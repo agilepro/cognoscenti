@@ -1,0 +1,25 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../css/global.css" media="screen" type="text/css">
+    <style>
+    body {padding:15px;width:800px}
+    table {}
+    th {padding:5px;background-color:darkblue;color:white;text-align:left;}
+	td {vertical-align:top;padding:5px;border:1px solid darkblue;}
+	pre {font-size:11px;}
+    </style>
+</head>
+<body>
+<h1>Server is Paused</h1>
+
+<p>Current server state: <b>{{serverState}}</b></p>
+<p>The server is placed into paused mode for shutting down or for administrative functions.
+   Generally, if you wait a moment, the server should start up again.</p>
+
+<form action="{{go}}">
+<input type="submit" value="Refresh">
+</form>
+
+
+</body>
+</html>

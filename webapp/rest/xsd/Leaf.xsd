@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Sam (Company) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://nugen.fujitsu.com" xmlns:ng="http://nugen.fujitsu.com" targetNamespace="http://nugen.fujitsu.com" elementFormDefault="qualified">
+	<xs:element name="abbreviation" type="xs:string"/>
+	<xs:element name="accesslevel">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="A"/>
+				<xs:enumeration value="PA"/>
+				<xs:enumeration value="M"/>
+				<xs:enumeration value="PM"/>
+				<xs:enumeration value="REMOVE"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="accomplishment" type="xs:string"/>
+	<xs:element name="actionscripts" type="xs:string"/>
+	<xs:element name="activities">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="activity" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="activity">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="processurl"/>
+				<xs:element ref="key"/>
+				<xs:element ref="display"/>
+				<xs:element ref="synopsis"/>
+				<xs:element ref="description"/>
+				<xs:element ref="state"/>
+				<xs:element ref="assignee"/>
+				<xs:element ref="subprocess"/>
+				<xs:element ref="actionscripts"/>
+				<xs:element ref="progress"/>
+				<xs:element ref="priority"/>
+				<xs:element ref="duedate"/>
+				<xs:element ref="startdate"/>
+				<xs:element ref="duration"/>
+				<xs:element ref="enddate"/>
+				<xs:element ref="rank"/>
+				<xs:element ref="accomplishment" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="address" type="xs:string"/>
+	<xs:element name="assignee" type="xs:string"/>
+	<xs:element name="attachment">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="address"/>
+				<xs:element ref="remark"/>
+				<xs:element ref="name"/>
+				<xs:element ref="type"/>
+				<xs:element ref="modifiedtime"/>
+				<xs:element ref="modifieduser"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="attachments">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="attachment" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="attachsection">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="secname"/>
+				<xs:element ref="url"/>
+				<xs:element ref="modifiedtime"/>
+				<xs:element ref="modifieduser"/>
+				<xs:element ref="attachments"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="book">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="name"/>
+				<xs:element ref="description"/>
+				<xs:element ref="stylesheet"/>
+				<xs:element ref="logo"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="books">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="book" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="bookurl" type="xs:string"/>
+	<xs:element name="choice" type="xs:string"/>
+	<xs:element name="comment">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="content"/>
+				<xs:element ref="subject"/>
+				<xs:element ref="time"/>
+				<xs:element ref="who"/>
+			</xs:choice>
+			<xs:attribute name="id" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="comments">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="comment" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="commentsection">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="secname"/>
+				<xs:element ref="url"/>
+				<xs:element ref="modifiedtime"/>
+				<xs:element ref="modifieduser"/>
+				<xs:element ref="comments"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="content" type="xs:string"/>
+	<xs:element name="context" type="xs:string"/>
+	<xs:element name="contexttype" type="xs:string"/>
+	<xs:element name="description" type="xs:string"/>
+	<xs:element name="display" type="xs:string"/>
+	<xs:element name="duedate" type="ng:nullableDateTime"/>
+	<xs:element name="duration" type="xs:string"/>
+	<xs:element name="email" type="xs:string"/>
+	<xs:element name="enddate" type="ng:nullableDateTime"/>
+	<xs:element name="event">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="type"/>
+				<xs:element ref="context"/>
+				<xs:element ref="contexttype"/>
+				<xs:element ref="responsible"/>
+				<xs:element ref="timestamp"/>
+				<xs:element ref="comments"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="expired" type="ng:nullableDateTime"/>
+	<xs:element name="favorite">
+		<xs:complexType>
+			<xs:attribute name="address" type="xs:anyURI" use="required"/>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="favorites">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="favorite" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="geospatial">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:anyAttribute namespace="##other"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="geospatialsection">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="secname"/>
+				<xs:element ref="url"/>
+				<xs:element ref="modifiedtime"/>
+				<xs:element ref="modifieduser"/>
+				<xs:element ref="geospatial"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="goal">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="synopsis"/>
+				<xs:element ref="description"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="history">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="processurl"/>
+				<xs:element ref="event" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="hitcount" type="xs:long"/>
+	<xs:element name="homepage" type="xs:anyURI"/>
+	<xs:element name="key" type="xs:string"/>
+	<xs:element name="lastlogin" type="ng:nullableDateTime"/>
+	<xs:element name="lastupdated" type="ng:nullableDateTime"/>
+	<xs:element name="license">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="owner"/>
+				<xs:element ref="expired"/>
+				<xs:element ref="remark"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="licenses">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="license" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="link">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="name"/>
+				<xs:element ref="url"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="links">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="linksection">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="secname"/>
+				<xs:element ref="url"/>
+				<xs:element ref="modifiedtime"/>
+				<xs:element ref="modifieduser"/>
+				<xs:element ref="links"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="logo" type="xs:string"/>
+	<xs:element name="method">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="GET"/>
+				<xs:enumeration value="PUT"/>
+				<xs:enumeration value="POST"/>
+				<xs:enumeration value="DELETE"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="modifiedtime" type="ng:nullableDateTime"/>
+	<xs:element name="modifieduser" type="xs:string"/>
+	<xs:element name="name" type="xs:string"/>
+	<xs:simpleType name="nullableDateTime">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0"/>
+					<xs:maxLength value="0"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType>
+				<xs:restriction base="xs:dateTime"/>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+	<xs:element name="owner" type="xs:string"/>
+	<xs:element name="page">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="name"/>
+				<xs:element ref="abbreviation"/>
+				<xs:element ref="bookurl"/>
+				<xs:element ref="goal"/>
+				<xs:element ref="sections"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pagename" type="xs:string"/>
+	<xs:element name="pagelist">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="pagerecord" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pagerecord">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="pagename"/>
+				<xs:element ref="url"/>
+				<xs:element ref="modifieduser"/>
+				<xs:element ref="modifiedtime"/>
+				<xs:element ref="remark"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="parentprocesses">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="url" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="poll">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="proposition"/>
+				<xs:element ref="vote" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="polls">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="poll"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pollsection">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="secname"/>
+				<xs:element ref="url"/>
+				<xs:element ref="modifiedtime"/>
+				<xs:element ref="modifieduser"/>
+				<xs:element ref="polls"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="priority" type="xs:int"/>
+	<xs:element name="privatesection">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="secname"/>
+				<xs:element ref="url"/>
+				<xs:element ref="modifiedtime"/>
+				<xs:element ref="modifieduser"/>
+				<xs:element ref="content" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="process">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="key"/>
+				<xs:element ref="display"/>
+				<xs:element ref="synopsis"/>
+				<xs:element ref="description"/>
+				<xs:element ref="priority"/>
+				<xs:element ref="duedate"/>
+				<xs:element ref="startdate"/>
+				<xs:element ref="enddate"/>
+				<xs:element ref="parentprocesses"/>
+				<xs:element ref="state"/>
+				<xs:element ref="history"/>
+				<xs:element ref="activities"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="processurl" type="xs:string"/>
+	<xs:element name="proposition" type="xs:string"/>
+	<xs:element name="rank" type="xs:string"/>
+	<xs:element name="reason" type="xs:string"/>
+	<xs:element name="remark" type="xs:string"/>
+	<xs:element name="relayurl" type="xs:anyURI"/>
+	<xs:element name="request" type="xs:anyURI"/>
+	<xs:element name="resourceid" type="xs:string"/>
+	<xs:element name="resourceurl" type="xs:string"/>
+	<xs:element name="responsible" type="xs:string"/>
+	<xs:element name="result">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="SUCCESS"/>
+				<xs:enumeration value="FAILED"/>
+				<xs:enumeration value="PARTIAL"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:element name="searchrecord">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="pagename"/>
+				<xs:element ref="url"/>
+				<xs:element ref="modifieduser"/>
+				<xs:element ref="modifiedtime"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="searchresults">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="searchstring"/>
+				<xs:element ref="hitcount"/>
+				<xs:element ref="searchrecord" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="searchstring" type="xs:string"/>
+	<xs:element name="secname" type="xs:string"/>
+	<xs:element name="sections">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element ref="wikisection"/>
+				<xs:element ref="linksection"/>
+				<xs:element ref="privatesection"/>
+				<xs:element ref="tasksection"/>
+				<xs:element ref="attachsection"/>
+				<xs:element ref="commentsection"/>
+				<xs:element ref="pollsection"/>
+				<xs:element ref="geospatialsection"/>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="subkey" type="xs:string"/>
+	<xs:element name="startdate" type="ng:nullableDateTime"/>
+	<xs:element name="state" type="xs:string"/>
+	<xs:element name="status">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="request"/>
+				<xs:element ref="method"/>
+				<xs:element ref="resourceid"/>
+				<xs:element ref="resourceurl"/>
+				<xs:element ref="result"/>
+				<xs:element ref="remark"/>
+				<xs:element ref="reason"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="progress" type="xs:string"/>
+	<xs:element name="stylesheet" type="xs:string"/>
+	<xs:element name="subject" type="xs:string"/>
+	<xs:element name="subprocess">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="subkey" minOccurs="0"/>
+				<xs:element ref="relayurl" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="synopsis" type="xs:string"/>
+	<xs:element name="tasksection">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="secname"/>
+				<xs:element ref="url"/>
+				<xs:element ref="modifiedtime"/>
+				<xs:element ref="modifieduser"/>
+				<xs:element ref="process"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="time" type="xs:string"/>
+	<xs:element name="timestamp" type="xs:string"/>
+	<xs:element name="type" type="xs:string"/>
+	<xs:element name="url" type="xs:string"/>
+	<xs:element name="user">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="accesslevel"/>
+			</xs:sequence>
+			<xs:attribute name="id" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="userid" type="xs:string"/>
+	<xs:element name="userlist">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="user" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="userprofiles">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="userprofile" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="userprofile">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="userid"/>
+				<xs:element ref="name"/>
+				<xs:element ref="description"/>
+				<xs:element ref="email"/>
+				<xs:element ref="lastlogin"/>
+				<xs:element ref="lastupdated"/>
+				<xs:element ref="homepage"/>
+				<xs:element ref="favorites"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="vote">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="who"/>
+				<xs:element ref="choice"/>
+				<xs:element ref="comment"/>
+				<xs:element ref="time"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="who" type="xs:string"/>
+	<xs:element name="wikisection">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="secname"/>
+				<xs:element ref="url"/>
+				<xs:element ref="modifiedtime"/>
+				<xs:element ref="modifieduser"/>
+				<xs:element ref="content"/>
+			</xs:sequence>
+			<xs:attribute name="id" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

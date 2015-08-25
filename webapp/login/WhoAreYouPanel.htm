@@ -1,0 +1,10 @@
+    <div id="openId{{oCount}}" class="inputArea">
+        {{oPrompt}}<br />
+        <form action="login.form" name="{{oForm}}" id="{{oForm}}">
+            <input type="hidden" name="uaid" value="{{unique}}" />
+            <input type="hidden" id="{{oGlobalIdName}}" name="globalId" value="" />
+            <input type="text" id="{{oUserName}}" name="username" class="inputGeneral" />
+            <input type="submit" name="op" value="Sign In" class="btnBlue"
+                onclick="submitFormWAY('{{oForm}}','{{oGlobalIdName}}','{{oURL}}','{{oUserName}}')"/><br />
+        </form>
+    </div>

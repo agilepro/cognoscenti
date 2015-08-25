@@ -1,0 +1,350 @@
+<%@page errorPage="/spring/jsp/error.jsp"
+%><%@page import="java.util.Date"
+%><%@page import="org.socialbiz.cog.NGRole"
+%><%@page import="java.text.SimpleDateFormat"
+%><%@page import="org.socialbiz.cog.TemplateRecord"
+%><%@page import="org.socialbiz.cog.MicroProfileMgr"
+%><%@ include file="/spring/jsp/include.jsp"
+%><%
+/*
+Required parameters:
+
+    1. pageId   : This is the id of an Project and here it is used to retrieve NGPage.
+    2. book     : This request attribute provide the key of account which is used to select account from the
+                  list of all sites by-default when the page is rendered.
+
+*/
+
+    String pageId      = ar.reqParam("pageId");
+    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngp);
+    ar.assertMember("Must be a member to see meetings");
+
+    List<GoalRecord> allGoalsRaw = ngp.getAllGoals();
+    JSONArray allGoals = new JSONArray();
+    for (GoalRecord gr : allGoalsRaw) {
+        allGoals.put(gr.getJSON4Goal(ngp));
+    }
+
+    UserProfile uProf = ar.getUserProfile();
+
+
+    Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
+    for(TemplateRecord tr : uProf.getTemplateList()){
+        String pageKey = tr.getPageKey();
+        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
+        if (ngpi!=null){
+            templates.add(ngpi);
+        }
+    }
+    NGPageIndex.sortInverseChronological(templates);
+
+    //NEEDED???
+    String book = (String)request.getAttribute("book");
+
+    JSONArray allLabels = ngp.getJSONLabels();
+
+    JSONObject stateName = new JSONObject();
+    stateName.put("0", BaseRecord.stateName(0));
+    stateName.put("1", BaseRecord.stateName(1));
+    stateName.put("2", BaseRecord.stateName(2));
+    stateName.put("3", BaseRecord.stateName(3));
+    stateName.put("4", BaseRecord.stateName(4));
+    stateName.put("5", BaseRecord.stateName(5));
+    stateName.put("6", BaseRecord.stateName(6));
+    stateName.put("7", BaseRecord.stateName(7));
+    stateName.put("8", BaseRecord.stateName(8));
+    stateName.put("9", BaseRecord.stateName(9));
+
+    JSONArray allPeople = UserManager.getUniqueUsersJSON();
+
+
+/*** PROTOTYPE
+
+    $scope.allGoals  = {
+      "assignTo": [{
+        "name": "Alex Demo",
+        "uid": "alex@kswenson.oib.com"
+      }],
+      "description": "test",
+      "duedate": 0,
+      "duration": 0,
+      "enddate": 0,
+      "id": "9270",
+      "modifiedtime": 0,
+      "modifieduser": "",
+      "priority": 0,
+      "projectKey": "facility-1-wellness-circle",
+      "projectname": "Facility 1 Wellness Circle",
+      "rank": 40,
+      "siteKey": "socio",
+      "sitename": "Sociocracy Prototype",
+      "startdate": 0,
+      "state": 2,
+      "status": "",
+      "synopsis": "asdfasdfasdf",
+      "universalid": "MHYDHNLWG@facility-1-wellness-circle@9270"
+    };
+
+*/
+
+%>
+
+
+
+<script type="text/javascript">
+
+var app = angular.module('myApp', ['ui.bootstrap']);
+app.controller('myCtrl', function($scope, $http) {
+    $scope.allGoals  = <%allGoals.write(out,2,4);%>;
+    $scope.allLabels = <%allLabels.write(out,2,4);%>;
+    $scope.stateName = <%stateName.write(out,2,4);%>;
+    $scope.allPeople = <%allPeople.write(out,2,4);%>;
+    $scope.filter = "";
+    $scope.showActive = true;
+    $scope.showFuture = false;
+    $scope.showCompleted = false;
+    $scope.isCreating = false;
+    $scope.newGoal = {assignOne:{name:""}};
+
+    $scope.newPerson = "";
+
+    $scope.editGoalInfo = false;
+    $scope.showCreateSubProject = false;
+
+    $scope.showError = false;
+    $scope.errorMsg = "";
+    $scope.errorTrace = "";
+    $scope.showTrace = false;
+    $scope.reportError = function(serverErr) {
+        errorPanelHandler($scope, serverErr);
+    };
+
+    $scope.findGoals = function() {
+        var lcfilter = $scope.filter.toLowerCase();
+        var res = [];
+        $scope.allGoals.map( function(rec) {
+            if (!$scope.showActive && rec.state>=2 && rec.state<=4) {
+                return;
+            }
+            if (!$scope.showFuture && rec.state==1) {
+                return;
+            }
+            if (!$scope.showCompleted && rec.state>=5) {
+                return;
+            }
+            if ($scope.filter.length==0) {
+                res.push(rec);
+            }
+            else if (rec.synopsis.toLowerCase().indexOf(lcfilter)>=0) {
+                res.push(rec);
+            }
+            else if (rec.description.toLowerCase().indexOf(lcfilter)>=0) {
+                res.push(rec);
+            }
+        });
+        return res;
+    };
+
+    $scope.makeState = function(rec, newState) {
+        var newRec = {};
+        newRec.id = rec.id;
+        newRec.universalid = rec.universalid;
+        newRec.state = newState;
+
+        var postURL = "updateGoal.json?gid="+rec.id;
+        var postdata = angular.toJson(newRec);
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            rec.state = data.state;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+
+    $scope.getPeople = function(viewValue) {
+        var newVal = [];
+        for( var i=0; i<$scope.allPeople.length; i++) {
+            var onePeople = $scope.allPeople[i];
+            if (onePeople.uid.indexOf(viewValue)>=0) {
+                newVal.push(onePeople);
+            }
+            else if (onePeople.name.indexOf(viewValue)>=0) {
+                newVal.push(onePeople);
+            }
+        }
+        return newVal;
+    }
+
+    $scope.createNewGoal = function() {
+        var newRec = $scope.newGoal;
+        newRec.id = "~new~";
+        newRec.universalid = "~new~";
+        newRec.assignTo = [];
+        newRec.state = 2;
+        newRec.assignTo.push(newRec.assignOne);
+
+        var postURL = "updateGoal.json?gid=~new~";
+        var postData = angular.toJson(newRec);
+        $http.post(postURL, postData)
+        .success( function(data) {
+            $scope.allGoals.push(data);
+            $scope.newGoal = {};
+            $scope.isCreating = false;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+   };
+
+});
+
+function addvalue() {
+    if(flag==false){
+        document.getElementById("projectname").value=projectNameTitle;
+    }
+}
+
+</script>
+
+<div ng-app="myApp" ng-controller="myCtrl">
+
+<%@include file="ErrorPanel.jsp"%>
+
+    <div class="generalHeading" style="height:40px">
+        <div  style="float:left;margin-top:8px;">
+            Action Items
+        </div>
+        <div class="rightDivContent" style="margin-right:100px;">
+          <span class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            Options: <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation"><a role="menuitem" tabindex="-1"
+                  ng-click="isCreating=true">Create New Goal</a></li>
+            </ul>
+          </span>
+
+        </div>
+    </div>
+
+
+    <div class="well" ng-show="!isCreating">
+        Filter <input ng-model="filter"> &nbsp;
+        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showActive">
+            Active</span> &nbsp;
+        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showFuture">
+            Future</span> &nbsp;
+        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showCompleted">
+            Completed</span>
+    </div>
+
+
+    <div class="well generalSettings" ng-show="isCreating">
+        <table>
+           <tr>
+                <td class="gridTableColummHeader">New Goal:</td>
+                <td style="width:20px;"></td>
+                <td colspan="2">
+                    <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
+                </td>
+           </tr>
+           <tr><td style="height:10px"></td></tr>
+           <tr>
+                <td class="gridTableColummHeader">Assignee:</td>
+                <td style="width:20px;"></td>
+                <td colspan="2">
+                    <input type="text" ng-model="newGoal.assignOne" class="form-control" placeholder="Who should do it"
+                       typeahead="person as person.name for person in getPeople($viewValue) | limitTo:12">
+                </td>
+            </tr>
+            <tr><td style="height:10px"></td></tr>
+            <tr>
+                <td class="gridTableColummHeader">Description:</td>
+                <td style="width:20px;"></td>
+                <td colspan="2">
+                    <textarea type="text" ng-model="newGoal.description" class="form-control"
+                        style="width:450px;height:100px" placeholder="Details"></textarea>
+                </td>
+            </tr>
+            <tr><td style="height:10px"></td></tr>
+            <tr>
+                <td class="gridTableColummHeader"></td>
+                <td style="width:20px;"></td>
+                <td colspan="2">
+                    <button class="btn btn-primary" ng-click="createNewGoal()">Create New Goal</button>
+                    <button class="btn btn-primary" ng-click="isCreating=false">Cancel</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="height:20px;"></div>
+
+
+
+    <div  id="searchresultdiv0">
+    <div class="taskListArea">
+      <ul id="ActiveTask">
+         <div ng-repeat="rec in findGoals()" id="node1503" class="ui-state-default" style="background-color: #F8F8F8; margin-bottom: 5px;">
+            <div>
+            <div style="float: left;margin:7px">
+              <div class="dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation"><a role="menuitem" tabindex="-1"
+                      href="task{{rec.id}}.htm">Edit Goal</a></li>
+                </ul>
+              </div>
+            </div>
+            <div style="float: left;margin:7px">
+              <a href="task{{rec.id}}.htm"><img src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
+            </div>
+            <div style="float: left;margin:3px;">
+              <div>
+                <span style="font-size: 17px;cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}}</span>
+                <div class="taskOverview">assigned to:
+                   <span class="red" ng-repeat="ass in rec.assignees"><a href="#">{{ass}}</a></span>
+
+                </div>
+                <div ng-show="rec.show" id="{{rec.id}}_1">
+                    <div class="taskStatus">Description: {{rec.description}}</div>
+                    <div class="taskStatus">Priority:  <span style="color:red">{{rec.priority}}</span></div>
+                    <div class="taskStatus">Status: {{rec.status}}  - (rank {{rec.rank}})</div>
+                    <div class="taskToolBar">
+                        Action:
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <span ng-show="rec.state!=2">
+                            <a title="Start & Offer the Activity" ng-click="makeState(rec, 2)">
+                                <img src="http://bobcat:8080/cg2/assets/goalstate/small2.gif" alt="accepted"  />
+                                <b>Start/Offer</b></a>
+                            </span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <span ng-show="rec.state==2">
+                            <a title="Accept the activity" ng-click="makeState(rec, 3)">
+                                <img src="http://bobcat:8080/cg2/assets/goalstate/small3.gif" alt="accepted"  />
+                                <b>Mark Accepted</b></a>
+                            </span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <span ng-show="rec.state!=5">
+                            <a title="Complete this activity" ng-click="makeState(rec, 5)">
+                                <img src="http://bobcat:8080/cg2/assets/goalstate/small5.gif" alt="completed"  />
+                                <b>Mark Completed</b></a>
+                            </span>
+                    </div>
+                </div>
+                </div>
+              </div>
+              <br style="clear: left;" />
+            </div>
+        </div>
+      </ul>
+    </div>
+    </div>
+
+</div>
+
+
+

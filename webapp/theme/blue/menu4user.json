@@ -1,0 +1,138 @@
+[
+  {
+    "level":1,
+    "name": "Projects",
+    "href": "watchedProjects.htm",
+    "ref": "ddsubmenu1",
+    "subs":   [
+        {
+          "name": "Watched Projects",
+          "href": "watchedProjects.htm"
+        },
+        {
+          "name": "Notified Projects",
+          "href": "notifiedProjects.htm"
+        },
+        {
+          "name": "Administered Projects",
+          "href": "ownerProjects.htm"
+        },
+        {
+          "name": "Templates",
+          "href": "templates.htm"
+        },
+        {
+          "name": "Participant Projects",
+          "href": "participantProjects.htm"
+        },
+        {
+          "name": "All Projects",
+          "href": "allProjects.htm"
+        },
+        {
+          "name": "Search Notes",
+          "href": "searchAllNotes.htm"
+        },
+        {
+          "name": "Create New Project",
+          "href": "userCreateProject.htm"
+        }
+      ]
+  },
+  {
+    "level":1,
+    "name": "Updates",
+    "href": "userAlerts.htm",
+    "ref": "",
+    "subs":   []
+  },
+  {
+    "level":1,
+    "name": "Goals",
+    "href": "userActiveTasks.htm",
+    "ref": "ddsubmenu2",
+    "subs":   [
+        {
+          "name": "Worklist Goals",
+          "href": "userActiveTasks.htm"
+        },
+        {
+          "name": "Remote Profiles",
+          "href": "RemoteProfiles.htm"
+        },
+        {
+          "name": "Remote Goals",
+          "href": "userRemoteTasks.htm"
+        },
+        {
+          "name": "Personal Assistant",
+          "href": "Agents.htm"
+        }
+      ]
+  },
+  {
+    "level":1,
+    "name": "Settings",
+    "href": "userSettings.htm",
+    "ref": "ddsubmenu3",
+    "subs":   [
+        {
+          "name": "Personal",
+          "href": "userSettings.htm"
+        },
+        {
+          "name": "Contacts",
+          "href": "userContacts.htm"
+        },
+        {
+          "name": "Connections",
+          "href": "userConnections.htm"
+        },
+        {
+          "name": "Sites",
+          "href": "userAccounts.htm"
+        },
+        {
+          "name": "Unsubscribe",
+          "href": "notificationSettings.htm"
+        }
+      ]
+  },
+  {
+    "level":2,
+    "name": "Administration",
+    "href": "emailListnerSettings.htm",
+    "ref": "ddsubmenu4",
+    "subs": [
+        {
+          "name": "Email",
+          "href": "emailListnerSettings.htm"
+        },
+        {
+          "name": "Last Notification Send",
+          "href": "lastNotificationSend.htm"
+        },
+        {
+          "name": "Error Log",
+          "href": "errorLog.htm"
+        },
+        {
+          "name": "New Sites",
+          "href": "newAccounts.htm"
+        },
+        {
+          "name": "New Users",
+          "href": "newUsers.htm"
+        },
+        {
+          "name": "Requested Sites",
+          "href": "requestedAccounts.htm"
+        },
+        {
+          "name": "Denied Sites",
+          "href": "deniedAccounts.htm"
+        }
+      ]
+  }
+]
+

@@ -1,0 +1,389 @@
+/* ----------------------------------------
+   Standard Elements
+------------------------------------------- */
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100%;
+    padding-bottom: 1px; /* force scrollbars */
+}
+
+body {
+    background: #FFFFFF
+    font: normal 13px Verdana,sans-serif;
+    color: #345;
+    padding-bottom: 1em;
+}
+
+a {color: #06A;}
+a:hover {color: #036;}
+
+p {padding: 0.1em 0 0.8em;}
+
+h1 {font: normal 1.8em Georgia,Tahoma,sans-serif;}
+h2 {font: normal 1.5em Georgia,sans-serif;}
+h3 {font: bold 1em Tahoma,sans-serif;}
+
+blockquote {
+    background: #FFF url('quote.gif') no-repeat;
+    border: 1px solid #EAEAEA;
+    color: #555;
+    display: block;
+    font: normal 1em sans-serif;
+    margin-bottom: 1em;
+    padding: 10px 1em 0.2em 42px;
+}
+
+code {
+    display: block;
+    background: #FFFFFA;
+    color: #335;
+    border: 1px solid #E8E8D5;
+    padding: 5px 10px;
+    overflow: auto;
+    margin: 1em 0;
+    font-size: 0.9em;
+    line-height: 1.5em;
+}
+
+ul,ol {margin: 0 0 1em 1.6em;}
+ul ul, ol ol {margin: 0.3em 0 0.3em 1em;}
+
+img {border: 0;}
+img.bordered {background: #000; padding: 5px; border: 1px solid #DDD;}
+img.left {margin-right: 1em;}
+img.right {margin-left: 1em;}
+
+small,.small {font-size: 0.8em;}
+big,.big {font-size: 1.2em;}
+
+
+/* ----------------------------------------
+  Forms
+------------------------------------------- */
+
+/* Inputs */
+input#qs, textarea, input.styled {
+    border: 1px solid #BBB;
+    padding: 3px;
+    width: 160px;
+    font: normal 1em Verdana,sans-serif;
+}
+textarea {width: 440px;}
+#searchsubmit {
+    border: 1px solid #BBB;
+    background: #EEE;
+    font: normal 0.9em Verdana,sans-serif;
+    padding: 2px 3px;
+}
+
+/* Seachform */
+table.search {
+    width: 100%;
+    border-collapse: collapse;
+}
+.search td {vertical-align: center;}
+
+
+/* ----------------------------------------
+   Layout
+------------------------------------------- */
+
+/* Main */
+#layout_wrapper {
+    margin: 20px auto 0;
+    width: 1000px;  
+}
+#layout_container {
+    background: #FFF;
+    padding: 0 5px;
+}
+#layout_edgetop, #layout_edgebottom {
+    background: url('layout_edges.gif') no-repeat left top;
+    display: block;
+    height: 10px;   
+    font-size: 0;
+    line-height: 0;
+}
+#layout_edgebottom {background-position: left bottom;}
+
+/* Site Title */
+#site_title {
+    background: #C5DEF0 url('site_title.jpg') repeat-x left top;
+    padding: 6px 18px;
+}
+#site_title h1 {
+    font: normal 2.0em sans-serif;
+    letter-spacing: -1px;
+}
+#site_title h1,#site_title h1 a {color: #507A9A;}
+#site_title h1 a {text-decoration: none;}
+#site_title h1 a:hover {color: #305A7A}
+#site_title h2 {
+    padding-top: 1.4em;
+    font: normal 1.1em sans-serif;
+    color: #679;
+}
+
+#top_separator {
+    background: url('top_separator.gif') repeat-x left top;
+    display: block;
+    font-size: 0;
+    height: 3px;
+    line-height: 0;
+}
+
+/* Navigation */
+#navigation {
+    background: #739CBA url('navigation.jpg') no-repeat left bottom;
+    padding: 82px 10px 0;
+}
+
+/* Tabs */
+#tabs ul {
+    margin: 0;
+    padding: 0;
+}
+#tabs li {
+    display:inline;
+    list-style:none;
+}
+#tabs a {
+    background: url("tableftC.gif") no-repeat left top;
+    float: left;
+    font: bold 0.9em sans-serif;
+    margin-right: 3px;
+    padding-left: 4px;
+    text-decoration: none;
+}
+#tabs a span {
+    float: left;
+    display: block;
+    background: url("tabrightC.gif") no-repeat right top;
+    padding: 5px 10px 5px 6px;
+    color: #608AAA;
+}
+/* Commented Backslash Hack hides rule from IE5-Mac \*/
+#tabs a span {float: none;}
+/* End IE5-Mac hack */
+
+#tabs a:hover span {color: #608AAA;}
+#tabs a:hover {background-position: 0% -42px;}
+#tabs a:hover span {background-position:100% -42px;}
+
+#tabs li.current_tab_item a {background-position: 0% -42px;}
+#tabs li.current_tab_item a span {background-position:100% -42px;color: #000000;}
+
+/* Main Layout */
+#main_left  {width: 220px;}
+#main_right {width: 765px;}
+
+/* Footer */
+#footer {
+    background: #A3B5C1 url('footer.gif') no-repeat left top;
+    padding: 8px 12px 2px;
+    font-size: 0.85em;
+    color: #FAFCFF;
+}
+#footer .right {color: #C8DBE8;}
+#footer .right a {
+    color: #D3E5F1;
+    text-decoration: none;
+}
+#footer .right a:hover {
+    color: #FFE;
+    text-decoration: underline;
+}
+
+
+/* ----------------------------------------
+   Miscellaneous
+------------------------------------------- */
+
+/* Images */
+img.bordered {
+    border: 1px solid #DDD;
+    background: #000;
+    padding: 5px;
+}
+
+/* Text */
+.bold {font-weight: bold;}
+.tright {text-align: right;}
+.tcenter {text-align: center;}
+.tright {text-align: right;}
+
+/* Floats */
+.center {float: center;}
+.left {float: left;}
+.right {float: right;}
+
+/* Clear */
+.clear,.clearer {clear: both;}
+.clearer,.spacer {
+    display: block;
+    font-size: 0;
+    line-height: 0;
+}
+
+/* Icons */
+span.comment {
+    background: url('icon_comment.gif') no-repeat left center;
+    padding-left: 18px;
+}
+
+
+/* ----------------------------------------
+   section, page
+------------------------------------------- */
+
+.section {
+    margin-bottom: 5px;
+    color: #444;
+}
+.section_title {
+    background: #E8E8E8 url('content_title.gif') no-repeat left top;
+    padding: 6px 12px 5px;
+    color: #469;
+}
+.section_title h1 {
+    font: bold 0.85em Verdana,sans-serif;
+}
+.section_title h1 a {
+    color: #469;
+}
+.section_title h1 a:hover {
+    color: #469;
+    text-decoration: none;
+}
+.section_title h1.left {
+    width: 500px
+}
+.section_date {
+    color: #999;
+    padding-top: 1px;
+    font-size: 0.85em;
+}
+.section_metadata {
+    margin-top: 5px;
+    padding: 0 5px;
+    background: #FDFDFD;
+}
+.section_metadata .content {
+    border-top: 0px solid #E5E5E5;
+    padding: 8px 5px 6px;
+    font-size: 0.8em;
+    color: #999;
+}
+.section_metadata .content a {color: #567;}
+.section_metadata .content a:hover {color: #002;}
+
+.section_body {
+    background: #FDFDFD url('content_body.gif') repeat-x left top;
+    padding: 10px 10px 1px;
+}
+.section_body img {
+    border: none;
+}
+.section_bottom {
+    background: url('content_bottom.gif') no-repeat left top;
+    display: block;
+    height: 5px;
+    font-size: 0;
+    line-height: 0;
+}
+.section_search_text {
+    font-size: 0.85em;
+    padding: 2px 0;
+}
+
+
+/* ----------------------------------------
+   Sidebar box
+------------------------------------------- */
+
+.box {margin-bottom: 5px;}
+.box_title {
+    background: #C6D2DB url('box_title.gif') no-repeat left top;
+    padding: 6px 10px 5px;
+    font: sans-serif;
+    font-weight: bold;
+    font-size: 0.8.5em;
+    color: #505E69;
+}
+.box_body {
+    background: #DAE3E9 url('box_body.gif') repeat-x left top;
+    padding: 8px 10px 1px;
+    font-size: 0.9em;
+}
+.box_bottom {
+    background: url('box_bottom.gif') no-repeat left top;
+    display: block;
+    height: 5px;
+    font-size: 0;
+    line-height: 0;
+}
+
+.box ul {
+    margin-left: 0;
+    border-bottom: 1px solid #E2ECF2;
+}
+
+.box li:first-child {
+    border-top: none;
+}
+
+.box ul li {
+    font: sans-serif;
+    font-weight: normal;
+    font-size: 0.8.5em;
+    list-style: none;
+    padding: 4px;
+    border-top: 1px solid #E2ECF2;
+    border-bottom: 1px solid #D0D8DE;
+}
+.box ul a {text-decoration: none;}
+.box ul a:hover {text-decoration: underline;}
+
+
+
+/* ----------------------------------------
+   Pagination
+------------------------------------------- */
+
+.pagenavigation {
+    background: #DDEBF4 url('pagenav_top.gif') no-repeat;
+    margin-bottom: 5px;
+}
+.pagenav_bottom {
+    display: block;
+    font-size: 0;
+    line-height: 0;
+    height: 5px;
+    background: url('pagenav_bottom.gif') no-repeat;
+}
+.pagenav {
+    font-size: 0.85em;
+    padding: 5px 8px 0;
+}
+.pagenav a {
+    color: #6A7DA4;
+    text-decoration: none;
+}
+.pagenav a:hover {
+    color: #002;
+    text-decoration: underline;
+}
+
+
+/* ----------------------------------------
+   Width, height, margin, padding
+------------------------------------------- */
+
+.h5 {height: 5px;}
+.p5 {padding: 5px;}
+.p10 {padding: 10px;}

@@ -1,0 +1,78 @@
+/***********************************************************************
+Brown Theme
+***********************************************************************/
+html{
+  background-color:#bda792;
+  background-image:url('pageBg.gif');
+}
+/***************************************************
+Style for top right hand side links starts here
+***************************************************/
+ul#globalLinks li a:link, ul#globalLinks li a:visited, ul#globalLinks li a:hover, ul#globalLinks li a:active{
+  color:#4f3f30;
+}
+
+/***********************************************************************
+    Style for Top Navigation Starts Here
+***********************************************************************/
+#mainNavigationLeft{
+  background-image:url('mainNavBgLT.gif');
+}
+#mainNavigationCenter{
+  background-image:url('mainNavBgC.gif');
+}
+#mainNavigationRight{
+  background-image:url('mainNavBgRT.gif');
+}
+#mainNavigation li{
+  border-left:1px solid #c2ae9a;
+}
+#mainNavigation li a{
+  color:#31271e;
+  background-image:url('mainNav_border_lt.gif'); 
+}
+/* on hover, or when current page is corresponding nav item */
+#mainNavigation li a:hover, #mainNavigation li.selected a, #mainNavigation li a.selected{
+  background-image:url('mainNav_bg_on.gif');
+  color:#ffffff;
+}
+#mainNavigation li a:hover, #mainNavigation li.selected a:link, #mainNavigation li.selected a:visited, #mainNavigation li.selected a:active, #mainNavigation li.selected a:hover{
+  color:#FFFFFF;
+}
+
+/***********************************************************************
+    Style for Right Panel (Main Site Content Area) Starts Here
+***********************************************************************/
+#mainSiteContainerDetails{
+  background-image:url('mainSiteContainerBgLT.png');
+}
+#mainSiteContainerDetailsRight{
+  background-image:url('mainSiteContainerBgRT.png');
+}
+
+/***********************************************************************
+    Style for Footer Area Starts Here
+***********************************************************************/
+#siteFooter{
+  background-image:url('footerLT.png');
+}
+#siteFooterCenter{
+  background-image:url('footerC.png');
+}
+#siteFooterRight{
+  background-image:url('footerRT.png');
+}
+/***********************************************************************
+    Style for dropdown menu
+***********************************************************************/
+.ddsubmenustyle ul{
+  border:1px solid #4f3f30;
+  border-bottom: 0px;
+}
+.ddsubmenustyle li a{
+  background-color:#fbfaf9;
+  border-bottom: 1px solid #4f3f30;
+}
+.ddsubmenustyle li a:hover{
+  background-color:#4f3f30;
+}

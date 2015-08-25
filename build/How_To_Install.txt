@@ -1,0 +1,161 @@
+READ ME for Installation
+
+These are the installation instructions for Cognoscenti.  There is a separate readme for doing the build.  These instructions assume that you have a cog.war file and are ready to put that into a running TomCat server.
+
+
+
+=== Requirements ====
+
+The only thing you need for Cognoscenti is:
+1) a running and functional TomCat server
+   for the purpose of documentation we will assume this is at C:\tomcat\ but of course you may have it installed at another location, substitute your locataion when appropriate.
+   for the purpose of documentation, we will assume the web location is http://myserver:80/ but of course you may configured it to be at a different web address, substitute your address where appropriate.
+2) access to an email server for sending email
+3) (optionally) access to a POP server for receiving email
+
+Data is all stored as files on a file system.  There are two main folders necessary.  These two folders do not need to be on the same physical or logical drive.
+
+1) A folder for all the user files and administration files
+   for the purpose of documentation, we will assume this is C:\cog\users
+2) A folder for the sites, projects, and artifacts/attachments in the project
+   for the purpose of documentation, we will assume this is C:\cog\sites
+   
+
+Additionally, there are two more folders that are no longer used for new installations.  For now you need to create an empty directory and make a setting for these, although they will not be used:
+
+3) A folder for data files, consider using C:\cog\olddata or something similar
+4) A folder for attachments, consider using C:\cog\oldattach or something similar
+
+
+
+==== Installation ====
+
+Either drop the war file into the webapps directory of TomCat, or else make a new folder in there with the name that you desire for the root of the application, and unzip the contents of the war file to that folder.   For the rest of this we will assume that the name of this folder is "cog" however you can use whatever valid webapp name you would like to use.
+
+You can at this point start, or restart the TomCat server, so that it will see the new application.  
+
+Access the application at:  http://myserver:80/cog/
+
+This will produce a display showing the status of the server, probably announcgin "Error Initializing Cognoscenti Server"  The latest up to date details are maintained on that screen, so it is a good resource to use.
+
+
+
+==== Main Configuration ====
+
+Find and edit the config.txt file at   c:\tomcat\webapps\cog\WEB-INF\config.txt
+
+libFolder - make sure that the path is what you want to use, and that it exists
+
+userFolder - make sure that the path is what you want to use, and that it exists
+
+dataFolder - point to an empty folder, this is not used in new servers
+
+attachFolder - point to an empty folder, this is not used in new servers
+
+baseURL - You must set this to a real name of the server and everything up to the name of the application, including a final slash.  This URL will be used to redirect users to resources on this application.  Sometimes, the name that exists locally on the machine is not the name that the users see, because of proxy or a server in front filtering or rerouting requests.  This needs to be the URL address of the application from the point of view of the user's browser.  Do not use "localhost" because obviously nobody on a different computer will get this server.  Use whatever name of the host that the browser will need to resolve to this machine.   IP addresses will work, but obviously are not good when you have DHCP in use to assign a dynamic IP address to the machine.
+
+localConnections - probably not needed
+
+cvsConnections - probably not needed
+
+max_days_interval - probably not needed
+
+superAdmin - we wil set this up in a moment, AFTER you have logged in for the first time.
+
+emailOpenIDProvider - this is the URL to an OpenID provider that allows one to log in with an email address.  We have prefilled this with the address of a free provider that we run, and it should work as long as this provider is not overloaded.   You may want to investigate the SSOFI project and run 
+a copy of your own email provider.   If so, include the web address up to the point where the email address would start in the URL, including the trailing slash.  Here is the default:
+
+emailOpenIDProvider=https://interstagebpm.com/eid/
+
+If you restart the server, you should see the 'Welcome Screen'  however, you will not be able to log in just yet.
+
+
+
+==== Configuring SSOFI ====
+
+SSOFI is the module that allows a user to log in using an OpenID.  You can point to a number of OpenID providers.  Find and edit the file   c:\tomcat\webapps\cog\WEB-INF\ssofi.config
+
+This is a JSON file, and you must follow JSON syntax.
+
+ApplicationHomePage - this is the same as the baseURL above, the external address of the application
+
+ApplicationName - You can leave this Cognoscenti, it is what the user will see when they log in
+
+BaseURL - also the same as baseURL above, but without the trailing slash
+
+tenants - contains an array of tenant objects, but Cognoscenti is a single tenant application as far as logging in is concerned, so you see only one tenant, and the id (only_tenant) is not important.  Inside the tenant you have:
+
+options - each option is a icon on the login display, and represents a different OpenID server that you might want to use.  These are preconfigured for accessing the Fujitsu Email OpenId Provider, Google, Yahoo, Wordpress, and MyOpenId.  To change these, adjust these settings on the option:
+
+img - the name of an image to display on the login form. in the "c:\tomcat\webapps\cog\login" folder.
+
+name - a descriptive name
+
+type - either "big" or "small"
+
+url - the URL to the openid service.  If the user id must be in the URL, then place a tokken "{id}" in the URL.  The user will be promted for the user id, and that will be substituted into the URL before redirecting the browser.
+
+prompt - enter some text to prompt the user IF there is an ID to enter.
+
+
+
+==== Configuring Email ====
+
+Find and edit the file at   c:\tomcat\webapps\cog\WEB-INF\EmailNotification.properties
+
+overrideAddress - while you are getting the server to work, you might want to set this to your own real email address.  If set, this will cause all email to go ONLY to that address, and never bug anyone else.  Later when you are ready for others to use it, comment out this setting
+
+mail.smtp.auth - set to true if your email server requires authentication for sending
+
+mail.smtp.user -  the user needed to access the email server for sending
+
+mail.smtp.password - the password for sending
+
+mail.smtp.host - the server DNS name
+
+mail.smtp.port - probably 25
+
+mail.smtp.from - this is the from address.  Some SMTP servers only allow sending email when the from address is set to particular values.  If you have troubles sending, try setting this address.
+
+That is all you need to set for sending email.  Cognoscenti also has the ability to receive email, and to add the contents of the email to a project.  To enable this, you need access to a POP server.  These settings are:
+
+mail.pop3.host=
+mail.pop3.port=
+mail.pop3.user=
+mail.pop3.password=
+
+Configing the POP receive of email is optional, and you can leave these empty for now.
+
+
+
+==== Log In & Set Super Admin ====
+
+From the welcome screen, click on the login link.  This should prompt you with the OpenId options,and choose one that you have an open id at.  When you are done logging in there, you will get a prompt (if all the settings are correct)  saying "You have been authenticated with ... but we can't find any profile that includes this ID"  This prompt will appear every time a new user hits Cognoscenti for the first time.   Click on the button to "create a new profile".
+
+This creates a new profile for you.  Now we need to go back and give you administrator (super admin) priveledges.  Near the upper right corner, click on the link for "Settings".  Near the bottom of the page will appear a value for "Unique Id" which is 9 capital letters.  This is your internal ID.   Copy this 9-character value. 
+
+Again, find and edit  c:\tomcat\webapps\cog\WEB-INF\config.txt
+
+Find the setting for superAdmin, and set it equal to the 9-letter id for your profile.  It should look something like this:
+
+superAdmin=YGOWVBWRG
+
+Now restart the server.  A new option for Administration should appear.  The super admin does not have a lot to do, but super admin is the only person who can approve new Sites.  Once the site exists, the site owner approves projects, and so on.   Super admin also have some capabilities to observe the error logs, and to clean up the data when appropriate.
+
+
+
+==== Initial Trials ====
+
+You are done configuring the server.  Everything else can be done through the user interface.  To experiment, try:
+
+1. Requesting a new Site
+2. Approving that site for yourself in the Administration options
+3. Visit that Site
+4. Create a Project in the site
+5. In the project, add a document
+6. In the project, create a note
+7. In the project, create a goal
+8. Test the email by sending a document by email
+9. If you set up receipt of email, send a document to the email address specified in the project, and see that the document becomes an attachment to the project.
+
+etc.

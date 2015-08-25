@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://nugen.fujitsu.com" elementFormDefault="unqualified" xmlns:ng="http://nugen.fujitsu.com">
+	<xs:element name="assignee" type="xs:string"/>
+	<xs:element name="duedate" type="ng:nullableDateTime"/>
+	<xs:element name="duration" type="xs:long"/>
+	<xs:element name="expectedenddate" type="ng:nullableDateTime"/>
+	<xs:element name="expectedstartdate" type="ng:nullableDateTime"/>
+	<xs:element name="priority" type="xs:int"/>
+	<xs:element name="process" type="xs:anyURI"/>
+	<xs:element name="progress" type="xs:string"/>
+	<xs:element name="state" type="xs:string"/>
+	<xs:element name="subprocess" type="xs:anyURI"/>
+	<xs:simpleType name="nullableDateTime">
+			<xs:union>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="0"/>
+						<xs:maxLength value="0"/>
+					</xs:restriction>
+				</xs:simpleType>
+				<xs:simpleType>
+					<xs:restriction base="xs:dateTime"/>
+				</xs:simpleType>
+			</xs:union>
+	</xs:simpleType>
+</xs:schema>

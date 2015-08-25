@@ -1,0 +1,182 @@
+{
+    "swagger": "2.0",
+    "info":  {
+        "title": "Cognoscenti",
+        "description": "A collaborative application platform.",
+        "termsOfService": "These are the terms",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1"
+    },
+    "host": "interstagebpm.com",
+    "basePath": "/av",
+    "schemes": ["https"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "paths": {
+      "/api/{site}/{proj}/summary.json": {
+        "get": {
+          "description": "a summary of the entire project",
+          "produces": ["application/json"],
+          "responses": {
+            "200": {
+              "description": "The project information.",
+              "schema": {
+                "$ref": "#/definitions/ProjectType"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "site",
+            "in": "path",
+            "type": "string"
+          },
+          {
+            "name": "proj",
+            "in": "path",
+            "type": "string"
+          },
+          {
+            "name": "lic",
+            "in": "query",
+            "type": "string"
+          }
+        ]
+
+      }
+    },
+    "definitions": {
+      "ProjectType": {
+        "properties": {
+          "docs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/DocSummary"
+            }
+          },
+          "goals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/GoalSummary"
+            }
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/NoteSummary"
+            }
+          },
+          "license": {
+            "$ref": "#/definitions/LicenseType"
+          },
+          "projectinfo": {
+            "type": "string"
+          },
+          "projectname": {
+            "type": "string"
+          },
+          "projectui": {
+            "type": "string"
+          },
+          "siteinfo": {
+            "type": "string"
+          },
+          "sitename": {
+            "type": "string"
+          },
+          "siteui": {
+            "type": "string"
+          }
+        }
+      },
+      "DocSummary": {
+        "properties": {
+          "content":      {"type": "string"},
+          "description":  {"type": "string"},
+          "id":           {"type": "string"},
+          "modifiedtime": {"type": "integer"},
+          "modifieduser": {"type": "string"},
+          "name":         {"type": "string"},
+          "size":         {"type": "integer"},
+          "universalid":  {"type": "string"}
+        }
+      },
+      "NoteSummary": {
+        "properties": {
+          "content":      {"type": "string"},
+          "id":           {"type": "string"},
+          "modifiedtime": {"type": "integer"},
+          "modifieduser": {"type": "string"},
+          "public":       {"type": "boolean"},
+          "subject":      {"type": "string"},
+          "universalid":  {"type": "string"}
+        }
+      },
+      "GoalSummary": {
+        "properties": {
+          "assignees": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "description":  {"type": "string"},
+          "duedate":      {"type": "integer"},
+          "duration":     {"type": "integer"},
+          "enddate":      {"type": "integer"},
+          "goalinfo":     {"type": "string"},
+          "id":           {"type": "string"},
+          "modifiedtime": {"type": "integer"},
+          "modifieduser": {"type": "string"},
+          "modifieduser": {"type": "string"},
+          "priority":     {"type": "integer"},
+          "projectinfo":  {"type": "string"},
+          "projectname":  {"type": "string"},
+          "rank":         {"type": "integer"},
+          "siteinfo":     {"type": "string"},
+          "sitename":     {"type": "string"},
+          "startdate":    {"type": "integer"},
+          "state":        {"type": "integer"},
+          "status":       {"type": "string"},
+          "synopsis":     {"type": "string"},
+          "ui":           {"type": "string"},
+          "universalid":  {"type": "string"}
+        }
+      },
+      "LicenseType": {
+        "properties": {
+          "creator": {"type": "string"},
+          "id":      {"type": "string"},
+          "role":    {"type": "string"},
+          "timeout": {"type": "integer"}
+        }
+      }
+    },
+    "parameters": {
+
+    },
+    "responses": {
+
+    },
+    "securityDefinitions": {
+
+    },
+    "security": [
+    ],
+    "tags": [{
+            "name": "pet",
+            "description": "Pets operations"
+        }
+    ],
+    "externalDocs": {
+      "description": "Find more info here",
+      "url": "https://swagger.io"
+    }
+}

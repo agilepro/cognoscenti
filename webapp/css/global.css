@@ -1,0 +1,465 @@
+/***********************************************************************
+  Begin Global Tag Defs, etc.
+  (see reset.css for further global resets)
+***********************************************************************/
+html{
+  background-color:#C1BFC0;
+  background-image:url('../assets/page_bg.jpg');
+  background-repeat:no-repeat;
+  background-position:left top;
+}
+
+body{
+  font-family:Arial, Helvetica, Verdana, sans-serif;
+  font-size:13px;
+  color:#000000;
+  background-color:transparent;
+}
+
+.bodyWrapper{
+  margin:0px 30px 45px 30px;
+  min-width:935px;
+  position:relative;
+}
+
+img{
+  border:0px;
+  margin:0px;
+  padding:0px;
+}
+h1,h2,h3,h4,h5,h6{
+  font-weight:bold;
+}
+li{
+  line-height:normal;
+}
+p{
+  line-height:normal;
+  padding-top:5px;
+  padding-bottom:5px;
+  font-family:Arial, Helvetica, Verdana, sans-serif;
+  font-size: 13px;
+}
+em{
+  font-weight:bold;
+}
+a:link, a:visited, a:active{
+  text-decoration:none;
+  color:#5377AC;
+}
+a:hover{
+  text-decoration:underline;
+}
+input.radio{
+  display:inline;
+}
+select{
+  border:1px solid #83ABDF;
+  width:150px;
+}
+select, textarea {
+  font-family:Arial, Helvetica, Verdana, sans-serif;
+  font-size:12px;
+  color:#000000;
+}
+.bold{
+  font-weight:bold;
+}
+.italic{
+  font-style:italic;
+}
+.blue{
+  color:#011a95;
+}
+.blue2{
+  color:#324fa2;
+}
+.blue3{
+  color:#1900fb;
+}
+.buttonBlueText{
+  color:#172579;
+}
+.sliderBlueText{
+  color:#3347aa;
+}
+.tableBlueText{
+  color:#062275;
+}
+.textGrey1{
+  color:#292929;
+}
+.textGrey2{
+  color:#4f4f4f;
+}
+.textGrey3{
+  color:#7c7c7c;
+}
+.green{
+  color:#007808;
+}
+.greenGrey{
+  color:#257a2b;
+}
+.red{
+  /*color:#fc0000;*/
+  color:#c90a0a;
+}
+.redGrey{
+  color: #d95555;
+}
+.white{
+  color:#ffffff;
+}
+.hidden{
+  display:none;
+}
+.floatRight{
+  float:right;
+  margin:0px;
+  padding:0px;
+}
+.floatLeft{
+  float:left;
+  margin:0px;
+  padding:0px;
+}
+.textRight{
+  float:right;
+  margin:-5px 30px 0px 0px;
+}
+.textLeft{
+  padding:0px 0px 0px 10px;
+}
+.underline{
+  text-decoration:underline;
+}
+
+.labelButton{
+  margin:1px;
+  padding:0px 2px;
+  font-size:11px;
+  color:black;
+}
+/***********************************************************************
+  End Global Tag Defs, etc.
+***********************************************************************/
+
+/***********************************************************************
+    Style for Header Starts Here
+***********************************************************************/
+
+#siteMasthead{
+  height:66px;
+  background-color:transparent;
+}
+#logoInterstage{
+  float:left;
+  margin-top:20px;
+  background-color:transparent;
+}
+#consoleName{
+  font-family:Arial, Helvetica, Verdana, sans-serif;
+  float:left;
+  margin-top:21px;
+  background-color:transparent;
+  font-size:15px;
+  color:#808080;
+  padding-left:15px;
+  padding-bottom:15px;
+  font-weight:bold;
+}
+#consoleName a{
+  color:#5377ac;
+}
+#consoleName span{
+  font-size:16px;
+  color:#cf0820;
+}
+
+/***************************************************
+Style for top right hand side links starts here
+***************************************************/
+#globalLinkArea{
+    position:absolute;
+    top:0px;
+    right:0px;
+    text-align:right;
+}
+ul#globalLinks{
+    font-size:12px;
+    color:#172579;
+    margin-top:4px;
+}
+ul#globalLinks li{
+    display:inline;
+    line-height:16px;
+    color:#ccc;
+    padding:0px 2px 0px 2px;
+}
+ul#globalLinks li.image{
+    border-right:none;
+  padding:0px 2px;
+}
+ul#globalLinks li.last{
+  border-right:none;
+}
+ul#globalLinks li a:link, ul#globalLinks li a:visited, ul#globalLinks li a:hover, ul#globalLinks li a:active{
+  /*color:#172579;*/
+  color:#5377ac;
+}
+/***************************************************
+Style for top right hand side links ends here
+***************************************************/
+
+#welcomeMessage{
+  position:absolute;
+  top:20px;
+  right:0px;
+  margin-top:3px;
+  font-size:13px;
+  color:#1A2739;
+  font-weight:bold;
+}
+#logoFujitsu{
+  vertical-align:-7px;
+}
+/***********************************************************************
+    Style for Header Ends Here
+***********************************************************************/
+
+
+/***********************************************************************
+    Style for Top Navigation Starts Here
+***********************************************************************/
+#mainNavigation{
+  position:absolute;
+  float:left;
+  top:66px;
+}
+#mainNavigationLeft{
+  height:43px;
+  background-image:url('../assets/mainNavBgLT.gif');
+  background-repeat:no-repeat;
+  background-position:bottom left;
+}
+#mainNavigationCenter{
+  margin-left:9px;
+  min-width:935px;
+  height:43px;
+  background-image:url('../assets/mainNavBgC.gif');
+  background-repeat:repeat-x;
+  background-position:bottom left;
+}
+#mainNavigationRight{
+  height:43px;
+  background-image:url('../assets/mainNavBgRT.gif');
+  background-repeat:no-repeat;
+  background-position:bottom right;
+}
+#mainNavigation ul{
+  height:34px;
+  width:930px;
+  padding-top:4px;
+}
+#mainNavigation li{
+  float:left;
+  height:34px;
+  border-left:1px solid #ACAEB1;
+}
+#mainNavigation li a{
+  display:block;
+  height:34px;
+  line-height:34px;
+  color:#272727;
+  text-align: center;
+  font-size:13px;
+  letter-spacing:1px;
+  text-decoration:none;
+  background-image:url('../assets/mainNav_border_lt.gif'); /* #F0F2F6 */
+  background-repeat:no-repeat;
+  background-position:left top;
+  padding-left:15px;
+  padding-right:15px;
+  font-weight:bold;
+}
+#mainNavigation li.mainNavLink1{
+  border-left:0 none;
+}
+#mainNavigation li.mainNavLink1 a{
+  background-image:none;
+  padding-left:20px;
+}
+#mainNavigation li.mainNavLink1 a:hover, #mainNavigation li.mainNavLink1.selected a{
+  background-position:left -4px;
+}
+/* on hover, or when current page is corresponding nav item */
+#mainNavigation li a:hover, #mainNavigation li.selected a, #mainNavigation li a.selected{
+  font-weight:bold;
+  text-decoration:none;
+  background-image:url('../assets/mainNav_bg_on.gif');
+  background-repeat:no-repeat;
+    background-position:center -4px;
+    color:#ffffff;
+}
+#mainNavigation li#mainNavLinkLast a:hover, li#mainNavLinkLast.selected a{
+  background-position:right -4px;
+}
+
+#mainNavigation li a:hover, #mainNavigation li.selected a:link, #mainNavigation li.selected a:visited, #mainNavigation li.selected a:active, #mainNavigation li.selected a:hover{
+  color:#FFFFFF;
+}
+/***********************************************************************
+    Style for Top Navigation Ends Here
+***********************************************************************/
+
+
+/**********************************************************************
+    Style for Left Panel Starts Here
+***********************************************************************/
+#leftPanel{
+  width:181px;
+  float:left;
+  padding:2px 6px 6px 4px;
+  *padding:6px 6px 6px 4px;
+  min-height:395px;
+  *min-height:375px;
+}
+.leftNavContent{
+    display:none;
+    font-size:12px;
+    color:#808080;
+    padding:6px 5px 6px 10px;
+    border:1px solid #cddda5;
+    border-top:0px solid #cddda5;
+}
+.leftNavContent.first{
+    display:block;
+}
+.leftNavContent a{
+  color:#5377ac;
+}
+.leftNavContent b{
+  color:#000;
+}
+.leftNavContent span{
+  color:#c90a0a;
+  font-weight:bold;
+}
+.generalLinks{
+  height:27px;
+  line-height:27px;
+  overflow:hidden;
+  padding:0px 5px 0px 8px;
+  background-image:url('../assets/leftNavHeaderBg.gif');
+  background-repeat:repeat-x;
+  background-position:0 0;
+  text-decoration:none;
+  font-size:12px;
+  color:#3d3d3d;
+  font-weight:bold;
+  margin-top:10px;
+  cursor: pointer;
+  border:1px solid #cddda5;
+}
+.searchLink{
+  height:27px;
+  line-height:27px;
+  padding:0px 5px 0px 8px;
+  background-image:url('../assets/leftNavHeaderBg.gif');
+  background-repeat:repeat-x;
+  background-position:0 0;
+  text-decoration:none;
+  font-size:12px;
+  color:#3d3d3d;
+  font-weight:bold;
+  margin-top:10px;
+  border:1px solid #cddda5;
+}
+.searchLinkContent{
+    font-size:12px;
+    color:#808080;
+    padding:6px 5px 6px 6px;
+    border:1px solid #cddda5;
+    border-top:0px solid #cddda5;
+}
+table.search{
+    width: 100%;
+    border-collapse: collapse;
+}
+.search td{
+  vertical-align: center;
+}
+/***********************************************************************
+    Style for Left Panel Ends Here
+***********************************************************************/
+
+/***********************************************************************
+    Style for Right Panel (Main Site Content Area) Starts Here
+***********************************************************************/
+/*
+#mainSiteContainer{
+  width:auto;
+  padding-left:10px;
+  background-color:transparent;
+  background-image:url('../assets/mainSiteContainer_bg.png');
+  background-repeat:repeat-y;
+}
+*/
+#mainSiteContainerDetails{
+  background-image:url('../assets/mainSiteContainerBgLT.png');
+  background-position:top left;
+  background-repeat:repeat-y;
+  min-width:934px;
+  padding-left:10px;
+  background-color:#ffffff;
+}
+#mainSiteContainerDetailsRight{
+  background-image:url('../assets/mainSiteContainerBgRT.png');
+  background-position:top right;
+  background-repeat:repeat-y;
+  height:100%;
+  padding-right:10px;
+}
+#mainContent{
+  width:auto;
+  padding:5px 3px 15px 5px;
+}
+/***********************************************************************
+    Style for Right Panel (Main Site Content Area) Ends Here
+***********************************************************************/
+
+/***********************************************************************
+    Style for Footer Area Starts Here
+***********************************************************************/
+#siteFooter{
+  background-image:url('../assets/footerLT.png');
+  background-repeat:no-repeat;
+  background-position:top left;
+  height:51px;
+  min-width:944px;
+}
+#siteFooterCenter{
+  background-image:url('../assets/footerC.png');
+  background-repeat:repeat-x;
+  background-position:top left;
+  margin-left:9px;
+  margin-right:9px;
+  height:51px;
+}
+#siteFooterRight{
+  background-image:url('../assets/footerRT.png');
+  background-repeat:no-repeat;
+  background-position:top right;
+  height:51px;
+}
+#footer{
+  padding-right:10px;
+  padding-top:20px;
+  text-align:right;
+  color:#4A4949;
+  font-size:12px;
+}
+/**********************************************************************
+    Style for Footer Area Ends Here
+***********************************************************************/

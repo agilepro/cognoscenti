@@ -1,0 +1,54 @@
+[
+  {
+    "level":1,
+    "name": "Site Projects",
+    "href": "accountListProjects.htm",
+    "ref": "ddsubmenu1",
+    "subs":   [
+        {
+          "name": "List Projects",
+          "href": "accountListProjects.htm"
+        },
+        {
+          "name": "Create New Project",
+          "href": "accountCreateProject.htm"
+        },
+        {
+          "name": "Clone Remote Project",
+          "href": "accountCloneProject.htm"
+        },
+        {
+          "name": "Convert Folder to Project",
+          "href": "convertFolderProject.htm"
+        },
+        {
+          "name": "Search Notes",
+          "href": "searchAllNotes.htm"
+        }
+      ]
+  },
+  {
+    "level":1,
+    "name": "Site Settings",
+    "href": "account_settings.htm",
+    "ref": "ddsubmenu2",
+    "subs":   [
+        {
+          "name": "Personal",
+          "href": "personal.htm"
+        },
+        {
+          "name": "Permissions",
+          "href": "permission.htm"
+        },
+        {
+          "name": "Role Requests",
+          "href": "roleRequest.htm"
+        },
+        {
+          "name": "Admin",
+          "href": "admin.htm"
+        }
+      ]
+  }
+]

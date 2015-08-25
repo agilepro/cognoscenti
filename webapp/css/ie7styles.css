@@ -1,0 +1,234 @@
+/**********************************
+  Global Styles
+***********************************/
+#mainSiteContainer {
+  height:auto;
+}
+#mainSiteContainerDetails {
+  height:auto;
+}
+#mainSiteContainerSmall {
+  height:auto;
+}
+
+.mainContentHeightShort {
+  height:auto;
+}
+.mainContentHeightMedium {
+  height:auto;
+}
+.mainContentHeightTall {
+  height:auto;
+}
+.padTop {
+  padding-top:3px;
+}
+.padtopff {
+  padding-top:0px;
+}
+.loginPanelMiddle {
+  height:0px;
+}
+
+.loginFieldContainer {
+  margin-bottom:5px;
+}
+
+.sectionHeader {
+  padding-bottom:0px;
+}
+.header {
+  margin:10px 10px 0px 10px;
+  text-align:left;
+}
+
+.headerLeft {
+  padding-top:8px;
+}
+.headerRight {
+  padding-top:10px;
+}
+.iconInfoBubble {
+  height:18px;
+}
+#formContainer {
+  margin:0px 0px 0px 20px;
+  padding-bottom:28px;
+}
+#formContainer2 {
+  margin:0px 0px 0px 5px;
+  padding-bottom:10px;
+}
+#formContainer3 {
+  margin:0px 0px 0px 20px;
+  padding-bottom:0px;
+  height:auto;
+}
+
+.formItemWrapper {
+  float:left;
+  clear:left;
+  padding:2px 0px 0px 0px;
+  width:auto;
+  line-height:1.07em;
+}
+.formInputField {
+  /*margin-left:-15px;*/
+}
+
+#addSubtaskWindow {
+  position:absolute;
+  top:365px;
+  /*left:323px;*/
+  left:35%;
+}
+#customFieldWindow {
+  top:752px;
+  left:565px;
+}
+.customFieldShadow {
+  top:758px;
+  left:570px;
+}
+.addSubtask_iframe {
+  width:550px;
+  height:490px;
+}
+.addSubtaskShadow {
+  background: transparent url('../assets/addSubtaskShadowbox2.gif') no-repeat;
+  top:370px;
+  /*left:326px; */
+  left:35.2%;
+  height:533px;
+  width:553px;
+
+}
+
+#resolveAlertWindow {
+  top:550px;
+  left:640px;
+}
+
+.resolveAlertShadow {
+  top:555px;
+  left:645px;
+}
+
+/**********************************
+  Analytics Styles
+***********************************/
+.dateRangeTextLine {
+  line-height:15px;
+}
+
+.toolbarKpiMiddleWrapper {
+  width:274px;
+}
+
+#analyticsFormContainer {
+  margin:0px 0px 0px 40px;
+  width:auto;
+  padding-top:0px;
+  padding-bottom:20px;
+  padding-left:30px;
+  border:none;
+}
+.analyticsItemWrapper {
+  margin-left:-40px;
+}
+.calendarPopup {
+  top:460px;
+  left:580px;
+}
+
+/**********************************
+  Process Management Styles
+***********************************/
+.processDefLeft {
+  height:510px;
+}
+.processDefRight {
+  height:505px;
+}
+.processDefSpacer {
+  height:90px;
+}
+.processDivider {
+  margin:-10px 5px 0px 0px;
+}
+
+/**********************************
+  Button Styles
+***********************************/
+.rightButtonWrapper3{
+  float:none;
+  margin:20px 0px 0px 260px;
+  height:22px;
+}
+/**********************************
+  Report Styles
+***********************************/
+.reportHeadMiddle {
+  height:34px;
+  padding-top:0px;
+}
+
+.reportHeadMiddleClosed {
+  padding-top:0px;
+}
+
+/**********************************
+  tab panel Styles
+***********************************/
+.tabSectionBodyWrapper {
+  padding:20px 10px 10px 10px;
+}
+.tabPanelGradiantContainer {
+  padding:10px 10px 10px 10px;
+  margin-top:0px;
+  height:auto;
+}
+.tabPanelPlainContainer {
+  padding:10px 10px 10px 10px;
+  margin-top:0px;
+  height:auto;
+}
+
+/**********************************
+  users Styles
+***********************************/
+.toolbarUserMiddleWrapper {
+  width:274px;
+}
+
+.tabHalfSubPanelWrapper {
+  margin-top:-5px;
+}
+
+/**********************************
+  popup Styles
+***********************************/
+#popupContent {
+  margin:0px 5px 0px 5px;
+}
+.popupSelect {
+  margin-left:5px;
+}
+
+.popupFormItemWrapper {
+  padding:0px 0px 0px 0px;
+  width:auto;
+  line-height:1.07em;
+}
+
+.popupFormLabel {
+  padding-top:3px;
+}
+.popupCheckText {
+  padding-top:3px;
+}
+.calendarPopup {
+  padding-top:138px;
+  padding-left:105px;
+}
+

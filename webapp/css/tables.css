@@ -1,0 +1,130 @@
+/* Styles for Tables */
+
+
+.scrollableOverflow {
+  float:left;
+  clear:left;
+  margin:-1px;
+  border-left:0px solid #a4a3a3;
+  width:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+
+table.fullTable {
+  border-collapse:collapse;
+  width:100%;
+  margin:0px;
+}
+table.smallTable {
+
+  border-bottom:1px solid #a4a3a3;
+  width:100%;
+  margin:0px;
+}
+
+#dataListTableContainer thead th {
+  height:29px;
+  background:url('../assets/tableHdr_bg.gif') repeat-x;
+  border-left:1px solid #a6a6a6;
+}
+#smallTableContainer thead th {
+  background-color:#dce5f1;
+  height:23px;
+  border-bottom:1px solid #a4a3a3;
+}
+#smallTableContainer thead th.last {
+  border-left:1px solid #a6a6a6;
+}
+tr.odd {
+  background-color:#e0e0e0;
+}
+tr.even {
+  background-color:#fefefe;
+}
+
+tr.rowOver {
+  background-color:#acd4f4;
+}
+tr.rowSelected {
+  background-color:#a9d4f2;
+  font-weight:bold;
+}
+
+.tableHeaderRow {
+  border-top:2px solid #a6a6a6;
+}
+
+.tableHeaderRow th {
+  font-size:12px;
+  font-weight:bold;
+  color:#062277;
+  font-family:Arial,Helvetica,Verdana,sans-serif;
+}
+.greyed th {
+  color:#1e4172;
+}
+.tableHeaderRow th {
+    line-height:22px;
+    vertical-align:middle;
+    text-align:center;
+    border-right:1px solid #a6a6a6;
+    padding-left:5px;
+    border-top:1px solid #a6a6a6;
+}
+
+.smallTableHeaderRow th {
+  font-size:11px;
+  color:#000000;
+  font-family:Verdana, Helvetica, Arial, sans-serif;
+  text-align:center;
+}
+
+.tableBodyRow td{
+  font-size:11px;
+  font-family:Arial,Helvetica,Verdana,sans-serif;
+  color:#262626;
+    -moz-outline: none;
+  -moz-user-focus: normal;
+}
+.greyed td {
+  color:#4f4f4f;
+}
+.tableBodyRow td{
+    line-height:22px;
+    vertical-align:middle;
+  padding-left:10px;
+    border-right:1px solid #ffffff;
+    -moz-user-select: none;
+}
+.tableBodyRow td.wrap{
+    line-height:17px;
+}
+.smallTableBodyRow td{
+  font-size:11px;
+  font-family:Verdana, Helvetica, Arial, sans-serif;
+  color:#000000;
+    -moz-outline: none;
+  -moz-user-focus: normal;
+}
+.smallTableBodyRow td{
+    line-height:22px;
+    vertical-align:middle;
+  padding-left:10px;
+    border-right:1px solid #a4a3a3;
+    border-left:1px solid #a4a3a3;
+    -moz-user-select: none;
+}
+.lastCell {
+  border-right:0px transparent;
+}
+.smallTableLastCell {
+  border-right:0px transparent;
+  text-align:center;
+}
+.numberCell {
+  text-align:right;
+  padding-right:10px;
+}
+
+

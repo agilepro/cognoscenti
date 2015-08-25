@@ -1,0 +1,185 @@
+#ActiveTask li, #CompletedTask li, #FutureTask li, #AllTask li{
+  font-family:Arial, Helvetica, sans-serif;
+  font-size:13px;
+  line-height:18px;
+  margin-bottom:5px;
+  background-color:#f8f8f8;
+  color:#000;
+}
+#ActiveTask li img, #CompletedTask li img, #FutureTask li img, #AllTask li img{
+  vertical-align:middle;
+}
+#ActiveTask li ul li, #CompletedTask li ul li, #FutureTask li ul li, #AllTask li ul li{
+  margin-bottom:0px;
+  background-color:#f3f6ec;
+}
+#ActiveTask li:hover, #CompletedTask li:hover, #FutureTask li:hover, #AllTask li:hover{
+  background-color:#f3f6ec;
+}
+#ActiveTask li.ui-draggable, #CompletedTask li.ui-draggable, #FutureTask li.ui-draggable, #AllTask li.ui-draggable{
+  cursor:move;
+  border-bottom:0px solid #cccccc;
+}
+#ActiveTask li.collapsable, #CompletedTask li.collapsable, #FutureTask li.collapsable, #AllTask li.collapsable{
+  background-color:#f3f6ec;
+}
+#ActiveTask li.collapsable li, #CompletedTask li.collapsable li, #FutureTask li.collapsable li, #AllTask li.collapsable li{
+  border-bottom:0px solid #cccccc;
+}
+.treeview, .treeview ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.treeview ul {
+  margin-top: 4px;
+}
+.treeview .hitarea {
+  background: url(../assets/images/treeview-default.gif) -64px -22px no-repeat;
+  height: 16px;
+  width: 16px;
+  margin-left: -16px;
+  float: left;
+  cursor: pointer;
+}
+/* fix for IE6 */
+* html .hitarea {
+  display: inline;
+  float:none;
+}
+.treeview li {
+  margin: 0;
+  padding: 3px 0pt 3px 16px;
+
+}
+.treeview a.selected {
+  background-color: #eee;
+}
+/*#treecontrol { margin: 1em 0; display: none; }*/
+.treeview .hover { color: red; cursor: pointer; }
+.treeview li {
+  background:url(../assets/images/treeview-default-line.gif) 0 0 no-repeat;
+}
+.treeview .expandable-hitarea { background-position: -80px 0px; }
+.treeview li.last { background-position: 0 -1766px }
+.treeview li.lastCollapsable, .treeview li.lastExpandable { background-image: url(../images/treeview-default.gif); }
+.treeview li.lastCollapsable { background-position: 0 -108px }
+.treeview li.lastExpandable { background-position: -32px -64px }
+.treeview div.lastCollapsable-hitarea 
+.treeview div.lastExpandable-hitarea { background-position: 0; }
+.taskHeading{
+  padding-left:5px;
+  color:#000000;
+  font-size:17px;
+  /*font-weight:bold;*/
+  cursor:pointer;
+  }
+.taskOverview{
+  font-size:12px;
+  padding-left:28px;
+    color:#3e3e3e;
+}
+div.taskOverview a{
+  color:red;
+}
+.taskDescription{
+  padding-top:10px;
+  font-size:12px;
+  color:#3e3e3e;
+  padding-left:28px;
+}
+.taskStatus{
+  padding-top:10px;
+  color:#3e3e3e;
+}
+div.taskToolBar{
+  font-size:12px;
+  padding-top:5px;
+}
+div.taskToolBar a{
+  font-size:12px;
+  font-weight:bold;
+  margin-left:0px;
+}
+.taskSeperator{
+  background-color:#cddda5;
+  height:1px;
+  margin-top:3px;
+  margin-bottom:3px;
+  margin-left:18px;
+}
+
+.taskReportArea td
+{
+    padding-top:10px;
+    border-top:1px solid #eaeaea;
+    vertical-align:top;
+}
+.reportSelection{
+  padding-top:10px;
+  padding-bottom:10px;
+}
+.paginationBar
+{
+    background-image:url('../assets/images/paginationBase.gif');
+    background-repeat:repeat-x;
+    height:21px;
+    line-height:21px;
+    font-size:11px;
+    text-align:right;
+    padding-right:10px;
+}
+.statusReport th{
+    background-image:url('../assets/images/dataTableHeaderBase.gif');
+    background-position:bottom;
+    background-repeat:repeat-x;
+    color:#000;
+    height:34px;
+    *height:28px;
+    text-align:left;
+    vertical-align:bottom;
+    padding-bottom:6px;
+    padding-left:10px;
+    font-weight:bold;
+}
+.statusReport td{
+    padding-left:10px;
+    padding-right:10px;
+    height:30px;
+}
+.reportTitle{
+  color:#000000;
+  font-size:17px;
+  font-weight:bold;
+  *font-weight:normal;
+}
+.reportTitle span
+{
+    padding-left:13px;
+}
+.reportTitle img{
+  vertical-align:middle;
+}
+.reportDescription{
+  font-size:12px;
+  padding-left:34px;
+  color:#3e3e3e;
+  padding-top:5px;
+  padding-bottom:10px;
+}
+.reportDescription p
+{
+    margin:0px;
+  padding-top:5px;
+  padding-bottom:5px;
+  padding-left:30px;
+}
+.linkedProject{
+  font-size:17px;
+  font-weight:bold;
+  *font-weight:normal;
+  color:#5377ac;
+  padding-top:2px;
+  background-color:#f8f8f8;
+  border-top:1px solid #eaeaea;
+}

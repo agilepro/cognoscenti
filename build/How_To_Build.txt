@@ -1,0 +1,36 @@
+HOW TO BUILD
+
+Cognoscenti is built in a way that follows the "9 Rules for Designing the Build" documents in a blog post.  You can read up on the reasons that the build is designed this way, or you can just follow the instructions below:
+
+http://agiletribe.wordpress.com/2013/07/16/designing-the-build/
+
+REQUIREMENTS
+
+You are required to have 
+
+* Java JDK installed 
+* ANT installed
+
+
+SETUP
+
+1) create a build folder on a local, fast disk, outside of the source tree and certainly not in a folder managed by a source management system.  It does not matter where this is located, but it will contain all of the temporary files and the final output WAR file.
+
+2) from the build folder in the source tree, copy two files:
+
+    * cogserv\build\build_configuration.bat
+    * cogserv\build\build.bat
+    
+3) Edit the "build_configuration.bat" file in your personal build folder.  This folder contains all the settings you will need for the build, such as where the Java JDK is, where ANT is, where the source is, and where the output (this folder) is.   The settings are documented in the settings file.  Do NOT edit the copy in the source distribution in the source code managed system, and do not check in any changes to this file.  Your settings are your settings.
+
+4) Run the "build.bat" file.  This is a small script that calls the config scripte, and then calls ANT.
+
+Rebuild as many times as you want in that folder.  Results of prior builds are properly cleaned out.  Note that the "build.xml" ANT script does not need to be copied to the build folder ... it is read directly from the source folder.
+
+If you must use Eclipse to do your builds, set it up to use the "build.bat" file for building.  It takes only a couple minutes to build.  This BAT file is the official project build, and the only way to be entirely sure that everyone else will be able to build is by using the official build.bat file for your own use.  Do not use the (default) setting in Eclipse to write anything into the source folders under management.  It is pretty easy to configure Eclipse to put all its automated output somewhere else, into a working folder.  The Ecplise working folder can be one place, and you link to an external folder for source and libraries from the project site.  
+
+
+RESULTS
+
+The build folder will be initially cleared of any results of prior runs so that there is no pollution of the build from non-source sources.   A temporary working folder will be created in your build folder, and files for the WAR file copies to it.  Libraries will be copied.  Then the Java from the source will be compiled and the output classes written to the working folder.  Finally, everything in the working folder will be JARed up into a WAR file.
+

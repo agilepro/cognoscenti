@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!--
+ * Copyright 2013 Keith D Swenson
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Contributors Include: Shamim Quader, Sameer Pradhan, Kumar Raja, Jim Farris,
+ * Sandia Yang, CY Chen, Rajiv Onat, Neal Wang, Dennis Tam, Shikha Srivastava,
+ * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
+ * -->
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Login</title>
+        <link rel="stylesheet" href="body.css" />
+        <script type="text/javascript">
+
+            function showInputArea(idNumber,count,url) {
+                var totalIcons= parseInt(count);
+                for(i=0;i<=count;i++){
+                    var divId = 'openId'+i;
+                    var imgIds = 'img'+i;
+                    if(document.getElementById(divId)!=null){
+                        document.getElementById(divId).style.display = "none";
+                        document.getElementById(imgIds).className ="";
+                    }
+
+                }
+                if(url.indexOf("{id}")!= -1){
+                    var openIdDiv = 'openId'+idNumber;
+                    if(document.getElementById(openIdDiv)!=null){
+                        if(document.getElementById(openIdDiv).className == "inputArea")
+                        {
+                            var imgId = 'img'+idNumber;
+                            document.getElementById(openIdDiv).style.display = "block";
+                            document.getElementById(imgId).className ="activeSmailImg";
+                        }
+                    }
+                }else{
+                    document.getElementById('globalId').value = url;
+                    document.bigIcon.submit();
+                }
+            }
+
+            function submitBigIconForm(globalId){
+                document.getElementById('globalId').value = globalId;
+                document.bigIcon.submit();
+            }
+            function submitFormWAY(formId, globalId, url, userNameTextId){
+                var userName = document.getElementById(userNameTextId).value;
+                var finalGlobalId = url.replace("{id}",userName);
+                document.getElementById(globalId).value = finalGlobalId;
+                document.forms[formId].submit();
+            }
+        </script>
+    </head>
+    <body>
+        <div class="loginWrapper">
+            <div class="loginHeader">Log In</div>
+            <div class="loginContentArea">
+                <span style="color:red;font-size:12px">{{exception}}</span>
+                Do you already have an account on any of these? Click the logo to log in with it here:
+                <div class="bigImages">
+                    {{BigIcon}}
+                </div>
+                <div class="smallImages">
+                    {{iterate WhoAreYouTab.htm}}
+                </div>
+                {{iterate WhoAreYouPanel.htm}}
+                Or, you can manually enter your OpenID<br />
+                <form id="openIdManual" action="login.form" method="post">
+                    <input type="hidden" name="uaid" value="{{unique}}" />
+                    <input type="text" name="globalId" class="inputGeneralBig" />
+                    <input type="submit" value="Log In" class="btnBlue"/>
+                </form>
+            </div>
+            <div align="right" style="padding:10px 20px;border-top:1px solid #ccc">
+                <form action="login.form" method="post">
+                    <input type="submit" name="op" value="Cancel" class="btnGray" />
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
+<!--
+{{debug}}
+-->

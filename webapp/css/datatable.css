@@ -1,0 +1,243 @@
+/* Design 1 */
+table.Design1 {
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+table.Design1 th {
+    text-align: left;
+    font-weight: normal;
+    padding: 0.1em 0.5em;
+    border: 1px solid #666666;
+}
+table.Design1 td {
+    text-align: right;
+    padding: 0.1em 0.5em;
+    border: 1px solid #666666;
+}
+table.Design1 thead th {
+    text-align: center;
+}
+table.Design1 th.Corner {
+    text-align: left;
+}
+
+
+/* Design 2 */
+table.Design2 {
+    border-spacing: 0px;
+    border-collapse: collapse;
+    border: 1px solid #666666;
+}
+table.Design2 th {
+    border-bottom: 1px solid #666666;
+    text-align: left;
+    font-weight: normal;
+    padding: 0.1em 0.5em;
+}
+table.Design2 td {
+    text-align: right;
+    border-bottom: 1px solid #666666;
+    padding: 0.1em 0.5em;
+}
+table.Design2 thead th {
+    background-color: #E5E5E5;
+    text-align: center;
+}
+table.Design2 th.Corner {
+    text-align: left;
+}
+
+
+/* Design 3 */
+table.Design3 {
+    border-spacing: 0px;
+    border-collapse: collapse;
+    background-color: #E5E5E5;
+    border: 10px solid #E5E5E5;
+}
+table.Design3 th {
+    text-align: left;
+    font-weight: normal;
+    padding: 0.1em 0.5em;
+}
+table.Design3 td {
+    text-align: right;
+    border-left: 1px solid #666666;
+    padding: 0.1em 0.5em;
+}
+table.Design3 thead th {
+    border-left: 1px solid #666666;
+    border-bottom: 1px solid #666666;
+    text-align: center;
+}
+table.Design3 th.Corner {
+    text-align: left;
+    border-left: 0px;
+}
+
+
+
+/* Design 4 */
+table.Design4 {
+    border-spacing: 0px;
+    border-collapse: collapse;
+}
+table.Design4 th {
+    text-align: left;
+    font-weight: normal;
+    padding: 0.1em 0.5em;
+    border-bottom: 2px solid #FFFFFF;
+    background: #DBE2F1;
+}
+table.Design4 td {
+    text-align: right;
+    border-bottom: 2px solid #FFFFFF;
+    padding: 0.1em 0.5em;
+    background: #DBE2F1;
+}
+
+table.Design4 thead th {
+    background: #687EAB;
+    color: #FFFFFF;
+    text-align: center;
+}
+table.Design4 th.Corner {
+    text-align: left;
+}
+
+
+/* Design 5 */
+table.Design5 {
+    border-spacing: 0px;
+    border-collapse: collapse;
+    border-top: 4px solid #EA9A1C;
+    border-bottom: 1px solid #EA9A1C;
+}
+table.Design5 th {
+    text-align: left;
+    font-weight: normal;
+    padding: 0.2em 0.5em;
+    border-top: 1px dotted #EA9A1C;
+}
+table.Design5 td {
+    text-align: right;
+    border-top: 1px dotted #EA9A1C;
+    padding: 0.2em 0.5em;
+}
+table.Design5 thead th {
+    text-align: center;
+    border-bottom: 1px solid #EA9A1C;
+}
+table.Design5 th.Corner {
+    text-align: left;
+}
+
+
+/* Design 6 */
+table.Design6 {
+    border-spacing: 0px;
+    border-collapse: collapse;
+    background: #E9E9F3;
+    border: 0.5em solid #E9E9F3;
+}
+table.Design6 th {
+    text-align: left;
+    font-weight: normal;
+    padding: 0.1em 0.5em;
+    border: 0px;
+    border-bottom: 1px solid #9999AA;
+}
+table.Design6 td {
+    text-align: right;
+    border: 0px;
+    border-bottom: 1px solid #9999AA;
+    border-left: 1px solid #9999AA;
+    padding: 0.1em 0.5em;
+}
+table.Design6 thead th {
+    text-align: center;
+    font-weight: bold;
+    color: #6C6C9A;
+    border-left: 1px solid #9999AA;
+}
+table.Design6 th.Corner {
+    text-align: left;
+    border-left: 0px;
+}
+table.Design6 tr.Odd {
+    background: #F6F4E4;
+}
+
+
+/* Design 7 */
+table.Design7 {
+    border-spacing: 0px;
+    border-collapse: collapse;
+    background: #F9F5D7;
+    border: 0.3em solid #000000;
+}
+table.Design7 th {
+    text-align: left;
+    font-weight: normal;
+    padding: 0.1em 0.5em;
+    border: 0px;
+    border-bottom: 1px solid #000000;
+}
+table.Design7 td {
+    text-align: right;
+    border: 0px;
+    border-bottom: 1px solid #000000;
+    padding: 0.1em 0.5em;
+}
+table.Design7 thead th {
+    text-align: center;
+    font-weight: bold;
+    background-color: #AA0000;
+    color: #FFFFFF;
+}
+table.Design7 th.Corner {
+    text-align: left;
+}
+table.Design7 td.Odd {
+    background: #E8E4C0;
+}
+
+/* Design 8 */
+table.Design8 {
+    border-spacing: 0px;
+    border-collapse: collapse;
+    background: #E9E9F3;
+    border: 0.1em solid #9999AA;
+}
+table.Design8 th {
+    text-align: left;
+    font-weight: bold;
+    padding: 0.1em 0.5em;
+    border: 0px;
+    border-bottom: 1px solid #9999AA;
+}
+table.Design8 td {
+    text-align: left;
+    border: 0px;
+    border-bottom: 1px solid #9999AA;
+    border-left: 1px solid #9999AA;
+    padding: 0.2em 0.5em;
+}
+table.Design8 thead th {
+    text-align: left;
+    font-weight: bold;
+    color: #6C6C9A;
+    border-left: 1px solid #9999AA;
+}
+table.Design8 th.Corner {
+    text-align: left;
+    border-left: 0px;
+}
+table.Design8 tr.Odd {
+    background: #FFFFFF;
+}
+
+table.Design8 td.Odd {
+    background: #FFFFFF;
+}
+
