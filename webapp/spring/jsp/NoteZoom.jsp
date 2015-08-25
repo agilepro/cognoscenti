@@ -612,7 +612,7 @@ app.controller('myCtrl', function($scope, $http) {
                                 %>
                                 <tr>
                                      <td class="projectStreamIcons"><a href="#"><img src="<%=photoSrc%>" alt="" width="50" height="50" /></a></td>
-                                     <td colspan="2"  class="projectStreamText">
+                                     <td colspan="2"  class="projectStreamText" style="max-width:800px;">
                                          <%
 
                                          NGWebUtils.writeLocalizedHistoryMessage(hist, ngp, ar);

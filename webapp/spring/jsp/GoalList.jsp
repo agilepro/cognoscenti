@@ -121,29 +121,43 @@ app.controller('myCtrl', function($scope, $http) {
     };
 
     $scope.findGoals = function() {
-        var lcfilter = $scope.filter.toLowerCase();
-        var res = [];
-        $scope.allGoals.map( function(rec) {
-            if (!$scope.showActive && rec.state>=2 && rec.state<=4) {
-                return;
-            }
-            if (!$scope.showFuture && rec.state==1) {
-                return;
-            }
-            if (!$scope.showCompleted && rec.state>=5) {
-                return;
-            }
-            if ($scope.filter.length==0) {
-                res.push(rec);
-            }
-            else if (rec.synopsis.toLowerCase().indexOf(lcfilter)>=0) {
-                res.push(rec);
-            }
-            else if (rec.description.toLowerCase().indexOf(lcfilter)>=0) {
-                res.push(rec);
-            }
-        });
-        return res;
+        var lcFilterList = $scope.filter.toLowerCase().split(" ");
+        var src = $scope.allGoals;
+        for (var j=0; j<lcFilterList.length; j++) {
+            var lcfilter = lcFilterList[j];
+            var res = [];
+            src.map( function(rec) {
+                if (!$scope.showActive && rec.state>=2 && rec.state<=4) {
+                    return;
+                }
+                if (!$scope.showFuture && rec.state==1) {
+                    return;
+                }
+                if (!$scope.showCompleted && rec.state>=5) {
+                    return;
+                }
+                if ($scope.filter.length==0) {
+                    res.push(rec);
+                    return;
+                }
+                if (rec.synopsis.toLowerCase().indexOf(lcfilter)>=0) {
+                    res.push(rec);
+                    return;
+                }
+                if (rec.description.toLowerCase().indexOf(lcfilter)>=0) {
+                    res.push(rec);
+                    return;
+                }
+                for (var i=rec.assignees.length-1; i>=0; i--) {
+                    if (rec.assignees[i].toLowerCase().indexOf(lcfilter)>=0) {
+                        res.push(rec);
+                        return;
+                    }
+                }
+            });
+            src = res;
+        }
+        return src;
     };
 
     $scope.makeState = function(rec, newState) {
@@ -296,6 +310,24 @@ function addvalue() {
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation"><a role="menuitem" tabindex="-1"
                       href="task{{rec.id}}.htm">Edit Goal</a></li>
+                  <li role="presentation" ng-show="rec.state<2">
+                      <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 2)">
+                          <img src="<%=ar.retPath%>assets/goalstate/small2.gif" alt="accepted"  />
+                          Start & Offer
+                      </a>
+                  </li>
+                  <li role="presentation" ng-show="rec.state==2">
+                      <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 3)">
+                          <img src="<%=ar.retPath%>assets/goalstate/small3.gif" alt="accepted"  />
+                          Mark Accepted
+                      </a>
+                  </li>
+                  <li role="presentation" ng-show="rec.state!=5">
+                      <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 5)">
+                          <img src="<%=ar.retPath%>assets/goalstate/small5.gif" alt="completed"  />
+                          Mark Completed
+                      </a>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -309,28 +341,28 @@ function addvalue() {
                    <span class="red" ng-repeat="ass in rec.assignees"><a href="#">{{ass}}</a></span>
 
                 </div>
-                <div ng-show="rec.show" id="{{rec.id}}_1">
+                <div ng-show="rec.show" id="{{rec.id}}_1" style="max-width:800px;">
                     <div class="taskStatus">Description: {{rec.description}}</div>
                     <div class="taskStatus">Priority:  <span style="color:red">{{rec.priority}}</span></div>
                     <div class="taskStatus">Status: {{rec.status}}  - (rank {{rec.rank}})</div>
                     <div class="taskToolBar">
                         Action:
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        <span ng-show="rec.state!=2">
+                        <span ng-show="rec.state<2">
                             <a title="Start & Offer the Activity" ng-click="makeState(rec, 2)">
-                                <img src="http://bobcat:8080/cg2/assets/goalstate/small2.gif" alt="accepted"  />
+                                <img src="<%=ar.retPath%>assets/goalstate/small2.gif" alt="accepted"  />
                                 <b>Start/Offer</b></a>
                             </span>
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         <span ng-show="rec.state==2">
                             <a title="Accept the activity" ng-click="makeState(rec, 3)">
-                                <img src="http://bobcat:8080/cg2/assets/goalstate/small3.gif" alt="accepted"  />
+                                <img src="<%=ar.retPath%>assets/goalstate/small3.gif" alt="accepted"  />
                                 <b>Mark Accepted</b></a>
                             </span>
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         <span ng-show="rec.state!=5">
                             <a title="Complete this activity" ng-click="makeState(rec, 5)">
-                                <img src="http://bobcat:8080/cg2/assets/goalstate/small5.gif" alt="completed"  />
+                                <img src="<%=ar.retPath%>assets/goalstate/small5.gif" alt="completed"  />
                                 <b>Mark Completed</b></a>
                             </span>
                     </div>
