@@ -101,7 +101,7 @@ public class AgendaItem extends DOMFace {
         }
         return null;
     }
-    public void addComment(AuthRequest ar, String newComment)  throws Exception {
+    public void addComment(AuthRequest ar, String newComment, boolean isPoll)  throws Exception {
         CommentRecord newCR = createChild("comment", CommentRecord.class);
         newCR.setTime(ar.nowTime);
         newCR.setUser(ar.getUserProfile());
@@ -204,7 +204,11 @@ public class AgendaItem extends DOMFace {
         }
         if (input.has("newComment")) {
             String newValue = input.getString("newComment");
-            addComment(ar, newValue);
+            boolean isPoll = false;
+            if (input.has("newPoll")) {
+                isPoll = input.getBoolean("newPoll");
+            }
+            addComment(ar, newValue, isPoll);
         }
         if (input.has("comments")) {
             JSONArray comments = input.getJSONArray("comments");
@@ -212,8 +216,8 @@ public class AgendaItem extends DOMFace {
                 JSONObject cmt = comments.getJSONObject(i);
                 long timeStamp = cmt.getLong("time");
                 CommentRecord cr = getComment(timeStamp);
-                if (cr!=null && cmt.has("html")) {
-                    cr.setContentHtml(ar, cmt.getString("html"));
+                if (cr!=null) {
+                    cr.updateFromJSON(cmt, ar);
                 }
             }
         }

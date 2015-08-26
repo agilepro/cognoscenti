@@ -287,7 +287,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <div ng-show="canUpdate">
                     <div class="well leafContent" style="width:100%">
                       <div ng-model="myComment"
-                          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','underline','clear','insertLink'],['html','undo','redo']]"
+                          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                           text-angular="" class="" style="width:100%;"></div>
 
                       <button ng-click="saveComment()" class="btn btn-danger">Create Comment</button>

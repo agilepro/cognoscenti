@@ -98,6 +98,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 
     $scope.myComment = "";
+    $scope.myPoll = false;
 
     $scope.createComment = function() {
         var saveRecord = {};
@@ -301,7 +302,7 @@ app.controller('myCtrl', function($scope, $http) {
                        <span ng-show="cmt.poll"><i class="fa fa-star-o"></i></span>
                        &nbsp; {{cmt.time | date}} - <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm"><span class="red">{{cmt.userName}}</span></a>
 <% if (isLoggedIn) { %>
-                       <span  ng-click="startEdit(cmt)" ng-show="editResp=='NOTHING' && editCmt=='NOTHING' && cmt.user=='<%ar.writeJS(currentUser);%>'">- EDIT</span>
+                       <span  ng-click="startEdit(cmt)" ng-show="editResp=='NOTHING' && editCmt=='NOTHING' && cmt.user=='<%ar.writeJS(currentUser);%>'">- <a href="">EDIT</a></span>
 <% } %>
                    </div>
                    <div class=""
@@ -313,7 +314,7 @@ app.controller('myCtrl', function($scope, $http) {
 <% if (isLoggedIn) { %>
                     <div class="well leafContent" style="width:100%" ng-show="editCmt==cmt.time && editResp=='NOTHING'">
                       <div ng-model="cmt.html"
-                          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','underline','clear','insertLink'],['html','undo','redo']]"
+                          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                           text-angular="" class="" style="width:100%;"></div>
 
                       <button ng-click="updateComment(cmt);stopEdit()" class="btn btn-danger">Save Changes</button>
@@ -354,7 +355,7 @@ app.controller('myCtrl', function($scope, $http) {
                               Choice:  <select class="form-control" ng-model="myResp.choice" ng-options="onch as onch for onch in cmt.choices"></select>
                           </div>
                           <div ng-model="myResp.html"
-                              ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','underline','clear','insertLink'],['html','undo','redo']]"
+                              ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                               text-angular="" class="" style="width:100%;"></div>
                        </div>
                       <button ng-click="updateComment(cmt);stopEdit()" class="btn btn-danger">Save Response</button>
@@ -380,7 +381,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div class="well leafContent" style="width:100%" ng-show="editCmt=='NEW'" >
           <div ng-model="myComment"
-              ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','underline','clear','insertLink'],['html','undo','redo']]"
+              ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
               text-angular="" class="" style="width:100%;"></div>
 
           <button ng-click="createComment()" class="btn btn-danger" ng-hide="myPoll">

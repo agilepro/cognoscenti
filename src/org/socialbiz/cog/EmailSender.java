@@ -629,7 +629,7 @@ public class EmailSender extends TimerTask {
         ar.writeURLData(ngpi.pageBookKey);
         ar.write("/");
         ar.writeURLData(ngpi.containerKey);
-        ar.write("/projectAllTasks.htm");
+        ar.write("/goalList.htm");
     }
 
     /**

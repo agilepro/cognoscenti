@@ -11,6 +11,8 @@
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
     UserProfile uProf = ar.getUserProfile();
+    String currentUser = uProf.getUniversalId();
+    String currentUserName = uProf.getName();
 
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngp.findMeeting(meetId);
@@ -142,6 +144,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.newGoal = {};
     $scope.newPerson = "";
     $scope.myComment = {};
+    $scope.myPoll = false;
     $scope.myUserId = "<% ar.writeJS(ar.getBestUserId()); %>";
 
     $scope.showError = false;
@@ -337,7 +340,7 @@ app.controller('myCtrl', function($scope, $http) {
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.meeting.agenda.push(data);
-            $scope.toggleEditor(2,data.id);
+            $scope.nowEditing=data.id+"x2";
             $scope.editHead=false;
             $scope.editDesc=false;
         })
@@ -356,7 +359,7 @@ app.controller('myCtrl', function($scope, $http) {
             actionItems:[]
         };
         $scope.meeting.agenda.push(newAgenda);
-        $scope.toggleEditor(2,newAgenda.id);
+        $scope.nowEditing=newAgenda.id+"x2";
     };
 
     $scope.addAttachment = function(item, doc) {
@@ -544,7 +547,7 @@ app.controller('myCtrl', function($scope, $http) {
         var saveRecord = {};
         saveRecord.agenda = [rec];
         $scope.putGetMeetingInfo(saveRecord);
-        $scope.toggleEditor(1,item.id);
+        $scope.nowEditing=item.id+"x1"
     }
     $scope.cancelEdit = function(item) {
         var rec = {};
@@ -553,10 +556,46 @@ app.controller('myCtrl', function($scope, $http) {
         var saveRecord = {};
         saveRecord.agenda = [rec];
         $scope.putGetMeetingInfo(saveRecord);
-        $scope.toggleEditor(1,item.id);
+        $scope.nowEditing="nothing";
     }
     $scope.saveComment = function(item) {
+        item.newComment.choices = ["Consent", "Object"];
         $scope.saveAgendaItem(item);
+    }
+
+    $scope.getMyResponse = function(cmt) {
+        cmt.choices = ["Consent", "Object"]
+        var selected = [];
+        if (cmt.user=="<%ar.writeJS(currentUser);%>") {
+            return selected;
+        }
+        cmt.responses.map( function(item) {
+            if (item.user=="<%ar.writeJS(currentUser);%>") {
+                selected.push(item);
+            }
+        });
+        if (selected.length == 0) {
+            var newResponse = {};
+            newResponse.user = "<%ar.writeJS(currentUser);%>";
+            cmt.responses.push(newResponse);
+            selected.push(newResponse);
+        }
+        return selected;
+    }
+
+    $scope.startResponse = function(cmt, pickedChoice) {
+        $scope.toggleEditor(9,cmt.time);
+        var myList = $scope.getMyResponse(cmt);
+        if (myList.length>0) {
+            myList[0].choice = pickedChoice;
+        }
+    }
+
+    $scope.createModifiedProposal = function(item, cmt) {
+        item.newComment = cmt.html;
+        item.newComment.time = cmt.time + 1;
+        item.newPoll = true;
+        $scope.toggleEditor(8,item.newComment.time);
     }
 
 });
@@ -721,7 +760,7 @@ app.controller('myCtrl', function($scope, $http) {
         </td>
         <td ng-show="isEditing(6,'0')" style="width:100%">
            <div class="well leafContent">
-             <div ng-model="meeting.meetingInfo" ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','underline','clear','insertLink'],['html','undo','redo']]" text-angular="" class="leafContent"></div>
+             <div ng-model="meeting.meetingInfo" ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]" text-angular="" class="leafContent"></div>
 
              <button ng-click="savePartialMeeting(['meetingInfo'])" class="btn btn-danger">Save</button>
              <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
@@ -798,7 +837,7 @@ app.controller('myCtrl', function($scope, $http) {
         </td>
         <td ng-show="isEditing(1,item.id) && myUserId == item.lockUser.uid" style="width:100%">
            <div class="well leafContent">
-             <div ng-model="item.desc" ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','underline','clear','insertLink'],['html','undo','redo']]" text-angular="" class="leafContent"></div>
+             <div ng-model="item.desc" ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]" text-angular="" class="leafContent"></div>
 
              <button ng-click="saveAgendaItem(item)" class="btn btn-danger">Save</button>
              <button ng-click="cancelEdit(item)" class="btn btn-danger">Cancel</button>
@@ -910,8 +949,10 @@ app.controller('myCtrl', function($scope, $http) {
            <td>
                <div class="leafContent comment-outer">
                    <div style="">
-                       <i class="fa fa-comments-o"></i> {{cmt.time | date}} - <a href="#"><span class="red">{{cmt.userName}}</span></a>
-                       <span ng-click="toggleEditor(7,cmt.time)" ng-show="cmt.user=='<%=uProf.getUniversalId()%>'">- EDIT</span>
+                       <span ng-hide="cmt.poll"><i class="fa fa-comments-o"></i></span>
+                       <span ng-show="cmt.poll"><i class="fa fa-star-o"></i></span>
+                       &nbsp; {{cmt.time | date}} - <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm"><span class="red">{{cmt.userName}}</span></a>
+                       <span ng-click="toggleEditor(7,cmt.time)" ng-show="cmt.user=='<%=uProf.getUniversalId()%>'">- <a href="">EDIT</a></span>
                    </div>
                    <div class="comment-inner"
                         ng-hide="isEditing(7,cmt.time)">
@@ -920,12 +961,52 @@ app.controller('myCtrl', function($scope, $http) {
 
                     <div class="well leafContent" style="width:100%" ng-show="isEditing(7,cmt.time)">
                       <div ng-model="cmt.html"
-                          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','underline','clear','insertLink'],['html','undo','redo']]"
+                          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                           text-angular="" class="" style="width:100%;"></div>
 
                       <button ng-click="saveAgendaItem(item)" class="btn btn-danger">Save Changes</button>
                       <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
+                      &nbsp;
+                      <input type="checkbox" ng-model="cmt.poll"> Proposal</button>
                     </div>
+
+                   <table style="min-width:500px;" ng-show="cmt.poll && !isEditing(9,cmt.time)">
+                   <tr ng-repeat="resp in cmt.responses">
+                       <td style="padding:5px;max-width:100px;">
+                           <b>{{resp.choice}}</b><br/>
+                           {{resp.userName}}
+                       </td>
+                       <td style="padding:5px;">
+                          <div ng-bind-html="resp.html"></div>
+                       </td>
+                   </tr>
+                   </table>
+
+                   <div ng-show="cmt.poll && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                       <button class="btn btn-default" ng-click="cmt.poll=false;saveAgendaItem(item)">Close Response Period</button>
+                       <button class="btn btn-default" ng-click="createModifiedProposal(item,cmt)">Make Modified Proposal</button>
+                   </div>
+                   <div ng-show="cmt.poll && !isEditing(9,cmt.time) && cmt.user!='<%ar.writeJS(currentUser);%>'">
+                       Respond: <span ng-repeat="choice in cmt.choices">&nbsp;
+                           <button class="btn btn-primary" ng-click="startResponse(cmt, choice)">
+                               {{choice}}
+                           </button>
+                       </span>&nbsp;
+                       <button class="btn btn-default" ng-click="createModifiedProposal(item,cmt)">Make Modified Proposal</button>
+                   </div>
+                   <div ng-show="cmt.poll && isEditing(9,cmt.time) && cmt.user!='<%ar.writeJS(currentUser);%>'">
+                       <h2>Your Response: <%ar.writeHtml(currentUserName);%></h2>
+                       <div ng-repeat="myResp in getMyResponse(cmt)">
+                          <div class="form-inline form-group">
+                              Choice:  <select class="form-control" ng-model="myResp.choice" ng-options="onch as onch for onch in cmt.choices"></select>
+                          </div>
+                          <div ng-model="myResp.html"
+                              ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
+                              text-angular="" class="" style="width:100%;"></div>
+                       </div>
+                      <button ng-click="saveAgendaItem(item);stopEditing()" class="btn btn-danger">Save Response</button>
+                      <button ng-click="stopEditing()" class="btn btn-danger">Cancel</button>
+                   </div>
                </div>
            </td>
       </tr>
@@ -933,16 +1014,24 @@ app.controller('myCtrl', function($scope, $http) {
         <td></td>
         <td>
         <div ng-hide="isEditing(8,item.id)" style="margin:20px;">
-            <button ng-click="toggleEditor(8,item.id)" class="btn btn-default">Create New <i class="fa fa-comments-o"></i> Comment</button>
+            <button ng-click="item.newPoll=false;toggleEditor(8,item.id)" class="btn btn-default">
+                Create New <i class="fa fa-comments-o"></i> Comment</button>
+            <button ng-click="item.newPoll=true;toggleEditor(8,item.id)" class="btn btn-default">
+                Create New <i class="fa fa-star-o"></i> Proposal</button>
         </div>
         <div ng-show="isEditing(8,item.id)">
             <div class="well leafContent" style="width:100%">
               <div ng-model="item.newComment"
-                  ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','underline','clear','insertLink'],['html','undo','redo']]"
+                  ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                   text-angular="" class="" style="width:100%;"></div>
 
-              <button ng-click="saveComment(item)" class="btn btn-danger">Create Comment</button>
+              <button ng-click="saveComment(item)" class="btn btn-danger" ng-hide="item.newPoll">
+                  Create <i class="fa fa-comments-o"></i> Comment</button>
+              <button ng-click="saveComment(item)" class="btn btn-danger" ng-show="item.newPoll">
+                  Create <i class="fa fa-star-o"></i> Proposal</button>
               <button ng-click="toggleEditor(8,item.id)" class="btn btn-danger">Cancel</button>
+              &nbsp;
+              <input type="checkbox" ng-model="item.newPoll"> Proposal</button>
             </div>
         </div>
         </td>
