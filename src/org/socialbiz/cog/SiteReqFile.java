@@ -22,6 +22,8 @@ package org.socialbiz.cog;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
@@ -31,11 +33,19 @@ import org.w3c.dom.Document;
 
 /**
  * Holds New Site Requests
+ * 
+ * This is a RARELY used file.  Very rare to request a site, and 
+ * also rare to review, grant, or deny it.  We are talking about
+ * less than 0.1% of the traffic.  So don't waste a lot of time
+ * storing this in memory.
+ * 
+ * Requests are kept 100 days, and thrown away after that.
+ * The site persists if granted, but otherwise forgotten about.
  *
  */
 public class SiteReqFile extends DOMFile {
 
-    private static List<SiteRequest> allRequests = null;
+    private static ArrayList<SiteRequest> allRequests = null;
     private static SiteReqFile siteReqFile = null;
 
     public synchronized static void clearAllStaticVars() {
@@ -46,13 +56,13 @@ public class SiteReqFile extends DOMFile {
     public static synchronized void initSiteList(Cognoscenti cog) throws Exception {
         siteReqFile = readSiteReqFile(cog);
 
-        long tenDaysAgo = System.currentTimeMillis() - 864000000;
+        long hundredDaysAgo = System.currentTimeMillis() - 8640000000L;
         Vector<SiteRequest> requests = siteReqFile.getChildren("request", SiteRequest.class);
         ArrayList<SiteRequest> outOfDate = new ArrayList<SiteRequest>();
         allRequests = new ArrayList<SiteRequest>();
         for (SiteRequest accountDetails : requests) {
             long time = accountDetails.getModTime();
-            if (time < tenDaysAgo) {
+            if (time < hundredDaysAgo) {
                 // collect all the old requests
                 outOfDate.add(accountDetails);
             }
@@ -66,6 +76,8 @@ public class SiteReqFile extends DOMFile {
         for (SiteRequest accountDetails : outOfDate) {
             siteReqFile.removeChild(accountDetails);
         }
+        
+        Collections.sort(allRequests, new SortByDateComparator());
     }
 
 
@@ -270,6 +282,27 @@ public class SiteReqFile extends DOMFile {
             }
         }
         return deniedReqs;
+    }
+    
+    /**
+     * Sort reverse chronological, so most recent is first
+     *
+     */
+    private static class SortByDateComparator implements Comparator<SiteRequest> {
+
+        public SortByDateComparator() {}
+        
+        @Override
+        public int compare(SiteRequest arg0, SiteRequest arg1) {
+            if (arg0.getModTime() == arg1.getModTime()) {
+                return 0;
+            }
+            if (arg1.getModTime() < arg0.getModTime()) {
+                return -1;
+            }
+            return 1;
+
+        }
     }
 
 }

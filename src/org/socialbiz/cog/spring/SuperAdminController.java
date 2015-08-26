@@ -99,18 +99,6 @@ public class SuperAdminController extends BaseController {
          }
      }
 
-     @RequestMapping(value = "/{userKey}/newAccounts.htm", method = RequestMethod.GET)
-     public ModelAndView newAccounts(@PathVariable String userKey,
-             HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
-         try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             return adminModelSetUp(ar, userKey, "newAccounts", "nugen.admin.subtab.new.accounts");
-         }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
-         }
-     }
-
      @RequestMapping(value = "/{userKey}/newUsers.htm", method = RequestMethod.GET)
      public ModelAndView newUsers(@PathVariable String userKey,
              HttpServletRequest request, HttpServletResponse response)
@@ -142,7 +130,7 @@ public class SuperAdminController extends BaseController {
          try{
              ar.assertSuperAdmin("Must be a super admin to accept site requests.");
              JSONObject requestInfo = getPostedObject(ar);
-             
+
 
              requestId = requestInfo.getString("requestId");
              SiteRequest siteRequest = SiteReqFile.getRequestByKey(requestId);
@@ -152,7 +140,7 @@ public class SuperAdminController extends BaseController {
 
              String newStatus = requestInfo.getString("newStatus");
              String description = requestInfo.getString("description");
-             
+
              HistoricActions ha = new HistoricActions(ar);
              if ("Granted".equals(newStatus)) {
                  ha.completeSiteRequest(siteRequest, true, description);
@@ -163,7 +151,7 @@ public class SuperAdminController extends BaseController {
              else{
                  throw new Exception("Unrecognized new status ("+newStatus+") in acceptOrDenySite.json");
              }
-             
+
              JSONObject repo = siteRequest.getJSON();
              repo.write(ar.w, 2, 2);
              ar.flush();
@@ -173,21 +161,7 @@ public class SuperAdminController extends BaseController {
              streamException(ee, ar);
          }
      }
-     
 
-     @RequestMapping(value = "/{userKey}/deniedAccounts.htm", method = RequestMethod.GET)
-     public ModelAndView deniedAccounts(@PathVariable String userKey,
-             HttpServletRequest request, HttpServletResponse response)
-             throws Exception {
-         try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             return adminModelSetUp(ar, userKey, "deniedAccounts",
-                     "nugen.admin.subtab.denied.accounts");
-
-         }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
-         }
-     }
 
      @RequestMapping(value = "/{userKey}/getErrorLogXML.ajax", method = RequestMethod.GET)
      public void errorLogXMLData(@PathVariable String userKey,@RequestParam String searchByDate,HttpServletRequest request,

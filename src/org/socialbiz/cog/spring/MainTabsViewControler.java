@@ -32,6 +32,7 @@ import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AgendaItem;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AuthRequest;
+import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.LeafletResponseRecord;
@@ -804,6 +805,7 @@ public class MainTabsViewControler extends BaseController {
                   throw new Exception("You must supply a meeting name to create a meeting.");
               }
               MeetingRecord newMeeting = ngp.createMeeting();
+              removeCompletedActionItems(ngp, meetingInfo);
               newMeeting.updateFromJSON(meetingInfo, ar);
               newMeeting.createAgendaFromJSON(meetingInfo, ar, ngp);
               newMeeting.setState(1);
@@ -818,6 +820,42 @@ public class MainTabsViewControler extends BaseController {
               Exception ee = new Exception("Unable to create meeting.", ex);
               streamException(ee, ar);
           }
+      }
+
+      /*
+       * The point is that uncompleted action items should get dragged to the next copy
+       * of the meeting.  Completed or skipped action items should NOT be dragged along.
+       * They are no longer useful.
+       */
+      private void removeCompletedActionItems(NGPage ngp, JSONObject meetingInfo) throws Exception {
+          if (!meetingInfo.has("agenda")) {
+              return;
+          }
+          JSONArray agenda = meetingInfo.getJSONArray("agenda");
+          for (int i=0; i<agenda.length(); i++) {
+              JSONObject agendaItem = agenda.getJSONObject(i);
+              if (!agendaItem.has("actionItems")) {
+                  continue;
+              }
+              JSONArray actionItems = agendaItem.getJSONArray("actionItems");
+              JSONArray approvedItems = new JSONArray();
+              for (int j=0; j<actionItems.length(); j++) {
+                  String universalId = actionItems.getString(j);
+                  GoalRecord gr = ngp.getGoalOrNull(universalId);
+                  if (gr==null) {
+                      continue;
+                  }
+                  if (gr.getState()==BaseRecord.STATE_COMPLETE) {
+                      continue;
+                  }
+                  if (gr.getState()==BaseRecord.STATE_SKIPPED) {
+                      continue;
+                  }
+                  approvedItems.put(universalId);
+              }
+              agendaItem.put("actionItems", approvedItems);
+          }
+
       }
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingUpdate.json", method = RequestMethod.POST)

@@ -106,6 +106,7 @@ public class AgendaItem extends DOMFace {
         newCR.setTime(ar.nowTime);
         newCR.setUser(ar.getUserProfile());
         newCR.setContentHtml(ar, newComment);
+        newCR.setPoll(isPoll);
     }
 
     /**

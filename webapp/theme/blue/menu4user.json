@@ -117,20 +117,12 @@
           "href": "errorLog.htm"
         },
         {
-          "name": "New Sites",
-          "href": "newAccounts.htm"
-        },
-        {
           "name": "New Users",
           "href": "newUsers.htm"
         },
         {
           "name": "Requested Sites",
           "href": "requestedAccounts.htm"
-        },
-        {
-          "name": "Denied Sites",
-          "href": "deniedAccounts.htm"
         }
       ]
   }

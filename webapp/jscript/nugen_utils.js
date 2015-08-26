@@ -195,10 +195,8 @@ function createSubLinks(){
             var arrayOfTabs4 = [new Tab(retPath+"v/"+userKey+"/emailListnerSettings.htm","Email"),
                 new Tab(retPath+"v/"+userKey+"/lastNotificationSend.htm","Last Notification Send"),
                 new Tab(retPath+"v/"+userKey+"/errorLog.htm",      "Error Log"),
-                new Tab(retPath+"v/"+userKey+"/newAccounts.htm",   "New Sites"),
                 new Tab(retPath+"v/"+userKey+"/newUsers.htm",      "New Users"),
                 new Tab(retPath+"v/"+userKey+"/requestedAccounts.htm","Requested Sites"),
-                new Tab(retPath+"v/"+userKey+"/deniedAccounts.htm","Denied Sites")
             ];
             arrayOfSubMenu  =["userSubMenu1","userSubMenu2","userSubMenu3","userSubMenu4"];
             arrayOfMainMenu =[ arrayOfTabs1,  arrayOfTabs2,  arrayOfTabs3,  arrayOfTabs4]

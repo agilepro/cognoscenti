@@ -575,11 +575,6 @@
         <put-attribute name="body" value="/spring/jsp/lastNotificationSend.jsp"/>
     </definition>
 
-    <definition name="newAccounts" extends="slimLayout">
-        <put-attribute name="title" value="New Sites"/>
-        <put-attribute name="body" value="/spring/jsp/newAccounts.jsp"/>
-    </definition>
-
     <definition name="newUsers" extends="slimLayout">
         <put-attribute name="title" value="New Users"/>
         <put-attribute name="body" value="/spring/jsp/newUsers.jsp"/>
@@ -588,11 +583,6 @@
     <definition name="requestedAccounts" extends="slimLayout">
         <put-attribute name="title" value="Requested Sites"/>
         <put-attribute name="body" value="/spring/jsp/requestedAccounts.jsp"/>
-    </definition>
-
-    <definition name="deniedAccounts" extends="slimLayout">
-        <put-attribute name="title" value="Denied Sites"/>
-        <put-attribute name="body" value="/spring/jsp/deniedAccounts.jsp"/>
     </definition>
 
     <definition name="UserActiveTasks" extends="slimLayout">

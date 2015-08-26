@@ -143,8 +143,6 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.newAssignee = "";
     $scope.newGoal = {};
     $scope.newPerson = "";
-    $scope.myComment = {};
-    $scope.myPoll = false;
     $scope.myUserId = "<% ar.writeJS(ar.getBestUserId()); %>";
 
     $scope.showError = false;
@@ -558,7 +556,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.putGetMeetingInfo(saveRecord);
         $scope.nowEditing="nothing";
     }
-    $scope.saveComment = function(item) {
+    $scope.createNewComment = function(item) {
         item.newComment.choices = ["Consent", "Object"];
         $scope.saveAgendaItem(item);
     }
@@ -595,7 +593,7 @@ app.controller('myCtrl', function($scope, $http) {
         item.newComment = cmt.html;
         item.newComment.time = cmt.time + 1;
         item.newPoll = true;
-        $scope.toggleEditor(8,item.newComment.time);
+        $scope.toggleEditor(8,item.id);
     }
 
 });
@@ -662,10 +660,12 @@ app.controller('myCtrl', function($scope, $http) {
             <span style="font-size:150%;font-weight: bold;">
                 Meeting: {{meeting.name}} @ {{meeting.startTime|date: "h:mma 'on' dd-MMM-yyyy"}}
             </span>
+            <span ng-show="meeting.state<3">
                 (
                 <i class="fa fa-cogs meeting-icon" ng-click="toggleEditor(5,'0')"></i>
                 <i class="fa fa-pencil-square-o meeting-icon" ng-click="toggleEditor(6,'0')"></i>
                 )
+            </span>
           </div>
            <div class="well leafContent" ng-show="isEditing(5,'0')">
              <table>
@@ -778,7 +778,7 @@ app.controller('myCtrl', function($scope, $http) {
         <td style="width:100%">
           <div class="leafContent" >
             <span style="font-size:130%;font-weight: bold;" ng-click="showItemMap[item.id]=!showItemMap[item.id]">{{item.position}}. {{item.subject}} &nbsp; </span>
-            <span ng-show="showItemMap[item.id]">
+            <span ng-show="showItemMap[item.id] && meeting.state<3">
                 ( <i class="fa fa-cogs meeting-icon" ng-click="toggleEditor(2,item.id)"
                     title="Agenda Item Settings"></i>
                 <i class="fa fa-pencil-square-o meeting-icon" ng-click="startEdit(item)"
@@ -1025,9 +1025,9 @@ app.controller('myCtrl', function($scope, $http) {
                   ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                   text-angular="" class="" style="width:100%;"></div>
 
-              <button ng-click="saveComment(item)" class="btn btn-danger" ng-hide="item.newPoll">
+              <button ng-click="createNewComment(item)" class="btn btn-danger" ng-hide="item.newPoll">
                   Create <i class="fa fa-comments-o"></i> Comment</button>
-              <button ng-click="saveComment(item)" class="btn btn-danger" ng-show="item.newPoll">
+              <button ng-click="createNewComment(item)" class="btn btn-danger" ng-show="item.newPoll">
                   Create <i class="fa fa-star-o"></i> Proposal</button>
               <button ng-click="toggleEditor(8,item.id)" class="btn btn-danger">Cancel</button>
               &nbsp;
