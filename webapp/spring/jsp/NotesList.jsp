@@ -312,13 +312,15 @@ app.controller('myCtrl', function($scope, $http) {
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Delete <img src="<%=ar.retPath%>deletedLink.gif"> Note</a></li>
                     </ul>
                   </span>
-                  <span ng-click="openMap[rec.id]=!openMap[rec.id]" style="color:#220011;">
+                  <span style="color:#220011;">
                     <span ng-show="rec.deleted"><img src="<%=ar.retPath%>deletedLink.gif"></span>
                     <span ng-show="rec.public"><img src="<%=ar.retPath%>assets/images/iconPublic.png"></span>
                     <span ng-show="!rec.public && !rec.deleted"><img src="<%=ar.retPath%>assets/images/iconMember.png"></span>
-                    <b>{{rec.subject}}</b>
-                    ({{rec.modUser.name}})
-                    {{rec.modTime|date}}
+                    <a href="noteZoom{{rec.id}}.htm" style="color:black;">
+                        <b>{{rec.subject}}</b>
+                        ({{rec.modUser.name}})
+                        {{rec.modTime|date}}
+                    </a>
 
                     <span ng-repeat="label in getNoteLabels(rec)">
                       <button class="btn btn-sm labelButton" style="background-color:{{label.color}};">
@@ -327,7 +329,10 @@ app.controller('myCtrl', function($scope, $http) {
                     </span>
                   </span>
                   &nbsp;
-                  <a class="fa fa-arrows-alt meeting-icon" href="noteZoom{{rec.id}}.htm"></a>
+                  <a class="fa fa-pencil-square-o meeting-icon" href="editNote.htm?nid={{rec.id}}" title="edit this topic"></a>
+                  &nbsp;
+                  <a class="fa fa-minus-square-o meeting-icon" ng-click="openMap[rec.id]=false" ng-show="openMap[rec.id]"></a>
+                  <a class="fa fa-plus-square-o meeting-icon" ng-click="openMap[rec.id]=true" ng-show="!openMap[rec.id]" title="preview this topic"></a>
                 </div>
                 <div class="leafContent" ng-show="openMap[rec.id]" style="background-color:white;border-radius:10px;margin:5px;">
                     <div ng-bind-html="rec.html"></div>

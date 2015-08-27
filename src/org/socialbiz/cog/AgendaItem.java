@@ -204,10 +204,11 @@ public class AgendaItem extends DOMFace {
             setPresenters(constructVector(input.getJSONArray("presenters")));
         }
         if (input.has("newComment")) {
-            String newValue = input.getString("newComment");
+            JSONObject newComment = input.getJSONObject("newComment");
+            String newValue = newComment.getString("html");
             boolean isPoll = false;
-            if (input.has("newPoll")) {
-                isPoll = input.getBoolean("newPoll");
+            if (newComment.has("poll")) {
+                isPoll = newComment.getBoolean("poll");
             }
             addComment(ar, newValue, isPoll);
         }

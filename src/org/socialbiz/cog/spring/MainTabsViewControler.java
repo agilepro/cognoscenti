@@ -337,8 +337,18 @@ public class MainTabsViewControler extends BaseController {
              ar.assertMember("Must be a member to update a note contents.");
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
-
              NoteRecord note = ngp.getNote(nid);
+             
+             boolean isCreateComment = noteInfo.has("newComment");
+             if (isCreateComment) {
+                 JSONObject newComment = noteInfo.getJSONObject("newComment");
+                 String comment = newComment.getString("html");
+                 comment = GetFirstHundredNoHtml(comment);
+                 HistoryRecord.createHistoryRecord(ngp, note.getId(),
+                         HistoryRecord.CONTEXT_TYPE_LEAFLET, 
+                         HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
+             }
+
 
              note.updateNoteFromJSON(noteInfo, ar);
 
@@ -351,6 +361,36 @@ public class MainTabsViewControler extends BaseController {
              Exception ee = new Exception("Unable to updated note "+nid+" contents", ex);
              streamException(ee, ar);
          }
+     }
+     
+     /*
+      * Pull the first 100 character max from the string, but ignore anything
+      * that looks like an HTML tag, and anything inside those tags.
+      * Does not handle script tags or other expressions in attributes ... but there should not be any.
+      */
+     private String GetFirstHundredNoHtml(String input) {
+         int limit = 100;
+         boolean inTag = false;
+         StringBuffer res = new StringBuffer();
+         for (int i=0; i<input.length() && limit>0; i++) {
+             char ch = input.charAt(i);
+             if (inTag) {
+                 if ('>' == ch) {
+                     inTag=false;
+                 }
+                 //ignore all other characters while in the tag
+             }
+             else {
+                 if ('<' == ch) {
+                     inTag=true;
+                 }
+                 else {
+                     res.append(ch);
+                     limit--;
+                 }
+             }
+         }
+         return res.toString();
      }
 
     //allow a user to change their email subscriptions, including opt out
@@ -809,8 +849,9 @@ public class MainTabsViewControler extends BaseController {
               newMeeting.updateFromJSON(meetingInfo, ar);
               newMeeting.createAgendaFromJSON(meetingInfo, ar, ngp);
               newMeeting.setState(1);
-              HistoryRecord.createHistoryRecord(ngp, newMeeting.getId(), HistoryRecord.CONTEXT_TYPE_MEETING,
-                      0, HistoryRecord.EVENT_TYPE_CREATED, ar, "");
+              HistoryRecord.createHistoryRecord(ngp, newMeeting.getId(), 
+                      HistoryRecord.CONTEXT_TYPE_MEETING,
+                      HistoryRecord.EVENT_TYPE_CREATED, ar, "");
 
               ngp.saveFile(ar, "Created new Meeting");
               JSONObject repo = newMeeting.getFullJSON(ar, ngp);
@@ -873,7 +914,25 @@ public class MainTabsViewControler extends BaseController {
               meeting.updateFromJSON(meetingInfo, ar);
               meeting.updateAgendaFromJSON(meetingInfo, ar, ngp);
 
-              ngp.saveFile(ar, "Created new Meeting");
+              if (meetingInfo.has("agenda")) {
+                  JSONArray agenda = meetingInfo.getJSONArray("agenda");
+                  for (int i=0; i<agenda.length(); i++) {
+                      JSONObject aItem = agenda.getJSONObject(i);
+                      if (aItem.has("newComment")) {
+                          JSONObject newComment = aItem.getJSONObject("newComment");
+                          if (newComment.has("html")) {
+                              String comment = newComment.getString("html");
+                              comment = GetFirstHundredNoHtml(comment);
+                              HistoryRecord.createHistoryRecord(ngp, meeting.getId(),
+                                      HistoryRecord.CONTEXT_TYPE_MEETING, 
+                                      HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
+                          }
+                      }
+                  }
+              }
+              
+              
+              ngp.saveFile(ar, "Updated Meeting");
               JSONObject repo = meeting.getFullJSON(ar, ngp);
               repo.write(ar.w, 2, 2);
               ar.flush();

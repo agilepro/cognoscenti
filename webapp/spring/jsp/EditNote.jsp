@@ -233,10 +233,10 @@ app.controller('myCtrl', function($scope, $http) {
             </div>
 
             <div text-angular-toolbar name="statictoolbar" class="statictoolbar"
-                ta-toolbar="[['h1','h2','h3','p'],['ul','indent','outdent'],['bold','italics'],['clear','insertLink'],['html','undo','redo']]"></div>
+                ta-toolbar="[['h1','h2','h3','p'],['ul','indent','outdent'],['bold','italics'],['clear','insertLink'],['undo','redo']]"></div>
 
             <div ng-model="noteInfo.html"
-                ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['html','undo','redo']]"
+                ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                 ta-target-toolbars='statictoolbar'
                 text-angular="" class="leafContent">
             </div>

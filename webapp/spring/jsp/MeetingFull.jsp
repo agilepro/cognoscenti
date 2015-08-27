@@ -556,8 +556,14 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.putGetMeetingInfo(saveRecord);
         $scope.nowEditing="nothing";
     }
-    $scope.createNewComment = function(item) {
+    $scope.startNewComment = function(item, isPoll) {
+        item.newComment = {};
         item.newComment.choices = ["Consent", "Object"];
+        item.newComment.html="";
+        item.newComment.poll=isPoll;
+        $scope.toggleEditor(8,item.id)
+    }
+    $scope.createNewComment = function(item) {
         $scope.saveAgendaItem(item);
     }
 
@@ -590,8 +596,10 @@ app.controller('myCtrl', function($scope, $http) {
     }
 
     $scope.createModifiedProposal = function(item, cmt) {
-        item.newComment = cmt.html;
+        item.newComment = {}
+        item.newComment.html = cmt.html;
         item.newComment.time = cmt.time + 1;
+        item.newComment.poll = true;
         item.newPoll = true;
         $scope.toggleEditor(8,item.id);
     }
@@ -1014,24 +1022,24 @@ app.controller('myCtrl', function($scope, $http) {
         <td></td>
         <td>
         <div ng-hide="isEditing(8,item.id)" style="margin:20px;">
-            <button ng-click="item.newPoll=false;toggleEditor(8,item.id)" class="btn btn-default">
+            <button ng-click="startNewComment(item, false)" class="btn btn-default">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="item.newPoll=true;toggleEditor(8,item.id)" class="btn btn-default">
+            <button ng-click="startNewComment(item, true)" class="btn btn-default">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
         </div>
         <div ng-show="isEditing(8,item.id)">
             <div class="well leafContent" style="width:100%">
-              <div ng-model="item.newComment"
+              <div ng-model="item.newComment.html"
                   ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                   text-angular="" class="" style="width:100%;"></div>
 
-              <button ng-click="createNewComment(item)" class="btn btn-danger" ng-hide="item.newPoll">
+              <button ng-click="createNewComment(item)" class="btn btn-danger" ng-hide="item.newComment.poll">
                   Create <i class="fa fa-comments-o"></i> Comment</button>
-              <button ng-click="createNewComment(item)" class="btn btn-danger" ng-show="item.newPoll">
+              <button ng-click="createNewComment(item)" class="btn btn-danger" ng-show="item.newComment.poll">
                   Create <i class="fa fa-star-o"></i> Proposal</button>
               <button ng-click="toggleEditor(8,item.id)" class="btn btn-danger">Cancel</button>
               &nbsp;
-              <input type="checkbox" ng-model="item.newPoll"> Proposal</button>
+              <input type="checkbox" ng-model="item.newComment.poll"> Proposal</button>
             </div>
         </div>
         </td>

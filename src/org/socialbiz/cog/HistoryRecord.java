@@ -703,6 +703,8 @@ history.task.subtask.add    113
                 return "marked as skipped";
             case EVENT_EMAIL_SENT:
                 return "sent as email";
+            case EVENT_COMMENT_ADDED:
+                return "extended with a comment";
             default:
                 return "modified (#"+type+")";
         }
