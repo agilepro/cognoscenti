@@ -29,6 +29,7 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.workcast.json.JSONObject;
 
 
 public class HistoryRecord extends DOMFace
@@ -313,13 +314,13 @@ public class HistoryRecord extends DOMFace
             case CONTEXT_TYPE_PROCESS:
                 return "Process";
             case CONTEXT_TYPE_TASK:
-                return "Task";
+                return "Action Item";
             case CONTEXT_TYPE_PERMISSIONS:
                 return "Permission";
             case CONTEXT_TYPE_DOCUMENT:
                 return "Document";
             case CONTEXT_TYPE_LEAFLET:
-                return "Note";
+                return "Topic";
             case CONTEXT_TYPE_ROLE:
                 return "Role";
             case CONTEXT_TYPE_MEETING:
@@ -810,6 +811,28 @@ history.task.subtask.add    113
             ar.writeHtml(comment);
         }
     }
+    
+    public JSONObject getJSON(NGPage ngp, AuthRequest ar) throws Exception {
+        AddressListEntry ale = new AddressListEntry(getResponsible());
+        JSONObject jo = new JSONObject();
+        jo.put("ctxType", getContextTypeName(getContextType()));
+        jo.put("ctxName", lookUpObjectName(ngp));
+        jo.put("ctxSite", ngp.getSiteKey());
+        jo.put("ctxProject", ngp.getKey());
+        jo.put("event", convertEventTypeToString(getEventType()));
+        JSONObject user = ale.getJSON();
+        UserProfile uProf = ale.getUserProfile();
+        if (uProf!=null) {
+            user.put("image", uProf.getImage());
+        }
+        else {
+            user.put("image","unknown.jpg");
+        }
+        jo.put("responsible", user);
+        jo.put("time",getTimeStamp());
+        jo.put("comment",getComments());
+        return jo;
+    }
 
     public String lookUpObjectName(NGPage ngp) throws Exception {
         int contextType = getContextType();
@@ -880,162 +903,5 @@ history.task.subtask.add    113
         return "";
     }
 
-    /**
-     * Write the template to the output stream, substituting in the data
-     * parameter values into the appropriate places in the specified template.
-     *
-     * Template must be of this format:
-     *
-     * Added user {1u} to role {2r} by {4u} in project {3p}
-     *
-     * Each token has curley braces around a number a letter. The lowest number
-     * should be 1, and the highest is the number of tokens. Here are the
-     * meanings of the various letters:
-     *
-     * (nothing) just take the parameter and output it directly as text u - find
-     * a user with that key, and output a link to that user p - find a project
-     * with that key, and output a link to that project a - find an account
-     * (book) with that key, and output a link to the account. r - find a role
-     * with that name, and output a link to that role t - find a task with that
-     * id, and output a link to the task d - find a document with that id, and
-     * output a link to that document n - find a note with that id, and output a
-     * link to that note m - find a reminder with that id, and output a link to
-     * that reminder x - don't display anything, hide this parameter and do not
-     * display
-     *
-     * there must be no spaces in the token, and the lower case letter must be
-     * the last character
-     *
-     * @param ar
-     *            The AuthRequest output stream, including locale and request
-     *            context
-     * @param template
-     *            The message to be displayed that can containe placeholders for
-     *            the parameters or causing exception.
-     * @return Nothing, this writes the output to the stream
-     * @throws Exception
-     *
-    private static void writeWithParams(AuthRequest ar, String template,
-            String[] params, NGContainer container) throws Exception {
-        // It should never happen that a null is passed to this method.
-        if (template == null) {
-            throw new ProgramLogicError(
-                    "a null template was passed to writeWithParams.");
-        }
-        if (params == null) {
-            // null can be passed as a convenience, and it means no parameters
-            params = new String[0];
-        }
-        boolean used[] = new boolean[params.length];
-
-        int start = 0;
-        int openPos = template.indexOf("{", start);
-        while (openPos >= 0) {
-            ar.writeHtml(template.substring(start, openPos));
-            openPos++;
-
-            int closePos = template.indexOf("}", openPos);
-            if (closePos < 0) {
-                // make a lot of noise about this so the translator takes care
-                // of the
-                // problem
-                throw new NGException("nugen.exception.incorrect.template",
-                        new Object[] { template });
-            }
-
-            String token = template.substring(openPos, closePos);
-            int tokenNum = DOMFace.safeConvertInt(token);
-            int tokenLetter = token.charAt(token.length() - 1);
-            if (tokenNum <= 0) {
-                throw new ProgramLogicError(
-                        "UI message template has no number, or has number 0.  "
-                                + "Token must have a number 1 or greater.");
-            }
-            if (tokenNum > params.length) {
-                throw new ProgramLogicError(
-                        "UI message template has a token number '" + tokenNum
-                                + "' but only '" + params.length
-                                + "' values were passed.");
-            }
-
-            tokenNum--;
-
-            String tokenVal = params[tokenNum];
-            used[tokenNum] = true;
-
-            switch (tokenLetter) {
-            case 'u':
-                AddressListEntry.writeParsedLinks(ar, tokenVal);
-                break;
-            case 'p':
-                writeContainerLinkIfExists(ar, tokenVal);
-                break;
-            case 'a':
-                writeContainerLinkIfExists(ar, tokenVal);
-                break;
-            case 'r':
-                String roleAddress = ar.getResourceURL(
-                        container,
-                        "permission.htm#"
-                                + URLEncoder.encode(tokenVal, "UTF-8"));
-                ar.write("<a href=\"");
-                ar.writeHtml(ar.retPath);
-                ar.writeHtml(roleAddress);
-                ar.write("\">");
-                ar.writeHtml(tokenVal);
-                ar.write("</a>");
-                break;
-            case 'm':
-                container.writeReminderLink(ar, tokenVal, 60);
-                break;
-            case 't':
-                container.writeTaskLink(ar, tokenVal, 60);
-                break;
-            case 'd':
-                container.writeDocumentLink(ar, tokenVal, 60);
-                break;
-            case 'n':
-                container.writeNoteLink(ar, tokenVal, 60);
-                break;
-            case 'x':
-                // don't display anything for this, hide the value
-                break;
-            default:
-                // this case includes any other letters that might be placed
-                // there. Might want to complain about it...
-                ar.writeHtmlWithLines(tokenVal);
-            }
-            start = closePos + 1;
-            openPos = template.indexOf("{", start);
-        }
-
-        if (start < template.length()) {
-            // write out the tail of the template.
-            ar.writeHtml(template.substring(start));
-        }
-
-        for (int i = 0; i < params.length; i++) {
-            if (!used[i]) {
-                throw new ProgramLogicError(
-                        "UI message template did not have a token for parameter '"
-                                + i + ".  Should have '" + params.length
-                                + "' tokens in all.");
-            }
-        }
-    }
-
-
-    private static void writeContainerLinkIfExists(AuthRequest ar, String id)
-            throws Exception {
-        NGContainer ngc = NGPageIndex.getContainerByKey(id);
-        if (ngc == null) {
-            ar.write("(container ");
-            ar.writeHtml(id);
-            ar.write(")");
-        } else {
-            ngc.writeContainerLink(ar, 100);
-        }
-    }
-    */
 
 }

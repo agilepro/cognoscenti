@@ -556,6 +556,9 @@ public class AddressListEntry implements UserRef
         JSONObject jObj = new JSONObject();
         jObj.put("name", getName());
         jObj.put("uid", getUniversalId());
+        if (user!=null) {
+            jObj.put("key", user.getKey());
+        }
         return jObj;
     }
 

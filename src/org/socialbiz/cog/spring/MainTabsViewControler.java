@@ -1154,6 +1154,9 @@ public class MainTabsViewControler extends BaseController {
       }
 
 
+      /*
+       * Creates an action item that is associated with a meeting
+       */
       @RequestMapping(value = "/{siteId}/{pageId}/createActionItem.json", method = RequestMethod.POST)
       public void createActionItem(@PathVariable String siteId,@PathVariable String pageId,
               HttpServletRequest request, HttpServletResponse response) {
@@ -1169,6 +1172,11 @@ public class MainTabsViewControler extends BaseController {
 
               JSONObject goalInfo = getPostedObject(ar);
               GoalRecord gr = ngp.createGoal();
+              
+              //create the history record here.
+              HistoryRecord.createHistoryRecord(ngp, gr.getId(),
+                      HistoryRecord.CONTEXT_TYPE_TASK, HistoryRecord.EVENT_TYPE_CREATED, ar,
+                      "on meeting: "+meeting.getName());
 
               //currently the update from JSON is designed for upstream sync.
               //There is a check that requires this to do the update.
@@ -1197,8 +1205,9 @@ public class MainTabsViewControler extends BaseController {
               String gid = ar.reqParam("gid");
               JSONObject goalInfo = getPostedObject(ar);
               GoalRecord gr = null;
-              int eventType = HistoryRecord.EVENT_TYPE_CREATED;
-              if ("~new~".equals(gid)) {
+              int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
+              boolean isNew = "~new~".equals(gid);
+              if (isNew) {
                   gr = ngp.createGoal();
                   goalInfo.put("universalid", gr.getUniversalId());
                   eventType = HistoryRecord.EVENT_TYPE_CREATED;
@@ -1208,13 +1217,18 @@ public class MainTabsViewControler extends BaseController {
               }
 
               gr.updateGoalFromJSON(goalInfo);
-
+              String comments = null;
               if (goalInfo.has("newAccomplishment")) {
-                  //create the history record here.
-                  HistoryRecord.createHistoryRecord(ngp, gr.getId(),
-                          HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar,
-                          goalInfo.getString("newAccomplishment"));
+                  comments = goalInfo.optString("newAccomplishment");
               }
+              else {
+                  comments = "State: "+BaseRecord.stateName(gr.getState());
+              }
+
+              //create the history record here.
+              HistoryRecord.createHistoryRecord(ngp, gr.getId(),
+                      HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar,
+                      comments);
 
               ngp.saveFile(ar, "Updated goal "+gid);
               JSONObject repo = gr.getJSON4Goal(ngp);
@@ -1226,6 +1240,29 @@ public class MainTabsViewControler extends BaseController {
           }
       }
 
+      @RequestMapping(value = "/{siteId}/{pageId}/getGoalHistory.json", method = RequestMethod.POST)
+      public void getGoalHistory(@PathVariable String siteId,@PathVariable String pageId,
+              HttpServletRequest request, HttpServletResponse response) {
+          AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          try{
+              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngp);
+              ar.assertMember("Must be a member to create a action item (goal).");
+              String gid = ar.reqParam("gid");
+              GoalRecord gr = ngp.getGoalOrFail(gid);
+
+              JSONArray repo = new JSONArray();
+              for (HistoryRecord hist : gr.getTaskHistory(ngp)) {
+                  repo.put(hist.getJSON(ngp, ar));
+              }
+              repo.write(ar.w, 2, 2);
+              ar.flush();
+          }catch(Exception ex){
+              Exception ee = new Exception("Unable to create Action Item for minutes of meeting.", ex);
+              streamException(ee, ar);
+          }
+      }
+      
 
       @RequestMapping(value = "/{siteId}/{pageId}/cloneMeeting.htm", method = RequestMethod.GET)
       public ModelAndView cloneMeeting(@PathVariable String siteId,@PathVariable String pageId,

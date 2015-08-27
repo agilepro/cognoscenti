@@ -36,7 +36,10 @@ Required parameters:
     //needed to prompt for the site to build a new project in
     List<NGBook> bookList = (List<NGBook>)request.getAttribute("bookList");
     List<HistoryRecord> histRecs = currentTaskRecord.getTaskHistory(ngp);
-
+    JSONArray allHist = new JSONArray();
+    for (HistoryRecord history : histRecs) {
+        allHist.put(history.getJSON(ngp, ar));
+    }
 
     Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
     for(TemplateRecord tr : uProf.getTemplateList()){
@@ -116,6 +119,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.stateName = <%stateName.write(out,2,4);%>;
     $scope.subGoals  = <%subGoals.write(out,2,4);%>;
     $scope.allPeople = <%allPeople.write(out,2,4);%>;
+    $scope.allHist   = <%allHist.write(out,2,4);%>;
+
     $scope.newPerson = "";
 
     $scope.editGoalInfo = false;
@@ -141,6 +146,7 @@ app.controller('myCtrl', function($scope, $http) {
         $http.post(postURL, postdata)
         .success( function(data) {
             $scope.goalInfo = data;
+            $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -188,6 +194,18 @@ app.controller('myCtrl', function($scope, $http) {
             }
         }
         return res;
+    }
+    $scope.refreshHistory = function() {
+        var postURL = "getGoalHistory.json?gid="+$scope.goalInfo.id;
+        var postdata = "{}";
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            $scope.allHist = data;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
     }
 
 });
@@ -396,47 +414,9 @@ function addvalue() {
                         </div>
                     </td>
                 </tr>
-
-                <!-- ========================================================================= -->
-                <tr><td height="30px"></td></tr>
-                <tr>
-                    <td colspan="3" class="generalHeading">History &amp; Accomplishments</td>
-                </tr>
-                <tr>
-                    <td colspan="3" id="prevAccomplishments">
-                        <table >
-                            <tr><td style="height:10px"></td>
-                            </tr>
-                <%
-                    for (HistoryRecord history : histRecs)
-                                    {
-                                        AddressListEntry ale = new AddressListEntry(history.getResponsible());
-                                        UserProfile responsible = ale.getUserProfile();
-                                        String photoSrc = ar.retPath+"assets/photoThumbnail.gif";
-                                        if(responsible!=null && responsible.getImage().length() > 0){
-                                            photoSrc = ar.retPath+"users/"+responsible.getImage();
-                                        }
-                %>
-                            <tr>
-                                <td class="projectStreamIcons"><a href="#"><img src="<%=photoSrc%>" alt="" width="50" height="50" /></a></td>
-                                <td colspan="2"  class="projectStreamText">
-                                    <%
-                                        NGWebUtils.writeLocalizedHistoryMessage(history, ngp, ar);
-                                    %>
-                                    <br/>
-                                    <%
-                                        SectionUtil.nicePrintTime(out, history.getTimeStamp(), ar.nowTime);
-                                    %>
-                                </td>
-                           </tr>
-                           <tr><td style="height:10px"></td></tr>
-                 <%
-                     }
-                 %>
-                        </table>
-                    </td>
-                </tr>
             </table>
+
+
 
 
 
@@ -634,8 +614,37 @@ function addvalue() {
                         </div>
                     </div>
 
-                </div>
-            </div>
+
+
+
+        <!-- ========================================================================= -->
+        <div style="height:30px"></div>
+        <div class="generalHeading">History &amp; Accomplishments
+        </div>
+        <div>
+                <table >
+                    <tr><td style="height:10px"></td>
+                    </tr>
+                    <tr ng-repeat="rec in allHist">
+                        <td class="projectStreamIcons"  style="padding:10px;">
+                            <a href="#"><img src="<%=ar.retPath%>users/{{rec.responsible.image}}" alt="" width="50" height="50" /></a></td>
+                        <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
+                            {{rec.time|date}} -
+                            <a href="<%=ar.retPath%>v/{{rec.responsible.key}}/userSettings.htm" title="access the profile of this user, if one exists">
+                                                                    <span class="red">{{rec.responsible.name}}</span>
+                            </a>
+                            <br/>
+                            {{rec.ctxType}} -
+                            <a href="">{{rec.ctxName}}</a> was {{rec.event}} - {{rec.comment}}
+                            <br/>
+
+                        </td>
+                   </tr>
+                </table>
+        </div>
+
+
+
     <script type="text/javascript">
 
         var isfreezed = '<%=ngp.isFrozen()%>';
@@ -649,21 +658,6 @@ function addvalue() {
         function createProject(){
         <%if (!ngp.isFrozen()) {%>
             document.forms["projectform"].submit();
-        <%}else{%>
-            return openFreezeMessagePopup();
-        <%}%>
-        }
-        function updateTaskStatus(){
-        <%if (!ngp.isFrozen()) {%>
-            document.forms["updateTaskStatusForm"].submit();
-        <%}else{%>
-            return openFreezeMessagePopup();
-        <%}%>
-        }
-
-        function AddNewAssigne(){
-        <%if (!ngp.isFrozen()) {%>
-            document.forms["assignTask"].submit();
         <%}else{%>
             return openFreezeMessagePopup();
         <%}%>
@@ -729,7 +723,9 @@ function addvalue() {
     }
 
 </script>
-    </div>
+
+
+</div>
 
 
 

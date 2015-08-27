@@ -7,13 +7,7 @@
         throw new Exception("New Site page should only be accessed by Super Admin");
     }
     UserProfile uProf=ar.getUserProfile();
-    Vector<SiteRequest> superRequests = new Vector<SiteRequest>();
-    for (SiteRequest accountDetails: SiteReqFile.getAllSiteReqs())
-    {   if (accountDetails.getStatus().equalsIgnoreCase("requested"))
-        {
-            superRequests.add(accountDetails);
-        }
-    }
+    List<SiteRequest> superRequests = SiteReqFile.getAllSiteReqs();
 
     JSONArray allRequests = new JSONArray();
     for (SiteRequest requestRecord : superRequests) {
@@ -34,6 +28,9 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    $scope.notDone = function(rec) {
+        return (rec.status == "requested");
+    }
 
     $scope.changeStatus = function(rec, isGranted) {
         rec.public = !rec.public;
@@ -92,7 +89,6 @@ app.controller('myCtrl', function($scope, $http) {
                         <th >Description</th>
                         <th >Date</th>
                         <th >Requested by</th>
-                        <th >timePeriod</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -103,9 +99,11 @@ app.controller('myCtrl', function($scope, $http) {
                             <span class="caret"></span></button>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                               <li role="presentation">
-                                  <a role="menuitem" tabindex="-1" ng-click="changeStatus(rec,true)">Grant Site</a></li>
+                                  <a role="menuitem" ng-click="changeStatus(rec,true)" ng-show="notDone(rec)">Grant Site</a></li>
                               <li role="presentation">
-                                  <a role="menuitem" tabindex="-1" ng-click="changeStatus(rec,false)">Deny Site</a></li>
+                                  <a role="menuitem" ng-click="changeStatus(rec,false)" ng-show="notDone(rec)">Deny Site</a></li>
+                              <li role="presentation">
+                                  <a role="menuitem" ng-hide="notDone(rec)">No Action Available</a></li>
                             </ul>
                           </div>
                         </td>
@@ -113,8 +111,8 @@ app.controller('myCtrl', function($scope, $http) {
                         <td>{{rec.name}}</td>
                         <td>{{rec.status}}</td>
                         <td>{{rec.desc}}</td>
-                        <td>{{rec.modTime}}</td>
-                        <td>{{rec.modUser}}</td>
+                        <td>{{rec.modTime|date}}</td>
+                        <td>{{rec.requester.name}}</td>
                     </tr>
                 </tbody>
             </table>

@@ -31,7 +31,6 @@ Required parameters:
         int contextType = hist.getContextType();
         String key = hist.getCombinedKey();
         String url = "";
-        String cType = HistoryRecord.getContextTypeName(contextType);
         String objName = "Unidentified";
         if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
             url = ar.getResourceURL(ngp, "projectAllTasks.htm");
@@ -76,9 +75,8 @@ Required parameters:
                 objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
             }
         }
-        JSONObject jObj = new JSONObject();
-        jObj.put("timestamp",   hist.getTimeStamp() );
-        jObj.put("responsible", ale.getUniversalId() );
+        JSONObject jObj = hist.getJSON(ngp,ar);
+        jObj.put("responsible", ale.getJSON() );
         if (responsible!=null) {
             jObj.put("respUrl",     "v/"+responsible.getKey()+"/userSettings.htm" );
         }
@@ -87,12 +85,7 @@ Required parameters:
         }
         jObj.put("respName",    ale.getName() );
         jObj.put("imagePath",   imagePath );
-        jObj.put("action",      hist.convertEventTypeToString(hist.getEventType()));
         jObj.put("contextUrl",  url );
-        jObj.put("contextType", cType );
-        jObj.put("context",     hist.getContext() );
-        jObj.put("contextName", objName );
-        jObj.put("comments",    hist.getComments() );
         allHistory.put(jObj);
     }
 
@@ -125,19 +118,19 @@ app.controller('myCtrl', function($scope, $http) {
         var filter = $scope.filter.toLowerCase();
         var res = [];
         $scope.allHistory.map(  function(hItem) {
-            if (hItem.respName.toLowerCase().indexOf(filter)>=0) {
+            if (hItem.responsible.name.toLowerCase().indexOf(filter)>=0) {
                 res.push(hItem);
             }
-            else if (hItem.contextName.toLowerCase().indexOf(filter)>=0) {
+            else if (hItem.ctxName.toLowerCase().indexOf(filter)>=0) {
                 res.push(hItem);
             }
             else if (hItem.comments.toLowerCase().indexOf(filter)>=0) {
                 res.push(hItem);
             }
-            else if (hItem.contextType.toLowerCase().indexOf(filter)>=0) {
+            else if (hItem.ctxType.toLowerCase().indexOf(filter)>=0) {
                 res.push(hItem);
             }
-            else if (hItem.action.toLowerCase().indexOf(filter)>=0) {
+            else if (hItem.event.toLowerCase().indexOf(filter)>=0) {
                 res.push(hItem);
             }
         });
@@ -178,11 +171,11 @@ app.controller('myCtrl', function($scope, $http) {
                 <img src="<%=ar.retPath%>{{hist.imagePath}}" alt="" width="50" height="50" />
             </td>
             <td class="projectStreamText" style="padding-bottom:10px;">
-                {{hist.timestamp|date}} -
+                {{hist.time|date}} -
                 <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
                 <br/>
-                {{hist.contextType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.contextName}}</a>"
-                was {{hist.action}}.
+                {{hist.ctxType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>"
+                was {{hist.event}}.
                 <br/>
                 <i>{{hist.comments}}</i>
 
