@@ -80,6 +80,7 @@ app.controller('myCtrl', function($scope, $http) {
         saveRecord.id = $scope.docInfo.id;
         saveRecord.universalid = $scope.docInfo.universalid;
         saveRecord.newComment = $scope.myComment;
+        $scope.isCreatingComment = false;
         $scope.savePartial(saveRecord);
     }
     $scope.savePartial = function(recordToSave) {
@@ -88,7 +89,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
-            $scope.noteInfo = data;
+            $scope.docInfo = data;
             $scope.myComment = "";
         })
         .error( function(data, status, headers, config) {
@@ -251,6 +252,47 @@ app.controller('myCtrl', function($scope, $http) {
 <%
     }
 %>
+
+        <tr>
+            <td></td>
+            <td style="width: 20px;"></td>
+            <td>
+
+                <div ng-repeat="cmt in docInfo.comments">
+                   <div class="leafContent" style="border: 1px solid lightgrey;border-radius:8px;padding:5px;margin-top:15px;background-color:#EEE">
+                       <div style="">
+                           <i class="fa fa-comments-o"></i> Comment {{cmt.time | date}} - <a href="#"><span class="red">{{cmt.userName}}</span></a>
+                       </div>
+                       <div class="" ng-click="startEdit(cmt)" style="border: 1px solid lightgrey;border-radius:6px;padding:5px;background-color:white">
+                         <div ng-bind-html="cmt.html"></div>
+                       </div>
+                   </div>
+                </div>
+
+                <div style="height:20px;"></div>
+
+
+                <div ng-show="canUpdate">
+                    <div class="well leafContent" style="width:100%" ng-show="isCreatingComment">
+                      <div ng-model="myComment"
+                          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
+                          text-angular="" class="" style="width:100%;"></div>
+
+                      <button ng-click="saveComment()" class="btn btn-danger">Create <i class="fa fa-comments-o"></i> Comment</button>
+                          <button ng-click="isCreatingComment=false" class="btn btn-danger">Cancel</button>
+                    </div>
+                    <div ng-hide="isCreatingComment" style="margin:20px;">
+                        <button ng-click="isCreatingComment=true" class="btn btn-default">
+                            Create New <i class="fa fa-comments-o"></i> Comment</button>
+                    </div>
+                </div>
+                <div ng-hide="canUpdate">
+                    <i>You have to be logged in and a member of this project in order to create a comment</i>
+                </div>
+
+            </td>
+        </tr>
+
         <tr>
             <td style="height: 10px"></td>
         </tr>
@@ -265,86 +307,6 @@ app.controller('myCtrl', function($scope, $http) {
             access controls.</span></td>
         </tr>
 
-        <tr>
-            <td></td>
-            <td style="width: 20px;"></td>
-            <td>
-
-                <div ng-repeat="cmt in docInfo.comments">
-                   <div class="leafContent" style="border: 1px solid lightgrey;border-radius:8px;padding:5px;margin-top:15px;background-color:#EEE">
-                       <div style="">
-                           Comment {{cmt.time | date}} - <a href="#"><span class="red">{{cmt.userName}}</span></a>
-                       </div>
-                       <div class="" ng-click="startEdit(cmt)" style="border: 1px solid lightgrey;border-radius:6px;padding:5px;background-color:white">
-                         <div ng-bind-html="cmt.html"></div>
-                       </div>
-                   </div>
-                </div>
-
-                <div style="height:30px;"></div>
-
-
-                <div ng-show="canUpdate">
-                    <div class="well leafContent" style="width:100%">
-                      <div ng-model="myComment"
-                          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-                          text-angular="" class="" style="width:100%;"></div>
-
-                      <button ng-click="saveComment()" class="btn btn-danger">Create Comment</button>
-                    </div>
-                </div>
-                <div ng-hide="canUpdate">
-                    <i>You have to be logged in and a member of this project in order to create a comment</i>
-                </div>
-
-            </td>
-        </tr>
-
     </table>
-
-<script>
-     var isfreezed = '<%=ngp.isFrozen() %>';
-     var isReadOnly = '<%=attachment.getReadOnlyType() %>';
-     var isEditingDoc = false;
-
-    function uploadRevisedDocForm(aid,attachmentName,description, version){
-        <% if(ngp.isFrozen()){ %>
-            return openFreezeMessagePopup();
-        <% } else if ("on".equals(attachment.getReadOnlyType())) { %>
-            alert('You can not edit this document. This is read only type');
-        <% } else { %>
-            window.location ="<%=ar.retPath%>t/<%ar.writeHtml(ngp.getSiteKey());%>/<%ar.writeHtml(ngp.getKey());%>/docsRevise.htm?aid="+aid;
-        <% } %>
-    }
-
-    function maintainDoc(aid,pageId,checkBoxId){
-        var transaction = YAHOO.util.Connect.asyncRequest('POST', "<%=ar.baseURL%>t/setEditMode.ajax?pageId="+pageId+"&aid="+aid+"&editing=true", getResponse);
-    }
-
-    function stopMaintaining(aid,pageId){
-        var transaction = YAHOO.util.Connect.asyncRequest('POST', "<%=ar.baseURL%>t/setEditMode.ajax?pageId="+pageId+"&aid="+aid+"&editing=false", getResponse);
-    }
-
-    var getResponse ={
-        success: function(o) {
-            var respText = o.responseText;
-            var json = eval('(' + respText+')');
-            if(json.msgType == "success"){
-                window.location.reload();
-            }else {
-                showErrorMessage("Unable to Perform Action", json.msg , json.comments);
-            }
-        },
-        failure: function(o) {
-            alert("Error in setEditMode.ajax: "+o.responseText);
-        }
-    }
-
-
-
-</script>
-
-
-
 
 </div>

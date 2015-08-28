@@ -28,7 +28,7 @@ var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.labelList = <%labelList.write(out,2,4);%>;
     $scope.newLabel = {name: "", color: ""};
-    $scope.colors = ["pink","yellow","white","lightgreen","magenta","bisque","red","cyan"];
+    $scope.colors = ["Pink","yellow","CornSilk","PaleGreen","Orange","Bisque","Coral","LightSteelBlue","Aqua","Thistle","Gold"];
 
     $scope.showInput = false;
     $scope.showError = false;
