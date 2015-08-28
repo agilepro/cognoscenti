@@ -1,28 +1,19 @@
 [
   {
     "level":1,
-    "name": "Home",
-    "href": "frontPage.htm",
-    "ref": "ddsubmenu6",
-    "subs": [
-        {
-          "name": "Front Page",
-          "href": "frontPage.htm"
-        },
-        {
-          "name": "Activity Stream",
-          "href": "history.htm"
-        }
-    ]
+    "name": "Project Stream",
+    "href": "history.htm",
+    "ref": "",
+    "subs": []
   },
   {
     "level":1,
-    "name": "Topics",
+    "name": "Project Notes",
     "href": "notesList.htm",
     "ref": "ddsubmenu1",
     "subs":   [
         {
-          "name": "Topic List",
+          "name": "List Notes",
           "href": "notesList.htm"
         },
         {
@@ -30,7 +21,7 @@
           "href": "automaticLinks.htm"
         },
         {
-          "name": "Search All Topics",
+          "name": "Search All Notes",
           "href": "searchAllNotes.htm"
         },
         {
@@ -41,22 +32,30 @@
   },
   {
     "level":1,
-    "name": "Action Items",
+    "name": "Project Goals",
     "href": "goalList.htm",
     "ref": "ddsubmenu2",
     "subs": [
         {
-          "name": "Action Item List",
+          "name": "List Goals",
           "href": "goalList.htm"
-        }
-      ]
-  },
-  {
-    "level":1,
-    "name": "Meetings",
-    "href": "meetingList.htm",
-    "ref": "ddsubmenu3",
-    "subs": [
+        },
+        {
+          "name": "OLD Active Goals",
+          "href": "projectActiveTasks.htm"
+        },
+        {
+          "name": "OLD Completed Goals",
+          "href": "projectCompletedTasks.htm"
+        },
+        {
+          "name": "OLD Future Goals",
+          "href": "projectFutureTasks.htm"
+        },
+        {
+          "name": "OLD All Goals",
+          "href": "projectAllTasks.htm"
+        },
         {
           "name": "Meeting List",
           "href": "meetingList.htm"
@@ -69,12 +68,12 @@
   },
   {
     "level":1,
-    "name": "Documents",
+    "name": "Project Documents",
     "href": "listAttachments.htm",
-    "ref": "ddsubmenu4",
+    "ref": "ddsubmenu3",
     "subs":   [
         {
-          "name": "Document List",
+          "name": "List Documents",
           "href": "listAttachments.htm"
         },
         {
@@ -105,9 +104,9 @@
   },
   {
     "level":1,
-    "name": "Settings",
+    "name": "Project Settings",
     "href": "personal.htm",
-    "ref": "ddsubmenu5",
+    "ref": "ddsubmenu4",
     "subs":   [
         {
           "name": "Personal",
