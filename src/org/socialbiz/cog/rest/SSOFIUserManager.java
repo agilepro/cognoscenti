@@ -25,9 +25,12 @@ import java.io.File;
 import javax.servlet.http.HttpSession;
 
 import org.socialbiz.cog.Cognoscenti;
+import org.socialbiz.cog.ConfigFile;
 import org.socialbiz.cog.NGSession;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
+import org.workcast.json.JSONArray;
+import org.workcast.json.JSONObject;
 import org.workcast.ssoficlient.interfaces.GlobalId;
 import org.workcast.ssoficlient.service.LoginServlet;
 import org.workcast.ssoficlient.service.SingleTenantManager;
@@ -169,11 +172,41 @@ public class  SSOFIUserManager implements org.workcast.ssoficlient.interfaces.Us
     }
 
     public static void initSSOFI(String baseURL, Cognoscenti cog) throws Exception {
-        File configFile = cog.getConfig().getFile("ssofi.config");
-        if (!configFile.exists()) {
-            throw new Exception("The login configuration file is missing: "+configFile);
+        ConfigFile theConfig = cog.getConfig();
+        String identityProvider = theConfig.getProperty("identityProvider");
+
+        //This used to have a separate config file, but instead here we generate a
+        //configuration structure.  The only thing we need is the identityProvider
+        //(to login to) and the base URL (to return to).  When you have only one
+        //identity providers, the SSOFI client does not stop to ask which provider
+        //and you never see it -- except in cases of exception.
+
+        JSONObject option = new JSONObject();
+        option.put("img", "email.gif");
+        option.put("name", "Login with identity provider");
+        option.put("type", "big");
+        option.put("url", identityProvider);
+
+        JSONArray options = new JSONArray();
+        options.put(option);
+
+        JSONObject tenant = new JSONObject();
+        tenant.put("id", "only_tenant");
+        tenant.put("options", options);
+
+        JSONArray tenants = new JSONArray();
+        tenants.put(tenant);
+
+        JSONObject configInfo = new JSONObject();
+        configInfo.put("ApplicationHomePage", baseURL);
+        configInfo.put("ApplicationName", "Cognoscenti");
+        if (baseURL.endsWith("/")) {
+            baseURL = baseURL.substring(0, baseURL.length()-1);
         }
-        LoginServlet.initialize(new SingleTenantManager(new SSOFIUserManager(cog)), configFile);
+        configInfo.put("BaseURL", baseURL);
+        configInfo.put("tenants", tenants);
+
+        LoginServlet.initialize(new SingleTenantManager(new SSOFIUserManager(cog)), configInfo);
     }
 
     public boolean canCreateUser() {

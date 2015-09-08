@@ -87,6 +87,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.meeting.startTime = $scope.meetingTime.getTime();
         $scope.meeting.state = 1;
         var postdata = angular.toJson($scope.meeting);
+        alert(postdata);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
@@ -97,9 +98,37 @@ app.controller('myCtrl', function($scope, $http) {
         });
     };
 
-
-
+    $scope.trimDesc = function(item) {
+        return GetFirstHundredNoHtml(item.desc);
+        //return item.desc;
+    }
 });
+
+function GetFirstHundredNoHtml(input) {
+     var limit = 100;
+     var inTag = false;
+     var res = "";
+     for (var i=0; i<input.length && limit>0; i++) {
+         var ch = input.charAt(i);
+         if (inTag) {
+             if ('>' == ch) {
+                 inTag=false;
+             }
+             //ignore all other characters while in the tag
+         }
+         else {
+             if ('<' == ch) {
+                 inTag=true;
+             }
+             else {
+                 res = res + ch;
+                 limit--;
+             }
+         }
+     }
+     return res;
+ }
+
 </script>
 
 
@@ -115,6 +144,16 @@ app.controller('myCtrl', function($scope, $http) {
     <div id="NewMeeting">
         <div class="generalSettings">
             <table>
+                <tr id="trspath">
+                    <td class="gridTableColummHeader">Type:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2"><select ng-model="meeting.meetingType" class="form-control blue" />
+                        <option value="1">Circle Meeting</option>
+                        <option value="2">Operational Meeting</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr><td style="height:30px"></td></tr>
                 <tr id="trspath">
                     <td class="gridTableColummHeader">Name:</td>
                     <td style="width:20px;"></td>
@@ -177,7 +216,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <tr id="trspath">
                     <td class="gridTableColummHeader">Duration:</td>
                     <td style="width:20px;"></td>
-                    <td colspan="2"><input type="text" ng-model="meeting.duration" class="form-control blue" size="40" /></td>
+                    <td colspan="2"><input type="text" ng-model="meeting.duration" class="form-control blue" size="10" /></td>
                 </tr>
                 <tr><td style="height:30px"></td></tr>
                 <tr>
@@ -208,7 +247,7 @@ app.controller('myCtrl', function($scope, $http) {
             </td>
             <td><b><a href="agendaItem.htm?id={{meeting.id}}&aid={{rec.id}}">{{rec.subject}}</a></b>
                 </td>
-            <td style="line-height: 1.3;">{{rec.desc}}</td>
+            <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>
             <td>{{rec.duration}}</td>
         </tr>
     </table>

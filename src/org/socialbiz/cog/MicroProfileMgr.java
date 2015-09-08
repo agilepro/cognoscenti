@@ -36,12 +36,29 @@ public class MicroProfileMgr {
     private static DOMFile  profileFile;
     private static Vector<AddressListEntry> allProfileIds = new Vector<AddressListEntry>();
 
-    public synchronized static void loadMicroProfilesInMemory() throws Exception
-    {
-        File theFile = NGPage.getPathInDataFolder("microprofiles.profile");
+    public synchronized static void loadMicroProfilesInMemory(Cognoscenti cog) throws Exception {
+        ConfigFile config = cog.getConfig();
+        File userFolder = config.getUserFolderOrFail();
+
+        //this is in {userFolder}/microprofiles.profile
+        File theFile = new File(userFolder, "microprofiles.profile");
+
+        //check to see if it exists
+        if (!theFile.exists()) {
+            //this used to be in {dataFolder}/microprofiles.profile,  if it is there, then
+            //move it to the new location as an 'upgrade'
+            File dataFolder = config.getDataFolderOrFail();
+            if (dataFolder.exists()) {
+                File theOldFile = new File(dataFolder,"microprofiles.profile");
+                if (theOldFile.exists()) {
+                    UtilityMethods.copyFileContents(theOldFile,theFile);
+                    theOldFile.delete();
+                }
+            }
+        }
+
         Document newDoc = DOMFile.readOrCreateFile(theFile, "micro-profiles");
         profileFile = new DOMFile(theFile, newDoc);
-
         refreshMicroProfilesHashTable();
     }
 
@@ -73,7 +90,7 @@ public class MicroProfileMgr {
         Vector<MicroProfileRecord> vc = profileFile.getChildren("microprofile", MicroProfileRecord.class);
         return vc;
     }
-    
+
     /**
      * Theoretically gets a list of all the email addresses that the system knows about,
      * some with names, and others without.

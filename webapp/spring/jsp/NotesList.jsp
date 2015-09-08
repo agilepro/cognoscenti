@@ -242,7 +242,7 @@ app.controller('myCtrl', function($scope, $http) {
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="showFilter=true"> Show Filter</a>
               </li>
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="editNote.htm?public=true"> Create Note</a>
+              <li role="presentation"><a role="menuitem" tabindex="-1" href="editNote.htm?public=true"> Create New Topic </a>
               </li>
               <li role="presentation"><a role="menuitem" tabindex="-1" href="sendNote.htm">
                   <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> Send Email</a>

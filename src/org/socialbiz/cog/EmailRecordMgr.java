@@ -22,12 +22,14 @@ package org.socialbiz.cog;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
 import org.w3c.dom.Document;
 
 public class EmailRecordMgr {
@@ -35,9 +37,29 @@ public class EmailRecordMgr {
     private static DOMFile  emailRecordFile;
     private static Hashtable<String, EmailRecord> emailRecordsTable = new Hashtable<String, EmailRecord>();
 
-    public synchronized static void initializeEmailRecordMgr() throws Exception
+    public synchronized static void initializeEmailRecordMgr(Cognoscenti cog) throws Exception
     {
-        File theFile = NGPage.getPathInDataFolder("email_records.record");
+        ConfigFile config = cog.getConfig();
+        File userFolder = config.getUserFolderOrFail();
+
+        //this is in {userFolder}/email_records.record
+        File theFile = new File(userFolder, "email_records.record");
+
+        //check to see if it exists
+        if (!theFile.exists()) {
+            //this used to be in {dataFolder}/email_records.record,  if it is there, then
+            //move it to the new location as an 'upgrade'
+            //TODO: get rid of this code when no longer needed
+            //this change made Aug 2015, so a few months later should be OK.
+            File dataFolder = config.getDataFolderOrFail();
+            if (dataFolder.exists()) {
+                File theOldFile = new File(dataFolder,"email_records.record");
+                if (theOldFile.exists()) {
+                    UtilityMethods.copyFileContents(theOldFile,theFile);
+                    theOldFile.delete();
+                }
+            }
+        }
 
         Document newDoc = DOMFile.readOrCreateFile(theFile, "email_records");
         emailRecordFile = new DOMFile(theFile, newDoc);

@@ -26,7 +26,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Properties;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +37,6 @@ import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.UtilityMethods;
-import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.streams.HTMLWriter;
@@ -63,7 +61,8 @@ public class RssServlet extends javax.servlet.http.HttpServlet
     {
         OutputStream out = null;
         try {
-            initNGPageIndex(req);
+            Cognoscenti cog = Cognoscenti.getInstance(req);
+            cog.assertInitialized();
 
             String requrl = req.getRequestURL().toString();
             out = resp.getOutputStream();
@@ -81,7 +80,6 @@ public class RssServlet extends javax.servlet.http.HttpServlet
                 status = RssServlet.STATUS_ALL;
             }
 
-            Cognoscenti cog = Cognoscenti.getInstance(req);
             TaskHelper th = new TaskHelper(userid, serverURL);
             th.scanAllTask(cog);
 
@@ -219,16 +217,6 @@ public class RssServlet extends javax.servlet.http.HttpServlet
             }
         }
         return urlFragment;
-    }
-
-    private void initNGPageIndex(HttpServletRequest req) throws Exception {
-        Properties props = Cognoscenti.getInstance(req).getConfig().getConfigProperties();
-        String dataFolder = props.getProperty("dataFolder");
-        if (dataFolder == null) {
-            throw new NGException("nugen.exception.system.configured.incorrectly",
-                    new Object[] { "dataFolder" });
-        }
-        Cognoscenti.getInstance(req).assertInitialized();
     }
 
     private void handleException(HttpServletResponse resp, Exception e)

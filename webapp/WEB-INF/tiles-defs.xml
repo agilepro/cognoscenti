@@ -505,9 +505,9 @@
         <put-attribute name="body" value="/spring/jsp/viewReminder.jsp" />
     </definition>
 
-    <definition name="notification" extends="slimLayout">
+    <definition name="NotificationSettings" extends="slimLayout">
         <put-attribute name="title" value="Notification Settings" />
-        <put-attribute name="body" value="/spring/jsp/notification.jsp" />
+        <put-attribute name="body" value="/spring/jsp/NotificationSettings.jsp" />
     </definition>
 
     <definition name="ProjectActiveTasks" extends="baseLayout">

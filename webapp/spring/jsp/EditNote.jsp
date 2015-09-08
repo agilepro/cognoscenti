@@ -229,7 +229,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <button ng-click="saveContents()" class ="btn btn-primary staticbutton" ng-hide="isCreate">Save</button>
             </div>
             <div style="margin:10px;">
-                <input ng-model="noteInfo.subject" class="form-control" style="width:450px;" placeholder="Enter a name for the note here">
+                <input ng-model="noteInfo.subject" class="form-control" style="width:450px;" placeholder="Enter a name for the topic here">
             </div>
 
             <div text-angular-toolbar name="statictoolbar" class="statictoolbar"

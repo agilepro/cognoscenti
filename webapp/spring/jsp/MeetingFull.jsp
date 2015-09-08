@@ -261,6 +261,15 @@ app.controller('myCtrl', function($scope, $http) {
         }
         return "Completed";
     };
+    $scope.itemStateName = function(item) {
+        if (item.status<=1) {
+            return "Good Shape";
+        }
+        if (item.status==2) {
+            return "Warnings";
+        }
+        return "Trouble";
+    };
 
     $scope.meetingStateStyle = function(val) {
         if (val<=1) {
@@ -274,9 +283,26 @@ app.controller('myCtrl', function($scope, $http) {
         }
         return "Unknown";
     }
+    $scope.itemStateStyle = function(item) {
+        if (item.status<=1) {
+            return "background-color:green";
+        }
+        if (item.status==2) {
+            return "background-color:yellow";
+        }
+        if (item.status>2) {
+            return "background-color:red";
+        }
+        return "background-color:lavender";
+    }
+
 
     $scope.changeMeetingState = function(newState) {
         $scope.meeting.state = newState;
+        $scope.saveMeeting();
+    };
+    $scope.changeItemState = function(item, newState) {
+        item.status = newState;
         $scope.saveMeeting();
     };
     $scope.saveMeeting = function() {
@@ -317,6 +343,7 @@ app.controller('myCtrl', function($scope, $http) {
             postURL = "agendaAdd.json?id="+$scope.meeting.id;
         }
         var postdata = angular.toJson(readyToSave);
+        alert(postdata);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
@@ -614,6 +641,8 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
+            <span ng-show="meeting.meetingType==1">Circle</span>
+            <span ng-show="meeting.meetingType==2">Operational</span>
             Meeting: <a href="meetingFull.htm?id={{meeting.id}}">{{meeting.name}}</a>
             @ {{meeting.startTime|date: "h:mma 'on' dd-MMM-yyyy"}}
         </div>
@@ -636,6 +665,8 @@ app.controller('myCtrl', function($scope, $http) {
               <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"  target="_blank"
                   href="<%=ar.retPath%>t/editNote.htm?pid=<%ar.writeURLData(pageId);%>&nid={{meeting.minutesLocalId}}">Edit Minutes</a></li>
               <li role="presentation" class="divider"></li>
+              <li role="presentation"><a role="menuitem" tabindex="-1"
+                  href="cloneMeeting.htm?id={{meeting.id}}">Clone Meeting</a></li>
               <li role="presentation"><a role="menuitem"
                   href="meetingList.htm">List All Meetings</a></li>
             </ul>
@@ -798,7 +829,23 @@ app.controller('myCtrl', function($scope, $http) {
             </span>
             <p><i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i><span ng-repeat="pres in getPresenters(item)">, {{pres.name}}</span>
             </p>
+            <div ng-show="meeting.meetingType==2">
+                <div class="btn" style="background-color:yellow;width:50px;">{{item.status}}</div>
+            </div>
           </div>
+            <span class="dropdown" ng-show="meeting.meetingType==2">
+                <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{itemStateStyle(item)}}">
+                State: {{itemStateName(item)}} <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation"><a role="menuitem"
+                      href="#"  ng-click="changeItemState(item, 1)">Good Shape</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      href="#"  ng-click="changeItemState(item, 2)">Warning</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      href="#"  ng-click="changeItemState(item, 3)">Trouble</a></li>
+                </ul>
+            </span>
+
           <div ng-show="isEditing(2,item.id)" class="well">
             <div class="form-inline form-group">
               Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"/>

@@ -510,8 +510,12 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
             //send all the info back for a reasonable response
             responseOK.put("doc",  att.getJSON4Doc(resDec.project, ar, urlRoot, resDec.lic));
+
+            //TODO: determine how to tell if the source was using the web UI or actually from
+            //a downstream synchronization.  Commenting out for now since it is inaccurate.
             HistoryRecord.createAttHistoryRecord(resDec.project, att, historyEventType, ar,
-                    "From downstream project by synchronization license "+resDec.licenseId);
+                      "");
+//                    "From downstream project by synchronization license "+resDec.licenseId);
             resDec.project.saveFile(ar, "Document synchronized from downstream linked project.");
             return responseOK;
         }

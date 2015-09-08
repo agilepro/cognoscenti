@@ -17,8 +17,6 @@
 
     AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
 
-    String dataFolder = ar.getSystemProperty("dataFolder");
-
     String action = request.getParameter("action");
 
 %>

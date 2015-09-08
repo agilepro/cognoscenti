@@ -14,7 +14,6 @@
 %><%AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Can not run test page.");
 
-    String attachBase = ar.getSystemProperty("attachFolder");
     String dataFolder = ar.getSystemProperty("dataFolder");%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>

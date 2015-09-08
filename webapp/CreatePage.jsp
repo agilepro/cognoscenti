@@ -41,8 +41,7 @@
         response.sendRedirect(ar.getResourceURL(ngp,""));
     }
 
-    String dataFolder = ar.getSystemProperty("dataFolder");
-    File root = ar.getCogInstance().getConfig().getFolderOrFail(dataFolder);
+    File root = ar.getCogInstance().getConfig().getDataFolderOrFail()
     File[] children = root.listFiles();
 
     pageTitle = "Create New Page";

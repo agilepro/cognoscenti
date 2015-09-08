@@ -30,13 +30,13 @@ public class SendEmailTimerTask extends TimerTask {
 
     public static Exception threadLastCheckException = null;
 
-    private SendEmailTimerTask() throws Exception{
-        EmailRecordMgr.initializeEmailRecordMgr();
+    private SendEmailTimerTask(Cognoscenti cog) throws Exception{
+        EmailRecordMgr.initializeEmailRecordMgr(cog);
     }
 
-    public static void initEmailSender(Timer timer) throws Exception
+    public static void initEmailSender(Timer timer, Cognoscenti cog) throws Exception
     {
-        SendEmailTimerTask sendEmailObj = new SendEmailTimerTask();
+        SendEmailTimerTask sendEmailObj = new SendEmailTimerTask(cog);
         timer.scheduleAtFixedRate(sendEmailObj, 60000, EVERY_TWO_HOURS);
     }
 

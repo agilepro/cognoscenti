@@ -9,6 +9,11 @@ import org.workcast.json.JSONObject;
 
 public class AgendaItem extends DOMFace {
 
+    public static final int STATUS_GOOD = 1;
+    public static final int STATUS_MID  = 2;
+    public static final int STATUS_POOR = 3;
+
+
     public AgendaItem(Document doc, Element ele, DOMFace p) {
         super(doc, ele, p);
         //check if the lock needs to be cleared after being idle
@@ -60,6 +65,13 @@ public class AgendaItem extends DOMFace {
     }
     public void setNotes(String newVal) throws Exception {
         setScalar("notes", newVal);
+    }
+
+    public int getStatus() {
+        return safeConvertInt(getAttribute("status"));
+    }
+    public void setStatus(int newVal) throws Exception {
+        setAttribute("status", Integer.toString(newVal));
     }
 
 
@@ -154,6 +166,7 @@ public class AgendaItem extends DOMFace {
         aiInfo.put("id",        getId());
         aiInfo.put("subject",   getSubject());
         aiInfo.put("duration",  getDuration());
+        aiInfo.put("status",    getStatus());
         String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getDesc());
         aiInfo.put("desc",      htmlVal);
         aiInfo.put("position",  getPosition());
@@ -183,12 +196,18 @@ public class AgendaItem extends DOMFace {
         if (input.has("duration")) {
             setDuration(input.getLong("duration"));
         }
+        if (input.has("status")) {
+            setDuration(input.getLong("status"));
+        }
         if (input.has("desc")) {
             String html = input.getString("desc");
             setDesc(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
         }
         if (input.has("position")) {
             setPosition(input.getInt("position"));
+        }
+        if (input.has("status")) {
+            setStatus(input.getInt("status"));
         }
         if (input.has("notes")) {
             String html = input.getString("notes");

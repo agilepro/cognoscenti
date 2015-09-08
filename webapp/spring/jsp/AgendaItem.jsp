@@ -75,9 +75,15 @@
 */
 %>
 
+<link href="<%=ar.retPath%>jscript/textAngular.css" rel="stylesheet" />
+<script src="<%=ar.retPath%>jscript/textAngular-rangy.min.js"></script>
+<script src="<%=ar.retPath%>jscript/textAngular-sanitize.min.js"></script>
+<script src="<%=ar.retPath%>jscript/textAngular.min.js"></script>
+
+
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.meeting    = <%meetingInfo.write(out,2,4);%>;
     $scope.isNew      = <%=isNew%>;
@@ -166,49 +172,6 @@ app.controller('myCtrl', function($scope, $http) {
         });
     };
 
-    $scope.createActionItem = function() {
-        var postURL = "createActionItem.json?id="+$scope.meeting.id+"&aid="+$scope.agendaItem.id;
-        var newSynop = $scope.newGoal.synopsis;
-        if (newSynop == null || newSynop.length==0) {
-            alert("must enter a description of the action item");
-            return;
-        }
-        for(var i=0; i<$scope.goalList.length; i++) {
-            var oneItem = $scope.goalList[i];
-            if (oneItem.synposis == newSynop) {
-                $scope.agendaItem.actionItems.push(oneItem.universalid);
-                $scope.newGoal = {};
-                $scope.calcAllActions();
-                return;
-            }
-        }
-
-        $scope.newGoal.state=2;
-        $scope.newGoal.assignTo = [];
-        var player = $scope.newAssignee;
-        if (typeof player == "string") {
-            var pos = player.lastIndexOf(" ");
-            var name = player.substring(0,pos).trim();
-            var uid = player.substring(pos).trim();
-            player = {name: name, uid: uid};
-        }
-
-        $scope.newGoal.assignTo.push(player);
-
-        var postdata = angular.toJson($scope.newGoal);
-        alert(postdata);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            $scope.goalList.push(data);
-            $scope.agendaItem.actionItems.push(data.universalid);
-            $scope.newGoal = {};
-            $scope.calcAllActions();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
 
     $scope.meetingStateName = function() {
         if ($scope.meeting.state<=1) {
@@ -237,11 +200,6 @@ app.controller('myCtrl', function($scope, $http) {
             res.push($scope.findDoc(docid));
         });
         return res;
-    }
-    $scope.addDocument = function() {
-        $scope.agendaItem.docList.push($scope.newAttachment.universalid);
-        $scope.newAttachment = undefined;
-        $scope.saveItem();
     }
     $scope.iconName = function(rec) {
         var type = rec.attType;
@@ -346,7 +304,11 @@ app.controller('myCtrl', function($scope, $http) {
                     <td class="gridTableColummHeader">Description:</td>
                     <td style="width:20px;"></td>
                     <td colspan="2" ng-show="meeting.state<=1"><textarea ng-model="agendaItem.desc"  class="form-control" style="width:450px;"></textarea></td>
-                    <td colspan="2" ng-show="meeting.state>=2">{{agendaItem.desc}}</td>
+                    <td colspan="2" ng-show="meeting.state>=2">
+                       <div class="leafContent">
+                         <div ng-bind-html="agendaItem.desc"></div>
+                       </div>
+                    </td>
                 </tr>
                 <tr><td style="height:10px"></td></tr>
                 <tr>
@@ -362,16 +324,6 @@ app.controller('myCtrl', function($scope, $http) {
                         <span class="gridTableColummHeader"> &nbsp; Position: </span>
                         {{agendaItem.position}}
                     </td>
-                </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr id="trspath" ng-show="meeting.state>=2">
-                    <td class="gridTableColummHeader">Notes:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2" ng-show="meeting.state==2">
-                        <textarea ng-model="agendaItem.notes" class="form-control" style="width:450px;height:200px"
-                         placeholder="Type notes here while running the meeting"></textarea>
-                    </td>
-                    <td colspan="2" ng-show="meeting.state>2">{{agendaItem.notes}}</td>
                 </tr>
                 <tr><td style="height:10px"></td></tr>
                 <tr id="trspath" ng-show="meeting.state<=2">
@@ -402,43 +354,7 @@ app.controller('myCtrl', function($scope, $http) {
                 </tr>
             </table>
         </div>
-        <div class="generalSettings"  ng-show="meeting.state==2">
-            <table>
-               <tr>
-                    <td class="gridTableColummHeader">Action:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
-                    </td>
-               </tr>
-               <tr><td style="height:10px"></td></tr>
-               <tr>
-                    <td class="gridTableColummHeader">Assignee:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <input type="text" ng-model="newAssignee" class="form-control" placeholder="Who should do it"
-                         typeahead="person as person.name for person in getPeople($viewValue) | limitTo:12">
-                    </td>
-                </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader">Description:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <textarea type="text" ng-model="newGoal.description" class="form-control"
-                            style="width:450px;height:100px" placeholder="Details"></textarea>
-                    </td>
-                </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader"></td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <button class="btn btn-primary" ng-click="createActionItem()">Create New Action Item</button>
-                    </td>
-                </tr>
-            </table>
-        </div>
+
     <% } %>
 
         <div class="generalSettings">
@@ -462,28 +378,6 @@ app.controller('myCtrl', function($scope, $http) {
             </table>
         </div>
 
-        <div class="generalSettings" ng-show="meeting.state<=2">
-            <table>
-               <tr>
-                    <td class="gridTableColummHeader">Attachment:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <input type="text" ng-model="newAttachment" class="form-control" placeholder="Type Document Name"
-                        typeahead="attach as attach.name for attach in filterAttachments($viewValue)"
-                        style="width:450px;">
-                    </td>
-
-               </tr>
-               <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader"></td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <button class="btn btn-primary" ng-click="addDocument()">Attach Document</button>
-                    </td>
-                </tr>
-            </table>
-        </div>
 
     </div>
 

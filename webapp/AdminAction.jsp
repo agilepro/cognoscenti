@@ -28,8 +28,6 @@
     String go = ar.reqParam("go");
     String action = ar.reqParam("action");
 
-    String dataFolder = ar.getSystemProperty("dataFolder");
-
     if (action.equals("Garbage Collect Pages")) {
         deleteMarkedPages(ar);
         action = "Reinitialize Index";

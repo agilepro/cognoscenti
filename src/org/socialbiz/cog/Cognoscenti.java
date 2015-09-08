@@ -2,6 +2,7 @@ package org.socialbiz.cog;
 
 import java.io.File;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Timer;
 import java.util.Vector;
 
@@ -33,6 +34,7 @@ public class Cognoscenti {
     public Exception lastFailureMsg = null;
     public boolean isInitialized = false;
     public boolean initializingNow = false;
+    //TODO: get rid of this static variable
     public static String serverId = "XXX";
 
     //hold on to the servlet context in case you need it later
@@ -40,6 +42,7 @@ public class Cognoscenti {
     private File rootFolder;
 
     //managing the known containers
+    //TODO: get rid of this static variable
     public static Vector<NGPageIndex> allContainers;
     public static Hashtable<String, NGPageIndex> keyToContainer;
     public static Hashtable<String, NGPageIndex> upstreamToContainer;
@@ -48,7 +51,7 @@ public class Cognoscenti {
     // list of keys, but there can be extras in this list without problem
     public Vector<String> projectsWithEmailToSend = new Vector<String>();
 
-    //TODO: get rid of this
+    //TODO: get rid of this static variable
     private static Cognoscenti singleton;
 
     private Cognoscenti(ServletContext sc) {
@@ -194,15 +197,14 @@ public class Cognoscenti {
 
             AuthDummy.initializeDummyRequest(this);
             UserManager.loadUpUserProfilesInMemory(this);
-            String attachFolder = theConfig.getProperty("attachFolder");
-            File attachFolderFile = new File(attachFolder);
+            File attachFolderFile = theConfig.getAttachFolderOrFail();
             AttachmentVersionSimple.attachmentFolder = attachFolderFile;
             NGPageIndex.initAllStaticVars();
             initIndexOfContainers();
-            MicroProfileMgr.loadMicroProfilesInMemory();
+            MicroProfileMgr.loadMicroProfilesInMemory(this);
             if (backgroundTimer!=null) {
                 EmailSender.initSender(backgroundTimer, this);
-                SendEmailTimerTask.initEmailSender(backgroundTimer);
+                SendEmailTimerTask.initEmailSender(backgroundTimer, this);
                 EmailListener.initListener(backgroundTimer);
             }
             SiteReqFile.initSiteList(this);
@@ -478,7 +480,7 @@ public class Cognoscenti {
     }
 
     private synchronized void scanAllPages() throws Exception {
-        System.out.println("Beginning SCAN for all pages in system.");
+        System.out.println("Beginning SCAN for all pages in system");
         Vector<File> allPageFiles = new Vector<File>();
         Vector<File> allProjectFiles = new Vector<File>();
         NGTerm.initialize();
@@ -486,6 +488,7 @@ public class Cognoscenti {
         upstreamToContainer = new Hashtable<String, NGPageIndex>();
         allContainers = new Vector<NGPageIndex>();
 
+/*
         String rootDirectory = theConfig.getProperty("dataFolder");
         if (rootDirectory != null && rootDirectory.length() > 0) {
             File root = theConfig.getDataFolderOrFail();
@@ -505,15 +508,13 @@ public class Cognoscenti {
             System.out
                     .println("Skipped scanning the data folder because no setting for 'datafolder'");
         }
+*/
 
-        String[] libFolders = theConfig.getArrayProperty("libFolder");
-        Vector<File> allSiteFiles = new Vector<File>();
+        //TODO: eliminate this, put the statics into this object!
+        NGBook.initStaticVars();
 
-        for (String libFolder : libFolders) {
-            File libDirectory = new File(libFolder);
-            if (!libDirectory.exists()) {
-                throw new Exception("Configuration error: LibFolder does not exist: " + libFolder);
-            }
+        List<File> allSiteFiles = new Vector<File>();
+        for (File libDirectory : theConfig.getSiteFolders()) {
             seekProjectsAndSites(libDirectory, allProjectFiles, allSiteFiles);
         }
 
@@ -559,7 +560,7 @@ public class Cognoscenti {
         dummy.logException("Initialization Loop Continuing After Failure", wrapper);
     }
 
-    private void seekProjectsAndSites(File folder, Vector<File> pjs, Vector<File> acts)
+    private void seekProjectsAndSites(File folder, List<File> pjs, List<File> acts)
             throws Exception {
 
         // only use the first ".sp" file or ".site" file in a given folder

@@ -23,7 +23,9 @@ package org.socialbiz.cog;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.List;
 import java.util.Properties;
+import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -243,6 +245,7 @@ public class ConfigFile {
         getAttachFolderOrFail();
         getDataFolderOrFail();
         getUserFolderOrFail();
+        getSiteFolders();
 
         String baseURL = props.getProperty("baseURL");
         if (baseURL==null) {
@@ -257,26 +260,53 @@ public class ConfigFile {
      * configured.
      */
     public File getUserFolderOrFail() throws Exception {
-        return getGenericFolderOrFail("userFolder");
+        return getGenericFolderOrFail("userFolder", "user");
     }
     public File getDataFolderOrFail() throws Exception {
-        return getGenericFolderOrFail("dataFolder");
+        return getGenericFolderOrFail("dataFolder", "olddata");
     }
     public File getAttachFolderOrFail() throws Exception {
-        return getGenericFolderOrFail("attachFolder");
+        return getGenericFolderOrFail("attachFolder", "oldattach");
+    }
+    public List<File> getSiteFolders() throws Exception {
+        String[] libFolders = getArrayProperty("libFolder");
+        Vector<File> allSiteFiles = new Vector<File>();
+        if (libFolders==null || libFolders.length==0) {
+            File parentPath = getParentFolderOrFail();
+            File newFolder = new File(parentPath, "sites");
+            if (!newFolder.exists()) {
+                newFolder.mkdirs();
+            }
+            allSiteFiles.add(newFolder);
+            return allSiteFiles;
+        }
+
+        for (String libFolder : libFolders) {
+            File libDirectory = new File(libFolder);
+            if (!libDirectory.exists()) {
+                libDirectory.mkdirs();
+            }
+            allSiteFiles.add(libDirectory);
+        }
+        return allSiteFiles;
     }
 
 
-    private File getGenericFolderOrFail(String propertyName) throws Exception {
+    private File getGenericFolderOrFail(String propertyName, String subFolderName) throws Exception {
         String getFolder = props.getProperty(propertyName);
+        File genFolderPath = null;
         if (getFolder == null || getFolder.length()==0) {
-            throw new NGException("nugen.exception.system.configured.incorrectly",
-                    new Object[] { propertyName });
+            File parentPath = getParentFolderOrFail();
+            genFolderPath = new File(parentPath, subFolderName);
         }
-        File genFolderPath = new File(getFolder);
+        else {
+            genFolderPath = new File(getFolder);
+        }
         if (!genFolderPath.exists()) {
-            throw new NGException("nugen.exception.folder.not.found", new Object[] { propertyName,
-                    genFolderPath.getAbsolutePath() });
+            genFolderPath.mkdirs();
+        }
+        if (!genFolderPath.exists()) {
+            throw new Exception("For some reason can not find or create the folder: "+genFolderPath);
         }
         if (!genFolderPath.isDirectory()) {
             throw new NGException("nugen.exception.folder.not.folder", new Object[] { propertyName,
@@ -285,6 +315,23 @@ public class ConfigFile {
         return genFolderPath;
     }
 
+    private File getParentFolderOrFail() throws Exception {
+        String parent = props.getProperty("dataContainer");
+        if (parent==null || parent.length()==0) {
+            //seems like a reasonable default to try out, pretty safe
+            parent="c:/CognoscentiData/";
+        }
+        File parentPath = new File(parent);
+        if (!parentPath.exists()) {
+            //if the data folder does not exist, then go ahead and create it
+            //what would be wrong with that?
+            parentPath.mkdirs();
+        }
+        if (!parentPath.exists()) {
+            throw new Exception("For some reason can not find or create the data container: "+parent);
+        }
+        return parentPath;
+    }
 
     /**
      * Returns a user specified globally unique value, or else a random value if

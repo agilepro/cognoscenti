@@ -1,6 +1,7 @@
 package org.socialbiz.cog;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -12,6 +13,10 @@ import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 public class MeetingRecord extends DOMFace {
+
+    public static final int MEETING_TYPE_CIRCLE = 1;
+    public static final int MEETING_TYPE_OPERATIONAL = 2;
+
 
     public MeetingRecord(Document doc, Element ele, DOMFace p) {
         super(doc, ele, p);
@@ -54,6 +59,13 @@ public class MeetingRecord extends DOMFace {
     }
     public void setDuration(long newVal) throws Exception {
         setAttribute("duration", Long.toString(newVal));
+    }
+
+    public long getMeetingType() {
+        return safeConvertInt(getAttribute("meetingType"));
+    }
+    public void setMeetingType(int newVal) {
+        setAttribute("meetingType", Long.toString(newVal));
     }
 
     public List<AgendaItem> getAgendaItems() throws Exception {
@@ -158,6 +170,7 @@ public class MeetingRecord extends DOMFace {
         meetingInfo.put("state",       getState());
         meetingInfo.put("startTime",   getStartTime());
         meetingInfo.put("duration",    getDuration());
+        meetingInfo.put("meetingType", getMeetingType());
         String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingInfo());
         meetingInfo.put("meetingInfo", htmlVal);
         return meetingInfo;
@@ -204,6 +217,9 @@ public class MeetingRecord extends DOMFace {
         }
         if (input.has("duration")) {
             setDuration(input.getLong("duration"));
+        }
+        if (input.has("meetingType")) {
+            setMeetingType(input.getInt("meetingType"));
         }
         if (input.has("meetingInfo")) {
             String html = input.getString("meetingInfo");
@@ -271,6 +287,7 @@ public class MeetingRecord extends DOMFace {
 
     public String generateWikiRep(AuthRequest ar, NGPage ngp) throws Exception {
         StringBuilder sb = new StringBuilder();
+        Calendar cal = Calendar.getInstance();
 
         sb.append("!!!Meeting: "+getNameAndDate());
 
@@ -278,21 +295,31 @@ public class MeetingRecord extends DOMFace {
 
         sb.append(getMeetingInfo());
 
+        sb.append("\n\n!!!Agenda");
+
+        long itemTime = this.getStartTime();
+
         for (AgendaItem ai : getSortedAgendaItems()) {
-            sb.append("\n\n!!");
+            sb.append("\n\n!");
             sb.append(Integer.toString(ai.getPosition()));
             sb.append(". ");
             sb.append(ai.getSubject());
-            sb.append("\n\n(");
+            cal.setTimeInMillis(itemTime);
+            sb.append("\n\n"+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+            sb.append(" (");
             sb.append(Long.toString(ai.getDuration()));
             sb.append(" minutes)");
+            itemTime = itemTime + (ai.getDuration()*60*1000);
             for (String presenter : ai.getPresenters()) {
                 AddressListEntry ale = new AddressListEntry(presenter);
                 sb.append(", ");
                 sb.append(ale.getName());
             }
+/*
             sb.append("\n\n"+ai.getDesc());
+
             String ainotes = ai.getNotes();
+
             if (ainotes!=null && ainotes.length()>0) {
                 sb.append("\n\n''Notes:''\n\n");
                 sb.append(ainotes);
@@ -319,7 +346,9 @@ public class MeetingRecord extends DOMFace {
                     sb.append("]");
                 }
             }
+        */
         }
+
         return sb.toString();
     }
 

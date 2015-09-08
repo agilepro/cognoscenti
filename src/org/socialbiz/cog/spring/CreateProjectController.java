@@ -31,7 +31,6 @@ import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoricActions;
-import org.socialbiz.cog.IdGenerator;
 import org.socialbiz.cog.LicensedURL;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
@@ -377,7 +376,7 @@ public class CreateProjectController extends BaseController {
 
     ////////////////// HELPER FUNCTIONS /////////////////////////////////
 
-
+/*
     private static String sanitizeHyphenate(String p) throws Exception {
         String plc = p.toLowerCase();
         StringBuffer result = new StringBuffer();
@@ -414,7 +413,7 @@ public class CreateProjectController extends BaseController {
             extp = p + "-" + (++incrementedExtension);
         }
     }
-
+*/
 
     private static NGPage createPage(AuthRequest ar, NGBook site)
             throws Exception {
@@ -428,6 +427,10 @@ public class CreateProjectController extends BaseController {
         return newPage;
     }
 
+/**
+ * The loc parameter is a path to a place where the folder already exists, and
+ * we want to convert an existing folder to a project.
+ */
     private static NGPage createPage(UserProfile uProf, NGBook site, String projectName,
             String loc, String upstream, long nowTime, Cognoscenti cog) throws Exception {
         if (!site.primaryOrSecondaryPermission(uProf)) {
@@ -437,15 +440,19 @@ public class CreateProjectController extends BaseController {
 
         NGPage ngPage = null;
         if (loc==null){
-            String projectFileName = findGoodFileName(projectName);
-            String pageKey = SectionWiki.sanitize(projectFileName);
+            //normal, create a brand new empty project
+            String pageKey = SectionWiki.sanitize(projectName);
+            if (pageKey.length()>20) {
+                pageKey = pageKey.substring(0,20);
+            }
             ngPage = site.createProjectByKey(uProf, pageKey, nowTime, cog);
             String[] nameSet = new String[] { projectName };
             ngPage.setPageNames(nameSet);
         }
         else {
             //in this case, loc is a path from the root of the site
-            //to a folder that the project should be created in.
+            //to a folder that already exists, and which should be
+            //converted to a project.
             File siteRoot = site.getSiteRootFolder();
             if (siteRoot == null) {
                 throw new Exception("Failed to create project at specified site because site does "

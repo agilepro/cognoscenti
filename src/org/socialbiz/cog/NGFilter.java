@@ -31,8 +31,7 @@ import javax.servlet.ServletResponse;
 public class NGFilter implements Filter {
 
     public void destroy() {
-        // TODO Auto-generated method stub
-
+        //nothing to destroy
     }
 
     public void doFilter(ServletRequest request, ServletResponse response,

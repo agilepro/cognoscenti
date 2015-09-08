@@ -60,6 +60,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
+<%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">

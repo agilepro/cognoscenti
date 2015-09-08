@@ -7,14 +7,14 @@
 # Each project is in its own folder.
 # Attachments are stored in the same folder with the project file
 # User can edit the attachment files directly, and re-synch later with project.
-libFolder=c:/cog/sites/
+libFolder=c:/CognoscentiData/sites/
 
 
 # User folder
 # This is the location where the global user files will be stored.
 # Can be any local path, include the complete path to the folder.
 # Make sure that this folder exists before you start.
-userFolder=c:/cog/user/
+userFolder=c:/CognoscentiData/user/
 
 
 # Data Folder
@@ -22,14 +22,14 @@ userFolder=c:/cog/user/
 # folder for storing the data, not needed any more.
 # Can be any local path, include the complete path to the folder.
 # Make sure that this folder exists before you start.
-dataFolder=c:/cog/olddata/
+dataFolder=c:/CognoscentiData/olddata/
 
 # Attachment folder
 # This is not needed on new installation.  Older servers had a 
 # folder for storing the attachments, not needed any more.
 # Can be any local path, include the complete path to the folder.
 # Make sure that this folder exists before you start.
-attachFolder=c:/cog/oldattach/
+attachFolder=c:/CognoscentiData/oldattach/
 
 
 # baseURL

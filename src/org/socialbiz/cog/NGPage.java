@@ -145,17 +145,17 @@ public class NGPage extends ContainerCommon implements NGContainer
         //deprecated sections, check to see if
         //there are any leaflets in there, and move them to the
         //main comments section.
-        migrateSectionToNoteIfExists("Public Comments");
-        migrateSectionToNoteIfExists("See Also");
-        migrateSectionToNoteIfExists("Links");
-        migrateSectionToNoteIfExists("Description");
-        migrateSectionToNoteIfExists("Public Content");
-        migrateSectionToNoteIfExists("Notes");
-        migrateSectionToNoteIfExists("Author Notes");
-        migrateSectionToNoteIfExists("Private");
-        migrateSectionToNoteIfExists("Member Content");
-        migrateSectionToNoteIfExists("Poll");
-        migrateSectionToNoteIfExists("Geospatial");
+        assertNoSectionWithThisName("Public Comments");
+        assertNoSectionWithThisName("See Also");
+        assertNoSectionWithThisName("Links");
+        assertNoSectionWithThisName("Description");
+        assertNoSectionWithThisName("Public Content");
+        assertNoSectionWithThisName("Notes");
+        assertNoSectionWithThisName("Author Notes");
+        assertNoSectionWithThisName("Private");
+        assertNoSectionWithThisName("Member Content");
+        assertNoSectionWithThisName("Poll");
+        assertNoSectionWithThisName("Geospatial");
 
         //migrate the old forms of members and admins roles to the new form
         //the old form was a "userlist" element, with "user" elements below that
@@ -199,11 +199,8 @@ public class NGPage extends ContainerCommon implements NGContainer
         setKey(fileKey);
     }
 
-    private void migrateSectionToNoteIfExists(String name)
-        throws Exception
-    {
-        if (getSection(name)!=null)
-        {
+    private void assertNoSectionWithThisName(String name) throws Exception {
+        if (getSection(name)!=null) {
             //this will automatically convert it to leaflet format
             removeSection(name);
         }
@@ -264,6 +261,7 @@ public class NGPage extends ContainerCommon implements NGContainer
     }
 
 
+    /*
     public static File getPathInDataFolder(String p)
         throws Exception
     {
@@ -292,7 +290,7 @@ public class NGPage extends ContainerCommon implements NGContainer
 
         return new File(fullPath);
     }
-
+*/
 
     /**
      * To an existing project, add all the (1) Goals (2) Roles of an
@@ -332,9 +330,6 @@ public class NGPage extends ContainerCommon implements NGContainer
 
 
     public static NGPage readPageAbsolutePath(File theFile) throws Exception {
-        if (dataPath==null) {
-            throw new NGException("nugen.exception.datapath.not.initialized",null);
-        }
         if (!theFile.exists()) {
             throw new NGException("nugen.exception.file.not.exist", new Object[]{theFile});
         }
@@ -445,7 +440,7 @@ public class NGPage extends ContainerCommon implements NGContainer
         }
     }
 
-    
+
 
     /**
     * This will mark the page as deleted at the time of the request

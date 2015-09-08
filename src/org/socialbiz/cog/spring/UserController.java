@@ -1520,7 +1520,7 @@ public class UserController extends BaseController {
                 }
             }
 
-            ModelAndView modelAndView = createModelAndView(ar, userProfile, "Notification Settings", "notification");
+            ModelAndView modelAndView = createModelAndView(ar, userProfile, "Notification Settings", "NotificationSettings");
             modelAndView.addObject( "messages", context );
             request.setAttribute("tabId", "Settings");
             return modelAndView;

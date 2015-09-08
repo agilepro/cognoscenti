@@ -338,14 +338,14 @@ public class MainTabsViewControler extends BaseController {
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
              NoteRecord note = ngp.getNote(nid);
-             
+
              boolean isCreateComment = noteInfo.has("newComment");
              if (isCreateComment) {
                  JSONObject newComment = noteInfo.getJSONObject("newComment");
                  String comment = newComment.getString("html");
                  comment = GetFirstHundredNoHtml(comment);
                  HistoryRecord.createHistoryRecord(ngp, note.getId(),
-                         HistoryRecord.CONTEXT_TYPE_LEAFLET, 
+                         HistoryRecord.CONTEXT_TYPE_LEAFLET,
                          HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
              }
 
@@ -362,7 +362,7 @@ public class MainTabsViewControler extends BaseController {
              streamException(ee, ar);
          }
      }
-     
+
      /*
       * Pull the first 100 character max from the string, but ignore anything
       * that looks like an HTML tag, and anything inside those tags.
@@ -849,7 +849,7 @@ public class MainTabsViewControler extends BaseController {
               newMeeting.updateFromJSON(meetingInfo, ar);
               newMeeting.createAgendaFromJSON(meetingInfo, ar, ngp);
               newMeeting.setState(1);
-              HistoryRecord.createHistoryRecord(ngp, newMeeting.getId(), 
+              HistoryRecord.createHistoryRecord(ngp, newMeeting.getId(),
                       HistoryRecord.CONTEXT_TYPE_MEETING,
                       HistoryRecord.EVENT_TYPE_CREATED, ar, "");
 
@@ -924,14 +924,14 @@ public class MainTabsViewControler extends BaseController {
                               String comment = newComment.getString("html");
                               comment = GetFirstHundredNoHtml(comment);
                               HistoryRecord.createHistoryRecord(ngp, meeting.getId(),
-                                      HistoryRecord.CONTEXT_TYPE_MEETING, 
+                                      HistoryRecord.CONTEXT_TYPE_MEETING,
                                       HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
                           }
                       }
                   }
               }
-              
-              
+
+
               ngp.saveFile(ar, "Updated Meeting");
               JSONObject repo = meeting.getFullJSON(ar, ngp);
               repo.write(ar.w, 2, 2);
@@ -1075,6 +1075,7 @@ public class MainTabsViewControler extends BaseController {
               streamException(ee, ar);
           }
       }
+
 
 
       @RequestMapping(value = "/{siteId}/{pageId}/agendaItem.htm", method = RequestMethod.GET)
@@ -1231,7 +1232,7 @@ public class MainTabsViewControler extends BaseController {
 
               JSONObject goalInfo = getPostedObject(ar);
               GoalRecord gr = ngp.createGoal();
-              
+
               //create the history record here.
               HistoryRecord.createHistoryRecord(ngp, gr.getId(),
                       HistoryRecord.CONTEXT_TYPE_TASK, HistoryRecord.EVENT_TYPE_CREATED, ar,
@@ -1321,7 +1322,7 @@ public class MainTabsViewControler extends BaseController {
               streamException(ee, ar);
           }
       }
-      
+
 
       @RequestMapping(value = "/{siteId}/{pageId}/cloneMeeting.htm", method = RequestMethod.GET)
       public ModelAndView cloneMeeting(@PathVariable String siteId,@PathVariable String pageId,

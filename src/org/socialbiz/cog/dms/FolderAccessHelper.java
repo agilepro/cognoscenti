@@ -34,7 +34,6 @@ import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AttachmentVersion;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
-import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.UserManager;
@@ -250,6 +249,7 @@ public class FolderAccessHelper {
         child.createFolder();
     }
 
+     /*
     private void createFolders(ResourceEntity folderToCreate)
             throws Exception{
 
@@ -263,6 +263,7 @@ public class FolderAccessHelper {
 
         folderToCreate.createFolder();
     }
+    */
 
     public void attachDocument(ResourceEntity remoteFile,
             NGPage ngp,        String description,   String dName,
@@ -552,21 +553,19 @@ public class FolderAccessHelper {
 
     public boolean copyAttachmentToRemote(NGPage ngp, String aid, ResourceEntity targetFile, boolean isOverwrite) throws Exception {
 
+        throw new Exception("copyAttachmentToRemote needs to be updated to handle attachements in the projects in sites.");
+/*
         ConnectionType cType = targetFile.getConnection();
         if (ngp==null)
         {
             throw new ProgramLogicError("FolderAccessHelper can serve up the attachment only when the project is known.");
         }
-        String attachFolder = ar.getSystemProperty("attachFolder");
-        if (attachFolder == null)
-        {
-            throw new NGException("nugen.exception.system.configured.incorrectly", new Object[]{"attachFolder"});
-        }
+        File attachFolder = ar.getCogInstance().getConfig().getAttachFolderOrFail();
 
         AttachmentRecord att = ngp.findAttachmentByIDOrFail(aid);
         String storageName =  att.getStorageFileName();
 
-        File file= new File(attachFolder+"/"+storageName );
+        File file= new File(attachFolder, storageName );
 
         ResourceEntity parent = targetFile.getParent();
 
@@ -596,6 +595,7 @@ public class FolderAccessHelper {
         ngp.saveFile(ar, "Linked a remote attachments");
 
         return true;
+        */
     }
 
     public Vector<ConnectionSettings> getAvailableConnections(String resourceAddress)throws Exception

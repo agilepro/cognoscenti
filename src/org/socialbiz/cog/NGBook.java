@@ -65,6 +65,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
             File cogFolder = theFile.getParentFile();
             projectFolder = cogFolder.getParentFile();
         }
+        /*
         else if (fileName.endsWith(".book") || fileName.endsWith(".site")) {
             if (!fileIsInDataPath(theFile)) {
                 //projects were being created with xxx.site file created directly
@@ -79,6 +80,10 @@ public class NGBook extends ContainerCommon implements NGContainer {
                 associatedFile = destFile;
                 theFile.delete();
             }
+        }
+        */
+        else {
+            throw new Exception("Unable to open site file with path: "+theFile);
         }
 
         // migration code, make sure there is a stored value for key
@@ -262,6 +267,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
     }
 
 
+    /*
     public void saveSiteAs(String newKey, UserProfile user, String comment) throws Exception {
         try {
             reformatXML();
@@ -282,6 +288,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
                     new Object[] { newKey }, e);
         }
     }
+    */
 
     @Override
     public String getKey() {
@@ -355,6 +362,12 @@ public class NGBook extends ContainerCommon implements NGContainer {
         allSites = null;
     }
 
+    //TODO:get rid of statics, put them into the Cognoscenti object
+    public synchronized static void initStaticVars() {
+        keyToSite = new Hashtable<String, NGBook>();
+        allSites = new Vector<NGBook>();
+    }
+
     /**
      * The method scanAllBooks is used to initialize the indices which are used
      * to quickly find and manipulate books. Book records are read and held in
@@ -396,6 +409,8 @@ public class NGBook extends ContainerCommon implements NGContainer {
      * created cached values in the mean time, and throws it's own self-destruct
      * exception.
      */
+
+    /*
     public synchronized static void scanAllSites(File root) throws Exception {
         // clear the statics first of all to make sure they are not
         // holding any old values that need to be cleared, also to make
@@ -448,16 +463,13 @@ public class NGBook extends ContainerCommon implements NGContainer {
         keyToSite = tKeyToSite;
         allSites = tAllSites;
     }
+    */
 
     public static NGBook createNewSite(String key, String name, Cognoscenti cog) throws Exception {
         // where is the site going to go?
-        String[] libFolders = cog.getConfig().getArrayProperty("libFolder");
-        if (libFolders.length == 0) {
-            throw new Exception(
-                    "You must have a setting for 'libFolder' in order to create a new site.");
-        }
+        List<File> allSiteFiles = cog.getConfig().getSiteFolders();
 
-        File domFolder = new File(libFolders[0]);
+        File domFolder = allSiteFiles.get(0);
         if (!domFolder.exists()) {
             throw new Exception(
                     "Config setting 'libFolder' is not correct, first value must be an existing folder: ("
@@ -927,11 +939,12 @@ public class NGBook extends ContainerCommon implements NGContainer {
     private File getNewProjectPath(String p) throws Exception {
         File rootFolder = getSiteRootFolder();
         if (rootFolder != null) {
-            return newProjFolderByKey(rootFolder, p);
+            return createNewUniqueNameFolder(rootFolder, p);
         }
 
         // No site root, this is an OLDSTYLE site in the data path
-
+        throw new Exception("old style datapath projects no longer supported.");
+/*
         if (NGPage.dataPath == null) {
             throw new NGException("nugen.exception.datapath.not.initialized", null);
         }
@@ -951,12 +964,13 @@ public class NGBook extends ContainerCommon implements NGContainer {
         }
 
         return theFile;
+        */
     }
 
     /**
      * Will create a new folder to put the project into based on the key
      */
-    private File newProjFolderByKey(File prefLoc, String key) throws Exception {
+    private File createNewUniqueNameFolder(File prefLoc, String key) throws Exception {
 
         File newFolder = new File(prefLoc, key);
 
@@ -1046,10 +1060,11 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
     }
 
-    /**
-     * Tells you if this file is within the dataPath folder
-     */
+//TODO: eliminate this method left over from earlier project structure
     public static boolean fileIsInDataPath(File testFile) {
+        if (NGPage.dataPath==null) {
+            return false;
+        }
         String fullPath = testFile.getPath();
         String cleanUp1 = fullPath.toLowerCase().replace('\\', '/');
         String cleanUp2 = NGPage.dataPath.toLowerCase().replace('\\', '/');
@@ -1138,8 +1153,11 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
         Document newDoc = readOrCreateFile(newFilePath, "page");
         NGPage newPage = null;
+
+        //TODO: clean up this logic once we know it works
         if (fileIsInDataPath(newFilePath)) {
-            newPage = new NGPage(newFilePath, newDoc, this);
+            throw new Exception("files in datapath no longer supported.  That is the old data way");
+//            newPage = new NGPage(newFilePath, newDoc, this);
         }
         else {
             newPage = new NGProj(newFilePath, newDoc, this);

@@ -26,11 +26,20 @@
 
     JSONArray partProjects = new JSONArray();
     Vector<NGPageIndex> v = ar.getCogInstance().getProjectsUserIsPartOf(uProf);
+    NGPageIndex.sortInverseChronological(v);
     for(NGPageIndex ngpi : v){
         NGPage ngp = ngpi.getPage();
         JSONObject jo = new JSONObject();
         jo.put("key", ngp.getKey());
+        jo.put("updated", ngp.getLastModifyTime());
         jo.put("fullName", ngp.getFullName());
+        JSONArray roles = new JSONArray();
+        for (NGRole ngr : ngp.getAllRoles()) {
+            if (ngr.isExpandedPlayer(uProf,ngp)) {
+                roles.put(ngr.getName());
+            }
+        }
+        jo.put("roles", roles);
         partProjects.put(jo);
     }
 
@@ -51,6 +60,10 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+
+    $scope.stopRole = function(prj, role) {
+        alert('Sit tight, Soon we will allow you to stop being a player of the '+role+' role of the '+prj.fullName+' project.');
+    }
 
     $scope.noImpl = function() {
         alert('no implemented yet');
@@ -89,13 +102,19 @@ app.controller('myCtrl', function($scope, $http) {
         <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-            <li role="presentation">
-                <a role="menuitem" tabindex="-1" ng-click="noImpl()">Stop Being a Member</a></li>
+            <li role="presentation" ng-repeat="role in prj.roles">
+                <a role="menuitem" tabindex="-1" ng-click="stopRole(prj, role)">Stop playing {{role}}</a>
+            </li>
         </ul>
     </span>
     <b>{{prj.fullName}}</b> - {{prj.key}}
-    <div style="background-color:white;border-radius:5px;margin:5px;">
-        details appear here
+    <div style="background-color:white;border-radius:5px;margin:5px;padding:10px;">
+        Project last updated: {{prj.updated|date}}
+        <br/>
+        You are playing the following roles:
+        <span ng-repeat="role in prj.roles">
+             {{role}}
+        </span>
     </div>
 </div>
 

@@ -77,7 +77,7 @@ public class UserManager
             return;
         }
 
-        String userFolder = cog.getConfig().getProperty("userFolder");
+        File userFolder = cog.getConfig().getUserFolderOrFail();
         File newPlace = new File(userFolder, "UserProfiles.xml");
 
         //check to see if the file is there
@@ -325,7 +325,7 @@ public class UserManager
     {
         try
         {
-            String userFolder = cog.getConfig().getProperty("userFolder");
+            File userFolder = cog.getConfig().getUserFolderOrFail();
             File tempSUsers = new File(userFolder, "SSOFIUsers.xml.tmp");
             File finalSUsers = new File(userFolder, "SSOFIUsers.xml");
 
@@ -566,7 +566,7 @@ public class UserManager
             {
                 throw new NGException("nugen.exception.cant.create.user.page",null);
             }
-            String userFolder = cog.getConfig().getProperty("userFolder");
+            File userFolder = cog.getConfig().getUserFolderOrFail();
             File newPlace = new File(userFolder, userKey+".user");
 
             //check to see if the file is there

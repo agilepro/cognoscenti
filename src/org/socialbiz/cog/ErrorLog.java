@@ -45,7 +45,7 @@ public class ErrorLog extends DOMFile {
         // create a log file name based on the date passed in.
         String encodedDate = new SimpleDateFormat("yyyy.MM.dd").format(dateValue);
         String fileName = "errorLog_"+ encodedDate.substring(0,10)+".xml";
-        String userFolder = cog.getConfig().getProperty("userFolder");
+        File userFolder = cog.getConfig().getUserFolderOrFail();
         File newPlace = new File(userFolder, fileName);
 
         ErrorLog eLog = cachedLogFile;
@@ -120,7 +120,7 @@ public class ErrorLog extends DOMFile {
 
     public static File getErrorFileFullPath(Date date, Cognoscenti cog) throws Exception {
         String searchByDate=new SimpleDateFormat("yyyy.MM.dd").format(date);
-        String userFolder = cog.getConfig().getProperty("userFolder");
+        File userFolder = cog.getConfig().getUserFolderOrFail();
         return new File(userFolder, "errorLog_"+searchByDate+".xml");
     }
 

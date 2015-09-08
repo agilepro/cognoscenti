@@ -94,6 +94,7 @@ public class CommentRecord extends DOMFace {
             userKey = up.getKey();
         }
         JSONObject commInfo = new JSONObject();
+        //TODO: remove the content field from JSON representation
         commInfo.put("content", getContent());
         commInfo.put("user",    ale.getUniversalId());
         commInfo.put("userName",ale.getName());
