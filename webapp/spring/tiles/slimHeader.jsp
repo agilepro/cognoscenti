@@ -360,7 +360,7 @@ Parameter used :
                             <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/emailListnerSettings.htm" title="Administration">Administration</a></li>
                         <%} %>
                         <li>|</li>
-                        <li class="text last"><a onclick="logOutServer();">Log Out</a></li>
+                        <li class="text last"><a onclick="logOutProvider();">Log Out</a></li>
                <%
                   }
                   else
@@ -544,22 +544,29 @@ function verifyToken() {
         loginInfo = data;
         if (loginInfo.verified) {
             loggedInNow=true;
+            window.location.reload();
         }
         else {
-            alert("was not able to verify token??");
+            alert("Internal Error: was not able to verify token.");
         }
         displayWelcomeMessage();
     });
 }
 
+function logOutProvider() {
+    var pUrl = providerUrl + "?openid.mode=apiLogout";
+    postJSON(pUrl, loginInfo, function(data) {
+        loginInfo = data;
+        logOutServer();
+    });
+}
 function logOutServer() {
     var pUrl = serverUrl + "auth/logout";
     postJSON(pUrl, loginInfo, function(data) {
-        alert("server responded to logout: "+JSON.stringify(data));
         loginInfo = data;
         loggedInNow = false;
         displayWelcomeMessage();
-        //window.location.href=providerUrl+"?openid.mode=logout&go=<%ar.writeURLData(currentPageURL);%>";
+        window.location.reload();
     });
 }
 
