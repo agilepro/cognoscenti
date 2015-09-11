@@ -26,6 +26,8 @@ import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.socialbiz.cog.UserManager;
+import org.socialbiz.cog.UserProfile;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.json.JSONTokener;
@@ -172,8 +174,13 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
                 boolean valid = response.getBoolean("verified");
 
                 if (valid) {
-                    aStat.setId(response.getString("userId"));
+                    String userId = response.getString("userId");
+                    aStat.setId(userId);
                     aStat.setName(response.getString("userName"));
+
+                    //remember for the user that they logged in at this time
+                    UserProfile up = UserManager.findUserByAnyId(userId);
+                    up.setLastLogin(System.currentTimeMillis(), userId);
                 }
                 else {
                     //after a failed login, don't leave any previous login around....

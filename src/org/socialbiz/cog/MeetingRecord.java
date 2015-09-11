@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -109,6 +110,19 @@ public class MeetingRecord extends DOMFace {
 
 
     /**
+     * Reminder time is the amount of time (in minutes) before
+     * the meeting to automatically send everyone the reminder.
+     */
+    public int getReminderTime()  throws Exception {
+        return safeConvertInt(getAttribute("reminderTime"));
+    }
+    public void setReminderTime(int newVal) throws Exception {
+        setAttribute("reminderTime", Integer.toString(newVal));
+    }
+
+
+
+    /**
      * There is one special meeting which is actually the container for backlog
      * agenda items.  This special meeting should never be shown as a meeting
      * but instead only to hold the agenda items.  The name and description
@@ -173,6 +187,7 @@ public class MeetingRecord extends DOMFace {
         meetingInfo.put("meetingType", getMeetingType());
         String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingInfo());
         meetingInfo.put("meetingInfo", htmlVal);
+        meetingInfo.put("reminderTime",getReminderTime());
         return meetingInfo;
     }
 
@@ -221,9 +236,15 @@ public class MeetingRecord extends DOMFace {
         if (input.has("meetingType")) {
             setMeetingType(input.getInt("meetingType"));
         }
+        if (input.has("reminderTime")) {
+            setReminderTime(input.getInt("reminderTime"));
+        }
         if (input.has("meetingInfo")) {
             String html = input.getString("meetingInfo");
             setMeetingInfo(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
+        }
+        if (input.has("reminderTime")) {
+            setReminderTime(input.getInt("reminderTime"));
         }
     }
 
@@ -353,6 +374,15 @@ public class MeetingRecord extends DOMFace {
     }
 
 
+    public void sendReminderEmail(AuthRequest ar, NGPage ngp) throws Exception {
+        EmailGenerator emg = ngp.createEmailGenerator();
+        emg.setSubject("Reminder for meeting: "+this.getName());
+        Vector<String> names = new Vector<String>();
+        names.add("Members");
+        emg.setRoleNames(names);
+        emg.setMeetingId(getId());
+        emg.composeAndSendEmail(ar, ngp);
+    }
 
 
     public static void sortChrono(List<MeetingRecord> meetList) {

@@ -20,8 +20,6 @@
 
 package org.socialbiz.cog.rest;
 
-import java.io.File;
-
 import javax.servlet.http.HttpSession;
 
 import org.socialbiz.cog.Cognoscenti;

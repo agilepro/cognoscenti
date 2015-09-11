@@ -38,8 +38,12 @@ Parameter used :
 //this indicates a project page
     String pageId = (String)request.getAttribute("pageId");
 
-//this indicates a site page
+//this indicates a site id
     String bookId = (String)request.getAttribute("book");
+//What is the difference beween bookid and accountid?  Account, Site, and Book at all the same thing.
+//TODO: straighten this out to have only one.
+//this also indicates a site id
+    String accountId = (String)request.getAttribute("accountId");
 
 //apparently this is calculated elsewhere and passed in.
     String viewingSelfStr = (String)request.getAttribute("viewingSelf");
@@ -51,25 +55,23 @@ Parameter used :
     if (headerTypeStr==null) {
         headerTypeStr="user";
     }
-    boolean isSiteHeader = false;
-    boolean isUserHeader = false;
-    boolean isProjectHeader = false;
-    if (headerTypeStr.equals("site")) {
-        isSiteHeader = true;
+    boolean isSiteHeader    = headerTypeStr.equals("site");
+    boolean isUserHeader    = headerTypeStr.equals("user");
+    boolean isProjectHeader = headerTypeStr.equals("project");
+
+    if (isSiteHeader) {
         if (bookId==null) {
             throw new Exception("Program Logic Error: need a site id passed to a site style header");
         }
     }
-    else if (headerTypeStr.equals("user")) {
-        isUserHeader = true;
+    else if (isUserHeader) {
         //if (userKey==null) {
         //    throw new Exception("Program Logic Error: need a userKey passed to a user style header");
         //}
         //can not test for presence of a user or not .... because unlogged in warning use this
         //probably need a special header type for warnings...like not logged in
     }
-    else if (headerTypeStr.equals("project")) {
-        isProjectHeader = true;
+    else if (isProjectHeader) {
         if (pageId==null) {
             throw new Exception("Program Logic Error: need a pageId passed to a project style header");
         }
@@ -81,9 +83,6 @@ Parameter used :
     String tabId = (String)request.getAttribute("tabId");
 
 
-//What is the difference beween bookid and accountid?  Account, Site, and Book at all the same thing.
-//TODO: straighten this out to have only one.
-    String accountId = (String)request.getAttribute("accountId");
 
 //We always POST to an address that consumes the data, and then redirects to a display page,
 //so the display page (like this one) should never experience a POST request
@@ -95,6 +94,8 @@ Parameter used :
     NGContainer ngp =null;
     NGBook ngb=null;
     UserProfile userRecord = null;
+
+//TODO: why test for pageTitle being null here?
     if(pageTitle == null && pageId != null){
         ngp  = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     }
@@ -127,12 +128,19 @@ Parameter used :
     if (ar.isSuperAdmin()) {
         exposeLevel = 2;
     }
+    JSONObject loginInfo = new JSONObject();
+    if (ar.isLoggedIn()) {
+        loginInfo.put("userId", ar.getBestUserId());
+        loginInfo.put("userName", uProf.getName());
+        loginInfo.put("verified", true);
+        loginInfo.put("msg", "Previously logged into server");
+    }
 
 
     String currentPageURL = ar.getCompleteURL();
     String encodedLoginMsg = URLEncoder.encode("Can't open form","UTF-8");
     String trncatePageTitle = pageTitle;
-    if(pageTitle!=null && pageTitle.length()>60){
+    if (pageTitle!=null && pageTitle.length()>60){
         trncatePageTitle=pageTitle.substring(0,60)+"...";
     }
 
@@ -147,13 +155,12 @@ Parameter used :
         throw new Exception("Can not find a menu file for: "+menuFile.toString());
     }
 
-
-
     FileInputStream fis = new FileInputStream(menuFile);
     InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
 
     %>
 <script type="text/javascript">
+
     menuStruct = <%
         char[] buf = new char[200];
         int amt = isr.read(buf);
@@ -256,7 +263,7 @@ Parameter used :
 
 
 
-<% if (!headerTypeStr.equals("site")) { %>
+<% if (!isSiteHeader) { %>
     <script>
         var specialTab='<%=tabId%>';
         headerType = "<%=headerTypeStr%>";
@@ -268,7 +275,7 @@ Parameter used :
         <% } %>
     </script>
 
-<% } else if(headerTypeStr.equals("site")){ %>
+<% } else if(isSiteHeader){ %>
      <script>
         var specialTab='<%=tabId%>';
         headerType = "<%=headerTypeStr%>";
@@ -353,14 +360,14 @@ Parameter used :
                             <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/emailListnerSettings.htm" title="Administration">Administration</a></li>
                         <%} %>
                         <li>|</li>
-                        <li class="text last"><a href="<%=ar.retPath%>t/LogoutAction.htm?go=<%ar.writeURLData(currentPageURL);%>">Log Out</a></li>
+                        <li class="text last"><a onclick="logOutServer();">Log Out</a></li>
                <%
                   }
                   else
                   {
                %>
                         <li><a href="<%=ar.retPath%>"
-                                title="Initial Introduction Page">Welcome Page</a></li>
+                               title="Initial Introduction Page">Welcome Page</a></li>
                         <li>|</li>
                         <li class="text last"><a href="<%=ar.retPath%>t/EmailLoginForm.htm?go=<%ar.writeURLData(currentPageURL);%>">Log in</a></li>
                <%
@@ -425,40 +432,169 @@ Parameter used :
 <script>
 
 
-        function validateDelimEmails(field) {
-            var count = 1;
-            var result = "";
-            var spiltedEmails;
-            var value = trimme(field.value);
-            if(value != ""){
-                if(value.indexOf(";") != -1){
-                    spiltedEmails = value.split(";");
-                }else if(value.indexOf(",") != -1){
-                    spiltedEmails = value.split(",");
-                }else if(value.indexOf("\n") != -1){
-                    spiltedEmails = value.split("\n");
-                }else{
-                    value = value+";";
-                    spiltedEmails = value.split(";");
-                }
-                for(var i = 0;i < spiltedEmails.length;i++){
-                    var email_id = trimme(spiltedEmails[i]);
-                    if(email_id != ""){
-                        if(!validateEmail(email_id)){
-                            result += "  "+count+".    "+email_id+" \n";
-                            count++;
-                        }
-                    }
-                }
-            }
-            if(result != ""){
-                alert("Below is the list of id(s) which does not look like an email. Please enter an email id(s).\n\n"+result);
-                field.focus();
-                return false;
-            }
-
-            return true;
+function validateDelimEmails(field) {
+    var count = 1;
+    var result = "";
+    var spiltedEmails;
+    var value = trimme(field.value);
+    if(value != ""){
+        if(value.indexOf(";") != -1){
+            spiltedEmails = value.split(";");
+        }else if(value.indexOf(",") != -1){
+            spiltedEmails = value.split(",");
+        }else if(value.indexOf("\n") != -1){
+            spiltedEmails = value.split("\n");
+        }else{
+            value = value+";";
+            spiltedEmails = value.split(";");
         }
+        for(var i = 0;i < spiltedEmails.length;i++){
+            var email_id = trimme(spiltedEmails[i]);
+            if(email_id != ""){
+                if(!validateEmail(email_id)){
+                    result += "  "+count+".    "+email_id+" \n";
+                    count++;
+                }
+            }
+        }
+    }
+    if(result != ""){
+        alert("Below is the list of id(s) which does not look like an email. Please enter an email id(s).\n\n"+result);
+        field.focus();
+        return false;
+    }
+
+    return true;
+}
+
+
+loggedInBeforePageFetch = <%=ar.isLoggedIn()%>;
+loggedInNow = <%=ar.isLoggedIn()%>;
+loginInfo = <% loginInfo.write(out, 2, 2); %>;
+providerUrl = '<%ar.writeJS(ar.getSystemProperty("identityProvider"));%>';
+serverUrl   = '<%ar.writeJS(ar.baseURL);%>';
+responseCode = 0;
+
+function getJSON(url, passedFunction) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.withCredentials = true;
+    xhr.onloadend = function() {
+        try {
+            responseCode = xhr.status;
+            passedFunction(JSON.parse(xhr.responseText));
+        }
+        catch (e) {
+            alert("Got an exception ("+e+") whille trying to handle: "+url);
+        }
+    }
+    xhr.send();
+}
+
+function postJSON(url, data, passedFunction) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+    xhr.withCredentials = true;
+    xhr.setRequestHeader("Content-Type","text/plain");
+    xhr.onloadend = function() {
+        try {
+            responseCode = xhr.status;
+            passedFunction(JSON.parse(xhr.responseText));
+        }
+        catch (e) {
+            alert("Got an exception ("+e+") whille trying to handle: "+url);
+        }
+
+    }
+    xhr.send(JSON.stringify(data));
+}
+
+function queryTheProvider() {
+    var pUrl = providerUrl + "?openid.mode=apiWho";
+    getJSON(pUrl, function(data) {
+        loginInfo = data;
+        displayWelcomeMessage();
+        if (data.userId) {
+            requestChallenge();
+        }
+    });
+}
+
+function requestChallenge() {
+    var pUrl = serverUrl + "auth/getChallenge";
+    postJSON(pUrl, loginInfo, function(data) {
+        loginInfo = data;
+        displayWelcomeMessage();
+        getToken();
+    });
+}
+
+function getToken() {
+    var pUrl  = providerUrl + "?openid.mode=apiGenerate";
+    postJSON(pUrl, loginInfo, function(data) {
+        loginInfo = data;
+        displayWelcomeMessage();
+        verifyToken();
+    });
+}
+
+function verifyToken() {
+    var pUrl = serverUrl + "auth/verifyToken";
+    postJSON(pUrl, loginInfo, function(data) {
+        loginInfo = data;
+        if (loginInfo.verified) {
+            loggedInNow=true;
+        }
+        else {
+            alert("was not able to verify token??");
+        }
+        displayWelcomeMessage();
+    });
+}
+
+function logOutServer() {
+    var pUrl = serverUrl + "auth/logout";
+    postJSON(pUrl, loginInfo, function(data) {
+        alert("server responded to logout: "+JSON.stringify(data));
+        loginInfo = data;
+        loggedInNow = false;
+        displayWelcomeMessage();
+        //window.location.href=providerUrl+"?openid.mode=logout&go=<%ar.writeURLData(currentPageURL);%>";
+    });
+}
+
+
+function displayWelcomeMessage() {
+    var y = document.getElementById("welcomeMessage");
+    if (responseCode==0) {
+        y.innerHTML = 'Checking identity, please <a target="_blank" href="'
+            +providerUrl
+            +'&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">Login</a>.';
+    }
+    else if (!loginInfo.userName) {
+        y.innerHTML = 'Not logged in, please <a target="_blank" href="'
+            +providerUrl
+            +'?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">Login</a>.';
+    }
+    else if (loggedInNow == false) {
+        y.innerHTML = 'Hello <b>'+loginInfo.userName+'</b>.  Attempting Automatic Login.';
+    }
+    else if (loggedInBeforePageFetch != loggedInNow) {
+        //just refresh page
+        y.innerHTML = '<a href="<%=currentPageURL%>#time=FORCE_REFRESH_SOMEHOW">Refresh Page</a>';
+    }
+    else {
+        y.innerHTML = 'Welcome <b>'+loginInfo.userName+'</b>.  <a target="_blank" href="'
+            +providerUrl
+            +'?openid.mode=logout&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">Logout</a>.';
+    }
+}
+
+<% if (!ar.isLoggedIn()) { %>
+queryTheProvider();
+<% } %>
+
+
 </script>
 <!-- END slimHeader.jsp -->
 <% out.flush(); %>

@@ -501,7 +501,7 @@ public class NGPage extends ContainerCommon implements NGContainer
     /**
     * Get a section, creating it if it does not exist yet
     */
-    public NGSection getRequiredSection(String secName)
+    private NGSection getRequiredSection(String secName)
         throws Exception
     {
         if (secName==null)
@@ -543,7 +543,7 @@ public class NGPage extends ContainerCommon implements NGContainer
     * record who added this required section.  In that case, pass a null
     * in for the AuthRecord, and nothing will be recorded.
     */
-    public void createSection(SectionDef sd, AuthRequest ar)
+    private void createSection(SectionDef sd, AuthRequest ar)
         throws Exception
     {
         if (sd==null)
@@ -634,6 +634,7 @@ public class NGPage extends ContainerCommon implements NGContainer
     * or one position lower (down).  First parameter is the section name,
     * second parameter is the direction  true=up, false=down
     */
+    /*
     public void moveSection(String secName, boolean moveUp)
     {
         Vector<Element> sections = DOMUtils.getNamedChildrenVector(fEle, "section");
@@ -671,7 +672,7 @@ public class NGPage extends ContainerCommon implements NGContainer
             //that we can not find.
         }
     }
-
+    */
 
     /**
     * This is the unique ID of the entire project
@@ -1700,5 +1701,48 @@ public class NGPage extends ContainerCommon implements NGContainer
         labelList.removeChild(existing);
     }
 
+
+    /**
+     * Return the time of the next automated action.  If there are multiple
+     * scheduled actions, this returns the time of the next one.
+     *
+     * A negative number means there are no scheduled events.
+     */
+    public long nextActionDue() throws Exception {
+        long nextTime = -1;
+        for (MeetingRecord meeting : getMeetings()) {
+            long meetStart = meeting.getStartTime();
+            int delta = meeting.getReminderTime();
+            if (delta<=0) {
+                continue;
+            }
+            long reminderTime = meetStart - (delta * 60000);
+            if (nextTime<0 || reminderTime < nextTime) {
+                nextTime = reminderTime;
+            }
+        }
+        return nextTime;
+    }
+
+    /**
+     * Acts on and performs a SINGLE scheduled action that is scheduled to be done
+     * before the current time.  Actions are done one at a time so that the calling
+     * code can decide to save the page before calling to execute the next action,
+     * or to spread a large number of actions out a bit.
+     */
+    public void performScheduledAction(AuthRequest ar) throws Exception {
+        for (MeetingRecord meeting : getMeetings()) {
+            long meetStart = meeting.getStartTime();
+            int delta = meeting.getReminderTime();
+            if (delta<=0) {
+                continue;
+            }
+            long reminderTime = meetStart - (delta * 60000);
+            if (reminderTime < ar.nowTime) {
+                meeting.sendReminderEmail(ar, this);
+                return;
+            }
+        }
+    }
 
 }

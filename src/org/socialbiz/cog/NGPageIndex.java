@@ -106,6 +106,7 @@ public class NGPageIndex {
     public boolean requestWaiting;
     public boolean isDeleted;
     public String[] admins; // a.k.a. authors
+    public long nextScheduledAction;
 
     public File containerPath;
     public String containerName; // The nicest name to use for this container
@@ -591,6 +592,10 @@ public class NGPageIndex {
                 pageBookName = ngb.getFullName();
                 pageBookKey = ngb.getKey();
             }
+            nextScheduledAction = ngp.nextActionDue();
+        }
+        else {
+            nextScheduledAction = -1;
         }
     }
 

@@ -26,7 +26,7 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.meetings = <%meetings.write(out,2,4);%>;
-    $scope.newMeeting = {name:"",duration:60,startTime:0,id:""};
+    $scope.newMeeting = {name:"",duration:60,startTime:0,id:"",meetingType:1};
 
 
     $scope.newMeetingTime = new Date();
@@ -161,6 +161,17 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div class="generalSettings">
             <table>
+                <tr id="trspath">
+                    <td class="gridTableColummHeader">Type:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2" class="form-inline form-group">
+                        <input type="radio" ng-model="newMeeting.meetingType" value="1"
+                            class="form-control" /> Circle Meeting   &nbsp
+                        <input type="radio" ng-model="newMeeting.meetingType" value="2"
+                            class="form-control" /> Operational Meeting
+                    </td>
+                </tr>
+                <tr><td style="height:30px"></td></tr>
                 <tr id="trspath">
                     <td class="gridTableColummHeader">Name:</td>
                     <td style="width:20px;"></td>

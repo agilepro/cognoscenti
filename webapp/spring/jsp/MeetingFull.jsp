@@ -285,7 +285,7 @@ app.controller('myCtrl', function($scope, $http) {
     }
     $scope.itemStateStyle = function(item) {
         if (item.status<=1) {
-            return "background-color:green";
+            return "background-color:lightgreen";
         }
         if (item.status==2) {
             return "background-color:yellow";
@@ -343,7 +343,6 @@ app.controller('myCtrl', function($scope, $http) {
             postURL = "agendaAdd.json?id="+$scope.meeting.id;
         }
         var postdata = angular.toJson(readyToSave);
-        alert(postdata);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
@@ -778,10 +777,19 @@ app.controller('myCtrl', function($scope, $http) {
                 </tr>
                 <tr><td style="height:10px"></td></tr>
                 <tr>
+                    <td class="gridTableColummHeader">Send Reminder:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2" class="form-inline form-group">
+                        <input ng-model="meeting.reminderTime" style="width:60px;"  class="form-control" >
+                        Minutes before the meeting
+                    </td>
+                </tr>
+                <tr><td style="height:10px"></td></tr>
+                <tr>
                     <td class="gridTableColummHeader"></td>
                     <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
-                        <button ng-click="savePartialMeeting(['name','startTime','duration'])" class="btn btn-danger">Save</button>
+                        <button ng-click="savePartialMeeting(['name','startTime','duration','reminderTime'])" class="btn btn-danger">Save</button>
                         <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
                     </td>
                 </tr>
@@ -815,7 +823,19 @@ app.controller('myCtrl', function($scope, $http) {
                           <!--  AGENDA HEADER -->
       <tr>
         <td style="width:100%">
-          <div class="leafContent" >
+          <div>
+            <span class="dropdown" ng-show="meeting.meetingType==2">
+                <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{itemStateStyle(item)}};width:150px;margin:10px;">
+                State: {{itemStateName(item)}} <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation"><a role="menuitem"
+                      href="#"  ng-click="changeItemState(item, 1)">Good Shape</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      href="#"  ng-click="changeItemState(item, 2)">Warning</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      href="#"  ng-click="changeItemState(item, 3)">Trouble</a></li>
+                </ul>
+            </span>
             <span style="font-size:130%;font-weight: bold;" ng-click="showItemMap[item.id]=!showItemMap[item.id]">{{item.position}}. {{item.subject}} &nbsp; </span>
             <span ng-show="showItemMap[item.id] && meeting.state<3">
                 ( <i class="fa fa-cogs meeting-icon" ng-click="toggleEditor(2,item.id)"
@@ -827,24 +847,10 @@ app.controller('myCtrl', function($scope, $http) {
                 <i class="fa fa-flag meeting-icon" ng-click="toggleEditor(4,item.id)"
                     title="Agenda Item Action Items (Generated Goals)"></i> )
             </span>
-            <p><i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i><span ng-repeat="pres in getPresenters(item)">, {{pres.name}}</span>
-            </p>
-            <div ng-show="meeting.meetingType==2">
-                <div class="btn" style="background-color:yellow;width:50px;">{{item.status}}</div>
+            <div ng-hide="meeting.meetingType==2">
+                <i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i><span ng-repeat="pres in getPresenters(item)">, {{pres.name}}</span>
             </div>
           </div>
-            <span class="dropdown" ng-show="meeting.meetingType==2">
-                <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{itemStateStyle(item)}}">
-                State: {{itemStateName(item)}} <span class="caret"></span></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation"><a role="menuitem"
-                      href="#"  ng-click="changeItemState(item, 1)">Good Shape</a></li>
-                  <li role="presentation"><a role="menuitem"
-                      href="#"  ng-click="changeItemState(item, 2)">Warning</a></li>
-                  <li role="presentation"><a role="menuitem"
-                      href="#"  ng-click="changeItemState(item, 3)">Trouble</a></li>
-                </ul>
-            </span>
 
           <div ng-show="isEditing(2,item.id)" class="well">
             <div class="form-inline form-group">

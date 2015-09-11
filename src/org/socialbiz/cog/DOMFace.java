@@ -30,6 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.workcast.json.JSONArray;
+import org.workcast.json.JSONObject;
 
 /**
 * The purpose of this class is to be a base class to classes which
@@ -585,6 +586,19 @@ public class DOMFace
             }
         }
         return list;
+    }
+
+    public void reflectScalarString(JSONObject dest, String fieldName) throws Exception {
+        dest.put(fieldName, getScalar(fieldName));
+    }
+    public void updateScalarString(String fieldName, JSONObject srce) throws Exception {
+        setScalar(fieldName, srce.getString(fieldName));
+    }
+    public void reflectAttributeString(JSONObject dest, String fieldName) throws Exception {
+        dest.put(fieldName, getAttribute(fieldName));
+    }
+    public void updateAttributeString(String fieldName, JSONObject srce) throws Exception {
+        setAttribute(fieldName, srce.getString(fieldName));
     }
 
 }

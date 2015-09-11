@@ -147,10 +147,11 @@ function GetFirstHundredNoHtml(input) {
                 <tr id="trspath">
                     <td class="gridTableColummHeader">Type:</td>
                     <td style="width:20px;"></td>
-                    <td colspan="2"><select ng-model="meeting.meetingType" class="form-control blue" />
-                        <option value="1">Circle Meeting</option>
-                        <option value="2">Operational Meeting</option>
-                        </select>
+                    <td colspan="2" class="form-inline form-group">
+                        <input type="radio" ng-model="meeting.meetingType" value="1"
+                            class="form-control" /> Circle Meeting   &nbsp
+                        <input type="radio" ng-model="meeting.meetingType" value="2"
+                            class="form-control" /> Operational Meeting
                     </td>
                 </tr>
                 <tr><td style="height:30px"></td></tr>
