@@ -42,7 +42,7 @@ import org.workcast.ssoficlient.service.StringGlobalId;
  */
 public class  SSOFIUserManager implements org.workcast.ssoficlient.interfaces.UserManager {
 
-    public static String emailProviderAddress = null;
+    private static String emailProviderAddress = null;
 
     /**
     * Cognoscenti allows user to log in with either an openid OR an email address.

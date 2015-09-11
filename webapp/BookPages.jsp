@@ -140,12 +140,6 @@ if (isMember)
             <div class="clearer">&nbsp;</div>
         </div>
         <div class="section_body">
-        <form action="CreatePage.jsp" method="post">
-            <input type="hidden" name="encodingGuard" value="<%ar.writeHtml("\u6771\u4eac");%>"/>
-            <input type="submit" name="action" value="New Project:">
-            <input type="hidden" name="b" value="<%=ngb.getKey()%>">
-            <input type="text" name="pt" value="">
-        </form>
         </div>
     </div>
 

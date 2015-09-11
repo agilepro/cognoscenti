@@ -65,23 +65,6 @@ public class NGBook extends ContainerCommon implements NGContainer {
             File cogFolder = theFile.getParentFile();
             projectFolder = cogFolder.getParentFile();
         }
-        /*
-        else if (fileName.endsWith(".book") || fileName.endsWith(".site")) {
-            if (!fileIsInDataPath(theFile)) {
-                //projects were being created with xxx.site file created directly
-                //in the site folder.  Preserve this kind of site.
-                projectFolder = theFile.getParentFile();
-
-                //move the file into the subfolder
-                File cogFolder = new File(projectFolder, ".cog");
-                cogFolder.mkdirs();
-                File destFile = new File(cogFolder, "SiteInfo.xml");
-                UtilityMethods.copyFileContents(theFile, destFile);
-                associatedFile = destFile;
-                theFile.delete();
-            }
-        }
-        */
         else {
             throw new Exception("Unable to open site file with path: "+theFile);
         }
@@ -267,29 +250,6 @@ public class NGBook extends ContainerCommon implements NGContainer {
     }
 
 
-    /*
-    public void saveSiteAs(String newKey, UserProfile user, String comment) throws Exception {
-        try {
-            reformatXML();
-
-            File theFile = NGPage.getPathInDataFolder(newKey + ".book");
-            if (!theFile.exists()) {
-                File theParent = theFile.getParentFile();
-                theParent.mkdirs();
-            }
-            saveAs(theFile);
-            key = newKey;
-
-            // Add & commit the new file the CVS.
-            CVSUtil.add(associatedFile, user.getName(), comment);
-        }
-        catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.write.file.for.key",
-                    new Object[] { newKey }, e);
-        }
-    }
-    */
-
     @Override
     public String getKey() {
         return key;
@@ -367,103 +327,6 @@ public class NGBook extends ContainerCommon implements NGContainer {
         keyToSite = new Hashtable<String, NGBook>();
         allSites = new Vector<NGBook>();
     }
-
-    /**
-     * The method scanAllBooks is used to initialize the indices which are used
-     * to quickly find and manipulate books. Book records are read and held in
-     * memory since they are used so frequently, and there are relatively few of
-     * them.
-     *
-     * This method need to consider carefully the "reinitialize" situation.
-     * There is an Admin page which allows for clearing memory, garbage
-     * collecting, and then reinitializing all the static variables. This is a
-     * "soft restart" of the nugen system, reinitializing all internal data
-     * structures. How can this be accomplished when we are not sure that all
-     * other requests have been stopped? Simply clearing the data structures has
-     * the problem that some code tests and automatically regenerates certain
-     * structures, and you might have the problem that multiple threads might be
-     * rebuilding the index at the same time, and this would be bad.
-     *
-     * This method was once written to create all the structures in temporary
-     * variables, and then update the globals all at once, but this is not
-     * entirely satisfactory because one of the methods used during the
-     * initialization might use the older existing indices, which might have the
-     * effect of causing a link reference from the new tables to the old tables,
-     * and cause garbage collection to fail to reclaim that memory.
-     *
-     * The cleanest method would be to clear all global variables, garbage
-     * collect with nothing in memory, and then rebuild completely from scratch.
-     * That requires a special mode of the server, which prevents any access
-     * during the time that the internal memory is being rebuilt. At this point
-     * in time such an admin mode is not present, so there is no way to prevent
-     * access during the time that the memory is being constructed.
-     *
-     * Currently, the globals are cleaned out (nulled), and then reconstructed.
-     * If there are accesses during the time of rebuilding, there are two
-     * possibilities. First, there could be an exception terminating the
-     * processing of the request. This is annoying to users, but a necessary
-     * side effect of doing maintenance while the server is online. Second,
-     * there might be an operation that causes the regeneration of such data.
-     * This is more problematic since that constructed data might have a mixture
-     * of old and new links. So this method checks to see if anything has
-     * created cached values in the mean time, and throws it's own self-destruct
-     * exception.
-     */
-
-    /*
-    public synchronized static void scanAllSites(File root) throws Exception {
-        // clear the statics first of all to make sure they are not
-        // holding any old values that need to be cleared, also to make
-        // sure that they are not set as a side effect of this code,
-        // or code on another thread that may be running.
-        keyToSite = null;
-        allSites = null;
-        System.out.println("Scanning for book files: " + root);
-
-        Hashtable<String, NGBook> tKeyToSite = new Hashtable<String, NGBook>();
-        Vector<NGBook> tAllSites = new Vector<NGBook>();
-
-        for (File child : root.listFiles()) {
-            String fileName = child.getName();
-            if (!fileName.endsWith(".book")) {
-                // ignore all files except those that end in .book
-                continue;
-            }
-
-            NGBook ngb = readSiteAbsolutePath(child);
-
-            tAllSites.add(ngb);
-            String key = ngb.getKey();
-
-            // check for uniqueness just to be sure
-            if (tKeyToSite.containsKey(key)) {
-                throw new Exception("found a new book with a key (" + key
-                        + ") that duplicates another book: " + child);
-            }
-            tKeyToSite.put(key, ngb);
-        }
-
-        if (keyToSite != null || allSites != null) {
-            // this is the 'self-destruct' message. Either something in
-            // the logic above, or something on a different thread
-            // has manipulated the static variables during execution.
-            // A self-destruct does not solve the problem, but it does
-            // alert the programmer / admin that the code logic is
-            // somehow incorrect.
-            throw new ProgramLogicError("somewhere inside "
-                    + "the logic to initialize the key data structures of the "
-                    + "server, something incorrectly created some values in "
-                    + "'keyToBook' or 'allAccounts'.  This should not happen, and "
-                    + "the fact that it happened means that the internal memory "
-                    + "structures are in an unknown state.  Restarting the server "
-                    + "is recommended in this case.");
-        }
-
-        // now make them live
-        keyToSite = tKeyToSite;
-        allSites = tAllSites;
-    }
-    */
 
     public static NGBook createNewSite(String key, String name, Cognoscenti cog) throws Exception {
         // where is the site going to go?
@@ -938,33 +801,12 @@ public class NGBook extends ContainerCommon implements NGContainer {
      */
     private File getNewProjectPath(String p) throws Exception {
         File rootFolder = getSiteRootFolder();
-        if (rootFolder != null) {
-            return createNewUniqueNameFolder(rootFolder, p);
+        if (rootFolder == null) {
+            // No site root, this is an OLDSTYLE site in the data path
+            throw new Exception("old style datapath projects no longer supported.  Need a Site Root folder.");
         }
+        return createNewUniqueNameFolder(rootFolder, p);
 
-        // No site root, this is an OLDSTYLE site in the data path
-        throw new Exception("old style datapath projects no longer supported.");
-/*
-        if (NGPage.dataPath == null) {
-            throw new NGException("nugen.exception.datapath.not.initialized", null);
-        }
-        if (p.indexOf('/') >= 0) {
-            throw new NGException("nugen.exception.path.have.slash", new Object[] { p });
-        }
-        File theFile = new File(NGPage.dataPath, p + ".sp");
-
-        // this is a security check:
-        // The result of combining the path in this way, must result in a path
-        // that is still within the data folder, so check that the cannonical
-        // path starts with the data folder path.
-        if (!fileIsInDataPath(theFile)) {
-            throw new ProgramLogicError(
-                    "Somehow the NGPage file is supposed to be in the datapath, but did not turn out to be: "
-                            + theFile);
-        }
-
-        return theFile;
-        */
     }
 
     /**

@@ -49,6 +49,25 @@ attachFolder=c:/CognoscentiData/oldattach/
 identityProvider=https://interstagebpm.com/eid/
 
 
+#specify the user ID that has administrator privilidges
+#Note that you have to run the server and create a user account first
+#and then reconfigure setting the ID of that user here.
+#superAdmin=AAABBBCCC
+
+
+#emailOpenIDProvider
+#This is the optional URL of an openID provider that follows these rules:
+# 1. the user log in using their email address
+# 2. the resulting OpenID starts with the string specified
+# 3. anything following the string is the email address of the user
+#The global InterstageBPM identity provider belongs to this category, and if you are
+#using that, then simply specify the same address here.  If you are using an identity
+#provider that does not work this way, then simply don't set this value.
+emailOpenIDProvider=https://interstagebpm.com/eid/
+
+
+
+
 #Local Connections designate named paths on the server machine
 #to which a local connection can be made
 #A sequence of expressions surrounded by square brackets, within
@@ -61,23 +80,3 @@ identityProvider=https://interstagebpm.com/eid/
 #square brackets.  [root=XXX,repository=YYY,sandbox=ZZZ]
 #cvsConnections=[root\=\:pserver\:uid\:pwd@10.124.230.110\:/pub/ftp/084all/cvs,repository\=iflow,sandbox\=d\:/sandbox/iflow/DOCS][root\=\:pserver\:uid\:pwd@133.164.97.10\:/space/cvs,repository\=ps/ProdMgmt,sandbox\=d\:/sandbox/ps/ProdMgmt]
 
-
-
-# This is the property used to set till how many of days , a history record can be displayed  
-# max_days_interval = 30
-
-#specify the user ID that has administrator privilidges
-#Note that you have to run the server and create a user account first
-#and then reconfigure setting the ID of that user here.
-#superAdmin=AAABBBCCC
-
-
-#Add this property to see feature that is in-development
-#serverMode=Development
-
-#emailOpenIDProvider
-#This is the URL of an openID provider that follows these rules:
-# 1. the user log in using their email address
-# 2. the resulting OpenID starts with the string specified
-# 3. anything following the string is the email address of the user
-emailOpenIDProvider=https://interstagebpm.com/eid/

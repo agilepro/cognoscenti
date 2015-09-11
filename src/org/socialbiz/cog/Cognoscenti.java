@@ -51,9 +51,6 @@ public class Cognoscenti {
     // list of keys, but there can be extras in this list without problem
     public Vector<String> projectsWithEmailToSend = new Vector<String>();
 
-    //TODO: get rid of this static variable
-    private static Cognoscenti singleton;
-
     private Cognoscenti(ServletContext sc) {
         System.out.println("Cognoscenti Server Object == Constructing");
         rootFolder = new File(sc.getRealPath(""));
@@ -66,8 +63,6 @@ public class Cognoscenti {
             cog = new Cognoscenti(sc);
             sc.setAttribute("cognoscenti", cog);
         }
-        //TODO: remove this line
-        singleton = cog;
         return cog;
     }
     public static Cognoscenti getInstance(HttpSession session) {
@@ -488,29 +483,7 @@ public class Cognoscenti {
         upstreamToContainer = new Hashtable<String, NGPageIndex>();
         allContainers = new Vector<NGPageIndex>();
 
-/*
-        String rootDirectory = theConfig.getProperty("dataFolder");
-        if (rootDirectory != null && rootDirectory.length() > 0) {
-            File root = theConfig.getDataFolderOrFail();
-
-            NGBook.scanAllSites(root);
-            for (NGBook acct : NGBook.getAllSites()) {
-                makeIndex(acct);
-            }
-
-            for (File child : root.listFiles()) {
-                if (child.getName().endsWith(".sp")) {
-                    allPageFiles.add(child);
-                }
-            }
-        }
-        else {
-            System.out
-                    .println("Skipped scanning the data folder because no setting for 'datafolder'");
-        }
-*/
-
-        //TODO: eliminate this, put the statics into this object!
+        //TODO: eliminate statics, put them as members of this Cognoscenti class!
         NGBook.initStaticVars();
 
         List<File> allSiteFiles = new Vector<File>();
@@ -671,19 +644,4 @@ public class Cognoscenti {
         projectsWithEmailToSend.removeElement(key);
     }
 
-
-
-
-
-
-
-
-    /**
-     * this is a temporary stop-gap measure to keep the code working while
-     * the static variables are more and more eliminated.
-     * TODO: eliminate this
-     */
-    public static Cognoscenti GetStaticInstanceStopUsingThis() {
-        return singleton;
-    }
 }

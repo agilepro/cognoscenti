@@ -41,16 +41,14 @@ import org.apache.pdfbox.pdmodel.graphics.color.PDGamma;
 import org.apache.pdfbox.pdmodel.interactive.action.type.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
-
 import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.IdGenerator;
-import org.socialbiz.cog.NoteRecord;
 import org.socialbiz.cog.LineIterator;
 import org.socialbiz.cog.MimeTypes;
-import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NoteRecord;
 import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.SectionWiki;
 import org.socialbiz.cog.UserProfile;
@@ -317,23 +315,6 @@ public class PDFUtil {
             if(line.length() > 1){
                 setCusrosrPosition(20,0);
                 startWithBullet = true;
-                /*contentStream.endText();
-
-                PDListAttributeObject attributeObject = new PDListAttributeObject();
-                PDListAttributeObject.LIST_NUMBERING_CIRCLE
-                //System.out.println("bullet-->"+ar.req.getRealPath(("assets/images/images.jpg")));
-                PDXObjectImage image = new PDJpeg(document, new FileInputStream(ar.req.getRealPath(("assets/images/bulletLevel1.gif"))));
-
-                PDResources temp = new PDResources();
-//                temp.getXObjects().put("form1", image);
-                temp.getXObjects().put("Im0", image);
-                page.setResources(temp);
-//                contentStream.drawImage(image, xPos, yPos);
-                contentStream.drawXObject(image, xPos, yPos, 1, 1);
-
-                contentStream.beginText();
-                setCusrosrPosition(xPos, yPos);
-                */
                 contentStream.setFont(nbfont, h1_font_size);
                 if(previousSubLineWidth > 0){
                     previousSubLineWidth += font.getStringWidth( ". " )/1000 * 10f;
@@ -716,29 +697,7 @@ public class PDFUtil {
             }
             else if (foundPages.size()==0)
             {
-                pageExists = false;
-                NGPage sourcePage = (NGPage)ar.ngp;
-                String bookName = "mainbook";
-                String sourceName = "main";
-                if (sourcePage!=null)
-                {
-                    sourceName = sourcePage.getFullName();
-                    NGBook ngb = sourcePage.getSite();
-                    if (ngb!=null)
-                    {
-                        bookName = ngb.getKey();
-                    }
-                }
-
-                if(ar.isNewUI() && ar.isLoggedIn() ){
-                    UserProfile up = ar.getUserProfile();
-                    linkAddr = ar.retPath +"v/"+up.getKey()+ "/watchedProjects.htm?projectName="+SectionUtil.encodeURLData(linkURL)
-                                                           +"&bookKey="+SectionUtil.encodeURLData(bookName);
-                }else{
-                    linkAddr = ar.retPath + "CreatePage.jsp?pt="+SectionUtil.encodeURLData(linkAddr)
-                                          +"&b="+SectionUtil.encodeURLData(bookName)
-                                          +"&s="+SectionUtil.encodeURLData(sourceName);
-                }
+                linkAddr = ar.retPath + "";
             }
             else
             {
@@ -754,24 +713,6 @@ public class PDFUtil {
             {
                 uri = new PDActionURI();
                 uri.setURI(linkAddr);
-                /*ar.write("\n<a href=\"");
-                ar.writeHtml(linkAddr);
-                ar.write("\" title=\"");
-                ar.writeHtml(titleValue);
-                ar.write("\">");
-                ar.write("<img src=\"");
-                ar.writeHtml(linkName);
-                ar.write("\"/>");
-                ar.write("</a>\n");
-                */
-            }
-            else
-            {
-                /*
-                ar.write("<img src=\"");
-                ar.writeHtml(linkName);
-                ar.write("\"/>");
-                */
             }
         }
         else   //not an image
@@ -780,44 +721,15 @@ public class PDFUtil {
             {
                 uri = new PDActionURI();
                 uri.setURI(linkAddr);
-                /*
-                ar.write("\n<a href=\"");
-                ar.writeHtml(linkAddr);
-                ar.write("\" title=\"");
-                ar.writeHtml(titleValue);
-                ar.write("\">");
-                ar.writeHtml(linkName);
-                ar.write("</a>\n");
-                */
             }
             else if (!ar.isLoggedIn() || ar.isStaticSite())
-                {
-                    //if page does not exist, and you are not linked in, then simply display
-                    //the name without making it a link.  Anonymous people will only see
-                    //links (within the wiki) that work.
-
-                //ar.writeHtml(linkName);
+            {
                 return linkName;
-
             }
             else
             {
                 uri = new PDActionURI();
                 uri.setURI(linkAddr);
-                /*
-                ar.write("<a href=\"");
-                ar.writeHtml(linkAddr);
-                ar.write("\" title=\"");
-                ar.writeHtml(titleValue);
-                ar.write("\">");
-                ar.writeHtml(linkName);
-                //the icon indicates condition of page
-                ar.write("<img src=\"");
-                ar.write(ar.retPath);
-                ar.write(specialGraphic);
-                ar.write("\"/>");
-                ar.write("</a>");
-                */
             }
         }
         return linkName;

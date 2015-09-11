@@ -85,31 +85,6 @@
         go = goStr.toString();
         eventType = HistoryRecord.EVENT_TYPE_SUBTASK_CREATED;
     }
-    else if (action.equals("Create Sub Page for this Task"))
-    {
-        task = ngp.getGoalOrFail(id);
-        // This will always create a new page.
-        // use a random key for the page name instread of constructing it from the synopsis.
-        String newPageKey = IdGenerator.generateKey();
-        String pageBook = ngp.getSite().getKey();
-        LicensedURL thisUrl =task.getWfxmlLink(ar);
-
-        StringBuffer goStr = new StringBuffer("CreatePage.jsp?pt=");
-        goStr.append(SectionUtil.encodeURLData(synopsis + " for " + ngp.getFullName()));
-        if (pageBook!=null)
-        {
-            goStr.append("&b=");
-            goStr.append(SectionUtil.encodeURLData(pageBook));
-        }
-        goStr.append("&pp=");
-        goStr.append(SectionUtil.encodeURLData(thisUrl.getCombinedRepresentation()));
-        goStr.append("&gs=");
-        goStr.append(SectionUtil.encodeURLData(synopsis));
-        goStr.append("&gd=");
-        goStr.append(SectionUtil.encodeURLData(description));
-        go = goStr.toString();
-        eventType = HistoryRecord.EVENT_TYPE_SUBLEAF_CREATED;
-    }
     else if (action.equals("Renumber Ranks"))
     {
         task = ngp.getGoalOrFail(id);

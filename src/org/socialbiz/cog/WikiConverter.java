@@ -495,28 +495,20 @@ public class WikiConverter
                 pageExists = !foundPI.isDeleted;
                 specialGraphic = "deletedLink.gif";
             } else if (foundPages.size() == 0) {
+
+                //TODO: eliminate this leftover ability to make a link to a project that does not exist
+                //We no longer expect people to make new projects this way.
+
                 pageExists = false;
                 specialGraphic = "createicon.gif";
-                NGPage sourcePage = (NGPage) ar.ngp;
-                String bookName = "mainbook";
-                String sourceName = "main";
-                if (sourcePage != null) {
-                    sourceName = sourcePage.getFullName();
-                    NGBook ngb = sourcePage.getSite();
-                    if (ngb != null) {
-                        bookName = ngb.getKey();
-                    }
-                }
-                titleValue = "Project does not exist, but click here to create one.";
+                titleValue = "Project does not exist";
 
                 if (ar.isNewUI() && ar.isLoggedIn()) {
                     linkAddr = "javascript:brokenLink(" + isImage + ",'"
                             + linkName + "','" + linkAddr + "')";
                 } else {
-                    linkAddr = ar.retPath + "CreatePage.jsp?pt="
-                            + SectionUtil.encodeURLData(linkAddr) + "&b="
-                            + SectionUtil.encodeURLData(bookName) + "&s="
-                            + SectionUtil.encodeURLData(sourceName);
+                    //this only creates an error message now.
+                    linkAddr = ar.retPath + "CreatePage.jsp";
                 }
             } else {
                 // this is the case where there is more than one page

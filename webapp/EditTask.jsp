@@ -90,9 +90,6 @@
             <button type="submit" id="createSubTaskActBtn" name="action"
                 value="Create Sub Goal">Create Sub Goal</button>
 
-            <button type="submit" id="createSubPageActBtn" name="action"
-                value="Create Sub Page for this Task">Create Sub Project for this Goal</button>
-
             <button type="submit" id="renumActBtn" name="action"
                 value="Renumber Ranks">Renumber Ranks</button>
         </center>

@@ -252,6 +252,11 @@ public class ConfigFile {
             throw new NGException("nugen.exception.system.configured.incorrectly",
                     new Object[] { "baseURL" });
         }
+        String identityProvider = props.getProperty("identityProvider");
+        if (identityProvider==null) {
+            throw new NGException("nugen.exception.system.configured.incorrectly",
+                    new Object[] { "identityProvider" });
+        }
     }
 
     /**

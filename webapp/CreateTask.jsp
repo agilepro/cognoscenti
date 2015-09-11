@@ -86,9 +86,6 @@
             <button type="submit" id="saveActBtn" name="action"
                 value="Create New Task">Save Changes</button>
 
-            <button type="submit" id="createSubPageActBtn" name="action"
-                value="Create Sub Page for this Task">Create Sub Page for this Task</button>
-
         </center>
         <br/>
         <table width="98%" class="Design8">
