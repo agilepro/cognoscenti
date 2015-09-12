@@ -87,7 +87,6 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.meeting.startTime = $scope.meetingTime.getTime();
         $scope.meeting.state = 1;
         var postdata = angular.toJson($scope.meeting);
-        alert(postdata);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {

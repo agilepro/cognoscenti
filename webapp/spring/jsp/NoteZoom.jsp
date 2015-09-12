@@ -407,10 +407,6 @@ app.controller('myCtrl', function($scope, $http) {
 
 
 <%
-    //writeOneLeaflet(ngp, ar, allowedLevel,note);
-
-
-
     String choices = note.getChoices();
     String[] choiceArray = UtilityMethods.splitOnDelimiter(choices, ',');
 

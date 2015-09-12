@@ -196,9 +196,6 @@ public class AgendaItem extends DOMFace {
         if (input.has("duration")) {
             setDuration(input.getLong("duration"));
         }
-        if (input.has("status")) {
-            setDuration(input.getLong("status"));
-        }
         if (input.has("desc")) {
             String html = input.getString("desc");
             setDesc(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));

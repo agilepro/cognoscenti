@@ -137,47 +137,10 @@
     private void writeLeaflets(NGPage ngp, AuthRequest ar, int accessLevel)
         throws Exception
     {
-        writeOneSection(ngp, ar, accessLevel, "Comments");
-    }
-
-    private void writeOneSection(NGPage ngp, AuthRequest ar, int accessLevel, String sectionName)
-        throws Exception
-    {
-        NGSection sec = ngp.getSectionOrFail(sectionName);
-        if (sec==null)
-        {
-            //convenience, allow null sections to be ignored when they don't exist.
-            return;
-        }
-        SectionFormat sf = sec.getFormat();
-        SectionDef sd = sec.def;
-        String formatName = sf.getName();
-
-        int viewAccess = sd.viewAccess;
-
-        //anonymous access and public access are displayed in the same section
-        if (viewAccess==0)
-        {
-            viewAccess = 1;
-        }
-
         ar.write("\n <div class=\"section\"> ");
 
         ar.write("\n     <div class=\"section_title\"> ");
-        ar.write("\n         <h1 class=\"left\">");
-        ar.write("<b><a name=\"#");
-        //this name should be sanitized to a proper identifier without spaces
-        ar.writeHtml(getSanitizedString(sd.name));
-        ar.write("\">");
-        ar.writeHtml(sd.displayName);
-        ar.write("</a></b> (");
-        ar.writeHtml(formatName);
-        ar.write(")");
-        if (sec.isDeprecated())
-        {
-            ar.write(" <br/>This section deprecated: move this information to another section.");
-        }
-        ar.write("</h1> ");
+        ar.write("\n         <h1 class=\"left\"><b> Notes </a></b> (Note)</h1> ");
 
         ar.write("\n         <div class=\"section_date right\">");
         ar.write("</div> ");
@@ -186,78 +149,24 @@
         ar.write("\n     </div> ");
 
         ar.write("\n     <div class=\"section_body\"> ");
-        if (formatName.equals("Note"))
-        {
-            leafletSectionDisplay(ar, sec, accessLevel);
-        }
-        else if (formatName.equals("Attachments Format"))
-        {
-            throw new Exception ("Attachments Format is no longer supported by writeOneSection");
-        }
-        else if (formatName.equals("Folders Format"))
-        {
-            throw new Exception ("Folders Format is no longer supported by writeOneSection");
-        }
-        else
-        {
-            throw new Exception("Do not have a display method for "+formatName);
+        List<NoteRecord> vizComments = ngp.getVisibleNotes(ar, accessLevel);
+
+        int i = -1;
+        for (NoteRecord cr : vizComments) {
+            i++;
+            int commentLevel = cr.getVisibility();
+            if (commentLevel != accessLevel) {
+                throw new Exception(
+                        "Hmmm, get visible comments not working quite right because I should not see an element at a different visibility level at this point.");
+            }
+            displayOldLeaflet(ar, ngp, cr, i);
         }
 
-        ar.write("\n         <div class=\"section_metadata\"> ");
-        ar.write("\n             <div class=\"content\"> ");
-        ar.write("\n                 <div class=\"left\"> ");
-        ar.write("\n                     Last modified by ");
-        ar.writeHtml(SectionUtil.cleanName(sec.getLastModifyUser()));
-        ar.write(" " );
-        SectionUtil.nicePrintTime(ar, sec.getLastModifyTime(), ar.nowTime);
-        ar.write("\n                 </div> ");
-        ar.write("\n                 <div class=\"right\"> ");
-        ar.write("\n                 </div> ");
-        ar.write("\n                 <div class=\"clearer\">&nbsp;</div> ");
-        ar.write("\n             </div> ");
-        ar.write("\n         </div> ");
 
         ar.write("\n     </div> ");
         ar.write("\n </div> ");
 
         ar.flush();
-    }
-
-
-    public void leafletSectionDisplay(AuthRequest ar, NGSection section,
-            int displayLevel) throws Exception {
-        Vector vizComments = SectionForNotes.getVisibleComments(section, displayLevel,
-                ar.getUserProfile());
-
-        Enumeration en = vizComments.elements();
-        int i = -1;
-        while (en.hasMoreElements()) {
-            i++;
-            NoteRecord cr = (NoteRecord) en.nextElement();
-            int commentLevel = cr.getVisibility();
-            if (commentLevel != displayLevel) {
-                throw new Exception(
-                        "Hmmm, get visible comments not working quite right because I should not see an element at a different visibility level at this point.");
-            }
-            displayOldLeaflet(ar, section, cr, i);
-        }
-    }
-
-
-
-    private void writeOneLeaflet(NGPage ngp, AuthRequest ar, int accessLevel, NoteRecord cr)
-        throws Exception
-    {
-        NGSection sec = ngp.getRequiredSection("Comments");
-        ar.write("\n <div class=\"section\"> ");
-
-        ar.write("\n     <div class=\"section_body\"> ");
-        displayOldLeaflet(ar, sec, cr, -1);
-
-        ar.write("\n     </div> ");
-        ar.write("\n </div> ");
-
-        ar.w.flush();
     }
 
 
@@ -268,9 +177,7 @@
      * the index to disable this, and leave it only open and without controls
      * for opening or zooming.
      */
-    public void displayOldLeaflet(AuthRequest ar, NGSection section,
-            NoteRecord cr, int i) throws Exception {
-        NGContainer ngp = section.parent;
+    public void displayOldLeaflet(AuthRequest ar, NGPage ngp, NoteRecord cr, int i) throws Exception {
         UserProfile uProf = ar.getUserProfile();
         boolean canEdit = false;
         UserRef lastModifiedBy = cr.getModUser();
