@@ -106,8 +106,8 @@
         <put-attribute name="body" value="/spring/jsp/ReminderEmail.jsp" />
     </definition>
 
-    <definition name="landingPage" extends="baseLayoutWithoutLeftPanel">
-        <put-attribute name="title" value="Cognoscenti Console" />
+    <definition name="landingPage" extends="slimLayout">
+        <put-attribute name="title" value="Welcome to Cognoscenti" />
         <put-attribute name="body" value="/spring/jsp/index.jsp" />
     </definition>
 
@@ -336,8 +336,8 @@
         <put-attribute name="body" value="/spring/jsp/docinfo.jsp" />
     </definition>
 
-    <definition name="showSearchResult" extends="baseLayout">
-        <put-attribute name="title" value="Search Result" />
+    <definition name="showSearchResult" extends="slimLayout">
+        <put-attribute name="title" value="Search Results" />
         <put-attribute name="body" value="/spring/jsp/showSearchResult.jsp" />
     </definition>
 

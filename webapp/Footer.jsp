@@ -24,7 +24,7 @@
 
 
                 <div id="footer">
-                    <div class="left">Source:  https://code.google.com/p/cognoscenti/</div>
+                    <div class="left">Source:  https://github.com/agilepro/cognoscenti/</div>
                     <div class="right">&laquo; Adaptive Case Management &raquo;</div>
                     <div class="clearer">&nbsp;</div>
                 </div>
