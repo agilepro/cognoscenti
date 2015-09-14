@@ -68,6 +68,7 @@ Required parameter:
 </style>
 
 <script type="text/javascript">
+document.title="<% ar.writeJS(note.getSubject());%>";
 
 var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
 app.controller('myCtrl', function($scope, $http) {

@@ -260,7 +260,7 @@
         <put-attribute name="body" value="/spring/jsp/EmailAdjustment.jsp" />
     </definition>
     <definition name="NoteZoom" extends="slimLayout">
-        <put-attribute name="title" value="Zoomed View" />
+        <put-attribute name="title" value="Topic" />
         <put-attribute name="body" value="/spring/jsp/NoteZoom.jsp" />
     </definition>
 

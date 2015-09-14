@@ -60,6 +60,7 @@ Required parameters:
 <script src="<%=ar.retPath%>jscript/textAngular.min.js"></script>
 
 <script type="text/javascript">
+document.title="<% ar.writeJS(attachment.getDisplayName());%>";
 
 var app = angular.module('myApp', ['ui.bootstrap','textAngular']);
 app.controller('myCtrl', function($scope, $http) {
