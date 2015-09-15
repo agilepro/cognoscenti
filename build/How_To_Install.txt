@@ -15,12 +15,23 @@ The only thing you need for Cognoscenti is:
 
 Data is all stored as files on a file system.  First decide where you would like your data folder to be.  By default all the folders will be placed in c:\CognoscentiData\ and for the purpose of this document we will assume they are there.  By default, the system will create four folders within there:
 
-    c:\CognoscentiData\users\
-    c:\CognoscentiData\sites\
-    c:\CognoscentiData\olddata\
-    c:\CognoscentiData\oldattach\   
+    c:\CognoscentiData\users\        --all user info
+    c:\CognoscentiData\sites\        --sites and project spaces
+    c:\CognoscentiData\olddata\      --not used any more, and will disappear soon
+    c:\CognoscentiData\oldattach\    --not used any more, and will disappear soon
 
 
+=== Preparations ===
+
+Authentication: Cognoscenti uses an external identity server to handle login, and this must be a SSOFI identity provider.  A public version of this server is running at https://interstagebom.com/eid/ and you are encouraged to just use this provider.  Before installing, go to that address and register a password for your email address.  THis will work for any scenario where you have ready access to the internet.  
+
+User Key: When you have registered and logged into SSOFI, choose to "View Your Profile".  On that screen is a "key".  It is a sequence of random letters and numbers.   Note that down, you will need that key below.
+
+Offline Use: If you want to install Cognoscenti is a location that cut off from the Internet, possibly for 'off-line' portable situation, then you will need to install a SSOFI indentity provider.  SSOFI is a free, open source utility, that can run in the same TomCat server you are using for Cognoscenti.  Please find information about SSOFI at https://github.com/agilepro/ssofi-provider
+
+SMTP: You will also want to make an account on the mail server for Cognoscenti.  If the SMTP server requires an authentication for sending mail, you will need to configure the username and password (below).  
+
+POP: if you want to receive email from the POP server, you will need a user account there as well.  Possibly the same user as the SMTP user, or it might be different.  Ability to receive email is not required in order to use the functionality of Cognoscenti, so if you don't have a POP account available, don't worry about it.
 
 ==== Installation ====
 
@@ -28,13 +39,7 @@ Decide on the name of the application.  That is the name of the folder in the To
 
 Create a folder named after your application in the webapps folder (e.g. c:\tomcat\webapps\cog).
 
-Unzip the contents of the war file to that folder.
-
-You can at this point start, or restart the TomCat server, so that it will see the new application.  
-
-Access the application at:  http://myserver:80/cog/
-
-This will create the data folders if they don't already exist, and in the browser you will see a display showing the status of the server, probably announcing "Error Initializing Cognoscenti Server"  The latest up to date details are maintained on that screen, so it is a good resource to use.
+Unzip the contents of the war file to that folder.  (Note: TomCat is designed to automatically unzip war files for you.  Last time this was tested, it did not succeed and we have not determined the reason.  That is why we probably need to follow these instructions of creating a folder and unzipping the contents into it.)
 
 
 
@@ -44,32 +49,16 @@ Find and edit the config.txt file at   c:\tomcat\webapps\cog\WEB-INF\config.txt
 
 baseURL - You MUST set this to a real name of the server and everything up to the name of the application, including a final slash.  This URL will be used to redirect users to resources on this application.  Sometimes, the name that exists locally on the machine is not the name that the users see, because of proxy or a server in front filtering or rerouting requests.  This needs to be the URL address of the application from the point of view of the user's browser.  Do not use "localhost" because obviously nobody on a different computer will get this server.  Use whatever name of the host that the browser will need to resolve to this machine.   IP addresses will work, but obviously are not good when you have DHCP in use to assign a dynamic IP address to the machine.
 
-superAdmin - we wil set this up in a moment, AFTER you have logged in for the first time.
+superAdmin - place your User Key from the SSOFI server here.  That will make you the super administrator.  If you want someone else to be superadministrator, have them log into SSOFI and set their key there.
 
-identityProvider - this is the NEW way to log into Cognoscenti, but not fully implemented at the time.   This needs to be a SSOFI provider, which is open source and you can download and install if you can't access the internet, but in most situations it is probably best to leave this set to the global Fujitsu ID server default:
+identityProvider - this is the way to log into Cognoscenti, see distussion above.  This is the URL to the provider.  In most situations you can use the default:
 
 identityProvider=https://interstagebpm.com/eid/
 
-emailOpenIDProvider - this is the URL to an OpenID provider that allows one to log in with an email address.  This needs to be a SSOFI provider, which is open source and you can download and install if you can't access the internet, but in most situations it is probably best to leave this set to the global Fujitsu ID server default:
+emailOpenIDProvider - use the same value as identity provider.
 
 emailOpenIDProvider=https://interstagebpm.com/eid/
 
-If you restart the server, you should see the 'Welcome Screen'  however, you will not be able to log in just yet.
-
-
-==== Configuring SSOFI ====
-
-SSOFI is the module that allows a user to log in using an OpenID.  You can point to a number of OpenID providers.  Find and edit the file   c:\tomcat\webapps\cog\WEB-INF\ssofi.config
-
-This is a JSON file, and you must follow JSON syntax.
-
-ApplicationHomePage - this is the same as the baseURL above, the external address of the application
-
-ApplicationName - You can leave this Cognoscenti, it is what the user will see when they log in
-
-BaseURL - also the same as baseURL above, but without the trailing slash
-
-tenants - contains an array of tenant objects, but Cognoscenti is a single tenant application as far as logging in is concerned, so you see only one tenant, and the id (only_tenant) is not important.  Inside the tenant there are a number of settings, but recommend you leave the defaults in order to log in to the global Fujitsu ID server.  If you run your own SSOFI server, you will need to make some changes here.
 
 
 ==== Configuring Email ====
@@ -100,21 +89,19 @@ mail.pop3.password=
 Configing the POP receive of email is optional, and you can leave these empty for now.
 
 
+==== Log In ====
 
-==== Log In & Set Super Admin ====
+You can at this point start, or restart the TomCat server, so that it will see the new application.  
 
-From the welcome screen, click on the login link.  This should prompt you with the OpenId options,and choose one that you have an open id at.  When you are done logging in there, you will get a prompt (if all the settings are correct)  saying "You have been authenticated with ... but we can't find any profile that includes this ID"  This prompt will appear every time a new user hits Cognoscenti for the first time.   Click on the button to "create a new profile".
+Access the application at:  http://myserver:80/cog/
 
-This creates a new profile for you.  Now we need to go back and give you administrator (super admin) priveledges.  Near the upper right corner, click on the link for "Settings".  Near the bottom of the page will appear a value for "Unique Id".  This is your internal ID and this is the value that must be placed in the superAdmin field. 
+This will create the data folders if they don't already exist.  If the server is not able to get fully to the running state, then the browser will display the status of the server, probably announcing "Error Initializing Cognoscenti Server"  The latest up to date details are maintained on that screen, so it is a good resource to use.  If, however, everything initializes correctly, you will see the welcome screen.
 
-Again, find and edit  c:\tomcat\webapps\cog\WEB-INF\config.txt
+From the welcome screen, click on the login link.  This should prompt you to log in at the SSOFI provider.  When you are done logging in there, you will get a prompt (if all the settings are correct)  saying "You have been authenticated with ... but we can't find any profile that includes this ID"  This prompt will appear every time a new user hits Cognoscenti for the first time.   Click on the button to "create a new profile".
 
-Find the setting for superAdmin, and set it equal to the internal id for your profile.  It should look something like this:
+If you have set up the superadmin setting in the config file, you will see a navigation bar item called "Administrator" which is used for important functions like allowing people to create sites. 
 
-superAdmin=YGOWVBWRG
-
-Now restart the server, and refresh the web page.  A new option for Administration should appear.  The super admin does not have a lot to do, but super admin is the only person who can approve new Sites.  Once the site exists, the site owner approves projects, and so on.   Super admin also have some capabilities to observe the error logs, and to clean up the data when appropriate.
-
+If you change the config file, you will need to restart the server.
 
 
 ==== Initial Trials ====
