@@ -1258,11 +1258,12 @@ public class MainTabsViewControler extends BaseController {
       public void updateGoal(@PathVariable String siteId,@PathVariable String pageId,
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          String gid = "";
           try{
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to create a action item (goal).");
-              String gid = ar.reqParam("gid");
+              gid = ar.reqParam("gid");
               JSONObject goalInfo = getPostedObject(ar);
               GoalRecord gr = null;
               int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
@@ -1295,12 +1296,12 @@ public class MainTabsViewControler extends BaseController {
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to create Action Item for minutes of meeting.", ex);
+              Exception ee = new Exception("Unable to update Action Item ("+gid+")", ex);
               streamException(ee, ar);
           }
       }
 
-      @RequestMapping(value = "/{siteId}/{pageId}/getGoalHistory.json", method = RequestMethod.POST)
+      @RequestMapping(value = "/{siteId}/{pageId}/getGoalHistory.json", method = RequestMethod.GET)
       public void getGoalHistory(@PathVariable String siteId,@PathVariable String pageId,
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);

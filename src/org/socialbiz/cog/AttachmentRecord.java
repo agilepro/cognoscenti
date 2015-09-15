@@ -957,7 +957,8 @@ public class AttachmentRecord extends DOMFace {
 
     public JSONObject getJSON4Doc(AuthRequest ar, NGPage ngp) throws Exception {
         JSONObject thisDoc = new JSONObject();
-        thisDoc.put("universalid",  getUniversalId());
+        String univ = getUniversalId(); 
+        thisDoc.put("universalid",  univ);
         thisDoc.put("id",           getId());
         thisDoc.put("name",         getNiceName());
         if ("URL".equals(getType())) {

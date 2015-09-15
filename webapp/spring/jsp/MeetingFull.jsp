@@ -144,6 +144,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.newGoal = {};
     $scope.newPerson = "";
     $scope.myUserId = "<% ar.writeJS(ar.getBestUserId()); %>";
+    $scope.actionItemFilter = "";
+    $scope.documentFilter = "";
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -225,12 +227,13 @@ app.controller('myCtrl', function($scope, $http) {
     }
     $scope.filterDocs = function(filter) {
         var res = [];
+        var filterlc = filter.toLowerCase();
         for(var i=0; i<$scope.attachmentList.length; i++) {
             var oneDoc = $scope.attachmentList[i];
-            if (oneDoc.name.indexOf(filter)>=0) {
+            if (filterlc.length==0 || oneDoc.name.toLowerCase().indexOf(filterlc)>=0) {
                 res.push(oneDoc);
             }
-            else if (oneDoc.description.indexOf(filter)>=0) {
+            else if (oneDoc.description.toLowerCase().indexOf(filterlc)>=0) {
                 res.push(oneDoc);
             }
         }
@@ -249,6 +252,90 @@ app.controller('myCtrl', function($scope, $http) {
         }
         return res;
     }
+    $scope.filterGoals = function(actionItemFilter) {
+        var res = [];
+        var fil = actionItemFilter.toLowerCase();
+        for(var i=0; i<$scope.goalList.length; i++) {
+            var oneGoal = $scope.goalList[i];
+            if (oneGoal.state<2 || oneGoal.state>4) {
+                continue;
+            }
+            //TODO: does synposis, need to do others, including assigneeds, and need to split filter
+            if (fil.length==0 || oneGoal.synopsis.toLowerCase().indexOf(fil)>=0) {
+                res.push(oneGoal);
+                continue;
+            }
+            for(var j=0; j<oneGoal.assignTo.length; j++) {
+                var ass = oneGoal.assignTo[j];
+                if (ass.name.toLowerCase().indexOf(fil)>=0) {
+                    res.push(oneGoal);
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+    $scope.filterGoalsForItem = function(actionItemFilter, item) {
+        var filteredList = $scope.filterGoals(actionItemFilter);
+        var res = []
+        for(var i=0; i<filteredList.length; i++) {
+            var oneGoal = filteredList[i];
+            if (!$scope.itemHasGoal(item, oneGoal)) {
+                res.push(oneGoal);
+            }
+        }
+        return res;
+    }
+    $scope.itemHasGoal = function(item, goal) {
+        for (var j=0; j<item.actionItems.length; j++) {
+            if (item.actionItems[j] == goal.universalid) {
+                return true;
+            }
+        }
+        return false;
+    }
+    $scope.addGoalToItem = function(item, goal) {
+        if (!$scope.itemHasGoal(item, goal)) {
+            item.actionItems.push(goal.universalid);
+        }
+        $scope.saveAgendaItem(item);
+    }
+    $scope.removeGoalFromItem = function(item, goal) {
+        var res = [];
+        for (var j=0; j<item.actionItems.length; j++) {
+            var aiId = item.actionItems[j];
+            if (aiId != goal.universalid) {
+                res.push(aiId);
+            }
+        }
+        item.actionItems = res;
+        $scope.saveAgendaItem(item);
+    }
+    $scope.itemHasDoc = function(item, doc) {
+        for (var j=0; j<item.docList.length; j++) {
+            if (item.docList[j] == doc.universalid) {
+                return true;
+            }
+        }
+        return false;
+    }
+    $scope.addDocToItem = function(item, doc) {
+        if (!$scope.itemHasDoc(item, doc)) {
+            item.docList.push(doc.universalid);
+        }
+        $scope.saveAgendaItem(item);
+    }
+    $scope.removeDocFromItem = function(item, doc) {
+        var res = [];
+        for (var j=0; j<item.docList.length; j++) {
+            var aiId = item.docList[j];
+            if (aiId != doc.universalid) {
+                res.push(aiId);
+            }
+        }
+        item.docList = res;
+        $scope.saveAgendaItem(item);
+    }
 
 
 
@@ -263,9 +350,18 @@ app.controller('myCtrl', function($scope, $http) {
     };
     $scope.itemStateName = function(item) {
         if (item.status<=1) {
-            return "Good Shape";
+            return "Good";
         }
         if (item.status==2) {
+            return "Warnings";
+        }
+        return "Trouble";
+    };
+    $scope.goalStateName = function(goal) {
+        if (goal.prospects=="good") {
+            return "Good";
+        }
+        if (goal.prospects=="ok") {
             return "Warnings";
         }
         return "Trouble";
@@ -295,6 +391,18 @@ app.controller('myCtrl', function($scope, $http) {
         }
         return "background-color:lavender";
     }
+    $scope.goalStateStyle = function(goal) {
+        if (goal.prospects=="good") {
+            return "background-color:lightgreen";
+        }
+        if (goal.prospects=="ok") {
+            return "background-color:yellow";
+        }
+        if (goal.prospects=="bad") {
+            return "background-color:red";
+        }
+        return "background-color:lavender";
+    }
 
 
     $scope.changeMeetingState = function(newState) {
@@ -304,6 +412,10 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.changeItemState = function(item, newState) {
         item.status = newState;
         $scope.saveMeeting();
+    };
+    $scope.changeGoalState = function(goal, newState) {
+        goal.prospects = newState;
+        $scope.saveGoal(goal);
     };
     $scope.saveMeeting = function() {
         $scope.meetingTime.setHours($scope.meetingHour);
@@ -330,7 +442,7 @@ app.controller('myCtrl', function($scope, $http) {
         var saveRecord = {};
         saveRecord.agenda = [agendaItem];
         $scope.putGetMeetingInfo(saveRecord);
-        $scope.stopEditing();
+        //$scope.stopEditing();
     };
     $scope.revertAllEdits = function() {
         var saveRecord = {};
@@ -462,6 +574,24 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
         $scope.stopEditing();
+    };
+    $scope.saveGoal = function(goal) {
+        var postURL = "updateGoal.json?gid="+goal.id;
+        var objForUpdate = {};
+        objForUpdate.id = goal.id;
+        objForUpdate.universalid = goal.universalid;
+        objForUpdate.prospects = goal.prospects;  //only thing that could have been changed
+        var postdata = angular.toJson(objForUpdate);
+        $scope.showError=false;
+        $scope.editGoalInfo=false;
+        $scope.showAccomplishment=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            goal.prospects = data.prospects;  //update back with official value
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
     };
 
     $scope.toggleEditor = function(whichone, itemid) {
@@ -707,7 +837,18 @@ app.controller('myCtrl', function($scope, $http) {
           </div>
            <div class="well leafContent" ng-show="isEditing(5,'0')">
              <table>
-                <tr><td style="height:30px"></td></tr>
+                <tr><td style="height:10px"></td></tr>
+                <tr id="trspath">
+                    <td class="gridTableColummHeader">Type:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2" class="form-inline form-group">
+                        <input type="radio" ng-model="meeting.meetingType" value="1"
+                            class="form-control" /> Circle Meeting   &nbsp
+                        <input type="radio" ng-model="meeting.meetingType" value="2"
+                            class="form-control" /> Operational Meeting
+                    </td>
+                </tr>
+                <tr><td style="height:10px"></td></tr>
                 <tr>
                     <td class="gridTableColummHeader">Name:</td>
                     <td style="width:20px;"></td>
@@ -789,7 +930,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <td class="gridTableColummHeader"></td>
                     <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
-                        <button ng-click="savePartialMeeting(['name','startTime','duration','reminderTime'])" class="btn btn-danger">Save</button>
+                        <button ng-click="savePartialMeeting(['name','startTime','duration','reminderTime','meetingType'])" class="btn btn-danger">Save</button>
                         <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
                     </td>
                 </tr>
@@ -823,17 +964,17 @@ app.controller('myCtrl', function($scope, $http) {
                           <!--  AGENDA HEADER -->
       <tr>
         <td style="width:100%">
-          <div>
+          <div style="padding:5px;">
             <span class="dropdown" ng-show="meeting.meetingType==2">
                 <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{itemStateStyle(item)}};width:150px;margin:10px;">
                 State: {{itemStateName(item)}} <span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation"><a role="menuitem"
-                      href="#"  ng-click="changeItemState(item, 1)">Good Shape</a></li>
+                      ng-click="changeItemState(item, 1)">Good Shape</a></li>
                   <li role="presentation"><a role="menuitem"
-                      href="#"  ng-click="changeItemState(item, 2)">Warning</a></li>
+                      ng-click="changeItemState(item, 2)">Warning</a></li>
                   <li role="presentation"><a role="menuitem"
-                      href="#"  ng-click="changeItemState(item, 3)">Trouble</a></li>
+                      ng-click="changeItemState(item, 3)">Trouble</a></li>
                 </ul>
             </span>
             <span style="font-size:130%;font-weight: bold;" ng-click="showItemMap[item.id]=!showItemMap[item.id]">{{item.position}}. {{item.subject}} &nbsp; </span>
@@ -845,6 +986,8 @@ app.controller('myCtrl', function($scope, $http) {
                 <i class="fa fa-book meeting-icon" ng-click="toggleEditor(3,item.id)"
                     title="Agenda Item Atteched Documents"></i>
                 <i class="fa fa-flag meeting-icon" ng-click="toggleEditor(4,item.id)"
+                    title="Agenda Item Action Items (Generated Goals)"></i>
+                <i class="fa fa-flag meeting-icon" ng-click="toggleEditor(9,item.id)"
                     title="Agenda Item Action Items (Generated Goals)"></i> )
             </span>
             <div ng-hide="meeting.meetingType==2">
@@ -908,54 +1051,84 @@ app.controller('myCtrl', function($scope, $http) {
 
                           <!--  AGENDA ATTACHMENTS -->
       <tr ng-show="showItemMap[item.id]">
-        <td ng-hide="isEditing(3,item.id)" style="width:100%">
+        <td style="width:100%">
            <div ng-repeat="doc in itemDocs(item)" class="leafContent"  style="margin-left:30px;">
               <a href="docinfo{{doc.id}}.htm">
                   <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
               </a>
            </div>
         </td>
+      </tr>
+
+                          <!--  AGENDA ADD DOCUMENTS -->
+      <tr ng-show="showItemMap[item.id]">
         <td ng-show="isEditing(3,item.id)" style="width:100%">
-           <div class="well">
-              <table>
-                <tr><td style="height:10px"></td></tr>
+           <div class="well" style="margin:10px;">
+              <div style="float:right;"><i class="fa fa-close meeting-icon" ng-click="toggleEditor(3,item.id)"></i></div>
+              <div><b>Add Document to this Agenda Item</b></div>
+              <table class="table">
                 <tr>
-                    <td>
-                      <div>
-                          <span class="dropdown" ng-repeat="doc in itemDocs(item)">
-                            <button class="btn dropdown-toggle btn-default" type="button" id="menu1"
-                              data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;">
-                            {{doc.name}}</button>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation"><a role="menuitem" tabindex="-1"
-                                  ng-click="removeAttachment(item, doc)">Remove Document:<br/>{{doc.name}}</a></li>
-                            </ul>
-                          </span>
-                      </div>
+                   <td colspan="4">
+                      Filter <input type="text" ng-model="documentFilter">
+                   </td>
                 </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr >
-                    <td class="form-inline form-group">
-                        <button ng-click="addAttachment(item, newAttachment)" class="btn btn-primary">Add Document</button>
-                        <input type="text" ng-model="newAttachment"  class="form-control" placeholder="Enter Document Name"
-                         style="width:350px;" typeahead="att as att.name for att in filterDocs($viewValue) | limitTo:12">
-                        <button ng-click="stopEditing()" class="btn btn-primary">Cancel</button>
+                <tr ng-repeat="doc in filterDocs(documentFilter)">
+                    <td><img src="<%=ar.retPath%>assets/images/iconFile.png"/> {{doc.name}} </td>
+                    <td></td>
+                    <td>
+                        <button ng-click="addDocToItem(item, doc)" ng-hide="itemHasDoc(item,doc)">Add</button>
+                        <button ng-click="removeDocFromItem(item, doc)" ng-show="itemHasDoc(item,doc)">Remove</button>
                     </td>
+                    </td>
+                </tr>
+                <tr>
+                   <td><button>Add All Above</button></td>
                 </tr>
              </table>
            </div>
-           <div style="height:50px"></div>
         </td>
       </tr>
 
                           <!--  AGENDA Action ITEMS -->
       <tr ng-show="showItemMap[item.id]">
         <td ng-hide="isEditing(4,item.id)" style="width:100%">
-           <div ng-repeat="goal in itemGoals(item)" class="leafContent"   style="margin-left:30px;">
-              <a href="task{{goal.id}}.htm">
-                  <img src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"> {{goal.synopsis}}
+           <table class="table">
+           <tr ng-show="itemGoals(item).length>0">
+              <th></th>
+              <th>Synopsis</th>
+              <th>Assignee</th>
+              <th>Due</th>
+           </tr>
+           <tr ng-repeat="goal in itemGoals(item)" style="margin-left:30px;">
+              <td>
+              <span class="dropdown" ng-show="meeting.meetingType==2">
+                <button class="btn btn-default dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" style="{{goalStateStyle(goal)}};width:100px;margin:2px;padding:2px;">
+                      {{goalStateName(goal)}} <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                  <li role="presentation"><a role="menuitem"
+                      ng-click="changeGoalState(goal, 'good')">Good</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      ng-click="changeGoalState(goal, 'ok')">Warning</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      ng-click="changeGoalState(goal, 'bad')">Trouble</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      ng-click="removeGoalFromItem(item, goal)">Remove Action Item</a></li>
+                </ul>
+              </span>
+              </td>
+              <td>
+              <a href="task{{goal.id}}.htm" class="leafContent"   >
+                <img src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"> {{goal.synopsis}}
               </a>
-           </div>
+              </td>
+              <td>
+              <span ng-repeat="person in goal.assignTo"> {{person.name}}<br/></span>
+              </td>
+              <td>
+              <span ng-show="goal.duedate>=0">{{goal.duedate|date}} </span>
+              </td>
+           </tr>
+           </table>
         </td>
         <td ng-show="isEditing(4,item.id)" style="width:100%">
             <div class="well generalSettings">
@@ -998,6 +1171,36 @@ app.controller('myCtrl', function($scope, $http) {
             </div>
         </td>
       </tr>
+                          <!--  AGENDA ADD ACTION ITEMS -->
+      <tr ng-show="showItemMap[item.id]">
+        <td ng-show="isEditing(9,item.id)" style="width:100%">
+           <div class="well" style="margin:10px;">
+              <div style="float:right;"><i class="fa fa-close meeting-icon" ng-click="toggleEditor(9,item.id)"></i></div>
+              <div><b>Add Action Item to this Agenda Item</b></div>
+              <table class="table">
+                <tr>
+                   <td colspan="4">
+                      Filter <input type="text" ng-model="actionItemFilter">
+                   </td>
+                </tr>
+                <tr ng-repeat="goal in filterGoalsForItem(actionItemFilter, item)">
+                    <td><img src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"/> {{goal.synopsis}} </td>
+                    <td><span ng-repeat="person in goal.assignTo"> {{person.name}} <br/></span></td>
+                    <td>
+                        <button ng-click="addGoalToItem(item, goal)" ng-hide="itemHasGoal(item,goal)">Add</button>
+                        <button ng-click="removeGoalFromItem(item, goal)" ng-show="itemHasGoal(item,goal)">Remove</button>
+                    </td>
+                    </td>
+                </tr>
+                <tr>
+                   <td><button>Add All Above</button></td>
+                </tr>
+             </table>
+           </div>
+        </td>
+      </tr>
+
+
       </table>
       </div>
 

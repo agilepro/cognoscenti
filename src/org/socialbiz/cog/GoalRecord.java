@@ -834,6 +834,18 @@ public class GoalRecord extends BaseRecord {
         return safeConvertLong(getScalar("snooze"));
     }
 
+    /**
+     * How is the action item proceeding and is it likely 
+     * to be completed on time.
+     * The values are "good", "ok", "bad"
+     */
+    public void setProspects(String pros) {
+        setScalar("prospects", pros);
+    }
+    public String getProspects() {
+        return getScalar("prospects");
+    }
+
 
 
     public JSONObject getJSON4Goal(NGPage ngp) throws Exception {
@@ -852,7 +864,8 @@ public class GoalRecord extends BaseRecord {
         thisGoal.put("enddate",   getEndDate());
         thisGoal.put("duration",  getDuration());
         thisGoal.put("rank",      getRank());
-
+        thisGoal.put("prospects", getProspects());
+        
         thisGoal.put("projectname", ngp.getFullName());
         thisGoal.put("projectKey", ngp.getKey());
 
@@ -953,6 +966,9 @@ public class GoalRecord extends BaseRecord {
         }
         if (goalObj.has("sitename")) {
             setRemoteSiteName(goalObj.getString("sitename"));
+        }
+        if (goalObj.has("prospects")) {
+            setProspects(goalObj.getString("prospects"));
         }
 
         if (goalObj.has("assignTo")) {

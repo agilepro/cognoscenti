@@ -483,7 +483,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 }
                 if (att==null) {
                     att = resDec.project.createAttachment();
-                    if (newUid==null) {
+                    if (newUid==null || newUid.length()==0) {
                         newUid = ngp.getContainerUniversalId() + "@" + att.getId();
 
                     }
