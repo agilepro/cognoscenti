@@ -369,7 +369,9 @@ Parameter used :
                         <li><a href="<%=ar.retPath%>"
                                title="Initial Introduction Page">Welcome Page</a></li>
                         <li>|</li>
-                        <li class="text last"><a href="<%=ar.retPath%>t/EmailLoginForm.htm?go=<%ar.writeURLData(currentPageURL);%>">Log in</a></li>
+                        <li class="text last">
+                            <a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">Login</a>
+                        </li>
                <%
                   }
                %>
@@ -547,7 +549,7 @@ function verifyToken() {
             window.location.reload();
         }
         else {
-            alert("Internal Error: was not able to verify token.");
+            alert("Internal Error: was not able to verify token: "+JSON.stringify(data));
         }
         displayWelcomeMessage();
     });
@@ -574,12 +576,12 @@ function logOutServer() {
 function displayWelcomeMessage() {
     var y = document.getElementById("welcomeMessage");
     if (responseCode==0) {
-        y.innerHTML = 'Checking identity, please <a target="_blank" href="'
+        y.innerHTML = 'Checking identity, please <a href="'
             +providerUrl
             +'&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">Login</a>.';
     }
     else if (!loginInfo.userName) {
-        y.innerHTML = 'Not logged in, please <a target="_blank" href="'
+        y.innerHTML = 'Not logged in, please <a href="'
             +providerUrl
             +'?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">Login</a>.';
     }

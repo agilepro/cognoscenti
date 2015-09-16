@@ -82,9 +82,6 @@ app.controller('myCtrl', function($scope, $http) {
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  ng-click="addId()" ><img src="<%=ar.retPath%>assets/iconChangePassword.gif"/>
-                        Add Another ID</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1" href="editUserProfile.htm?u={{userInfo.key}}" >
                         <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
                         Update Settings</a></li>
@@ -201,7 +198,7 @@ if (ar.isLoggedIn()) { %>
                     <% } %>
                     <tr><td style="height:10px"></td></tr>
                     <tr>
-                        <td class="gridTableColummHeader"><fmt:message key="nugen.userprofile.Id"/>:</td>
+                        <td class="gridTableColummHeader">User Key:</td>
                         <td style="width:20px;"></td>
                         <td><% ar.writeHtml(key);%></td>
                     </tr>

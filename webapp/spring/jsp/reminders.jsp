@@ -1,8 +1,12 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/attachment_forms.jsp"
+%><%@ include file="/spring/jsp/include.jsp"
 %><%
 
-    String encodedLoginMsg = URLEncoder.encode("Can't open form","UTF-8");
+    String pageId = ar.reqParam("pageId");
+    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngp);
+
+    //String encodedLoginMsg = URLEncoder.encode("Can't open form","UTF-8");
 
     ReminderMgr rMgr = ngp.getReminderMgr();
     JSONArray allReminders = new JSONArray();

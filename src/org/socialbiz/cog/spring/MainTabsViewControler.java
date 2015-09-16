@@ -702,6 +702,7 @@ public class MainTabsViewControler extends BaseController {
           return modelAndView;
       }
 
+/*
       @RequestMapping(value = "/{siteId}/{pageId}/projectActiveTasks.htm", method = RequestMethod.GET)
       public ModelAndView projectActiveTasks(@PathVariable String siteId,@PathVariable String pageId,
               HttpServletRequest request, HttpServletResponse response)
@@ -728,7 +729,9 @@ public class MainTabsViewControler extends BaseController {
           }
 
       }
+*/
 
+/*
       @RequestMapping(value = "/{siteId}/{pageId}/projectCompletedTasks.htm", method = RequestMethod.GET)
       public ModelAndView projectCompletedTasks(@PathVariable String siteId,@PathVariable String pageId,
               HttpServletRequest request, HttpServletResponse response)
@@ -755,7 +758,9 @@ public class MainTabsViewControler extends BaseController {
               throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
           }
       }
+*/
 
+/*
       @RequestMapping(value = "/{siteId}/{pageId}/projectFutureTasks.htm", method = RequestMethod.GET)
       public ModelAndView projectFutureTasks(@PathVariable String siteId,@PathVariable String pageId,
               HttpServletRequest request, HttpServletResponse response)
@@ -809,6 +814,7 @@ public class MainTabsViewControler extends BaseController {
               throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
           }
       }
+*/
 
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingList.htm", method = RequestMethod.GET)

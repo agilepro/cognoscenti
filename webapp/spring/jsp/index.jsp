@@ -75,11 +75,10 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="registerButton" onclick="login();">&nbsp;</td>
+                                    <td class="registerButton" onclick="jumpToLoginPage();">&nbsp;</td>
                                     <td class="loginLink">
                                         Already a member<br />
-                                        <a href="<%=ar.baseURL%>t/EmailLoginForm.htm?go=<%ar.writeURLData(ar.getCompleteURL());%>">
-                                           Log In</a> here.
+                                        <a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(ar.getCompleteURL(), "UTF-8")%>">Login</a> here.
                                     </td>
                                 </tr>
                             </table>
@@ -136,6 +135,13 @@
         </tr>
     </table>
 
+<script>
+
+function jumpToLoginPage() {
+    window.location = "<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(ar.getCompleteURL(), "UTF-8")%>";
+}
+
+</script>
 
 <%@ include file="functions.jsp"%>
 </body>

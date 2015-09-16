@@ -97,13 +97,6 @@
                 <div id="mainSiteContainerDetailsRight">
                     <table width="100%">
                         <tr>
-                            <td valign="top" style="width:181px">
-                                <!-- Begin leftPanel -->
-                                    <div id="leftPanel">
-                                        <tiles:insertAttribute name="menu" />
-                                    </div>
-                                <!-- End leftPanel -->
-                            </td>
                             <td valign="top">
                                 <!-- Begin mainContent (Body area) -->
                                     <div id="mainContent">

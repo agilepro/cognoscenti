@@ -57,7 +57,7 @@ public class RemoteLinkController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage ngp = registerRequiredProject(ar, siteId, pageId);
             if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar, "message.login.sync.attachment",null);
+                sendRedirectToLogin(ar);
                 return;
             }
             Hashtable<String, String> params = new Hashtable<String, String>();
@@ -113,7 +113,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar, "message.can.not.perform.operation",null);
+                sendRedirectToLogin(ar);
                 return;
             }
             String folderId = ar.reqParam("folderId");
@@ -136,7 +136,7 @@ public class RemoteLinkController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage ngp = registerRequiredProject(ar, siteId, pageId);
             if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar, "message.login.sync.attachment",null);
+                sendRedirectToLogin(ar);
                 return;
             }
             Hashtable<String, String> params = new Hashtable<String, String>();

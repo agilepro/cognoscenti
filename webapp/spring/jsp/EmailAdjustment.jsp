@@ -93,7 +93,7 @@ Optional Parameters:
                     <tr>
                         <td class="gridTableColummHeader" valign="top"></td>
                         <td style="width:20px;"></td>
-                        <td>Note: if you <a href="<%=ar.retPath%>t/EmailLoginForm.htm?go=<%ar.writeURLData(ar.getCompleteURL());%>">
+                        <td>Note: if you <a href="<%=ar.getSystemProperty("identityProvider")+"?openid.mode=quick&go="+URLEncoder.encode(go, "UTF-8")%>">
                         login </a> you will have more options.</td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>

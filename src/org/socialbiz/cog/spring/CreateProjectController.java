@@ -196,7 +196,7 @@ public class CreateProjectController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar, "message.login.to.create.page",null);
+                sendRedirectToLogin(ar);
                 return;
             }
             NGPage project= createTemplateProject(ar,siteId);
@@ -226,7 +226,7 @@ public class CreateProjectController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar, "message.login.to.create.page",null);
+                sendRedirectToLogin(ar);
                 return;
             }
 
@@ -258,7 +258,7 @@ public class CreateProjectController extends BaseController {
         try {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar, "message.login.create.template.from.project",null);
+                sendRedirectToLogin(ar);
                 return;
             }
             String goUrl = ar.reqParam("goUrl");
@@ -283,7 +283,7 @@ public class CreateProjectController extends BaseController {
         try {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar, "message.login.create.template.from.project",null);
+                sendRedirectToLogin(ar);
                 return;
             }
             String goUrl = ar.reqParam("goUrl");
@@ -309,7 +309,7 @@ public class CreateProjectController extends BaseController {
         try {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar, "message.login.create.template.from.project",null);
+                sendRedirectToLogin(ar);
                 return;
             }
             NGPage created = createProjectFromAgentRules(ar);

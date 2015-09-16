@@ -882,22 +882,6 @@
     }
 
 
-    public void writeLoginPrompt(AuthRequest ar)
-        throws Exception
-    {
-        Writer w = ar.w;
-        String currentPageURL = ar.getCompleteURL();
-        ar.write("<form action=\"");
-        ar.write(ar.retPath);
-        ar.write("t/EmailLoginForm.htm\" method=\"get\">");
-        ar.write("<input type=\"hidden\" name=\"go\" value=\"");
-        ar.writeHtml(currentPageURL);
-        ar.write("\"/><tr><td colspan=\"2\">");
-        ar.write("<input type=\"submit\" value=\"Login\">  --  If you don't have a profile, you can ");
-        ar.write("<input type=\"submit\" value=\"Register for a Profile\">");
-        ar.write(" &nbsp; Forgot password?: <input type=\"submit\" value=\"Reset Password by Email\">");
-        ar.write("</form>");
-    }
 
     //used by header and pages to redirect to new UI
     public String getNewURL(AuthRequest ar, String resource)

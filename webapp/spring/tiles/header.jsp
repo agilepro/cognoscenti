@@ -394,7 +394,7 @@ Parameter used :
                             <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/emailListnerSettings.htm" title="Administration">Administration</a></li>
                         <%} %>
                         <li>|</li>
-                        <li class="text last"><a href="<%=ar.retPath%>t/LogoutAction.htm?go=<%ar.writeURLData(currentPageURL);%>">Log Out</a></li>
+                        <li class="text last"><a onclick="alert('Logout is not possible from this page, please navigate to another to log out')">Log Out</a></li>
                <%
                   }
                   else
@@ -403,7 +403,7 @@ Parameter used :
                         <li><a href="<%=ar.retPath%>"
                                 title="Initial Introduction Page">Welcome Page</a></li>
                         <li>|</li>
-                        <li class="text last"><a href="<%=ar.retPath%>t/EmailLoginForm.htm?go=<%ar.writeURLData(currentPageURL);%>">Log in</a></li>
+                        <li class="text last"><a onclick="alert('Login is not possible from this page, please navigate to another to log in')">Log in</a></li>
                <%
                   }
                %>

@@ -76,11 +76,6 @@
         <put-attribute name="body" value="/spring/jsp/leaf_admin.jsp" />
     </definition>
 
-    <definition name="process" extends="projectBaseLayout">
-        <put-attribute name="title" value="Process" />
-        <put-attribute name="body" value="/spring/jsp/leaf_process.jsp" />
-    </definition>
-
     <definition name="FrontPage" extends="slimLayout">
         <put-attribute name="title" value="History" />
         <put-attribute name="body" value="/spring/jsp/FrontPage.jsp" />
@@ -509,27 +504,6 @@
         <put-attribute name="title" value="Notification Settings" />
         <put-attribute name="body" value="/spring/jsp/NotificationSettings.jsp" />
     </definition>
-
-    <definition name="ProjectActiveTasks" extends="baseLayout">
-        <put-attribute name="title" value="Process" />
-        <put-attribute name="body" value="/spring/jsp/ProjectActiveTasks.jsp" />
-    </definition>
-
-    <definition name="ProjectCompletedTasks" extends="baseLayout">
-        <put-attribute name="title" value="Process" />
-        <put-attribute name="body" value="/spring/jsp/ProjectCompletedTasks.jsp" />
-    </definition>
-
-    <definition name="ProjectFutureTasks" extends="baseLayout">
-        <put-attribute name="title" value="Process" />
-        <put-attribute name="body" value="/spring/jsp/ProjectFutureTasks.jsp" />
-    </definition>
-
-    <definition name="ProjectsAllTasks" extends="baseLayout">
-        <put-attribute name="title" value="Process" />
-        <put-attribute name="body" value="/spring/jsp/ProjectsAllTasks.jsp" />
-    </definition>
-
 
 
     <definition name="MeetingList" extends="slimLayout">

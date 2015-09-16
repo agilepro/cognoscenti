@@ -48,34 +48,9 @@
     //find the user profile for this
     UserProfile up = UserManager.getUserProfileByKey(u);
 
-    //request the email if requested
-    /*
-    if (isEmail)
-    {
-        UserPage anonPage = ar.getAnonymousUserPage();
-        ProfileRequest newReq = anonPage.createProfileRequest(ProfileRequest.ADD_EMAIL, newid, ar.nowTime);
-        newReq.setUserKey(up.getKey());
-        newReq.sendEmail(ar, go);
-        String gotowait = ar.retPath+"t/waitForEmail.htm?email="+URLEncoder.encode(newid, "UTF-8")
-            +"&option="+URLEncoder.encode(ProfileRequest.getPromptString(ProfileRequest.ADD_EMAIL), "UTF-8")
-            +"&go="+URLEncoder.encode(go, "UTF-8");
-
-        anonPage.saveUserPage(ar, "requested to add email "+newid);
-        response.sendRedirect(gotowait);
-        return;
-    }
-    else
-    {
-        String registerAddr = ar.retPath+"t/openIdLogin.form?go="+URLEncoder.encode(go)
-                +"&err="+URLEncoder.encode(ar.getCompleteURL())
-                +"&openid="+URLEncoder.encode(newid)
-                +"&key="+URLEncoder.encode(up.getKey());
-        response.sendRedirect(registerAddr);
-    }
-    */
     up.addId(newid.trim());
     up.setLastUpdated(ar.nowTime);
     UserManager.writeUserProfilesToFile();
-    
+
     response.sendRedirect(go);
 %>

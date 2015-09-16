@@ -34,7 +34,6 @@ import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.SectionAttachments;
-import org.socialbiz.cog.SectionDef;
 import org.socialbiz.cog.WikiToPDF;
 import org.socialbiz.cog.dms.FolderAccessHelper;
 import org.socialbiz.cog.exception.NGException;
@@ -129,11 +128,7 @@ public class ProjectDocsController extends BaseController {
             boolean canAccessDoc = AccessControl.canAccessDoc(ar, nGPage, att);
 
             if(!canAccessDoc){
-                String msgKey = "message.loginalert.access.attachment";
-                if(att.getVisibility() != SectionDef.PUBLIC_ACCESS){
-                    msgKey = "message.loginalert.access.non.public.attachment";
-                }
-                sendRedirectToLogin(ar, msgKey,null);
+                 sendRedirectToLogin(ar);
                 return;
             }
 

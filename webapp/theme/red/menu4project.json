@@ -41,22 +41,6 @@
           "href": "goalList.htm"
         },
         {
-          "name": "OLD Active Goals",
-          "href": "projectActiveTasks.htm"
-        },
-        {
-          "name": "OLD Completed Goals",
-          "href": "projectCompletedTasks.htm"
-        },
-        {
-          "name": "OLD Future Goals",
-          "href": "projectFutureTasks.htm"
-        },
-        {
-          "name": "OLD All Goals",
-          "href": "projectAllTasks.htm"
-        },
-        {
           "name": "Meeting List",
           "href": "meetingList.htm"
         },

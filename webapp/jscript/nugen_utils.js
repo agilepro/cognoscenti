@@ -221,10 +221,6 @@ function createSubLinks(){
 
         var arrayOfTabs2 = [
             new Tab(retPath+"t/"+book+"/"+pageId+"/goalList.htm",             "List Goals"),
-            new Tab(retPath+"t/"+book+"/"+pageId+"/projectActiveTasks.htm",   "OLD Active Goals"),
-            new Tab(retPath+"t/"+book+"/"+pageId+"/projectCompletedTasks.htm","OLD Completed Goals"),
-            new Tab(retPath+"t/"+book+"/"+pageId+"/projectFutureTasks.htm",   "OLD Future Goals"),
-            new Tab(retPath+"t/"+book+"/"+pageId+"/projectAllTasks.htm",      "OLD All Goals"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/meetingList.htm",          "Meeting List"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/agendaBacklog.htm",        "Agenda Item Backlog")
         ];

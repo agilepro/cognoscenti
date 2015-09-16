@@ -25,8 +25,6 @@ Data is all stored as files on a file system.  First decide where you would like
 
 Authentication: Cognoscenti uses an external identity server to handle login, and this must be a SSOFI identity provider.  A public version of this server is running at https://interstagebom.com/eid/ and you are encouraged to just use this provider.  Before installing, go to that address and register a password for your email address.  THis will work for any scenario where you have ready access to the internet.  
 
-User Key: When you have registered and logged into SSOFI, choose to "View Your Profile".  On that screen is a "key".  It is a sequence of random letters and numbers.   Note that down, you will need that key below.
-
 Offline Use: If you want to install Cognoscenti is a location that cut off from the Internet, possibly for 'off-line' portable situation, then you will need to install a SSOFI indentity provider.  SSOFI is a free, open source utility, that can run in the same TomCat server you are using for Cognoscenti.  Please find information about SSOFI at https://github.com/agilepro/ssofi-provider
 
 SMTP: You will also want to make an account on the mail server for Cognoscenti.  If the SMTP server requires an authentication for sending mail, you will need to configure the username and password (below).  
@@ -35,21 +33,19 @@ POP: if you want to receive email from the POP server, you will need a user acco
 
 ==== Installation ====
 
-Decide on the name of the application.  That is the name of the folder in the TomCat "webapps" folder.  For the rest of this we will assume that the name of this folder is "cog" however you can use whatever valid webapp name you would like to use.
+Decide on the name of the application.  That is the name of the folder in the TomCat "webapps" folder.  For the rest of this we will assume that the name of this folder is "cog" (e.g. c:\tomcat\webapps\cog) however you can use whatever valid webapp name you would like to use.
 
-Create a folder named after your application in the webapps folder (e.g. c:\tomcat\webapps\cog).
-
-Unzip the contents of the war file to that folder.  (Note: TomCat is designed to automatically unzip war files for you.  Last time this was tested, it did not succeed and we have not determined the reason.  That is why we probably need to follow these instructions of creating a folder and unzipping the contents into it.)
-
-
+Unzip the contents of the war file to that folder.  (Note: TomCat is designed to automatically unzip war files for you.  Last time this was tested, it did not succeed and we have not determined the reason.  That is why we recommend to follow these instructions of creating a folder and unzipping the contents into it.)
 
 ==== Main Configuration ====
 
 Find and edit the config.txt file at   c:\tomcat\webapps\cog\WEB-INF\config.txt
 
-baseURL - You MUST set this to a real name of the server and everything up to the name of the application, including a final slash.  This URL will be used to redirect users to resources on this application.  Sometimes, the name that exists locally on the machine is not the name that the users see, because of proxy or a server in front filtering or rerouting requests.  This needs to be the URL address of the application from the point of view of the user's browser.  Do not use "localhost" because obviously nobody on a different computer will get this server.  Use whatever name of the host that the browser will need to resolve to this machine.   IP addresses will work, but obviously are not good when you have DHCP in use to assign a dynamic IP address to the machine.
+There is a file called config_example.txt.  The first time the server starts, if it does not find a config.txt, it will copy this config_example.txt file to a new config.txt file.  If you are configuring the server before starting it the first time, you can manually copy config_example.txt to a new config.txt file in order to get the default values and comments.
 
-superAdmin - place your User Key from the SSOFI server here.  That will make you the super administrator.  If you want someone else to be superadministrator, have them log into SSOFI and set their key there.
+baseURL - You MUST set this to a real URL of the server including everything up to the name of the application, including a final slash, the way that users' browsers will see it.   This URL will be used to redirect users to resources on this application.  Sometimes, the name that exists locally on the machine is not the name that the users see, because of proxy or a server in front filtering or rerouting requests.  This needs to be the URL address of the application from the point of view of the user's browser.  Do not use "localhost" because obviously nobody on a different computer will get this server.  Use whatever name of the host that the browser will need to resolve to this machine.   An IP address will work, but obviously is not good when you have a dynamic IP address to the machine that might change.
+
+superAdmin - Leave this empty for now.  You have to log in first, and get assigned a user key (unique id) before you you have a value to place here.  See below for setting up superAdmin.
 
 identityProvider - this is the way to log into Cognoscenti, see distussion above.  This is the URL to the provider.  In most situations you can use the default:
 
@@ -65,7 +61,13 @@ emailOpenIDProvider=https://interstagebpm.com/eid/
 
 Find and edit the file at   c:\tomcat\webapps\cog\WEB-INF\EmailNotification.properties
 
-overrideAddress - while you are getting the server to work, you might want to set this to your own real email address.  If set, this will cause all email to go ONLY to that address, and never bug anyone else.  Later when you are ready for others to use it, comment out this setting
+If you are configurng this before running the server the first time, you can copy the contents of EmailNotification_example.properties to create a new EmailNotification.properties with all the right default values and comments.
+
+overrideAddress - This is a testing/debug feature that makes the server sent ALL email to this one address.  While you are getting the server to work, you might want to set this to your own real email address.  If set, this will cause all email to go ONLY to that address, and never bug anyone else.  Later when you are ready for others to use it, comment out this setting
+
+mail.smtp.host - the server DNS name
+
+mail.smtp.port - probably 25
 
 mail.smtp.auth - set to true if your email server requires authentication for sending
 
@@ -73,11 +75,7 @@ mail.smtp.user -  the user needed to access the email server for sending
 
 mail.smtp.password - the password for sending
 
-mail.smtp.host - the server DNS name
-
-mail.smtp.port - probably 25
-
-mail.smtp.from - this is the from address.  Some SMTP servers only allow sending email when the from address is set to particular values.  If you have troubles sending, try setting this address.
+mail.smtp.from - this is the default from address.  Some SMTP servers only allow sending email when the from address is set to particular values.  If you have troubles sending, try setting this address.
 
 That is all you need to set for sending email.  Cognoscenti also has the ability to receive email, and to add the contents of the email to a project.  To enable this, you need access to a POP server.  These settings are:
 
@@ -91,18 +89,23 @@ Configing the POP receive of email is optional, and you can leave these empty fo
 
 ==== Log In ====
 
-You can at this point start, or restart the TomCat server, so that it will see the new application.  
+You can at this point start, or restart the TomCat server, so that it will see the new application and settings. 
 
 Access the application at:  http://myserver:80/cog/
 
 This will create the data folders if they don't already exist.  If the server is not able to get fully to the running state, then the browser will display the status of the server, probably announcing "Error Initializing Cognoscenti Server"  The latest up to date details are maintained on that screen, so it is a good resource to use.  If, however, everything initializes correctly, you will see the welcome screen.
 
-From the welcome screen, click on the login link.  This should prompt you to log in at the SSOFI provider.  When you are done logging in there, you will get a prompt (if all the settings are correct)  saying "You have been authenticated with ... but we can't find any profile that includes this ID"  This prompt will appear every time a new user hits Cognoscenti for the first time.   Click on the button to "create a new profile".
+From the welcome screen, click on the login link.  This should prompt you to log in at the SSOFI provider.  When you are done logging in there, you should see an indicator at the upper right with your user name.
 
-If you have set up the superadmin setting in the config file, you will see a navigation bar item called "Administrator" which is used for important functions like allowing people to create sites. 
+==== Setting up Super Administrator ====
 
-If you change the config file, you will need to restart the server.
+Once you have logged in and can access the system, go to your user profile by clicking on your name after the Welcome message in the upper right corner.  On this page, there is a field labeled "User Key" which is probably a 9-letter code value.  Note this value down.
 
+Edit the config.txt one more time.  In the setting for "superAdmin" place your User Key that you found above.  That will make you the super administrator.  If you want someone else to be superadministrator, have them log in, find their user key, and set their key there.
+
+If you have set up the superadmin setting in the config file, you will see a navigation bar item called "Administrator" which is used for important functions like allowing people to create sites.   New sites are created by a user requesting a new site.  It is the super administrator who must respond, and either grant or deny the new site.  Once a site is created, the site owner controls all the project spaces within the site.  The super administrator also has access to some important diagnostic information about the running of the server.
+
+Whenever you change the config file, you will need to restart the server, for the changes to take effect.
 
 ==== Initial Trials ====
 

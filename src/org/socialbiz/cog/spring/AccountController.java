@@ -492,19 +492,22 @@ public class AccountController extends BaseController {
         return assigness;
     }
 
+//This is a pretty horrible function.  It is used to support the old style of
+//auto complete when entering user names.
+//However this really does not site well with the angular approach
+//TODO: this should be eliminated once we know it is not being used.
     @RequestMapping(value = "/{siteId}/$/getUsers.ajax", method = RequestMethod.GET)
     public void getUsers(HttpServletRequest request, HttpServletResponse response,
             @PathVariable String siteId) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar, "message.loginalert.get.userlist",null);
-                return;
+            String users="";
+            if(ar.isLoggedIn()){
+                ar.getCogInstance().getSiteByIdOrFail(siteId);
+                String matchKey = ar.defParam("matchkey", "");
+                users = UserManager.getUserFullNameList(matchKey);
+                users = users.replaceAll("\"", "");
             }
-            ar.getCogInstance().getSiteByIdOrFail(siteId);
-            String matchKey = ar.defParam("matchkey", "");
-            String users = UserManager.getUserFullNameList(matchKey);
-            users = users.replaceAll("\"", "");
             NGWebUtils.sendResponse(ar, users);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.get.users", null, ex);
@@ -539,6 +542,10 @@ public class AccountController extends BaseController {
         }
     }
 
+/*
+
+    This is for getting document from sites ... but sites no longer have document attachments
+
     @RequestMapping(value="/{siteId}/$/a/{docId}.{ext}", method = RequestMethod.GET)
     public void loadDocument(
           @PathVariable String siteId,
@@ -548,10 +555,7 @@ public class AccountController extends BaseController {
           HttpServletResponse response) throws Exception {
        try{
            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-           if(!ar.isLoggedIn()){
-               sendRedirectToLogin(ar, "message.loginalert.access.attachment",null);
-               return;
-           }
+           ar.assertLoggedIn();
 
            ar.getCogInstance().getSiteByIdOrFail(siteId);
 
@@ -566,5 +570,5 @@ public class AccountController extends BaseController {
            throw new NGException("nugen.operation.fail.account.download.document", new Object[]{docId, siteId}, ex);
        }
    }
-
+*/
 }

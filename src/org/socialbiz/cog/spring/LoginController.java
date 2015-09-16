@@ -348,7 +348,7 @@ public class LoginController extends BaseController {
         }
     }
 
-
+/*
     @RequestMapping(value = "/EmailLoginAction.form", method = RequestMethod.POST)
      public void EmailIdLogInAction(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -441,7 +441,7 @@ public class LoginController extends BaseController {
             redirectToLoginPage(ar, go, new NGException("nugen.operation.fail.to.login", null , ex));
         }
     }
-
+*/
 
 
     // Login is complicated and must be done exactly right, and there are many factors

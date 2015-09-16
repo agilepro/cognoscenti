@@ -280,7 +280,9 @@ public class UserController extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Need to log in to see a user's alerts page.");
+            if(!ar.isLoggedIn()){
+                return showWarningView(ar, "message.loginalert.see.page");
+            }
 
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
 
@@ -469,7 +471,7 @@ public class UserController extends BaseController {
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            ar.assertLoggedIn("Must be logged in to update an agent.");
+            ar.assertLoggedIn("Must be logged in to look up agents.");
 
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
             UserPage uPage = userBeingViewed.getUserPage();
@@ -696,6 +698,7 @@ public class UserController extends BaseController {
         }
     }
 
+/*
     @RequestMapping(value = "/{siteId}/{pageId}/CreateRole.form", method = RequestMethod.POST)
     public ModelAndView createRole(@PathVariable String siteId,@PathVariable String pageId,HttpServletRequest request,
             HttpServletResponse response)
@@ -705,9 +708,6 @@ public class UserController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request,  response ,null);
             NGPage project  = registerRequiredProject(ar, siteId, pageId);
             ar.assertLoggedIn("Can't create a Role.");
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
             ar.assertAdmin("Must be an admin of the project to create a role.");
 
             String roleName = ar.reqParam("rolename").trim();
@@ -726,6 +726,7 @@ public class UserController extends BaseController {
             throw new NGException("nugen.operation.fail.user.create.role.page", new Object[]{pageId,siteId} , ex);
         }
     }
+*/
 
     @RequestMapping(value = "/markAsTemplate.ajax", method = RequestMethod.POST)
     public void markAsTemplate(HttpServletRequest request, HttpServletResponse response)
@@ -813,6 +814,7 @@ public class UserController extends BaseController {
         }
     }
 
+/*
     @RequestMapping(value = "/{userKey}/addUserId.htm", method = RequestMethod.GET)
     public ModelAndView addUserId(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -830,7 +832,7 @@ public class UserController extends BaseController {
         }
         return modelAndView;
     }
-
+*/
 
     @RequestMapping(value = "/approveOrRejectRoleRequest.ajax", method = RequestMethod.POST)
     public void approveOrRejectRoleRequest(HttpServletRequest request, HttpServletResponse response)
@@ -1306,10 +1308,8 @@ public class UserController extends BaseController {
         try{
             AuthRequest ar  = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
-                String go = ar.getRequestURL();
-                String loginUrl = ar.baseURL+"t/EmailLoginForm.htm?go="+URLEncoder.encode(go,"UTF-8")
-                +"&msg="+URLEncoder.encode("Need to log in to browse remote folders","UTF-8");
-                response.sendRedirect(loginUrl);
+                sendRedirectToLogin(ar);
+                return;
             }
 
             String path = ar.reqParam("path");
@@ -1556,7 +1556,8 @@ public class UserController extends BaseController {
             }else if(emailId != null){
                 return redirectBrowser(ar,"unsubscribemember.htm?emailId="+URLEncoder.encode(emailId, "UTF-8"));
             }
-            return redirectToLoginView(ar, "nugen.user.notification.automatic.access.denied",null );
+            sendRedirectToLogin(ar);
+            return null;
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.open.notification.page", null , ex);
         }

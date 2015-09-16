@@ -157,20 +157,10 @@ public class BaseController {
         return new ModelAndView(viewName);
     }
 
-    /*
-    * Redirect from a fetched page to the login page.  Returns to this page.
-    * Should not have two of these.  Clean up and have just one
-    */
-    public static ModelAndView redirectToLoginView(AuthRequest ar, String msgKey, Object[] param) throws Exception {
-        sendRedirectToLogin(ar, msgKey, param);
-        return null;
-    }
 
-    public static void sendRedirectToLogin(AuthRequest ar, String msgKey, Object[] param) throws Exception {
+    public static void sendRedirectToLogin(AuthRequest ar) throws Exception {
         String go = ar.getCompleteURL();
-        String message = ar.getMessageFromPropertyFile(msgKey, param);
-        String loginUrl = ar.baseURL+"t/EmailLoginForm.htm?go="+URLEncoder.encode(go,"UTF-8")
-        +"&msg="+URLEncoder.encode(message,"UTF-8");
+        String loginUrl = ar.getSystemProperty("identityProvider")+"?openid.mode=quick&go="+URLEncoder.encode(go, "UTF-8");
         ar.resp.sendRedirect(loginUrl);
         return;
     }
@@ -181,7 +171,7 @@ public class BaseController {
     * parameter go is the web address to redirect to on successful login
     * parameter error is an exception that represents the message to display to the user
     * Error message is displayed only once.  Refreshing the page will clear the message.
-    */
+    *
     protected void redirectToLoginPage(AuthRequest ar, String go, Exception error) throws Exception
     {
         //pass the 'last' error message to the login page through the session (not parameter)
@@ -192,6 +182,7 @@ public class BaseController {
         ar.resp.sendRedirect(err1return);
         return;
     }
+    */
 
     /*
     * Pass in the relative URL and

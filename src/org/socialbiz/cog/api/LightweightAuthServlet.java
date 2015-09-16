@@ -26,6 +26,7 @@ import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.socialbiz.cog.IdGenerator;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.workcast.json.JSONArray;
@@ -74,7 +75,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
         //the cookies with "withCredentials" then it will not allows the '*'
         //setting on allow origin any more.  The only alternative is that you
         //MUST copy the origin from the request into the response.
-        //This is truely strange, but required.
+        //This is truly strange, but required.
 
         String origin = req.getHeader("Origin");
         if (origin==null || origin.length()==0) {
@@ -180,6 +181,15 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
 
                     //remember for the user that they logged in at this time
                     UserProfile up = UserManager.findUserByAnyId(userId);
+                    
+                    //This could be the first time a user accesses, so create profile
+                    if (up==null) {
+                        String virginKey = IdGenerator.generateKey();
+                        up = UserManager.createUserWithId(virginKey, userId);
+                        up.setName(response.getString("userName"));
+                        UserManager.writeUserProfilesToFile();
+                    }
+                    
                     up.setLastLogin(System.currentTimeMillis(), userId);
                 }
                 else {

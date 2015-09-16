@@ -1228,8 +1228,8 @@ app.controller('myCtrl', function($scope, $http) {
                           ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                           text-angular="" class="" style="width:100%;"></div>
 
-                      <button ng-click="saveAgendaItem(item)" class="btn btn-danger">Save Changes</button>
-                      <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
+                      <button ng-click="saveAgendaItem(item);stopEditing()" class="btn btn-danger">Save Changes</button>
+                      <button ng-click="revertAllEdits();stopEditing()" class="btn btn-danger">Cancel</button>
                       &nbsp;
                       <input type="checkbox" ng-model="cmt.poll"> Proposal</button>
                     </div>
@@ -1289,11 +1289,11 @@ app.controller('myCtrl', function($scope, $http) {
                   ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                   text-angular="" class="" style="width:100%;"></div>
 
-              <button ng-click="createNewComment(item)" class="btn btn-danger" ng-hide="item.newComment.poll">
+              <button ng-click="createNewComment(item);stopEditing()" class="btn btn-danger" ng-hide="item.newComment.poll">
                   Create <i class="fa fa-comments-o"></i> Comment</button>
-              <button ng-click="createNewComment(item)" class="btn btn-danger" ng-show="item.newComment.poll">
+              <button ng-click="createNewComment(item);stopEditing()" class="btn btn-danger" ng-show="item.newComment.poll">
                   Create <i class="fa fa-star-o"></i> Proposal</button>
-              <button ng-click="toggleEditor(8,item.id)" class="btn btn-danger">Cancel</button>
+              <button ng-click="stopEditing()" class="btn btn-danger">Cancel</button>
               &nbsp;
               <input type="checkbox" ng-model="item.newComment.poll"> Proposal</button>
             </div>

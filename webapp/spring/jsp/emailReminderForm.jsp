@@ -1,6 +1,10 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="/spring/jsp/attachment_forms.jsp"
+%><%@ include file="/spring/jsp/include.jsp"
 %><%
+
+    String pageId = ar.reqParam("pageId");
+    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngp);
 
     List<CustomRole> roles = ngp.getAllRoles();
     if (roles==null) {
@@ -36,7 +40,7 @@
    </div>
     <div class="generalSettings">
         <form name="reminderForm" id="reminderForm" action="emailReminder.form" method="post" onsubmit="return validate();">
-            <input type="hidden" name="encodingGuard" value="<%writeHtml(out,"\u6771\u4eac");%>"/>
+            <input type="hidden" name="encodingGuard" value="<%ar.writeHtml("\u6771\u4eac");%>"/>
             <table border="0px solid red" class="popups" width="100%">
                 <tr>
                     <td class="gridTableColummHeader_2">

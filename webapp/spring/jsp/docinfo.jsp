@@ -102,11 +102,6 @@ app.controller('myCtrl', function($scope, $http) {
 </script>
 
 
-
-<script type="text/javascript" src="<%=ar.retPath%>jscript/attachment.js"></script>
-
-
-
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>

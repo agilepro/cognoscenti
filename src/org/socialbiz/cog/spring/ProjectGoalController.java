@@ -508,8 +508,8 @@ public class ProjectGoalController extends BaseController {
     public ModelAndView updateGoalSpecial(@PathVariable String siteId,
             @PathVariable String pageId,HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
             //note: this form is for people NOT logged in!
             //ukey specifies user, and mntask verifies they have a proper link to the goal
@@ -547,8 +547,8 @@ public class ProjectGoalController extends BaseController {
                 accomp = "using 'Completed' through anonymous web form";
             }
             else if ("Other".equals(cmd))  {
-                String loginUrl = ar.retPath + "t/EmailLoginForm.htm?go="+URLEncoder.encode(go, "UTF-8");
-                return redirectBrowser(ar,loginUrl);
+                sendRedirectToLogin(ar);
+                return null;
                 //do not save any changes
             }
             else {
@@ -624,6 +624,8 @@ public class ProjectGoalController extends BaseController {
         return "No project found";
     }
 
+
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/statusUpdateForTask.form", method = RequestMethod.POST)
     public ModelAndView statusUpdateForTask(@PathVariable
     String siteId, @PathVariable
@@ -670,6 +672,7 @@ public class ProjectGoalController extends BaseController {
             throw new NGException("nugen.operation.fail.project.update.status", new Object[]{pageId,siteId} , ex);
         }
     }
+    */
 
     @RequestMapping(value = "/{siteId}/{pageId}/setOrderTasks.ajax", method = RequestMethod.POST)
     public void updateOrderTasks( @PathVariable String pageId,@RequestParam String indexString,
