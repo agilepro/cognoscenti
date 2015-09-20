@@ -31,9 +31,19 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    $scope.bestDate = function(rec) {
+        if (rec.state==2) {
+            return rec.scheduleTime;
+        }
+        else if (rec.state==3) {
+            return rec.sendDate;
+        }
+        else return (new Date()).getTime();
+    }
     $scope.sortInverseChron = function() {
+        var nowTime = (new Date()).getTime();
         $scope.eGenList.sort( function(a, b){
-            return b.sendDate - a.sendDate;
+            return $scope.bestDate(b)-$scope.bestDate(a);
         });
     };
     $scope.sortInverseChron();
@@ -124,13 +134,13 @@ app.controller('myCtrl', function($scope, $http) {
             <td width="50px">From</td>
             <td width="250px">Subject</td>
             <td width="50px">State</td>
-            <td width="100px">Sent</td>
+            <td width="100px">Date</td>
         </tr>
         <tr ng-repeat="rec in eGenList">
             <td>{{namePart(rec.from)}}</td>
             <td><a href="sendNote.htm?id={{rec.id}}">{{rec.subject}}</a></td>
             <td>{{stateName(rec.state)}}</td>
-            <td>{{rec.sendDate|date}}</td>
+            <td>{{bestDate(rec)|date:'M/d/yy H:mm'}}</td>
         </tr>
     </table>
 

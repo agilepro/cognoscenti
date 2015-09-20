@@ -123,13 +123,6 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.newPerson = "";
 
-    $scope.copyDatesToDummies = function() {
-        $scope.dummyDate1 = new Date($scope.goalInfo.duedate);
-        $scope.dummyDate2 = new Date($scope.goalInfo.startdate);
-        $scope.dummyDate3 = new Date($scope.goalInfo.enddate);
-    }
-    $scope.copyDatesToDummies();
-
     $scope.editGoalInfo = false;
     $scope.showCreateSubProject = false;
 
@@ -261,6 +254,12 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.goalInfo.prospects = newVal;
     }
 
+    $scope.copyDatesToDummies = function() {
+        $scope.dummyDate1 = new Date($scope.goalInfo.duedate);
+        $scope.dummyDate2 = new Date($scope.goalInfo.startdate);
+        $scope.dummyDate3 = new Date($scope.goalInfo.enddate);
+    }
+    $scope.copyDatesToDummies();
     $scope.datePickOptions = {
         formatYear: 'yyyy',
         startingDay: 1

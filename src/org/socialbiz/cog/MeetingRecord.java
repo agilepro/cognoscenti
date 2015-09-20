@@ -34,6 +34,17 @@ public class MeetingRecord extends DOMFace {
         setAttribute("name", newVal);
     }
 
+    /**
+     * The owner is the actual user who created this meeting. 
+     * Email will appear to be from this user.
+     */
+    public String getOwner() throws Exception {
+        return getScalar("owner");
+    }
+    public void setOwner(String newVal) throws Exception {
+        setScalar("owner", newVal);
+    }
+
     public String getMeetingInfo()  throws Exception {
         return getScalar("meetingInfo");
     }
@@ -120,6 +131,16 @@ public class MeetingRecord extends DOMFace {
         setAttribute("reminderTime", Integer.toString(newVal));
     }
 
+    /**
+     * This is the actual time that the reminder was actually sent.
+     */
+    public long getReminderSent()  throws Exception {
+        return getAttributeLong("reminderSent");
+    }
+    public void setReminderSent(long newVal) throws Exception {
+        setAttributeLong("reminderSent", newVal);
+    }
+
 
 
     /**
@@ -188,6 +209,8 @@ public class MeetingRecord extends DOMFace {
         String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingInfo());
         meetingInfo.put("meetingInfo", htmlVal);
         meetingInfo.put("reminderTime",getReminderTime());
+        meetingInfo.put("reminderSent",getReminderSent());
+        meetingInfo.put("owner",       getOwner());
         return meetingInfo;
     }
 
@@ -221,30 +244,46 @@ public class MeetingRecord extends DOMFace {
     }
 
     public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
+        boolean hasSetMeetingInfo = false;
+        
         if (input.has("name")) {
             setName(input.getString("name"));
+            hasSetMeetingInfo = true;
         }
         if (input.has("state")) {
             setState(input.getInt("state"));
         }
         if (input.has("startTime")) {
             setStartTime(input.getLong("startTime"));
+            hasSetMeetingInfo = true;
         }
         if (input.has("duration")) {
             setDuration(input.getLong("duration"));
+            hasSetMeetingInfo = true;
         }
         if (input.has("meetingType")) {
             setMeetingType(input.getInt("meetingType"));
+            hasSetMeetingInfo = true;
         }
         if (input.has("reminderTime")) {
             setReminderTime(input.getInt("reminderTime"));
+            hasSetMeetingInfo = true;
         }
         if (input.has("meetingInfo")) {
             String html = input.getString("meetingInfo");
             setMeetingInfo(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
+            hasSetMeetingInfo = true;
         }
-        if (input.has("reminderTime")) {
-            setReminderTime(input.getInt("reminderTime"));
+        if (input.has("owner")) {
+            setOwner(input.getString("owner"));
+        }
+        
+        //fix up the owner if needed .. schema migration
+        //TODO: remove after Dec 2015
+        String owner = getOwner();
+        if (hasSetMeetingInfo && (owner==null || owner.length()==0)) {
+            //set to the person currently saving the record.
+            setOwner(ar.getBestUserId());
         }
     }
 
@@ -381,7 +420,16 @@ public class MeetingRecord extends DOMFace {
         names.add("Members");
         emg.setRoleNames(names);
         emg.setMeetingId(getId());
-        emg.composeAndSendEmail(ar, ngp);
+        String meetingOwner = getOwner();
+        if (meetingOwner==null || meetingOwner.length()==0) {
+            throw new Exception("The owner of the meeting has not been set.");
+        }
+        emg.setOwner(meetingOwner);
+        emg.setFrom(meetingOwner);
+        //UserProfile originalSender = UserManager.findUserByAnyId(getOwner()); 
+        //AuthRequest impersonateOwner = new AuthDummy(originalSender, ar.w, ar.getCogInstance());
+        emg.constructEmailRecords(ar, ngp);
+        setReminderSent(ar.nowTime);
     }
 
 

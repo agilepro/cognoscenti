@@ -83,6 +83,7 @@ Optional Parameters:
         emailInfo.put("includeSelf", false);
         emailInfo.put("makeMembers", false);
         emailInfo.put("includeBody", false);
+        emailInfo.put("scheduleTime", new Date().getTime());
 
         String meetId      = ar.defParam("meet", null);
         if (meetId!=null && meetId.length()>0) {
@@ -174,11 +175,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.errorTrace = "";
     $scope.showTrace = false;
     $scope.reportError = function(serverErr) {
-        var exception = serverErr.exception;
-        $scope.errorMsg = exception.join();
-        $scope.errorTrace = exception.stack;
-        $scope.showError=true;
-        $scope.showTrace = false;
+        errorPanelHandler($scope, serverErr);
     };
 
     $scope.newEmailAddress = "";
@@ -252,6 +249,16 @@ app.controller('myCtrl', function($scope, $http) {
     }
     $scope.sendEmail = function() {
         $scope.emailInfo.sendIt = true;
+        $scope.emailInfo.scheduleIt = false;
+        $scope.saveEmail();
+    }
+    $scope.scheduleEmail = function() {
+        $scope.emailInfo.sendIt = false;
+        $scope.emailInfo.scheduleIt = true;
+        $scope.meetingTime.setHours($scope.meetingHour);
+        $scope.meetingTime.setMinutes($scope.meetingMinutes);
+        $scope.meetingTime.setSeconds(0);
+        $scope.emailInfo.scheduleTime = $scope.meetingTime.getTime();
         $scope.saveEmail();
     }
 
@@ -312,6 +319,44 @@ app.controller('myCtrl', function($scope, $http) {
         }
         return docName.substring(0,30)+".."+docName.substring(pos);
     }
+    $scope.explainState = function() {
+        if ($scope.emailInfo.state==1) {
+            return "Draft Email Message";
+        }
+        else if ($scope.emailInfo.state==2) {
+            return "Scheduled to send: "+new Date($scope.emailInfo.scheduleTime);
+        }
+        else if ($scope.emailInfo.state==3) {
+            return "Already sent: "+new Date($scope.emailInfo.sendDate);
+        }
+    }
+
+    $scope.datePickOptions = {
+        formatYear: 'yyyy',
+        startingDay: 1
+    };
+    $scope.datePickDisable = function(date, mode) {
+        return false;
+    };
+    $scope.dummyDate1 = new Date();
+    $scope.datePickOpen = false;
+    $scope.openDatePicker = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.datePickOpen = true;
+    };
+    $scope.datePickOpen1 = false;
+    $scope.openDatePicker1 = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.datePickOpen1 = true;
+    };
+    $scope.extractDateParts = function() {
+        $scope.meetingTime = new Date($scope.emailInfo.scheduleTime);
+        $scope.meetingHour = $scope.meetingTime.getHours();
+        $scope.meetingMinutes = $scope.meetingTime.getMinutes();
+    };
+    $scope.extractDateParts();
 
 });
 
@@ -507,15 +552,75 @@ app.controller('myCtrl', function($scope, $http) {
                 <td style="width:20px;"></td>
                 <td>
                     <button ng-click="saveEmail()" class="btn btn-primary">Save Changes</button>
-                    <button ng-click="sendEmail()" class="btn btn-primary">Send Email</button>
+                    <button ng-click="sendEmail()" class="btn btn-primary">Send Email Now</button>
+                </td>
+            </tr>
+            <tr><td style="height:10px"></td></tr>
+            <tr>
+                <td class="gridTableColummHeader"></td>
+                <td style="width:20px;"></td>
+                <td class="form-inline form-group">
+                    <button ng-click="scheduleEmail()" class="btn btn-primary">Schedule For Later</button>
+                    on
+                    <input type="text"
+                        style="width:150;"
+                        class="form-control"
+                        datepicker-popup="dd-MMMM-yyyy"
+                        ng-model="meetingTime"
+                        is-open="datePickOpen"
+                        min-date="minDate"
+                        datepicker-options="datePickOptions"
+                        date-disabled="datePickDisable(date, mode)"
+                        ng-required="true"
+                        ng-click="openDatePicker($event)"
+                        close-text="Close"/>
+                        at
+                        <select style="width:50;" ng-model="meetingHour" class="form-control" >
+                            <option value="0">00</option>
+                            <option value="1">01</option>
+                            <option value="2">02</option>
+                            <option value="3">03</option>
+                            <option value="4">04</option>
+                            <option value="5">05</option>
+                            <option value="6">06</option>
+                            <option value="7">07</option>
+                            <option value="8">08</option>
+                            <option value="9">09</option>
+                            <option>10</option>
+                            <option>11</option>
+                            <option>12</option>
+                            <option>13</option>
+                            <option>14</option>
+                            <option>15</option>
+                            <option>16</option>
+                            <option>17</option>
+                            <option>18</option>
+                            <option>19</option>
+                            <option>20</option>
+                            <option>21</option>
+                            <option>22</option>
+                            <option>23</option>
+                        </select> :
+                        <select  style="width:50;" ng-model="meetingMinutes" class="form-control" >
+                            <option value="0">00</option>
+                            <option>15</option>
+                            <option>30</option>
+                            <option>45</option>
+                        </select>
                 </td>
             </tr>
 
+            <tr><td style="height:20px"></td></tr>
+            <tr>
+                <td class="gridTableColummHeader" valign="top">Status:</td>
+                <td style="width:20px;"></td>
+                <td>{{explainState()}}</td>
+            </tr>
 <%
 String overrideAddress = EmailSender.getProperty("overrideAddress");
 if (overrideAddress!=null && overrideAddress.length()>0) {
 %>
-            <tr><td style="height:30px"></td></tr>
+            <tr><td style="height:20px"></td></tr>
             <tr>
                 <td class="gridTableColummHeader" valign="top">Override Address Active:</td>
                 <td style="width:20px;"></td>

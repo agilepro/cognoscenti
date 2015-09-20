@@ -701,7 +701,7 @@ public class AuthRequest
 
         if (canRedirect) {
             String go = getCompleteURL();
-            String loginUrl = getSystemProperty("identityProvider")+"?openid.mode=quick&go="+URLEncoder.encode(getCompleteURL(), "UTF-8");
+            String loginUrl = getSystemProperty("identityProvider")+"?openid.mode=quick&go="+URLEncoder.encode(go, "UTF-8");
             resp.sendRedirect(loginUrl);
             throw new ServletExit();
         }

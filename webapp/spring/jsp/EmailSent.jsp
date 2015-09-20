@@ -51,20 +51,25 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.sortInverseChron();
     $scope.getFiltered = function() {
         var searchVal = $scope.filter.toLowerCase();
-        if ($scope.filter==null || $scope.filter.length==0) {
-            return $scope.emailList;
-        };
         var res = [];
-        $scope.emailList.map( function(oneEmail) {
-            var foundIt = oneEmail.subject.toLowerCase().indexOf(searchVal)>=0;
-            oneEmail.to.map( function( oneTo ) {
-                if (oneTo.toLowerCase().indexOf(searchVal)>=0) {
-                    foundIt = true;
-                }
+        if ($scope.filter==null || $scope.filter.length==0) {
+            res = $scope.emailList;
+        }
+        else {
+            $scope.emailList.map( function(oneEmail) {
+                var foundIt = oneEmail.subject.toLowerCase().indexOf(searchVal)>=0;
+                oneEmail.to.map( function( oneTo ) {
+                    if (oneTo.toLowerCase().indexOf(searchVal)>=0) {
+                        foundIt = true;
+                    }
+                });
+                if (foundIt) {
+                    res.push(oneEmail);
+                };
             });
-            if (foundIt) {
-                res.push(oneEmail);
-            };
+        }
+        res = res.sort( function(a,b) {
+            return $scope.bestDate(b)-$scope.bestDate(a);
         });
         return res;
     }
@@ -79,6 +84,14 @@ app.controller('myCtrl', function($scope, $http) {
         return val.substring(0,pos);
     }
 
+    $scope.bestDate = function(rec) {
+        if (rec.status == "Sent" || rec.status == "Failed") {
+            return rec.sendDate;
+        }
+        else {
+            return (new Date()).getTime();
+        }
+    }
 });
 
 </script>
@@ -123,7 +136,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <td>{{rec.subject}}</td>
                 <td><span ng-repeat="addr in rec.to">{{addr}}, </span></td>
                 <td>{{rec.status}}</td>
-                <td>{{rec.sendDate | date}}</td>
+                <td>{{bestDate(rec) |date:'M/d/yy H:mm'}}</td>
             </tr>
         </table>
 

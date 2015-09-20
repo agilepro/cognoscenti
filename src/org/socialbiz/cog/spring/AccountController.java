@@ -20,8 +20,6 @@
 
 package org.socialbiz.cog.spring;
 
-import java.net.URLDecoder;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -542,33 +540,4 @@ public class AccountController extends BaseController {
         }
     }
 
-/*
-
-    This is for getting document from sites ... but sites no longer have document attachments
-
-    @RequestMapping(value="/{siteId}/$/a/{docId}.{ext}", method = RequestMethod.GET)
-    public void loadDocument(
-          @PathVariable String siteId,
-          @PathVariable String docId,
-          @PathVariable String ext,
-          HttpServletRequest request,
-          HttpServletResponse response) throws Exception {
-       try{
-           AuthRequest ar = AuthRequest.getOrCreate(request, response);
-           ar.assertLoggedIn();
-
-           ar.getCogInstance().getSiteByIdOrFail(siteId);
-
-           String attachmentName = URLDecoder.decode(docId,"UTF-8")+"."+ext;
-
-           NGBook ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
-           ar.setPageAccessLevels(ngb);
-           String version = ar.reqParam("version");
-           AttachmentHelper.serveUpFileNewUI(ar, ngb, attachmentName,Integer.parseInt(version));
-
-       }catch(Exception ex){
-           throw new NGException("nugen.operation.fail.account.download.document", new Object[]{docId, siteId}, ex);
-       }
-   }
-*/
 }

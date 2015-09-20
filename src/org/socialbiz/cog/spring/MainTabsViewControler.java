@@ -702,120 +702,6 @@ public class MainTabsViewControler extends BaseController {
           return modelAndView;
       }
 
-/*
-      @RequestMapping(value = "/{siteId}/{pageId}/projectActiveTasks.htm", method = RequestMethod.GET)
-      public ModelAndView projectActiveTasks(@PathVariable String siteId,@PathVariable String pageId,
-              HttpServletRequest request, HttpServletResponse response)
-              throws Exception {
-
-          try{
-              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-              registerRequiredProject(ar, siteId, pageId);
-              ModelAndView modelAndView= memberCheckViews(ar);
-              if (modelAndView!=null) {
-                  return modelAndView;
-              }
-
-              //this page has a required parameter 'active', test it here so that any error
-              //happens in the controller, not the page.
-              String active = ar.defParam("active", "1");
-
-              request.setAttribute("realRequestURL", ar.getRequestURL());
-              request.setAttribute("tabId", "Project Tasks");
-              request.setAttribute("active", active);
-              return new ModelAndView("ProjectActiveTasks");
-          }catch(Exception ex){
-              throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
-          }
-
-      }
-*/
-
-/*
-      @RequestMapping(value = "/{siteId}/{pageId}/projectCompletedTasks.htm", method = RequestMethod.GET)
-      public ModelAndView projectCompletedTasks(@PathVariable String siteId,@PathVariable String pageId,
-              HttpServletRequest request, HttpServletResponse response)
-              throws Exception {
-
-          try{
-              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-              registerRequiredProject(ar, siteId, pageId);
-
-              ModelAndView modelAndView= memberCheckViews(ar);
-              if (modelAndView!=null) {
-                  return modelAndView;
-              }
-
-              //this page has a required parameter 'active', test it here so that any error
-              //happens in the controller, not the page.
-              String active = ar.defParam("active", "1");
-
-              request.setAttribute("realRequestURL", ar.getRequestURL());
-              request.setAttribute("tabId", "Project Tasks");
-              request.setAttribute("active", active);
-              return new ModelAndView("ProjectCompletedTasks");
-          }catch(Exception ex){
-              throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
-          }
-      }
-*/
-
-/*
-      @RequestMapping(value = "/{siteId}/{pageId}/projectFutureTasks.htm", method = RequestMethod.GET)
-      public ModelAndView projectFutureTasks(@PathVariable String siteId,@PathVariable String pageId,
-              HttpServletRequest request, HttpServletResponse response)
-              throws Exception {
-
-          try{
-              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-              registerRequiredProject(ar, siteId, pageId);
-
-              ModelAndView modelAndView= memberCheckViews(ar);
-              if (modelAndView!=null) {
-                  return modelAndView;
-              }
-
-              //this page has a required parameter 'active', test it here so that any error
-              //happens in the controller, not the page.
-              String active = ar.defParam("active", "1");
-
-              request.setAttribute("realRequestURL", ar.getRequestURL());
-              request.setAttribute("tabId", "Project Tasks");
-              request.setAttribute("active", active);
-              return new ModelAndView("ProjectFutureTasks");
-          }catch(Exception ex){
-              throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
-          }
-      }
-
-      @RequestMapping(value = "/{siteId}/{pageId}/projectAllTasks.htm", method = RequestMethod.GET)
-      public ModelAndView projectAllTasks(@PathVariable String siteId,@PathVariable String pageId,
-              HttpServletRequest request, HttpServletResponse response)
-              throws Exception {
-
-          try{
-              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-              registerRequiredProject(ar, siteId, pageId);
-
-              ModelAndView modelAndView= memberCheckViews(ar);
-              if (modelAndView!=null) {
-                  return modelAndView;
-              }
-
-              //this page has a required parameter 'active', test it here so that any error
-              //happens in the controller, not the page.
-              String active = ar.defParam("active", "1");
-
-              request.setAttribute("realRequestURL", ar.getRequestURL());
-              request.setAttribute("tabId", "Project Tasks");
-              request.setAttribute("active", active);
-              return new ModelAndView("ProjectsAllTasks");
-          }catch(Exception ex){
-              throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
-          }
-      }
-*/
-
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingList.htm", method = RequestMethod.GET)
       public ModelAndView meetingList(@PathVariable String siteId,@PathVariable String pageId,
@@ -851,6 +737,7 @@ public class MainTabsViewControler extends BaseController {
                   throw new Exception("You must supply a meeting name to create a meeting.");
               }
               MeetingRecord newMeeting = ngp.createMeeting();
+              newMeeting.setOwner(ar.getBestUserId());
               removeCompletedActionItems(ngp, meetingInfo);
               newMeeting.updateFromJSON(meetingInfo, ar);
               newMeeting.createAgendaFromJSON(meetingInfo, ar, ngp);

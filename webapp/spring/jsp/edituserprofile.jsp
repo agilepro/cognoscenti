@@ -144,12 +144,8 @@ Optional Parameter:
         }
     }
 
-    function defaultRadioButton(){
-        document.getElementById("openIdRadio").checked = true;
-    }
-
 </script>
-<body class="yui-skin-sam" onload="defaultRadioButton();">
+<body class="yui-skin-sam">
     <div class="generalArea">
         <div class="pageHeading">Update Your Settings</div>
         <div class="pageSubHeading">From here you can modify your profile settings.</div>

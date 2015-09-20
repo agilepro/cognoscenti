@@ -681,19 +681,30 @@ public class ProjectSettingController extends BaseController {
             EmailGenerator eGen = null;
             if ("~new~".equals(id)) {
                 eGen = ngp.createEmailGenerator();
+                eGen.setOwner(ar.getBestUserId());
             }
             else {
                 eGen = ngp.getEmailGeneratorOrFail(id);
             }
+            
+            //the 'owner' is always the last person who saves the record. The email can
+            //only include what this person sees.  This avoid a problem with getting around
+            //security by finding an email of a highly privileged person, and modifying the 
+            //email to send confidential stuff.
+            eGen.setOwner(ar.getBestUserId());
 
             //this is a non persistent flag in the body ... could be a URL parameter
             boolean sendIt = eGenInfo.optBoolean("sendIt");
+            boolean scheduleIt = eGenInfo.optBoolean("scheduleIt");
             eGen.updateFromJSON(eGenInfo);
 
             if (sendIt) {
                 //need to make this work on a TIMER
                 //and ... does this block while sending?
-                eGen.composeAndSendEmail(ar, ngp);
+                eGen.constructEmailRecords(ar, ngp);
+            }
+            else if (scheduleIt) {
+                eGen.scheduleEmail(ar);
             }
 
             ngp.saveFile(ar, "Updated Email Generator "+id);

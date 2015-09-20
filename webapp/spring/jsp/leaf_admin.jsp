@@ -1,6 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="include.jsp"
 %><%@page import="org.socialbiz.cog.TemplateRecord"
+%><%@page import="org.socialbiz.cog.EmailGenerator"
 %>
 <%
     ar.assertLoggedIn("Must be logged in to see admin options");
@@ -31,6 +32,33 @@
 
     String[] names = ngp.getPageNames();
     String thisPageAddress = ar.getResourceURL(ngp,"admin.htm");
+
+
+    JSONArray allScheduled = new JSONArray();
+    for (MeetingRecord meeting : ngp.getMeetings()) {
+        long meetStart = meeting.getStartTime();
+        int delta = meeting.getReminderTime();
+        if (delta<=0) {
+            continue;
+        }
+        long reminderTime = meetStart - (delta * 60000);
+        JSONObject oneSched = new JSONObject();
+        oneSched.put("name", meeting.getName());
+        oneSched.put("action", "Send Meeting Reminder");
+        oneSched.put("time", reminderTime);
+        allScheduled.put(oneSched);
+    }
+    for (EmailGenerator eg : ngp.getAllEmailGenerators()) {
+        if (eg.EG_STATE_SCHEDULED == eg.getState()) {
+            long reminderTime = eg.getScheduleTime();
+            JSONObject oneSched = new JSONObject();
+            oneSched.put("name", eg.getSubject());
+            oneSched.put("action", "Send Email");
+            oneSched.put("time", reminderTime);
+            allScheduled.put(oneSched);
+        }
+    }
+
 %>
 
 
@@ -97,6 +125,12 @@
             return openFreezeMessagePopup();
         }
     }
+
+var app = angular.module('myApp', ['ui.bootstrap']);
+app.controller('myCtrl', function($scope, $http) {
+    $scope.allScheduled = <%allScheduled.write(out,2,4);%>;
+});
+
 </script>
 
 
@@ -126,9 +160,9 @@
 
 
     <div>
-        <%
-            if (!ar.isAdmin()) {
-        %>
+
+<% if (!ar.isAdmin()) { %>
+
             <div class="generalContent">
                 <fmt:message key="nugen.generatInfo.Admin.administration">
                     <fmt:param value='<%=ar.getBestUserId()%>'/>
@@ -146,10 +180,8 @@
                 %>
                 </ul>
             </div>
-        <%
-            }else
-                {
-        %>
+
+<% }else { %>
 
             <div>
                 <table>
@@ -345,8 +377,17 @@
                 </table>
             </div>
 
-            <%
-        }
-        %>
+<% } %>
+
+            <div class="generalContent">
+                <div class="generalHeading paddingTop">Future Scheduled Actions</div>
+                <div ng-repeat="rec in allScheduled">
+                   {{rec.action}}: <b>&quot;{{rec.name}}&quot;</b> at {{rec.time|date:'M/d/yy H:mm'}}
+                </div>
+                <div>
+                   Next Action due: {{<%=ngp.nextActionDue()%>|date:'M/d/yy H:mm'}}
+                </div>
+            </div>
+
     </div>
 </div>

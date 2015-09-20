@@ -199,7 +199,7 @@ public class Cognoscenti {
             MicroProfileMgr.loadMicroProfilesInMemory(this);
             if (backgroundTimer!=null) {
                 EmailSender.initSender(backgroundTimer, this);
-                SendEmailTimerTask.initEmailSender(backgroundTimer, this);
+                //SendEmailTimerTask.initEmailSender(backgroundTimer, this);
                 EmailListener.initListener(backgroundTimer);
             }
             SiteReqFile.initSiteList(this);

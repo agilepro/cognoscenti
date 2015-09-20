@@ -23,7 +23,7 @@ Data is all stored as files on a file system.  First decide where you would like
 
 === Preparations ===
 
-Authentication: Cognoscenti uses an external identity server to handle login, and this must be a SSOFI identity provider.  A public version of this server is running at https://interstagebom.com/eid/ and you are encouraged to just use this provider.  Before installing, go to that address and register a password for your email address.  THis will work for any scenario where you have ready access to the internet.  
+Authentication: Cognoscenti uses an external identity server to handle login, and this must be a SSOFI identity provider.  A public version of this server is running at https://interstagebpm.com/eid/ and you are encouraged to just use this provider.  Before installing, go to that address and register a password for your email address.  THis will work for any scenario where you have ready access to the internet.  
 
 Offline Use: If you want to install Cognoscenti is a location that cut off from the Internet, possibly for 'off-line' portable situation, then you will need to install a SSOFI indentity provider.  SSOFI is a free, open source utility, that can run in the same TomCat server you are using for Cognoscenti.  Please find information about SSOFI at https://github.com/agilepro/ssofi-provider
 
@@ -62,6 +62,10 @@ emailOpenIDProvider=https://interstagebpm.com/eid/
 Find and edit the file at   c:\tomcat\webapps\cog\WEB-INF\EmailNotification.properties
 
 If you are configurng this before running the server the first time, you can copy the contents of EmailNotification_example.properties to create a new EmailNotification.properties with all the right default values and comments.
+
+Most of these parameters are consumed by the standard Java Mail library.   You can find more information on settings at: https://javamail.java.net/nonav/docs/api/overview-summary.html and also at: https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html
+
+If you are having difficulty, and want to try running the server without email for now (you can enable it later) just set mail.transport.protocol to "none" and it will disable the email sending feature of Cognoscenti.
 
 overrideAddress - This is a testing/debug feature that makes the server sent ALL email to this one address.  While you are getting the server to work, you might want to set this to your own real email address.  If set, this will cause all email to go ONLY to that address, and never bug anyone else.  Later when you are ready for others to use it, comment out this setting
 

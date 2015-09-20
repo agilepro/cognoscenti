@@ -106,6 +106,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.showCompleted = false;
     $scope.isCreating = false;
     $scope.newGoal = {assignOne:{name:""}};
+    $scope.dummyDate1 = new Date();
+
 
     $scope.newPerson = "";
 
@@ -198,6 +200,7 @@ app.controller('myCtrl', function($scope, $http) {
         newRec.assignTo = [];
         newRec.state = 2;
         newRec.assignTo.push(newRec.assignOne);
+        newRec.duedate = $scope.dummyDate1.getTime();
 
         var postURL = "updateGoal.json?gid=~new~";
         var postData = angular.toJson(newRec);
@@ -211,6 +214,20 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
    };
+
+    $scope.datePickOptions = {
+        formatYear: 'yyyy',
+        startingDay: 1
+    };
+    $scope.datePickDisable = function(date, mode) {
+        return false;
+    };
+    $scope.datePickOpen1 = false;
+    $scope.openDatePicker1 = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.datePickOpen1 = true;
+    };
 
 });
 
@@ -258,7 +275,7 @@ function addvalue() {
     <div class="well generalSettings" ng-show="isCreating">
         <table>
            <tr>
-                <td class="gridTableColummHeader">New Goal:</td>
+                <td class="gridTableColummHeader">New Synopsis:</td>
                 <td style="width:20px;"></td>
                 <td colspan="2">
                     <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
@@ -280,6 +297,25 @@ function addvalue() {
                 <td colspan="2">
                     <textarea type="text" ng-model="newGoal.description" class="form-control"
                         style="width:450px;height:100px" placeholder="Details"></textarea>
+                </td>
+            </tr>
+            <tr><td style="height:10px"></td></tr>
+            <tr>
+                <td class="gridTableColummHeader">Due Date:</td>
+                <td style="width:20px;"></td>
+                <td colspan="2">
+                    <input type="text"
+                        style="width:150;margin-top:10px;"
+                        class="form-control"
+                        datepicker-popup="dd-MMMM-yyyy"
+                        ng-model="dummyDate1"
+                        is-open="datePickOpen1"
+                        min-date="minDate"
+                        datepicker-options="datePickOptions"
+                        date-disabled="datePickDisable(date, mode)"
+                        ng-required="true"
+                        ng-click="openDatePicker1($event)"
+                        close-text="Close"/>
                 </td>
             </tr>
             <tr><td style="height:10px"></td></tr>

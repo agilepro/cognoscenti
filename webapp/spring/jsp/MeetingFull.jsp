@@ -180,12 +180,26 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.datePickDisable = function(date, mode) {
         return false;
     };
+    $scope.dummyDate1 = new Date();
     $scope.datePickOpen = false;
     $scope.openDatePicker = function($event) {
         $event.preventDefault();
         $event.stopPropagation();
         $scope.datePickOpen = true;
     };
+    $scope.datePickOpen1 = false;
+    $scope.openDatePicker1 = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.datePickOpen1 = true;
+    };
+    $scope.extractDateParts = function() {
+        $scope.meetingTime = new Date($scope.meeting.startTime);
+        $scope.meetingHour = $scope.meetingTime.getHours();
+        $scope.meetingMinutes = $scope.meetingTime.getMinutes();
+        $scope.sortItems();
+    };
+    $scope.extractDateParts();
 
     $scope.sortItems = function() {
         $scope.meeting.agenda.sort( function(a, b){
@@ -204,13 +218,6 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.meeting.totalDuration = runDur;
         return $scope.meeting.agenda;
     };
-    $scope.extractDateParts = function() {
-        $scope.meetingTime = new Date($scope.meeting.startTime);
-        $scope.meetingHour = $scope.meetingTime.getHours();
-        $scope.meetingMinutes = $scope.meetingTime.getMinutes();
-        $scope.sortItems();
-    };
-    $scope.extractDateParts();
 
     $scope.itemDocs = function(item) {
         var res = [];
@@ -420,6 +427,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.saveMeeting = function() {
         $scope.meetingTime.setHours($scope.meetingHour);
         $scope.meetingTime.setMinutes($scope.meetingMinutes);
+        $scope.meetingTime.setSeconds(0);
         $scope.meeting.startTime = $scope.meetingTime.getTime();
 
         $scope.sortItems();
@@ -428,6 +436,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.savePartialMeeting = function(fieldList) {
         $scope.meetingTime.setHours($scope.meetingHour);
         $scope.meetingTime.setMinutes($scope.meetingMinutes);
+        $scope.meetingTime.setSeconds(0);
         $scope.meeting.startTime = $scope.meetingTime.getTime();
 
         var saveRecord = {};
@@ -561,6 +570,7 @@ app.controller('myCtrl', function($scope, $http) {
         }
 
         $scope.newGoal.assignTo.push(player);
+        $scope.newGoal.duedate = $scope.dummyDate1.getTime();
 
         var postdata = angular.toJson($scope.newGoal);
         $scope.showError=false;
@@ -982,13 +992,13 @@ app.controller('myCtrl', function($scope, $http) {
                 ( <i class="fa fa-cogs meeting-icon" ng-click="toggleEditor(2,item.id)"
                     title="Agenda Item Settings"></i>
                 <i class="fa fa-pencil-square-o meeting-icon" ng-click="startEdit(item)"
-                    title="Agenda Item Description"></i>
+                    title="Edit Description"></i>
                 <i class="fa fa-book meeting-icon" ng-click="toggleEditor(3,item.id)"
-                    title="Agenda Item Atteched Documents"></i>
+                    title="Agenda Item Attached Documents"></i>
                 <i class="fa fa-flag meeting-icon" ng-click="toggleEditor(4,item.id)"
-                    title="Agenda Item Action Items (Generated Goals)"></i>
-                <i class="fa fa-flag meeting-icon" ng-click="toggleEditor(9,item.id)"
-                    title="Agenda Item Action Items (Generated Goals)"></i> )
+                    title="Create New Action Item"></i>
+                <i class="fa fa-tasks meeting-icon" ng-click="toggleEditor(9,item.id)"
+                    title="Manage Action Items"></i> )
             </span>
             <div ng-hide="meeting.meetingType==2">
                 <i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i><span ng-repeat="pres in getPresenters(item)">, {{pres.name}}</span>
@@ -1111,6 +1121,7 @@ app.controller('myCtrl', function($scope, $http) {
                       ng-click="changeGoalState(goal, 'ok')">Warning</a></li>
                   <li role="presentation"><a role="menuitem"
                       ng-click="changeGoalState(goal, 'bad')">Trouble</a></li>
+                  <li role="presentation" class="divider"></li>
                   <li role="presentation"><a role="menuitem"
                       ng-click="removeGoalFromItem(item, goal)">Remove Action Item</a></li>
                 </ul>
@@ -1134,7 +1145,7 @@ app.controller('myCtrl', function($scope, $http) {
             <div class="well generalSettings">
                 <table>
                    <tr>
-                        <td class="gridTableColummHeader">New Goal:</td>
+                        <td class="gridTableColummHeader">Synopsis:</td>
                         <td style="width:20px;"></td>
                         <td colspan="2">
                             <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
@@ -1160,11 +1171,31 @@ app.controller('myCtrl', function($scope, $http) {
                     </tr>
                     <tr><td style="height:10px"></td></tr>
                     <tr>
+                        <td class="gridTableColummHeader">Due Date:</td>
+                        <td style="width:20px;"></td>
+                        <td colspan="2">
+                            <input type="text"
+                                style="width:150;margin-top:10px;"
+                                class="form-control"
+                                datepicker-popup="dd-MMMM-yyyy"
+                                ng-model="dummyDate1"
+                                is-open="datePickOpen1"
+                                min-date="minDate"
+                                datepicker-options="datePickOptions"
+                                date-disabled="datePickDisable(date, mode)"
+                                ng-required="true"
+                                ng-click="openDatePicker1($event)"
+                                close-text="Close"/>
+                        </td>
+                    </tr>
+                    <tr><td style="height:10px"></td></tr>
+                    <tr>
                         <td class="gridTableColummHeader"></td>
                         <td style="width:20px;"></td>
                         <td colspan="2">
                             <button class="btn btn-primary" ng-click="createActionItem(item)">Create New Action Item</button>
                             <button class="btn btn-primary" ng-click="revertAllEdits()">Cancel</button>
+                            {{dummyDate1}}
                         </td>
                     </tr>
                 </table>
@@ -1309,7 +1340,8 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
 
-    Refreshed {{refreshCount}} times.   {{refreshStatus}}
+    Refreshed {{refreshCount}} times.   {{refreshStatus}}<br/>
+    reminder sent {{meeting.reminderSent | date:'M/d/yy H:mm'}}
 
 </div>
 

@@ -1,6 +1,6 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
-%><%@ include file="/spring/jsp/functions.jsp"
+%><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%
 /*
@@ -27,7 +27,7 @@ Optional Parameters:
 
 %><%!String pageTitle="";%>
 <%
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     pageTitle  ="Adjust Email Subscriptions";
     UserProfile uProf = ar.getUserProfile();
@@ -93,7 +93,7 @@ Optional Parameters:
                     <tr>
                         <td class="gridTableColummHeader" valign="top"></td>
                         <td style="width:20px;"></td>
-                        <td>Note: if you <a href="<%=ar.getSystemProperty("identityProvider")+"?openid.mode=quick&go="+URLEncoder.encode(go, "UTF-8")%>">
+                        <td>Note: if you <a href="<%=ar.getSystemProperty("identityProvider")+"?openid.mode=quick&go="+URLEncoder.encode(ar.getCompleteURL(), "UTF-8")%>">
                         login </a> you will have more options.</td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
@@ -101,8 +101,8 @@ Optional Parameters:
                     <tr>
                         <td class="gridTableColummHeader" valign="top"></td>
                         <td style="width:20px;"></td>
-                        <td><ul><li><a href="<%=ar.retPath%><%=ar.getResourceURL(ngp, "permission.htm")%>">Add/Remove others from this role</a></li>
-                            <li><a href="<%=ar.retPath%>v/<%=ar.getUserProfile().getKey()%>/notificationSettings.htm">Visit your subscriptions page.</a></li></ul></td>
+                        <td><ul><li><a href="<%=ar.retPath%><%=ar.getResourceURL(ngp, "permission.htm")%>" class="btn btn-default">Add/Remove others from this role</a></li>
+                            <li><a href="<%=ar.retPath%>v/<%=ar.getUserProfile().getKey()%>/notificationSettings.htm" class="btn btn-default">Visit your subscriptions page.</a></li></ul></td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
     <% } %>

@@ -250,7 +250,7 @@
         <put-attribute name="title" value="Send Note By Email" />
         <put-attribute name="body" value="/spring/jsp/SendNote.jsp" />
     </definition>
-    <definition name="EmailAdjustment" extends="baseLayoutWithoutLeftPanel">
+    <definition name="EmailAdjustment" extends="slimLayout">
         <put-attribute name="title" value="Adjust Email Subscriptions" />
         <put-attribute name="body" value="/spring/jsp/EmailAdjustment.jsp" />
     </definition>
@@ -259,7 +259,7 @@
         <put-attribute name="body" value="/spring/jsp/NoteZoom.jsp" />
     </definition>
 
-    <definition name="editUserProfile" extends="baseLayoutWithoutLeftPanel">
+    <definition name="editUserProfile" extends="slimLayout">
         <put-attribute name="title" value="Update User Profile" />
         <put-attribute name="body" value="/spring/jsp/edituserprofile.jsp" />
     </definition>

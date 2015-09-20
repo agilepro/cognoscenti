@@ -1717,8 +1717,32 @@ public class NGPage extends ContainerCommon implements NGContainer
                 continue;
             }
             long reminderTime = meetStart - (delta * 60000);
+            long reminderSent = meeting.getReminderSent();
+            if (reminderSent > reminderTime) {
+                //the reminder was sent at some point after it was due, so it has been sent
+                continue;
+            }
             if (nextTime<0 || reminderTime < nextTime) {
                 nextTime = reminderTime;
+            }
+        }
+        for (EmailGenerator eg : getAllEmailGenerators()) {
+            if (eg.EG_STATE_SCHEDULED == eg.getState()) {
+                long reminderTime = eg.getScheduleTime();
+                if (nextTime<0 || reminderTime < nextTime) {
+                    nextTime = reminderTime;
+                }                
+            }
+        }
+        for (EmailRecord er : getAllEmail()) {
+            if (er.statusReadyToSend()) {
+                //there is no scheduled time for sending email .. it just is scheduled
+                //immediately and supposed to be sent as soon as possible after that
+                //so return now minus 1 minutes
+                long reminderTime = System.currentTimeMillis()-60000;
+                if (nextTime<0 || reminderTime < nextTime) {
+                    nextTime = reminderTime;
+                }                
             }
         }
         return nextTime;
@@ -1738,9 +1762,23 @@ public class NGPage extends ContainerCommon implements NGContainer
                 continue;
             }
             long reminderTime = meetStart - (delta * 60000);
+            long reminderSent = meeting.getReminderSent();
+            if (reminderSent > reminderTime) {
+                //the reminder was sent at some point after it was due, so it has been sent
+                continue;
+            }
             if (reminderTime < ar.nowTime) {
                 meeting.sendReminderEmail(ar, this);
-                return;
+                return;   //only do one action
+            }
+        }
+        for (EmailGenerator eg : getAllEmailGenerators()) {
+            if (eg.EG_STATE_SCHEDULED == eg.getState()) {
+                long reminderTime = eg.getScheduleTime();
+                if (reminderTime < ar.nowTime) {
+                    eg.constructEmailRecords(ar, this);
+                    return;    //only do one action
+                }                
             }
         }
     }

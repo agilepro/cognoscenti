@@ -22,6 +22,7 @@ package org.socialbiz.cog;
 
 import java.io.StringWriter;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -66,6 +67,19 @@ public class EmailGenerator extends DOMFace {
     }
 
 
+    /**
+     * The owner is the actual user who created this record.  The email
+     * will have the same access privileges at that user regardless of
+     * who sends it in the future?
+     */
+    public String getOwner() throws Exception {
+        return getScalar("owner");
+    }
+    public void setOwner(String newVal) throws Exception {
+        setScalar("owner", newVal);
+    }
+
+    
     public String getFrom() throws Exception {
         return getScalar("from");
     }
@@ -97,6 +111,23 @@ public class EmailGenerator extends DOMFace {
         setScalar("sendDate", Long.toString(newVal));
     }
 
+    /**
+     * The email can be scheduled to be sent at a time in the future.
+     * If the email is set to status EG_STATE_SCHEDULED then this
+     * member tells the time that it should be sent.  The email can
+     * (and should) be sent any time this time is in the past.
+     * Let it wait if this time is in the future.
+     * Of course, once sent the status should change to 
+     * EG_STATE_SENT and this value does not matter.
+     */
+    public long getScheduleTime() throws Exception {
+        return safeConvertLong(getScalar("scheduleTime"));
+    }
+    public void setScheduleTime(long newVal) throws Exception {
+        setScalar("scheduleTime", Long.toString(newVal));
+    }
+    
+    
     public List<String> getRoleNames() throws Exception {
         return getVector("roleName");
     }
@@ -217,7 +248,18 @@ public class EmailGenerator extends DOMFace {
 
 
 
-    public void composeAndSendEmail(AuthRequest ar, NGPage ngp) throws Exception {
+    public void scheduleEmail(AuthRequest ar) throws Exception {
+        long aboutFifteenMinutesAgo = ar.nowTime - 15 * 60000;
+        if (getScheduleTime()<aboutFifteenMinutesAgo) {
+            throw new Exception("To schedule the email for sending, the schedule time has to be in the future.  Schedule time currently set to: "
+                +new Date(getScheduleTime()));
+        }
+        setState(EG_STATE_SCHEDULED);
+    }
+    
+    
+
+    public Vector<OptOutAddr> expandAddresses(AuthRequest ar, NGPage ngp) throws Exception {
         Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
         for (String roleName : getRoleNames()) {
             NGRole role = ngp.getRole(roleName);
@@ -245,13 +287,20 @@ public class EmailGenerator extends DOMFace {
             AddressListEntry aleself = new AddressListEntry(ar.getUserProfile());
             OptOutAddr.appendOneUser(new OptOutDirectAddress(aleself), sendTo);
         }
+        return sendTo;
+    }
+    
+    
+    public void constructEmailRecords(AuthRequest ar, NGPage ngp) throws Exception {
+        Vector<OptOutAddr> sendTo = expandAddresses(ar, ngp);
+        NoteRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
 
         StringBuffer historyNameList = new StringBuffer();
         boolean needComma = false;
         for (OptOutAddr ooa : sendTo) {
             String addr = ooa.getEmail();
             if (addr!=null && addr.length()>0) {
-                sendMessageToUser(ar, ngp, noteRec, ooa);
+                constructEmailRecordOneUser(ar, ngp, noteRec, ooa);
                 if (needComma) {
                     historyNameList.append(",");
                 }
@@ -263,7 +312,7 @@ public class EmailGenerator extends DOMFace {
         setSendDate(ar.nowTime);
     }
 
-    private void sendMessageToUser(AuthRequest ar, NGPage ngp, NoteRecord noteRec, OptOutAddr ooa)
+    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord noteRec, OptOutAddr ooa)
             throws Exception  {
         String userAddress = ooa.getEmail();
         if (userAddress==null || userAddress.length()==0)
@@ -273,7 +322,8 @@ public class EmailGenerator extends DOMFace {
         }
 
         StringWriter bodyWriter = new StringWriter();
-        AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter, ar.getCogInstance());
+        UserProfile originalSender = UserManager.findUserByAnyId(getOwner()); 
+        AuthRequest clone = new AuthDummy(originalSender, bodyWriter, ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.write("<html><body>");
@@ -319,8 +369,14 @@ public class EmailGenerator extends DOMFace {
             NGPage ngp, NoteRecord selectedNote,
             AddressListEntry ale, String intro, boolean includeBody,
             List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
+        
+        
         ar.write("<p><b>Note From:</b> ");
-        ar.getUserProfile().writeLink(ar);
+        UserProfile ownerProfile = ar.getUserProfile();
+        if (ownerProfile==null) {
+            throw new Exception("Some problem, so some reason the owner user profile is null");
+        }
+        ownerProfile.writeLink(ar);
         ar.write(" &nbsp; <b>Project:</b> ");
         ngp.writeContainerLink(ar, 100);
         ar.write("</p>");
@@ -430,6 +486,7 @@ public class EmailGenerator extends DOMFace {
         obj.put("makeMembers", getMakeMembers());
         obj.put("includeBody", getIncludeBody());
         obj.put("attachFiles", getAttachFiles());
+        obj.put("scheduleTime", getScheduleTime());
 
         JSONArray attachmentInfo = new JSONArray();
         for (String attId : getAttachments()) {
@@ -513,6 +570,9 @@ public class EmailGenerator extends DOMFace {
         if (obj.has("meetingInfo")) {
             JSONObject attInfo = obj.getJSONObject("meetingInfo");
             setMeetingId( attInfo.getString("id") );
+        }
+        if (obj.has("scheduleTime")) {
+            setScheduleTime(obj.getLong("scheduleTime"));
         }
     }
 

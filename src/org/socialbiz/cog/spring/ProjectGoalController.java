@@ -20,7 +20,6 @@
 
 package org.socialbiz.cog.spring;
 
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -625,54 +624,7 @@ public class ProjectGoalController extends BaseController {
     }
 
 
-    /*
-    @RequestMapping(value = "/{siteId}/{pageId}/statusUpdateForTask.form", method = RequestMethod.POST)
-    public ModelAndView statusUpdateForTask(@PathVariable
-    String siteId, @PathVariable
-    String pageId, @RequestParam
-    String taskId,HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                super.redirectToLoginPage(ar, "Must be logged in to update task.", new Exception("Must be logged in"));
-                return null;
-            }
-            ar.getCogInstance().getSiteByIdOrFail(siteId);
 
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-            ar.setPageAccessLevels(ngp);
-            ar.assertMember("Must be a member of a project to manipulate tasks.");
-            ar.assertNotFrozen(ngp);
-
-            String accomp=ar.defParam("accomp", "");
-            String status=ar.defParam("status", "");
-            GoalRecord task  = ngp.getGoalOrFail(taskId);
-            task.setStatus(status);
-            task.setState(Integer.parseInt(ar.reqParam("states")));
-            if(task.getState()==5){
-                task.setPercentComplete(100);
-            }else{
-                task.setPercentComplete(Integer.parseInt(ar.defParam("percentage", "0")));
-            }
-            int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
-
-            task.setModifiedDate(ar.nowTime);
-            task.setModifiedBy(ar.getBestUserId());
-            HistoryRecord.createHistoryRecord(ngp, task.getId(),
-                            HistoryRecord.CONTEXT_TYPE_TASK, eventType,
-                            ar, accomp);
-            String go = ar.reqParam("go");
-
-            ngp.saveFile(ar, "updated a task status");
-
-            return redirectBrowser(ar,go);
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.update.status", new Object[]{pageId,siteId} , ex);
-        }
-    }
-    */
 
     @RequestMapping(value = "/{siteId}/{pageId}/setOrderTasks.ajax", method = RequestMethod.POST)
     public void updateOrderTasks( @PathVariable String pageId,@RequestParam String indexString,
@@ -741,99 +693,4 @@ public class ProjectGoalController extends BaseController {
         NGWebUtils.sendResponse(ar, responseMessage);
     }
 
-
-    @RequestMapping(value = "/{siteId}/{projectId}/tasks.csv", method = RequestMethod.GET)
-    public void getTasks( @PathVariable String siteId, @PathVariable String projectId,
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception
-    {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.getCogInstance().getSiteByIdOrFail(siteId);
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(projectId);
-            ar.setPageAccessLevels(ngp);
-            ar.assertMember("Must be a member of a project to get tasks.");
-
-            response.setContentType("text/csv;charset=UTF-8");
-            MultiLevelNumber numbers = new MultiLevelNumber();
-
-            ar.write("Task,Assignee,Status,Percent,StartDate,EndDate,DueDate,Description,ID\n");
-
-            List<GoalRecord> tasks = ngp.getAllGoals();
-            for (GoalRecord task : tasks) {
-
-                int percent = task.getCorrectedPercentComplete();
-                int taskLevel = determineTaskLevel(task);
-                String taskNums = numbers.nextAtLevel(taskLevel);
-
-                writeWithoutCommas(ar,taskNums);
-                writeWithoutCommas(ar," ");
-                writeWithoutCommas(ar,task.getSynopsis());
-                ar.write(",");
-                NGRole assignee = task.getAssigneeRole();
-                List<AddressListEntry> players = assignee.getExpandedPlayers(ngp);
-                boolean needspace = false;
-                for (AddressListEntry ale : players) {
-                    if (needspace) {
-                        ar.write(" ");
-                    }
-                    writeWithoutCommas(ar,ale.getName());
-                    needspace = true;
-                }
-                ar.write(",");
-                writeWithoutCommas(ar,BaseRecord.stateName(task.getState()));
-                ar.write(",");
-                ar.write(Integer.toString(percent));
-                ar.write("%,");
-                writeDateForCsv(ar, task.getStartDate());
-                ar.write(",");
-                writeDateForCsv(ar, task.getEndDate());
-                ar.write(",");
-                writeDateForCsv(ar, task.getDueDate());
-                ar.write(",");
-                writeWithoutCommas(ar,task.getDescription());
-                ar.write(",");
-                writeWithoutCommas(ar,task.getId());
-                ar.write("\n");
-            }
-            ar.flush();
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.task.csv", new Object[]{projectId,siteId} , ex);
-        }
-    }
-
-    private int determineTaskLevel(GoalRecord task) throws Exception
-    {
-        int level=0;
-        GoalRecord g3 = task.getParentGoal();
-        while (g3 != null)
-        {
-            level++;
-            g3 = g3.getParentGoal();
-        }
-        return level;
-    }
-
-    private void writeWithoutCommas(AuthRequest ar, String str) throws Exception
-    {
-        StringBuffer stripped = new StringBuffer();
-        for (int i=0; i<str.length(); i++)
-        {
-            char ch = str.charAt(i);
-
-            // just strip commas and returns (all control characters) from text for now
-            // there is another mode that uses quotes to allow commas, but not supported yet
-            if (ch!=',' && ch>=' ') {
-                stripped.append(ch);
-            }
-        }
-        ar.write( stripped.toString() );
-    }
-
-    private void writeDateForCsv(AuthRequest ar, long date) throws Exception
-    {
-        //TODO: figure out how CSV dates are stored
-        SectionUtil.nicePrintTimestamp(ar.w, date);
-    }
 }
