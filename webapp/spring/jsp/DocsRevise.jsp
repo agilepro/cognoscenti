@@ -54,7 +54,7 @@ div[dropzone] {
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     window.MY_SCOPE = $scope;
-    $scope.docInfo = <% docInfo.write(ar.w, 2,2); %>;
+    $scope.docInfo = <% docInfo.write(ar.w, 2,4); %>;
     $scope.fileProgress = [];
 
     $scope.showError = false;
@@ -97,11 +97,13 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.nameUploadedFile = function(oneProgress) {
         oneProgress.status = "Finishing";
         var postURL = "<%=remoteProjectLink%>";
-        var op = {operation: "newDoc"};
+        var op = {operation: "updateDoc"};
         op.tempFileName = oneProgress.tempFileName;
         op.doc = {};
-        op.doc.description = oneProgress.description;
-        op.doc.name = oneProgress.file.name;
+        op.doc.description = $scope.docInfo.description;
+        op.doc.name        = $scope.docInfo.name;
+        op.doc.id          = $scope.docInfo.id;
+        op.doc.universalid = $scope.docInfo.universalid;
         var postdata = JSON.stringify(op);
         $http.post(postURL, postdata)
         .success( function(data) {
@@ -154,7 +156,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <td class="gridTableColummHeader">Drop Here:</td>
                     <td style="width:20px;"></td>
                     <td>
-                        <div id="holder" class="nicenice">Drop Modified File Here</div>
+                        <div id="holder" class="nicenice">Drop "{{docInfo.name}}" File Here</div>
                     </td>
                 </tr>
                 <tr><td style="height:10px"></td></tr>
@@ -164,15 +166,18 @@ app.controller('myCtrl', function($scope, $http) {
                     <td>
                         <div ng-repeat="fp in fileProgress" class="well">
                           <div >
-                              <div style="float:left;"><b>{{fp.file.name}}</b></div>
+                              <div style="float:left;">{{fp.file.name}}</div>
 
                               <div style="float:right;">{{fp.file.size}} bytes
                               {{fp.status}}</div>
                               <div style="clear:both;"></div>
                           </div>
+                          <div ng-show="fp.file.name!=docInfo.name">
+                              <span style="color:red;">Uploading as </span><b>{{docInfo.name}}</b>
+                          </div>
                           <div ng-hide="fp.done">
                              Description:<br/>
-                             <textarea ng-model="fp.description" class="form-control"></textarea>
+                             <textarea ng-model="docInfo.description" class="form-control"></textarea>
                           </div>
                           <div ng-hide="fp.done">
                               <button ng-click="startUpload(fp)" class="btn btn-primary">Upload</button>

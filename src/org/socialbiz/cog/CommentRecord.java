@@ -86,6 +86,19 @@ public class CommentRecord extends DOMFace {
         setVector("choice", choices);
     }
 
+    public boolean getEmailSent()  throws Exception {
+        return "true".equals(getAttributeLong("emailSent"));
+    }
+    public void setEmailSent(boolean newVal) throws Exception {
+        if (newVal) {
+            setAttribute("emailSent", "true");
+        }
+        else {
+            clearAttribute("emailSent");
+        }
+    }
+    
+    
     public JSONObject getJSON() throws Exception {
         AddressListEntry ale = getUser();
         UserProfile up = ale.getUserProfile();
@@ -101,6 +114,7 @@ public class CommentRecord extends DOMFace {
         commInfo.put("userKey", userKey);
         commInfo.put("time",    getTime());
         commInfo.put("poll",    isPoll());
+        commInfo.put("emailSent",getEmailSent());
         return commInfo;
     }
     public JSONObject getHtmlJSON(AuthRequest ar) throws Exception {
@@ -129,6 +143,9 @@ public class CommentRecord extends DOMFace {
             }
             if (input.has("choices")) {
                 setChoices(constructVector(input.getJSONArray("choices")));
+            }
+            if (input.has("emailSent")) {
+                setEmailSent(input.getBoolean("emailSent"));
             }
         }
         System.out.println("COMMRESP:  looking for responses");

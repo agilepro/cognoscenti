@@ -21,12 +21,12 @@
 package org.socialbiz.cog;
 
 import java.io.Writer;
-import java.util.Vector;
 import java.util.List;
-import org.w3c.dom.Element;
+import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.w3c.dom.Element;
 
 /**
 * Implements the process and task formatting
@@ -44,7 +44,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
         return "Process";
     }
 
-
+/*
     public static void plugInDurationCalcScript(Writer out)
         throws Exception
     {
@@ -74,7 +74,8 @@ public class SectionTask extends SectionUtil implements SectionFormat
         out.write("\n    }         ");
         out.write("\n</script> ");
     }
-
+*/
+    
     public static List<GoalRecord> getAllTasks(NGSection sec)
             throws Exception
     {
@@ -231,8 +232,8 @@ public class SectionTask extends SectionUtil implements SectionFormat
         return ar.isMember();
     }
 
-
-    public void copyTaskRecord(GoalRecord sourceRecord, GoalRecord destinationRecord) throws Exception{
+/*
+    public static void copyTaskRecord(GoalRecord sourceRecord, GoalRecord destinationRecord) throws Exception{
         destinationRecord.setSynopsis(sourceRecord.getSynopsis().toString());
         destinationRecord.setDueDate(SectionUtil.niceParseDate(String.valueOf(sourceRecord.getDueDate())));
         destinationRecord.setAssigneeCommaSeparatedList(sourceRecord.getAssigneeCommaSeparatedList());
@@ -254,4 +255,5 @@ public class SectionTask extends SectionUtil implements SectionFormat
             destinationRecord.setParentGoal(sourceRecord.getParentGoalId());
         }
     }
+*/
 }

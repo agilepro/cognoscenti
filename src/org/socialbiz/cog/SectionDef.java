@@ -109,13 +109,10 @@ public class SectionDef
         SectionFormat canonLink =        new SectionLink();
         SectionFormat canonPoll =        new SectionPoll();
         SectionFormat canonPrivate =     new SectionPrivate();
-        SectionFormat cannonGeospatial = new SectionGeospatial();
 
 
 
         //deprecated sections
-        allDefs.add(new SectionDef(cannonGeospatial, "Geospatial", MEMBER_ACCESS, MEMBER_ACCESS,
-                                   true, "XXX Geospatial", false));
         allDefs.add(new SectionDef(canonLink, "See Also", ANON_ACCESS, MEMBER_ACCESS,
                                    true, "XXX Public Links", false));
         allDefs.add(new SectionDef(canonPoll, "Poll", MEMBER_ACCESS, MEMBER_ACCESS,

@@ -445,7 +445,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             resDec.project.saveFile(ar, "Topic synchronized from downstream linked project.");
             return responseOK;
         }
-        if ("updateDoc".equals(op) || "newDoc".equals(op)) {
+        if ("updateDoc".equals(op) || "newDoc".equals(op) || "uploadDoc".equals(op)) {
             JSONObject newDocObj = objIn.getJSONObject("doc");
             String tempFileName = objIn.getString("tempFileName");
 
@@ -459,6 +459,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             AttachmentRecord att;
             int historyEventType = HistoryRecord.EVENT_TYPE_CREATED;
             String newUid = newDocObj.optString("universalid");
+            String updateReason = "";
             if ("updateDoc".equals(op)) {
                 historyEventType = HistoryRecord.EVENT_TYPE_MODIFIED;
                 att = resDec.project.findAttachmentByUidOrNull(newUid);
@@ -476,10 +477,15 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 }
                 String newName = newDocObj.getString("name");
                 att = ngp.findAttachmentByName(newName);
-                if (att!=null && newUid!=null && !newUid.equals(att.getUniversalId())) {
-                    throw new Exception("Attempt to update a document with the name "+newName
-                            +" with information from another document wiht the same name, but different universal ID. "
-                            +" Something is wrong with upstream/downstream exchange.");
+                if ("updateDoc".equals(op)) {
+                    //updateDoc requires that the universalID be set and be correct
+                    //uploadDoc will allow a similarly named files to become new versions
+                    if (att!=null && newUid!=null && !newUid.equals(att.getUniversalId())) {
+                        throw new Exception("Attempt to update a document with the name "+newName
+                                +" with information from another document with the same name, but different universal ID. "
+                                +" Something is wrong with upstream/downstream exchange.");
+                    }
+                    updateReason = "From downstream project by synchronization license "+resDec.licenseId;
                 }
                 if (att==null) {
                     att = resDec.project.createAttachment();
@@ -514,8 +520,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             //TODO: determine how to tell if the source was using the web UI or actually from
             //a downstream synchronization.  Commenting out for now since it is inaccurate.
             HistoryRecord.createAttHistoryRecord(resDec.project, att, historyEventType, ar,
-                      "");
-//                    "From downstream project by synchronization license "+resDec.licenseId);
+                    updateReason);
             resDec.project.saveFile(ar, "Document synchronized from downstream linked project.");
             return responseOK;
         }

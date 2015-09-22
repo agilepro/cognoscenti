@@ -42,7 +42,6 @@ import org.socialbiz.cog.NoteRecord;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.SectionAttachments;
 import org.socialbiz.cog.SectionForNotes;
-import org.socialbiz.cog.SectionGeospatial;
 import org.socialbiz.cog.SectionLink;
 import org.socialbiz.cog.SectionTask;
 import org.socialbiz.cog.UserProfile;
@@ -403,8 +402,6 @@ public class ResourceSection  implements NGResource
             || ngs.getName().equals("Public Links")
             || ngs.getName().equals("Links")){
             ResourceSection.updateLinkSection(ngp, ngs,element_section);
-        }else if(ngs.getName().equals("Geospatial")){
-            ResourceSection.updateGeospatialSection(ngp, ngs,element_section, lar);
         }
     }
 
@@ -712,18 +709,6 @@ public class ResourceSection  implements NGResource
         {
             String content = DOMUtils.textValueOf(element_content, true);
             ngs.setScalar("wiki", content);
-        }
-    }
-
-    public static void updateGeospatialSection(NGPage ngp, NGSection ngs,
-        Element secInput, AuthRequest ar) throws Exception
-    {
-        SectionGeospatial geoFormat = (SectionGeospatial)ngs.getFormat();
-        Element element_geo = findElement(secInput, "geospatial");
-
-        if(element_geo != null)
-        {
-            geoFormat.addGeoData(ar,ngs,element_geo);
         }
     }
 
