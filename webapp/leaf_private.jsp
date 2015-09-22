@@ -214,7 +214,7 @@
           <input type="hidden" name="p" value="<% ar.writeHtml(p); %>">
           <input type="hidden" name="viz" value="4">
           <input type="hidden" name="go" value="<% ar.writeHtml(ar.getCompleteURL()); %>">
-          <input type="submit" value="Create New Private Note">
+          <input type="submit" value="Create New Private Topic">
           </form>
         <%
         }

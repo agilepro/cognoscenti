@@ -36,7 +36,7 @@
                 <div class="pagenav">
                     <div class="left"><%
                         ar.writeHtml( uProf.getName());
-                    %> &raquo; Active Goals </div>
+                    %> &raquo; Active Action Items </div>
                     <div class="right"></div>
                     <div class="clearer">&nbsp;</div>
                 </div>
@@ -74,7 +74,7 @@
         {
 %>
             <tr><td colspan="3"><b>
-                <a href="<%=ar.retPath%><%=ar.getResourceURL(taskPage,"")%>" title="see the page this goal is on">
+                <a href="<%=ar.retPath%><%=ar.getResourceURL(taskPage,"")%>" title="see the page this action item is on">
                 <%ar.writeHtml( taskPage.getFullName());%></a></b></td></tr>
             <%
             lastKey = pageKey;

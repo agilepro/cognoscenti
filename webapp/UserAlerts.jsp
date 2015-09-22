@@ -35,7 +35,7 @@
                 <div class="pagenav">
                     <div class="left"><%
                         ar.writeHtml( uProf.getName());
-                    %> &raquo; Active Goals </div>
+                    %> &raquo; Active Action Items </div>
                     <div class="right"></div>
                     <div class="clearer">&nbsp;</div>
                 </div>
@@ -44,7 +44,7 @@
 
  <div class="section">
      <div class="section_title">
-         <h1 class="left">Active Goals <a href="UserEmailSample.jsp?u=<%ar.writeHtml(uProf.getKey());%>"><img src="emailIcon.gif"></a></h1>
+         <h1 class="left">Active Action Items <a href="UserEmailSample.jsp?u=<%ar.writeHtml(uProf.getKey());%>"><img src="emailIcon.gif"></a></h1>
          <div class="section_date right"></div>
          <div class="clearer">&nbsp;</div>
      </div>

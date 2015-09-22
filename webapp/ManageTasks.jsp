@@ -38,8 +38,8 @@
 
     String filter = ar.defParam(DataFeedServlet.OPERATION_GETTASKLIST, DataFeedServlet.MYACTIVETASKS);
 
-    pageTitle = "Manage Goals: "+uProf.getName();
-    specialTab = "Manage Goals";
+    pageTitle = "Manage Action Items: "+uProf.getName();
+    specialTab = "Manage Action Items";
 
     TaskHelper th = new TaskHelper(uProf.getUniversalId(), "");
     th.scanAllTask(ar.getCogInstance());
@@ -50,7 +50,7 @@
     <table><tr>
         <form action="SyncTasksAction.jsp">
         <td>
-            <input type="submit" value="Synchronize Goals from Projects to Personal Goal List"> &nbsp;
+            <input type="submit" value="Synchronize Action Items from Projects to Personal Action Item List"> &nbsp;
             <input type="hidden" name="go"  value="<%ar.writeHtml(thisPage);%>">
         </td>
         </form>

@@ -274,10 +274,10 @@ public class MainTabsViewControler extends BaseController {
 
              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
              ar.setPageAccessLevels(ngp);
-             ar.assertMember("Need Member Access to Edit a Note.");
+             ar.assertMember("Need Member Access to Edit a Topic.");
              modelAndView = new ModelAndView("EditNote");
              modelAndView.addObject("pageTitle",ngp.getFullName());
-             request.setAttribute("title","Edit Note: "+ ngp.getFullName());
+             request.setAttribute("title","Edit Topic: "+ ngp.getFullName());
              return modelAndView;
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.project.create.note.page", null , ex);
@@ -292,7 +292,7 @@ public class MainTabsViewControler extends BaseController {
          try{
              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
              ar.setPageAccessLevels(ngp);
-             ar.assertMember("Must be a member to update a note contents.");
+             ar.assertMember("Must be a member to update a topic contents.");
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
 
@@ -314,13 +314,13 @@ public class MainTabsViewControler extends BaseController {
              HistoryRecord.createHistoryRecord(ngp, note.getId(), HistoryRecord.CONTEXT_TYPE_LEAFLET,
                      0, eventType, ar, "");
 
-             ngp.saveFile(ar, "Updated Note Contents");
+             ngp.saveFile(ar, "Updated Topic Contents");
 
              JSONObject repo = note.getJSONWithHtml(ar);
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
-             Exception ee = new Exception("Unable to updated note "+nid+" contents", ex);
+             Exception ee = new Exception("Unable to updated topic "+nid+" contents", ex);
              streamException(ee, ar);
          }
      }
@@ -334,7 +334,7 @@ public class MainTabsViewControler extends BaseController {
          try{
              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
              ar.setPageAccessLevels(ngp);
-             ar.assertMember("Must be a member to update a note contents.");
+             ar.assertMember("Must be a member to update a topic contents.");
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
              NoteRecord note = ngp.getNote(nid);
@@ -352,13 +352,13 @@ public class MainTabsViewControler extends BaseController {
 
              note.updateNoteFromJSON(noteInfo, ar);
 
-             ngp.saveFile(ar, "Updated Note Contents");
+             ngp.saveFile(ar, "Updated Topic Contents");
 
              JSONObject repo = note.getJSONWithHtml(ar);
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
-             Exception ee = new Exception("Unable to updated note "+nid+" contents", ex);
+             Exception ee = new Exception("Unable to updated topic "+nid+" contents", ex);
              streamException(ee, ar);
          }
      }
@@ -507,14 +507,14 @@ public class MainTabsViewControler extends BaseController {
             }
 
             if (action.startsWith("Update")) {
-                //Note: we do not need to have "note edit" permission here
+                //Note: we do not need to have "topic edit" permission here
                 //because we are only changing a response record.  We only need
-                //note 'access' permissions which might come from magic number
+                //topic 'access' permissions which might come from magic number
                 if (AccessControl.canAccessNote(ar, ngp, note)) {
                     llr.setData(data);
                     llr.setChoice(choice);
                     llr.setLastEdited(ar.nowTime);
-                    ngp.saveFile(ar, "Updated response to note");
+                    ngp.saveFile(ar, "Updated response to topic");
                 }
             }
             modelAndView = new ModelAndView(new RedirectView(go));
@@ -574,7 +574,7 @@ public class MainTabsViewControler extends BaseController {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            ar.assertLoggedIn("Must be logged in to search the notes");
+            ar.assertLoggedIn("Must be logged in to search the topics");
 
             JSONObject query = getPostedObject(ar);
 
@@ -602,7 +602,7 @@ public class MainTabsViewControler extends BaseController {
             resultList.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to search for notes.", ex);
+            Exception ee = new Exception("Unable to search for topics.", ex);
             streamException(ee, ar);
         }
     }
@@ -661,7 +661,7 @@ public class MainTabsViewControler extends BaseController {
          String responseText = null;
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try {
-             ar.assertLoggedIn("Must be logged in to create a note.");
+             ar.assertLoggedIn("Must be logged in to create a topic.");
              String p = ar.reqParam("p");
              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( p );
              ar.setPageAccessLevels(ngp);
@@ -1076,12 +1076,12 @@ public class MainTabsViewControler extends BaseController {
               }
               nr.setLastEdited(ar.nowTime);
 
-              ngp.saveFile(ar, "Created Note for minutes of meeting.");
+              ngp.saveFile(ar, "Created Topic for minutes of meeting.");
               JSONObject repo = meeting.getFullJSON(ar, ngp);
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to create Note for minutes of meeting.", ex);
+              Exception ee = new Exception("Unable to create Topic for minutes of meeting.", ex);
               streamException(ee, ar);
           }
       }
@@ -1117,7 +1117,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
-              ar.assertMember("Must be a member to create a action item (goal).");
+              ar.assertMember("Must be a member to create a action item.");
               String id = ar.reqParam("id");
               MeetingRecord meeting = ngp.findMeeting(id);
               String aid = ar.reqParam("aid");
@@ -1137,7 +1137,7 @@ public class MainTabsViewControler extends BaseController {
               gr.updateGoalFromJSON(goalInfo);
               ai.addActionItemId(gr.getUniversalId());
 
-              ngp.saveFile(ar, "Created Action Item (Goal) for minutes of meeting.");
+              ngp.saveFile(ar, "Created action item for minutes of meeting.");
               JSONObject repo = gr.getJSON4Goal(ngp);
               repo.write(ar.w, 2, 2);
               ar.flush();
@@ -1155,7 +1155,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
-              ar.assertMember("Must be a member to create a action item (goal).");
+              ar.assertMember("Must be a member to create a action item.");
               gid = ar.reqParam("gid");
               JSONObject goalInfo = getPostedObject(ar);
               GoalRecord gr = null;
@@ -1184,7 +1184,7 @@ public class MainTabsViewControler extends BaseController {
                       HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar,
                       comments);
 
-              ngp.saveFile(ar, "Updated goal "+gid);
+              ngp.saveFile(ar, "Updated action item "+gid);
               JSONObject repo = gr.getJSON4Goal(ngp);
               repo.write(ar.w, 2, 2);
               ar.flush();
@@ -1201,7 +1201,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
-              ar.assertMember("Must be a member to create a action item (goal).");
+              ar.assertMember("Must be a member to create a action item.");
               String gid = ar.reqParam("gid");
               GoalRecord gr = ngp.getGoalOrFail(gid);
 

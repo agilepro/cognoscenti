@@ -317,7 +317,7 @@ public class ResourceSection  implements NGResource
         }else if(lname.equals("Public Comments")
                     || lname.equals("Comments")){
             deleteNotes(ngp);
-            cmsg = "Note with id = " + lid + " is deleted";
+            cmsg = "Topic with id = " + lid + " is deleted";
         }
 
         NGSection ngs = ngp.getSectionOrFail(lname);

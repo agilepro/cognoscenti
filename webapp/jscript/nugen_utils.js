@@ -70,7 +70,7 @@ function createTabs(){
         arrayOfTabs = [
             new TabRef(retPath+"v/"+userKey+"/watchedProjects.htm","Projects","userSubMenu1"),
             new TabRef(retPath+"v/"+userKey+"/userAlerts.htm","Updates",""),
-            new TabRef(retPath+"v/"+userKey+"/userActiveTasks.htm","Goals","userSubMenu2"),
+            new TabRef(retPath+"v/"+userKey+"/userActiveTasks.htm","Action Items","userSubMenu2"),
             new TabRef(retPath+"v/"+userKey+"/userSettings.htm","Settings","userSubMenu3")
         ];
 
@@ -87,8 +87,8 @@ function createTabs(){
     else if(headerType == "project") {
         arrayOfTabs = [
             new TabRef(retPath+"t/"+book+"/"+pageId+"/history.htm","Project Stream",""),
-            new TabRef(retPath+"t/"+book+"/"+pageId+"/notesList.htm","Project Notes","ddsubmenu1"),
-            new TabRef(retPath+"t/"+book+"/"+pageId+"/goalList.htm","Project Goals","ddsubmenu2"),
+            new TabRef(retPath+"t/"+book+"/"+pageId+"/notesList.htm","Project Topics","ddsubmenu1"),
+            new TabRef(retPath+"t/"+book+"/"+pageId+"/goalList.htm","Project Action Items","ddsubmenu2"),
             new TabRef(retPath+"t/"+book+"/"+pageId+"/listAttachments.htm","Project Documents","ddsubmenu3"),
             new TabRef(retPath+"t/"+book+"/"+pageId+"/personal.htm","Project Settings","ddsubmenu4")
         ];
@@ -117,7 +117,7 @@ function createTabs(){
             newli.className = 'mainNavLink1';
         }
 
-        if(specialTab=="null" && ((arrayOfTabs[i].name=="Project Stream")||(arrayOfTabs[i].name=="Projects") ||(arrayOfTabs[i].name=="Site Notes"))){
+        if(specialTab=="null" && ((arrayOfTabs[i].name=="Project Stream")||(arrayOfTabs[i].name=="Projects") ||(arrayOfTabs[i].name=="Site Topics"))){
             newli.className = 'mainNavLink1 selected';
         }
         else if(specialTab==arrayOfTabs[i].name){
@@ -155,7 +155,7 @@ function createSubLinks(){
             new Tab(retPath+"t/"+accountId+"/$/accountCreateProject.htm","Create New Project"),
             new Tab(retPath+"t/"+accountId+"/$/accountCloneProject.htm","Clone Remote Project"),
             new Tab(retPath+"t/"+accountId+"/$/convertFolderProject.htm","Convert Folder to Project"),
-            new Tab(retPath+"t/"+accountId+"/$/searchAllNotes.htm", "Search Notes")
+            new Tab(retPath+"t/"+accountId+"/$/searchAllNotes.htm", "Search Topics")
         ];
         var accountSubMenu4 = [new Tab(retPath+"t/"+accountId+"/$/personal.htm","Personal"),
             new Tab(retPath+"t/"+accountId+"/$/permission.htm","Permissions"),
@@ -173,14 +173,14 @@ function createSubLinks(){
             new Tab(retPath+"v/"+userKey+"/templates.htm","Templates"),
             new Tab(retPath+"v/"+userKey+"/participantProjects.htm","Participant Projects"),
             new Tab(retPath+"v/"+userKey+"/allProjects.htm","All Projects"),
-            new Tab(retPath+"t/"+userKey+"/searchAllNotes.htm", "Search Notes"),
+            new Tab(retPath+"t/"+userKey+"/searchAllNotes.htm", "Search Topics"),
             new Tab(retPath+"v/"+userKey+"/userCreateProject.htm","Create New Project")
         ];
 
-        var arrayOfTabs2 = [new Tab(retPath+"v/"+userKey+"/userActiveTasks.htm","Worklist Goals"),
+        var arrayOfTabs2 = [new Tab(retPath+"v/"+userKey+"/userActiveTasks.htm","Action Items"),
             new Tab(retPath+"v/"+userKey+"/ShareRequests.htm","Share Requests"),
             new Tab(retPath+"v/"+userKey+"/RemoteProfiles.htm","Remote Profiles"),
-            new Tab(retPath+"v/"+userKey+"/userRemoteTasks.htm","Remote Goals"),
+            new Tab(retPath+"v/"+userKey+"/userRemoteTasks.htm","Remote Action Items"),
             new Tab(retPath+"v/"+userKey+"/Agents.htm","Personal Assistant")
         ];
 
@@ -212,15 +212,15 @@ function createSubLinks(){
     else{   //This is the Project case
 
         var arrayOfTabs1 = [
-            new Tab(retPath+"t/"+book+"/"+pageId+"/notesList.htm",   "List Notes"),
+            new Tab(retPath+"t/"+book+"/"+pageId+"/notesList.htm",   "List Topics"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/automaticLinks.htm","Automatic Links"),
-            new Tab(retPath+"t/"+book+"/"+pageId+"/searchAllNotes.htm","Search All Notes"),
+            new Tab(retPath+"t/"+book+"/"+pageId+"/searchAllNotes.htm","Search All Topics"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/exportPDF.htm",   "Generate PDF"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/editNote.htm?public=true",  "Create New Note &gt;")
         ];
 
         var arrayOfTabs2 = [
-            new Tab(retPath+"t/"+book+"/"+pageId+"/goalList.htm",             "List Goals"),
+            new Tab(retPath+"t/"+book+"/"+pageId+"/goalList.htm",             "List Action Items"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/meetingList.htm",          "Meeting List"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/agendaBacklog.htm",        "Agenda Item Backlog")
         ];
@@ -513,7 +513,7 @@ var formSubmitResponse ={
             if(action == 'Edit' || action == 'SaveAsDraft'|| action == 'Update' ){
 
                 if(action == 'SaveAsDraft'){
-                    alert("This Note has been saved 'Draft Notes' section.");
+                    alert("This Topic has been saved 'Draft Topics' section.");
                 }
                 var flagClose = document.getElementById('flagClose').value;
                 if(flagClose == 'yes'){
@@ -709,14 +709,14 @@ function defaultAssigneeValue(elementName) {
                 var json = eval('(' + respText+')');
                 if(json.msgType == "success"){
                     if(json.visibility == 1){
-                        alert("'"+json.subject+"' note has been publish under Public Notes.");
+                        alert("'"+json.subject+"' topic has been publish under Public Topics.");
                         if(isPublishFromEdit){
                             window.close();
                         }else{
                             window.location = "public.htm"
                         }
                     }else{
-                        alert("'"+json.subject+"' note has been publish under Member Notes.");
+                        alert("'"+json.subject+"' topic has been publish under Member Topics.");
                         if(isPublishFromEdit){
                             window.close();
                         }else{

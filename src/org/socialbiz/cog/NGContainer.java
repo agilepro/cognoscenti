@@ -54,8 +54,8 @@ public interface NGContainer
 
 
     /**
-    * notes are the basic block of rich text (wiki) that appear on the userinterface.
-    * Notes can appear on projects (NGPage), sites (NGBook) or user (UserPage).
+    * Topics are the basic block of rich text (wiki) that appear on the userinterface.
+    * Topics can only appear on projects (NGPage).
     */
     public List<NoteRecord> getAllNotes() throws Exception;
 
@@ -180,7 +180,7 @@ public interface NGContainer
     public List<HistoryRecord> getHistoryRange(long startTime, long endTime) throws Exception;
 
     /**
-    * Pass a context type (Note, Task, Document, etc) and a old context id, and all the
+    * Pass a context type (Topic, Action Item, Document, etc) and a old context id, and all the
     * history for that resource will be copied to the current container for a new context id.
     * The history records are left in the old container.
     * The history records in the new page will have the new ID.

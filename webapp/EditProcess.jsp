@@ -60,7 +60,7 @@
     <form action="EditProcessAction.jsp" method="post">
         <input type="hidden" name="p" value="<% ar.writeHtml(p); %>"/>
         <input type="hidden" name="encodingGuard" value="<%ar.writeHtml("\u6771\u4eac");%>"/>
-        <center><button type="submit" id="actBtn" name="action" value="Save Changes">Save Goal Changes</button></center>
+        <center><button type="submit" id="actBtn" name="action" value="Save Changes">Save Changes</button></center>
         <br/>
 
         <table width="95%" class="Design8">

@@ -283,7 +283,7 @@ public class EmailListener extends TimerTask{
             message.setFlag(Flag.DELETED, true);
 
         }catch (Exception e) {
-            //May be in this case we should also send reply to sender stating that 'note could not be created due to some reason'.
+            //May be in this case we should also send reply to sender stating that 'topic could not be created due to some reason'.
             throw new NGException("nugen.exception.could.not.process.email", new Object[]{message.getSubject()},e);
         }
     }
@@ -314,7 +314,7 @@ public class EmailListener extends TimerTask{
             String fromAdd = getFromAddress(fromAdrs[0].toString());
             note.setModUser(AddressListEntry.parseCombinedAddress(fromAdd));
 
-            ngp.saveFile(ar,"Note created from Mail");
+            ngp.saveFile(ar,"Topic created from Mail");
 
             handleEmailAttachments(ngp, message);
 

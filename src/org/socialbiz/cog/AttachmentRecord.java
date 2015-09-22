@@ -957,7 +957,7 @@ public class AttachmentRecord extends DOMFace {
 
     public JSONObject getJSON4Doc(AuthRequest ar, NGPage ngp) throws Exception {
         JSONObject thisDoc = new JSONObject();
-        String univ = getUniversalId(); 
+        String univ = getUniversalId();
         thisDoc.put("universalid",  univ);
         thisDoc.put("id",           getId());
         thisDoc.put("name",         getNiceName());
@@ -1047,8 +1047,8 @@ public class AttachmentRecord extends DOMFace {
         String universalid = docInfo.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen
-            throw new Exception("Error trying to update the record for a goal with UID ("
-                    +getUniversalId()+") with post from goal with UID ("+universalid+")");
+            throw new Exception("Error trying to update the record for an action item with UID ("
+                    +getUniversalId()+") with post from action item with UID ("+universalid+")");
         }
         boolean changed = updateFromJSON(docInfo, (NGPage)ar.ngp, ar);
 

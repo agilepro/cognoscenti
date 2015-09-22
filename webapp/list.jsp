@@ -49,7 +49,7 @@
                     <td>Site Id</td>
                     <td>#prj</td>
                     <td>#docs</td>
-                    <td>#notes</td>
+                    <td>#topics</td>
                     <td>Owners</td>
                     <td>Description</td>
                 </tr>

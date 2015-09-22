@@ -171,7 +171,7 @@ public class PDFUtil {
 
         if(publicNoteList != null && publicNoteList.size() > 0){
             contentStream.setFont( nbfont, h1_font_size );
-            contentStream.drawString("Public Notes : ");
+            contentStream.drawString("Public Topics : ");
             setCusrosrPosition(0,-30);
             writeInPDF(ar, publicNotes);
         }
@@ -183,7 +183,7 @@ public class PDFUtil {
                 setPage();
             }
             contentStream.setFont( nbfont, h1_font_size );
-            contentStream.drawString("Member Notes : ");
+            contentStream.drawString("Member Topics : ");
             setCusrosrPosition(0,-30);
             writeInPDF(ar, memberNotes);
         }
@@ -209,7 +209,7 @@ public class PDFUtil {
 
             String subject = lr.getSubject();
             if (subject == null || subject.length() == 0) {
-                subject = "Untitled Note";
+                subject = "Untitled Topic";
             }
 
             if(subject.length() > 45){

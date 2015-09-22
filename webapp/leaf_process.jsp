@@ -180,7 +180,7 @@
             String goal = pr.getSynopsis();
             if (goal!=null && goal.length()>0)
             {
-                ar.write(" (Goal: ");
+                ar.write(" (Action Item: ");
                 ar.writeHtml(goal);
                 ar.write(")");
             }

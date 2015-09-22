@@ -35,7 +35,7 @@ public class MeetingRecord extends DOMFace {
     }
 
     /**
-     * The owner is the actual user who created this meeting. 
+     * The owner is the actual user who created this meeting.
      * Email will appear to be from this user.
      */
     public String getOwner() throws Exception {
@@ -234,7 +234,7 @@ public class MeetingRecord extends DOMFace {
                 meetingInfo.put("minutesLocalId", nr.getId());
             }
             else {
-                //since no corresponding note exists, clear the setting
+                //since no corresponding topic exists, clear the setting
                 //could be a schema migration thing
                 setMinutesId(null);
             }
@@ -245,7 +245,7 @@ public class MeetingRecord extends DOMFace {
 
     public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
         boolean hasSetMeetingInfo = false;
-        
+
         if (input.has("name")) {
             setName(input.getString("name"));
             hasSetMeetingInfo = true;
@@ -277,7 +277,7 @@ public class MeetingRecord extends DOMFace {
         if (input.has("owner")) {
             setOwner(input.getString("owner"));
         }
-        
+
         //fix up the owner if needed .. schema migration
         //TODO: remove after Dec 2015
         String owner = getOwner();
@@ -426,7 +426,7 @@ public class MeetingRecord extends DOMFace {
         }
         emg.setOwner(meetingOwner);
         emg.setFrom(meetingOwner);
-        //UserProfile originalSender = UserManager.findUserByAnyId(getOwner()); 
+        //UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
         //AuthRequest impersonateOwner = new AuthDummy(originalSender, ar.w, ar.getCogInstance());
         emg.constructEmailRecords(ar, ngp);
         setReminderSent(ar.nowTime);

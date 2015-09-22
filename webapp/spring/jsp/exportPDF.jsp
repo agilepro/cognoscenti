@@ -97,7 +97,7 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
             </tr>
         </table>
-        <div class="generalHeading">Public Notes :</div>
+        <div class="generalHeading">Public Topics :</div>
         <br>
         <table border="0px solid gray" class="gridTable" width="800">
             <thead>
@@ -130,13 +130,13 @@ app.controller('myCtrl', function($scope, $http) {
 <%
 if (ar.isMember()) {
 %>
-        <div class="generalHeading">Member Notes :</div>
+        <div class="generalHeading">Member Topics :</div>
         <br>
         <table border="0px solid gray" class="gridTable" width="800">
             <%
                 List<NoteRecord> memberComments = ngp.getVisibleNotes(ar, SectionDef.MEMBER_ACCESS);
                 if(memberComments.size() == 0) {
-                    %> No member notes found. <%
+                    %> No member topics found. <%
                 }
                 else{
             %>

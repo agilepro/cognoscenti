@@ -348,8 +348,8 @@ public class ResourcePage implements NGResource
                 continue;
             }
 
-            //can this note be seen by the license?
-            //currently the only notes that can be requested are Member and Public
+            //can this topic be seen by the license?
+            //currently the only topics that can be requested are Member and Public
             //may have other roles in the future, but for now only check if the
             //license is for Public or Member
             String licRole = license.getRole();

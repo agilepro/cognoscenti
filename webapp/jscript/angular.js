@@ -2285,7 +2285,7 @@ function publishExternalAPI(angular) {
  *
  * <div class="alert alert-success">jqLite is a tiny, API-compatible subset of jQuery that allows
  * Angular to manipulate the DOM in a cross-browser compatible way. **jqLite** implements only the most
- * commonly needed functionality with the goal of having a very small footprint.</div>
+ * commonly needed functionality with the action item of having a very small footprint.</div>
  *
  * To use jQuery, simply load it before `DOMContentLoaded` event fired.
  *

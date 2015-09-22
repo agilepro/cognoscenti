@@ -74,7 +74,7 @@ import org.workcast.json.JSONTokener;
  * in any way.
  *
  * {site-proj}/summary.json
- * This will list all the goals, notes, and attachments to this project.
+ * This will list all the action items, notes, and attachments to this project.
  * and include some info like modified date, owner, and file size.
  *
  * {site-proj}/doc{docid}/docname.ext
@@ -111,7 +111,7 @@ import org.workcast.json.JSONTokener;
  *
  * {site-proj}/goal{goalid}/goal.json
  * Will retrieve a goal in JSON format
- * A POST to this address will update the goal in JSON format
+ * A POST to this address will update the action item in JSON format
  */
 @SuppressWarnings("serial")
 public class APIServlet extends javax.servlet.http.HttpServlet {
@@ -418,14 +418,14 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             JSONObject newNoteObj = objIn.getJSONObject("note");
             if (!resDec.hasFullMemberAccess()) {
                 throw new Exception("The license ("+resDec.licenseId
-                        +") does not have full member access which is needed in order to create a new note.");
+                        +") does not have full member access which is needed in order to create a new topic.");
             }
             NoteRecord newNote = resDec.project.createNote();
             newNote.setUniversalId(newNoteObj.getString("universalid"));
             newNote.updateNoteFromJSON(newNoteObj, ar);
             HistoryRecord.createNoteHistoryRecord(resDec.project, newNote, HistoryRecord.EVENT_TYPE_CREATED, ar,
                     "From downstream project by synchronization license "+resDec.licenseId);
-            resDec.project.saveFile(ar, "New note synchronized from downstream linked project.");
+            resDec.project.saveFile(ar, "New topic synchronized from downstream linked project.");
             return responseOK;
         }
         if ("updateNote".equals(op)) {
@@ -433,16 +433,16 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             String noteUID = newNoteObj.getString("universalid");
             NoteRecord note = resDec.project.getNoteByUidOrNull(noteUID);
             if (note==null) {
-                throw new Exception("Unable to find an existing note with UID ("+noteUID+")");
+                throw new Exception("Unable to find an existing topic with UID ("+noteUID+")");
             }
             if (!resDec.canAccessNote(note)) {
                 throw new Exception("The license ("+resDec.licenseId
-                        +") does not have right to access note ("+noteUID+").");
+                        +") does not have right to access topic ("+noteUID+").");
             }
             note.updateNoteFromJSON(newNoteObj, ar);
             HistoryRecord.createNoteHistoryRecord(resDec.project, note, HistoryRecord.EVENT_TYPE_MODIFIED, ar,
                     "From downstream project by synchronization license "+resDec.licenseId);
-            resDec.project.saveFile(ar, "Note synchronized from downstream linked project.");
+            resDec.project.saveFile(ar, "Topic synchronized from downstream linked project.");
             return responseOK;
         }
         if ("updateDoc".equals(op) || "newDoc".equals(op)) {
@@ -705,7 +705,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         NoteRecord note = resDec.project.getNoteOrFail(resDec.noteId);
         if (!resDec.canAccessNote(note)) {
             throw new Exception("Specified license ("+resDec.licenseId
-                    +") is not able to access note ("+resDec.noteId+")");
+                    +") is not able to access topic ("+resDec.noteId+")");
         }
         String contents = note.getWiki();
         if (contents.length()==0) {

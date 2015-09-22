@@ -146,7 +146,7 @@ public class TaskHelper
 
 
     /**
-     * Includes a goal record into the registry of goals that are being
+     * Includes an action item record into the registry of action items that are being
      * tracked by this TaskHelper object.
      */
     private void registerGoal(NGPage aProject, GoalRecord gr) throws Exception {
@@ -169,7 +169,7 @@ public class TaskHelper
     }
 
     /**
-    * loads the goals from the specified project, and then, given a list of task ids, it
+    * loads the action items from the specified project, and then, given a list of task ids, it
     * generate an XML dom tree from the tasks specifically mentioned by ID.
     */
     public void generateXPDLTaskInfo(NGPage ngp, Document doc, Element element_activities, String dataIds)

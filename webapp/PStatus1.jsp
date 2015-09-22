@@ -38,7 +38,7 @@
 
             <div class="pagenavigation">
                 <div class="pagenav">
-                    <div class="left"><% ar.writeHtml( uProf.getName());%> &raquo; Active Goals </div>
+                    <div class="left"><% ar.writeHtml( uProf.getName());%> &raquo; Active Action Items </div>
                     <div class="right"></div>
                     <div class="clearer">&nbsp;</div>
                 </div>

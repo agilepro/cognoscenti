@@ -565,7 +565,7 @@ function addvalue() {
         <table width="100%">
             <tr><td height="20px"></td></tr>
             <tr ng-show="subGoals.length>0">
-                <td class="gridTableColummHeader">Sub Goals:</td>
+                <td class="gridTableColummHeader">Sub Action Items:</td>
                 <td style="width:20px;"></td>
                 <td>
                     <div ng-repeat="sub in subGoals">
@@ -761,7 +761,7 @@ function addvalue() {
                                                         <tr>
                                                             <td class="gridTableColummHeader"></td>
                                                             <td style="width:20px;"></td>
-                                                            <td><input type="button" value="Create Sub Goal" class="btn btn-primary" tabindex=3 onclick="createSubTask();"/></td>
+                                                            <td><input type="button" value="Create Sub Action Item" class="btn btn-primary" tabindex=3 onclick="createSubTask();"/></td>
                                                         </tr>
                                                     </table>
                                                 </div>

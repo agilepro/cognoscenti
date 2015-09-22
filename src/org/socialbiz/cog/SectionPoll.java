@@ -23,7 +23,7 @@ package org.socialbiz.cog;
 import java.io.Writer;
 
 /**
-* Deprecated Class to support Polls.  Instead, just use a note
+* Deprecated Class to support Polls.  Instead, just use a topic
 */
 public class SectionPoll extends SectionUtil implements SectionFormat
 {

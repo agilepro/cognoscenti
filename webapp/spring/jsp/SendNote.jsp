@@ -6,7 +6,7 @@
 %><%@page import="org.socialbiz.cog.EmailGenerator"
 %><%@page import="org.socialbiz.cog.MeetingRecord"
 %><%!
-    String pageTitle="Send Note By Mail";
+    String pageTitle="Send Topic By Mail";
 %><%
 /*
 Required parameters:
@@ -18,7 +18,7 @@ Optional Parameters:
     1. eGenId       : This is the id of a Email Generator.  If omitted a NEW one is created.
     2. intro        : This is the introductory comment in email.
     3. subject      : Set subject of email.
-    4. noteId       : This is Note id which can be included in the email as body contents
+    4. noteId       : This is Topic id which can be included in the email as body contents
     5. att          : The id of an attachement to automatically include
     6. meet         : The id of a meeting to automatically include
 
@@ -57,7 +57,7 @@ Optional Parameters:
                 mailSubject = noteRec.getSubject();
             }
             if(mailSubject==null || mailSubject.trim().length()==0){
-                mailSubject = "Sending Note from Project";
+                mailSubject = "Sending Topic from Project";
             }
             emailInfo.put("noteInfo", noteRec.getJSONWithHtml(ar));
         }
@@ -126,7 +126,7 @@ Optional Parameters:
       "noteInfo": {
         "comments": [
           {
-            "content": "this is a comment on a note.   I cut back to Weaver and am back on Katie\u2019s training screen. I decide to look at our training materials. A tag in the corner of the front pages says that the whole package is scheduled for review in seven months. I click on Minutes in the tag and view the record of the decision a year ago to adopt the materials and set a one-year review date. No one had expressed any doubts at the time. I close the minutes and the training materials, and there is the familiar ring of Wellness Support faces again.",
+            "content": "this is a comment on a topic.   I cut back to Weaver and am back on Katie\u2019s training screen. I decide to look at our training materials. A tag in the corner of the front pages says that the whole package is scheduled for review in seven months. I click on Minutes in the tag and view the record of the decision a year ago to adopt the materials and set a one-year review date. No one had expressed any doubts at the time. I close the minutes and the training materials, and there is the familiar ring of Wellness Support faces again.",
             "time": 1435356818486,
             "user": "kswenson@us.fujitsu.com"
           },
@@ -152,11 +152,11 @@ Optional Parameters:
         },
         "pin": 0,
         "public": true,
-        "subject": "public note",
+        "subject": "public topic",
         "universalid": "FLVQAPMWG@facility-1-wellness-circle@3896"
       },
       "roleNames": ["Members"],
-      "subject": "public note"
+      "subject": "public topic"
     };
 
     */
@@ -506,9 +506,9 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr><td style="height:10px"></td></tr>
             <tr ng-show="emailInfo.noteInfo.id">
-                <td class="gridTableColummHeader">Note:</td>
+                <td class="gridTableColummHeader">Topic:</td>
                 <td style="width:20px;"></td>
-                <td><input type="checkbox" ng-model="emailInfo.includeBody"> Include note <i>'{{emailInfo.noteInfo.subject}}'</i> into email</td>
+                <td><input type="checkbox" ng-model="emailInfo.includeBody"> Include topic <i>'{{emailInfo.noteInfo.subject}}'</i> into email</td>
             </tr>
             <tr ng-show="emailInfo.meetingInfo.name">
                 <td class="gridTableColummHeader">Meeting:</td>

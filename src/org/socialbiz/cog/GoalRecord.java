@@ -62,7 +62,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     /**
-     * Make sure that all the important attributes are copied from another goal
+     * Make sure that all the important attributes are copied from another action item
      * object, but NOT the id. The ID remains unchanged.
      */
     public void copyFrom(GoalRecord other) throws Exception {
@@ -84,8 +84,8 @@ public class GoalRecord extends BaseRecord {
     }
 
     /**
-     * Generates a fully qualified, licensed, Wf-XML link for this goal This is
-     * the link someone else would use to get to this goal. AuthRequest is
+     * Generates a fully qualified, licensed, Wf-XML link for this action item This is
+     * the link someone else would use to get to this action item. AuthRequest is
      * needed to know the current server context path
      */
     public LicensedURL getWfxmlLink(AuthRequest ar) throws Exception {
@@ -100,7 +100,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     /**
-     * Get a NGRole that represents the assignees of the goal. a role is a list
+     * Get a NGRole that represents the assignees of the action item. a role is a list
      * of users. Using the role you can test whether a user is playing the role
      * or not, as well as add and remove people from the role.
      */
@@ -163,7 +163,7 @@ public class GoalRecord extends BaseRecord {
         List<GoalRecord> goalList = ngp.getAllGoals();
         if (goalList == null || goalList.size() == 0) {
             throw new ProgramLogicError(
-                    "Unable to find any goals on the project : " + ngp.getKey());
+                    "Unable to find any action items on the project : " + ngp.getKey());
         }
 
         int state = getState();
@@ -241,7 +241,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     public void makeAsRegularGoal() throws Exception {
-        // removing the parent goal attribute would make this task a regular
+        // removing the parent action item attribute would make this task a regular
         // task
         // instead of subtask.
         fEle.removeAttribute("parenttask");
@@ -587,9 +587,9 @@ public class GoalRecord extends BaseRecord {
     }
 
     /**
-     * the universal id is a globally unique ID for this goal, composed of the
-     * id for the server, the project, and the goal. This is set at the point
-     * where the goal is created and remains with the note as it is carried
+     * the universal id is a globally unique ID for this action item, composed of the
+     * id for the server, the project, and the action item. This is set at the point
+     * where the action item is created and remains with the note as it is carried
      * around the system as long as it is moved as a clone from a project to a
      * clone of a project. If it is copied or moved to another project for any
      * other reason, then the universal ID should be reset.
@@ -715,7 +715,7 @@ public class GoalRecord extends BaseRecord {
 
     /**
      * This value, if set, is the GMT time that the wait period is scheduled
-     * to end.  IF the goal is discovered in wait mode after this time, then
+     * to end.  If the action item is discovered in wait mode after this time, then
      * it should be reset to active mode.  A setting of zero or negative
      * indicates that this wakup is disabled.
      */
@@ -740,7 +740,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     /**
-     * Passive is a setting that says that the goal was not defined
+     * Passive is a setting that says that the action item was not defined
      * in this particular replicant of the project, and so it should
      * only display the status, and not allow any means to change
      * the state.
@@ -778,7 +778,7 @@ public class GoalRecord extends BaseRecord {
 
     /**
      * RemoteProjectURL is the URL to get information about the
-     * project that this goal is defined in
+     * project that this action item is defined in
      */
     public void setRemoteProjectURL(String url) {
         setScalar("remoteProjectURL", url);
@@ -789,7 +789,7 @@ public class GoalRecord extends BaseRecord {
 
     /**
      * RemoteProjectName is the name of the
-     * project that this goal is defined in
+     * project that this action item is defined in
      */
     public void setRemoteProjectName(String url) {
         setScalar("remoteProjectName", url);
@@ -800,7 +800,7 @@ public class GoalRecord extends BaseRecord {
 
     /**
      * RemoteSiteURL is the URL to get information about the
-     * site that this goal is defined in
+     * site that this action item is defined in
      */
     public void setRemoteSiteURL(String url) {
         setScalar("remoteSiteURL", url);
@@ -811,7 +811,7 @@ public class GoalRecord extends BaseRecord {
 
     /**
      * RemoteSiteName is the name of the
-     * site that this goal is defined in
+     * site that this action item is defined in
      */
     public void setRemoteSiteName(String url) {
         setScalar("remoteSiteName", url);
@@ -835,7 +835,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     /**
-     * How is the action item proceeding and is it likely 
+     * How is the action item proceeding and is it likely
      * to be completed on time.
      * The values are "good", "ok", "bad"
      */
@@ -865,7 +865,7 @@ public class GoalRecord extends BaseRecord {
         thisGoal.put("duration",  getDuration());
         thisGoal.put("rank",      getRank());
         thisGoal.put("prospects", getProspects());
-        
+
         thisGoal.put("projectname", ngp.getFullName());
         thisGoal.put("projectKey", ngp.getKey());
 
@@ -913,8 +913,8 @@ public class GoalRecord extends BaseRecord {
         String universalid = goalObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen
-            throw new Exception("Error trying to update the record for a goal with UID ("
-                    +getUniversalId()+") with post from goal with UID ("+universalid+")");
+            throw new Exception("Error trying to update the record for a action item with UID ("
+                    +getUniversalId()+") with post from action item with UID ("+universalid+")");
         }
         if (goalObj.has("synopsis")) {
             setSynopsis(goalObj.optString("synopsis"));

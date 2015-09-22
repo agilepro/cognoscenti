@@ -29,7 +29,7 @@
 
     ngb = ngp.getSite();
     pageTitle = ngp.getFullName();
-    specialTab = "Member Notes";
+    specialTab = "Member Topics";
     newUIResource = "member.htm";
 
 %>
@@ -58,7 +58,7 @@
               <input type="hidden" name="p" value="<% ar.writeHtml(p); %>">
               <input type="hidden" name="viz" value="2">
               <input type="hidden" name="go" value="<% ar.writeHtml(ar.getCompleteURL()); %>">
-              <input type="submit" value="Create New Member Note">
+              <input type="submit" value="Create New Member Topic">
 
               </form>
             <%

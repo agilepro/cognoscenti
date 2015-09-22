@@ -87,7 +87,7 @@ Parameters:
                         <thead>
                              <tr>
                                  <th >Project/Account Name</th>
-                                 <th >Note Subject</th>
+                                 <th >Topic Subject</th>
                              </tr>
                          </thead>
                          <tbody>
@@ -130,7 +130,7 @@ Parameters:
             {
                 var myColumnDefs = [
                     {key:"Project_Account_Name",label:"Project/Site Name",sortable:true,resizeable:true},
-                    {key:"Note_Subject",label:"Note Subject",sortable:true,resizeable:true}
+                    {key:"Note_Subject",label:"Topic Subject",sortable:true,resizeable:true}
                     ];
 
                 var myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("searchresultTable"));

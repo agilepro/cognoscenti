@@ -253,7 +253,7 @@ function addvalue() {
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
-                  ng-click="isCreating=true">Create New Goal</a></li>
+                  ng-click="isCreating=true">Create New Action Item</a></li>
             </ul>
           </span>
 
@@ -323,7 +323,7 @@ function addvalue() {
                 <td class="gridTableColummHeader"></td>
                 <td style="width:20px;"></td>
                 <td colspan="2">
-                    <button class="btn btn-primary" ng-click="createNewGoal()">Create New Goal</button>
+                    <button class="btn btn-primary" ng-click="createNewGoal()">Create New Action Item</button>
                     <button class="btn btn-primary" ng-click="isCreating=false">Cancel</button>
                 </td>
             </tr>
@@ -345,7 +345,7 @@ function addvalue() {
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation"><a role="menuitem" tabindex="-1"
-                      href="task{{rec.id}}.htm">Edit Goal</a></li>
+                      href="task{{rec.id}}.htm">Edit Action Item</a></li>
                   <li role="presentation" ng-show="rec.state<2">
                       <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 2)">
                           <img src="<%=ar.retPath%>assets/goalstate/small2.gif" alt="accepted"  />

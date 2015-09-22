@@ -34,7 +34,7 @@ public class LeafletResponseRecord extends DOMFace
         String user = getAttribute("user");
         if (user==null || user.length()==0)
         {
-            throw new RuntimeException("A note response tag MUST have an "
+            throw new RuntimeException("A topic response tag MUST have an "
                          +"attribute 'user' with a valid value");
         }
     }

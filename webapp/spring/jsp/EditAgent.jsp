@@ -126,7 +126,7 @@ app.controller('myCtrl', function($scope, $http) {
             <tr><td colspan="3" class="generalHeading">Actions</td></tr>
             <tr><td style="height:10px"></td></tr>
             <tr id="trspath">
-                <td class="gridTableColummHeader">Goal:</td>
+                <td class="gridTableColummHeader">Action Item:</td>
                 <td style="width:20px;"></td>
                 <td colspan="2"><input type="checkbox" ng-model="agent.autoAccept"/> Auto-Accept</td>
             </tr>

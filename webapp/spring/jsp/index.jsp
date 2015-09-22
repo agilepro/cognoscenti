@@ -50,7 +50,7 @@
                                         <br /><br />
                                         With a few keystrokes you make a place for a project which can be accessed from anywhere,
                                         but only the people you designate.
-                                        Goals can be assigned to anyone with an email address,<br>and automatic email notification
+                                        Action items can be assigned to anyone with an email address,<br>and automatic email notification
                                         keeps everyone informed.<br>It is quick and easy to sign up for a free site.
                                     </td>
                                 </tr>
@@ -103,16 +103,16 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    Managing Goals
+                                                    Managing Action Items
                                                     <div class="createTask">
-                                                        <a href="../assets/createTaskBig.gif" class="lWOn" title="Managing Goals">
+                                                        <a href="../assets/createTaskBig.gif" class="lWOn" title="Managing Action Items">
                                                         <img src="../assets/createTaskSmall.gif" width="195" height="157" border="0"></a>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    Sharing Notes
+                                                    Sharing Topics
                                                     <div class="sharingNotes">
-                                                        <a href="../assets/sharingNotesBig.gif" class="lWOn" title="Sharing Notes">
+                                                        <a href="../assets/sharingNotesBig.gif" class="lWOn" title="Sharing Topics">
                                                         <img src="../assets/sharingNotesSmall.gif" width="195" height="157" border="0"></a>
                                                     </div>
                                                 </td>

@@ -31,7 +31,6 @@ public class SectionPrivate extends SectionWiki
     private static String NOTE_NODE_NAME = "note";
     private static String OWNER_NODE_NAME = "owner";
     private static String DATA_NODE_NAME = "data";
-    //private static String PRIVATE_SECTION_NAME = "Private";
 
     public SectionPrivate()
     {
@@ -50,8 +49,8 @@ public class SectionPrivate extends SectionWiki
 
 
     /**
-    * Converts a Wiki section to a note, copying appropriate information
-    * from the wiki section to the note.  The idea is that all (displayable)
+    * Converts a Wiki section to a topic, copying appropriate information
+    * from the wiki section to the topic.  The idea is that all (displayable)
     * sections will become leaflets in the future.
     * This might be called just before deleting the section.
     * Returns NULL if the section is empty.

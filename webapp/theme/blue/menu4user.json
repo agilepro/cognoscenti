@@ -48,12 +48,12 @@
   },
   {
     "level":1,
-    "name": "Goals",
+    "name": "Worklist",
     "href": "userActiveTasks.htm",
     "ref": "ddsubmenu2",
     "subs":   [
         {
-          "name": "Worklist Goals",
+          "name": "All Action Items",
           "href": "userActiveTasks.htm"
         },
         {
@@ -61,7 +61,7 @@
           "href": "RemoteProfiles.htm"
         },
         {
-          "name": "Remote Goals",
+          "name": "Remote Action Items",
           "href": "userRemoteTasks.htm"
         },
         {

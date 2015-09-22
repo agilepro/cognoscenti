@@ -31,7 +31,7 @@
 
     GoalRecord currentGoalRecord = ngp.getGoalOrFail(taskId);
     if (!currentGoalRecord.isPassive()) {
-        throw new Exception("Program Logic Error: this view should only be invoked on passive goals");
+        throw new Exception("Program Logic Error: this view should only be invoked on passive action items");
     }
     NGRole assignees = currentGoalRecord.getAssigneeRole();
     boolean isAssignee = uProf!=null && assignees.isPlayer(uProf);
@@ -72,7 +72,7 @@ table.datatable {
     <div class="generalArea">
         <div class="pageHeading">
             <img src="<%=ar.retPath %><%=BaseRecord.stateImg(currentGoalRecord.getState())%>" />
-            <span style="color:#5377ac"> <%=BaseRecord.stateName(currentGoalRecord.getState())%> Goal:</span>
+            <span style="color:#5377ac"> <%=BaseRecord.stateName(currentGoalRecord.getState())%> Synopsis:</span>
             <%ar.writeHtml(currentGoalRecord.getSynopsis());%>
         </div>
 
@@ -123,7 +123,7 @@ table.datatable {
                 <tr><td height="15px"></td></tr>
                 <tr><td colspan="3">
                     <form action="<%=currentGoalRecord.getRemoteUpdateURL()%>" method="get">
-                        <input type="submit" class="btn btn-primary" name="op" value="Access Goal on Remote Project">
+                        <input type="submit" class="btn btn-primary" name="op" value="Access Action Item on Remote Project">
                     </form>
                     </td>
                 </tr>
@@ -188,8 +188,8 @@ table.datatable {
                             <tr><td class="buttoncolumn">
                                 <input type="submit" name="cmd" value="Remove Me" class="btn btn-primary"/>
                             </td><td class="buttoncolumn">
-                                Unassign <%ar.writeHtml(uProf.getUniversalId());%> from this goal.
-                                Use this if for any reason you do not plan to complete the goal,
+                                Unassign <%ar.writeHtml(uProf.getUniversalId());%> from this action item.
+                                Use this if for any reason you do not plan to complete the action item,
                                 and instead open it up for someone else to do.
                                 You will stop getting reminders about it.
                             </td></tr>
@@ -198,8 +198,8 @@ table.datatable {
                             <tr><td class="buttoncolumn">
                                 <input type="submit" name="cmd" value="Complete" class="btn btn-primary"/>
                             </td><td class="buttoncolumn">
-                                Mark this goal as completed so that everyone knows that the
-                                goal has been accomplished.
+                                Mark this action item as completed so that everyone knows that the
+                                action item has been accomplished.
                                 You will stop getting reminders about it.
                             </td></tr>
 <% } %>
@@ -207,7 +207,7 @@ table.datatable {
                                 <input type="submit" name="cmd" value="Other" class="btn btn-primary"/>
                             </td><td class="buttoncolumn">
                                 Log in in order to perform all other modification or updates
-                                to this goal.
+                                to this action item.
                             </td></tr>
                         </table>
                         </form>

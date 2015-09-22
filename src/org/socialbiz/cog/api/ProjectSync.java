@@ -230,10 +230,10 @@ public class ProjectSync {
         /*
         We don't walk through the local goals because:
         1) local goals created here are never sent upstream
-        2) remote goals can not be changed here, and will never
+        2) remote action items can not be changed here, and will never
            be updated back.
-        So we never hae any case where we send goals from here upstream
-        Only download if remote goals have changed.
+        So we never hae any case where we send action items from here upstream
+        Only download if remote action items have changed.
         */
         JSONArray goals2 = remote.getGoals();
         int len = goals2.length();
@@ -515,10 +515,10 @@ public class ProjectSync {
         if (docNum+noteNum+goalNum>0) {
             HistoryRecord.createContainerHistoryRecord(local,
                 HistoryRecord.EVENT_DOC_UPDATED, ar, "Synchronized from upstream project:  "+docNum+" documents, "
-                +noteNum+" Notes, and "+goalNum+" goals.");
+                +noteNum+" topics, and "+goalNum+" action items.");
         }
 
-        local.saveFile(ar, "Synchronized notes and documents from upstream project");
+        local.saveFile(ar, "Synchronized topics and documents from upstream project");
     }
 
     /**

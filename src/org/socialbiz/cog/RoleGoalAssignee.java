@@ -127,7 +127,7 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
             goal.setAssigneeCommaSeparatedList("");
         } catch (Exception e) {
             // this is very unlikely ...
-            throw new RuntimeException("Unable to clear the Goal assignees", e);
+            throw new RuntimeException("Unable to clear the action item assignees", e);
         }
     }
 

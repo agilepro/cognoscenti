@@ -13,7 +13,7 @@
 %><%@page import="org.socialbiz.cog.UtilityMethods"
 %><%@page import="java.io.StringWriter"
 %><%AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
-    ar.assertLoggedIn("Unable to modify notes");
+    ar.assertLoggedIn("Unable to modify topics");
 
     String go = ar.reqParam("go");
     String action = ar.reqParam("action");
@@ -44,7 +44,7 @@
         llr.setData(data);
         llr.setChoice(choice);
         llr.setLastEdited(ar.nowTime);
-        ngp.saveFile(ar, "Updated response to note");
+        ngp.saveFile(ar, "Updated response to topic");
     }
 
     response.sendRedirect(go);%>

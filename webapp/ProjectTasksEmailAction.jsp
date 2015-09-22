@@ -36,7 +36,7 @@
     ar.setPageAccessLevels(ngp);
     Vector<AddressListEntry> sendTo = new Vector<AddressListEntry>();
     String thisPageAddress = ar.getResourceURL(ngp,"process.htm");
-    String subject = "Goals for: "+ngp.getFullName();
+    String subject = "Action Items for: "+ngp.getFullName();
 
     if (action.equals("Send Mail"))
     {

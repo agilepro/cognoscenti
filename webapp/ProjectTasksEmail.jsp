@@ -71,7 +71,7 @@
     Subject:
   </td>
   <td>
-    <b>Goals for: <%ar.writeHtml(ngp.getFullName());%></b>
+    <b>Action Items for: <%ar.writeHtml(ngp.getFullName());%></b>
   </td>
 </tr>
 <tr>

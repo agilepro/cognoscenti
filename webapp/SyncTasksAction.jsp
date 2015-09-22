@@ -35,7 +35,7 @@
     th.scanAllTask(ar.getCogInstance());
     th.syncTasksToProfile(uPage, ar.getCogInstance());
 
-    uPage.saveFile(ar,"Synchronize Goals from Projects");
+    uPage.saveFile(ar,"Synchronize Action Items from Projects");
 
     response.sendRedirect(go);
 

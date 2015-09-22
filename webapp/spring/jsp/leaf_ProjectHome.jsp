@@ -9,9 +9,9 @@ Required parameter:
 */
 
     String pageId = ar.reqParam("pageId");
-    
+
     %><%
-    
+
     NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
@@ -90,7 +90,7 @@ Required parameter:
                 var respText = o.responseText;
                 var json = eval('(' + respText+')');
                 if(json.msgType == "yes"){
-                    showErrorMessage("Unable to Perform Action", "Note has already been deleted." , json.comments);
+                    showErrorMessage("Unable to Perform Action", "Topic has already been deleted." , json.comments);
                 }
                 else if(json.msgType == "no"){
                     openWin(opUrl);
@@ -146,7 +146,7 @@ Required parameter:
                 var respText = o.responseText;
                 var json = eval('(' + respText+')');
                 if(json.msgType == "yes"){
-                    showErrorMessage("Unable to Perform Action", "Note has already been deleted." , json.comments);
+                    showErrorMessage("Unable to Perform Action", "Topic has already been deleted." , json.comments);
                 }
                 else if(json.msgType == "no"){
                     openWin(document.getElementById(operation+idForEditing).href);
@@ -218,20 +218,20 @@ Required parameter:
             if(!addedInContextMenu){
                 oContextMenu.addItems([
                                     <% if(ngp.isFrozen()){%>
-                                      [{ text: "Create Note", onclick: { fn: openFreezeMessagePopup },disabled: delete_tab}],
-                                     [{ text: "Edit Note", onclick: { fn: openFreezeMessagePopup },disabled: delete_tab}],
-                                     [{ text: "Delete Note", onclick: { fn: openFreezeMessagePopup },disabled: delete_tab}],
-                                     [{ text: "UnDelete Note", onclick: { fn: openFreezeMessagePopup },disabled: not_a_delete_tab}],
-                                     [{ text: "Send Note By Email", onclick: { fn: openFreezeMessagePopup },disabled: delete_tab}],
+                                      [{ text: "Create Topic", onclick: { fn: openFreezeMessagePopup },disabled: delete_tab}],
+                                     [{ text: "Edit Topic", onclick: { fn: openFreezeMessagePopup },disabled: delete_tab}],
+                                     [{ text: "Delete Topic", onclick: { fn: openFreezeMessagePopup },disabled: delete_tab}],
+                                     [{ text: "UnDelete Topic", onclick: { fn: openFreezeMessagePopup },disabled: not_a_delete_tab}],
+                                     [{ text: "Send Topic By Email", onclick: { fn: openFreezeMessagePopup },disabled: delete_tab}],
                                      [{ text: "Make Public", onclick: { fn: openFreezeMessagePopup },disabled: public_tab}],
                                      [{ text: "Make Member Only", onclick: { fn: openFreezeMessagePopup }, disabled: member}]
 
                                     <% }else{%>
-                                   [{ text: "Create Note", onclick: { fn: createLeafletMenuItem },disabled: delete_tab}],
-                                   [{ text: "Edit Note", onclick: { fn: onNoteEditMenu },disabled: delete_tab}],
-                                   [{ text: "Delete Note", onclick: { fn: onMenuItemDelete },disabled: delete_tab}],
-                                   [{ text: "UnDelete Note", onclick: { fn: onMenuItemUnDelete },disabled: not_a_delete_tab}],
-                                   [{ text: "Send Note By Email", onclick: { fn: sendNodeByEmail },disabled: delete_tab}],
+                                   [{ text: "Create Topic", onclick: { fn: createLeafletMenuItem },disabled: delete_tab}],
+                                   [{ text: "Edit Topic", onclick: { fn: onNoteEditMenu },disabled: delete_tab}],
+                                   [{ text: "Delete Topic", onclick: { fn: onMenuItemDelete },disabled: delete_tab}],
+                                   [{ text: "UnDelete Topic", onclick: { fn: onMenuItemUnDelete },disabled: not_a_delete_tab}],
+                                   [{ text: "Send Topic By Email", onclick: { fn: sendNodeByEmail },disabled: delete_tab}],
                                    [{ text: "Make Public", onclick: { fn: onMenuItemMakePublic },disabled: public_tab}],
                                    [{ text: "Make Member Only", onclick: { fn: onMenuItemMakeMember }, disabled: member}]
                                    <%}%>

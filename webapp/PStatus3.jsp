@@ -154,7 +154,7 @@
                 ar.write("<tr><td colspan=\"8\"><br/><hr/>Project: <b><a href=\"");
                 ar.write(ar.retPath);
                 ar.write(ar.getResourceURL(ngp,""));
-                ar.write("\" title=\"see the page this goal is on\">");
+                ar.write("\" title=\"see the page this action item is on\">");
                 ar.writeHtml(ngp.getFullName());
                 ar.write("</a></b></td></tr>");
                 lastKey = ngp.getKey();
@@ -203,7 +203,7 @@
             ar.write("</i></td></tr>");
 
             //get task name
-            wikiNote.write("\n*Goal: ");
+            wikiNote.write("\n*Action Item: ");
             convertToWiki(wikiNote, task.getSynopsis());
 
             //add assignees

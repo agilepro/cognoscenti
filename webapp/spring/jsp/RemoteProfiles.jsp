@@ -100,7 +100,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Remote Profiles (for accessing Goals)
+            Remote Profiles (for accessing Action Items)
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">

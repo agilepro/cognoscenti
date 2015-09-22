@@ -75,7 +75,7 @@ table.datatable {
     <div class="generalArea">
         <div class="pageHeading">
             <img src="<%=ar.retPath %><%=BaseRecord.stateImg(currentGoalRecord.getState())%>" />
-            <span style="color:#5377ac"> <%=BaseRecord.stateName(currentGoalRecord.getState())%> Goal:</span>
+            <span style="color:#5377ac"> <%=BaseRecord.stateName(currentGoalRecord.getState())%> Synopsis:</span>
             <%ar.writeHtml(currentGoalRecord.getSynopsis());%>
         </div>
 

@@ -513,7 +513,7 @@ public class CreateProjectController extends BaseController {
 
         ProcessRecord process = subProject.getProcess();
         process.setSynopsis("Goal Setting");
-        process.setDescription("Purpose of Projec Setting");
+        process.setDescription("Purpose of Project Setting");
 
         subProject.saveFile(ar, "Changed Goal and/or Purpose of Project");
         LicensedURL parentLicensedURL = null;

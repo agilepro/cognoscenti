@@ -42,28 +42,6 @@ public class SectionForNotes extends SectionWiki {
         return "Note";
     }
 
-/*
-    public void removeLeaflet(String oId, NGSection section) throws Exception {
-        NoteRecord ei = getLeaflet(oId, section);
-        if (ei != null) {
-            section.removeChild(ei);
-        }
-    }
-
-
-    public static NoteRecord addLeaflet(AuthRequest ar, NGSection section,
-            String subject, String data) throws Exception {
-        String id = IdGenerator.generateKey();
-        NoteRecord newNote = section.createChildWithID(
-                LEAFLET_NODE_NAME, NoteRecord.class, "id", id);
-        newNote.setOwner(ar.getBestUserId());
-        newNote.setLastEditedBy(ar.getBestUserId());
-        newNote.setLastEdited(ar.nowTime);
-        newNote.setSubject(subject);
-        newNote.setData(data);
-        return newNote;
-    }
-*/
     private static List<NoteRecord> getAllNotesInSection(NGSection section)
             throws Exception {
         return section.getChildren(LEAFLET_NODE_NAME, NoteRecord.class);
@@ -117,8 +95,8 @@ public class SectionForNotes extends SectionWiki {
     }
 
     /**
-     * Copies the notes from on section to another. The idea is that all
-     * (displayable) sections will become notes in the future. This might be
+     * Copies the topics from on section to another. The idea is that all
+     * (displayable) sections will become topics in the future. This might be
      * called just before deleting the section. Returns NULL if the section is
      * empty.
      */

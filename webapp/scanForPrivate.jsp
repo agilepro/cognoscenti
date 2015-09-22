@@ -22,7 +22,7 @@
     <link href="mystyle.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<h3>Check for private notes</h3>
+<h3>Check for private topics</h3>
 <ul>
 <%
     File thisDir = new File(dataFolder);
@@ -61,7 +61,7 @@
 
         ar.write("\n<li>");
         ar.write(Integer.toString(numSects));
-        ar.write(" private notes in file ");
+        ar.write(" private topics in file ");
         ar.writeHtml(aPage.getFullName());
         ar.write("</li>");
 

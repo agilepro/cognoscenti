@@ -128,7 +128,7 @@ app.controller('myCtrl', function($scope, $http) {
         <br/>
         As you visit projects, go to the "Project Settings &gt; Personal" page, and sign up
         to receive notifications.   Then, when things in the project change,
-        such as documents added, or notes edited, you will see those changes here,
+        such as documents added, or topics edited, you will see those changes here,
         and will be automatically notified of the changes by email.<br/>
         <br/>
         Later, you can turn off notifications at any time.

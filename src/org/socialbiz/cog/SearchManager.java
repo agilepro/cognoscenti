@@ -193,7 +193,7 @@ public class SearchManager {
                 NoteRecord note = ngp.getNoteOrFail(noteId);
 
                 if (note.getVisibility()==SectionDef.PUBLIC_ACCESS) {
-                    //ok to access public note
+                    //ok to access public topic
                 }
                 else if (!isLoggedIn) {
                     continue;   //don't include this result if not logged in

@@ -94,7 +94,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Goals for <% ar.writeHtml(uProf.getName()); %>
+            Action Items for <% ar.writeHtml(uProf.getName()); %>
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">

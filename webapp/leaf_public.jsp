@@ -27,7 +27,7 @@
     String pageMode = ar.defParam("pageMode", "all");
 
     pageTitle = ngp.getFullName();
-    specialTab = "Public Notes";
+    specialTab = "Public Topics";
 
     String testwait = "false";
     try{
@@ -52,7 +52,7 @@
             <input type="hidden" name="p" value="<% ar.writeHtml(p); %>">
             <input type="hidden" name="viz" value="1">
             <input type="hidden" name="go" value="<% ar.writeHtml(ar.getCompleteURL()); %>">
-            <input type="submit" value="Create New Public Note">
+            <input type="submit" value="Create New Public Topic">
 
             </form>
             <h3 ALIGN="CENTER"><a align=right href="<%=pdflink%>">View AS PDF</a></h3>

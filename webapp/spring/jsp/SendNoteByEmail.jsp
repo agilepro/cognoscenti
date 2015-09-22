@@ -36,7 +36,7 @@ Optional Parameters:
     String subject  = ar.defParam("subject", null);
     //getting the value of attach{docid} i.e. ar.defParam(paramId, null) on the basis of dynamic docid.%><%!String pageTitle="";%>
 <%
-    pageTitle  ="Send Note By Mail";
+    pageTitle  ="Send Topic By Mail";
 
     List selectedRoleList = null;
     if(selectedRoles!=null){
@@ -62,7 +62,7 @@ Optional Parameters:
             subject = noteRec.getSubject();
         }
         if(subject==null || subject.trim().length()==0){
-            subject = "Note from Project "+ngp.getFullName();
+            subject = "Topic from Project "+ngp.getFullName();
         }
         body = noteRec.getWiki();
     }
@@ -175,7 +175,7 @@ Optional Parameters:
                     <tr>
                         <td class="gridTableColummHeader">Content:</td>
                         <td style="width:20px;"></td>
-                        <td><input id="includeBodyCheckBox" type="checkbox" name="includeBody"> Include note '<%ar.writeHtml(noteSubject);%>' into email</td>
+                        <td><input id="includeBodyCheckBox" type="checkbox" name="includeBody"> Include topic '<%ar.writeHtml(noteSubject);%>' into email</td>
                     </tr>
                     <% } %>
                     <tr>

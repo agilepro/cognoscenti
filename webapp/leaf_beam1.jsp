@@ -75,22 +75,22 @@
     <p>Need to get from Upstream</p>
     <ul>
         <li><%=docsNeedingDown.size()%> Documents</li>
-        <li><%=notesNeedingDown.size()%> Notes</li>
-        <li><%=goalsNeedingDown.size()%> Goals</li>
+        <li><%=notesNeedingDown.size()%> Topics</li>
+        <li><%=goalsNeedingDown.size()%> Action Items</li>
 
     </ul>
     <p>Need to send to Upstream</p>
     <ul>
         <li><%=docsNeedingUp.size()%> Documents</li>
-        <li><%=notesNeedingUp.size()%> Notes</li>
-        <li><%=goalsNeedingUp.size()%> Goals</li>
+        <li><%=notesNeedingUp.size()%> Topics</li>
+        <li><%=goalsNeedingUp.size()%> Action Items</li>
 
     </ul>
     <p>Fully Synchronized</p>
     <ul>
         <li><%=docsEqual.size()%> Documents</li>
-        <li><%=notesEqual.size()%> Notes</li>
-        <li><%=goalsEqual.size()%> Goals</li>
+        <li><%=notesEqual.size()%> Topics</li>
+        <li><%=goalsEqual.size()%> Action Items</li>
 
     </ul>
 
@@ -107,9 +107,9 @@
     writeSyncSection(ar, docsNeedingDown, "Documents to Download", p);
     writeSyncSection(ar, docsNeedingUp, "Documents to Upload", p);
     writeSyncSection(ar, docsEqual, "Documents Equal", p);
-    writeSyncSection(ar, notesNeedingDown, "Notes to Download", p);
-    writeSyncSection(ar, notesNeedingUp, "Notes to Upload", p);
-    writeSyncSection(ar, notesEqual, "Equal Notes", p);
+    writeSyncSection(ar, notesNeedingDown, "Topics to Download", p);
+    writeSyncSection(ar, notesNeedingUp, "Topics to Upload", p);
+    writeSyncSection(ar, notesEqual, "Equal Topics", p);
 
 
 %>

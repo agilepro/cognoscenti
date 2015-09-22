@@ -293,10 +293,10 @@ public class NGPage extends ContainerCommon implements NGContainer
 */
 
     /**
-     * To an existing project, add all the (1) Goals (2) Roles of an
+     * To an existing project, add all the (1) Action Items (2) Roles of an
      * existing project.
      * @param ar is needed to get the current logged in user and the current time
-     * @param template is the project to get the Goals/Roles from
+     * @param template is the project to get the ActionItems/Roles from
      */
     public void injectTemplate(AuthRequest ar, NGPage template)
         throws Exception
@@ -860,14 +860,14 @@ public class NGPage extends ContainerCommon implements NGContainer
             return true;
         }
         if (lr instanceof LicenseForUser) {
-            //check all the goals, the license will be valid if the person
-            //is still assigned to a goals, and the license is a LicenseForUser
+            //check all the action items, the license will be valid if the person
+            //is still assigned to a action items, and the license is a LicenseForUser
             AddressListEntry ale = new AddressListEntry(lr.getCreator());
             for (GoalRecord goal : this.getAllGoals()) {
                 if (!goal.isPassive() && goal.isAssignee(ale)) {
-                    //passive goals from other project should only effect those other projects,
+                    //passive action items from other project should only effect those other projects,
                     //and should not allow anyone into a linked sub project.
-                    //Active goals should allow anyone assigned to be treated as a member.
+                    //Active action items should allow anyone assigned to be treated as a member.
                     return true;
                 }
             }
@@ -941,7 +941,7 @@ public class NGPage extends ContainerCommon implements NGContainer
 
 
     /**
-    * Returns all the goals for a project.
+    * Returns all the action items for a project.
     */
     public List<GoalRecord> getAllGoals() throws Exception {
         NGSection sec = getRequiredSection("Tasks");
@@ -958,7 +958,7 @@ public class NGPage extends ContainerCommon implements NGContainer
 
 
     /**
-    * Find the requested goal, or throw an exception
+    * Find the requested action item, or throw an exception
     */
     public GoalRecord getGoalOrFail(String id) throws Exception {
         NGSection sec = getRequiredSection("Tasks");
@@ -971,7 +971,7 @@ public class NGPage extends ContainerCommon implements NGContainer
     }
 
     /**
-    * Creates a goal in a project without any history about creating it
+    * Creates an action item in a project without any history about creating it
     */
     public GoalRecord createGoal()
         throws Exception
@@ -1156,12 +1156,12 @@ public class NGPage extends ContainerCommon implements NGContainer
         {
             return true;
         }
-        //now walk through the goals, and check if person is assigned to any active goal
+        //now walk through the action items, and check if person is assigned to any active goal
 
         for (GoalRecord gr : getAllGoals())
         {
             if (gr.isPassive()) {
-                //ignore any passive goals that are from other projects.  Only consider local goals
+                //ignore any passive action items that are from other projects.  Only consider local goals
                 continue;
             }
             int state = gr.getState();
@@ -1364,7 +1364,7 @@ public class NGPage extends ContainerCommon implements NGContainer
             }
             else
             {
-                ar.write( "(Note " );
+                ar.write( "(Topic " );
                 ar.write( noteId );
                 ar.write( ")" );
             }
@@ -1731,7 +1731,7 @@ public class NGPage extends ContainerCommon implements NGContainer
                 long reminderTime = eg.getScheduleTime();
                 if (nextTime<0 || reminderTime < nextTime) {
                     nextTime = reminderTime;
-                }                
+                }
             }
         }
         for (EmailRecord er : getAllEmail()) {
@@ -1742,7 +1742,7 @@ public class NGPage extends ContainerCommon implements NGContainer
                 long reminderTime = System.currentTimeMillis()-60000;
                 if (nextTime<0 || reminderTime < nextTime) {
                     nextTime = reminderTime;
-                }                
+                }
             }
         }
         return nextTime;
@@ -1778,7 +1778,7 @@ public class NGPage extends ContainerCommon implements NGContainer
                 if (reminderTime < ar.nowTime) {
                     eg.constructEmailRecords(ar, this);
                     return;    //only do one action
-                }                
+                }
             }
         }
     }

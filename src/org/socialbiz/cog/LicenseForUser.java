@@ -29,7 +29,7 @@ import org.workcast.json.JSONObject;
 * This license is use when a user accesses a project, and does not have
 * a project specific license.  In that case the user's privileges are
 * used to control access to the project.  This license is necessary
-* when creating a user goal list, so that proper licensed links can be created
+* when creating a user action item list, so that proper licensed links can be created
 * without actually creating unique licenses in each of the projects
 * involved.
 *

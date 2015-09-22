@@ -30,7 +30,7 @@
         throw new Exception("This page has been deleted, and can not be edited.  If you want to change this page contents, first 'un-delete' the page (Admin) and then you can edit the sections");
     }
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("You must be a member of the project in order to create or edit notes.");
+    ar.assertMember("You must be a member of the project in order to create or edit topics.");
 
     ngb = ngp.getSite();
     pageTitle = ngp.getFullName();%>
@@ -41,7 +41,7 @@
     ar.write("\n <div class=\"pagenavigation\"> ");
     ar.write("\n     <div class=\"pagenav\"> ");
     ar.write("\n         <h3 class=\"left\">");
-    ar.write("<b>Edit &raquo; Note</b>");
+    ar.write("<b>Edit &raquo; Topic</b>");
     ar.write("</h3> ");
 
     ar.write("\n         <div class=\"section_date right\"></div> ");
@@ -91,7 +91,7 @@
     ar.write("<input type=\"submit\" name=\"action\" value=\"Save and Continue Editing\"/>");
 
     ar.write("\n<input type=\"submit\" name=\"action\" value=\"Close (without saving)\"/>");
-    ar.write(" or to delete note: ");
+    ar.write(" or to delete topic: ");
     ar.write("\n<input type=\"submit\" name=\"action\" value=\"Remove\"/>");
     ar.write("\n<input type=\"hidden\" name=\"section\" value=\"");
     ar.writeHtml(secName);

@@ -121,7 +121,7 @@ else
         <p>Select resources below to be moved to this current project, along with all the
            history and versions of those resources.<p>
         <input type="submit" value="Move Selected Resources">
-        <h3><br/>Notes<br/></h3>
+        <h3><br/>Topics<br/></h3>
         <table><%
             for (NoteRecord lr : hookPage.getAllNotes()) {
 
@@ -182,7 +182,7 @@ else
 
             }
 
-            ar.write("\n</table>\n<h3>Goals</h3>\n<table>");
+            ar.write("\n</table>\n<h3>Action Items</h3>\n<table>");
 
             for (GoalRecord tr : hookPage.getAllGoals()) {
 

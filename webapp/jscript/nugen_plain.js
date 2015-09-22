@@ -293,7 +293,7 @@ var formSubmitResponse ={
             if(action == 'Edit' || action == 'SaveAsDraft'|| action == 'Update' ){
 
                 if(action == 'SaveAsDraft'){
-                    alert("This Note has been saved 'Draft Notes' section.");
+                    alert("This Topic has been saved 'Draft Topics' section.");
                 }
                 var flagClose = document.getElementById('flagClose').value;
                 if(flagClose == 'yes'){
@@ -489,14 +489,14 @@ function defaultAssigneeValue(elementName) {
                 var json = eval('(' + respText+')');
                 if(json.msgType == "success"){
                     if(json.visibility == 1){
-                        alert("'"+json.subject+"' note has been publish under Public Notes.");
+                        alert("'"+json.subject+"' topic has been publish under Public Topics.");
                         if(isPublishFromEdit){
                             window.close();
                         }else{
                             window.location = "public.htm"
                         }
                     }else{
-                        alert("'"+json.subject+"' note has been publish under Member Notes.");
+                        alert("'"+json.subject+"' topic has been publish under Member Topics.");
                         if(isPublishFromEdit){
                             window.close();
                         }else{

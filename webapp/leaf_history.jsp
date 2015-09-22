@@ -134,14 +134,14 @@ else
                     else if (ar.isStaticSite())
                     {
                         GoalRecord task = (GoalRecord) taskHash.get(history.getContext());
-                        ar.write("Goal \"");
+                        ar.write("Action Item \"");
                         ar.writeHtml(task.getSynopsis());
                     }
                     else
                     {
                         GoalRecord task = (GoalRecord) taskHash.get(history.getContext());
                         String tname = task.getSynopsis();
-                        ar.write("Goal \"<a href=\"");
+                        ar.write("Action Item \"<a href=\"");
                         ar.write(ar.retPath);
                         ar.write("WorkItem.jsp?p=");
                         ar.writeURLData(ngp.getKey());
@@ -203,7 +203,7 @@ else
                 {
                     String lid = history.getContext();
                     NoteRecord leaflet = ngp.getNote(lid);
-                    ar.write("Note \"");
+                    ar.write("Topic \"");
                     if (leaflet==null)
                     {
                         ar.write("#");

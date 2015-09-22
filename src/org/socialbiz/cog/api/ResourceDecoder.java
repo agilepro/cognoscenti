@@ -144,7 +144,7 @@ public class ResourceDecoder {
         if (resource.startsWith("note")) {
             isNote = true;
             if (slashPos<=4) {
-                throw new Exception("malformed note access URL, did not find a note ID");
+                throw new Exception("malformed topic access URL, did not find a topic ID");
             }
             noteId = resource.substring(4, slashPos);
             if (resource.endsWith("htm")) {
@@ -155,7 +155,7 @@ public class ResourceDecoder {
         if (resource.startsWith("goal")) {
             isGoal = true;
             if (slashPos<=4) {
-                throw new Exception("malformed goal access URL, did not find a goal ID");
+                throw new Exception("malformed action item access URL, did not find a goal ID");
             }
             goalId = resource.substring(4, slashPos);
             return;

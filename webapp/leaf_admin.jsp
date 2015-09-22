@@ -62,7 +62,7 @@
       <input type="hidden" name="p" value="<%ar.writeHtml(p);%>">
       <input type="hidden" name="viz" value="3">
       <input type="hidden" name="go" value="<%ar.writeHtml(ar.getCompleteURL());%>">
-      <input type="submit" value="Create New Admin Note">
+      <input type="submit" value="Create New Admin Topic">
       </form>
     <%
         }
@@ -247,7 +247,7 @@
             String stContent = "p/" + pageKey + "/s/" + secName + "/section.xml";
             String stHistory = "p/" + pageKey + "/s/" + secName + "/history.xml";
 %>
-            <li>Goals
+            <li>Action Items
                 <ul>
                     <li>Section Content <a href="<%=ar.retPath%><%ar.writeHtml(stContent);%>" target="restapi">
                                 <%

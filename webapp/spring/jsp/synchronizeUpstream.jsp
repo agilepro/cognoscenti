@@ -141,7 +141,7 @@
                         <td ><%=docsEqual%></td>
                     </tr>
                     <tr>
-                        <td class="gridTableColummHeader_2">Notes:</td>
+                        <td class="gridTableColummHeader_2">Topics:</td>
                         <td style="width:20px"></td>
                         <td style="width:40px;">
                             <input type="checkbox" name="notesUp" value="yes" <%if(notesNeedingUp>0){%>checked="checked"<%}%>>
@@ -154,7 +154,7 @@
                         <td ><%=notesEqual%></td>
                     </tr>
                     <tr>
-                        <td class="gridTableColummHeader_2">Goals:</td>
+                        <td class="gridTableColummHeader_2">Action Items:</td>
                         <td style="width:20px;"></td>
                         <td style="width:40px;">
                             &nbsp; &nbsp;

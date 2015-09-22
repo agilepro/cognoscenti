@@ -49,7 +49,7 @@
 
 
     <definition name="NotesList" extends="slimLayout">
-        <put-attribute name="title" value="Notes List" />
+        <put-attribute name="title" value="Topics List" />
         <put-attribute name="body" value="/spring/jsp/NotesList.jsp" />
     </definition>
 
@@ -247,7 +247,7 @@
         <put-attribute name="body" value="/spring/jsp/error.jsp" />
     </definition>
     <definition name="SendNote" extends="slimLayout">
-        <put-attribute name="title" value="Send Note By Email" />
+        <put-attribute name="title" value="Send Topic By Email" />
         <put-attribute name="body" value="/spring/jsp/SendNote.jsp" />
     </definition>
     <definition name="EmailAdjustment" extends="slimLayout">
@@ -442,7 +442,7 @@
     </definition>
 
     <definition name="SearchAllNotes" extends="slimLayout">
-        <put-attribute name="title" value="Search All Notes Links" />
+        <put-attribute name="title" value="Search All Topics Links" />
         <put-attribute name="body" value="/spring/jsp/SearchAllNotes.jsp" />
     </definition>
 
@@ -560,32 +560,32 @@
     </definition>
 
     <definition name="UserActiveTasks" extends="slimLayout">
-        <put-attribute name="title" value="User Goals" />
+        <put-attribute name="title" value="User Action Items" />
         <put-attribute name="body" value="/spring/jsp/UserActiveTasks.jsp" />
     </definition>
 
     <definition name="ShareRequests" extends="baseLayout">
-        <put-attribute name="title" value="User Goals" />
+        <put-attribute name="title" value="User Action Items" />
         <put-attribute name="body" value="/spring/jsp/ShareRequests.jsp" />
     </definition>
 
     <definition name="RemoteProfiles" extends="slimLayout">
-        <put-attribute name="title" value="User Goals" />
+        <put-attribute name="title" value="User Action Items" />
         <put-attribute name="body" value="/spring/jsp/RemoteProfiles.jsp" />
     </definition>
 
     <definition name="UserRemoteTasks" extends="slimLayout">
-        <put-attribute name="title" value="Extended Goals" />
+        <put-attribute name="title" value="Extended Action Items" />
         <put-attribute name="body" value="/spring/jsp/UserRemoteTasks.jsp" />
     </definition>
 
     <definition name="Agents" extends="slimLayout">
-        <put-attribute name="title" value="User Goals" />
+        <put-attribute name="title" value="User Action Items" />
         <put-attribute name="body" value="/spring/jsp/Agents.jsp" />
     </definition>
 
     <definition name="EditAgent" extends="slimLayout">
-        <put-attribute name="title" value="User Goals" />
+        <put-attribute name="title" value="User Action Items" />
         <put-attribute name="body" value="/spring/jsp/EditAgent.jsp" />
     </definition>
 
@@ -620,7 +620,7 @@
     </definition>
 
     <definition name="accountRequestResult" extends="baseLayout">
-        <put-attribute name="title" value="User Goals" />
+        <put-attribute name="title" value="User Action Items" />
         <put-attribute name="body" value="/spring/jsp/accountRequestResult.jsp" />
     </definition>
 

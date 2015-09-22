@@ -352,9 +352,9 @@ input.inputLoginBtn:hover{
 ***********************************************************************/
 
 /**********************************************************************
-    Style for leaflets (Notes) Starts Here
+    Style for leaflets (Topics) Starts Here
 ***********************************************************************/
-/* Style for Create Note Link Starts Here  */
+/* Style for Create Topic Link Starts Here  */
 .createLeaf{
   float:right;
   margin-top:5px;
@@ -374,7 +374,7 @@ input.inputLoginBtn:hover{
   color:#808080;
   text-decoration:underline;
 }
-/* Style for Create Note Link Ends Here  */
+/* Style for Create Topic Link Ends Here  */
 
 .leafLetArea{
   margin: 0px;
@@ -386,7 +386,7 @@ input.inputLoginBtn:hover{
   color:#536399;
   font-weight:bold;
 }
-/* Style for Notes Heading Section Starts Here  */
+/* Style for Topics Heading Section Starts Here  */
 .leafHeading{
     margin-bottom:5px;
     border:1px solid #ccc;
@@ -427,9 +427,9 @@ input.inputLoginBtn:hover{
     background-image:url(../assets/images/zoomIconOn.gif);
     background-repeat:no-repeat;
 }
-/* Style for Notes Heading Section Ends Here  */
+/* Style for Topics Heading Section Ends Here  */
 
-/* Style for Notes Content Section Starts Here  */
+/* Style for Topics Content Section Starts Here  */
 .leafContentArea{
   margin-top:-6px;
   margin-bottom:5px;
@@ -537,9 +537,9 @@ input.inputLoginBtn:hover{
   *position:absolute;
   *right:24px;
 }
-/* Style for Notes Content Section Ends Here  */
+/* Style for Topics Content Section Ends Here  */
 
-/* Style for Notes Footer Section Starts Here  */
+/* Style for Topics Footer Section Starts Here  */
 .leafFooter{
   background-color:#f4f6fb;
   text-align:right;
@@ -568,9 +568,9 @@ input.inputLoginBtn:hover{
   font-size:11px;
   color:#000;
 }
-/* Style for Notes Footer Section Ends Here  */
+/* Style for Topics Footer Section Ends Here  */
 /**********************************************************************
-    Style for leaflets (Notes) Ends Here
+    Style for leaflets (Topics) Ends Here
 ***********************************************************************/
 
 /**********************************************************************

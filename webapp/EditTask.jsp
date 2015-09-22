@@ -20,7 +20,7 @@
 %>
 <%
     ar = AuthRequest.getOrCreate(request, response, out);
-    ar.assertLoggedIn("Can't edit a goal.");
+    ar.assertLoggedIn("Can't edit an action item.");
 
     String p = ar.reqParam("p");
     String id = ar.reqParam("id");
@@ -37,7 +37,7 @@
     // ngp and the ar variables are defined in the Header.jsp.
     ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Can not edit a goal.");
+    ar.assertMember("Can not edit a action item.");
     ngb = ngp.getSite();
 
     uProf = ar.getUserProfile();
@@ -88,7 +88,7 @@
                 value="Save Changes">Save Changes</button>
 
             <button type="submit" id="createSubTaskActBtn" name="action"
-                value="Create Sub Goal">Create Sub Goal</button>
+                value="Create Sub Goal">Create Sub Action Item</button>
 
             <button type="submit" id="renumActBtn" name="action"
                 value="Renumber Ranks">Renumber Ranks</button>
@@ -148,7 +148,7 @@
                 </td>
             </tr>
             <tr>
-                <td>Parent Goal</td>
+                <td>Parent Action Item</td>
                 <td class="Odd">
                     <input type="text" name="sub" style="WIDTH: 96%;" value="<%ar.writeHtml(parentTask);%>"/>
                 </td>

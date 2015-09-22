@@ -235,7 +235,7 @@ public class HistoricActions {
 
         if (receivingUser==null) {
             clone.write("<p>Cognoscenti is a cloud-based service to help people manage the documents, ");
-            clone.write("notes, and goals of a project.  ");
+            clone.write("topics, and action items of a project.  ");
             clone.write("It uses an approach known as Adaptive Case Management (ACM).  ");
             clone.write("By being added to this role, you will have some ability to access that project ");
             clone.write("and to receive email from the people working on the project.</p>");

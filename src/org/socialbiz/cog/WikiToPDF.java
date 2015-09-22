@@ -254,7 +254,7 @@ public class WikiToPDF
 
     private void writeTOCPage(NGPage ngp, Vector<NoteRecord> publicNoteList,
             Vector<NoteRecord> memberNoteList)  throws Exception {
-        headerText = "Notes report generated from Cognoscenti";
+        headerText = "Topic report generated from Cognoscenti";
         footerText = "Generated: 2012-06-23  --  Page 1";
 
         startPage();
@@ -274,7 +274,7 @@ public class WikiToPDF
             setPFont();
             newLine();
             newLine();
-            writeWrappedLine("Public Notes in this report: ");
+            writeWrappedLine("Public Topics in this report: ");
             for (NoteRecord note : publicNoteList) {
                 noteCount++;
                 setH2Font();
@@ -287,7 +287,7 @@ public class WikiToPDF
             setPFont();
             newLine();
             newLine();
-            writeWrappedLine("Member Notes: ");
+            writeWrappedLine("Member Topics: ");
             for (NoteRecord note : memberNoteList) {
                 noteCount++;
                 setH2Font();
@@ -319,7 +319,7 @@ public class WikiToPDF
         SectionUtil.nicePrintDate(out, ar.nowTime);
         String printTime = out.toString();
 
-        headerText = "Note "+noteNum+": "+subject;
+        headerText = "Topic "+noteNum+": "+subject;
         footerText = "Generated: "+printTime+"  --  Page "+pageNum;
         if(!isNewPage){
             endPage();

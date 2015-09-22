@@ -696,7 +696,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
     @Override
     public void writeNoteLink(AuthRequest ar, String noteId, int len) throws Exception {
-        throw new ProgramLogicError("Sites do not have notes and writeNoteLink not implemented");
+        throw new ProgramLogicError("Sites do not have topics and writeNoteLink not implemented");
      }
 
 

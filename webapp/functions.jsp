@@ -140,7 +140,7 @@
         ar.write("\n <div class=\"section\"> ");
 
         ar.write("\n     <div class=\"section_title\"> ");
-        ar.write("\n         <h1 class=\"left\"><b> Notes </a></b> (Note)</h1> ");
+        ar.write("\n         <h1 class=\"left\"><b> Topics </a></b></h1> ");
 
         ar.write("\n         <div class=\"section_date right\">");
         ar.write("</div> ");
@@ -206,7 +206,7 @@
             String javascript1 = "showHideCommnets('" + divid + "')";
             ar.write("<a href=\"javascript:");
             ar.writeHtml(javascript1);
-            ar.write("\" title=\"Click to show or hide the note body\">");
+            ar.write("\" title=\"Click to show or hide the topic body\">");
             ar.writeHtml(subject);
             ar.write("</a><img src=\"");
             ar.write(ar.retPath);
@@ -226,7 +226,7 @@
                     + SectionUtil.encodeURLData(ar.getRequestURL());
             ar.write("\n<a href=\"");
             ar.writeHtml(editUrl);
-            ar.write("\" title=\"Edit this note\"  target=\"_blank\"><img src=\"");
+            ar.write("\" title=\"Edit this topic\"  target=\"_blank\"><img src=\"");
             ar.write(ar.retPath);
             ar.write("edittexticon.gif\"/></a>");
         }

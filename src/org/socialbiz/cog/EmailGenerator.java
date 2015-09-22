@@ -79,7 +79,7 @@ public class EmailGenerator extends DOMFace {
         setScalar("owner", newVal);
     }
 
-    
+
     public String getFrom() throws Exception {
         return getScalar("from");
     }
@@ -117,7 +117,7 @@ public class EmailGenerator extends DOMFace {
      * member tells the time that it should be sent.  The email can
      * (and should) be sent any time this time is in the past.
      * Let it wait if this time is in the future.
-     * Of course, once sent the status should change to 
+     * Of course, once sent the status should change to
      * EG_STATE_SENT and this value does not matter.
      */
     public long getScheduleTime() throws Exception {
@@ -126,8 +126,8 @@ public class EmailGenerator extends DOMFace {
     public void setScheduleTime(long newVal) throws Exception {
         setScalar("scheduleTime", Long.toString(newVal));
     }
-    
-    
+
+
     public List<String> getRoleNames() throws Exception {
         return getVector("roleName");
     }
@@ -214,7 +214,7 @@ public class EmailGenerator extends DOMFace {
 
     /**
      * This boolean controls whether the body of the NOTE is included
-     * in the message, or whether the note is simply linked.
+     * in the message, or whether the topic is simply linked.
      */
     public boolean getIncludeBody() throws Exception {
         return "true".equals(getAttribute("includeBody"));
@@ -256,8 +256,8 @@ public class EmailGenerator extends DOMFace {
         }
         setState(EG_STATE_SCHEDULED);
     }
-    
-    
+
+
 
     public Vector<OptOutAddr> expandAddresses(AuthRequest ar, NGPage ngp) throws Exception {
         Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
@@ -289,8 +289,8 @@ public class EmailGenerator extends DOMFace {
         }
         return sendTo;
     }
-    
-    
+
+
     public void constructEmailRecords(AuthRequest ar, NGPage ngp) throws Exception {
         Vector<OptOutAddr> sendTo = expandAddresses(ar, ngp);
         NoteRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
@@ -322,7 +322,7 @@ public class EmailGenerator extends DOMFace {
         }
 
         StringWriter bodyWriter = new StringWriter();
-        UserProfile originalSender = UserManager.findUserByAnyId(getOwner()); 
+        UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
         AuthRequest clone = new AuthDummy(originalSender, bodyWriter, ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
@@ -369,8 +369,8 @@ public class EmailGenerator extends DOMFace {
             NGPage ngp, NoteRecord selectedNote,
             AddressListEntry ale, String intro, boolean includeBody,
             List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
-        
-        
+
+
         ar.write("<p><b>Note From:</b> ");
         UserProfile ownerProfile = ar.getUserProfile();
         if (ownerProfile==null) {
@@ -403,7 +403,7 @@ public class EmailGenerator extends DOMFace {
                     + "?" + AccessControl.getAccessNoteParams(ngp, selectedNote)
                     + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8");
             if (includeBody) {
-                ar.write("\n<p><i>The note is copied below. You can access the most recent, ");
+                ar.write("\n<p><i>The topic is copied below. You can access the most recent, ");
                 ar.write("most up to date version on the web at the following link:</i> <a href=\"");
                 ar.write(noteURL);
                 ar.write("\" title=\"Access the latest version of this message\"><b>");
@@ -411,7 +411,7 @@ public class EmailGenerator extends DOMFace {
                     ar.writeHtml(selectedNote.getSubject());
                 }
                 else {
-                    ar.writeHtml("Note Link");
+                    ar.writeHtml("Topic Link");
                 }
                 ar.write("</b></a></p>");
                 ar.write("\n<hr/>\n");
@@ -422,10 +422,10 @@ public class EmailGenerator extends DOMFace {
             else {
                 ar.write("\n<p><i>Access the web page using the following link:</i> <a href=\"");
                 ar.write(noteURL);
-                ar.write("\" title=\"Access the latest version of this note\"><b>");
+                ar.write("\" title=\"Access the latest version of this topic\"><b>");
                 String noteSubj = selectedNote.getSubject();
                 if (noteSubj==null || noteSubj.length()==0) {
-                    noteSubj = "Note has no name.";
+                    noteSubj = "Topic has no name.";
                 }
                 ar.writeHtml(noteSubj);
                 ar.write("</b></a></p>");

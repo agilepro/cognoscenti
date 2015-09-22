@@ -239,8 +239,8 @@ if (showStartControl)
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr><td><input type="submit" id="startActBtn" name="action" value="Start Activity"/></td>
         <td>This activity is unstarted.  This option will start the activity,
-        officially offering the goal to the assignees, and will make the
-        activity appear on their current worklist.
+        officially offering the action item to the assignees, and will make the
+        action item appear on their current worklist.
         </td>
     </tr>
 <%
@@ -284,7 +284,7 @@ if (showStatusControl)
 %>
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr><td></td>
-        <td>If the goal is not yet completed, you can update the status below:
+        <td>If the action item is not yet completed, you can update the status below:
         </td>
     </tr>
     <tr><td><input type="submit" id="updateStatusActBtn" name="action" value="Update Status"/></td>
@@ -308,9 +308,9 @@ if (showSubtaskControl)
 %>
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr><td><input type="submit" id="createSubTaskActBtn" name="action" value="Create SubTask"/></td>
-        <td>Use this option to create a sub goal for the purpose of
-            completing this goal.  The sub goal will be connected
-            to this goal, and will be completed when the subgoal
+        <td>Use this option to create a sub action item for the purpose of
+            completing this action item.  The sub action item will be connected
+            to this action item, and will be completed when the sub action item
             is completed.
         </td>
     </tr>
@@ -335,12 +335,12 @@ if (task.isPassive()) {
 %>
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr><td></td>
-        <td>This is a passive goal which means that it was not created in this copy
+        <td>This is a passive action item which means that it was not created in this copy
         of the project folder, and was replicated from another folder.
-        The goal can only be manipulated by accessing the original server that it was
+        The action item can only be manipulated by accessing the original server that it was
         creatd on.
         <br/><br/>
-        <a href="<%=task.getRemoteUpdateURL()%>">Visit Site of Goal<a/>
+        <a href="<%=task.getRemoteUpdateURL()%>">Visit Site of Action Item<a/>
         </td>
     </tr>
 <%
@@ -363,7 +363,7 @@ if (showReviewControl)
     </tr>
     <tr><td colspan="2">&nbsp;</td></tr>
     <tr><td><input type="submit" id="rejectActBtn" name="action" value="Reject"/></td>
-        <td>Mark that you do not approve this, and send the goal back to the
+        <td>Mark that you do not approve this, and send the action item back to the
             assignee for further work.
         </td>
     </tr>
@@ -386,7 +386,7 @@ if (state==BaseRecord.STATE_DELETED)
 
         %>
         <tr><td>Deleted & Moved:</td>
-            <td>This goal has been moved to project:  <%oProj.writeContainerLink(ar, 40);%>
+            <td>This action item has been moved to project:  <%oProj.writeContainerLink(ar, 40);%>
             </td>
         </tr>
         <%

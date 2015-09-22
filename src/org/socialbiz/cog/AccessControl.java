@@ -165,7 +165,7 @@ public class AccessControl {
 
     public static boolean canAccessNote(AuthRequest ar, NGContainer ngc, NoteRecord noteRec)
     throws Exception {
-        //first, anyone can access a public note
+        //first, anyone can access a public topic
         if (noteRec.getVisibility() == SectionDef.PUBLIC_ACCESS) {
             return true;
         }

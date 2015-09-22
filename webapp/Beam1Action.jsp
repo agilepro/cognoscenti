@@ -81,7 +81,7 @@
                     note.setSubject(stat.nameRemote);
                     note.setWiki(stat.urlRemote);
                     note.setLastEdited(stat.timeRemote);
-                    ngp.saveFile(ar, "Downloaded a Note from beamUp project");
+                    ngp.saveFile(ar, "Downloaded a Topic from beamUp project");
                     found=true;
                     break;
                 }

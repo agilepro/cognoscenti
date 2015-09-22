@@ -51,12 +51,12 @@ of &quot;<% ar.writeHtml(ngp.getFullName()); %>&quot;</p>
 <tr><td colspan="2">
   <br/>
   <input type="hidden" name="p" value="<%ar.writeHtml( p);%>">
-  <input type="radio" name="createTask" value="no"> Specify an existing Goal to link to:
+  <input type="radio" name="createTask" value="no"> Specify an existing action item to link to:
   </td></tr>
 
 <tr>
   <td>
-    Goal Link:
+    Action Item Link:
   </td>
   <td>
     <input type="text" name="taskUrl" size="60">
@@ -64,10 +64,10 @@ of &quot;<% ar.writeHtml(ngp.getFullName()); %>&quot;</p>
 </tr>
 <tr>
   <td></td><td>
-    <p>Specify here the Wf-XML link to a goal.  It must be a link that
+    <p>Specify here the Wf-XML link to a action item.  It must be a link that
        includes an access token within it so that the server is able to
-       update the goal, and set the subprocess to be this leaf.
-       If the goal already has a subprocess setting, it will be overwritten
+       update the action item, and set the subprocess to be this leaf.
+       If the action item already has a subprocess setting, it will be overwritten
        to point to this project.</p>
 
   </td>
@@ -76,7 +76,7 @@ of &quot;<% ar.writeHtml(ngp.getFullName()); %>&quot;</p>
 
 <tr>
   <td colspan="2"><br/>
-    <input type="radio" name="createTask" value="yes"> Create a goal, and link to that:
+    <input type="radio" name="createTask" value="yes"> Create an action item, and link to that:
   </td>
 </tr>
 <tr>
@@ -86,19 +86,19 @@ of &quot;<% ar.writeHtml(ngp.getFullName()); %>&quot;</p>
   <td></td><td>
     <p>Specify here the Wf-XML link to a process.  It must be a link that
        includes an access token within it so that the server is able to
-       update the process with a new goal, and set the subprocess of that
-       new goal to be this project.
+       update the process with a new action item, and set the subprocess of that
+       new action item to be this project.
   </td>
 </tr>
-<tr><td>Goal Subject: </td><td><input type="text" name="taskSub" size="60"
+<tr><td>Action Item Subject: </td><td><input type="text" name="taskSub" size="60"
        value="<% ar.writeHtml( process.getSynopsis()); %>"></td></tr>
 
-<tr><td>Goal Description: </td><td><input type="text" name="taskDes" size="60"
+<tr><td>Action Item Description: </td><td><input type="text" name="taskDes" size="60"
        value="<% ar.writeHtml( process.getDescription()); %>"></td></tr>
 
 <tr>
   <td></td><td>
-    <p>Specify the subject and description of the goal to be created.</p>
+    <p>Specify the subject and description of the action item to be created.</p>
   </td>
 </tr>
 <tr>

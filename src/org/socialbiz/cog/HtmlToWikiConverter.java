@@ -87,10 +87,10 @@ import javax.swing.text.html.parser.ParserDelegator;
  * four characters that can be escaped, then it will be output exactly as
  * it had in the past.  If that is to the editor, and the user updates
  * then the EC will be escaped when it is input back to the system, and the
- * note will be effectively converted.
+ * topic will be effectively converted.
  *
  * The only really undesirable situation occurs when the EC exists in a
- * note already followed by an underscore, single quote, square bracket,
+ * topic already followed by an underscore, single quote, square bracket,
  * or another EC.  In that situation, the output will be distorted from what
  * it used to be.  We are hoping that the combination of using an
  * unusual EC, along with the unlikelyhood that it is followed by on of the
@@ -99,7 +99,7 @@ import javax.swing.text.html.parser.ParserDelegator;
  * by adding the EC back in (which had been suppressed) and re-styling
  * the following text to the way it had been.
  *
- * Once enough time has passed for the notes to be considered converted
+ * Once enough time has passed for the topics to be considered converted
  * it will be relatively safe to add new characters that can be escaped
  * for future special meanings.
  */

@@ -13,7 +13,7 @@
 %><%@page import="org.socialbiz.cog.SectionUtil"
 %><%@page import="org.socialbiz.cog.GoalRecord"
 %><%AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
-    ar.assertLoggedIn("Can't edit a goal.");
+    ar.assertLoggedIn("Can't edit a action item.");
     boolean createNewSubPage = false;
 
     //here we are testing is TomCat is configured correctly.  If it is this value
@@ -34,7 +34,7 @@
 
     ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Can not create a new goal.");
+    ar.assertMember("Can not create a new action item.");
 
     String synopsis = ar.reqParam("synopsis");
     String description = ar.defParam("description", "");
@@ -75,7 +75,7 @@
                      + "&s=Tasks";
         eventType = HistoryRecord.EVENT_TYPE_CREATED;
     }
-    else if (action.equals("Create Sub Goal"))
+    else if (action.equals("Create Sub Action Item"))
     {
         task = ngp.getGoalOrFail(id);
         StringBuffer goStr = new StringBuffer("CreateTask.jsp?p=");
@@ -112,7 +112,7 @@
 
     if (task==null)
     {
-        throw new Exception("Not able to find a goal with id = '"+id+"' on this project.");
+        throw new Exception("Not able to find an action item with id = '"+id+"' on this project.");
     }
 
     if (synopsis!=null) {

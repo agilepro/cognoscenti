@@ -25,7 +25,7 @@
     }
     if (task==null)
     {
-        throw new Exception("Can not find a goal with the id = "+id);
+        throw new Exception("Can not find an action item with the id = "+id);
     }
 
     //this retrieves the process.xml url
@@ -72,5 +72,5 @@
         }
         return urlFragment;
     }
-    
+
 %>

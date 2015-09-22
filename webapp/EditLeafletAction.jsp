@@ -17,7 +17,7 @@
 
     ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Must be a member of the project in order to create or modify notes.");
+    ar.assertMember("Must be a member of the project in order to create or modify topics.");
 
     //editor was popped up in a separate window, so this is a dead end.
     String go = ar.retPath+"closeWindow.htm";

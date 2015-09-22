@@ -11,7 +11,7 @@ import org.workcast.streams.HTMLWriter;
 
 public class DailyDigest {
 
-    
+
     /*
      * This method loops through all known users (with profiles) and sends an
      * email with their tasks on it.
@@ -413,7 +413,7 @@ public class DailyDigest {
         ar.write("/");
         ar.writeURLData(ngpi.containerKey);
         ar.write("/goalList.htm");
-    }    
+    }
 
     private static int writeReminders(AuthRequest ar, UserProfile up)
             throws Exception {
@@ -539,7 +539,7 @@ public class DailyDigest {
         Vector<ProjectGoal> activeTask = new Vector<ProjectGoal>();
 
         if (up == null) {
-            throw new Exception("can not get list of goals for userwhich is null");
+            throw new Exception("can not get list of action items for userwhich is null");
         }
 
         for (NGPageIndex ngpi : cog.getAllContainers()) {
@@ -588,5 +588,5 @@ public class DailyDigest {
             ngpi = cog.getContainerIndexByKey(aPage.getKey());
         }
     }
-    
+
 }

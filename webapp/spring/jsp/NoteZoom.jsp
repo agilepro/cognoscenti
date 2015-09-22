@@ -254,13 +254,13 @@ app.controller('myCtrl', function($scope, $http) {
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="notesList.htm">List Notes</a></li>
+                  href="notesList.htm">List Topics</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="editNote.htm?nid={{noteInfo.id}}" target="_blank">Edit This Note</a></li>
+                  href="editNote.htm?nid={{noteInfo.id}}" target="_blank">Edit This Topic</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">Generate PDF</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="sendNote.htm?noteId={{noteInfo.id}}">Send Note By Email</a></li>
+                  href="sendNote.htm?noteId={{noteInfo.id}}">Send Topic By Email</a></li>
             </ul>
           </span>
 

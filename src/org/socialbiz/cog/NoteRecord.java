@@ -32,10 +32,10 @@ import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 /**
-* A NoteRecord represents a Note in a Container.
-* Notes exist on project and sites as quick ways for people to
+* A NoteRecord represents a Topic in a Workspace.
+* Topic exist on projects as quick ways for people to
 * write and exchange information about the project.
-* Leaflet is the old term for this, we prefer the term Note now everywhere.
+* Leaflet is the old term for this, we prefer the term Topic now everywhere.
 * (Used to be called LeafletRecord, but name changed March 2013)
 */
 public class NoteRecord extends DOMFace
@@ -134,7 +134,7 @@ public class NoteRecord extends DOMFace
 
 
     /**
-    * Each note can be controlled as being public, member, or private,
+    * Each topic can be controlled as being public, member, or private,
     * so that it can be moved over the course of lifespan.  When it is
     * private, it can be seen only by the owner.
     *
@@ -172,9 +172,9 @@ public class NoteRecord extends DOMFace
         setScalar("visibility", Integer.toString(newData));
     }
     /**
-     * Visibility value of 1 means that this note is publicly viewable.
+     * Visibility value of 1 means that this topic is publicly viewable.
      * This convenience method makes the test for this easy.
-     * Also, deleted notes are never considered public (for obvious reasons)
+     * Also, deleted topics are never considered public (for obvious reasons)
      */
     public boolean isPublic() {
         return (getVisibility()==1) && !isDeleted();
@@ -182,7 +182,7 @@ public class NoteRecord extends DOMFace
 
     /**
     * given a display level and a user (AuthRequest) tells whether
-    * this note is to be displayed at that level.  Note this is
+    * this topic is to be displayed at that level.  Note this is
     * an "exact" match to a level, not a "greater than" match.
     */
     public boolean isVisible(AuthRequest ar, int displayLevel)
@@ -286,7 +286,7 @@ public class NoteRecord extends DOMFace
     }
 
     /**
-    * Given a vector of string, this choices for this note
+    * Given a vector of string, this choices for this topic
     */
     public void setChoices(String choices)
     {
@@ -296,7 +296,7 @@ public class NoteRecord extends DOMFace
 
 
     /**
-    * gets all the response that exist on the note.
+    * gets all the response that exist on the topic.
     */
     public Vector<LeafletResponseRecord> getResponses()
         throws Exception
@@ -344,7 +344,7 @@ public class NoteRecord extends DOMFace
 
     /**
     * This is needed for finding responses from people with email addresses
-    * who have been asked to respond to a note, but who do not have any profile.
+    * who have been asked to respond to a topic, but who do not have any profile.
     * In this case ID must match exactly.
     */
     public LeafletResponseRecord accessResponse(String userId)
@@ -365,7 +365,7 @@ public class NoteRecord extends DOMFace
 
 
     /**
-    * output a HTML link to this note, truncating the name (subject)
+    * output a HTML link to this topic, truncating the name (subject)
     * to maxlength if it is longer than that.
     */
     public void writeLink(AuthRequest ar, int maxLength)
@@ -478,9 +478,9 @@ public class NoteRecord extends DOMFace
     }
 
     /**
-    * Marking a Note as deleted means that we SET the deleted time.
+    * Marking a Topic as deleted means that we SET the deleted time.
     * If there is no deleted time, then it is not deleted.
-    * A Note that is deleted remains in the archive until a later
+    * A Topic that is deleted remains in the archive until a later
     * date, when garbage has been collected.
     */
     public boolean isDeleted()
@@ -493,7 +493,7 @@ public class NoteRecord extends DOMFace
     * Set deleted date to the date that it is effectively deleted,
     * which is the current time in most cases.
     * Set the date to zero in order to clear the deleted flag
-    * and make the note to be not-deleted
+    * and make the topic to be not-deleted
     */
     public void setDeleted(AuthRequest ar)
     {
@@ -528,7 +528,7 @@ public class NoteRecord extends DOMFace
     }
 
     /**
-     * when a note is moved to another project, use this to record where
+     * when a topic is moved to another project, use this to record where
      * it was moved to, so that we can link there.
      */
      public void setMovedTo(String project, String otherId)
@@ -540,7 +540,7 @@ public class NoteRecord extends DOMFace
 
 
      /**
-     * get the project that this note was moved to.
+     * get the project that this topic was moved to.
      */
      public String getMovedToProjectKey()
          throws Exception
@@ -558,9 +558,9 @@ public class NoteRecord extends DOMFace
      }
 
      /**
-     * the universal id is a globally unique ID for this note, composed of the id for the
-     * server, the project, and the note.  This is set at the point where the note is created
-     * and remains with the note as it is carried around the system as long as it is moved
+     * the universal id is a globally unique ID for this topic, composed of the id for the
+     * server, the project, and the topic.  This is set at the point where the topic is created
+     * and remains with the topic as it is carried around the system as long as it is moved
      * as a clone from a project to a clone of a project.   If it is copied or moved to another
      * project for any other reason, then the universal ID should be reset.
      */
@@ -593,7 +593,7 @@ public class NoteRecord extends DOMFace
 
 
      /**
-      * check if a particular role has access to the particular note.
+      * check if a particular role has access to the particular topic.
       * Just handles the 'special' roles, and does not take into consideration
       * the Members or Admin roles, nor whether the attachment is public.
       */
@@ -747,7 +747,7 @@ public class NoteRecord extends DOMFace
          if (!universalid.equals(getUniversalId())) {
              //just checking, this should never happen
              throw new Exception("Error trying to update the record for a note with UID ("
-                     +getUniversalId()+") with post from note with UID ("+universalid+")");
+                     +getUniversalId()+") with post from topic with UID ("+universalid+")");
          }
          if (noteObj.has("subject")) {
              setSubject(noteObj.getString("subject"));

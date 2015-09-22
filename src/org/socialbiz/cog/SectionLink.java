@@ -108,9 +108,9 @@ public class SectionLink extends SectionWiki
    }
 
     /**
-    * Converts a Link section to a note, converting the links
+    * Converts a Link section to a topic, converting the links
     * appropriately.  The idea is that all (displayable)
-    * sections will become notes in the future.
+    * sections will become topics in the future.
     * This might be called just before deleting the section.
     * Returns NULL if the section is empty.
     */
@@ -126,7 +126,7 @@ public class SectionLink extends SectionWiki
         String data = wikiSection.asText();
         if (data==null || data.length()==0)
         {
-            //this section is empty, so don't create any note, and return null
+            //this section is empty, so don't create any topic, and return null
             return null;
         }
         StringBuffer modifiedSource = new StringBuffer();

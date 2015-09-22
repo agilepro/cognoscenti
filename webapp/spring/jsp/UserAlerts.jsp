@@ -7,6 +7,7 @@
 %><%@page import="java.util.Vector"
 %><%@page import="java.util.ArrayList"
 %><%@page import="org.socialbiz.cog.AuthRequest"
+%><%@page import="org.socialbiz.cog.DailyDigest"
 %><%@page import="org.socialbiz.cog.EmailSender"
 %><%@page import="org.socialbiz.cog.GoalRecord"
 %><%@page import="org.socialbiz.cog.NGBook"
@@ -108,7 +109,7 @@ app.controller('myCtrl', function($scope, $http) {
     <p>These notifications, if any, will be included in your next daily digest email.</p>
 
     <%
-    EmailSender.constructDailyDigestEmail(ar,containers,lastSendTime,ar.nowTime);
+    DailyDigest.constructDailyDigestEmail(ar,containers,lastSendTime,ar.nowTime);
 
     out.flush();
 

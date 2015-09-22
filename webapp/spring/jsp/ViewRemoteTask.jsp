@@ -36,7 +36,7 @@ Required parameters:
 
     RemoteGoal remoteGoal = uPage.findRemoteGoal(url);
     if (remoteGoal==null) {
-        throw new Exception("Unable to find the remote goal record");
+        throw new Exception("Unable to find the remote action item record");
     }
 
     List<HistoryRecord> histRecs = new Vector<HistoryRecord>();
@@ -106,9 +106,9 @@ Required parameters:
                         <tr><td height="23px"></td></tr>
                         <tr>
                             <form action="<% ar.writeHtml(remoteGoal.getUserInterfaceURL());%>" method="get">
-                            <td colspan="3" class="generalHeading">Remote Goal Status
+                            <td colspan="3" class="generalHeading">Remote Action Item Status
                                 &nbsp; &nbsp; &nbsp; &nbsp;
-                                <input type="submit" value="Visit Original Goal" class="btn btn-primary" /></td>
+                                <input type="submit" value="Visit Original Action Item" class="btn btn-primary" /></td>
                             </form>                        </tr>
                         <tr><td height="10px"></td></tr>
                         <tr>
@@ -226,7 +226,7 @@ Required parameters:
                         </td>
                         <td style="width:20px;"></td>
                         <td> Use this button to access the local project (<%ar.writeHtml(localProject.getFullName());%>)
-                             which is a clone of the remote project that the goal is on.
+                             which is a clone of the remote project that the action item is on.
                         </td></tr></table>
                     <%
                         }

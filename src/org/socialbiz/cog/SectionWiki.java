@@ -148,9 +148,9 @@ public class SectionWiki extends SectionUtil implements SectionFormat {
     }
 
     /**
-    * Converts a Wiki section to a note, copying appropriate information
-    * from the wiki section to the note.  The idea is that all (displayable)
-    * sections will become notes in the future.
+    * Converts a Wiki section to a topic, copying appropriate information
+    * from the wiki section to the topic.  The idea is that all (displayable)
+    * sections will become topics in the future.
     * This might be called just before deleting the section.
     * Returns NULL if the section is empty.
     */

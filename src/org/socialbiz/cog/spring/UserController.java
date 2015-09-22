@@ -585,12 +585,12 @@ public class UserController extends BaseController {
                 RemoteProfile remProf = new RemoteProfile(pRef.getAddress());
                 remProf.syncRemoteGoals(uPage);
             }
-            uPage.saveFile(ar, "Synchronized goals from remote profiles");
+            uPage.saveFile(ar, "Synchronized action items from remote profiles");
 
             return redirectBrowser(ar,go);
 
         }catch(Exception ex){
-            throw new Exception("Unable to refresh consolidates goals list from remote profiles", ex);
+            throw new Exception("Unable to refresh consolidates action items list from remote profiles", ex);
         }
     }
 
@@ -1889,7 +1889,7 @@ public class UserController extends BaseController {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            ar.assertLoggedIn("Must be logged in to search the notes");
+            ar.assertLoggedIn("Must be logged in to search the topics");
 
             JSONObject query = getPostedObject(ar);
 

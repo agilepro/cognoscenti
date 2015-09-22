@@ -104,7 +104,7 @@ Optional Parameter:
 </script>
 
 <body class="yui-skin-sam">
-    <div class="generalHeading"> Reassign a Goal</div>
+    <div class="generalHeading"> Reassign an Action Item</div>
     <div class="generalContent">
         <!-- Tab Structure Starts Here -->
         <div id="container">

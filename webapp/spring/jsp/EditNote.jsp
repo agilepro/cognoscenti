@@ -56,7 +56,7 @@
       },
       "pin": 0,
       "public": true,
-      "subject": "Example Note With Tags",
+      "subject": "Example Topic With Tags",
       "universalid": "PCEDJSNWG@test-for-john@7649"
     };
 

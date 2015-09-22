@@ -301,7 +301,7 @@ app.controller('myCtrl', function($scope, $http) {
                       <li role="presentation">
                           <a role="menuitem" tabindex="-1" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
                       <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="editNote.htm?nid={{rec.id}}" target="_blank">Edit Note</a></li>
+                          <a role="menuitem" tabindex="-1" href="editNote.htm?nid={{rec.id}}" target="_blank">Edit Topic</a></li>
                       <li role="presentation">
                           <a role="menuitem" tabindex="-1" href="sendNote.htm?noteId={{rec.id}}">Send Email</a></li>
                       <li role="presentation" ng-hide="rec.public">
@@ -309,7 +309,7 @@ app.controller('myCtrl', function($scope, $http) {
                       <li role="presentation" ng-show="rec.public">
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteViz(rec)">Make <img src="<%=ar.retPath%>assets/images/iconMember.png"> Member Only</a></li>
                       <li role="presentation">
-                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Delete <img src="<%=ar.retPath%>deletedLink.gif"> Note</a></li>
+                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Delete <img src="<%=ar.retPath%>deletedLink.gif"> Topic</a></li>
                     </ul>
                   </span>
                   <span style="color:#220011;">

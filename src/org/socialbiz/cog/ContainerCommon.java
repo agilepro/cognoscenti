@@ -58,13 +58,13 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
 
     /**
     * schema migration ...
-    * make sure that all notes and documents have universal ids.
+    * make sure that all topics and documents have universal ids.
     * do this here because the NoteRecord & AttachmentRecord constructor
     * does not easily know what the container is.
     */
     protected void cleanUpNoteAndDocUniversalId() throws Exception {
         //schema migration ...
-        //make sure that all notes have universal ids.
+        //make sure that all topics have universal ids.
         for (NoteRecord lr : getAllNotes()) {
             String uid = lr.getUniversalId();
             if (uid==null || uid.length()==0) {
@@ -346,7 +346,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
     }
 
 
-    /** mark deleted, don't actually deleting the Note. */
+    /** mark deleted, don't actually deleting the Topic. */
     public void deleteNote(String id,AuthRequest ar) throws Exception {
         NoteRecord ei = getNote( id );
 
@@ -589,7 +589,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
             else if ("Members".equals(roleName))
             {
                 desc = "Members of a project can see and edit any of the content in the project.  "
-                       +"Members can create, edit, and delete notes, can upload, download, and delete documents."
+                       +"Members can create, edit, and delete topics, can upload, download, and delete documents."
                        +"Members can approve other people to become members or other roles.";
             }
             else if ("Administrators".equals(roleName))

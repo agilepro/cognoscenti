@@ -198,7 +198,7 @@ public class ProjectDocsController extends BaseController {
     * note that the docid in the path is not needed, but it will be different for
     * every file for convenience of auto-generating a file name to save to.
     *
-    * following the name is a bunch of query paramters listing the notes to include in the output.
+    * following the name is a bunch of query paramters listing the topics to include in the output.
     */
     @RequestMapping(value="/{siteId}/{pageId}/pdf/{docId}.pdf", method = RequestMethod.GET)
     public void generatePDFDocument(

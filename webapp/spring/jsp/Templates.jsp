@@ -131,7 +131,7 @@ app.controller('myCtrl', function($scope, $http) {
         User <% uProf.writeLink(ar); %> has not specified any templates.<br/>
             <br/>
             Templates are references to normal projects.  When you
-            create a new project, you can specify a template, and all the goals
+            create a new project, you can specify a template, and all the action items
             and roles are copied (empty & unstarted) into the new project.
             This is a convenient way to 'prime' a project with the normal tasks
             and roles that you need. <br/>

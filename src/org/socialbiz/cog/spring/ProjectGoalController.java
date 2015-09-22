@@ -511,7 +511,7 @@ public class ProjectGoalController extends BaseController {
         try{
 
             //note: this form is for people NOT logged in!
-            //ukey specifies user, and mntask verifies they have a proper link to the goal
+            //ukey specifies user, and mntask verifies they have a proper link to the action item
 
             NGPage ngp = registerRequiredProject(ar, siteId, pageId);
             String taskId = ar.reqParam("taskId");

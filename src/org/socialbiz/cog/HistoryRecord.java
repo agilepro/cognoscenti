@@ -401,7 +401,7 @@ public class HistoryRecord extends DOMFace
     }
 
     /**
-     * Creates a history record appropriate for a change to a note.
+     * Creates a history record appropriate for a change to a topic.
      */
     public static HistoryRecord createNoteHistoryRecord(NGContainer ngc,
             NoteRecord note, int eventType, AuthRequest ar, String comments) throws Exception
@@ -813,7 +813,7 @@ history.task.subtask.add    113
             ar.writeHtml(comment);
         }
     }
-    
+
     public JSONObject getJSON(NGPage ngp, AuthRequest ar) throws Exception {
         AddressListEntry ale = new AddressListEntry(getResponsible());
         JSONObject jo = new JSONObject();

@@ -43,9 +43,9 @@
                         if (ngp != null)
                         {
                             makeTab(ar, ar.getResourceURL(ngp,"history.htm"),    "Stream");
-                            makeTab(ar, ar.getResourceURL(ngp,"public.htm"),     "Public Notes");
+                            makeTab(ar, ar.getResourceURL(ngp,"public.htm"),     "Public Topics");
                             if (showLiveOnly) {
-                                makeTab(ar, ar.getResourceURL(ngp,"member.htm"),     "Member Notes");
+                                makeTab(ar, ar.getResourceURL(ngp,"member.htm"),     "Member Topics");
                                 makeTab(ar, ar.getResourceURL(ngp,"admin.htm"),      "Admin");
                                 makeTab(ar, ar.getResourceURL(ngp,"permission.htm"), "Permissions");
                             }

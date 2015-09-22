@@ -32,9 +32,9 @@ import org.workcast.json.JSONObject;
 /**
  * A RemoteGoal is a reference to a Goal at a remote site, or even the local
  * site, but managed separately from those projects. The purpose is to allow a
- * user's profile to contain a list of goal references, and allow that user to
- * reorganize them and manipulate them, without messing with the original goal
- * or the way that goal appears in the project goal list.
+ * user's profile to contain a list of action item references, and allow that user to
+ * reorganize them and manipulate them, without messing with the original action item
+ * or the way that action item appears in the project goal list.
  */
 public class RemoteGoal extends DOMFace {
 
@@ -205,7 +205,7 @@ public class RemoteGoal extends DOMFace {
     }
 
     /**
-     * This is the UNIQUE key for this set of records, each remote goal has a
+     * This is the UNIQUE key for this set of records, each remote action item has a
      * unique access URL.  Code here assures that you have something non-null
      * to use as a key.
      */
@@ -349,7 +349,7 @@ public class RemoteGoal extends DOMFace {
             setFromJSONObject(goalObj);
         }
         catch (Exception e) {
-            throw new Exception("Unable to refresh remote goal ("+getSynopsis()+")", e);
+            throw new Exception("Unable to refresh remote action item ("+getSynopsis()+")", e);
         }
     }
 

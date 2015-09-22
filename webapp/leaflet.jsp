@@ -10,7 +10,7 @@
 %><%//This is a legacy forwarding page in case people have old links
     //the old pattern is
     //   p/{projectid}/leaf{noteid}.htm
-    //the servlet parses and passes, the project as "p" and the note id as "lid"
+    //the servlet parses and passes, the project as "p" and the topic id as "lid"
 
     AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
 

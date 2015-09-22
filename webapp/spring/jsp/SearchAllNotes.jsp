@@ -48,7 +48,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Search All Notes
+            Search All Topics
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -100,7 +100,7 @@ app.controller('myCtrl', function($scope, $http) {
     <table class="gridTable2" width="100%">
         <tr class="gridTableHeader">
             <td width="200px">Site/Project</td>
-            <td width="200px">Note</td>
+            <td width="200px">Topic</td>
             <td width="100px">Updated</td>
         </tr>
         <tr ng-repeat="row in results">

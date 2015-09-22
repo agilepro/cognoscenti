@@ -58,11 +58,11 @@ public class SyncStatus
     public long    sizeRemote;
 
     //documents have URL, notes use the URL for the note content
-    //goals use this for the URL that the remote UI is at
+    //action items use this for the URL that the remote UI is at
     public String  urlLocal;
     public String  urlRemote;
 
-    //these are for tasks/goals only
+    //these are for action items only
     public String  assigneeLocal;
     public String  assigneeRemote;
     public int     priorityLocal;
