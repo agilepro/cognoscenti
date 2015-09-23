@@ -102,16 +102,15 @@ app.controller('myCtrl', function($scope, $http) {
         var postdata = JSON.stringify(op);
         $http.post(postURL, postdata)
         .success( function(data) {
-            alert("("+status+") "+JSON.stringify(data));
             if (data.exception) {
                 $scope.reportError(data);
+                return;
             }
             oneProgress.status = "DONE";
             oneProgress.done = true;
             oneProgress.doc = data;
         })
         .error( function(data, status, headers, config) {
-            alert("("+status+") "+JSON.stringify(data));
             $scope.reportError(data);
         });
     };
