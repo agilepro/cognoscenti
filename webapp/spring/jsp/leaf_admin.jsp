@@ -2,6 +2,7 @@
 %><%@ include file="include.jsp"
 %><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%@page import="org.socialbiz.cog.EmailGenerator"
+%><%@page import="org.socialbiz.cog.CommentRecord"
 %>
 <%
     ar.assertLoggedIn("Must be logged in to see admin options");
@@ -56,6 +57,27 @@
             oneSched.put("action", "Send Email");
             oneSched.put("time", reminderTime);
             allScheduled.put(oneSched);
+        }
+    }
+    for (NoteRecord note : ngp.getAllNotes()) {
+        long timeToAct = note.emailSchedule();
+        if (timeToAct > 0) {
+            JSONObject oneSched = new JSONObject();
+            oneSched.put("name", "NEW TOPIC "+note.getSubject());
+            oneSched.put("action", "Send Email About Topic");
+            oneSched.put("time", timeToAct);
+            allScheduled.put(oneSched);
+        }
+
+        for (CommentRecord cr : note.getComments()) {
+            timeToAct = cr.emailSchedule();
+            if (timeToAct > 0) {
+                JSONObject oneSched = new JSONObject();
+                oneSched.put("name", "Comment on "+note.getSubject());
+                oneSched.put("action", "Send Email About Comment");
+                oneSched.put("time", timeToAct);
+                allScheduled.put(oneSched);
+            }
         }
     }
 

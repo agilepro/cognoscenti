@@ -294,7 +294,7 @@ app.controller('myCtrl', function($scope, $http) {
       <table>
       <tr ng-repeat="cmt in noteInfo.comments">
            <td style="width:50px;vertical-align:top;padding:15px;">
-               <img style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
+               <img id="cmt{{cmt.time}}" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
            </td>
            <td>
                <div class="leafContent" style="border: 1px solid lightgrey;border-radius:8px;padding:5px;margin-top:15px;background-color:#EEE">
@@ -304,6 +304,7 @@ app.controller('myCtrl', function($scope, $http) {
                        &nbsp; {{cmt.time | date}} - <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm"><span class="red">{{cmt.userName}}</span></a>
 <% if (isLoggedIn) { %>
                        <span  ng-click="startEdit(cmt)" ng-show="editResp=='NOTHING' && editCmt=='NOTHING' && cmt.user=='<%ar.writeJS(currentUser);%>'">- <a href="">EDIT</a></span>
+                       <span ng-hide="cmt.emailSent">-email pending-</span>
 <% } %>
                    </div>
                    <div class=""

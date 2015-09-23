@@ -1,5 +1,6 @@
 package org.socialbiz.cog;
 
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Vector;
 
@@ -87,7 +88,7 @@ public class CommentRecord extends DOMFace {
     }
 
     public boolean getEmailSent()  throws Exception {
-        return "true".equals(getAttributeLong("emailSent"));
+        return "true".equals(getAttribute("emailSent"));
     }
     public void setEmailSent(boolean newVal) throws Exception {
         if (newVal) {
@@ -97,8 +98,73 @@ public class CommentRecord extends DOMFace {
             clearAttribute("emailSent");
         }
     }
-    
-    
+
+
+    /**
+     * The email for a comment should be sent about 5 minutes after the comment is created.
+     * This gives the author enough time to correct things if needed.
+     * If the email has not been sent, this will return the time that it should be sent.
+     * If the email has already been sent, then this return -1.
+     */
+    public long emailSchedule() throws Exception  {
+        if (getEmailSent()) {
+            return -1;
+        }
+        long createTime = getTime();
+        if (createTime < System.currentTimeMillis() - 36 * 60 * 60 * 1000) {
+            //if it is more than 36 hours old, then suppress sending email.
+            //this is mainly to avoid sending email for every comment in history
+            //before we invented the email sending of comments.
+            setEmailSent(true);
+            return -1;
+        }
+        //ok, set it to set five minutes after the time it was created
+        return createTime + 300000;
+    }
+
+    public void commentEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note) throws Exception {
+        Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
+        OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
+
+        AddressListEntry commenter = getUser();
+        UserProfile commenterProfile = commenter.getUserProfile();
+
+        for (OptOutAddr ooa : sendTo) {
+            constructEmailRecordOneUser(ar, ngp, note, ooa, commenterProfile);
+        }
+        setEmailSent(true);
+    }
+
+    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord note, OptOutAddr ooa,
+            UserProfile commenterProfile) throws Exception  {
+        if (!ooa.hasEmailAddress()) {
+            return;  //ignore users without email addresses
+        }
+
+        StringWriter bodyWriter = new StringWriter();
+        AuthRequest clone = new AuthDummy(commenterProfile, bodyWriter, ar.getCogInstance());
+        clone.setNewUI(true);
+        clone.retPath = ar.baseURL;
+        clone.write("<html><body>");
+
+        String topicAddress = ar.baseURL + clone.getResourceURL(ngp, note) + "#cmt" + getTime();
+        String emailSubject = "New Comment on: "+note.getSubject();
+        clone.write("<h2>New comment on topic <a href=\"");
+        clone.write(topicAddress);
+        clone.write("\">");
+        clone.writeHtml(note.getSubject());
+        clone.write("</a></h2>");
+
+        clone.write(this.getContentHtml(ar));
+
+        clone.write("</body></html>");
+
+
+        EmailSender.containerEmail(ooa, ngp, emailSubject, bodyWriter.toString(), commenterProfile.getEmailWithName(),
+                new Vector<String>(), ar.getCogInstance());
+    }
+
+
     public JSONObject getJSON() throws Exception {
         AddressListEntry ale = getUser();
         UserProfile up = ale.getUserProfile();

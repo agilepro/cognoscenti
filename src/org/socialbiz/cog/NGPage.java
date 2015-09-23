@@ -29,6 +29,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
@@ -1745,6 +1746,18 @@ public class NGPage extends ContainerCommon implements NGContainer
                 }
             }
         }
+
+        //Now scan all the comments on all the topics
+        for (NoteRecord note : this.getAllNotes()) {
+            for (CommentRecord cr : note.getComments()) {
+                long timeToAct = cr.emailSchedule();
+                if (timeToAct > 0) {
+                    if (nextTime<0 || timeToAct < nextTime) {
+                        nextTime = timeToAct;
+                    }
+                }
+            }
+        }
         return nextTime;
     }
 
@@ -1778,6 +1791,34 @@ public class NGPage extends ContainerCommon implements NGContainer
                 if (reminderTime < ar.nowTime) {
                     eg.constructEmailRecords(ar, this);
                     return;    //only do one action
+                }
+            }
+        }
+        //Now scan all the comments on all the topics
+        for (NoteRecord note : this.getAllNotes()) {
+            long timeToAct = note.emailSchedule();
+            if (timeToAct > 0 && timeToAct < ar.nowTime) {
+                System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+                System.out.println("&- "+note.getSubject());
+                System.out.println("&- found a topic (note) time to act: "+new Date(timeToAct));
+                System.out.println("&- topic create time is: "+new Date(note.getLastEdited()));
+                System.out.println("&- topic has emailSent set to: "+note.getEmailSent());
+                note.topicEmailRecord(ar, this, note);
+                System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+                return;   //only one thing at a time
+            }
+
+            for (CommentRecord cr : note.getComments()) {
+                timeToAct = cr.emailSchedule();
+                if (timeToAct > 0 && timeToAct < ar.nowTime) {
+                    System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+                    System.out.println("&- "+note.getSubject());
+                    System.out.println("&- found a comment time to act: "+new Date(timeToAct));
+                    System.out.println("&- comment create time is: "+new Date(cr.getTime()));
+                    System.out.println("&- comment has emailSent set to: "+cr.getEmailSent());
+                    cr.commentEmailRecord(ar, this, note);
+                    System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+                    return;   //only do one at a time
                 }
             }
         }

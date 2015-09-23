@@ -66,6 +66,10 @@ public class OptOutAddr {
     public String getEmail() {
         return assignee.getEmail();
     }
+    public boolean hasEmailAddress() {
+        String email = getEmail();
+        return (email!=null && email.length()>0);
+    }
 
     public boolean matches(OptOutAddr ooa) {
         return assignee.hasAnyId(ooa.getEmail());
@@ -118,7 +122,7 @@ public class OptOutAddr {
         }
     }
 
-    
+
     /**
      * Get the users from the role, and add them, only if they are not already
      * in the list. Adds a OptOutRolePlayer type of address.
@@ -132,8 +136,8 @@ public class OptOutAddr {
                     collector);
         }
     }
-    
-    
+
+
     /**
      * Get the users from the role, and add them, only if they are not already
      * in the list. Adds a OptOutDirectAddress type of address.
@@ -147,7 +151,7 @@ public class OptOutAddr {
 
     /**
      * Only add the user if the user is not already present.
-     * Remember ... the user might have more than one email address, so this 
+     * Remember ... the user might have more than one email address, so this
      * checks all the email addresses that a user might have registered here.
      */
     public static void appendOneUser(OptOutAddr newser,
@@ -172,6 +176,6 @@ public class OptOutAddr {
             sendTo.remove(found);
         }
     }
-    
-    
+
+
 }

@@ -82,7 +82,14 @@ public class Cognoscenti {
      * @param resourceBundle the resource bundle from the wrapped servlet
      */
     public static void startTheServer(ServletConfig config) {
-        System.out.println("Cognoscenti Server Object == Start the Server");
+System.out.println("   _________                                                        __  .__  ");
+System.out.println("   \\_   ___ \\  ____   ____   ____   ____  ______ ____  ____   _____/  |_|__| ");
+System.out.println("   /    \\  \\/ /  _ \\ / ___\\ /    \\ /  _ \\/  ___// ___\\/ __ \\ /    \\   __\\  | ");
+System.out.println("   \\     \\___(  <_> ) /_/  >   |  (  <_> )___ \\\\  \\__\\  ___/|   |  \\  | |  | ");
+System.out.println("    \\______  /\\____/\\___  /|___|  /\\____/____  >\\___  >___  >___|  /__| |__| ");
+System.out.println("           \\/      /_____/      \\/           \\/     \\/    \\/     \\/          ");
+System.out.println("");
+System.out.println("Cognoscenti Server Object == Start the Server");
 
         //first thing to do is to get the cognoscenti object associated with this app
         ServletContext sc = config.getServletContext();
