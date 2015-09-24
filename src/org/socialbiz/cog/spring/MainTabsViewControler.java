@@ -1062,7 +1062,7 @@ public class MainTabsViewControler extends BaseController {
                   nr.setSubject("Minutes for Meeting: "+meeting.getName());
                   meeting.setMinutesId(nr.getUniversalId());
               }
-              nr.setWiki(meeting.generateWikiRep(ar,  ngp));
+              nr.setWiki(meeting.generateMinutes(ar,  ngp));
               nr.setModUser(ar.getUserProfile());
 
               //now copy all the attachment references across

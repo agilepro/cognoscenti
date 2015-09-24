@@ -412,6 +412,79 @@ public class MeetingRecord extends DOMFace {
         return sb.toString();
     }
 
+    public String generateMinutes(AuthRequest ar, NGPage ngp) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        Calendar cal = Calendar.getInstance();
+
+        sb.append("!!!Meeting: "+getNameAndDate());
+
+        sb.append("\n\n");
+
+        sb.append(getMeetingInfo());
+
+        sb.append("\n\n");
+        sb.append("See original meeting: [");
+        sb.append(getNameAndDate());
+        sb.append("|meetingFull.htm?id=");
+        sb.append(getId());
+        sb.append("]");
+        
+        sb.append("\n\n!!!Agenda");
+
+        long itemTime = this.getStartTime();
+
+        for (AgendaItem ai : getSortedAgendaItems()) {
+            sb.append("\n\n!");
+            sb.append(Integer.toString(ai.getPosition()));
+            sb.append(". ");
+            sb.append(ai.getSubject());
+            cal.setTimeInMillis(itemTime);
+            sb.append("\n\n"+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+            sb.append(" (");
+            sb.append(Long.toString(ai.getDuration()));
+            sb.append(" minutes)");
+            itemTime = itemTime + (ai.getDuration()*60*1000);
+            for (String presenter : ai.getPresenters()) {
+                AddressListEntry ale = new AddressListEntry(presenter);
+                sb.append(", ");
+                sb.append(ale.getName());
+            }
+
+            sb.append("\n\n"+ai.getDesc());
+
+            String ainotes = ai.getNotes();
+
+            if (ainotes!=null && ainotes.length()>0) {
+                sb.append("\n\n''Notes:''\n\n");
+                sb.append(ainotes);
+            }
+            for (String actionItemId : ai.getActionItems()) {
+                GoalRecord gr = ngp.getGoalOrNull(actionItemId);
+                if (gr!=null) {
+                    sb.append("\n\n* Action Item: [");
+                    sb.append(gr.getSynopsis());
+                    sb.append("|");
+                    sb.append(ar.baseURL);
+                    sb.append(ar.getResourceURL(ngp, "task"+gr.getId()+".htm"));
+                    sb.append("]");
+                }
+            }
+            for (String doc : ai.getDocList()) {
+                AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(doc);
+                if (aRec!=null) {
+                    sb.append("\n\n* Attachment: [");
+                    sb.append(aRec.getNiceName());
+                    sb.append("|");
+                    sb.append(ar.baseURL);
+                    sb.append(ar.getResourceURL(ngp, "docinfo"+aRec.getId()+".htm"));
+                    sb.append("]");
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+    
 
     public void sendReminderEmail(AuthRequest ar, NGPage ngp) throws Exception {
         EmailGenerator emg = ngp.createEmailGenerator();
