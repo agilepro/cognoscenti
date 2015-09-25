@@ -269,6 +269,9 @@ public class MeetingRecord extends DOMFace {
             setReminderTime(input.getInt("reminderTime"));
             hasSetMeetingInfo = true;
         }
+        if (input.has("reminderSent")) {
+            setReminderSent(input.getInt("reminderSent"));
+        }
         if (input.has("meetingInfo")) {
             String html = input.getString("meetingInfo");
             setMeetingInfo(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
@@ -375,38 +378,6 @@ public class MeetingRecord extends DOMFace {
                 sb.append(", ");
                 sb.append(ale.getName());
             }
-/*
-            sb.append("\n\n"+ai.getDesc());
-
-            String ainotes = ai.getNotes();
-
-            if (ainotes!=null && ainotes.length()>0) {
-                sb.append("\n\n''Notes:''\n\n");
-                sb.append(ainotes);
-            }
-            for (String actionItemId : ai.getActionItems()) {
-                GoalRecord gr = ngp.getGoalOrNull(actionItemId);
-                if (gr!=null) {
-                    sb.append("\n\n* Action Item: [");
-                    sb.append(gr.getSynopsis());
-                    sb.append("|");
-                    sb.append(ar.baseURL);
-                    sb.append(ar.getResourceURL(ngp, "task"+gr.getId()+".htm"));
-                    sb.append("]");
-                }
-            }
-            for (String doc : ai.getDocList()) {
-                AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(doc);
-                if (aRec!=null) {
-                    sb.append("\n\n* Attachment: [");
-                    sb.append(aRec.getNiceName());
-                    sb.append("|");
-                    sb.append(ar.baseURL);
-                    sb.append(ar.getResourceURL(ngp, "docinfo"+aRec.getId()+".htm"));
-                    sb.append("]");
-                }
-            }
-        */
         }
 
         return sb.toString();
@@ -428,7 +399,7 @@ public class MeetingRecord extends DOMFace {
         sb.append("|meetingFull.htm?id=");
         sb.append(getId());
         sb.append("]");
-        
+
         sb.append("\n\n!!!Agenda");
 
         long itemTime = this.getStartTime();
@@ -484,7 +455,7 @@ public class MeetingRecord extends DOMFace {
 
         return sb.toString();
     }
-    
+
 
     public void sendReminderEmail(AuthRequest ar, NGPage ngp) throws Exception {
         EmailGenerator emg = ngp.createEmailGenerator();

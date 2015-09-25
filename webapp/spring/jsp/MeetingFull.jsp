@@ -610,13 +610,9 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.nowEditing = "nothing";
             return;
         }
-        else if ($scope.nowEditing == "nothing") {
+        if ($scope.nowEditing == "nothing") {
             $scope.nowEditing = combo;
             return;
-        }
-        else {
-            alert("Closing the other editor ... make sure you save your changes.");
-            $scope.nowEditing = combo;
         }
     }
     $scope.stopEditing =  function() {
@@ -936,7 +932,10 @@ app.controller('myCtrl', function($scope, $http) {
                     <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
                         <input ng-model="meeting.reminderTime" style="width:60px;"  class="form-control" >
-                        Minutes before the meeting
+                        <span ng-show="meeting.reminderSent==0">Minutes before the meeting</span>
+                        <span ng-hide="meeting.reminderSent==0">Was sent {{meeting.reminderSent|date:'M/d/yy H:mm'}}
+                            <button ng-click="meeting.reminderSent=0" class="btn btn-default">Send Again</button>
+                        </span>
                     </td>
                 </tr>
                 <tr><td style="height:10px"></td></tr>
@@ -944,7 +943,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <td class="gridTableColummHeader"></td>
                     <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
-                        <button ng-click="savePartialMeeting(['name','startTime','duration','reminderTime','meetingType'])" class="btn btn-danger">Save</button>
+                        <button ng-click="savePartialMeeting(['name','startTime','duration','reminderTime','meetingType','reminderSent'])" class="btn btn-danger">Save</button>
                         <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
                     </td>
                 </tr>
@@ -979,6 +978,18 @@ app.controller('myCtrl', function($scope, $http) {
       <tr>
         <td style="width:100%">
           <div style="padding:5px;">
+            <span class="dropdown" ng-show="meeting.meetingType==2">
+                <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{itemStateStyle(item)}};width:150px;margin:10px;">
+                State: {{itemStateName(item)}} <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation"><a role="menuitem"
+                      ng-click="changeItemState(item, 1)">Good Shape</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      ng-click="changeItemState(item, 2)">Warning</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      ng-click="changeItemState(item, 3)">Trouble</a></li>
+                </ul>
+            </span>
             <span style="font-size:130%;font-weight: bold;" ng-click="showItemMap[item.id]=!showItemMap[item.id]">{{item.position}}. {{item.subject}} &nbsp; </span>
             <span ng-show="showItemMap[item.id] && meeting.state<3">
                 ( <i class="fa fa-cogs meeting-icon" ng-click="toggleEditor(2,item.id)"
@@ -1001,7 +1012,7 @@ app.controller('myCtrl', function($scope, $http) {
             <div class="form-inline form-group">
               Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"/>
               Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>
-              <button ng-click="saveAgendaItem(item);stopEditing()" class="btn btn-danger">Save</button>
+              <button ng-click="saveAgendaItem(item)" class="btn btn-danger">Save</button>
               <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
             </div>
             <div class="form-inline form-group">
@@ -1021,8 +1032,7 @@ app.controller('myCtrl', function($scope, $http) {
                   </span>
             </div>
             <div class="form-inline form-group" ng-show="showAddPresenter">
-                <button ng-click="addPresenter(item,newPerson);showAddPresenter=false"
-                    class="form-control btn btn-primary">
+                <button ng-click="addPresenter(item,newPerson);showAddPresenter=false" class="form-control btn btn-primary">
                     Add This Presenter</button>
                 <input type="text" ng-model="newPerson"  class="form-control"
                     placeholder="Enter Email Address" style="width:350px;"
@@ -1046,7 +1056,7 @@ app.controller('myCtrl', function($scope, $http) {
            <div class="well leafContent">
              <div ng-model="item.desc" ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]" text-angular="" class="leafContent"></div>
 
-             <button ng-click="saveAgendaItem(item);stopEditing()" class="btn btn-danger">Save</button>
+             <button ng-click="saveAgendaItem(item)" class="btn btn-danger">Save</button>
              <button ng-click="cancelEdit(item)" class="btn btn-danger">Cancel</button>
            </div>
         </td>
