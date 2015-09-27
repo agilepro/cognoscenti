@@ -14,10 +14,16 @@ Required parameters:
     NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
+    Cognoscenti cog = ar.getCogInstance();
+
 
     List<HistoryRecord> histRecs = ngp.getAllHistory();
-    JSONArray allHistory = new JSONArray();
+    JSONArray topHistory = new JSONArray();
+    int limit=10;
     for (HistoryRecord hist : histRecs) {
+        if (limit-- < 0) {
+            break;
+        }
         AddressListEntry ale = new AddressListEntry(hist.getResponsible());
         UserProfile responsible = ale.getUserProfile();
         String imagePath = "assets/photoThumbnail.gif";
@@ -76,7 +82,8 @@ Required parameters:
                 objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
             }
         }
-        JSONObject jObj = new JSONObject();
+        JSONObject jObj = hist.getJSON(ngp,ar);
+        /*
         jObj.put("timestamp",   hist.getTimeStamp() );
         jObj.put("responsible", ale.getUniversalId() );
         if (responsible!=null) {
@@ -93,16 +100,51 @@ Required parameters:
         jObj.put("context",     hist.getContext() );
         jObj.put("contextName", objName );
         jObj.put("comments",    hist.getComments() );
-        allHistory.put(jObj);
+        */
+        topHistory.put(jObj);
     }
 
+    JSONObject thisCircle = new JSONObject();
+    thisCircle.put("name", ngp.getFullName());
+    thisCircle.put("site", ngp.getKey());
+    thisCircle.put("key",  ngp.getSiteKey());
+
+    JSONObject parent = new JSONObject();
+    NGPageIndex parentIndex = cog.getContainerIndexByKey(ngp.getParentKey());
+    if (parentIndex==null) {
+        parent.put("name", "");
+        parent.put("site", "");
+        parent.put("key",  "");
+    }
+    else {
+        parent.put("name", parentIndex.containerName);
+        parent.put("site", parentIndex.pageBookKey);
+        parent.put("key",  parentIndex.containerKey);
+    }
+
+    JSONArray children = new JSONArray();
+    for (NGPageIndex ngpi : cog.getAllContainers()) {
+        if (!ngpi.isProject()) {
+            continue;
+        }
+        if (pageId.equals(ngpi.parentKey)) {
+            JSONObject jo = new JSONObject();
+            jo.put("name", ngpi.containerName);
+            jo.put("site", ngpi.pageBookKey);
+            jo.put("key",  ngpi.containerKey);
+            children.put(jo);
+        }
+    }
 %>
 
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
-    $scope.allHistory = <%allHistory.write(out,2,4);%>;
+    $scope.topHistory = <%topHistory.write(out,2,4);%>;
+    $scope.parent     = <%parent.write(out,2,4);%>;
+    $scope.thisCircle = <%thisCircle.write(out,2,4);%>;
+    $scope.children   = <%children.write(out,2,4);%>;
     $scope.filter = "";
 
     $scope.showInput = false;
@@ -117,6 +159,28 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.processTemplate = function(hist) {
         return hist.template;
     }
+
+    $scope.layoutChildren = function() {
+        var yPos = 265;
+        var len = $scope.children.length;
+        if (len==0) {
+            return;
+        }
+        if (len==1) {
+            $scope.children[0].x = 175;
+            $scope.children[0].y = yPos;
+            return;
+        }
+
+        var minx = 70;
+        var xwidth = 210;
+        var disp = xwidth / ($scope.children.length-1);
+        for (var i=0; i<len; i++) {
+            $scope.children[i].x = minx + (disp*i);
+            $scope.children[i].y = yPos + (i%2 * 10*len);
+        }
+    }
+    $scope.layoutChildren();
 
     $scope.getHistory = function() {
         if ($scope.filter.length==0) {
@@ -143,6 +207,10 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return res;
     }
+
+    $scope.makePath = function() {
+        return "<%=ar.retPath%>t/geojungl/executiveteam/frontPage.htm";
+    }
 });
 </script>
 
@@ -168,9 +236,91 @@ app.controller('myCtrl', function($scope, $http) {
         </div-->
     </div>
 
-    <div>
-    (Content coming here soon.)
-    </div>
+    <style>
+      .tripleColumn {
+          border: 1px solid lightgrey;
+          border-radius:5px;
+          padding:5px;
+          background-color:#EEEEEE;
+          margin:6px
+      }
+    </style>
+
+    <table><tr>
+    <td style="width:350px">
+       <div class="tripleColumn">
+          <h1>Recent Updates</h1>
+          <div ng-repeat="hist in topHistory">
+             {{hist.time|date}} -
+             <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
+
+             {{hist.ctxType}} <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>
+             was {{hist.event}}.
+             <br/>
+             <i>{{hist.comments}}</i>
+          </div>
+       </div>
+    </td>
+    <td style="width:350px">
+       <div class="tripleColumn">
+           <svg height="350px" width="350px">
+               <g ng-show="parent.key">
+                   <line x1="177" y1="85" x2="177" y2="175" style="stroke:rgb(120,0,0);stroke-width:2" />
+                   <line x1="173" y1="85" x2="173" y2="175" style="stroke:rgb(120,0,0);stroke-width:2" />
+                   <a ng-attr-xlink:href="{{makePath()}}">
+                       <ellipse cx="175" cy="65" rx="70" ry="35"
+                        style="fill:yellow;stroke:rgb(120,0,0);stroke-width:2" />
+                        <text x="175" y="65" text-anchor="middle" fill="black">{{parent.name}}</text>
+                   </a>
+               </g>
+               <g ng-repeat="child in children">
+                   <line ng-attr-x1="{{child.x+2}}" ng-attr-y1="{{child.y}}" x2="177" y2="175" style="stroke:rgb(120,0,0);stroke-width:2" />
+                   <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:rgb(120,0,0);stroke-width:2" />
+               </g>
+               <ellipse cx="175" cy="175" rx="80" ry="40"
+                    style="fill:yellow;stroke:rgb(120,0,0);stroke-width:2" />
+               <a xlink:href="<%=ar.retPath%>t/xxx/frontPage.htm">
+               </a>
+               <a xlink:href="frontPage.htm">
+                   <text x="175" y="175" text-anchor="middle" fill="black">{{thisCircle.name}}</text>
+               </a>
+
+               <g ng-repeat="child in children">
+                   <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}" rx="60" ry="30" style="fill:yellow;stroke:rgb(120,0,0);stroke-width:2" />
+                   <text ng-attr-x="{{child.x}}" ng-attr-y="{{child.y}}" text-anchor="middle" fill="black">{{child.name}}</text>
+               </g>
+           </svg>
+       </div>
+    </td>
+    <td style="width:350px">
+       <div class="tripleColumn">
+           <div style="margin:5px;">
+               <h1>Your Roles</h1>
+               <ul>
+               <li>Members</li>
+               </ul>
+           </div>
+           <div style="margin:5px;">
+               <h1>Other Members</h1>
+               <ul>
+               <li>John</li>
+               <li>Joe</li>
+               <li>Betty</li>
+               </ul>
+           </div>
+           <div style="margin:5px;">
+               <h1>Parent Circle</h1>
+               <a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/frontPage.htm">{{parent.name}}</a>
+           </div>
+           <div style="margin:5px;">
+               <h1>Children Circles</h1>
+               <div ng-repeat="child in children">
+                   <a href="<%=ar.retPath%>t/{{child.site}}/{{child.key}}/frontPage.htm">{{child.name}}</a>
+               </div>
+           </div>
+       </div>
+    </td>
+    </tr></table>
 
 
 </div>

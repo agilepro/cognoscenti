@@ -137,6 +137,11 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.goalInfo.state=newState;
         $scope.saveGoal();
     }
+    $scope.startEdit = function() {
+        $scope.editGoalInfo=true;
+        $scope.showAccomplishment=false;
+        $scope.copyDatesToDummies();
+    }
     $scope.saveGoal = function() {
         $scope.goalInfo.duedate = $scope.dummyDate1.getTime();
         $scope.goalInfo.startdate = $scope.dummyDate2.getTime();
@@ -273,16 +278,25 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.openDatePicker1 = function($event) {
         $event.preventDefault();
         $event.stopPropagation();
+        if ($scope.dummyDate1.getTime()<=0) {
+            $scope.dummyDate1 = new Date();
+        }
         $scope.datePickOpen1 = true;
     };
     $scope.openDatePicker2 = function($event) {
         $event.preventDefault();
         $event.stopPropagation();
+        if ($scope.dummyDate2.getTime()<=0) {
+            $scope.dummyDate2 = new Date();
+        }
         $scope.datePickOpen2 = true;
     };
     $scope.openDatePicker3 = function($event) {
         $event.preventDefault();
         $event.stopPropagation();
+        if ($scope.dummyDate3.getTime()<=0) {
+            $scope.dummyDate3 = new Date();
+        }
         $scope.datePickOpen3 = true;
     };
 
@@ -311,7 +325,7 @@ function addvalue() {
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="editGoalInfo=!editGoalInfo;showAccomplishment=false">Edit Details</a></li>
+                  href="#" ng-click="startEdit()">Edit Details</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   href="#" ng-click="showAccomplishment=!showAccomplishment;editGoalInfo=false;">Record Accomplishment</a></li>
               <!--li role="presentation"><a role="menuitem" tabindex="-1"
@@ -328,7 +342,7 @@ function addvalue() {
             <tr>
                 <td class="gridTableColummHeader">Summary:</td>
                 <td style="width:20px;"></td>
-                <td><b>{{goalInfo.synopsis}}</b> ~ {{goalInfo.description}}</td>
+                <td ng-click="startEdit()"><b>{{goalInfo.synopsis}}</b> ~ {{goalInfo.description}}</td>
             </tr>
             <tr><td height="10px"></td></tr>
             <tr>
@@ -366,7 +380,7 @@ function addvalue() {
             <tr>
                 <td ></td>
                 <td style="width:20px;"></td>
-                <td>
+                <td ng-click="startEdit()">
                     <span ng-show="goalInfo.duedate>0">   <b>Due:</b>   {{goalInfo.duedate|date}}   &nbsp; &nbsp; </span>
                     <span ng-show="goalInfo.startdate>0"> <b>Start:</b> {{goalInfo.startdate|date}} &nbsp; &nbsp; </span>
                     <span ng-show="goalInfo.enddate>0">   <b>End:</b>   {{goalInfo.enddate|date}}   &nbsp; &nbsp; </span>

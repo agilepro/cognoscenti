@@ -113,6 +113,7 @@ public class NGPageIndex {
     public String containerKey;
     public String pageBookName;
     public String pageBookKey;
+    public String parentKey;     // Key for the 'circle' hierarchy parent project
 
 
     /**
@@ -593,6 +594,7 @@ public class NGPageIndex {
                 pageBookKey = ngb.getKey();
             }
             nextScheduledAction = ngp.nextActionDue();
+            parentKey = ngp.getParentKey();
         }
         else {
             nextScheduledAction = -1;

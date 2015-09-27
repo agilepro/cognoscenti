@@ -40,6 +40,7 @@ import org.socialbiz.cog.util.CVSUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
+import org.workcast.json.JSONObject;
 
 /**
 * NGPage is a Container that represents a Project.
@@ -688,14 +689,6 @@ public class NGPage extends ContainerCommon implements NGContainer
     }
     public void setKey(String newKey) {
         pageInfo.setKey(newKey);
-    }
-
-    //TODO: this is dangerous, this address is old
-    /**
-    * Returns the HTTP relative address for normal resource
-    */
-    public String getOldUIPermaLink() {
-        return "p/"+getKey()+"/";
     }
 
     /**
@@ -1702,6 +1695,20 @@ public class NGPage extends ContainerCommon implements NGContainer
         labelList.removeChild(existing);
     }
 
+    
+    ///////////////////// PARENT PROJECT /////////////////////
+    
+    
+    public String getParentKey() throws Exception {
+        return getInfoParent().getScalar("parentProject");
+    }
+
+    public void setParentKey(String parentKey) throws Exception {
+        getInfoParent().setScalar("parentProject", parentKey);
+    }
+    
+    
+    
 
     /**
      * Return the time of the next automated action.  If there are multiple
@@ -1823,5 +1830,69 @@ public class NGPage extends ContainerCommon implements NGContainer
             }
         }
     }
+    
+    public JSONObject getConfigJSON() throws Exception {
+        ProcessRecord process = getProcess();
+        JSONObject projectInfo = new JSONObject();
+        projectInfo.put("goal", process.getSynopsis());
+        projectInfo.put("purpose", process.getDescription());
+        projectInfo.put("parentKey", getParentKey());
+        projectInfo.put("allowPublic", "yes".equals(getAllowPublic()));
+        projectInfo.put("frozen", isFrozen());
+        projectInfo.put("deleted", isDeleted());
+        projectInfo.put("upstream", getUpstreamLink());
+        projectInfo.put("projectMail", getProjectMailId());
+        return projectInfo;
+    }
 
+    public void updateConfigJSON(AuthRequest ar, JSONObject newConfig) throws Exception {
+        ProcessRecord process = getProcess();
+        if (newConfig.has("goal")) {
+            process.setSynopsis(newConfig.getString("goal"));
+        }
+        if (newConfig.has("purpose")) {
+            process.setDescription(newConfig.getString("purpose"));
+        }
+        if (newConfig.has("parentKey")) {
+            setParentKey(newConfig.getString("parentKey"));
+        }
+        if (newConfig.has("allowPublic")) {
+            if (newConfig.getBoolean("allowPublic")) {
+                setAllowPublic("yes");
+            }
+            else {
+                setAllowPublic("no");
+            }
+        }
+        if (newConfig.has("deleted")) {
+            boolean newDelete = newConfig.getBoolean("deleted");
+            if (newDelete != isDeleted()) {
+                if (newDelete) {
+                    markDeleted(ar);
+                }
+                else {
+                    markUnDeleted(ar);
+                }
+            }
+        }
+        if (newConfig.has("frozen")) {
+            boolean newFrozen = newConfig.getBoolean("frozen");
+            if (newFrozen != isFrozen()) {
+                if (newFrozen) {
+                    freezeProject(ar);
+                }
+                else {
+                    unfreezeProject();
+                }
+            }
+        }
+        if (newConfig.has("upstream")) {
+            setUpstreamLink(newConfig.getString("upstream"));
+        }
+        if (newConfig.has("projectMail")) {
+            setProjectMailId(newConfig.getString("projectMail"));
+        }
+    }
+    
+    
 }

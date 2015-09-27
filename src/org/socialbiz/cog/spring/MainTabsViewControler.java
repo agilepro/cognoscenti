@@ -45,6 +45,7 @@ import org.socialbiz.cog.NoteRecord;
 import org.socialbiz.cog.ProfileRequest;
 import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
+import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.UserProfile;
@@ -1169,15 +1170,28 @@ public class MainTabsViewControler extends BaseController {
               else {
                   gr = ngp.getGoalOrFail(gid);
               }
+              
+              int previousState = gr.getState();
+              String previousStatus = gr.getStatus();
+              long previousDue = gr.getDueDate();
 
               gr.updateGoalFromJSON(goalInfo);
-              String comments = null;
-              if (goalInfo.has("newAccomplishment")) {
-                  comments = goalInfo.optString("newAccomplishment");
+              
+              //now make the history description of what just happened
+              StringBuffer inventedComment = new StringBuffer(goalInfo.optString("newAccomplishment"));
+              if (previousState != gr.getState()) {
+                  inventedComment.append(" State:");
+                  inventedComment.append(BaseRecord.stateName(gr.getState()));
               }
-              else {
-                  comments = "State: "+BaseRecord.stateName(gr.getState());
+              if (!previousStatus.equals(gr.getStatus())) {
+                  inventedComment.append(" Status:");
+                  inventedComment.append(gr.getStatus());
               }
+              if (previousDue != gr.getDueDate()) {
+                  inventedComment.append(" DueDate:");
+                  inventedComment.append(SectionUtil.getNicePrintDate(gr.getDueDate()));
+              }
+              String comments = inventedComment.toString();
 
               //create the history record here.
               HistoryRecord.createHistoryRecord(ngp, gr.getId(),

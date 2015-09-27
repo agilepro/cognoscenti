@@ -12,6 +12,7 @@
     NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
+    Cognoscenti cog = ar.getCogInstance();
 
     UserProfile up = ar.getUserProfile();
     String userKey = up.getKey();
@@ -33,6 +34,38 @@
 
     String[] names = ngp.getPageNames();
     String thisPageAddress = ar.getResourceURL(ngp,"admin.htm");
+
+    ProcessRecord process = ngp.getProcess();
+    String parentKey = ngp.getParentKey();
+    NGPageIndex parentIndex = cog.getContainerIndexByKey(parentKey);
+    String parentName = "";
+    if (parentIndex!=null) {
+        parentName = parentIndex.containerName;
+    }
+
+    JSONObject projectInfo = ngp.getConfigJSON();
+    projectInfo.put("parentName", parentName);
+
+
+
+    JSONArray oldNameArray = new JSONArray();
+    for (int i = 1; i < names.length; i++) {
+        //skip the first name since that is the current name
+        oldNameArray.put(names[i]);
+    }
+
+    JSONArray allProjects = new JSONArray();
+    for (NGPageIndex ngpi : cog.getAllProjectsInSite(ngb.getKey())) {
+        if (ngpi.isDeleted) {
+            continue;
+        }
+        JSONObject pInfo = new JSONObject();
+        pInfo.put("name", ngpi.containerName);
+        pInfo.put("key", ngpi.containerKey);
+        allProjects.put(pInfo);
+    }
+
+
 
 
     JSONArray allScheduled = new JSONArray();
@@ -85,74 +118,57 @@
 
 
 <script type="text/javascript" language="JavaScript">
-    var isfreezed = '<%=ngp.isFrozen()%>';
-
-    function updateProjectSettings(obj){
-        if(confirm("Are you sure you want to change Project Settings?")){
-            var allowPublic = "no";
-            if(obj.checked){
-                allowPublic = "yes";
-            }
-            var transaction = YAHOO.util.Connect.asyncRequest('POST',"updateProjectSettings.ajax?allowPublic="
-                              +allowPublic+"&operation=publicPermission", updateResponse);
-        }else{
-            unChangedCheckBox(obj);
-        }
-    }
-    var updateResponse ={
-        success: function(o) {
-            var respText = o.responseText;
-            var json = eval('(' + respText+')');
-            if(json.msgType == "success"){
-                alert("Operation has been performed successfully.");
-            }
-            else{
-                showErrorMessage("Result", json.msg, json.comments);
-            }
-        },
-        failure: function(o) {
-            alert("projectValidationResponse Error:" +o.responseText);
-        }
-    }
-
-    function browse(){
-        window.location = "<%=ar.retPath%>v/<%ar.writeHtml(userKey);%>/ListConnections.htm?pageId=<%ar.writeHtml(ngp.getKey());%>&fndDefLoctn=true";
-    }
-
-    function freezeOrUnfreezeProject(obj){
-        var freezeUnfreezeProject = "unfreezeProject";
-        var confirmation_msg = "This operation will unfreeze the project and user can modify the project. Are you sure you want to unfreeze this Project?";
-        if(obj.checked){
-            freezeUnfreezeProject = "freezeProject";
-            confirmation_msg = "This operation will freeze the project and user can only view the project but can not modify. Are you sure you want to freeze this Project?";
-        }
-        if(confirm(confirmation_msg)){
-            var transaction = YAHOO.util.Connect.asyncRequest('POST',"updateProjectSettings.ajax?operation="+freezeUnfreezeProject, updateResponse);
-        }else{
-            unChangedCheckBox(obj);
-        }
-    }
-
-    function unChangedCheckBox(obj){
-        if(obj.checked){
-            obj.checked = false;
-        }else{
-            obj.checked = true;
-        }
-    }
-    function checkFreezed(){
-        if(isfreezed == 'false'){
-            return true;
-        }else{
-            return openFreezeMessagePopup();
-        }
-    }
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.allScheduled = <%allScheduled.write(out,2,4);%>;
-});
+    $scope.oldNameArray = <%oldNameArray.write(out,2,4);%>;
+    $scope.projectInfo = <%projectInfo.write(out,2,4);%>;
+    $scope.allProjects = <%allProjects.write(out,2,4);%>;
 
+    $scope.showError = false;
+    $scope.errorMsg = "";
+    $scope.errorTrace = "";
+    $scope.showTrace = false;
+    $scope.reportError = function(serverErr) {
+        errorPanelHandler($scope, serverErr);
+    };
+
+    $scope.lookUpName = function(prjKey) {
+        for (var i=0; i<$scope.allProjects.length; i++) {
+            if ($scope.allProjects[i].key==prjKey) {
+                return $scope.allProjects[i].name;
+            }
+        }
+        return "(unknown)";
+    }
+    $scope.projectMode = function() {
+        if ($scope.projectInfo.deleted) {
+            return "deletedMode";
+        }
+        if ($scope.projectInfo.frozen) {
+            return "freezedMode";
+        }
+        return "normalMode";
+    }
+    $scope.saveProjectConfig = function() {
+        var postURL = "updateProjectInfo.json";
+        var postdata = angular.toJson($scope.projectInfo);
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            $scope.projectInfo = data;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+
+
+});
+app.filter('escape', function() {
+  return window.encodeURIComponent;
+});
 </script>
 
 
@@ -207,14 +223,14 @@ app.controller('myCtrl', function($scope, $http) {
 
             <div>
                 <table>
-                    <form action="changeProjectName.form" method="post" onsubmit="return checkFreezed();">
+                    <form action="changeProjectName.form" method="post" >
                         <tr>
                             <td class="gridTableColummHeader_2"><fmt:message key="nugen.generatInfo.PageNameCaption"/>:</td>
                             <td style="width:20px;"></td>
                             <td><input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>">
                                 <input type="hidden" name="encodingGuard" value="%E6%9D%B1%E4%BA%AC"/>
                                 <input type="hidden" name="go" value="<%ar.writeHtml(ar.getCompleteURL());%>">
-                                <input type="text" class="inputGeneral" name="newName" value="<%ar.writeHtml(ngp.getFullName());%>">
+                                <input type="text" class="form-control" style="width:300px" name="newName" value="<%ar.writeHtml(ngp.getFullName());%>">
                             </td>
                         </tr>
                         <tr><td style="height:5px" colspan="3"></td></tr>
@@ -239,134 +255,110 @@ app.controller('myCtrl', function($scope, $http) {
                             value="<%ar.writeHtml(thisPage);%>">
                     <input type="hidden" name="encodingGuard"
                             value="%E6%9D%B1%E4%BA%AC" />
-        <%
-            for (int i = 1; i < names.length; i++) {
-                String delLink = ar.retPath+"t/"+ngp.getSite().getKey()+"/"+ngp.getKey()
-                    + "/deletePreviousProjectName.htm?action=delName&p="
-                    + URLEncoder.encode(pageId, "UTF-8")
-                    + "&oldName="
-                    + URLEncoder.encode(names[i], "UTF-8");
-                out.write("<tr><td></td><td></td><td>");
-                ar.writeHtml( names[i]);
-                out.write(" &nbsp; <a href=\"");
-                if(ngp.isFrozen()){
-                    out.write("#\" onclick=\"javascript:openFreezeMessagePopup();\" ");
-                }else{
-                    ar.writeHtml( delLink);
-                }
-                out.write("\" title=\"delete this name from project\"><img src=\"");
-                out.write(ar.retPath);
-                out.write("/assets/iconDelete.gif\"></a></td></tr>\n");
-                out.write("</td></tr>\n");
-            }
-        %>
+
+                <tr ng-repeat="name in oldNameArray">
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <a href="deletePreviousProjectName.htm?action=delName&p=<%=URLEncoder.encode(pageId, "UTF-8")%>&oldName={{name|escape}}"
+                           title="delete this name from project">
+                           {{name}}
+                           <img src="<%=ar.retPath%>/assets/iconDelete.gif">
+                        </a>
+                    </td>
+                </tr>
                 </table>
             </div>
             <div class="generalContent">
                 <div class="generalHeading paddingTop">Project Settings</div>
                 <table width="720px">
-            <%
-            ProcessRecord process = ngp.getProcess();
+                    <tr><td style="height:5px"></td></tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2">Goal:</td>
+                        <td style="width:20px;"></td>
+                        <td>
+                            <input type="text" name="goal" class="form-control" ng-model="projectInfo.goal">
+                        </td>
+                    </tr>
+                    <tr><td style="height:5px"></td></tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2" valign="top">Purpose:</td>
+                        <td style="width:20px;"></td>
+                        <td><textarea name="purpose" class="form-control" ng-model="projectInfo.purpose"
+                              rows="4"></textarea></td>
+                    </tr>
+                    <tr><td style="height:8px"></td></tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2" valign="top">Project Mode:</td>
+                        <td style="width:20px;"></td>
+                        <td  valign="top">
 
-            String goal = process.getSynopsis();
-            String purpose = process.getDescription();
-            %>
-                    <form action="changeProjectSettings.form" method="post" >
-                        <input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>">
-                        <input type="hidden" name="go" value="<%ar.writeHtml(thisPageAddress);%>">
-                        <input type="hidden" name="encodingGuard" value="%E6%9D%B1%E4%BA%AC"/>
-                        <tr><td style="height:5px"></td></tr>
-                        <tr>
-                            <td class="gridTableColummHeader_2">Goal:</td>
-                            <td style="width:20px;"></td>
-                            <td><input type="text" name="goal" id="txtGoal" class="inputGeneral"
-                                value="<%ar.writeHtml(goal);%>"></td>
-                        </tr>
-                        <tr><td style="height:5px"></td></tr>
-                        <tr>
-                            <td class="gridTableColummHeader_2" valign="top">Purpose:</td>
-                            <td style="width:20px;"></td>
-                            <td><textarea name="purpose" id="txtPurpose" class="textAreaGeneral"
-                                  rows="4"><%ar.writeHtml(purpose);%></textarea></td>
-                        </tr>
-                        <tr><td style="height:8px"></td></tr>
-                        <tr>
-                            <td class="gridTableColummHeader_2" valign="top">Project Mode:</td>
-                            <td style="width:20px;"></td>
-                            <td  valign="top">
+                            <input type="checkbox" name="allowPublic" value="yes"
+                                ng-model="projectInfo.frozen"/> Frozen  &nbsp;&nbsp;
+                            <input type="checkbox" name="allowPublic" value="yes"
+                                ng-model="projectInfo.deleted"/> Deleted
 
-                                <input type="radio" id="normalMode" name="projectMode" value="normalMode"
-                                <% if(!ngp.isDeleted() && !ngp.isFrozen()){ %>
-                                    checked="checked"
-                                 <%} %>
-                                 /> Normal &nbsp;&nbsp;<br/>
+                            <input type="hidden" name="projectMode" value="{{projectMode()}}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2">Allow Public:</td>
+                        <td style="width:20px;"></td>
+                        <td>
+                            <input type="checkbox" name="allowPublic" value="yes"
+                                ng-model="projectInfo.allowPublic"/> {{projectInfo.allowPublic}}
+                        </td>
+                    </tr>
+                    <tr><td style="height:5px"></td></tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2">Project Email id:</td>
+                        <td style="width:20px;"></td>
+                        <td>
+                            <input type="text" class="form-control"
+                                   name="projectMailId" ng-model="projectInfo.projectMail" />
+                        </td>
+                    </tr>
+                    <tr><td style="height:5px"></td></tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2">Upstream Clone:</td>
+                        <td style="width:20px;"></td>
+                        <td>
+                            <input type="text" class="form-control" style="width:450px" id="upstream"
+                                   name="upstream" ng-model="projectInfo.upstream" />
+                        </td>
+                    </tr>
+                    <tr><td style="height:5px"></td></tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2">Parent Circle:</td>
+                        <td style="width:20px;"></td>
+                        <td>
+                            <input type="text" ng-model="projectInfo.parentKey" class="form-control" style="width:100px"/>
+                            {{lookUpName(projectInfo.parentKey)}}
+                        </td>
+                    </tr>
 
-                                <input type="radio" id="freezedMode" name="projectMode" value="freezedMode"
-                                <% if(ngp.isFrozen()){ %>
-                                    checked="checked"
-                                 <%} %>
-                                 /> Frozen &nbsp;&nbsp;<br/>
 
-                                <input type="radio" id="deletedMode" name="projectMode" value="deletedMode"
-                                <% if(ngp.isDeleted()){ %>
-                                    checked="checked"
-                                 <%} %>
-                                 /> Deleted &nbsp;&nbsp;
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="gridTableColummHeader_2">Allow Public:</td>
-                            <td style="width:20px;"></td>
-                            <td>
-                                <%
-                                    String checkedStr = "" ;
-                                    if (ngp.getAllowPublic().equals("yes")) {
-                                        checkedStr = "checked=\"checked\"" ;
-                                    }
-                                %>
-                                <input type="checkbox" name="allowPublic" id="allowPublic" value="yes"
-                                <%ar.writeHtml(checkedStr);%>  />
-                            </td>
-                        </tr>
-                        <tr><td style="height:5px"></td></tr>
-                        <tr>
-                            <td class="gridTableColummHeader_2">Project Email id:</td>
-                            <td style="width:20px;"></td>
-                            <td>
-                                <input type="text" class="inputGeneral" style="width: 250px" id="projectMailId"
-                                       name="projectMailId" value="<% ar.writeHtml(ngp.getProjectMailId()); %>" />
-                            </td>
-                        </tr>
-                        <tr><td style="height:5px"></td></tr>
-                        <tr>
-                            <td class="gridTableColummHeader_2">Upstream Link:</td>
-                            <td style="width:20px;"></td>
-                            <td>
-                                <input type="text" class="inputGeneral" style="width: 250px" id="upstream"
-                                       name="upstream" value="<% ar.writeHtml(ngp.getUpstreamLink()); %>" />
-                            </td>
-                        </tr>
-                        <tr><td style="height:5px"></td></tr>
-                        <tr>
-                            <td class="gridTableColummHeader_2">Default Location:</td>
-                            <td  style="width:20px;"></td>
-                            <td>
-                                <input type="button" class="btn btn-primary" name="action" value="Browse" onclick="browse()">
-                            </td>
-                        </tr>
+                    <!--tr><td style="height:5px"></td></tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2">Default Location:</td>
+                        <td  style="width:20px;"></td>
+                        <td>
+                            <input type="button" class="btn btn-primary" name="action"
+                                value="Browse" onclick="browse()">
+                        </td>
+                    </tr-->
 
-                        <tr><td style="height:5px"></td></tr>
-                        <tr>
-                            <td class="gridTableColummHeader_2"></td>
-                            <td style="width:20px;"></td>
-                            <td>
-                                <input type="submit" value="Update" class="btn btn-primary" />
-                            </td>
-                        </tr>
-                        <tr><td style="height:10px" colspan="3"></td></tr>
-                    </form>
+                    <tr><td style="height:15px"></td></tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2"></td>
+                        <td style="width:20px;"></td>
+                        <td>
+                            <button ng-click="saveProjectConfig();" class="btn btn-primary" >Update</button>
+                        </td>
+                    </tr>
                 </table>
             </div>
+
 
 
             <div class="generalContent">

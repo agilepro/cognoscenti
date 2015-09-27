@@ -44,7 +44,7 @@
 
         %>
         <li>TESTING: <a href="<%ar.writeHtml(ar.getResourceURL(aPage,""));%>"><%
-            ar.writeHtml(aPage.getOldUIPermaLink());
+            ar.writeHtml("p/"+aPage.getKey()+"/");
         %></a>
         <%
         out.flush();

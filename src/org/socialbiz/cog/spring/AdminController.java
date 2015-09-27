@@ -52,6 +52,30 @@ import org.workcast.json.JSONObject;
 @Controller
 public class AdminController extends BaseController {
 
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/updateProjectInfo.json", method = RequestMethod.POST)
+    public void updateProjectInfo(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            ar.setPageAccessLevels(ngp);
+            ar.assertAdmin("Must be an admin to change project info.");
+            JSONObject newConfig = getPostedObject(ar);
+            
+            ngp.updateConfigJSON(ar, newConfig);
+
+            ngp.saveFile(ar, "updated configuration of project");
+            JSONObject repo = ngp.getConfigJSON();
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to create meeting.", ex);
+            streamException(ee, ar);
+        }
+    }
+    
+    
     @RequestMapping(value = "/{siteId}/{project}/changeGoal.form", method = RequestMethod.POST)
     public ModelAndView changeGoalHandler(@PathVariable String siteId,@PathVariable String project,
             HttpServletRequest request,

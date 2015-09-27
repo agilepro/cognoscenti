@@ -31,20 +31,20 @@
             "BKLQHEHWG@clone-c-of-clone-4@8005",
             "HFCKCQHWG@clone-c-of-clone-4@0353"
           ],
-          "desc": "An autocracy vests power in one person or set of persons, an \u201cauto\" that can ignore the rest of the organization and make decisions without consultation. This discourages the development of leadership and creative ideas in the organization. This can also produce bad decisions because other members of the organization are afraid to share negative information. While some associations are democratic, most are autocratic with power vested in a board of directors. Employees and members alike can be ignored. Non-profits, like businesses, are almost exclusively autocratic.",
+          "desc": "An autocracy vests power in one autocratic.",
           "docList": [
             "VKSSSCSRG@sec-inline-xbrl@4841",
             "HGYDQWIWG@clone-c-of-clone-4@9358"
           ],
           "duration": 14,
           "id": "1695",
-          "notes": "Randy says he is interested in this topic.\n\nan another as well\n\nBy contrast, democracy vests power in the \u201cdemos,\u201d in the population, without respect to their understanding of the issues or of each other. In a democracy, the majority of the \u201cdemos\u201d can ignore the minority of the \u201cdemos\u201d when they make decisions. This inevitably produces factions and conflict rather than harmony. It encourages people to build alliances, trade favors, and think politically rather than achieving the aims of  the organization.",
+          "notes": "Randy says he is interested organization.",
           "position": 1,
           "subject": "Approve Advertising Plan"
         },
         {
           "actionItems": [],
-          "desc": "Many new organizational systems make use of, indeed require, higher levels of shared information and multi-side communications than traditional command and control systems. We are using Sociocracy as our starting example of such a system and test case but we do so with the awareness that there are many other \"hi-com\" systems that are likely to have similar and overlapping needs for communications support.",
+          "desc": "Many new organizational support.",
           "docList": [],
           "duration": 5,
           "id": "2695",
@@ -64,7 +64,7 @@
         },
         {
           "actionItems": [],
-          "desc": "A sociocratic organization is governed by \"circles,\" semi-autonomous policy decision-making groups that correspond to working groups, whether they are departments, teams, or local neighborhood associations. Each circle has its own aim and steers its own work by performing all the functions of  leading, doing, and measuring on its own operations. Together the three steering functions establish a feedback loop, making the circle self-correcting, or self-regulating.\n\nIn circle meetings, each person is equivalent and has the power to consent or object to proposed actions that affect their responsibility in the organization.\n\nOn a daily basis, activities are directed by a leader without discussion or reevaluation of decisions. This produces efficiency and forward movement. If there is disagreement, the leader makes the decision in the moment. the issue is discussed in the next circle meeting, and a policy is established to govern such decisions in the future.",
+          "desc": "A sociocratic in the future.",
           "docList": [],
           "duration": 5,
           "id": "0675",
@@ -75,7 +75,7 @@
       ],
       "duration": 60,
       "id": "0695",
-      "meetingInfo": "Please join us in Austin for [CHEST 2014|http://2014.chestmeeting.chestnet.org/Meeting-Information], your connection to education opportunities that will help optimize the clinical decisions you make. The cutting-edge sessions and community of innovative problem-solvers in attendance will inspire and energize you. CHEST 2014 takes place at:\n\n* Austin Convention Center\n* 500 E Cesar Chavez Street\n* Austin, Texas 78701",
+      "meetingInfo": "Please join us in Austin, Texas 78701",
       "name": "Status Meeting",
       "startTime": 1434137400000,
       "state": 1
@@ -135,7 +135,7 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
     $scope.goalList = <%goalList.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
@@ -145,7 +145,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.newPerson = "";
     $scope.myUserId = "<% ar.writeJS(ar.getBestUserId()); %>";
     $scope.actionItemFilter = "";
-    $scope.documentFilter = "";
+    alert("about to clear the filter");
+    $scope.realDocumentFilter = "";
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -257,6 +258,9 @@ app.controller('myCtrl', function($scope, $http) {
                 }
             }
         }
+        res.sort( function(a,b) {
+            return a.duedate-b.duedate;
+        });
         return res;
     }
     $scope.filterGoals = function(actionItemFilter) {
@@ -326,13 +330,21 @@ app.controller('myCtrl', function($scope, $http) {
         }
         return false;
     }
-    $scope.addDocToItem = function(item, doc) {
+    $scope.addDocToItem = function(item, doc, filter) {
+        $scope.realDocumentFilter = filter;
         if (!$scope.itemHasDoc(item, doc)) {
             item.docList.push(doc.universalid);
         }
         $scope.saveAgendaItem(item);
     }
-    $scope.removeDocFromItem = function(item, doc) {
+    $scope.foo = function(val) {
+        alert("foo is ("+val+")");
+    }
+    $scope.removeDocFromItem = function(item, doc, filter) {
+        //this is the strangest thing.  If the filter is not
+        //passed and reset, it will mysterously be cleared.
+        //Something clears it before this line.
+        $scope.realDocumentFilter = filter;
         var res = [];
         for (var j=0; j<item.docList.length; j++) {
             var aiId = item.docList[j];
@@ -451,7 +463,6 @@ app.controller('myCtrl', function($scope, $http) {
         var saveRecord = {};
         saveRecord.agenda = [agendaItem];
         $scope.putGetMeetingInfo(saveRecord);
-        //$scope.stopEditing();
     };
     $scope.revertAllEdits = function() {
         var saveRecord = {};
@@ -507,27 +518,6 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.nowEditing=newAgenda.id+"x2";
     };
 
-    $scope.addAttachment = function(item, doc) {
-        for (var i=0; i<item.docList.length; i++) {
-            if (doc.universalid == item.docList[i]) {
-                alert("Document already attached: "+doc.name);
-                return;
-            }
-        }
-        item.docList.push(doc.universalid);
-        $scope.saveAgendaItem(item);
-        $scope.newAttachment = "";
-    }
-    $scope.removeAttachment = function(item, doc) {
-        var newVal = [];
-        for( var i=0; i<item.docList.length; i++) {
-            if (item.docList[i]!=doc.universalid) {
-                newVal.push(item.docList[i]);
-            }
-        }
-        item.docList = newVal;
-        $scope.saveAgendaItem(item);
-    }
 
     $scope.getPeople = function(viewValue) {
         var newVal = [];
@@ -590,7 +580,9 @@ app.controller('myCtrl', function($scope, $http) {
         var objForUpdate = {};
         objForUpdate.id = goal.id;
         objForUpdate.universalid = goal.universalid;
-        objForUpdate.prospects = goal.prospects;  //only thing that could have been changed
+        objForUpdate.prospects = goal.prospects;  //first thing that could have been changed
+        objForUpdate.duedate = goal.duedate;      //second thing that could have been changed
+        objForUpdate.status = goal.status;        //third thing that could have been changed
         var postdata = angular.toJson(objForUpdate);
         $scope.showError=false;
         $scope.editGoalInfo=false;
@@ -614,6 +606,7 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.nowEditing = combo;
             return;
         }
+        $scope.nowEditing = combo;
     }
     $scope.stopEditing =  function() {
         $scope.nowEditing = "nothing";
@@ -770,7 +763,107 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.toggleEditor(8,item.id);
     }
 
+    $scope.navigateToDoc = function(doc) {
+        window.location="docinfo"+doc.id+".htm";
+    }
+
+  $scope.openDueDate = function (item, goal) {
+
+    var modalInstance = $modal.open({
+      animation: false,
+      templateUrl: 'myModalDueDate.html',
+      controller: 'ModalInstanceCtrl',
+      size: 'lg',
+      resolve: {
+        item: function () {
+          return item;
+        },
+        goal: function () {
+          return goal;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (modifiedGoal) {
+        $scope.goalList.map( function(item) {
+            if (item.id == modifiedGoal.id) {
+                item.duedate = modifiedGoal.duedate;
+                item.status = modifiedGoal.status;
+            }
+        });
+        $scope.saveGoal(modifiedGoal);
+    }, function () {
+      //cancel action
+    });
+  };
+
 });
+
+app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal) {
+
+  $scope.item = item;
+  $scope.goal = goal;
+  $scope.goalDueDate = goal;
+
+  $scope.ok = function () {
+      $scope.goal.duedate = $scope.goalDueDate.getTime();
+      $modalInstance.close($scope.goal);
+  };
+
+  $scope.cancel = function () {
+      $modalInstance.dismiss('cancel');
+  };
+
+    $scope.datePickOptions = {
+        formatYear: 'yyyy',
+        startingDay: 1
+    };
+    $scope.datePickDisable = function(date, mode) {
+        return false;
+    };
+    $scope.dummyDate1 = new Date();
+    $scope.datePickOpen = false;
+    $scope.openDatePicker = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.datePickOpen = true;
+    };
+    $scope.extractDateParts = function() {
+        if ($scope.goal.duedate<=0) {
+            $scope.goalDueDate = new Date();
+        }
+        else {
+            $scope.goalDueDate = new Date($scope.goal.duedate);
+        }
+    };
+    $scope.extractDateParts();
+    $scope.goalStateStyle = function(goal) {
+        if (goal.prospects=="good") {
+            return "background-color:lightgreen";
+        }
+        if (goal.prospects=="ok") {
+            return "background-color:yellow";
+        }
+        if (goal.prospects=="bad") {
+            return "background-color:red";
+        }
+        return "background-color:lavender";
+    }
+    $scope.goalStateName = function(goal) {
+        if (goal.prospects=="good") {
+            return "Good";
+        }
+        if (goal.prospects=="ok") {
+            return "Warnings";
+        }
+        return "Trouble";
+    };
+    $scope.changeGoalState = function(goal, newState) {
+        goal.prospects = newState;
+        $scope.saveGoal(goal);
+    };
+});
+
 </script>
 
 
@@ -798,7 +891,7 @@ app.controller('myCtrl', function($scope, $http) {
                   href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
               <li role="presentation" class="divider"></li>
               <li role="presentation"><a role="menuitem"
-                  href="#" ng-click="createMinutes()">Generate Minutes</a></li>
+                  ng-click="createMinutes()">Generate Minutes</a></li>
               <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"
                   href="noteZoom{{meeting.minutesLocalId}}.htm">View Minutes</a></li>
               <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"  target="_blank"
@@ -821,11 +914,11 @@ app.controller('myCtrl', function($scope, $http) {
             State: {{stateName()}} <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem"
-                  href="#"  ng-click="changeMeetingState(1)">Plan Meeting</a></li>
+                  ng-click="changeMeetingState(1)">Plan Meeting</a></li>
               <li role="presentation"><a role="menuitem"
-                  href="#" ng-click="changeMeetingState(2)">Run Meeting</a></li>
+                  ng-click="changeMeetingState(2)">Run Meeting</a></li>
               <li role="presentation"><a role="menuitem"
-                  href="#"  ng-click="changeMeetingState(3)">Complete Meeting</a></li>
+                  ng-click="changeMeetingState(3)">Complete Meeting</a></li>
             </ul>
         </span>
     </div>
@@ -978,18 +1071,6 @@ app.controller('myCtrl', function($scope, $http) {
       <tr>
         <td style="width:100%">
           <div style="padding:5px;">
-            <span class="dropdown" ng-show="meeting.meetingType==2">
-                <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{itemStateStyle(item)}};width:150px;margin:10px;">
-                State: {{itemStateName(item)}} <span class="caret"></span></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="changeItemState(item, 1)">Good Shape</a></li>
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="changeItemState(item, 2)">Warning</a></li>
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="changeItemState(item, 3)">Trouble</a></li>
-                </ul>
-            </span>
             <span style="font-size:130%;font-weight: bold;" ng-click="showItemMap[item.id]=!showItemMap[item.id]">{{item.position}}. {{item.subject}} &nbsp; </span>
             <span ng-show="showItemMap[item.id] && meeting.state<3">
                 ( <i class="fa fa-cogs meeting-icon" ng-click="toggleEditor(2,item.id)"
@@ -1064,12 +1145,15 @@ app.controller('myCtrl', function($scope, $http) {
 
                           <!--  AGENDA ATTACHMENTS -->
       <tr ng-show="showItemMap[item.id]">
-        <td style="width:100%">
-           <div ng-repeat="doc in itemDocs(item)" class="leafContent"  style="margin-left:30px;">
-              <a href="docinfo{{doc.id}}.htm">
-                  <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
-              </a>
-           </div>
+        <td>
+           <table style="margin:10px;"><tr>
+              <td style="vertical-align:top;"><b>Attachments: </b></td>
+              <td><span ng-repeat="doc in itemDocs(item)" class="btn btn-sm btn-default"  style="margin:4px;"
+                   ng-click="navigateToDoc(doc)">
+                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
+                  </span>
+              </td>
+           </table>
         </td>
       </tr>
 
@@ -1082,15 +1166,15 @@ app.controller('myCtrl', function($scope, $http) {
               <table class="table">
                 <tr>
                    <td colspan="4">
-                      Filter <input type="text" ng-model="documentFilter">
+                      Filter <input type="text" ng-model="realDocumentFilter"> {{realDocumentFilter}}
                    </td>
                 </tr>
-                <tr ng-repeat="doc in filterDocs(documentFilter)">
+                <tr ng-repeat="doc in filterDocs(realDocumentFilter+'')">
                     <td><img src="<%=ar.retPath%>assets/images/iconFile.png"/> {{doc.name}} </td>
                     <td></td>
                     <td>
-                        <button ng-click="addDocToItem(item, doc)" ng-hide="itemHasDoc(item,doc)">Add</button>
-                        <button ng-click="removeDocFromItem(item, doc)" ng-show="itemHasDoc(item,doc)">Remove</button>
+                        <button ng-click="addDocToItem(item, doc, realDocumentFilter)" ng-hide="itemHasDoc(item,doc)">Add</button>
+                        <button ng-click="removeDocFromItem(item, doc, realDocumentFilter)" ng-show="itemHasDoc(item,doc)">Remove</button>
                     </td>
                     </td>
                 </tr>
@@ -1103,14 +1187,17 @@ app.controller('myCtrl', function($scope, $http) {
       </tr>
 
                           <!--  AGENDA Action ITEMS -->
+      <tr><td style="height:15px"></td></tr>
       <tr ng-show="showItemMap[item.id]">
         <td ng-hide="isEditing(4,item.id)" style="width:100%">
            <table class="table">
            <tr ng-show="itemGoals(item).length>0">
               <th></th>
+              <th></th>
               <th>Synopsis</th>
               <th>Assignee</th>
               <th>Due</th>
+              <th>Status</th>
            </tr>
            <tr ng-repeat="goal in itemGoals(item)" style="margin-left:30px;">
               <td>
@@ -1130,16 +1217,24 @@ app.controller('myCtrl', function($scope, $http) {
                 </ul>
               </span>
               </td>
-              <td>
+              <td style="width:20px;">
               <a href="task{{goal.id}}.htm" class="leafContent"   >
-                <img src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"> {{goal.synopsis}}
+                <img src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif">
+              </a>
+              </td>
+              <td style="max-width:300px;">
+              <a href="task{{goal.id}}.htm" >
+                {{goal.synopsis}}
               </a>
               </td>
               <td>
               <span ng-repeat="person in goal.assignTo"> {{person.name}}<br/></span>
               </td>
-              <td>
+              <td ng-click="openDueDate(item,goal)" style="width:100px;">
               <span ng-show="goal.duedate>=0">{{goal.duedate|date}} </span>
+              </td>
+              <td style="max-width:300px;" ng-click="openDueDate(item,goal)">
+                {{goal.status}}
               </td>
            </tr>
            </table>
@@ -1345,6 +1440,78 @@ app.controller('myCtrl', function($scope, $http) {
 
     Refreshed {{refreshCount}} times.   {{refreshStatus}}<br/>
     reminder sent {{meeting.reminderSent | date:'M/d/yy H:mm'}}
+
+
+    <script type="text/ng-template" id="myModalDueDate.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Action Item</h3>
+        </div>
+        <div class="modal-body">
+          <table id="displayTable">
+            <tr>
+              <td style="padding:10px;">
+                Summary:
+              </td>
+              <td style="padding:10px;">
+                {{goal.synopsis}} ~ {{goal.description}}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px;">
+                Prospect:
+              </td>
+              <td style="padding:10px;">
+                  <span class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" style="{{goalStateStyle(goal)}};width:100px;margin:2px;padding:2px;">
+                          {{goalStateName(goal)}} <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                      <li role="presentation"><a role="menuitem"
+                          ng-click="changeGoalState(goal, 'good')">Good</a></li>
+                      <li role="presentation"><a role="menuitem"
+                          ng-click="changeGoalState(goal, 'ok')">Warning</a></li>
+                      <li role="presentation"><a role="menuitem"
+                          ng-click="changeGoalState(goal, 'bad')">Trouble</a></li>
+                      <li role="presentation" class="divider"></li>
+                      <li role="presentation"><a role="menuitem"
+                          ng-click="removeGoalFromItem(item, goal)">Remove Action Item</a></li>
+                    </ul>
+                  </span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px;">
+                Due Date:
+              </td>
+              <td style="padding:10px;">
+                <input type="text"
+                style="width:200px;"
+                class="form-control"
+                datepicker-popup="dd-MMMM-yyyy"
+                ng-model="goalDueDate"
+                is-open="datePickOpen"
+                min-date="minDate"
+                datepicker-options="datePickOptions"
+                date-disabled="datePickDisable(date, mode)"
+                ng-required="true"
+                ng-click="openDatePicker($event)"
+                close-text="Close"/>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px;">
+                Status:
+              </td>
+              <td style="padding:10px;">
+                <textarea ng-model="goal.status" class="form-control" style="width:400px"></textarea>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">Save</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
 
 </div>
 

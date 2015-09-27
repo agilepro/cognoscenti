@@ -147,7 +147,9 @@ app.controller('myCtrl', function($scope, $http) {
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="showInput=!showInput">Add New Meeting</a></li>
+                  href="#" ng-click="newMeeting.meetingType=1;showInput=true">New Circle Meeting</a></li>
+              <li role="presentation"><a role="menuitem" tabindex="-1"
+                  href="#" ng-click="newMeeting.meetingType=2;showInput=true">New Operational Meeting</a></li>
             </ul>
           </span>
 
@@ -190,7 +192,6 @@ app.controller('myCtrl', function($scope, $http) {
                         ng-model="newMeetingTime"
                         is-open="datePickOpen"
                         min-date="minDate"
-                        max-date="'2015-06-22'"
                         datepicker-options="datePickOptions"
                         date-disabled="datePickDisable(date, mode)"
                         ng-required="true"
@@ -282,4 +283,5 @@ app.controller('myCtrl', function($scope, $http) {
             <td>{{rec.duration}}</td>
         </tr>
     </table>
+
 </div>
