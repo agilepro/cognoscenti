@@ -19,7 +19,10 @@ Required parameters:
 
     List<HistoryRecord> histRecs = ngp.getAllHistory();
     JSONArray topHistory = new JSONArray();
+    JSONArray recentChanges = new JSONArray();
     int limit=10;
+    Hashtable<String,String> seenBefore = new Hashtable<String,String>();
+
     for (HistoryRecord hist : histRecs) {
         if (limit-- < 0) {
             break;
@@ -83,24 +86,17 @@ Required parameters:
             }
         }
         JSONObject jObj = hist.getJSON(ngp,ar);
+        jObj.put("contextUrl", url );
         /*
-        jObj.put("timestamp",   hist.getTimeStamp() );
-        jObj.put("responsible", ale.getUniversalId() );
-        if (responsible!=null) {
-            jObj.put("respUrl",     "v/"+responsible.getKey()+"/userSettings.htm" );
-        }
-        else {
-            jObj.put("respUrl",     "findUser.htm?id="+URLEncoder.encode(ale.getUniversalId(),"UTF-8") );
-        }
-        jObj.put("respName",    ale.getName() );
-        jObj.put("imagePath",   imagePath );
-        jObj.put("action",      hist.convertEventTypeToString(hist.getEventType()));
-        jObj.put("contextUrl",  url );
-        jObj.put("contextType", cType );
-        jObj.put("context",     hist.getContext() );
         jObj.put("contextName", objName );
-        jObj.put("comments",    hist.getComments() );
         */
+
+        //elliminate duplicate objects
+        boolean seen = seenBefore.containsKey(objectKey);
+        if (!seen) {
+            seenBefore.put(objectKey,objectKey);
+            recentChanges.put(jObj);
+        }
         topHistory.put(jObj);
     }
 
@@ -135,6 +131,39 @@ Required parameters:
             children.put(jo);
         }
     }
+
+    UserProfile uProf = ar.getUserProfile();
+
+    JSONArray yourRoles = new JSONArray();
+    for (NGRole ngr : ngp.findRolesOfPlayer(uProf)) {
+        yourRoles.put(ngr.getName());
+    }
+
+    JSONArray otherMembers = new JSONArray();
+    for (AddressListEntry ale : ngp.getPrimaryRole().getExpandedPlayers(ngp)) {
+        if (uProf.hasAnyId(ale.getUniversalId())) {
+            continue;
+        }
+        otherMembers.put(ale.getJSON());
+    }
+
+    JSONArray myMeetings = new JSONArray();
+    for (MeetingRecord meet : ngp.getMeetings()) {
+        if (meet.getState() == 99) {
+            continue;
+        }
+        myMeetings.put(meet.getListableJSON(ar));
+    }
+
+    JSONArray myActions = new JSONArray();
+    for (GoalRecord action : ngp.getAllGoals()) {
+        NGRole assignees = action.getAssigneeRole();
+        if (!assignees.isExpandedPlayer(uProf, ngp)) {
+            continue;
+        }
+        myActions.put(action.getJSON4Goal(ngp));
+    }
+
 %>
 
 <script type="text/javascript">
@@ -142,9 +171,14 @@ Required parameters:
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.topHistory = <%topHistory.write(out,2,4);%>;
+    $scope.recentChanges = <%recentChanges.write(out,2,4);%>;
     $scope.parent     = <%parent.write(out,2,4);%>;
     $scope.thisCircle = <%thisCircle.write(out,2,4);%>;
     $scope.children   = <%children.write(out,2,4);%>;
+    $scope.yourRoles  = <%yourRoles.write(out,2,4);%>;
+    $scope.otherMembers = <%otherMembers.write(out,2,4);%>;
+    $scope.myMeetings = <%myMeetings.write(out,2,4);%>;
+    $scope.myActions  = <%myActions.write(out,2,4);%>;
     $scope.filter = "";
 
     $scope.showInput = false;
@@ -246,10 +280,30 @@ app.controller('myCtrl', function($scope, $http) {
       }
     </style>
 
-    <table><tr>
-    <td style="width:350px">
-       <div class="tripleColumn">
+    <table><tr style="vertical-align:top;">
+    <td style="width:350px;vertial-align:top;">
+       <div class="tripleColumn leafContent">
           <h1>Recent Updates</h1>
+          <div ng-repeat="hist in recentChanges">
+             <ul>
+               <li>
+                 <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>
+               </li>
+             </ul>
+          </div>
+          <h1>Upcoming Meetings</h1>
+          <ul>
+            <li ng-repeat="meet in myMeetings">
+              <a href="meetingFull.htm?id={{meet.id}}">{{meet.name}}</a>
+            </li>
+          </ul>
+          <h1>Your Action Items</h1>
+          <ul>
+            <li ng-repeat="act in myActions">
+              <a href="task{{act.id}}.htm">{{act.synopsis}}</a>
+            </li>
+          </ul>
+          <h1>Recent History</h1>
           <div ng-repeat="hist in topHistory">
              {{hist.time|date}} -
              <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
@@ -261,8 +315,8 @@ app.controller('myCtrl', function($scope, $http) {
           </div>
        </div>
     </td>
-    <td style="width:350px">
-       <div class="tripleColumn">
+    <td style="width:350px;vertial-align:top;">
+       <div class="tripleColumn leafContent">
            <svg height="350px" width="350px">
                <g ng-show="parent.key">
                    <line x1="177" y1="85" x2="177" y2="175" style="stroke:rgb(120,0,0);stroke-width:2" />
@@ -292,31 +346,34 @@ app.controller('myCtrl', function($scope, $http) {
            </svg>
        </div>
     </td>
-    <td style="width:350px">
-       <div class="tripleColumn">
+    <td style="width:350px;vertial-align:top;">
+       <div class="tripleColumn leafContent">
            <div style="margin:5px;">
                <h1>Your Roles</h1>
                <ul>
-               <li>Members</li>
+               <li ng-repeat="role in yourRoles">{{role}}</li>
                </ul>
            </div>
            <div style="margin:5px;">
                <h1>Other Members</h1>
                <ul>
-               <li>John</li>
-               <li>Joe</li>
-               <li>Betty</li>
+               <li ng-repeat="person in otherMembers">{{person.name}}</li>
                </ul>
            </div>
            <div style="margin:5px;">
                <h1>Parent Circle</h1>
-               <a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/frontPage.htm">{{parent.name}}</a>
+               <ul>
+               <li><a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/frontPage.htm">{{parent.name}}</a>
+               </li>
+               </ul>
            </div>
            <div style="margin:5px;">
                <h1>Children Circles</h1>
-               <div ng-repeat="child in children">
+               <ul>
+               <li ng-repeat="child in children">
                    <a href="<%=ar.retPath%>t/{{child.site}}/{{child.key}}/frontPage.htm">{{child.name}}</a>
-               </div>
+               </li>
+               </ul>
            </div>
        </div>
     </td>

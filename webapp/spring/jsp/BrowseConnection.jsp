@@ -63,7 +63,7 @@ Required parameter:
         {
             fdname = fdname.substring(0, indx2);
         }
-        String projectLink = ar.retPath + "t/" + page.getSite().getKey() + "/" +page.getKey() + "/notesList.htm";
+        String projectLink = ar.retPath + "t/" + page.getSite().getKey() + "/" +page.getKey() + "/frontPage.htm";
 
         ar.write("<div class=\"generalArea\">");
         ar.write("\n<div class=\"pageHeading\">");

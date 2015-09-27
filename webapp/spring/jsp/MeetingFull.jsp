@@ -145,7 +145,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.newPerson = "";
     $scope.myUserId = "<% ar.writeJS(ar.getBestUserId()); %>";
     $scope.actionItemFilter = "";
-    alert("about to clear the filter");
     $scope.realDocumentFilter = "";
 
     $scope.showError = false;
@@ -463,6 +462,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         var saveRecord = {};
         saveRecord.agenda = [agendaItem];
         $scope.putGetMeetingInfo(saveRecord);
+        $scope.stopEditing();
     };
     $scope.revertAllEdits = function() {
         var saveRecord = {};

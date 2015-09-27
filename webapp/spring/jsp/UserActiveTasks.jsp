@@ -133,7 +133,7 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
                 <td>{{rec.description | limitTo: 150}}</td>
                 <td>
-                    <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/notesList.htm">{{rec.projectname}}</a>
+                    <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/frontPage.htm">{{rec.projectname}}</a>
                 </td>
                 <td>
                     <a href="../../t/{{rec.siteKey}}/$/accountListProjects.htm">{{rec.sitename}}</a>

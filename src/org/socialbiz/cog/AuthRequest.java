@@ -1381,7 +1381,7 @@ public class AuthRequest
     public String getDefaultURL(NGContainer ngc) throws Exception {
         if(ngc instanceof NGPage){
             return "t/" + URLEncoder.encode(((NGPage) ngc).getSiteKey(), "UTF-8")+"/"
-                        + ngc.getKey()+"/notesList.htm";
+                        + ngc.getKey()+"/frontPage.htm";
         }
 
         // for site go to the project list
@@ -1391,7 +1391,7 @@ public class AuthRequest
     public String getDefaultURL(NGPageIndex ngpi) throws Exception {
         if (ngpi.isProject()) {
             return "t/" + URLEncoder.encode(ngpi.pageBookKey, "UTF-8")+"/"
-                        + ngpi.containerKey + "/notesList.htm";
+                        + ngpi.containerKey + "/frontPage.htm";
         }
         // for site go to the project list
         return  "t/" + URLEncoder.encode(ngpi.pageBookKey, "UTF-8")+"/$/accountListProjects.htm";

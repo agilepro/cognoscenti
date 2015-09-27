@@ -77,7 +77,7 @@ public class MainTabsViewControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "notesList.htm");
+        return redirectBrowser(ar, "frontPage.htm");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/notesList.htm", method = RequestMethod.GET)
@@ -100,28 +100,28 @@ public class MainTabsViewControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "notesList.htm");
+        return redirectBrowser(ar, "frontPage.htm");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/member.htm", method = RequestMethod.GET)
     public ModelAndView member(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "notesList.htm");
+        return redirectBrowser(ar, "frontPage.htm");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/deletedNotes.htm", method = RequestMethod.GET)
     public ModelAndView deletedNotes(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "notesList.htm");
+        return redirectBrowser(ar, "frontPage.htm");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/draftNotes.htm", method = RequestMethod.GET)
     public ModelAndView draftNotes(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "notesList.htm");
+        return redirectBrowser(ar, "frontPage.htm");
     }
 
 
@@ -1170,13 +1170,13 @@ public class MainTabsViewControler extends BaseController {
               else {
                   gr = ngp.getGoalOrFail(gid);
               }
-              
+
               int previousState = gr.getState();
               String previousStatus = gr.getStatus();
               long previousDue = gr.getDueDate();
 
               gr.updateGoalFromJSON(goalInfo);
-              
+
               //now make the history description of what just happened
               StringBuffer inventedComment = new StringBuffer(goalInfo.optString("newAccomplishment"));
               if (previousState != gr.getState()) {

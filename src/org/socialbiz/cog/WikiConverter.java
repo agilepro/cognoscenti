@@ -486,7 +486,7 @@ public class WikiConverter
             if (foundPages.size() == 1) {
                 NGPageIndex foundPI = foundPages.firstElement();
                 linkAddr = ar.baseURL
-                        + ar.getResourceURL(foundPI, "notesList.htm");
+                        + ar.getResourceURL(foundPI, "frontPage.htm");
                 if (!userSpecifiedName) {
                     linkName = foundPI.containerName; // use the best name for
                                                         // page

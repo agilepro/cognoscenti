@@ -44,7 +44,7 @@ Required parameter:
                 }
         %>
         <div class="pageHeading">Browse folders to store your document of
-            <a href="<%ar.writeHtml(projectLink);%>/notesList.htm"><%ar.writeHtml(ngPage.getFullName()); %></a>
+            <a href="<%ar.writeHtml(projectLink);%>/frontPage.htm"><%ar.writeHtml(ngPage.getFullName()); %></a>
         </div><br>
         <%
         showHeader(ar, ent, ngPage, folderId, aid, fndDefLoctn);

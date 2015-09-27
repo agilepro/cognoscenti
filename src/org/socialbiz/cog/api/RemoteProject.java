@@ -71,7 +71,7 @@ public class RemoteProject
 
         //old api had a field for 'ui' attempt to reconstruct
         if (projectui == null || projectui.length()==0) {
-            projectui = getJSONObj().optString("ui") + "notesList.htm";
+            projectui = getJSONObj().optString("ui") + "frontPage.htm";
         }
         return projectui;
     }

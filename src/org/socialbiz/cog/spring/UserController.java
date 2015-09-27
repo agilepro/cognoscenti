@@ -1721,7 +1721,7 @@ public class UserController extends BaseController {
                 Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
                 if(foundPages.size()>0){
                     NGPageIndex foundPage = foundPages.get( 0 );
-                    return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/notesList.htm" );
+                    return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
                 }
             }
 
@@ -1769,7 +1769,7 @@ public class UserController extends BaseController {
                 Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
                 if(foundPages.size()>0){
                     NGPageIndex foundPage = foundPages.get( 0 );
-                    return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/notesList.htm" );
+                    return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
                 }
             }
 
@@ -1818,7 +1818,7 @@ public class UserController extends BaseController {
                 Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
                 if(foundPages.size()>0){
                     NGPageIndex foundPage = foundPages.get( 0 );
-                    return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/notesList.htm" );
+                    return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
                 }
             }
 

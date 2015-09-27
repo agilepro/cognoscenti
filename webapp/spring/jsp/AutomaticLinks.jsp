@@ -111,7 +111,7 @@ app.controller('myCtrl', function($scope, $http) {
         <td>#{{oneTag.tag}}</td>
         <td>
           <div ng-repeat="projs in oneTag.projects">
-            <a href="<%=ar.retPath%>t/{{projs.siteKey}}/{{projs.pageKey}}/notesList.htm">{{projs.name}}</a><br/>
+            <a href="<%=ar.retPath%>t/{{projs.siteKey}}/{{projs.pageKey}}/frontPage.htm">{{projs.name}}</a><br/>
           </div>
         </td>
       </tr>
@@ -123,7 +123,7 @@ app.controller('myCtrl', function($scope, $http) {
         <td>To This Project</td>
         <td>
           <div ng-repeat="projs in inboundLinks">
-            <a href="<%=ar.retPath%>t/{{projs.siteKey}}/{{projs.pageKey}}/notesList.htm">{{projs.name}}</a><br/>
+            <a href="<%=ar.retPath%>t/{{projs.siteKey}}/{{projs.pageKey}}/frontPage.htm">{{projs.name}}</a><br/>
           </div>
         </td>
       </tr>
@@ -131,7 +131,7 @@ app.controller('myCtrl', function($scope, $http) {
         <td>From This Project</td>
         <td>
           <div ng-repeat="projs in outboundLinks">
-            <a href="<%=ar.retPath%>t/{{projs.siteKey}}/{{projs.pageKey}}/notesList.htm">{{projs.name}}</a><br/>
+            <a href="<%=ar.retPath%>t/{{projs.siteKey}}/{{projs.pageKey}}/frontPage.htm">{{projs.name}}</a><br/>
           </div>
         </td>
       </tr>
@@ -139,7 +139,7 @@ app.controller('myCtrl', function($scope, $http) {
         <td>Recently Visited</td>
         <td>
           <div ng-repeat="projs in recentList">
-            <a href="<%=ar.retPath%>t/{{projs.siteKey}}/{{projs.pageKey}}/notesList.htm">{{projs.name}}</a><br/>
+            <a href="<%=ar.retPath%>t/{{projs.siteKey}}/{{projs.pageKey}}/frontPage.htm">{{projs.name}}</a><br/>
           </div>
         </td>
       </tr>

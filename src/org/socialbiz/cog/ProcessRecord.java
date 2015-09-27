@@ -197,7 +197,7 @@ public class ProcessRecord extends BaseRecord
         processEle.setAttribute("id", getId());
 
         DOMUtils.createChildElement(doc, processEle, "key", processurl);
-        DOMUtils.createChildElement(doc, processEle, "display", "notesList.htm");
+        DOMUtils.createChildElement(doc, processEle, "display", "frontPage.htm");
         DOMUtils.createChildElement(doc, processEle, "synopsis", getSynopsis());
         DOMUtils.createChildElement(doc, processEle, "description", getDescription());
         DOMUtils.createChildElement(doc, processEle, "priority", String.valueOf(getPriority()));

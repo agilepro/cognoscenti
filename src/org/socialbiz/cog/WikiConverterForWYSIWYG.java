@@ -106,7 +106,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter
                 Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkText);
                 if (foundPages.size() >= 1) {
                     NGPageIndex foundPI = foundPages.firstElement();
-                    linkAddr = ar.baseURL + ar.getResourceURL(foundPI, "notesList.htm");
+                    linkAddr = ar.baseURL + ar.getResourceURL(foundPI, "frontPage.htm");
                 }
                 else {
                     //didn't find a project with that name, so just link to hash which

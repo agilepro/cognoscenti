@@ -62,7 +62,7 @@ function createTabs(){
     var mainElement = document.getElementById("tabs");
     var arrayOfTabs;
     var shortPath = "t/"+book+"/"+pageId;
-    var homePath = shortPath + "/notesList.htm";
+    var homePath = shortPath + "/frontPage.htm";
     if (shortPath == "t///projectHome.htm") {
         homePath = "";
     }
@@ -212,7 +212,7 @@ function createSubLinks(){
     else{   //This is the Project case
 
         var arrayOfTabs1 = [
-            new Tab(retPath+"t/"+book+"/"+pageId+"/notesList.htm",   "List Topics"),
+            new Tab(retPath+"t/"+book+"/"+pageId+"/frontPage.htm",   "List Topics"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/automaticLinks.htm","Automatic Links"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/searchAllNotes.htm","Search All Topics"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/exportPDF.htm",   "Generate PDF"),

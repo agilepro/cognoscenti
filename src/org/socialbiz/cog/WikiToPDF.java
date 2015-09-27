@@ -956,7 +956,7 @@ public class WikiToPDF
                 {
                     NGPageIndex foundPI = foundPages.firstElement();
                     if (!foundPI.isDeleted) {
-                        linkAddr = ar.baseURL + ar.getResourceURL(foundPI, "notesList.htm");
+                        linkAddr = ar.baseURL + ar.getResourceURL(foundPI, "frontPage.htm");
                         linkName = foundPI.containerName;   //use the best name for page
 
                         lookupOK = true;

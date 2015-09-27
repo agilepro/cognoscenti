@@ -171,7 +171,7 @@
         var pageKey = oRecord.getData("pageKey");
         var bookKey = oRecord.getData("bookKey");
         var projectName = oRecord.getData("projectName");
-        elCell.innerHTML = '<a href="<%=ar.baseURL%>t/'+bookKey+'/'+pageKey+'/notesList.htm" >'+projectName+'</a>';
+        elCell.innerHTML = '<a href="<%=ar.baseURL%>t/'+bookKey+'/'+pageKey+'/frontPage.htm" >'+projectName+'</a>';
 
     };
 

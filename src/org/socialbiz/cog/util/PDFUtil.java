@@ -688,7 +688,7 @@ public class PDFUtil {
             if (foundPages.size()==1)
             {
                 NGPageIndex foundPI = foundPages.firstElement();
-                linkAddr = ar.retPath + ar.getResourceURL(foundPI, "notesList.htm");
+                linkAddr = ar.retPath + ar.getResourceURL(foundPI, "frontPage.htm");
                 if (!userSpecifiedName)
                 {
                     linkName = foundPI.containerName;   //use the best name for page
