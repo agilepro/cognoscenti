@@ -148,10 +148,9 @@ public class BaseController {
     }
 
     public ModelAndView createNamedView(String siteId, String pageId,
-            AuthRequest ar,  String viewName, String tabId)
+            AuthRequest ar,  String viewName)
             throws Exception {
         ar.req.setAttribute("book", siteId);
-        ar.req.setAttribute("tabId", tabId);
         ar.req.setAttribute("pageId", pageId);
         ar.req.setAttribute("realRequestURL", ar.getRequestURL());
         return new ModelAndView(viewName);

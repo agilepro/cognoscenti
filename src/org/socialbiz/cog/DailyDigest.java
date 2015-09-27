@@ -100,7 +100,7 @@ public class DailyDigest {
                     }
 
                     if (containers.size() > 0) {
-                        clone.write("<div style=\"margin-top:15px;margin-bottom:20px;\"><span style=\"font-size:24px;font-weight:bold;\">Project Updates</span>&nbsp;&nbsp;&nbsp;");
+                        clone.write("<div style=\"margin-top:15px;margin-bottom:20px;\"><span style=\"font-size:24px;font-weight:bold;\">Workspace Updates</span>&nbsp;&nbsp;&nbsp;");
                         numberOfUpdates += constructDailyDigestEmail(clone, containers,
                                         lastNotificationSentTime,
                                         processingStartTime);
@@ -225,7 +225,7 @@ public class DailyDigest {
             clone.write("<h4><img border=\"0\" align=\"middle\" src=\"");
             clone.write(clone.baseURL);
             clone.write("assets/iconProject.png");
-            clone.write("\" alt=\"Project");
+            clone.write("\" alt=\"Workspace");
             clone.write("\"/>&nbsp;&nbsp;<a href=\"");
 
             clone.write(url);
@@ -364,7 +364,7 @@ public class DailyDigest {
             ar.writeHtml(task.getSynopsis());
             ar.write("</a> - <a href=\"");
             writeProcessLinkUrl(ar, ngpi);
-            ar.write("\" title=\"See the project containing this task\">");
+            ar.write("\" title=\"See the workspace containing this task\">");
             ar.writeHtml(ngpi.containerName);
             ar.write("</a>");
             ar.write("\n<br/>Status: ");
@@ -452,7 +452,7 @@ public class DailyDigest {
                         ar.write("\n <th>Document to upload</th> ");
                         ar.write("\n <th>Requested By</th> ");
                         ar.write("\n <th>Sent On</th>");
-                        ar.write("\n <th>Project</th>");
+                        ar.write("\n <th>Workspace</th>");
                         ar.write("\n </tr> ");
                         ar.write("\n </thead> ");
                         ar.write("\n <tbody>");

@@ -154,7 +154,7 @@ app.controller('myCtrl', function($scope, $http) {
             <col width="300px">
             <col width="400px">
             <tr>
-                <td><b>Watch project:</b></td>
+                <td><b>Watch workspace:</b></td>
                 <td>
                     <button ng-show="isWatching" class="btn " ng-click="userOp('ClearWatch')">Stop Watching</button>
                     <button ng-show="isWatching" class="btn " ng-click="userOp('SetWatch')">Reset Watch Time</button>
@@ -164,16 +164,16 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn" ng-click="openWatch=!openWatch">?</button>
                 </td>
                 <td ng-show="openWatch" ng-click="openWatch=!openWatch">
-                    <span ng-hide="isWatching"><b>You are not watching this project</b></span>
-                    <span ng-show="isWatching"><b>You are watching this project</b></span>
+                    <span ng-hide="isWatching"><b>You are not watching this workspace</b></span>
+                    <span ng-show="isWatching"><b>You are watching this workspace</b></span>
                     <br/>
                     <br/>
                     In order to view your recent &amp; selected modified projects list at a glance from your
-                    profile's homepage, you can simply click the "<b>Start Watching</b>" button & the project name
-                    will appear in the list of "<b>Watched Projects</b>" under homepage.<br/>
+                    profile's homepage, you can simply click the "<b>Start Watching</b>" button and the workspace name
+                    will appear in the list of "<b>Watched Workspaces</b>" under homepage.<br/>
                     <br/>
-                    And in future if you do not want that project to appear in watched project list you can stop
-                    watching that project immediately.
+                    And in future if you do not want that workspace to appear in watched workspace list you can stop
+                    watching that workspace immediately.
                     <br/>
                     <br/>
                 </td>
@@ -188,13 +188,13 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn" ng-click="openTemplate=!openTemplate">?</button>
                 </td>
                 <td ng-show="openTemplate" ng-click="openTemplate=!openTemplate">
-                    <span ng-hide="isTemplate"><b>This project is not one of your template</b></span>
-                    <span ng-show="isTemplate"><b>This project is one of your template</b></span>
+                    <span ng-hide="isTemplate"><b>This workspace is not one of your template</b></span>
+                    <span ng-show="isTemplate"><b>This workspace is one of your template</b></span>
                     <br/>
                     <br/>
-                    You can use this project as template for your future reference. If you mark this
-                    project as template then it will appear in the "List of Templates" in your profile's
-                    project page. At any time you can even stop using this project as template.
+                    You can use this workspace as template for your future reference. If you mark this
+                    workspace as template then it will appear in the "List of Templates" in your profile's
+                    workspace page. At any time you can even stop using this workspace as template.
                     <br/>
                     <br/>
                 </td>
@@ -209,13 +209,13 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn" ng-click="openNotify=!openNotify">?</button>
                 </td>
                 <td ng-show="openNotify" ng-click="openNotify=!openNotify">
-                    <span ng-hide="isNotify"><b>You are not receiving notifications for this project</b></span>
-                    <span ng-show="isNotify"><b>You are receiving notifications for this project</b></span>
+                    <span ng-hide="isNotify"><b>You are not receiving notifications for this workspace</b></span>
+                    <span ng-show="isNotify"><b>You are receiving notifications for this workspace</b></span>
                     <br/>
                     <br/>
-                    You can use this project as template for your future reference. If you mark this
-                    project as template then it will appear in the "List of Templates" in your profile's
-                    project page. At any time you can even stop using this project as template.
+                    You can use this workspace as template for your future reference. If you mark this
+                    workspace as template then it will appear in the "List of Templates" in your profile's
+                    workspace page. At any time you can even stop using this workspace as template.
                     <br/>
                     <br/>
                 </td>

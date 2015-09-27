@@ -58,7 +58,7 @@
 <%@ include file="Header.jsp"%>
 
 
-<h2>Access Document from Project</h2>
+<h2>Access Document from Workspace</h2>
 <br/>
 
 <table>
@@ -72,7 +72,7 @@
 <tr>
   <td></td>
   <td><%
-  	ar.writeHtml(attachment.getDescription());
+    ar.writeHtml(attachment.getDescription());
   %></td>
 </tr>
 <tr>
@@ -91,7 +91,7 @@
       <br/>&nbsp;</td>
 </tr>
 <tr>
-  <td>Project:</td>
+  <td>Workspace:</td>
   <td><%ar.writeHtml(ngp.getFullName());%></td>
 </tr>
 </table>

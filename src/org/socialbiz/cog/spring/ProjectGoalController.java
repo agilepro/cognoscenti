@@ -64,7 +64,7 @@ public class ProjectGoalController extends BaseController {
     public static final String CREATE_TASK = "Create Task";
     public static final String BOOK_ATT = "book";
     public static final String PROCESS_HTML = "projectActiveTasks.htm";
-    public static final String PROJECT_TASKS="Project Tasks";
+    public static final String PROJECT_TASKS="Workspace Action Items";
     public static final String SUCCESS_LOCAL = "success_local";
     public static final String SUCCESS_REMOTE = "success_remote";
     public static final String REMOTE_PROJECT = "Remote_project";
@@ -149,7 +149,6 @@ public class ProjectGoalController extends BaseController {
             ar.assertLoggedIn("Must be logged in to open a sub task");
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", PROJECT_TASKS);
             request.setAttribute("taskId", taskId);
             request.setAttribute("title", " : " + nGPage.getFullName());
             return new ModelAndView("subtask");
@@ -163,7 +162,7 @@ public class ProjectGoalController extends BaseController {
     {
        // final boolean updateTask =  true;
         ar.setPageAccessLevels(ngp);
-        ar.assertMember("Must be a member of a project to manipulate tasks.");
+        ar.assertMember("Must be a member of a workspace to manipulate tasks.");
         ar.assertNotFrozen(ngp);
 
         UserProfile userProfile = ar.getUserProfile();
@@ -224,7 +223,7 @@ public class ProjectGoalController extends BaseController {
             throws Exception
     {
         ar.setPageAccessLevels(ngp);
-        ar.assertMember("Must be a member of a project to manipulate tasks.");
+        ar.assertMember("Must be a member of a workspace to manipulate tasks.");
         ar.assertNotFrozen(ngp);
 
         UserProfile userProfile = ar.getUserProfile();
@@ -340,7 +339,6 @@ public class ProjectGoalController extends BaseController {
             }
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", PROJECT_TASKS);
             request.setAttribute("taskId", taskId);
             return modelAndView;
 
@@ -379,7 +377,7 @@ public class ProjectGoalController extends BaseController {
             ar = AuthRequest.getOrCreate(request, response);
             NGPage ngp = registerRequiredProject(ar, siteId, pageId);
             ar.assertLoggedIn("Can't edit a work item.");
-            ar.assertMember("Must be a member of a project to update tasks.");
+            ar.assertMember("Must be a member of a workspace to update tasks.");
 
             String id = ar.reqParam("id");
             GoalRecord task = ngp.getGoalOrFail(id);
@@ -440,7 +438,7 @@ public class ProjectGoalController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Must be logged in to reassign task.");
             NGPage ngp = registerRequiredProject(ar, siteId, pageId);
-            ar.assertMember("Must be a member of a project to reassign tasks.");
+            ar.assertMember("Must be a member of a workspace to reassign tasks.");
             ar.assertNotFrozen(ngp);
 
             String taskId = ar.reqParam("taskid");
@@ -620,7 +618,7 @@ public class ProjectGoalController extends BaseController {
             NGPageIndex.releaseLock(page);
         }
 
-        return "No project found";
+        return "No workspace found";
     }
 
 
@@ -638,7 +636,7 @@ public class ProjectGoalController extends BaseController {
 
             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
             ar.setPageAccessLevels(ngp);
-            ar.assertMember("Must be a member of a project to reorder tasks.");
+            ar.assertMember("Must be a member of a workspace to reorder tasks.");
 
             List<GoalRecord> tasks = ngp.getAllGoals();
 

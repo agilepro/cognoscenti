@@ -28,7 +28,7 @@
         process.setSynopsis(goal);
         process.setDescription(purpose);
         ngp.setUpstreamLink(beam);
-        ngp.saveFile(ar, "Changed Goal and/or Purpose of Project");
+        ngp.saveFile(ar, "Changed Goal and/or Purpose of Workspace");
     }
     else
     {

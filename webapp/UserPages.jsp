@@ -25,7 +25,7 @@
     {
         pageTitle = "User: "+uProf.getName();
     }
-    specialTab = "My Projects";
+    specialTab = "My Workspaces";
 %>
 
 
@@ -37,7 +37,7 @@
 %>
     <div class="pagenavigation">
         <div class="pagenav">
-            <div class="left"><%ar.writeHtml(uProf.getName());%> &raquo; List of Projects</div>
+            <div class="left"><%ar.writeHtml(uProf.getName());%> &raquo; List of Workspaces</div>
             <div class="right"></div>
             <div class="clearer">&nbsp;</div>
         </div>
@@ -47,7 +47,7 @@
 
     <div class="section">
         <div class="section_title">
-            <h1 class="left">List of Projects</h1>
+            <h1 class="left">List of Workspaces</h1>
             <div class="section_date right"></div>
             <div class="clearer">&nbsp;</div>
         </div>

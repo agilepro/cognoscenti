@@ -45,7 +45,7 @@
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Synchronize with Upstream Project
+            Synchronize with Upstream Workspace
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -63,21 +63,21 @@
 
                 <%
                 if (upstreamLink==null || upstreamLink.length()==0) {
-                    %><i>Set an Upstream link (above) in order to synchronize with an upstream project,<br/>
-                    <br/>or..... enter a link to a remote site to create a new clone of this project.</i>
+                    %><i>Set an Upstream link (above) in order to synchronize with an upstream workspace,<br/>
+                    <br/>or..... enter a link to a remote site to create a new clone of this workspace.</i>
 
 
                   <form action="<%=ar.retPath%>Beam1Create.jsp" method="post">
                       <input type="hidden" name="go" value="<%ar.writeHtml(thisPage);%>">
                       <input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>">
                       <input type="text" name="siteLink" value="" size="50" class="inputGeneral">
-                      <input type="submit" name="op" value="Create Remote Upstream Project"  class="btn btn-primary">
+                      <input type="submit" name="op" value="Create Remote Upstream Workspace"  class="btn btn-primary">
                   </form>
 
                     <%
                 }
                 else if (upstreamError!=null)  {
-                    %><p><i>Encountered an error accessing the upstream project:
+                    %><p><i>Encountered an error accessing the upstream workspace:
                          <%ar.writeHtml(upstreamError.toString());%></i></p>
                       <p>An error of this type usually means that there is a problem with
                          the upstream link URL.  Is the link correct?  Another possibility
@@ -85,7 +85,7 @@
                          from this server at this time.  </p>
                       <p>Upstream URL: <a href="<%ar.writeHtml(upstreamLink);%>">
                          <%ar.writeHtml(upstreamLink);%></a></p>
-                      <p>The upstream link can be changed from this project's
+                      <p>The upstream link can be changed from this workspace's
                          <button class="btn btn-primary" onclick="window.location='admin.htm'"
                          type="button">Admin</button> page.</p>
                     <%
@@ -106,13 +106,13 @@
                     int goalsNeedingUp   = ps.getToUpload(SyncStatus.TYPE_TASK).size();
                     int goalsEqual       = ps.getEqual(SyncStatus.TYPE_TASK).size();
                 %>
-                <p>Link to project <a href="<%ar.writeHtml(rp.getUIAddress());%>"><%ar.writeHtml(rp.getName());%></a>
+                <p>Link to workspace <a href="<%ar.writeHtml(rp.getUIAddress());%>"><%ar.writeHtml(rp.getName());%></a>
                     (<a href="<%ar.writeHtml(upstreamLink);%>">api</a>)
                     on the remote site <a href="<%ar.writeHtml(rp.getSiteUIAddress());%>"><%ar.writeHtml(rp.getSiteName());%></a>
                     (<a href="<%ar.writeHtml(rp.getSiteURL());%>">api</a>)
                     is valid for <%=days%> more day as long as
                     <% ar.writeHtml(lic.getCreator()); %> remains in the
-                    <% ar.writeHtml(lic.getRole()); %> role in that project</p>
+                    <% ar.writeHtml(lic.getRole()); %> role in that workspace</p>
 
                 <table width="720px">
                   <form action="<%=ar.retPath%>Beam1SyncAll.jsp" method="post">

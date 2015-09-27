@@ -102,8 +102,7 @@ public class UserController extends BaseController {
     }
 
     public static ModelAndView createModelAndView(AuthRequest ar,
-            UserProfile up, String tabId,
-            String modelAndViewName) {
+            UserProfile up, String modelAndViewName) {
 
         HttpServletRequest request = ar.req;
         ModelAndView modelAndView = new ModelAndView(modelAndViewName);
@@ -114,7 +113,6 @@ public class UserController extends BaseController {
         request.setAttribute("userKey", up.getKey());
         request.setAttribute("userProfile", up);
         request.setAttribute("pageTitle", "User: " + up.getName());
-        request.setAttribute("tabId", tabId);
         request.setAttribute("title", up.getName());
         return modelAndView;
     }
@@ -151,7 +149,7 @@ public class UserController extends BaseController {
 
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
 
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "Projects", "WatchedProjects");
+            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "WatchedProjects");
             modelAndView.addObject( "messages", context );
 
             return modelAndView;
@@ -173,7 +171,7 @@ public class UserController extends BaseController {
 
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
 
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "Projects", "NotifiedProjects");
+            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "NotifiedProjects");
             modelAndView.addObject( "messages", context );
 
             return modelAndView;
@@ -195,7 +193,7 @@ public class UserController extends BaseController {
             }
 
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "Projects", "OwnerProjects");
+            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "OwnerProjects");
 
             return modelAndView;
         }catch(Exception ex){
@@ -218,7 +216,7 @@ public class UserController extends BaseController {
 
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
 
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "Projects", "Templates");
+            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "Templates");
             //modelAndView.addObject( "messages", context );
 
             return modelAndView;
@@ -240,7 +238,7 @@ public class UserController extends BaseController {
             }
 
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "Projects", "ParticipantProjects");
+            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "ParticipantProjects");
 
             return modelAndView;
         }catch(Exception ex){
@@ -261,7 +259,7 @@ public class UserController extends BaseController {
             }
 
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "Projects", "AllProjects");
+            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "AllProjects");
 
             return modelAndView;
         }catch(Exception ex){
@@ -286,7 +284,7 @@ public class UserController extends BaseController {
 
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
 
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "Updates", "UserAlerts");
+            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "UserAlerts");
             modelAndView.addObject( "messages", context );
             request.setAttribute("title", userBeingViewed.getName());
             return modelAndView;
@@ -315,7 +313,7 @@ public class UserController extends BaseController {
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
 
             request.setAttribute("title", userBeingViewed.getName());
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "Goals", viewName);
+            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, viewName);
             modelAndView.addObject("active", level);
             return modelAndView;
         }catch(Exception ex){
@@ -362,7 +360,7 @@ public class UserController extends BaseController {
             }
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
 
-            return createModelAndView(ar, userBeingViewed, "Goals", "ShareRequests");
+            return createModelAndView(ar, userBeingViewed, "ShareRequests");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
         }
@@ -442,7 +440,7 @@ public class UserController extends BaseController {
             }
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
 
-            return createModelAndView(ar, userBeingViewed, "Goals", "RemoteProfiles");
+            return createModelAndView(ar, userBeingViewed, "RemoteProfiles");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
         }
@@ -459,7 +457,7 @@ public class UserController extends BaseController {
             }
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
 
-            return createModelAndView(ar, userBeingViewed, "Goals", "UserRemoteTasks");
+            return createModelAndView(ar, userBeingViewed, "UserRemoteTasks");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
         }
@@ -513,7 +511,7 @@ public class UserController extends BaseController {
             }
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
 
-            return createModelAndView(ar, userBeingViewed, "Goals", "Agents");
+            return createModelAndView(ar, userBeingViewed, "Agents");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
         }
@@ -537,7 +535,7 @@ public class UserController extends BaseController {
                 throw new Exception("Unable to find an agent with id="+agentId);
             }
 
-            return createModelAndView(ar, userBeingViewed, "Goals", "EditAgent");
+            return createModelAndView(ar, userBeingViewed, "EditAgent");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
         }
@@ -561,7 +559,7 @@ public class UserController extends BaseController {
                 throw new Exception("unable to find a remote goal records with the url="+accessUrl);
             }
 
-            return createModelAndView(ar, userBeingViewed, "Goals", "ViewRemoteTask");
+            return createModelAndView(ar, userBeingViewed, "ViewRemoteTask");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
         }
@@ -698,35 +696,6 @@ public class UserController extends BaseController {
         }
     }
 
-/*
-    @RequestMapping(value = "/{siteId}/{pageId}/CreateRole.form", method = RequestMethod.POST)
-    public ModelAndView createRole(@PathVariable String siteId,@PathVariable String pageId,HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception
-    {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request,  response ,null);
-            NGPage project  = registerRequiredProject(ar, siteId, pageId);
-            ar.assertLoggedIn("Can't create a Role.");
-            ar.assertAdmin("Must be an admin of the project to create a role.");
-
-            String roleName = ar.reqParam("rolename").trim();
-            String des = ar.defParam("description", "");
-
-            NGRole role = project.createRole(roleName,des);
-
-            HistoryRecord.createHistoryRecord(project, role.getName(),
-                HistoryRecord.CONTEXT_TYPE_ROLE,
-                HistoryRecord.EVENT_TYPE_CREATED, ar, "");
-            project.saveFile(ar, "Add New Role "+roleName+" to roleList");
-
-            return redirectBrowser(ar,"permission.htm");
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.user.create.role.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
-*/
 
     @RequestMapping(value = "/markAsTemplate.ajax", method = RequestMethod.POST)
     public void markAsTemplate(HttpServletRequest request, HttpServletResponse response)
@@ -934,7 +903,7 @@ public class UserController extends BaseController {
             ar.assertLoggedIn("Need to log in to see a user's sites.");
             UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
 
-            return createModelAndView(ar, uProf, "Settings", "UserAccounts");
+            return createModelAndView(ar, uProf, "UserAccounts");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.useraccounts.page", new Object[]{userKey} , ex);
         }
@@ -947,10 +916,10 @@ public class UserController extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Need to log in to create a project.");
+            ar.assertLoggedIn("Need to log in to create a workspace.");
             UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
 
-            return createModelAndView(ar, uProf, "Projects", "UserCreateProject");
+            return createModelAndView(ar, uProf, "UserCreateProject");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.useraccounts.page", new Object[]{userKey} , ex);
         }
@@ -1155,7 +1124,6 @@ public class UserController extends BaseController {
             modelAndView = new ModelAndView("RoleRequest");
 
             request.setAttribute("isAccessThroughEmail", isAccessThroughEmail);
-            request.setAttribute("tabId", "Project Settings");
             request.setAttribute("canAccessPage", canAccessPage);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.approve.reject.rolereq.page", null , ex);
@@ -1187,7 +1155,7 @@ public class UserController extends BaseController {
             ar.assertLoggedIn("Need to log in to see page.");
             UserProfile up = UserManager.getUserProfileOrFail(userKey);
 
-            modelAndView = createModelAndView(ar, up, "Home", "ListConnections");
+            modelAndView = createModelAndView(ar, up, "ListConnections");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.list.connection.page", new Object[]{userKey} , ex);
         }
@@ -1218,7 +1186,7 @@ public class UserController extends BaseController {
             FolderAccessHelper fdh = new FolderAccessHelper(ar);
             fdh.getRemoteResource(folderId, path, true);
 
-            ModelAndView modelAndView = createModelAndView(ar, up, "Home", "FolderDisplay");
+            ModelAndView modelAndView = createModelAndView(ar, up, "FolderDisplay");
             request.setAttribute("path", path);
 
             //this is deprecated ... remove soon
@@ -1251,7 +1219,7 @@ public class UserController extends BaseController {
             String p = ar.reqParam("p");
             ar.getCogInstance().getProjectByKeyOrFail(p);
 
-            modelAndView = createModelAndView(ar, up, "Home", "BrowseConnection");
+            modelAndView = createModelAndView(ar, up, "BrowseConnection");
             request.setAttribute("folderId", folderId);
             request.setAttribute("path", path);
         }catch(Exception ex){
@@ -1272,7 +1240,7 @@ public class UserController extends BaseController {
             ar.assertLoggedIn("Need to log in to see remote folder page.");
             UserProfile up = UserManager.getUserProfileOrFail(userKey);
             String path = "/";  //debug
-            modelAndView = createModelAndView(ar, up, "Home", "FolderDisplay");
+            modelAndView = createModelAndView(ar, up, "FolderDisplay");
             request.setAttribute("fid", folderId + path);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.page", new Object[]{userKey}, ex);
@@ -1291,7 +1259,7 @@ public class UserController extends BaseController {
             ar.assertLoggedIn("Need to log in to see remote folder page.");
             UserProfile up = UserManager.getUserProfileOrFail(userKey);
             String path = "/";  //debug
-            modelAndView = createModelAndView(ar, up, "Home", "FolderDisplay");
+            modelAndView = createModelAndView(ar, up, "FolderDisplay");
             request.setAttribute("fid", folderId + path);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.page", new Object[]{userKey}, ex);
@@ -1460,7 +1428,6 @@ public class UserController extends BaseController {
             AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not open confirm page.");
 
             modelAndView = new ModelAndView("confirmedAddIdView");
-            request.setAttribute("tabId", "My Settings");
             String realRequestURL = request.getRequestURL().toString();
             request.setAttribute("realRequestURL", realRequestURL);
 
@@ -1520,9 +1487,8 @@ public class UserController extends BaseController {
                 }
             }
 
-            ModelAndView modelAndView = createModelAndView(ar, userProfile, "Notification Settings", "NotificationSettings");
+            ModelAndView modelAndView = createModelAndView(ar, userProfile, "NotificationSettings");
             modelAndView.addObject( "messages", context );
-            request.setAttribute("tabId", "Settings");
             return modelAndView;
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.open.notification.page", new Object[]{userKey} , ex);
@@ -1730,7 +1696,7 @@ public class UserController extends BaseController {
             request.setAttribute("userName",userName);
             request.setAttribute("flag","true");
             request.setAttribute("retPath",ar.retPath);
-            return createModelAndView(ar, uProf, "Settings", "UserSettings");
+            return createModelAndView(ar, uProf, "UserSettings");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
         }
@@ -1776,10 +1742,9 @@ public class UserController extends BaseController {
             request.setAttribute("book",    null);
             request.setAttribute("ngpage",ngp);
             request.setAttribute("userName",userName);
-            request.setAttribute("username","PLEASE REPORT ISSUE #148944");
             request.setAttribute("flag","true");
             request.setAttribute("retPath",ar.retPath);
-            return createModelAndView(ar, uProf, "Settings", "UserContacts");
+            return createModelAndView(ar, uProf, "UserContacts");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
         }
@@ -1827,7 +1792,7 @@ public class UserController extends BaseController {
             request.setAttribute("userName",userName);
             request.setAttribute("flag","true");
             request.setAttribute("retPath",ar.retPath);
-            return createModelAndView(ar, up, "Settings", "UserConnections");
+            return createModelAndView(ar, up, "UserConnections");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
         }
@@ -1992,13 +1957,13 @@ public class UserController extends BaseController {
         clone.write("<html><body>\n");
         clone.write("You requested to join the role <b>'");
         clone.writeHtml(roleName);
-        clone.write("'</b> on the project '");
+        clone.write("'</b> on the workspace '");
         ngp.writeContainerLink(clone, 100);
         clone.write("'.</p><p>\n");
         if ("approved".equalsIgnoreCase(action)) {
             clone.write("Your request has been <b>accepted</b>. Now you can play the role of <b>'");
             clone.write(roleName);
-            clone.write("'</b> in that project.");
+            clone.write("'</b> in that workspace.");
 
         } else {
             clone.write("Your request has been <b>denied</b>.");

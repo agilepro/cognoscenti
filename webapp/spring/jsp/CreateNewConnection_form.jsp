@@ -7,7 +7,7 @@
 /*
 Required parameter:
 
-    1. pageId   : This is the id of a Project and used to retrieve NGPage.
+    1. pageId   : This is the id of a Workspace and used to retrieve NGPage.
     2. rlink    : It is the path of the file for which you are creating new connection.
 
 Optional Parameters:
@@ -30,7 +30,7 @@ Optional Parameters:
     ar.setPageAccessLevels(ngp);
 
     String pageTitle = "Add Remote Attachment to "+ngp.getFullName();
-    ar.assertMember("Can not attach a document to this project.");
+    ar.assertMember("Can not attach a document to this workspace.");
 
     if(ConnectionURL.length()== 0 && rlink.length() > 0){
         ConnectionURL = rlink.substring(0,rlink.lastIndexOf('/'));

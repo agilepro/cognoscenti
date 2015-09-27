@@ -8,13 +8,12 @@ Parameter used :
 
     1. pageTitle    : Used to retrieve the page title from request.
     2. userKey      : This is Key of user who is logged in.
-    3. pageId       : Id of a Project, used to fetch details of Project (NGPage).
+    3. pageId       : Id of a Workspace, used to fetch details of Workspace (NGPage).
     4. book         : This is key of a site, used here to get details of an Site (NGBook).
     5. viewingSelf  : This parameter is used to check if user is viewing himself/herself or other profile.
-    6. headerType   : Used to check the header type whether it is from site, project or user on the basis of
+    6. headerType   : Used to check the header type whether it is from site, workspace or user on the basis of
                       it corrosponding tabs are displayed
-    7. tabId        : This is tabId when the page ie rendered Tab with this id will be selected.
-    8. accountId    : This is key of a site, used here to get details of an Site (NGBook).
+    7. accountId    : This is key of a site, used here to get details of an Site (NGBook).
 
 */
 
@@ -26,8 +25,8 @@ Parameter used :
     Cognoscenti cog = ar.getCogInstance();
 
 //pageTitle is a ver strange variable.  I mostly is used to hold the value displayed
-//just above the menu.  Usually "Project: My Project"   or "Site: my Site" or "User: Joe User"
-//Essentially this depends upon the header type (project, site, or user).
+//just above the menu.  Usually "Workspace: My Workspace"   or "Site: my Site" or "User: Joe User"
+//Essentially this depends upon the header type (workspace, site, or user).
 //however the logic is quite convoluted in first detecting what header type it is, and then
 //making sure that the right thing is in this value, and then truncating it sometimes.
     String pageTitle = (String)request.getAttribute("pageTitle");
@@ -35,7 +34,7 @@ Parameter used :
 //this indicates a user page
     String userKey = (String)request.getAttribute("userKey");
 
-//this indicates a project page
+//this indicates a workspace page
     String pageId = (String)request.getAttribute("pageId");
 
 //this indicates a site id
@@ -73,14 +72,13 @@ Parameter used :
     }
     else if (isProjectHeader) {
         if (pageId==null) {
-            throw new Exception("Program Logic Error: need a pageId passed to a project style header");
+            throw new Exception("Program Logic Error: need a pageId passed to a workspace style header");
         }
     }
     else {
         throw new Exception("don't understand header type: "+headerTypeStr);
     }
 
-    String tabId = (String)request.getAttribute("tabId");
 
 
 
@@ -209,7 +207,6 @@ Parameter used :
             var newli   = document.createElement('li');
             var newlink = document.createElement('a');
 
-            newlink.setAttribute('onclick','updateSpecialTab("'+oneTab.name+'");');
             var newspan = document.createElement('span');
 
             newlink.setAttribute('href',oneTab.href);
@@ -229,10 +226,6 @@ Parameter used :
 
         //TODO: convert to an Angular approach
         ddlevelsmenu.setup("tabs", "topbar");
-    }
-
-    function updateSpecialTab(tabName){
-        specialTab=tabName;
     }
 
 </script>
@@ -265,7 +258,6 @@ Parameter used :
 
 <% if (!isSiteHeader) { %>
     <script>
-        var specialTab='<%=tabId%>';
         headerType = "<%=headerTypeStr%>";
         var userKey = "<%=userKey%>";
         var isSuperAdmin = "<%=ar.isSuperAdmin()%>";
@@ -277,7 +269,6 @@ Parameter used :
 
 <% } else if(isSiteHeader){ %>
      <script>
-        var specialTab='<%=tabId%>';
         headerType = "<%=headerTypeStr%>";
         var userKey = "<%=userKey%>";
 
@@ -327,7 +318,7 @@ Parameter used :
             }
             else {
                 if(pageTitle!=null){
-                    ar.write("Project: <span title=\"");
+                    ar.write("Workspace: <span title=\"");
                     ar.write(pageTitle);
                     ar.write("\">");
                     ar.writeHtml(trncatePageTitle);
@@ -345,7 +336,7 @@ Parameter used :
                         uProf = ar.getUserProfile();
                 %>
                         <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/watchedProjects.htm"
-                                title="Projects for the logged in user">Projects</a></li>
+                                title="Workspaces for the logged in user">Workspaces</a></li>
                         <li>|</li>
                         <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/userAlerts.htm"
                                 title="Updates for the logged in user">Updates</a></li>
@@ -410,12 +401,12 @@ Parameter used :
             <ul id="tabs">
 
                 <div id="zoomOutButton" style="display: none;vertical-align:baseline;" align="right"  >
-                    <input type="button" class="btn btn-primary" onclick="zoomOut()" value="<< Back in Project">YES
+                    <input type="button" class="btn btn-primary" onclick="zoomOut()" value="<< Back in Workspace">YES
                 </div>
             </ul>
         </div>
 
-        <!--Top Drop Down Menu for project section HTML Starts Here -->
+        <!--Top Drop Down Menu for workspace section HTML Starts Here -->
             <ul id="ddsubmenu1" class="ddsubmenustyle"></ul>
             <ul id="ddsubmenu2" class="ddsubmenustyle"></ul>
             <ul id="ddsubmenu3" class="ddsubmenustyle"></ul>

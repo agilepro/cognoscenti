@@ -21,11 +21,11 @@
     ar.assertAdmin("Unable to delete this page. ");
 
     //first, handle cancel operation.
-    if ("Delete Project".equals(action))
+    if ("Delete Workspace".equals(action))
     {
         ngp.markDeleted(ar);
     }
-    else if ("Un-Delete Project".equals(action))
+    else if ("Un-Delete Workspace".equals(action))
     {
         ngp.markUnDeleted(ar);
     }

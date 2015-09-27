@@ -1,24 +1,24 @@
 [
   {
     "level":1,
-    "name": "Site Projects",
+    "name": "Site Workspaces",
     "href": "accountListProjects.htm",
     "ref": "ddsubmenu1",
     "subs":   [
         {
-          "name": "List Projects",
+          "name": "List Workspaces",
           "href": "accountListProjects.htm"
         },
         {
-          "name": "Create New Project",
+          "name": "Create New Workspace",
           "href": "accountCreateProject.htm"
         },
         {
-          "name": "Clone Remote Project",
+          "name": "Clone Remote Workspace",
           "href": "accountCloneProject.htm"
         },
         {
-          "name": "Convert Folder to Project",
+          "name": "Convert Folder to Workspace",
           "href": "convertFolderProject.htm"
         },
         {

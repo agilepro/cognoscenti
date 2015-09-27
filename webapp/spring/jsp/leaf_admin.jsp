@@ -261,7 +261,7 @@ app.filter('escape', function() {
                     <td></td>
                     <td>
                         <a href="deletePreviousProjectName.htm?action=delName&p=<%=URLEncoder.encode(pageId, "UTF-8")%>&oldName={{name|escape}}"
-                           title="delete this name from project">
+                           title="delete this name from workspace">
                            {{name}}
                            <img src="<%=ar.retPath%>/assets/iconDelete.gif">
                         </a>
@@ -270,7 +270,7 @@ app.filter('escape', function() {
                 </table>
             </div>
             <div class="generalContent">
-                <div class="generalHeading paddingTop">Project Settings</div>
+                <div class="generalHeading paddingTop">Workspace Settings</div>
                 <table width="720px">
                     <tr><td style="height:5px"></td></tr>
                     <tr>
@@ -289,7 +289,7 @@ app.filter('escape', function() {
                     </tr>
                     <tr><td style="height:8px"></td></tr>
                     <tr>
-                        <td class="gridTableColummHeader_2" valign="top">Project Mode:</td>
+                        <td class="gridTableColummHeader_2" valign="top">Workspace Mode:</td>
                         <td style="width:20px;"></td>
                         <td  valign="top">
 
@@ -311,7 +311,7 @@ app.filter('escape', function() {
                     </tr>
                     <tr><td style="height:5px"></td></tr>
                     <tr>
-                        <td class="gridTableColummHeader_2">Project Email id:</td>
+                        <td class="gridTableColummHeader_2">Workspace Email id:</td>
                         <td style="width:20px;"></td>
                         <td>
                             <input type="text" class="form-control"

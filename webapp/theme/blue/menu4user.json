@@ -1,20 +1,20 @@
 [
   {
     "level":1,
-    "name": "Projects",
+    "name": "Workspaces",
     "href": "watchedProjects.htm",
     "ref": "ddsubmenu1",
     "subs":   [
         {
-          "name": "Watched Projects",
+          "name": "Watched Workspaces",
           "href": "watchedProjects.htm"
         },
         {
-          "name": "Notified Projects",
+          "name": "Notified Workspaces",
           "href": "notifiedProjects.htm"
         },
         {
-          "name": "Administered Projects",
+          "name": "Administered Workspaces",
           "href": "ownerProjects.htm"
         },
         {
@@ -22,11 +22,11 @@
           "href": "templates.htm"
         },
         {
-          "name": "Participant Projects",
+          "name": "Participant Workspaces",
           "href": "participantProjects.htm"
         },
         {
-          "name": "All Projects",
+          "name": "All Workspaces",
           "href": "allProjects.htm"
         },
         {
@@ -34,7 +34,7 @@
           "href": "searchAllNotes.htm"
         },
         {
-          "name": "Create New Project",
+          "name": "Create New Workspace",
           "href": "userCreateProject.htm"
         }
       ]

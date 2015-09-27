@@ -939,7 +939,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
         String licVal = ar.reqParam("lic");
         if (licVal == null || licVal.length() == 0) {
             throw new ProgramLogicError("Have to be logged in, or have a licensed link, "
-                    + "to create a new project");
+                    + "to create a new workspace");
         }
         License lic = this.getLicense(licVal);
         if (lic == null) {
@@ -947,7 +947,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
         }
         if (ar.nowTime > lic.getTimeout()) {
             throw new ProgramLogicError("Specified license (" + lic + ") is no longer valid.  "
-                    + "You will need an updated licensed link to create a new project.");
+                    + "You will need an updated licensed link to create a new workspace.");
         }
         // TODO: check that the user for this license is still in the role
 

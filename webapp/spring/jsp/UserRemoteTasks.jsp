@@ -133,7 +133,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td width="16px"></td>
             <td width="200px">Action Item</td>
             <td width="200px">Description</td>
-            <td width="100px">Project</td>
+            <td width="100px">Workspace</td>
             <td width="100px">Site</td>
         </tr>
         <tr ng-repeat="rec in getRows()">

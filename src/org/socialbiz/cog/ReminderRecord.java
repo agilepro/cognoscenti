@@ -276,12 +276,12 @@ public class ReminderRecord extends DOMFace
         ar.write("<table>");
         ar.write("<p>From: ");
         ale.writeLink(ar);
-        ar.write(", &nbsp; Project: ");
+        ar.write(", &nbsp; Workspace: ");
         ngp.writeContainerLink(ar, 100);
         ar.write("</p>\n");
         ar.write("<p>You have been invited to upload a file so that it can ");
         ar.write("be shared (in a controlled manner) with others in ");
-        ar.write("the project \"");
+        ar.write("the workspace \"");
         ar.writeHtml(ngp.getFullName());
         ar.write("\". Uploading the file will stop the email reminders. </p>\n<hr/>");
         ar.write("\n<p><b>Instructions:</b> ");

@@ -553,49 +553,8 @@ public class FolderAccessHelper {
 
     public boolean copyAttachmentToRemote(NGPage ngp, String aid, ResourceEntity targetFile, boolean isOverwrite) throws Exception {
 
-        throw new Exception("copyAttachmentToRemote needs to be updated to handle attachements in the projects in sites.");
-/*
-        ConnectionType cType = targetFile.getConnection();
-        if (ngp==null)
-        {
-            throw new ProgramLogicError("FolderAccessHelper can serve up the attachment only when the project is known.");
-        }
-        File attachFolder = ar.getCogInstance().getConfig().getAttachFolderOrFail();
+        throw new Exception("copyAttachmentToRemote needs to be updated to handle attachements in the workspace in sites.");
 
-        AttachmentRecord att = ngp.findAttachmentByIDOrFail(aid);
-        String storageName =  att.getStorageFileName();
-
-        File file= new File(attachFolder, storageName );
-
-        ResourceEntity parent = targetFile.getParent();
-
-        if (!parent.exists()) {
-            createFolders(parent);
-        }
-
-        if(isOverwrite){
-            cType.overwriteExistingDocument(targetFile, file);
-        }else{
-            if (targetFile.exists()) {
-                return false;
-            }
-            cType.createNewFile(targetFile, file);
-        }
-
-        //pick up the timestamp from the remote server
-        targetFile.fillInDetails(false);
-
-        att.setRemoteCombo(targetFile.getCombo());
-        att.setFormerRemoteTime(targetFile.getLastModifed());
-
-        HistoryRecord.createHistoryRecord(ngp, att.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
-            ar.nowTime, HistoryRecord.EVENT_DOC_UPDATED, ar, "");
-
-        ngp.setLastModify(ar);
-        ngp.saveFile(ar, "Linked a remote attachments");
-
-        return true;
-        */
     }
 
     public Vector<ConnectionSettings> getAvailableConnections(String resourceAddress)throws Exception

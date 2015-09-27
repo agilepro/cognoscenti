@@ -194,7 +194,7 @@ public class RemoteLinkController extends BaseController {
 
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            return createNamedView(siteId, pageId, ar, "LinkToRepository", "Project Documents");
+            return createNamedView(siteId, pageId, ar, "LinkToRepository");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.link.to.repository.page",
                     new Object[]{pageId,siteId} , ex);
@@ -302,7 +302,7 @@ public class RemoteLinkController extends BaseController {
             }
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            return createNamedView(siteId, pageId, ar, "ProblemDiagnosePage", "Project Documents");
+            return createNamedView(siteId, pageId, ar, "ProblemDiagnosePage");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.problem.diagnose.page",
                     new Object[]{pageId,siteId} , ex);
@@ -406,7 +406,7 @@ public class RemoteLinkController extends BaseController {
 
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            return createNamedView(siteId, pageId, ar, "WebDevURLForm", "Project Documents");
+            return createNamedView(siteId, pageId, ar, "WebDevURLForm");
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.link.to.repository",
@@ -439,7 +439,7 @@ public class RemoteLinkController extends BaseController {
             request.setAttribute("symbol", remoteFile.getSymbol());
             request.setAttribute("atype", ar.defParam("atype","2"));
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            return createNamedView(siteId, pageId, ar, "createLinkToRepositoryForm", "Project Documents");
+            return createNamedView(siteId, pageId, ar, "createLinkToRepositoryForm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.link.to.repository.page",
                     new Object[]{pageId,siteId} , ex);
@@ -463,7 +463,7 @@ public class RemoteLinkController extends BaseController {
             request.setAttribute("rlink", rlink);
             request.setAttribute("atype", ar.defParam("atype", "2"));
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            return createNamedView(siteId, pageId, ar, "CreateNewConnection_form", "Project Documents");
+            return createNamedView(siteId, pageId, ar, "CreateNewConnection_form");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.create.new.connection.page",
                     new Object[]{pageId,siteId} , ex);
@@ -548,7 +548,7 @@ public class RemoteLinkController extends BaseController {
             request.setAttribute("folderId", folderId);
             request.setAttribute("path", path);
             request.setAttribute("fndDefLoctn", fndDefLoctn);
-            return createNamedView(siteId, pageId, ar, "ChooseFolder", "Project Documents");
+            return createNamedView(siteId, pageId, ar, "ChooseFolder");
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.choose.folder.page",
@@ -576,7 +576,7 @@ public class RemoteLinkController extends BaseController {
             request.setAttribute("folderId", folderId);
             request.setAttribute("path", path);
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            return createNamedView(siteId, pageId, ar, "PushToRepository", "Project Documents");
+            return createNamedView(siteId, pageId, ar, "PushToRepository");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.push.to.repository.page",
                     new Object[]{pageId,siteId} , ex);
@@ -780,7 +780,7 @@ public class RemoteLinkController extends BaseController {
 
             request.setAttribute("aid", ar.reqParam("aid"));
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            return createNamedView(siteId, pageId, ar, "CreateNewConnection", "Project Documents");
+            return createNamedView(siteId, pageId, ar, "CreateNewConnection");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.create.connection.for.existing.file",
                     new Object[]{pageId,siteId} , ex);
@@ -836,7 +836,7 @@ public class RemoteLinkController extends BaseController {
             request.setAttribute("path", verifyEnt.getFullPath());
             request.setAttribute("folderId", verifyEnt.getFolderId());
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            return createNamedView(siteId, pageId, ar, "FileExist", "Project Documents");
+            return createNamedView(siteId, pageId, ar, "FileExist");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.check.file.exists.page",
                     new Object[]{pageId,siteId} , ex);

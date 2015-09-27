@@ -58,7 +58,7 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Project Name</th>
+                    <th>Workspace Name</th>
                     <th>Last Modified</th>
                     <th>Comment</th>
                 </tr>

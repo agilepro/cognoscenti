@@ -201,12 +201,12 @@ public class UploadFileController extends BaseController {
 
             if(!ar.isLoggedIn()){
                 request.setAttribute("property_msg_key", "nugen.project.send.email.reminder.login.msg");
-                modelAndView = createNamedView(siteId, pageId, ar, "Warning", "Project Documents");
+                modelAndView = createNamedView(siteId, pageId, ar, "Warning");
             }else if(!ar.isMember()){
                 request.setAttribute("property_msg_key", "nugen.attachment.send.email.reminder.memberlogin");
-                modelAndView = createNamedView(siteId, pageId, ar, "Warning","Project Documents");
+                modelAndView = createNamedView(siteId, pageId, ar, "Warning");
             }else{
-                modelAndView = createNamedView(siteId, pageId, ar, "ReminderEmail","Project Documents");
+                modelAndView = createNamedView(siteId, pageId, ar, "ReminderEmail");
                 request.setAttribute("isNewUpload", "yes");
             }
             request.setAttribute("realRequestURL", ar.getRequestURL());
@@ -340,7 +340,7 @@ public class UploadFileController extends BaseController {
                 return showWarningView(ar, "nugen.generatInfo.Frozen");
             }
 
-            modelAndView = createNamedView(siteId, pageId, ar, "linkURLToProject", "Project Documents");
+            modelAndView = createNamedView(siteId, pageId, ar, "linkURLToProject");
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title", ngp.getFullName());
@@ -371,7 +371,7 @@ public class UploadFileController extends BaseController {
                 return showWarningView(ar, "nugen.generatInfo.Frozen");
             }
 
-            modelAndView = createNamedView(siteId, pageId, ar, "emailreminder_form", "Project Documents");
+            modelAndView = createNamedView(siteId, pageId, ar, "emailreminder_form");
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title", ngp.getFullName());
@@ -404,7 +404,7 @@ public class UploadFileController extends BaseController {
 
             String symbol = ar.reqParam("symbol");
             ResourceEntity remoteFile = ar.getUserPage().getResourceFromSymbol(symbol);
-            modelAndView = createNamedView(siteId, pageId, ar, "linkfromrepository_form", "Project Documents");
+            modelAndView = createNamedView(siteId, pageId, ar, "linkfromrepository_form");
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("symbol", remoteFile.getSymbol());
             request.setAttribute("realRequestURL", ar.getRequestURL());
@@ -469,7 +469,7 @@ public class UploadFileController extends BaseController {
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.display.repository.folder");
             registerRequiredProject(ar, siteId, pageId);
 
-            modelAndView = createNamedView(siteId, pageId, ar, "FolderDisplay", "Project Documents");
+            modelAndView = createNamedView(siteId, pageId, ar, "FolderDisplay");
             request.setAttribute("fid",ar.defParam("fid",null));
             request.setAttribute("realRequestURL", ar.getRequestURL());
         }catch(Exception ex){
@@ -509,7 +509,7 @@ public class UploadFileController extends BaseController {
             }
             ngp.findAttachmentByIDOrFail(aid);
 
-            modelAndView = createNamedView(siteId, pageId, ar, "editDetails", "Project Documents");
+            modelAndView = createNamedView(siteId, pageId, ar, "editDetails");
             request.setAttribute("aid",aid);
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title", ngp.getFullName());
@@ -539,7 +539,7 @@ public class UploadFileController extends BaseController {
             String aid = ar.reqParam("aid");
             ngp.findAttachmentByIDOrFail(aid);
 
-            modelAndView = createNamedView(siteId, pageId, ar, "fileVersions", "Project Documents");
+            modelAndView = createNamedView(siteId, pageId, ar, "fileVersions");
             request.setAttribute("aid",aid);
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title",ngp.getFullName());
@@ -591,7 +591,7 @@ public class UploadFileController extends BaseController {
             ReminderMgr mgr = ngp.getReminderMgr();
             ReminderRecord reminderRecord = mgr.findReminderByIDOrFail(rid);
             if (AccessControl.canAccessReminder(ar, ngp, reminderRecord)) {
-                return createNamedView(siteId, pageId, ar, "remind_attachment", "Project Documents");
+                return createNamedView(siteId, pageId, ar, "remind_attachment");
             }
 
             if(!ar.isLoggedIn()){
@@ -602,7 +602,7 @@ public class UploadFileController extends BaseController {
                 //basically, the reminder should have been display, and we have no idea now why not
                 throw new Exception("Program Logic Error ... something is wrong with the canAccessReminder method");
             }
-            return createNamedView(siteId, pageId, ar, "Warning", "Project Documents");
+            return createNamedView(siteId, pageId, ar, "Warning");
 
         }catch(Exception ex){
             Exception extd = new NGException("nugen.operation.fail.project.reminder.attachment.page",
@@ -624,7 +624,7 @@ public class UploadFileController extends BaseController {
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("aid", docId);
-            return createNamedView(siteId, pageId, ar, "docinfo", "Project Documents");
+            return createNamedView(siteId, pageId, ar, "docinfo");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.download.document.page", new Object[]{pageId,siteId} , ex);
         }
@@ -681,7 +681,7 @@ public class UploadFileController extends BaseController {
             }
 
 
-            modelAndView = createNamedView(siteId, pageId, ar, "CreateCopy", "Project Documents");
+            modelAndView = createNamedView(siteId, pageId, ar, "CreateCopy");
             String aid = ar.reqParam("aid");
 
             AttachmentRecord attachment = ngp.findAttachmentByID(aid);
@@ -786,7 +786,7 @@ public class UploadFileController extends BaseController {
                 return showWarningView(ar, "nugen.attachment.send.email.reminder.memberlogin");
             }
 
-            modelAndView = createNamedView(siteId, pageId, ar, "viewReminder","Project Documents");
+            modelAndView = createNamedView(siteId, pageId, ar, "viewReminder");
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title", ngp.getFullName());

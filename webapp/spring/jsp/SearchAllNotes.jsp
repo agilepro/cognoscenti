@@ -79,11 +79,11 @@ app.controller('myCtrl', function($scope, $http) {
                       <option value="one">This Site</option>
                       <option value="all">All Sites</option>
                   </select>
-                  Projects:
+                  Workspaces:
                   <select ng-model="query.searchProject" class="form-control" style="width:150px;">>
-                      <option value="all">All Projects</option>
-                      <option value="member">Member Projects</option>
-                      <option value="owner">Owned Projects</option>
+                      <option value="all">All Workspaces</option>
+                      <option value="member">Member Workspaces</option>
+                      <option value="owner">Owned Workspaces</option>
                   </select>
               </div>
             </td>
@@ -99,7 +99,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <table class="gridTable2" width="100%">
         <tr class="gridTableHeader">
-            <td width="200px">Site/Project</td>
+            <td width="200px">Site/Workspace</td>
             <td width="200px">Topic</td>
             <td width="100px">Updated</td>
         </tr>

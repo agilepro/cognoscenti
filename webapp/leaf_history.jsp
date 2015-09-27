@@ -62,7 +62,7 @@ else
 <%
     if (!ar.isStaticSite()) {
 %>
-<h1>Project Status Update</h1>
+<h1>Workspace Status Update</h1>
 <table>
 <form action="<%=ar.retPath%>HistoryAction.jsp" method="post">
 <input type="hidden" name="p" value="<%ar.writeHtml(p);%>"/>

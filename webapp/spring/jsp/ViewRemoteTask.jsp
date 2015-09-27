@@ -76,7 +76,7 @@ Required parameters:
             String remoteOmitLicense = removeParamsFromUrl(localProject.getUpstreamLink());
 
             if (!accessOmitLicense.equals(remoteOmitLicense)) {
-                throw new Exception("Strange, found the local project but it has the wrong URL: "
+                throw new Exception("Strange, found the local workspace but it has the wrong URL: "
                        +accessUrl+" vs. "+localProject.getUpstreamLink());
             }
         }
@@ -120,7 +120,7 @@ Required parameters:
                         </tr>
                         <tr><td height="10px"></td></tr>
                         <tr>
-                            <td class="gridTableColummHeader">Project:</td>
+                            <td class="gridTableColummHeader">Workspace:</td>
                             <td style="width:20px;"></td>
                             <td class="textAreaGeneral">
                                 <a href="<%ar.writeHtml(remoteGoal.getProjectAccessURL());%>">
@@ -214,7 +214,7 @@ Required parameters:
                         </tr>
                     </table>
                     <div class="generalArea">
-                        <div class="generalHeading">Local Project</div>
+                        <div class="generalHeading">Local Workspace</div>
                         <div class="generalContent">
                     <%
                         if(!isLocal && localProject!=null){
@@ -225,15 +225,15 @@ Required parameters:
                             </form>
                         </td>
                         <td style="width:20px;"></td>
-                        <td> Use this button to access the local project (<%ar.writeHtml(localProject.getFullName());%>)
-                             which is a clone of the remote project that the action item is on.
+                        <td> Use this button to access the local workspace (<%ar.writeHtml(localProject.getFullName());%>)
+                             which is a clone of the remote workspace that the action item is on.
                         </td></tr></table>
                     <%
                         }
                         else if (isLocal && localProject!=null) {
                     %>
                             <div>
-                            This project is on this local host: <a href="<%=ar.retPath%><%=ar.getResourceURL(localProject,"projectActiveTasks.htm")%>">
+                            This workspace is on this local host: <a href="<%=ar.retPath%><%=ar.getResourceURL(localProject,"projectActiveTasks.htm")%>">
                                 <%ar.writeHtml(localProject.getFullName());%></a><br/>
                                 <%ar.writeHtml(remoteGoal.getAccessURL());%><br/>
                                 <%ar.writeHtml(ar.baseURL);%>
@@ -243,7 +243,7 @@ Required parameters:
                         else if(!viewingSelf){
                     %>
                             <div id="loginArea">
-                                <span class="black">No project available.  Can't create a project on someone else's remote task.</span>
+                                <span class="black">No workspace available.  Can't create a workspace on someone else's remote task.</span>
                             </div>
                     <%
                         }
@@ -254,14 +254,14 @@ Required parameters:
                             <form action="userCreateProject.htm" method="get">
                                 <input type="hidden" name="upstream" value="<%ar.writeHtml(remoteGoal.getProjectAccessURL());%>"/>
                                 <input type="hidden" name="pname" value="<%ar.writeHtml(remoteGoal.getProjectName());%> (clone)"/>
-                                <input type="hidden" name="desc" value="This is a local clone of a project named '<%ar.writeHtml(remoteGoal.getProjectName());%>' on a remote site named '<%ar.writeHtml(remoteGoal.getSiteName());%>'"/>
+                                <input type="hidden" name="desc" value="This is a local clone of a workspace named '<%ar.writeHtml(remoteGoal.getProjectName());%>' on a remote site named '<%ar.writeHtml(remoteGoal.getSiteName());%>'"/>
                                 <input type="submit" value="Create Local Clone" class="btn btn-primary" />
                             </form>
                         </td>
                         <td style="width:20px;"></td>
-                        <td> Use this button to create a local clone of the remote project,
+                        <td> Use this button to create a local clone of the remote workspace,
                            to download all the document for working off line, and to allow you to
-                           involve other people in working on the project.
+                           involve other people in working on the workspace.
                         </td></tr></table>
 
                   <%

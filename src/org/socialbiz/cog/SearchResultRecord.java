@@ -79,7 +79,7 @@ public class SearchResultRecord
     }
     public void setPageName(String value) {
         if (value == null || value.length() == 0) {
-            value = "No Project Name";
+            value = "No Workspace Name";
         }
         pageName = value;
     }

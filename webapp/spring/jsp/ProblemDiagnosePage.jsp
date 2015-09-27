@@ -9,7 +9,7 @@
 /*
 Required parameter:
 
-    1. pageId   : This is the id of a Project and used to retrieve NGPage.
+    1. pageId   : This is the id of a Workspace and used to retrieve NGPage.
     2. aid      : This is attachment id to get detail of an attachment i.e. AttachmentRecord.
 
 */

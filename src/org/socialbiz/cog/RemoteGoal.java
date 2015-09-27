@@ -34,7 +34,7 @@ import org.workcast.json.JSONObject;
  * site, but managed separately from those projects. The purpose is to allow a
  * user's profile to contain a list of action item references, and allow that user to
  * reorganize them and manipulate them, without messing with the original action item
- * or the way that action item appears in the project goal list.
+ * or the way that action item appears in the workspace action item list.
  */
 public class RemoteGoal extends DOMFace {
 

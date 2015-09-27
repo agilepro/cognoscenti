@@ -108,15 +108,15 @@ public class JSONController extends BaseController {
             HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
-            ar.assertLoggedIn("Must be logged in to check project name.");
+            ar.assertLoggedIn("Must be logged in to check workspace name.");
             String message=projectNameValidity(siteId, ar,context);
             sendJSONResponse(ar, message);
         }
         catch (Exception e) {
             //not sure what to do here.  Expected response is in JSON format
             //but how then do we format errors?  Set the error code
-            ar.logException("Unable to tell if project exists", e);
-            sendErrorResponse(ar, "Unable to tell if project exists", e);
+            ar.logException("Unable to tell if workspace exists", e);
+            sendErrorResponse(ar, "Unable to tell if workspace exists", e);
         }
     }
 
@@ -129,7 +129,7 @@ public class JSONController extends BaseController {
         AuthRequest ar = null;
 
         try{
-            ar = NGWebUtils.getAuthRequest(request, response,"Could not check project name.");
+            ar = NGWebUtils.getAuthRequest(request, response,"Could not check workspace name.");
 
             message=projectNameValidity(siteId, ar,context);
 

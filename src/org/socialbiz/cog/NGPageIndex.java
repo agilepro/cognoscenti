@@ -117,7 +117,7 @@ public class NGPageIndex {
 
 
     /**
-     * containerType is the type of container whether it is Site, Project or
+     * containerType is the type of container whether it is Site, Workspace or
      * User See constants below
      */
     public int containerType = 0;
@@ -265,7 +265,7 @@ public class NGPageIndex {
         ar.write("\n    <a href=\"");
         ar.writeHtml(ar.retPath);
         ar.writeHtml(ar.getResourceURL(this, "frontPage.htm"));
-        ar.write("\"  title=\"Navigate to project: ");
+        ar.write("\"  title=\"Navigate to workspace: ");
         ar.writeHtml(linkName);
         ar.write("\">");
         if (linkName.length() > len) {

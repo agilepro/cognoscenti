@@ -11,7 +11,7 @@ Required parameter:
 */
 
     //this page should only be called when logged in and having access to the site
-    ar.assertLoggedIn("Must be logged in to create a project");
+    ar.assertLoggedIn("Must be logged in to create a workspace");
 
     String accountKey = ar.reqParam("accountId");
 
@@ -30,7 +30,7 @@ Required parameter:
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Create Project in this Site
+            Create Workspace in this Site
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -51,7 +51,7 @@ Required parameter:
         <table class="popups">
            <tr><td style="height:30px"></td></tr>
            <tr>
-                <td class="gridTableColummHeader_2 bigHeading">New Project Name:</td>
+                <td class="gridTableColummHeader_2 bigHeading">New Workspace Name:</td>
                 <td style="width:20px;"></td>
                 <td>
                     <table cellpadding="0" cellspacing="0">

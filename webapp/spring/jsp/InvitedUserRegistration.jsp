@@ -80,7 +80,7 @@ Required parameter:
             <td width="5%">&nbsp;</td>
             <td colspan="2">
                 3). &nbsp;No not claim the Email id, <a href="<%=ar.baseURL%><%=ar.getDefaultURL(ngp)%>" >
-                Just go on to the project page.</a>
+                Just go on to the workspace page.</a>
             </td>
         </tr>
 
@@ -168,7 +168,7 @@ Required parameter:
                         </tr>
                         <tr>
                             <td style="padding:20px;">
-                                <input type="button" class="btn btn-primary" value="Don't claim the address, Just go to project page" onclick="gotoproject();"/>
+                                <input type="button" class="btn btn-primary" value="Don't claim the address, Just go to workspace page" onclick="gotoproject();"/>
                             </td>
                         </tr>
                     </table>
@@ -181,7 +181,7 @@ Required parameter:
                 <i>
                     *After you have registered, you will have complete access to documents and other materials
                     collected for the <b><a href="<%=ar.retPath%><%=ar.getDefaultURL(ngp)%>">
-                    <% ar.writeHtml(ngp.getFullName()); %></a></b>  project. You will be able to comment and contribute
+                    <% ar.writeHtml(ngp.getFullName()); %></a></b>  workspace. You will be able to comment and contribute
                     as well.
                     </i>
             </td>

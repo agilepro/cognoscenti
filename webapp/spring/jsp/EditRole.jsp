@@ -4,7 +4,7 @@
 %><%/*
 Required parameters:
 
-    1. pageId : This is the id of an project and here it is used to retrieve NGPage (Project's Details).
+    1. pageId : This is the id of a  workspace and here it is used to retrieve NGPage (Workspace's Details).
     2. roleName : This request parameter is required to get NGRole detail of given role.
 
     3. roles    : This parameter is used to get List of all existing roles , this list is required to check

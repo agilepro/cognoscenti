@@ -255,7 +255,6 @@ public class SuperAdminController extends BaseController {
              throw new NGException("nugen.exceptionhandling.system.admin.rights",null);
          }
          UserProfile up = UserManager.getUserProfileOrFail(userKey);
-         String tabId = "Administration";
          HttpServletRequest request = ar.req;
          ModelAndView modelAndView = new ModelAndView(modelAndViewName);
 
@@ -266,7 +265,6 @@ public class SuperAdminController extends BaseController {
          request.setAttribute("userKey", up.getKey());
          request.setAttribute("userProfile", up);
          request.setAttribute("pageTitle", "User: " + up.getName());
-         request.setAttribute("tabId", tabId);
          return modelAndView;
      }
 

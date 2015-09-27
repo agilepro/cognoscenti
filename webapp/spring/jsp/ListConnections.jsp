@@ -4,7 +4,7 @@
 /*
 Required parameter:
 
-    1. pageId         : This is the id of a Project and used to retrieve NGPage.
+    1. pageId         : This is the id of a Workspace and used to retrieve NGPage.
     2. aid            : This is attachment id which is used to check if it is not null then
                         you are pushing it to repository and if null then you are browsing connection
                         to attach the document.
@@ -98,7 +98,7 @@ Required parameter:
            ar.write("\n</div>");
            ar.write("\n</div>");
        } catch (Exception e) {
-           throw new ProgramLogicError("Unable to display root folders for project "+pageId, e);
+           throw new ProgramLogicError("Unable to display root folders for workspace "+pageId, e);
        }
 
     }%>

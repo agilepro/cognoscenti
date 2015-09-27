@@ -3,7 +3,7 @@
 %><%/*
 Required parameter:
 
-    1. pageId : This is the id of a Project and used to retrieve NGPage.
+    1. pageId : This is the id of a Workspace and used to retrieve NGPage.
 
 */
 

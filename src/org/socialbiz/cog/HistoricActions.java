@@ -231,22 +231,20 @@ public class HistoricActions {
         clone.writeHtml(role);
         clone.write("' role of the ");
         container.writeContainerLink(clone, 100);
-        clone.write(" project.</p>");
+        clone.write(" workspace.</p>");
 
         if (receivingUser==null) {
             clone.write("<p>Cognoscenti is a cloud-based service to help people manage the documents, ");
-            clone.write("topics, and action items of a project.  ");
+            clone.write("topics, and action items of a workspace.  ");
             clone.write("It uses an approach known as Adaptive Case Management (ACM).  ");
-            clone.write("By being added to this role, you will have some ability to access that project ");
-            clone.write("and to receive email from the people working on the project.</p>");
+            clone.write("By being added to this role, you will have some ability to access that workspace ");
+            clone.write("and to receive email from the people working on the workspace.</p>");
             clone.write("<p>I've checked, and there is no user profile for you at this email address (");
             clone.writeHtml(emailId);
             clone.write(") so you have two options: create a new login and profile for this email address, ");
             clone.write("or add this email address to an existing user profile that you already have.");
             clone.write("Creating a new login profile is free and easy.</p>");
         }
-        //clone.write("<p>If you do not know this person, this project, or for any reason you do not want");
-        //clone.write("to be included in this role, you can easily <a href="">unsubscribe</a> from the role.</p>");
 
         EmailSender.containerEmail(ooa, container, "Added to " + role
                 + " role of " + container.getFullName(), bodyWriter.toString(),

@@ -889,7 +889,7 @@ public class AttachmentRecord extends DOMFace {
             throw new ProgramLogicError("call to getLabels must be made AFTER the container is set.");
         }
         if (!(container instanceof NGPage)) {
-            throw new ProgramLogicError("Container must be a Project style container.");
+            throw new ProgramLogicError("Container must be a Workspace style container.");
         }
         NGPage ngp = (NGPage) container;
         Vector<NGLabel> res = new Vector<NGLabel>();

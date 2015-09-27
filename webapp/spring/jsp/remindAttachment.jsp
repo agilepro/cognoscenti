@@ -34,7 +34,7 @@
         <h1>Reminder to Upload: <%ar.writeHtml(rRec.getSubject());%></h1>
 
         <p>You are invited to upload a file so that it can be shared (in a controlled manner) with others
-           on the project. Upload the file will complete and close the reminder. Enter a description that will help
+           on the workspace. Upload the file will complete and close the reminder. Enter a description that will help
            others know what the file contains, or on what occasion it was produced. Browse your local
            disk to locate and select the file.  Press "Upload Document" to send the file to the server.
         </p>

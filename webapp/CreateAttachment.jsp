@@ -30,7 +30,7 @@
 
 <%@ include file="Header.jsp"%>
 
-<h1>Upload New Document to Project</h1>
+<h1>Upload New Document to Workspace</h1>
 
 <p>Use this form to attach upload a file to the project &quot;<%ar.writeHtml(ngp.getFullName());%>&quot;.</p>
 
@@ -89,7 +89,7 @@
 </table>
 
 <br/> <br/> <hr/><!------------------------------------------------------------->
-<h1>Link URL to Project</h1>
+<h1>Link URL to Workspace</h1>
 
 <p>Use this form to attach a URL to the project &quot;<% ar.writeHtml(ngp.getFullName()); %>&quot;.</p>
 

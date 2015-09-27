@@ -109,7 +109,7 @@
             <input type="hidden" name="aid" value="<%ar.writeHtml(aid);%>">
             <input type="hidden" name="fname" value="<%ar.writeHtml(att2.getNiceName());%>">
             <input type="submit" name="cmd" value="Adopt Name">
-            for old <b><%ar.writeHtml(att2.getNiceName());%></b> documents.  Project used to have a document with the
+            for old <b><%ar.writeHtml(att2.getNiceName());%></b> documents.  Workspace used to have a document with the
             name <%ar.writeHtml(att.getDisplayName());%> which is now missing.  Did you rename this
             document, and would you like the project to use this new name for all the old versions?
             <p>

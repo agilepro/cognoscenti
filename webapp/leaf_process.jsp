@@ -69,9 +69,9 @@
             <img src="<%=ar.retPath%>update.gif"></a>
 
             <% if (max==1) { %>
-            <a href="process4.htm">Include Sub-Projects</a>
+            <a href="process4.htm">Include Sub-Workspaces</a>
             <% } else { %>
-            <a href="process.htm">Only This Project</a>
+            <a href="process.htm">Only This Workspace</a>
             <% } %>
 
         <a href="<%=ar.retPath%>ProjectTasksEmail.jsp?p=<%=URLEncoder.encode(ngp.getKey(), "UTF-8")%>">

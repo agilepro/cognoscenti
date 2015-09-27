@@ -6,7 +6,7 @@
 %><%/*
 Required parameter:
 
-    1. pageId : This is the id of a Project and used to retrieve NGPage.
+    1. pageId : This is the id of a Workspace and used to retrieve NGPage.
     2. lid    : This is id of note (NoteRecord).
 
 */
@@ -342,7 +342,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
     </div>
     <div ng-hide="canUpdate">
-        <i>You have to be logged in and a member of this project in order to create a comment</i>
+        <i>You have to be logged in and a member of this workspace in order to create a comment</i>
     </div>
     </td>
     </tr>
@@ -452,7 +452,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
     </div>
     <div ng-hide="canUpdate">
-        <i>You have to be logged in and a member of this project in order to create a comment</i>
+        <i>You have to be logged in and a member of this workspace in order to create a comment</i>
     </div>
     </td>
     </tr>

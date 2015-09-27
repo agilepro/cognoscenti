@@ -625,7 +625,6 @@ public class MainTabsViewControler extends BaseController {
 
             request.setAttribute("subprocess", subprocess);
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Project Tasks");
         }
         catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.subprocess.page", new Object[]{pageId,siteId} , ex);
@@ -649,7 +648,6 @@ public class MainTabsViewControler extends BaseController {
                 return showWarningView(ar, "nugen.project.export.pdf.login.msg");
             }
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Project Notes");
             return new ModelAndView("exportPDF");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.export.pdf.page", new Object[]{pageId,siteId} , ex);

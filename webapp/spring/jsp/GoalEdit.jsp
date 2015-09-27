@@ -13,7 +13,7 @@
 /*
 Required parameters:
 
-    1. pageId   : This is the id of an Project and here it is used to retrieve NGPage.
+    1. pageId   : This is the id of an Workspace and here it is used to retrieve NGPage.
     2. bookList : This is the list of sites which is set in request attribute, used here to show
                   dropdown list of sites.
     3. taskId   : This parameter is id of a task and here it is used to get current task detail (GoalRecord)
@@ -33,7 +33,7 @@ Required parameters:
 
     UserProfile uProf = ar.getUserProfile();
 
-    //needed to prompt for the site to build a new project in
+    //needed to prompt for the site to build a new workspace in
     List<NGBook> bookList = (List<NGBook>)request.getAttribute("bookList");
     List<HistoryRecord> histRecs = currentTaskRecord.getTaskHistory(ngp);
     JSONArray allHist = new JSONArray();
@@ -331,7 +331,7 @@ function addvalue() {
               <!--li role="presentation"><a role="menuitem" tabindex="-1"
                   href="#" ng-click="showCreateSubGoal=!showCreateSubGoal">Create Sub Action</a></li>
               <li role="presentation"><a role="menuitem"
-                  href="#" ng-click="showCreateSubProject=!showCreateSubProject">Convert to Project</a></li-->
+                  href="#" ng-click="showCreateSubProject=!showCreateSubProject">Convert to Workspace</a></li-->
             </ul>
           </span>
 
@@ -597,7 +597,7 @@ function addvalue() {
 
 
                 <div class="TabbedPanelsContent" ng-show="showCreateSubProject">
-                    <div class="generalHeading">Create Sub Project</div>
+                    <div class="generalHeading">Create Sub Workspace</div>
                     <div class="well">
                         <div class="generalContent">
                     <%
@@ -619,7 +619,7 @@ function addvalue() {
                                 <table>
                                     <tr><td style="height:20px"></td></tr>
                                     <tr>
-                                        <td class="gridTableColummHeader">Sub Project Name:</td>
+                                        <td class="gridTableColummHeader">Sub Workspace Name:</td>
                                         <td style="width:20px;"></td>
                                         <td>
                                             <input type="text" onblur="validateProjectField()" class="inputGeneral"
@@ -681,7 +681,7 @@ function addvalue() {
                                          <td class="gridTableColummHeader"></td>
                                          <td style="width:20px;"></td>
                                          <td>
-                                             <input type="button" value="Create Sub Project" class="btn btn-primary" onclick="createProject();" />
+                                             <input type="button" value="Create Sub Workspace" class="btn btn-primary" onclick="createProject();" />
                                              <input type="hidden" name="goUrl" value="<%ar.writeHtml(goToUrl);%>" />
                                              <input type="hidden" id="parentProcessUrl" name="parentProcessUrl"
                                                 value="<%ar.writeHtml(currentTaskRecord.getWfxmlLink(ar).getCombinedRepresentation());%>" />

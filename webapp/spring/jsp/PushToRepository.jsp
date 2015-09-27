@@ -5,7 +5,7 @@
 /*
 Required parameter:
 
-    1. p        : This is the id of a Project and used to retrieve NGPage.
+    1. p        : This is the id of a Workspace and used to retrieve NGPage.
     2. aid      : This parameter is attachment id used here to get the detail of an attachment.
     3. path     : This is the path of the selected folder in the repository
     4. folderId : This is connection id which is used to get Connection details.

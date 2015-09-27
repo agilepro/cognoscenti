@@ -107,7 +107,7 @@
         </tr>
         <tr>
            <td></td>
-           <td><b>Projects to Include</b></td>
+           <td><b>Workspaces to Include</b></td>
         </tr>
 <%
 

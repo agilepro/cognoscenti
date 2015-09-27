@@ -48,10 +48,11 @@
                                         Stop wasting your time chasing emails,
                                         and start organizing and planning to accomplish things.
                                         <br /><br />
-                                        With a few keystrokes you make a place for a project which can be accessed from anywhere,
+                                        With a few keystrokes you make a place for a workspace which can be accessed from anywhere,
                                         but only the people you designate.
-                                        Action items can be assigned to anyone with an email address,<br>and automatic email notification
-                                        keeps everyone informed.<br>It is quick and easy to sign up for a free site.
+                                        Action items can be assigned to anyone with an email address,<br/>
+                                        and automatic email notification keeps everyone informed.<br/>
+                                        It is quick and easy to sign up for a free site.
                                     </td>
                                 </tr>
                             </table>
@@ -96,9 +97,9 @@
                                         <table cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
                                                 <td>
-                                                    Creating a project
+                                                    Creating a workspace
                                                     <div class="createProject">
-                                                        <a href="../assets/createProjectBig.gif" class="lWOn" title="Creating a Project">
+                                                        <a href="../assets/createProjectBig.gif" class="lWOn" title="Creating a Workspace">
                                                         <img src="../assets/createProjectSmall.gif" width="195" height="157" border="0"></a>
                                                     </div>
                                                 </td>

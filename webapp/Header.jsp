@@ -133,7 +133,7 @@
                         else if (ngb!=null)
                         {
                             makeTab(ar, "BookPages.jsp?b="+URLEncoder.encode(ngb.getKey(), "UTF-8"),
-                                        "Site Projects");
+                                        "Site Workspaces");
                             makeTab(ar, "BookInfo.jsp?b="+URLEncoder.encode(ngb.getKey(), "UTF-8"),
                                         "Site Info");
                         }
@@ -150,7 +150,7 @@
                             makeTab(ar, "ManageTasks.jsp?u="+URLEncoder.encode(uProf.getKey(), "UTF-8"),
                                         "Manage Tasks");
                             makeTab(ar, "UserPages.jsp?u="+URLEncoder.encode(uProf.getKey(), "UTF-8"),
-                                        "My Projects");
+                                        "My Workspaces");
                             makeTab(ar, "UserProfile.jsp?u="+URLEncoder.encode(uProf.getKey(), "UTF-8"),
                                         "Settings");
                         }

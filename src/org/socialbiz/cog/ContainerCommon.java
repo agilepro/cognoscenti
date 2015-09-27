@@ -193,7 +193,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
         attach.setId(newId);
         attach.setContainer(this);
 
-        //this is the default, but it might be overridden in case of sync from another project
+        //this is the default, but it might be overridden in case of sync from another workspace
         attach.setUniversalId( getContainerUniversalId() + "@" + newId );
         return attach;
     }
@@ -580,23 +580,23 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
         NGRole role = getRole(roleName);
         if (role==null)
         {
-            String desc = roleName+" of the project "+getFullName();
+            String desc = roleName+" of the workspace "+getFullName();
             if ("Executives".equals(roleName))
             {
                 desc = "The role 'Executives' contains a list of people who are assigned to the site "
-                +"as a whole, and are automatically members of every project in that site.  ";
+                +"as a whole, and are automatically members of every workspace in that site.  ";
             }
             else if ("Members".equals(roleName))
             {
-                desc = "Members of a project can see and edit any of the content in the project.  "
+                desc = "Members of a project can see and edit any of the content in the workspace.  "
                        +"Members can create, edit, and delete topics, can upload, download, and delete documents."
                        +"Members can approve other people to become members or other roles.";
             }
             else if ("Administrators".equals(roleName))
             {
                 desc = "Administrators have all the rights that Members have, but have additional ability "
-                       +"to manage the structure of the project, to add/remove roles, and to exercise greater "
-                       +"control over a project, such as renaming and deleting a project.";
+                       +"to manage the structure of the workspace, to add/remove roles, and to exercise greater "
+                       +"control over a workspace, such as renaming and deleting a workspace.";
             }
             else if ("Notify".equals(roleName))
             {
@@ -606,7 +606,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
             {
                 //I don't know of any other required roles, if so, we should have a
                 //better description than this.
-                desc = roleName+" of the project "+getFullName();
+                desc = roleName+" of the workspace "+getFullName();
             }
             role = createRole(roleName, desc);
         }
@@ -637,7 +637,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
     * for someone to receive the email and click on the link,
     * so they have to last for days at least, probably weeks.
     * This algorithm generates a magic number that will last
-    * permanently as long as the project lasts.  This is good because
+    * permanently as long as the workspace lasts.  This is good because
     * there is no real way to migrate to a new algorithm for generating
     * the magic numbers.  But in practice
     * this algorithm might be changed at any time, causing discomfort

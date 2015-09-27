@@ -73,7 +73,7 @@
 <div class="section">
 <!-- ------------------------------------------------- -->
     <div class="section_title">
-    Project Goal and Purpose
+    Workspace Goal and Purpose
     </div>
     <div class="section_body">
     <table>
@@ -118,7 +118,7 @@
 <div class="section">
 <!-- ------------------------------------------------- -->
     <div class="section_title">
-    Delete Project
+    Delete Workspace
     </div>
     <div class="section_body">
 
@@ -129,17 +129,17 @@
     <%
         if (!ngp.isDeleted()) {
     %>
-    <input type="submit" name="action" value="Delete Project">
+    <input type="submit" name="action" value="Delete Workspace">
     <%
         } else {
     %>
-    <p>Project was deleted by <%
+    <p>Workspace was deleted by <%
         UserProfile.writeLink(ar, ngp.getDeleteUser());
     %>
         <%
             SectionUtil.nicePrintTime(ar, ngp.getDeleteDate(), ar.nowTime);
         %>
-    <input type="submit" name="action" value="Un-Delete Project">
+    <input type="submit" name="action" value="Un-Delete Workspace">
     <%
         }
     %>
@@ -218,9 +218,9 @@
 
         </ul>
    </li>
-   <li>Project
+   <li>Workspace
          <ul>
-            <li>Project Content <a href="<%=ar.retPath%><%=pContentAd%>" target="restapi"><%=pContentAd%></a></li>
+            <li>Workspace Content <a href="<%=ar.retPath%><%=pContentAd%>" target="restapi"><%=pContentAd%></a></li>
             <li>User List <a href="<%=ar.retPath%><%=pUserListAd%>" target="restapi"><%=pUserListAd%></a></li>
             <li>License List <a HREF="<%=ar.retPath%><%=pLicenseAd%>" TARGET="restapi"><%=pLicenseAd%></a></li>
             <li>Site
@@ -229,7 +229,7 @@
                              <%=bContentAd%></a></li>
                     <li>User List <a href="<%=ar.retPath%><%=bUserListAd%>" target="restapi">
                              <%=bUserListAd%></a></li>
-                    <li>Project List <a href="<%=ar.retPath%><%=bPageListAd%>" target="restapi">
+                    <li>Workspace List <a href="<%=ar.retPath%><%=bPageListAd%>" target="restapi">
                              <%=bPageListAd%></a></li>
                 </ul>
             </li>

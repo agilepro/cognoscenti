@@ -96,7 +96,7 @@
 </script>
 <body>
 
-<div class="pageHeading">Convert Folder to Project</div>
+<div class="pageHeading">Convert Folder to Workspace</div>
 <div class="pageSubHeading"></div>
 
 <div class="generalContent">
@@ -153,7 +153,7 @@
            <tr>
                 <td class="gridTableColummHeader_2"></td>
                 <td style="width:20px;"></td>
-                <td>This folder already has a project in it.</td>
+                <td>This folder already has a workspace in it.</td>
            </tr>
            <tr><td style="height:10px"></td></tr>
            <tr>
@@ -167,7 +167,7 @@
            <tr>
                 <td class="gridTableColummHeader_2"></td>
                 <td style="width:20px;"></td>
-                <td>You can't create a project in the root folder of a site.</td>
+                <td>You can't create a workspace in the root folder of a site.</td>
            </tr>
 
        <% } else { %>
@@ -177,7 +177,7 @@
        <tr><td style="height:30px"></td></tr>
 
        <tr>
-            <td class="gridTableColummHeader_2 bigHeading">New Project Name:</td>
+            <td class="gridTableColummHeader_2 bigHeading">New Workspace Name:</td>
             <td style="width:20px;"></td>
             <td>
                 <table cellpadding="0" cellspacing="0">

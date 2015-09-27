@@ -45,7 +45,7 @@ public class RoleProjectAssignee extends RoleSpecialBase implements NGRole {
      * A description of the purpose of the role, suitable for display to user.
      */
     public String getDescription() {
-        return "Assignees of tasks in the project " + ngp.getFullName();
+        return "Assignees of tasks in the workspace " + ngp.getFullName();
     }
 
     public List<AddressListEntry> getDirectPlayers() throws Exception {

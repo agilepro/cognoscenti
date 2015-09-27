@@ -514,11 +514,11 @@ public class ProjectSync {
 
         if (docNum+noteNum+goalNum>0) {
             HistoryRecord.createContainerHistoryRecord(local,
-                HistoryRecord.EVENT_DOC_UPDATED, ar, "Synchronized from upstream project:  "+docNum+" documents, "
+                HistoryRecord.EVENT_DOC_UPDATED, ar, "Synchronized from upstream workspace:  "+docNum+" documents, "
                 +noteNum+" topics, and "+goalNum+" action items.");
         }
 
-        local.saveFile(ar, "Synchronized topics and documents from upstream project");
+        local.saveFile(ar, "Synchronized topics and documents from upstream workspace");
     }
 
     /**

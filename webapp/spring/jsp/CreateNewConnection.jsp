@@ -33,7 +33,7 @@ Optional Parameters:
             Create New Connection
         </div>
         <div class="pageSubHeading">
-            Use this form to create a new connection to store the project document in the repository.
+            Use this form to create a new connection to store the workspace document in the repository.
         </div>
         <div class="generalContent">
             <form name="createConnection" id="createConnection" action="createConnectionToPushDoc.form" method="post">

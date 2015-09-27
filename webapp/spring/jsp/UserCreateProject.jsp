@@ -8,7 +8,7 @@
 Required Parameters:
 
 */
-    ar.assertLoggedIn("You must be logged in to create a project");
+    ar.assertLoggedIn("You must be logged in to create a workspace");
 
     //note, this page only displays info for the current logged in user, regardless of URL
     UserProfile  userProfile =ar.getUserProfile();
@@ -44,7 +44,7 @@ Required Parameters:
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Watched Projects
+            Choose Site to create Workspace
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -65,9 +65,9 @@ if(memberOfSites.size()>0) {
         <div class="generalContent">
             <div id="accountPaging"></div>
             <div id="accountsContainer">
-                A new project must be created inside a site.
+                A new workspace must be created inside a site.
                 Choose from the list below the site you would like to create
-                this new project in.
+                this new workspace in.
                 <br/><br/>
                 <table class="acctList">
                 <tr>
@@ -103,12 +103,12 @@ if(memberOfSites.size()>0) {
 }else{
 %>
         <div class="generalContent">
-            To create a project, you must have a space for that
-            project in an account.  You have no sites at this time.
-            Each project has to belong to a site, and you can only create a
-            project in an site if you have been given access to do so.
+            To create a workspace, you must have a space for that
+            workspace in an account.  You have no sites at this time.
+            Each workspace has to belong to a site, and you can only create a
+            workspace in a site if you have been given access to do so.
             <br/>
-            Create a Site in order to create a project<br/>.
+            Create a Site in order to create a workspace<br/>.
             <form action="userAccounts.htm">
             <input type="submit" value="View Your Sites" class="btn btn-primary">
             </form>

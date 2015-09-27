@@ -44,7 +44,7 @@
 
 
     String op = ar.reqParam("op");
-    if ("Create Remote Upstream Project".equals(op)) {
+    if ("Create Remote Upstream Workspace".equals(op)) {
         JSONObject requestObj = new JSONObject();
         requestObj.put("operation", "createProject");
 

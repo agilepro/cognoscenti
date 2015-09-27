@@ -262,7 +262,7 @@ public class WikiToPDF
         String projectName = ngp.getFullName();
         setPFont();
         newLine();
-        writeWrappedLine("Project:");
+        writeWrappedLine("Workspace:");
 
         setH1Font();
         newLine();
@@ -334,7 +334,7 @@ public class WikiToPDF
         setH1Font();
         currentLineSize = 8;  //but really small
         newLine();
-        writeWrappedLine("Project: "+ngp.getFullName()+", Site: "+book.getFullName());
+        writeWrappedLine("Workspace: "+ngp.getFullName()+", Site: "+book.getFullName());
         newLine();
         writeWrappedLine("Last modified by:  "+lastEditor.getName()+" on "+editTime);
 

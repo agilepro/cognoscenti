@@ -86,11 +86,6 @@
     </definition>
 
 
-    <definition name="userProfile" extends="baseLayout">
-        <put-attribute name="title" value="User Settings" />
-        <put-attribute name="body" value="/spring/jsp/UserProfile.jsp" />
-    </definition>
-
     <definition name="upload_link_attachment" extends="baseLayout">
         <put-attribute name="title" value="Upload Attachments" />
         <put-attribute name="body" value="/spring/jsp/createLinkURL.jsp" />
@@ -107,27 +102,27 @@
     </definition>
 
     <definition name="WatchedProjects" extends="slimLayout">
-        <put-attribute name="title" value="Watched Projects" />
+        <put-attribute name="title" value="Watched Workspaces" />
         <put-attribute name="body" value="/spring/jsp/WatchedProjects.jsp" />
     </definition>
 
     <definition name="NotifiedProjects" extends="slimLayout">
-        <put-attribute name="title" value="Notified Projects" />
+        <put-attribute name="title" value="Notified Workspaces" />
         <put-attribute name="body" value="/spring/jsp/NotifiedProjects.jsp" />
     </definition>
 
     <definition name="OwnerProjects" extends="slimLayout">
-        <put-attribute name="title" value="Administered Projects" />
+        <put-attribute name="title" value="Administered Workspaces" />
         <put-attribute name="body" value="/spring/jsp/OwnerProjects.jsp" />
     </definition>
 
     <definition name="ParticipantProjects" extends="slimLayout">
-        <put-attribute name="title" value="All Projects" />
+        <put-attribute name="title" value="Participant Workspaces" />
         <put-attribute name="body" value="/spring/jsp/ParticipantProjects.jsp" />
     </definition>
 
     <definition name="AllProjects" extends="slimLayout">
-        <put-attribute name="title" value="All Projects" />
+        <put-attribute name="title" value="All Workspaces" />
         <put-attribute name="body" value="/spring/jsp/AllProjects.jsp" />
     </definition>
 
@@ -137,7 +132,7 @@
     </definition>
 
     <definition name="UserCreateProject" extends="slimLayout">
-        <put-attribute name="title" value="User Create Project" />
+        <put-attribute name="title" value="User Create Workspace" />
         <put-attribute name="body" value="/spring/jsp/UserCreateProject.jsp" />
     </definition>
 
@@ -190,7 +185,7 @@
         <put-attribute name="body" value="/spring/jsp/ListAttachments.jsp" />
     </definition>
     <definition name="DocsFolder" extends="slimLayout">
-        <put-attribute name="title" value="Project Documents Folders" />
+        <put-attribute name="title" value="Workspace Documents Folders" />
         <put-attribute name="body" value="/spring/jsp/DocsFolder.jsp" />
     </definition>
 
@@ -218,7 +213,7 @@
 
 
     <definition name="linkURLToProject" extends="slimLayout">
-        <put-attribute name="title" value="Link URL To Project Form" />
+        <put-attribute name="title" value="Link URL To Workspace Form" />
         <put-attribute name="body" value="/spring/jsp/linkURLToProject.jsp" />
     </definition>
 
@@ -295,15 +290,15 @@
         <put-attribute name="body" value="/spring/jsp/leaf_account_personal.jsp" />
     </definition>
     <definition name="accountListProjects" extends="slimLayout">
-        <put-attribute name="title" value="List of Site Projects" />
+        <put-attribute name="title" value="List of Site Workspaces" />
         <put-attribute name="body" value="/spring/jsp/accountListProjects.jsp" />
     </definition>
     <definition name="accountCreateProject" extends="slimLayout">
-        <put-attribute name="title" value="Create Project" />
+        <put-attribute name="title" value="Create Workspace" />
         <put-attribute name="body" value="/spring/jsp/accountCreateProject.jsp" />
     </definition>
     <definition name="accountCloneProject" extends="slimLayout">
-        <put-attribute name="title" value="Clone Remote Project" />
+        <put-attribute name="title" value="Clone Remote Workspace" />
         <put-attribute name="body" value="/spring/jsp/accountCloneProject.jsp" />
     </definition>
     <definition name="convertFolderProject" extends="slimLayout">

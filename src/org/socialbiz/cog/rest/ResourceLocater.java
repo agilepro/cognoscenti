@@ -672,12 +672,12 @@ public class ResourceLocater
         if (ngpi==null)
         {
             lrstatus.setStatusCode(404);
-            throw new ProgramLogicError("Not able to find a project named '"+ token1
+            throw new ProgramLogicError("Not able to find a workspace named '"+ token1
                            +"'.  Check the link and see if it is entered correctly.");
         }
         if (!ngpi.isProject())
         {
-            throw new ProgramLogicError("Not able to find a project named '"+ token1
+            throw new ProgramLogicError("Not able to find a workspace named '"+ token1
                            +"'.  Found some other container with that name.");
         }
 

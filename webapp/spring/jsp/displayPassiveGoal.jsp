@@ -10,7 +10,7 @@
 /*
    Required parameters:
 
-    1. pageId   : This is the id of an Project and here it is used to retrieve NGPage.
+    1. pageId   : This is the id of an Workspace and here it is used to retrieve NGPage.
     2. taskId   : This parameter is id of a task and here it is used to get current task detail (GoalRecord)
                   and to pass current task id value when submitted.
 
@@ -123,7 +123,7 @@ table.datatable {
                 <tr><td height="15px"></td></tr>
                 <tr><td colspan="3">
                     <form action="<%=currentGoalRecord.getRemoteUpdateURL()%>" method="get">
-                        <input type="submit" class="btn btn-primary" name="op" value="Access Action Item on Remote Project">
+                        <input type="submit" class="btn btn-primary" name="op" value="Access Action Item on Remote Workspace">
                     </form>
                     </td>
                 </tr>
@@ -161,7 +161,7 @@ table.datatable {
 
                 <tr><td height="10px"></td></tr>
                 <tr>
-                    <td class="labelcolumn">Project:</td>
+                    <td class="labelcolumn">Workspace:</td>
                     <td style="width:20px;"></td>
                     <td class="datacolumn" style="width:20px;"><%ar.writeHtml(ngp.getFullName());%></td>
                 </tr>

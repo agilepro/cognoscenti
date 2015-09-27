@@ -7,7 +7,7 @@
     List<String> folders = UtilityMethods.splitString(folderVal, '|');
     NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     if (ngp.isFrozen()) {
-        throw new Exception("Program Logic Error: addDocument.jsp should never be invoked when the project is frozen.  "
+        throw new Exception("Program Logic Error: addDocument.jsp should never be invoked when the workspace is frozen.  "
            +"Please check the logic of the controller.");
     }
     String folderPart = "";
@@ -60,7 +60,7 @@ app.controller('myCtrl', function($scope, $http) {
         <td style="padding:15px">
             <button class="btn btn-primary" onClick="location.href='docsUpload.htm<%=folderPart%>'">Upload Files</button>
         </td>
-        <td style="padding:15px"><p>Take files from your local disk, and using your browser upload them to the project.</p></td>
+        <td style="padding:15px"><p>Take files from your local disk, and using your browser upload them to the workspace.</p></td>
     </tr>
     <tr style="height:50px;padding:15px">
         <td style="padding:15px">
@@ -75,7 +75,7 @@ app.controller('myCtrl', function($scope, $http) {
         <td style="padding:15px">
             <button type="button" class="btn btn-primary" onClick="location.href='linkURLToProject.htm<%=folderPart%>'">Link URL</button>
         </td>
-        <td style="padding:15px"><p>Link a web page to the project.   This will not download the web page as a attachment,
+        <td style="padding:15px"><p>Link a web page to the workspace.   This will not download the web page as a attachment,
                but instead will provide an easy way for other users to access the web page in their browser.</p></td>
     </tr>
     </table>

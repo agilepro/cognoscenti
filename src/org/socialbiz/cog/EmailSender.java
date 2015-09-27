@@ -198,7 +198,7 @@ public class EmailSender extends TimerTask {
         while (ngpi!=null) {
             if (ngpi.isProject()) {
                 NGPage ngp = (NGPage) ngpi.getContainer();
-                System.out.println("BACKGROUND EVENTS: found project ("+ngp.getFullName()+") due at "+new Date(ngp.nextActionDue()));
+                System.out.println("BACKGROUND EVENTS: found workspace ("+ngp.getFullName()+") due at "+new Date(ngp.nextActionDue()));
                 EmailRecord eRec = ngp.getEmailReadyToSend();
                 if (eRec!=null) {
                     //priority to sending email
@@ -211,7 +211,7 @@ public class EmailSender extends TimerTask {
                 }
                 ngpi.nextScheduledAction = ngp.nextActionDue();
                 ngp.save();
-                System.out.println("BACKGROUND EVENTS: finished action on project ("+ngp.getFullName()+")");
+                System.out.println("BACKGROUND EVENTS: finished action on workspace ("+ngp.getFullName()+")");
                 count++;
                 NGPageIndex.clearLocksHeldByThisThread();
             }
@@ -264,12 +264,12 @@ public class EmailSender extends TimerTask {
             sendPreparedMessageImmediately(eRec, cog);
         }
         catch (Exception whatWentWrong) {
-            
+
             System.out.println("EmailSender: FAILURE while sendOneEmail ("+pageName+") "+whatWentWrong);
             whatWentWrong.printStackTrace(System.out);
             System.out.println("EmailSender: ----------------------------------");
             exHolder = whatWentWrong;
-            
+
             //slow things down a bit.  We are catching and continuing here, so if this is
             //an error in program, slow it down so it does not fill up the disk with log output.
             Thread.sleep(5000);

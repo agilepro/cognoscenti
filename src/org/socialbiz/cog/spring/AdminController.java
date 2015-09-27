@@ -52,7 +52,7 @@ import org.workcast.json.JSONObject;
 @Controller
 public class AdminController extends BaseController {
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/updateProjectInfo.json", method = RequestMethod.POST)
     public void updateProjectInfo(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -60,12 +60,12 @@ public class AdminController extends BaseController {
         try{
             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngp);
-            ar.assertAdmin("Must be an admin to change project info.");
+            ar.assertAdmin("Must be an admin to change workspace info.");
             JSONObject newConfig = getPostedObject(ar);
-            
+
             ngp.updateConfigJSON(ar, newConfig);
 
-            ngp.saveFile(ar, "updated configuration of project");
+            ngp.saveFile(ar, "updated configuration of workspace");
             JSONObject repo = ngp.getConfigJSON();
             repo.write(ar.w, 2, 2);
             ar.flush();
@@ -74,8 +74,8 @@ public class AdminController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
-    
+
+
     @RequestMapping(value = "/{siteId}/{project}/changeGoal.form", method = RequestMethod.POST)
     public ModelAndView changeGoalHandler(@PathVariable String siteId,@PathVariable String project,
             HttpServletRequest request,
@@ -95,7 +95,7 @@ public class AdminController extends BaseController {
             process.setSynopsis(ar.reqParam("goal"));
             process.setDescription(ar.reqParam("purpose"));
 
-            ngp.saveFile(ar, "Changed Goal and/or Purpose of Project");
+            ngp.saveFile(ar, "Changed Goal and/or Purpose of Workspace");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.admin.change.goal", new Object[]{project,siteId} , ex);
         }
@@ -112,7 +112,7 @@ public class AdminController extends BaseController {
         ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("User must be logged in to change the name of project.");
+            ar.assertLoggedIn("User must be logged in to change the name of workspace.");
             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(project);
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Unable to change the name of this page.");
@@ -152,7 +152,7 @@ public class AdminController extends BaseController {
         ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("User must be logged in to delete previous name of project.");
+            ar.assertLoggedIn("User must be logged in to delete previous name of workspace.");
             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(project);
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Unable to change the name of this page.");
@@ -443,11 +443,11 @@ public class AdminController extends BaseController {
         String responseMessage = "";
         AuthRequest ar = null;
         try{
-            ar = NGWebUtils.getAuthRequest(request, response, "User must be logged in to update project settings.");
+            ar = NGWebUtils.getAuthRequest(request, response, "User must be logged in to update workspace settings.");
 
             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(project);
             ar.setPageAccessLevels(ngp);
-            ar.assertAdmin("Unable to change project settings.");
+            ar.assertAdmin("Unable to change workspace settings.");
             String operation = ar.reqParam("operation");
             if("publicPermission".equals(operation)){
                 ngp.setAllowPublic(ar.reqParam("allowPublic"));
@@ -477,7 +477,7 @@ public class AdminController extends BaseController {
         ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("User must be logged in to change the goal/purpose of project.");
+            ar.assertLoggedIn("User must be logged in to change the goal/purpose of workspace.");
             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Unable to change the name of this page.");
@@ -498,7 +498,7 @@ public class AdminController extends BaseController {
                         ngp.setDefRemoteFolder(defFolder);
                     }
                 }
-                ngp.saveFile(ar, "Updated default location of project.");
+                ngp.saveFile(ar, "Updated default location of workspace.");
                 modelAndView = new ModelAndView(new RedirectView( "admin.htm"));
                 modelAndView.addObject("folderId", null);
                 modelAndView.addObject("path", null);
@@ -518,7 +518,7 @@ public class AdminController extends BaseController {
     throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("User must be logged in to change the settings of project.");
+            ar.assertLoggedIn("User must be logged in to change the settings of workspace.");
             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(project);
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Unable to change the name of this page.");
@@ -584,7 +584,7 @@ public class AdminController extends BaseController {
             //This preserves the old modified date and user.
             String oldModUser = ngp.getLastModifyUser();
             long   oldModTime = ngp.getLastModifyTime();
-            ngp.save(oldModUser, oldModTime, "Changed Goal and/or Purpose of Project", ar.getCogInstance());
+            ngp.save(oldModUser, oldModTime, "Changed Goal and/or Purpose of Workspace", ar.getCogInstance());
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.admin.update.project.settings",
                     new Object[]{project,siteId} , ex);

@@ -62,7 +62,7 @@ app.controller('myCtrl', function($scope, $http) {
     };
 
     $scope.stopRole = function(prj, role) {
-        alert('Sit tight, Soon we will allow you to stop being a player of the '+role+' role of the '+prj.fullName+' project.');
+        alert('Sit tight, Soon we will allow you to stop being a player of the '+role+' role of the '+prj.fullName+' workspace.');
     }
 
     $scope.noImpl = function() {
@@ -109,7 +109,7 @@ app.controller('myCtrl', function($scope, $http) {
     </span>
     <b>{{prj.fullName}}</b> - {{prj.key}}
     <div style="background-color:white;border-radius:5px;margin:5px;padding:10px;">
-        Project last updated: {{prj.updated|date}}
+        Workspace last updated: {{prj.updated|date}}
         <br/>
         You are playing the following roles:
         <span ng-repeat="role in prj.roles">

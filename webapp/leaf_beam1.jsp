@@ -38,7 +38,7 @@
 
     boolean isAdmin = ar.isAdmin();
 
-    pageTitle = "Project Sync: "+ngp.getFullName();
+    pageTitle = "Workspace Sync: "+ngp.getFullName();
     specialTab = "Admin";
 
     //randomly, get the first license record
@@ -65,7 +65,7 @@
 
     <div class="pagenavigation">
         <div class="pagenav">
-            <div class="left"><% ar.writeHtml( ngp.getFullName());%> &raquo; Synchronize Projects </div>
+            <div class="left"><% ar.writeHtml( ngp.getFullName());%> &raquo; Synchronize Workspaces </div>
             <div class="right"></div>
             <div class="clearer">&nbsp;</div>
         </div>

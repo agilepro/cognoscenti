@@ -8,7 +8,7 @@
     List<String> folders = UtilityMethods.splitString(folderVal, '|');
     NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     if (ngp.isFrozen()) {
-        throw new Exception("Program Logic Error: addDocument.jsp should never be invoked when the project is frozen.  "
+        throw new Exception("Program Logic Error: addDocument.jsp should never be invoked when the workspace is frozen.  "
            +"Please check the logic of the controller.");
     }
     String folderPart = "";
@@ -95,7 +95,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Link URL to Project
+            Link URL to Workspace
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">

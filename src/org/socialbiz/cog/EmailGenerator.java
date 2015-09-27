@@ -377,7 +377,7 @@ public class EmailGenerator extends DOMFace {
             throw new Exception("Some problem, so some reason the owner user profile is null");
         }
         ownerProfile.writeLink(ar);
-        ar.write(" &nbsp; <b>Project:</b> ");
+        ar.write(" &nbsp; <b>Workspace:</b> ");
         ngp.writeContainerLink(ar, 100);
         ar.write("</p>");
         ar.write("\n<div class=\"leafContent\" >");

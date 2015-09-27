@@ -55,7 +55,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
- * This class will handle all requests that are coming to create a new Project.
+ * This class will handle all requests that are coming to create a new Workspace.
  * Currently this is handling only requests that are coming to create a new
  * project from scratch. Later this can be extended to edit a project or to
  * create a project from Template.
@@ -109,7 +109,7 @@ public class CreateProjectController extends BaseController {
         String message="";
         AuthRequest ar = null;
         try{
-            ar = NGWebUtils.getAuthRequest(request, response, "Could not find project name.");
+            ar = NGWebUtils.getAuthRequest(request, response, "Could not find workspace name.");
 
             String matchKey = ar.defParam("matchkey", "").trim();
             String projects = getAllProjectFullNameList(matchKey, ar.getCogInstance());
@@ -200,7 +200,7 @@ public class CreateProjectController extends BaseController {
                 return;
             }
             NGPage project= createTemplateProject(ar,siteId);
-            project.saveFile(ar, "Created new project");
+            project.saveFile(ar, "Created new workspace");
 
             String upstream = project.getUpstreamLink();
             if (upstream!=null && upstream.length()>0) {
@@ -455,12 +455,12 @@ public class CreateProjectController extends BaseController {
             //converted to a project.
             File siteRoot = site.getSiteRootFolder();
             if (siteRoot == null) {
-                throw new Exception("Failed to create project at specified site because site does "
+                throw new Exception("Failed to create workspace at specified site because site does "
                         +"not have a root folder for some reason: "+site.getFullName());
             }
             File expectedLoc = new File(siteRoot, loc);
             if (!expectedLoc.exists()) {
-                throw new Exception("Failed to create project because location does not exist: "
+                throw new Exception("Failed to create workspace because location does not exist: "
                         + expectedLoc.toString());
             }
 
@@ -474,7 +474,7 @@ public class CreateProjectController extends BaseController {
         }
 
         ngPage.setSite(site);
-        ngPage.save(uProf.getUniversalId(), nowTime, "Creating a project", cog);
+        ngPage.save(uProf.getUniversalId(), nowTime, "Creating a workspace", cog);
 
         cog.makeIndex(ngPage);
 
@@ -499,7 +499,7 @@ public class CreateProjectController extends BaseController {
             }
             return project;
         } catch (Exception ex) {
-            throw new Exception("Unable to create a project from template for site "
+            throw new Exception("Unable to create a workspace from template for site "
                     +siteId, ex);
         }
     }
@@ -513,16 +513,16 @@ public class CreateProjectController extends BaseController {
 
         ProcessRecord process = subProject.getProcess();
         process.setSynopsis("Goal Setting");
-        process.setDescription("Purpose of Project Setting");
+        process.setDescription("Purpose of Workspace Setting");
 
-        subProject.saveFile(ar, "Changed Goal and/or Purpose of Project");
+        subProject.saveFile(ar, "Changed Goal and/or Purpose of Workspace");
         LicensedURL parentLicensedURL = null;
 
         if (parentProcessUrl != null && parentProcessUrl.length() > 0) {
             parentLicensedURL = LicensedURL.parseCombinedRepresentation(parentProcessUrl);
             process.addLicensedParent(parentLicensedURL);
         }
-        // link up the project with the parent task link
+        // link up the project with the workspace task link
         if (parentLicensedURL != null) {
             LicensedURL thisUrl = process.getWfxmlLink(ar);
 

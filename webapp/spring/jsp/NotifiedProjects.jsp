@@ -75,7 +75,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Notified Projects
+            Notified Workspaces
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -96,7 +96,7 @@ app.controller('myCtrl', function($scope, $http) {
     <table class="gridTable2" width="100%">
         <tr class="gridTableHeader">
             <td width="50px"></td>
-            <td width="200px">Project</td>
+            <td width="200px">Workspace</td>
             <td width="100px">Changed</td>
         </tr>
         <tr ng-repeat="rec in getRows()">
@@ -107,7 +107,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">
-                      Access Project</a></li>
+                      Access Workspace</a></li>
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/personal.htm">
                       Stop Notifications</a></li>
@@ -124,10 +124,10 @@ app.controller('myCtrl', function($scope, $http) {
     </table>
 
     <div class="guideVocal" ng-show="noneFound">
-        User <% uProf.writeLink(ar); %> has not signed up to receive notifications from any project.<br/>
+        User <% uProf.writeLink(ar); %> has not signed up to receive notifications from any workspace.<br/>
         <br/>
-        As you visit projects, go to the "Project Settings &gt; Personal" page, and sign up
-        to receive notifications.   Then, when things in the project change,
+        As you visit workspaces, go to the "Workspace Settings &gt; Personal" page, and sign up
+        to receive notifications.   Then, when things in the workspace change,
         such as documents added, or topics edited, you will see those changes here,
         and will be automatically notified of the changes by email.<br/>
         <br/>

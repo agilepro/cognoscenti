@@ -122,7 +122,7 @@ public void generateCollisionPage(Writer out, NGSection ngs, String val,
     ar.write("<textarea name=\"valedited\" cols=\"80\" rows=\"20\">");
     ar.writeHtml(val);
     ar.write("</textarea>\n");
-    ar.write("<p>Project: ");
+    ar.write("<p>Workspace: ");
     ar.writeHtml(p);
     ar.write("</p>\n<p>Section: ");
     ar.writeHtml(ngs.getName());

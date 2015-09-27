@@ -195,7 +195,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <button type="submit" class="btn btn-primary" name="actionType" value="RefreshWorking">Refresh from History</button>
                 </td><td>
                 Document has disappeared from the directory.  Do you want to mark it as deleted in the
-                project, or refresh from the latest backed up copy?
+                workspace, or refresh from the latest backed up copy?
                 </td></tr></table>
             </td>
         </tr>
@@ -207,7 +207,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <table><tr><td width="100">
                 <button type="submit" class="btn btn-primary" name="actionType" value="Add">Add</button>
                 </td><td>
-                Document has appeared in the project folder. <br/>Do you want to add it as an attachment?
+                Document has appeared in the workspace folder. <br/>Do you want to add it as an attachment?
                 </td></tr></table>
             </td>
         </tr>
@@ -219,7 +219,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <table><tr><td width="200">
                 <button type="submit" class="btn btn-primary" name="actionType" value="Commit">Commit Changes</button>
                 </td><td>
-                Document has been modified in the project directory.  Do you want to commit these
+                Document has been modified in the workspace.  Do you want to commit these
                 changes for safekeeping?
                 </td></tr></table>
             </td>

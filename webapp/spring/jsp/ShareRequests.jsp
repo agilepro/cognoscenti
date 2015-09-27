@@ -32,7 +32,7 @@
                 <tr>From</tr>
                 <tr>Subject</tr>
                 <tr>Sent On</tr>
-                <th>Project</th>
+                <th>Workspace</th>
                 <th>timePeriod</th>
                 <th>rid</th>
                 <th>projectKey</th>
@@ -116,7 +116,7 @@
                 {key:"from",label:"Requested By",sortable:true,resizeable:true},
                 {key:"subject",label:"Document to upload",formatter:reminderNameFormater,sortable:true,resizeable:true},
                 {key:"sentOn",label:"Sent On",sortable:true,sortOptions:{sortFunction:sortDates},resizeable:true},
-                {key:"projectName",label:"Project Name",formatter:prjectNameFormater,sortable:true,resizeable:true},
+                {key:"projectName",label:"Workspace Name",formatter:prjectNameFormater,sortable:true,resizeable:true},
                 {key:"timePeriod",label:"timePeriod",sortable:true,resizeable:false,hidden:true},
                 {key:"rid",label:"rid",sortable:true,resizeable:false,hidden:true},
                 {key:"pageKey",label:"pageKey",sortable:true,resizeable:false,hidden:true},

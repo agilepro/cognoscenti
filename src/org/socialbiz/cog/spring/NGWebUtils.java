@@ -159,7 +159,7 @@ public class NGWebUtils {
 
         if (sendTo.size() == 0) {
             throw new Exception(
-                    "sendRoleRequestEmail has been called when there are no valid Members or Administrators of the project to send the email to.");
+                    "sendRoleRequestEmail has been called when there are no valid Members or Administrators of the workspace to send the email to.");
         }
 
         String baseURL = ar.baseURL;
@@ -173,7 +173,7 @@ public class NGWebUtils {
         ar.getUserProfile().writeLink(clone);
         clone.write(" has requested to join the role <b>'");
         clone.writeHtml(roleRequestRecord.getRoleName());
-        clone.write("'</b> in the project '");
+        clone.write("'</b> in the workspace '");
         container.writeContainerLink(clone, 100);
         clone.write("'.   <br/>Comment: <i>");
         clone.writeHtml(roleRequestRecord.getRequestDescription());
@@ -185,7 +185,7 @@ public class NGWebUtils {
         clone.write("\">Click here to Accept/Deny</a></p>");
 
         clone.write("<p>You can accept or deny this request because you are either an ");
-        clone.write("Administrator or Member of this project.   If you are not responsible for ");
+        clone.write("Administrator or Member of this workspace.   If you are not responsible for ");
         clone.write("approving/rejecting this request  you can safely ignore and delete this message.</p>");
         clone.write("\n<hr/>\n");
         clone.write("</body></html>");

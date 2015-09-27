@@ -5,7 +5,7 @@
 /*
 Required parameters:
 
-    1. pageId : This is project id used to get Project Details.
+    1. pageId : This is workspace id used to get Workspace Details.
 
 Optional parameters:
 
@@ -30,7 +30,7 @@ Optional parameters:
 
     NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Can not attach a document to this project.");
+    ar.assertMember("Can not attach a document to this workspace.");
 
     UserProfile uProf = ar.getUserProfile();
     UserPage uPage    = ar.getUserPage();
@@ -88,7 +88,7 @@ Optional parameters:
                         <td style="width:20px;"></td>
                         <td><textarea name="comment" id="comment" value="<%ar.writeHtml(comment);%>" rows="4"
                                       class="form-control"></textarea><br />
-                            <span class="tipText">what is the relationship between document & this project?</span>
+                            <span class="tipText">what is the relationship between document and this workspace?</span>
                         </td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>

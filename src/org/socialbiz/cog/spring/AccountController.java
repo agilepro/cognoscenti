@@ -64,7 +64,6 @@ public class AccountController extends BaseController {
             ModelAndView modelAndView = new ModelAndView("RequestAccount");
             request.setAttribute("userKey", userKey);
             request.setAttribute("pageTitle", "New Site Request Form");
-            request.setAttribute("tabId", "Settings");
             return modelAndView;
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.account.request.page", null, ex);
@@ -166,7 +165,6 @@ public class AccountController extends BaseController {
 
             modelAndView = new ModelAndView("account_role_request");
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Site Settings");
             request.setAttribute("pageTitle", site.getFullName());
             return modelAndView;
         }catch(Exception ex){
@@ -192,7 +190,6 @@ public class AccountController extends BaseController {
 
             modelAndView = new ModelAndView("accountListProjects");
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Site Projects");
             request.setAttribute("pageTitle", site.getFullName());
             return modelAndView;
         }catch(Exception ex){
@@ -216,7 +213,6 @@ public class AccountController extends BaseController {
             }
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Site Projects");
             request.setAttribute("pageTitle", site.getFullName());
             return new ModelAndView("accountCreateProject");
         }catch(Exception ex){
@@ -240,7 +236,6 @@ public class AccountController extends BaseController {
             }
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Site Projects");
             request.setAttribute("pageTitle", site.getFullName());
             return new ModelAndView("accountCloneProject");
         }catch(Exception ex){
@@ -288,7 +283,6 @@ public class AccountController extends BaseController {
 
             modelAndView = new ModelAndView("UserAccountSetting");
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Site Settings");
             request.setAttribute("visibility_value", "3");
             request.setAttribute("pageTitle", site.getFullName());
             return modelAndView;
@@ -410,7 +404,6 @@ public class AccountController extends BaseController {
 
             modelAndView = new ModelAndView(new RedirectView("permission.htm"));
             modelAndView.addObject("page", site);
-            request.setAttribute("tabId", "Project Settings");
             request.setAttribute("pageId", siteId);
             request.setAttribute("pageTitle", site.getFullName());
             return modelAndView;
@@ -436,7 +429,6 @@ public class AccountController extends BaseController {
             modelAndView = new ModelAndView("account_permission");
             request.setAttribute("headerType", "site");
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Site Settings");
             request.setAttribute("pageTitle", site.getFullName());
             return modelAndView;
         }catch(Exception ex){
@@ -460,7 +452,6 @@ public class AccountController extends BaseController {
             //one can request access.
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Site Settings");
             request.setAttribute("visibility_value", "4");
             request.setAttribute("pageTitle", site.getFullName());
             return new ModelAndView("account_personal");
@@ -531,7 +522,6 @@ public class AccountController extends BaseController {
             modelAndView=new ModelAndView("editRoleAccount");
             request.setAttribute("headerType", "site");
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Site Settings");
             request.setAttribute("roleName", roleName);
             request.setAttribute("projectName", projectName);
             return modelAndView;

@@ -96,7 +96,7 @@ app.controller('myCtrl', function($scope, $http) {
                             ar.writeHtml(names[i]);
                             out.write(" &nbsp; <a href=\"");
                             ar.writeHtml(delLink);
-                            out.write("\" title=\"delete this name from project\"><img src=\"");
+                            out.write("\" title=\"delete this name from workspace\"><img src=\"");
                             out.write(ar.retPath);
                             out.write("assets/iconDelete.gif\"></a><br />\n");
                         }
@@ -201,7 +201,7 @@ app.controller('myCtrl', function($scope, $http) {
                         }
                         //ok ... since at this time there is no UI for creating licenses
                         //in order to test, we just create a license on the fly here, and
-                        //also save the project, which is not exactly proper.
+                        //also save the workspace, which is not exactly proper.
                         //TODO: clean this up
                         if (lic==null) {
                             lic = ngb.createLicense(ar.getBestUserId(), "Owners", ar.nowTime+(1000*60*60*24*365), false);

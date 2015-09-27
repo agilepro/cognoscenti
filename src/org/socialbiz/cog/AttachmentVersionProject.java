@@ -121,7 +121,7 @@ public class AttachmentVersionProject implements AttachmentVersion {
     public static List<AttachmentVersion> getProjectVersions(File projectfolder,  String attachName,
             String attachmentId) throws Exception  {
         if (projectfolder==null)  {
-            throw new ProgramLogicError("null project folder sent to getProjectVersions");
+            throw new ProgramLogicError("null workspace folder sent to getProjectVersions");
         }
         if (attachName==null) {
             throw new ProgramLogicError("null attachment Name sent to getProjectVersions");
@@ -264,7 +264,7 @@ public class AttachmentVersionProject implements AttachmentVersion {
                     //should never happen, but test to be sure
                     if (specialCogFile==null)  {
                         throw new Exception("Consistency problem: found a modified version in "
-                                +"the project folder, but the file did not exist and was not copied: "
+                                +"the workspace folder, but the file did not exist and was not copied: "
                                 +currentFile);
                     }
                     //rename the special copy to have the right version number
@@ -371,7 +371,7 @@ public class AttachmentVersionProject implements AttachmentVersion {
     public InputStream getInputStream() throws Exception {
         return new FileInputStream(actualFile);
     }
-    
+
     @Override
     public File getLocalFile() {
         return actualFile;

@@ -163,7 +163,7 @@ public class GoalRecord extends BaseRecord {
         List<GoalRecord> goalList = ngp.getAllGoals();
         if (goalList == null || goalList.size() == 0) {
             throw new ProgramLogicError(
-                    "Unable to find any action items on the project : " + ngp.getKey());
+                    "Unable to find any action items on the workspace : " + ngp.getKey());
         }
 
         int state = getState();

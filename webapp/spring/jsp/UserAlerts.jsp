@@ -88,7 +88,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Watched Projects
+            Watched Workspaces
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -104,7 +104,7 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 <%
 %>
-<div class="generalHeading" style="padding-top:35px">Project Notifications Since Last Digest
+<div class="generalHeading" style="padding-top:35px">Workspace Notifications Since Last Digest
         <%SectionUtil.nicePrintDateAndTime(out, lastSendTime);%></div>
     <p>These notifications, if any, will be included in your next daily digest email.</p>
 

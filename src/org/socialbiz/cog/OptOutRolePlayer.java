@@ -60,7 +60,7 @@ public class OptOutRolePlayer extends OptOutAddr {
         clone.writeHtml(roleName);
         clone.write("'</b> role in the '");
         ngc.writeContainerLink(clone, 100);
-        clone.write("' project.  ");
+        clone.write("' workspace.  ");
         clone.write("You can ");
         clone.write("<a href=\"");
         clone.writeHtml(clone.baseURL);

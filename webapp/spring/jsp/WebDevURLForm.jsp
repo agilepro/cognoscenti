@@ -5,7 +5,7 @@
 /*
 Required parameter:
 
-    1. pageId   : This is the id of a Project and used to retrieve NGPage.
+    1. pageId   : This is the id of a Workspace and used to retrieve NGPage.
     2. rLink    : This is the url of the document
 
 */
@@ -24,7 +24,7 @@ Required parameter:
     FolderAccessHelper fdh = new FolderAccessHelper(ar);
 
     pageTitle = "Add Remote Attachment to "+ngp.getFullName();
-    ar.assertMember("Can not attach a document to this project.");
+    ar.assertMember("Can not attach a document to this workspace.");
 
 %>
 

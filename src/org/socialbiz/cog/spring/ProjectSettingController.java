@@ -80,7 +80,6 @@ public class ProjectSettingController extends BaseController {
 
             modelAndView.addObject("page", nGPage);
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Project Settings");
             return modelAndView;
         }
         catch (Exception ex) {
@@ -132,7 +131,7 @@ public class ProjectSettingController extends BaseController {
             ar.flush();
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update the user setting for "+op+" on project "+pageId, ex);
+            Exception ee = new Exception("Unable to update the user setting for "+op+" on workspace "+pageId, ex);
             streamException(ee, ar);
         }
     }
@@ -211,7 +210,7 @@ public class ProjectSettingController extends BaseController {
             ar.flush();
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update the user setting for "+op+" on role "+roleId+" project  "+pageId, ex);
+            Exception ee = new Exception("Unable to update the user setting for "+op+" on role "+roleId+" workspace  "+pageId, ex);
             streamException(ee, ar);
         }
     }
@@ -264,7 +263,7 @@ public class ProjectSettingController extends BaseController {
             ar.flush();
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update the user setting for "+op+" on role "+roleName+" project  "+pageId, ex);
+            Exception ee = new Exception("Unable to update the user setting for "+op+" on role "+roleName+" workspace  "+pageId, ex);
             streamException(ee, ar);
         }
     }
@@ -277,7 +276,6 @@ public class ProjectSettingController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Project Settings");
 
             NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
             List<CustomRole> roles = nGPage.getAllRoles();
@@ -318,7 +316,6 @@ public class ProjectSettingController extends BaseController {
 
             modelAndView = new ModelAndView("EditRole");
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Project Settings");
             request.setAttribute("roleName", roleName);
             request.setAttribute("roles", roles);
             request.setAttribute("title", " : " + nGPage.getFullName());
@@ -586,7 +583,6 @@ public class ProjectSettingController extends BaseController {
             }
 
 
-            request.setAttribute("tabId", "Project Settings");
             request.setAttribute("visibility_value", "3");
             return new ModelAndView("leaf_admin");
         }catch (Exception ex) {
@@ -686,10 +682,10 @@ public class ProjectSettingController extends BaseController {
             else {
                 eGen = ngp.getEmailGeneratorOrFail(id);
             }
-            
+
             //the 'owner' is always the last person who saves the record. The email can
             //only include what this person sees.  This avoid a problem with getting around
-            //security by finding an email of a highly privileged person, and modifying the 
+            //security by finding an email of a highly privileged person, and modifying the
             //email to send confidential stuff.
             eGen.setOwner(ar.getBestUserId());
 
@@ -735,7 +731,6 @@ public class ProjectSettingController extends BaseController {
 
             modelAndView.addObject("page", nGPage);
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Project Settings");
             return modelAndView;
         }
         catch (Exception ex) {
@@ -760,7 +755,6 @@ public class ProjectSettingController extends BaseController {
 
             modelAndView.addObject("page", nGPage);
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Project Settings");
             return modelAndView;
         }
         catch (Exception ex) {

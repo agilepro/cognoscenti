@@ -17,7 +17,7 @@
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Roles of Project
+            Roles of Workspace
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">

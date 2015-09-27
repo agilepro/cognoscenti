@@ -92,7 +92,7 @@ public class ResourceDecoder {
         curPos = slashPos+1;
         slashPos = path.indexOf("/", curPos);
         if (slashPos<=curPos) {
-            throw new Exception("Can't find a project ID in the URL.");
+            throw new Exception("Can't find a workspace ID in the URL.");
         }
         projId = path.substring(curPos, slashPos);
 
@@ -111,7 +111,7 @@ public class ResourceDecoder {
         project = ar.getCogInstance().getProjectByKeyOrFail(projId);
         lic = project.getLicense(licenseId);
         if (lic==null) {
-            throw new Exception("Can not find the license '"+licenseId+"' on project '"+projId+"'");
+            throw new Exception("Can not find the license '"+licenseId+"' on workspace '"+projId+"'");
         }
         licenseOwner = new AddressListEntry(lic.getCreator());
         setUserFromLicense(ar);

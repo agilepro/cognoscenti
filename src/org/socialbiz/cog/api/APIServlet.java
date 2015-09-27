@@ -297,7 +297,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         JSONObject aPath = new JSONObject();
         allPaths.put("/api/{site}/{proj}/summary.json", aPath);
         JSONObject gets = new JSONObject();
-        gets.put("description", "Entire Project Summary");
+        gets.put("description", "Entire Workspace Summary");
 
         return allPaths;
     }
@@ -349,7 +349,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         responseOK.put("license", getLicenseInfo(resDec.lic));
         if ("createProject".equals(op)) {
             if (!"$".equals(resDec.projId)) {
-                throw new Exception("create project can only be called on a site URL, not project: "+resDec.projId);
+                throw new Exception("create workspace can only be called on a site URL, not workspace: "+resDec.projId);
             }
             NGBook site = resDec.site;
             String projectName = objIn.getString("projectName");
@@ -359,7 +359,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
             License lr = ngp.createLicense(ar.getBestUserId(), "Admin",
                     ar.nowTime + 1000*60*60*24*365, false);
-            ngp.saveFile(ar, "project created through API by "+ar.getBestUserId());
+            ngp.saveFile(ar, "workspace created through API by "+ar.getBestUserId());
 
             String newLink = ar.baseURL + "api/" + resDec.siteId + "/" + ngp.getKey()
                     + "/summary.json?lic=" + lr.getId();
@@ -388,7 +388,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
         NGPage ngp = resDec.project;
         if (ngp == null) {
-            throw new Exception("Unable to find a project with the id "+resDec.projId);
+            throw new Exception("Unable to find a workspace with the id "+resDec.projId);
         }
         if (resDec.lic == null) {
             throw new Exception("Unable to find a license with the id "+resDec.licenseId);
@@ -424,8 +424,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             newNote.setUniversalId(newNoteObj.getString("universalid"));
             newNote.updateNoteFromJSON(newNoteObj, ar);
             HistoryRecord.createNoteHistoryRecord(resDec.project, newNote, HistoryRecord.EVENT_TYPE_CREATED, ar,
-                    "From downstream project by synchronization license "+resDec.licenseId);
-            resDec.project.saveFile(ar, "New topic synchronized from downstream linked project.");
+                    "From downstream workspace by synchronization license "+resDec.licenseId);
+            resDec.project.saveFile(ar, "New topic synchronized from downstream linked workspace.");
             return responseOK;
         }
         if ("updateNote".equals(op)) {
@@ -441,8 +441,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             }
             note.updateNoteFromJSON(newNoteObj, ar);
             HistoryRecord.createNoteHistoryRecord(resDec.project, note, HistoryRecord.EVENT_TYPE_MODIFIED, ar,
-                    "From downstream project by synchronization license "+resDec.licenseId);
-            resDec.project.saveFile(ar, "Topic synchronized from downstream linked project.");
+                    "From downstream workspace by synchronization license "+resDec.licenseId);
+            resDec.project.saveFile(ar, "Topic synchronized from downstream linked workspace.");
             return responseOK;
         }
         if ("updateDoc".equals(op) || "newDoc".equals(op) || "uploadDoc".equals(op)) {
@@ -485,7 +485,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                                 +" with information from another document with the same name, but different universal ID. "
                                 +" Something is wrong with upstream/downstream exchange.");
                     }
-                    updateReason = "From downstream project by synchronization license "+resDec.licenseId;
+                    updateReason = "From downstream workspace by synchronization license "+resDec.licenseId;
                 }
                 if (att==null) {
                     att = resDec.project.createAttachment();
@@ -521,7 +521,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             //a downstream synchronization.  Commenting out for now since it is inaccurate.
             HistoryRecord.createAttHistoryRecord(resDec.project, att, historyEventType, ar,
                     updateReason);
-            resDec.project.saveFile(ar, "Document synchronized from downstream linked project.");
+            resDec.project.saveFile(ar, "Document synchronized from downstream linked workspace.");
             return responseOK;
         }
 

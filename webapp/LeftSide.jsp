@@ -64,7 +64,7 @@
                     ar.write(ar.retPath);
                     ar.write("UserPages.jsp?u=");
                     ar.writeHtml(uProf.getKey());
-                    ar.write("\" title=\"home for the logged in user\">My Projects</a><br/>\n");
+                    ar.write("\" title=\"home for the logged in user\">My Workspaces</a><br/>\n");
                     ar.write("- <a href=\"");
                     ar.write(ar.retPath);
                     ar.write("UserProfile.jsp?u=");

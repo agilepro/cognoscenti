@@ -9,7 +9,7 @@ Required parameters:
     1. st   : style of request.  Known styles:
               role - this is an email message sent because you are a member of a role, ad this
                      page will allow you to leave the role.
-    2. p    : This is the id of a Project .
+    2. p    : This is the id of a Workspace.
     3. role : the name of the role
     4. email: the email address that was sent the email, and received it.  This is the email address
               that the owner owns.
@@ -77,7 +77,7 @@ Optional Parameters:
                         <td style="width:20px;"></td>
                         <td>You are a member of a role named
                             '<b><%ar.writeHtml(specRole.getName());%></b>'
-                            in a project named '<b><%ar.writeHtml(ngp.getFullName());%></b>'.
+                            in a workspace named '<b><%ar.writeHtml(ngp.getFullName());%></b>'.
                         </td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
@@ -86,7 +86,7 @@ Optional Parameters:
                         <td style="width:20px;"></td>
                         <td><input type="submit" name="cmd" id="cmd" value="Remove Me"    class="btn btn-primary" />
                         Removes you from the role, and you will no longer get email messages sent to
-                            '<%ar.writeHtml(specRole.getName());%>' in a project '<%ar.writeHtml(ngp.getFullName());%>'.</td>
+                            '<%ar.writeHtml(specRole.getName());%>' in a workspace '<%ar.writeHtml(ngp.getFullName());%>'.</td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
     <% if (!ar.isLoggedIn())  { %>
@@ -113,13 +113,13 @@ Optional Parameters:
                     </tr>
                     <tr><td style="height:10px"></td></tr>
                     <tr>
-                        <td class="gridTableColummHeader" valign="top">Project:</td>
+                        <td class="gridTableColummHeader" valign="top">Workspace:</td>
                         <td style="width:20px;"></td>
                         <td valign="top"><%ngp.writeContainerLink(ar, 60);%></td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
                     <tr>
-                        <td class="gridTableColummHeader" valign="top">Project Owners:</td>
+                        <td class="gridTableColummHeader" valign="top">Workspace Owners:</td>
                         <td style="width:20px;"></td>
                         <td valign="top"><% for (AddressListEntry owner : ngp.getSecondaryRole().getExpandedPlayers(ngp)){
                                 owner.writeLink(ar);

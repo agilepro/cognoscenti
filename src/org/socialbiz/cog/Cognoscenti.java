@@ -342,7 +342,7 @@ System.out.println("Cognoscenti Server Object == Start the Server");
 
 
     /**
-     * This is a convenience function that looks a particular project
+     * This is a convenience function that looks a particular workspace
      * up in the index, finds the index entry, and then IF it is a
      * project, returns that with the right type (NGPage).
      * Fails if the key is not matched with anything, or if the key

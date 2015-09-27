@@ -364,7 +364,7 @@ public class HistoryRecord extends DOMFace
 
     /**
      *
-     * @param ngc the container (Project, Site, Profile) that this history is to add to
+     * @param ngc the container (Workspace, Site, Profile) that this history is to add to
      * @param objectID this is the ID of the object that the history is about.  Use null string if about the entire container
      * @param contextType
      * @param contextVersion

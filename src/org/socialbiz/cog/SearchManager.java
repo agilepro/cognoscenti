@@ -187,7 +187,7 @@ public class SearchManager {
             if ("$".equals(noteId)) {
                 //this is the case of the entire page search record
                 linkAddr = ar.getDefaultURL(ngp);
-                noteSubject = "Project: "+ngp.getFullName();
+                noteSubject = "Workspace: "+ngp.getFullName();
             }
             if (noteId!=null && noteId.length()==4) {
                 NoteRecord note = ngp.getNoteOrFail(noteId);

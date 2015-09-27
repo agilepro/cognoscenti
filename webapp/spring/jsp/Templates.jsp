@@ -98,7 +98,7 @@ app.controller('myCtrl', function($scope, $http) {
     <table class="gridTable2" width="100%">
         <tr class="gridTableHeader">
             <td width="50px"></td>
-            <td width="200px">Project</td>
+            <td width="200px">Workspace</td>
             <td width="100px">Changed</td>
             <td width="100px">Seen</td>
         </tr>
@@ -110,7 +110,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">
-                          Access Project</a></li>
+                          Access Workspace</a></li>
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/personal.htm">
                           Remove Template</a></li>
@@ -131,16 +131,16 @@ app.controller('myCtrl', function($scope, $http) {
         User <% uProf.writeLink(ar); %> has not specified any templates.<br/>
             <br/>
             Templates are references to normal projects.  When you
-            create a new project, you can specify a template, and all the action items
-            and roles are copied (empty & unstarted) into the new project.
-            This is a convenient way to 'prime' a project with the normal tasks
+            create a new workspace, you can specify a template, and all the action items
+            and roles are copied (empty & unstarted) into the new workspace.
+            This is a convenient way to 'prime' a workspace with the normal tasks
             and roles that you need. <br/>
             <br/>
-            If you visit a project which has a good form, and you might want to use it
-            in the future as a template, on that project go the "Project Settings>Personal" page,
-            and choose to remember the project as a template.  Then that project will appear here
+            If you visit a workspace which has a good form, and you might want to use it
+            in the future as a template, on that workspace go the "Workspace Settings>Personal" page,
+            and choose to remember the workspace as a template.  Then that workspace will appear here
             and in other places where you can use a template, such as at the time that you
-            create a new project.
+            create a new workspace.
     </div>
 
 </div>

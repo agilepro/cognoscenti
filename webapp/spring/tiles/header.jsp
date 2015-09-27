@@ -7,13 +7,12 @@ Parameter used :
 
     1. pageTitle    : Used to retrieve the page title from request.
     2. userKey      : This is Key of user who is logged in.
-    3. pageId       : Id of a Project, used to fetch details of Project (NGPage).
+    3. pageId       : Id of a Workspace, used to fetch details of Workspace (NGPage).
     4. book         : This is key of a site, used here to get details of an Site (NGBook).
     5. viewingSelf  : This parameter is used to check if user is viewing himself/herself or other profile.
-    6. headerType   : Used to check the header type whether it is from site, project or user on the basis of
+    6. headerType   : Used to check the header type whether it is from site, workspace or user on the basis of
                       it corrosponding tabs are displayed
-    7. tabId        : This is tabId when the page ie rendered Tab with this id will be selected.
-    8. accountId    : This is key of a site, used here to get details of an Site (NGBook).
+    7. accountId    : This is key of a site, used here to get details of an Site (NGBook).
 
 */%><%!
     String pageTitle = null;
@@ -32,7 +31,6 @@ Parameter used :
     String viewingSelfStr = (String)request.getAttribute("viewingSelf");
 
     String headerTypeStr = (String)request.getAttribute("headerType");
-    String tabId = (String)request.getAttribute("tabId");
     String accountId = (String)request.getAttribute("accountId");
 
     String headerType = "";
@@ -269,10 +267,10 @@ Parameter used :
             }
 
         function openFreezeMessagePopup(){
-            var popup_title = "Project Frozen";
+            var popup_title = "Workspace Frozen";
             var popup_body = '<div class="generalArea">'+
                 '<div class="generalContent" align="center">'+
-                    'You can not perform any operation in this project because this project has been frozen by administrator/owner.'+
+                    'You can not perform any operation in this workspace because this workspace has been frozen by administrator/owner.'+
                     '<br>'+
                     '<br>'+
                     '<input type="button" class="btn btn-primary"  value="Ok" onclick="cancelPanel()" >'+
@@ -290,7 +288,6 @@ Parameter used :
 
 <% if (!headerType.equals("site")) { %>
     <script>
-        var specialTab='<%=tabId%>';
         headerType = "<%=headerType%>";
         var userKey = "<%=userKey%>";
         var isSuperAdmin = "<%=ar.isSuperAdmin()%>";
@@ -302,7 +299,6 @@ Parameter used :
 
 <% } else if(headerType.equals("site")){ %>
      <script>
-        var specialTab='<%=tabId%>';
         headerType = "<%=headerType%>";
         var userKey = "<%=userKey%>";
 
@@ -361,7 +357,7 @@ Parameter used :
                     }else{
                         trncatePageTitle=pageTitle;
                     }
-                    ar.write("Project: <span title=\"");
+                    ar.write("Workspace: <span title=\"");
                     ar.write(pageTitle);
                     ar.write("\">");
                     ar.writeHtml(trncatePageTitle);
@@ -379,7 +375,7 @@ Parameter used :
                         uProf = ar.getUserProfile();
                 %>
                         <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/watchedProjects.htm"
-                                title="Projects for the logged in user">Projects</a></li>
+                                title="Workspaces for the logged in user">Workspaces</a></li>
                         <li>|</li>
                         <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/userAlerts.htm"
                                 title="Updates for the logged in user">Updates</a></li>
@@ -444,7 +440,7 @@ Parameter used :
             <ul id="tabs">
 
                 <div id="zoomOutButton" style="display: none;vertical-align:baseline;" align="right"  >
-                    <input type="button" class="btn btn-primary" onclick="zoomOut()" value="<< Back in Project">
+                    <input type="button" class="btn btn-primary" onclick="zoomOut()" value="<< Back in Workspace">
                 </div>
             </ul>
         </div>
@@ -458,7 +454,7 @@ Parameter used :
             <ul id="userSubMenu4" class="ddsubmenustyle"/></ul>
             <%}%>
 
-        <!--Top Drop Down Menu for project section HTML Starts Here -->
+        <!--Top Drop Down Menu for workspace section HTML Starts Here -->
             <ul id="ddsubmenu1" class="ddsubmenustyle"/></ul>
             <ul id="ddsubmenu2" class="ddsubmenustyle"></ul>
             <ul id="ddsubmenu3" class="ddsubmenustyle"> </ul>

@@ -9,7 +9,7 @@ Required parameters:
 
 Optional Parameters:
 
-    1. p :  This is project key which should be null
+    1. p :  This is workspace key which should be null
 */
 
     String folderId = ar.reqParam("folderId");

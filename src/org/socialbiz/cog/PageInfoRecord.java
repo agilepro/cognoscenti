@@ -209,7 +209,7 @@ public class PageInfoRecord extends DOMFace
     {
         if (isDeleted())
         {
-            throw new ProgramLogicError("attempt to unfreeze a project which is deleted.  Undelete the project first.");
+            throw new ProgramLogicError("attempt to unfreeze a workspace which is deleted.  Undelete the workspace first.");
         }
         setAttribute("freezeDate", null);
         setAttribute("freezeUser", null);

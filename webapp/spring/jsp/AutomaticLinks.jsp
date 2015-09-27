@@ -14,7 +14,7 @@
     NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(ngp.getKey());
 
 
-//GET the Recently VIsited Projects
+//GET the Recently Visited Workspaces
     JSONArray recentList = new JSONArray();
     NGSession ngsession = ar.ngsession;
     if (ngsession!=null) {
@@ -105,7 +105,7 @@ app.controller('myCtrl', function($scope, $http) {
       <col width="70%">
       <tr class="gridTableHeader">
         <td>Tag Value</td>
-        <td>Project Using Tag</td>
+        <td>Workspace Using Tag</td>
       </tr>
       <tr ng-repeat="oneTag in allTags">
         <td>#{{oneTag.tag}}</td>
@@ -117,10 +117,10 @@ app.controller('myCtrl', function($scope, $http) {
       </tr>
       <tr class="gridTableHeader">
         <td></td>
-        <td>Project Links</td>
+        <td>Workspace Links</td>
       </tr>
       <tr>
-        <td>To This Project</td>
+        <td>To This Workspace</td>
         <td>
           <div ng-repeat="projs in inboundLinks">
             <a href="<%=ar.retPath%>t/{{projs.siteKey}}/{{projs.pageKey}}/frontPage.htm">{{projs.name}}</a><br/>
@@ -128,7 +128,7 @@ app.controller('myCtrl', function($scope, $http) {
         </td>
       </tr>
       <tr>
-        <td>From This Project</td>
+        <td>From This Workspace</td>
         <td>
           <div ng-repeat="projs in outboundLinks">
             <a href="<%=ar.retPath%>t/{{projs.siteKey}}/{{projs.pageKey}}/frontPage.htm">{{projs.name}}</a><br/>

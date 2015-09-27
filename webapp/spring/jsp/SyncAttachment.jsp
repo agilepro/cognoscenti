@@ -144,7 +144,7 @@ if (ps!=null) {
     %>
     <div class="pageHeading">Upstream Synchronization</div>
     <div class="pageSubHeading">
-        Documents to synchronize with upstream project.
+        Documents to synchronize with upstream workspace.
     </div>
     <br/>
     <form action="<%=ar.retPath%>Beam1SyncAll.jsp" method="post">
@@ -152,7 +152,7 @@ if (ps!=null) {
         <input type="hidden" name="p" value="<%ar.writeHtml(ngp.getKey());%>">
         <input type="hidden" value="Upload All" name="op">
         <button type="submit" name="docsUp" value="yes" class="btn btn-primary">Send Documents Upstream</button>
-        to project: <b><%ar.writeHtml(rp.getName());%></b>
+        to workspace: <b><%ar.writeHtml(rp.getName());%></b>
     </form>
     <br/>
     <ul>
@@ -177,7 +177,7 @@ if (ps!=null) {
         <input type="hidden" name="p" value="<%ar.writeHtml(ngp.getKey());%>">
         <input type="hidden" value="Download All" name="op">
         <button type="submit" name="docsDown" value="yes" class="btn btn-primary">Fetch Documents from Upstream</button>
-        to project: <b><%ar.writeHtml(rp.getName());%></b>
+        to workspace: <b><%ar.writeHtml(rp.getName());%></b>
     </form>
     <br/>
     <ul>

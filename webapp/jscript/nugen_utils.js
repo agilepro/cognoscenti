@@ -80,17 +80,17 @@ function createTabs(){
     }
     else if(headerType == "site") {
         arrayOfTabs = [
-            new TabRef(retPath+"t/"+accountId+"/$/accountListProjects.htm","Site Projects","accountSubMenu2"),
+            new TabRef(retPath+"t/"+accountId+"/$/accountListProjects.htm","Site Workspaces","accountSubMenu2"),
             new TabRef(retPath+"t/"+accountId+"/$/account_settings.htm","Site Settings","accountSubMenu4")
         ];
     }
     else if(headerType == "project") {
         arrayOfTabs = [
-            new TabRef(retPath+"t/"+book+"/"+pageId+"/history.htm","Project Stream",""),
-            new TabRef(retPath+"t/"+book+"/"+pageId+"/notesList.htm","Project Topics","ddsubmenu1"),
-            new TabRef(retPath+"t/"+book+"/"+pageId+"/goalList.htm","Project Action Items","ddsubmenu2"),
-            new TabRef(retPath+"t/"+book+"/"+pageId+"/listAttachments.htm","Project Documents","ddsubmenu3"),
-            new TabRef(retPath+"t/"+book+"/"+pageId+"/personal.htm","Project Settings","ddsubmenu4")
+            new TabRef(retPath+"t/"+book+"/"+pageId+"/history.htm","Workspace Stream",""),
+            new TabRef(retPath+"t/"+book+"/"+pageId+"/notesList.htm","Workspace Topics","ddsubmenu1"),
+            new TabRef(retPath+"t/"+book+"/"+pageId+"/goalList.htm","Workspace Action Items","ddsubmenu2"),
+            new TabRef(retPath+"t/"+book+"/"+pageId+"/listAttachments.htm","Workspace Documents","ddsubmenu3"),
+            new TabRef(retPath+"t/"+book+"/"+pageId+"/personal.htm","Workspace Settings","ddsubmenu4")
         ];
     }
     else  {
@@ -104,16 +104,15 @@ function createTabs(){
         var newli   = document.createElement('li');
         var newlink = document.createElement('a');
 
-        newlink.setAttribute('onclick','updateSpecialTab("'+arrayOfTabs[i].name+'");');
         var newspan = document.createElement('span');
 
         newlink.setAttribute('href',arrayOfTabs[i].href);
         newlink.setAttribute('rel',arrayOfTabs[i].ref);
 
-        if(arrayOfTabs[i].name=="Project Stream" ){
+        if(arrayOfTabs[i].name=="Workspace Stream" ){
             newli.className = 'mainNavLink1';
         }
-        if(arrayOfTabs[i].name=="Projects" ){
+        if(arrayOfTabs[i].name=="Workspaces" ){
             newli.className = 'mainNavLink1';
         }
 
@@ -121,8 +120,8 @@ function createTabs(){
             newli.className = 'mainNavLink1 selected';
         }
         else if(specialTab==arrayOfTabs[i].name){
-            if( (arrayOfTabs[i].name=="Project Stream")||
-                (arrayOfTabs[i].name=="Projects") ){
+            if( (arrayOfTabs[i].name=="Workspace Stream")||
+                (arrayOfTabs[i].name=="Workspaces") ){
                 newli.className = 'mainNavLink1 selected';
             }
             else {
@@ -140,10 +139,6 @@ function createTabs(){
     ddlevelsmenu.setup("tabs", "topbar");
 }
 
-function updateSpecialTab(tabName){
-    specialTab=tabName;
-}
-
 function createSubLinks(){
 
     var arrayOfSubMenu=0;
@@ -151,10 +146,10 @@ function createSubLinks(){
 
     if(headerType == "site") {
 
-        var accountSubMenu2 = [new Tab(retPath+"t/"+accountId+"/$/accountListProjects.htm","List Projects"),
-            new Tab(retPath+"t/"+accountId+"/$/accountCreateProject.htm","Create New Project"),
-            new Tab(retPath+"t/"+accountId+"/$/accountCloneProject.htm","Clone Remote Project"),
-            new Tab(retPath+"t/"+accountId+"/$/convertFolderProject.htm","Convert Folder to Project"),
+        var accountSubMenu2 = [new Tab(retPath+"t/"+accountId+"/$/accountListProjects.htm","List Workspaces"),
+            new Tab(retPath+"t/"+accountId+"/$/accountCreateProject.htm","Create New Workspace"),
+            new Tab(retPath+"t/"+accountId+"/$/accountCloneProject.htm","Clone Remote Workspace"),
+            new Tab(retPath+"t/"+accountId+"/$/convertFolderProject.htm","Convert Folder to Workspace"),
             new Tab(retPath+"t/"+accountId+"/$/searchAllNotes.htm", "Search Topics")
         ];
         var accountSubMenu4 = [new Tab(retPath+"t/"+accountId+"/$/personal.htm","Personal"),
@@ -167,14 +162,14 @@ function createSubLinks(){
     }
     else if(headerType == "user"){
 
-        var arrayOfTabs1 = [new Tab(retPath+"v/"+userKey+"/watchedProjects.htm","Watched Projects"),
-            new Tab(retPath+"v/"+userKey+"/notifiedProjects.htm","Notified Projects"),
-            new Tab(retPath+"v/"+userKey+"/ownerProjects.htm","Administered Projects"),
+        var arrayOfTabs1 = [new Tab(retPath+"v/"+userKey+"/watchedProjects.htm","Watched Workspaces"),
+            new Tab(retPath+"v/"+userKey+"/notifiedProjects.htm","Notified Workspaces"),
+            new Tab(retPath+"v/"+userKey+"/ownerProjects.htm","Administered Workspaces"),
             new Tab(retPath+"v/"+userKey+"/templates.htm","Templates"),
-            new Tab(retPath+"v/"+userKey+"/participantProjects.htm","Participant Projects"),
-            new Tab(retPath+"v/"+userKey+"/allProjects.htm","All Projects"),
+            new Tab(retPath+"v/"+userKey+"/participantProjects.htm","Participant Workspaces"),
+            new Tab(retPath+"v/"+userKey+"/allProjects.htm","All Workspaces"),
             new Tab(retPath+"t/"+userKey+"/searchAllNotes.htm", "Search Topics"),
-            new Tab(retPath+"v/"+userKey+"/userCreateProject.htm","Create New Project")
+            new Tab(retPath+"v/"+userKey+"/userCreateProject.htm","Create New Workspace")
         ];
 
         var arrayOfTabs2 = [new Tab(retPath+"v/"+userKey+"/userActiveTasks.htm","Action Items"),

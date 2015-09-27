@@ -77,7 +77,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Watched Projects
+            Watched Workspaces
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -99,7 +99,7 @@ app.controller('myCtrl', function($scope, $http) {
     <table class="gridTable2" width="100%">
         <tr class="gridTableHeader">
             <td width="50px"></td>
-            <td width="200px">Project</td>
+            <td width="200px">Workspace</td>
             <td width="100px">Changed</td>
             <td width="100px">Visited</td>
         </tr>
@@ -110,7 +110,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Project</a></li>
+                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Workspace</a></li>
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/personal.htm">Stop Watching</a></li>
                 </ul>
@@ -129,11 +129,11 @@ app.controller('myCtrl', function($scope, $http) {
     <div class="guideVocal" ng-show="noneFound">
         User <% uProf.writeLink(ar); %> is not watching any projects.<br/>
         <br/>
-        As you visit projects, go to the "Project Settings &gt; Personal" page, and choose
-        to watch the project.  Then that project will appear here.  It is a convenient
+        As you visit projects, go to the "Workspace Settings &gt; Personal" page, and choose
+        to watch the workspace.  Then that workspace will appear here.  It is a convenient
         way to keep track of the projects that you are currently working on.<br/>
         <br/>
-        Later, when you are no longer interested, it is easy to stop watching a project.
+        Later, when you are no longer interested, it is easy to stop watching a workspace.
     </div>
 
 </div>

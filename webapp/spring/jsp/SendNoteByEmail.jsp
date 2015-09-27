@@ -5,7 +5,7 @@
 %><%/*
 Required parameters:
 
-    1. p    : This is the id of a Project and used to retrieve NGPage.
+    1. p    : This is the id of a Workspace and used to retrieve NGPage.
     2. oid  : This is Leaflet id which is used to retieve Leaflet information which is being send
               by email (NoteRecord object).
 
@@ -62,12 +62,12 @@ Optional Parameters:
             subject = noteRec.getSubject();
         }
         if(subject==null || subject.trim().length()==0){
-            subject = "Topic from Project "+ngp.getFullName();
+            subject = "Topic from Workspace "+ngp.getFullName();
         }
         body = noteRec.getWiki();
     }
     if(subject == null){
-        subject = "Message from Project "+ngp.getFullName();
+        subject = "Message from Workspace "+ngp.getFullName();
     }
 
     List<CustomRole> roles = ngp.getAllRoles();

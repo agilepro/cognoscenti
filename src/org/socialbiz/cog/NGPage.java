@@ -43,9 +43,9 @@ import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 /**
-* NGPage is a Container that represents a Project.
+* NGPage is a Container that represents a Workspace.
 * "Page" is the old term, "Leaf" is also an old term, avoid these.
-* The current term for the user interaction is "Project"
+* The current term for the user interaction is "Workspace"
 */
 public class NGPage extends ContainerCommon implements NGContainer
 {
@@ -98,7 +98,7 @@ public class NGPage extends ContainerCommon implements NGContainer
         displayNames = pageInfo.getPageNames();
 
         if (site==null) {
-            //site==null only when read an existing project, not creating
+            //site==null only when read an existing workspace, not creating
             //in this case, the project should have a site setting.
             String siteKey = pageInfo.getSiteKey();
 
@@ -110,7 +110,7 @@ public class NGPage extends ContainerCommon implements NGContainer
                 //problem.  Time to fix that server and remove this code.
                 siteKey="mainbook";
                 pageInfo.setSiteKey("mainbook");
-                System.out.println("This server still has a project without any site key setting: "+key);
+                System.out.println("This server still has a workspace without any site key setting: "+key);
             }
 
             //this throws an exception if book not found
@@ -1695,10 +1695,10 @@ public class NGPage extends ContainerCommon implements NGContainer
         labelList.removeChild(existing);
     }
 
-    
+
     ///////////////////// PARENT PROJECT /////////////////////
-    
-    
+
+
     public String getParentKey() throws Exception {
         return getInfoParent().getScalar("parentProject");
     }
@@ -1706,9 +1706,9 @@ public class NGPage extends ContainerCommon implements NGContainer
     public void setParentKey(String parentKey) throws Exception {
         getInfoParent().setScalar("parentProject", parentKey);
     }
-    
-    
-    
+
+
+
 
     /**
      * Return the time of the next automated action.  If there are multiple
@@ -1830,7 +1830,7 @@ public class NGPage extends ContainerCommon implements NGContainer
             }
         }
     }
-    
+
     public JSONObject getConfigJSON() throws Exception {
         ProcessRecord process = getProcess();
         JSONObject projectInfo = new JSONObject();
@@ -1893,6 +1893,6 @@ public class NGPage extends ContainerCommon implements NGContainer
             setProjectMailId(newConfig.getString("projectMail"));
         }
     }
-    
-    
+
+
 }

@@ -50,7 +50,7 @@
     <table><tr>
         <form action="SyncTasksAction.jsp">
         <td>
-            <input type="submit" value="Synchronize Action Items from Projects to Personal Action Item List"> &nbsp;
+            <input type="submit" value="Synchronize Action Items from Workspaces to Personal Action Item List"> &nbsp;
             <input type="hidden" name="go"  value="<%ar.writeHtml(thisPage);%>">
         </td>
         </form>

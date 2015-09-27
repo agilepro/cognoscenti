@@ -18,12 +18,12 @@
 /*
 Required parameter:
 
-    1. p   : This is the id of a Project and used to retrieve NGPage.
+    1. p   : This is the id of a Workspace and used to retrieve NGPage.
     2. rid : This is reminder id used here to get detail of reminder i.e. ReminderRecord.
 
 */
-    ar.assertLoggedIn("In order to see this section of the project, you need to be"+
-                       "logged in, and you need to be a member of the project.");
+    ar.assertLoggedIn("In order to see this section of the workspace, you need to be"+
+                       "logged in, and you need to be a member of the workspace.");
     String p = ar.reqParam("pageId");
     String rid  = ar.reqParam("rid");
 

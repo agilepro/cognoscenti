@@ -29,7 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
-* Project Attachments (attachments on NGProj) work differently than attachments on
+* Workspace Attachments (attachments on NGProj) work differently than attachments on
 * NGPage objects.  They are stored with real file names (not just IDs) in the same
 * folder that the project is stored in.
 *
@@ -159,7 +159,7 @@ public class AttachmentRecordProj extends AttachmentRecord
     public void commitWorkingCopy(NGContainer ngc) throws Exception {
         File projectFolder = ((NGProj)ngc).containingFolder;
         if (!projectFolder.exists()) {
-            throw new Exception("Strange, this project's folder does not exist.  "
+            throw new Exception("Strange, this workspace's folder does not exist.  "
                     + "Something must be wrong: "+projectFolder);
         }
         File cogFolder = new File(projectFolder,".cog");

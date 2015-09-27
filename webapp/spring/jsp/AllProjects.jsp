@@ -73,7 +73,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            All Projects on this Server
+            All Workspaces on this Server
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -94,7 +94,7 @@ app.controller('myCtrl', function($scope, $http) {
         <table class="gridTable2" width="100%">
             <tr class="gridTableHeader">
                 <td width="50px"></td>
-                <td width="200px">Project</td>
+                <td width="200px">Workspace</td>
                 <td width="100px">Changed</td>
             </tr>
             <tr ng-repeat="rec in getRows()">
@@ -104,7 +104,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                       <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Project</a></li>
+                          <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Workspace</a></li>
                     </ul>
                   </div>
                 </td>
@@ -122,7 +122,7 @@ app.controller('myCtrl', function($scope, $http) {
            <br/>
            When a user create projects, they will be listed here.<br/>
            <br/>
-           In order to create a project, you need to be an "Owner" or an "Executive" of an "Site".<br/>
+           In order to create a workspace, you need to be an "Owner" or an "Executive" of an "Site".<br/>
            <br/>
            Use <button class="btn btn-sm" onClick="location.href='userAccounts.htm'">Settings &gt; Sites</button>
            to view your sites, or request a new site from the system administrator.

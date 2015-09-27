@@ -115,7 +115,7 @@ app.controller('myCtrl', function($scope, $http) {
         <div class="guideVocal" ng-show="siteList.length==0">
             <p ng-show="reqNum>0">User <% uProf.writeLink(ar); %> has requested {{reqNum}} sites.</p>
             <p ng-show="reqNum==0"><b>User <% uProf.writeLink(ar); %> does not have any sites.</b></p>
-            <p>A site is required if you want to create your own projects in your own space.  Every project belongs to one site.</p>
+            <p>A site is required if you want to create your own projects in your own space.  Every workspace belongs to one site.</p>
 
             <p>You do not need an site in order to participate on projects that have already been created.<br/>
             Other site owners may give you permission to create projects in their sites.</p>

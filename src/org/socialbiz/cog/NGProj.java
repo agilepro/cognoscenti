@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
 import org.workcast.streams.HTMLWriter;
 
 /**
-* NGProj is a Container that represents a Project.
+* NGProj is a Container that represents a Workspace.
 * This kind of project exists anywhere in a library hierarchy.
 * The old project (NGPage) existed only in a single date folder, and all the attachments
 * existed in the attachment folder.

@@ -11,7 +11,7 @@
 /*
 Required parameters:
 
-    1. pageId  : This is the id of a Project and used to retrieve NGPage.
+    1. pageId  : This is the id of a Workspace and used to retrieve NGPage.
 
 Optional Parameters:
 
@@ -57,7 +57,7 @@ Optional Parameters:
                 mailSubject = noteRec.getSubject();
             }
             if(mailSubject==null || mailSubject.trim().length()==0){
-                mailSubject = "Sending Topic from Project";
+                mailSubject = "Sending Topic from Workspace";
             }
             emailInfo.put("noteInfo", noteRec.getJSONWithHtml(ar));
         }
@@ -97,7 +97,7 @@ Optional Parameters:
         }
 
         if(mailSubject == null){
-            mailSubject = "Message from Project "+ngp.getFullName();
+            mailSubject = "Message from Workspace "+ngp.getFullName();
         }
         emailInfo.put("subject", mailSubject);
 

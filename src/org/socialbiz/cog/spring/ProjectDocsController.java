@@ -260,7 +260,6 @@ public class ProjectDocsController extends BaseController {
             }
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("tabId", "Project Documents");
             return new ModelAndView("reminders");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.reminder.page", new Object[]{pageId,siteId} , ex);
@@ -290,7 +289,7 @@ public class ProjectDocsController extends BaseController {
                 return showWarningView(ar, "nugen.generatInfo.Frozen");
             }
 
-            modelAndView = createNamedView(siteId, pageId, ar, "DocsAdd","Project Documents");
+            modelAndView = createNamedView(siteId, pageId, ar, "DocsAdd");
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title", ngp.getFullName());
@@ -322,7 +321,7 @@ public class ProjectDocsController extends BaseController {
                 return showWarningView(ar, "nugen.generatInfo.Frozen");
             }
 
-            modelAndView = createNamedView(siteId, pageId, ar, "uploadDocumentForm","Project Documents");
+            modelAndView = createNamedView(siteId, pageId, ar, "uploadDocumentForm");
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title", ngp.getFullName());
@@ -381,7 +380,7 @@ public class ProjectDocsController extends BaseController {
             String aid = ar.reqParam("aid");
             ngp.findAttachmentByIDOrFail(aid);
 
-            modelAndView = createNamedView(siteId, pageId, ar, "DocsRevise","Project Documents");
+            modelAndView = createNamedView(siteId, pageId, ar, "DocsRevise");
             ar.req.setAttribute("aid", aid);
             request.setAttribute("isNewUpload", "yes");
 

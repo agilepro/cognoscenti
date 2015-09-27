@@ -73,7 +73,7 @@ else
 
 <br/>
 
-<h1>Move Resources From Another Project</h1>
+<h1>Move Resources From Another Workspace</h1>
 
 <div id="historydiv">
 
@@ -108,10 +108,10 @@ else
     }
     else {
 %>
-        <h3>From Project: <%
+        <h3>From Workspace: <%
             ar.writeHtml(hookPage.getFullName());
         %></h3>
-        <h3>To Project: <%
+        <h3>To Workspace: <%
             ar.writeHtml(ngp.getFullName());
         %></h3>
         <form action="../../leaf_moveAction.jsp" method="post">

@@ -44,11 +44,11 @@
 
     <div>
     Email Address: <% ar.writeHtml(EmailListener.getEmailProperties().getProperty("mail.smtp.from")); %><br/>
-    Token:  [cog:<% ar.writeHtml(ngp.getKey()); %>] - include this in the subject to address this project.
+    Token:  [cog:<% ar.writeHtml(ngp.getKey()); %>] - include this in the subject to address this workspace.
     </div>
 
     <div style="height:30px">&nbsp;</div>
-    <div class="generalHeading">Project Streaming Links</div>
+    <div class="generalHeading">Workspace Streaming Links</div>
 
     <table width="600" border="0">
         <col width="150">

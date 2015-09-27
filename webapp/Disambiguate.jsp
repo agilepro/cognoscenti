@@ -89,7 +89,7 @@
 %>
             </table>
             <br/>
-            Note: Projects can have multiple names.  The first name is the current name
+            Note: Workspaces can have multiple names.  The first name is the current name
             (the name seen at the top of the page) but the old names can still be used
             to link to that leaf.  If the old name is no longer appropriate for that
             project, you may wish to delete the old name in order to eliminate

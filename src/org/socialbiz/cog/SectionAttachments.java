@@ -229,7 +229,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
         throws Exception
     {
         if (ngp==null) {
-            throw new ProgramLogicError("SectionAttachments can serve upthe attachment only when the Project is known.");
+            throw new ProgramLogicError("SectionAttachments can serve upthe attachment only when the workspace is known.");
         }
         try {
             //get the mime type from the file extension
@@ -264,7 +264,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             //Someone might be trying all the possible file names just to
             //see what is here.  A three second sleep makes that more difficult.
             Thread.sleep(3000);
-            throw new Exception("Unable to serve up a file named '"+fileName+"' from project '"+ngp.getFullName()+"'", e);
+            throw new Exception("Unable to serve up a file named '"+fileName+"' from workspace '"+ngp.getFullName()+"'", e);
         }
     }
 
@@ -307,7 +307,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             throw new NGException("Attachment does not have ANY versions", new Object[0]);
         }
         catch (Exception e) {
-            throw new Exception("Unable to get contents of version "+version+" file named '"+fileName+"' from project '"+ngp.getFullName()+"'", e);
+            throw new Exception("Unable to get contents of version "+version+" file named '"+fileName+"' from workspace '"+ngp.getFullName()+"'", e);
         }
     }
 

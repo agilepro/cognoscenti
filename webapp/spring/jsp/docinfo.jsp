@@ -6,7 +6,7 @@
 %><%/*
 Required parameters:
 
-    1. pageId : This is the id of an project and here it is used to retrieve NGPage (Project's Details).
+    1. pageId : This is the id of a workspace and here it is used to retrieve NGPage (Workspace's Details).
     2. aid : This is document/attachment id which is used to get information of the attachment being downloaded.
 
 */
@@ -283,7 +283,7 @@ app.controller('myCtrl', function($scope, $http) {
                     </div>
                 </div>
                 <div ng-hide="canUpdate">
-                    <i>You have to be logged in and a member of this project in order to create a comment</i>
+                    <i>You have to be logged in and a member of this workspace in order to create a comment</i>
                 </div>
 
             </td>

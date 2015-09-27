@@ -11,7 +11,7 @@ Required parameter:
 */
 
     //this page should only be called when logged in and having access to the site
-    ar.assertLoggedIn("Must be logged in to clone a remote project");
+    ar.assertLoggedIn("Must be logged in to clone a remote workspace");
 
     String accountKey = ar.reqParam("accountId");
 
@@ -55,7 +55,7 @@ Required parameter:
 <body>
 
 
-<div class="pageHeading">Create Clone from Remote Project</div>
+<div class="pageHeading">Create Clone from Remote Workspace</div>
 <div class="pageSubHeading"></div>
 
 <div class="generalContent">
@@ -66,7 +66,7 @@ Required parameter:
                 <td colspan="3">
                 <table id="assignTask">
                     <tr>
-                        <td>Enter the streaming link from the remote project you would like to clone:</td>
+                        <td>Enter the streaming link from the remote workspace you would like to clone:</td>
                     </tr>
                     <tr><td style="height:20px"></td></tr>
                     <tr>

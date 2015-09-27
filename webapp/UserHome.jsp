@@ -67,7 +67,7 @@
         <br/>
         <div class="section">
             <div class="section_title">
-                <h1 class="left">Watched Projects</h1>
+                <h1 class="left">Watched Workspaces</h1>
                 <div class="section_date right">
                 </div>
                 <div class="clearer">&nbsp;</div>

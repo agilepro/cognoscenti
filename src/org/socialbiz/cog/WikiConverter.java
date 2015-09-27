@@ -491,7 +491,7 @@ public class WikiConverter
                     linkName = foundPI.containerName; // use the best name for
                                                         // page
                 }
-                titleValue = "Navigate to the project: " + linkName;
+                titleValue = "Navigate to the workspace: " + linkName;
                 pageExists = !foundPI.isDeleted;
                 specialGraphic = "deletedLink.gif";
             } else if (foundPages.size() == 0) {
@@ -501,7 +501,7 @@ public class WikiConverter
 
                 pageExists = false;
                 specialGraphic = "createicon.gif";
-                titleValue = "Project does not exist";
+                titleValue = "Workspace does not exist";
 
                 if (ar.isNewUI() && ar.isLoggedIn()) {
                     linkAddr = "javascript:brokenLink(" + isImage + ",'"
@@ -514,7 +514,7 @@ public class WikiConverter
                 // this is the case where there is more than one page
                 linkAddr = ar.retPath + "Disambiguate.jsp?n="
                         + SectionUtil.encodeURLData(linkAddr);
-                titleValue = "There is more than one project named " + linkAddr;
+                titleValue = "There is more than one workspace named " + linkAddr;
 
             }
         }

@@ -47,7 +47,7 @@
       },
       {
         "color": "magenta",
-        "description": "Members of a project can see and edit any of the content in the project.  Members can create, edit, and delete notes, can upload, download, and delete documents.Members can approve other people to become members or other roles.",
+        "description": "Members of a project can see and edit any of roles.",
         "expandedPlayers": [
           {
             "name": "Keith (local) Test",
@@ -318,7 +318,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Project Documents by Folder
+            Workspace Documents by Folder
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -345,7 +345,7 @@ app.controller('myCtrl', function($scope, $http) {
         <div class="folderLine" style="cursor:pointer">
             <span ng-click="trimFolderPath(0)">
                 <img src="<%=ar.retPath%>assets/iconFolder.gif">
-                <img src="<%=ar.retPath%>assets/images/collapseIcon.gif"> Project
+                <img src="<%=ar.retPath%>assets/images/collapseIcon.gif"> Workspace
             </span>
         </div>
         <div class="folderLine" style="margin-left:{{$index*15+15}}px;cursor:pointer" ng-repeat="folder in folderPath">
