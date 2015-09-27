@@ -65,7 +65,10 @@ public class AdminController extends BaseController {
 
             ngp.updateConfigJSON(ar, newConfig);
 
-            ngp.saveFile(ar, "updated configuration of workspace");
+            //note: this save does not set the "last changed" metadata
+            //configuration changes are not content changes and should not 
+            //appear as being updated.
+            ngp.save();
             JSONObject repo = ngp.getConfigJSON();
             repo.write(ar.w, 2, 2);
             ar.flush();
