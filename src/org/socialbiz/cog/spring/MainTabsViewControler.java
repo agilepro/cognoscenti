@@ -1249,8 +1249,8 @@ public class MainTabsViewControler extends BaseController {
 
           try{
               AuthRequest ar = AuthRequest.getOrCreate(request, response);
-              registerRequiredProject(ar, siteId, pageId);
-              ModelAndView modelAndView= checkLoginMember(ar);
+              NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+              ModelAndView modelAndView= checkLoginMemberFrozen(ar, ngp);
               if (modelAndView!=null) {
                   return modelAndView;
               }
