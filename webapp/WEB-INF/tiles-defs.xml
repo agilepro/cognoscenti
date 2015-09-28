@@ -217,6 +217,11 @@
         <put-attribute name="body" value="/spring/jsp/linkURLToProject.jsp" />
     </definition>
 
+    <definition name="linkGoogleDoc" extends="slimLayout">
+        <put-attribute name="title" value="Link Google Doc" />
+        <put-attribute name="body" value="/spring/jsp/linkGoogleDoc.jsp" />
+    </definition>
+
     <definition name="createLinkToRepositoryForm" extends="slimLayout">
         <put-attribute name="title" value="Link To Repository Form" />
         <put-attribute name="body" value="/spring/jsp/createLinkToRepositoryForm.jsp" />

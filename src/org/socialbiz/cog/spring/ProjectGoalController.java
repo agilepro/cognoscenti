@@ -355,7 +355,7 @@ public class ProjectGoalController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
 
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -575,9 +575,8 @@ public class ProjectGoalController extends BaseController {
             HttpServletResponse response) throws Exception {
 
         String responseMessage = "";
-        AuthRequest ar = null;
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("You need to login to perform this function.");
 
             String processURL = ar.reqParam("processURL");
@@ -637,6 +636,7 @@ public class ProjectGoalController extends BaseController {
             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member of a workspace to reorder tasks.");
+            ar.assertNotFrozen(ngp);
 
             List<GoalRecord> tasks = ngp.getAllGoals();
 

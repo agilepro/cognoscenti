@@ -134,7 +134,7 @@ public class MainTabsViewControler extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -160,7 +160,7 @@ public class MainTabsViewControler extends BaseController {
             else {
                 registerRequiredProject(ar, siteId, pageId);
             }
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -192,7 +192,7 @@ public class MainTabsViewControler extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -213,7 +213,7 @@ public class MainTabsViewControler extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -268,7 +268,7 @@ public class MainTabsViewControler extends BaseController {
                  return showWarningView(ar, "message.loginalert.see.page");
              }
              registerRequiredProject(ar, siteId, pageId);
-             ModelAndView modelAndView = memberCheckViews(ar);
+             ModelAndView modelAndView = checkLoginMember(ar);
              if (modelAndView!=null) {
                  return modelAndView;
              }
@@ -294,6 +294,7 @@ public class MainTabsViewControler extends BaseController {
              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
              ar.setPageAccessLevels(ngp);
              ar.assertMember("Must be a member to update a topic contents.");
+             ar.assertNotFrozen(ngp);
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
 
@@ -336,6 +337,7 @@ public class MainTabsViewControler extends BaseController {
              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
              ar.setPageAccessLevels(ngp);
              ar.assertMember("Must be a member to update a topic contents.");
+             ar.assertNotFrozen(ngp);
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
              NoteRecord note = ngp.getNote(nid);
@@ -458,7 +460,7 @@ public class MainTabsViewControler extends BaseController {
 
             boolean canAccessNote  = AccessControl.canAccessNote(ar, ngp, note);
             if (!canAccessNote) {
-                ModelAndView modelAndView= memberCheckViews(ar);
+                ModelAndView modelAndView= checkLoginMember(ar);
                 if (modelAndView!=null) {
                     return modelAndView;
                 }
@@ -710,7 +712,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               AuthRequest ar = AuthRequest.getOrCreate(request, response);
               registerRequiredProject(ar, siteId, pageId);
-              ModelAndView modelAndView= memberCheckViews(ar);
+              ModelAndView modelAndView= checkLoginMember(ar);
               if (modelAndView!=null) {
                   return modelAndView;
               }
@@ -730,6 +732,7 @@ public class MainTabsViewControler extends BaseController {
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to create a meeting.");
+              ar.assertNotFrozen(ngp);
               JSONObject meetingInfo = getPostedObject(ar);
               String name = meetingInfo.getString("name");
               if (name==null || name.length()==0) {
@@ -799,6 +802,7 @@ public class MainTabsViewControler extends BaseController {
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to create a meeting.");
+              ar.assertNotFrozen(ngp);
               String id = ar.reqParam("id");
               MeetingRecord meeting = ngp.findMeeting(id);
               JSONObject meetingInfo = getPostedObject(ar);
@@ -844,6 +848,7 @@ public class MainTabsViewControler extends BaseController {
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to delete a meeting.");
+              ar.assertNotFrozen(ngp);
               JSONObject meetingInfo = getPostedObject(ar);
               meetingId = meetingInfo.getString("id");
               ngp.removeMeeting(meetingId);
@@ -866,7 +871,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               AuthRequest ar = AuthRequest.getOrCreate(request, response);
               registerRequiredProject(ar, siteId, pageId);
-              ModelAndView modelAndView= memberCheckViews(ar);
+              ModelAndView modelAndView= checkLoginMember(ar);
               if (modelAndView!=null) {
                   return modelAndView;
               }
@@ -885,6 +890,7 @@ public class MainTabsViewControler extends BaseController {
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to create a meeting.");
+              ar.assertNotFrozen(ngp);
               String id = ar.reqParam("id");
               MeetingRecord meeting = ngp.findMeeting(id);
               JSONObject agendaInfo = getPostedObject(ar);
@@ -917,6 +923,7 @@ public class MainTabsViewControler extends BaseController {
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to delete a meeting.");
+              ar.assertNotFrozen(ngp);
               String id = ar.reqParam("id");
               MeetingRecord meeting = ngp.findMeeting(id);
               JSONObject agendaInfo = getPostedObject(ar);
@@ -942,6 +949,7 @@ public class MainTabsViewControler extends BaseController {
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to move an agenda item.");
+              ar.assertNotFrozen(ngp);
               String src = ar.reqParam("src");
               String dest = ar.reqParam("dest");
               MeetingRecord meeting = ngp.findMeeting(src);
@@ -978,7 +986,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               AuthRequest ar = AuthRequest.getOrCreate(request, response);
               registerRequiredProject(ar, siteId, pageId);
-              ModelAndView modelAndView= memberCheckViews(ar);
+              ModelAndView modelAndView= checkLoginMember(ar);
               if (modelAndView!=null) {
                   return modelAndView;
               }
@@ -999,6 +1007,7 @@ public class MainTabsViewControler extends BaseController {
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to update an agenda item.");
+              ar.assertNotFrozen(ngp);
               String id = ar.reqParam("id");
               MeetingRecord meeting = ngp.findMeeting(id);
               String aid = ar.reqParam("aid");
@@ -1048,6 +1057,7 @@ public class MainTabsViewControler extends BaseController {
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to update an agenda item.");
+              ar.assertNotFrozen(ngp);
               String id = ar.reqParam("id");
               MeetingRecord meeting = ngp.findMeeting(id);
 
@@ -1094,7 +1104,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               AuthRequest ar = AuthRequest.getOrCreate(request, response);
               registerRequiredProject(ar, siteId, pageId);
-              ModelAndView modelAndView= memberCheckViews(ar);
+              ModelAndView modelAndView= checkLoginMember(ar);
               if (modelAndView!=null) {
                   return modelAndView;
               }
@@ -1117,6 +1127,7 @@ public class MainTabsViewControler extends BaseController {
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to create a action item.");
+              ar.assertNotFrozen(ngp);
               String id = ar.reqParam("id");
               MeetingRecord meeting = ngp.findMeeting(id);
               String aid = ar.reqParam("aid");
@@ -1155,6 +1166,7 @@ public class MainTabsViewControler extends BaseController {
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to create a action item.");
+              ar.assertNotFrozen(ngp);
               gid = ar.reqParam("gid");
               JSONObject goalInfo = getPostedObject(ar);
               GoalRecord gr = null;
@@ -1213,7 +1225,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
-              ar.assertMember("Must be a member to create a action item.");
+              ar.assertMember("Must be a member to get action item history.");
               String gid = ar.reqParam("gid");
               GoalRecord gr = ngp.getGoalOrFail(gid);
 
@@ -1238,7 +1250,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               AuthRequest ar = AuthRequest.getOrCreate(request, response);
               registerRequiredProject(ar, siteId, pageId);
-              ModelAndView modelAndView= memberCheckViews(ar);
+              ModelAndView modelAndView= checkLoginMember(ar);
               if (modelAndView!=null) {
                   return modelAndView;
               }
@@ -1258,7 +1270,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               AuthRequest ar = AuthRequest.getOrCreate(request, response);
               registerRequiredProject(ar, siteId, pageId);
-              ModelAndView modelAndView= memberCheckViews(ar);
+              ModelAndView modelAndView= checkLoginMember(ar);
               if (modelAndView!=null) {
                   return modelAndView;
               }

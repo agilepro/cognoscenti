@@ -60,7 +60,21 @@ app.controller('myCtrl', function($scope, $http) {
         <td style="padding:15px">
             <button class="btn btn-primary" onClick="location.href='docsUpload.htm<%=folderPart%>'">Upload Files</button>
         </td>
-        <td style="padding:15px"><p>Take files from your local disk, and using your browser upload them to the workspace.</p></td>
+        <td style="padding:15px">
+            <p>Take files from your local disk, and using your browser upload them to the workspace.</p>
+        </td>
+    </tr>
+    <tr style="height:50px;padding:15px">
+        <td style="padding:15px">
+            <button type="button" class="btn btn-primary"
+                onClick="location.href='linkGoogleDoc.htm<%=folderPart%>'">Attach Google Doc</button>
+        </td>
+        <td style="padding:15px">
+            <p>Cognoscenti can access documents from Google Drive, also known as
+            Google Docs.  In the current implementation you create or locate the document on
+            Google Drive, open it for editing, and save the URL for that into your Cognoscenti workspace.
+            </p>
+        </td>
     </tr>
     <tr style="height:50px;padding:15px">
         <td style="padding:15px">
@@ -73,7 +87,8 @@ app.controller('myCtrl', function($scope, $http) {
     </tr>
     <tr style="height:50px;padding:15px">
         <td style="padding:15px">
-            <button type="button" class="btn btn-primary" onClick="location.href='linkURLToProject.htm<%=folderPart%>'">Link URL</button>
+            <button type="button" class="btn btn-primary"
+                onClick="location.href='linkURLToProject.htm<%=folderPart%>'">Link URL</button>
         </td>
         <td style="padding:15px"><p>Link a web page to the workspace.   This will not download the web page as a attachment,
                but instead will provide an easy way for other users to access the web page in their browser.</p></td>

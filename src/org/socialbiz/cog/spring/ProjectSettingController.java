@@ -280,7 +280,7 @@ public class ProjectSettingController extends BaseController {
             NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
             List<CustomRole> roles = nGPage.getAllRoles();
 
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -721,7 +721,7 @@ public class ProjectSettingController extends BaseController {
         try {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -745,7 +745,7 @@ public class ProjectSettingController extends BaseController {
         try {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }

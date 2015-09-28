@@ -187,7 +187,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -296,7 +296,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -399,7 +399,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -421,7 +421,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -453,7 +453,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -533,7 +533,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -563,7 +563,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -773,7 +773,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -824,7 +824,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }

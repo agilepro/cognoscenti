@@ -3,11 +3,12 @@
     function errorPanelHandler($scope, errorData) {
         if (errorData.exception) {
             var exception = errorData.exception;
-            $scope.errorMsg = exception.msgs.join();
+            $scope.errorMsgs = exception.msgs;
             $scope.errorTrace = exception.stack;
         }
         else {
-            $scope.errorMsg = stripHtml(errorData);
+            $scope.errorMsgs = [];
+            $scope.errorMsgs.push(stripHtml(errorData));
             $scope.errorTrace = errorData;
         }
         $scope.showError=true;
@@ -37,22 +38,32 @@
         <div class="rightDivContent" style="margin:10px;">
             <a href="#" ng-click="showError=false"><img src="<%= ar.retPath%>assets/iconBlackDelete.gif"/></a>
         </div>
-        <div class="generalSettings">
-            <table>
+        <div>
+            <table style="color:#888888;font-family:sans-serif;font-size:16px;">
                 <tr>
-                    <td class="gridTableColummHeader">Error:</td>
+                    <td class="gridTableColummHeader">Problem:</td>
                     <td style="width:20px;"></td>
-                    <td colspan="2">{{errorMsg}}</td>
+                    <td colspan="2" style="padding:15px;">
+                        <div ng-repeat="msg in errorMsgs">
+                            {{msg}}
+                        </div>
+                    </td>
                 </tr>
                 <tr ng-show="showTrace">
                     <td class="gridTableColummHeader">Trace:</td>
                     <td style="width:20px;"></td>
-                    <td colspan="2">{{errorTrace}}</td>
+                    <td colspan="2" style="padding:15px;">
+                       <div>
+                          <pre>{{errorTrace}}</pre>
+                       </div>
+                    </td>
                 </tr>
-                <tr ng-hide="showTrace">
+                <tr>
                     <td class="gridTableColummHeader">Trace:</td>
                     <td style="width:20px;"></td>
-                    <td colspan="2"><button ng-click="showTrace=true">Show The Details</button></td>
+                    <td colspan="2" style="padding:15px;">
+                        <button ng-click="showTrace=!showTrace">Show The Details</button>
+                    </td>
                 </tr>
             </table>
         </div>

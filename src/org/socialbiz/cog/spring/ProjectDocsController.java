@@ -98,7 +98,7 @@ public class ProjectDocsController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
             registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -341,7 +341,7 @@ public class ProjectDocsController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage ngp = registerRequiredProject(ar, siteId, pageId);
 
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -401,7 +401,7 @@ public class ProjectDocsController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
 
-            ModelAndView modelAndView= memberCheckViews(ar);
+            ModelAndView modelAndView= checkLoginMember(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }
@@ -421,10 +421,11 @@ public class ProjectDocsController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String did = "";
         try{
+            did = ar.reqParam("did");
             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to update a document information.");
-            did = ar.reqParam("did");
+            ar.assertNotFrozen(ngp);
             JSONObject docInfo = getPostedObject(ar);
 
             AttachmentRecord aDoc = null;
@@ -447,7 +448,7 @@ public class ProjectDocsController extends BaseController {
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to updated document "+did, ex);
+            Exception ee = new Exception("Unable to update document "+did, ex);
             streamException(ee, ar);
         }
     }

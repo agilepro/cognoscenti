@@ -165,24 +165,6 @@ public class BaseController {
     }
 
 
-    /**
-    * Redirect to the login page from a form POST controller when an error occurred.
-    * parameter go is the web address to redirect to on successful login
-    * parameter error is an exception that represents the message to display to the user
-    * Error message is displayed only once.  Refreshing the page will clear the message.
-    *
-    protected void redirectToLoginPage(AuthRequest ar, String go, Exception error) throws Exception
-    {
-        //pass the 'last' error message to the login page through the session (not parameter)
-        String msgtxt = NGException.getFullMessage(error, ar.getLocale());
-        ar.session.setAttribute("error-msg", msgtxt);
-
-        String err1return = ar.retPath+"t/EmailLoginForm.htm?go="+URLEncoder.encode(go, "UTF-8");
-        ar.resp.sendRedirect(err1return);
-        return;
-    }
-    */
-
     /*
     * Pass in the relative URL and
     * this will redirect the browser to that address.
@@ -218,8 +200,9 @@ public class BaseController {
      * of the user.  Particularly: must be logged in, must have a name, must have an email
      * address, and must be a member of the page.
      * @return a ModelAndView object that will tell the user what is wrong.
+     *         and return a NULL if logged in, member, and all config is OK
      */
-    protected ModelAndView memberCheckViews(AuthRequest ar) throws Exception {
+    protected ModelAndView checkLoginMember(AuthRequest ar) throws Exception {
         if(!ar.isLoggedIn()){
             return showWarningView(ar, "nugen.project.login.msg");
         }
@@ -235,6 +218,23 @@ public class BaseController {
         }
         if (UserManager.getAllSuperAdmins(ar).size()==0) {
             return showWarningView(ar, "nugen.missingSuperAdmin");
+        }
+        return null;
+    }
+    
+    /**
+     * Checks that the project is OK to be updated.  Should be used for
+     * forms that prompt for information to update the workspace.  In that
+     * case a frozen (or deleted) workspace should not prompt for that update.
+     * @throws Exception
+     */
+    protected ModelAndView checkLoginMemberFrozen(AuthRequest ar, NGPage ngp) throws Exception {
+        ModelAndView modelAndView = checkLoginMember(ar);
+        if (modelAndView!=null) {
+            return modelAndView;
+        }
+        if(ngp.isFrozen()){
+            return showWarningView(ar, "nugen.generatInfo.Frozen");
         }
         return null;
     }
@@ -281,7 +281,7 @@ public class BaseController {
 
             //all exceptions are delayed by 3 seconds to avoid attempts to
             //mine for valid license numbers
-            Thread.sleep(3000);
+            Thread.sleep(ar.ngsession.getErrorResponseDelay());
 
             System.out.println("USER_CONTROLLER_ERROR: "+ar.getCompleteURL());
 

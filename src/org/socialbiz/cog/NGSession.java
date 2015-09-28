@@ -20,16 +20,16 @@
 
 package org.socialbiz.cog;
 
-import org.socialbiz.cog.api.AuthStatus;
-import org.socialbiz.cog.exception.ProgramLogicError;
-
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.servlet.http.HttpSession;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+
+import org.socialbiz.cog.api.AuthStatus;
+import org.socialbiz.cog.exception.ProgramLogicError;
 
 /**
 * Holds things that are persistent for a user across a session
@@ -51,6 +51,7 @@ public class NGSession
     private HttpSession session;
 
     private AuthStatus aStat;
+    
 
     /**
      * The proper way to get the NGSession instance that is assocaited with a
@@ -189,4 +190,29 @@ public class NGSession
         UserManager.writeUserProfilesToFile();
     }
 
+    private long lastError=0;
+    /**
+     * It is possible for a hacker to probe and get information from a server 
+     * by observing what makes an error and what does not.  The dange of this is 
+     * greatly reduced if errors a slow.  If an error takes a few seconds, then
+     * it takes too long to mine the errors for useful information.   If you are
+     * a legitimate user, then a delay of a few seconds does not matter.  
+     * ONLY, it is a much nicer user interface if the error response is immediate.
+     * The compromise is this.  The FIRST error will be fast, very fast.
+     * Subsequent errors -- within a give time span -- should be slower.  A 
+     * simple rule:  Never give another error message until 5 seconds after
+     * the last.  This will never slow the FIRST error, but only subsequent ones.
+     * Once you have gone 5 seconds without an error, you are back to fast 
+     * errors again.  
+     */
+    public long getErrorResponseDelay() {
+        long now = System.currentTimeMillis();
+        long delay = lastError + 5000 - now;
+        lastError = now;
+        if (delay<0) {
+            return 0;
+        }
+        return delay;
+    }
+    
 }

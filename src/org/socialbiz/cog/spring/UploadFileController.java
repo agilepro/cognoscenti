@@ -324,33 +324,49 @@ public class UploadFileController extends BaseController {
     protected ModelAndView getLinkURLToProjectForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
 
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.link.url.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.attachment.linkurltoproject.memberlogin");
-            }
-            if(ngp.isFrozen()){
-                return showWarningView(ar, "nugen.generatInfo.Frozen");
+            ModelAndView modelAndView = checkLoginMemberFrozen(ar, ngp);
+            if (modelAndView!=null) {
+                return modelAndView;
             }
 
             modelAndView = createNamedView(siteId, pageId, ar, "linkURLToProject");
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title", ngp.getFullName());
+            return modelAndView;
 
-        }catch(Exception ex){
+        }
+        catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.linkurl.to.project.page", new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/linkGoogleDoc.htm", method = RequestMethod.GET)
+    protected ModelAndView linkGoogleDoc(@PathVariable String siteId,
+            @PathVariable String pageId, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
+
+            ModelAndView modelAndView = checkLoginMemberFrozen(ar, ngp);
+            if (modelAndView!=null) {
+                return modelAndView;
+            }
+
+            return createNamedView(siteId, pageId, ar, "linkGoogleDoc");
+        }
+        catch(Exception ex){
+            throw new NGException("nugen.operation.fail.project.linkurl.to.project.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+
+    
+    
     @RequestMapping(value = "/{siteId}/{pageId}/emailReminder.htm", method = RequestMethod.GET)
     protected ModelAndView getEmailRemainderForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
