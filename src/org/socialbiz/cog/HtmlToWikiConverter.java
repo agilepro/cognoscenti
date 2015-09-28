@@ -202,12 +202,8 @@ class HTMLParser extends HTMLEditorKit.ParserCallback {
             //conversion to a link.
             StringBuffer smallerBuffer = new StringBuffer();
 
-            //walk through and escape special characters that would
-            //otherwise cause possible styling errors
+            //copy over -- don't escape here, do it lower down
             for (char ch : data) {
-                if (ch=='[' || ch=='_' || ch=='\'' || ch=='º') {
-                    smallerBuffer.append('º');
-                }
                 smallerBuffer.append( ch );
             }
 
@@ -218,7 +214,7 @@ class HTMLParser extends HTMLEditorKit.ParserCallback {
                 int pos2 = smallerBuffer.indexOf("https://", start);
                 if (pos1<start && pos2<start) {
                     //nothing else found, so copy the rest of the string and quit
-                    wikiText.append(smallerBuffer.substring(start));
+                    copyWhileEscaping(wikiText, smallerBuffer.substring(start));
                     start = smallerBuffer.length();
                     break;
                 }
@@ -234,12 +230,24 @@ class HTMLParser extends HTMLEditorKit.ParserCallback {
                 }
 
                 //now copy the link inside of square brackets
-                wikiText.append(smallerBuffer.substring(start, pos1));
+                copyWhileEscaping(wikiText, smallerBuffer.substring(start, pos1));
                 wikiText.append("[");
                 wikiText.append(smallerBuffer.substring(pos1, endPos));
                 wikiText.append("]");
                 start = endPos;
             }
+        }
+    }
+
+    private void copyWhileEscaping(StringBuffer dest, String input) {
+        //walk through and escape special characters that would
+        //otherwise cause possible styling errors
+        for (int i=0; i<input.length(); i++) {
+            char ch = input.charAt(i);
+            if (ch=='[' || ch=='_' || ch=='\'' || ch=='º') {
+                dest.append('º');
+            }
+            dest.append( ch );
         }
     }
 
