@@ -972,12 +972,15 @@ public class GoalRecord extends BaseRecord {
         }
 
         if (goalObj.has("assignTo")) {
+            JSONArray peopleList = goalObj.getJSONArray("assignTo");
             NGRole assigneeRole = getAssigneeRole();
             assigneeRole.clear();
-            JSONArray peopleList = goalObj.getJSONArray("assignTo");
             int lastPerson = peopleList.length();
             for (int i=0; i<lastPerson; i++) {
                 JSONObject person = peopleList.getJSONObject(i);
+                if (!person.has("uid")) {
+                    continue;  //ignore any entry without a UID
+                }
                 assigneeRole.addPlayer(new AddressListEntry(person.getString("uid"), person.getString("name")));
             }
         }
