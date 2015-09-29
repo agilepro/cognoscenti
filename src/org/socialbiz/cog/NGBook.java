@@ -28,7 +28,6 @@ import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.socialbiz.cog.util.CVSUtil;
 import org.w3c.dom.Document;
 
 /**
@@ -565,8 +564,6 @@ public class NGBook extends ContainerCommon implements NGContainer {
         try {
             setLastModify(ar);
             save();
-            // commit the modified files to the CVS.
-            CVSUtil.commit(getFilePath(), ar.getBestUserId(), comment);
         }
         catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.write.account.file",
@@ -892,8 +889,6 @@ public class NGBook extends ContainerCommon implements NGContainer {
             siteInfoRec.setModTime(modTime);
             siteInfoRec.setModUser(modUser);
             save();
-            // commit the modified files to the CVS.
-            CVSUtil.commit(getFilePath(), modUser, comment);
         }
         catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.write.account.file",

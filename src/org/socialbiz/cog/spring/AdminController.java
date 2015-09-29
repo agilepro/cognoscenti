@@ -66,9 +66,9 @@ public class AdminController extends BaseController {
             ngp.updateConfigJSON(ar, newConfig);
 
             //note: this save does not set the "last changed" metadata
-            //configuration changes are not content changes and should not 
+            //configuration changes are not content changes and should not
             //appear as being updated.
-            ngp.save();
+            ngp.saveWithoutMarkingModified(ar.getBestUserId(), "Updating workspace settings", ar.getCogInstance());
             JSONObject repo = ngp.getConfigJSON();
             repo.write(ar.w, 2, 2);
             ar.flush();
@@ -586,8 +586,7 @@ public class AdminController extends BaseController {
             //the time stamp which is associated mainly with the content.
             //This preserves the old modified date and user.
             String oldModUser = ngp.getLastModifyUser();
-            long   oldModTime = ngp.getLastModifyTime();
-            ngp.save(oldModUser, oldModTime, "Changed Goal and/or Purpose of Workspace", ar.getCogInstance());
+            ngp.saveWithoutMarkingModified(oldModUser, "Changed Settings of Workspace", ar.getCogInstance());
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.admin.update.project.settings",
                     new Object[]{project,siteId} , ex);

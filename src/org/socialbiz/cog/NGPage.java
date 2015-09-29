@@ -36,7 +36,6 @@ import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.socialbiz.cog.util.CVSUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
@@ -400,15 +399,18 @@ public class NGPage extends ContainerCommon implements NGContainer
     @Override
     public void save(String modUser, long modTime, String comment, Cognoscenti cog) throws Exception
     {
-        try
-        {
-            pageInfo.setModTime(modTime);
-            pageInfo.setModUser(modUser);
+        pageInfo.setModTime(modTime);
+        pageInfo.setModUser(modUser);
 
+        saveWithoutMarkingModified(modUser, comment, cog);
+    }
+
+
+    //This is for config changes, NOT content changes
+    public void saveWithoutMarkingModified(String modUser, String comment, Cognoscenti cog) throws Exception
+    {
+        try {
             save();
-
-            // commit the modified files to the CVS.
-            CVSUtil.commit(getFilePath(), modUser, comment);
 
             //update the in memory index because the file has changed
             refreshOutboundLinks(cog);
@@ -416,8 +418,7 @@ public class NGPage extends ContainerCommon implements NGContainer
             //Update blocking Queue
             NGPageIndex.postEventMsg(this.getKey());
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.write.file",
                     new Object[]{getFilePath().toString()}, e);
         }
