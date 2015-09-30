@@ -75,7 +75,6 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.canUpdate = <%=canUpdate%>;
-    $scope.inverseSort = true;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -241,21 +240,10 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.noteInfo.comments.map( function(item) {
             res.push(item);
         });
-        if ($scope.inverseSort) {
-            res.sort( function(a,b) {
-                return b.time - a.time;
-            });
-        }
-        else {
-            res.sort( function(a,b) {
-                return a.time - b.time;
-            });
-        }
+        res.sort( function(a,b) {
+            return a.time - b.time;
+        });
         return res;
-    }
-
-    $scope.changeSortDirection = function() {
-        $scope.inverseSort = !$scope.inverseSort;
     }
 
 });
@@ -283,8 +271,6 @@ app.controller('myCtrl', function($scope, $http) {
                   href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">Generate PDF</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   href="sendNote.htm?noteId={{noteInfo.id}}">Send Topic By Email</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  ng-click="changeSortDirection()"><input type="checkbox" ng-checked="inverseSort"/> InverseSort</a></li>
             </ul>
           </span>
 
@@ -316,37 +302,6 @@ app.controller('myCtrl', function($scope, $http) {
 
 
       <table>
-
-    <tr ng-show="inverseSort">
-    <td></td>
-    <td>
-    <div ng-show="canUpdate && editResp=='NOTHING'">
-        <div ng-show="editCmt=='NOTHING'" style="margin:20px;">
-            <button ng-click="myPoll=false;editCmt='NEW'" class="btn btn-default">
-                Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="myPoll=true;editCmt='NEW'" class="btn btn-default">
-                Create New <i class="fa fa-star-o"></i> Proposal</button>
-        </div>
-        <div class="well leafContent" style="width:100%" ng-show="editCmt=='NEW'" >
-          <div ng-model="myComment"
-              ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-              text-angular="" class="" style="width:100%;"></div>
-
-          <button ng-click="createComment()" class="btn btn-danger" ng-hide="myPoll">
-              Create <i class="fa fa-comments-o"></i> Comment</button>
-          <button ng-click="createComment()" class="btn btn-danger" ng-show="myPoll">
-              Create <i class="fa fa-star-o"></i> Proposal</button>
-          <button ng-click="myComment='';myPoll=false;editCmt='NOTHING'" class="btn btn-danger">Cancel</button>
-          &nbsp;
-          <input type="checkbox" ng-model="myPoll"> Proposal</button>
-        </div>
-    </div>
-    <div ng-hide="canUpdate">
-        <i>You have to be logged in and a member of this workspace in order to create a comment</i>
-    </div>
-    </td>
-    </tr>
-
 
       <tr ng-repeat="cmt in getComments()">
            <td style="width:50px;vertical-align:top;padding:15px;">
@@ -427,7 +382,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <tr><td style="height:20px;"></td></tr>
 
-    <tr ng-hide="inverseSort">
+    <tr>
     <td></td>
     <td>
     <div ng-show="canUpdate && editResp=='NOTHING'">
