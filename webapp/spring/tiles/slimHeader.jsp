@@ -54,6 +54,7 @@ Parameter used :
     if (headerTypeStr==null) {
         headerTypeStr="user";
     }
+    boolean isBlankHeader   = headerTypeStr.equals("blank");   //used for welcome page and error pages, no nav bar
     boolean isSiteHeader    = headerTypeStr.equals("site");
     boolean isUserHeader    = headerTypeStr.equals("user");
     boolean isProjectHeader = headerTypeStr.equals("project");
@@ -75,7 +76,7 @@ Parameter used :
             throw new Exception("Program Logic Error: need a pageId passed to a workspace style header");
         }
     }
-    else {
+    else if (!isBlankHeader) {
         throw new Exception("don't understand header type: "+headerTypeStr);
     }
 
@@ -469,35 +470,44 @@ serverUrl   = '<%ar.writeJS(ar.baseURL);%>';
 responseCode = 0;
 
 function getJSON(url, passedFunction) {
+    console.log("calling GET");
     var xhr = new XMLHttpRequest();
+    globalForXhr = xhr;
+    xhr.onreadystatechange = iehandler;
     xhr.open("GET", url, true);
     xhr.withCredentials = true;
-    xhr.onloadend = function() {
-        try {
-            responseCode = xhr.status;
-            passedFunction(JSON.parse(xhr.responseText));
-        }
-        catch (e) {
-            alert("Got an exception ("+e+") whille trying to handle: "+url);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            try {
+                responseCode = xhr.status;
+                passedFunction(JSON.parse(xhr.responseText));
+            }
+            catch (e) {
+                alert("Got an exception ("+e+") whille trying to handle: "+url);
+            }
         }
     }
     xhr.send();
 }
 
+
 function postJSON(url, data, passedFunction) {
+    console.log("calling POST");
     var xhr = new XMLHttpRequest();
+    globalForXhr = xhr;
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type","text/plain");
-    xhr.onloadend = function() {
-        try {
-            responseCode = xhr.status;
-            passedFunction(JSON.parse(xhr.responseText));
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            try {
+                responseCode = xhr.status;
+                passedFunction(JSON.parse(xhr.responseText));
+            }
+            catch (e) {
+                alert("Got an exception ("+e+") whille trying to handle: "+url);
+            }
         }
-        catch (e) {
-            alert("Got an exception ("+e+") whille trying to handle: "+url);
-        }
-
     }
     xhr.send(JSON.stringify(data));
 }

@@ -1226,6 +1226,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
               <a href="task{{goal.id}}.htm" >
                 {{goal.synopsis}}
               </a>
+               ~ {{goal.description}}
               </td>
               <td>
               <span ng-repeat="person in goal.assignTo"> {{person.name}}<br/></span>

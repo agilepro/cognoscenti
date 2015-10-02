@@ -247,7 +247,7 @@ public class MainTabsViewControler extends BaseController {
                  list.add(ngb);
              }
 
-             request.setAttribute("headerType", "user");
+             request.setAttribute("headerType", "blank");
              //TODO: see if bookList is really needed
              modelAndView.addObject("bookList",list);
          }catch(Exception ex){
