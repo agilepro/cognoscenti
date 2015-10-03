@@ -378,6 +378,13 @@ function addvalue() {
             </tr>
             <tr><td height="20px"></td></tr>
             <tr>
+                <td class="gridTableColummHeader">Status:</td>
+                <td style="width:20px;"></td>
+                <td ng-click="startEdit()">
+                    {{goalInfo.status}}
+                </td>
+            </tr>
+            <tr>
                 <td ></td>
                 <td style="width:20px;"></td>
                 <td ng-click="startEdit()">
