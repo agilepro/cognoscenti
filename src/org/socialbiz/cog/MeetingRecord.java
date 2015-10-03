@@ -270,7 +270,7 @@ public class MeetingRecord extends DOMFace {
             hasSetMeetingInfo = true;
         }
         if (input.has("reminderSent")) {
-            setReminderSent(input.getInt("reminderSent"));
+            setReminderSent(input.getLong("reminderSent"));
         }
         if (input.has("meetingInfo")) {
             String html = input.getString("meetingInfo");

@@ -473,7 +473,6 @@ function getJSON(url, passedFunction) {
     console.log("calling GET");
     var xhr = new XMLHttpRequest();
     globalForXhr = xhr;
-    xhr.onreadystatechange = iehandler;
     xhr.open("GET", url, true);
     xhr.withCredentials = true;
     xhr.onreadystatechange = function() {
