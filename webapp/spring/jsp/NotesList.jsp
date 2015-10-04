@@ -19,10 +19,6 @@
     JSONArray notes = new JSONArray();
     for (NoteRecord aNote : aList) {
 
-        //when not a member (and not logged in) only include public notes
-        //if (!aNote.isPublic() && !isMember) {
-        //    continue;
-        //}
         if (aNote.isPublic()) {
             notes.put( aNote.getJSONWithHtml(ar) );
         }
@@ -166,6 +162,7 @@ app.controller('myCtrl', function($scope, $http) {
     }
     $scope.toggleLabel = function(label) {
         $scope.filterMap[label.name] = !$scope.filterMap[label.name];
+        $scope.showFilter=true;
     }
     $scope.allLabelFilters = function() {
         var res = [];
@@ -323,7 +320,7 @@ app.controller('myCtrl', function($scope, $http) {
                     </a>
 
                     <span ng-repeat="label in getNoteLabels(rec)">
-                      <button class="btn btn-sm labelButton" style="background-color:{{label.color}};">
+                      <button class="btn btn-sm labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
                       {{label.name}}
                       </button>
                     </span>

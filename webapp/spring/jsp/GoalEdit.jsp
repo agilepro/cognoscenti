@@ -299,6 +299,21 @@ app.controller('myCtrl', function($scope, $http) {
         }
         $scope.datePickOpen3 = true;
     };
+    $scope.hasLabel = function(searchName) {
+        return $scope.goalInfo.labelMap[searchName];
+    }
+    $scope.toggleLabel = function(label) {
+        $scope.goalInfo.labelMap[label.name] = !$scope.goalInfo.labelMap[label.name];
+    }
+    $scope.getGoalLabels = function(goal) {
+        var res = [];
+        $scope.allLabels.map( function(val) {
+            if (goal.labelMap[val.name]) {
+                res.push(val);
+            }
+        });
+        return res;
+    }
 
 });
 
@@ -338,266 +353,305 @@ function addvalue() {
         </div>
     </div>
 
-        <table width="100%" ng-hide="editGoalInfo">
-            <tr>
-                <td class="gridTableColummHeader">Summary:</td>
-                <td style="width:20px;"></td>
-                <td ng-click="startEdit()"><b>{{goalInfo.synopsis}}</b> ~ {{goalInfo.description}}</td>
-            </tr>
-            <tr><td height="10px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader">Assigned To:</td>
-                <td style="width:20px;"></td>
-                <td>
-                  <span class="dropdown" ng-repeat="person in goalInfo.assignTo">
-                    <button class="btn btn-sm dropdown-toggle" type="button" id="menu1"
-                       data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;">
-                       {{bestName(person)}}</button>
+    <table width="100%" ng-hide="editGoalInfo">
+        <tr>
+            <td class="gridTableColummHeader">Summary:</td>
+            <td style="width:20px;"></td>
+            <td ng-click="startEdit()">
+                <b>{{goalInfo.synopsis}}</b>
+                ~ {{goalInfo.description}}
+                <span ng-repeat="label in getGoalLabels(goalInfo)">
+                  <button class="btn btn-sm labelButton" style="background-color:{{label.color}};">
+                    {{label.name}}
+                  </button>
+                </span>
+            </td>
+        </tr>
+        <tr><td height="10px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Assigned To:</td>
+            <td style="width:20px;"></td>
+            <td>
+              <span class="dropdown" ng-repeat="person in goalInfo.assignTo">
+                <button class="btn btn-sm dropdown-toggle" type="button" id="menu1"
+                   data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;">
+                   {{bestName(person)}}</button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                   <li role="presentation"><a role="menuitem" title="{{person}} {{person.uid}}"
+                      ng-click="removePerson(person)">Remove Address:<br/>{{person.name}}<br/>{{person.uid}}</a></li>
+                </ul>
+              </span>
+              <span >
+                <button class="btn btn-sm btn-primary" ng-click="showAddEmail=!showAddEmail"
+                    style="margin:2px;padding: 2px 5px;font-size: 11px;">+</button>
+              </span>
+            </td>
+        </tr>
+        <tr ng-show="showAddEmail"><td height="10px"></td></tr>
+        <tr ng-show="showAddEmail">
+            <td ></td>
+            <td style="width:20px;"></td>
+            <td class="form-inline form-group">
+                <button ng-click="addPerson();showAddEmail=false" class="form-control btn btn-primary">
+                    Add This Email</button>
+                <input type="text" ng-model="newPerson"  class="form-control"
+                    placeholder="Enter Email Address" style="width:350px;"
+                    typeahead="person as person.name for person in getPeople($viewValue) | limitTo:12">
+            </td>
+        </tr>
+        <tr><td height="20px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Status:</td>
+            <td style="width:20px;"></td>
+            <td ng-click="startEdit()">
+                {{goalInfo.status}}
+            </td>
+        </tr>
+        <tr>
+            <td ></td>
+            <td style="width:20px;"></td>
+            <td ng-click="startEdit()">
+                <span ng-show="goalInfo.duedate>0">   <b>Due:</b>   {{goalInfo.duedate|date}}   &nbsp; &nbsp; </span>
+                <span ng-show="goalInfo.startdate>0"> <b>Start:</b> {{goalInfo.startdate|date}} &nbsp; &nbsp; </span>
+                <span ng-show="goalInfo.enddate>0">   <b>End:</b>   {{goalInfo.enddate|date}}   &nbsp; &nbsp; </span>
+            </td>
+        </tr>
+        <tr><td height="20px"></td></tr>
+        <tr><td></td><td></td>
+            <td>
+                <button class="btn btn-default" ng-click="setState(2)" ng-show="goalInfo.state<2">
+                    Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered</button>
+                <button class="btn btn-default" ng-click="setState(3)" ng-show="goalInfo.state<3">
+                    Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted</button>
+                <button class="btn btn-default" ng-click="setState(5)" ng-show="goalInfo.state<5">
+                    Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed</button>
+
+                <span class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                    Other <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                       <li role="presentation"><a role="menuitem" title="{{person}} {{person.uid}}"
-                          ng-click="removePerson(person)">Remove Address:<br/>{{person.name}}<br/>{{person.uid}}</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
+                              Mark <img src="<%=ar.retPath%>assets/goalstate/small1.gif"> Unstarted
+                          </a>
+                      </li>
+                      <li role="presentation">
+                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">
+                              Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered
+                          </a>
+                      </li>
+                      <li role="presentation">
+                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">
+                              Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted
+                          </a>
+                      </li>
+                      <li role="presentation">
+                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(4)">
+                              Mark <img src="<%=ar.retPath%>assets/goalstate/small4.gif"> Waiting
+                          </a>
+                      </li>
+                      <li role="presentation">
+                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
+                              Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed
+                          </a>
+                      </li>
+                      <li role="presentation">
+                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
+                              Mark <img src="<%=ar.retPath%>assets/goalstate/small6.gif"> Skipped
+                          </a>
+                      </li>
+                      <li role="presentation">
+                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(7)">
+                              Mark <img src="<%=ar.retPath%>assets/goalstate/small7.gif"> Reviewing
+                          </a>
+                      </li>
+                      <li role="presentation">
+                          <a role="menuitem" tabindex="-1" href="#" ng-click="setState(8)">
+                              Mark <img src="<%=ar.retPath%>assets/goalstate/small8.gif"> Paused
+                          </a>
+                      </li>
                     </ul>
-                  </span>
-                  <span >
-                    <button class="btn btn-sm btn-primary" ng-click="showAddEmail=!showAddEmail"
-                        style="margin:2px;padding: 2px 5px;font-size: 11px;">+</button>
-                  </span>
-                </td>
-            </tr>
-            <tr ng-show="showAddEmail"><td height="10px"></td></tr>
-            <tr ng-show="showAddEmail">
-                <td ></td>
-                <td style="width:20px;"></td>
-                <td class="form-inline form-group">
-                    <button ng-click="addPerson();showAddEmail=false" class="form-control btn btn-primary">
-                        Add This Email</button>
-                    <input type="text" ng-model="newPerson"  class="form-control"
-                        placeholder="Enter Email Address" style="width:350px;"
-                        typeahead="person as person.name for person in getPeople($viewValue) | limitTo:12">
-                </td>
-            </tr>
-            <tr><td height="20px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader">Status:</td>
-                <td style="width:20px;"></td>
-                <td ng-click="startEdit()">
-                    {{goalInfo.status}}
-                </td>
-            </tr>
-            <tr>
-                <td ></td>
-                <td style="width:20px;"></td>
-                <td ng-click="startEdit()">
-                    <span ng-show="goalInfo.duedate>0">   <b>Due:</b>   {{goalInfo.duedate|date}}   &nbsp; &nbsp; </span>
-                    <span ng-show="goalInfo.startdate>0"> <b>Start:</b> {{goalInfo.startdate|date}} &nbsp; &nbsp; </span>
-                    <span ng-show="goalInfo.enddate>0">   <b>End:</b>   {{goalInfo.enddate|date}}   &nbsp; &nbsp; </span>
-                </td>
-            </tr>
-            <tr><td height="20px"></td></tr>
-            <tr><td></td><td></td>
-                <td>
-                    <button class="btn btn-default" ng-click="setState(2)" ng-show="goalInfo.state<2">
-                        Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered</button>
-                    <button class="btn btn-default" ng-click="setState(3)" ng-show="goalInfo.state<3">
-                        Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted</button>
-                    <button class="btn btn-default" ng-click="setState(5)" ng-show="goalInfo.state<5">
-                        Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed</button>
+                </span>
+                &nbsp; Prospects:
+                <span class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="menu2" data-toggle="dropdown"
+                       style="{{goalProspectsStyle()}}">{{goalProspectsName()}} <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                      <li role="presentation">
+                          <a role="menuitem" tabindex="-1" ng-click="setProspects('good')">
+                              Good
+                          </a>
+                      </li>
+                      <li role="presentation">
+                          <a role="menuitem" tabindex="-1" ng-click="setProspects('ok')">
+                              Warning
+                          </a>
+                      </li>
+                      <li role="presentation">
+                          <a role="menuitem" tabindex="-1" ng-click="setProspects('bad')">
+                              Trouble
+                          </a>
+                      </li>
 
-                    <span class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                        Other <span class="caret"></span></button>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                          <li role="presentation">
-                              <a role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
-                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small1.gif"> Unstarted
-                              </a>
-                          </li>
-                          <li role="presentation">
-                              <a role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">
-                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered
-                              </a>
-                          </li>
-                          <li role="presentation">
-                              <a role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">
-                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted
-                              </a>
-                          </li>
-                          <li role="presentation">
-                              <a role="menuitem" tabindex="-1" href="#" ng-click="setState(4)">
-                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small4.gif"> Waiting
-                              </a>
-                          </li>
-                          <li role="presentation">
-                              <a role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
-                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed
-                              </a>
-                          </li>
-                          <li role="presentation">
-                              <a role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
-                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small6.gif"> Skipped
-                              </a>
-                          </li>
-                          <li role="presentation">
-                              <a role="menuitem" tabindex="-1" href="#" ng-click="setState(7)">
-                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small7.gif"> Reviewing
-                              </a>
-                          </li>
-                          <li role="presentation">
-                              <a role="menuitem" tabindex="-1" href="#" ng-click="setState(8)">
-                                  Mark <img src="<%=ar.retPath%>assets/goalstate/small8.gif"> Paused
-                              </a>
-                          </li>
-                        </ul>
-                    </span>
-                    &nbsp; Prospects:
-                    <span class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="menu2" data-toggle="dropdown"
-                           style="{{goalProspectsStyle()}}">{{goalProspectsName()}} <span class="caret"></span></button>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                          <li role="presentation">
-                              <a role="menuitem" tabindex="-1" ng-click="setProspects('good')">
-                                  Good
-                              </a>
-                          </li>
-                          <li role="presentation">
-                              <a role="menuitem" tabindex="-1" ng-click="setProspects('ok')">
-                                  Warning
-                              </a>
-                          </li>
-                          <li role="presentation">
-                              <a role="menuitem" tabindex="-1" ng-click="setProspects('bad')">
-                                  Trouble
-                              </a>
-                          </li>
+                    </ul>
+                </span>
+            </td>
+        </tr>
+        <tr><td height="10px"></td></tr>
+    </table>
 
-                        </ul>
-                    </span>
-                </td>
-            </tr>
-            <tr><td height="10px"></td></tr>
-        </table>
+    <table width="100%"  ng-show="editGoalInfo" class="well">
 
-        <table width="100%"  ng-show="editGoalInfo" class="well">
+        <tr><td height="10px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Synopsis:</td>
+            <td style="width:20px;"></td>
+            <td><input ng-model="goalInfo.synopsis" class="form-control"/></td>
+            <td style="width:40px;"></td>
+        </tr>
+        <tr><td height="10px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Description:</td>
+            <td style="width:20px;"></td>
+            <td><textarea ng-model="goalInfo.description" class="form-control"></textarea></td>
+            <td style="width:40px;"></td>
+        </tr>
+        <tr><td height="10px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Labels:</td>
+            <td style="width:20px;"></td>
+            <td>
+              <span class="dropdown" ng-repeat="role in allLabels">
+                <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
+                   data-toggle="dropdown" style="background-color:{{role.color}};"
+                   ng-show="hasLabel(role.name)">{{role.name}}</button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                   <li role="presentation"><a role="menuitem" title="{{add}}"
+                      ng-click="toggleLabel(role)">Remove Label:<br/>{{role.name}}</a></li>
+                </ul>
+              </span>
+              <span>
+                 <span class="dropdown">
+                   <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+                   style="padding: 2px 5px;font-size: 11px;"> + </button>
+                   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                     <li role="presentation" ng-repeat="rolex in allLabels">
+                         <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
+                         ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
+                             {{rolex.name}}</button></li>
+                   </ul>
+                 </span>
+              </span>
+            </td>
+        </tr>
+        <tr><td height="20px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Status:</td>
+            <td style="width:20px;"></td>
+            <td><textarea ng-model="goalInfo.status" class="form-control"></textarea></td>
+        </tr>
+        <tr>
+            <td class="gridTableColummHeader">Due Date:</td>
+            <td style="width:20px;"></td>
+            <td>
+                <input type="text"
+                    style="width:150;margin-top:10px;"
+                    class="form-control"
+                    datepicker-popup="dd-MMMM-yyyy"
+                    ng-model="dummyDate1"
+                    is-open="datePickOpen1"
+                    min-date="minDate"
+                    datepicker-options="datePickOptions"
+                    date-disabled="datePickDisable(date, mode)"
+                    ng-required="true"
+                    ng-click="openDatePicker1($event)"
+                    close-text="Close"/>
+            </td>
+        </tr>
+        <tr><td height="10px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Start Date:</td>
+            <td style="width:20px;"></td>
+            <td>
+                <input type="text"
+                    style="width:150;margin-top:10px;"
+                    class="form-control"
+                    datepicker-popup="dd-MMMM-yyyy"
+                    ng-model="dummyDate2"
+                    is-open="datePickOpen2"
+                    min-date="minDate"
+                    datepicker-options="datePickOptions"
+                    date-disabled="datePickDisable(date, mode)"
+                    ng-required="true"
+                    ng-click="openDatePicker2($event)"
+                    close-text="Close"/>
+            </td>
+        </tr>
+        <tr><td height="10px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">End Date:</td>
+            <td style="width:20px;"></td>
+            <td>
+                <input type="text"
+                    style="width:150;margin-top:10px;"
+                    class="form-control"
+                    datepicker-popup="dd-MMMM-yyyy"
+                    ng-model="dummyDate3"
+                    is-open="datePickOpen3"
+                    min-date="minDate"
+                    datepicker-options="datePickOptions"
+                    date-disabled="datePickDisable(date, mode)"
+                    ng-required="true"
+                    ng-click="openDatePicker3($event)"
+                    close-text="Close"/>
+            </td>
+        </tr>
+        <tr><td height="10px"></td></tr>
+        <tr><td></td><td></td>
+            <td>
+                <button class="btn btn-primary" ng-click="saveGoal()">Save Edits</button>
+                <button class="btn btn-primary" ng-click="undoGoalChanges()">Cancel</button>
+            </td>
+        </tr>
+        <tr><td height="10px"></td></tr>
+    </table>
 
-            <tr><td height="10px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader">Synopsis:</td>
-                <td style="width:20px;"></td>
-                <td><input ng-model="goalInfo.synopsis" class="form-control"/></td>
-                <td style="width:40px;"></td>
-            </tr>
-            <tr><td height="10px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader">Description:</td>
-                <td style="width:20px;"></td>
-                <td><textarea ng-model="goalInfo.description" class="form-control"></textarea></td>
-            </tr>
-            <tr><td height="20px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader">Status:</td>
-                <td style="width:20px;"></td>
-                <td><textarea ng-model="goalInfo.status" class="form-control"></textarea></td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader">Due Date:</td>
-                <td style="width:20px;"></td>
-                <td>
-                    <input type="text"
-                        style="width:150;margin-top:10px;"
-                        class="form-control"
-                        datepicker-popup="dd-MMMM-yyyy"
-                        ng-model="dummyDate1"
-                        is-open="datePickOpen1"
-                        min-date="minDate"
-                        datepicker-options="datePickOptions"
-                        date-disabled="datePickDisable(date, mode)"
-                        ng-required="true"
-                        ng-click="openDatePicker1($event)"
-                        close-text="Close"/>
-                </td>
-            </tr>
-            <tr><td height="10px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader">Start Date:</td>
-                <td style="width:20px;"></td>
-                <td>
-                    <input type="text"
-                        style="width:150;margin-top:10px;"
-                        class="form-control"
-                        datepicker-popup="dd-MMMM-yyyy"
-                        ng-model="dummyDate2"
-                        is-open="datePickOpen2"
-                        min-date="minDate"
-                        datepicker-options="datePickOptions"
-                        date-disabled="datePickDisable(date, mode)"
-                        ng-required="true"
-                        ng-click="openDatePicker2($event)"
-                        close-text="Close"/>
-                </td>
-            </tr>
-            <tr><td height="10px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader">End Date:</td>
-                <td style="width:20px;"></td>
-                <td>
-                    <input type="text"
-                        style="width:150;margin-top:10px;"
-                        class="form-control"
-                        datepicker-popup="dd-MMMM-yyyy"
-                        ng-model="dummyDate3"
-                        is-open="datePickOpen3"
-                        min-date="minDate"
-                        datepicker-options="datePickOptions"
-                        date-disabled="datePickDisable(date, mode)"
-                        ng-required="true"
-                        ng-click="openDatePicker3($event)"
-                        close-text="Close"/>
-                </td>
-            </tr>
-            <tr><td height="10px"></td></tr>
-            <tr><td></td><td></td>
-                <td>
-                    <button class="btn btn-primary" ng-click="saveGoal()">Save Edits</button>
-                    <button class="btn btn-primary" ng-click="undoGoalChanges()">Cancel</button>
-                </td>
-            </tr>
-            <tr><td height="10px"></td></tr>
-        </table>
 
-        <table width="100%"  ng-show="showAccomplishment" class="well">
 
-            <tr><td height="20px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader">Accomplishments:</td>
-                <td style="width:20px;"></td>
-                <td><textarea ng-model="newAccomplishment" class="form-control"></textarea></td>
-                <td style="width:40px;"></td>
-            </tr>
-            <tr><td height="10px"></td></tr>
-            <tr><td></td><td></td>
-                <td>
-                    <button class="btn btn-primary" ng-click="saveAccomplishment()">Save Accomplishment</button>
-                    <button class="btn btn-primary" ng-click="showAccomplishment=false">Cancel</button>
-                </td>
-            </tr>
-            <tr><td height="20px"></td></tr>
-        </table>
+    <table width="100%"  ng-show="showAccomplishment" class="well">
 
-        <table width="100%">
-            <tr><td height="20px"></td></tr>
-            <tr ng-show="subGoals.length>0">
-                <td class="gridTableColummHeader">Sub Action Items:</td>
-                <td style="width:20px;"></td>
-                <td>
-                    <div ng-repeat="sub in subGoals">
-                        <a href="task{{sub.id}}.htm">
-                            <img src="<%=ar.retPath%>assets/goalstate/small{{sub.state}}.gif">
-                            {{sub.synopsis}} ~ {{sub.description}}
-                        </a>
-                    </div>
-                </td>
-            </tr>
-        </table>
+        <tr><td height="20px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Accomplishments:</td>
+            <td style="width:20px;"></td>
+            <td><textarea ng-model="newAccomplishment" class="form-control"></textarea></td>
+            <td style="width:40px;"></td>
+        </tr>
+        <tr><td height="10px"></td></tr>
+        <tr><td></td><td></td>
+            <td>
+                <button class="btn btn-primary" ng-click="saveAccomplishment()">Save Accomplishment</button>
+                <button class="btn btn-primary" ng-click="showAccomplishment=false">Cancel</button>
+            </td>
+        </tr>
+        <tr><td height="20px"></td></tr>
+    </table>
+
+    <table width="100%">
+        <tr><td height="20px"></td></tr>
+        <tr ng-show="subGoals.length>0">
+            <td class="gridTableColummHeader">Sub Action Items:</td>
+            <td style="width:20px;"></td>
+            <td>
+                <div ng-repeat="sub in subGoals">
+                    <a href="task{{sub.id}}.htm">
+                        <img src="<%=ar.retPath%>assets/goalstate/small{{sub.state}}.gif">
+                        {{sub.synopsis}} ~ {{sub.description}}
+                    </a>
+                </div>
+            </td>
+        </tr>
+    </table>
 
 
 

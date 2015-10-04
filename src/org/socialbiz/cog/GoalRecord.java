@@ -846,6 +846,36 @@ public class GoalRecord extends BaseRecord {
         return getScalar("prospects");
     }
 
+    /**
+     * get the labels on a document -- only labels valid in the project,
+     * and no duplicates
+     */
+    public List<NGLabel> getLabels(NGPage ngp) throws Exception {
+        Vector<NGLabel> res = new Vector<NGLabel>();
+        for (String name : getVector("labels")) {
+            NGLabel aLabel = ngp.getLabelRecordOrNull(name);
+            if (aLabel!=null) {
+                if (!res.contains(aLabel)) {
+                    res.add(aLabel);
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * set the list of labels on a document
+     */
+    public void setLabels(List<NGLabel> values) throws Exception {
+        Vector<String> labelNames = new Vector<String>();
+        for (NGLabel aLable : values) {
+            labelNames.add(aLable.getName());
+        }
+        //Since this is a 'set' type vector, always sort them so that they are
+        //stored in a consistent way ... so files are more easily compared
+        Collections.sort(labelNames);
+        setVector("labels", labelNames);
+    }
 
 
     public JSONObject getJSON4Goal(NGPage ngp) throws Exception {
@@ -883,6 +913,12 @@ public class GoalRecord extends BaseRecord {
         thisGoal.put("sitename", site.getFullName());
         thisGoal.put("siteKey", site.getKey());
 
+        JSONObject labelMap = new JSONObject();
+        for (NGLabel lRec : getLabels(ngp) ) {
+            labelMap.put(lRec.getName(), true);
+        }
+        thisGoal.put("labelMap",      labelMap);
+
         return thisGoal;
     }
     public JSONObject getJSON4Goal(NGPage ngp, String baseURL, License license) throws Exception {
@@ -909,7 +945,7 @@ public class GoalRecord extends BaseRecord {
     //TODO: looks like this can be used either to update from an upstream representation
     //or a JSON from the UI, but the behavior should probably be a little different.
     //probably need two separate functions for that.
-    public void updateGoalFromJSON(JSONObject goalObj) throws Exception {
+    public void updateGoalFromJSON(JSONObject goalObj, NGPage ngp) throws Exception {
         String universalid = goalObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen
@@ -987,5 +1023,18 @@ public class GoalRecord extends BaseRecord {
         else if (goalObj.has("assignee")) {
             throw new Exception("Potential problem.... JSON has assignee but no assignTo field. Assignee is deprecated.");
         }
+
+        if (goalObj.has("labelMap")) {
+            JSONObject labelMap = goalObj.getJSONObject("labelMap");
+            Vector<NGLabel> selectedLabels = new Vector<NGLabel>();
+            for (NGLabel stdLabel : ngp.getAllLabels()) {
+                String labelName = stdLabel.getName();
+                if (labelMap.optBoolean(labelName)) {
+                    selectedLabels.add(stdLabel);
+                }
+            }
+            setLabels(selectedLabels);
+        }
+    
     }
 }

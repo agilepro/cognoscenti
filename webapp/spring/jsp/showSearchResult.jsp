@@ -28,9 +28,49 @@ Parameters:
     String b = ar.defParam("b", "All Books");
     String pf = ar.defParam("pf", "all");
 
+    JSONArray allResults = new JSONArray();
+    for (SearchResultRecord srr : searchResults) {
+        JSONObject oneRes = new JSONObject();
+        oneRes.put("pageLink", srr.getPageLink());
+        oneRes.put("pageName", srr.getPageName());
+        oneRes.put("noteLink", srr.getNoteLink());
+        oneRes.put("noteSubject", srr.getNoteSubject());
+        allResults.put(oneRes);
+    }
+
+    JSONArray allSites = new JSONArray();
+    for(NGBook site : NGBook.getAllSites())
+    {
+        JSONObject oneSite = new JSONObject();
+        oneSite.put("name",site.getFullName());
+        oneSite.put("key", site.getKey());
+        allSites.put(oneSite);
+    }
+
 %>
 
-<body class="yui-skin-sam">
+<script type="text/javascript">
+
+var app = angular.module('myApp', ['ui.bootstrap']);
+app.controller('myCtrl', function($scope, $http, $modal) {
+    $scope.allResults = <%allResults.write(out,2,4);%>;
+    $scope.allSites = <%allSites.write(out,2,4);%>;
+
+    $scope.showError = false;
+    $scope.errorMsg = "";
+    $scope.errorTrace = "";
+    $scope.showTrace = false;
+    $scope.reportError = function(serverErr) {
+        errorPanelHandler($scope, serverErr);
+    };
+
+});
+</script>
+
+<div ng-app="myApp" ng-controller="myCtrl">
+
+<%@include file="ErrorPanel.jsp"%>
+
 
 <div class="generalArea">
 <form action="searchPublicNotes.htm" method="get" name="searchForm">
@@ -83,7 +123,7 @@ Parameters:
     <div class="generalHeading"><label id="resultsLbl">Search Result</label></div>
         <div id="container">
             <div id="searchresultdiv">
-                    <table id="searchresultTable">
+                    <table id="searchresultTable" class="table">
                         <thead>
                              <tr>
                                  <th >Workspace/Site Name</th>
@@ -91,71 +131,22 @@ Parameters:
                              </tr>
                          </thead>
                          <tbody>
-                        <%
-                        for(SearchResultRecord srr : searchResults){
-                        %>
-                            <tr>
+                            <tr ng-repeat="srr in allResults">
                                 <td>
-                                    <a href="#" onclick="return goToLink('<%=ar.baseURL%><%=srr.getPageLink()%>')" title='Access Workspace/Site'>
-                                        <%ar.writeHtml(srr.getPageName());%>
+                                    <a href="<%=ar.baseURL%>{{srr.pageLink}}" title='Access Workspace/Site'>
+                                        {{srr.pageName}}
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="#" onclick="return goToLink('<%=ar.baseURL%><%=srr.getNoteLink()%>')" title='Access Note'>
-                                        <%ar.writeHtml(srr.getNoteSubject());%>
+                                    <a href="<%=ar.baseURL%>{{srr.noteLink}}" title='Access Topic'>
+                                        {{srr.noteSubject}}
                                     </a>
                                 </td>
                             </tr>
-
-
-                        <%}
-                        %>
                          </tbody>
                     </table>
                 </div>
         </div>
 
+</div>
 
-<%@ include file="functions.jsp"%>
- </body>
-
-<script type="text/javascript">
-        function goToLink(link){
-            document.location = link;
-            return true;
-        }
-        YAHOO.util.Event.addListener(window, "load", function()
-        {
-            YAHOO.example.EnhanceFromMarkup = function()
-            {
-                var myColumnDefs = [
-                    {key:"Project_Account_Name",label:"Workspace/Site Name",sortable:true,resizeable:true},
-                    {key:"Note_Subject",label:"Topic Subject",sortable:true,resizeable:true}
-                    ];
-
-                var myDataSource = new YAHOO.util.DataSource(YAHOO.util.Dom.get("searchresultTable"));
-                myDataSource.responseType = YAHOO.util.DataSource.TYPE_HTMLTABLE;
-                myDataSource.responseSchema = {
-                    fields: [
-                            {key:"Project_Account_Name"},
-                            {key:"Note_Subject"}
-                            ]
-                };
-
-                var oConfigs = {
-                    paginator: new YAHOO.widget.Paginator({
-                        rowsPerPage: 200
-                    }),
-                    initialRequest: "results=999999"
-                };
-
-                var myDataTable = new YAHOO.widget.DataTable("searchresultdiv", myColumnDefs, myDataSource, oConfigs,
-                {caption:"",sortedBy:{key:"Project_Account_Name",dir:"Project_Account_Name"}});
-
-                return {
-                    oDS: myDataSource,
-                    oDT: myDataTable
-                };
-            }();
-        });
-</script>

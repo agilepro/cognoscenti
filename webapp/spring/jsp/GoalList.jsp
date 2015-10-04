@@ -90,7 +90,8 @@ Required parameters:
 
 %>
 
-
+<link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" data-semver="4.3.0"
+data-require="font-awesome@*" />
 
 <script type="text/javascript">
 
@@ -101,13 +102,13 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.stateName = <%stateName.write(out,2,4);%>;
     $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.filter = "";
+    $scope.filterMap = {};
     $scope.showActive = true;
     $scope.showFuture = false;
     $scope.showCompleted = false;
     $scope.isCreating = false;
     $scope.newGoal = {assignOne:{name:""}};
     $scope.dummyDate1 = new Date();
-
 
     $scope.newPerson = "";
 
@@ -155,6 +156,17 @@ app.controller('myCtrl', function($scope, $http) {
                         res.push(rec);
                         return;
                     }
+                }
+            });
+            src = res;
+        }
+        var allReqLabels = $scope.allLabelFilters();
+        for (var j=0; j<allReqLabels.length; j++) {
+            var requiredLabel = allReqLabels[j].name;
+            var res = [];
+            src.map( function(rec) {
+                if (rec.labelMap[requiredLabel]) {
+                    res.push(rec);
                 }
             });
             src = res;
@@ -228,6 +240,30 @@ app.controller('myCtrl', function($scope, $http) {
         $event.stopPropagation();
         $scope.datePickOpen1 = true;
     };
+    $scope.getGoalLabels = function(goal) {
+        var res = [];
+        $scope.allLabels.map( function(val) {
+            if (goal.labelMap[val.name]) {
+                res.push(val);
+            }
+        });
+        return res;
+    }
+    $scope.hasLabel = function(searchName) {
+        return $scope.filterMap[searchName];
+    }
+    $scope.toggleLabel = function(label) {
+        $scope.filterMap[label.name] = !$scope.filterMap[label.name];
+    }
+    $scope.allLabelFilters = function() {
+        var res = [];
+        $scope.allLabels.map( function(val) {
+            if ($scope.filterMap[val.name]) {
+                res.push(val);
+            }
+        });
+        return res;
+    }
 
 });
 
@@ -269,6 +305,28 @@ function addvalue() {
             Future</span> &nbsp;
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showCompleted">
             Completed</span>
+        <span class="dropdown" ng-repeat="role in allLabelFilters()">
+            <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
+               data-toggle="dropdown" style="background-color:{{role.color}};"
+               ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+               <li role="presentation"><a role="menuitem" title="{{add}}"
+                  ng-click="toggleLabel(role)">Remove Filter:<br/>{{role.name}}</a></li>
+            </ul>
+        </span>
+        <span>
+             <span class="dropdown">
+               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu2" data-toggle="dropdown"
+                       title="Add Filter by Label"><i class="fa fa-filter"></i></button>
+               <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                 <li role="presentation" ng-repeat="rolex in allLabels">
+                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
+                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
+                         {{rolex.name}}</button>
+                 </li>
+               </ul>
+             </span>
+        </span>
     </div>
 
 
@@ -373,6 +431,12 @@ function addvalue() {
             <div style="float: left;margin:3px;">
               <div>
                 <span style="font-size: 17px;cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}}</span>
+                <span ng-repeat="label in getGoalLabels(rec)">
+                  <button class="btn btn-sm labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
+                  {{label.name}}
+                  </button>
+                </span>
+
                 <div class="taskOverview">assigned to:
                    <span class="red" ng-repeat="ass in rec.assignees"><a href="#">{{ass}}</a></span>
 

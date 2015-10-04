@@ -560,10 +560,10 @@ public class MainTabsViewControler extends BaseController {
                 searchResults = new Vector<SearchResultRecord>();
             }
             request.setAttribute("searchResults",searchResults);
+            return  new ModelAndView("showSearchResult");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.search.public.note.page", null , ex);
         }
-        return  new ModelAndView("showSearchResult");
     }
 
 
@@ -1144,7 +1144,7 @@ public class MainTabsViewControler extends BaseController {
               //currently the update from JSON is designed for upstream sync.
               //There is a check that requires this to do the update.
               goalInfo.put("universalid", gr.getUniversalId());
-              gr.updateGoalFromJSON(goalInfo);
+              gr.updateGoalFromJSON(goalInfo, ngp);
               ai.addActionItemId(gr.getUniversalId());
 
               ngp.saveFile(ar, "Created action item for minutes of meeting.");
@@ -1185,7 +1185,7 @@ public class MainTabsViewControler extends BaseController {
               String previousStatus = gr.getStatus();
               long previousDue = gr.getDueDate();
 
-              gr.updateGoalFromJSON(goalInfo);
+              gr.updateGoalFromJSON(goalInfo, ngp);
 
               //now make the history description of what just happened
               StringBuffer inventedComment = new StringBuffer(goalInfo.optString("newAccomplishment"));

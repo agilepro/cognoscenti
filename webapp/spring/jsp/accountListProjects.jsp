@@ -40,11 +40,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.errorTrace = "";
     $scope.showTrace = false;
     $scope.reportError = function(serverErr) {
-        var exception = serverErr.exception;
-        $scope.errorMsg = exception.msgs.join();
-        $scope.errorTrace = exception.stack;
-        $scope.showError=true;
-        $scope.showTrace = false;
+        errorPanelHandler($scope, serverErr);
     };
 
     $scope.sortItems = function() {
@@ -74,27 +70,7 @@ app.controller('myCtrl', function($scope, $http) {
     <div class="section_body">
         <div style="height:10px;"></div>
 
-        <div id="ErrorPanel" style="border:2px solid red;display=none;background:LightYellow;margin:10px;" ng-show="showError" ng-cloak>
-            <div class="generalSettings">
-                <table>
-                    <tr>
-                        <td class="gridTableColummHeader">Error:</td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2">{{errorMsg}}</td>
-                    </tr>
-                    <tr ng-show="showTrace">
-                        <td class="gridTableColummHeader">Trace:</td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2">{{errorTrace}}</td>
-                    </tr>
-                    <tr ng-hide="showTrace">
-                        <td class="gridTableColummHeader">Trace:</td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2"><button ng-click="showTrace=true">Show The Trace</button></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+<%@include file="ErrorPanel.jsp"%>
 
         <div class="generalHeading">Workspaces that belong to this site</div>
         <div>Filter <input ng-model="filter"></div>
