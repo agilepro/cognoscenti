@@ -9,7 +9,8 @@
 %><%@page import="org.socialbiz.cog.dms.ConnectionSettings"
 %><%
 
-    String pageId      = ar.reqParam("pageId");
+    String pageId  = ar.reqParam("pageId");
+    String go      = ar.defParam("go", "listAttachments.htm" );
     NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
@@ -90,7 +91,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.showError=false;
         $http.post(postURL, postdata)
         .success( function(data) {
-            $scope.docInfo = data;
+            window.location = "<%ar.writeJS(go);%>";
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
