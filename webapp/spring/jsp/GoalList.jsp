@@ -90,9 +90,6 @@ Required parameters:
 
 %>
 
-<link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" data-semver="4.3.0"
-data-require="font-awesome@*" />
-
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap']);

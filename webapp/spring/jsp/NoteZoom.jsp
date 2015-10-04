@@ -46,8 +46,6 @@ Required parameter:
 
 %>
 
-<link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-
 <!-- something in here is needed for the html bind -->
 <link href="<%=ar.retPath%>jscript/textAngular.css" rel="stylesheet" />
 <script src="<%=ar.retPath%>jscript/textAngular-rangy.min.js"></script>

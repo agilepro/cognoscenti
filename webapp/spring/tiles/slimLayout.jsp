@@ -37,6 +37,9 @@
     <link href="<%=ar.retPath%>css/global.css" rel="styleSheet" type="text/css" media="screen" />
     <link href="<%=ar.retPath%><%=themePath%>theme.css" rel="styleSheet" type="text/css" media="screen" />
 
+    <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+          data-semver="4.3.0" data-require="font-awesome@*" />
+
     <title><tiles:getAsString name="title"/><%
     if(title!=null) {
         ar.write(" : ");

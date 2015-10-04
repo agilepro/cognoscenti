@@ -109,6 +109,7 @@ public class ResourceDecoder {
             return;
         }
         project = ar.getCogInstance().getProjectByKeyOrFail(projId);
+        ar.setPageAccessLevels(project);
         lic = project.getLicense(licenseId);
         if (lic==null) {
             throw new Exception("Can not find the license '"+licenseId+"' on workspace '"+projId+"'");

@@ -16,6 +16,8 @@
     String remoteProjectLink = ar.baseURL +  "api/" + site.getKey() + "/" + ngp.getKey()
                     + "/summary.json?lic="+lfu.getId();
 
+    JSONArray allLabels = ngp.getJSONLabels();
+
 %>
 
 <style>
@@ -50,9 +52,11 @@ div[dropzone] {
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     window.MY_SCOPE = $scope;
+    $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.docInfo = {description: ""};
     $scope.fileProgress = [];
     $scope.browsedFile = null;
+    $scope.filterMap = {};
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -67,6 +71,7 @@ app.controller('myCtrl', function($scope, $http) {
     }
     $scope.startUpload = function(oneProgress) {
         oneProgress.status = "Starting";
+        oneProgress.labelMap = $scope.filterMap;
         var postURL = "<%=remoteProjectLink%>";
         var postdata = '{"operation": "tempFile"}';
         $scope.showError=false;
@@ -99,6 +104,7 @@ app.controller('myCtrl', function($scope, $http) {
         op.doc = {};
         op.doc.description = oneProgress.description;
         op.doc.name = oneProgress.file.name;
+        op.doc.labelMap = oneProgress.labelMap;
         var postdata = JSON.stringify(op);
         $http.post(postURL, postdata)
         .success( function(data) {
@@ -120,6 +126,23 @@ app.controller('myCtrl', function($scope, $http) {
            alert('hey, browsedFile has changed!');
        }
     });
+
+    $scope.hasLabel = function(searchName) {
+        return $scope.filterMap[searchName];
+    }
+    $scope.toggleLabel = function(label) {
+        $scope.filterMap[label.name] = !$scope.filterMap[label.name];
+        $scope.showFilter=true;
+    }
+    $scope.allLabelFilters = function() {
+        var res = [];
+        $scope.allLabels.map( function(val) {
+            if ($scope.filterMap[val.name]) {
+                res.push(val);
+            }
+        });
+        return res;
+    }
 
 });
 </script>
@@ -156,6 +179,35 @@ app.controller('myCtrl', function($scope, $http) {
                     <td>
                         <div id="holder" class="nicenice">Drop Files Here</div>
                         <!--input ng-model="browsedFile" type="file"/-->
+                    </td>
+                </tr>
+                <tr><td style="height:10px"></td></tr>
+                <tr>
+                    <td class="gridTableColummHeader">Labels:</td>
+                    <td style="width:20px;"></td>
+                    <td>
+                        <span class="dropdown" ng-repeat="role in allLabelFilters()">
+                            <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
+                               data-toggle="dropdown" style="background-color:{{role.color}};"
+                               ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                               <li role="presentation"><a role="menuitem" title="{{add}}"
+                                  ng-click="toggleLabel(role)">Remove Filter:<br/>{{role.name}}</a></li>
+                            </ul>
+                        </span>
+                        <span>
+                             <span class="dropdown">
+                               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+                               title="Add Filter by Label"><i class="fa fa-filter"></i></button>
+                               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                                 <li role="presentation" ng-repeat="rolex in allLabels">
+                                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
+                                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
+                                         {{rolex.name}}</button>
+                                 </li>
+                               </ul>
+                             </span>
+                        </span>
                     </td>
                 </tr>
                 <tr><td style="height:10px"></td></tr>

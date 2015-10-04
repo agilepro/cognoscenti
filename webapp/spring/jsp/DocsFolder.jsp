@@ -76,9 +76,6 @@
 
 %>
 
-<link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" data-semver="4.3.0"
-data-require="font-awesome@*" />
-
 <style>
    .folderLine {
        margin:5px;
@@ -357,13 +354,13 @@ app.controller('myCtrl', function($scope, $http) {
                 </button>
             </span>
         </div>
-        <div class="folderLine" style="margin-left:{{folderPath.length*15+15}}px;cursor:pointer" ng-repeat="folder in getAvailableFolders()">
-            <span ng-click="addFolderPath(folder)">
-                <img src="<%=ar.retPath%>assets/iconFolder.gif">
-                <img src="<%=ar.retPath%>assets/images/expandIcon.gif">
-                <button class="btn labelButton"
-                    style="margin:2px;padding: 2px 5px;font-size: 11px;background-color:{{folder.color}};">{{folder.name}}
-                </button>
+        <div class="well" ng-show="getAvailableFolders().length>0">
+            Choose Folder: <span class="folderLine" style="margin-left:{{folderPath.length*15+15}}px;cursor:pointer" ng-repeat="folder in getAvailableFolders()">
+                <span ng-click="addFolderPath(folder)">
+                    <button class="btn labelButton"
+                        style="margin:2px;font-size:11px;background-color:{{folder.color}};">{{folder.name}}
+                    </button>
+                </span>
             </span>
         </div>
 
@@ -374,10 +371,14 @@ app.controller('myCtrl', function($scope, $http) {
             <td width="50px">
               <div class="dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                <span class="caret"></span></button>
+                   <span class="caret"></span>
+                </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="docsAdd.htm?folder={{folderPathList()}}"> <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a></li>
+                      <a role="menuitem" tabindex="-1" href="docsAdd.htm?folder={{folderPathList()}}">
+                      <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" />
+                      Add Document</a>
+                  </li>
                 </ul>
               </div>
             </td>

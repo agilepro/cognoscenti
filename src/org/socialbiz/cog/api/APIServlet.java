@@ -495,6 +495,11 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                     }
                     att.setUniversalId(newUid);
                 }
+                else {
+                    //ignore any label settings when working with existing doc.
+                    //labels should only apply on newly created docs.
+                    newDocObj.remove("labelMap");
+                }
                 //TODO: review this need for uid to match
                 //this silly statement is needed to make updateDocFromJSON work....
                 newDocObj.put("universalid", att.getUniversalId());

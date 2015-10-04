@@ -64,9 +64,6 @@
 %>
 
 
-<link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" data-semver="4.3.0"
-data-require="font-awesome@*" />
-
 <link href="<%=ar.retPath%>jscript/textAngular.css" rel="stylesheet" />
 <script src="<%=ar.retPath%>jscript/textAngular-rangy.min.js"></script>
 <script src="<%=ar.retPath%>jscript/textAngular-sanitize.min.js"></script>

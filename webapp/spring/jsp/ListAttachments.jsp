@@ -42,9 +42,6 @@
 
 %>
 
-<link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" data-semver="4.3.0"
-data-require="font-awesome@*" />
-
 
 <script type="text/javascript">
 
@@ -169,8 +166,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.hasLabel = function(searchName) {
         return $scope.filterMap[searchName];
     }
-    $scope.addLabel = function(label) {
-        $scope.filterMap[label.name] = true;
+    $scope.toggleLabel = function(label) {
+        $scope.filterMap[label.name] = !$scope.filterMap[label.name];
     }
     $scope.toggleLabel = function(label) {
         $scope.filterMap[label.name] = !$scope.filterMap[label.name];
@@ -217,7 +214,7 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
 
-    <div >Filter <input ng-model="filter"> &nbsp;
+    <div class="well">Filter <input ng-model="filter"> &nbsp;
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showVizPub">
             <img src="<%=ar.retPath%>assets/images/iconPublic.png"> Public</span>
         <span style="vertical-align:middle;" ng-show="<%=isMember%>"><input type="checkbox" ng-model="showVizMem">
@@ -303,7 +300,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td>
                 <b><a href="docinfo{{rec.id}}.htm" title="{{rec.name}}">{{rec.name}}</a></b>
                 ~ {{rec.description}}
-                <span ng-repeat="label in getAllLabels(rec)"><button class="btn btn-sm labelButton" ng-click="addLabel(label)"
+                <span ng-repeat="label in getAllLabels(rec)"><button class="btn btn-sm labelButton" ng-click="toggleLabel(label)"
                     style="background-color:{{label.color}};">{{label.name}}
                     </button>
                 </span>
