@@ -213,9 +213,8 @@ app.controller('myCtrl', function($scope, $http) {
                     <span ng-show="isNotify"><b>You are receiving notifications for this workspace</b></span>
                     <br/>
                     <br/>
-                    You can use this workspace as template for your future reference. If you mark this
-                    workspace as template then it will appear in the "List of Templates" in your profile's
-                    workspace page. At any time you can even stop using this workspace as template.
+                    If you request to receive notifications, then a summary of the changes to this workspace will
+                    be included in the daily digest email that you receive.
                     <br/>
                     <br/>
                 </td>

@@ -93,7 +93,7 @@ Required parameters:
 
         //elliminate duplicate objects
         boolean seen = seenBefore.containsKey(objectKey);
-        if (!seen) {
+        if (!seen && contextType!=HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
             seenBefore.put(objectKey,objectKey);
             recentChanges.put(jObj);
         }
@@ -102,8 +102,8 @@ Required parameters:
 
     JSONObject thisCircle = new JSONObject();
     thisCircle.put("name", ngp.getFullName());
-    thisCircle.put("site", ngp.getKey());
-    thisCircle.put("key",  ngp.getSiteKey());
+    thisCircle.put("key",  ngp.getKey());
+    thisCircle.put("site", ngp.getSiteKey());
 
     JSONObject parent = new JSONObject();
     NGPageIndex parentIndex = cog.getContainerIndexByKey(ngp.getParentKey());
@@ -114,8 +114,8 @@ Required parameters:
     }
     else {
         parent.put("name", parentIndex.containerName);
-        parent.put("site", parentIndex.pageBookKey);
         parent.put("key",  parentIndex.containerKey);
+        parent.put("site", parentIndex.pageBookKey);
     }
 
     JSONArray children = new JSONArray();
@@ -126,8 +126,8 @@ Required parameters:
         if (pageId.equals(ngpi.parentKey)) {
             JSONObject jo = new JSONObject();
             jo.put("name", ngpi.containerName);
-            jo.put("site", ngpi.pageBookKey);
             jo.put("key",  ngpi.containerKey);
+            jo.put("site", ngpi.pageBookKey);
             children.put(jo);
         }
     }
@@ -161,7 +161,10 @@ Required parameters:
         if (!assignees.isExpandedPlayer(uProf, ngp)) {
             continue;
         }
-        myActions.put(action.getJSON4Goal(ngp));
+        int state = action.getState();
+        if (state==BaseRecord.STATE_STARTED || state==BaseRecord.STATE_ACCEPTED) {
+            myActions.put(action.getJSON4Goal(ngp));
+        }
     }
 
 %>
@@ -245,6 +248,10 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.makePath = function() {
         return "<%=ar.retPath%>t/geojungl/executiveteam/frontPage.htm";
     }
+
+    $scope.ellipse = function(workspace) {
+        window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/frontPage.htm";
+    }
 });
 </script>
 
@@ -272,10 +279,10 @@ app.controller('myCtrl', function($scope, $http) {
 
     <style>
       .tripleColumn {
-          border: 1px solid lightgrey;
+          border: 1px solid white;
           border-radius:5px;
           padding:5px;
-          background-color:#EEEEEE;
+          background-color:#FFFFFF;
           margin:6px
       }
     </style>
@@ -319,29 +326,38 @@ app.controller('myCtrl', function($scope, $http) {
        <div class="tripleColumn leafContent">
            <svg height="350px" width="350px">
                <g ng-show="parent.key">
-                   <line x1="177" y1="85" x2="177" y2="175" style="stroke:rgb(120,0,0);stroke-width:2" />
-                   <line x1="173" y1="85" x2="173" y2="175" style="stroke:rgb(120,0,0);stroke-width:2" />
-                   <a ng-attr-xlink:href="{{makePath()}}">
-                       <ellipse cx="175" cy="65" rx="70" ry="35"
-                        style="fill:yellow;stroke:rgb(120,0,0);stroke-width:2" />
-                        <text x="175" y="65" text-anchor="middle" fill="black">{{parent.name}}</text>
-                   </a>
+                   <ellipse cx="179" cy="69" rx="70" ry="35"
+                        style="fill:gray;stroke:gray" />
+                   <line x1="177" y1="85" x2="177" y2="175" style="stroke:saddlebrown;stroke-width:2" />
+                   <line x1="173" y1="85" x2="173" y2="175" style="stroke:saddlebrown;stroke-width:2" />
+                   <ellipse cx="175" cy="65" rx="70" ry="35"  ng-click="ellipse(parent)"
+                        style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer" />
+                   <foreignObject  x="105" y="50" width="140" height="70">
+                      <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;"
+                           ng-click="ellipse(parent)">{{parent.name}}</div>
+                   </foreignObject>
                </g>
+               <ellipse cx="179" cy="179" rx="80" ry="40" ng-click="ellipse(thisCircle)"
+                    style="fill:gray;stroke:gray" />
                <g ng-repeat="child in children">
-                   <line ng-attr-x1="{{child.x+2}}" ng-attr-y1="{{child.y}}" x2="177" y2="175" style="stroke:rgb(120,0,0);stroke-width:2" />
-                   <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:rgb(120,0,0);stroke-width:2" />
+                   <line ng-attr-x1="{{child.x+2}}" ng-attr-y1="{{child.y}}" x2="177" y2="175" style="stroke:saddlebrown;stroke-width:2" />
+                   <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:saddlebrown;stroke-width:2" />
                </g>
-               <ellipse cx="175" cy="175" rx="80" ry="40"
-                    style="fill:yellow;stroke:rgb(120,0,0);stroke-width:2" />
-               <a xlink:href="<%=ar.retPath%>t/xxx/frontPage.htm">
-               </a>
-               <a xlink:href="frontPage.htm">
-                   <text x="175" y="175" text-anchor="middle" fill="black">{{thisCircle.name}}</text>
-               </a>
-
+               <ellipse cx="175" cy="175" rx="80" ry="40" ng-click="ellipse(thisCircle)"
+                    style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer" />
+                <foreignObject  x="95" y="160" width="160" height="80">
+                   <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;"
+                           ng-click="ellipse(thisCircle)">{{thisCircle.name}}</div>
+                </foreignObject>
                <g ng-repeat="child in children">
-                   <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}" rx="60" ry="30" style="fill:yellow;stroke:rgb(120,0,0);stroke-width:2" />
-                   <text ng-attr-x="{{child.x}}" ng-attr-y="{{child.y}}" text-anchor="middle" fill="black">{{child.name}}</text>
+                   <ellipse ng-attr-cx="{{child.x+4}}" ng-attr-cy="{{child.y+4}}"  ng-click="ellipse(child)"
+                       rx="60" ry="30" style="fill:gray;stroke:gray" />
+                   <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}"  ng-click="ellipse(child)"
+                       rx="60" ry="30" style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer;" />
+                   <foreignObject ng-attr-x="{{child.x-55}}" ng-attr-y="{{child.y-15}}" width="110" height="60">
+                       <div xmlns="http://www.w3.org/1999/xhtml" style="height:60px;vertical-align:middle;text-align:center;cursor:pointer;"
+                           ng-click="ellipse(child)">{{child.name}}</div>
+                   </foreignObject>
                </g>
            </svg>
        </div>
