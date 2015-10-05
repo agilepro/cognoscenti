@@ -1082,7 +1082,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                 <i class="fa fa-tasks meeting-icon" ng-click="toggleEditor(9,item.id)"
                     title="Manage Action Items"></i> )
             </span>
-            <div ng-hide="meeting.meetingType==2">
+            <div>
                 <i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i><span ng-repeat="pres in getPresenters(item)">, {{pres.name}}</span>
             </div>
           </div>
@@ -1292,7 +1292,6 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                         <td colspan="2">
                             <button class="btn btn-primary" ng-click="createActionItem(item)">Create New Action Item</button>
                             <button class="btn btn-primary" ng-click="revertAllEdits()">Cancel</button>
-                            {{dummyDate1}}
                         </td>
                     </tr>
                 </table>

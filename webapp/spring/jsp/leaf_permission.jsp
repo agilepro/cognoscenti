@@ -80,7 +80,7 @@
             ar.writeHtml(aRole.getColor());
             ar.write(";\">");
             ar.writeHtml(aRole.getName());
-            ar.write("</button></a></div>\n<div><br/>");
+            ar.write("</button> &nbsp; Edit Role</a></div>\n<div><br/>");
 
             ar.writeHtml(aRole.getDescription());
             ar.write("</div><br/><div>");

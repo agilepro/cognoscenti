@@ -340,6 +340,8 @@ app.controller('myCtrl', function($scope, $http) {
                <ellipse cx="179" cy="179" rx="80" ry="40" ng-click="ellipse(thisCircle)"
                     style="fill:gray;stroke:gray" />
                <g ng-repeat="child in children">
+                   <ellipse ng-attr-cx="{{child.x+4}}" ng-attr-cy="{{child.y+4}}"  ng-click="ellipse(child)"
+                       rx="60" ry="30" style="fill:gray;stroke:gray" />
                    <line ng-attr-x1="{{child.x+2}}" ng-attr-y1="{{child.y}}" x2="177" y2="175" style="stroke:saddlebrown;stroke-width:2" />
                    <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:saddlebrown;stroke-width:2" />
                </g>
@@ -350,8 +352,6 @@ app.controller('myCtrl', function($scope, $http) {
                            ng-click="ellipse(thisCircle)">{{thisCircle.name}}</div>
                 </foreignObject>
                <g ng-repeat="child in children">
-                   <ellipse ng-attr-cx="{{child.x+4}}" ng-attr-cy="{{child.y+4}}"  ng-click="ellipse(child)"
-                       rx="60" ry="30" style="fill:gray;stroke:gray" />
                    <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}"  ng-click="ellipse(child)"
                        rx="60" ry="30" style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer;" />
                    <foreignObject ng-attr-x="{{child.x-55}}" ng-attr-y="{{child.y-15}}" width="110" height="60">
