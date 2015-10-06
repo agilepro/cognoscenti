@@ -564,7 +564,7 @@ public class DailyDigest {
                         activeTask.add(new ProjectGoal(gr, aPage, cog));
                     }
                 }
-                else if (state == BaseRecord.STATE_ACCEPTED || state == BaseRecord.STATE_STARTED
+                else if (state == BaseRecord.STATE_ACCEPTED || state == BaseRecord.STATE_OFFERED
                         || state == BaseRecord.STATE_WAITING) {
                     // the assignee should see this task in the active task list.
                     if (gr.isAssignee(up)) {

@@ -1195,25 +1195,26 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
               <th>Synopsis</th>
               <th>Assignee</th>
               <th>Due</th>
+              <th>Prospect</th>
               <th>Status</th>
            </tr>
            <tr ng-repeat="goal in itemGoals(item)" style="margin-left:30px;">
               <td>
-              <span class="dropdown" ng-show="meeting.meetingType==2">
-                <button class="btn btn-default dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" style="{{goalStateStyle(goal)}};width:100px;margin:2px;padding:2px;">
-                      {{goalStateName(goal)}} <span class="caret"></span></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="changeGoalState(goal, 'good')">Good</a></li>
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="changeGoalState(goal, 'ok')">Warning</a></li>
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="changeGoalState(goal, 'bad')">Trouble</a></li>
-                  <li role="presentation" class="divider"></li>
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="removeGoalFromItem(item, goal)">Remove Action Item</a></li>
-                </ul>
-              </span>
+                  <span class="dropdown" ng-show="meeting.meetingType==2">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" >
+                          <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                      <li role="presentation"><a role="menuitem"
+                          ng-click="changeGoalState(goal, 'good')">Good</a></li>
+                      <li role="presentation"><a role="menuitem"
+                          ng-click="changeGoalState(goal, 'ok')">Warning</a></li>
+                      <li role="presentation"><a role="menuitem"
+                          ng-click="changeGoalState(goal, 'bad')">Trouble</a></li>
+                      <li role="presentation" class="divider"></li>
+                      <li role="presentation"><a role="menuitem"
+                          ng-click="removeGoalFromItem(item, goal)">Remove Action Item</a></li>
+                    </ul>
+                  </span>
               </td>
               <td style="width:20px;">
               <a href="task{{goal.id}}.htm" class="leafContent"   >
@@ -1231,6 +1232,20 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
               </td>
               <td ng-click="openDueDate(item,goal)" style="width:100px;">
               <span ng-show="goal.duedate>=0">{{goal.duedate|date}} </span>
+              </td>
+              <td style="width:120px;">
+                  <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
+                       title="Good shape" ng-click="changeGoalState(goal, 'good')">
+                  <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
+                       title="Good shape">
+                  <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
+                       title="Warning" ng-click="changeGoalState(goal, 'ok')">
+                  <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
+                       title="Warning" >
+                  <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
+                       title="In trouble" ng-click="changeGoalState(goal, 'bad')">
+                  <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
+                       title="In trouble" >
               </td>
               <td style="max-width:300px;" ng-click="openDueDate(item,goal)">
                 {{goal.status}}
@@ -1459,21 +1474,18 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                 Prospect:
               </td>
               <td style="padding:10px;">
-                  <span class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" style="{{goalStateStyle(goal)}};width:100px;margin:2px;padding:2px;">
-                          {{goalStateName(goal)}} <span class="caret"></span></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                      <li role="presentation"><a role="menuitem"
-                          ng-click="changeGoalState(goal, 'good')">Good</a></li>
-                      <li role="presentation"><a role="menuitem"
-                          ng-click="changeGoalState(goal, 'ok')">Warning</a></li>
-                      <li role="presentation"><a role="menuitem"
-                          ng-click="changeGoalState(goal, 'bad')">Trouble</a></li>
-                      <li role="presentation" class="divider"></li>
-                      <li role="presentation"><a role="menuitem"
-                          ng-click="removeGoalFromItem(item, goal)">Remove Action Item</a></li>
-                    </ul>
-                  </span>
+                  <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
+                       title="Good shape" ng-click="changeGoalState(goal, 'good')">
+                  <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
+                       title="Good shape">
+                  <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
+                       title="Warning" ng-click="changeGoalState(goal, 'ok')">
+                  <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
+                       title="Warning" >
+                  <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
+                       title="In trouble" ng-click="changeGoalState(goal, 'bad')">
+                  <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
+                       title="In trouble" >
               </td>
             </tr>
             <tr>

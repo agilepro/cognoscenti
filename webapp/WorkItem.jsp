@@ -60,7 +60,7 @@
             heading = "Future Activity: ";
             isClaimable = true;
             break;
-        case BaseRecord.STATE_STARTED:
+        case BaseRecord.STATE_OFFERED:
             heading = "Offered Activity: ";
             isClaimable = true;
             break;
@@ -212,7 +212,7 @@ else if (state==BaseRecord.STATE_UNSTARTED)
     showSubtaskControl = true;
     showSubprojectControl = true;
 }
-else if (state==BaseRecord.STATE_STARTED)
+else if (state==BaseRecord.STATE_OFFERED)
 {
     showAcceptControl = true;
     showCompleteControl = true;

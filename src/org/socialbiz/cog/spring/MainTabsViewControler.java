@@ -1144,7 +1144,7 @@ public class MainTabsViewControler extends BaseController {
               //currently the update from JSON is designed for upstream sync.
               //There is a check that requires this to do the update.
               goalInfo.put("universalid", gr.getUniversalId());
-              gr.updateGoalFromJSON(goalInfo, ngp);
+              gr.updateGoalFromJSON(goalInfo, ngp, ar);
               ai.addActionItemId(gr.getUniversalId());
 
               ngp.saveFile(ar, "Created action item for minutes of meeting.");
@@ -1184,8 +1184,9 @@ public class MainTabsViewControler extends BaseController {
               int previousState = gr.getState();
               String previousStatus = gr.getStatus();
               long previousDue = gr.getDueDate();
+              String previousProspects = gr.getProspects();
 
-              gr.updateGoalFromJSON(goalInfo, ngp);
+              gr.updateGoalFromJSON(goalInfo, ngp, ar);
 
               //now make the history description of what just happened
               StringBuffer inventedComment = new StringBuffer(goalInfo.optString("newAccomplishment"));
@@ -1201,6 +1202,11 @@ public class MainTabsViewControler extends BaseController {
                   inventedComment.append(" DueDate:");
                   inventedComment.append(SectionUtil.getNicePrintDate(gr.getDueDate()));
               }
+              if (!previousProspects.equals(gr.getProspects())) {
+                  inventedComment.append(" Prospects:");
+                  inventedComment.append(gr.getProspects());
+              }
+
               String comments = inventedComment.toString();
 
               //create the history record here.

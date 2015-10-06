@@ -153,6 +153,43 @@ public class GoalRecord extends BaseRecord {
         }
     }
 
+    public void setStateAndAct(int newVal, AuthRequest ar) throws Exception {
+        int prevState = getState();
+        if (newVal==prevState) {
+            //ignore any non-change call
+            return;
+        }
+
+        //set the start and end dates if appropriate, and if not already
+        //set.  Leave them alone if already set to something.
+        if (isFinal(newVal)) {
+            long end = getEndDate();
+            if (end<=0) {
+                setEndDate(ar.nowTime);
+            }
+            long begin = getStartDate();
+            if (begin<=0) {
+                setStartDate(ar.nowTime);
+            }
+            setPercentComplete(100);
+        }
+        else if (isStarted(newVal)) {
+            long begin = getStartDate();
+            if (begin<=0) {
+                setStartDate(ar.nowTime);
+            }
+            //since it is NOT final, clear the end date
+            setEndDate(0);
+        }
+        else {
+            //neither started nor final, so clear both dates
+            setStartDate(0);
+            setEndDate(0);
+            setPercentComplete(0);
+        }
+        setState(newVal);
+    }
+
     private void handleStateChangeEvent(NGPage ngp) throws Exception {
 
         if (ngp == null) {
@@ -662,7 +699,7 @@ public class GoalRecord extends BaseRecord {
 
             int state = task.getState();
 
-            if (state == BaseRecord.STATE_STARTED
+            if (state == BaseRecord.STATE_OFFERED
                     || state == BaseRecord.STATE_ACCEPTED
                     || state == BaseRecord.STATE_WAITING) {
                 // stop looking since the next task is started/active/waiting.
@@ -677,7 +714,7 @@ public class GoalRecord extends BaseRecord {
             }
 
             if (state == BaseRecord.STATE_UNSTARTED) {
-                task.setState(BaseRecord.STATE_STARTED);
+                task.setState(BaseRecord.STATE_OFFERED);
                 // done and so break.
                 break;
             }
@@ -701,7 +738,7 @@ public class GoalRecord extends BaseRecord {
                     subTask.setState(BaseRecord.STATE_COMPLETE);
                     subTask.setPercentComplete(100);
                 } else if (tstate == BaseRecord.STATE_UNSTARTED
-                        || tstate == BaseRecord.STATE_STARTED) {
+                        || tstate == BaseRecord.STATE_OFFERED) {
                     subTask.setState(BaseRecord.STATE_SKIPPED);
                 }
             }
@@ -945,7 +982,7 @@ public class GoalRecord extends BaseRecord {
     //TODO: looks like this can be used either to update from an upstream representation
     //or a JSON from the UI, but the behavior should probably be a little different.
     //probably need two separate functions for that.
-    public void updateGoalFromJSON(JSONObject goalObj, NGPage ngp) throws Exception {
+    public void updateGoalFromJSON(JSONObject goalObj, NGPage ngp, AuthRequest ar) throws Exception {
         String universalid = goalObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen
@@ -964,12 +1001,6 @@ public class GoalRecord extends BaseRecord {
         if (goalObj.has("modifieduser")) {
             setModifiedBy(goalObj.getString("modifieduser"));
         }
-        if (goalObj.has("status")) {
-            setStatus(goalObj.getString("status"));
-        }
-        if (goalObj.has("state")) {
-            setState(goalObj.optInt("state"));
-        }
         if (goalObj.has("priority")) {
             setPriority(goalObj.getInt("priority"));
         }
@@ -981,6 +1012,12 @@ public class GoalRecord extends BaseRecord {
         }
         if (goalObj.has("enddate")) {
             setEndDate(goalObj.getLong("enddate"));
+        }
+        if (goalObj.has("state")) {
+            setStateAndAct(goalObj.optInt("state"), ar);
+        }
+        if (goalObj.has("status")) {
+            setStatus(goalObj.getString("status"));
         }
         if (goalObj.has("duration")) {
             setDuration(goalObj.getLong("duration"));
@@ -1035,6 +1072,6 @@ public class GoalRecord extends BaseRecord {
             }
             setLabels(selectedLabels);
         }
-    
+
     }
 }

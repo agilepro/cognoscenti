@@ -158,7 +158,7 @@ public class RssServlet extends javax.servlet.http.HttpServlet
             else if (state == BaseRecord.STATE_UNSTARTED) {
                 stateStr = "open.notrunning";
             }
-            else if (state == BaseRecord.STATE_STARTED) {
+            else if (state == BaseRecord.STATE_OFFERED) {
                 stateStr = "open.running.offered";
             }
             else if (state == BaseRecord.STATE_ACCEPTED) {

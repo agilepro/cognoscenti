@@ -132,10 +132,10 @@
                         ar.writeHtml(GoalRecord.stateName(BaseRecord.STATE_UNSTARTED));
                     %><br/>
 
-                <input type="radio" name="state" value="<%=BaseRecord.STATE_STARTED%>" checked="checked" />
+                <input type="radio" name="state" value="<%=BaseRecord.STATE_OFFERED%>" checked="checked" />
                     <img src="assets/goalstate/small2.gif"/>
                     <%
-                        ar.writeHtml(GoalRecord.stateName(BaseRecord.STATE_STARTED));
+                        ar.writeHtml(GoalRecord.stateName(BaseRecord.STATE_OFFERED));
                     %><br/>
 
                 <input type="radio" name="state" value="<%=BaseRecord.STATE_ACCEPTED%>"/>

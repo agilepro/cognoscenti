@@ -71,7 +71,7 @@ public class ProcessRecord extends BaseRecord
         {
             int state = goal.getState();
             if (state == BaseRecord.STATE_UNSTARTED ||
-                    state == BaseRecord.STATE_STARTED ||
+                    state == BaseRecord.STATE_OFFERED ||
                     state == BaseRecord.STATE_ACCEPTED ||
                     state == BaseRecord.STATE_ERROR) {
                 //don't change anything

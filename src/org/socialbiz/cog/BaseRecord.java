@@ -29,7 +29,7 @@ public class BaseRecord extends DOMFace
 
     public final static int STATE_ERROR     = 0;
     public final static int STATE_UNSTARTED = 1;
-    public final static int STATE_STARTED   = 2;
+    public final static int STATE_OFFERED   = 2;
     public final static int STATE_ACCEPTED  = 3;
     public final static int STATE_WAITING   = 4;
     public final static int STATE_COMPLETE  = 5;
@@ -38,17 +38,17 @@ public class BaseRecord extends DOMFace
     public final static int STATE_FROZEN    = 8;
     public final static int STATE_DELETED   = 9;
 
-    public final static String STATE_ERROR_STR     = "Error";
-    public final static String STATE_UNSTARTED_STR = "Unstarted";
-    public final static String STATE_STARTED_STR   = "Offered";
-    public final static String STATE_ACCEPTED_STR  = "Accepted";
-    public final static String STATE_WAITING_STR   = "Waiting";
-    public final static String STATE_COMPLETE_STR  = "Completed";
-    public final static String STATE_SKIPPED_STR   = "Skipped";
-    public final static String STATE_REVIEW_STR    = "Review";     //Never used
-    public final static String STATE_FROZEN_STR    = "Frozen";
-    public final static String STATE_DELETED_STR   = "Deleted";
-    public final static String STATE_UNKNOWN_STR   = "Unknown";
+    private final static String STATE_ERROR_STR     = "Error";
+    private final static String STATE_UNSTARTED_STR = "Unstarted";
+    private final static String STATE_OFFERED_STR   = "Offered";
+    private final static String STATE_ACCEPTED_STR  = "Accepted";
+    private final static String STATE_WAITING_STR   = "Waiting";
+    private final static String STATE_COMPLETE_STR  = "Completed";
+    private final static String STATE_SKIPPED_STR   = "Skipped";
+    private final static String STATE_REVIEW_STR    = "Review";     //Never used
+    private final static String STATE_FROZEN_STR    = "Frozen";
+    private final static String STATE_DELETED_STR   = "Deleted";
+    private final static String STATE_UNKNOWN_STR   = "Unknown";
 
     public final static long MAX_TASK_DURATION  = 365;
     public final static long MAX_TASK_PRIORITY  = 100;
@@ -206,14 +206,13 @@ public class BaseRecord extends DOMFace
 
     public static String stateName(int state)
     {
-        switch (state)
-        {
+        switch (state) {
             case STATE_ERROR:
                 return STATE_ERROR_STR;
             case STATE_UNSTARTED:
                 return STATE_UNSTARTED_STR;
-            case STATE_STARTED:
-                return STATE_STARTED_STR;
+            case STATE_OFFERED:
+                return STATE_OFFERED_STR;
             case STATE_ACCEPTED:
                 return STATE_ACCEPTED_STR;
             case STATE_WAITING:
@@ -232,6 +231,58 @@ public class BaseRecord extends DOMFace
         }
         return STATE_UNKNOWN_STR;
     }
+
+    /**
+     * There are three main categories of state and these three methods
+     * help to distinguish these categories.
+     * Future: means it has not been started and not ready
+     * Active: means it is actively being worked on (maybe not accepted)
+     * Final:  means it is done, either complete, skipped, or deleted
+     */
+    public static boolean isFuture(int state) {
+        switch (state) {
+            case STATE_UNSTARTED:
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean isActive(int state) {
+        switch (state) {
+            case STATE_OFFERED:
+            case STATE_ACCEPTED:
+            case STATE_WAITING:
+            case STATE_REVIEW:
+            case STATE_FROZEN:
+            case STATE_ERROR:
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean isStarted(int state) {
+        switch (state) {
+            case STATE_ACCEPTED:
+            case STATE_WAITING:
+            case STATE_REVIEW:
+            case STATE_FROZEN:
+            case STATE_ERROR:
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean isFinal(int state) {
+        switch (state) {
+            case STATE_COMPLETE:
+            case STATE_SKIPPED:
+            case STATE_DELETED:
+                return true;
+        }
+        return false;
+    }
+
+
 
 /**
 * In June 2015 this was changed to the new location and names of the

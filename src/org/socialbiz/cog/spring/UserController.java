@@ -1560,7 +1560,7 @@ public class UserController extends BaseController {
                 for (String taskId : tasksToBeCompleted) {
                     taskRecord = ngp.getGoalOrFail(taskId);
                     taskRecord.setEndDate(ar.nowTime);
-                    taskRecord.setState(BaseRecord.STATE_COMPLETE);
+                    taskRecord.setStateAndAct(BaseRecord.STATE_COMPLETE, ar);
                     eventType = HistoryRecord.EVENT_TYPE_STATE_CHANGE_COMPLETE;
                     taskRecord.setModifiedDate(ar.nowTime);
                     taskRecord.setModifiedBy(ar.getBestUserId());

@@ -192,9 +192,7 @@ public class EmailSender extends TimerTask {
 
     private void handleAllOverdueScheduledEvents(AuthRequest ar) throws Exception{
         long nowTime = ar.nowTime;
-        System.out.println("BACKGROUND EVENTS: scanning for all events due before "+new Date(nowTime));
         NGPageIndex ngpi = findOverdueContainer(nowTime);
-        int count = 0;
         while (ngpi!=null) {
             if (ngpi.isProject()) {
                 NGPage ngp = (NGPage) ngpi.getContainer();
@@ -212,17 +210,15 @@ public class EmailSender extends TimerTask {
                 ngpi.nextScheduledAction = ngp.nextActionDue();
                 ngp.save();
                 System.out.println("BACKGROUND EVENTS: finished action on workspace ("+ngp.getFullName()+")");
-                count++;
                 NGPageIndex.clearLocksHeldByThisThread();
             }
             else {
                 System.out.println("BACKGROUND EVENTS: strange non-Page object has scheduled events --- ignoring it");
                 ngpi.nextScheduledAction = 0;
             }
-            Thread.sleep(500);  //just small delay to avoid saturation
+            Thread.sleep(200);  //just small delay to avoid saturation
             ngpi = findOverdueContainer(ar.nowTime);
         }
-        System.out.println("BACKGROUND EVENTS: Finished scan, handled "+count+" actions");
     }
 
     private NGPageIndex findOverdueContainer(long nowTime) {

@@ -162,7 +162,7 @@ Required parameters:
             continue;
         }
         int state = action.getState();
-        if (state==BaseRecord.STATE_STARTED || state==BaseRecord.STATE_ACCEPTED) {
+        if (state==BaseRecord.STATE_OFFERED || state==BaseRecord.STATE_ACCEPTED) {
             myActions.put(action.getJSON4Goal(ngp));
         }
     }

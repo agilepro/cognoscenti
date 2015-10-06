@@ -70,7 +70,7 @@
         throws Exception
     {
         int ts = task.getState();
-        if (ts!=BaseRecord.STATE_STARTED && ts!=BaseRecord.STATE_ACCEPTED)
+        if (ts!=BaseRecord.STATE_ACCEPTED && ts!=BaseRecord.STATE_OFFERED)
         {
             //not interested in task if not started or accepted
             return;

@@ -508,7 +508,7 @@ public class ProjectSync {
                 goal.setPassive(true);
                 goal.setRemoteUpdateURL(goalStat.urlRemote);
             }
-            goal.updateGoalFromJSON(goalStat.remoteCopy, local);
+            goal.updateGoalFromJSON(goalStat.remoteCopy, local, ar);
             goalNum++;
         }
 

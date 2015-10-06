@@ -94,7 +94,7 @@
     {
         eventType = HistoryRecord.EVENT_TYPE_STATE_CHANGE_STARTED;
         String appRoot = application.getRealPath("/").trim();
-        task.setState(BaseRecord.STATE_STARTED);
+        task.setState(BaseRecord.STATE_OFFERED);
     }
     else if (action.equals("Mark Accepted") || action.equals("Accept Activity"))
     {

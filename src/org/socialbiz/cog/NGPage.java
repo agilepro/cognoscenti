@@ -1160,7 +1160,7 @@ public class NGPage extends ContainerCommon implements NGContainer
                 continue;
             }
             int state = gr.getState();
-            if (state == BaseRecord.STATE_STARTED ||
+            if (state == BaseRecord.STATE_OFFERED ||
                 state == BaseRecord.STATE_ACCEPTED||
                 state == BaseRecord.STATE_WAITING )
             {

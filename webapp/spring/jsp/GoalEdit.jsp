@@ -257,6 +257,8 @@ app.controller('myCtrl', function($scope, $http) {
     }
     $scope.setProspects = function(newVal) {
         $scope.goalInfo.prospects = newVal;
+        $scope.saveGoal();
+        $scope.refreshHistory();
     }
 
     $scope.copyDatesToDummies = function() {
@@ -472,28 +474,20 @@ function addvalue() {
                       </li>
                     </ul>
                 </span>
-                &nbsp; Prospects:
-                <span class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="menu2" data-toggle="dropdown"
-                       style="{{goalProspectsStyle()}}">{{goalProspectsName()}} <span class="caret"></span></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                      <li role="presentation">
-                          <a role="menuitem" tabindex="-1" ng-click="setProspects('good')">
-                              Good
-                          </a>
-                      </li>
-                      <li role="presentation">
-                          <a role="menuitem" tabindex="-1" ng-click="setProspects('ok')">
-                              Warning
-                          </a>
-                      </li>
-                      <li role="presentation">
-                          <a role="menuitem" tabindex="-1" ng-click="setProspects('bad')">
-                              Trouble
-                          </a>
-                      </li>
-
-                    </ul>
+                &nbsp; Prospect:
+                <span>
+                    <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goalInfo.prospects=='good'"
+                         title="Good shape" ng-click="setProspects('good')">
+                    <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goalInfo.prospects=='good'"
+                         title="Good shape">
+                    <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goalInfo.prospects=='ok'"
+                         title="Warning" ng-click="setProspects('ok')">
+                    <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goalInfo.prospects=='ok'"
+                         title="Warning">
+                    <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goalInfo.prospects=='bad'"
+                         title="In trouble" ng-click="setProspects('bad')">
+                    <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goalInfo.prospects=='bad'"
+                         title="In trouble">
                 </span>
             </td>
         </tr>

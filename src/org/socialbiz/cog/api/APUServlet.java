@@ -228,7 +228,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
                     continue;
                 }
                 if (gr.getState()==BaseRecord.STATE_ACCEPTED ||
-                        gr.getState()==BaseRecord.STATE_STARTED) {
+                        gr.getState()==BaseRecord.STATE_OFFERED) {
                     goalArray.put(gr.getJSON4Goal(aPage, ar.baseURL, userDec.lic));
                 }
             }

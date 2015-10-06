@@ -157,6 +157,7 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
+    //TODO: is this still used?
     private void taskActionUpdate(AuthRequest ar, NGPage ngp, String parentTaskId)
             throws Exception
     {
@@ -201,11 +202,7 @@ public class ProjectGoalController extends BaseController {
 
         task.setPriority(Integer.parseInt(priority));
         task.setDescription(ar.defParam("description", ""));
-        task.setState(Integer.parseInt(taskState));
-        if(task.getState()==5){
-            task.setPercentComplete(100);
-        }
-
+        task.setStateAndAct(Integer.parseInt(taskState), ar);
 
         task.setCreator(userProfile.getUniversalId());
         task.setModifiedDate(ar.nowTime);
@@ -287,7 +284,7 @@ public class ProjectGoalController extends BaseController {
 
         String startOption=ar.defParam("startActivity", "");
         if(startOption.length()>0){
-            task.setState(BaseRecord.STATE_STARTED);
+            task.setState(BaseRecord.STATE_OFFERED);
         }else{
             task.setState(BaseRecord.STATE_UNSTARTED);
         }
@@ -386,23 +383,13 @@ public class ProjectGoalController extends BaseController {
             String comments = "";
             String action = ar.reqParam("action");
             if (action.equals("Start Offer")) {
-                long beginTime = task.getStartDate();
-                if (beginTime == 0) {
-                    task.setStartDate(ar.nowTime);
-                }
-                task.setState(BaseRecord.STATE_STARTED);
+                task.setStateAndAct(BaseRecord.STATE_OFFERED, ar);
                 eventType = HistoryRecord.EVENT_TYPE_STATE_CHANGE_STARTED;
             } else if (action.equals("Mark Accepted") || action.equals("Accept Activity")) {
-                long beginTime = task.getStartDate();
-                if (beginTime == 0) {
-                    task.setStartDate(ar.nowTime);
-                }
-                task.setState(BaseRecord.STATE_ACCEPTED);
+                task.setStateAndAct(BaseRecord.STATE_ACCEPTED, ar);
                 eventType = HistoryRecord.EVENT_TYPE_STATE_CHANGE_ACCEPTED;
             } else if (action.equals("Complete Activity")) {
-                task.setEndDate(ar.nowTime);
-                task.setState(BaseRecord.STATE_COMPLETE);
-                task.setPercentComplete(100);
+                task.setStateAndAct(BaseRecord.STATE_COMPLETE, ar);
                 eventType = HistoryRecord.EVENT_TYPE_STATE_CHANGE_COMPLETE;
             } else if (action.equals("Update Status")) {
                 String newStatus = ar.defParam("status", null);
@@ -501,6 +488,8 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
+
+    //TODO: is this still used?  Switch to JSON option?
     @RequestMapping(value = "/{siteId}/{pageId}/updateGoalSpecial.form", method = RequestMethod.POST)
     public ModelAndView updateGoalSpecial(@PathVariable String siteId,
             @PathVariable String pageId,HttpServletRequest request, HttpServletResponse response)
@@ -539,7 +528,7 @@ public class ProjectGoalController extends BaseController {
                 //silently ignore requests for users that are not assigned
             }
             else if ("Complete".equals(cmd))  {
-                goal.setState(GoalRecord.STATE_COMPLETE);
+                goal.setStateAndAct(GoalRecord.STATE_COMPLETE, ar);
                 eventType = HistoryRecord.EVENT_TYPE_STATE_CHANGE_COMPLETE;
                 accomp = "using 'Completed' through anonymous web form";
             }

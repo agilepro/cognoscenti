@@ -27,8 +27,8 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.labelList = <%labelList.write(out,2,4);%>;
-    $scope.newLabel = {name: "", color: ""};
-    $scope.colors = ["Pink","yellow","CornSilk","PaleGreen","Orange","Bisque","Coral","LightSteelBlue","Aqua","Thistle","Gold"];
+    $scope.colors = ["Gold","Yellow","CornSilk","PaleGreen","Orange","Bisque","Coral","LightSteelBlue","Aqua","Thistle","Pink"];
+    $scope.newLabel = {name: "", color: $scope.colors[0]};
 
     $scope.showInput = false;
     $scope.showError = false;
@@ -88,8 +88,16 @@ app.controller('myCtrl', function($scope, $http) {
         });
     };
 
-    $scope.createLabel = function(label) {
-        $scope.labelList.push({name:"",color:"white",isNew:true});
+    $scope.createFromNew = function() {
+        var label=$scope.newLabel;
+        if (!label.name || label.name.length==0) {
+            alert("Enter a label name");
+            return;
+        }
+        var newOne = {name:label.name,editedName:label.name,color:label.color};
+        $scope.newLabel.name="";
+        $scope.labelList.push(newOne);
+        $scope.updateLabel(newOne);
         $scope.sortItems();
     };
 
@@ -156,6 +164,24 @@ yyy
         </div>
     </div>
 
+        <div class="well">
+            <table><tr>
+                <td>New Label:</td>
+                <td style="padding:10px"><input type="text" ng-model="newLabel.name" style="width:200px;"
+                            placeholder="Enter New Label Name" class="form-control"></td>
+                <td style="padding:10px"><div class="dropdown">
+                    <button class="form-control dropdown-toggle" id="menu2" data-toggle="dropdown"
+                            style="background-color:{{newLabel.color}};">
+                            {{newLabel.color}} <span class="caret"></span></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                        <li role="presentation" ng-repeat="color in colors">
+                            <a role="menuitem" style="background-color:{{color}};"
+                            href="#"  ng-click="newLabel.color=color">{{color}}</a></li>
+                    </ul>
+                </div></td>
+                <td style="padding:10px"><button class="btn btn-primary" ng-click="createFromNew(newLabel)">Create New</button></td>
+            </tr></table>
+        </div>
 
         <table class="gridTable2" width="600px;">
             <tr class="gridTableHeader">
@@ -198,6 +224,5 @@ yyy
                 </td>
             </tr>
         </table>
-        <button class="btn" ng-click="createLabel(label)">Create New</button>
     </div>
 </div>

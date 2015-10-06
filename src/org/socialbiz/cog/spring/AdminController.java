@@ -568,7 +568,7 @@ public class AdminController extends BaseController {
                 if("freezedMode".equals(projectMode) || "deletedMode".equals(projectMode)){
                     if(task.getState() == BaseRecord.STATE_ERROR ||
                             task.getState()  == BaseRecord.STATE_ACCEPTED ||
-                            task.getState()  == BaseRecord.STATE_STARTED){
+                            task.getState()  == BaseRecord.STATE_OFFERED){
                         task.setLastState(String.valueOf(task.getState()));
                         task.setState(BaseRecord.STATE_FROZEN);
                     }

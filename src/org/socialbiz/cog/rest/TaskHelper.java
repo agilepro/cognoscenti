@@ -157,7 +157,7 @@ public class TaskHelper
             activeTask.add(gr);
         }else if(state == BaseRecord.STATE_ACCEPTED){
             activeTask.add(gr);
-        }else if(state == BaseRecord.STATE_STARTED){
+        }else if(state == BaseRecord.STATE_OFFERED){
             activeTask.add(gr);
         }else if(state == BaseRecord.STATE_WAITING){
             activeTask.add(gr);
@@ -247,7 +247,7 @@ public class TaskHelper
         uPage.clearTaskRefFlags();
         for (GoalRecord existingTask : allTask) {
             int state = existingTask.getState();
-            if (state == BaseRecord.STATE_STARTED ||
+            if (state == BaseRecord.STATE_OFFERED ||
                 state == BaseRecord.STATE_ACCEPTED)  {
                 NGPage proj = pageMap.get(existingTask);
                 RemoteGoal ref = uPage.findOrCreateTask( proj.getKey(), existingTask.getId() );
