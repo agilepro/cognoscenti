@@ -721,7 +721,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.toggleEditor(8,item.id)
     }
     $scope.createNewComment = function(item) {
-        $scope.saveAgendaItem(item);
+        var itemCopy = {};
+        itemCopy.id = item.id;
+        itemCopy.newComment = item.newComment;
+        $scope.saveAgendaItem(itemCopy);
     }
 
     $scope.getMyResponse = function(cmt) {
