@@ -449,8 +449,8 @@ public class Crawler {
         log.prn(Log.INFO, "\tFound ["+ newAnchorCount + "] new anchors");
     }
 
-    
-    
+
+
     private void checkContentType(Page pageToTest) throws Exception
     {
         String contentType = pageToTest.getWebResponse().getContentType();
@@ -497,10 +497,6 @@ public class Crawler {
             return false;
         }
         if(urlPath.indexOf("AllMyTask.htm")>=0)
-        {
-            return false;
-        }
-        if(urlPath.indexOf("EmailLoginForm.htm")>=0)
         {
             return false;
         }

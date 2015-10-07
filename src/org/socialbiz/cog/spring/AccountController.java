@@ -54,9 +54,6 @@ public class AccountController extends BaseController {
             if (needsToSetName(ar)) {
                 return new ModelAndView("requiredName");
             }
-            if (needsToSetEmail(ar)) {
-                return new ModelAndView("requiredEmail");
-            }
             if (UserManager.getAllSuperAdmins(ar).size()==0) {
                 return showWarningView(ar, "nugen.missingSuperAdmin");
             }

@@ -165,71 +165,6 @@ public class UserPage extends ContainerCommon
     }
 
 
-    // timeout values are tested at the time of fetching
-    // if something is too old, it is thrown out at this time
-    public Vector<ProfileRequest> getProfileRequests() throws Exception {
-        Vector<ProfileRequest> retVal = new Vector<ProfileRequest>();
-        Vector<ProfileRequest> nl = getChildren("profilerequest", ProfileRequest.class);
-        long timeout = System.currentTimeMillis() - 87000000; // about 1 day
-
-        for (ProfileRequest pr : nl) {
-            if (pr.getTimestamp() < timeout) {
-                //request has been timed out, so ignore it and get rid of it.
-                removeChild(pr);
-            }
-            else {
-                retVal.add(pr);
-            }
-        }
-        return retVal;
-    }
-
-    public ProfileRequest createProfileRequest(int requestType, String email, long nowTime)
-        throws Exception
-    {
-        ProfileRequest pr = createChildWithID(
-            "profilerequest", ProfileRequest.class, "id", getUniqueOnPage());
-        pr.setReqType(requestType);
-        pr.setSecurityToken(createMagicNumber(pr.getId()));
-        pr.setEmail(email);
-        pr.setTimestamp(nowTime);
-        return pr;
-    }
-
-    public void removeProfileRequest(String id) throws Exception {
-        for (ProfileRequest profi : getProfileRequests()) {
-            if (id.equals(profi.getAttribute("id"))) {
-                removeChild(profi);
-            }
-        }
-    }
-
-    public ProfileRequest findProfileRequest(String id) throws Exception {
-        for (ProfileRequest profi : getProfileRequests()) {
-            if (id.equals(profi.getAttribute("id"))) {
-                return profi;
-            }
-        }
-        return null;
-    }
-
-    private String createMagicNumber(String fourNumberId)
-    {
-        String nineLetters = IdGenerator.generateKey();
-        StringBuffer betterNumber = new StringBuffer(20);
-        betterNumber.append(nineLetters.substring(0,3));
-        betterNumber.append("-");
-        betterNumber.append(fourNumberId.substring(0,2));
-        betterNumber.append("-");
-        betterNumber.append(nineLetters.substring(3,6));
-        betterNumber.append("-");
-        betterNumber.append(fourNumberId.substring(2,4));
-        betterNumber.append("-");
-        betterNumber.append(nineLetters.substring(6,9));
-        return betterNumber.toString();
-    }
-
-
     /**
     * Get a four digit numeric id which is unique on the page.
     */
@@ -246,9 +181,6 @@ public class UserPage extends ContainerCommon
             }
             for (TaskTemplate tt : getTaskTemplates()) {
                 existingIds.add(tt.getId());
-            }
-            for (ProfileRequest pr : getProfileRequests()) {
-                existingIds.add(pr.getId());
             }
             for (AgentRule ar : getAgentRules()) {
                 existingIds.add(ar.getId());
@@ -515,16 +447,6 @@ public class UserPage extends ContainerCommon
          }
          return cType.getResourceInternal(relPath);
      }
-
-    public ProfileRequest getProfileRequest(String emailId) throws Exception {
-        Vector<ProfileRequest> nl = getChildren("profilerequest", ProfileRequest.class);
-        for (ProfileRequest tEle : nl) {
-            if (emailId.equals(tEle.getAttribute("email"))) {
-                return tEle;
-            }
-        }
-        return null;
-    }
 
     public String getAllowPublic() throws Exception {
         return getAttribute("allowPublic");

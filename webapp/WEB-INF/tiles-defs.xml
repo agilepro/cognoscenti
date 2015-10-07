@@ -174,11 +174,6 @@
         <put-attribute name="body" value="/spring/jsp/EditRole.jsp" />
     </definition>
 
-    <definition name="WaitForEmail" extends="baseLayout">
-        <put-attribute name="title" value="Wait for Email" />
-        <put-attribute name="body" value="/spring/jsp/WaitForEmail.jsp" />
-    </definition>
-
 
     <definition name="ListAttachments" extends="slimLayout">
         <put-attribute name="title" value="List Attachments" />
@@ -262,10 +257,6 @@
     <definition name="editUserProfile" extends="slimLayout">
         <put-attribute name="title" value="Update User Profile" />
         <put-attribute name="body" value="/spring/jsp/edituserprofile.jsp" />
-    </definition>
-    <definition name="addUserIdForm" extends="baseLayout">
-        <put-attribute name="title" value="Update User Profile" />
-        <put-attribute name="body" value="/spring/jsp/addUserId.jsp" />
     </definition>
     <definition name="remind_attachment" extends="baseLayoutWithoutLeftPanel">
         <put-attribute name="title" value="Upload Attachment" />
@@ -478,11 +469,6 @@
     <definition name="requiredName" extends="baseLayoutWithoutLeftPanel">
         <put-attribute name="title" value="Warning" />
         <put-attribute name="body" value="/spring/jsp/requiredName.jsp" />
-    </definition>
-
-    <definition name="requiredEmail" extends="baseLayoutWithoutLeftPanel">
-        <put-attribute name="title" value="Warning" />
-        <put-attribute name="body" value="/spring/jsp/requiredEmail.jsp" />
     </definition>
 
     <definition name="DisplayException" extends="slimLayout">

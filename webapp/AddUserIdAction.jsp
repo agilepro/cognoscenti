@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
 %><%@ page session="true"
-%><%@ page import="org.socialbiz.cog.ProfileRequest"
 %><%@ page import="org.socialbiz.cog.UserPage"
 %><%@ page import="org.socialbiz.cog.UtilityMethods"
 %><%@ page import="java.io.File"

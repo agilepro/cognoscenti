@@ -241,9 +241,7 @@ public class HistoricActions {
             clone.write("and to receive email from the people working on the workspace.</p>");
             clone.write("<p>I've checked, and there is no user profile for you at this email address (");
             clone.writeHtml(emailId);
-            clone.write(") so you have two options: create a new login and profile for this email address, ");
-            clone.write("or add this email address to an existing user profile that you already have.");
-            clone.write("Creating a new login profile is free and easy.</p>");
+            clone.write(").  Creating a new login profile is free and easy.</p>");
         }
 
         EmailSender.containerEmail(ooa, container, "Added to " + role

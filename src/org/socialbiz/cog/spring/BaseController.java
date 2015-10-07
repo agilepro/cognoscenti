@@ -186,6 +186,8 @@ public class BaseController {
         return displayName == null || displayName.length()==0;
     }
 
+/*
+emaio is provided by the SSOFI so no need to manipulate it here
     protected boolean needsToSetEmail(AuthRequest ar) throws Exception {
         if (!ar.isLoggedIn()) {
             return false;
@@ -194,6 +196,7 @@ public class BaseController {
         String email = up.getPreferredEmail();
         return email == null || email.length()==0;
     }
+*/
 
     /**
      * This is a set of checks that results in different views depending on the state
@@ -209,9 +212,6 @@ public class BaseController {
         if (needsToSetName(ar)) {
             return new ModelAndView("requiredName");
         }
-        if (needsToSetEmail(ar)) {
-            return new ModelAndView("requiredEmail");
-        }
         if(!ar.isMember()){
             ar.req.setAttribute("roleName", "Members");
             return showWarningView(ar, "nugen.project.member.msg");
@@ -221,7 +221,7 @@ public class BaseController {
         }
         return null;
     }
-    
+
     /**
      * Checks that the project is OK to be updated.  Should be used for
      * forms that prompt for information to update the workspace.  In that
@@ -248,12 +248,6 @@ public class BaseController {
     protected ModelAndView executiveCheckViews(AuthRequest ar) throws Exception {
         if(!ar.isLoggedIn()){
             return showWarningView(ar, "nugen.project.login.msg");
-        }
-        if (needsToSetName(ar)) {
-            return new ModelAndView("requiredName");
-        }
-        if (needsToSetEmail(ar)) {
-            return new ModelAndView("requiredEmail");
         }
         if(!ar.isMember()){
             ar.req.setAttribute("roleName", "Executive");

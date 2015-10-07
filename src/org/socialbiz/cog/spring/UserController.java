@@ -56,7 +56,6 @@ import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.OptOutIndividualRequest;
 import org.socialbiz.cog.ProfileRef;
-import org.socialbiz.cog.ProfileRequest;
 import org.socialbiz.cog.ReminderMgr;
 import org.socialbiz.cog.ReminderRecord;
 import org.socialbiz.cog.RemoteGoal;
@@ -783,25 +782,6 @@ public class UserController extends BaseController {
         }
     }
 
-/*
-    @RequestMapping(value = "/{userKey}/addUserId.htm", method = RequestMethod.GET)
-    public ModelAndView addUserId(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Can't access to the Add User ID page.");
-            UserProfile up = UserManager.getUserProfileOrFail(userKey);
-            modelAndView = new ModelAndView("addUserIdForm");
-            request.setAttribute("userProfile", up);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.user.adduserid.page", new Object[]{userKey} , ex);
-        }
-        return modelAndView;
-    }
-*/
 
     @RequestMapping(value = "/approveOrRejectRoleRequest.ajax", method = RequestMethod.POST)
     public void approveOrRejectRoleRequest(HttpServletRequest request, HttpServletResponse response)
@@ -926,59 +906,7 @@ public class UserController extends BaseController {
 
     }
 
-    @RequestMapping(value = "/addUserId.ajax", method = RequestMethod.POST)
-    public void addUserId(HttpServletRequest request, HttpServletResponse response)
-    throws Exception {
 
-        AuthRequest ar = null;
-        String responseMessage = "";
-        try{
-            ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Must be logged in to add User Id");
-
-            String go     = ar.reqParam("go");
-            String isEmailStr = ar.reqParam("isEmail");
-            boolean isEmail = "true".equals(isEmailStr);
-            String newid  = ar.reqParam("newid");
-
-            //if parameter for email is not set at all, go back to the login page.
-            if (isEmail && newid.indexOf("@")<0)
-            {
-                throw new NGException("nugen.exception.enter.valid.email",null);
-            }
-
-            if (!isEmail && newid.indexOf("@")>=0)
-            {
-                throw new NGException("nugen.exception.incorrect.openid",null);
-            }
-
-            UserProfile up = ar.getUserProfile();
-
-            if (isEmail)
-            {
-                UserPage anonPage = ar.getAnonymousUserPage();
-                ProfileRequest newReq = anonPage.createProfileRequest(ProfileRequest.ADD_EMAIL, newid, ar.nowTime);
-                newReq.setUserKey(up.getKey());
-                newReq.sendEmail(ar, go);
-
-                anonPage.saveFile(ar, "requested to add Id "+newid);
-            }else{
-                up.addId(newid);
-                up.setLastUpdated(ar.nowTime);
-                UserManager.writeUserProfilesToFile();
-            }
-
-            JSONObject paramMap = new JSONObject();
-            paramMap.put(Constant.MSG_TYPE , Constant.SUCCESS);
-            paramMap.put("newId", newid);
-            responseMessage = paramMap.toString();
-        }
-        catch(Exception ex){
-            responseMessage = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
-            ar.logException("Caught by addUserId.ajax", ex);
-        }
-        NGWebUtils.sendResponse(ar, responseMessage);
-    }
 
     private File getUserImageFolder(HttpServletRequest request) {
         String path=request.getSession().getServletContext().getRealPath("/");
@@ -1702,6 +1630,27 @@ public class UserController extends BaseController {
         }
     }
 
+
+    @RequestMapping(value = "/{userId}/editUserProfile.htm")
+    public ModelAndView changeUserProfile(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        try
+        {
+            AuthRequest ar = AuthRequest.getOrCreate( request, response );
+            if(!ar.isLoggedIn()){
+                return showWarningView(ar, "message.loginalert.see.page");
+            }
+            request.setAttribute( "realRequestURL", ar.getRequestURL() );
+        } catch (Exception ex)
+        {
+            throw new NGException("nugen.operation.fail.edit.userprofile.page", null , ex);
+        }
+        return new ModelAndView( "editUserProfile" );
+
+    }
+
+
     @RequestMapping(value = "/{userKey}/userContacts.htm", method = RequestMethod.GET)
     public ModelAndView userContacts(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -1803,27 +1752,6 @@ public class UserController extends BaseController {
     public ModelAndView accountRequestResult(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         ModelAndView modelAndView = new ModelAndView("accountRequestResult");
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "/{userKey}/clearCookie.form", method = RequestMethod.POST)
-    public ModelAndView clearCookie(HttpServletRequest request, HttpServletResponse response)
-    throws Exception {
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            ar.clearCookie();
-
-            UserProfile up = ar.getUserProfile();
-
-            String go = ar.baseURL+"v/"+up.getKey()+"/userSettings.htm";
-            modelAndView = new ModelAndView(new RedirectView(go));
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.to.clear.cookies", null, ex);
-        }
         return modelAndView;
     }
 

@@ -42,12 +42,10 @@ import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NoteRecord;
-import org.socialbiz.cog.ProfileRequest;
 import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.UserManager;
-import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1290,15 +1288,6 @@ public class MainTabsViewControler extends BaseController {
 
 
 
-
-
-
-
-
-
-
-
-
       //A very simple form with a prompt for a user's display name  (dName)
       //and the user name is set with whatever is posted in.
       //Can only set the current logged in user name.
@@ -1316,62 +1305,6 @@ public class MainTabsViewControler extends BaseController {
                   up.setName(dName);
                   up.setLastUpdated(ar.nowTime);
                   UserManager.writeUserProfilesToFile();
-              }
-              response.sendRedirect(go);
-          }catch(Exception ex){
-              throw new NGException("nugen.operation.fail.project.sent.note.by.email.page", null , ex);
-          }
-      }
-
-
-      //A very simple form with a prompt for a user's email address which is
-      //user to send a confirmation message, and another prompt to enter the
-      //confirmation message.
-      @RequestMapping(value = "/requiredEmail.form", method = RequestMethod.POST)
-      public void requiredEmail_form(HttpServletRequest request, HttpServletResponse response)
-          throws Exception {
-
-          try{
-              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-              String go = ar.defParam("go", ar.baseURL);
-              String cmd = ar.reqParam("cmd");
-              if (ar.isLoggedIn()) {
-                  UserProfile up = ar.getUserProfile();
-                  UserPage uPage = ar.getAnonymousUserPage();
-                  if ("Send Email".equals(cmd)) {
-                      String email = ar.reqParam("email");
-                      ProfileRequest newReq = uPage.createProfileRequest(
-                              ProfileRequest.ADD_EMAIL, email, ar.nowTime);
-                      newReq.sendEmail(ar, go);
-                      newReq.setUserKey(up.getKey());
-                      uPage.save();
-                  }
-                  else if ("Confirmation Key".equals(cmd)) {
-                      String cKey = ar.reqParam("cKey");
-
-                      //look through the requests by email, and if the confirmation key matches
-                      //then add the email, and remove the profile request.
-                      for (ProfileRequest profi : uPage.getProfileRequests()) {
-                          if (cKey.equals(profi.getSecurityToken())  &&
-                                  up.getKey().equals(profi.getUserKey())) {
-                              //ok, can only happen if same person received the message
-                              String email = profi.getEmail();
-                              String id = profi.getId();
-
-                              //use it only ONCE
-                              uPage.removeProfileRequest(id);
-                              uPage.save();
-
-                              //go ahead and add email to profile.
-                              up.addId(email);
-                              up.setPreferredEmail(email);
-                              up.setLastUpdated(ar.nowTime);
-                              UserManager.writeUserProfilesToFile();
-
-                              break;
-                          }
-                      }
-                  }
               }
               response.sendRedirect(go);
           }catch(Exception ex){

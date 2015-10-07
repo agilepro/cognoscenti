@@ -199,9 +199,6 @@ import org.socialbiz.cog.DOMFile;
                 if (log.isDebugEnabled()){
                     log.debug("Searching " + url.toString());
                 }
-                if(url.toString().indexOf("t/EmailLoginForm.htm")>0){
-                    continue;
-                }
 
                 System.out.println("Starting search: URL " + url.toString());
                try{
@@ -294,7 +291,6 @@ import org.socialbiz.cog.DOMFile;
                 List<String> IgnoredUrlList=new ArrayList<String>();
 
                 WebCrawler wc = new WebCrawler();
-                IgnoredUrlList.add("Found new URL http://leaves.interstagebpm.com:8080/nugen/t/EmailLoginForm.htm?go=http%3A%2F%2Fleaves.interstagebpm.com%3A8080%2Fnugen%2Ft%2FEmailLoginForm.htm%3Bjsessionid%3D66DEA037C7EBDC9113D96A27AF1C8CCA%3Fmsg%3DMust%2520be%2520logged%2520in%2520to%2520open%2520public%2520page.%26go%3Dhttp%253A%252F%252Fleaves.interstagebpm.com%253A8080%252Fnugen%252Fv%252Fmainbook%252F%2524%252Fpublic.htm");
 
                 wc.setIgnoredUrlpatterns(IgnoredUrlList);
                 Iterator<String> it =urlList.iterator();

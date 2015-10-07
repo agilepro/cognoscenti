@@ -9,42 +9,6 @@
 <% if (!ar.isStaticSite()) { %>
 
 
-        <!-- SEARCH BOX -->
-        <div class="box">
-            <div class="box_title">Search</div>
-            <div class="box_body">
-                <div>
-<%
-    if (!ar.isLoggedIn()) {
-%>
-                    <p>Please <a href="<%=ar.retPath%>t/EmailLoginForm.htm?go=<%ar.writeURLData(ar.getCompleteURL());%>">log-in or
-                       register</a> to search.</p>
-<%
-    } else if (ngb==null) {
-%>
-                    <p>Select an account to search.</p>
-<%
-    } else {
-%>
-                    <form method="get" id="searchform" action="<%=ar.retPath%>Search.jsp">
-                        <input type="hidden" name="b"
-                              value="<%ar.writeURLData(ngb.getKey());%>" />
-                        <table class="search">
-                            <tr>
-                                <td><input type="text" name="qs" id="qs"/></td>
-                                <td><input type="image" src="<%=ar.retPath%>button_go.gif" /></td>
-                            </tr>
-                        </table>
-                    </form>
-<%
-    }
-%>
-                </div>
-            </div>
-            <div class="box_bottom"></div>
-        </div>
-
-
 
         <div class="box">
             <div class="box_title">General Links</div>

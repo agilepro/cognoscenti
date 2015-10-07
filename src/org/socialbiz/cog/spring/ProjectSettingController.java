@@ -71,9 +71,6 @@ public class ProjectSettingController extends BaseController {
             if (needsToSetName(ar)) {
                 return new ModelAndView("requiredName");
             }
-            if (needsToSetEmail(ar)) {
-                return new ModelAndView("requiredEmail");
-            }
 
             ModelAndView modelAndView = new ModelAndView("personal");
             request.setAttribute("visibility_value", "4");
@@ -573,9 +570,6 @@ public class ProjectSettingController extends BaseController {
             //signing up as member or other operations require name and email address
             if (needsToSetName(ar)) {
                 return new ModelAndView("requiredName");
-            }
-            if (needsToSetEmail(ar)) {
-                return new ModelAndView("requiredEmail");
             }
             if(!ar.isMember()){
                 ar.req.setAttribute("roleName", "Members");

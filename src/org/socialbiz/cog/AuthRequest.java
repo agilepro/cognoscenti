@@ -1752,6 +1752,7 @@ public class AuthRequest
          resp.addCookie(openIdCookie);
      }
 
+/*
      public boolean autoLoginRedirect() throws Exception{
          String autoLoginCookie = findCookieValue("autoLoginCookie");
 
@@ -1765,6 +1766,7 @@ public class AuthRequest
         }
         return false;
      }
+*/
 
      public Cognoscenti getCogInstance() {
          return cog;

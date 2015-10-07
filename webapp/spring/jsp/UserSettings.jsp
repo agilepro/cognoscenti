@@ -1,6 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@include file="include.jsp"
-%><%@page import="org.workcast.ssoficlient.service.LoginServlet"
 %><%@page import="org.socialbiz.cog.IDRecord"
 %><%@page import="org.socialbiz.cog.ConfigFile"
 %><%
@@ -36,12 +35,6 @@
     String openIdCookie = ar.findCookieValue("openIdCookie");
 
     String thisPage = ar.getCompleteURL();
-    String ssofiLogin = "";
-    if (viewingSelf) {
-        ssofiLogin = LoginServlet.getAddIdURL(thisPage, thisPage, "only_tenant");
-    }
-    String emailOpenIDProvider = ar.getSystemProperty("emailOpenIDProvider");
-    String visitLoginPrompt = "";
     String prefEmail = uProf.getPreferredEmail();
     if (prefEmail==null) {
         prefEmail = "-none-";
@@ -122,12 +115,6 @@ if (ar.isLoggedIn()) { %>
                         <td style="width:20px;"></td>
                         <td><%
                             ar.writeHtml(prefEmail);
-                            if (emailOpenIDProvider!=null) {
-                                %> [<a href="<%
-                                ar.write(emailOpenIDProvider);
-                                ar.write(prefEmail);
-                                %>">Visit Login Site</a>] <%
-                            }
                             %></td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
@@ -144,12 +131,6 @@ if (ar.isLoggedIn()) { %>
                                     %>
                                         <tr><td><%
                                         ar.writeHtml(anid.getLoginId());
-                                        if (emailOpenIDProvider!=null) {
-                                            %> [<a href="<%
-                                            ar.write(emailOpenIDProvider);
-                                            ar.write(anid.getLoginId());
-                                            %>">Visit Login Site</a>] <%
-                                        }
                                         %></td></tr>
                                     <%
                                     }
@@ -188,7 +169,7 @@ if (ar.isLoggedIn()) { %>
                         <td style="width:20px;"></td>
                         <td><%SectionUtil.nicePrintTime(ar.w, uProf.getLastLogin(), ar.nowTime); %> as <% ar.writeHtml(uProf.getLastLoginId()); %> </td>
                     </tr>
-            <%if (viewingSelf){ %>
+    <%if (viewingSelf){ %>
                     <tr><td style="height:10px"></td></tr>
                     <tr>
                         <td class="gridTableColummHeader">Remote URL:</td>
@@ -208,33 +189,8 @@ if (ar.isLoggedIn()) { %>
                         <td style="width:20px;"></td>
                         <td><% ar.writeHtml(uProf.getLicenseToken());%></td>
                     </tr>
-                    <% } %>
-                    <tr>
-                        <td class="gridTableColummHeader"></td>
-                        <td></td><td><hr><i>Settings in cookies in this browser:</i><br/>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader"><fmt:message key="nugen.userprofile.AutoLogin"/>:</td>
-                        <td style="width:20px;"></td>
-                        <%
-                        if((autoLoginCookie!=null)&&(autoLoginCookie.equals("true"))){ %>
-                        <td>
-                            <form id="clearCookie" action="clearCookie.form" method="post">
-                                <table>
-                                    <tr>
-                                        <td>ON</td>
-                                        <td width="5px">&nbsp;</td>
-                                        <td><input type="submit" class="btn btn-primary" value="Turn Off"/></td>
-                                        <td><% ar.writeHtml(openIdCookie); %></td>
-                                    </tr>
-                                </table>
-                            </form>
-                        </td>
-                        <%}else{%>
-                        <td>OFF</td>
-                        <%} %>
-                    </tr>
-                    <%} %>
+            <% } %>
+    <%} %>
                 </table>
             </div>
         </div>
