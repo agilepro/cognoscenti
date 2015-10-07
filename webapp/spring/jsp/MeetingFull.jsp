@@ -462,6 +462,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.putGetMeetingInfo(saveRecord);
         $scope.stopEditing();
     };
+    $scope.saveAgendaItemParts = function(agendaItem, fieldList) {
+        var itemCopy = {};
+        itemCopy.id = agendaItem.id;
+        fieldList.map( function(ele) {
+            itemCopy[ele] = agendaItem[ele];
+        });
+        $scope.saveAgendaItem(itemCopy);
+    };
     $scope.revertAllEdits = function() {
         var saveRecord = {};
         $scope.putGetMeetingInfo(saveRecord);
@@ -620,7 +628,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.refreshStatus = "No refresh because meeting is not being run";
             return;  //don't set of refresh unless in run mode
         }
-        window.setTimeout( function() {$scope.refresh()}, 5000);
+        window.setTimeout( function() {$scope.refresh()}, 60000);
         if ($scope.nowEditing != "nothing") {
             $scope.refreshStatus = "No refresh because currently editing";
             return;   //don't refresh when editing
@@ -726,6 +734,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         itemCopy.newComment = item.newComment;
         $scope.saveAgendaItem(itemCopy);
     }
+    $scope.saveComment = function(item, cmt) {
+        var itemCopy = {};
+        itemCopy.id = item.id;
+        itemCopy.comments = [];
+        itemCopy.comments.push(cmt);
+        $scope.saveAgendaItem(itemCopy);
+    }
+
 
     $scope.getMyResponse = function(cmt) {
         cmt.choices = ["Consent", "Object"]
@@ -1094,7 +1110,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
             <div class="form-inline form-group">
               Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"/>
               Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>
-              <button ng-click="saveAgendaItem(item)" class="btn btn-danger">Save</button>
+              <button ng-click="saveAgendaItemParts(item, ['subject','duration'])" class="btn btn-danger">Save</button>
               <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
             </div>
             <div class="form-inline form-group">
@@ -1138,7 +1154,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
            <div class="well leafContent">
              <div ng-model="item.desc" ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]" text-angular="" class="leafContent"></div>
 
-             <button ng-click="saveAgendaItem(item)" class="btn btn-danger">Save</button>
+             <button ng-click="saveAgendaItemParts(item, ['desc'])" class="btn btn-danger">Save</button>
              <button ng-click="cancelEdit(item)" class="btn btn-danger">Cancel</button>
            </div>
         </td>
@@ -1203,7 +1219,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
            </tr>
            <tr ng-repeat="goal in itemGoals(item)" style="margin-left:30px;">
               <td>
-                  <span class="dropdown" ng-show="meeting.meetingType==2">
+                  <span class="dropdown">
                     <button class="btn btn-default dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" >
                           <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
@@ -1373,7 +1389,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                           ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                           text-angular="" class="" style="width:100%;"></div>
 
-                      <button ng-click="saveAgendaItem(item);stopEditing()" class="btn btn-danger">Save Changes</button>
+                      <button ng-click="saveComment(item,cmt);stopEditing()" class="btn btn-danger">Save Changes</button>
                       <button ng-click="revertAllEdits();stopEditing()" class="btn btn-danger">Cancel</button>
                       &nbsp;
                       <input type="checkbox" ng-model="cmt.poll"> Proposal</button>
@@ -1392,7 +1408,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                    </table>
 
                    <div ng-show="cmt.poll && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                       <button class="btn btn-default" ng-click="cmt.poll=false;saveAgendaItem(item)">Close Response Period</button>
+                       <button class="btn btn-default" ng-click="cmt.poll=false;saveComment(item,cmt)">Close Response Period</button>
                        <button class="btn btn-default" ng-click="createModifiedProposal(item,cmt)">Make Modified Proposal</button>
                    </div>
                    <div ng-show="cmt.poll && !isEditing(9,cmt.time) && cmt.user!='<%ar.writeJS(currentUser);%>'">
@@ -1413,7 +1429,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                               ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                               text-angular="" class="" style="width:100%;"></div>
                        </div>
-                      <button ng-click="saveAgendaItem(item);stopEditing()" class="btn btn-danger">Save Response</button>
+                      <button ng-click="saveComment(item,cmt);stopEditing()" class="btn btn-danger">Save Response</button>
                       <button ng-click="stopEditing()" class="btn btn-danger">Cancel</button>
                    </div>
                </div>
