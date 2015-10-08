@@ -6,6 +6,10 @@
     "ref": "ddsubmenu1",
     "subs":   [
         {
+          "name": "Search Workspaces",
+          "href": "searchAllNotes.htm"
+        },
+        {
           "name": "List Workspaces",
           "href": "accountListProjects.htm"
         },
@@ -20,10 +24,6 @@
         {
           "name": "Convert Folder to Workspace",
           "href": "convertFolderProject.htm"
-        },
-        {
-          "name": "Search Notes",
-          "href": "searchAllNotes.htm"
         }
       ]
   },
@@ -38,7 +38,7 @@
           "href": "personal.htm"
         },
         {
-          "name": "Permissions",
+          "name": "Roles & Permissions",
           "href": "permission.htm"
         },
         {
@@ -46,7 +46,7 @@
           "href": "roleRequest.htm"
         },
         {
-          "name": "Admin",
+          "name": "Site Administration",
           "href": "admin.htm"
         }
       ]

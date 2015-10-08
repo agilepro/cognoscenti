@@ -253,35 +253,23 @@ app.controller('myCtrl', function($scope, $http) {
         return -1;
     };
 
-    $scope.findDoc = function(searchId) {
-        for(var i=0; i<$scope.attachmentList.length; i++) {
-            var oneDoc = $scope.attachmentList[i];
-            if (oneDoc.universalid == searchId) {
-                return oneDoc;
-            }
-        }
-        return {name: "unknown doc "+searchId, description: "does not exist"};
-    }
-
     $scope.allDocuments = function() {
-        var coll = {};
-        for(var i=0; i<$scope.meeting.agenda.length; i++) {
-            var ai = $scope.meeting.agenda[i];
-            for(var j=0; j<ai.docList.length; j++) {
-                var docid = ai.docList[j];
-                var docRec = $scope.findDoc(docid);
-                coll[docid] = docRec;
-            }
-        }
-        console.log("GOT "+JSON.stringify(coll));
-        var res = [];
-        for (var key in coll) {
-            if (coll.hasOwnProperty(key)) {
-                res.push(coll[key]);
-            }
-        }
-        console.log("THEN "+JSON.stringify(res));
-        return res;
+        var coll = [];
+        var eliminateDups = {};
+        $scope.meeting.agenda.map( function(agendaItem) {
+            agendaItem.docList.map( function(docid) {
+                console.log("Considering "+docid);
+                if (!eliminateDups[docid]) {
+                    $scope.attachmentList.map( function(att) {
+                        if (att.universalid == docid) {
+                            coll.push(att);
+                        }
+                    });
+                }
+                eliminateDups[docid] = true;
+            });
+        });
+        return coll;
     }
     $scope.iconName = function(rec) {
         var type = rec.attType;
@@ -465,17 +453,18 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div style="height:30px;"></div>
 
-    <table class="gridTable2" width="100%" ng-show="meeting.state>=2">
+    <table class="gridTable2" width="100%">
         <tr class="gridTableHeader">
-            <td width="200px">Action Item</td>
-            <td width="200px">Description</td>
+            <td width="200px">Action Item ~ Description</td>
             <td width="50px">Assignees</td>
         </tr>
         <tr ng-repeat="rec in allActionItems()">
             <td >
-                <img src="<%= ar.retPath %>assets/goalstate/small{{rec.state}}.gif"> <a href="task{{rec.id}}.htm">{{rec.synopsis}}</a>
+                <img src="<%= ar.retPath %>assets/goalstate/small{{rec.state}}.gif">
+                <a href="task{{rec.id}}.htm">{{rec.synopsis}}</a>
+                ~
+                {{rec.description}}
             </td>
-            <td>{{rec.description}}</td>
             <td>
                 <span ng-repeat="person in rec.assignTo"> {{person.name}} </span>
             </td>

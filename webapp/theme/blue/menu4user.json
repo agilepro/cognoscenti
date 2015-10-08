@@ -6,6 +6,10 @@
     "ref": "ddsubmenu1",
     "subs":   [
         {
+          "name": "Search Workspaces",
+          "href": "searchAllNotes.htm"
+        },
+        {
           "name": "Watched Workspaces",
           "href": "watchedProjects.htm"
         },
@@ -28,10 +32,6 @@
         {
           "name": "All Workspaces",
           "href": "allProjects.htm"
-        },
-        {
-          "name": "Search Notes",
-          "href": "searchAllNotes.htm"
         },
         {
           "name": "Create New Workspace",
