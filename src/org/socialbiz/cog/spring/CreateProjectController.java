@@ -70,39 +70,6 @@ public class CreateProjectController extends BaseController {
         this.context = context;
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/addmemberrole.htm", method = RequestMethod.GET)
-    public ModelAndView addMemberRole(@PathVariable String siteId,@PathVariable String pageId,HttpServletRequest request,
-            HttpServletResponse response) throws Exception
-    {
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            NGPage page = registerRequiredProject(ar, siteId, pageId);
-
-            String invitedUser = ar.defParam( "invitedUser","false" );
-
-            String action = ar.defParam( "action","submit" );
-            if(!action.equals( "cancel" )){
-                String roleName = ar.reqParam("roleList");
-                String userList = ar.reqParam("rolemember");
-                HistoricActions ha = new HistoricActions(ar);
-                ha.addMembersToRole(page, page.getRoleOrFail(roleName), userList, true);
-                page.saveFile(ar, "Add New Members ("+userList+") to Role "+roleName);
-            }
-            if(invitedUser.equals( "true" )){
-                modelAndView = new ModelAndView(new RedirectView("projectActiveTasks.htm"));
-            }else{
-                modelAndView = new ModelAndView(new RedirectView("permission.htm"));
-            }
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.add.member.role", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-    }
-
     @RequestMapping(value = "/getProjectNames.ajax", method = RequestMethod.POST)
     public void getProjectNames(HttpServletRequest request,
             HttpServletResponse response) throws Exception {

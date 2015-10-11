@@ -294,6 +294,25 @@ public class ProjectSettingController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/roleManagement.htm", method = RequestMethod.GET)
+    public ModelAndView roleManagement(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            registerRequiredProject(ar, siteId, pageId);
+            
+            ModelAndView modelAndView= checkLoginMember(ar);
+            if (modelAndView!=null) {
+                return modelAndView;
+            }
+
+            return new ModelAndView("RoleManagement");
+        }catch(Exception ex){
+            throw new NGException("nugen.operation.fail.project.permission.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+
     @RequestMapping(value = "/{siteId}/{pageId}/EditRole.htm", method = RequestMethod.GET)
     public ModelAndView editRole(@PathVariable String siteId,@PathVariable String pageId,
             @RequestParam String roleName,

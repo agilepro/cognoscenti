@@ -373,41 +373,6 @@ public class AccountController extends BaseController {
 
 
 
-    @RequestMapping(value = "/{siteId}/$/addmemberrole.htm", method = RequestMethod.GET)
-    public ModelAndView addMemberRole(@PathVariable String siteId,HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            NGBook site = prepareSiteView(ar, siteId);
-            ModelAndView modelAndView = executiveCheckViews(ar);
-            if (modelAndView != null) {
-                return modelAndView;
-            }
-            String roleMember = ar.reqParam("rolemember");
-            roleMember = pasreFullname(roleMember);
-
-            String roleName = ar.reqParam("roleList");
-
-            HistoricActions ha = new HistoricActions(ar);
-            ha.addMembersToRole(site, site.getRoleOrFail(roleName), roleMember, true);
-
-            site.saveFile(ar, "Add New Member ("+roleMember+") to Role "+roleName);
-
-            String emailIds = ar.reqParam("rolemember");
-            NGWebUtils.updateUserContactAndSaveUserPage(ar, "Add", emailIds);
-
-            modelAndView = new ModelAndView(new RedirectView("permission.htm"));
-            modelAndView.addObject("page", site);
-            request.setAttribute("pageId", siteId);
-            request.setAttribute("pageTitle", site.getFullName());
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.add.member.role", new Object[]{siteId}, ex);
-        }
-    }
 
     @RequestMapping(value = "/{siteId}/$/permission.htm", method = RequestMethod.GET)
     public ModelAndView showPermissionTab(@PathVariable String siteId,

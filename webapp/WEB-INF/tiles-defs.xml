@@ -64,6 +64,10 @@
         <put-attribute name="title" value="Permission" />
         <put-attribute name="body" value="/spring/jsp/leaf_permission.jsp" />
     </definition>
+    <definition name="RoleManagement" extends="slimLayout">
+        <put-attribute name="title" value="Permission" />
+        <put-attribute name="body" value="/spring/jsp/RoleManagement.jsp" />
+    </definition>
 
     <definition name="account_permission" extends="slimLayout">
         <put-attribute name="title" value="Permission" />

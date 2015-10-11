@@ -201,7 +201,7 @@ emaio is provided by the SSOFI so no need to manipulate it here
     /**
      * This is a set of checks that results in different views depending on the state
      * of the user.  Particularly: must be logged in, must have a name, must have an email
-     * address, and must be a member of the page.
+     * address, and must be a member of the page, so the page has to be set as well.
      * @return a ModelAndView object that will tell the user what is wrong.
      *         and return a NULL if logged in, member, and all config is OK
      */
@@ -211,6 +211,9 @@ emaio is provided by the SSOFI so no need to manipulate it here
         }
         if (needsToSetName(ar)) {
             return new ModelAndView("requiredName");
+        }
+        if (ar.ngp==null) {
+            throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGPage on the AuthRequest.");
         }
         if(!ar.isMember()){
             ar.req.setAttribute("roleName", "Members");

@@ -114,8 +114,8 @@
           "href": "personal.htm"
         },
         {
-          "name": "Permissions",
-          "href": "permission.htm"
+          "name": "Roles & Permissions",
+          "href": "roleManagement.htm"
         },
         {
           "name": "Role Requests",
