@@ -86,7 +86,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
         resp.setHeader("Access-Control-Allow-Origin",      origin);
         resp.setHeader("Access-Control-Allow-Credentials", "true");
         resp.setHeader("Access-Control-Allow-Methods",     "GET, POST, OPTIONS");
-        resp.setHeader("Access-Control-Allow-Headers",     "Authorization");
+        resp.setHeader("Access-Control-Allow-Headers",     "Content-Type");
         resp.setHeader("Access-Control-Max-Age",           "1");
         resp.setHeader("Vary",                             "*");
     }
@@ -181,7 +181,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
 
                     //remember for the user that they logged in at this time
                     UserProfile up = UserManager.findUserByAnyId(userId);
-                    
+
                     //This could be the first time a user accesses, so create profile
                     if (up==null) {
                         String virginKey = IdGenerator.generateKey();
@@ -189,7 +189,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
                         up.setName(response.getString("userName"));
                         UserManager.writeUserProfilesToFile();
                     }
-                    
+
                     up.setLastLogin(System.currentTimeMillis(), userId);
                 }
                 else {

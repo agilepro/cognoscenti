@@ -401,24 +401,35 @@ public class UserProfile extends DOMFace implements UserRef
         return favorites;
     }
 
-    public void setHomePage(String newHomePage)
-    {
+    public void setHomePage(String newHomePage) {
         setScalar("homepage", newHomePage);
     }
-    public String getHomePage()
-    {
+    public String getHomePage() {
         return getScalar("homepage");
     }
 
-    public void setPassword(String password)
-    {
-        setScalar("password", password);
-
-        //should probably clear the magic number if this is called
+    /*
+     * A user can choose how many days between reminder emails.
+     * Typically 1= 1 day,   7= 1 week,  30= about a month
+     * Notification email is not sent unless it is needed.
+     * Then, when time to send, it makes sure that it has not
+     * sent any email within that time period to that user,
+     * and waits until it has been that long.  Of course,
+     * The first email is on the first day that they need
+     * notification if it has been a long time.
+     */
+    public void setNotificationPeriod(int period) {
+        if (period<=0) {
+            period=1;
+        }
+        setAttributeInt("notificationPeriod", period);
     }
-    public String getPassword()
-    {
-        return getScalar("password");
+    public int getNotificationPeriod() {
+        int period = getAttributeInt("notificationPeriod");
+        if (period<=0) {
+            period=1;
+        }
+        return period;
     }
 
 

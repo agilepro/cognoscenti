@@ -30,7 +30,6 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.GoalRecord;
-import org.socialbiz.cog.HistoricActions;
 import org.socialbiz.cog.LicensedURL;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
@@ -51,8 +50,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * This class will handle all requests that are coming to create a new Workspace.

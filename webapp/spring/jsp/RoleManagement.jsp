@@ -15,7 +15,13 @@
         JSONObject rollo = new JSONObject();
         rollo.put("name", aRole.getName());
         rollo.put("color", aRole.getColor());
-        rollo.put("count", aRole.getExpandedPlayers(ngp).size());
+        List<AddressListEntry> players = aRole.getExpandedPlayers(ngp);
+        rollo.put("count", players.size());
+        JSONArray playlist = new JSONArray();
+        for (AddressListEntry ale: players) {
+            playlist.put(ale.getJSON());
+        }
+        rollo.put("players", playlist);
         allRoles.put(rollo);
     }
 
@@ -79,6 +85,7 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.allRoles.map( function(aRole) {
                 if (aRole.name == key) {
                     aRole.color  = $scope.roleInfo.color;
+                    aRole.players  = $scope.roleInfo.players;
                 }
             });
         }
@@ -191,20 +198,26 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
     <table width="100%"><tr>
-        <td style="width:250px;height:600px;vertical-align:top;" >
-            <div class="generalContent">
-                <div ng-repeat="role in allRoles" style="margin:10px;">
+        <td style="width:300px;height:600px;vertical-align:top;" >
+            <div ng-repeat="role in allRoles" style="margin:10px" class="generalContent">
+                <div style="float:left">
                     <button class="btn btn-sm" style="color:black;background-color:{{role.color}}"
                          ng-click="fetchRole(role.name)">{{role.name}}</button>
                 </div>
+                <div style="float:right;">
+                    <span ng-repeat="player in role.players">
+                        <img src="<%=ar.retPath%>users/{{player.key}}.jpg" style="width:32px;height:32px">
+                    </span>
+                </div>
+                <div style="clear:both;"></div>
             </div>
 
 
         </td>
-        <td  ng-hide="showInput" style="vertical-align:top;" >
-            <i>select a role to edit</i>
+        <td  ng-hide="showInput" style="vertical-align:top;text-align:center;" >
+            <i>select a role to edit, be sure to save to preserve changes</i>
         </td>
-        <td  class="well" ng-show="showInput">
+        <td  class="well" ng-show="showInput" style="vertical-align:top;" >
             <table width="100%">
                 <tr><td style="height:10px" colspan="3"></td></tr>
                 <tr>

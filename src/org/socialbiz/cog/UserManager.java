@@ -22,9 +22,7 @@ package org.socialbiz.cog;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -32,10 +30,8 @@ import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.socialbiz.cog.util.PasswordEncrypter;
 import org.w3c.dom.Document;
 import org.workcast.json.JSONArray;
-import org.workcast.streams.HTMLWriter;
 
 public class UserManager
 {
@@ -305,96 +301,18 @@ public class UserManager
         return res;
     }
 
-    public synchronized static void writeUserProfilesToFile() throws Exception
-    {
-        if (profileFile==null)
-        {
+    public synchronized static void writeUserProfilesToFile() throws Exception {
+        if (profileFile==null) {
             throw new NGException("nugen.exception.write.user.profile.info.fail",null);
         }
         profileFile.save();
-        generateSSOFIUserFile(cog);
     }
 
 
-    /**
-    * in order to transition from Cognoscenti managing passowrds
-    * to SSOFI managing passords, we need to write the passwords
-    * out in a form that SSOFI can read, and this does that.
-    */
-    private static void generateSSOFIUserFile(Cognoscenti cog) throws Exception
-    {
-        try
-        {
-            File userFolder = cog.getConfig().getUserFolderOrFail();
-            File tempSUsers = new File(userFolder, "SSOFIUsers.xml.tmp");
-            File finalSUsers = new File(userFolder, "SSOFIUsers.xml");
-
-            if (tempSUsers.exists())
-            {
-                tempSUsers.delete();
-            }
-
-            FileOutputStream fos = new FileOutputStream(tempSUsers);
-            OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-
-            osw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><users>\n");
-
-            for (UserProfile userx : getAllUserProfiles())
-            {
-                String pwd= userx.getPassword();
-                if (pwd==null || pwd.length()==0)
-                {
-                    //ignore users who have never set up a password
-                    continue;
-                }
-                List<String> eList = userx.getEmailList();
-                if (eList.size()==0)
-                {
-                    //ignore users who have no email address
-                    continue;
-                }
-
-                String hashedPwd = PasswordEncrypter.getSaltedHash(pwd);
-
-                osw.write("  <user>\n");
-                for (String oneEmail : eList)
-                {
-                    osw.write("    <address>");
-                    HTMLWriter.writeHtml(osw,oneEmail);
-                    osw.write("</address>\n");
-                }
-                osw.write("    <password>");
-                HTMLWriter.writeHtml(osw,hashedPwd);
-                osw.write("</password>\n");
-
-                osw.write("    <fullname>");
-                HTMLWriter.writeHtml(osw,userx.getName());
-                osw.write("</fullname>\n");
-                osw.write("  </user>\n");
-            }
-            osw.write("</users>");
-            osw.flush();
-            osw.close();
-
-            //now swap the new file with the old one
-            if (finalSUsers.exists()) {
-                finalSUsers.delete();
-            }
-            tempSUsers.renameTo(finalSUsers);
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Failure while attempting to create the SSOFI users file.", e);
-        }
-    }
-
-    public static String getShortNameByUserId(String userId)
-    {
-        if(userHashByUID != null)
-        {
+    public static String getShortNameByUserId(String userId) {
+        if(userHashByUID != null) {
             UserProfile up = findUserByAnyId(userId);
-            if(up != null)
-            {
+            if(up != null) {
                 return up.getName();
             }
         }

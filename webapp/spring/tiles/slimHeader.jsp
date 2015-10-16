@@ -383,7 +383,7 @@ Parameter used :
         {
             %>
             <div id="welcomeMessage">
-                Not logged in
+                Browser compatibility or setting problem
             </div>
             <%
         }

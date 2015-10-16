@@ -104,10 +104,6 @@ public class DOMFace
         fEle.removeAttribute(attrName);
     }
 
-    public void setAttributeLong(String attrName, long value)
-    {
-        setAttribute(attrName, Long.toString(value));
-    }
     public String getAttribute(String attrName)
     {
         if (attrName == null)
@@ -117,9 +113,18 @@ public class DOMFace
         }
         return fEle.getAttribute(attrName);
     }
-    public long getAttributeLong(String attrName)
-    {
+
+    public void setAttributeLong(String attrName, long value) {
+        setAttribute(attrName, Long.toString(value));
+    }
+    public void setAttributeInt(String attrName, int value) {
+        setAttribute(attrName, Integer.toString(value));
+    }
+    public long getAttributeLong(String attrName) {
         return safeConvertLong(getAttribute(attrName));
+    }
+    public int getAttributeInt(String attrName) {
+        return safeConvertInt(getAttribute(attrName));
     }
 
     public boolean attributeEquals(String attrName, String testValue)
