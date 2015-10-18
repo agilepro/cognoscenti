@@ -44,6 +44,7 @@ import org.socialbiz.cog.AgentRule;
 import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.BaseRecord;
+import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.EmailListener;
 import org.socialbiz.cog.EmailSender;
 import org.socialbiz.cog.GoalRecord;
@@ -763,10 +764,10 @@ public class UserController extends BaseController {
                 }
             }
 
-            if(action.equals("Save"))
-            {
-            profile.setName(ar.defParam("name", ""));
-            profile.setDescription(ar.defParam("description", ""));
+            if(action.equals("Save")) {
+                profile.setName(ar.defParam("name", ""));
+                profile.setDescription(ar.defParam("description", ""));
+                profile.setNotificationPeriod(DOMFace.safeConvertInt(ar.defParam("notificationPeriod", "1")));
             }
 
             String email= ar.defParam("email", null);

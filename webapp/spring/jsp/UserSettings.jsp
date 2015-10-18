@@ -21,6 +21,7 @@
 
     JSONObject userInfo = uProf.getJSON();
     userInfo.put("key", uProf.getKey());
+    userInfo.put("notificationPeriod", uProf.getNotificationPeriod());
 
     String key = uProf.getKey();
     String name = uProf.getName();
@@ -139,44 +140,26 @@ if (ar.isLoggedIn()) { %>
                             </table>
                         </td>
                     </tr>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader" valign="top">Open Id:</td>
-                        <td style="width:20px;"></td>
-                        <td valign="top">
-                            <table>
-                                <%
-                                for (IDRecord anid : uProf.getIdList())
-                                {
-                                    if (!anid.isEmail())
-                                    {
-                                    %>
-                                    <tr>
-                                        <td>
-                                            <a href="<%ar.writeHtml(anid.getLoginId());%>"><%ar.writeHtml(anid.getLoginId());%></a>
-                                        </td>
-                                    </tr>
-                                    <%
-                                    }
-                                }
-                                %>
-                            </table>
-                        </td>
-                    </tr>
                     <tr><td style="height:15px"></td></tr>
                     <tr>
                         <td class="gridTableColummHeader">Last Login:</td>
                         <td style="width:20px;"></td>
                         <td><%SectionUtil.nicePrintTime(ar.w, uProf.getLastLogin(), ar.nowTime); %> as <% ar.writeHtml(uProf.getLastLoginId()); %> </td>
                     </tr>
-    <%if (viewingSelf){ %>
+                    <tr><td style="height:10px"></td></tr>
+                    <tr>
+                        <td class="gridTableColummHeader">Notification Period:</td>
+                        <td style="width:20px;"></td>
+                        <td>{{userInfo.notificationPeriod}} days</td>
+                    </tr>
+            <%if (viewingSelf){ %>
                     <tr><td style="height:10px"></td></tr>
                     <tr>
                         <td class="gridTableColummHeader">Remote URL:</td>
                         <td style="width:20px;"></td>
                         <td><a href="<%=remoteProfileURL%>"><%=remoteProfileURL%></a></td>
                     </tr>
-                    <% } %>
+           <% } %>
                     <tr><td style="height:10px"></td></tr>
                     <tr>
                         <td class="gridTableColummHeader">User Key:</td>

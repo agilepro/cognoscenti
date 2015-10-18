@@ -120,10 +120,18 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
         //this is an API to be read by others, so you have to set the CORS to
         //allow scripts to read this data from a browser.
-        resp.setHeader("Access-Control-Allow-Origin",      req.getHeader("Origin"));
+        String origin = req.getHeader("Origin");
+        if (origin==null || origin.length()==0) {
+            System.out.println("COG-LAuth: got a null origin header???");
+            //this does not always work, but what else can we do?
+            origin="*";
+        }
+        resp.setHeader("Access-Control-Allow-Origin",      origin);
         resp.setHeader("Access-Control-Allow-Credentials", "true");
         resp.setHeader("Access-Control-Allow-Methods",     "GET, POST, OPTIONS");
-        resp.setHeader("Access-Control-Allow-Headers",     "Authorization");
+        resp.setHeader("Access-Control-Allow-Headers",     "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+        resp.setHeader("Access-Control-Max-Age",           "1");
+        resp.setHeader("Vary",                             "*");
 
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         try {

@@ -458,22 +458,28 @@ public class MeetingRecord extends DOMFace {
 
 
     public void sendReminderEmail(AuthRequest ar, NGPage ngp) throws Exception {
-        EmailGenerator emg = ngp.createEmailGenerator();
-        emg.setSubject("Reminder for meeting: "+this.getName());
-        Vector<String> names = new Vector<String>();
-        names.add("Members");
-        emg.setRoleNames(names);
-        emg.setMeetingId(getId());
-        String meetingOwner = getOwner();
-        if (meetingOwner==null || meetingOwner.length()==0) {
-            throw new Exception("The owner of the meeting has not been set.");
+        try {
+            EmailGenerator emg = ngp.createEmailGenerator();
+            emg.setSubject("Reminder for meeting: "+this.getName());
+            Vector<String> names = new Vector<String>();
+            names.add("Members");
+            emg.setRoleNames(names);
+            emg.setMeetingId(getId());
+            String meetingOwner = getOwner();
+            if (meetingOwner==null || meetingOwner.length()==0) {
+                throw new Exception("The owner of the meeting has not been set.");
+            }
+            emg.setOwner(meetingOwner);
+            emg.setFrom(meetingOwner);
+            //UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
+            //AuthRequest impersonateOwner = new AuthDummy(originalSender, ar.w, ar.getCogInstance());
+            emg.constructEmailRecords(ar, ngp);
+            setReminderSent(ar.nowTime);
         }
-        emg.setOwner(meetingOwner);
-        emg.setFrom(meetingOwner);
-        //UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
-        //AuthRequest impersonateOwner = new AuthDummy(originalSender, ar.w, ar.getCogInstance());
-        emg.constructEmailRecords(ar, ngp);
-        setReminderSent(ar.nowTime);
+        catch (Exception e) {
+            throw new Exception("Unable to send reminder email for meeting '"+getName()
+                    +"' in workspace '"+ngp.getFullName()+"'",e);
+        }
     }
 
 

@@ -42,7 +42,7 @@ Required Parameters:
     //NEED TO FILL THE ARRAY HERE
 
     List<NGContainer> containers = new ArrayList<NGContainer>();
-    long lastSendTime = ar.getSuperAdminLogFile().getLastNotificationSentTime();
+    long lastSendTime = uProf.getNotificationTime();
     if(notifications.size()>0) {
         int count = 0;
         String rowStyleClass = "";
@@ -106,7 +106,9 @@ app.controller('myCtrl', function($scope, $http) {
 %>
 <div class="generalHeading" style="padding-top:35px">Workspace Notifications Since Last Digest
         <%SectionUtil.nicePrintDateAndTime(out, lastSendTime);%></div>
-    <p>These notifications, if any, will be included in your next daily digest email.</p>
+    <p>These notifications, if any, will be included in your next daily digest email.
+       Notification period: <%= uProf.getNotificationPeriod() %> days.
+    </p>
 
     <%
     DailyDigest.constructDailyDigestEmail(ar,containers,lastSendTime,ar.nowTime);

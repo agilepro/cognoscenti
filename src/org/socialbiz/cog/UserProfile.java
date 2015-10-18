@@ -433,6 +433,14 @@ public class UserProfile extends DOMFace implements UserRef
     }
 
 
+    public void setNotificationTime(long period) {
+        setAttributeLong("notificationTime", period);
+    }
+    public long getNotificationTime() {
+        return getAttributeLong("notificationTime");
+    }
+
+
     /**
     * The magic number is set when the user makes a request for a password.
     * The magic number is sent to the user in the hyper link.

@@ -42,10 +42,10 @@ int pos = thisPage.lastIndexOf("/");
 String thisServer = thisPage.substring(0, pos+1)+"auth/";
 
 %>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>SSOFI JS Client Test</title>
-<link href="testStyle.css" rel="styleSheet" type="text/css" media="screen" />
 </head>
 <body>
 <h1>SSOFI JS Client Test</h1>
@@ -75,7 +75,13 @@ Logged In: <span id="myStatus" style="color: teal;"></span>
 
 <script>
 
-function getJSON(url, passedFunction) {
+serverLogin = false;
+responseCode = 0;
+response = {};
+
+var foo = JSON.stringify( response );
+
+function getJSONxxx(url, passedFunction) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.withCredentials = true;
@@ -91,7 +97,7 @@ function getJSON(url, passedFunction) {
     xhr.send();
 }
 
-function postJSON(url, data, passedFunction) {
+function postJSONxxx(url, data, passedFunction) {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
@@ -109,6 +115,48 @@ function postJSON(url, data, passedFunction) {
     xhr.send(JSON.stringify(data));
 }
 
+function getJSON(url, passedFunction) {
+    console.log("calling GET "+url);
+    var xhr = new XMLHttpRequest();
+    globalForXhr = xhr;
+    xhr.open("GET", url, true);
+    xhr.withCredentials = true;
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            try {
+                responseCode = xhr.status;
+                passedFunction(JSON.parse(xhr.responseText));
+            }
+            catch (e) {
+                alert("Got an exception ("+e+") whille trying to handle: "+url);
+            }
+        }
+    }
+    xhr.send();
+}
+
+
+function postJSON(url, data, passedFunction) {
+    console.log("calling POST "+url);
+    var xhr = new XMLHttpRequest();
+    globalForXhr = xhr;
+    xhr.open("POST", url, true);
+    xhr.withCredentials = true;
+    xhr.setRequestHeader("Content-Type","text/plain");
+    //xhr.setRequestHeader("Content-Type","application/json");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            try {
+                responseCode = xhr.status;
+                passedFunction(JSON.parse(xhr.responseText));
+            }
+            catch (e) {
+                alert("Got an exception ("+e+") whille trying to handle: "+url);
+            }
+        }
+    }
+    xhr.send(JSON.stringify(data));
+}
 
 function queryServer() {
     var pUrl = document.getElementById("MyServer").value + "query";
@@ -120,6 +168,7 @@ function queryServer() {
 
 function whoAmI() {
     var pUrl = document.getElementById("MyProvider").value + "?openid.mode=apiWho";
+    response = {};
     getJSON(pUrl, function(data) {
         response = data;
         displayUser();
@@ -128,15 +177,21 @@ function whoAmI() {
 
 function requestChallenge() {
     var pUrl = document.getElementById("MyServer").value + "getChallenge";
-    postJSON(pUrl, response, function(data) {
+    var data1 = response;
+    response = {};
+    displayUser();
+    postJSON(pUrl, data1, function(data) {
         response = data;
         displayUser();
     });
+    response = {};
 }
 
 function getToken() {
     var pUrl  =document.getElementById("MyProvider").value + "?openid.mode=apiGenerate";
-    postJSON(pUrl, response, function(data) {
+    var data1 = response;
+    response = {};
+    postJSON(pUrl, data1, function(data) {
         response = data;
         displayUser();
     });
@@ -144,7 +199,9 @@ function getToken() {
 
 function verifyToken() {
     var pUrl = document.getElementById("MyServer").value + "verifyToken";
-    postJSON(pUrl, response, function(data) {
+    var data1 = response;
+    response = {};
+    postJSON(pUrl, data1, function(data) {
         response = data;
         if (response.verified) {
             serverLogin=true;
@@ -155,7 +212,10 @@ function verifyToken() {
 
 function logOutServer() {
     var pUrl = document.getElementById("MyServer").value + "logout";
-    postJSON(pUrl, response, function(data) {
+    var data1 = response;
+    response = {};
+    displayUser();
+    postJSON(pUrl, data1, function(data) {
         response = data;
         if (response.verified) {
             serverLogin=true;
@@ -169,15 +229,15 @@ function shortCircuitToken() {
     //function, but included here to see if the SSOFI provider
     //works correctly.
     var pUrl  =document.getElementById("MyProvider").value + "?openid.mode=apiVerify";
-    postJSON(pUrl, response, function(data) {
+    var data1 = response;
+    response = {};
+    displayUser();
+    postJSON(pUrl, data1, function(data) {
         response = data;
         displayUser();
     });
 }
 
-serverLogin = false;
-responseCode = 0;
-response = {};
 function displayUser() {
     setMessageArea("Response Code: "+responseCode+"\n"+JSON.stringify(response, null, 2) );
     document.getElementById("myName").textContent = response.userName;
@@ -211,6 +271,8 @@ function clearData() {
     displayUser();
     setMessageArea("Cleared, clicked "+clickCount+" times.");
 }
+
+displayUser();
 
 </script>
 

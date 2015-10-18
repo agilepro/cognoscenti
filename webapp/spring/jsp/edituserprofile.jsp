@@ -50,6 +50,7 @@ Optional Parameter:
 
     String desc = uProf.getDescription();
     String name = uProf.getName();
+    int notePeriod = uProf.getNotificationPeriod();
     String preferredEmail = uProf.getPreferredEmail();
     pageTitle = "User: "+uProf.getName();
     String photoSource = ar.retPath+"assets/photoThumbnail.gif";
@@ -161,6 +162,16 @@ Optional Parameter:
                         <td class="gridTableColummHeader_2" style="vertical-align:top"><fmt:message key="nugen.userprofile.Description"/>:</td>
                         <td style="width:20px;"></td>
                         <td colspan="2"><textarea rows="4" name="description" class="textAreaGeneral"><% ar.writeHtml(desc);%></textarea></td>
+                    </tr>
+                    <tr><td style="height:10px"></td></tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2" style="vertical-align:top">Notification Period:</td>
+                        <td style="width:20px;"></td>
+                        <td colspan="2">
+                            <input type="radio" name="notificationPeriod" value="1"  <% if(notePeriod<=3) {ar.write("checked=\"checked\" ");} %>> Daily
+                            <input type="radio" name="notificationPeriod" value="7"  <% if(notePeriod<=20 && notePeriod>3) {ar.write("checked=\"checked\" ");} %>> Weekly
+                            <input type="radio" name="notificationPeriod" value="30" <% if(notePeriod>20) {ar.write("checked=\"checked\" ");} %>> Monthly
+                        </td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
                     <tr>
