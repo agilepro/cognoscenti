@@ -43,6 +43,17 @@ Required Parameters:
 
     List<NGContainer> containers = new ArrayList<NGContainer>();
     long lastSendTime = uProf.getNotificationTime();
+
+    //schema migration ... some users will not have this value set.
+    //never go back more than twice the notification period.
+    //This avoids getting a message with all possible history in it
+    long earliestPossible = System.currentTimeMillis()-(uProf.getNotificationPeriod()*2*24*60*60*1000);
+    if (lastSendTime<earliestPossible) {
+        lastSendTime = earliestPossible;
+    }
+
+
+
     if(notifications.size()>0) {
         int count = 0;
         String rowStyleClass = "";

@@ -69,9 +69,6 @@ Name: <span id="myName" style="color: teal;"></span>
 <p>
 Email: <span id="myId" style="color: teal;"></span>
 </p>
-<p>
-Logged In: <span id="myStatus" style="color: teal;"></span>
-</p>
 
 <script>
 
@@ -80,40 +77,6 @@ responseCode = 0;
 response = {};
 
 var foo = JSON.stringify( response );
-
-function getJSONxxx(url, passedFunction) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.withCredentials = true;
-    xhr.onloadend = function() {
-        try {
-            responseCode = xhr.status;
-            passedFunction(JSON.parse(xhr.responseText));
-        }
-        catch (e) {
-            passedFunction({exception: e, context: url, data: xhr.responseText});
-        }
-    }
-    xhr.send();
-}
-
-function postJSONxxx(url, data, passedFunction) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", url, true);
-    xhr.withCredentials = true;
-    xhr.setRequestHeader("Content-Type","text/plain");
-    xhr.onloadend = function() {
-        try {
-            responseCode = xhr.status;
-            passedFunction(JSON.parse(xhr.responseText));
-        }
-        catch (e) {
-            passedFunction({exception: ""+e, context: url, data: xhr.responseText});
-        }
-
-    }
-    xhr.send(JSON.stringify(data));
-}
 
 function getJSON(url, passedFunction) {
     console.log("calling GET "+url);
@@ -135,15 +98,20 @@ function getJSON(url, passedFunction) {
     xhr.send();
 }
 
-
 function postJSON(url, data, passedFunction) {
     console.log("calling POST "+url);
     var xhr = new XMLHttpRequest();
     globalForXhr = xhr;
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
-    xhr.setRequestHeader("Content-Type","text/plain");
-    //xhr.setRequestHeader("Content-Type","application/json");
+    if (document.getElementById("useMime").checked) {
+        xhr.setRequestHeader("Content-Type","application/json");
+        console.log("using MimeType=application/json");
+    }
+    else {
+        xhr.setRequestHeader("Content-Type","text/plain");
+        console.log("using MimeType=text/plain");
+    }
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             try {
@@ -272,8 +240,6 @@ function clearData() {
     setMessageArea("Cleared, clicked "+clickCount+" times.");
 }
 
-displayUser();
-
 </script>
 
 Provider: <input id="MyProvider"  style="width:400px;" type="text" value="<%=identityProvider%>"/>
@@ -281,6 +247,9 @@ Provider: <input id="MyProvider"  style="width:400px;" type="text" value="<%=ide
 <br/>
 <br/>
 Server: <input id="MyServer"  style="width:400px;" type="text" value="<%=thisServer%>"/>
+<br/>
+<br/>
+Mime Type: <input id="useMime"  type="checkbox" value="true"/> application/json (instead of text/plain) for all requests
 <br/>
 <br/>
 <button onclick="clearData()">Clear</button>
