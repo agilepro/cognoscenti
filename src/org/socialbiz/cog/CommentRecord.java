@@ -35,7 +35,7 @@ public class CommentRecord extends DOMFace {
         setAttribute("user", newVal.getUniversalId());
     }
 
-    public long getTime()  throws Exception {
+    public long getTime() {
         return getAttributeLong("time");
     }
     public void setTime(long newVal) throws Exception {
@@ -88,15 +88,10 @@ public class CommentRecord extends DOMFace {
     }
 
     public boolean getEmailSent()  throws Exception {
-        return "true".equals(getAttribute("emailSent"));
+        return getAttributeBool("emailSent");
     }
     public void setEmailSent(boolean newVal) throws Exception {
-        if (newVal) {
-            setAttribute("emailSent", "true");
-        }
-        else {
-            clearAttribute("emailSent");
-        }
+        setAttributeBool("emailSent", newVal);
     }
 
 
@@ -148,12 +143,29 @@ public class CommentRecord extends DOMFace {
         clone.write("<html><body>");
 
         String topicAddress = ar.baseURL + clone.getResourceURL(ngp, note) + "#cmt" + getTime();
-        String emailSubject = "New Comment on: "+note.getSubject();
-        clone.write("<h2>New comment on topic <a href=\"");
+        String emailSubject;
+        String cmtType;
+        if (this.isPoll()) {
+            emailSubject = note.getSubject()+": NEW Proposal";
+            cmtType = "proposal";
+        }
+        else {
+            emailSubject = note.getSubject()+": NEW Comment";
+            cmtType = "comment";
+        }
+        AddressListEntry ale = commenterProfile.getAddressListEntry();
+        
+        clone.write("\n<p><b>From: ");
+        ale.writeLink(clone);
+        clone.write("&nbsp; \n    <b>Workspace:</b> ");
+        ngp.writeContainerLink(clone, 40);
+        clone.write("\n</p>\n<p><b>New ");
+        clone.write(cmtType);
+        clone.write("</b> on topic <a href=\"");
         clone.write(topicAddress);
         clone.write("\">");
         clone.writeHtml(note.getSubject());
-        clone.write("</a></h2>");
+        clone.write("</a></p>\n<hr/>\n");
 
         clone.write(this.getContentHtml(ar));
 
@@ -210,9 +222,6 @@ public class CommentRecord extends DOMFace {
             if (input.has("choices")) {
                 setChoices(constructVector(input.getJSONArray("choices")));
             }
-            if (input.has("emailSent")) {
-                setEmailSent(input.getBoolean("emailSent"));
-            }
         }
         System.out.println("COMMRESP:  looking for responses");
         if (input.has("responses")) {
@@ -230,5 +239,48 @@ public class CommentRecord extends DOMFace {
         }
     }
 
+    public ScheduledNotification findNextScheduledNotification(NGPage ngp, NoteRecord note) throws Exception {
+        ScheduledNotification best = null;
+        ScheduledNotification sn = getScheduledNotification(ngp, note);
+        if (!sn.isSent()) {
+            best = sn;
+        }
+        for (ResponseRecord rr : getResponses()) {
+            sn = rr.getScheduledNotification(ngp, note, this);
+            if (!sn.isSent()) {
+                if (best==null || sn.timeToSend() < best.timeToSend()) {
+                    best=sn;
+                }
+            }
+        }
+        return best;
+    }
+    
 
+    public ScheduledNotification getScheduledNotification(NGPage ngp, NoteRecord note) {
+        return new CRScheduledNotification(ngp, note, this);
+    }
+    
+    private class CRScheduledNotification implements ScheduledNotification {
+        NGPage ngp;
+        NoteRecord note;
+        CommentRecord cr;
+        
+        public CRScheduledNotification( NGPage _ngp, NoteRecord _note, CommentRecord _cr) {
+            ngp  = _ngp;
+            note = _note;
+            cr   = _cr;
+        }
+        public boolean isSent() throws Exception {
+            return cr.getEmailSent();
+        }
+        
+        public long timeToSend() throws Exception {
+            return cr.getTime()+300000;
+        }
+        
+        public void sendIt(AuthRequest ar) throws Exception {
+            cr.commentEmailRecord(ar,ngp,note);
+        }
+    }
 }

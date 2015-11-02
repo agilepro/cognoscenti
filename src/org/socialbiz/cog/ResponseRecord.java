@@ -20,6 +20,9 @@
 
 package org.socialbiz.cog;
 
+import java.io.StringWriter;
+import java.util.Vector;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONObject;
@@ -37,6 +40,19 @@ public class ResponseRecord extends DOMFace
     public void setUserId(String userId) {
         setAttribute("uid", userId);
     }
+    public long getTime() {
+        return getAttributeLong("time");
+    }
+    public void setTime(long newVal) throws Exception {
+        setAttributeLong("time", newVal);
+    }
+    public boolean getEmailSent()  throws Exception {
+        return getAttributeBool("emailSent");
+    }
+    public void setEmailSent(boolean newVal) throws Exception {
+        setAttributeBool("emailSent", newVal);
+    }
+
 
     public String getChoice() {
         return getScalar("choice");
@@ -58,7 +74,56 @@ public class ResponseRecord extends DOMFace
     public void setHtml(AuthRequest ar, String newHtml) throws Exception {
         setContent(HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
     }
+    
+    
+    public void responseEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note, CommentRecord cr) throws Exception {
+        Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
+        OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
 
+        AddressListEntry commenter = new AddressListEntry(getUserId());
+        UserProfile commenterProfile = commenter.getUserProfile();
+
+        for (OptOutAddr ooa : sendTo) {
+            constructEmailRecordOneUser(ar, ngp, note, ooa, commenterProfile);
+        }
+        setEmailSent(true);
+    }
+
+    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord note, OptOutAddr ooa,
+            UserProfile commenterProfile) throws Exception  {
+        if (!ooa.hasEmailAddress()) {
+            return;  //ignore users without email addresses
+        }
+
+        StringWriter bodyWriter = new StringWriter();
+        AuthRequest clone = new AuthDummy(commenterProfile, bodyWriter, ar.getCogInstance());
+        clone.setNewUI(true);
+        clone.retPath = ar.baseURL;
+        clone.write("<html><body>");
+
+        String topicAddress = ar.baseURL + clone.getResourceURL(ngp, note) + "#cmt" + getTime();
+        String emailSubject = note.getSubject()+": NEW Proposal Response";
+        AddressListEntry ale = commenterProfile.getAddressListEntry();
+        
+        clone.write("\n<p><b>From: ");
+        ale.writeLink(clone);
+        clone.write("&nbsp; \n    <b>Workspace:</b> ");
+        ngp.writeContainerLink(clone, 40);
+        clone.write("\n</p>\n<p><b>New Proposal Response</b> on topic <a href=\"");
+        clone.write(topicAddress);
+        clone.write("\">");
+        clone.writeHtml(note.getSubject());
+        clone.write("</a></p>\n<hr/>\n");
+
+        clone.write(this.getHtml(ar));
+
+        clone.write("</body></html>");
+
+
+        EmailSender.containerEmail(ooa, ngp, emailSubject, bodyWriter.toString(), commenterProfile.getEmailWithName(),
+                new Vector<String>(), ar.getCogInstance());
+    }
+    
     public JSONObject getJSON(AuthRequest ar) throws Exception {
         JSONObject jo = new JSONObject();
         AddressListEntry ale = new AddressListEntry(getUserId());
@@ -80,4 +145,33 @@ public class ResponseRecord extends DOMFace
         }
     }
 
+    public ScheduledNotification getScheduledNotification(NGPage ngp, NoteRecord note, CommentRecord cr) {
+        return new RRScheduledNotification(ngp, note, cr, this);
+    }
+    
+    private class RRScheduledNotification implements ScheduledNotification {
+        NGPage ngp;
+        NoteRecord note;
+        CommentRecord cr;
+        ResponseRecord rr;
+        
+        public RRScheduledNotification( NGPage _ngp, NoteRecord _note, CommentRecord _cr, ResponseRecord _rr) {
+            ngp  = _ngp;
+            note = _note;
+            cr   = _cr;
+            rr   = _rr;
+        }
+        public boolean isSent() throws Exception {
+            return rr.getEmailSent();
+        }
+        
+        public long timeToSend() throws Exception {
+            return cr.getTime()+300000;
+        }
+        
+        public void sendIt(AuthRequest ar) throws Exception {
+            rr.responseEmailRecord(ar,ngp,note,cr);
+        }
+    }
+    
 }

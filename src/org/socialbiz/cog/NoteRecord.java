@@ -690,15 +690,10 @@ public class NoteRecord extends DOMFace
       }
 
       public boolean getEmailSent()  throws Exception {
-          return "true".equals(getAttribute("emailSent"));
+          return getAttributeBool("emailSent");
       }
       public void setEmailSent(boolean newVal) throws Exception {
-          if (newVal) {
-              setAttribute("emailSent", "true");
-          }
-          else {
-              clearAttribute("emailSent");
-          }
+          setAttributeBool("emailSent", newVal);
       }
 
 
@@ -903,4 +898,50 @@ public class NoteRecord extends DOMFace
          setNoteFromHtml(ar, noteObj.getString("html"));
      }
 
+     
+     
+     public ScheduledNotification findNextScheduledNotification(NGPage ngp) throws Exception {
+         ScheduledNotification best = null;
+         ScheduledNotification sn = getScheduledNotification(ngp);
+         if (!sn.isSent()) {
+             best = sn;
+         }
+         for (CommentRecord cr : getComments()) {
+             sn = cr.findNextScheduledNotification(ngp, this);
+             if (sn!=null && !sn.isSent()) {
+                 if (best==null || sn.timeToSend() < best.timeToSend()) {
+                     best=sn;
+                 }
+             }
+         }
+         return best;
+     }
+
+     
+     public ScheduledNotification getScheduledNotification(NGPage ngp) {
+         return new NScheduledNotification(ngp, this);
+     }
+     
+     private class NScheduledNotification implements ScheduledNotification {
+         NGPage ngp;
+         NoteRecord note;
+         
+         public NScheduledNotification( NGPage _ngp, NoteRecord _note) {
+             ngp  = _ngp;
+             note = _note;
+         }
+         public boolean isSent() throws Exception {
+             return note.getEmailSent();
+         }
+         
+         public long timeToSend() throws Exception {
+             return getLastEdited()+300000;
+         }
+         
+         public void sendIt(AuthRequest ar) throws Exception {
+             note.topicEmailRecord(ar,ngp,note);
+         }
+     }
+     
+     
 }

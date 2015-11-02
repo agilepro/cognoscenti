@@ -126,6 +126,17 @@ public class DOMFace
     public int getAttributeInt(String attrName) {
         return safeConvertInt(getAttribute(attrName));
     }
+    public boolean getAttributeBool(String attrName)  throws Exception {
+        return "true".equals(getAttribute(attrName));
+    }
+    public void setAttributeBool(String attrName, boolean newVal) throws Exception {
+        if (newVal) {
+            setAttribute(attrName, "true");
+        }
+        else {
+            clearAttribute(attrName);
+        }
+    }
 
     public boolean attributeEquals(String attrName, String testValue)
         throws Exception
