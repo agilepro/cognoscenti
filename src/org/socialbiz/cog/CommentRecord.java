@@ -1,6 +1,7 @@
 package org.socialbiz.cog;
 
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -76,6 +77,7 @@ public class CommentRecord extends DOMFace {
     public void setResponse(AuthRequest ar, UserRef user, String choice, String htmlContent) throws Exception  {
         ResponseRecord rr = getOrCreateResponse(user);
         rr.setChoice(choice);
+        rr.setTime(ar.nowTime);
         rr.setHtml(ar, htmlContent);
     }
 
@@ -88,7 +90,22 @@ public class CommentRecord extends DOMFace {
     }
 
     public boolean getEmailSent()  throws Exception {
-        return getAttributeBool("emailSent");
+        if (getAttributeBool("emailSent")) {
+            return true;
+        }
+
+        //schema migration.  If the email was not sent, and the item was created
+        //more than 1 week ago, then go ahead and mark it as sent, because it is
+        //too late to send.   This is important while adding this automatic email
+        //sending because there are a lot of old records that have never been marked
+        //as being sent.   Need to set them as being sent so they are not sent now.
+        if (getTime() < NoteRecord.ONE_WEEK_AGO) {
+            System.out.println("CommentRecord Migration: will never send email due "+new Date(getTime()));
+            setEmailSent(true);
+            return true;
+        }
+
+        return false;
     }
     public void setEmailSent(boolean newVal) throws Exception {
         setAttributeBool("emailSent", newVal);
@@ -154,12 +171,12 @@ public class CommentRecord extends DOMFace {
             cmtType = "comment";
         }
         AddressListEntry ale = commenterProfile.getAddressListEntry();
-        
-        clone.write("\n<p><b>From: ");
+
+        clone.write("\n<p>From: ");
         ale.writeLink(clone);
-        clone.write("&nbsp; \n    <b>Workspace:</b> ");
+        clone.write("&nbsp; \n    Workspace: ");
         ngp.writeContainerLink(clone, 40);
-        clone.write("\n</p>\n<p><b>New ");
+        clone.write("\n<br/>\nNew <b>");
         clone.write(cmtType);
         clone.write("</b> on topic <a href=\"");
         clone.write(topicAddress);
@@ -223,7 +240,6 @@ public class CommentRecord extends DOMFace {
                 setChoices(constructVector(input.getJSONArray("choices")));
             }
         }
-        System.out.println("COMMRESP:  looking for responses");
         if (input.has("responses")) {
             JSONArray responses = input.getJSONArray("responses");
             for (int i=0; i<responses.length(); i++) {
@@ -234,6 +250,7 @@ public class CommentRecord extends DOMFace {
                 if (user.hasAnyId(responseUser)) {
                     ResponseRecord rr = getOrCreateResponse(user);
                     rr.updateFromJSON(oneResp, ar);
+                    rr.setTime(ar.nowTime);
                 }
             }
         }
@@ -255,17 +272,17 @@ public class CommentRecord extends DOMFace {
         }
         return best;
     }
-    
+
 
     public ScheduledNotification getScheduledNotification(NGPage ngp, NoteRecord note) {
         return new CRScheduledNotification(ngp, note, this);
     }
-    
+
     private class CRScheduledNotification implements ScheduledNotification {
         NGPage ngp;
         NoteRecord note;
         CommentRecord cr;
-        
+
         public CRScheduledNotification( NGPage _ngp, NoteRecord _note, CommentRecord _cr) {
             ngp  = _ngp;
             note = _note;
@@ -274,11 +291,11 @@ public class CommentRecord extends DOMFace {
         public boolean isSent() throws Exception {
             return cr.getEmailSent();
         }
-        
+
         public long timeToSend() throws Exception {
             return cr.getTime()+300000;
         }
-        
+
         public void sendIt(AuthRequest ar) throws Exception {
             cr.commentEmailRecord(ar,ngp,note);
         }

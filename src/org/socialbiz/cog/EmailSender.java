@@ -200,7 +200,7 @@ public class EmailSender extends TimerTask {
                 EmailRecord eRec = ngp.getEmailReadyToSend();
                 if (eRec!=null) {
                     //priority to sending email
-                    System.out.println("BACKGROUND EVENTS: sending an email message to "+eRec.getAddressees().firstElement().getEmail());
+                    System.out.println("BACKGROUND EVENTS: sending an email message #"+eRec.getId()+" to "+eRec.getAddressees().size()+" recipients.");
                     sendOneEmail(ngp, eRec);
                 }
                 else {

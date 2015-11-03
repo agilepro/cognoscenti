@@ -21,6 +21,7 @@
 package org.socialbiz.cog;
 
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.Vector;
 
 import org.w3c.dom.Document;
@@ -47,7 +48,22 @@ public class ResponseRecord extends DOMFace
         setAttributeLong("time", newVal);
     }
     public boolean getEmailSent()  throws Exception {
-        return getAttributeBool("emailSent");
+        if (getAttributeBool("emailSent")) {
+            return true;
+        }
+
+        //schema migration.  If the email was not sent, and the item was created
+        //more than 1 week ago, then go ahead and mark it as sent, because it is
+        //too late to send.   This is important while adding this automatic email
+        //sending because there are a lot of old records that have never been marked
+        //as being sent.   Need to set them as being sent so they are not sent now.
+        if (getTime() < NoteRecord.ONE_WEEK_AGO) {
+            System.out.println("ResponseRecord Migration: will never send email due "+new Date(getTime()));
+            setEmailSent(true);
+            return true;
+        }
+
+        return false;
     }
     public void setEmailSent(boolean newVal) throws Exception {
         setAttributeBool("emailSent", newVal);
@@ -74,8 +90,8 @@ public class ResponseRecord extends DOMFace
     public void setHtml(AuthRequest ar, String newHtml) throws Exception {
         setContent(HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
     }
-    
-    
+
+
     public void responseEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note, CommentRecord cr) throws Exception {
         Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
         OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
@@ -84,13 +100,13 @@ public class ResponseRecord extends DOMFace
         UserProfile commenterProfile = commenter.getUserProfile();
 
         for (OptOutAddr ooa : sendTo) {
-            constructEmailRecordOneUser(ar, ngp, note, ooa, commenterProfile);
+            constructEmailRecordOneUser(ar, ngp, note, ooa, cr, commenterProfile);
         }
         setEmailSent(true);
     }
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord note, OptOutAddr ooa,
-            UserProfile commenterProfile) throws Exception  {
+            CommentRecord cr, UserProfile commenterProfile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
         }
@@ -101,15 +117,17 @@ public class ResponseRecord extends DOMFace
         clone.retPath = ar.baseURL;
         clone.write("<html><body>");
 
-        String topicAddress = ar.baseURL + clone.getResourceURL(ngp, note) + "#cmt" + getTime();
-        String emailSubject = note.getSubject()+": NEW Proposal Response";
+        String topicAddress = ar.baseURL + clone.getResourceURL(ngp, note) + "#cmt" + cr.getTime();
+        String emailSubject = note.getSubject()+": Proposal "+getChoice()+" response";
         AddressListEntry ale = commenterProfile.getAddressListEntry();
-        
-        clone.write("\n<p><b>From: ");
+
+        clone.write("\n<p>From: ");
         ale.writeLink(clone);
-        clone.write("&nbsp; \n    <b>Workspace:</b> ");
+        clone.write("&nbsp; \n    Workspace: ");
         ngp.writeContainerLink(clone, 40);
-        clone.write("\n</p>\n<p><b>New Proposal Response</b> on topic <a href=\"");
+        clone.write("\n<br/>\nProposal <b>");
+        clone.writeHtml(getChoice());
+        clone.write("</b> response on a proposal on topic <a href=\"");
         clone.write(topicAddress);
         clone.write("\">");
         clone.writeHtml(note.getSubject());
@@ -117,13 +135,15 @@ public class ResponseRecord extends DOMFace
 
         clone.write(this.getHtml(ar));
 
-        clone.write("</body></html>");
-
+        clone.write("<hr/>\nIn Response to the Proposal: <br/>");
+        clone.write("\n<div style=\"color:#A9A9A9\">");
+        clone.write(cr.getContentHtml(ar));
+        clone.write("\n</div>");
 
         EmailSender.containerEmail(ooa, ngp, emailSubject, bodyWriter.toString(), commenterProfile.getEmailWithName(),
                 new Vector<String>(), ar.getCogInstance());
     }
-    
+
     public JSONObject getJSON(AuthRequest ar) throws Exception {
         JSONObject jo = new JSONObject();
         AddressListEntry ale = new AddressListEntry(getUserId());
@@ -148,13 +168,13 @@ public class ResponseRecord extends DOMFace
     public ScheduledNotification getScheduledNotification(NGPage ngp, NoteRecord note, CommentRecord cr) {
         return new RRScheduledNotification(ngp, note, cr, this);
     }
-    
+
     private class RRScheduledNotification implements ScheduledNotification {
         NGPage ngp;
         NoteRecord note;
         CommentRecord cr;
         ResponseRecord rr;
-        
+
         public RRScheduledNotification( NGPage _ngp, NoteRecord _note, CommentRecord _cr, ResponseRecord _rr) {
             ngp  = _ngp;
             note = _note;
@@ -164,14 +184,14 @@ public class ResponseRecord extends DOMFace
         public boolean isSent() throws Exception {
             return rr.getEmailSent();
         }
-        
+
         public long timeToSend() throws Exception {
             return cr.getTime()+300000;
         }
-        
+
         public void sendIt(AuthRequest ar) throws Exception {
             rr.responseEmailRecord(ar,ngp,note,cr);
         }
     }
-    
+
 }

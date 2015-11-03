@@ -23,6 +23,7 @@ package org.socialbiz.cog;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -40,6 +41,11 @@ import org.workcast.json.JSONObject;
 */
 public class NoteRecord extends DOMFace
 {
+    //This is actually one week before the server started, and is used mainly in the
+    //startup methods for an arbitrary time long enough ago that automated notifications
+    //should be cancelled or ignored.  If the server stays on a long this value will
+    //not be updated -- it remains the time a week before starting the server.
+    public static final long ONE_WEEK_AGO = System.currentTimeMillis() - 7*24*60*60*1000;
 
     public NoteRecord(Document definingDoc, Element definingElement, DOMFace new_ngs)
     {
@@ -690,7 +696,22 @@ public class NoteRecord extends DOMFace
       }
 
       public boolean getEmailSent()  throws Exception {
-          return getAttributeBool("emailSent");
+          if (getAttributeBool("emailSent")) {
+              return true;
+          }
+
+          //schema migration.  If the email was not sent, and the item was created
+          //more than 1 week ago, then go ahead and mark it as sent, because it is
+          //too late to send.   This is important whie adding this automatic email
+          //sending becaue there are a lot of old records that have never been marked
+          //as being sent.   Need to set them as being sent so they are not sent now.
+          if (getLastEdited() < ONE_WEEK_AGO) {
+              System.out.println("NoteRecord Migration: will never send email due "+new Date(getLastEdited())+" for "+this.getSubject());
+              setEmailSent(true);
+              return true;
+          }
+
+          return false;
       }
       public void setEmailSent(boolean newVal) throws Exception {
           setAttributeBool("emailSent", newVal);
@@ -898,8 +919,8 @@ public class NoteRecord extends DOMFace
          setNoteFromHtml(ar, noteObj.getString("html"));
      }
 
-     
-     
+
+
      public ScheduledNotification findNextScheduledNotification(NGPage ngp) throws Exception {
          ScheduledNotification best = null;
          ScheduledNotification sn = getScheduledNotification(ngp);
@@ -917,15 +938,15 @@ public class NoteRecord extends DOMFace
          return best;
      }
 
-     
+
      public ScheduledNotification getScheduledNotification(NGPage ngp) {
          return new NScheduledNotification(ngp, this);
      }
-     
+
      private class NScheduledNotification implements ScheduledNotification {
          NGPage ngp;
          NoteRecord note;
-         
+
          public NScheduledNotification( NGPage _ngp, NoteRecord _note) {
              ngp  = _ngp;
              note = _note;
@@ -933,15 +954,15 @@ public class NoteRecord extends DOMFace
          public boolean isSent() throws Exception {
              return note.getEmailSent();
          }
-         
+
          public long timeToSend() throws Exception {
              return getLastEdited()+300000;
          }
-         
+
          public void sendIt(AuthRequest ar) throws Exception {
              note.topicEmailRecord(ar,ngp,note);
          }
      }
-     
-     
+
+
 }
