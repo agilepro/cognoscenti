@@ -22,6 +22,7 @@ package org.socialbiz.cog;
 
 import java.io.StringWriter;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -573,6 +574,35 @@ public class EmailGenerator extends DOMFace {
         }
         if (obj.has("scheduleTime")) {
             setScheduleTime(obj.getLong("scheduleTime"));
+        }
+    }
+
+    public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
+        if (getState()==EG_STATE_SCHEDULED) {
+            EGScheduledNotification sn = new EGScheduledNotification(ngp, this);
+            resList.add(sn);
+        }
+    }
+
+
+    private class EGScheduledNotification implements ScheduledNotification {
+        NGPage ngp;
+        EmailGenerator eg;
+
+        public EGScheduledNotification( NGPage _ngp, EmailGenerator _eg) {
+            ngp  = _ngp;
+            eg = _eg;
+        }
+        public boolean isSent() throws Exception {
+            return eg.getState()==EG_STATE_SENT;
+        }
+
+        public long timeToSend() throws Exception {
+            return eg.getScheduleTime();
+        }
+
+        public void sendIt(AuthRequest ar) throws Exception {
+            eg.constructEmailRecords(ar, ngp);
         }
     }
 

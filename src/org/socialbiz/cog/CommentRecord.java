@@ -1,6 +1,7 @@
 package org.socialbiz.cog;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -271,6 +272,20 @@ public class CommentRecord extends DOMFace {
             }
         }
         return best;
+    }
+
+    public void gatherUnsentScheduledNotification(NGPage ngp, NoteRecord note,
+            ArrayList<ScheduledNotification> resList) throws Exception {
+        ScheduledNotification sn = getScheduledNotification(ngp, note);
+        if (!sn.isSent()) {
+            resList.add(sn);
+        }
+        for (ResponseRecord rr : getResponses()) {
+            sn = rr.getScheduledNotification(ngp, note, this);
+            if (!sn.isSent()) {
+                resList.add(sn);
+            }
+        }
     }
 
 

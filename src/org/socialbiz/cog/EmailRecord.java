@@ -22,6 +22,7 @@ package org.socialbiz.cog;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -153,7 +154,7 @@ public class EmailRecord extends DOMFace
     public boolean statusReadyToSend() {
         return READY_TO_GO.equals(getAttribute("status"));
     }
-    
+
     public String getErrorMessage() {
         return getScalar("error");
     }
@@ -266,7 +267,7 @@ public class EmailRecord extends DOMFace
         return mf;
     }
 
-    
+
     public JSONObject getJSON() throws Exception {
         JSONObject obj = new JSONObject();
         obj.put("from", getFromAddress());
@@ -279,8 +280,41 @@ public class EmailRecord extends DOMFace
         obj.put("status", getStatus());
         obj.put("sendDate", getLastSentDate());
         obj.put("error", getErrorMessage());
-        
+
         return obj;
     }
-    
+
+
+    public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
+        if (statusReadyToSend()) {
+            EMScheduledNotification sn = new EMScheduledNotification(ngp, this);
+            resList.add(sn);
+        }
+    }
+
+    private class EMScheduledNotification implements ScheduledNotification {
+        NGPage ngp;
+        EmailRecord er;
+
+        public EMScheduledNotification( NGPage _ngp, EmailRecord _er) {
+            ngp  = _ngp;
+            er = _er;
+        }
+        public boolean isSent() throws Exception {
+            String status = er.getStatus();
+            return SENT.equals(status) || FAILED.equals(status);
+        }
+
+        public long timeToSend() throws Exception {
+            //there is no scheduled time for sending email .. it just is scheduled
+            //immediately and supposed to be sent as soon as possible after that
+            //so return now minus 1 minutes
+            return System.currentTimeMillis()-60000;
+        }
+
+        public void sendIt(AuthRequest ar) throws Exception {
+            EmailSender.sendPreparedMessageImmediately(er, ar.getCogInstance());
+        }
+    }
+
 }

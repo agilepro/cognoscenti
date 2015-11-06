@@ -21,6 +21,7 @@
 package org.socialbiz.cog;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -936,6 +937,17 @@ public class NoteRecord extends DOMFace
              }
          }
          return best;
+     }
+
+     public void gatherUnsentScheduledNotification(NGPage ngp,
+             ArrayList<ScheduledNotification> resList) throws Exception {
+         ScheduledNotification sn = getScheduledNotification(ngp);
+         if (sn!=null && !sn.isSent()) {
+             resList.add(sn);
+         }
+         for (CommentRecord cr : getComments()) {
+             cr.gatherUnsentScheduledNotification(ngp, this, resList);
+         }
      }
 
 

@@ -193,7 +193,9 @@ public class EmailSender extends TimerTask {
     private void handleAllOverdueScheduledEvents(AuthRequest ar) throws Exception{
         long nowTime = ar.nowTime;
         NGPageIndex ngpi = findOverdueContainer(nowTime);
+        int iCount = 0;
         while (ngpi!=null) {
+            iCount++;
             if (ngpi.isProject()) {
                 NGPage ngp = (NGPage) ngpi.getContainer();
                 System.out.println("BACKGROUND EVENTS: found workspace ("+ngp.getFullName()+") due at "+new Date(ngp.nextActionDue()));
@@ -219,6 +221,7 @@ public class EmailSender extends TimerTask {
             Thread.sleep(200);  //just small delay to avoid saturation
             ngpi = findOverdueContainer(ar.nowTime);
         }
+        System.out.println("BACKGROUND EVENTS: Processed "+iCount+" background events at "+(new Date()));
     }
 
     private NGPageIndex findOverdueContainer(long nowTime) {

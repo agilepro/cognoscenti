@@ -1719,30 +1719,6 @@ public class NGPage extends ContainerCommon implements NGContainer
     public long nextActionDue() throws Exception {
         //initialize to some time next year
         long nextTime = System.currentTimeMillis() + 31000000000L;
-        for (MeetingRecord meeting : getMeetings()) {
-            long meetStart = meeting.getStartTime();
-            int delta = meeting.getReminderTime();
-            if (delta<=0) {
-                continue;
-            }
-            long reminderTime = meetStart - (delta * 60000);
-            long reminderSent = meeting.getReminderSent();
-            if (reminderSent > reminderTime) {
-                //the reminder was sent at some point after it was due, so it has been sent
-                continue;
-            }
-            if (reminderTime < nextTime) {
-                nextTime = reminderTime;
-            }
-        }
-        for (EmailGenerator eg : getAllEmailGenerators()) {
-            if (eg.EG_STATE_SCHEDULED == eg.getState()) {
-                long reminderTime = eg.getScheduleTime();
-                if (reminderTime < nextTime) {
-                    nextTime = reminderTime;
-                }
-            }
-        }
         for (EmailRecord er : getAllEmail()) {
             if (er.statusReadyToSend()) {
                 //there is no scheduled time for sending email .. it just is scheduled
@@ -1755,28 +1731,33 @@ public class NGPage extends ContainerCommon implements NGContainer
             }
         }
 
-        //Now scan all the comments on all the topics
-        for (NoteRecord note : this.getAllNotes()) {
-            for (CommentRecord cr : note.getComments()) {
-                ScheduledNotification sn = cr.getScheduledNotification(this, note);
-                if (!sn.isSent()) {
-                    long timeToAct = sn.timeToSend();
-                    if (timeToAct < nextTime) {
-                        nextTime = timeToAct;
-                    }
-                }
-                for (ResponseRecord rr : cr.getResponses()) {
-                    sn = rr.getScheduledNotification(this, note, cr);
-                    if (!sn.isSent()) {
-                        long timeToAct = sn.timeToSend();
-                        if (timeToAct < nextTime) {
-                            nextTime = timeToAct;
-                        }
-                    }
-                }
+        ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
+        gatherUnsentScheduledNotification(resList);
+
+        //Now scan all the standard scheduled notifications
+        for (ScheduledNotification sn : resList) {
+            long timeToAct = sn.timeToSend();
+            if (timeToAct < nextTime) {
+                nextTime = timeToAct;
             }
         }
         return nextTime;
+    }
+
+
+    public void gatherUnsentScheduledNotification(ArrayList<ScheduledNotification> resList) throws Exception {
+        for (MeetingRecord meeting : getMeetings()) {
+            meeting.gatherUnsentScheduledNotification(this, resList);
+        }
+        for (NoteRecord note : this.getAllNotes()) {
+            note.gatherUnsentScheduledNotification(this, resList);
+        }
+        for (EmailGenerator eg : getAllEmailGenerators()) {
+            eg.gatherUnsentScheduledNotification(this, resList);
+        }
+        for (EmailRecord er : getAllEmail()) {
+            er.gatherUnsentScheduledNotification(this, resList);
+        }
     }
 
     /**
@@ -1786,42 +1767,22 @@ public class NGPage extends ContainerCommon implements NGContainer
      * or to spread a large number of actions out a bit.
      */
     public void performScheduledAction(AuthRequest ar) throws Exception {
-        for (MeetingRecord meeting : getMeetings()) {
-            long meetStart = meeting.getStartTime();
-            int delta = meeting.getReminderTime();
-            if (delta<=0) {
-                continue;
-            }
-            long reminderTime = meetStart - (delta * 60000);
-            long reminderSent = meeting.getReminderSent();
-            if (reminderSent > reminderTime) {
-                //the reminder was sent at some point after it was due, so it has been sent
-                continue;
-            }
-            if (reminderTime < ar.nowTime) {
-                System.out.println("BACKGROUND EVENTS: sending reminder email for meeting "+meeting.getName());
-                meeting.sendReminderEmail(ar, this);
-                return;   //only do one action
+
+        ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
+        gatherUnsentScheduledNotification(resList);
+        ScheduledNotification earliest = null;
+        long nextTime = System.currentTimeMillis() + 31000000000L;
+
+        for (ScheduledNotification sn : resList) {
+            if (sn.timeToSend() < nextTime) {
+                earliest = sn;
+                nextTime = sn.timeToSend();
             }
         }
-        for (EmailGenerator eg : getAllEmailGenerators()) {
-            if (eg.EG_STATE_SCHEDULED == eg.getState()) {
-                long reminderTime = eg.getScheduleTime();
-                if (reminderTime < ar.nowTime) {
-                    System.out.println("BACKGROUND EVENTS: sending scheduled email generated by "+eg.getSubject());
-                    eg.constructEmailRecords(ar, this);
-                    return;    //only do one action
-                }
-            }
-        }
-        //Now scan all the comments on all the topics
-        for (NoteRecord note : this.getAllNotes()) {
-            ScheduledNotification sn = note.findNextScheduledNotification(this);
-            if (sn!=null && !sn.isSent() && sn.timeToSend() < ar.nowTime) {
-                System.out.println("BACKGROUND EVENTS: sending scheduled notification on note "+note.getSubject());
-                sn.sendIt(ar);
-                return;   //only one thing at a time
-            }
+
+        if (earliest!=null) {
+            earliest.sendIt(ar);
+            return;   //only one thing at a time
         }
     }
 

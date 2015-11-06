@@ -1,6 +1,7 @@
 package org.socialbiz.cog;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -515,6 +516,43 @@ public class MeetingRecord extends DOMFace {
             catch (Exception e) {
                 return 0;
             }
+        }
+    }
+
+    public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
+        MScheduledNotification sn = new MScheduledNotification(ngp, this);
+        if (!sn.isSent()) {
+            resList.add(sn);
+        }
+    }
+
+
+    private class MScheduledNotification implements ScheduledNotification {
+        NGPage ngp;
+        MeetingRecord meet;
+
+        public MScheduledNotification( NGPage _ngp, MeetingRecord _meet) {
+            ngp  = _ngp;
+            meet = _meet;
+        }
+        public boolean isSent() throws Exception {
+            long reminderTime = timeToSend();
+            long reminderSent = meet.getReminderSent();
+            //the reminder was sent at some point after it was due, so it has been sent
+            return (reminderSent > reminderTime);
+        }
+
+        public long timeToSend() throws Exception {
+            long meetStart = meet.getStartTime();
+            int delta = meet.getReminderTime();
+            if (delta<=0) {
+                return -1;
+            }
+            return meetStart - (delta * 60000);
+        }
+
+        public void sendIt(AuthRequest ar) throws Exception {
+            meet.sendReminderEmail(ar, ngp);
         }
     }
 
