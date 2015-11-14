@@ -305,7 +305,7 @@ public class NGPage extends ContainerCommon implements NGContainer
 
         //copy all of the tasks, but no status.
         for (GoalRecord templateGoal : template.getAllGoals()) {
-            GoalRecord newGoal = createGoal();
+            GoalRecord newGoal = createGoal(ar.getBestUserId());
             newGoal.setSynopsis(templateGoal.getSynopsis());
             newGoal.setDescription(templateGoal.getDescription());
             newGoal.setPriority(templateGoal.getPriority());
@@ -967,12 +967,13 @@ public class NGPage extends ContainerCommon implements NGContainer
     /**
     * Creates an action item in a project without any history about creating it
     */
-    public GoalRecord createGoal()
+    public GoalRecord createGoal(String requesterId)
         throws Exception
     {
         String id = getUniqueOnPage();
         NGSection ngs = getSectionOrFail("Tasks");
         GoalRecord goal = ngs.createChildWithID("task", GoalRecord.class, "id", id);
+        goal.setCreator(requesterId);
         String uid = getContainerUniversalId() + "@" + id;
         goal.setUniversalId(uid);
         goal.setRank(32000000);
@@ -984,8 +985,8 @@ public class NGPage extends ContainerCommon implements NGContainer
     /**
     * Create a new goal that is subordinant to another
     */
-    public GoalRecord createSubGoal(GoalRecord parent) throws Exception {
-        GoalRecord goal = createGoal();
+    public GoalRecord createSubGoal(GoalRecord parent, String requesterId) throws Exception {
+        GoalRecord goal = createGoal(requesterId);
         goal.setParentGoal(parent.getId());
         goal.setDueDate(parent.getDueDate());
         parent.setState(BaseRecord.STATE_WAITING);
@@ -1552,6 +1553,34 @@ public class NGPage extends ContainerCommon implements NGContainer
     }
 
 
+
+    public List<DecisionRecord> getDecisions() throws Exception {
+        DOMFace meetings = requireChild("meetings", DOMFace.class);
+        return meetings.getChildren("meeting", DecisionRecord.class);
+    }
+    public DecisionRecord createDecision() throws Exception {
+        DOMFace decisions = requireChild("decisions", DOMFace.class);
+        int max = 0;
+        for (DecisionRecord m : getDecisions()) {
+            if (max < m.getNumber()) {
+                max = m.getNumber();
+            }
+        }
+        DecisionRecord dr = decisions.createChildWithID("decision", DecisionRecord.class,
+                "num", Integer.toString(max+1));
+        return dr;
+    }
+    public DecisionRecord findDecisionOrNull(int number) throws Exception {
+        for (DecisionRecord m : getDecisions()) {
+            if (number == m.getNumber()) {
+                return m;
+            }
+        }
+        return null;
+    }
+
+
+
     /**
     * Returns all the email generators for a project.
     */
@@ -1757,6 +1786,9 @@ public class NGPage extends ContainerCommon implements NGContainer
         }
         for (EmailRecord er : getAllEmail()) {
             er.gatherUnsentScheduledNotification(this, resList);
+        }
+        for (GoalRecord goal : getAllGoals()) {
+            goal.gatherUnsentScheduledNotification(this, resList);
         }
     }
 

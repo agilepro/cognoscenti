@@ -234,10 +234,10 @@ public class ProjectGoalController extends BaseController {
         boolean isSubTask = (parentTaskId != null && parentTaskId.length() > 0);
         if (isSubTask) {
             parentTask = ngp.getGoalOrFail(parentTaskId);
-            task = ngp.createSubGoal(parentTask);
+            task = ngp.createSubGoal(parentTask, ar.getBestUserId());
             eventType = HistoryRecord.EVENT_TYPE_SUBTASK_CREATED;
         } else {
-            task = ngp.createGoal();
+            task = ngp.createGoal(ar.getBestUserId());
             eventType = HistoryRecord.EVENT_TYPE_CREATED;
         }
         task.setSynopsis(ar.reqParam("taskname"));

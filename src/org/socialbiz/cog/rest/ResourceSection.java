@@ -825,7 +825,7 @@ public class ResourceSection  implements NGResource
                 GoalRecord gr = null;
                 if (tid == null || tid.length() == 0 || tid.equals("factory")) {
                     // Need to create the attachment
-                    gr = ngp.createGoal();
+                    gr = ngp.createGoal(ar.getBestUserId());
                     gr.setState(GoalRecord.STATE_OFFERED);
                 }
                 else {

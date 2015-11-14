@@ -17,8 +17,8 @@
 %><%
 
     AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
-    if (ServerInitializer.serverInitState!=ServerInitializer.STATE_RUNNING) {
-        throw new Exception("Server is not running???");
+    if (cog.initializer.serverInitState!=ServerInitializer.STATE_RUNNING) {
+        throw new Exception("Server is not running???  Must be running to see log file.");
     }
 
     ar.assertLoggedIn("Must be logged in to run Admin page");

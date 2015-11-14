@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
-public class MeetingRecord extends DOMFace {
+public class MeetingRecord extends DOMFace implements EmailContext {
 
     public static final int MEETING_TYPE_CIRCLE = 1;
     public static final int MEETING_TYPE_OPERATIONAL = 2;
@@ -519,10 +519,27 @@ public class MeetingRecord extends DOMFace {
         }
     }
 
+    /**
+     * Needed for the EmailContext interface
+     */
+    public String emailSubject() throws Exception {
+        return getName();
+    }
+    public String getResourceURL(AuthRequest ar, NGPage ngp) throws Exception {
+        return ar.getResourceURL(ngp,  "meetingFull.htm?id="+this.getId());
+    }
+    public String selfDescription() throws Exception {
+        return "(Meeting) "+getNameAndDate();
+    }
+
+
     public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
         MScheduledNotification sn = new MScheduledNotification(ngp, this);
         if (!sn.isSent()) {
             resList.add(sn);
+        }
+        for (AgendaItem ai : this.getAgendaItems()) {
+            ai.gatherUnsentScheduledNotification(ngp, this, resList);
         }
     }
 
@@ -554,6 +571,11 @@ public class MeetingRecord extends DOMFace {
         public void sendIt(AuthRequest ar) throws Exception {
             meet.sendReminderEmail(ar, ngp);
         }
+
+        public String selfDescription() throws Exception {
+            return meet.selfDescription();
+        }
+
     }
 
 }

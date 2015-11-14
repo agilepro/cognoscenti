@@ -1132,7 +1132,7 @@ public class MainTabsViewControler extends BaseController {
               AgendaItem ai = meeting.findAgendaItem(aid);
 
               JSONObject goalInfo = getPostedObject(ar);
-              GoalRecord gr = ngp.createGoal();
+              GoalRecord gr = ngp.createGoal(ar.getBestUserId());
 
               //create the history record here.
               HistoryRecord.createHistoryRecord(ngp, gr.getId(),
@@ -1143,6 +1143,11 @@ public class MainTabsViewControler extends BaseController {
               //There is a check that requires this to do the update.
               goalInfo.put("universalid", gr.getUniversalId());
               gr.updateGoalFromJSON(goalInfo, ngp, ar);
+              gr.setCreator(ar.getBestUserId());
+              System.out.println("SETTING creator toL "+ar.getBestUserId());
+              if (gr.getCreator()==null || gr.getCreator().length()==0) {
+                  throw new Exception("can not set the creator");
+              }
               ai.addActionItemId(gr.getUniversalId());
 
               ngp.saveFile(ar, "Created action item for minutes of meeting.");
@@ -1171,7 +1176,7 @@ public class MainTabsViewControler extends BaseController {
               int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
               boolean isNew = "~new~".equals(gid);
               if (isNew) {
-                  gr = ngp.createGoal();
+                  gr = ngp.createGoal(ar.getBestUserId());
                   goalInfo.put("universalid", gr.getUniversalId());
                   eventType = HistoryRecord.EVENT_TYPE_CREATED;
               }

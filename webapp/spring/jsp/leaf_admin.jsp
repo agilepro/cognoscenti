@@ -3,12 +3,15 @@
 %><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%@page import="org.socialbiz.cog.EmailGenerator"
 %><%@page import="org.socialbiz.cog.CommentRecord"
+%><%@page import="org.socialbiz.cog.ScheduledNotification"
+%><%@page import="java.util.ArrayList"
 %>
 <%
     ar.assertLoggedIn("Must be logged in to see admin options");
     ar.assertMember("This VIEW only for members in use cases");
 
     String pageId      = ar.reqParam("pageId");
+    NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageId);
     NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
@@ -19,10 +22,10 @@
 
     Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
     for(TemplateRecord tr : up.getTemplateList()){
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(tr.getPageKey());
-        if (ngpi!=null) {
+        NGPageIndex ngpirr = ar.getCogInstance().getContainerIndexByKey(tr.getPageKey());
+        if (ngpirr!=null) {
             //silently ignore templates that no longer exist
-            templates.add(ngpi);
+            templates.add(ngpirr);
         }
     }
     NGPageIndex.sortInverseChronological(templates);
@@ -55,8 +58,8 @@
     }
 
     JSONArray allProjects = new JSONArray();
-    for (NGPageIndex ngpi : cog.getAllProjectsInSite(ngb.getKey())) {
-        if (ngpi.isDeleted) {
+    for (NGPageIndex ngpis : cog.getAllProjectsInSite(ngb.getKey())) {
+        if (ngpis.isDeleted) {
             continue;
         }
         JSONObject pInfo = new JSONObject();
@@ -66,54 +69,6 @@
     }
 
 
-
-
-    JSONArray allScheduled = new JSONArray();
-    for (MeetingRecord meeting : ngp.getMeetings()) {
-        long meetStart = meeting.getStartTime();
-        int delta = meeting.getReminderTime();
-        if (delta<=0) {
-            continue;
-        }
-        long reminderTime = meetStart - (delta * 60000);
-        JSONObject oneSched = new JSONObject();
-        oneSched.put("name", meeting.getName());
-        oneSched.put("action", "Send Meeting Reminder");
-        oneSched.put("time", reminderTime);
-        allScheduled.put(oneSched);
-    }
-    for (EmailGenerator eg : ngp.getAllEmailGenerators()) {
-        if (eg.EG_STATE_SCHEDULED == eg.getState()) {
-            long reminderTime = eg.getScheduleTime();
-            JSONObject oneSched = new JSONObject();
-            oneSched.put("name", eg.getSubject());
-            oneSched.put("action", "Send Email");
-            oneSched.put("time", reminderTime);
-            allScheduled.put(oneSched);
-        }
-    }
-    for (NoteRecord note : ngp.getAllNotes()) {
-        long timeToAct = note.emailSchedule();
-        if (timeToAct > 0) {
-            JSONObject oneSched = new JSONObject();
-            oneSched.put("name", "NEW TOPIC "+note.getSubject());
-            oneSched.put("action", "Send Email About Topic");
-            oneSched.put("time", timeToAct);
-            allScheduled.put(oneSched);
-        }
-
-        for (CommentRecord cr : note.getComments()) {
-            timeToAct = cr.emailSchedule();
-            if (timeToAct > 0) {
-                JSONObject oneSched = new JSONObject();
-                oneSched.put("name", "Comment on "+note.getSubject());
-                oneSched.put("action", "Send Email About Comment");
-                oneSched.put("time", timeToAct);
-                allScheduled.put(oneSched);
-            }
-        }
-    }
-
 %>
 
 
@@ -121,7 +76,6 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
-    $scope.allScheduled = <%allScheduled.write(out,2,4);%>;
     $scope.oldNameArray = <%oldNameArray.write(out,2,4);%>;
     $scope.projectInfo = <%projectInfo.write(out,2,4);%>;
     $scope.allProjects = <%allProjects.write(out,2,4);%>;
@@ -395,13 +349,64 @@ app.filter('escape', function() {
 
             <div class="generalContent">
                 <div class="generalHeading paddingTop">Future Scheduled Actions</div>
-                <div ng-repeat="rec in allScheduled">
-                   {{rec.action}}: <b>&quot;{{rec.name}}&quot;</b> at {{rec.time|date:'M/d/yy H:mm'}}
-                </div>
                 <div>
                    Next Action due: {{<%=ngp.nextActionDue()%>|date:'M/d/yy H:mm'}}
+                </div>
+                <div>
+                   Index says: {{<%=ngpi.nextScheduledAction%>|date:'M/d/yy H:mm'}}
+                </div>
+                <div>
+                    OVERDUE:
+                    <ul>
+                    <%findOverdueContainer(ar);%>
+                    </ul>
+                    ALL UNSENT NOTIFICATIONS:
+                    <ol>
+                    <%
+
+                    ArrayList<ScheduledNotification> allUnsent = new ArrayList<ScheduledNotification>();
+
+                    //Now scan all the comments on all the topics
+                    int ii = 0;
+                    ngp.gatherUnsentScheduledNotification(allUnsent);
+                    for (ScheduledNotification sn : allUnsent) {
+                        if (sn!=null) {
+                            long timeToAct = sn.timeToSend();
+                            ar.write("<li>"+ (++ii)+": ");
+                            ar.writeHtml( (new Date(timeToAct)).toString() );
+                            ar.write(", ");
+                            ar.writeHtml( sn.selfDescription() );
+                            if (timeToAct < ar.nowTime) {
+                                ar.write("  <b>OVERDUE!</b>");
+                            }
+                            ar.write("</li>");
+                        }
+                    }
+
+
+
+                    %>
+                    </ol>
                 </div>
             </div>
 
     </div>
 </div>
+
+<%!
+
+    private NGPageIndex findOverdueContainer(AuthRequest ar) throws Exception  {
+        for (NGPageIndex ngpi : ar.getCogInstance().getAllContainers()) {
+            if (ngpi.nextScheduledAction>0 && ngpi.nextScheduledAction<ar.nowTime) {
+                ar.write("<li>");
+                ar.writeHtml(ngpi.containerName);
+                ar.write(": ");
+                ar.write( (new Date(ngpi.nextScheduledAction)).toString() );
+                ar.write("</li>");
+            }
+        }
+        return null;
+    }
+
+
+%>

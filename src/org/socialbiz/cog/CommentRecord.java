@@ -113,29 +113,8 @@ public class CommentRecord extends DOMFace {
     }
 
 
-    /**
-     * The email for a comment should be sent about 5 minutes after the comment is created.
-     * This gives the author enough time to correct things if needed.
-     * If the email has not been sent, this will return the time that it should be sent.
-     * If the email has already been sent, then this return -1.
-     */
-    public long emailSchedule() throws Exception  {
-        if (getEmailSent()) {
-            return -1;
-        }
-        long createTime = getTime();
-        if (createTime < System.currentTimeMillis() - 36 * 60 * 60 * 1000) {
-            //if it is more than 36 hours old, then suppress sending email.
-            //this is mainly to avoid sending email for every comment in history
-            //before we invented the email sending of comments.
-            setEmailSent(true);
-            return -1;
-        }
-        //ok, set it to set five minutes after the time it was created
-        return createTime + 300000;
-    }
 
-    public void commentEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note) throws Exception {
+    public void commentEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet) throws Exception {
         Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
         OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
 
@@ -143,12 +122,12 @@ public class CommentRecord extends DOMFace {
         UserProfile commenterProfile = commenter.getUserProfile();
 
         for (OptOutAddr ooa : sendTo) {
-            constructEmailRecordOneUser(ar, ngp, note, ooa, commenterProfile);
+            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile);
         }
         setEmailSent(true);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord note, OptOutAddr ooa,
+    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
             UserProfile commenterProfile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
@@ -160,15 +139,15 @@ public class CommentRecord extends DOMFace {
         clone.retPath = ar.baseURL;
         clone.write("<html><body>");
 
-        String topicAddress = ar.baseURL + clone.getResourceURL(ngp, note) + "#cmt" + getTime();
+        String topicAddress = ar.baseURL + noteOrMeet.getResourceURL(clone, ngp) + "#cmt" + getTime();
         String emailSubject;
         String cmtType;
         if (this.isPoll()) {
-            emailSubject = note.getSubject()+": NEW Proposal";
+            emailSubject = noteOrMeet.emailSubject()+": NEW Proposal";
             cmtType = "proposal";
         }
         else {
-            emailSubject = note.getSubject()+": NEW Comment";
+            emailSubject = noteOrMeet.emailSubject()+": NEW Comment";
             cmtType = "comment";
         }
         AddressListEntry ale = commenterProfile.getAddressListEntry();
@@ -182,7 +161,7 @@ public class CommentRecord extends DOMFace {
         clone.write("</b> on topic <a href=\"");
         clone.write(topicAddress);
         clone.write("\">");
-        clone.writeHtml(note.getSubject());
+        clone.writeHtml(noteOrMeet.emailSubject());
         clone.write("</a></p>\n<hr/>\n");
 
         clone.write(this.getContentHtml(ar));
@@ -274,14 +253,14 @@ public class CommentRecord extends DOMFace {
         return best;
     }
 
-    public void gatherUnsentScheduledNotification(NGPage ngp, NoteRecord note,
+    public void gatherUnsentScheduledNotification(NGPage ngp, EmailContext noteOrMeet,
             ArrayList<ScheduledNotification> resList) throws Exception {
-        ScheduledNotification sn = getScheduledNotification(ngp, note);
+        ScheduledNotification sn = getScheduledNotification(ngp, noteOrMeet);
         if (!sn.isSent()) {
             resList.add(sn);
         }
         for (ResponseRecord rr : getResponses()) {
-            sn = rr.getScheduledNotification(ngp, note, this);
+            sn = rr.getScheduledNotification(ngp, noteOrMeet, this);
             if (!sn.isSent()) {
                 resList.add(sn);
             }
@@ -289,18 +268,18 @@ public class CommentRecord extends DOMFace {
     }
 
 
-    public ScheduledNotification getScheduledNotification(NGPage ngp, NoteRecord note) {
-        return new CRScheduledNotification(ngp, note, this);
+    public ScheduledNotification getScheduledNotification(NGPage ngp, EmailContext noteOrMeet) {
+        return new CRScheduledNotification(ngp, noteOrMeet, this);
     }
 
     private class CRScheduledNotification implements ScheduledNotification {
         NGPage ngp;
-        NoteRecord note;
+        EmailContext noteOrMeet;
         CommentRecord cr;
 
-        public CRScheduledNotification( NGPage _ngp, NoteRecord _note, CommentRecord _cr) {
+        public CRScheduledNotification( NGPage _ngp, EmailContext _noteOrMeet, CommentRecord _cr) {
             ngp  = _ngp;
-            note = _note;
+            noteOrMeet = _noteOrMeet;
             cr   = _cr;
         }
         public boolean isSent() throws Exception {
@@ -312,7 +291,14 @@ public class CommentRecord extends DOMFace {
         }
 
         public void sendIt(AuthRequest ar) throws Exception {
-            cr.commentEmailRecord(ar,ngp,note);
+            cr.commentEmailRecord(ar,ngp,noteOrMeet);
         }
+
+        public String selfDescription() throws Exception {
+            return "(Comment) "+cr.getUser()+" on "+noteOrMeet.selfDescription();
+        }
+
     }
+
+
 }

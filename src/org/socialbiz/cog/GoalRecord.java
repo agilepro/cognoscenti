@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,25 +41,6 @@ public class GoalRecord extends BaseRecord {
         // migrate old documents
         accessLicense();
 
-        // fix up the creator if we can...
-        // There had been a chronic problem of filling in the creator with the
-        // 'name'
-        // of the user, not a permanent ID. So this attempts to fix it up by
-        // first
-        // searching for the user, and then putting the universal id in instead.
-        // However, me might not find the user.
-        // Note that this also handles cases where a use changes their ID.
-        String currentCreator = getCreator();
-        if (currentCreator != null && currentCreator.length() > 0) {
-            UserProfile creatorUser = UserManager
-                    .findUserByAnyId(currentCreator);
-            if (creatorUser != null) {
-                String betterID = creatorUser.getUniversalId();
-                if (!betterID.equals(currentCreator)) {
-                    setCreator(betterID);
-                }
-            }
-        }
     }
 
     /**
@@ -109,6 +91,9 @@ public class GoalRecord extends BaseRecord {
     }
 
     public void setCreator(String newVal) throws Exception {
+        if (newVal==null || newVal.length()==0) {
+            throw new Exception("Whyis the creator being set to null string?");
+        }
         setScalar("creator", newVal);
     }
 
@@ -946,6 +931,10 @@ public class GoalRecord extends BaseRecord {
         thisGoal.put("assignees", peopleList);
         thisGoal.put("assignTo", assignTo);
 
+        JSONArray creatorArray = new JSONArray();
+        creatorArray.put(getCreator());
+        thisGoal.put("requesters", creatorArray);
+
         NGBook site = ngp.getSite();
         thisGoal.put("sitename", site.getFullName());
         thisGoal.put("siteKey", site.getKey());
@@ -1047,6 +1036,7 @@ public class GoalRecord extends BaseRecord {
         if (goalObj.has("assignTo")) {
             JSONArray peopleList = goalObj.getJSONArray("assignTo");
             NGRole assigneeRole = getAssigneeRole();
+            int numPeopleBefore = assigneeRole.getDirectPlayers().size();
             assigneeRole.clear();
             int lastPerson = peopleList.length();
             for (int i=0; i<lastPerson; i++) {
@@ -1055,6 +1045,11 @@ public class GoalRecord extends BaseRecord {
                     continue;  //ignore any entry without a UID
                 }
                 assigneeRole.addPlayer(new AddressListEntry(person.getString("uid"), person.getString("name")));
+            }
+            int numPeopleAfter = assigneeRole.getDirectPlayers().size();
+            if (numPeopleBefore != numPeopleAfter) {
+                //if the assignee number changes, send email in 5 minutes
+                setEmailSendTime(ar.nowTime + 300000);
             }
         }
         else if (goalObj.has("assignee")) {
@@ -1074,4 +1069,158 @@ public class GoalRecord extends BaseRecord {
         }
 
     }
+
+    public long getEmailSendTime()  throws Exception {
+        return getAttributeLong("emailSendTime");
+    }
+    public void setEmailSendTime(long newVal) throws Exception {
+        setAttributeLong("emailSendTime", newVal);
+    }
+
+
+
+    ////////////////////////// EMAIL /////////////////////////////
+
+    public void goalEmailRecord(AuthRequest ar, NGPage ngp) throws Exception {
+        try {
+            if (getEmailSendTime()<=0) {
+                throw new Exception("Program Logic Error: attempt to send email on action item when no schedule for sending is set");
+            }
+            if (getEmailSendTime()>ar.nowTime) {
+                throw new Exception("Program Logic Error: attempt to send email on action item when it is not yet time to send it");
+            }
+            NGRole assigneeRole = getAssigneeRole();
+            List<AddressListEntry> players = assigneeRole.getExpandedPlayers(ngp);
+            if (players.size()==0) {
+                //no assignee yet .... so wait
+                return;
+            }
+
+            Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
+            OptOutAddr.appendUsers(players, sendTo);
+
+            UserProfile creatorProfile = null;
+            String creator = getCreator();
+            if (creator==null || creator.length()==0) {
+                //if action item not set correctly, then use the owner of the page as the 'from' person
+                NGRole owners = ngp.getSecondaryRole();
+                List<AddressListEntry> ownerList = owners.getExpandedPlayers(ngp);
+                if (ownerList.size()==0) {
+                    throw new Exception("Action Item has no requester, and the Workspace has no owner");
+                }
+                creatorProfile = ownerList.get(0).getUserProfile();
+                if (creatorProfile==null) {
+                    throw new Exception("Somehow the profile of '"+ownerList.get(0).getUniversalId()+"' is null");
+                }
+            }
+            else {
+                AddressListEntry commenter = new AddressListEntry(creator);
+                creatorProfile = commenter.getUserProfile();
+                if (creatorProfile==null) {
+                    throw new Exception("Somehow the profile of '"+getCreator()+"' is null");
+                }
+            }
+
+
+            for (OptOutAddr ooa : sendTo) {
+                constructEmailRecordOneUser(ar, ngp, ooa, creatorProfile);
+            }
+            System.out.println("Marking ActionItem as SENT: "+getSynopsis());
+            setEmailSendTime(0);
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to send email for Action Item: "+getSynopsis(), e);
+        }
+    }
+
+    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, OptOutAddr ooa,
+            UserProfile requesterProfile) throws Exception  {
+        if (!ooa.hasEmailAddress()) {
+            return;  //ignore users without email addresses
+        }
+        if (requesterProfile==null) {
+            throw new Exception("Program Logic Error: Why did constructEmailRecordOneUser get called with a null profile?");
+        }
+
+        StringWriter bodyWriter = new StringWriter();
+        AuthRequest clone = new AuthDummy(requesterProfile, bodyWriter, ar.getCogInstance());
+        clone.setNewUI(true);
+        clone.retPath = ar.baseURL;
+        clone.write("<html><body>");
+
+        String topicAddress = ar.baseURL + clone.getResourceURL(ngp, "task"+getId()+".htm");
+        String emailSubject = "Action Item: "+getSynopsis();
+        AddressListEntry ale = requesterProfile.getAddressListEntry();
+
+        clone.write("\n<p>From: ");
+        ale.writeLink(clone);
+        clone.write("&nbsp; \n    Workspace: ");
+        ngp.writeContainerLink(clone, 40);
+        clone.write("</p>\n<hr/>\n");
+
+        clone.write("You have been assigned to this activity: <br/>");
+
+        clone.write("<table><tr><td>Synopsis:</td>\n  <td>");
+        clone.write("\n<a href=\""+topicAddress+"\">");
+        clone.writeHtml(getSynopsis());
+        clone.write("</a></td></tr>\n");
+
+        clone.write("<tr><td>Requested by:</td>\n  <td>");
+        ale.writeLink(clone);
+        clone.write("</td></tr>\n");
+
+        clone.write("<tr><td>Assigned to:</td>\n  <td>");
+        boolean needComma = false;
+        for (AddressListEntry person : getAssigneeRole().getExpandedPlayers(ngp)) {
+            if (needComma) {
+                clone.write(", ");
+            }
+            person.writeLink(clone);
+            needComma = true;
+        }
+        clone.write("</td></tr>\n");
+
+        clone.write("<tr><td>Description:</td>\n  <td>");
+        clone.writeHtml(getDescription());
+        clone.write("</td></tr>\n</table>\n");
+
+        EmailSender.containerEmail(ooa, ngp, emailSubject, bodyWriter.toString(), requesterProfile.getEmailWithName(),
+                new Vector<String>(), ar.getCogInstance());
+    }
+
+    public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
+        //don't send email if there is no assignee.  Wait till there is an assignee
+        if (isActive(getState()) && getAssigneeRole().getDirectPlayers().size()>0) {
+            GScheduledNotification sn = new GScheduledNotification(ngp, this);
+            if (!sn.isSent()) {
+                resList.add(sn);
+            }
+        }
+    }
+
+    private class GScheduledNotification implements ScheduledNotification {
+        NGPage ngp;
+        GoalRecord goal;
+
+        public GScheduledNotification( NGPage _ngp, GoalRecord _goal) {
+            ngp  = _ngp;
+            goal = _goal;
+        }
+        public boolean isSent() throws Exception {
+            return goal.getEmailSendTime() <= 0;
+        }
+
+        public long timeToSend() throws Exception {
+            return goal.getEmailSendTime();
+        }
+
+        public void sendIt(AuthRequest ar) throws Exception {
+            goal.goalEmailRecord(ar, ngp);
+        }
+
+        public String selfDescription() throws Exception {
+            return "(ActionItem) "+getSynopsis();
+        }
+    }
+
 }

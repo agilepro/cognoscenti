@@ -604,6 +604,10 @@ public class EmailGenerator extends DOMFace {
         public void sendIt(AuthRequest ar) throws Exception {
             eg.constructEmailRecords(ar, ngp);
         }
+
+        public String selfDescription() throws Exception {
+            return "(Email Generator) "+eg.getSubject();
+        }
     }
 
 }

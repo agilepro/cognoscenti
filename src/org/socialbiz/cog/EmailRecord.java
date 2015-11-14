@@ -287,17 +287,15 @@ public class EmailRecord extends DOMFace
 
     public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
         if (statusReadyToSend()) {
-            EMScheduledNotification sn = new EMScheduledNotification(ngp, this);
+            EMScheduledNotification sn = new EMScheduledNotification(this);
             resList.add(sn);
         }
     }
 
     private class EMScheduledNotification implements ScheduledNotification {
-        NGPage ngp;
         EmailRecord er;
 
-        public EMScheduledNotification( NGPage _ngp, EmailRecord _er) {
-            ngp  = _ngp;
+        public EMScheduledNotification( EmailRecord _er) {
             er = _er;
         }
         public boolean isSent() throws Exception {
@@ -314,6 +312,10 @@ public class EmailRecord extends DOMFace
 
         public void sendIt(AuthRequest ar) throws Exception {
             EmailSender.sendPreparedMessageImmediately(er, ar.getCogInstance());
+        }
+
+        public String selfDescription() throws Exception {
+            return "(Email Record) "+er.getSubject();
         }
     }
 

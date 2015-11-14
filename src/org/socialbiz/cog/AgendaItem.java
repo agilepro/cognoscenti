@@ -1,5 +1,6 @@
 package org.socialbiz.cog;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import org.w3c.dom.Document;
@@ -253,4 +254,12 @@ public class AgendaItem extends DOMFace {
         }
 
     }
+
+    public void gatherUnsentScheduledNotification(NGPage ngp, EmailContext meet, ArrayList<ScheduledNotification> resList) throws Exception {
+        for (CommentRecord ac : this.getComments()) {
+            ac.gatherUnsentScheduledNotification(ngp, meet, resList);
+        }
+    }
+
+
 }

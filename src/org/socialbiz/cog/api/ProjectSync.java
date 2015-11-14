@@ -503,7 +503,7 @@ public class ProjectSync {
                 goal = local.getGoalOrFail(goalStat.idLocal);
             }
             else {
-                goal = local.createGoal();
+                goal = local.createGoal("%fake creator%");
                 goal.setUniversalId(goalStat.universalId);
                 goal.setPassive(true);
                 goal.setRemoteUpdateURL(goalStat.urlRemote);

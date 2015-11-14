@@ -92,7 +92,7 @@ public class ResponseRecord extends DOMFace
     }
 
 
-    public void responseEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note, CommentRecord cr) throws Exception {
+    public void responseEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, CommentRecord cr) throws Exception {
         Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
         OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
 
@@ -100,12 +100,12 @@ public class ResponseRecord extends DOMFace
         UserProfile commenterProfile = commenter.getUserProfile();
 
         for (OptOutAddr ooa : sendTo) {
-            constructEmailRecordOneUser(ar, ngp, note, ooa, cr, commenterProfile);
+            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, cr, commenterProfile);
         }
         setEmailSent(true);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord note, OptOutAddr ooa,
+    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
             CommentRecord cr, UserProfile commenterProfile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
@@ -117,8 +117,8 @@ public class ResponseRecord extends DOMFace
         clone.retPath = ar.baseURL;
         clone.write("<html><body>");
 
-        String topicAddress = ar.baseURL + clone.getResourceURL(ngp, note) + "#cmt" + cr.getTime();
-        String emailSubject = note.getSubject()+": Proposal "+getChoice()+" response";
+        String topicAddress = ar.baseURL + noteOrMeet.getResourceURL(clone, ngp) + "#cmt" + cr.getTime();
+        String emailSubject = noteOrMeet.emailSubject()+": Proposal "+getChoice()+" response";
         AddressListEntry ale = commenterProfile.getAddressListEntry();
 
         clone.write("\n<p>From: ");
@@ -130,7 +130,7 @@ public class ResponseRecord extends DOMFace
         clone.write("</b> response on a proposal on topic <a href=\"");
         clone.write(topicAddress);
         clone.write("\">");
-        clone.writeHtml(note.getSubject());
+        clone.writeHtml(noteOrMeet.emailSubject());
         clone.write("</a></p>\n<hr/>\n");
 
         clone.write(this.getHtml(ar));
@@ -165,19 +165,19 @@ public class ResponseRecord extends DOMFace
         }
     }
 
-    public ScheduledNotification getScheduledNotification(NGPage ngp, NoteRecord note, CommentRecord cr) {
-        return new RRScheduledNotification(ngp, note, cr, this);
+    public ScheduledNotification getScheduledNotification(NGPage ngp, EmailContext noteOrMeet, CommentRecord cr) {
+        return new RRScheduledNotification(ngp, noteOrMeet, cr, this);
     }
 
     private class RRScheduledNotification implements ScheduledNotification {
         NGPage ngp;
-        NoteRecord note;
+        EmailContext noteOrMeet;
         CommentRecord cr;
         ResponseRecord rr;
 
-        public RRScheduledNotification( NGPage _ngp, NoteRecord _note, CommentRecord _cr, ResponseRecord _rr) {
+        public RRScheduledNotification( NGPage _ngp, EmailContext _noteOrMeet, CommentRecord _cr, ResponseRecord _rr) {
             ngp  = _ngp;
-            note = _note;
+            noteOrMeet = _noteOrMeet;
             cr   = _cr;
             rr   = _rr;
         }
@@ -190,7 +190,11 @@ public class ResponseRecord extends DOMFace
         }
 
         public void sendIt(AuthRequest ar) throws Exception {
-            rr.responseEmailRecord(ar,ngp,note,cr);
+            rr.responseEmailRecord(ar,ngp,noteOrMeet,cr);
+        }
+
+        public String selfDescription() throws Exception {
+            return "(Response) "+rr.getUserId()+" on "+noteOrMeet.selfDescription();
         }
     }
 

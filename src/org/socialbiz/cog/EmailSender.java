@@ -221,7 +221,7 @@ public class EmailSender extends TimerTask {
             Thread.sleep(200);  //just small delay to avoid saturation
             ngpi = findOverdueContainer(ar.nowTime);
         }
-        System.out.println("BACKGROUND EVENTS: Processed "+iCount+" background events at "+(new Date()));
+        System.out.println("BACKGROUND EVENTS: Processed "+iCount+" background events at "+(new Date())+System.currentTimeMillis());
     }
 
     private NGPageIndex findOverdueContainer(long nowTime) {

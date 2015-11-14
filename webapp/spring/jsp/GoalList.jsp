@@ -261,6 +261,27 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return res;
     }
+    $scope.getName = function(uid) {
+        var person = $scope.getPeople(uid);
+        if (!person) {
+            return uid;
+        }
+        if (person.length==0) {
+            return uid;
+        }
+        console.log("PERSON: "+JSON.stringify(person[0]));
+        if (person[0].name) {
+            return person[0].name;
+        }
+        return "Unknown "+uid;
+    }
+    $scope.getLink = function(uid) {
+        var person = $scope.getPeople(uid);
+        if (person.length==0) {
+            return uid;
+        }
+        return "<%=ar.retPath%>v/"+person[0].key+"/userSettings.htm";
+    }
 
 });
 
@@ -434,11 +455,14 @@ function addvalue() {
                   </button>
                 </span>
 
-                <div class="taskOverview">assigned to:
-                   <span class="red" ng-repeat="ass in rec.assignees"><a href="#">{{ass}}</a></span>
+                <div class="taskOverview">Assigned to:
+                   <span class="red" ng-repeat="ass in rec.assignees"><a href="{{getLink(ass)}}">{{getName(ass)}}</a>, </span>
 
                 </div>
                 <div ng-show="rec.show" id="{{rec.id}}_1" style="max-width:800px;">
+                    <div class="taskOverview">Requested by:
+                         <span class="red" ng-repeat="ass in rec.requesters"><a href="{{getLink(ass)}}">{{getName(ass)}}</a>, </span>
+                    </div>
                     <div class="taskStatus">Description: {{rec.description}}</div>
                     <div class="taskStatus">Priority:  <span style="color:red">{{rec.priority}}</span></div>
                     <div class="taskStatus">Status: {{rec.status}}  - (rank {{rec.rank}})</div>

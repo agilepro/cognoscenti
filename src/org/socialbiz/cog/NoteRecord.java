@@ -40,8 +40,8 @@ import org.workcast.json.JSONObject;
 * Leaflet is the old term for this, we prefer the term Topic now everywhere.
 * (Used to be called LeafletRecord, but name changed March 2013)
 */
-public class NoteRecord extends DOMFace
-{
+public class NoteRecord extends DOMFace implements EmailContext {
+
     //This is actually one week before the server started, and is used mainly in the
     //startup methods for an arbitrary time long enough ago that automated notifications
     //should be cancelled or ignored.  If the server stays on a long this value will
@@ -719,28 +719,6 @@ public class NoteRecord extends DOMFace
       }
 
 
-      /**
-       * The email for a comment should be sent about 5 minutes after the comment is created.
-       * This gives the author enough time to correct things if needed.
-       * If the email has not been sent, this will return the time that it should be sent.
-       * If the email has already been sent, then this return -1.
-       */
-      public long emailSchedule() throws Exception  {
-          if (getEmailSent()) {
-              return -1;
-          }
-          long createTime = getLastEdited();
-          if (createTime < System.currentTimeMillis() - 36 * 60 * 60 * 1000) {
-              //if it is more than 36 hours old, then suppress sending email.
-              //this is mainly to avoid sending email for every note in history
-              //before we invented the email sending of notes.
-              setEmailSent(true);
-              return -1;
-          }
-          //ok, set it to set five minutes after the time it was edited
-          return createTime + 300000;
-      }
-
       public void topicEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note) throws Exception {
           Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
           OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
@@ -939,6 +917,22 @@ public class NoteRecord extends DOMFace
          return best;
      }
 
+
+     /**
+      * Needed for the EmailContext interface
+      */
+     public String emailSubject() throws Exception {
+         return getSubject();
+     }
+
+     public String getResourceURL(AuthRequest ar, NGPage ngp) throws Exception {
+         return ar.getResourceURL(ngp,  "noteZoom"+this.getId()+".htm");
+     }
+     public String selfDescription() throws Exception {
+         return "(Note) "+getSubject();
+     }
+
+
      public void gatherUnsentScheduledNotification(NGPage ngp,
              ArrayList<ScheduledNotification> resList) throws Exception {
          ScheduledNotification sn = getScheduledNotification(ngp);
@@ -973,6 +967,10 @@ public class NoteRecord extends DOMFace
 
          public void sendIt(AuthRequest ar) throws Exception {
              note.topicEmailRecord(ar,ngp,note);
+         }
+
+         public String selfDescription() throws Exception {
+             return note.selfDescription();
          }
      }
 

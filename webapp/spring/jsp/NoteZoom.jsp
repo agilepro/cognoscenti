@@ -189,9 +189,6 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.getMyResponse = function(cmt) {
         var selected = [];
-        if (cmt.user=="<%ar.writeJS(currentUser);%>") {
-            return selected;
-        }
         cmt.responses.map( function(item) {
             if (item.user=="<%ar.writeJS(currentUser);%>") {
                 selected.push(item);
@@ -346,8 +343,9 @@ app.controller('myCtrl', function($scope, $http) {
                        </td>
                    </tr>
                    </table>
-<% if (isLoggedIn) { %>
-                   <div ng-show="cmt.poll && editCmt=='NOTHING' && editResp=='NOTHING'  && cmt.user!='<%ar.writeJS(currentUser);%>'">
+<% if (isLoggedIn && canUpdate) { %>
+
+                   <div ng-show="cmt.poll && editCmt=='NOTHING' && editResp=='NOTHING'">
                        Respond: <span ng-repeat="choice in cmt.choices">&nbsp;
                            <button class="btn btn-primary" ng-click="startResponse(cmt, choice)">
                                {{choice}}

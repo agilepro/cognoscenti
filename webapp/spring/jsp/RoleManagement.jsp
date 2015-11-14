@@ -206,7 +206,7 @@ app.controller('myCtrl', function($scope, $http) {
                 </div>
                 <div style="float:right;">
                     <span ng-repeat="player in role.players">
-                        <img src="<%=ar.retPath%>users/{{player.key}}.jpg" style="width:32px;height:32px">
+                        <img class="img-circle" src="<%=ar.retPath%>users/{{player.key}}.jpg" style="width:32px;height:32px">
                     </span>
                 </div>
                 <div style="clear:both;"></div>
