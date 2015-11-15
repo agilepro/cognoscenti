@@ -1369,7 +1369,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
       <table ng-show="showItemMap[item.id]">
       <tr ng-repeat="cmt in item.comments">
            <td style="width:50px;vertical-align:top;padding:15px;">
-               <img style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
+               <img class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
            </td>
            <td>
                <div class="leafContent comment-outer">
@@ -1472,7 +1472,6 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
 
     Refreshed {{refreshCount}} times.   {{refreshStatus}}<br/>
     reminder sent {{meeting.reminderSent | date:'M/d/yy H:mm'}}
-
 
     <script type="text/ng-template" id="myModalDueDate.html">
         <div class="modal-header">

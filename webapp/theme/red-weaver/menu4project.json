@@ -48,6 +48,10 @@
         {
           "name": "Action Item List",
           "href": "goalList.htm"
+        },
+        {
+          "name": "Decision List",
+          "href": "decisionList.htm"
         }
       ]
   },

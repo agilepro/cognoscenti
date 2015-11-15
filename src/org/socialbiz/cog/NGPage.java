@@ -1555,8 +1555,8 @@ public class NGPage extends ContainerCommon implements NGContainer
 
 
     public List<DecisionRecord> getDecisions() throws Exception {
-        DOMFace meetings = requireChild("meetings", DOMFace.class);
-        return meetings.getChildren("meeting", DecisionRecord.class);
+        DOMFace meetings = requireChild("decisions", DOMFace.class);
+        return meetings.getChildren("decision", DecisionRecord.class);
     }
     public DecisionRecord createDecision() throws Exception {
         DOMFace decisions = requireChild("decisions", DOMFace.class);
@@ -1568,6 +1568,7 @@ public class NGPage extends ContainerCommon implements NGContainer
         }
         DecisionRecord dr = decisions.createChildWithID("decision", DecisionRecord.class,
                 "num", Integer.toString(max+1));
+        dr.setUniversalId(this.getContainerUniversalId()+"@DEC"+max);
         return dr;
     }
     public DecisionRecord findDecisionOrNull(int number) throws Exception {
@@ -1577,6 +1578,13 @@ public class NGPage extends ContainerCommon implements NGContainer
             }
         }
         return null;
+    }
+    public DecisionRecord findDecisionOrFail(int num) throws Exception {
+        DecisionRecord dr = findDecisionOrNull(num);
+        if (dr!=null) {
+            return dr;
+        }
+        throw new Exception("Could not find a decision with the number="+num);
     }
 
 

@@ -26,6 +26,7 @@
 %><%@page import="org.socialbiz.cog.BaseRecord"
 %><%@page import="org.socialbiz.cog.Cognoscenti"
 %><%@page import="org.socialbiz.cog.CustomRole"
+%><%@page import="org.socialbiz.cog.DecisionRecord"
 %><%@page import="org.socialbiz.cog.GoalRecord"
 %><%@page import="org.socialbiz.cog.HistoryRecord"
 %><%@page import="org.socialbiz.cog.LicensedURL"

@@ -269,7 +269,6 @@ app.controller('myCtrl', function($scope, $http) {
         if (person.length==0) {
             return uid;
         }
-        console.log("PERSON: "+JSON.stringify(person[0]));
         if (person[0].name) {
             return person[0].name;
         }

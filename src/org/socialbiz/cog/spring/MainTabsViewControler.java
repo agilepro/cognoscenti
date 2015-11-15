@@ -44,7 +44,6 @@ import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NoteRecord;
 import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
-import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
@@ -1160,95 +1159,7 @@ public class MainTabsViewControler extends BaseController {
           }
       }
 
-      @RequestMapping(value = "/{siteId}/{pageId}/updateGoal.json", method = RequestMethod.POST)
-      public void updateGoal(@PathVariable String siteId,@PathVariable String pageId,
-              HttpServletRequest request, HttpServletResponse response) {
-          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-          String gid = "";
-          try{
-              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngp);
-              ar.assertMember("Must be a member to create a action item.");
-              ar.assertNotFrozen(ngp);
-              gid = ar.reqParam("gid");
-              JSONObject goalInfo = getPostedObject(ar);
-              GoalRecord gr = null;
-              int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
-              boolean isNew = "~new~".equals(gid);
-              if (isNew) {
-                  gr = ngp.createGoal(ar.getBestUserId());
-                  goalInfo.put("universalid", gr.getUniversalId());
-                  eventType = HistoryRecord.EVENT_TYPE_CREATED;
-              }
-              else {
-                  gr = ngp.getGoalOrFail(gid);
-              }
 
-              int previousState = gr.getState();
-              String previousStatus = gr.getStatus();
-              long previousDue = gr.getDueDate();
-              String previousProspects = gr.getProspects();
-
-              gr.updateGoalFromJSON(goalInfo, ngp, ar);
-
-              //now make the history description of what just happened
-              StringBuffer inventedComment = new StringBuffer(goalInfo.optString("newAccomplishment"));
-              if (previousState != gr.getState()) {
-                  inventedComment.append(" State:");
-                  inventedComment.append(BaseRecord.stateName(gr.getState()));
-              }
-              if (!previousStatus.equals(gr.getStatus())) {
-                  inventedComment.append(" Status:");
-                  inventedComment.append(gr.getStatus());
-              }
-              if (previousDue != gr.getDueDate()) {
-                  inventedComment.append(" DueDate:");
-                  inventedComment.append(SectionUtil.getNicePrintDate(gr.getDueDate()));
-              }
-              if (!previousProspects.equals(gr.getProspects())) {
-                  inventedComment.append(" Prospects:");
-                  inventedComment.append(gr.getProspects());
-              }
-
-              String comments = inventedComment.toString();
-
-              //create the history record here.
-              HistoryRecord.createHistoryRecord(ngp, gr.getId(),
-                      HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar,
-                      comments);
-
-              ngp.saveFile(ar, "Updated action item "+gid);
-              JSONObject repo = gr.getJSON4Goal(ngp);
-              repo.write(ar.w, 2, 2);
-              ar.flush();
-          }catch(Exception ex){
-              Exception ee = new Exception("Unable to update Action Item ("+gid+")", ex);
-              streamException(ee, ar);
-          }
-      }
-
-      @RequestMapping(value = "/{siteId}/{pageId}/getGoalHistory.json", method = RequestMethod.GET)
-      public void getGoalHistory(@PathVariable String siteId,@PathVariable String pageId,
-              HttpServletRequest request, HttpServletResponse response) {
-          AuthRequest ar = AuthRequest.getOrCreate(request, response);
-          try{
-              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngp);
-              ar.assertMember("Must be a member to get action item history.");
-              String gid = ar.reqParam("gid");
-              GoalRecord gr = ngp.getGoalOrFail(gid);
-
-              JSONArray repo = new JSONArray();
-              for (HistoryRecord hist : gr.getTaskHistory(ngp)) {
-                  repo.put(hist.getJSON(ngp, ar));
-              }
-              repo.write(ar.w, 2, 2);
-              ar.flush();
-          }catch(Exception ex){
-              Exception ee = new Exception("Unable to create Action Item for minutes of meeting.", ex);
-              streamException(ee, ar);
-          }
-      }
 
 
       @RequestMapping(value = "/{siteId}/{pageId}/cloneMeeting.htm", method = RequestMethod.GET)

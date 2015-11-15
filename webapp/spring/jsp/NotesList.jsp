@@ -97,6 +97,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.showVizDel = false;
     $scope.filterMap = {};
     $scope.openMap = {};
+    $scope.showFilter = true;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -122,9 +123,9 @@ app.controller('myCtrl', function($scope, $http) {
     }
     $scope.sortNotes();
     $scope.getRows = function() {
-        var lcfilter = $scope.filter.toLowerCase();
+        var src = $scope.notes;
         var res = [];
-        $scope.notes.map( function(aNote) {
+        src.map( function(aNote) {
             if (aNote.public && !aNote.deleted && !$scope.showVizPub) {
                 return;
             }
@@ -143,15 +144,24 @@ app.controller('myCtrl', function($scope, $http) {
             if (!hasLabel) {
                 return;
             }
-
-            if (aNote.subject.toLowerCase().indexOf(lcfilter)>=0) {
-                res.push(aNote);
-            }
-            else if (aNote.html.toLowerCase().indexOf(lcfilter)>=0) {
-                res.push(aNote);
-            }
+            res.push(aNote);
         });
-        return res;
+        src = res;
+        var filterlist = $scope.filter.split(" ");
+        for (var j=0; j<filterlist.length; j++) {
+            var res = [];
+            var lcfilter = filterlist[j].toLowerCase();
+            src.map( function(aNote) {
+                if (aNote.subject.toLowerCase().indexOf(lcfilter)>=0) {
+                    res.push(aNote);
+                }
+                else if (aNote.html.toLowerCase().indexOf(lcfilter)>=0) {
+                    res.push(aNote);
+                }
+            });
+            src = res;
+        }
+        return src;
     }
     $scope.hasLabel = function(searchName) {
         return $scope.filterMap[searchName];

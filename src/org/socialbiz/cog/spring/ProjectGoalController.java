@@ -31,6 +31,8 @@ import org.socialbiz.cog.AccessControl;
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.BaseRecord;
+import org.socialbiz.cog.DOMFace;
+import org.socialbiz.cog.DecisionRecord;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.LicensedURL;
@@ -50,6 +52,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 /**
@@ -680,4 +683,160 @@ public class ProjectGoalController extends BaseController {
         NGWebUtils.sendResponse(ar, responseMessage);
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/updateGoal.json", method = RequestMethod.POST)
+    public void updateGoal(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String gid = "";
+        try{
+            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            ar.setPageAccessLevels(ngp);
+            ar.assertMember("Must be a member to create a action item.");
+            ar.assertNotFrozen(ngp);
+            gid = ar.reqParam("gid");
+            JSONObject goalInfo = getPostedObject(ar);
+            GoalRecord gr = null;
+            int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
+            boolean isNew = "~new~".equals(gid);
+            if (isNew) {
+                gr = ngp.createGoal(ar.getBestUserId());
+                goalInfo.put("universalid", gr.getUniversalId());
+                eventType = HistoryRecord.EVENT_TYPE_CREATED;
+            }
+            else {
+                gr = ngp.getGoalOrFail(gid);
+            }
+
+            int previousState = gr.getState();
+            String previousStatus = gr.getStatus();
+            long previousDue = gr.getDueDate();
+            String previousProspects = gr.getProspects();
+
+            gr.updateGoalFromJSON(goalInfo, ngp, ar);
+
+            //now make the history description of what just happened
+            StringBuffer inventedComment = new StringBuffer(goalInfo.optString("newAccomplishment"));
+            if (previousState != gr.getState()) {
+                inventedComment.append(" State:");
+                inventedComment.append(BaseRecord.stateName(gr.getState()));
+            }
+            if (!previousStatus.equals(gr.getStatus())) {
+                inventedComment.append(" Status:");
+                inventedComment.append(gr.getStatus());
+            }
+            if (previousDue != gr.getDueDate()) {
+                inventedComment.append(" DueDate:");
+                inventedComment.append(SectionUtil.getNicePrintDate(gr.getDueDate()));
+            }
+            if (!previousProspects.equals(gr.getProspects())) {
+                inventedComment.append(" Prospects:");
+                inventedComment.append(gr.getProspects());
+            }
+
+            String comments = inventedComment.toString();
+
+            //create the history record here.
+            HistoryRecord.createHistoryRecord(ngp, gr.getId(),
+                    HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar,
+                    comments);
+
+            ngp.saveFile(ar, "Updated action item "+gid);
+            JSONObject repo = gr.getJSON4Goal(ngp);
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to update Action Item ("+gid+")", ex);
+            streamException(ee, ar);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/getGoalHistory.json", method = RequestMethod.GET)
+    public void getGoalHistory(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            ar.setPageAccessLevels(ngp);
+            ar.assertMember("Must be a member to get action item history.");
+            String gid = ar.reqParam("gid");
+            GoalRecord gr = ngp.getGoalOrFail(gid);
+
+            JSONArray repo = new JSONArray();
+            for (HistoryRecord hist : gr.getTaskHistory(ngp)) {
+                repo.put(hist.getJSON(ngp, ar));
+            }
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to create Action Item for minutes of meeting.", ex);
+            streamException(ee, ar);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/decisionList.htm", method = RequestMethod.GET)
+    public ModelAndView decisionList(@PathVariable String siteId, @PathVariable String pageId,
+        HttpServletRequest request,   HttpServletResponse response)  throws Exception
+    {
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            registerRequiredProject(ar, siteId, pageId);
+
+            ModelAndView modelAndView= checkLoginMember(ar);
+            if (modelAndView!=null) {
+                return modelAndView;
+            }
+
+            modelAndView=new ModelAndView("DecisionList");
+            return modelAndView;
+
+        }catch(Exception ex){
+            throw new NGException("nugen.operation.fail.project.edit.task.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/updateDecision.json", method = RequestMethod.POST)
+    public void updateDecision(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String did = "";
+        try{
+            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            ar.setPageAccessLevels(ngp);
+            ar.assertMember("Must be a member to update a decision.");
+            ar.assertNotFrozen(ngp);
+            did = ar.reqParam("did");
+            JSONObject decisionInfo = getPostedObject(ar);
+            DecisionRecord dr = null;
+            int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
+            boolean isNew = "~new~".equals(did);
+            if (isNew) {
+                dr = ngp.createDecision();
+                decisionInfo.put("universalid", dr.getUniversalId());
+                dr.setTimestamp(ar.nowTime);
+                decisionInfo.put("timestamp", ar.nowTime);
+                eventType = HistoryRecord.EVENT_TYPE_CREATED;
+            }
+            else {
+                int didVal = DOMFace.safeConvertInt(did);
+                if (didVal<=0) {
+                    throw new Exception("Don't understand the decision number: "+didVal);
+                }
+                dr = ngp.findDecisionOrFail(didVal);
+            }
+            dr.updateDecisionFromJSON(decisionInfo, ngp, ar);
+
+            //create the history record here.
+            HistoryRecord.createHistoryRecord(ngp, Integer.toString(dr.getNumber()),
+                    HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar,
+                    "created decision");
+
+            ngp.saveFile(ar, "Updated decision "+did);
+            JSONObject repo = dr.getJSON4Decision(ngp, ar);
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to update Decision ("+did+")", ex);
+            streamException(ee, ar);
+        }
+    }
 }

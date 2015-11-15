@@ -20,8 +20,14 @@
 
 package org.socialbiz.cog;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Vector;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.workcast.json.JSONArray;
+import org.workcast.json.JSONObject;
 
 public class DecisionRecord extends DOMFace {
 
@@ -42,6 +48,13 @@ public class DecisionRecord extends DOMFace {
     public void setDecision(String newVal) throws Exception {
         setScalar("decision", newVal);
     }
+    public String getContentHtml(AuthRequest ar)  throws Exception {
+        return WikiConverterForWYSIWYG.makeHtmlString(ar, getDecision());
+    }
+    public void setContentHtml(AuthRequest ar, String newHtml) throws Exception {
+        setDecision(HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
+    }
+
 
     public long getTimestamp() throws Exception {
         return getAttributeLong("timestamp");
@@ -50,5 +63,94 @@ public class DecisionRecord extends DOMFace {
         setAttributeLong("timestamp", newVal);
     }
 
+    /**
+     * the universal id is a globally unique ID for this decision, composed of the
+     * id for the server, the project, and the action item. This is set at the point
+     * where the action item is created and remains with the note as it is carried
+     * around the system as long as it is moved as a clone from a project to a
+     * clone of a project. If it is copied or moved to another project for any
+     * other reason, then the universal ID should be reset.
+     */
+    public String getUniversalId() throws Exception {
+        return getScalar("universalid");
+    }
+
+    public void setUniversalId(String newID) throws Exception {
+        setScalar("universalid", newID);
+    }
+
+
+    /**
+     * get the labels on a document -- only labels valid in the project,
+     * and no duplicates
+     */
+    public List<NGLabel> getLabels(NGPage ngp) throws Exception {
+        Vector<NGLabel> res = new Vector<NGLabel>();
+        for (String name : getVector("labels")) {
+            NGLabel aLabel = ngp.getLabelRecordOrNull(name);
+            if (aLabel!=null) {
+                if (!res.contains(aLabel)) {
+                    res.add(aLabel);
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * set the list of labels on a document
+     */
+    public void setLabels(List<NGLabel> values) throws Exception {
+        Vector<String> labelNames = new Vector<String>();
+        for (NGLabel aLable : values) {
+            labelNames.add(aLable.getName());
+        }
+        //Since this is a 'set' type vector, always sort them so that they are
+        //stored in a consistent way ... so files are more easily compared
+        Collections.sort(labelNames);
+        setVector("labels", labelNames);
+    }
+
+
+    public JSONObject getJSON4Decision(NGPage ngp, AuthRequest ar) throws Exception {
+        JSONObject thisDecision = new JSONObject();
+        thisDecision.put("universalid", getUniversalId());
+        thisDecision.put("num", getNumber());
+        thisDecision.put("timestamp", getTimestamp());
+        JSONObject labelMap = new JSONObject();
+        for (NGLabel lRec : getLabels(ngp) ) {
+            labelMap.put(lRec.getName(), true);
+        }
+        thisDecision.put("labelMap",  labelMap);
+        thisDecision.put("html", getContentHtml(ar));
+        return thisDecision;
+    }
+
+    public void updateDecisionFromJSON(JSONObject decisionObj, NGPage ngp, AuthRequest ar) throws Exception {
+        String universalid = decisionObj.getString("universalid");
+        if (!universalid.equals(getUniversalId())) {
+            //just checking, this should never happen
+            throw new Exception("Error trying to update the record for a decision with UID ("
+                    +getUniversalId()+") with post from decision with UID ("+universalid+")");
+        }
+        if (decisionObj.has("html")) {
+            setContentHtml(ar, decisionObj.getString("html"));
+        }
+        if (decisionObj.has("timestamp")) {
+            setTimestamp(decisionObj.getLong("timestamp"));
+        }
+        if (decisionObj.has("labelMap")) {
+            JSONObject labelMap = decisionObj.getJSONObject("labelMap");
+            Vector<NGLabel> selectedLabels = new Vector<NGLabel>();
+            for (NGLabel stdLabel : ngp.getAllLabels()) {
+                String labelName = stdLabel.getName();
+                if (labelMap.optBoolean(labelName)) {
+                    selectedLabels.add(stdLabel);
+                }
+            }
+            setLabels(selectedLabels);
+        }
+
+    }
 
 }

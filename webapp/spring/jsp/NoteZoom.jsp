@@ -300,7 +300,7 @@ app.controller('myCtrl', function($scope, $http) {
 
       <tr ng-repeat="cmt in getComments()">
            <td style="width:50px;vertical-align:top;padding:15px;">
-               <img id="cmt{{cmt.time}}" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
+               <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
            </td>
            <td>
                <div class="leafContent" style="border: 1px solid lightgrey;border-radius:8px;padding:5px;margin-top:15px;background-color:#EEE">
@@ -617,7 +617,7 @@ app.controller('myCtrl', function($scope, $http) {
                                 }
                                 %>
                                 <tr>
-                                     <td class="projectStreamIcons"><a href="#"><img src="<%=photoSrc%>" alt="" width="50" height="50" /></a></td>
+                                     <td class="projectStreamIcons"><a href="#"><img class="img-circle" src="<%=photoSrc%>" alt="" width="50" height="50" /></a></td>
                                      <td colspan="2"  class="projectStreamText" style="max-width:800px;">
                                          <%
 
