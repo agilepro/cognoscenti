@@ -44,6 +44,8 @@ public class HistoryRecord extends DOMFace
     public final static int CONTEXT_TYPE_ROLE         = 5;
     public final static int CONTEXT_TYPE_CONTAINER    = 6;
     public final static int CONTEXT_TYPE_MEETING      = 7;
+    public final static int CONTEXT_TYPE_DECISION     = 8;
+
 
     public final static String EVENT_TYPE_PREFIX="event.type";
     public final static String CONTEXT_TYPE_PREFIX="context.type";
@@ -234,13 +236,14 @@ public class HistoryRecord extends DOMFace
     * CONTEXT_TYPE_ROLE         = 5;
     * CONTEXT_TYPE_CONTAINER    = 6;
     * CONTEXT_TYPE_MEETING      = 7;
+    * CONTEXT_TYPE_DECISION     = 8;
     */
     public int getContextType() throws Exception {
         return safeConvertInt(getScalar("contextType"));
     }
     public void setContextType(int contextTypeVal) throws Exception {
-        if (contextTypeVal<0 || contextTypeVal>7) {
-            throw new Exception("Program Logic Error: history context type must be from 0 to 6.");
+        if (contextTypeVal<0 || contextTypeVal>8) {
+            throw new Exception("Program Logic Error: history context type must be from 0 to 8.");
         }
         setScalar("contextType", Integer.toString(contextTypeVal));
     }
@@ -325,6 +328,8 @@ public class HistoryRecord extends DOMFace
                 return "Role";
             case CONTEXT_TYPE_MEETING:
                 return "Meeting";
+            case CONTEXT_TYPE_DECISION:
+                return "Decision";
             default:
         }
         return "Object";
@@ -448,6 +453,9 @@ public class HistoryRecord extends DOMFace
                 break;
             case CONTEXT_TYPE_MEETING:
                 messageID = "history.meeting.";
+                break;
+            case CONTEXT_TYPE_DECISION:
+                messageID = "history.decision.";
                 break;
             case CONTEXT_TYPE_CONTAINER:
                 //THIS IS NEVER USED!
@@ -875,12 +883,29 @@ history.task.subtask.add    113
                 return meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
             }
         }
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
+            DecisionRecord dr = ngp.findDecisionOrNull(safeConvertInt(objectKey));
+            if (dr!=null) {
+                return "#" + dr.getNumber();
+            }
+        }
         return "Unknown";
     }
 
     public String lookUpURL(AuthRequest ar, NGPage ngp) throws Exception {
-        int contextType = getContextType();
-        String objectKey = getContext();
+        return lookUpResourceURL(ar, ngp, getContextType(), getContext());
+    }
+
+    /**
+     * Get a 'standard' URL for accessing object based on their type and ID.
+     * Only work on a single project workspace.
+     */
+    public static String lookUpResourceURL(AuthRequest ar, NGPage ngp,
+            int contextType, String contextKey) throws Exception {
+
+        //always encode to avoid problems with injection
+        String objectKey = URLEncoder.encode(contextKey, "UTF-8");
+
         if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
             return ar.getResourceURL(ngp, "projectAllTasks.htm");
         }
@@ -888,7 +913,7 @@ history.task.subtask.add    113
             return  ar.getResourceURL(ngp, "task"+objectKey+".htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-            return ar.getResourceURL(ngp, "findUser.htm?id=")+URLEncoder.encode(objectKey, "UTF-8");
+            return ar.getResourceURL(ngp, "findUser.htm?id=")+objectKey;
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
             return ar.getResourceURL(ngp, "docinfo"+objectKey+".htm");
@@ -900,9 +925,12 @@ history.task.subtask.add    113
             return ar.getResourceURL(ngp, "permission.htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
-            return ar.getResourceURL(ngp, "meetingFull.htm?id="+objectKey);
+            return ar.getResourceURL(ngp, "meetingFull.htm?id=")+objectKey;
         }
-        return "";
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
+            return ar.getResourceURL(ngp, "decisionList.htm#DEC")+objectKey;
+        }
+        return ar.getResourceURL(ngp, "frontPage.htm");
     }
 
 

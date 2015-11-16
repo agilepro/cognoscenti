@@ -26,10 +26,14 @@ import java.util.Vector;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 public class DecisionRecord extends DOMFace {
+
+    //these codes match those for History record
+    public final static int SOURCE_TYPE_TOPIC        = 4;
+    public final static int SOURCE_TYPE_MEETING      = 7;
+    public final static int SOURCE_TYPE_DECISION     = 8;
 
     public DecisionRecord(Document nDoc, Element nEle, DOMFace p) {
         super(nDoc, nEle, p);
@@ -62,6 +66,32 @@ public class DecisionRecord extends DOMFace {
     public void setTimestamp(long newVal) throws Exception {
         setAttributeLong("timestamp", newVal);
     }
+
+    //Where did this decision come from???
+    public int getSourceType() throws Exception {
+        return getAttributeInt("sourceType");
+    }
+    public void setSourceType(int newVal) throws Exception {
+        setAttributeInt("sourceType", newVal);
+    }
+    public String getSourceId() throws Exception {
+        return getAttribute("sourceId");
+    }
+    public void setSourceId(String newVal) throws Exception {
+        setAttribute("sourceId", newVal);
+    }
+    public long getSourceCmt() throws Exception {
+        return getAttributeLong("sourceCmt");
+    }
+    public void setSourceCmt(long newVal) throws Exception {
+        setAttributeLong("sourceCmt", newVal);
+    }
+
+    public String getSourceUrl(AuthRequest ar, NGPage ngp) throws Exception {
+        return HistoryRecord.lookUpResourceURL(ar, ngp, getSourceType(), getSourceId())
+                + "#cmt" + getSourceCmt();
+    }
+
 
     /**
      * the universal id is a globally unique ID for this decision, composed of the
@@ -123,6 +153,10 @@ public class DecisionRecord extends DOMFace {
         }
         thisDecision.put("labelMap",  labelMap);
         thisDecision.put("html", getContentHtml(ar));
+        thisDecision.put("sourceType", getSourceType());
+        thisDecision.put("sourceId", getSourceId());
+        thisDecision.put("sourceCmt", getSourceCmt());
+        thisDecision.put("sourceUrl", getSourceUrl(ar, ngp));
         return thisDecision;
     }
 
@@ -149,6 +183,16 @@ public class DecisionRecord extends DOMFace {
                 }
             }
             setLabels(selectedLabels);
+        }
+
+        if (decisionObj.has("sourceType")) {
+            setSourceType(decisionObj.getInt("sourceType"));
+        }
+        if (decisionObj.has("sourceId")) {
+            setSourceId(decisionObj.getString("sourceId"));
+        }
+        if (decisionObj.has("sourceCmt")) {
+            setSourceCmt(decisionObj.getLong("sourceCmt"));
         }
 
     }

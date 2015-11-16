@@ -30,8 +30,10 @@ Required parameters:
         String objectKey = hist.getContext();
         int contextType = hist.getContextType();
         String key = hist.getCombinedKey();
-        String url = "";
-        String objName = "Unidentified";
+        String url = hist.lookUpURL(ar, ngp);
+        String objName = hist.lookUpObjectName(ngp);
+
+/*
         if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
             url = ar.getResourceURL(ngp, "projectAllTasks.htm");
             objName = "";
@@ -75,6 +77,8 @@ Required parameters:
                 objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
             }
         }
+        */
+
         JSONObject jObj = hist.getJSON(ngp,ar);
         jObj.put("responsible", ale.getJSON() );
         if (responsible!=null) {

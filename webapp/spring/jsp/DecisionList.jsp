@@ -81,6 +81,8 @@ Required parameters:
 <script src="<%=ar.retPath%>jscript/textAngular-sanitize.min.js"></script>
 <script src="<%=ar.retPath%>jscript/textAngular.min.js"></script>
 
+
+
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
@@ -243,82 +245,34 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
 
-  $scope.openDecisionEditor = function (decision) {
+    $scope.openDecisionEditor = function (decision) {
 
-    var modalInstance = $modal.open({
-        animation: false,
-        templateUrl: 'myModalDecision.html',
-        controller: 'ModalInstanceCtrl',
-        size: 'lg',
-        resolve: {
-            decision: function () {
-                return JSON.parse(JSON.stringify(decision));
-            },
-            allLabels: function() {
-                return $scope.allLabels;
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/DecisionModal.html',
+            controller: 'ModalInstanceCtrl',
+            size: 'lg',
+            resolve: {
+                decision: function () {
+                    return JSON.parse(JSON.stringify(decision));
+                },
+                allLabels: function() {
+                    return $scope.allLabels;
+                }
             }
-        }
-    });
+        });
 
-    modalInstance.result.then(function (modifiedDecision) {
-        $scope.saveDecision(modifiedDecision);
-    }, function () {
-        //cancel action - nothing really to do
-    });
-
-
-  };
+        modalInstance.result.then(function (modifiedDecision) {
+            $scope.saveDecision(modifiedDecision);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
 });
 
-app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, decision, allLabels) {
-
-    $scope.decision = decision;
-    $scope.allLabels = allLabels;
-    $scope.dummyDate = "";
-
-    $scope.hasLabel = function(val) {
-        return $scope.decision.labelMap[val];
-    }
-    $scope.toggleLabel = function(val) {
-        console.log("toggling label for: "+val.name);
-        $scope.decision.labelMap[val.name] = !$scope.decision.labelMap[val.name];
-    }
-
-    $scope.ok = function () {
-        $scope.decision.timestamp = $scope.dummyDate.getTime();
-        $modalInstance.close($scope.decision);
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-
-    $scope.datePickOptions = {
-        formatYear: 'yyyy',
-        startingDay: 1
-    };
-    $scope.datePickDisable = function(date, mode) {
-        return false;
-    };
-    $scope.dummyDate1 = new Date();
-    $scope.datePickOpen = false;
-    $scope.openDatePicker = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        $scope.datePickOpen = true;
-    };
-    $scope.extractDateParts = function() {
-        if ($scope.decision.timestamp<=0) {
-            $scope.dummyDate = new Date();
-        }
-        else {
-            $scope.dummyDate = new Date($scope.decision.timestamp);
-        }
-    };
-    $scope.extractDateParts();
-});
 
 </script>
+<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
@@ -402,6 +356,9 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, decision, 
                     <div ng-click="rec.show=!rec.show">
                         <div ng-bind-html="rec.html" style="max-width:800px;"></div>
                     </div>
+                    <div ng-show="rec.sourceUrl">
+                        Source is <a href="<%=ar.retPath%>{{rec.sourceUrl}}">Comment</a>
+                    </div>
                   </div>
                 </td>
 
@@ -411,60 +368,6 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, decision, 
   </div>
 
 
-
-
-    <script type="text/ng-template" id="myModalDecision.html">
-        <style>
-            .ta-editor.form-control.myform2-height  {
-                height: 100px;
-                min-height: 100px;
-                font-size: 100%;
-            }
-        </style>
-        <div class="modal-header">
-            <h3 class="modal-title">Edit Decision</h3>
-        </div>
-        <div class="modal-body">
-            <div ng-model="decision.html"
-                ta-text-editor-class="form-control myform2-height"
-                ta-html-editor-class="form-control myform2-height"
-                ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-                text-angular="" class="leafContent">
-            </div>
-            <div>
-               Labels:
-              <span class="dropdown" ng-repeat="role in allLabels">
-                <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
-                   data-toggle="dropdown" style="background-color:{{role.color}};"
-                   ng-show="hasLabel(role.name)">{{role.name}}</button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                   <li role="presentation"><a role="menuitem" title="{{add}}"
-                      ng-click="toggleLabel(role)">Remove Role:<br/>{{role.name}}</a></li>
-                </ul>
-              </span>
-              <span>
-                 <span class="dropdown">
-                   <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
-                   style="padding: 2px 5px;font-size: 11px;"> + </button>
-                   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                     <li role="presentation" ng-repeat="rolex in allLabels">
-                         <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
-                         ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
-                             {{rolex.name}}</button></li>
-                   </ul>
-                 </span>
-              </span>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button ng-show="decision.num=='~new~'" class="btn btn-primary"
-                type="button" ng-click="ok()">Create</button>
-            <button ng-hide="decision.num=='~new~'" class="btn btn-primary"
-                type="button" ng-click="ok()">Save</button>
-            <button class="btn btn-warning" type="button" ng-click="cancel()">
-                Cancel</button>
-        </div>
-    </script>
 
 </div>
 

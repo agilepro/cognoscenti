@@ -1,0 +1,51 @@
+<style>
+    .ta-editor.form-control.myform2-height  {
+        height: 100px;
+        min-height: 100px;
+        font-size: 100%;
+    }
+</style>
+<div class="modal-header">
+    <h3 class="modal-title">Edit Decision</h3>
+</div>
+<div class="modal-body">
+    <div ng-model="decision.html"
+        ta-text-editor-class="form-control myform2-height"
+        ta-html-editor-class="form-control myform2-height"
+        ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
+        text-angular="" class="leafContent">
+    </div>
+    <div>
+       Labels:
+      <span class="dropdown" ng-repeat="role in allLabels">
+        <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
+           data-toggle="dropdown" style="background-color:{{role.color}};"
+           ng-show="hasLabel(role.name)">{{role.name}}</button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+           <li role="presentation"><a role="menuitem" title="{{add}}"
+              ng-click="toggleLabel(role)">Remove Role:<br/>{{role.name}}</a></li>
+        </ul>
+      </span>
+      <span>
+         <span class="dropdown">
+           <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+           style="padding: 2px 5px;font-size: 11px;"> + </button>
+           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+             <li role="presentation" ng-repeat="rolex in allLabels">
+                 <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
+                 ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
+                     {{rolex.name}}</button></li>
+           </ul>
+         </span>
+      </span>
+    </div>
+</div>
+<div class="modal-footer">
+    <button ng-show="decision.num=='~new~'" class="btn btn-primary"
+        type="button" ng-click="ok()">Create</button>
+    <button ng-hide="decision.num=='~new~'" class="btn btn-primary"
+        type="button" ng-click="ok()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">
+        Cancel</button>
+</div>
+

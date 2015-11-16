@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog.spring;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -54,6 +55,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
+import org.workcast.streams.StreamHelper;
 
 /**
  * This class will handle all requests managing process/tasks. Currently this is
@@ -827,8 +829,8 @@ public class ProjectGoalController extends BaseController {
 
             //create the history record here.
             HistoryRecord.createHistoryRecord(ngp, Integer.toString(dr.getNumber()),
-                    HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar,
-                    "created decision");
+                    HistoryRecord.CONTEXT_TYPE_DECISION, eventType, ar,
+                    "update decision");
 
             ngp.saveFile(ar, "Updated decision "+did);
             JSONObject repo = dr.getJSON4Decision(ngp, ar);
@@ -839,4 +841,26 @@ public class ProjectGoalController extends BaseController {
             streamException(ee, ar);
         }
     }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/{filename}.html", method = RequestMethod.GET)
+    public void modalHandler(@PathVariable String siteId,
+            @PathVariable String pageId, @PathVariable String filename,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
+            File springFolder = ar.getCogInstance().getConfig().getFileFromRoot("spring");
+            File htmlFolder = new File(springFolder, "html");
+            File decisionModelFile = new File(htmlFolder, filename+".html");
+            if (!decisionModelFile.exists()) {
+                throw new Exception("Unable to find the file "+decisionModelFile.getCanonicalPath());
+            }
+
+            StreamHelper.copyFileToWriter(decisionModelFile, ar.w, "ISO-8859-1");
+        }
+        catch (Exception e) {
+            Exception ee = new Exception("Unable to stream the .html file requested", e);
+            streamException(ee, ar);
+        }
+    }
+
 }
