@@ -379,7 +379,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       <table>
 
       <tr ng-repeat="cmt in getComments()">
-           <td style="width:50px;max-width:50px;vertical-align:top;padding:15px;">
+           <td style="width:50px;max-width:50px;vertical-align:top;padding:5px;padding-top:15px">
                <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
            </td>
            <td>
@@ -393,17 +393,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                            <span class="caret"></span></button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                               <li role="presentation" ng-show="editResp=='NOTHING' && editCmt=='NOTHING' && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                                  <a role="menuitem" tabindex="-1" ng-click="startEdit(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.poll">
-                                  <a role="menuitem" tabindex="-1" ng-click="startResponse(cmt, choice)">Create/Edit Response:</a></li>
+                                  <a role="menuitem" ng-click="startEdit(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.poll && editResp=='NOTHING' && editCmt=='NOTHING'">
-                                  <a role="menuitem" tabindex="-1" ng-click="createModifiedProposal(cmt)">Make Modified Proposal</a></li>
+                                  <a role="menuitem" ng-click="startResponse(cmt, choice)">Create/Edit Response:</a></li>
+                              <li role="presentation" ng-show="cmt.poll && editResp=='NOTHING' && editCmt=='NOTHING'">
+                                  <a role="menuitem" ng-click="createModifiedProposal(cmt)">Make Modified Proposal</a></li>
                               <li role="presentation" ng-show="cmt.poll && editResp=='NOTHING' && editCmt=='NOTHING' && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                                  <a role="menuitem" tabindex="-1" ng-click="cmt.poll=false;updateComment(cmt)">Close Response Period</a></li>
+                                  <a role="menuitem" ng-click="cmt.poll=false;updateComment(cmt)">Close Response Period</a></li>
                               <li role="presentation" ng-show="!cmt.poll && editResp=='NOTHING' && editCmt=='NOTHING'">
-                                  <a role="menuitem" tabindex="-1" ng-click="replyToComment(cmt)">Reply</a></li>
-                              <li role="presentation" ng-show="cmt.poll && editResp=='NOTHING' && editCmt=='NOTHING'">
-                                  <a role="menuitem" tabindex="-1" ng-click="openDecisionEditor(cmt)">Record Decision</a></li>
+                                  <a role="menuitem" ng-click="replyToComment(cmt)">Reply</a></li>
+                              <li role="presentation" ng-show="cmt.poll && !cmt.decision && editResp=='NOTHING' && editCmt=='NOTHING'">
+                                  <a role="menuitem" ng-click="openDecisionEditor(cmt)">Create New Decision</a></li>
                            </ul>
 <% } %>
                          </div>

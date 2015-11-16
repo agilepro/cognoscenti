@@ -329,7 +329,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
          <tr ng-repeat="rec in findDecisions()" id="node1503" class="ui-state-default"
              style="background: linear-gradient(#EEE, white); margin: 5px;border-style:solid;border-color:#FFF;border-width:12px">
                 <td style="padding:3px;vertical-align:top;margin:5px;">
-                  <div class="dropdown">
+                  <div class="dropdown" style="padding:4px">
                     <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -342,7 +342,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   <a href="decisionList.htm#DEC{{rec.num}}"><span style="font-size:200%;">{{rec.num}}</span></a>
                 </td>
                 <td style="padding:3px;vertical-align:top;;margin:5px;">
-                  <div>
+                  <div class="leafContent" style="padding:0px">
                     <div id="{{rec.id}}_1" style="max-width:800px;width:100%;color:#88F;margin:2px;vertical-align:bottom;">
                         <div class="taskOverview">
                             <i>{{rec.timestamp|date}}</i>
@@ -353,11 +353,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                             </span>
                         </div>
                     </div>
-                    <div ng-click="rec.show=!rec.show">
+                    <div ng-click="rec.show=!rec.show" >
                         <div ng-bind-html="rec.html" style="max-width:800px;"></div>
                     </div>
-                    <div ng-show="rec.sourceUrl">
-                        Source is <a href="<%=ar.retPath%>{{rec.sourceUrl}}">Comment</a>
+                    <div ng-show="rec.sourceType==4">
+                        See source <a href="<%=ar.retPath%>{{rec.sourceUrl}}">proposal</a>
                     </div>
                   </div>
                 </td>
