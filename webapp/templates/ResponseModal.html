@@ -1,0 +1,30 @@
+<style>
+    .ta-editor.form-control.myform2-height  {
+        height: 200px;
+        min-height: 200px;
+        font-size: 200%;
+    }
+</style>
+<div class="modal-header">
+    <h3 class="modal-title">{{response.userName}} - Response to Proposal</h3>
+</div>
+<div class="modal-body">
+    <div class="form-inline form-group">
+        Choice:  <select class="form-control" ng-model="response.choice" ng-options="onch as onch for onch in cmt.choices"></select>
+    </div>
+    <div ng-model="response.html"
+        ta-text-editor-class="form-control myform2-height"
+        ta-html-editor-class="form-control myform2-height"
+        ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
+        text-angular="" class="leafContent">
+    </div>
+</div>
+<div class="modal-footer">
+    <button ng-show="reponse.isNew" class="btn btn-primary"
+        type="button" ng-click="ok()">Create</button>
+    <button ng-hide="reponse.isNew" class="btn btn-primary"
+        type="button" ng-click="ok()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">
+        Cancel</button>
+</div>
+

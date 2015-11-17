@@ -899,25 +899,6 @@ public class NoteRecord extends DOMFace implements EmailContext {
      }
 
 
-
-     public ScheduledNotification findNextScheduledNotification(NGPage ngp) throws Exception {
-         ScheduledNotification best = null;
-         ScheduledNotification sn = getScheduledNotification(ngp);
-         if (!sn.isSent()) {
-             best = sn;
-         }
-         for (CommentRecord cr : getComments()) {
-             sn = cr.findNextScheduledNotification(ngp, this);
-             if (sn!=null && !sn.isSent()) {
-                 if (best==null || sn.timeToSend() < best.timeToSend()) {
-                     best=sn;
-                 }
-             }
-         }
-         return best;
-     }
-
-
      /**
       * Needed for the EmailContext interface
       */

@@ -244,6 +244,7 @@ public class CommentRecord extends DOMFace {
         }
         if (input.has("responses")) {
             JSONArray responses = input.getJSONArray("responses");
+            System.out.println("Submitted to server comment responses: "+responses.toString());
             for (int i=0; i<responses.length(); i++) {
                 JSONObject oneResp = responses.getJSONObject(i);
                 String responseUser = oneResp.getString("user");
@@ -267,41 +268,24 @@ public class CommentRecord extends DOMFace {
         }
     }
 
-    public ScheduledNotification findNextScheduledNotification(NGPage ngp, NoteRecord note) throws Exception {
-        ScheduledNotification best = null;
-        ScheduledNotification sn = getScheduledNotification(ngp, note);
-        if (!sn.isSent()) {
-            best = sn;
-        }
-        for (ResponseRecord rr : getResponses()) {
-            sn = rr.getScheduledNotification(ngp, note, this);
-            if (!sn.isSent()) {
-                if (best==null || sn.timeToSend() < best.timeToSend()) {
-                    best=sn;
-                }
-            }
-        }
-        return best;
-    }
 
     public void gatherUnsentScheduledNotification(NGPage ngp, EmailContext noteOrMeet,
             ArrayList<ScheduledNotification> resList) throws Exception {
-        ScheduledNotification sn = getScheduledNotification(ngp, noteOrMeet);
-        if (!sn.isSent()) {
-            resList.add(sn);
+        if (!getEmailSent()) {
+            ScheduledNotification sn = new CRScheduledNotification(ngp, noteOrMeet, this);
+            if (!sn.isSent()) {
+                System.out.println("Adding COMMENT Email SCNOT: "+this.getContent());
+                resList.add(sn);
+            }
         }
         for (ResponseRecord rr : getResponses()) {
-            sn = rr.getScheduledNotification(ngp, noteOrMeet, this);
+            ScheduledNotification sn = rr.getScheduledNotification(ngp, noteOrMeet, this);
             if (!sn.isSent()) {
                 resList.add(sn);
             }
         }
     }
 
-
-    public ScheduledNotification getScheduledNotification(NGPage ngp, EmailContext noteOrMeet) {
-        return new CRScheduledNotification(ngp, noteOrMeet, this);
-    }
 
     private class CRScheduledNotification implements ScheduledNotification {
         NGPage ngp;

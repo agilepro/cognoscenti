@@ -68,7 +68,6 @@ Required parameter:
 
 <script type="text/javascript">
 document.title="<% ar.writeJS(note.getSubject());%>";
-console.log("foo");
 
 var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
 app.controller('myCtrl', function($scope, $http, $modal) {
@@ -96,7 +95,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 //which editor is open
     $scope.editCmt = "NOTHING";
-    $scope.editResp = "NOTHING";
+
 
 
     $scope.myComment = "";
@@ -190,44 +189,52 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.saveDocs();
     }
 
-    $scope.getMyResponse = function(cmt) {
+    $scope.getResponse = function(cmt) {
         var selected = [];
         cmt.responses.map( function(item) {
             if (item.user=="<%ar.writeJS(currentUser);%>") {
                 selected.push(item);
             }
         });
+        return selected;
+    }
+    $scope.updateResponse = function(cmt, response) {
+        var selected = [];
+        cmt.responses.map( function(item) {
+            if (item.user!="<%ar.writeJS(currentUser);%>") {
+                selected.push(item);
+            }
+        });
+        selected.push(response);
+        cmt.responses = selected;
+        $scope.updateComment(cmt);
+    }
+    $scope.getOrCreateResponse = function(cmt) {
+        var selected = $scope.getResponse(cmt);
         if (selected.length == 0) {
             var newResponse = {};
             newResponse.user = "<%ar.writeJS(currentUser);%>";
+            newResponse.userName = "<%ar.writeJS(currentUserName);%>";
             cmt.responses.push(newResponse);
             selected.push(newResponse);
         }
         return selected;
     }
 
-    $scope.startResponse = function(cmt, pickedChoice) {
-        $scope.editResp =  cmt.time;
-        $scope.editCmt  =  'NOTHING';
-        var myList = $scope.getMyResponse(cmt);
-        if (myList.length>0) {
-            myList[0].choice = pickedChoice;
-        }
+    $scope.startResponse = function(cmt) {
+        $scope.openResponseEditor(cmt)
     }
 
     $scope.startEdit = function(cmt) {
         $scope.editCmt  = cmt.time;
-        $scope.editResp = 'NOTHING';
     }
 
     $scope.stopEdit = function() {
         $scope.editCmt  = 'NOTHING';
-        $scope.editResp = 'NOTHING';
     }
 
     $scope.createModifiedProposal = function(cmt) {
         $scope.editCmt  = 'NEW';
-        $scope.editResp = 'NOTHING';
         $scope.myComment = cmt.html;
         $scope.myPoll = true;
 
@@ -250,6 +257,50 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "Comment";
     }
+
+
+    $scope.openResponseEditor = function (cmt) {
+
+        var selected = $scope.getResponse(cmt);
+        var selResponse = {};
+        if (selected.length == 0) {
+            selResponse.user = "<%ar.writeJS(currentUser);%>";
+            selResponse.userName = "<%ar.writeJS(currentUserName);%>";
+            selResponse.choice = cmt.choices[0];
+            selResponse.isNew = true;
+        }
+        else {
+            selResponse = JSON.parse(JSON.stringify(selected[0]));
+        }
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html',
+            controller: 'ModalResponseCtrl',
+            size: 'lg',
+            resolve: {
+                response: function () {
+                    return selResponse;
+                },
+                cmt: function () {
+                    return cmt;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (response) {
+            var cleanResponse = {};
+            cleanResponse.html = response.html;
+            cleanResponse.user = response.user;
+            cleanResponse.userName = response.userName;
+            cleanResponse.choice = response.choice;
+            $scope.updateResponse(cmt, cleanResponse);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
+
 
     $scope.createDecision = function(newDecision) {
         newDecision.num="~new~";
@@ -281,7 +332,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             sourceType: 4,
             sourceCmt: cmt.time
         };
-        console.log("New DECISION is "+JSON.stringify(newDecision));
 
         var modalInstance = $modal.open({
             animation: false,
@@ -308,6 +358,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </script>
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
+<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
@@ -392,17 +443,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="margin-right:10px;">
                            <span class="caret"></span></button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation" ng-show="editResp=='NOTHING' && editCmt=='NOTHING' && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                              <li role="presentation" ng-show="editCmt=='NOTHING' && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="startEdit(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.poll && editResp=='NOTHING' && editCmt=='NOTHING'">
-                                  <a role="menuitem" ng-click="startResponse(cmt, choice)">Create/Edit Response:</a></li>
-                              <li role="presentation" ng-show="cmt.poll && editResp=='NOTHING' && editCmt=='NOTHING'">
+                              <li role="presentation" ng-show="cmt.poll && editCmt=='NOTHING'">
+                                  <a role="menuitem" ng-click="startResponse(cmt)">Create/Edit Response:</a></li>
+                              <li role="presentation" ng-show="cmt.poll && editCmt=='NOTHING'">
                                   <a role="menuitem" ng-click="createModifiedProposal(cmt)">Make Modified Proposal</a></li>
-                              <li role="presentation" ng-show="cmt.poll && editResp=='NOTHING' && editCmt=='NOTHING' && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                              <li role="presentation" ng-show="cmt.poll && editCmt=='NOTHING' && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="cmt.poll=false;updateComment(cmt)">Close Response Period</a></li>
-                              <li role="presentation" ng-show="!cmt.poll && editResp=='NOTHING' && editCmt=='NOTHING'">
+                              <li role="presentation" ng-show="!cmt.poll && editCmt=='NOTHING'">
                                   <a role="menuitem" ng-click="replyToComment(cmt)">Reply</a></li>
-                              <li role="presentation" ng-show="cmt.poll && !cmt.decision && editResp=='NOTHING' && editCmt=='NOTHING'">
+                              <li role="presentation" ng-show="cmt.poll && !cmt.decision && editCmt=='NOTHING'">
                                   <a role="menuitem" ng-click="openDecisionEditor(cmt)">Create New Decision</a></li>
                            </ul>
 <% } %>
@@ -419,7 +470,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    </div>
 
 <% if (isLoggedIn) { %>
-                    <div class="well leafContent" style="width:100%" ng-show="editCmt==cmt.time && editResp=='NOTHING'">
+                    <div class="well leafContent" style="width:100%" ng-show="editCmt==cmt.time">
                       <div ng-model="cmt.html"
                           ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                           text-angular="" class="" style="width:100%;"></div>
@@ -431,7 +482,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     </div>
 <% } %>
 
-                   <table style="min-width:500px;" ng-show="cmt.poll && editResp!=cmt.time">
+                   <table style="min-width:500px;" ng-show="cmt.poll">
                        <col style="width:100px">
                        <col width="width:1*">
                        <tr ng-repeat="resp in cmt.responses">
@@ -440,28 +491,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                {{resp.userName}}
                            </td>
                            <td >
-                               <div class="comment-inner-box">
+                               <div class="comment-inner-box leafContent">
                                   <div ng-bind-html="resp.html"></div>
                                </div>
                            </td>
                        </tr>
                    </table>
-<% if (isLoggedIn && canUpdate) { %>
-
-                   <div ng-show="cmt.poll && editCmt=='NOTHING' && editResp==cmt.time">
-                       <h2>Your Response: <%ar.writeHtml(currentUserName);%></h2>
-                       <div ng-repeat="myResp in getMyResponse(cmt)">
-                          <div class="form-inline form-group">
-                              Choice:  <select class="form-control" ng-model="myResp.choice" ng-options="onch as onch for onch in cmt.choices"></select>
-                          </div>
-                          <div ng-model="myResp.html"
-                              ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-                              text-angular="" class="" style="width:100%;"></div>
-                       </div>
-                      <button ng-click="updateComment(cmt);stopEdit()" class="btn btn-danger">Save Response</button>
-                      <button ng-click="stopEdit()" class="btn btn-danger">Cancel</button>
-                   </div>
-<% } %>
                    <div ng-show="cmt.decision">
                        See Linked Decision: <a href="decisionList.htm#DEC{{cmt.decision}}">#{{cmt.decision}}</a>
                    </div>
@@ -475,7 +510,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <tr>
     <td></td>
     <td>
-    <div ng-show="canUpdate && editResp=='NOTHING'">
+    <div ng-show="canUpdate">
         <div ng-show="editCmt=='NOTHING'" style="margin:20px;">
             <button ng-click="myPoll=false;editCmt='NEW'" class="btn btn-default">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>

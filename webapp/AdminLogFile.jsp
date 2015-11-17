@@ -17,7 +17,8 @@
 %><%
 
     AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
-    if (cog.initializer.serverInitState!=ServerInitializer.STATE_RUNNING) {
+    ServerInitializer si = ar.getCogInstance().initializer;
+    if (si.serverInitState!=ServerInitializer.STATE_RUNNING) {
         throw new Exception("Server is not running???  Must be running to see log file.");
     }
 
