@@ -23,7 +23,6 @@ package org.socialbiz.cog;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -35,8 +34,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.workcast.json.Dom2JSON;
-import org.workcast.json.JSONObject;
 
 /**
  * At the root of a DOM tree is a node that has no parent, and that is the root
@@ -80,7 +77,9 @@ public class DOMFile extends DOMFace {
             reformatXML();
             DOMUtils.writeDomToFile(fDoc, associatedFile);
 
-            //also save a JSON file
+            //also save a JSON file as a test of the XML to JSON conversion
+            //ability ... but there is no real need for this file...
+            /*
             JSONObject copy = Dom2JSON.convertDomToJSON(fDoc);
             File folder = associatedFile.getParentFile();
             File jsonproject = new File(folder, "project.json");
@@ -89,6 +88,7 @@ public class DOMFile extends DOMFace {
             copy.write(osw, 2, 0);
             osw.flush();
             osw.close();
+            */
         }
         catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.write.file",

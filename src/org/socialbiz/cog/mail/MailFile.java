@@ -192,5 +192,33 @@ public class MailFile extends JSONWrapper {
             }
         }
     }
+    
+    /**
+     * This throws away old email on this schedule:
+     * 3 months old -- the body is discarded, only the metadata remains
+     * 9 months old -- removed entirely
+     */
+    public void pruneOldRecords() throws Exception {
+        long THREE_MONTHS_AGO = System.currentTimeMillis() - 90*24*60*60*1000;
+        long NINE_MONTHS_AGO = System.currentTimeMillis() - 270*24*60*60*1000;
+        
+        JSONArray oldList = kernel.getJSONArray("msgs");
+        JSONArray newEmailList = new JSONArray();
+        int last = oldList.length();
+        for (int i=0; i<last; i++) {
+            JSONObject mailObject = oldList.getJSONObject(i);
+            MailInst mailInst = new MailInst(mailObject);
+            long sendTime = mailInst.getLastSentDate();
+            if (sendTime<NINE_MONTHS_AGO) {
+                continue;
+            }
+            if (sendTime<THREE_MONTHS_AGO) {
+                mailInst.setBodyText("*deleted*");
+                mailInst.setAttachmentFiles(new ArrayList<File>());
+            }
+            newEmailList.put(mailObject);
+        }
+        kernel.put("msgs", newEmailList);
+    }
 
 }

@@ -79,7 +79,7 @@ public class HistoricActions {
         clone.write("<p>Being a <b>Super Admin</b> of the Cognoscenti console, you have rights to accept or deny this request.</p>");
         clone.write("</body></html>");
 
-        EmailSender.simpleEmail(UserManager.getSuperAdminMailList(ar), null,
+        EmailSender.generalMailToList(UserManager.getSuperAdminMailList(ar), ar.getBestUserId(),
                 "Site Approval for " + ar.getBestUserId(),
                 bodyWriter.toString(), ar.getCogInstance());
     }
@@ -161,7 +161,7 @@ public class HistoricActions {
         Vector<OptOutAddr> v = new Vector<OptOutAddr>();
         v.add(new OptOutIndividualRequest(new AddressListEntry(owner)));
 
-        EmailSender.simpleEmail(v, null, "Site Request Resolution for " + owner.getName(),
+        EmailSender.generalMailToList(v, ar.getBestUserId(), "Site Request Resolution for " + owner.getName(),
                 bodyWriter.toString(), ar.getCogInstance());
     }
 

@@ -167,7 +167,7 @@ public class DailyDigest {
                         + numReminders + " reminders.";
 
                 //Actually SEND the email here
-                EmailSender.quickEmail(ooa, null, thisSubj, bodyOut.toString(), cog);
+                EmailSender.generalMailToOne(ooa, null, thisSubj, bodyOut.toString(), cog);
 
 
                 debugEvidence.write("\n<li>");

@@ -95,21 +95,6 @@ public class EmailSender extends TimerTask {
     public static Exception threadLastMsgException = null;
 
 
-    /**
-     * quickEmail - Send a email to a single email address (as an
-     * AddressListEntry) This method sends a single email message to the list of
-     * addressees with the given subject and body. You can specify the from
-     * address as well.
-     *
-     * Use this method WHENEVER POSSIBLE. If you don't have an AddressListEntry
-     * then use the other form with a string email address.
-     */
-    public static void quickEmail(OptOutAddr ooa, String from, String subject,
-            String emailBody, Cognoscenti cog) throws Exception {
-        Vector<OptOutAddr> v = new Vector<OptOutAddr>();
-        v.add(ooa);
-        simpleEmail(v, from, subject, emailBody, cog);
-    }
 
     /**
      * Initialize the EmailSender class, including background processing for
@@ -347,18 +332,9 @@ public class EmailSender extends TimerTask {
         threadLastCheckTime = System.currentTimeMillis();
         if (threadLastCheckTime > nextScheduledTime) {
             System.out.println("EmailSender: Checked, it is time to send the daily digest");
-            sendDailyDigest(ar);
+            DailyDigest.sendDailyDigest(ar, cog);
         }
     }
-
-    /*
-     * This method loops through all known users (with profiles) and sends an
-     * email with their tasks on it.
-     */
-    public void sendDailyDigest(AuthRequest arx) throws Exception {
-        DailyDigest.sendDailyDigest(arx, cog);
-    }
-
 
 
     /**
@@ -483,11 +459,40 @@ public class EmailSender extends TimerTask {
         }
     }
 
+    
+    /**
+     * generalMailToOne - Send a email to a single email address (as an
+     * AddressListEntry) in the scope of the entire product (not any specific
+     * project or other context).  
+     * 
+     * This method sends a single email message to the addressee
+     * with the given subject and body. You can specify the from
+     * address as well.
+     * 
+     * Email is stored in the GlobalMailArchive momentarily before actually
+     * sending it.
+     */
+    public static void generalMailToOne(OptOutAddr ooa, String from, String subject,
+            String emailBody, Cognoscenti cog) throws Exception {
+        Vector<OptOutAddr> v = new Vector<OptOutAddr>();
+        v.add(ooa);
+        generalMailToList(v, from, subject, emailBody, cog);
+    }
+    
 
     /**
-     * Create an email message in the global email outbox
+     * generalMailToList - Send a email to a list of email address 
+     * in the scope of the entire product (not any specific
+     * project or other context).  
+     * 
+     * This method sends a single email message to the addressee
+     * with the given subject and body. You can specify the from
+     * address as well.
+     * 
+     * Email is stored in the GlobalMailArchive momentarily before actually
+     * sending it.
      */
-    public static void simpleEmail(Vector<OptOutAddr> addresses, String from,
+    public static void generalMailToList(Vector<OptOutAddr> addresses, String from,
             String subject, String emailBody, Cognoscenti cog) throws Exception {
         if (subject == null || subject.length() == 0) {
             throw new ProgramLogicError("simpleEmail requires a non null subject parameter");
@@ -499,7 +504,7 @@ public class EmailSender extends TimerTask {
             throw new ProgramLogicError("simpleEmail requires a non empty addresses parameter");
         }
         if (from == null || from.length() == 0) {
-            throw new ProgramLogicError("simpleEmail requires a non empty 'from' parameter");
+            from = emailProperties.getProperty("mail.smtp.from");
         }
         synchronized(globalMailArchive) {
             try {
@@ -507,6 +512,7 @@ public class EmailSender extends TimerTask {
                 for (OptOutAddr ooa : addresses) {
                     globalArchive.createEmailRecord(from, ooa.getEmail(), subject, emailBody);
                 }
+                globalArchive.save();
             }
             catch (Exception e) {
                 throw new Exception("Failure while composing an email message for the global archive", e);
@@ -608,7 +614,7 @@ public class EmailSender extends TimerTask {
         }
     }
 
-    public static void dumpProperties(Properties props) {
+    private static void dumpProperties(Properties props) {
 
         for (String key : props.stringPropertyNames()) {
             System.out.println("  ** Property "+key+" = "+props.getProperty(key));

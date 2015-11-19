@@ -434,7 +434,8 @@ public class AdminController extends BaseController {
 
         clone.write("<p>You are receiving this message because you are a Super Admin of this server.</p>");
         clone.write("</body></html>");
-        EmailSender.simpleEmail(UserManager.getSuperAdminMailList(ar), null, "Error report",
+        EmailSender.generalMailToList(UserManager.getSuperAdminMailList(ar), ar.getBestUserId(), 
+                "Error report",
                 bodyWriter.toString(), ar.getCogInstance());
     }
 
