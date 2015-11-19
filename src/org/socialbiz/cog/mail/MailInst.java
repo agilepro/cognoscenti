@@ -205,7 +205,7 @@ public class MailInst extends JSONWrapper {
             message.addRecipients(Message.RecipientType.TO, addressTo);
             transport.sendMessage(message, message.getAllRecipients());
 
-            System.out.println("MAILINST: sent email to: "+addressee);
+            System.out.println("MAILINST: Sent email to "+addressee+": "+getSubject());
 
             setStatus(EmailRecord.SENT);
             setLastSentDate(sendTime);

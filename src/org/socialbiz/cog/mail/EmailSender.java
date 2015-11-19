@@ -70,7 +70,7 @@ public class EmailSender extends TimerTask {
     private static File globalMailArchive;
 
     // expressed in milliseconds
-    private final static long EVERY_MINUTE = 60000;
+    private final static long TWICE_PER_MINUTE = 30000;
 
     /**
      * Every time the thread checks to see if it needs to send email, it marks
@@ -162,11 +162,9 @@ public class EmailSender extends TimerTask {
 
         // second parameter is the "delay" of 60 seconds.
         // The first mailing will be tested one minute from now,
-        // and every 20 minutes after that.
-        // Note, if the sending of email fails, then it will
-        // try again 20 minutes later, and every 20 minutes until it succeeds.
-        //timer.scheduleAtFixedRate(singletonSender, 60000, EVERY_MINUTE);
-        timer.scheduleAtFixedRate(singletonSender, 10000, 5000);
+        // and every 30 seconds after that.
+        timer.scheduleAtFixedRate(singletonSender, 30000, TWICE_PER_MINUTE);
+        //timer.scheduleAtFixedRate(singletonSender, 10000, 5000);
 
     }
 
@@ -223,8 +221,8 @@ public class EmailSender extends TimerTask {
         //default delay is 5 minutes AFTER the scheduled time.  This 5 minutes is to allow people who
         //create something a few minutes to edit before it is sent.  However, this can be set in the
         //properties to be more or less than that.
-        //int delayTime = 5*60*1000;
-        int delayTime = 0;
+        int delayTime = 5*60*1000;
+        //int delayTime = 0;
         String delayStr = mailer.getProperty("automated.email.delay");
         if (delayStr!=null) {
             //delay time config parameter is in minutes
@@ -233,7 +231,7 @@ public class EmailSender extends TimerTask {
 
 
         long nowTime = ar.nowTime;
-        NGPageIndex ngpi = findOverdueContainer(nowTime);
+        NGPageIndex ngpi = findOverdueContainer(nowTime-delayTime);
         int iCount = 0;
         while (ngpi!=null) {
             iCount++;
@@ -312,62 +310,6 @@ public class EmailSender extends TimerTask {
         return null;
     }
 
-/**
- * note: this method has to be outside of both the EmailRecord and the NGPage object
- * because it attempts to cause the sending of email between transactions ... at a time
- * when no transaction is open.   It assumes the NGPage is in memory and gathers the info
- * that it needs.  Then it lets go of the NGPage object, sends the email, and the
- * re-acquires the NGPage object in order to mark that it has sent the mail.
- *
- * You might think this is dangerous because it could send the email, and then later fail to mark it
- * down as being sent.  This could happen in any case even holding the transaction: if you send the
- * email, and then the server fails before saving the file (committing) then you have the same
- * situation.
- *
- * If the email server take 30 or 40 seconds to respond, then
- *
-    private void sendOneEmail(NGPage possiblePage, EmailRecord eRec) throws Exception {
-        String pageKey = possiblePage.getKey();
-        String pageName = possiblePage.getFullName();
-        String id = eRec.getId();
-        eRec.prepareForSending(possiblePage);
-        NGPageIndex.clearLocksHeldByThisThread();
-        Exception exHolder = null;
-
-        try {
-            //this is done while not holding any locks ....
-            //important because some email servers are slow and block for a long time
-            //however there is a danger that another thread might modify some of
-            //the fields in the mean time.
-            sendPreparedMessageImmediately(eRec, cog);
-        }
-        catch (Exception whatWentWrong) {
-
-            System.out.println("EmailSender: FAILURE while sendOneEmail ("+pageName+") "+whatWentWrong);
-            whatWentWrong.printStackTrace(System.out);
-            System.out.println("EmailSender: ----------------------------------");
-            exHolder = whatWentWrong;
-
-            //slow things down a bit.  We are catching and continuing here, so if this is
-            //an error in program, slow it down so it does not fill up the disk with log output.
-            Thread.sleep(5000);
-        }
-
-        //START the second transaction to update that the message has been sent
-        possiblePage =  cog.getProjectByKeyOrFail(pageKey);
-        eRec=possiblePage.getEmail(id);
-
-        if (exHolder==null) {
-            eRec.setErrorMessage(null);
-            eRec.setStatus(EmailRecord.SENT);
-        }
-        else {
-            eRec.setErrorMessage(NGException.getFullMessage(exHolder));
-            eRec.setStatus(EmailRecord.FAILED);
-        }
-        possiblePage.save();
-        eRec.setLastSentDate(System.currentTimeMillis());
-    }*/
 
 
     /**
@@ -574,25 +516,6 @@ public class EmailSender extends TimerTask {
 
 
 
-
-/*
-    public static Vector<AddressListEntry> parseAddressList(String list) {
-        Vector<AddressListEntry> res = new Vector<AddressListEntry>();
-        if (list == null || list.length() == 0) {
-            return res;
-        }
-        String[] values = UtilityMethods.splitOnDelimiter(list, ',');
-
-        for (String value : values) {
-            String trimValue = value.trim();
-            if (trimValue.length() > 0) {
-                res.add(AddressListEntry.parseCombinedAddress(trimValue));
-            }
-        }
-        return res;
-    }
-*/
-
     private static String composeFromAddress(NGContainer ngc) throws Exception {
         StringBuffer sb = new StringBuffer("^");
         String baseName = ngc.getFullName();
@@ -758,14 +681,13 @@ public class EmailSender extends TimerTask {
         emailProperties = new Properties();
 
         emailProperties.put("mail.smtp.starttls.enable", "true");
-        //emailProperties.put("mail.smtp.starttls.require", "true");
         emailProperties.put("mail.smtp.auth", "true");
         emailProperties.put("mail.smtp.host", "smtp.gmail.com");
         emailProperties.put("mail.smtp.port", "587");
         emailProperties.put("mail.smtp.user", args[0]);
         emailProperties.put("mail.smtp.password",args[1]);
-        emailProperties.put("mail.smtp.from", "keith2010@kswenson.oib.com");
-        emailProperties.put("mail.smtp.testAddress", "demotest@kswenson.oib.com");
+        emailProperties.put("mail.smtp.from", "xxx@yyy.com");
+        emailProperties.put("mail.smtp.testAddress", "xxx@zzz.com");
 
         try {
             sendTestEmail();

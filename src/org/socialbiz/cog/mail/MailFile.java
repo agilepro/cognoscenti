@@ -186,7 +186,6 @@ public class MailFile extends JSONWrapper {
         for (MailInst inst : allEmail) {
 
             if (MailInst.READY_TO_GO.equals(inst.getStatus())) {
-                System.out.println("MailFile: sending an email from the archive: "+inst.getSubject());
                 inst.sendPreparedMessageImmediately(mailer);
                 //now lets remember that this email was sent ... in case other messages bomb out
                 save();

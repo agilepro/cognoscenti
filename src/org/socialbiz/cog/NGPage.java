@@ -29,6 +29,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
@@ -1778,6 +1779,7 @@ public class NGPage extends ContainerCommon implements NGContainer
                 //so return now minus 1 minutes
                 long reminderTime = System.currentTimeMillis()-60000;
                 if (reminderTime < nextTime) {
+                    System.out.println("Workspace has email that needs to be collected");
                     nextTime = reminderTime;
                 }
             }
@@ -1786,11 +1788,20 @@ public class NGPage extends ContainerCommon implements NGContainer
         ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
         gatherUnsentScheduledNotification(resList);
 
+        ScheduledNotification first = null;
         //Now scan all the standard scheduled notifications
         for (ScheduledNotification sn : resList) {
             long timeToAct = sn.timeToSend();
             if (timeToAct < nextTime) {
                 nextTime = timeToAct;
+                first = sn;
+            }
+        }
+        if (first!=null) {
+            System.out.println("Found the next event to be: "+first.selfDescription()+" at "
+                     +new Date(first.timeToSend()));
+            if (first.isSent()) {
+                System.out.println("BUT it was sent!");
             }
         }
         return nextTime;

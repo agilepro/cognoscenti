@@ -3,7 +3,7 @@
 %><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%@page import="org.socialbiz.cog.EmailGenerator"
 %><%@page import="org.socialbiz.cog.CommentRecord"
-%><%@page import="org.socialbiz.cog.ScheduledNotification"
+%><%@page import="org.socialbiz.cog.mail.ScheduledNotification"
 %><%@page import="java.util.ArrayList"
 %>
 <%

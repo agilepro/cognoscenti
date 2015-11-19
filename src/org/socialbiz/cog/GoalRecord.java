@@ -1094,7 +1094,7 @@ public class GoalRecord extends BaseRecord {
             NGRole assigneeRole = getAssigneeRole();
             List<AddressListEntry> players = assigneeRole.getExpandedPlayers(ngp);
             if (players.size()==0) {
-                //no assignee yet .... so wait
+                System.out.println("no assignee yet .... so wait");
                 return;
             }
 
@@ -1111,19 +1111,10 @@ public class GoalRecord extends BaseRecord {
                     throw new Exception("Action Item has no requester, and the Workspace has no owner");
                 }
                 creatorProfile = ownerList.get(0).getUserProfile();
-                if (creatorProfile==null) {
-                    System.out.println("DATA PROBLEM: action item came from a person without a profile ("+getCreator()+") ignoring");
-                    return;
-                }
             }
             else {
                 AddressListEntry commenter = new AddressListEntry(creator);
                 creatorProfile = commenter.getUserProfile();
-                if (creatorProfile==null) {
-                    System.out.println("DATA PROBLEM: action item came from a person without a profile ("+getCreator()+") ignoring");
-                    setEmailSendTime(0);
-                    return;
-                }
             }
 
 
@@ -1142,6 +1133,10 @@ public class GoalRecord extends BaseRecord {
             UserProfile requesterProfile, MailFile mailFile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
+        }
+        if (requesterProfile==null) {
+            System.out.println("DATA PROBLEM: action item came from a person without a profile ("+getCreator()+") ignoring");
+            return;
         }
 
         StringWriter bodyWriter = new StringWriter();
@@ -1219,6 +1214,9 @@ public class GoalRecord extends BaseRecord {
 
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             goal.goalEmailRecord(ar, ngp, mailFile);
+            if (!isSent()) {
+                System.out.println("ERROR: for some reason it did not get move to the mailFile?");
+            }
         }
 
         public String selfDescription() throws Exception {
