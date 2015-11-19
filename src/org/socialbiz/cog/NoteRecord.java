@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import org.socialbiz.cog.mail.MailFile;
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
@@ -719,21 +721,26 @@ public class NoteRecord extends DOMFace implements EmailContext {
       }
 
 
-      public void topicEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note) throws Exception {
+      public void topicEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note, MailFile mailFile) throws Exception {
           Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
           OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
 
           UserRef creator = getModUser();
           UserProfile creatorProfile = UserManager.findUserByAnyId(creator.getUniversalId());
+          if (creatorProfile==null) {
+              System.out.println("DATA PROBLEM: discussion topic came from a person without a profile ("+getModUser().getUniversalId()+") ignoring");
+              setEmailSent(true);
+              return;
+          }
 
           for (OptOutAddr ooa : sendTo) {
-              constructEmailRecordOneUser(ar, ngp, note, ooa, creatorProfile);
+              constructEmailRecordOneUser(ar, ngp, note, ooa, creatorProfile, mailFile);
           }
           setEmailSent(true);
       }
 
       private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord note, OptOutAddr ooa,
-              UserProfile commenterProfile) throws Exception  {
+              UserProfile commenterProfile, MailFile mailFile) throws Exception  {
           if (!ooa.hasEmailAddress()) {
               return;  //ignore users without email addresses
           }
@@ -754,11 +761,10 @@ public class NoteRecord extends DOMFace implements EmailContext {
 
           clone.write(this.getNoteHtml(ar));
 
+          ooa.writeUnsubscribeLink(clone);
           clone.write("</body></html>");
 
-
-          EmailSender.containerEmail(ooa, ngp, emailSubject, bodyWriter.toString(), commenterProfile.getEmailWithName(),
-                  new Vector<String>(), ar.getCogInstance());
+          mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, bodyWriter.toString());
       }
 
 
@@ -943,11 +949,11 @@ public class NoteRecord extends DOMFace implements EmailContext {
          }
 
          public long timeToSend() throws Exception {
-             return getLastEdited()+300000;
+             return getLastEdited()+1000;
          }
 
-         public void sendIt(AuthRequest ar) throws Exception {
-             note.topicEmailRecord(ar,ngp,note);
+         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+             note.topicEmailRecord(ar,ngp,note, mailFile);
          }
 
          public String selfDescription() throws Exception {

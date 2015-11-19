@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog;
 
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Vector;
 
@@ -42,6 +43,7 @@ import org.socialbiz.cog.exception.NGException;
 public class OptOutAddr {
 
     AddressListEntry assignee;
+    String messageForAssignee = "";
 
     public OptOutAddr(AddressListEntry _assignee) {
         assignee = _assignee;
@@ -84,6 +86,19 @@ public class OptOutAddr {
     public boolean isUserWithProfile() {
         UserProfile up = UserManager.findUserByAnyId(getEmail());
         return (up!=null);
+    }
+
+
+    public void prepareInternalMessage(Cognoscenti cog) throws Exception {
+        StringWriter bodyWriter = new StringWriter();
+        UserProfile up = UserManager.findUserByAnyId(getEmail());
+        AuthRequest clone = new AuthDummy(up, bodyWriter, cog);
+        writeUnsubscribeLink(clone);
+        messageForAssignee = bodyWriter.toString();
+    }
+
+    public String getUnSubscriptionAsString() throws Exception {
+        return messageForAssignee;
     }
 
 

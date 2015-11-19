@@ -288,7 +288,11 @@ public class EmailListener extends TimerTask{
         }
     }
 
-    public void createNoteFromMail(Message message) throws Exception {
+    /**
+     * RELEASES LOCK: This must NOT be called with a project file open and locked
+     */
+    private void createNoteFromMail(Message message) throws Exception {
+        NGPageIndex.assertNoLocksOnThread();
         String subject = message.getSubject();
         try{
             Address[] recipientAdrs= message.getAllRecipients();
@@ -437,7 +441,11 @@ public class EmailListener extends TimerTask{
         }
     }
 
+    /**
+     * RELEASES LOCK:  this must NOT be called from within a project workspace code
+    */
     private void createDocumentRecord(NGPage ngp,InputStream is,String fileName,String fromAdd) throws Exception {
+        NGPageIndex.assertNoLocksOnThread();
         try{
             ar.assertNotFrozen(ngp);
             ar.setPageAccessLevels(ngp);

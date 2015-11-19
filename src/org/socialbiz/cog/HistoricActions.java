@@ -3,6 +3,8 @@ package org.socialbiz.cog;
 import java.io.StringWriter;
 import java.util.Vector;
 
+import org.socialbiz.cog.mail.EmailSender;
+
 public class HistoricActions {
 
     private AuthRequest ar;
@@ -185,15 +187,14 @@ public class HistoricActions {
 
         role.addPlayerIfNotPresent(ale);
         if (sendEmail) {
-            sendInviteEmail(ngc.getKey(),  ale.getEmail(), role.getName() );
+            sendInviteEmail(ngc,  ale.getEmail(), role.getName() );
         }
         HistoryRecord.createHistoryRecord(ngc, ale.getUniversalId(), HistoryRecord.CONTEXT_TYPE_PERMISSIONS,
                 0, HistoryRecord.EVENT_PLAYER_ADDED, ar, role.getName());
     }
 
-    private void sendInviteEmail(String pageId, String emailId, String role) throws Exception {
+    private void sendInviteEmail(NGContainer container, String emailId, String role) throws Exception {
         StringWriter bodyWriter = new StringWriter();
-        NGContainer container = ar.getCogInstance().getProjectByKeyOrFail(pageId);
         UserProfile receivingUser = UserManager.findUserByAnyId(emailId);
         AuthRequest clone = new AuthDummy(receivingUser, bodyWriter, ar.getCogInstance());
         UserProfile requestingUser = ar.getUserProfile();
@@ -247,7 +248,6 @@ public class HistoricActions {
         EmailSender.containerEmail(ooa, container, "Added to " + role
                 + " role of " + container.getFullName(), bodyWriter.toString(),
                 null, new Vector<String>(), clone.getCogInstance());
-        NGPageIndex.releaseLock(container);
     }
 
 

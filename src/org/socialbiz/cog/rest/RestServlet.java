@@ -65,6 +65,7 @@ public class RestServlet extends javax.servlet.http.HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         try {
+            NGPageIndex.assertNoLocksOnThread();
             if (!ar.getCogInstance().isInitialized()) {
                 throw new Exception("not initialized", NGLeafServlet.initializationException);
             }

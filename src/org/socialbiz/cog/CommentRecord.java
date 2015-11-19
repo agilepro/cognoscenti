@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import org.socialbiz.cog.mail.MailFile;
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
@@ -135,21 +137,26 @@ public class CommentRecord extends DOMFace {
 
 
 
-    public void commentEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet) throws Exception {
+    public void commentEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
         Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
         OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
 
         AddressListEntry commenter = getUser();
         UserProfile commenterProfile = commenter.getUserProfile();
+        if (commenterProfile==null) {
+            System.out.println("DATA PROBLEM: comment came from a person without a profile ("+getUser().getEmail()+") ignoring");
+            setEmailSent(true);
+            return;
+        }
 
         for (OptOutAddr ooa : sendTo) {
-            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile);
+            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile, mailFile);
         }
         setEmailSent(true);
     }
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
-            UserProfile commenterProfile) throws Exception  {
+            UserProfile commenterProfile, MailFile mailFile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
         }
@@ -187,11 +194,10 @@ public class CommentRecord extends DOMFace {
 
         clone.write(this.getContentHtml(ar));
 
+        ooa.writeUnsubscribeLink(clone);
         clone.write("</body></html>");
 
-
-        EmailSender.containerEmail(ooa, ngp, emailSubject, bodyWriter.toString(), commenterProfile.getEmailWithName(),
-                new Vector<String>(), ar.getCogInstance());
+        mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, bodyWriter.toString());
     }
 
 
@@ -274,7 +280,6 @@ public class CommentRecord extends DOMFace {
         if (!getEmailSent()) {
             ScheduledNotification sn = new CRScheduledNotification(ngp, noteOrMeet, this);
             if (!sn.isSent()) {
-                System.out.println("Adding COMMENT Email SCNOT: "+this.getContent());
                 resList.add(sn);
             }
         }
@@ -302,11 +307,11 @@ public class CommentRecord extends DOMFace {
         }
 
         public long timeToSend() throws Exception {
-            return cr.getTime()+300000;
+            return cr.getTime()+1000;
         }
 
-        public void sendIt(AuthRequest ar) throws Exception {
-            cr.commentEmailRecord(ar,ngp,noteOrMeet);
+        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+            cr.commentEmailRecord(ar,ngp,noteOrMeet,mailFile);
         }
 
         public String selfDescription() throws Exception {

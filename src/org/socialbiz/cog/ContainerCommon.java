@@ -228,6 +228,23 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
         }
     }
 
+
+    public File getAttachmentPathOrNull(String oneId) throws Exception {
+
+        AttachmentRecord attach = this.findAttachmentByID(oneId);
+        if (attach==null) {
+            //attachments might get removed in the mean time, just ignore them
+            //throw new Exception("getAttachmentPathFromContainer was called with an invalid ID?: "+oneId);
+            return null;
+        }
+        AttachmentVersion aVer = attach.getLatestVersion(this);
+        if (aVer==null) {
+            //throw new Exception("Apparently there are no file versions of ID: "+oneId);
+            return null;
+        }
+        return(aVer.getLocalFile());
+    }
+
     /**
     * Returns the ResourceEntity that represents the remote folder that files
     * can be stored in.  Returns null if not set.

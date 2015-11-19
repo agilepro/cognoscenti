@@ -571,7 +571,7 @@ public class ProjectGoalController extends BaseController {
         String responseMessage = "";
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            ar.assertLoggedIn("You need to login to perform this function.");
+            ar.assertLoggedIn("You need to login to access subProcess.ajax.");
 
             String processURL = ar.reqParam("processURL");
             int pcolon = processURL.indexOf(":");
@@ -597,21 +597,21 @@ public class ProjectGoalController extends BaseController {
         NGWebUtils.sendResponse(ar, responseMessage);
     }
 
+
     private String getLocalProcess(String siteId, String projectID,
             AuthRequest ar) throws Exception {
 
         for (NGPageIndex ngpi : ar.getCogInstance().getAllProjectsInSite(siteId)) {
-            NGPage page = ngpi.getPage();
-            if (page.getKey().equalsIgnoreCase(projectID)) {
+            if (ngpi.containerKey.equals(projectID)) {
+                NGPage page = ngpi.getPage();
                 ar.setPageAccessLevels(page);
                 ProcessRecord process = page.getProcess();
                 LicensedURL thisProcessUrl = process.getWfxmlLink(ar);
                 return thisProcessUrl.getCombinedRepresentation();
             }
-            NGPageIndex.releaseLock(page);
         }
 
-        return "No workspace found";
+        throw new Exception("Local process for workspace '"+projectID+"' not found");
     }
 
 

@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import org.socialbiz.cog.mail.MailFile;
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
@@ -458,8 +460,10 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
 
-    public void sendReminderEmail(AuthRequest ar, NGPage ngp) throws Exception {
+    public void sendReminderEmail(AuthRequest ar, NGPage ngp, MailFile mailFile) throws Exception {
         try {
+
+            //TODO: make a non-persistent version of EmailGenerator -- no real reason to save this
             EmailGenerator emg = ngp.createEmailGenerator();
             emg.setSubject("Reminder for meeting: "+this.getName());
             Vector<String> names = new Vector<String>();
@@ -474,7 +478,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             emg.setFrom(meetingOwner);
             //UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
             //AuthRequest impersonateOwner = new AuthDummy(originalSender, ar.w, ar.getCogInstance());
-            emg.constructEmailRecords(ar, ngp);
+            emg.constructEmailRecords(ar, ngp, mailFile);
             setReminderSent(ar.nowTime);
         }
         catch (Exception e) {
@@ -568,8 +572,11 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             return meetStart - (delta * 60000);
         }
 
-        public void sendIt(AuthRequest ar) throws Exception {
-            meet.sendReminderEmail(ar, ngp);
+        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+            meet.sendReminderEmail(ar, ngp, mailFile);
+            if (!isSent()) {
+                System.out.println("STRANGE: the meeting was just sent, but it does not think so.");
+            }
         }
 
         public String selfDescription() throws Exception {

@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Vector;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.socialbiz.cog.mail.MailFile;
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
@@ -1049,7 +1051,7 @@ public class GoalRecord extends BaseRecord {
             int numPeopleAfter = assigneeRole.getDirectPlayers().size();
             if (numPeopleBefore != numPeopleAfter) {
                 //if the assignee number changes, send email in 5 minutes
-                setEmailSendTime(ar.nowTime + 300000);
+                setEmailSendTime(ar.nowTime);
             }
         }
         else if (goalObj.has("assignee")) {
@@ -1081,7 +1083,7 @@ public class GoalRecord extends BaseRecord {
 
     ////////////////////////// EMAIL /////////////////////////////
 
-    public void goalEmailRecord(AuthRequest ar, NGPage ngp) throws Exception {
+    public void goalEmailRecord(AuthRequest ar, NGPage ngp, MailFile mailFile) throws Exception {
         try {
             if (getEmailSendTime()<=0) {
                 throw new Exception("Program Logic Error: attempt to send email on action item when no schedule for sending is set");
@@ -1110,20 +1112,23 @@ public class GoalRecord extends BaseRecord {
                 }
                 creatorProfile = ownerList.get(0).getUserProfile();
                 if (creatorProfile==null) {
-                    throw new Exception("Somehow the profile of '"+ownerList.get(0).getUniversalId()+"' is null");
+                    System.out.println("DATA PROBLEM: action item came from a person without a profile ("+getCreator()+") ignoring");
+                    return;
                 }
             }
             else {
                 AddressListEntry commenter = new AddressListEntry(creator);
                 creatorProfile = commenter.getUserProfile();
                 if (creatorProfile==null) {
-                    throw new Exception("Somehow the profile of '"+getCreator()+"' is null");
+                    System.out.println("DATA PROBLEM: action item came from a person without a profile ("+getCreator()+") ignoring");
+                    setEmailSendTime(0);
+                    return;
                 }
             }
 
 
             for (OptOutAddr ooa : sendTo) {
-                constructEmailRecordOneUser(ar, ngp, ooa, creatorProfile);
+                constructEmailRecordOneUser(ar, ngp, ooa, creatorProfile, mailFile);
             }
             System.out.println("Marking ActionItem as SENT: "+getSynopsis());
             setEmailSendTime(0);
@@ -1134,12 +1139,9 @@ public class GoalRecord extends BaseRecord {
     }
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, OptOutAddr ooa,
-            UserProfile requesterProfile) throws Exception  {
+            UserProfile requesterProfile, MailFile mailFile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
-        }
-        if (requesterProfile==null) {
-            throw new Exception("Program Logic Error: Why did constructEmailRecordOneUser get called with a null profile?");
         }
 
         StringWriter bodyWriter = new StringWriter();
@@ -1183,9 +1185,10 @@ public class GoalRecord extends BaseRecord {
         clone.write("<tr><td>Description:</td>\n  <td>");
         clone.writeHtml(getDescription());
         clone.write("</td></tr>\n</table>\n");
+        ooa.writeUnsubscribeLink(clone);
+        clone.write("</body></html>");
 
-        EmailSender.containerEmail(ooa, ngp, emailSubject, bodyWriter.toString(), requesterProfile.getEmailWithName(),
-                new Vector<String>(), ar.getCogInstance());
+        mailFile.createEmailRecord(requesterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, bodyWriter.toString());
     }
 
     public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
@@ -1214,8 +1217,8 @@ public class GoalRecord extends BaseRecord {
             return goal.getEmailSendTime();
         }
 
-        public void sendIt(AuthRequest ar) throws Exception {
-            goal.goalEmailRecord(ar, ngp);
+        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+            goal.goalEmailRecord(ar, ngp, mailFile);
         }
 
         public String selfDescription() throws Exception {

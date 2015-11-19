@@ -1,6 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="org.socialbiz.cog.EmailListener"
-%><%@page import="org.socialbiz.cog.EmailSender"
 %><%@page import="java.io.PrintWriter"
 %><%@ include file="/spring/jsp/include.jsp"
 %>

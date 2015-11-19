@@ -12,6 +12,9 @@
 %><%@page import="org.socialbiz.cog.UtilityMethods"
 %><%@page import="org.socialbiz.cog.UserManager"
 %><%@page import="org.socialbiz.cog.UserProfile"
+%><%@page import="org.socialbiz.cog.mail.MailConversions"
+%><%@page import="org.socialbiz.cog.mail.MailFile"
+%><%@page import="org.socialbiz.cog.mail.MailInst"
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Enumeration"
@@ -22,9 +25,26 @@
     ar = AuthRequest.getOrCreate(request, response, out);
 
     String p = ar.reqParam("p");
+    String xxx = ar.defParam("xxx", null);
+
     ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertAdmin("old admin page is only for project administrators and you must be logged in to access it.");
+    File cogFolder = ngp.getFilePath().getParentFile();
+
+    if ("a".equals(xxx)) {
+        MailConversions.moveEmails(ngp, cogFolder, ar.getCogInstance());
+    } else if ("b".equals(xxx)) {
+        System.out.println("STARTING EMAIL: "+cogFolder);
+        MailConversions.sendAllMail(cogFolder, ar);
+        System.out.println("ENDING EMAIL");
+    } else if ("c".equals(xxx)) {
+        System.out.println("STARTING test: "+cogFolder);
+        MailFile mf = MailFile.readOrCreate(new File(cogFolder, "MailArchive.json"));
+        List<MailInst> mi = mf.getAllMessages();
+        System.out.println("ENDING test: "+mi.size());
+    }
+
 
     boolean isMember = ar.isMember();
     boolean isAdmin = ar.isAdmin();

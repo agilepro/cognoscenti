@@ -3,6 +3,7 @@ package org.socialbiz.cog;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;

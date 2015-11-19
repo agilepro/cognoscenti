@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
+import org.socialbiz.cog.mail.EmailSender;
 import org.workcast.streams.HTMLWriter;
 
 public class DailyDigest {
@@ -20,6 +21,7 @@ public class DailyDigest {
         Writer debugEvidence = new StringWriter();
 
         try {
+            NGPageIndex.assertNoLocksOnThread();
             long lastNotificationSentTime = arx.getSuperAdminLogFile().getLastNotificationSentTime();
 
             debugEvidence.write("\n<li>Previous send time: ");
@@ -61,6 +63,7 @@ public class DailyDigest {
     private static void handleOneUser(Cognoscenti cog, AuthRequest arx, UserProfile up,
             Writer debugEvidence, long processingStartTime) {
         try {
+            NGPageIndex.assertNoLocksOnThread();
 
             String realAddress = up.getPreferredEmail();
             if (realAddress == null || realAddress.length() == 0) {
@@ -427,9 +430,9 @@ public class DailyDigest {
         ar.write("/goalList.htm");
     }
 
-    private static int writeReminders(AuthRequest ar, UserProfile up)
-            throws Exception {
+    private static int writeReminders(AuthRequest ar, UserProfile up) throws Exception {
 
+        NGPageIndex.assertNoLocksOnThread();
         int noOfReminders = 0;
 
         for (NGPageIndex ngpi : ar.getCogInstance().getAllContainers()) {
@@ -547,6 +550,7 @@ public class DailyDigest {
 
     // operation get task list.
     private static List<ProjectGoal> getActiveTaskList(UserProfile up, Cognoscenti cog) throws Exception {
+        NGPageIndex.assertNoLocksOnThread();
 
         Vector<ProjectGoal> activeTask = new Vector<ProjectGoal>();
 

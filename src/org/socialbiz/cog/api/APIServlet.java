@@ -135,6 +135,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         try {
+            NGPageIndex.assertNoLocksOnThread();
             System.out.println("API_GET: "+ar.getCompleteURL());
             if (!ar.getCogInstance().isInitialized()) {
                 throw new Exception("Server is not ready to handle requests.");

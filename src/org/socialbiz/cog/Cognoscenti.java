@@ -15,6 +15,7 @@ import org.socialbiz.cog.api.LightweightAuthServlet;
 import org.socialbiz.cog.dms.FolderAccessHelper;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.socialbiz.cog.mail.EmailSender;
 import org.socialbiz.cog.rest.ServerInitializer;
 
 /**
@@ -208,7 +209,7 @@ System.out.println("Cognoscenti Server Object == Start the Server");
                 //SendEmailTimerTask.initEmailSender(backgroundTimer, this);
                 EmailListener.initListener(backgroundTimer);
             }
-            EmailRecordMgr.initializeEmailRecordMgr(this);
+
             SiteReqFile.initSiteList(this);
             FolderAccessHelper.initLocalConnections(this);
             FolderAccessHelper.initCVSConnections(this);

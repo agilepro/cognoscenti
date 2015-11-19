@@ -312,6 +312,7 @@ public class ResourceBook implements NGResource
 
     public void loadPage()throws Exception
     {
+        NGPageIndex.assertNoLocksOnThread();
         ltype = NGResource.TYPE_XML;
         NGBook ngb = ar.getCogInstance().getSiteByIdOrFail(lid);
         if(!ngb.getKey().equals(lid))

@@ -74,7 +74,6 @@ public class OptOutRolePlayer extends OptOutAddr {
         clone.writeURLData(ngc.emailDependentMagicNumber(emailId));
         clone.write("\">withdraw from that role</a> if you no longer want to be involved and receive email for the role. ");
         writeConcludingPart(clone);
-        NGPageIndex.releaseLock(ngc);
     }
 
 }

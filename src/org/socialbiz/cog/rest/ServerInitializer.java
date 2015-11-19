@@ -71,37 +71,37 @@ import org.socialbiz.cog.NGPageIndex;
  */
 public class ServerInitializer extends TimerTask {
 
-    
+
     public static final int STATE_INITIAL = 0;
     public static final int STATE_TESTING = 1;
     public static final int STATE_FAILED  = 2;
     public static final int STATE_PAUSED  = 3;
     public static final int STATE_RUNNING = 4;
-    
+
     /**
-     * Take great care with the serverInitState.  
+     * Take great care with the serverInitState.
      * It MUST be initialized (statically) to STATE_INITIAL
      * and that means it is a brand new object, nothing done
-     * 
+     *
      * Then it starts initialization by setting the FAILED
-     * status ... in case an exception is thrown.  FAILED is 
+     * status ... in case an exception is thrown.  FAILED is
      * a permanent status, and it means something is wrong
      * beyond the ability of the server to correct.
-     * 
-     * If the server gets up and running, but notices that a 
+     *
+     * If the server gets up and running, but notices that a
      * resource (like another server) that it needs is not
-     * available, then it can go into TESTING state.  
+     * available, then it can go into TESTING state.
      * It is not running, but it will continue to retry
      * those resources, and when everything is available
      * it goes into RUNNING.
-     * 
+     *
      * When it succeeds in initializing, it goes to RUNNING
-     * 
+     *
      * While RUNNING, if it notices that one of those external
      * resources has gone down, it should return to TESTING
      * mode.  Once they are all available again it can return
      * to RUNNING.
-     * 
+     *
      * When it is running, it can be PAUSED and subsequently resumed
      * under administrator control.
      */
@@ -114,15 +114,15 @@ public class ServerInitializer extends TimerTask {
     private Timer timerForOtherTasks = null;
     private Timer timerForInit = null;
 
-    
+
     /**
-     * Creates an instance of the initializer, and also sets the 
+     * Creates an instance of the initializer, and also sets the
      * timer to call it at 30 second intervals.
      */
     public ServerInitializer(Cognoscenti _cog) {
         cog = _cog;
         serverInitState = STATE_FAILED;
-        
+
         timerForInit = new Timer("Initialization Timer", true);
         timerForInit.scheduleAtFixedRate(this, 30000, 30000);
     }
@@ -181,8 +181,7 @@ public class ServerInitializer extends TimerTask {
         //Init fails if any init method throws an exception
 
         try {
-
-            
+            NGPageIndex.assertNoLocksOnThread();
             serverInitState = STATE_TESTING;
             lastInitAttemptTime = System.currentTimeMillis();
 

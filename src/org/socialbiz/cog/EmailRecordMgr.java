@@ -32,6 +32,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.w3c.dom.Document;
 
+/**
+ * @deprecated
+ */
 public class EmailRecordMgr {
 
     private static DOMFile  emailRecordFile;

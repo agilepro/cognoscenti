@@ -27,6 +27,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import org.socialbiz.cog.mail.MailFile;
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.socialbiz.cog.spring.NGWebUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -292,7 +294,7 @@ public class EmailGenerator extends DOMFace {
     }
 
 
-    public void constructEmailRecords(AuthRequest ar, NGPage ngp) throws Exception {
+    public void constructEmailRecords(AuthRequest ar, NGPage ngp, MailFile mailFile) throws Exception {
         Vector<OptOutAddr> sendTo = expandAddresses(ar, ngp);
         NoteRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
 
@@ -301,7 +303,7 @@ public class EmailGenerator extends DOMFace {
         for (OptOutAddr ooa : sendTo) {
             String addr = ooa.getEmail();
             if (addr!=null && addr.length()>0) {
-                constructEmailRecordOneUser(ar, ngp, noteRec, ooa);
+                constructEmailRecordOneUser(ar, ngp, noteRec, ooa, mailFile);
                 if (needComma) {
                     historyNameList.append(",");
                 }
@@ -313,17 +315,20 @@ public class EmailGenerator extends DOMFace {
         setSendDate(ar.nowTime);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord noteRec, OptOutAddr ooa)
+    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord noteRec, OptOutAddr ooa, MailFile mailFile)
             throws Exception  {
         String userAddress = ooa.getEmail();
-        if (userAddress==null || userAddress.length()==0)
-        {
+        if (userAddress==null || userAddress.length()==0) {
             //don't send anything if the user does not have an email address
             return;
         }
 
         StringWriter bodyWriter = new StringWriter();
         UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
+        if (originalSender==null) {
+            System.out.println("DATA PROBLEM: email generator came from a person without a profile ("+getOwner()+") ignoring");
+            return;
+        }
         AuthRequest clone = new AuthDummy(originalSender, bodyWriter, ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
@@ -360,9 +365,10 @@ public class EmailGenerator extends DOMFace {
         writeNoteAttachmentEmailBody(clone, ngp, noteRec, ooa.getAssignee(), getIntro(),
                 getIncludeBody(), attachList, meeting);
 
+        ooa.writeUnsubscribeLink(clone);
         clone.write("</body></html>");
 
-        EmailSender.containerEmail(ooa, ngp, getSubject(), bodyWriter.toString(), getFrom(), attachIds, ar.getCogInstance());
+        mailFile.createEmailWithAttachments(ngp, getFrom(), ooa.getEmail(), getSubject(), bodyWriter.toString(), attachIds);
     }
 
     //TODO: change this to use a TEMPLATE approach, when loops are allowed
@@ -601,8 +607,8 @@ public class EmailGenerator extends DOMFace {
             return eg.getScheduleTime();
         }
 
-        public void sendIt(AuthRequest ar) throws Exception {
-            eg.constructEmailRecords(ar, ngp);
+        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+            eg.constructEmailRecords(ar, ngp, mailFile);
         }
 
         public String selfDescription() throws Exception {

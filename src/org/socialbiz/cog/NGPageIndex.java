@@ -438,6 +438,7 @@ public class NGPageIndex {
                         ctid, this.containerKey, lockedBy }, lockedByAuditException);
             }
 
+            System.out.println("~ locking "+this.containerKey);
             lockedBy = thisThread;
             lockedByAuditException = new Exception("Audit lock hold by " + ctid + " pageId: "
                     + containerKey);
@@ -472,6 +473,7 @@ public class NGPageIndex {
                         .println("LOCK ERROR - clear lock called when thread does not have lock!");
                 return;
             }
+            System.out.println("~ unlocking "+this.containerKey);
             this.lockedBy = 0;
             this.lockedByAuditException = null;
             lockBlq.add(LOCK_ID);
@@ -482,6 +484,42 @@ public class NGPageIndex {
                     + this.containerKey + " lock is available nothing to clear");
         }
     }
+
+    /**
+     * Here is the deal:  when you access a workspace or other major object, it is locked
+     * to that thread so that we don't have multiple threads working on the same data.
+     *
+     * However, some routines walk through multiple major objects, and this might lead to
+     * them holding lots and lots of locks, causing deadlock problems.  Those routines
+     * want to unlock the major objects.
+     *
+     * Unlocking in a method is safe ONLY if you enter the routine without any locks.
+     * Nested locks are not tracked, so you can recursively fetch a major object without
+     * locking yourself out.  But if one of those recursive fetches ALSO does an unlock,
+     * then you are unlocking for the parent AS WELL, and that is mucho-dangerous.
+     *
+     * The solution:  every method that is going to walk through major objects, and
+     * unlock in the middle of that, must ASSERT that there were no long being held by
+     * that thread before entering.  This is the only way to know that unlocking will
+     * be safe.  The all calling methods on the way must guarantee that they are not
+     * holding a lock whenever such a method is called.
+     *
+     * This method asserts that no locks are held by the thread, and throws an exception
+     * if it finds any locks held by this thread.  That would be a no-no.
+     */
+    public static void assertNoLocksOnThread() throws Exception {
+        if (lockMap==null) {
+            //during initialization all locks are ignored
+            return;
+        }
+        String ctid = "tid:" + Thread.currentThread().getId();
+        if (lockMap.containsKey(ctid)) {
+            throw new Exception("program logic error: Thread is holding a lock when it should not.  "
+                    +"Method that is controlling locks must only be called when no locks are being held.  "
+                    +"Clear all locks and all references to locked objects before calling this method.");
+        }
+    }
+
 
     public static void clearLocksHeldByThisThread() {
         if (lockMap==null) {

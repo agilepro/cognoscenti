@@ -22,7 +22,6 @@ package org.socialbiz.cog;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -33,6 +32,21 @@ import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
 
+/**
+ * This class represents an email message in the ngPage world.
+ * Operations that happen in the page, will create an email message
+ * of this type, and store it in the page for delivery.
+ *
+ * Constructing and storing this message is expected to be fast,
+ * reliable, and part of the same transaction that updates the
+ * page.
+ *
+ * A separate thread will wake up, take the message from the page
+ * deleting it here, and adding it to the mail archive file.
+ * Then mail messages in the archive file are sent to the email
+ * service.
+ *
+ */
 public class EmailRecord extends DOMFace
 {
 
@@ -204,6 +218,7 @@ public class EmailRecord extends DOMFace
         setVector("attachid", ids);
     }
 
+
     /**
      * Read attachments into cache so that all the information to send
      * a file is held in memory and there is no chance for failure.
@@ -285,38 +300,5 @@ public class EmailRecord extends DOMFace
     }
 
 
-    public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
-        if (statusReadyToSend()) {
-            EMScheduledNotification sn = new EMScheduledNotification(this);
-            resList.add(sn);
-        }
-    }
-
-    private class EMScheduledNotification implements ScheduledNotification {
-        EmailRecord er;
-
-        public EMScheduledNotification( EmailRecord _er) {
-            er = _er;
-        }
-        public boolean isSent() throws Exception {
-            String status = er.getStatus();
-            return SENT.equals(status) || FAILED.equals(status);
-        }
-
-        public long timeToSend() throws Exception {
-            //there is no scheduled time for sending email .. it just is scheduled
-            //immediately and supposed to be sent as soon as possible after that
-            //so return now minus 1 minutes
-            return System.currentTimeMillis()-60000;
-        }
-
-        public void sendIt(AuthRequest ar) throws Exception {
-            EmailSender.sendPreparedMessageImmediately(er, ar.getCogInstance());
-        }
-
-        public String selfDescription() throws Exception {
-            return "(Email Record) "+er.getSubject();
-        }
-    }
 
 }

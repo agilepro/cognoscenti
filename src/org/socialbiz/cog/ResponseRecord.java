@@ -24,6 +24,8 @@ import java.io.StringWriter;
 import java.util.Date;
 import java.util.Vector;
 
+import org.socialbiz.cog.mail.MailFile;
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONObject;
@@ -92,21 +94,26 @@ public class ResponseRecord extends DOMFace
     }
 
 
-    public void responseEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, CommentRecord cr) throws Exception {
+    public void responseEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, CommentRecord cr, MailFile mailFile) throws Exception {
         Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
         OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
 
         AddressListEntry commenter = new AddressListEntry(getUserId());
         UserProfile commenterProfile = commenter.getUserProfile();
+        if (commenterProfile==null) {
+            System.out.println("DATA PROBLEM: proposal response came from a person without a profile ("+getUserId()+") ignoring");
+            setEmailSent(true);
+            return;
+        }
 
         for (OptOutAddr ooa : sendTo) {
-            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, cr, commenterProfile);
+            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, cr, commenterProfile, mailFile);
         }
         setEmailSent(true);
     }
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
-            CommentRecord cr, UserProfile commenterProfile) throws Exception  {
+            CommentRecord cr, UserProfile commenterProfile, MailFile mailFile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
         }
@@ -139,9 +146,10 @@ public class ResponseRecord extends DOMFace
         clone.write("\n<div style=\"color:#A9A9A9\">");
         clone.write(cr.getContentHtml(ar));
         clone.write("\n</div>");
+        ooa.writeUnsubscribeLink(clone);
+        clone.write("</body></html>");
 
-        EmailSender.containerEmail(ooa, ngp, emailSubject, bodyWriter.toString(), commenterProfile.getEmailWithName(),
-                new Vector<String>(), ar.getCogInstance());
+        mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, bodyWriter.toString());
     }
 
     public JSONObject getJSON(AuthRequest ar) throws Exception {
@@ -186,11 +194,11 @@ public class ResponseRecord extends DOMFace
         }
 
         public long timeToSend() throws Exception {
-            return cr.getTime()+300000;
+            return cr.getTime()+1000;
         }
 
-        public void sendIt(AuthRequest ar) throws Exception {
-            rr.responseEmailRecord(ar,ngp,noteOrMeet,cr);
+        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+            rr.responseEmailRecord(ar,ngp,noteOrMeet,cr,mailFile);
         }
 
         public String selfDescription() throws Exception {

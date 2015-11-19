@@ -6,7 +6,6 @@
 %><%@page import="java.util.Properties"
 %><%@page import="org.socialbiz.cog.AuthRequest"
 %><%@page import="org.socialbiz.cog.Cognoscenti"
-%><%@page import="org.socialbiz.cog.EmailSender"
 %><%@page import="org.socialbiz.cog.MimeTypes"
 %><%@page import="org.socialbiz.cog.NGBook"
 %><%@page import="org.socialbiz.cog.ConfigFile"

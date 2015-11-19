@@ -83,6 +83,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
 
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         try {
+            NGPageIndex.assertNoLocksOnThread();
             System.out.println("API_GET: "+ar.getCompleteURL());
             if (!ar.getCogInstance().isInitialized()) {
                 throw new Exception("Server is not ready to handle requests.");
@@ -214,6 +215,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
 
     public static JSONArray getGoalList(AuthRequest ar, UserDecoder userDec) throws Exception {
 
+        NGPageIndex.assertNoLocksOnThread();
         UserProfile up = userDec.uProf;
 
         JSONArray goalArray = new JSONArray();

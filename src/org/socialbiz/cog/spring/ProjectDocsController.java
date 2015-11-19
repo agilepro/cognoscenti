@@ -119,6 +119,7 @@ public class ProjectDocsController extends BaseController {
            HttpServletRequest request,
            HttpServletResponse response) throws Exception {
         try{
+            NGPageIndex.assertNoLocksOnThread();
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
 

@@ -755,6 +755,7 @@ public class UserPage extends ContainerCommon
     // operation get task list.
     public static JSONArray getWorkListJSON(UserProfile up, Cognoscenti cog) throws Exception {
 
+        NGPageIndex.assertNoLocksOnThread();
         if (up == null) {
             throw new Exception("getTaskListJSON requires a UserProfile but got a null");
         }

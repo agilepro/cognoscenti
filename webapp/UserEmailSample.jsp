@@ -1,7 +1,6 @@
 <%@page errorPage="error.jsp"
 %><%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
 %><%@page import="org.socialbiz.cog.AuthRequest"
-%><%@page import="org.socialbiz.cog.EmailSender"
 %><%@page import="org.socialbiz.cog.UtilityMethods"
 %><%@page import="org.socialbiz.cog.UserManager"
 %><%@page import="org.socialbiz.cog.UserProfile"

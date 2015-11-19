@@ -133,6 +133,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         try {
+            NGPageIndex.assertNoLocksOnThread();
             if (!ar.getCogInstance().isRunning()) {
                 String go = ar.getRequestURL();
                 String configDest = ar.retPath + "init/config.htm?go="+URLEncoder.encode(go,"UTF-8");
@@ -306,7 +307,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse resp) {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         try {
-
+            NGPageIndex.assertNoLocksOnThread();
             String auHeader = req.getHeader("Authorization");
             if (auHeader == null) {
                 throw new NGException("nugen.exception.authorization.header.not.set",null);
@@ -323,7 +324,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
     public void doPut(HttpServletRequest req, HttpServletResponse resp) {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         try {
-
+            NGPageIndex.assertNoLocksOnThread();
             String auHeader = req.getHeader("Authorization");
             if (auHeader == null) {
                 throw new NGException("nugen.exception.authorization.header.not.set",null);
@@ -340,7 +341,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
     public void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         try {
-
+            NGPageIndex.assertNoLocksOnThread();
             String auHeader = req.getHeader("Authorization");
             if (auHeader == null) {
                 throw new NGException("nugen.exception.authorization.header.not.set",null);

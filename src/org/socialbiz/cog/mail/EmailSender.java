@@ -18,11 +18,11 @@
  * Anamika Chaudhari, Ajay Kakkar, Rajeev Rastogi
  */
 
-package org.socialbiz.cog;
+package org.socialbiz.cog.mail;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -31,22 +31,27 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import javax.activation.DataHandler;
 import javax.mail.Authenticator;
 import javax.mail.Message;
-import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeUtility;
 
+import org.socialbiz.cog.AuthDummy;
+import org.socialbiz.cog.AuthRequest;
+import org.socialbiz.cog.Cognoscenti;
+import org.socialbiz.cog.DOMFace;
+import org.socialbiz.cog.DailyDigest;
+import org.socialbiz.cog.EmailRecord;
+import org.socialbiz.cog.NGContainer;
+import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.OptOutAddr;
+import org.socialbiz.cog.SuperAdminLogFile;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.workcast.streams.MemFile;
 
 /**
  * Support class for sending email messages based on an email configuration
@@ -59,6 +64,10 @@ import org.workcast.streams.MemFile;
 public class EmailSender extends TimerTask {
     private static Properties emailProperties = new Properties();
     private Cognoscenti cog;
+
+    // this says where the file is, but it ALSO serves as the lock object
+    // for manipulating this file.  Always use synchronized on this object
+    private static File globalMailArchive;
 
     // expressed in milliseconds
     private final static long EVERY_MINUTE = 60000;
@@ -139,6 +148,9 @@ public class EmailSender extends TimerTask {
      */
     public static void initSender(Timer timer, Cognoscenti cog) throws Exception {
 
+        File userFolder = cog.getConfig().getUserFolderOrFail();
+        globalMailArchive = new File(userFolder, "GlobalEmailArchive.json");
+
         // apparently a timer task can not be reused by a Timer, or in another
         // Timer.  You have to create them every time you schedule them???
         // TODO: no reason to make these static then
@@ -153,14 +165,9 @@ public class EmailSender extends TimerTask {
         // and every 20 minutes after that.
         // Note, if the sending of email fails, then it will
         // try again 20 minutes later, and every 20 minutes until it succeeds.
-        timer.scheduleAtFixedRate(singletonSender, 60000, EVERY_MINUTE);
+        //timer.scheduleAtFixedRate(singletonSender, 60000, EVERY_MINUTE);
+        timer.scheduleAtFixedRate(singletonSender, 10000, 5000);
 
-        //
-        //commented out now we have the new way of handling all background events
-        //SendEmailThread sendEmailThread = new SendEmailThread(cog);
-        //check if anything needs to be sent every 10 seconds
-        //after waiting an initial 60 seconds.
-        //timer.scheduleAtFixedRate(sendEmailThread, 60000, 10000);
     }
 
     // This method must be called regularly and frequently, and email is only
@@ -173,7 +180,10 @@ public class EmailSender extends TimerTask {
 
         // make sure that this method doesn't throw any exception
         try {
+            NGPageIndex.assertNoLocksOnThread();
+            System.out.println("BACKGROUND: starting to check for mail to send."+new Date());
             checkAndSendDailyDigest(ar);
+            handleGlobalEmail();
             handleAllOverdueScheduledEvents(ar);
         } catch (Exception e) {
             Exception failure = new Exception(
@@ -190,34 +200,101 @@ public class EmailSender extends TimerTask {
         }
     }
 
+    Object globalEmailFileLock = new Integer(999);
+
+    private void handleGlobalEmail() {
+        synchronized(globalMailArchive) {
+            try {
+                Mailer mailer = new Mailer(cog.getConfig().getFile("EmailNotification.properties"));
+                MailFile globalArchive = MailFile.readOrCreate(globalMailArchive);
+                globalArchive.sendAllMail(mailer);
+                globalArchive.save();
+            }
+            catch (Exception e) {
+                System.out.println("FATAL ERROR HANDLING GLOBAL EMAIL: "+e.toString());
+            }
+        }
+    }
+
     private void handleAllOverdueScheduledEvents(AuthRequest ar) throws Exception{
+        NGPageIndex.assertNoLocksOnThread();
+        Mailer mailer = new Mailer(cog.getConfig().getFile("EmailNotification.properties"));
+
+        //default delay is 5 minutes AFTER the scheduled time.  This 5 minutes is to allow people who
+        //create something a few minutes to edit before it is sent.  However, this can be set in the
+        //properties to be more or less than that.
+        //int delayTime = 5*60*1000;
+        int delayTime = 0;
+        String delayStr = mailer.getProperty("automated.email.delay");
+        if (delayStr!=null) {
+            //delay time config parameter is in minutes
+            delayTime = DOMFace.safeConvertInt(delayStr)*1000*60;
+        }
+
+
         long nowTime = ar.nowTime;
         NGPageIndex ngpi = findOverdueContainer(nowTime);
         int iCount = 0;
         while (ngpi!=null) {
             iCount++;
-            if (ngpi.isProject()) {
-                NGPage ngp = (NGPage) ngpi.getContainer();
-                System.out.println("BACKGROUND EVENTS: found workspace ("+ngp.getFullName()+") due at "+new Date(ngp.nextActionDue()));
-                EmailRecord eRec = ngp.getEmailReadyToSend();
-                if (eRec!=null) {
-                    //priority to sending email
-                    System.out.println("BACKGROUND EVENTS: sending an email message #"+eRec.getId()+" to "+eRec.getAddressees().size()+" recipients.");
-                    sendOneEmail(ngp, eRec);
-                }
-                else {
-                    //if no email, then call for the other scheduled actions
-                    ngp.performScheduledAction(ar);
-                }
-                ngpi.nextScheduledAction = ngp.nextActionDue();
-                ngp.save();
-                System.out.println("BACKGROUND EVENTS: finished action on workspace ("+ngp.getFullName()+")");
-                NGPageIndex.clearLocksHeldByThisThread();
-            }
-            else {
+            if (!ngpi.isProject()) {
                 System.out.println("BACKGROUND EVENTS: strange non-Page object has scheduled events --- ignoring it");
                 ngpi.nextScheduledAction = 0;
+                continue;
             }
+
+            File workspaceCogFolder = ngpi.containerPath.getParentFile();
+            File emailArchiveFile = new File(workspaceCogFolder, "mailArchive.json");
+
+            //open and read the archive first .. it is safe becasue this is the only thread
+            //that reads the email archive.
+            MailFile emailArchive = MailFile.readOrCreate(emailArchiveFile);
+
+            {
+                //now open the page and generate all the email messages, remember this
+                //locks the file blocking all other threads, so be quick
+                NGPage ngp = (NGPage) ngpi.getContainer();
+                System.out.println("BACKGROUND EVENTS: found workspace ("+ngp.getFullName()+") due at "
+                        +new Date(ngp.nextActionDue()));
+
+                //first, move all the email messages that have been stored in the project from foreground events.
+                MailConversions.moveEmails(ngp, emailArchive, cog);
+
+                ngpi.nextScheduledAction = ngp.nextActionDue();
+                ngp.save();
+                NGPageIndex.clearLocksHeldByThisThread();
+                emailArchive.save();
+            }
+
+            while (ngpi.nextScheduledAction < ar.nowTime-delayTime) {
+                //now open the page and generate all the email messages, remember this
+                //locks the file blocking all other threads, so be quick
+                NGPage ngp = (NGPage) ngpi.getContainer();
+
+                ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
+                ngp.gatherUnsentScheduledNotification(resList);
+
+                int total = resList.size();
+                int count = 0;
+                for (ScheduledNotification sn : resList) {
+                    count++;
+                    System.out.println("Email Sender: Performing Notification "+count+" of "+total+": "+sn.selfDescription());
+                    sn.sendIt(ar, emailArchive);
+                }
+
+                ngpi.nextScheduledAction = ngp.nextActionDue();
+                ngp.save(); //save all the changes from the removal of email and scheduling of events
+                System.out.println("BACKGROUND EVENTS: finished action on workspace ("+ngp.getFullName()+")");
+                NGPageIndex.clearLocksHeldByThisThread();
+
+                //now we can go an actually send the email in the mailArchive
+                emailArchive.save();
+            }
+
+
+            //now we can go an actually send the email in the mailArchive
+            emailArchive.sendAllMail(mailer);
+
             Thread.sleep(200);  //just small delay to avoid saturation
             ngpi = findOverdueContainer(ar.nowTime);
         }
@@ -248,7 +325,7 @@ public class EmailSender extends TimerTask {
  * situation.
  *
  * If the email server take 30 or 40 seconds to respond, then
- */
+ *
     private void sendOneEmail(NGPage possiblePage, EmailRecord eRec) throws Exception {
         String pageKey = possiblePage.getKey();
         String pageName = possiblePage.getFullName();
@@ -290,7 +367,8 @@ public class EmailSender extends TimerTask {
         }
         possiblePage.save();
         eRec.setLastSentDate(System.currentTimeMillis());
-    }
+    }*/
+
 
     /**
      * This method is designed to be called repeatedly ... every 20 minutes.
@@ -386,6 +464,10 @@ public class EmailSender extends TimerTask {
         return cal.getTime().getTime();
     }
 
+    /**
+    * Stores an email message in the NGPage project workspace, that will LATER be moved to the
+    * MailFile archive and sent.
+    */
     public static void containerEmail(OptOutAddr ooa, NGContainer ngc,
             String subject, String emailBody, String from, Vector<String> attachIds, Cognoscenti cog) throws Exception {
         ooa.assertValidEmail();
@@ -394,6 +476,10 @@ public class EmailSender extends TimerTask {
         queueEmailNGC(addressList, ngc, subject, emailBody, from, attachIds, cog);
     }
 
+    /**
+    * Stores an email message in the NGPage project workspace, that will LATER be moved to the
+    * MailFile archive and sent.
+    */
     public static void queueEmailNGC(Vector<OptOutAddr> addresses,
             NGContainer ngc, String subject, String emailBody, String from, Vector<String> attachIds, Cognoscenti cog)
             throws Exception {
@@ -421,10 +507,12 @@ public class EmailSender extends TimerTask {
 
 
     /**
-     * TODO: This should probable be on the NGPage object.
+     * Stores an email message in the NGPage project workspace, that will LATER be moved to the
+     * MailFile archive and sent.
      */
     private static void createEmailRecordInternal(NGContainer ngc, String from,
-            Vector<OptOutAddr> addresses, String subject, String emailBody, Vector<String> attachIds, Cognoscenti cog)
+            Vector<OptOutAddr> addresses, String subject, String emailBody, Vector<String> attachIds,
+            Cognoscenti cog)
             throws Exception {
 
         try {
@@ -446,206 +534,48 @@ public class EmailSender extends TimerTask {
             emailRec.setAttachmentIds(attachIds);
             ngc.save("SERVER", System.currentTimeMillis(), "Sending an email message", cog);
 
-            //note, this is a little dangerous because there must not be any modifications
-            //of ngc after this point!
-            NGPageIndex.releaseLock(ngc);
-
-            EmailRecordMgr.triggerNextMessageSend();
+//            EmailRecordMgr.triggerNextMessageSend();
         } catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.send.simple.msg",
                     new Object[] { from, subject }, e);
         }
     }
 
-    private static String getUnSubscriptionAsString(OptOutAddr ooa, Cognoscenti cog)
-            throws Exception {
-
-        StringWriter bodyWriter = new StringWriter();
-        UserProfile up = UserManager.findUserByAnyId(ooa.getEmail());
-        AuthRequest clone = new AuthDummy(up, bodyWriter, cog);
-        ooa.writeUnsubscribeLink(clone);
-        return bodyWriter.toString();
-    }
 
     /**
-     * Static version that actually talks to SMTP server and sends the email
+     * Create an email message in the global email outbox
      */
     public static void simpleEmail(Vector<OptOutAddr> addresses, String from,
             String subject, String emailBody, Cognoscenti cog) throws Exception {
-        EmailSender.instantEmailSend(addresses, subject, emailBody, from, cog);
-    }
-
-    /**
-     * Creates an email record and then sends it immediately
-     * Does NOT associate this with a NGPage object.
-     * TODO: check if this should be on a project
-     */
-    private static void instantEmailSend(Vector<OptOutAddr> addresses, String subject,
-            String emailBody, String fromAddress, Cognoscenti cog) throws Exception {
         if (subject == null || subject.length() == 0) {
-            throw new ProgramLogicError(
-                    "instantEmailSend requires a non null subject parameter");
+            throw new ProgramLogicError("simpleEmail requires a non null subject parameter");
         }
         if (emailBody == null || emailBody.length() == 0) {
-            throw new ProgramLogicError(
-                    "instantEmailSend requires a non null body parameter");
+            throw new ProgramLogicError("simpleEmail requires a non null body parameter");
         }
         if (addresses == null || addresses.size() == 0) {
-            throw new ProgramLogicError(
-                    "instantEmailSend requires a non empty addresses parameter");
+            throw new ProgramLogicError("simpleEmail requires a non empty addresses parameter");
         }
-        if (fromAddress == null || fromAddress.length() == 0) {
-            fromAddress = getProperty("mail.smtp.from", "xyz@example.com");
+        if (from == null || from.length() == 0) {
+            throw new ProgramLogicError("simpleEmail requires a non empty 'from' parameter");
         }
-
-        EmailRecord eRec = EmailRecordMgr.createEmailRecord("TEMP"
-                + IdGenerator.generateKey());
-        eRec.setAddressees(addresses);
-        eRec.setSubject(subject);
-        eRec.setBodyText(emailBody);
-        eRec.setFromAddress(fromAddress);
-
-        sendPreparedMessageImmediately(eRec, cog);
-    }
-
-
-
-    public static void sendPreparedMessageImmediately(EmailRecord eRec, Cognoscenti cog)
-            throws Exception {
-        if (eRec == null) {
-            throw new ProgramLogicError(
-                    "sendPreparedMessageImmediately requires a non null eRec parameter");
-        }
-
-        long sendTime = System.currentTimeMillis();
-
-        //check that server is configured to send email
-        if (!"smtp".equals(getProperty("mail.transport.protocol"))) {
-            //if protocol is set to anything else, then just ignore this request
-            //this is an easy way to disable the sending of email across board
-            eRec.setStatus(EmailRecord.SKIPPED);
-            eRec.setLastSentDate(sendTime);
-            System.out.println("Email skipped, not sent, mail.transport.protocol!=smtp ");
-            return;
-        }
-
-        String addressForErrorReporting = "(Initial value)";
-
-        Transport transport = null;
-        try {
-            Authenticator authenticator = new MyAuthenticator(emailProperties);
-            Session mailSession = Session.getInstance(emailProperties, authenticator);
-            mailSession.setDebug("true".equals(getProperty("mail.debug")));
-
-            transport = mailSession.getTransport();
-            transport.connect();
-
-            String overrideAddress = getProperty("overrideAddress");
-            Vector<OptOutAddr> addresses = eRec.getAddressees();
-            int addressCount = 0;
-
-            // send the message to each addressee individually so they each get
-            // their own op-out unsubscribe line.
-            for (OptOutAddr ooa : addresses) {
-
-                addressForErrorReporting = ooa.getEmail();
-
-                MimeMessage message = new MimeMessage(mailSession);
-                message.setSentDate(new Date(sendTime));
-
-                String rawFrom = eRec.getFromAddress();
-                if (rawFrom==null || rawFrom.length()==0) {
-                    throw new Exception("Attempt to send an email record that does not have a from address");
+        synchronized(globalMailArchive) {
+            try {
+                MailFile globalArchive = MailFile.readOrCreate(globalMailArchive);
+                for (OptOutAddr ooa : addresses) {
+                    globalArchive.createEmailRecord(from, ooa.getEmail(), subject, emailBody);
                 }
-                message.setFrom(new InternetAddress(AddressListEntry.cleanQuotes(rawFrom)));
-                String encodedSubjectLine = MimeUtility.encodeText(
-                        eRec.getSubject(), "utf-8", "B");
-                message.setSubject(encodedSubjectLine);
-
-                MimeBodyPart textPart = new MimeBodyPart();
-                textPart.setHeader("Content-Type", "text/html; charset=\"utf-8\"");
-                textPart.setText(eRec.getBodyText() + getUnSubscriptionAsString(ooa, cog), "UTF-8");
-                textPart.setHeader("Content-Transfer-Encoding", "quoted-printable");
-                // apparently using 'setText' can change the content type for
-                // you automatically, so re-set it.
-                textPart.setHeader("Content-Type", "text/html; charset=\"utf-8\"");
-
-                Multipart mp = new MimeMultipart();
-                mp.addBodyPart(textPart);
-                message.setContent(mp);
-
-                attachFiles(mp, eRec);
-
-
-                // set the to address.
-                InternetAddress[] addressTo = new InternetAddress[1];
-
-                try {
-                    // if overrideAddress is configured, then all email will go
-                    // to that email address, instead of the address in the profile.
-                    if (overrideAddress != null && overrideAddress.length() > 0) {
-                        addressTo[0] = new InternetAddress(overrideAddress);
-                    } else {
-                        addressTo[0] = new InternetAddress(AddressListEntry.cleanQuotes(ooa.getEmail()));
-                    }
-                } catch (Exception ex) {
-                    throw new NGException("nugen.exception.problem.with.address",
-                            new Object[] { addressCount, ooa.getEmail() }, ex);
-                }
-
-                message.addRecipients(Message.RecipientType.TO, addressTo);
-                transport.sendMessage(message, message.getAllRecipients());
-
-                addressCount++;
             }
-
-            eRec.setStatus(EmailRecord.SENT);
-            eRec.setLastSentDate(sendTime);
-        } catch (Exception me) {
-            eRec.setStatus(EmailRecord.FAILED);
-            eRec.setLastSentDate(sendTime);
-            eRec.setExceptionMessage(me);
-
-            System.out.println("ERROR sendPreparedMessageImmediately "+me);
-
-            //TODO: temporary because someone is swallowing the exception somewhere .. need to find
-            me.printStackTrace(System.out);
-
-            dumpProperties(emailProperties);
-            throw new NGException("nugen.exception.unable.to.send.simple.msg",
-                    new Object[] { addressForErrorReporting, eRec.getSubject() }, me);
-        } finally {
-            if (transport != null) {
-                try {
-                    transport.close();
-                } catch (Exception ce) { /* ignore this exception */
-                    System.out.println("transport.close() threw an exception in a finally block!  Ignored!");
-                }
+            catch (Exception e) {
+                throw new Exception("Failure while composing an email message for the global archive", e);
             }
         }
     }
 
-    /**
-     * Note that this method needs to work without accessing the NGPage object
-     * directly.  We must use only the EmailRecord object alone, by using
-     * the attachment contents inside the object.
-     */
-    private static void attachFiles(Multipart mp, EmailRecord eRec) throws Exception {
-        Vector<String> attachids = eRec.getAttachmentIds();
-        for (String oneId : attachids) {
 
-            File path = eRec.getAttachPath(oneId);
-            MemFile mf = eRec.getAttachContents(oneId);
 
-            MimeBodyPart pat = new MimeBodyPart();
-            MemFileDataSource mfds = new MemFileDataSource(mf, path.toString(),
-                            MimeTypes.getMimeType(path.getName()));
-            pat.setDataHandler(new DataHandler(mfds));
-            pat.setFileName(path.getName());
-            mp.addBodyPart(pat);
-        }
-    }
 
+/*
     public static Vector<AddressListEntry> parseAddressList(String list) {
         Vector<AddressListEntry> res = new Vector<AddressListEntry>();
         if (list == null || list.length() == 0) {
@@ -661,6 +591,7 @@ public class EmailSender extends TimerTask {
         }
         return res;
     }
+*/
 
     private static String composeFromAddress(NGContainer ngc) throws Exception {
         StringBuffer sb = new StringBuffer("^");

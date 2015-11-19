@@ -2,7 +2,6 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="org.socialbiz.cog.CustomRole"
-%><%@page import="org.socialbiz.cog.EmailSender"
 %><%@page import="org.socialbiz.cog.EmailGenerator"
 %><%@page import="org.socialbiz.cog.MeetingRecord"
 %><%!

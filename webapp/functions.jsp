@@ -2,7 +2,6 @@
 %><%@page import="org.socialbiz.cog.AddressListEntry"
 %><%@page import="org.socialbiz.cog.AttachmentRecord"
 %><%@page import="org.socialbiz.cog.AuthRequest"
-%><%@page import="org.socialbiz.cog.EmailSender"
 %><%@page import="org.socialbiz.cog.HistoryRecord"
 %><%@page import="org.socialbiz.cog.NoteRecord"
 %><%@page import="org.socialbiz.cog.LeafletResponseRecord"

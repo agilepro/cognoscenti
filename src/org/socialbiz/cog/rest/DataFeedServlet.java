@@ -76,6 +76,7 @@ public class DataFeedServlet extends HttpServlet {
             throws ServletException {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
+            NGPageIndex.assertNoLocksOnThread();
             handleAllRequests(ar);
         }
         catch (Exception e) {
@@ -268,6 +269,7 @@ public class DataFeedServlet extends HttpServlet {
     // operation get task list.
     public static TaskListRecord[] getTaskList(UserProfile up, String listType, Cognoscenti cog) throws Exception {
 
+        NGPageIndex.assertNoLocksOnThread();
         Vector<TaskListRecord> allTask = new Vector<TaskListRecord>();
         Vector<TaskListRecord> activeTask = new Vector<TaskListRecord>();
         Vector<TaskListRecord> completedTask = new Vector<TaskListRecord>();

@@ -35,6 +35,8 @@ import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.socialbiz.cog.mail.MailFile;
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
@@ -1599,8 +1601,14 @@ public class NGPage extends ContainerCommon implements NGContainer
 
     public JSONArray getJSONEmailGenerators(AuthRequest ar) throws Exception {
         JSONArray val = new JSONArray();
-        for (EmailGenerator egen : getAllEmailGenerators()) {
+        List<EmailGenerator> gg = getAllEmailGenerators();
+        int limit = 200;
+        for (EmailGenerator egen : gg) {
             val.put(egen.getJSON(ar, this));
+            if (limit--<0) {
+                System.out.println("LIMIT: stopped including EmailGenerators at 200 out of "+gg.size());
+                break;
+            }
         }
         return val;
     }
@@ -1745,6 +1753,13 @@ public class NGPage extends ContainerCommon implements NGContainer
     }
 
 
+    /**
+     * This will delete all email records in the project (workspace)
+     */
+    public void clearAllEmail() throws Exception {
+        DOMFace mail = requireChild("mail", DOMFace.class);
+        mail.clearVector("email");
+    }
 
 
     /**
@@ -1792,9 +1807,6 @@ public class NGPage extends ContainerCommon implements NGContainer
         for (EmailGenerator eg : getAllEmailGenerators()) {
             eg.gatherUnsentScheduledNotification(this, resList);
         }
-        for (EmailRecord er : getAllEmail()) {
-            er.gatherUnsentScheduledNotification(this, resList);
-        }
         for (GoalRecord goal : getAllGoals()) {
             goal.gatherUnsentScheduledNotification(this, resList);
         }
@@ -1805,8 +1817,10 @@ public class NGPage extends ContainerCommon implements NGContainer
      * before the current time.  Actions are done one at a time so that the calling
      * code can decide to save the page before calling to execute the next action,
      * or to spread a large number of actions out a bit.
+     *
+     * This should ONLY be called on the background email thread.
      */
-    public void performScheduledAction(AuthRequest ar) throws Exception {
+    public void performScheduledAction(AuthRequest ar, MailFile mailFile) throws Exception {
 
         ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
         gatherUnsentScheduledNotification(resList);
@@ -1821,7 +1835,8 @@ public class NGPage extends ContainerCommon implements NGContainer
         }
 
         if (earliest!=null) {
-            earliest.sendIt(ar);
+            earliest.sendIt(ar, mailFile);
+            System.out.println("BACKGROUND: Just sent: "+earliest.selfDescription());
             return;   //only one thing at a time
         }
     }

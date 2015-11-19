@@ -71,6 +71,7 @@ public class SpringServletWrapper extends HttpServlet
         String requestAddr = "unknown";
 
         try {
+            NGPageIndex.assertNoLocksOnThread();
             requestAddr = ar.getCompleteURL();
 
             //test for initialized, and if not redirect to config page
