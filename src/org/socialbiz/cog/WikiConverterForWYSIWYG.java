@@ -23,6 +23,8 @@ package org.socialbiz.cog;
 import java.io.StringWriter;
 import java.util.Vector;
 
+import org.workcast.streams.MemFile;
+
 /**
  * This is a sub class of WikiConverter that handles the HTML to WIKI conversion
  * for new Editor.
@@ -49,11 +51,12 @@ public class WikiConverterForWYSIWYG extends WikiConverter
     */
     public static String makeHtmlString(AuthRequest destination, String tv) throws Exception
     {
-        StringWriter strWriter = new StringWriter();
-        AuthDummy dummy = new AuthDummy(destination.getUserProfile(), strWriter, destination.getCogInstance());
+        MemFile htmlChunk = new MemFile();
+        AuthDummy dummy = new AuthDummy(destination.getUserProfile(), htmlChunk.getWriter(), destination.getCogInstance());
         WikiConverterForWYSIWYG wc = new WikiConverterForWYSIWYG(dummy);
         wc.writeWikiAsHtml(tv);
-        return strWriter.toString();
+        dummy.flush();
+        return htmlChunk.toString();
     }
 
 

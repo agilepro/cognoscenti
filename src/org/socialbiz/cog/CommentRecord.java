@@ -1,6 +1,5 @@
 package org.socialbiz.cog;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +11,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
+import org.workcast.streams.MemFile;
 
 public class CommentRecord extends DOMFace {
 
@@ -161,8 +161,8 @@ public class CommentRecord extends DOMFace {
             return;  //ignore users without email addresses
         }
 
-        StringWriter bodyWriter = new StringWriter();
-        AuthRequest clone = new AuthDummy(commenterProfile, bodyWriter, ar.getCogInstance());
+        MemFile body = new MemFile();
+        AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.write("<html><body>");
@@ -196,8 +196,9 @@ public class CommentRecord extends DOMFace {
 
         ooa.writeUnsubscribeLink(clone);
         clone.write("</body></html>");
+        clone.flush();
 
-        mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, bodyWriter.toString());
+        mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, body.toString());
     }
 
 
@@ -315,7 +316,7 @@ public class CommentRecord extends DOMFace {
         }
 
         public String selfDescription() throws Exception {
-            return "(Comment) "+cr.getUser()+" on "+noteOrMeet.selfDescription();
+            return "(Comment) "+cr.getUser().getName()+" on "+noteOrMeet.selfDescription();
         }
 
     }

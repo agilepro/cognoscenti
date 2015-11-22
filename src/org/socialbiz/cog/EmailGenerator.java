@@ -20,7 +20,6 @@
 
 package org.socialbiz.cog;
 
-import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
+import org.workcast.streams.MemFile;
 
 /**
  * People create this, and this creates emails, sent possibly in
@@ -323,13 +323,13 @@ public class EmailGenerator extends DOMFace {
             return;
         }
 
-        StringWriter bodyWriter = new StringWriter();
+        MemFile bodyChunk = new MemFile();
         UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
         if (originalSender==null) {
             System.out.println("DATA PROBLEM: email generator came from a person without a profile ("+getOwner()+") ignoring");
             return;
         }
-        AuthRequest clone = new AuthDummy(originalSender, bodyWriter, ar.getCogInstance());
+        AuthRequest clone = new AuthDummy(originalSender, bodyChunk.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.write("<html><body>");
@@ -367,8 +367,9 @@ public class EmailGenerator extends DOMFace {
 
         ooa.writeUnsubscribeLink(clone);
         clone.write("</body></html>");
+        clone.flush();
 
-        mailFile.createEmailWithAttachments(ngp, getFrom(), ooa.getEmail(), getSubject(), bodyWriter.toString(), attachIds);
+        mailFile.createEmailWithAttachments(ngp, getFrom(), ooa.getEmail(), getSubject(), bodyChunk.toString(), attachIds);
     }
 
     //TODO: change this to use a TEMPLATE approach, when loops are allowed

@@ -153,13 +153,13 @@ public class MailFile extends JSONWrapper {
 
         try {
             if (subject == null || subject.length() == 0) {
-                throw new ProgramLogicError("createEmailRecord requires a non null subject parameter");
+                throw new ProgramLogicError("createEmailRecord requires a non null 'subject' parameter");
             }
             if (emailBody == null || emailBody.length() == 0) {
-                throw new ProgramLogicError("createEmailRecord requires a non null body parameter");
+                throw new ProgramLogicError("createEmailRecord requires a non null 'body' parameter");
             }
             if (addressee == null || addressee.length() == 0) {
-                throw new ProgramLogicError("createEmailRecord requires a non empty addresses parameter");
+                throw new ProgramLogicError("createEmailRecord requires a non empty 'addresses' parameter");
             }
             if (from == null || from.length() == 0) {
                 throw new ProgramLogicError("createEmailRecord requires a non null 'from' parameter");
@@ -192,7 +192,7 @@ public class MailFile extends JSONWrapper {
             }
         }
     }
-    
+
     /**
      * This throws away old email on this schedule:
      * 3 months old -- the body is discarded, only the metadata remains
@@ -201,7 +201,7 @@ public class MailFile extends JSONWrapper {
     public void pruneOldRecords() throws Exception {
         long THREE_MONTHS_AGO = System.currentTimeMillis() - 90*24*60*60*1000;
         long NINE_MONTHS_AGO = System.currentTimeMillis() - 270*24*60*60*1000;
-        
+
         JSONArray oldList = kernel.getJSONArray("msgs");
         JSONArray newEmailList = new JSONArray();
         int last = oldList.length();

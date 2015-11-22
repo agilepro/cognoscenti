@@ -20,7 +20,6 @@
 
 package org.socialbiz.cog.spring;
 
-import java.io.StringWriter;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,6 +47,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.workcast.json.JSONObject;
+import org.workcast.streams.MemFile;
 
 @Controller
 public class AdminController extends BaseController {
@@ -409,8 +409,8 @@ public class AdminController extends BaseController {
     private static void sendErrorMessageEmail(AuthRequest ar,String errorDOM,String comments)
     throws Exception
     {
-        StringWriter bodyWriter = new StringWriter();
-        AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter, ar.getCogInstance());
+        MemFile bodyWriter = new MemFile();
+        AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.write("<html><body>\n");
@@ -434,7 +434,9 @@ public class AdminController extends BaseController {
 
         clone.write("<p>You are receiving this message because you are a Super Admin of this server.</p>");
         clone.write("</body></html>");
-        EmailSender.generalMailToList(UserManager.getSuperAdminMailList(ar), ar.getBestUserId(), 
+        clone.flush();
+
+        EmailSender.generalMailToList(UserManager.getSuperAdminMailList(ar), ar.getBestUserId(),
                 "Error report",
                 bodyWriter.toString(), ar.getCogInstance());
     }

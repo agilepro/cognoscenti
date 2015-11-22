@@ -1,9 +1,9 @@
 package org.socialbiz.cog;
 
-import java.io.StringWriter;
 import java.util.Vector;
 
 import org.socialbiz.cog.mail.EmailSender;
+import org.workcast.streams.MemFile;
 
 public class HistoricActions {
 
@@ -52,9 +52,9 @@ public class HistoricActions {
 
     private static void sendSiteRequestEmail(AuthRequest ar,
             SiteRequest accountDetails) throws Exception {
-        StringWriter bodyWriter = new StringWriter();
+        MemFile body = new MemFile();
         UserProfile up = UserManager.getSuperAdmin(ar);
-        AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter, ar.getCogInstance());
+        AuthRequest clone = new AuthDummy(ar.getUserProfile(), body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.write("<html><body>\n");
@@ -78,10 +78,11 @@ public class HistoricActions {
         clone.write("</table>\n");
         clone.write("<p>Being a <b>Super Admin</b> of the Cognoscenti console, you have rights to accept or deny this request.</p>");
         clone.write("</body></html>");
+        clone.flush();
 
         EmailSender.generalMailToList(UserManager.getSuperAdminMailList(ar), ar.getBestUserId(),
                 "Site Approval for " + ar.getBestUserId(),
-                bodyWriter.toString(), ar.getCogInstance());
+                body.toString(), ar.getCogInstance());
     }
 
     /**
@@ -122,8 +123,8 @@ public class HistoricActions {
     }
 
     private void siteResolutionEmail(UserProfile owner, SiteRequest siteRequest) throws Exception {
-        StringWriter bodyWriter = new StringWriter();
-        AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter, ar.getCogInstance());
+        MemFile body = new MemFile();
+        AuthRequest clone = new AuthDummy(ar.getUserProfile(), body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.write("<html><body>\n");
@@ -160,9 +161,10 @@ public class HistoricActions {
 
         Vector<OptOutAddr> v = new Vector<OptOutAddr>();
         v.add(new OptOutIndividualRequest(new AddressListEntry(owner)));
+        clone.flush();
 
         EmailSender.generalMailToList(v, ar.getBestUserId(), "Site Request Resolution for " + owner.getName(),
-                bodyWriter.toString(), ar.getCogInstance());
+                body.toString(), ar.getCogInstance());
     }
 
     /**
@@ -194,9 +196,9 @@ public class HistoricActions {
     }
 
     private void sendInviteEmail(NGContainer container, String emailId, String role) throws Exception {
-        StringWriter bodyWriter = new StringWriter();
+        MemFile body = new MemFile();
         UserProfile receivingUser = UserManager.findUserByAnyId(emailId);
-        AuthRequest clone = new AuthDummy(receivingUser, bodyWriter, ar.getCogInstance());
+        AuthRequest clone = new AuthDummy(receivingUser, body.getWriter(), ar.getCogInstance());
         UserProfile requestingUser = ar.getUserProfile();
 
         String dest = emailId;
@@ -244,9 +246,10 @@ public class HistoricActions {
             clone.writeHtml(emailId);
             clone.write(").  Creating a new login profile is free and easy.</p>");
         }
+        clone.flush();
 
         EmailSender.containerEmail(ooa, container, "Added to " + role
-                + " role of " + container.getFullName(), bodyWriter.toString(),
+                + " role of " + container.getFullName(), body.toString(),
                 null, new Vector<String>(), clone.getCogInstance());
     }
 

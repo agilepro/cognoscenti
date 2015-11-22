@@ -269,7 +269,7 @@ public class SectionUtil
     public static String getNicePrintTime(long timestamp, long currentTime)
         throws Exception
     {
-        StringWriter out = new StringWriter();
+        StringWriter out = new StringWriter(20);
         nicePrintTime(out, timestamp, currentTime);
         return out.toString();
     }
@@ -390,7 +390,7 @@ public class SectionUtil
     public static String getNicePrintDate(long timestamp)
         throws Exception
     {
-        StringWriter out = new StringWriter();
+        StringWriter out = new StringWriter(20);
         nicePrintDate(out, timestamp);
         return out.toString();
     }

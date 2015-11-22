@@ -5,6 +5,7 @@
 %><%
     String title=(String)request.getAttribute("title");
     String themePath = ar.getThemePath();
+    long renderStart = System.currentTimeMillis();
 
 %>
 <!-- BEGIN slimLayout.jsp -->
@@ -89,4 +90,4 @@
     <!-- End body wrapper -->
 </body>
 </html>
-<!-- END slimLayout.jsp -->
+<!-- END slimLayout.jsp -- <%= (System.currentTimeMillis()-renderStart) %> ms -->

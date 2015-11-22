@@ -20,7 +20,6 @@
 
 package org.socialbiz.cog;
 
-import java.io.StringWriter;
 import java.util.Date;
 import java.util.Vector;
 
@@ -29,6 +28,7 @@ import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONObject;
+import org.workcast.streams.MemFile;
 
 public class ResponseRecord extends DOMFace
 {
@@ -118,8 +118,8 @@ public class ResponseRecord extends DOMFace
             return;  //ignore users without email addresses
         }
 
-        StringWriter bodyWriter = new StringWriter();
-        AuthRequest clone = new AuthDummy(commenterProfile, bodyWriter, ar.getCogInstance());
+        MemFile body = new MemFile();
+        AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.write("<html><body>");
@@ -148,8 +148,10 @@ public class ResponseRecord extends DOMFace
         clone.write("\n</div>");
         ooa.writeUnsubscribeLink(clone);
         clone.write("</body></html>");
+        clone.flush();
 
-        mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, bodyWriter.toString());
+        String bodyStr = body.toString();
+        mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, bodyStr);
     }
 
     public JSONObject getJSON(AuthRequest ar) throws Exception {

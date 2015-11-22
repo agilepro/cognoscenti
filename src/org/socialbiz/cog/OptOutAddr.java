@@ -20,11 +20,11 @@
 
 package org.socialbiz.cog;
 
-import java.io.StringWriter;
 import java.util.List;
 import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
+import org.workcast.streams.MemFile;
 
 /**
 * The purpose of this class it to remember an assignee to an email message
@@ -90,11 +90,12 @@ public class OptOutAddr {
 
 
     public void prepareInternalMessage(Cognoscenti cog) throws Exception {
-        StringWriter bodyWriter = new StringWriter();
+        MemFile body = new MemFile();
         UserProfile up = UserManager.findUserByAnyId(getEmail());
-        AuthRequest clone = new AuthDummy(up, bodyWriter, cog);
+        AuthRequest clone = new AuthDummy(up, body.getWriter(), cog);
         writeUnsubscribeLink(clone);
-        messageForAssignee = bodyWriter.toString();
+        clone.flush();
+        messageForAssignee = body.toString();
     }
 
     public String getUnSubscriptionAsString() throws Exception {

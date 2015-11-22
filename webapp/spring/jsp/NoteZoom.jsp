@@ -40,7 +40,7 @@ Required parameter:
         throw new Exception("Program Logic Error: this view should only display when user can actually access the note.");
     }
 
-    JSONObject noteInfo = note.getJSONWithHtml(ar);
+    JSONObject noteInfo = note.getJSONWithComments(ar);
     JSONArray attachmentList = ngp.getJSONAttachments(ar);
     JSONArray allLabels = ngp.getJSONLabels();
 

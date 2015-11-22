@@ -20,7 +20,6 @@
 
 package org.socialbiz.cog;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,6 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
+import org.workcast.streams.MemFile;
 
 public class GoalRecord extends BaseRecord {
     public GoalRecord(Document definingDoc, Element definingElement, DOMFace p)
@@ -1139,8 +1139,8 @@ public class GoalRecord extends BaseRecord {
             return;
         }
 
-        StringWriter bodyWriter = new StringWriter();
-        AuthRequest clone = new AuthDummy(requesterProfile, bodyWriter, ar.getCogInstance());
+        MemFile body = new MemFile();
+        AuthRequest clone = new AuthDummy(requesterProfile, body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.write("<html><body>");
@@ -1182,8 +1182,9 @@ public class GoalRecord extends BaseRecord {
         clone.write("</td></tr>\n</table>\n");
         ooa.writeUnsubscribeLink(clone);
         clone.write("</body></html>");
+        clone.flush();
 
-        mailFile.createEmailRecord(requesterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, bodyWriter.toString());
+        mailFile.createEmailRecord(requesterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, body.toString());
     }
 
     public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {

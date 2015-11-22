@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1059,23 +1058,17 @@ public class NGPage extends ContainerCommon implements NGContainer
         DOMUtils.writeDom(doc, ar.w);
     }
 
-    public String getPlainText(AuthRequest ar) throws Exception
+    public void writePlainText(AuthRequest ar) throws Exception
     {
-        StringWriter out = new StringWriter();
-
-        for (int i=0; i<displayNames.length; i++)
-        {
-            out.write(displayNames[i]);
-            out.write("\n");
+        for (int i=0; i<displayNames.length; i++) {
+            ar.write(displayNames[i]);
+            ar.write("\n");
         }
 
-        for (NGSection sec : getAllSections())
-        {
+        for (NGSection sec : getAllSections()) {
             SectionFormat formatter = sec.getFormat();
-            formatter.writePlainText(sec, out);
+            formatter.writePlainText(sec, ar.w);
         }
-
-        return out.toString();
     }
 
     /**

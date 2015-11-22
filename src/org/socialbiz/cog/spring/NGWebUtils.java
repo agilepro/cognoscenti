@@ -52,7 +52,7 @@ public class NGWebUtils {
     }
 
     public static String getNicePrintDate(long timestamp) throws Exception {
-        StringWriter out = new StringWriter();
+        StringWriter out = new StringWriter(20);
         nicePrintDate(out, timestamp);
         return out.toString();
     }

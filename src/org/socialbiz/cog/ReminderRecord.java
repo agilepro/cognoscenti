@@ -20,12 +20,12 @@
 
 package org.socialbiz.cog;
 
-import java.io.StringWriter;
 import java.util.Vector;
 
 import org.socialbiz.cog.mail.EmailSender;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.workcast.streams.MemFile;
 
 /**
 * ReminderRecord hold the information about a reminder to attach a file
@@ -325,13 +325,15 @@ public class ReminderRecord extends DOMFace
         Vector<AddressListEntry> addressList = AddressListEntry.parseEmailList(emailto);
         for (AddressListEntry ale : addressList) {
             OptOutAddr ooa = new OptOutAddr(ale);
-            StringWriter bodyWriter = new StringWriter();
-            AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter, ar.getCogInstance());
+            MemFile body = new MemFile();
+            AuthRequest clone = new AuthDummy(ar.getUserProfile(), body.getWriter(), ar.getCogInstance());
             clone.write("<html><body>");
             rRec.writeReminderEmailBody(clone, ngp);
 
             clone.write("</body></html>");
-            EmailSender.containerEmail(ooa, ngp, subject, bodyWriter.toString(), null, new Vector<String>(), ar.getCogInstance());
+            clone.flush();
+
+            EmailSender.containerEmail(ooa, ngp, subject, body.toString(), null, new Vector<String>(), ar.getCogInstance());
         }
         if (ngp instanceof NGPage) {
             HistoryRecord.createHistoryRecord(ngp, reminderId,

@@ -355,10 +355,12 @@ public class EmailListener extends TimerTask{
                 +recipientAdr+") or in subject: ("+subject+")");
     }
 
+    //TODO: convert this to use a Stream and MemFile approach
     private static String getEmailBody(Message msg) throws Exception {
         return getText(msg);
     }
 
+    //TODO: convert this to use a Stream and MemFile approach
     private static String getText(Part p) throws Exception {
 
         if (p.isMimeType("text/*")) {
@@ -401,6 +403,7 @@ public class EmailListener extends TimerTask{
         return "";
     }
 
+    //TODO: convert this to use a Stream and MemFile approach
     private static StringBuffer getPlainText(InputStream is) throws Exception {
         StringWriter out = new StringWriter();
         InputStreamReader isr = new InputStreamReader(is, "UTF-8");

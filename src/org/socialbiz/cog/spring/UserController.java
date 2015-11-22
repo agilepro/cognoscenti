@@ -22,7 +22,6 @@ package org.socialbiz.cog.spring;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
@@ -84,6 +83,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
+import org.workcast.streams.MemFile;
 
 
 @Controller
@@ -1836,9 +1836,10 @@ public class UserController extends BaseController {
                 if(profile.getImage().length() > 0){
                     srcOfPhoto = "users/"+profile.getImage();
                 }
-                StringWriter owner = new StringWriter();
-                AuthRequest clone = new AuthDummy(profile, owner, ar.getCogInstance());
+                MemFile owner = new MemFile();
+                AuthRequest clone = new AuthDummy(profile, owner.getWriter(), ar.getCogInstance());
                 ale.writeLink(clone);
+                clone.flush();
                 profilelinkwithquote = ar.getQuote4JS(owner.toString());
                 profilelink = owner.toString();
             }else{
@@ -1876,8 +1877,8 @@ public class UserController extends BaseController {
     private static void sendRoleRequestApprovedOrRejectionEmail(AuthRequest ar,
             String addressee, String subject, String responseComment,
             NGContainer ngp, String roleName, String action) throws Exception {
-        StringWriter bodyWriter = new StringWriter();
-        AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter, ar.getCogInstance());
+        MemFile bodyWriter = new MemFile();
+        AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter.getWriter(), ar.getCogInstance());
         OptOutAddr ooa = new OptOutIndividualRequest(new AddressListEntry(
                 addressee));
 
@@ -1901,6 +1902,7 @@ public class UserController extends BaseController {
         clone.writeHtml(responseComment);
         clone.write("</p>");
         clone.write("</body></html>");
+        clone.flush();
 
         EmailSender.containerEmail(ooa, ngp, subject, bodyWriter.toString(),
                 null, new Vector<String>(), ar.getCogInstance());

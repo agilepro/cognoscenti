@@ -20,7 +20,6 @@
 
 package org.socialbiz.cog;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,6 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
+import org.workcast.streams.MemFile;
 
 /**
 * A NoteRecord represents a Topic in a Workspace.
@@ -634,10 +634,11 @@ public class NoteRecord extends DOMFace implements EmailContext {
       }
 
       public String getNoteHtml(AuthRequest ar) throws Exception {
-          StringWriter sw = new StringWriter();
-          AuthDummy dummy = new AuthDummy(ar.getUserProfile(), sw, ar.getCogInstance());
+          MemFile htmlChunk = new MemFile();
+          AuthDummy dummy = new AuthDummy(ar.getUserProfile(), htmlChunk.getWriter(), ar.getCogInstance());
           WikiConverterForWYSIWYG.writeWikiAsHtml(dummy, getWiki());
-          return sw.toString();
+          dummy.flush();
+          return htmlChunk.toString();
       }
 
       public void setNoteFromHtml(AuthRequest ar, String htmlInput) throws Exception {
@@ -745,8 +746,8 @@ public class NoteRecord extends DOMFace implements EmailContext {
               return;  //ignore users without email addresses
           }
 
-          StringWriter bodyWriter = new StringWriter();
-          AuthRequest clone = new AuthDummy(commenterProfile, bodyWriter, ar.getCogInstance());
+          MemFile body = new MemFile();
+          AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
           clone.setNewUI(true);
           clone.retPath = ar.baseURL;
           clone.write("<html><body>");
@@ -763,8 +764,10 @@ public class NoteRecord extends DOMFace implements EmailContext {
 
           ooa.writeUnsubscribeLink(clone);
           clone.write("</body></html>");
+          clone.flush();
+          clone.flush();
 
-          mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, bodyWriter.toString());
+          mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, body.toString());
       }
 
 
@@ -793,6 +796,10 @@ public class NoteRecord extends DOMFace implements EmailContext {
      public JSONObject getJSONWithHtml(AuthRequest ar) throws Exception {
          JSONObject noteData = getJSON(((NGPage)ar.ngp));
          noteData.put("html", getNoteHtml(ar));
+         return noteData;
+     }
+     public JSONObject getJSONWithComments(AuthRequest ar) throws Exception {
+         JSONObject noteData = getJSONWithHtml(ar);
          JSONArray allCommentss = new JSONArray();
          for (CommentRecord cr : getComments()) {
              allCommentss.put(cr.getHtmlJSON(ar));
@@ -800,6 +807,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
          noteData.put("comments",  allCommentss);
          return noteData;
      }
+
      public JSONObject getJSONWithWiki(NGPage ngp) throws Exception {
          JSONObject noteData = getJSON(ngp);
          noteData.put("wiki", getWiki());
@@ -818,6 +826,8 @@ public class NoteRecord extends DOMFace implements EmailContext {
          thisNote.put("content", contentUrl);
          return thisNote;
      }
+
+
      public void updateNoteFromJSON(JSONObject noteObj, AuthRequest ar) throws Exception {
          String universalid = noteObj.getString("universalid");
          if (!universalid.equals(getUniversalId())) {

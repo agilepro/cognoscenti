@@ -15,7 +15,7 @@
     boolean isCreate = (nid==null);
     if (!isCreate) {
         NoteRecord note = ngp.getNote(nid);
-        noteInfo = note.getJSONWithHtml(ar);
+        noteInfo = note.getJSONWithComments(ar);
     }
     else {
         noteInfo = new JSONObject();

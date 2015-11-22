@@ -315,7 +315,7 @@ public class MainTabsViewControler extends BaseController {
 
              ngp.saveFile(ar, "Updated Topic Contents");
 
-             JSONObject repo = note.getJSONWithHtml(ar);
+             JSONObject repo = note.getJSONWithComments(ar);
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -354,7 +354,7 @@ public class MainTabsViewControler extends BaseController {
 
              ngp.saveFile(ar, "Updated Topic Contents");
 
-             JSONObject repo = note.getJSONWithHtml(ar);
+             JSONObject repo = note.getJSONWithComments(ar);
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){

@@ -311,11 +311,11 @@ public class WikiToPDF
 
         String subject = stripBadCharacters(note.getSubject());
         UserRef lastEditor = note.getModUser();
-        StringWriter out = new StringWriter();
+        StringWriter out = new StringWriter(20);
         SectionUtil.nicePrintDateAndTime(out, note.getLastEdited());
         String editTime = out.toString();
 
-        out = new StringWriter();
+        out = new StringWriter(20);
         SectionUtil.nicePrintDate(out, ar.nowTime);
         String printTime = out.toString();
 

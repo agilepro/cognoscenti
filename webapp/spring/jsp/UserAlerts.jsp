@@ -7,7 +7,7 @@
 %><%@page import="java.util.Vector"
 %><%@page import="java.util.ArrayList"
 %><%@page import="org.socialbiz.cog.AuthRequest"
-%><%@page import="org.socialbiz.cog.DailyDigest"
+%><%@page import="org.socialbiz.cog.mail.DailyDigest"
 %><%@page import="org.socialbiz.cog.GoalRecord"
 %><%@page import="org.socialbiz.cog.NGBook"
 %><%@page import="org.socialbiz.cog.NGPage"

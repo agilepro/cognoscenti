@@ -1,14 +1,34 @@
-package org.socialbiz.cog;
+package org.socialbiz.cog.mail;
 
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.socialbiz.cog.AccessControl;
+import org.socialbiz.cog.AddressListEntry;
+import org.socialbiz.cog.AuthDummy;
+import org.socialbiz.cog.AuthRequest;
+import org.socialbiz.cog.BaseRecord;
+import org.socialbiz.cog.Cognoscenti;
+import org.socialbiz.cog.GoalRecord;
+import org.socialbiz.cog.HistoryRecord;
+import org.socialbiz.cog.NGContainer;
+import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NotificationRecord;
+import org.socialbiz.cog.OptOutAddr;
+import org.socialbiz.cog.ReminderMgr;
+import org.socialbiz.cog.ReminderRecord;
+import org.socialbiz.cog.SectionUtil;
+import org.socialbiz.cog.SiteReqFile;
+import org.socialbiz.cog.SiteRequest;
+import org.socialbiz.cog.SuperAdminLogFile;
+import org.socialbiz.cog.UserManager;
+import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
-import org.socialbiz.cog.mail.EmailSender;
 import org.workcast.streams.HTMLWriter;
+import org.workcast.streams.MemFile;
 
 public class DailyDigest {
 
@@ -18,37 +38,39 @@ public class DailyDigest {
      * email with their tasks on it.
      */
     public static void sendDailyDigest(AuthRequest arx, Cognoscenti cog) throws Exception {
-        Writer debugEvidence = new StringWriter();
+        MemFile debugStuff = new MemFile();
+        Writer debugWriter = debugStuff.getWriter();
 
         try {
             NGPageIndex.assertNoLocksOnThread();
             long lastNotificationSentTime = arx.getSuperAdminLogFile().getLastNotificationSentTime();
 
-            debugEvidence.write("\n<li>Previous send time: ");
-            SectionUtil.nicePrintDateAndTime(debugEvidence,lastNotificationSentTime);
+            debugWriter.write("\n<li>Previous send time: ");
+            SectionUtil.nicePrintDateAndTime(debugWriter,lastNotificationSentTime);
 
             // we pick up the time here, at the beginning, so that any new
             // events created AFTER this time, but before the end of this routine are
             // not lost during the processing.
             long processingStartTime = System.currentTimeMillis();
-            debugEvidence.write("</li>\n<li>Email being sent at: ");
-            SectionUtil.nicePrintDateAndTime(debugEvidence, processingStartTime);
-            debugEvidence.write("</li>");
+            debugWriter.write("</li>\n<li>Email being sent at: ");
+            SectionUtil.nicePrintDateAndTime(debugWriter, processingStartTime);
+            debugWriter.write("</li>");
 
 
             // loop thru all the profiles to send out the email.
             UserProfile[] ups = UserManager.getAllUserProfiles();
             for (UserProfile up : ups) {
-                handleOneUser(cog, arx, up, debugEvidence, processingStartTime);
+                handleOneUser(cog, arx, up, debugWriter, processingStartTime);
 
                 //this clears locks if there was an error during sending
                 NGPageIndex.clearLocksHeldByThisThread();
             }
 
+            debugWriter.flush();
             // at the very last moment, if all was successful, mark down the
             // time that we sent it all.
             SuperAdminLogFile.getInstance(cog).setLastNotificationSentTime(processingStartTime,
-                    debugEvidence.toString());
+                    debugStuff.toString());
 
             //save all the times that we set on the user profiles
             UserManager.writeUserProfilesToFile();
@@ -103,8 +125,8 @@ public class DailyDigest {
                 AddressListEntry.parseCombinedAddress(realAddress));
 
 
-            StringWriter bodyOut = new StringWriter();
-            AuthDummy clone = new AuthDummy(up, bodyOut, cog);
+            MemFile body = new MemFile();
+            AuthDummy clone = new AuthDummy(up, body.getWriter(), cog);
             clone.nowTime = processingStartTime;
 
             int numberOfUpdates = 0;
@@ -122,34 +144,43 @@ public class DailyDigest {
                     processingStartTime);
             clone.write("</b></p>\n");
 
-            List<NGContainer> containers = new ArrayList<NGContainer>();
-            for (NotificationRecord record : up.getNotificationList()) {
-                NGContainer ngc = clone.getCogInstance().getProjectByKeyOrFail(record.getPageKey());
+            int numTasks = 0;
 
-                // users might have items on the notification list that don't exist, because
-                // they signed up for notification, and then the project was deleted.
-                if (ngc != null) {
-                    containers.add(ngc);
+            {
+                List<NGPageIndex> containers = new ArrayList<NGPageIndex>();
+                for (NotificationRecord record : up.getNotificationList()) {
+                    NGPageIndex ngci = clone.getCogInstance().getContainerIndexByKey(record.getPageKey());
+
+                    // users might have items on the notification list that don't exist, because
+                    // they signed up for notification, and then the project was deleted.
+                    if (ngci != null) {
+                        containers.add(ngci);
+                    }
                 }
-            }
 
-            if (containers.size() > 0) {
-                clone.write("<div style=\"margin-top:15px;margin-bottom:20px;\"><span style=\"font-size:24px;font-weight:bold;\">Workspace Updates</span>&nbsp;&nbsp;&nbsp;");
-                numberOfUpdates += constructDailyDigestEmail(clone, containers,
-                        historyStartTime, processingStartTime);
-            }
-
-            if (clone.isSuperAdmin(up.getKey())) {
-                String doublecheck = clone.getSystemProperty("superAdmin");
-                if (up.getKey().equals(doublecheck)) {
-                    List<SiteRequest> delayedSites = SiteReqFile.scanAllDelayedSiteReqs();
-                    numberOfUpdates += delayedSites.size();
-                    writeDelayedSiteList(clone, delayedSites);
-                } else {
-                    debugEvidence.write("\n<li>isSuperAdmin returned wrong result in double check test</li>");
+                if (containers.size() > 0) {
+                    clone.write("<div style=\"margin-top:15px;margin-bottom:20px;\"><span style=\"font-size:24px;font-weight:bold;\">Workspace Updates</span>&nbsp;&nbsp;&nbsp;");
+                    numberOfUpdates += constructDailyDigestEmail(clone, containers,
+                            historyStartTime, processingStartTime);
+                    clone.write("</div>");
                 }
+
+                if (clone.isSuperAdmin(up.getKey())) {
+                    String doublecheck = clone.getSystemProperty("superAdmin");
+                    if (up.getKey().equals(doublecheck)) {
+                        List<SiteRequest> delayedSites = SiteReqFile.scanAllDelayedSiteReqs();
+                        numberOfUpdates += delayedSites.size();
+                        writeDelayedSiteList(clone, delayedSites);
+                    } else {
+                        debugEvidence.write("\n<li>isSuperAdmin returned wrong result in double check test</li>");
+                    }
+                }
+                numTasks = formatTaskListForEmail(clone, up);
+
+                //writeReminders will walk through a bunch of pages and all locks must be
+                //cleared before entering it.  Clean up locks from containers processing.
+                NGPageIndex.clearLocksHeldByThisThread();
             }
-            int numTasks = formatTaskListForEmail(clone, up);
 
             int numReminders = writeReminders(clone, up);
 
@@ -167,7 +198,7 @@ public class DailyDigest {
                         + numReminders + " reminders.";
 
                 //Actually SEND the email here
-                EmailSender.generalMailToOne(ooa, null, thisSubj, bodyOut.toString(), cog);
+                EmailSender.generalMailToOne(ooa, null, thisSubj, body.toString(), cog);
 
 
                 debugEvidence.write("\n<li>");
@@ -207,12 +238,13 @@ public class DailyDigest {
      * Returns the total number of history records actually found.
      */
     public static int constructDailyDigestEmail(AuthRequest clone,
-            List<NGContainer> containers,
+            List<NGPageIndex> containers,
             long historyRangeStart, long historyRangeEnd) throws Exception {
         int totalHistoryCount = 0;
         boolean needsFirst = true;
 
-        for (NGContainer container : containers) {
+        for (NGPageIndex ngpi : containers) {
+            NGContainer container = ngpi.getContainer();
             List<HistoryRecord> histRecs = container.getHistoryRange(
                     historyRangeStart, historyRangeEnd);
             if (histRecs.size() == 0) {
@@ -432,106 +464,117 @@ public class DailyDigest {
 
     private static int writeReminders(AuthRequest ar, UserProfile up) throws Exception {
 
-        NGPageIndex.assertNoLocksOnThread();
         int noOfReminders = 0;
 
         for (NGPageIndex ngpi : ar.getCogInstance().getAllContainers()) {
-            // start by clearing any outstanding locks in every loop
-            NGPageIndex.clearLocksHeldByThisThread();
 
-            if (!ngpi.isProject()) {
-                continue;
-            }
-            int count = 0;
-            NGPage aPage = ngpi.getPage();
+            noOfReminders = writeOneReminder(ar, up, ngpi, noOfReminders);
 
-            ReminderMgr rMgr = aPage.getReminderMgr();
-            Vector<ReminderRecord> rVec = rMgr.getUserReminders(up);
-            for (ReminderRecord reminder : rVec) {
-                if ("yes".equals(reminder.getSendNotification())) {
-                    if (noOfReminders == 0) {
-                        ar.write("<div style=\"margin-top:25px;margin-bottom:5px;\">");
-                        ar.write("<span style=\"font-size:24px;font-weight:bold;\">");
-                        ar.write("Reminders To Share Document</span>&nbsp;&nbsp;&nbsp;");
-
-                        ar.write("<a href=\"");
-                        ar.write(ar.baseURL);
-                        ar.write("v/");
-                        ar.writeURLData(up.getKey());
-                        ar.write("/userActiveTasks.htm\">View Latest </a>");
-                        ar.write("(Below is list of reminders of documents which you are requested to upload.)</div>");
-                        ar.write("\n <table width=\"800\" class=\"Design8\">");
-                        ar.write("\n <thead> ");
-                        ar.write("\n <tr>");
-                        ar.write("\n <th></th> ");
-                        ar.write("\n <th>Document to upload</th> ");
-                        ar.write("\n <th>Requested By</th> ");
-                        ar.write("\n <th>Sent On</th>");
-                        ar.write("\n <th>Workspace</th>");
-                        ar.write("\n </tr> ");
-                        ar.write("\n </thead> ");
-                        ar.write("\n <tbody>");
-                    }
-
-                    ar.write("\n <tr");
-                    if (count % 2 == 0) {
-                        ar.write(" class=\"Odd\"");
-                    }
-                    ar.write(" valign=\"top\">");
-
-                    ar.write("\n <td>");
-                    ar.write("<a href=\"");
-                    writeReminderLink(ar, up, aPage, reminder);
-                    ar.write("\" title=\"access details of reminder\">");
-                    ar.write("<img src=\"");
-                    ar.write(ar.baseURL);
-                    ar.write("assets/iconUpload.png\" />");
-                    ar.write("</a> ");
-                    ar.write("</td>");
-
-                    ar.write("\n <td>");
-
-                    ar.write("<a href=\"");
-                    writeReminderLink(ar, up, aPage, reminder);
-                    ar.write("\" title=\"access details of reminder\">");
-                    ar.writeHtml(reminder.getSubject());
-                    ar.write("</a> ");
-
-                    ar.write("\n </td>");
-
-                    ar.write("\n <td>");
-                    (new AddressListEntry(reminder.getModifiedBy()))
-                            .writeLink(ar);
-                    // ar.write(reminder.getModifiedBy());
-                    ar.write("\n </td>");
-
-                    ar.write("\n <td>");
-                    SectionUtil.nicePrintTime(ar, reminder.getModifiedDate(),
-                            ar.nowTime);
-                    ar.write("\n </td>");
-
-                    ar.write("\n <td>");
-                    ar.write("<a href='");
-                    ar.write(ar.baseURL);
-                    ar.write("t/");
-                    ar.writeURLData(ngpi.pageBookKey);
-                    ar.write("/");
-                    ar.writeURLData(ngpi.containerKey);
-                    ar.write("/reminders.htm' >");
-                    ar.writeHtml(aPage.getFullName());
-                    ar.write("</a>");
-                    ar.write("\n </td>");
-
-                    ar.write("\n </tr>");
-
-                    noOfReminders++;
-                }
-            }
         }
         ar.write("\n </tbody>");
         ar.write("\n </table>");
         return noOfReminders;
     }
+
+    private static int writeOneReminder(AuthRequest ar, UserProfile up, NGPageIndex ngpi, int noOfReminders)
+            throws Exception {
+
+        NGPageIndex.assertNoLocksOnThread();
+        if (!ngpi.isProject()) {
+            return noOfReminders;
+        }
+        int count = 0;
+        NGPage aPage = ngpi.getPage();
+
+        ReminderMgr rMgr = aPage.getReminderMgr();
+        Vector<ReminderRecord> rVec = rMgr.getUserReminders(up);
+        for (ReminderRecord reminder : rVec) {
+            if ("yes".equals(reminder.getSendNotification())) {
+                if (noOfReminders == 0) {
+                    ar.write("<div style=\"margin-top:25px;margin-bottom:5px;\">");
+                    ar.write("<span style=\"font-size:24px;font-weight:bold;\">");
+                    ar.write("Reminders To Share Document</span>&nbsp;&nbsp;&nbsp;");
+
+                    ar.write("<a href=\"");
+                    ar.write(ar.baseURL);
+                    ar.write("v/");
+                    ar.writeURLData(up.getKey());
+                    ar.write("/userActiveTasks.htm\">View Latest </a>");
+                    ar.write("(Below is list of reminders of documents which you are requested to upload.)</div>");
+                    ar.write("\n <table width=\"800\" class=\"Design8\">");
+                    ar.write("\n <thead> ");
+                    ar.write("\n <tr>");
+                    ar.write("\n <th></th> ");
+                    ar.write("\n <th>Document to upload</th> ");
+                    ar.write("\n <th>Requested By</th> ");
+                    ar.write("\n <th>Sent On</th>");
+                    ar.write("\n <th>Workspace</th>");
+                    ar.write("\n </tr> ");
+                    ar.write("\n </thead> ");
+                    ar.write("\n <tbody>");
+                }
+
+                ar.write("\n <tr");
+                if (count % 2 == 0) {
+                    ar.write(" class=\"Odd\"");
+                }
+                ar.write(" valign=\"top\">");
+
+                ar.write("\n <td>");
+                ar.write("<a href=\"");
+                writeReminderLink(ar, up, aPage, reminder);
+                ar.write("\" title=\"access details of reminder\">");
+                ar.write("<img src=\"");
+                ar.write(ar.baseURL);
+                ar.write("assets/iconUpload.png\" />");
+                ar.write("</a> ");
+                ar.write("</td>");
+
+                ar.write("\n <td>");
+
+                ar.write("<a href=\"");
+                writeReminderLink(ar, up, aPage, reminder);
+                ar.write("\" title=\"access details of reminder\">");
+                ar.writeHtml(reminder.getSubject());
+                ar.write("</a> ");
+
+                ar.write("\n </td>");
+
+                ar.write("\n <td>");
+                (new AddressListEntry(reminder.getModifiedBy()))
+                        .writeLink(ar);
+                // ar.write(reminder.getModifiedBy());
+                ar.write("\n </td>");
+
+                ar.write("\n <td>");
+                SectionUtil.nicePrintTime(ar, reminder.getModifiedDate(),
+                        ar.nowTime);
+                ar.write("\n </td>");
+
+                ar.write("\n <td>");
+                ar.write("<a href='");
+                ar.write(ar.baseURL);
+                ar.write("t/");
+                ar.writeURLData(ngpi.pageBookKey);
+                ar.write("/");
+                ar.writeURLData(ngpi.containerKey);
+                ar.write("/reminders.htm' >");
+                ar.writeHtml(aPage.getFullName());
+                ar.write("</a>");
+                ar.write("\n </td>");
+
+                ar.write("\n </tr>");
+
+                noOfReminders++;
+            }
+        }
+
+        // clear any locks made in this handling
+        NGPageIndex.clearLocksHeldByThisThread();
+        return noOfReminders;
+    }
+
+
 
     private static void writeReminderLink(AuthRequest ar, UserProfile up,
             NGPage aPage, ReminderRecord reminder) throws Exception {

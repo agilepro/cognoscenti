@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,7 +44,6 @@ import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.DOMFace;
-import org.socialbiz.cog.DailyDigest;
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
@@ -164,7 +164,6 @@ public class EmailSender extends TimerTask {
         // make sure that this method doesn't throw any exception
         try {
             NGPageIndex.assertNoLocksOnThread();
-            System.out.println("BACKGROUND: starting to check for mail to send."+new Date());
             checkAndSendDailyDigest(ar);
             handleGlobalEmail();
             handleAllOverdueScheduledEvents(ar);
@@ -214,14 +213,18 @@ public class EmailSender extends TimerTask {
             delayTime = DOMFace.safeConvertInt(delayStr)*1000*60;
         }
 
+        System.out.println("BACKGROUND: ----------- begining scan at "
+                +new Date()+"-------------");
 
         long nowTime = ar.nowTime;
-        NGPageIndex ngpi = findOverdueContainer(nowTime-delayTime);
+        List<NGPageIndex> allOverdue = listOverdueContainers(nowTime-delayTime);
         int iCount = 0;
-        while (ngpi!=null) {
+        for (NGPageIndex ngpi : allOverdue) {
             iCount++;
+            System.out.println("BACKGROUND: workspace ("+ngpi.containerName+") due since "
+                    +new Date(ngpi.nextScheduledAction));
             if (!ngpi.isProject()) {
-                System.out.println("BACKGROUND EVENTS: strange non-Page object has scheduled events --- ignoring it");
+                System.out.println("BACKGROUND: strange non-Page object has scheduled events --- ignoring it");
                 ngpi.nextScheduledAction = 0;
                 continue;
             }
@@ -237,8 +240,6 @@ public class EmailSender extends TimerTask {
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
                 NGPage ngp = (NGPage) ngpi.getContainer();
-                System.out.println("BACKGROUND EVENTS: found workspace ("+ngp.getFullName()+") due at "
-                        +new Date(ngp.nextActionDue()));
 
                 //first, move all the email messages that have been stored in the project from foreground events.
                 MailConversions.moveEmails(ngp, emailArchive, cog);
@@ -249,7 +250,7 @@ public class EmailSender extends TimerTask {
                 emailArchive.save();
             }
 
-            while (ngpi.nextScheduledAction < ar.nowTime-delayTime) {
+            {
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
                 NGPage ngp = (NGPage) ngpi.getContainer();
@@ -261,13 +262,12 @@ public class EmailSender extends TimerTask {
                 int count = 0;
                 for (ScheduledNotification sn : resList) {
                     count++;
-                    System.out.println("Email Sender: Performing Notification "+count+" of "+total+": "+sn.selfDescription());
+                    System.out.println("BACKGROUND: Notification "+count+" of "+total+": "+sn.selfDescription());
                     sn.sendIt(ar, emailArchive);
                 }
 
                 ngpi.nextScheduledAction = ngp.nextActionDue();
                 ngp.save(); //save all the changes from the removal of email and scheduling of events
-                System.out.println("BACKGROUND EVENTS: finished action on workspace ("+ngp.getFullName()+")");
                 NGPageIndex.clearLocksHeldByThisThread();
 
                 //now we can go an actually send the email in the mailArchive
@@ -279,20 +279,20 @@ public class EmailSender extends TimerTask {
             emailArchive.sendAllMail(mailer);
 
             Thread.sleep(200);  //just small delay to avoid saturation
-            ngpi = findOverdueContainer(ar.nowTime);
         }
         if (iCount>0) {
-            System.out.println("BACKGROUND EVENTS: Processed "+iCount+" background events at "+(new Date()));
+            System.out.println("BACKGROUND: Processed "+iCount+" background events at "+(new Date()));
         }
     }
 
-    private NGPageIndex findOverdueContainer(long nowTime) {
+    private ArrayList<NGPageIndex> listOverdueContainers(long cutoffTime) {
+        ArrayList<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : cog.getAllContainers()) {
-            if (ngpi.nextScheduledAction>0 && ngpi.nextScheduledAction<nowTime) {
-                return ngpi;
+            if (ngpi.nextScheduledAction>0 && ngpi.nextScheduledAction<cutoffTime) {
+                ret.add(ngpi);
             }
         }
-        return null;
+        return ret;
     }
 
 
@@ -459,16 +459,16 @@ public class EmailSender extends TimerTask {
         }
     }
 
-    
+
     /**
      * generalMailToOne - Send a email to a single email address (as an
      * AddressListEntry) in the scope of the entire product (not any specific
-     * project or other context).  
-     * 
+     * project or other context).
+     *
      * This method sends a single email message to the addressee
      * with the given subject and body. You can specify the from
      * address as well.
-     * 
+     *
      * Email is stored in the GlobalMailArchive momentarily before actually
      * sending it.
      */
@@ -478,17 +478,17 @@ public class EmailSender extends TimerTask {
         v.add(ooa);
         generalMailToList(v, from, subject, emailBody, cog);
     }
-    
+
 
     /**
-     * generalMailToList - Send a email to a list of email address 
+     * generalMailToList - Send a email to a list of email address
      * in the scope of the entire product (not any specific
-     * project or other context).  
-     * 
+     * project or other context).
+     *
      * This method sends a single email message to the addressee
      * with the given subject and body. You can specify the from
      * address as well.
-     * 
+     *
      * Email is stored in the GlobalMailArchive momentarily before actually
      * sending it.
      */

@@ -29,6 +29,7 @@
 %><%@page import="org.socialbiz.cog.UserRef"
 %><%@page import="org.socialbiz.cog.UtilityMethods"
 %><%@page import="org.socialbiz.cog.WikiConverter"
+%><%@page import="org.socialbiz.cog.mail.EmailSender"
 %><%@page import="org.socialbiz.cog.dms.ConnectionSettings"
 %><%@page import="org.socialbiz.cog.dms.FolderAccessHelper"
 %><%@page import="org.socialbiz.cog.dms.ResourceEntity"

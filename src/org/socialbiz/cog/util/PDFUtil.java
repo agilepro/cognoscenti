@@ -23,7 +23,6 @@ package org.socialbiz.cog.util;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,6 +51,7 @@ import org.socialbiz.cog.NoteRecord;
 import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.SectionWiki;
 import org.socialbiz.cog.UserProfile;
+import org.workcast.streams.MemFile;
 
 public class PDFUtil {
 
@@ -553,13 +553,14 @@ public class PDFUtil {
 
     private void addUserLinkAnnotation(float x,float y, float hieght, String userId, String editTime) throws Exception{
 
-        StringWriter writer = new StringWriter();
-        AuthRequest clone = new AuthDummy(ar.getUserProfile(), writer, ar.getCogInstance());
+        MemFile linkData = new MemFile();
+        AuthRequest clone = new AuthDummy(ar.getUserProfile(), linkData.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         UserProfile.writeLink(clone, userId);
+        clone.flush();
 
-        Map<String, String> userInfoMap = parseStringForUserInfo(writer.toString());
+        Map<String, String> userInfoMap = parseStringForUserInfo(linkData.toString());
         String cleanName = "";
         if(userInfoMap.containsKey("cleanName")){
             cleanName = userInfoMap.get("cleanName");

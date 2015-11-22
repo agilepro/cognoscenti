@@ -293,7 +293,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
                     throw new NGException("nugen.exception.non.understandable.request",null);
                 }
             } else if (resource.equals("process.txt")) {
-                ar.write(ngp.getPlainText(ar));
+                ngp.writePlainText(ar);
                 ar.flush();
             } else {
                 throw new NGException("nugen.exception.page.resouce.incorrect", new Object[]{resource});

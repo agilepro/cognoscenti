@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.workcast.json.JSONObject;
+import org.workcast.streams.MemFile;
 
 @Controller
 public class ProjectSettingController extends BaseController {
@@ -254,8 +255,8 @@ public class ProjectSettingController extends BaseController {
 
         String baseURL = ar.baseURL;
 
-        StringWriter bodyWriter = new StringWriter();
-        AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter, ar.getCogInstance());
+        MemFile bodyWriter = new MemFile();
+        AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = baseURL;
         clone.write("<html><body>\n");
@@ -279,6 +280,7 @@ public class ProjectSettingController extends BaseController {
         clone.write("approving/rejecting this request  you can safely ignore and delete this message.</p>");
         clone.write("\n<hr/>\n");
         clone.write("</body></html>");
+        clone.flush();
 
         EmailSender.queueEmailNGC(sendTo, container,
                 "Role Requested by " + ar.getBestUserId(),
