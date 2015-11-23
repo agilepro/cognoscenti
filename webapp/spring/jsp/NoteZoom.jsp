@@ -100,6 +100,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.myComment = "";
     $scope.myPoll = false;
+    $scope.myReplyTo = 0;
 
     $scope.createComment = function() {
         var saveRecord = {};
@@ -108,6 +109,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         saveRecord.newComment = {};
         saveRecord.newComment.html = $scope.myComment;
         saveRecord.newComment.poll = $scope.myPoll;
+        if ($scope.myReplyTo>0) {
+            saveRecord.newComment.replyTo = $scope.myReplyTo;
+        }
         $scope.savePartial(saveRecord);
         $scope.editCmt='NOTHING';
     }
@@ -131,6 +135,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.savePartial = function(recordToSave) {
         var postURL = "updateNote.json?nid="+$scope.noteInfo.id;
         var postdata = angular.toJson(recordToSave);
+        console.log(postdata);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
@@ -236,10 +241,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.createModifiedProposal = function(cmt) {
         $scope.editCmt  = 'NEW';
         $scope.myComment = cmt.html;
+        $scope.myReplyTo = cmt.time;
         $scope.myPoll = true;
-
     }
-
+    $scope.replyToComment = function(cmt) {
+        $scope.editCmt  = 'NEW';
+        $scope.myReplyTo = cmt.time;
+        $scope.myPoll = false;
+        //$anchorScroll("#CommentEditor");
+    }
     $scope.getComments = function() {
         var res = [];
         $scope.noteInfo.comments.map( function(item) {
@@ -249,6 +259,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return a.time - b.time;
         });
         return res;
+    }
+    $scope.findComment = function(timestamp) {
+        var selected = {};
+        $scope.noteInfo.comments.map( function(cmt) {
+            if (timestamp==cmt.time) {
+                selected = cmt;
+            }
+        });
+        return selected;
     }
 
     $scope.commentTypeName = function(cmt) {
@@ -462,6 +481,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                          <span ng-show="cmt.poll"><i class="fa fa-star-o"></i></span>
                          &nbsp; {{cmt.time | date}} - <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm"><span class="red">{{cmt.userName}}</span></a>
                          <span ng-hide="cmt.emailSent">-email pending-</span>
+                         <span ng-show="cmt.replyTo">
+                             <span ng-hide="cmt.poll">In reply to</span>
+                             <span ng-show="cmt.poll">Based on</span>
+                             <a href="#cmt{{cmt.replyTo}}">{{findComment(cmt.replyTo).userName}}</a>
+                         </span>
                          <div style="clear:both"></div>
                       </div>
                    </div>
@@ -500,6 +524,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    <div ng-show="cmt.decision">
                        See Linked Decision: <a href="decisionList.htm#DEC{{cmt.decision}}">#{{cmt.decision}}</a>
                    </div>
+                   <div ng-show="cmt.replies.length>0">
+                       <span ng-show="cmt.poll">See proposals: </span>
+                       <span ng-hide="cmt.poll">See replies: </span>
+                       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}">{{findComment(reply).userName}}</a>, </span>
+                   </div>
+
+
                </div>
            </td>
        </tr>
@@ -517,7 +548,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <button ng-click="myPoll=true;editCmt='NEW'" class="btn btn-default">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
         </div>
-        <div class="well leafContent" style="width:100%" ng-show="editCmt=='NEW'" >
+        <div class="well leafContent" style="width:100%" ng-show="editCmt=='NEW'" id="CommentEditor">
           <div ng-model="myComment"
               ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
               text-angular="" class="" style="width:100%;"></div>

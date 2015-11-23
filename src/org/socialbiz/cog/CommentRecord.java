@@ -92,11 +92,11 @@ public class CommentRecord extends DOMFace {
         setVector("choice", choices);
     }
 
-    public String getReplyTo() {
-        return getScalar("replyTo");
+    public long getReplyTo() {
+        return getScalarLong("replyTo");
     }
-    public void setReplyTo(String replies) {
-        setScalar("replyTo", replies);
+    public void setReplyTo(long replyVal) {
+        setScalar("replyTo", replyVal);
     }
 
     public String getDecision() {
@@ -106,11 +106,20 @@ public class CommentRecord extends DOMFace {
         setScalar("decision", replies);
     }
 
-    public List<String> getReplies() {
-        return getVector("replies");
+    public List<Long> getReplies() {
+        ArrayList<Long> ret = new ArrayList<Long>();
+        for(String val : getVector("replies")) {
+            long longVal = safeConvertLong(val);
+            ret.add(new Long(longVal));
+        }
+        return ret;
     }
-    public void setReplies(Vector<String> replies) {
-        setVector("replies", replies);
+    public void addOneToReplies(long replyValue) {
+        String val = Long.toString(replyValue);
+        addVectorValue("replies", val);
+    }
+    public void setReplies(Vector<Long> replies) {
+        setVectorLong("replies", replies);
     }
 
     public boolean getEmailSent()  throws Exception {
@@ -217,7 +226,11 @@ public class CommentRecord extends DOMFace {
         commInfo.put("poll",     isPoll());
         commInfo.put("emailSent",getEmailSent());
         commInfo.put("replyTo",  getReplyTo());
-        commInfo.put("replies",  constructJSONArray(getReplies()));
+        JSONArray replyList = new JSONArray();
+        for (Long val : getReplies()) {
+            replyList.put(val.longValue());
+        }
+        commInfo.put("replies",  replyList);
         commInfo.put("decision", getDecision());
         return commInfo;
     }
@@ -265,10 +278,10 @@ public class CommentRecord extends DOMFace {
             }
         }
         if (input.has("replyTo")) {
-            setReplyTo(input.getString("replyTo"));
+            setReplyTo(input.getLong("replyTo"));
         }
         if (input.has("replies")) {
-            setReplies(constructVector(input.getJSONArray("replies")));
+            setReplies(constructVectorLong(input.getJSONArray("replies")));
         }
         if (input.has("decision")) {
             setDecision(input.getString("decision"));

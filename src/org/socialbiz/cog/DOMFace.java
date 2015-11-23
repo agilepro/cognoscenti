@@ -154,23 +154,25 @@ public class DOMFace
         return testValue.equals(val);
     }
 
-    public void setScalar(String memberName, String value)
-    {
-        if (memberName == null)
-        {
+    public void setScalar(String memberName, String value) {
+        if (memberName == null) {
             throw new RuntimeException("Program logic error: a null member name"
                 +" was passed to setScalar.");
         }
         DOMUtils.setChildValue(fDoc, fEle, memberName, value);
     }
-    public String getScalar(String memberName)
-    {
-        if (memberName == null)
-        {
+    public void setScalar(String memberName, long value) {
+        setScalar(memberName, Long.toString(value));
+    }
+    public String getScalar(String memberName) {
+        if (memberName == null) {
             throw new RuntimeException("Program logic error: a null member name"
                 +" was passed to getScalar.");
         }
         return DOMUtils.getChildText(fEle, memberName);
+    }
+    public long getScalarLong(String memberName) {
+        return safeConvertLong(getScalar(memberName));
     }
 
     /**
@@ -266,17 +268,24 @@ public class DOMFace
     * memberName: the name of the tag holding a data value
     * values: a Vector of string values
     */
-    public void setVector(String memberName, Vector<String> values)
-    {
-        if (memberName == null)
-        {
+    public void setVector(String memberName, Vector<String> values) {
+        if (memberName == null) {
             throw new RuntimeException("Program logic error: a null member name"
                 +" was passed to setVector.");
         }
         removeAllNamedChild(memberName);
-        for (String val : values)
-        {
+        for (String val : values) {
             createChildElement(memberName, val);
+        }
+    }
+    public void setVectorLong(String memberName, Vector<Long> values) {
+        if (memberName == null) {
+            throw new RuntimeException("Program logic error: a null member name"
+                +" was passed to setVector.");
+        }
+        removeAllNamedChild(memberName);
+        for (Long val : values) {
+            createChildElement(memberName, Long.toString(val));
         }
     }
 
@@ -599,6 +608,19 @@ public class DOMFace
             //assure uniqueness of the values in the list, don't allow duplicates
             if (!list.contains(val)) {
                 list.add(val);
+            }
+        }
+        return list;
+    }
+    public static Vector<Long> constructVectorLong(JSONArray input) throws Exception {
+        Vector<Long> list = new Vector<Long>();
+        int top = input.length();
+        for (int i = 0; i<top; i++) {
+            String val = input.getString(i);
+            long longVal = safeConvertLong(val);
+            //assure uniqueness of the values in the list, don't allow duplicates
+            if (!list.contains(val)) {
+                list.add(new Long(longVal));
             }
         }
         return list;

@@ -649,6 +649,14 @@ public class NoteRecord extends DOMFace implements EmailContext {
       public Vector<CommentRecord> getComments()  throws Exception {
           return getChildren("comment", CommentRecord.class);
       }
+      public CommentRecord findComment(long timestamp)  throws Exception {
+          for (CommentRecord cr : getComments()) {
+              if (cr.getTime() == timestamp) {
+                  return cr;
+              }
+          }
+          return null;
+      }
       public CommentRecord addComment(AuthRequest ar, String htmlInput)  throws Exception {
           CommentRecord newCR = createChild("comment", CommentRecord.class);
           newCR.setTime(ar.nowTime);
@@ -876,6 +884,24 @@ public class NoteRecord extends DOMFace implements EmailContext {
              String htmlValue = newComment.getString("html");
              CommentRecord cr = addComment(ar, htmlValue);
              cr.updateFromJSON(newComment, ar);
+             
+             //if this NEW comment is a reply, find the source of that
+             //and mark it to know about this comment.
+             long replyTo = newComment.optLong("replyTo", 0);
+             if (replyTo>0) {
+                 System.out.println("Found a reply to value in new comment: "+replyTo);
+                 CommentRecord source = this.findComment(replyTo);
+                 if (source!=null) {
+                     System.out.println("added forward into comment: "+replyTo);
+                     source.addOneToReplies(cr.getTime());
+                 }
+                 else {
+                     System.out.println("did not find any comment with this value: "+replyTo);
+                 }
+             }
+             else {
+                 System.out.println("NO replyto information: ");
+             }
          }
          //if there is a comments, then IF the creator of the comment is the currently
          //logged in user, and the timestamps match, then update the html part
