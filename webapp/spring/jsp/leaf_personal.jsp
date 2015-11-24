@@ -156,9 +156,9 @@ app.controller('myCtrl', function($scope, $http) {
             <tr>
                 <td><b>Watch workspace:</b></td>
                 <td>
-                    <button ng-show="isWatching" class="btn " ng-click="userOp('ClearWatch')">Stop Watching</button>
+                    <button ng-show="isWatching" class="btn " ng-click="userOp('ClearWatch')"><i class="fa  fa-check-square-o"></i> Watch List</button>
                     <button ng-show="isWatching" class="btn " ng-click="userOp('SetWatch')">Reset Watch Time</button>
-                    <button ng-hide="isWatching" class="btn " ng-click="userOp('SetWatch')">Start Watching</button>
+                    <button ng-hide="isWatching" class="btn " ng-click="userOp('SetWatch')"><i class="fa  fa-square-o"></i> Watch List</button>
                 </td>
                 <td ng-hide="openWatch">
                     <button class="btn" ng-click="openWatch=!openWatch">?</button>
@@ -181,8 +181,8 @@ app.controller('myCtrl', function($scope, $http) {
             <tr>
                 <td><b>Template:</b></td>
                 <td>
-                    <button ng-show="isTemplate" class="btn" ng-click="userOp('ClearTemplate')">Remove from Templates</button>
-                    <button ng-hide="isTemplate" class="btn" ng-click="userOp('SetTemplate')">Mark As Template</button>
+                    <button ng-show="isTemplate" class="btn" ng-click="userOp('ClearTemplate')"><i class="fa  fa-check-square-o"></i> Template</button>
+                    <button ng-hide="isTemplate" class="btn" ng-click="userOp('SetTemplate')"><i class="fa  fa-square-o"></i> Template</button>
                 </td>
                 <td ng-hide="openTemplate">
                     <button class="btn" ng-click="openTemplate=!openTemplate">?</button>
@@ -202,8 +202,8 @@ app.controller('myCtrl', function($scope, $http) {
             <tr>
                 <td><b>Notification:</b></td>
                 <td>
-                    <button ng-show="isNotify" class="btn" ng-click="userOp('ClearNotify')">Stop Receiving Notifications</button>
-                    <button ng-hide="isNotify" class="btn" ng-click="userOp('SetNotify')">Start Receiving Notifications</button>
+                    <button ng-show="isNotify" class="btn" ng-click="userOp('ClearNotify')"><i class="fa  fa-check-square-o"></i> Receive Notifications</button>
+                    <button ng-hide="isNotify" class="btn" ng-click="userOp('SetNotify')"><i class="fa  fa-square-o"></i> Receive Notifications</button>
                 </td>
                 <td ng-hide="openNotify">
                     <button class="btn" ng-click="openNotify=!openNotify">?</button>
@@ -229,7 +229,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn btn-sm" style="background-color:{{role.color}};">{{role.name}}</button>
                 </td>
                 <td>
-                    <button class="btn" ng-click="roleChange(role, 'Leave')">Leave the Role</button>
+                    <button class="btn" ng-click="roleChange(role, 'Leave')"><i class="fa  fa-check-square-o"></i> in Role</button>
                 </td>
                 <td ng-hide="role.show">
                     <button class="btn" ng-click="role.show=!role.show">?</button>
@@ -253,7 +253,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn btn-sm" style="background-color:{{role.color}};">{{role.name}}</button>
                 </td>
                 <td>
-                    <button class="btn" ng-click="roleChange(role, 'Leave')">Leave the Role</button>
+                    <button class="btn" ng-click="roleChange(role, 'Leave')"><i class="fa fa-clock-o"></i> pending Role</button>
                 </td>
                 <td ng-hide="role.show">
                     <button class="btn" ng-click="role.show=!role.show">?</button>
@@ -277,7 +277,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn btn-sm" style="background-color:{{role.color}};">{{role.name}}</button>
                 </td>
                 <td>
-                    <button class="btn" ng-click="roleChange(role, 'Join')">Join the Role</button>
+                    <button class="btn" ng-click="roleChange(role, 'Join')"><i class="fa  fa-square-o"></i> in Role</button>
                 </td>
                 <td ng-hide="role.show">
                     <button class="btn" ng-click="role.show=!role.show">?</button>

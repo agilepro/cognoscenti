@@ -41,6 +41,7 @@ Optional Parameters:
         emailInfo = eGen.getJSON(ar, ngp);
     }
     else {
+        String targetRole = null;
         emailInfo = new JSONObject();
         emailInfo.put("id", "~new~");
         emailInfo.put("intro", ar.defParam("intro",
@@ -59,6 +60,8 @@ Optional Parameters:
                 mailSubject = "Sending Topic from Workspace";
             }
             emailInfo.put("noteInfo", noteRec.getJSONWithHtml(ar));
+
+            targetRole = noteRec.getTargetRole();
         }
 
 
@@ -74,9 +77,6 @@ Optional Parameters:
         emailInfo.put("attachments", attachments);
 
         emailInfo.put("from", userFromAddress);
-        JSONArray defaultRoles = new JSONArray();
-        defaultRoles.put("Members");   //By default, send email to members
-        emailInfo.put("roleNames", defaultRoles);
         emailInfo.put("alsoTo", new JSONArray());
         emailInfo.put("excludeResponders", false);
         emailInfo.put("includeSelf", false);
@@ -93,12 +93,21 @@ Optional Parameters:
                     mailSubject = "Meeting: "+mr.getNameAndDate();
                 }
             }
+            targetRole = mr.getTargetRole();
         }
 
         if(mailSubject == null){
             mailSubject = "Message from Workspace "+ngp.getFullName();
         }
         emailInfo.put("subject", mailSubject);
+        JSONArray defaultRoles = new JSONArray();
+        if (targetRole!=null && targetRole.length()>0) {
+            defaultRoles.put(targetRole);
+        }
+        else {
+            defaultRoles.put("Members");
+        }
+        emailInfo.put("roleNames", defaultRoles);
 
     }
 

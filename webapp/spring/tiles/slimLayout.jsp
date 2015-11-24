@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"
@@ -90,4 +90,4 @@
     <!-- End body wrapper -->
 </body>
 </html>
-<!-- END slimLayout.jsp -- <%= (System.currentTimeMillis()-renderStart) %> ms -->
+<!-- END slimLayout.jsp - - <%= (System.currentTimeMillis()-renderStart) %> ms -->

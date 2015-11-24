@@ -19,7 +19,9 @@
         rollo.put("count", players.size());
         JSONArray playlist = new JSONArray();
         for (AddressListEntry ale: players) {
-            playlist.put(ale.getJSON());
+            if (ale.getName().length()>0) {
+                playlist.put(ale.getJSON());
+            }
         }
         rollo.put("players", playlist);
         allRoles.put(rollo);
@@ -172,6 +174,20 @@ app.controller('myCtrl', function($scope, $http) {
         }
         return rec.uid;
     }
+    $scope.imageName = function(player) {
+        if (player.key) {
+            return player.key+".jpg";
+        }
+        else {
+            var lc = player.uid.toLowerCase();
+            var ch = lc.charAt(0);
+            var i =1;
+            while(i<lc.length && (ch<'a'||ch>'z')) {
+                ch = lc.charAt(i); i++;
+            }
+            return "fake-"+ch+".jpg";
+        }
+    }
 });
 
 </script>
@@ -199,19 +215,19 @@ app.controller('myCtrl', function($scope, $http) {
 
     <table width="100%"><tr>
         <td style="width:400px;height:600px;vertical-align:top;" >
-            <div ng-repeat="role in allRoles" style="margin:10px" class="generalContent">
-                <div style="float:left">
-                    <button class="btn btn-sm" style="color:black;background-color:{{role.color}}"
-                         ng-click="fetchRole(role.name)">{{role.name}}</button>
-                </div>
-                <div style="float:right;">
-                    <span ng-repeat="player in role.players">
-                        <img class="img-circle" src="<%=ar.retPath%>users/{{player.key}}.jpg" style="width:32px;height:32px">
-                    </span>
-                </div>
-                <div style="clear:both;"></div>
-            </div>
-
+            <table>
+                <tr ng-repeat="role in allRoles" style="background-color:{{(role.name==roleInfo.name)?'#EEE':'white'}};" class="generalContent">
+                    <td style="padding:10px">
+                        <button class="btn btn-sm" style="color:black;background-color:{{role.color}}"
+                             ng-click="fetchRole(role.name)">{{role.name}}</button>
+                    </td>
+                    <td style="align:right;padding:10px">
+                        <span ng-repeat="player in role.players">
+                            <img sh-show="player.key" class="img-circle" src="<%=ar.retPath%>users/{{imageName(player)}}" style="width:32px;height:32px">
+                        </span>
+                    </td>
+                </tr>
+            </table>
 
         </td>
         <td  ng-hide="showInput" style="vertical-align:top;text-align:center;" >

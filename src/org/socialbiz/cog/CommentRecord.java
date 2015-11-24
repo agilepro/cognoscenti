@@ -148,7 +148,11 @@ public class CommentRecord extends DOMFace {
 
     public void commentEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
         Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
-        OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
+        String targetRole = noteOrMeet.getTargetRole();
+        if (targetRole==null || targetRole.length()==0) {
+            targetRole = "Members";
+        }
+        OptOutAddr.appendUsersFromRole(ngp, targetRole, sendTo);
 
         AddressListEntry commenter = getUser();
         UserProfile commenterProfile = commenter.getUserProfile();

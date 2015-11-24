@@ -96,7 +96,11 @@ public class ResponseRecord extends DOMFace
 
     public void responseEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, CommentRecord cr, MailFile mailFile) throws Exception {
         Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
-        OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
+        String targetRole = noteOrMeet.getTargetRole();
+        if (targetRole==null || targetRole.length()==0) {
+            targetRole = "Members";
+        }
+        OptOutAddr.appendUsersFromRole(ngp, targetRole, sendTo);
 
         AddressListEntry commenter = new AddressListEntry(getUserId());
         UserProfile commenterProfile = commenter.getUserProfile();

@@ -1,5 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="org.socialbiz.cog.SuperAdminLogFile"
+%><%@page import="java.io.FileInputStream"
+%><%@page import="org.workcast.streams.StreamHelper"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
 
@@ -15,6 +17,29 @@
         jo.put("lastLogin", user.getLastLogin());
         jo.put("email", user.getPreferredEmail());
         allNewUsers.put(jo);
+    }
+
+    File userFolder =  ar.getCogInstance().getConfig().getFileFromRoot("users");
+    for (AddressListEntry ale : UserManager.getAllUsers()) {
+        UserProfile anyone = ale.getUserProfile();
+        if (anyone==null) {
+            continue;
+        }
+        String key = anyone.getKey();
+        File imageFile = new File(userFolder, key+".jpg");
+        if (!imageFile.exists()) {
+            String lc = anyone.getName().toLowerCase();
+            char ch = lc.charAt(0);
+            int i=1;
+            while (i<lc.length() && (ch<'a'||ch>'z')) {
+                ch = lc.charAt(i);
+                i++;
+            }
+            File fakeFile = new File(userFolder, "fake-"+ch+".jpg");
+            FileInputStream is = new FileInputStream(fakeFile);
+            StreamHelper.copyStreamToFile(is, imageFile);
+            is.close();
+        }
     }
 
 %>

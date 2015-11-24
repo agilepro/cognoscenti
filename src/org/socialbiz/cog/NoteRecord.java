@@ -94,6 +94,14 @@ public class NoteRecord extends DOMFace implements EmailContext {
         setScalar("owner", newOwner);
     }
 
+    public String getTargetRole()  throws Exception {
+        return getAttribute("targetRole");
+    }
+    public void setTargetRole(String newVal) throws Exception {
+        setAttribute("targetRole", newVal);
+    }
+    
+    
     public long getLastEdited()
     {
         return safeConvertLong(getScalar("created"));
@@ -743,7 +751,11 @@ public class NoteRecord extends DOMFace implements EmailContext {
 
       public void topicEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note, MailFile mailFile) throws Exception {
           Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
-          OptOutAddr.appendUsersFromRole(ngp, "Members", sendTo);
+          String targetRole = note.getTargetRole();
+          if (targetRole==null || targetRole.length()==0) {
+              targetRole = "Members";
+          }
+          OptOutAddr.appendUsersFromRole(ngp, targetRole, sendTo);
 
           UserRef creator = getModUser();
           UserProfile creatorProfile = UserManager.findUserByAnyId(creator.getUniversalId());
