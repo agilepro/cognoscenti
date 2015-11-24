@@ -11,6 +11,7 @@
 %><%@page import="org.socialbiz.cog.GoalRecord"
 %><%@page import="org.socialbiz.cog.NGBook"
 %><%@page import="org.socialbiz.cog.NGPage"
+%><%@page import="org.socialbiz.cog.mail.DailyDigest"
 %><%@page import="org.socialbiz.cog.NGPageIndex"
 %><%@page import="org.socialbiz.cog.SectionUtil"
 %><%@page import="org.socialbiz.cog.SuperAdminLogFile"
@@ -40,7 +41,7 @@ Required Parameters:
 
     //NEED TO FILL THE ARRAY HERE
 
-    List<NGContainer> containers = new ArrayList<NGContainer>();
+    List<NGPageIndex> containers = new ArrayList<NGPageIndex>();
     long lastSendTime = uProf.getNotificationTime();
 
     //schema migration ... some users will not have this value set.
@@ -58,18 +59,8 @@ Required Parameters:
         String rowStyleClass = "";
         for (NotificationRecord tr : notifications) {
             String pageId = tr.getPageKey();
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-            if (ngp==null) {
-                continue;
-            }
-            containers.add(ngp);
-            String linkAddr = ar.retPath + "t/" +ngp.getSite().getKey()+"/"+ngp.getKey() + "/history.htm";
-            if(count%2 == 0){
-                rowStyleClass = "tableBodyRow odd";
-            }
-            else{
-                rowStyleClass = "tableBodyRow even";
-            }
+            NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageId);
+            containers.add(ngpi);
         }
     }
 %>

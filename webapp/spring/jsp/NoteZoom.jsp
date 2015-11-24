@@ -44,6 +44,10 @@ Required parameter:
     JSONArray attachmentList = ngp.getJSONAttachments(ar);
     JSONArray allLabels = ngp.getJSONLabels();
 
+    JSONArray history = new JSONArray();
+    for (HistoryRecord hist : note.getNoteHistory(ngp)) {
+        history.put(hist.getJSON(ngp, ar));
+    }
 
 %>
 
@@ -75,6 +79,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.canUpdate = <%=canUpdate%>;
+    $scope.history = <%history.write(out,2,4);%>
+
+    $scope.isEditing = false;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -101,6 +108,26 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.myComment = "";
     $scope.myPoll = false;
     $scope.myReplyTo = 0;
+
+    $scope.saveEdits = function(fields) {
+        var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
+        var rec = {};
+        rec.id = $scope.noteInfo.id
+        rec.universalid = $scope.noteInfo.universalid;
+        fields.map( function(fieldName) {
+            rec[fieldName] = $scope.noteInfo[fieldName];
+        });
+        var postdata = angular.toJson(rec);
+        $scope.showError=false;
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            $scope.noteInfo = data;
+            $scope.refreshHistory();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
 
     $scope.createComment = function() {
         var saveRecord = {};
@@ -142,6 +169,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.noteInfo = data;
             $scope.fixUpChoices();
             $scope.myComment = "";
+            $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -276,6 +304,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "Comment";
     }
+    $scope.refreshHistory = function() {
+        var postURL = "getNoteHistory.json?nid="+$scope.noteInfo.id;
+        $scope.showError=false;
+        $http.get(postURL)
+        .success( function(data) {
+            $scope.history = data;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
 
 
     $scope.openResponseEditor = function (cmt) {
@@ -335,7 +374,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     $scope.updateComment(cmt);
                 }
             });
-            //update the comment
+            $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -395,7 +434,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   href="notesList.htm">List Topics</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="editNote.htm?nid={{noteInfo.id}}" target="_blank">Edit This Topic</a></li>
+                  ng-click="isEditing = !isEditing" target="_blank">Edit This Topic</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">Generate PDF</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -406,9 +445,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
     </div>
 
-    <div class="leafContent">
+    <div class="leafContent" ng-hide="isEditing">
       <div ng-bind-html="noteInfo.html"></div>
       <div><br/><i>Last modified by <a href="findUser.htm?uid={{noteInfo.modUser.uid}}"><span class="red">{{noteInfo.modUser.name}}</span></a> on {{noteInfo.modTime|date}}</i></div>
+    </div>
+    <div class="well leafContent" ng-show="isEditing">
+      <div ng-model="noteInfo.html"
+          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
+          text-angular="" class="leafContent"></div>
+
+      <button ng-click="saveEdits(['html']);isEditing=false" class="btn btn-danger">Save</button>
+      <button ng-click="saveEdits([]);isEditing=false" class="btn btn-danger">Cancel</button>
     </div>
 
 
@@ -575,229 +622,27 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 
-<%
-    String choices = note.getChoices();
-    String[] choiceArray = UtilityMethods.splitOnDelimiter(choices, ',');
 
-    int allowedLevel = note.getVisibility();
-    String mnnote = ar.defParam("emailId", null);
+    <div class="generalHeading">History</div>
+        <table >
+            <tr><td style="height:10px"></td></tr>
+            <tr ng-repeat="rec in history">
+                    <td class="projectStreamIcons"  style="padding:10px;">
+                        <a href="#"><img src="<%=ar.retPath%>users/{{rec.responsible.image}}" alt="" width="50" height="50" /></a></td>
+                    <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
+                        {{rec.time|date}} -
+                        <a href="<%=ar.retPath%>v/{{rec.responsible.key}}/userSettings.htm" title="access the profile of this user, if one exists">
+                            <span class="red">{{rec.responsible.name}}</span>
+                        </a>
+                        <br/>
+                        {{rec.ctxType}} -
+                        <a href="">{{rec.ctxName}}</a> was {{rec.event}} - {{rec.comment}}
+                        <br/>
 
-    if( !note.isDeleted()){
-        if (choiceArray.length>0 && (ar.isLoggedIn() || mnnote != null))
-        {
-            UserProfile up = ar.getUserProfile();
-            String userId = "";
-            LeafletResponseRecord llr = null;
-            if(up == null){
-                userId = ar.reqParam("emailId");
-                up = UserManager.findUserByAnyId(userId);
-            }else{
-                userId = up.getUniversalId();
-            }
-            if (up!=null) {
-                llr = note.getOrCreateUserResponse(up);
-            }
-            else {
-                //this is for the case that an invite was sent to someone who has
-                //never made a profile.
-                llr = note.accessResponse(userId);
-            }
-
-    String data = llr.getData();
-
-%>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <form method="post" action="leafletResponse.htm">
-            <input type="hidden" name="lid" value="<% ar.writeHtml(lid); %>">
-            <input type="hidden" name="uid" value="<% ar.writeHtml(userId); %>">
-            <input type="hidden" name="mnnote" value="<% ar.writeHtml(mnnote); %>">
-            <input type="hidden" name="go" value="<% ar.writeHtml(ar.getCompleteURL()); %>">
-
-            <br><br>
-            <div class="generalContent">
-
-                <div class="generalHeading">Your Response</div>
-
-                <table cellpadding="0" cellspacing="0" width="100%">
-                    <tr><td style="height:5px" colspan="3"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2">Choice:</td>
-                        <td style="width:20px;"></td>
-                        <td>
-                            <%
-                            for (String ach : choiceArray)
-                                {
-                                    String isChecked = "";
-                                    if (ach.equals(llr.getChoice())) {
-                                        isChecked = " checked=\"checked\"";
-                                    }
-                                    %>
-                                    <input type="radio" name="choice"<%ar.writeHtml(isChecked);%> value="<%
-                                    ar.writeHtml(ach);
-                                    %>"> <%
-                                    ar.writeHtml(ach);
-                                    %> &nbsp; <%
-                                }
-                            %>
-                        </td>
-                    </tr>
-                    <tr><td style="height:8px" colspan="3"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2" valign="top">Response:</td>
-                        <td style="width:20px;"></td>
-                        <td>
-                              <textarea name="data" class="textAreaGeneral" rows="4"><% ar.writeHtml(data); %></textarea>
-                          </td>
-                    </tr>
-                    <tr><td style="height:8px" colspan="3"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2"></td>
-                        <td style="width:20px;"></td>
-                        <td>
-                          <input class="btn btn-primary" type="submit" name="action" value="Update">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2"></td>
-                        <td style="width:20px;"></td>
-                        <td>
-                          <i>You can change your response at any time by visiting this page again.</i>
-                        </td>
-                    </tr>
-                </table>
-            </form>
-
-            <%
-            }
-        }
-            %>
-
-            <br><br>
-
-            <div class="generalHeading">Responses</div>
-            <table cellpadding="0" cellspacing="0" width="100%">
-                <tr><td style="height:5px" colspan="3"></td></tr>
-            <%
-            Vector<LeafletResponseRecord> recs = note.getResponses();
-            Hashtable choiceTotals= new Hashtable();
-            int count =0;
-
-            for (LeafletResponseRecord llr : recs)
-            {
-                AddressListEntry ale = new AddressListEntry(llr.getUser());
-                String choice = llr.getChoice();
-                Integer tot = (Integer) choiceTotals.get(choice);
-                if (tot==null)
-                {
-                    tot = new Integer(1);
-                }
-                else
-                {
-                    tot = new Integer( tot.intValue()+1 );
-                }
-                choiceTotals.put(choice, tot);
-                if(count==0){
-                %><tr><td  width="180px" valign="top">
-                <%
-                }else{
-                %>
-
-                 <tr><td valign="top">
-                <%}
-                ale.writeLink(ar);
-                %></td><td><b><%
-                ar.writeHtml(choice);
-                %></b> - <%
-                SectionUtil.nicePrintTime(out, llr.getLastEdited(), ar.nowTime);
-                %><br/><%
-                WikiConverter.writeWikiAsHtml(ar,llr.getData());
-                %></td></tr>
-                <%
-            }
-
-            %>
-            </table>
-            <br><br>
-
-            <div class="generalHeading">Totals</div>
-            <table cellpadding="0" cellspacing="0" width="100%">
-                <tr><td style="height:5px" colspan="3"></td></tr>
-                <%
-                for (String ach : choiceArray)
-                {
-                    int val = 0;
-                    Integer tot = (Integer) choiceTotals.get(ach);
-                    if (tot!=null)
-                    {
-                        val=tot.intValue();
-                    }
-                    %>
-                    <tr><td width="180px"><b><%
-                    ar.writeHtml(ach);
-                    %>:</b></td>
-                    <td> <%ar.writeHtml(String.valueOf(val));%></td>
-                    </tr>
-                <%
-                }
-                %>
-            </table>
-            <br><br>
-
-            <div class="generalHeading">History</div>
-            <table >
-                <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td>
-                    <%
-                        List<HistoryRecord> histRecs = ngp.getAllHistory();
-                        for (HistoryRecord hist : histRecs)
-                        {
-                            if (hist.getContextType()==HistoryRecord.CONTEXT_TYPE_LEAFLET
-                                && lid.equals(hist.getContext()))
-                            {
-                                AddressListEntry ale = new AddressListEntry(hist.getResponsible());
-                                UserProfile responsible = ale.getUserProfile();
-                                String photoSrc = ar.retPath+"assets/photoThumbnail.gif";
-                                if(responsible!=null && responsible.getImage().length() > 0){
-                                    photoSrc = ar.retPath+"users/"+responsible.getImage();
-                                }
-                                %>
-                                <tr>
-                                     <td class="projectStreamIcons"><a href="#"><img class="img-circle" src="<%=photoSrc%>" alt="" width="50" height="50" /></a></td>
-                                     <td colspan="2"  class="projectStreamText" style="max-width:800px;">
-                                         <%
-
-                                         NGWebUtils.writeLocalizedHistoryMessage(hist, ngp, ar);
-                                         ar.write("<br/>");
-                                         SectionUtil.nicePrintTime(out, hist.getTimeStamp(), ar.nowTime);
-                                         %>
-                                     </td>
-                                </tr>
-                                <tr><td style="height:10px"></td></tr>
-                                <%
-                            }
-                        }
-                    %>
                     </td>
-                </tr>
-            </table>
-        </div>
-    <%
+            </tr>
+        </table>
+    </div>
 
-
-    out.flush();
-%>
+</div>
+<%out.flush();%>

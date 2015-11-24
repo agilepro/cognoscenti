@@ -16,9 +16,19 @@
 
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngp.findMeeting(meetId);
+    String targetRole = mRec.getTargetRole();
+    if (targetRole==null || targetRole.length()==0) {
+        mRec.setTargetRole(ngp.getPrimaryRole().getName());
+    }
     JSONObject meetingInfo = mRec.getFullJSON(ar, ngp);
     JSONArray attachmentList = ngp.getJSONAttachments(ar);
-    JSONArray goalList = ngp.getJSONGoals();
+    JSONArray goalList     = ngp.getJSONGoals();
+
+    JSONArray allRoles = new JSONArray();
+    for (NGRole aRole : ngp.getAllRoles()) {
+        allRoles.put(aRole.getName());
+    }
+
 
     JSONArray allPeople = UserManager.getUniqueUsersJSON();
 
@@ -138,6 +148,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.goalList = <%goalList.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allPeople = <%allPeople.write(out,2,4);%>;
+    $scope.allRoles = <%allRoles.write(out,2,4);%>;
+
     $scope.newAssignee = "";
     $scope.newGoal = {};
     $scope.newPerson = "";
@@ -1050,10 +1062,18 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                 </tr>
                 <tr><td style="height:10px"></td></tr>
                 <tr>
+                    <td class="gridTableColummHeader">Target Role:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2" class="form-inline form-group">
+                        <select class="form-control" ng-model="meeting.targetRole" ng-options="value for value in allRoles"></select>
+                    </td>
+                </tr>
+                <tr><td style="height:10px"></td></tr>
+                <tr>
                     <td class="gridTableColummHeader"></td>
                     <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
-                        <button ng-click="savePartialMeeting(['name','startTime','duration','reminderTime','meetingType','reminderSent'])" class="btn btn-danger">Save</button>
+                        <button ng-click="savePartialMeeting(['name','startTime','targetRole','duration','reminderTime','meetingType','reminderSent'])" class="btn btn-danger">Save</button>
                         <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
                     </td>
                 </tr>

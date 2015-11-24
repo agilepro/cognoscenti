@@ -213,8 +213,8 @@ public class EmailSender extends TimerTask {
             delayTime = DOMFace.safeConvertInt(delayStr)*1000*60;
         }
 
-        System.out.println("BACKGROUND: ----------- begining scan at "
-                +new Date()+"-------------");
+        //System.out.println("BACKGROUND: ----------- begining scan at "
+        //        +new Date()+"-------------");
 
         long nowTime = ar.nowTime;
         List<NGPageIndex> allOverdue = listOverdueContainers(nowTime-delayTime);

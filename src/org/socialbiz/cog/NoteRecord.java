@@ -729,6 +729,17 @@ public class NoteRecord extends DOMFace implements EmailContext {
           setAttributeBool("emailSent", newVal);
       }
 
+      public List<HistoryRecord> getNoteHistory(NGPage ngc) throws Exception {
+          ArrayList<HistoryRecord> histRecs = new ArrayList<HistoryRecord>();
+          String nid = this.getId();
+          for (HistoryRecord hist : ngc.getAllHistory()) {
+              if (hist.getContextType()==HistoryRecord.CONTEXT_TYPE_LEAFLET
+                      && nid.equals(hist.getContext())) {
+                  histRecs.add(hist);
+              }
+          }
+          return histRecs;
+      }
 
       public void topicEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note, MailFile mailFile) throws Exception {
           Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
@@ -937,7 +948,9 @@ public class NoteRecord extends DOMFace implements EmailContext {
          }
      }
      public void updateHtmlFromJSON(AuthRequest ar, JSONObject noteObj) throws Exception {
-         setNoteFromHtml(ar, noteObj.getString("html"));
+         if (noteObj.has("html")) {
+             setNoteFromHtml(ar, noteObj.getString("html"));
+         }
      }
 
 

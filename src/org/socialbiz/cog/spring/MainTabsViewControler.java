@@ -393,6 +393,29 @@ public class MainTabsViewControler extends BaseController {
          return res.toString();
      }
 
+     
+     @RequestMapping(value = "/{siteId}/{pageId}/getNoteHistory.json", method = RequestMethod.GET)
+     public void getGoalHistory(@PathVariable String siteId,@PathVariable String pageId,
+             HttpServletRequest request, HttpServletResponse response) {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         try{
+             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+             ar.setPageAccessLevels(ngp);
+             String nid = ar.reqParam("nid");
+             NoteRecord note = ngp.getNoteOrFail(nid);
+
+             JSONArray repo = new JSONArray();
+             for (HistoryRecord hist : note.getNoteHistory(ngp)) {
+                 repo.put(hist.getJSON(ngp, ar));
+             }
+             repo.write(ar.w, 2, 2);
+             ar.flush();
+         }catch(Exception ex){
+             Exception ee = new Exception("Unable to get history for note.", ex);
+             streamException(ee, ar);
+         }
+     }
+     
     //allow a user to change their email subscriptions, including opt out
     //even when not logged in.
     @RequestMapping(value = "/EmailAdjustment.htm", method = RequestMethod.GET)

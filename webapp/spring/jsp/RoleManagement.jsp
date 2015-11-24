@@ -198,7 +198,7 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
     <table width="100%"><tr>
-        <td style="width:300px;height:600px;vertical-align:top;" >
+        <td style="width:400px;height:600px;vertical-align:top;" >
             <div ng-repeat="role in allRoles" style="margin:10px" class="generalContent">
                 <div style="float:left">
                     <button class="btn btn-sm" style="color:black;background-color:{{role.color}}"

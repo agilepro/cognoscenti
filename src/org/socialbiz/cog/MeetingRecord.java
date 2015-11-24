@@ -83,6 +83,14 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         setAttribute("meetingType", Long.toString(newVal));
     }
 
+    
+    public String getTargetRole()  throws Exception {
+        return getAttribute("targetRole");
+    }
+    public void setTargetRole(String newVal) throws Exception {
+        setAttribute("targetRole", newVal);
+    }
+    
     public List<AgendaItem> getAgendaItems() throws Exception {
         return getChildren("agenda", AgendaItem.class);
     }
@@ -205,6 +213,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         JSONObject meetingInfo = new JSONObject();
         meetingInfo.put("id",          getId());
         meetingInfo.put("name",        getName());
+        meetingInfo.put("targetRole",  getTargetRole());
         meetingInfo.put("state",       getState());
         meetingInfo.put("startTime",   getStartTime());
         meetingInfo.put("duration",    getDuration());
@@ -259,6 +268,9 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         if (input.has("startTime")) {
             setStartTime(input.getLong("startTime"));
             hasSetMeetingInfo = true;
+        }
+        if (input.has("targetRole")) {
+            setTargetRole(input.getString("targetRole"));
         }
         if (input.has("duration")) {
             setDuration(input.getLong("duration"));
@@ -467,7 +479,11 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             EmailGenerator emg = ngp.createEmailGenerator();
             emg.setSubject("Reminder for meeting: "+this.getName());
             Vector<String> names = new Vector<String>();
-            names.add("Members");
+            String tRole = getTargetRole();
+            if (tRole==null || tRole.length()==0) {
+                tRole = "Members";
+            }
+            names.add(tRole);
             emg.setRoleNames(names);
             emg.setMeetingId(getId());
             String meetingOwner = getOwner();
