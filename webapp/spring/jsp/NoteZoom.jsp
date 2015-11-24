@@ -315,6 +315,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.reportError(data);
         });
     }
+    $scope.hasLabel = function(searchName) {
+        return $scope.noteInfo.labelMap[searchName];
+    }
+    $scope.toggleLabel = function(label) {
+        $scope.noteInfo.labelMap[label.name] = !$scope.noteInfo.labelMap[label.name];
+    }
 
 
     $scope.openResponseEditor = function (cmt) {
@@ -459,7 +465,33 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 
 
-    <div class="generalHeading" style="margin-top:50px;">Attachments</div>
+    <div class="generalHeading" style="margin-top:50px;"></div>
+
+    <div>
+          Labels:
+          <span class="dropdown" ng-repeat="role in allLabels">
+            <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
+               data-toggle="dropdown" style="background-color:{{role.color}};"
+               ng-show="hasLabel(role.name)">{{role.name}}</button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+               <li role="presentation"><a role="menuitem" title="{{add}}"
+                  ng-click="toggleLabel(role)">Remove Role:<br/>{{role.name}}</a></li>
+            </ul>
+          </span>
+          <span>
+             <span class="dropdown">
+               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+               style="padding: 2px 5px;font-size: 11px;"> + </button>
+               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                 <li role="presentation" ng-repeat="rolex in allLabels">
+                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
+                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
+                         {{rolex.name}}</button></li>
+               </ul>
+             </span>
+          </span>
+    </div>
+
 
     <div style="width:100%">
       <div>
@@ -470,6 +502,32 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 {{doc.name}}</a>
           </div>
       </div>
+    </div>
+    <div>
+      Attachments:
+      <span class="dropdown" ng-repeat="doc in getDocs()">
+        <button class="btn dropdown-toggle" type="button" id="menu1"
+          data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;">
+        {{doc.name}}</button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              ng-click="removeAttachment(doc)">Remove Document:<br/>{{doc.name}}</a></li>
+        </ul>
+      </span>
+      <span ng-show="getDocs().length==0 && canUpdate"><i>no documents attached</i></span>
+      <button class="btn dropdown-toggle btn-primary" ng-click="showAdd=!showAdd"
+          style="margin:2px;padding: 2px 5px;font-size: 11px;" title="Attach a document">
+          + </button>
+    </div>
+    <div ng-show="showAdd">
+
+        <div class="form-inline form-group" style="padding-top:10px;">
+
+            <button ng-click="addAttachment(newAttachment);showAdd=false" class="btn btn-primary">Add Document</button>
+            <input type="text" ng-model="newAttachment"  class="form-control" placeholder="Enter Document Name"
+             style="width:350px;" typeahead="att as att.name for att in filterDocs($viewValue) | limitTo:12">
+        </div>
+
     </div>
 
 
@@ -529,9 +587,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                          &nbsp; {{cmt.time | date}} - <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm"><span class="red">{{cmt.userName}}</span></a>
                          <span ng-hide="cmt.emailSent">-email pending-</span>
                          <span ng-show="cmt.replyTo">
-                             <span ng-hide="cmt.poll">In reply to</span>
-                             <span ng-show="cmt.poll">Based on</span>
-                             <a href="#cmt{{cmt.replyTo}}">{{findComment(cmt.replyTo).userName}}</a>
+                             <span ng-hide="cmt.poll">In reply to
+                                 <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
+                                 <i class="fa fa-comments-o"></i> {{findComment(cmt.replyTo).userName}}</a></span>
+                             <span ng-show="cmt.poll">Based on
+                                 <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
+                                 <i class="fa fa-star-o"></i> {{findComment(cmt.replyTo).userName}}</a></span>
                          </span>
                          <div style="clear:both"></div>
                       </div>
@@ -571,10 +632,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    <div ng-show="cmt.decision">
                        See Linked Decision: <a href="decisionList.htm#DEC{{cmt.decision}}">#{{cmt.decision}}</a>
                    </div>
-                   <div ng-show="cmt.replies.length>0">
-                       <span ng-show="cmt.poll">See proposals: </span>
-                       <span ng-hide="cmt.poll">See replies: </span>
-                       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}">{{findComment(reply).userName}}</a>, </span>
+                   <div ng-show="cmt.replies.length>0 && cmt.poll">
+                       See proposals:
+                       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
+                           <i class="fa fa-star-o"></i> {{findComment(reply).userName}}</a> </span>
+                   </div>
+                   <div ng-show="cmt.replies.length>0 && !cmt.poll">
+                       See replies:
+                       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
+                           <i class="fa fa-comments-o"></i> {{findComment(reply).userName}}</a> </span>
                    </div>
 
 
@@ -628,7 +694,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <tr><td style="height:10px"></td></tr>
             <tr ng-repeat="rec in history">
                     <td class="projectStreamIcons"  style="padding:10px;">
-                        <a href="#"><img src="<%=ar.retPath%>users/{{rec.responsible.image}}" alt="" width="50" height="50" /></a></td>
+                        <img class="img-circle" src="<%=ar.retPath%>users/{{rec.responsible.image}}" alt="" width="50" height="50" /></td>
                     <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
                         {{rec.time|date}} -
                         <a href="<%=ar.retPath%>v/{{rec.responsible.key}}/userSettings.htm" title="access the profile of this user, if one exists">

@@ -172,7 +172,7 @@ app.controller('myCtrl', function($scope, $http) {
 
         <tr ng-repeat="hist in getHistory()"  >
             <td class="projectStreamIcons" style="padding-bottom:20px;">
-                <img src="<%=ar.retPath%>{{hist.imagePath}}" alt="" width="50" height="50" />
+                <img class="img-circle" src="<%=ar.retPath%>{{hist.imagePath}}" alt="" width="50" height="50" />
             </td>
             <td class="projectStreamText" style="padding-bottom:10px;">
                 {{hist.time|date}} -

@@ -856,7 +856,8 @@ function addvalue() {
                     </tr>
                     <tr ng-repeat="rec in allHist">
                         <td class="projectStreamIcons"  style="padding:10px;">
-                            <a href="#"><img src="<%=ar.retPath%>users/{{rec.responsible.image}}" alt="" width="50" height="50" /></a></td>
+                            <img class="img-circle" src="<%=ar.retPath%>users/{{rec.responsible.image}}"
+                                 alt="" width="50" height="50" /></td>
                         <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
                             {{rec.time|date}} -
                             <a href="<%=ar.retPath%>v/{{rec.responsible.key}}/userSettings.htm" title="access the profile of this user, if one exists">

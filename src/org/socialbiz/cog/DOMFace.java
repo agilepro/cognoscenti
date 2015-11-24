@@ -599,6 +599,13 @@ public class DOMFace
         }
         return val;
     }
+    public static JSONArray constructJSONArrayLong(List<Long> input) {
+        JSONArray val = new JSONArray();
+        for (Long item : input) {
+            val.put(item.longValue());
+        }
+        return val;
+    }
 
     public static Vector<String> constructVector(JSONArray input) throws Exception {
         Vector<String> list = new Vector<String>();
@@ -616,11 +623,11 @@ public class DOMFace
         Vector<Long> list = new Vector<Long>();
         int top = input.length();
         for (int i = 0; i<top; i++) {
-            String val = input.getString(i);
-            long longVal = safeConvertLong(val);
+            long longVal = input.getLong(i);
             //assure uniqueness of the values in the list, don't allow duplicates
-            if (!list.contains(val)) {
-                list.add(new Long(longVal));
+            Long objVal = new Long(longVal);
+            if (!list.contains(objVal)) {
+                list.add(objVal);
             }
         }
         return list;
