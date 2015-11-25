@@ -20,20 +20,17 @@
 
 package org.socialbiz.cog.rest;
 
-import org.socialbiz.cog.exception.NGException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
+
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.License;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
-
-import java.io.OutputStream;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import java.util.Vector;
-
+import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -214,9 +211,9 @@ public class TaskLinkHelper
     public String getSubPageLicense(AuthRequest ar, NGPage ngp) throws Exception
     {
         String subLicense = null;
-        Vector<License> v  = ngp.getLicenses();
+        List<License> v  = ngp.getLicenses();
         if(!v.isEmpty()){
-            License ls = v.firstElement();
+            License ls = v.get(0);
             subLicense = ls.getId();
         }
         return subLicense;

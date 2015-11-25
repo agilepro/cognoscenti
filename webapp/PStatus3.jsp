@@ -17,10 +17,8 @@
 %><%@page import="org.socialbiz.cog.rest.TaskHelper"
 %><%@page import="java.io.StringWriter"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.List"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%
     ar = AuthRequest.getOrCreate(request, response, out);

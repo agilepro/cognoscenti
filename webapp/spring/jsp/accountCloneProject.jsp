@@ -16,7 +16,7 @@ Required parameter:
     String accountKey = ar.reqParam("accountId");
 
     UserProfile  uProf =ar.getUserProfile();
-    Vector<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
+    //List<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
 
     String upstream = ar.defParam("upstream", "");
     String desc = ar.defParam("desc", "");

@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -142,8 +141,8 @@ public class PDFUtil {
         NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
         ar.setPageAccessLevels(ngp);
 
-        Vector<NoteRecord> publicNotes = new Vector<NoteRecord>();
-        Vector<NoteRecord> memberNotes = new Vector<NoteRecord>();
+        List<NoteRecord> publicNotes = new ArrayList<NoteRecord>();
+        List<NoteRecord> memberNotes = new ArrayList<NoteRecord>();
 
         List<String> publicNoteList = null;
         if(ar.req.getParameterValues("publicNotes")!= null){
@@ -202,7 +201,7 @@ public class PDFUtil {
         out.flush();
     }
 
-    private void writeInPDF(AuthRequest ar, Vector<NoteRecord> notes) throws Exception, IOException {
+    private void writeInPDF(AuthRequest ar, List<NoteRecord> notes) throws Exception, IOException {
 
         for (NoteRecord lr : notes) {
             String data = lr.getWiki();
@@ -685,10 +684,9 @@ public class PDFUtil {
                 return linkName;
             }
 
-            Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkAddr);
-            if (foundPages.size()==1)
-            {
-                NGPageIndex foundPI = foundPages.firstElement();
+            List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkAddr);
+            if (foundPages.size()==1) {
+                NGPageIndex foundPI = foundPages.get(0);
                 linkAddr = ar.retPath + ar.getResourceURL(foundPI, "frontPage.htm");
                 if (!userSpecifiedName)
                 {

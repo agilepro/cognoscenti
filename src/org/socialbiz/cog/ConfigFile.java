@@ -23,9 +23,9 @@ package org.socialbiz.cog;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -275,7 +275,7 @@ public class ConfigFile {
     }
     public List<File> getSiteFolders() throws Exception {
         String[] libFolders = getArrayProperty("libFolder");
-        Vector<File> allSiteFiles = new Vector<File>();
+        List<File> allSiteFiles = new ArrayList<File>();
         if (libFolders==null || libFolders.length==0) {
             File parentPath = getParentFolderOrFail();
             File newFolder = new File(parentPath, "sites");

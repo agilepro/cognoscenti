@@ -20,8 +20,9 @@
 
 package org.socialbiz.cog;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
@@ -95,7 +96,7 @@ public class ResponseRecord extends DOMFace
 
 
     public void responseEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, CommentRecord cr, MailFile mailFile) throws Exception {
-        Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
+        List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
         String targetRole = noteOrMeet.getTargetRole();
         if (targetRole==null || targetRole.length()==0) {
             targetRole = "Members";

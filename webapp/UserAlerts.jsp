@@ -16,8 +16,6 @@
 %><%@page import="org.socialbiz.cog.rest.TaskHelper"
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Unable to see user alerts. ");
@@ -56,11 +54,7 @@
            <td>Due</td>
         </tr>
 <%
-    Vector myActive = th.getActiveTasks();
-    Enumeration e = myActive.elements();
-    while (e.hasMoreElements())
-    {
-        GoalRecord tr = (GoalRecord) e.nextElement();
+    for (GoalRecord tr : th.getActiveTasks()) {
         int state = tr.getState();
         NGPage taskPage = tr.getProject();
 %>
@@ -92,13 +86,9 @@
         <table>
 <%
 
-        Vector<WatchRecord> watchList = uProf.getWatchList();
-        if (watchList != null)
-        {
-            Enumeration e2 = watchList.elements();
-            while (e2.hasMoreElements())
-            {
-                WatchRecord wr = (WatchRecord)e2.nextElement();
+        List<WatchRecord> watchList = uProf.getWatchList();
+        if (watchList != null) {
+            for (WatchRecord wr : watchList) {
                 NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(wr.getPageKey());
                 long  changeTime = 0;
                 if (ngpi==null)
@@ -138,13 +128,8 @@
         <table>
 <%
 
-    Vector adms = ar.getCogInstance().getAllPagesForAdmin(uProf);
-    Enumeration admse = adms.elements();
-    while(admse.hasMoreElements())
-    {
-        NGPageIndex ngpi = (NGPageIndex)admse.nextElement();
-        if (!ngpi.requestWaiting)
-        {
+    for (NGPageIndex ngpi : ar.getCogInstance().getAllPagesForAdmin(uProf)) {
+        if (!ngpi.requestWaiting) {
             continue;
         }
         NGPage aPage = ngpi.getPage();

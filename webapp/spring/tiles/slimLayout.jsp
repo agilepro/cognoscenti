@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"
@@ -40,6 +40,7 @@
 
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
+    <link href="<%=ar.retPath%>css/bootstrap-ext.css" rel="styleSheet" type="text/css" media="screen" />
 
     <title><tiles:getAsString name="title"/><%
     if(title!=null) {

@@ -23,11 +23,11 @@ package org.socialbiz.cog.spring;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -676,7 +676,7 @@ public class UserController extends BaseController {
 
             String matchKey = ar.reqParam("matchkey");
             StringBuffer users = new StringBuffer();
-            Vector<AddressListEntry> userList = ar.getMatchedFragment(matchKey.toLowerCase());
+            List<AddressListEntry> userList = ar.getMatchedFragment(matchKey.toLowerCase());
             for (AddressListEntry ale : userList) {
                 if(ale.getName().length() == 0){
                     users.append(ale.getUniversalId());
@@ -1613,7 +1613,7 @@ public class UserController extends BaseController {
             String bookForNewProject = ar.defParam( "bookKey", null );
 
             if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
-                Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
+                List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
                 if(foundPages.size()>0){
                     NGPageIndex foundPage = foundPages.get( 0 );
                     return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
@@ -1682,7 +1682,7 @@ public class UserController extends BaseController {
             String bookForNewProject = ar.defParam( "bookKey", null );
 
             if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
-                Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
+                List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
                 if(foundPages.size()>0){
                     NGPageIndex foundPage = foundPages.get( 0 );
                     return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
@@ -1730,7 +1730,7 @@ public class UserController extends BaseController {
             String bookForNewProject = ar.defParam( "bookKey", null );
 
             if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
-                Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
+                List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
                 if(foundPages.size()>0){
                     NGPageIndex foundPage = foundPages.get( 0 );
                     return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
@@ -1801,7 +1801,7 @@ public class UserController extends BaseController {
                 searchResults = SearchManager.performSearch(ar, searchText, searchProject, searchSite);
             }
             else {
-                searchResults = new Vector<SearchResultRecord>();
+                searchResults = new ArrayList<SearchResultRecord>();
             }
 
             JSONArray resultList = new JSONArray();
@@ -1905,7 +1905,7 @@ public class UserController extends BaseController {
         clone.flush();
 
         EmailSender.containerEmail(ooa, ngp, subject, bodyWriter.toString(),
-                null, new Vector<String>(), ar.getCogInstance());
+                null, new ArrayList<String>(), ar.getCogInstance());
     }
 
 

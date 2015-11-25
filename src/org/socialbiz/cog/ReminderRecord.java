@@ -20,11 +20,12 @@
 
 package org.socialbiz.cog;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.socialbiz.cog.mail.EmailSender;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.workcast.streams.MemFile;
 
 /**
@@ -217,12 +218,10 @@ public class ReminderRecord extends DOMFace
     /**
     * this is a array of selected role names
     */
-    public Vector<String> getNotifyRoles()
-    {
+    public List<String> getNotifyRoles() {
         return getVector("notifyRoles");
     }
-    public void setNotifyRoles(Vector<String> fname)
-    {
+    public void setNotifyRoles(List<String> fname) {
         setVector("notifyRoles", fname);
     }
 
@@ -236,12 +235,10 @@ public class ReminderRecord extends DOMFace
     * forever part of this record.  There is no undo
     * to dis-associate a document from this reminder.
     */
-    public Vector<String> getAttachedIds()
-    {
+    public List<String> getAttachedIds() {
         return getVector("attachedIds");
     }
-    public void addAttachedId(String oneId)
-    {
+    public void addAttachedId(String oneId) {
         addVectorValue("attachedIds", oneId);
     }
 
@@ -322,7 +319,7 @@ public class ReminderRecord extends DOMFace
         ReminderMgr rMgr = ngp.getReminderMgr();
         ReminderRecord rRec = rMgr.findReminderByIDOrFail(reminderId);
         String subject = "Reminder to Upload: " + rRec.getSubject();
-        Vector<AddressListEntry> addressList = AddressListEntry.parseEmailList(emailto);
+        List<AddressListEntry> addressList = AddressListEntry.parseEmailList(emailto);
         for (AddressListEntry ale : addressList) {
             OptOutAddr ooa = new OptOutAddr(ale);
             MemFile body = new MemFile();
@@ -333,7 +330,7 @@ public class ReminderRecord extends DOMFace
             clone.write("</body></html>");
             clone.flush();
 
-            EmailSender.containerEmail(ooa, ngp, subject, body.toString(), null, new Vector<String>(), ar.getCogInstance());
+            EmailSender.containerEmail(ooa, ngp, subject, body.toString(), null, new ArrayList<String>(), ar.getCogInstance());
         }
         if (ngp instanceof NGPage) {
             HistoryRecord.createHistoryRecord(ngp, reminderId,

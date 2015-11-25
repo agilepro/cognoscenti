@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
@@ -478,7 +477,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             //TODO: make a non-persistent version of EmailGenerator -- no real reason to save this
             EmailGenerator emg = ngp.createEmailGenerator();
             emg.setSubject("Reminder for meeting: "+this.getName());
-            Vector<String> names = new Vector<String>();
+            List<String> names = new ArrayList<String>();
             String tRole = getTargetRole();
             if (tRole==null || tRole.length()==0) {
                 tRole = "Members";

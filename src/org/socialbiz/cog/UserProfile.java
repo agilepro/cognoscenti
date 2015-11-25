@@ -38,9 +38,9 @@ public class UserProfile extends DOMFace implements UserRef
     private long lastLogin;
     private long lastUpdated;
     private ValueElement[] favorites = null;
-    private Vector<IDRecord> ids = null;
-    private Vector<WatchRecord> watchList = null;
-    private Vector<NotificationRecord> notificationList = null;
+    private List<IDRecord> ids = null;
+    private List<WatchRecord> watchList = null;
+    private List<NotificationRecord> notificationList = null;
     private List<TemplateRecord> templateList = null;
 
     public UserProfile(Document doc, Element upEle, DOMFace p)
@@ -55,7 +55,7 @@ public class UserProfile extends DOMFace implements UserRef
             key = IdGenerator.generateKey();
             upEle.setAttribute("id", key);
         }
-        ids = new Vector<IDRecord>();
+        ids = new ArrayList<IDRecord>();
 
         IDRecord.findIDRecords(this, ids);
 
@@ -704,7 +704,7 @@ public class UserProfile extends DOMFace implements UserRef
     * Returns a vector of WatchRecord objects.
     * Do not modify this vector externally, just read only.
     */
-    public Vector<WatchRecord> getWatchList()  throws Exception {
+    public List<WatchRecord> getWatchList()  throws Exception {
         if (watchList == null) {
             watchList = new Vector<WatchRecord>();
             WatchRecord.findWatchRecord(this, watchList);
@@ -753,29 +753,22 @@ public class UserProfile extends DOMFace implements UserRef
     /**
      * Get rid of any notification of the specified page.
      */
-    public void clearAllNotifications()
-        throws Exception
-    {
-        if (notificationList == null)
-        {
+    public void clearAllNotifications() throws Exception {
+        if (notificationList == null) {
             getNotificationList();
         }
-        for (NotificationRecord sr : notificationList)
-        {
+        for (NotificationRecord sr : notificationList) {
             removeChild(sr);
         }
-        notificationList.removeAllElements();
+        notificationList.clear();
     }
 
     /**
      * Returns a vector of NotificationRecord objects.
      * Do not modify this vector externally, just read only.
      */
-     public Vector<NotificationRecord> getNotificationList()
-         throws Exception
-     {
-         if (notificationList == null)
-         {
+     public List<NotificationRecord> getNotificationList() throws Exception {
+         if (notificationList == null) {
              notificationList = getChildren("notification", NotificationRecord.class);
          }
          return notificationList;

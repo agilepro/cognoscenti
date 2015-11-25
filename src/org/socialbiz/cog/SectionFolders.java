@@ -21,7 +21,8 @@
 package org.socialbiz.cog;
 
 import java.io.Writer;
-import java.util.Vector;
+import java.util.List;
+
 import org.socialbiz.cog.exception.ProgramLogicError;
 
 @Deprecated
@@ -61,8 +62,8 @@ public class SectionFolders extends SectionUtil implements SectionFormat {
      * into the vector so that we can generate another ID and assure it does not
      * duplication any id found here.
      */
-    public void findIDs(Vector<String> v, NGSection sec) throws Exception {
-
+    public void findIDs(List<String> v, NGSection sec) throws Exception {
+        //no content, nothing to check
     }
 
     /**

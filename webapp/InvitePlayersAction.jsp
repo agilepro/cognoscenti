@@ -40,16 +40,6 @@
     }
 
 
-    if (action.equals("Send Mail"))
-    {
-        Vector sendTo = new Vector();
-
-        //OK, done, so write history about it
-//        HistoryRecord.createHistoryRecord(ngp,
-//                leaflet.getId(), HistoryRecord.CONTEXT_TYPE_LEAFLET,
-//                HistoryRecord.EVENT_EMAIL_SENT, ar, "sent an invite");
-    }
-
     response.sendRedirect(go);
 
 %>
@@ -90,23 +80,16 @@
 
 
 public void appendUsersGGG(List<AddressListEntry> members, Vector collector)
-    throws Exception
-{
-    for (AddressListEntry ale : members)
-    {
-        Enumeration e2 = collector.elements();
+        throws Exception {
+    for (AddressListEntry ale : members) {
         boolean found = false;
-        while (e2.hasMoreElements())
-        {
-            AddressListEntry coll = (AddressListEntry)e2.nextElement();
-            if (coll.hasAnyId(ale.getUniversalId()))
-            {
+        for (AddressListEntry coll:collector) {
+            if (coll.hasAnyId(ale.getUniversalId())) {
                 found = true;
                 break;
             }
         }
-        if (!found)
-        {
+        if (!found) {
             collector.add(ale);
         }
     }

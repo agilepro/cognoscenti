@@ -21,9 +21,8 @@
 package org.socialbiz.cog;
 
 import java.lang.reflect.Constructor;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
@@ -213,16 +212,11 @@ public class DOMFace
     }
     public void removeChildrenByNameAttrVal(String tagname, String attrName, String attrValue)
     {
-        Vector<Element> children = getNamedChildrenVector(tagname);
-        Enumeration<Element> e = children.elements();
-        while (e.hasMoreElements())
-        {
-            Element child = e.nextElement();
-            if (tagname.equals(child.getLocalName()) || tagname.equals(child.getNodeName()))
-            {
+        List<Element> children = getNamedChildrenVector(tagname);
+        for  (Element child : children) {
+            if (tagname.equals(child.getLocalName()) || tagname.equals(child.getNodeName())) {
                 String childAttValue = child.getAttribute(attrName);
-                if (childAttValue!=null && attrValue.equals(childAttValue))
-                {
+                if (childAttValue!=null && attrValue.equals(childAttValue)) {
                     fEle.removeChild(child);
                 }
             }
@@ -232,23 +226,19 @@ public class DOMFace
 
 
 
-    public Vector<Element> getNamedChildrenVector(String elementName)
+    public List<Element> getNamedChildrenVector(String elementName)
     {
         return DOMUtils.getNamedChildrenVector(fEle, elementName);
     }
-    public void fillVectorValues(Vector<String> result, String elementName)
-    {
-        Vector<Element> children = getNamedChildrenVector(elementName);
-        Enumeration<Element> e = children.elements();
-        while (e.hasMoreElements())
-        {
-            Element child = e.nextElement();
+    public void fillVectorValues(List<String> result, String elementName) {
+        List<Element> children = getNamedChildrenVector(elementName);
+        for (Element child : children) {
             result.add(DOMUtils.textValueOf(child, false));
         }
     }
-    public Vector<String> getVector(String memberName)
+    public List<String> getVector(String memberName)
     {
-        Vector<String> children = new Vector<String>();
+        List<String> children = new ArrayList<String>();
         fillVectorValues(children, memberName);
         return children;
     }
@@ -266,9 +256,9 @@ public class DOMFace
     * will be removed.
     *
     * memberName: the name of the tag holding a data value
-    * values: a Vector of string values
+    * values: a List of string values
     */
-    public void setVector(String memberName, Vector<String> values) {
+    public void setVector(String memberName, List<String> values) {
         if (memberName == null) {
             throw new RuntimeException("Program logic error: a null member name"
                 +" was passed to setVector.");
@@ -278,7 +268,7 @@ public class DOMFace
             createChildElement(memberName, val);
         }
     }
-    public void setVectorLong(String memberName, Vector<Long> values) {
+    public void setVectorLong(String memberName, List<Long> values) {
         if (memberName == null) {
             throw new RuntimeException("Program logic error: a null member name"
                 +" was passed to setVector.");
@@ -320,36 +310,27 @@ public class DOMFace
         }
         createChildElement(memberName, value);
     }
-    public void removeVectorValue(String memberName, String value)
-    {
-        if (memberName == null)
-        {
+    public void removeVectorValue(String memberName, String value) {
+        if (memberName == null) {
             throw new RuntimeException("Program logic error: a null member name"
                 +" was passed to addVectorValue.");
         }
-        Vector<Element> children = getNamedChildrenVector(memberName);
-        Enumeration<Element> e = children.elements();
-        while (e.hasMoreElements())
-        {
-            Element child = e.nextElement();
+        List<Element> children = getNamedChildrenVector(memberName);
+        for (Element child : children) {
             String childVal = DOMUtils.textValueOf(child, false);
-            if (childVal.equals(value))
-            {
+            if (childVal.equals(value)) {
                 fEle.removeChild(child);
             }
         }
     }
 
-    public Element getElement()
-    {
+    public Element getElement() {
         return fEle;
     }
-    public Document getDocument()
-    {
+    public Document getDocument() {
         return fDoc;
     }
-    public DOMFace getParent()
-    {
+    public DOMFace getParent() {
         return parent;
     }
 
@@ -458,16 +439,15 @@ public class DOMFace
 
 
     /**
-    * Get a Vector full of DOMFace elements.  Pass in the tagname and the
+    * Get a List full of DOMFace elements.  Pass in the tagname and the
     * specific class or objects you want constructed.  Class must have
     * a constructor with two parameters (like DOMFace).
     *
     * USAGE:  parent.getChildren("childtag", ChildClass.class);
     */
-    public <T extends DOMFace> Vector<T> getChildren(String elementName, Class<T> childClass)
-        throws Exception
-    {
-        Vector<T> list = new Vector<T>() ;
+    public <T extends DOMFace> List<T> getChildren(String elementName, Class<T> childClass)
+            throws Exception {
+        ArrayList<T> list = new ArrayList<T>() ;
         Constructor<T> con = childClass.getConstructor(constructParams);
         Object[] inits = new Object[3];
         inits[0] = fDoc;
@@ -607,8 +587,8 @@ public class DOMFace
         return val;
     }
 
-    public static Vector<String> constructVector(JSONArray input) throws Exception {
-        Vector<String> list = new Vector<String>();
+    public static List<String> constructVector(JSONArray input) throws Exception {
+        ArrayList<String> list = new ArrayList<String>();
         int top = input.length();
         for (int i = 0; i<top; i++) {
             String val = input.getString(i);
@@ -619,8 +599,8 @@ public class DOMFace
         }
         return list;
     }
-    public static Vector<Long> constructVectorLong(JSONArray input) throws Exception {
-        Vector<Long> list = new Vector<Long>();
+    public static List<Long> constructVectorLong(JSONArray input) throws Exception {
+        ArrayList<Long> list = new ArrayList<Long>();
         int top = input.length();
         for (int i = 0; i<top; i++) {
             long longVal = input.getLong(i);

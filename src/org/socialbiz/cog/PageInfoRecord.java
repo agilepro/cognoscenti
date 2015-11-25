@@ -20,8 +20,10 @@
 
 package org.socialbiz.cog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.socialbiz.cog.exception.ProgramLogicError;
-import java.util.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -106,8 +108,8 @@ public class PageInfoRecord extends DOMFace
 
 
     String[] getPageNames() {
-        Vector<String> vc = getVector("pageName");
-        Vector<String> vccleaned = new Vector<String>();
+        List<String> vc = getVector("pageName");
+        List<String> vccleaned = new ArrayList<String>();
         for (String chl : vc) {
             String aName = chl.trim();
             if (aName.length() > 0) {
@@ -115,9 +117,7 @@ public class PageInfoRecord extends DOMFace
             }
         }
 
-        String[] displayNames = new String[vccleaned.size()];
-        vccleaned.copyInto(displayNames);
-        return displayNames;
+        return vccleaned.toArray(new String[0]);
     }
 
     public void setPageNames(String[] newNames)

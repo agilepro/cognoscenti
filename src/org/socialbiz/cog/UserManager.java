@@ -111,7 +111,7 @@ public class UserManager
         //because the openid is ID that is stored in pages.  It does change the
         //URL for that user, but we have no choice ... some other user has that URL.
         Hashtable<String, String> guaranteeUnique = new Hashtable<String, String>();
-        Vector<UserProfile> profiles = profileFile.getChildren("userprofile", UserProfile.class);
+        List<UserProfile> profiles = profileFile.getChildren("userprofile", UserProfile.class);
         for (UserProfile up : profiles) {
             String upKey = up.getKey();
             if (guaranteeUnique.containsKey(upKey)) {

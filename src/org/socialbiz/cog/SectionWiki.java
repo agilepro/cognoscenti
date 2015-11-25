@@ -21,11 +21,11 @@
 package org.socialbiz.cog;
 
 import java.io.Writer;
-import java.util.Vector;
+import java.util.List;
 
+import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.socialbiz.cog.exception.ProgramLogicError;
 
 /**
  * Implements the Wiki formatting
@@ -40,7 +40,7 @@ public class SectionWiki extends SectionUtil implements SectionFormat {
         return "Wiki Format";
     }
 
-    public void findLinks(Vector<String> v, NGSection section) throws Exception {
+    public void findLinks(List<String> v, NGSection section) throws Exception {
         LineIterator li = new LineIterator(section.asText().trim());
         while (li.moreLines())
         {
@@ -49,7 +49,7 @@ public class SectionWiki extends SectionUtil implements SectionFormat {
         }
     }
 
-    protected void scanLineForLinks(String thisLine, Vector<String> v) {
+    protected void scanLineForLinks(String thisLine, List<String> v) {
         int bracketPos = thisLine.indexOf('[');
         int startPos = 0;
         while (bracketPos >= startPos) {

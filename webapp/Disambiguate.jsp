@@ -12,7 +12,6 @@
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%
 

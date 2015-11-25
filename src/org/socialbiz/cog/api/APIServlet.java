@@ -255,13 +255,18 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
     private void genSwagger(AuthRequest ar, ResourceDecoder resDec) throws Exception {
 
-        JSONObject root = new JSONObject("{\"swagger\": \"2.0\"}");
+        JSONObject root = new JSONObject();
+        root.put("swagger","2.0");
 
-        JSONObject info = new JSONObject("{\"title\": \"Cognoscenti\"}");
+        JSONObject info = new JSONObject();
+        info.put("title","Cognoscenti");
         info.put("description", "A collaborative application platform.");
         info.put("termsOfService", "This is the terms of service.");
         info.put("contact", "Cognoscenti");
-        info.put("license", new JSONObject("{\"name\": \"Apache 2.0\",\"url\": \"http://www.apache.org/licenses/LICENSE-2.0.html\"}"));
+        JSONObject license = new JSONObject();
+        license.put("name", "Apache 2.0");
+        license.put("url", "http://www.apache.org/licenses/LICENSE-2.0.html");
+        info.put("license", license);
         info.put("version", "Cognoscenti");
         root.put("info", info);
 

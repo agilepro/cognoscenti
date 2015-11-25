@@ -137,8 +137,8 @@ function changeIcon(id1,id2,id3){
 <%
 
 if (ps!=null) {
-    Vector<SyncStatus> upDocs = ps.getToUpload(SyncStatus.TYPE_DOCUMENT);
-    Vector<SyncStatus> downDocs = ps.getToDownload(SyncStatus.TYPE_DOCUMENT);
+    List<SyncStatus> upDocs = ps.getToUpload(SyncStatus.TYPE_DOCUMENT);
+    List<SyncStatus> downDocs = ps.getToDownload(SyncStatus.TYPE_DOCUMENT);
 
 
     %>

@@ -8,7 +8,6 @@
 %><%@page import="java.io.File"
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Properties"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%//constructing the AuthRequest object should always be the first thing
     //that a page does, so that everything can be set up correctly.
@@ -49,7 +48,7 @@
         <div class="section_body">
 
 <%
-    Vector<NGPageIndex> v = ar.getCogInstance().getAllProjectsInSite(ngb.key);
+    List<NGPageIndex> v = ar.getCogInstance().getAllProjectsInSite(ngb.key);
     if (v.size()>0)
     {
 %>

@@ -28,10 +28,9 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
-import java.util.Vector;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -41,6 +40,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -50,7 +51,6 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.socialbiz.cog.exception.NGException;
 
 /**
  * This class offers a number of helper functions for dealing with XML DOMS
@@ -269,13 +269,14 @@ public class DOMUtils {
     * or an empty Enumeration if there are no child elements
     */
 
+    /*
     public static Enumeration<Element> getChildElements(Element from)
     {
         if (from==null)
         {
             throw new RuntimeException("getChildElements must have a non null parameter 'from'");
         }
-        Vector<Element> list = new Vector<Element>() ;
+        List<Element> list = new ArrayList<Element>() ;
         NodeList childNdList = from.getChildNodes();
         for (int i = 0 ; i < childNdList.getLength(); i++) {
             org.w3c.dom.Node n = childNdList.item(i) ;
@@ -285,7 +286,7 @@ public class DOMUtils {
             list.add((Element)n) ;
         }
         return list.elements() ;
-    }
+    }*/
 
    /**
    * Get an ordered list of all ELEMENTs that are children of a context Node
@@ -316,9 +317,8 @@ public class DOMUtils {
 
     /////////////////// SET OF CHILDREN  ///////////////////////
 
-    public static Vector<Element> getNamedChildrenVector(Element from, String name)
-    {
-        Vector<Element> list = new Vector<Element>() ;
+    public static List<Element> getNamedChildrenVector(Element from, String name) {
+        List<Element> list = new ArrayList<Element>() ;
         NodeList childNdList = from.getChildNodes();
         for (int i = 0 ; i < childNdList.getLength(); i++) {
             org.w3c.dom.Node n = childNdList.item(i) ;
@@ -750,7 +750,7 @@ public class DOMUtils {
 
 
   /**************************************************************************
-   * Title:        A trivial Vector based NodeList implementation
+   * Title:        A trivial ArrayList based NodeList implementation
    * Description:
    * @version 1.0
    */

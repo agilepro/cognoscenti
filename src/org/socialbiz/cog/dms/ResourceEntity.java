@@ -20,10 +20,12 @@
 
 package org.socialbiz.cog.dms;
 
-import org.socialbiz.cog.exception.ProgramLogicError;
 import java.io.File;
 import java.io.InputStream;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.socialbiz.cog.exception.ProgramLogicError;
 
 public class ResourceEntity {
 
@@ -41,7 +43,7 @@ public class ResourceEntity {
     private int fcount = 0;
 
     private ConnectionType connection;
-    private Vector<ResourceEntity> childList = new Vector<ResourceEntity>();
+    private List<ResourceEntity> childList = new ArrayList<ResourceEntity>();
 
     /**
     * constructor is only available for classes in this package
@@ -97,7 +99,7 @@ public class ResourceEntity {
         childList.add(cEntity);
     }
 
-    public Vector<ResourceEntity> getChidEntityList() {
+    public List<ResourceEntity> getChidEntityList() {
         return childList;
     }
 

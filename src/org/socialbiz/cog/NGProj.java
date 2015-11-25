@@ -25,8 +25,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.w3c.dom.Document;
 import org.workcast.streams.HTMLWriter;
@@ -179,7 +179,7 @@ public class NGProj extends NGPage {
             att.setType("EXTRA");
             list.add(att);
         }
-        List<AttachmentRecord> ghosts = new Vector<AttachmentRecord>();
+        List<AttachmentRecord> ghosts = new ArrayList<AttachmentRecord>();
         for (AttachmentRecord knownAtt : list) {
             if ("URL".equals(knownAtt.getType())) {
                 continue;   //ignore URL attachments

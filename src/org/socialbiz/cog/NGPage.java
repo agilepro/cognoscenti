@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -54,9 +53,9 @@ public class NGPage extends ContainerCommon implements NGContainer
     public ReminderMgr reminderMgr;
 
     protected String[] displayNames;
-    protected Vector<NGSection> sectionElements = null;
+    protected List<NGSection> sectionElements = null;
     protected NGBook prjSite;
-    protected Vector<String> existingIds = null;
+    protected List<String> existingIds = null;
 
 
     public static final int CAT_ANONYMOUS = -1;
@@ -169,7 +168,7 @@ public class NGPage extends ContainerCommon implements NGContainer
         DOMFace userList = pageInfo.getChild("userlist", DOMFace.class);
         if (userList!=null)
         {
-            Vector<DOMFace> users = userList.getChildren("user", DOMFace.class);
+            List<DOMFace> users = userList.getChildren("user", DOMFace.class);
             for (DOMFace ele : users) {
                 String id = ele.getAttribute("id");
                 AddressListEntry user = AddressListEntry.newEntryFromStorage(id);
@@ -557,11 +556,9 @@ public class NGPage extends ContainerCommon implements NGContainer
         //clear the cached vector, force regeneration in any case
         sectionElements = null;
         String secName = sd.getTypeName();
-        Vector<NGSection> allSections = getChildren("section", NGSection.class);
-        for (NGSection sec : allSections)
-        {
-            if (secName.equals(sec.getAttribute("name")))
-            {
+        List<NGSection> allSections = getChildren("section", NGSection.class);
+        for (NGSection sec : allSections) {
+            if (secName.equals(sec.getAttribute("name"))) {
                 return;  //already created
             }
         }
@@ -609,11 +606,8 @@ public class NGPage extends ContainerCommon implements NGContainer
     }
 
 
-    public Vector<NGSection> getAllSections()
-        throws Exception
-    {
-        if (sectionElements==null)
-        {
+    public List<NGSection> getAllSections() throws Exception {
+        if (sectionElements==null) {
             //fetch it and cache it here
             sectionElements = getChildren("section", NGSection.class);
         }
@@ -633,50 +627,6 @@ public class NGPage extends ContainerCommon implements NGContainer
         return false;
     }
 
-    /**
-    * Move a section to a new position, either one position higher (up)
-    * or one position lower (down).  First parameter is the section name,
-    * second parameter is the direction  true=up, false=down
-    */
-    /*
-    public void moveSection(String secName, boolean moveUp)
-    {
-        Vector<Element> sections = DOMUtils.getNamedChildrenVector(fEle, "section");
-
-        for (int i=0; i<sections.size(); i++)
-        {
-            Element e = sections.elementAt(i);
-            String secNameFound = e.getAttribute("name");
-            if (secName.equals(secNameFound))
-            {
-                if (moveUp)
-                {
-                    if (i==0)
-                    {
-                        return;   //already first, can't move up
-                    }
-                    Element prevE = sections.elementAt(i-1);
-                    fEle.insertBefore(e, prevE);
-                }
-                else
-                {
-                    if (i>=sections.size()-1)
-                    {
-                        return;   //already last, can't move down
-                    }
-                    Element nextE = sections.elementAt(i+1);
-                    fEle.insertBefore(nextE, e);
-                }
-                //clear the cached vector so it can get the new order
-                sectionElements = null;
-                return;   //we found something, we are done
-            }
-
-            //for now we are silently ignoring requests to move sections
-            //that we can not find.
-        }
-    }
-    */
 
     /**
     * This is the unique ID of the entire project
@@ -727,20 +677,14 @@ public class NGPage extends ContainerCommon implements NGContainer
         pageInfo.setScalar("upstream", uStrm);
     }
 
-    public void findLinks(Vector<String> v)
-        throws Exception
-    {
-        for (NGSection sec : getAllSections())
-        {
+    public void findLinks(List<String> v) throws Exception {
+        for (NGSection sec : getAllSections()) {
             sec.findLinks(v);
         }
     }
 
-    public void findTags(Vector<String> v)
-        throws Exception
-    {
-        for (NoteRecord note : getAllNotes())
-        {
+    public void findTags(List<String> v) throws Exception {
+        for (NoteRecord note : getAllNotes()) {
             note.findTags(v);
         }
     }
@@ -833,8 +777,8 @@ public class NGPage extends ContainerCommon implements NGContainer
     * Override the superclass implementation to add a license for the process
     */
     @Override
-    public Vector<License> getLicenses() throws Exception {
-        Vector<License> vc = super.getLicenses();
+    public List<License> getLicenses() throws Exception {
+        List<License> vc = super.getLicenses();
         vc.add(new LicenseForProcess(getProcess()));
         return vc;
     }
@@ -1078,11 +1022,10 @@ public class NGPage extends ContainerCommon implements NGContainer
     public String getUniqueOnPage()
         throws Exception
     {
-        existingIds = new Vector<String>();
+        existingIds = new ArrayList<String>();
 
         //this is not to be trusted any more
-        for (NGSection sec : getAllSections())
-        {
+        for (NGSection sec : getAllSections()) {
             sec.findIDs(existingIds);
         }
 
@@ -1198,7 +1141,7 @@ public class NGPage extends ContainerCommon implements NGContainer
 
         List<RoleRequestRecord> requestList = new ArrayList<RoleRequestRecord>();
         DOMFace rolelist = pageInfo.requireChild("Role-Requests", DOMFace.class);
-        Vector<RoleRequestRecord> children =  rolelist.getChildren("requests", RoleRequestRecord.class);
+        List<RoleRequestRecord> children =  rolelist.getChildren("requests", RoleRequestRecord.class);
         for (RoleRequestRecord rrr: children) {
             requestList.add(rrr);
         }
@@ -1384,7 +1327,7 @@ public class NGPage extends ContainerCommon implements NGContainer
     public void deleteRoleRequest(String requestId) throws Exception {
         DOMFace roleRequests = pageInfo.requireChild("Role-Requests",
                 DOMFace.class);
-        Vector<Element> children = DOMUtils.getNamedChildrenVector( roleRequests.getElement(),
+        List<Element> children = DOMUtils.getNamedChildrenVector( roleRequests.getElement(),
                 "requests");
         for (Element child : children) {
             if ("requests".equals(child.getLocalName()) || "requests".equals(child.getNodeName())) {
@@ -1641,7 +1584,7 @@ public class NGPage extends ContainerCommon implements NGContainer
      */
     public List<AddressListEntry> getAllAddressesInProject() throws Exception {
         HashSet<String> nameSet = new HashSet<String>();
-        Vector<AddressListEntry> result = new Vector<AddressListEntry>();
+        List<AddressListEntry> result = new ArrayList<AddressListEntry>();
         for (NGRole role : getAllRoles()) {
             for (AddressListEntry ale : role.getExpandedPlayers(this)) {
                 String uid = ale.getUniversalId();
@@ -1678,7 +1621,7 @@ public class NGPage extends ContainerCommon implements NGContainer
     * roles as well as the non-role labels
     */
     public List<NGLabel> getAllLabels() throws Exception {
-        Vector<NGLabel> ret = new Vector<NGLabel>();
+        List<NGLabel> ret = new ArrayList<NGLabel>();
         DOMFace labelList =  requireChild("labelList", DOMFace.class);
         for (LabelRecord lr : labelList.getChildren("label", LabelRecord.class)) {
             ret.add(lr);

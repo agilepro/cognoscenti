@@ -7,7 +7,6 @@
 %><%@page import="org.socialbiz.cog.SectionWiki"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Can't  change the name of this page.");
@@ -24,7 +23,7 @@
     if (action.equals("Change Name"))
     {
         String newName = ar.reqParam("newName");
-        Vector newNameSet = new Vector();
+        List newNameSet = new Vector();
         String[] nameSet = ngp.getPageNames();
 
         boolean isNew = true;

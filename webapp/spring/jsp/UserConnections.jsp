@@ -20,8 +20,8 @@
 
     boolean viewingSelf = uProf.getKey().equals(operatingUser.getKey());
 
-    Vector<CVSConfig> cvsConnectionList =  FolderAccessHelper.getCVSConnections();
-    Vector<LocalFolderConfig> lclConnectionList =  FolderAccessHelper.getLoclConnections();
+    List<CVSConfig> cvsConnectionList =  FolderAccessHelper.getCVSConnections();
+    List<LocalFolderConfig> lclConnectionList =  FolderAccessHelper.getLoclConnections();
 
     JSONArray localConnections = new JSONArray();
     JSONArray cvsConnections = new JSONArray();

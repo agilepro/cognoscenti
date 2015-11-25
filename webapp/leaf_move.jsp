@@ -1,8 +1,12 @@
 <%@page errorPage="error.jsp"
 %><%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
+%><%@page import="java.io.Writer"
+%><%@page import="java.net.URLEncoder"
+%><%@page import="java.util.Hashtable"
 %><%@page import="org.socialbiz.cog.AttachmentRecord"
 %><%@page import="org.socialbiz.cog.AuthRequest"
 %><%@page import="org.socialbiz.cog.BaseRecord"
+%><%@page import="org.socialbiz.cog.GoalRecord"
 %><%@page import="org.socialbiz.cog.HistoryRecord"
 %><%@page import="org.socialbiz.cog.NGBook"
 %><%@page import="org.socialbiz.cog.NGPage"
@@ -11,13 +15,7 @@
 %><%@page import="org.socialbiz.cog.ProcessRecord"
 %><%@page import="org.socialbiz.cog.SectionFormat"
 %><%@page import="org.socialbiz.cog.SectionUtil"
-%><%@page import="org.socialbiz.cog.GoalRecord"
 %><%@page import="org.socialbiz.cog.UserProfile"
-%><%@page import="java.io.Writer"
-%><%@page import="java.net.URLEncoder"
-%><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Hashtable"
-%><%@page import="java.util.Vector"
 %><%ar = AuthRequest.getOrCreate(request, response, out);
     ar.retPath="../../";
 
@@ -85,7 +83,7 @@ else
 <%
     NGSession ngsession = ar.ngsession;
     if (ngsession!=null) {
-        Vector<RUElement> recent = ngsession.recentlyVisited;
+        List<RUElement> recent = ngsession.recentlyVisited;
         RUElement.sortByDisplayName(recent);
         for(RUElement rue : recent) {
             if (rue.key.equals(p)) {

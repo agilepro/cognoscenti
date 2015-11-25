@@ -8,7 +8,6 @@
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%
     AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Can't create a user profile.");

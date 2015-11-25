@@ -114,10 +114,8 @@ public class UserPage extends ContainerCommon
     * Returns a Vector of key values (Strings) for pages.
     * No guarantee that that page still exists.
     */
-    public Vector<String> getProjectTemplates()
-        throws Exception
-    {
-        Vector<String> nl = getVector("template");
+    public List<String> getProjectTemplates() throws Exception {
+        List<String> nl = getVector("template");
         return nl;
     }
     public void addProjectTemplate(String pageKey)
@@ -140,23 +138,19 @@ public class UserPage extends ContainerCommon
         return false;
     }
 
-    public Vector<TaskTemplate> getTaskTemplates()
-        throws Exception
-    {
-        Vector<TaskTemplate> nl = getChildren("task", TaskTemplate.class);
+    public List<TaskTemplate> getTaskTemplates() throws Exception {
+        List<TaskTemplate> nl = getChildren("task", TaskTemplate.class);
         return nl;
     }
 
-    public TaskTemplate createTaskTemplate()
-        throws Exception
-    {
+    public TaskTemplate createTaskTemplate() throws Exception {
         TaskTemplate tt = createChildWithID("task",
                 TaskTemplate.class, "id", getUniqueOnPage());
         return tt;
     }
 
     public void removeTaskTemplate(String id) throws Exception {
-        Vector<TaskTemplate> nl = getChildren("task", TaskTemplate.class);
+        List<TaskTemplate> nl = getChildren("task", TaskTemplate.class);
         for (TaskTemplate tEle : nl) {
             if (id.equals(tEle.getAttribute("id"))) {
                 removeChild(tEle);
@@ -301,8 +295,7 @@ public class UserPage extends ContainerCommon
         return cSet;
     }
 
-    public Vector<ConnectionSettings> getAllConnectionSettings()throws Exception
-    {
+    public List<ConnectionSettings> getAllConnectionSettings()throws Exception {
          return getChildren("folder", ConnectionSettings.class);
     }
 
@@ -650,7 +643,7 @@ public class UserPage extends ContainerCommon
 
         //TODO: this does the same thing with the microprofile entries.
         //I don't understand why it needs to do this.
-        Vector<AddressListEntry> microProfileIds = MicroProfileMgr.getAllProfileIds();
+        List<AddressListEntry> microProfileIds = MicroProfileMgr.getAllProfileIds();
         for (AddressListEntry ale : microProfileIds) {
             if(!CustomRole.isPlayerOfAddressList(ale, existingContacts)){
                 resultList.add(ale);

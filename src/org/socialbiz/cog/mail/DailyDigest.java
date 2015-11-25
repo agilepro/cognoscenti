@@ -3,7 +3,6 @@ package org.socialbiz.cog.mail;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.AccessControl;
 import org.socialbiz.cog.AddressListEntry;
@@ -487,7 +486,7 @@ public class DailyDigest {
         NGPage aPage = ngpi.getPage();
 
         ReminderMgr rMgr = aPage.getReminderMgr();
-        Vector<ReminderRecord> rVec = rMgr.getUserReminders(up);
+        List<ReminderRecord> rVec = rMgr.getUserReminders(up);
         for (ReminderRecord reminder : rVec) {
             if ("yes".equals(reminder.getSendNotification())) {
                 if (noOfReminders == 0) {
@@ -595,7 +594,7 @@ public class DailyDigest {
     private static List<ProjectGoal> getActiveTaskList(UserProfile up, Cognoscenti cog) throws Exception {
         NGPageIndex.assertNoLocksOnThread();
 
-        Vector<ProjectGoal> activeTask = new Vector<ProjectGoal>();
+        ArrayList<ProjectGoal> activeTask = new ArrayList<ProjectGoal>();
 
         if (up == null) {
             throw new Exception("can not get list of action items for userwhich is null");

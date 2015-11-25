@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog;
 
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -482,9 +483,9 @@ public class WikiConverter
                 return;
             }
 
-            Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkAddr);
+            List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkAddr);
             if (foundPages.size() == 1) {
-                NGPageIndex foundPI = foundPages.firstElement();
+                NGPageIndex foundPI = foundPages.get(0);
                 linkAddr = ar.baseURL
                         + ar.getResourceURL(foundPI, "frontPage.htm");
                 if (!userSpecifiedName) {

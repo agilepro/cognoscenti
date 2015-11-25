@@ -3,7 +3,7 @@
 %><%@page import="org.socialbiz.cog.NotificationRecord"
 %><%
     UserProfile uProf = ar.getUserProfile();
-    Vector<NGPageIndex> ownedProjs = ar.getCogInstance().getAllContainers();
+    List<NGPageIndex> ownedProjs = ar.getCogInstance().getAllContainers();
     boolean noneFound = ownedProjs.size()==0;
     String accountKey = ar.reqParam("accountId");
 

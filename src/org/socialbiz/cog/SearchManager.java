@@ -20,8 +20,8 @@
 
 package org.socialbiz.cog;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -140,7 +140,7 @@ public class SearchManager {
     public static synchronized List<SearchResultRecord> performSearch(AuthRequest ar,
                 String queryStr, String relationship, String siteId) throws Exception {
 
-        Vector<SearchResultRecord> vec = new Vector<SearchResultRecord>();
+        List<SearchResultRecord> vec = new ArrayList<SearchResultRecord>();
 
         boolean onlyOwner = ("owner".equals(relationship));
         boolean onlyMember = ("member".equals(relationship));

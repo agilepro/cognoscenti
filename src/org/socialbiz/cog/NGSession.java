@@ -21,9 +21,10 @@
 package org.socialbiz.cog;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -36,7 +37,7 @@ import org.socialbiz.cog.exception.ProgramLogicError;
 */
 public class NGSession
 {
-    public Vector<RUElement> recentlyVisited = new Vector<RUElement>();
+    public List<RUElement> recentlyVisited = new ArrayList<RUElement>();
 
     /**
     * table of page ids that this session is an honorary member of

@@ -24,7 +24,6 @@
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Hashtable"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%
     ar = AuthRequest.getOrCreate(request, response, out);
@@ -47,17 +46,17 @@
     RemoteProject rp = new RemoteProject(ngp.getUpstreamLink());
 
     ProjectSync ps = new ProjectSync(ngp, rp, ar, ngp.getLicenses().get(0).getId());
-    Vector<SyncStatus> ss2 = ps.getStatus();
+    List<SyncStatus> ss2 = ps.getStatus();
 
-    Vector<SyncStatus> docsNeedingDown  = ps.getToDownload(SyncStatus.TYPE_DOCUMENT);
-    Vector<SyncStatus> docsNeedingUp    = ps.getToUpload(SyncStatus.TYPE_DOCUMENT);
-    Vector<SyncStatus> docsEqual        = ps.getEqual(SyncStatus.TYPE_DOCUMENT);
-    Vector<SyncStatus> notesNeedingDown = ps.getToDownload(SyncStatus.TYPE_NOTE);
-    Vector<SyncStatus> notesNeedingUp   = ps.getToUpload(SyncStatus.TYPE_NOTE);
-    Vector<SyncStatus> notesEqual       = ps.getEqual(SyncStatus.TYPE_NOTE);
-    Vector<SyncStatus> goalsNeedingDown = ps.getToDownload(SyncStatus.TYPE_TASK);
-    Vector<SyncStatus> goalsNeedingUp   = ps.getToUpload(SyncStatus.TYPE_TASK);
-    Vector<SyncStatus> goalsEqual       = ps.getEqual(SyncStatus.TYPE_TASK);
+    List<SyncStatus> docsNeedingDown  = ps.getToDownload(SyncStatus.TYPE_DOCUMENT);
+    List<SyncStatus> docsNeedingUp    = ps.getToUpload(SyncStatus.TYPE_DOCUMENT);
+    List<SyncStatus> docsEqual        = ps.getEqual(SyncStatus.TYPE_DOCUMENT);
+    List<SyncStatus> notesNeedingDown = ps.getToDownload(SyncStatus.TYPE_NOTE);
+    List<SyncStatus> notesNeedingUp   = ps.getToUpload(SyncStatus.TYPE_NOTE);
+    List<SyncStatus> notesEqual       = ps.getEqual(SyncStatus.TYPE_NOTE);
+    List<SyncStatus> goalsNeedingDown = ps.getToDownload(SyncStatus.TYPE_TASK);
+    List<SyncStatus> goalsNeedingUp   = ps.getToUpload(SyncStatus.TYPE_TASK);
+    List<SyncStatus> goalsEqual       = ps.getEqual(SyncStatus.TYPE_TASK);
 
 
 %>
@@ -121,7 +120,7 @@
 
 <%!
 
-public void writeSyncSection(AuthRequest ar, Vector<SyncStatus> ss1, String title, String p) throws Exception {
+public void writeSyncSection(AuthRequest ar, List<SyncStatus> ss1, String title, String p) throws Exception {
 
     ar.write("<div class=\"section\">");
     ar.write("  <div class=\"section_title\">");

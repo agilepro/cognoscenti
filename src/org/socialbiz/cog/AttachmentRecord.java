@@ -23,10 +23,10 @@ package org.socialbiz.cog;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.dms.RemoteLinkCombo;
 import org.socialbiz.cog.exception.NGException;
@@ -836,8 +836,8 @@ public class AttachmentRecord extends DOMFace {
         if (container==null) {
             throw new ProgramLogicError("call to rolesWithAccess must be made AFTER the container is set.");
         }
-        Vector<NGRole> res = new Vector<NGRole>();
-        Vector<String> roleNames = getVector("labels");
+        List<NGRole> res = new ArrayList<NGRole>();
+        List<String> roleNames = getVector("labels");
         for (String name : roleNames) {
             NGRole aRole = container.getRole(name);
             if (aRole!=null) {
@@ -849,21 +849,6 @@ public class AttachmentRecord extends DOMFace {
         return res;
     }
 
-    /**
-     * setAccessRoles sets the list of NGRoles which have access for non-members.
-     * You should not specify Admin or Members in this list.
-     *
-    public void setAccessRoles(List<NGRole> values) throws Exception {
-        Vector<String> roleNames = new Vector<String>();
-        for (NGRole aRole : values) {
-            roleNames.add(aRole.getName());
-        }
-        //Since this is a 'set' type vector, always sort them so that they are
-        //stored in a consistent way ... so files are more easily compared
-        Collections.sort(roleNames);
-        setVector("accessRole", roleNames);
-    }
-    */
 
     /**
     * check if a particular role has access to the particular file.
@@ -892,7 +877,7 @@ public class AttachmentRecord extends DOMFace {
             throw new ProgramLogicError("Container must be a Workspace style container.");
         }
         NGPage ngp = (NGPage) container;
-        Vector<NGLabel> res = new Vector<NGLabel>();
+        List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
             NGLabel aLabel = ngp.getLabelRecordOrNull(name);
             if (aLabel!=null) {
@@ -908,7 +893,7 @@ public class AttachmentRecord extends DOMFace {
      * set the list of labels on a document
      */
     public void setLabels(List<NGLabel> values) throws Exception {
-        Vector<String> labelNames = new Vector<String>();
+        List<String> labelNames = new ArrayList<String>();
         for (NGLabel aLable : values) {
             labelNames.add(aLable.getName());
         }
@@ -922,7 +907,7 @@ public class AttachmentRecord extends DOMFace {
     * check if document marked with a label
     */
     public boolean hasLabel(String roleName) {
-        Vector<String> labelNames = getVector("labels");
+        List<String> labelNames = getVector("labels");
         for (String name : labelNames) {
             if (roleName.equals(name)) {
                 return true;
@@ -944,7 +929,7 @@ public class AttachmentRecord extends DOMFace {
         return "";
     }
 
-    public Vector<CommentRecord> getComments()  throws Exception {
+    public List<CommentRecord> getComments()  throws Exception {
         return getChildren("comment", CommentRecord.class);
     }
     public void addComment(AuthRequest ar, String newComment)  throws Exception {
@@ -1007,7 +992,7 @@ public class AttachmentRecord extends DOMFace {
 
         if (docInfo.has("labelMap")) {
             JSONObject labelMap = docInfo.getJSONObject("labelMap");
-            Vector<NGLabel> selectedLabels = new Vector<NGLabel>();
+            List<NGLabel> selectedLabels = new ArrayList<NGLabel>();
             for (NGLabel stdLabel : ngp.getAllLabels()) {
                 String labelName = stdLabel.getName();
                 if (labelMap.optBoolean(labelName)) {

@@ -23,10 +23,10 @@ package org.socialbiz.cog;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -154,7 +154,7 @@ public class DOMFile extends DOMFace {
         // between
         // the Element nodes.
 
-        Vector<Element> elementSet = new Vector<Element>();
+        List<Element> elementSet = new ArrayList<Element>();
         for (int i = 0; i < childNdList.getLength(); i++) {
             Node n = childNdList.item(i);
             if (n.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
@@ -182,19 +182,16 @@ public class DOMFile extends DOMFace {
 
         Collections.sort(elementSet, new DOMElementComparator());
 
-        Enumeration<Element> e1 = elementSet.elements();
-        while (e1.hasMoreElements()) {
+        for (Element ele : elementSet) {
             parent.appendChild(fDoc.createTextNode(newIndent));
-            Element ele = e1.nextElement();
             parent.appendChild(ele);
         }
 
         parent.appendChild(fDoc.createTextNode(indent));
 
         // recursively indent the children elements now
-        e1 = elementSet.elements();
-        while (e1.hasMoreElements()) {
-            indentChildren(e1.nextElement(), newIndent);
+        for (Element ele : elementSet) {
+            indentChildren(ele, newIndent);
         }
 
     }

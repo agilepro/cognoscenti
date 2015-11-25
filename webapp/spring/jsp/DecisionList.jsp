@@ -28,7 +28,7 @@ Required parameters:
     UserProfile uProf = ar.getUserProfile();
 
 
-    Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
+    List<NGPageIndex> templates = new ArrayList<NGPageIndex>();
     for(TemplateRecord tr : uProf.getTemplateList()){
         String pageKey = tr.getPageKey();
         NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);

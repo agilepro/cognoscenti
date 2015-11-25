@@ -21,7 +21,7 @@
 package org.socialbiz.cog;
 
 import java.io.Writer;
-import java.util.Vector;
+import java.util.List;
 
 /**
 * A section is associated with a section type, and each type is
@@ -40,7 +40,7 @@ public interface SectionFormat
     * scans the section information, finds all the link values, and adds them
     * to the vector.
     */
-    public void findLinks(Vector<String> v, NGSection section) throws Exception;
+    public void findLinks(List<String> v, NGSection section) throws Exception;
 
     /**
     * scans the section information, and return the plain text data that can be
@@ -53,7 +53,7 @@ public interface SectionFormat
     * IDs into the vector so that we can generate another ID and assure it
     * does not duplication any id found here.
     */
-    public void findIDs(Vector<String> v, NGSection sec) throws Exception;
+    public void findIDs(List<String> v, NGSection sec) throws Exception;
 
     /**
     * In an attempt to convert all the older display section formats to

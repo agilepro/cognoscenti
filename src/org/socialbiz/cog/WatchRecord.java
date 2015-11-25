@@ -20,8 +20,8 @@
 
 package org.socialbiz.cog;
 
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -75,14 +75,11 @@ public class WatchRecord extends DOMFace
     * Pattern is "find" and the class name, is the proper way to
     * read the DOM tree for all the elements of thsi type
     */
-    public static void findWatchRecord(UserProfile user, Vector<WatchRecord> results)
-        throws Exception
-    {
-        Vector<WatchRecord> chilluns = user.getChildren("watch", WatchRecord.class);
-        Enumeration<WatchRecord> e = chilluns.elements();
-        while (e.hasMoreElements())
-        {
-            results.add(e.nextElement());
+    public static void findWatchRecord(UserProfile user, List<WatchRecord> results)
+            throws Exception {
+        List<WatchRecord> chilluns = user.getChildren("watch", WatchRecord.class);
+        for (WatchRecord wr : chilluns) {
+            results.add(wr);
         }
     }
 

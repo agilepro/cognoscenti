@@ -20,9 +20,8 @@
 
 package org.socialbiz.cog.rest;
 
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AttachmentRecord;
@@ -559,15 +558,13 @@ public class ResourceSection  implements NGResource
     }
 
     public static void loadLinkSection(Document loutdoc, NGSection ngs, Element element_sec,
-        AuthRequest ar, String lserverURL)throws Exception
-    {
+            AuthRequest ar, String lserverURL)throws Exception {
         Element element_links = DOMUtils.createChildElement(loutdoc, element_sec, "links");
 
         SectionLink secLnk = (SectionLink) ngs.getFormat();
-        Vector<String> v = new Vector<String>();
+        List<String> v = new ArrayList<String>();
         secLnk.findLinks(v,ngs);
-        for(String thisLine : v)
-        {
+        for(String thisLine : v) {
             makeLink(loutdoc, ngs, element_links, thisLine, lserverURL, ar);
         }
     }
@@ -634,20 +631,16 @@ public class ResourceSection  implements NGResource
         AuthRequest au, String lserverURL)throws Exception
     {
         Element element_polls = DOMUtils.createChildElement(loutdoc, element_sec, "polls");
-        Vector<Element> polllist = DOMUtils.getNamedChildrenVector(ngs.getElement(), "poll");
-        Enumeration<Element> penum = polllist.elements();
-        while (penum.hasMoreElements())
-        {
+        List<Element> polllist = DOMUtils.getNamedChildrenVector(ngs.getElement(), "poll");
+        for (Element pollElement : polllist) {
             Element element_poll = DOMUtils.createChildElement(loutdoc, element_polls, "poll");
-            Element pollElement = penum.nextElement();
             String id = pollElement.getAttribute("id");
             element_poll.setAttribute("id", id);
             String proposition = DOMUtils.getChildText(pollElement, "proposition").trim();
             DOMUtils.createChildElement(loutdoc, element_poll, "proposition", proposition);
 
             NodeList nl = DOMUtils.findNodesOneLevel(pollElement, "vote");
-            for (int i=0; i<nl.getLength(); i++)
-            {
+            for (int i=0; i<nl.getLength(); i++) {
                 Element element_vote = DOMUtils.createChildElement(loutdoc, element_poll, "vote");
                 Element voteElement  = (Element)nl.item(i);
                 String who = DOMUtils.getChildText(voteElement, "who").trim();
@@ -658,7 +651,6 @@ public class ResourceSection  implements NGResource
                 DOMUtils.createChildElement(loutdoc, element_vote, "comment", comment);
                 String time = DOMUtils.getChildText(voteElement, "time").trim();
                 DOMUtils.createChildElement(loutdoc, element_vote, "time", time);
-
             }
         }
     }
@@ -794,7 +786,7 @@ public class ResourceSection  implements NGResource
 
             Element parentElem = DOMUtils.getChildElement(element_process, "parentprocesses");
             if(parentElem != null){
-                Vector<String> purlList = new Vector<String>();
+                List<String> purlList = new ArrayList<String>();
                 for (Element element_url : DOMUtils.getChildElementsList(parentElem)) {
                     String purl = DOMUtils.textValueOf(element_url, true);
                     if(purl != null && purl.length() >0) {

@@ -11,7 +11,6 @@
 %><%@page import="java.io.File"
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Properties"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%@page import="org.workcast.json.JSONArray"
 %><%@page import="org.workcast.json.JSONObject"

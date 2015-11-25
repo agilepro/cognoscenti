@@ -3,7 +3,6 @@ package org.socialbiz.cog;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
@@ -88,7 +87,7 @@ public class CommentRecord extends DOMFace {
     public List<String> getChoices() {
         return getVector("choice");
     }
-    public void setChoices(Vector<String> choices) {
+    public void setChoices(List<String> choices) {
         setVector("choice", choices);
     }
 
@@ -118,7 +117,7 @@ public class CommentRecord extends DOMFace {
         String val = Long.toString(replyValue);
         addVectorValue("replies", val);
     }
-    public void setReplies(Vector<Long> replies) {
+    public void setReplies(List<Long> replies) {
         setVectorLong("replies", replies);
     }
 
@@ -147,7 +146,7 @@ public class CommentRecord extends DOMFace {
 
 
     public void commentEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
-        Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
+        List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
         String targetRole = noteOrMeet.getTargetRole();
         if (targetRole==null || targetRole.length()==0) {
             targetRole = "Members";

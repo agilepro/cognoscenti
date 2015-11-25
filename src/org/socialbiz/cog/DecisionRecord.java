@@ -20,9 +20,9 @@
 
 package org.socialbiz.cog;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -115,7 +115,7 @@ public class DecisionRecord extends DOMFace {
      * and no duplicates
      */
     public List<NGLabel> getLabels(NGPage ngp) throws Exception {
-        Vector<NGLabel> res = new Vector<NGLabel>();
+        List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
             NGLabel aLabel = ngp.getLabelRecordOrNull(name);
             if (aLabel!=null) {
@@ -131,7 +131,7 @@ public class DecisionRecord extends DOMFace {
      * set the list of labels on a document
      */
     public void setLabels(List<NGLabel> values) throws Exception {
-        Vector<String> labelNames = new Vector<String>();
+        List<String> labelNames = new ArrayList<String>();
         for (NGLabel aLable : values) {
             labelNames.add(aLable.getName());
         }
@@ -175,7 +175,7 @@ public class DecisionRecord extends DOMFace {
         }
         if (decisionObj.has("labelMap")) {
             JSONObject labelMap = decisionObj.getJSONObject("labelMap");
-            Vector<NGLabel> selectedLabels = new Vector<NGLabel>();
+            List<NGLabel> selectedLabels = new ArrayList<NGLabel>();
             for (NGLabel stdLabel : ngp.getAllLabels()) {
                 String labelName = stdLabel.getName();
                 if (labelMap.optBoolean(labelName)) {

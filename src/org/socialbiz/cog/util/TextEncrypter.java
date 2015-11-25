@@ -26,7 +26,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.security.spec.KeySpec;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -49,7 +50,7 @@ public class TextEncrypter {
     private KeySpec keySpec;
     private SecretKeyFactory keyFactory;
     private Cipher cipher;
-    private Vector<String> listOfKeys = new Vector<String>();
+    private List<String> listOfKeys = new ArrayList<String>();
 
     private static final String UNICODE_FORMAT = "UTF-8";
 
@@ -113,7 +114,7 @@ public class TextEncrypter {
         }
 
         BufferedReader fileBr = new BufferedReader(new FileReader(iniFile));
-        Vector<String> lineList = new Vector<String>();
+        List<String> lineList = new ArrayList<String>();
         while (true) {
             String readLn = null;
             readLn = fileBr.readLine();

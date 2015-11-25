@@ -1,10 +1,10 @@
 package org.socialbiz.cog;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Timer;
-import java.util.Vector;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -43,13 +43,13 @@ public class Cognoscenti {
 
     //managing the known containers
     //TODO: get rid of this static variable
-    public static Vector<NGPageIndex> allContainers;
+    public static List<NGPageIndex> allContainers;
     public static Hashtable<String, NGPageIndex> keyToContainer;
     public static Hashtable<String, NGPageIndex> upstreamToContainer;
 
     // there may be a number of pages that have unsent email, and so this is a
     // list of keys, but there can be extras in this list without problem
-    public Vector<String> projectsWithEmailToSend = new Vector<String>();
+    public List<String> projectsWithEmailToSend = new ArrayList<String>();
 
     private Cognoscenti(ServletContext sc) {
         System.out.println("Cognoscenti Server Object == Constructing");
@@ -195,7 +195,7 @@ System.out.println("Cognoscenti Server Object == Start the Server");
             initializingNow = true;
             theConfig = ConfigFile.initialize(rootFolder);
             theConfig.assertConfigureCorrectInternal();
-            projectsWithEmailToSend = new Vector<String>();
+            projectsWithEmailToSend = new ArrayList<String>();
 
             AuthDummy.initializeDummyRequest(this);
             UserManager.loadUpUserProfilesInMemory(this);
@@ -273,8 +273,8 @@ System.out.println("Cognoscenti Server Object == Start the Server");
     }
 
 
-    public Vector<NGPageIndex> getAllContainers() {
-        Vector<NGPageIndex> ret = new Vector<NGPageIndex>();
+    public List<NGPageIndex> getAllContainers() {
+        List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         if (allContainers == null) {
             return ret;
         }
@@ -288,8 +288,8 @@ System.out.println("Cognoscenti Server Object == Start the Server");
         return ret;
     }
 
-    public Vector<NGPageIndex> getDeletedContainers() {
-        Vector<NGPageIndex> ret = new Vector<NGPageIndex>();
+    public List<NGPageIndex> getDeletedContainers() {
+        List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
             if (ngpi.isDeleted) {
                 ret.add(ngpi);
@@ -322,7 +322,7 @@ System.out.println("Cognoscenti Server Object == Start the Server");
      * a vector back, which might be empty, it might have one or it might have
      * more pages.
      */
-    public Vector<NGPageIndex> getPageIndexByName(String pageName) throws Exception {
+    public List<NGPageIndex> getPageIndexByName(String pageName) throws Exception {
         assertInitialized();
 
         NGTerm term = NGTerm.findTerm(pageName);
@@ -396,8 +396,8 @@ System.out.println("Cognoscenti Server Object == Start the Server");
      * Returns a vector of NGPageIndex objects which represent projects which
      * are all part of a single site. Should be called get all projects in site
      */
-    public Vector<NGPageIndex> getAllProjectsInSite(String accountKey) throws Exception {
-        Vector<NGPageIndex> ret = new Vector<NGPageIndex>();
+    public List<NGPageIndex> getAllProjectsInSite(String accountKey) throws Exception {
+        List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
             if (ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PROJECT
                     && ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PAGE) {
@@ -417,8 +417,8 @@ System.out.println("Cognoscenti Server Object == Start the Server");
         return ret;
     }
 
-    public Vector<NGPageIndex> getAllPagesForAdmin(UserProfile user) {
-        Vector<NGPageIndex> ret = new Vector<NGPageIndex>();
+    public List<NGPageIndex> getAllPagesForAdmin(UserProfile user) {
+        List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
             if (ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PROJECT
                     && ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PAGE) {
@@ -435,8 +435,8 @@ System.out.println("Cognoscenti Server Object == Start the Server");
         return ret;
     }
 
-    public Vector<NGPageIndex> getProjectsUserIsPartOf(UserRef ale) throws Exception {
-        Vector<NGPageIndex> ret = new Vector<NGPageIndex>();
+    public List<NGPageIndex> getProjectsUserIsPartOf(UserRef ale) throws Exception {
+        List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
             if (ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PROJECT
                     && ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PAGE) {
@@ -483,17 +483,17 @@ System.out.println("Cognoscenti Server Object == Start the Server");
 
     private synchronized void scanAllPages() throws Exception {
         System.out.println("Beginning SCAN for all pages in system");
-        Vector<File> allPageFiles = new Vector<File>();
-        Vector<File> allProjectFiles = new Vector<File>();
+        List<File> allPageFiles = new ArrayList<File>();
+        List<File> allProjectFiles = new ArrayList<File>();
         NGTerm.initialize();
         keyToContainer = new Hashtable<String, NGPageIndex>();
         upstreamToContainer = new Hashtable<String, NGPageIndex>();
-        allContainers = new Vector<NGPageIndex>();
+        allContainers = new ArrayList<NGPageIndex>();
 
         //TODO: eliminate statics, put them as members of this Cognoscenti class!
         NGBook.initStaticVars();
 
-        List<File> allSiteFiles = new Vector<File>();
+        List<File> allSiteFiles = new ArrayList<File>();
         for (File libDirectory : theConfig.getSiteFolders()) {
             seekProjectsAndSites(libDirectory, allProjectFiles, allSiteFiles);
         }
@@ -640,7 +640,7 @@ System.out.println("Cognoscenti Server Object == Start the Server");
         if (projectsWithEmailToSend.size() == 0) {
             return null;
         }
-        return projectsWithEmailToSend.firstElement();
+        return projectsWithEmailToSend.get(0);
     }
 
     /**
@@ -648,7 +648,7 @@ System.out.println("Cognoscenti Server Object == Start the Server");
      * call removePageFromEmailToSend to remove from the cached list.
      */
     public void removePageFromEmailToSend(String key) {
-        projectsWithEmailToSend.removeElement(key);
+        projectsWithEmailToSend.remove(key);
     }
 
 }

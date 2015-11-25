@@ -1,8 +1,6 @@
 <%@page errorPage="error.jsp"
 %><%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
 %><%@page import="org.socialbiz.cog.AuthRequest"
-%><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%@page import="org.socialbiz.cog.dms.FolderAccessHelper"
 %><%@page import="org.socialbiz.cog.dms.LocalFolderConfig"
 %><%@page import="org.socialbiz.cog.dms.CVSConfig"
@@ -10,8 +8,8 @@
     ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Can't edit this section.");
     pageTitle  = "Connect to Repository";
-    Vector<LocalFolderConfig> lclConnections =  FolderAccessHelper.getLoclConnections();
-    Vector<CVSConfig> cvsConnections =  FolderAccessHelper.getCVSConnections();
+    List<LocalFolderConfig> lclConnections =  FolderAccessHelper.getLoclConnections();
+    List<CVSConfig> cvsConnections =  FolderAccessHelper.getCVSConnections();
 %>
 
 <%@ include file="Header.jsp"%>
@@ -24,8 +22,8 @@
 <%@ include file="functions.jsp"%>
 
 <%!
-    public void mounFolderForm(AuthRequest ar, Vector<LocalFolderConfig> lclConnections,
-                Vector<CVSConfig> cvsConnections)throws Exception {
+    public void mounFolderForm(AuthRequest ar, List<LocalFolderConfig> lclConnections,
+                List<CVSConfig> cvsConnections)throws Exception {
         Writer out = ar.w;
         ar.write("<form name=\"folderForm\" method=\"get\" action=\"");
         ar.write(ar.retPath);

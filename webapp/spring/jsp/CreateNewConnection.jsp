@@ -25,8 +25,8 @@ Optional Parameters:
     String name     = attachment.getDisplayName();
     String pageTitle = "Create new connection for repository";
 
-    Vector<CVSConfig> cvsConnections =  FolderAccessHelper.getCVSConnections();
-    Vector<LocalFolderConfig> lclConnections =  FolderAccessHelper.getLoclConnections();
+    List<CVSConfig> cvsConnections =  FolderAccessHelper.getCVSConnections();
+    List<LocalFolderConfig> lclConnections =  FolderAccessHelper.getLoclConnections();
 %>
     <div>
         <div class="pageHeading">

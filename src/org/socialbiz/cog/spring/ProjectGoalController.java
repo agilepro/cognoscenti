@@ -23,7 +23,6 @@ package org.socialbiz.cog.spring;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -635,12 +634,12 @@ public class ProjectGoalController extends BaseController {
             List<GoalRecord> tasks = ngp.getAllGoals();
 
             //Get the ranks of all the tasks from the browser
-            Vector<String> idlist = UtilityMethods.splitString(indexString, ',');
+            List<String> idlist = UtilityMethods.splitString(indexString, ',');
             int last = idlist.size();
             int[] previous = new int[last];
 
             for (int i=0; i<last; i++){
-                String taskId=idlist.elementAt(i);
+                String taskId=idlist.get(i);
                 boolean found = false;
                 for (GoalRecord task : tasks) {
                     if(task.getId().equals(taskId)){
@@ -661,7 +660,7 @@ public class ProjectGoalController extends BaseController {
             //other task was in.  In effect, when you reorder tasks, they take
             //the same absolute position that the other task used to have.
             for (int i=0; i<last; i++){
-                String taskId=idlist.elementAt(i);
+                String taskId=idlist.get(i);
                 for (GoalRecord task : tasks) {
                     if(task.getId().equals(taskId)){
                         task.setRank(previous[i]);

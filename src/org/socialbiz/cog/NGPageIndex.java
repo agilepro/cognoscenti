@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -99,9 +98,9 @@ import org.workcast.json.JSONObject;
  */
 public class NGPageIndex {
 
-    public Vector<NGTerm> nameTerms;
-    public Vector<NGTerm> refTerms;
-    public Vector<NGTerm> hashTags;
+    public List<NGTerm> nameTerms;
+    public List<NGTerm> refTerms;
+    public List<NGTerm> hashTags;
     public long lastChange;
     public boolean requestWaiting;
     public boolean isDeleted;
@@ -137,7 +136,7 @@ public class NGPageIndex {
 
     private static int blqSize = 10;
 
-    public static Hashtable<String, Vector<ArrayBlockingQueue<String>>> blqList = new Hashtable<String, Vector<ArrayBlockingQueue<String>>>();
+    public static Hashtable<String, List<ArrayBlockingQueue<String>>> blqList = new Hashtable<String, List<ArrayBlockingQueue<String>>>();
 
     public static Hashtable<String, ArrayBlockingQueue<String>> bsnList = new Hashtable<String, ArrayBlockingQueue<String>>();
 
@@ -152,12 +151,12 @@ public class NGPageIndex {
 
     /**
      * Returns the collection of all target pages that are linked FROM this
-     * page. Vector contains NGPageIndex objects. Remember, this may contain
+     * page. List contains NGPageIndex objects. Remember, this may contain
      * multiple pages for a single link if there are multiple pages with the
      * same name.
      */
-    public Vector<NGPageIndex> getOutLinkPages() {
-        Vector<NGPageIndex> ret = new Vector<NGPageIndex>();
+    public List<NGPageIndex> getOutLinkPages() {
+        List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGTerm term : refTerms) {
             for (NGPageIndex target : term.targetLeaves) {
                 if (!ret.contains(target)) {
@@ -170,12 +169,12 @@ public class NGPageIndex {
     }
 
     /**
-     * Returns the collection of all source pages that link TO this page. Vector
+     * Returns the collection of all source pages that link TO this page. List
      * contains NGPageIndex objects. Remember, this may contain multiple pages
      * for a single link if there are multiple pages with the same name.
      */
-    public Vector<NGPageIndex> getInLinkPages() {
-        Vector<NGPageIndex> ret = new Vector<NGPageIndex>();
+    public List<NGPageIndex> getInLinkPages() {
+        List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGTerm term : nameTerms) {
             for (NGPageIndex target : term.sourceLeaves) {
                 if (!ret.contains(target)) {
@@ -212,13 +211,13 @@ public class NGPageIndex {
      *
      * Must NOT manipulate resulting vector in any way!
      */
-    public static Vector<NGPageIndex> getContainersForTag(String tag) throws Exception {
+    public static List<NGPageIndex> getContainersForTag(String tag) throws Exception {
         if (tag == null) {
             throw new ProgramLogicError("null value tag given to getPagesForTag");
         }
         NGTerm tagTerm = NGTerm.findTagIfExists(tag);
         if (tagTerm == null) {
-            return new Vector<NGPageIndex>();
+            return new ArrayList<NGPageIndex>();
         }
         return tagTerm.targetLeaves;
     }
@@ -296,14 +295,14 @@ public class NGPageIndex {
 
     public synchronized static void initAllStaticVars() {
         blqSize = 10;
-        blqList = new Hashtable<String, Vector<ArrayBlockingQueue<String>>>();
+        blqList = new Hashtable<String, List<ArrayBlockingQueue<String>>>();
         bsnList = new Hashtable<String, ArrayBlockingQueue<String>>();
         lockMap = new HashMap<String, List<NGPageIndex>>();
     }
 
 
 
-    public boolean isInVector(Vector<NGPageIndex> v) {
+    public boolean isInVector(List<NGPageIndex> v) {
         for (NGPageIndex y : v) {
             if (y.containerKey.equals(containerKey)) {
                 return true;
@@ -315,11 +314,11 @@ public class NGPageIndex {
     /**
      * Implement sorting and comparator classes
      */
-    public static void sortByName(Vector<NGPageIndex> v) {
+    public static void sortByName(List<NGPageIndex> v) {
         Collections.sort(v, new NGPIByName());
     }
 
-    public static void sortInverseChronological(Vector<NGPageIndex> v) {
+    public static void sortInverseChronological(List<NGPageIndex> v) {
         Collections.sort(v, new NGPIByInverseChange());
     }
 
@@ -368,7 +367,7 @@ public class NGPageIndex {
             return;
         }
         String result = "evt_" + emsg;
-        Vector<ArrayBlockingQueue<String>> v = blqList.get(emsg);
+        List<ArrayBlockingQueue<String>> v = blqList.get(emsg);
         if (v != null) {
             // copied out to an array because I had concurrent update problems
             // otherwise.
@@ -393,9 +392,9 @@ public class NGPageIndex {
         }
         long l = PAGE_NTFX_WAIT;
 
-        Vector<ArrayBlockingQueue<String>> v = blqList.get(emsg);
+        List<ArrayBlockingQueue<String>> v = blqList.get(emsg);
         if (v == null) {
-            v = new Vector<ArrayBlockingQueue<String>>();
+            v = new ArrayList<ArrayBlockingQueue<String>>();
             blqList.put(emsg, v);
         }
         ArrayBlockingQueue<String> blq = new ArrayBlockingQueue<String>(blqSize);
@@ -645,7 +644,7 @@ public class NGPageIndex {
      * container.
      */
     private void initNameTerms(NGContainer container) throws Exception {
-        Vector<NGTerm> nameTermsTmp = new Vector<NGTerm>();
+        List<NGTerm> nameTermsTmp = new ArrayList<NGTerm>();
 
         // make a link to the page key first
         NGTerm term = NGTerm.findTerm(containerKey);
@@ -688,7 +687,7 @@ public class NGPageIndex {
      * from this container.
      */
     private void initLinkTerms(NGContainer container) throws Exception {
-        Vector<String> tmpRef = new Vector<String>();
+        List<String> tmpRef = new ArrayList<String>();
         if (container instanceof NGPage) {
             // find the links in the page, right now only the Link type sections
 
@@ -696,7 +695,7 @@ public class NGPageIndex {
             Collections.sort(tmpRef);
         }
         // remove duplicate entries in the map
-        Vector<NGTerm> refTermTmp = new Vector<NGTerm>();
+        List<NGTerm> refTermTmp = new ArrayList<NGTerm>();
         for (String entry : tmpRef) {
             int barPos = entry.indexOf("|");
             if (barPos >= 0) {
@@ -739,12 +738,12 @@ public class NGPageIndex {
      * directions.
      */
     private void initIndexForHashTags(NGContainer container) throws Exception {
-        Vector<String> tagVals = new Vector<String>();
+        List<String> tagVals = new ArrayList<String>();
         if (container instanceof NGPage) {
             NGPage ngp = (NGPage) container;
             ngp.findTags(tagVals);
         }
-        Vector<NGTerm> hashTagsTmp = new Vector<NGTerm>();
+        List<NGTerm> hashTagsTmp = new ArrayList<NGTerm>();
         for (String hashVal : tagVals) {
             if (hashVal.length() < 3) {
                 continue;
@@ -772,17 +771,17 @@ public class NGPageIndex {
         for (NGTerm term : nameTerms) {
             term.removeTarget(this);
         }
-        nameTerms.removeAllElements();
+        nameTerms.clear();
 
         for (NGTerm term : refTerms) {
             term.removeSource(this);
         }
-        refTerms.removeAllElements();
+        refTerms.clear();
 
         for (NGTerm term : hashTags) {
             term.removeTarget(this);
         }
-        hashTags.removeAllElements();
+        hashTags.clear();
     }
 
     public JSONObject getJSON4List() throws Exception {

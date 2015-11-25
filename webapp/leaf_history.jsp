@@ -15,9 +15,7 @@
 %><%@page import="org.socialbiz.cog.UserProfile"
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Hashtable"
-%><%@page import="java.util.Vector"
 %><%ar = AuthRequest.getOrCreate(request, response, out);
     ar.retPath="../../";
 

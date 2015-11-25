@@ -21,9 +21,7 @@
 package org.socialbiz.cog;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -66,14 +64,11 @@ public class TemplateRecord extends DOMFace
 
 
     public static List<TemplateRecord> getAllTemplateRecords(UserProfile user)
-        throws Exception
-    {
+            throws Exception  {
         List<TemplateRecord> templateList = new ArrayList<TemplateRecord>();
-        Vector<TemplateRecord> chilluns = user.getChildren("template", TemplateRecord.class);
-        Enumeration<TemplateRecord> e = chilluns.elements();
-        while (e.hasMoreElements())
-        {
-            templateList.add(e.nextElement());
+        List<TemplateRecord> chilluns = user.getChildren("template", TemplateRecord.class);
+        for (TemplateRecord tr : chilluns) {
+            templateList.add(tr);
         }
         return templateList;
     }

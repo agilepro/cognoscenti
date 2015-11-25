@@ -15,7 +15,6 @@
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%
     ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Unable to add a file. ");

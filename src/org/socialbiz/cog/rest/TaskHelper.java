@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog.rest;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -50,10 +51,10 @@ public class TaskHelper
     private AddressListEntry ale = null;
 
     private Hashtable<GoalRecord,NGPage> pageMap = new Hashtable<GoalRecord,NGPage>();
-    private Vector<GoalRecord> allTask = new Vector<GoalRecord>();
-    private Vector<GoalRecord> activeTask = new Vector<GoalRecord>();
-    private Vector<GoalRecord> completedTask = new Vector<GoalRecord>();
-    private Vector<GoalRecord> futureTask = new Vector<GoalRecord>();
+    private List<GoalRecord> allTask = new ArrayList<GoalRecord>();
+    private List<GoalRecord> activeTask = new ArrayList<GoalRecord>();
+    private List<GoalRecord> completedTask = new ArrayList<GoalRecord>();
+    private List<GoalRecord> futureTask = new ArrayList<GoalRecord>();
 
     private boolean isFilled = false;
 
@@ -74,7 +75,7 @@ public class TaskHelper
             throw new ProgramLogicError(
                     "Attempt to produce a task list, but the tasks have not been collected yet.");
         }
-        Vector<GoalRecord> taskList = null;
+        List<GoalRecord> taskList = null;
         if (NGResource.DATA_ALLTASK_XML.equals(filter)) {
             taskList = allTask;
         }
@@ -207,25 +208,25 @@ public class TaskHelper
     }
 
 
-    public Vector<GoalRecord> getAllTasks() {
+    public List<GoalRecord> getAllTasks() {
         if (!isFilled) {
             throw new ProgramLogicError("Attempt to get a task list, but the tasks have not been collected yet.");
         }
         return allTask;
     }
-    public Vector<GoalRecord> getActiveTasks() {
+    public List<GoalRecord> getActiveTasks() {
         if (!isFilled) {
             throw new ProgramLogicError("Attempt to get a task list, but the tasks have not been collected yet.");
         }
         return activeTask;
     }
-    public Vector<GoalRecord> getCompletedTasks() {
+    public List<GoalRecord> getCompletedTasks() {
         if (!isFilled) {
             throw new ProgramLogicError("Attempt to get a task list, but the tasks have not been collected yet.");
         }
         return completedTask;
     }
-    public Vector<GoalRecord> getFutureTasks() {
+    public List<GoalRecord> getFutureTasks() {
         if (!isFilled) {
             throw new ProgramLogicError("Attempt to get a task list, but the tasks have not been collected yet.");
         }

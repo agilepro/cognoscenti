@@ -21,7 +21,6 @@
 package org.socialbiz.cog;
 
 import java.util.List;
-import java.util.Vector;
 
 /**
 * Interface of all objects that define a role.
@@ -127,7 +126,7 @@ public interface NGRole extends NGLabel {
 
     public void addPlayerIfNotPresent(AddressListEntry member)throws Exception;
 
-    public Vector<AddressListEntry> getMatchedFragment(String frag)throws Exception;
+    public List<AddressListEntry> getMatchedFragment(String frag)throws Exception;
 
 
 

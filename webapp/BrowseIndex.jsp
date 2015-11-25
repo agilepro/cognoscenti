@@ -30,10 +30,7 @@
         NGTerm term = NGTerm.findTerm(p);
 
         %><p>Term <%ar.writeHtml(key);%> Source:<%=term.sourceLeaves.size()%>  Target:<%=term.targetLeaves.size()%></p><ol><%
-        Enumeration t0 = term.sourceLeaves.elements();
-        while (t0.hasMoreElements())
-        {
-            NGPageIndex sn = (NGPageIndex) t0.nextElement();
+        for (NGPageIndex sn:term.sourceLeaves) {
             out.write("<li>NGPI Source: ");
             ar.writeHtml(sn.pageKey);
             out.write(" - - ");
@@ -133,7 +130,7 @@
         %></p><%
 
         %><p>Links On <%
-        Vector pageSections = aPage.getAllSections();
+        List pageSections = aPage.getAllSections();
         out.write(Integer.toString(pageSections.size()));
         %> Sections </p><ul><%
         en = pageSections.elements();

@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.mail.MailFile;
@@ -441,7 +440,7 @@ public class GoalRecord extends BaseRecord {
 
     public List<GoalRecord> getSubGoals() throws Exception {
         List<GoalRecord> grlist = getProject().getAllGoals();
-        Vector<GoalRecord> subTasksVect = new Vector<GoalRecord>();
+        List<GoalRecord> subTasksVect = new ArrayList<GoalRecord>();
         String myId = getId();
 
         for (GoalRecord gr : grlist) {
@@ -875,7 +874,7 @@ public class GoalRecord extends BaseRecord {
      * and no duplicates
      */
     public List<NGLabel> getLabels(NGPage ngp) throws Exception {
-        Vector<NGLabel> res = new Vector<NGLabel>();
+        List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
             NGLabel aLabel = ngp.getLabelRecordOrNull(name);
             if (aLabel!=null) {
@@ -891,7 +890,7 @@ public class GoalRecord extends BaseRecord {
      * set the list of labels on a document
      */
     public void setLabels(List<NGLabel> values) throws Exception {
-        Vector<String> labelNames = new Vector<String>();
+        List<String> labelNames = new ArrayList<String>();
         for (NGLabel aLable : values) {
             labelNames.add(aLable.getName());
         }
@@ -1060,7 +1059,7 @@ public class GoalRecord extends BaseRecord {
 
         if (goalObj.has("labelMap")) {
             JSONObject labelMap = goalObj.getJSONObject("labelMap");
-            Vector<NGLabel> selectedLabels = new Vector<NGLabel>();
+            List<NGLabel> selectedLabels = new ArrayList<NGLabel>();
             for (NGLabel stdLabel : ngp.getAllLabels()) {
                 String labelName = stdLabel.getName();
                 if (labelMap.optBoolean(labelName)) {
@@ -1098,7 +1097,7 @@ public class GoalRecord extends BaseRecord {
                 return;
             }
 
-            Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
+            List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
             OptOutAddr.appendUsers(players, sendTo);
 
             UserProfile creatorProfile = null;

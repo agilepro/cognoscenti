@@ -20,8 +20,9 @@
 
 package org.socialbiz.cog;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 /**
 * NGTerm implements the many-to-many linking of pages (with multiple links)
@@ -31,8 +32,8 @@ import java.util.Vector;
 public class NGTerm
 {
     public String sanitizedName;
-    public Vector<NGPageIndex> sourceLeaves = new Vector<NGPageIndex>();
-    public Vector<NGPageIndex> targetLeaves = new Vector<NGPageIndex>();
+    public List<NGPageIndex> sourceLeaves = new ArrayList<NGPageIndex>();
+    public List<NGPageIndex> targetLeaves = new ArrayList<NGPageIndex>();
 
     private static Hashtable<String,NGTerm> allTerms;
     private static Hashtable<String,NGTerm> allTags;

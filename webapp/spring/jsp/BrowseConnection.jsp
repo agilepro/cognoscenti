@@ -55,7 +55,7 @@ Required parameter:
             throw new ProgramLogicError("Something went wrong, resource entity is not initialized");
         }
         String dname = ent.getDisplayName();
-        Vector<ResourceEntity> entityList = ent.getChidEntityList();
+        List<ResourceEntity> entityList = ent.getChidEntityList();
 
         String fdname = ent.getDisplayName();
         int indx2 = fdname.indexOf('/');
@@ -84,7 +84,7 @@ Required parameter:
         ar.write("\n<td>Modified On</td>");
         ar.write("\n</tr>");
 
-        Vector<ResourceEntity> fileList = new Vector();
+        List<ResourceEntity> fileList = new ArrayList();
         for (ResourceEntity entity : entityList)
         {
             ar.write("\n<!-- Time1: "+(new Date()).toString()+"-->");

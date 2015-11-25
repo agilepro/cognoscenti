@@ -11,10 +11,9 @@
     String link = ar.reqParam("p");
     String go = ar.reqParam("go");
 
-    Vector v = ar.getCogInstance().getPageIndexByName(link);
+    List v = ar.getCogInstance().getPageIndexByName(link);
 
-    if (v.size()==0)
-    {
+    if (v.size()==0) {
         throw new Exception("Can not find any pages named '"+link+"'.  You can only hook a link to an existing page.");
     }
 

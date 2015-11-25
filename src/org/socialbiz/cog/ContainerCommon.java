@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Vector;
 
 import org.socialbiz.cog.dms.ConnectionSettings;
 import org.socialbiz.cog.dms.ConnectionType;
@@ -111,7 +110,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
      */
     public List<AttachmentRecord> getAccessibleAttachments(UserProfile up) throws Exception {
         List<NGRole> rolesPlayed = findRolesOfPlayer(up);
-        Vector<AttachmentRecord> aList = new Vector<AttachmentRecord>();
+        List<AttachmentRecord> aList = new ArrayList<AttachmentRecord>();
         for(AttachmentRecord attachment : getAllAttachments()) {
             if (attachment.isDeleted()) {
                 continue;
@@ -214,7 +213,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
         attachParent.removeChild(att);
     }
     public void purgeDeletedAttachments() throws Exception {
-        Vector<AttachmentRecord> cleanList = new Vector<AttachmentRecord>();
+        List<AttachmentRecord> cleanList = new ArrayList<AttachmentRecord>();
         for (AttachmentRecord ar : getAllAttachments()) {
             if (!ar.isDeleted()) {
                 //don't purge or do anything to non-deleted attachments
@@ -489,7 +488,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
     }
 
     public List<NGRole> findRolesOfPlayer(UserRef user) throws Exception {
-        Vector<NGRole> res = new Vector<NGRole>();
+        List<NGRole> res = new ArrayList<NGRole>();
         if (user==null) {
             return res;
         }
@@ -506,7 +505,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
     public List<HistoryRecord> getAllHistory()
             throws Exception
     {
-        Vector<HistoryRecord> vect = historyParent.getChildren("event", HistoryRecord.class);
+        List<HistoryRecord> vect = historyParent.getChildren("event", HistoryRecord.class);
         HistoryRecord.sortByTimeStamp(vect);
         return vect;
     }
@@ -514,8 +513,8 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
     public List<HistoryRecord> getHistoryRange(long startTime, long endTime)
             throws Exception
     {
-        Vector<HistoryRecord> allHist = historyParent.getChildren("event", HistoryRecord.class);
-        Vector<HistoryRecord> newHist = new Vector<HistoryRecord>();
+        List<HistoryRecord> allHist = historyParent.getChildren("event", HistoryRecord.class);
+        List<HistoryRecord> newHist = new ArrayList<HistoryRecord>();
         for (HistoryRecord hr : allHist)
         {
             long eventTime = hr.getTimeStamp();
@@ -835,9 +834,9 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
     /**
     * Pages have a set of licenses
     */
-    public Vector<License> getLicenses() throws Exception {
-        Vector<LicenseRecord> vc = infoParent.getChildren("license", LicenseRecord.class);
-        Vector<License> v = new Vector<License>();
+    public List<License> getLicenses() throws Exception {
+        List<LicenseRecord> vc = infoParent.getChildren("license", LicenseRecord.class);
+        List<License> v = new ArrayList<License>();
         for (License child : vc) {
             v.add(child);
         }
@@ -868,7 +867,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
     }
 
     public boolean removeLicense(String id) throws Exception {
-        Vector<LicenseRecord> vc = infoParent.getChildren("license", LicenseRecord.class);
+        List<LicenseRecord> vc = infoParent.getChildren("license", LicenseRecord.class);
         for (LicenseRecord child : vc) {
             if (id.equals(child.getId())) {
                 infoParent.removeChild(child);

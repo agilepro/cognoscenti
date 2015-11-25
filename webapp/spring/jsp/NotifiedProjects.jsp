@@ -3,7 +3,7 @@
 %><%@page import="org.socialbiz.cog.NotificationRecord"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-    Vector<NotificationRecord> notifications = uProf.getNotificationList();
+    List<NotificationRecord> notifications = uProf.getNotificationList();
     boolean noneFound = notifications.size()==0;
 
     JSONArray projList = new JSONArray();

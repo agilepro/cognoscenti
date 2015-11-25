@@ -951,10 +951,10 @@ public class WikiToPDF
 
             String sanitizedName = SectionWiki.sanitize(linkAddr);
             if (sanitizedName.length()>0) {
-                Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkAddr);
+                List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkAddr);
                 if (foundPages.size()==1)
                 {
-                    NGPageIndex foundPI = foundPages.firstElement();
+                    NGPageIndex foundPI = foundPages.get(0);
                     if (!foundPI.isDeleted) {
                         linkAddr = ar.baseURL + ar.getResourceURL(foundPI, "frontPage.htm");
                         linkName = foundPI.containerName;   //use the best name for page

@@ -20,7 +20,7 @@
     UserProfile up = ar.getUserProfile();
     String userKey = up.getKey();
 
-    Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
+    List<NGPageIndex> templates = new ArrayList<NGPageIndex>();
     for(TemplateRecord tr : up.getTemplateList()){
         NGPageIndex ngpirr = ar.getCogInstance().getContainerIndexByKey(tr.getPageKey());
         if (ngpirr!=null) {

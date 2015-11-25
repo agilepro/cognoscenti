@@ -21,8 +21,8 @@
 package org.socialbiz.cog;
 
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
 
@@ -47,9 +47,9 @@ public class SectionForNotes extends SectionWiki {
         return section.getChildren(LEAFLET_NODE_NAME, NoteRecord.class);
     }
 
-    public static Vector<NoteRecord> getVisibleComments(NGSection section, int desiredViz,
+    public static List<NoteRecord> getVisibleComments(NGSection section, int desiredViz,
             UserProfile up) throws Exception {
-        Vector<NoteRecord> nl = new Vector<NoteRecord>();
+        List<NoteRecord> nl = new ArrayList<NoteRecord>();
         for (NoteRecord cr : getAllNotesInSection(section)) {
             int visibility = cr.getVisibility();
             if (visibility != desiredViz || cr.isDeleted()) {
@@ -82,7 +82,7 @@ public class SectionForNotes extends SectionWiki {
         writePlainTextForComments(section, out);
     }
 
-    public void findLinks(Vector<String> v, NGSection section) throws Exception {
+    public void findLinks(List<String> v, NGSection section) throws Exception {
 
         for (NoteRecord cr : getAllNotesInSection(section)) {
             String tv = cr.getWiki();

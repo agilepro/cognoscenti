@@ -20,8 +20,8 @@
 
 package org.socialbiz.cog.rest;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -134,7 +134,7 @@ public class DataFeedServlet extends HttpServlet {
         String openId = defParam(ar.req, "u", ar.getBestUserId());
 
         UserProfile up = UserManager.findUserByAnyId(openId);
-        TaskListRecord[] tasks = getTaskList(up, listType, ar.getCogInstance());
+        List<TaskListRecord> tasks = getTaskList(up, listType, ar.getCogInstance());
 
         writeTaskListToResponse(ar, tasks);
     }
@@ -191,7 +191,7 @@ public class DataFeedServlet extends HttpServlet {
         writeXMLToResponse(ar, doc);
     }
 
-    private void writeTaskListToResponse(AuthRequest ar, TaskListRecord[] records) throws Exception {
+    private void writeTaskListToResponse(AuthRequest ar, List<TaskListRecord> records) throws Exception {
         if (ar == null || records == null) {
             throw new ProgramLogicError("writeTaskListToResponse parameter must not be null");
         }
@@ -200,8 +200,8 @@ public class DataFeedServlet extends HttpServlet {
         Document doc = DOMUtils.createDocument("ResultSet");
         Element resultSetEle = doc.getDocumentElement();
 
-        for (int i = 0; i < records.length; i++) {
-            TaskListRecord rec = records[i];
+        for (int i = 0; i < records.size(); i++) {
+            TaskListRecord rec = records.get(i);
             NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKeyOrFail(rec.pageKey);
 
             Element resultEle = DOMUtils.createChildElement(doc, resultSetEle, "Result");
@@ -247,8 +247,8 @@ public class DataFeedServlet extends HttpServlet {
 
         // TODO Duplicate Code.
         resultSetEle.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        resultSetEle.setAttribute("totalResultsAvailable", String.valueOf(records.length));
-        resultSetEle.setAttribute("totalResultsReturned", String.valueOf(records.length));
+        resultSetEle.setAttribute("totalResultsAvailable", String.valueOf(records.size()));
+        resultSetEle.setAttribute("totalResultsReturned", String.valueOf(records.size()));
         resultSetEle.setAttribute("firstResultPosition", "1");
 
         writeXMLToResponse(ar, doc);
@@ -267,17 +267,16 @@ public class DataFeedServlet extends HttpServlet {
     }
 
     // operation get task list.
-    public static TaskListRecord[] getTaskList(UserProfile up, String listType, Cognoscenti cog) throws Exception {
+    public static List<TaskListRecord> getTaskList(UserProfile up, String listType, Cognoscenti cog) throws Exception {
 
         NGPageIndex.assertNoLocksOnThread();
-        Vector<TaskListRecord> allTask = new Vector<TaskListRecord>();
-        Vector<TaskListRecord> activeTask = new Vector<TaskListRecord>();
-        Vector<TaskListRecord> completedTask = new Vector<TaskListRecord>();
-        Vector<TaskListRecord> futureTask = new Vector<TaskListRecord>();
+        ArrayList<TaskListRecord> allTask = new ArrayList<TaskListRecord>();
+        ArrayList<TaskListRecord> activeTask = new ArrayList<TaskListRecord>();
+        ArrayList<TaskListRecord> completedTask = new ArrayList<TaskListRecord>();
+        ArrayList<TaskListRecord> futureTask = new ArrayList<TaskListRecord>();
 
-        TaskListRecord[] tasks = new TaskListRecord[0];
         if (up == null || listType == null || listType.length() == 0) {
-            return tasks;
+            return allTask;  //empty at this point
         }
 
         for (NGPageIndex ngpi : cog.getAllContainers()) {
@@ -332,22 +331,18 @@ public class DataFeedServlet extends HttpServlet {
         }
 
         if (listType.equalsIgnoreCase(ALLTASKS)) {
-            tasks = new TaskListRecord[allTask.size()];
-            allTask.copyInto(tasks);
+            return allTask;
         }
         else if (listType.equalsIgnoreCase(MYACTIVETASKS)) {
-            tasks = new TaskListRecord[activeTask.size()];
-            activeTask.copyInto(tasks);
+            return activeTask;
         }
         else if (listType.equalsIgnoreCase(COMPLETEDTASKS)) {
-            tasks = new TaskListRecord[completedTask.size()];
-            completedTask.copyInto(tasks);
+            return completedTask;
         }
         else if (listType.equalsIgnoreCase(FUTURETASKS)) {
-            tasks = new TaskListRecord[futureTask.size()];
-            futureTask.copyInto(tasks);
+            return futureTask;
         }
-        return tasks;
+        throw new Exception("getTaskList does not understand the list type: "+listType);
     }
 
     private String reqParam(HttpServletRequest request, String paramName) throws Exception {

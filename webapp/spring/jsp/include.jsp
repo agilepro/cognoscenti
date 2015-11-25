@@ -20,6 +20,7 @@
 %><%@page import="java.util.Map"
 %><%@page import="java.util.Properties"
 %><%@page import="java.util.Vector"
+%><%@page import="java.util.ArrayList"
 %><%@page import="org.socialbiz.cog.AddressListEntry"
 %><%@page import="org.socialbiz.cog.AttachmentRecord"
 %><%@page import="org.socialbiz.cog.AuthRequest"

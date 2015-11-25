@@ -22,7 +22,7 @@ package org.socialbiz.cog;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Vector;
+import java.util.List;
 
 /**
 * Holds data for a Recently Used list
@@ -56,7 +56,7 @@ public final class RUElement
     * at.  This avoids possible paradoxes when things that happened during one
     * transaction have slightly different times.
     */
-    public static void addToRUVector(Vector<RUElement> v, RUElement newElement, long currentTime, int max)
+    public static void addToRUVector(List<RUElement> v, RUElement newElement, long currentTime, int max)
     {
         //check to see if it is already present, and look for oldest
         long oldestTimestamp = currentTime;
@@ -85,8 +85,7 @@ public final class RUElement
     }
 
 
-    public static void sortByDisplayName(Vector<RUElement> v)
-    {
+    public static void sortByDisplayName(List<RUElement> v) {
         Collections.sort(v, new RUElementByName());
     }
 

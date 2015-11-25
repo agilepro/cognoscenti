@@ -20,8 +20,8 @@
 
 package org.socialbiz.cog.rest;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
@@ -297,7 +297,7 @@ public class ResourcePage implements NGResource
         DOMUtils.createChildElement(loutdoc, element_goal, "description", pdescription);
         //Adding section element
         Element element_sections = DOMUtils.createChildElement(loutdoc, element_root, "sections");
-        Vector<NGSection> sectionList = ngp.getAllSections();
+        List<NGSection> sectionList = ngp.getAllSections();
         for (NGSection ngs : sectionList) {
 
             String secElname = ResourceSection.getSectionElementName(ngs.getName());
@@ -565,7 +565,7 @@ public class ResourcePage implements NGResource
         Element element_root = loutdoc.getDocumentElement();
         DOMUtils.setSchemAttribute(element_root, schema);
 
-        Vector<License> licenseList = new Vector<License>();
+        List<License> licenseList = new ArrayList<License>();
         if (licenseId == null) {
             throw new ProgramLogicError("LicenseId can not be null");
         }

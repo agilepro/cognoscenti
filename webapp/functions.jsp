@@ -459,24 +459,17 @@
     }
 
 
-    public void appendUsersF(List<AddressListEntry> members, Vector<AddressListEntry> collector)
-        throws Exception
-    {
-        for (AddressListEntry ale : members)
-        {
-            Enumeration e2 = collector.elements();
+    public void appendUsersF(List<AddressListEntry> members, List<AddressListEntry> collector)
+                throws Exception {
+        for (AddressListEntry ale : members) {
             boolean found = false;
-            while (e2.hasMoreElements())
-            {
-                AddressListEntry coll = (AddressListEntry)e2.nextElement();
-                if (coll.hasAnyId(ale.getUniversalId()))
-                {
+            for (AddressListEntry coll : collector) {
+                if (coll.hasAnyId(ale.getUniversalId())) {
                     found = true;
                     break;
                 }
             }
-            if (!found)
-            {
+            if (!found) {
                 collector.add(ale);
             }
         }

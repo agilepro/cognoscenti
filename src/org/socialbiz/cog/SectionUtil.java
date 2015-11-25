@@ -20,14 +20,13 @@
 
 package org.socialbiz.cog;
 
-import org.socialbiz.cog.exception.ProgramLogicError;
 import java.io.StringWriter;
 import java.io.Writer;
-
 import java.net.URLEncoder;
-
-import java.util.Vector;
 import java.util.Calendar;
+import java.util.List;
+
+import org.socialbiz.cog.exception.ProgramLogicError;
 
 /**
 * Base class of the section classes, contains a number of
@@ -463,7 +462,7 @@ public class SectionUtil
     * IDs into the vector so that we can generate another ID and assure it
     * does not duplication any id found here.
     */
-    public void findIDs(Vector<String> v, NGSection sec) throws Exception {
+    public void findIDs(List<String> v, NGSection sec) throws Exception {
         //default behavior ... do nothing
     }
 
@@ -476,7 +475,7 @@ public class SectionUtil
 
 
     //default befavior is to not find any links
-    public void findLinks(Vector<String> v, NGSection section)
+    public void findLinks(List<String> v, NGSection section)
         throws Exception
     {
         //not implemented yet

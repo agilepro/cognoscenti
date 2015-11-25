@@ -20,7 +20,8 @@
 
 package org.socialbiz.cog;
 
-import java.util.Vector;
+import java.util.List;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -71,20 +72,13 @@ public class PollRecord extends DOMFace
     }
 
 
-    public VoteRecord[] getVotes()
-        throws Exception
-    {
-        if (votes!=null)
-        {
+    public VoteRecord[] getVotes() throws Exception {
+        if (votes!=null) {
             return votes;
         }
-        Vector<VoteRecord> nl = getChildren("vote", VoteRecord.class);
-        int last = nl.size();
-
-        VoteRecord[] retVal = new VoteRecord[last];
-        nl.copyInto(retVal);
-        votes = retVal;
-        return retVal;
+        List<VoteRecord> nl = getChildren("vote", VoteRecord.class);
+        votes = nl.toArray(new VoteRecord[0]);
+        return votes;
     }
 
     public VoteRecord findVote(String name)

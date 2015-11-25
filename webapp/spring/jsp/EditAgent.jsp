@@ -26,7 +26,7 @@
     if (theAgent==null) {
         throw new Exception("Unagle to find an agent with id="+id);
     }
-    Vector<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
+    List<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
     List<NGBook> memberOfSites = uProf.findAllMemberSites();
 
 %>

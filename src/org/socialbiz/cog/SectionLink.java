@@ -20,9 +20,10 @@
 
 package org.socialbiz.cog;
 
-import org.socialbiz.cog.exception.ProgramLogicError;
 import java.io.Writer;
-import java.util.Vector;
+import java.util.List;
+
+import org.socialbiz.cog.exception.ProgramLogicError;
 
 /**
 * Implements the Bidirectional Link formatting
@@ -60,7 +61,7 @@ public class SectionLink extends SectionWiki
     }
 
 
-    public void findLinks(Vector<String> v, NGSection section)
+    public void findLinks(List<String> v, NGSection section)
         throws Exception
     {
         String tv = section.asText().trim();

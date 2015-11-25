@@ -26,8 +26,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AttachmentVersion;
@@ -51,7 +51,7 @@ public class ProjectSync {
     AuthRequest ar;
     String licenseID;
 
-    Vector<SyncStatus> statii;
+    ArrayList<SyncStatus> statii;
 
     public ProjectSync(NGPage _local, RemoteProject _remote, AuthRequest _ar, String _licenseID) throws Exception {
 
@@ -60,7 +60,7 @@ public class ProjectSync {
         ar        = _ar;
         licenseID = _licenseID;
 
-        statii = new Vector<SyncStatus>();
+        statii = new ArrayList<SyncStatus>();
 
         figureAttachments();
         figureNotes();
@@ -70,7 +70,7 @@ public class ProjectSync {
 
     private void figureAttachments() throws Exception {
 
-        Vector<String> docNames = new Vector<String>();
+        ArrayList<String> docNames = new ArrayList<String>();
         List<AttachmentRecord> allAtts = local.getAllAttachments();
         for (AttachmentRecord att : allAtts) {
             if (!"FILE".equals(att.getType())) {
@@ -155,7 +155,7 @@ public class ProjectSync {
 
     private void figureNotes() throws Exception {
 
-        Vector<String> noteIds = new Vector<String>();
+        ArrayList<String> noteIds = new ArrayList<String>();
 
         List<NoteRecord> allNotes = local.getAllNotes();
         for (NoteRecord note : allNotes) {
@@ -224,7 +224,7 @@ public class ProjectSync {
 
 
     private void figureGoals() throws Exception {
-        Vector<String> goalIds = new Vector<String>();
+        ArrayList<String> goalIds = new ArrayList<String>();
 
         List<GoalRecord> allGoals = local.getAllGoals();
         /*
@@ -287,7 +287,7 @@ public class ProjectSync {
     }
 
 
-    public Vector<SyncStatus> getStatus() {
+    public List<SyncStatus> getStatus() {
         return statii;
     }
 
@@ -297,8 +297,8 @@ public class ProjectSync {
     * Returns a collection that represents all the resources that
     * need to be downloaded.
     */
-    public Vector<SyncStatus> getToDownload(int resourceType) {
-        Vector<SyncStatus> retset = new Vector<SyncStatus>();
+    public List<SyncStatus> getToDownload(int resourceType) {
+        ArrayList<SyncStatus> retset = new ArrayList<SyncStatus>();
         for (SyncStatus stat : statii) {
             if (stat.type != resourceType) {
                 //only interested specified resource type
@@ -326,8 +326,8 @@ public class ProjectSync {
     * Returns a collection that represents all the resources that
     * need to be uploaded to the upstream site.
     */
-    public Vector<SyncStatus> getToUpload(int resourceType) {
-        Vector<SyncStatus> retset = new Vector<SyncStatus>();
+    public List<SyncStatus> getToUpload(int resourceType) {
+        ArrayList<SyncStatus> retset = new ArrayList<SyncStatus>();
         for (SyncStatus stat : statii) {
             if (stat.type != resourceType) {
                 //only interested specified resource type
@@ -353,8 +353,8 @@ public class ProjectSync {
     * Returns a collection that represents all the resources that
     * are fully synchronized and need no additional handling
     */
-    public Vector<SyncStatus> getEqual(int resourceType) {
-        Vector<SyncStatus> retset = new Vector<SyncStatus>();
+    public List<SyncStatus> getEqual(int resourceType) {
+        ArrayList<SyncStatus> retset = new ArrayList<SyncStatus>();
         for (SyncStatus stat : statii) {
             if (stat.type != resourceType) {
                 //only interested specified resource type
@@ -398,7 +398,7 @@ public class ProjectSync {
         int noteNum = 0;
         int goalNum = 0;
 
-        Vector<SyncStatus> docsNeedingDown  = getToDownload(SyncStatus.TYPE_DOCUMENT);
+        List<SyncStatus> docsNeedingDown  = getToDownload(SyncStatus.TYPE_DOCUMENT);
         for (SyncStatus docStat : docsNeedingDown) {
             if (docStat.timeRemote==0) {
                 //this is a programming consistency thing.  A doc falls into the needing
@@ -461,7 +461,7 @@ public class ProjectSync {
             docNum++;
         }
 
-        Vector<SyncStatus> notesNeedingDown  = getToDownload(SyncStatus.TYPE_NOTE);
+        List<SyncStatus> notesNeedingDown  = getToDownload(SyncStatus.TYPE_NOTE);
 
         for (SyncStatus noteStat : notesNeedingDown) {
 
@@ -495,7 +495,7 @@ public class ProjectSync {
                     "from upstream project");
         }
 
-        Vector<SyncStatus> goalsNeedingDown  = getToDownload(SyncStatus.TYPE_TASK);
+        List<SyncStatus> goalsNeedingDown  = getToDownload(SyncStatus.TYPE_TASK);
         for (SyncStatus goalStat : goalsNeedingDown) {
 
             GoalRecord goal;
@@ -528,7 +528,7 @@ public class ProjectSync {
     public void uploadAll() throws Exception {
 
         String urlRoot = ar.baseURL + "api/" + local.getSiteKey() + "/" + local.getKey() + "/";
-        Vector<SyncStatus> goalsNeedingUp  = getToUpload(SyncStatus.TYPE_TASK);
+        List<SyncStatus> goalsNeedingUp  = getToUpload(SyncStatus.TYPE_TASK);
 
         //This license is not really used after upload is complete, so any license will do
         LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
@@ -547,7 +547,7 @@ public class ProjectSync {
             request.put("goal", goalObj);
             remote.call(request);
         }
-        Vector<SyncStatus> docsNeedingUp  = getToUpload(SyncStatus.TYPE_DOCUMENT);
+        List<SyncStatus> docsNeedingUp  = getToUpload(SyncStatus.TYPE_DOCUMENT);
         for (SyncStatus docStat : docsNeedingUp) {
             AttachmentRecord newAtt = local.findAttachmentByIDOrFail(docStat.idLocal);
 
@@ -597,7 +597,7 @@ public class ProjectSync {
             request.put("doc", newAtt.getJSON4Doc(local, ar, urlRoot, lfu));
             response = remote.call(request);
         }
-        Vector<SyncStatus> notesNeedingUp  = getToUpload(SyncStatus.TYPE_NOTE);
+        List<SyncStatus> notesNeedingUp  = getToUpload(SyncStatus.TYPE_NOTE);
         for (SyncStatus docStat : notesNeedingUp) {
             NoteRecord note = local.getNoteOrFail(docStat.idLocal);
             JSONObject request = new JSONObject();

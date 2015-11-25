@@ -20,9 +20,10 @@
 
 package org.socialbiz.cog;
 
+import java.util.List;
+
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import java.util.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -160,7 +161,7 @@ public class NGSection extends DOMFace
         return def.deprecated;
     }
 
-    public void findLinks(Vector<String> v)
+    public void findLinks(List<String> v)
         throws Exception
     {
         def.format.findLinks(v, this);
@@ -188,7 +189,7 @@ public class NGSection extends DOMFace
     * IDs into the vector so that we can generate another ID and assure it
     * does not duplication any id found here.
     */
-    public void findIDs(Vector<String> v) throws Exception {
+    public void findIDs(List<String> v) throws Exception {
         def.format.findIDs(v, this);
     }
 

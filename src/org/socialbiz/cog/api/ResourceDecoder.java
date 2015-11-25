@@ -15,8 +15,8 @@
  */
 package org.socialbiz.cog.api;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AttachmentRecord;
@@ -221,7 +221,7 @@ public class ResourceDecoder {
                         +") is invalid because the user who created license is no longer a "
                         +"member of the role ("+restrictRole+")");
             }
-            licensedRoles = new Vector<NGRole>();
+            licensedRoles = new ArrayList<NGRole>();
             licensedRoles.add(specifiedRole);
         }
         return licensedRoles;

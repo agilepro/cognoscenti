@@ -20,20 +20,25 @@
 
 package org.socialbiz.cog;
 
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Locale;
 import java.util.Vector;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionContext;
+
 import org.socialbiz.cog.exception.NGException;
 
 public class HttpNestedRequest implements HttpServletRequest
@@ -386,6 +391,8 @@ public class HttpNestedRequest implements HttpServletRequest
     @SuppressWarnings("rawtypes")
     public Enumeration getLocales()
     {
+        //note, the interface requires an enumeration, and that
+        //requires a Vector class used here.
         Vector<Locale> v = new Vector<Locale>();
         v.add(getLocale());
         return v.elements();
@@ -770,6 +777,7 @@ public class HttpNestedRequest implements HttpServletRequest
     @SuppressWarnings("rawtypes")
     public Enumeration getHeaders(String name)
     {
+        //Enumeration requires vector
         Vector<String> v = new Vector<String>();
         return v.elements();
     }
@@ -802,6 +810,7 @@ public class HttpNestedRequest implements HttpServletRequest
     @SuppressWarnings("rawtypes")
     public Enumeration getHeaderNames()
     {
+        //enumeration requires Vector
         Vector<String> v = new Vector<String>();
         return v.elements();
     }

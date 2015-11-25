@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
@@ -273,7 +272,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
     /**
     * Given a vector, this will fill the vector with tag terms
     */
-    public void fillTags(Vector<String> result)
+    public void fillTags(List<String> result)
     {
         fillVectorValues(result, "tag");
     }
@@ -282,14 +281,14 @@ public class NoteRecord extends DOMFace implements EmailContext {
     /**
     * Returns a vector of string tag values
     */
-    public Vector<String> getTags()
+    public List<String> getTags()
     {
         return getVector("tag");
     }
     /**
     * Given a vector of string, this tag terms for this comment
     */
-    public void setTags(Vector<String> newVal)
+    public void setTags(List<String> newVal)
     {
         setVector("tag", newVal);
     }
@@ -315,14 +314,14 @@ public class NoteRecord extends DOMFace implements EmailContext {
     /**
     * gets all the response that exist on the topic.
     */
-    public Vector<LeafletResponseRecord> getResponses()
+    public List<LeafletResponseRecord> getResponses()
         throws Exception
     {
         //there was a bug ...  that puts response records in for uses BY KEY, but later accesses by
         //global ID (which is the right way).  This code strips out the records that are created with a
         //nine-letter ID, and not an email address ....
-        Vector<LeafletResponseRecord> temp = getChildren("response", LeafletResponseRecord.class);
-        Vector<LeafletResponseRecord> res = new Vector<LeafletResponseRecord>();
+        List<LeafletResponseRecord> temp = getChildren("response", LeafletResponseRecord.class);
+        List<LeafletResponseRecord> res = new ArrayList<LeafletResponseRecord>();
         for (LeafletResponseRecord llr : temp) {
             String userId = llr.getUser();
             if (userId.length()==9 && userId.indexOf("@")<0 && userId.indexOf("/")<0) {
@@ -340,14 +339,11 @@ public class NoteRecord extends DOMFace implements EmailContext {
     * not already exist.
     */
     public LeafletResponseRecord getOrCreateUserResponse(UserProfile up)
-        throws Exception
-    {
-        Vector<LeafletResponseRecord> temp = getChildren("response", LeafletResponseRecord.class);
-        for (LeafletResponseRecord child : temp)
-        {
+                throws Exception {
+        List<LeafletResponseRecord> temp = getChildren("response", LeafletResponseRecord.class);
+        for (LeafletResponseRecord child : temp) {
             String childUser = child.getUser();
-            if (up.hasAnyId(childUser))
-            {
+            if (up.hasAnyId(childUser)) {
                 //update record with user's current universal ID
                 child.setUser(up.getUniversalId());
                 return child;
@@ -367,7 +363,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
     public LeafletResponseRecord accessResponse(String userId)
         throws Exception
     {
-        Vector<LeafletResponseRecord> nl = getChildren("response", LeafletResponseRecord.class);
+        List<LeafletResponseRecord> nl = getChildren("response", LeafletResponseRecord.class);
         for (LeafletResponseRecord child : nl) {
             String childUser = child.getUser();
             if (userId.equals(childUser)) {
@@ -401,7 +397,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
     }
 
 
-    public void findTags(Vector<String> v)
+    public void findTags(List<String> v)
         throws Exception
     {
         String tv = getWiki();
@@ -413,19 +409,15 @@ public class NoteRecord extends DOMFace implements EmailContext {
         }
     }
 
-    protected void scanLineForTags(String thisLine, Vector<String> v)
-    {
+    protected void scanLineForTags(String thisLine, List<String> v) {
         int hashPos = thisLine.indexOf('#');
         int startPos = 0;
         int last = thisLine.length();
-        while (hashPos >= startPos)
-        {
+        while (hashPos >= startPos) {
             hashPos++;
             int endPos = WikiConverter.findIdentifierEnd(thisLine, hashPos);
-            if (endPos > hashPos+2)
-            {
-                if (endPos >= last)
-                {
+            if (endPos > hashPos+2) {
+                if (endPos >= last) {
                     //this includes everything to the end of the string, and we are done
                     v.add(thisLine.substring(hashPos));
                     return;
@@ -433,8 +425,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
 
                 v.add(thisLine.substring(hashPos, endPos));
             }
-            else if (endPos >= last)
-            {
+            else if (endPos >= last) {
                 return;
             }
             startPos = endPos;
@@ -444,7 +435,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
 
 
 
-    public static void sortNotesInPinOrder(Vector<NoteRecord> v) {
+    public static void sortNotesInPinOrder(List<NoteRecord> v) {
         Collections.sort(v, new NotesInPinOrder());
     }
 
@@ -595,8 +586,8 @@ public class NoteRecord extends DOMFace implements EmailContext {
       * This list contains only the extra roles that have access for non-members.
       */
      public List<NGRole> getAccessRoles(NGContainer ngp) throws Exception {
-         Vector<NGRole> res = new Vector<NGRole>();
-         Vector<String> roleNames = getVector("accessRole");
+         List<NGRole> res = new ArrayList<NGRole>();
+         List<String> roleNames = getVector("accessRole");
          for (String name : roleNames) {
              NGRole aRole = ngp.getRole(name);
              if (aRole!=null) {
@@ -615,7 +606,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
       * the Members or Admin roles, nor whether the attachment is public.
       */
       public boolean roleCanAccess(String roleName) {
-          Vector<String> roleNames = getVector("labels");
+          List<String> roleNames = getVector("labels");
           for (String name : roleNames) {
               if (roleName.equals(name)) {
                   return true;
@@ -654,7 +645,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
           setWiki(wikiText);
       }
 
-      public Vector<CommentRecord> getComments()  throws Exception {
+      public List<CommentRecord> getComments()  throws Exception {
           return getChildren("comment", CommentRecord.class);
       }
       public CommentRecord findComment(long timestamp)  throws Exception {
@@ -674,13 +665,13 @@ public class NoteRecord extends DOMFace implements EmailContext {
       }
 
 
-      public Vector<String> getDocList()  throws Exception {
+      public List<String> getDocList()  throws Exception {
           return getVector("docList");
       }
       public void addDocId(String goalId)  throws Exception {
           this.addVectorValue("docList", goalId);
       }
-      public void setDocList(Vector<String> newVal) throws Exception {
+      public void setDocList(List<String> newVal) throws Exception {
           setVector("docList", newVal);
       }
 
@@ -689,7 +680,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
        * and no duplicates
        */
       public List<NGLabel> getLabels(NGPage ngp) throws Exception {
-          Vector<NGLabel> res = new Vector<NGLabel>();
+          List<NGLabel> res = new ArrayList<NGLabel>();
           for (String name : getVector("labels")) {
               NGLabel aLabel = ngp.getLabelRecordOrNull(name);
               if (aLabel!=null) {
@@ -705,7 +696,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
        * set the list of labels on a document
        */
       public void setLabels(List<NGLabel> values) throws Exception {
-          Vector<String> labelNames = new Vector<String>();
+          List<String> labelNames = new ArrayList<String>();
           for (NGLabel aLable : values) {
               labelNames.add(aLable.getName());
           }
@@ -750,7 +741,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
       }
 
       public void topicEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note, MailFile mailFile) throws Exception {
-          Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
+          List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
           String targetRole = note.getTargetRole();
           if (targetRole==null || targetRole.length()==0) {
               targetRole = "Members";
@@ -946,7 +937,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
          }
          if (noteObj.has("labelMap")) {
              JSONObject labelMap = noteObj.getJSONObject("labelMap");
-             Vector<NGLabel> selectedLabels = new Vector<NGLabel>();
+             List<NGLabel> selectedLabels = new ArrayList<NGLabel>();
              for (NGLabel stdLabel : ((NGPage)ar.ngp).getAllLabels()) {
                  String labelName = stdLabel.getName();
                  if (labelMap.optBoolean(labelName)) {

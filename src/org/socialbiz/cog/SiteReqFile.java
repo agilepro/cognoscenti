@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -57,7 +56,7 @@ public class SiteReqFile extends DOMFile {
         siteReqFile = readSiteReqFile(cog);
 
         long hundredDaysAgo = System.currentTimeMillis() - 8640000000L;
-        Vector<SiteRequest> requests = siteReqFile.getChildren("request", SiteRequest.class);
+        List<SiteRequest> requests = siteReqFile.getChildren("request", SiteRequest.class);
         ArrayList<SiteRequest> outOfDate = new ArrayList<SiteRequest>();
         allRequests = new ArrayList<SiteRequest>();
         for (SiteRequest accountDetails : requests) {

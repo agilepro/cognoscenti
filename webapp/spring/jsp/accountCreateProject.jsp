@@ -16,7 +16,7 @@ Required parameter:
     String accountKey = ar.reqParam("accountId");
 
     UserProfile  uProf =ar.getUserProfile();
-    Vector<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
+    List<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
 
     String upstream = ar.defParam("upstream", "");
     String desc = ar.defParam("desc", "");
@@ -75,8 +75,7 @@ Required parameter:
                         <td><Select class="form-control" id="templateName" name="templateName">
                                 <option value="" selected>Select</option>
                                 <%
-                                for (NGPageIndex ngpi : templates)
-                                {
+                                for (NGPageIndex ngpi : templates) {
                                     %>
                                     <option value="<%ar.writeHtml(ngpi.containerKey);%>" ><%ar.writeHtml(ngpi.containerName);%></option>
                                     <%

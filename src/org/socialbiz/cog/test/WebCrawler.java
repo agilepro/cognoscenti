@@ -30,14 +30,12 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.w3c.dom.Document;
-
-import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.DOMFile;
+import org.socialbiz.cog.exception.NGException;
+import org.w3c.dom.Document;
 
 
     public class WebCrawler {
@@ -60,7 +58,7 @@ import org.socialbiz.cog.DOMFile;
         public void initialize(String[] initdata) {
             URL url;
             knownURLs = new Hashtable<URL, Integer>();
-            newURLs = new Vector<URL>();
+            newURLs = new ArrayList<URL>();
             try {
                 url = new URL(initdata[0]);
             } catch (MalformedURLException e) {

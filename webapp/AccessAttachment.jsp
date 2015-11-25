@@ -19,7 +19,6 @@
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.List"
-%><%@page import="java.util.Vector"
 %><%
 
     ar = AuthRequest.getOrCreate(request, response, out);

@@ -19,10 +19,8 @@
 %><%@page import="org.socialbiz.cog.rest.TaskHelper"
 %><%@page import="java.io.StringWriter"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.List"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%
     ar = AuthRequest.getOrCreate(request, response, out);
@@ -40,8 +38,8 @@
     specialTab = "Multi-Status";
     newUIResource = "projectAllTasks.htm";
 
-    Vector<WatchRecord> watchList = uProf.getWatchList();
-    Vector<NGPageIndex> watchedProjects = new Vector<NGPageIndex>();
+    List<WatchRecord> watchList = uProf.getWatchList();
+    List<NGPageIndex> watchedProjects = new ArrayList<NGPageIndex>();
 
 
     String srid = ar.reqParam("srid");

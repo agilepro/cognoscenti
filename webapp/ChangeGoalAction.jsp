@@ -5,7 +5,6 @@
 %><%@page import="org.socialbiz.cog.NGPageIndex"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Can't  change the goal/purpose of this page.");

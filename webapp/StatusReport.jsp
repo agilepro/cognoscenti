@@ -17,8 +17,6 @@
 %><%@page import="org.socialbiz.cog.rest.TaskHelper"
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Unable to see status report.");
@@ -57,13 +55,11 @@
            <td>Due</td>
         </tr>
 <%
-    Vector<GoalRecord> myActive = th.getActiveTasks();
+    List<GoalRecord> myActive = th.getActiveTasks();
     String lastKey ="";
-    for (GoalRecord goal : myActive)
-    {
+    for (GoalRecord goal : myActive) {
         int state = goal.getState();
-        if (state != BaseRecord.STATE_ACCEPTED)
-        {
+        if (state != BaseRecord.STATE_ACCEPTED) {
             continue;
         }
         NGPage taskPage = goal.getProject();

@@ -29,12 +29,13 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
-import java.util.Vector;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -1691,8 +1692,8 @@ public class AuthRequest
         }
     }
 
-    public Vector<AddressListEntry> getMatchedFragment(String frag) throws Exception{
-        Vector<AddressListEntry> matchedContacts = null;
+    public List<AddressListEntry> getMatchedFragment(String frag) throws Exception{
+        List<AddressListEntry> matchedContacts = null;
         UserPage up = getUserPage();
         NGRole aRole  = up.getRole("Contacts");
         if(aRole != null){
@@ -1700,7 +1701,7 @@ public class AuthRequest
         }
 
         if(matchedContacts == null){
-            matchedContacts = new Vector<AddressListEntry>();
+            matchedContacts = new ArrayList<AddressListEntry>();
         }
         matchedContacts.addAll(up.getPeopleYouMayKnowList());
         return matchedContacts;

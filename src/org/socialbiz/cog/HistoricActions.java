@@ -1,6 +1,7 @@
 package org.socialbiz.cog;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.socialbiz.cog.mail.EmailSender;
 import org.workcast.streams.MemFile;
@@ -159,7 +160,7 @@ public class HistoricActions {
         owner.writeLink(clone);
         clone.write("</td></tr>\n</table>\n</body></html>");
 
-        Vector<OptOutAddr> v = new Vector<OptOutAddr>();
+        List<OptOutAddr> v = new ArrayList<OptOutAddr>();
         v.add(new OptOutIndividualRequest(new AddressListEntry(owner)));
         clone.flush();
 
@@ -174,7 +175,7 @@ public class HistoricActions {
      * @param sendEmail set to true if you want email sent, false if not.
      */
     public void addMembersToRole(NGContainer ngc, NGRole role, String memberList, boolean sendEmail) throws Exception {
-        Vector<AddressListEntry> emailList = AddressListEntry.parseEmailList(memberList);
+        List<AddressListEntry> emailList = AddressListEntry.parseEmailList(memberList);
         for (AddressListEntry ale : emailList) {
             addMemberToRole(ngc, role, ale, sendEmail);
         }
@@ -250,7 +251,7 @@ public class HistoricActions {
 
         EmailSender.containerEmail(ooa, container, "Added to " + role
                 + " role of " + container.getFullName(), body.toString(),
-                null, new Vector<String>(), clone.getCogInstance());
+                null, new ArrayList<String>(), clone.getCogInstance());
     }
 
 

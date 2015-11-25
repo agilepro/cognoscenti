@@ -25,7 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Vector;
+import java.util.List;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -163,7 +163,7 @@ public class LocalAccess extends ConnectionTypeBase{
     }
 
     private void checkAccess(String path)throws Exception {
-        Vector<LocalFolderConfig> lclConnections = FolderAccessHelper.getLoclConnections();
+        List<LocalFolderConfig> lclConnections = FolderAccessHelper.getLoclConnections();
         if(lclConnections.isEmpty()){
             throw new NGException("nugen.exception.co.cofig.for.local.con",null);
         }

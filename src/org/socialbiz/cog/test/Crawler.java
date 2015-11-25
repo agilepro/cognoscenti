@@ -20,7 +20,16 @@
 
 package org.socialbiz.cog.test;
 
+import java.io.PrintWriter;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.TreeSet;
+
 import org.socialbiz.cog.exception.ProgramLogicError;
+
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.JavaScriptPage;
 import com.gargoylesoftware.htmlunit.Page;
@@ -33,18 +42,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
-
-
-import java.io.PrintWriter;
-import java.lang.Comparable;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Random;
-import java.util.TreeSet;
-import java.util.Vector;
 
 public class Crawler {
 
@@ -65,9 +62,9 @@ public class Crawler {
     public static int YUI_SHOW = 0;
     public static int YUI_HIDE = 1;
 
-    Vector<PageTestStatus> pagesToCrawl = new Vector<PageTestStatus>();
+    List<PageTestStatus> pagesToCrawl = new ArrayList<PageTestStatus>();
     BrowserVersion myBrowser = BrowserVersion.FIREFOX_3; // this is the only one for now. later, we can add emulation of other browsers
-    Vector<String> errors = new Vector<String>();
+    List<String> errors = new ArrayList<String>();
     StringBuffer excludePages = new StringBuffer();
 
     public static void main(String[] args)
@@ -386,28 +383,20 @@ public class Crawler {
         log.prn(Log.ALL, "Total:["+ts.size()+"] Passed:["+passedCount+"] Failed:["+failedCount+"] YUI Error:["+yuiErrorCount+"] Skipped:["+skippedCount+"] Untested:["+untestedCount+"] Unknown result:["+unknownResultCount+"]\n");
     }
 
-    private void printSummary()
-    {
+    private void printSummary() {
         log.prn(Log.ALL, "SUMMARY: Found ["+ errors.size() + "] exceptions");
-        Enumeration<String> e = errors.elements();
         int i=1;
-        while (e.hasMoreElements())
-        {
-            log.prn(Log.ALL, "<a href=\"#e" + i + "\">(" + i + ")</a> "+ e.nextElement());
+        for (String oneErr : errors) {
+            log.prn(Log.ALL, "<a href=\"#e" + i + "\">(" + i + ")</a> "+oneErr);
             i++;
         }
         out.flush();
     }
 
-    public void getNewAnchors(HtmlPage htmlPage)
-        throws Exception
-    {
+    public void getNewAnchors(HtmlPage htmlPage) throws Exception {
         int newAnchorCount = 0;
         List<HtmlAnchor> anchorList = htmlPage.getAnchors();
-        ListIterator<HtmlAnchor> anchorIter = anchorList.listIterator();
-        while(anchorIter.hasNext())
-        {
-            HtmlAnchor anchor = anchorIter.next();
+        for (HtmlAnchor anchor : anchorList) {
             String href = anchor.getHrefAttribute();
 
             //strip off anything after the hash mark (since that is addressing a
@@ -521,7 +510,7 @@ public class Crawler {
         int checkPage = random.nextInt(knownPages);
         while (checkPage<knownPages)
         {
-            PageTestStatus possible = pagesToCrawl.elementAt(checkPage);
+            PageTestStatus possible = pagesToCrawl.get(checkPage);
             if (!possible.isTested())
             {
                 return possible;
@@ -533,7 +522,7 @@ public class Crawler {
         checkPage=0;
         while (checkPage<knownPages)
         {
-            PageTestStatus possible = pagesToCrawl.elementAt(checkPage);
+            PageTestStatus possible = pagesToCrawl.get(checkPage);
             if (!possible.isTested())
             {
                 return possible;

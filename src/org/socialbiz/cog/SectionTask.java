@@ -22,7 +22,6 @@ package org.socialbiz.cog;
 
 import java.io.Writer;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -132,7 +131,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
     }
 
 
-    public void findLinks(Vector<String> v, NGSection sec)
+    public void findLinks(List<String> v, NGSection sec)
         throws Exception
     {
         for (GoalRecord tr : getAllTasks(sec))
@@ -195,11 +194,8 @@ public class SectionTask extends SectionUtil implements SectionFormat
     * IDs into the vector so that we can generate another ID and assure it
     * does not duplication any id found here.
     */
-    public void findIDs(Vector<String> v, NGSection sec)
-        throws Exception
-    {
-        for (GoalRecord tr : getAllTasks(sec))
-        {
+    public void findIDs(List<String> v, NGSection sec) throws Exception {
+        for (GoalRecord tr : getAllTasks(sec)) {
             v.add(tr.getId());
         }
     }

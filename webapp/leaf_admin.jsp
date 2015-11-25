@@ -17,8 +17,6 @@
 %><%@page import="org.socialbiz.cog.mail.MailInst"
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%
 
@@ -50,7 +48,7 @@
     boolean isAdmin = ar.isAdmin();
 
     ar.retPath="../../";
-    Vector allSecs = ngp.getAllSections();
+    List<NGSection> allSecs = ngp.getAllSections();
 
     String[] names = ngp.getPageNames();
 
@@ -256,10 +254,7 @@
             <li>Section
                 <ul>
 <%
-    Enumeration senum = allSecs.elements();
-    while (senum.hasMoreElements())
-    {
-        NGSection sec = (NGSection) senum.nextElement();
+    for (NGSection sec : allSecs) {
         String secName = sec.getName();
         if(secName.equals("Tasks"))
         {

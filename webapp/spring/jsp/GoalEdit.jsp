@@ -41,7 +41,7 @@ Required parameters:
         allHist.put(history.getJSON(ngp, ar));
     }
 
-    Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
+    List<NGPageIndex> templates = new ArrayList<NGPageIndex>();
     for(TemplateRecord tr : uProf.getTemplateList()){
         String pageKey = tr.getPageKey();
         NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);

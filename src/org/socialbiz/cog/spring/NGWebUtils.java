@@ -27,7 +27,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -218,7 +217,7 @@ public class NGWebUtils {
             } else if (op.equals("Add")) {
                 eventType = HistoryRecord.EVENT_PLAYER_ADDED;
 
-                Vector<AddressListEntry> contactList = AddressListEntry
+                List<AddressListEntry> contactList = AddressListEntry
                         .parseEmailList(emailIds);
                 NGWebUtils.addMembersInContacts(ar, contactList);
             }

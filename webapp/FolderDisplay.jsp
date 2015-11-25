@@ -39,7 +39,7 @@
             String go = ar.getCompleteURL();
             FolderAccessHelper fdh = new FolderAccessHelper(ar);
             ResourceEntity ent = fdh.getResourceEntity(combo, true);
-            Vector<ResourceEntity> entityList = ent.getChidEntityList();
+            List<ResourceEntity> entityList = ent.getChidEntityList();
 
             ar.write("<h3>");
             displayHeader(ar, ent, pageId);
@@ -85,7 +85,7 @@
             ar.write("\n   <td align=\"left\">");
             ar.write("\n   </td>");
             ar.write("\n</tr>");
-            Vector<ResourceEntity> fileList = new Vector<ResourceEntity>();
+            List<ResourceEntity> fileList = new Vector<ResourceEntity>();
             for (ResourceEntity entity : entityList) {
                 if (entity.isFile()) {
                     fileList.add(entity);
@@ -217,7 +217,7 @@
                 combo = combo + "/";
             }
             ResourceEntity ent = fdh.getResourceEntity(combo, true);
-            Vector<ResourceEntity> entityList = ent.getChidEntityList();
+            List<ResourceEntity> entityList = ent.getChidEntityList();
 
             ar.write("<h3>");
             displayHeader(ar, ent, null);
@@ -302,7 +302,7 @@
             ar.write("\n   </td>");
             ar.write("\n</tr>");
             ar.write("\n<tr><td><h2>Folders</h2></td></tr>");
-            Vector<ResourceEntity> fileList = new Vector<ResourceEntity>();
+            List<ResourceEntity> fileList = new Vector<ResourceEntity>();
             for (ResourceEntity entity : entityList) {
                 if (entity.isFile()) {
                     fileList.add(entity);

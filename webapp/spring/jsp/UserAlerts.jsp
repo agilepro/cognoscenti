@@ -3,8 +3,6 @@
 %><%@include file="/spring/jsp/include.jsp"
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%@page import="java.util.ArrayList"
 %><%@page import="org.socialbiz.cog.AuthRequest"
 %><%@page import="org.socialbiz.cog.mail.DailyDigest"
@@ -31,12 +29,12 @@ Required Parameters:
 
 */
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-    Vector<NGPageIndex> ownedProjs = ar.getCogInstance().getAllContainers();
-    boolean noneFound = ownedProjs.size()==0;
+    //List<NGPageIndex> ownedProjs = ar.getCogInstance().getAllContainers();
+    //boolean noneFound = ownedProjs.size()==0;
 
     ApplicationContext context = (ApplicationContext)request.getAttribute("messages");
 
-    Vector<NotificationRecord> notifications = uProf.getNotificationList();
+    List<NotificationRecord> notifications = uProf.getNotificationList();
     JSONArray allAlerts = new JSONArray();
 
     //NEED TO FILL THE ARRAY HERE

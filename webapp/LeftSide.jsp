@@ -132,15 +132,12 @@
                 <ul>
 <%
 NGSession ngsession = ar.ngsession;
-if (ngsession!=null)
-{
-    Vector<RUElement> recent = ngsession.recentlyVisited;
+if (ngsession!=null) {
+    List<RUElement> recent = ngsession.recentlyVisited;
     RUElement.sortByDisplayName(recent);
-    for(RUElement rue : recent)
-    {
+    for(RUElement rue : recent) {
         NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(rue.key);
-        if (ngpi!=null)
-        {
+        if (ngpi!=null) {
             ngpi.writeTruncatedLink(ar, 20);
             ar.write("<br/>\n");
         }
@@ -206,12 +203,8 @@ if (ngp != null)
 <%
     NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(ngp.getKey());
 
-    if (ngpi!=null)
-    {
-        Enumeration en = ngpi.getInLinkPages().elements();
-        while (en.hasMoreElements())
-        {
-            NGPageIndex refB = (NGPageIndex) en.nextElement();
+    if (ngpi!=null) {
+        for (NGPageIndex refB : ngpi.getInLinkPages()) {
             refB.writeTruncatedLink(ar, 20);
             ar.write("\n<br/>\n");
         }
@@ -227,12 +220,8 @@ if (ngp != null)
         <div class="box_body">
             <ul>
 <%
-    if (ngpi!=null)
-    {
-        Enumeration en = ngpi.getOutLinkPages().elements();
-        while (en.hasMoreElements())
-        {
-            NGPageIndex refB = (NGPageIndex) en.nextElement();
+    if (ngpi!=null) {
+        for (NGPageIndex refB : ngpi.getOutLinkPages()) {
             refB.writeTruncatedLink(ar, 20);
             ar.write("\n<br/>\n");
         }

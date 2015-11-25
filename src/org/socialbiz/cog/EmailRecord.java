@@ -22,8 +22,9 @@ package org.socialbiz.cog;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
@@ -84,10 +85,10 @@ public class EmailRecord extends DOMFace
         setAttribute("fromAddress",fromAddress);
     }
 
-    public Vector<OptOutAddr> getAddressees() throws Exception {
-        Vector<DOMFace> children = getChildren("to", DOMFace.class);
+    public List<OptOutAddr> getAddressees() throws Exception {
+        List<DOMFace> children = getChildren("to", DOMFace.class);
 
-        Vector<OptOutAddr> res = new Vector<OptOutAddr>();
+        ArrayList<OptOutAddr> res = new ArrayList<OptOutAddr>();
         for (DOMFace assignee : children) {
 
             String ootype = assignee.getAttribute("ootype");
@@ -115,7 +116,7 @@ public class EmailRecord extends DOMFace
     }
 
 
-    public void setAddressees(Vector<OptOutAddr> inad) throws Exception {
+    public void setAddressees(List<OptOutAddr> inad) throws Exception {
         removeAllNamedChild("to");
         for (OptOutAddr ooa : inad) {
 
@@ -211,10 +212,10 @@ public class EmailRecord extends DOMFace
         setScalar("exception", NGException.getFullMessage(e));
     }
 
-    public Vector<String> getAttachmentIds() {
+    public List<String> getAttachmentIds() {
         return getVector("attachid");
     }
-    public void setAttachmentIds(Vector<String> ids) {
+    public void setAttachmentIds(List<String> ids) {
         setVector("attachid", ids);
     }
 

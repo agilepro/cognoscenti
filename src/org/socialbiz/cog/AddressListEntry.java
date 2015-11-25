@@ -20,10 +20,10 @@
 
 package org.socialbiz.cog;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.workcast.json.JSONObject;
@@ -497,7 +497,7 @@ public class AddressListEntry implements UserRef
     public static void writeParsedLinks(AuthRequest ar, String addressList)
         throws Exception
     {
-        Vector<AddressListEntry> list = parseEmailList(addressList);
+        List<AddressListEntry> list = parseEmailList(addressList);
         boolean needsComma = false;
         for (AddressListEntry ale : list)
         {
@@ -516,10 +516,10 @@ public class AddressListEntry implements UserRef
     * semicolons, or carriage returns, this will parse the list, and return a
     * vector of AddressListEntry objects.
     */
-    public static Vector<AddressListEntry> parseEmailList(String addressList)
+    public static List<AddressListEntry> parseEmailList(String addressList)
         throws Exception
     {
-        Vector<AddressListEntry> res = new Vector<AddressListEntry>();
+        List<AddressListEntry> res = new ArrayList<AddressListEntry>();
 
         int start = 0;
         while (start < addressList.length())

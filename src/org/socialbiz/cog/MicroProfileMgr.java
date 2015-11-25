@@ -21,10 +21,9 @@
 package org.socialbiz.cog;
 
 import java.io.File;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -34,7 +33,7 @@ public class MicroProfileMgr {
 
     private static Hashtable<String, MicroProfileRecord> microProfiles = new Hashtable<String, MicroProfileRecord>();
     private static DOMFile  profileFile;
-    private static Vector<AddressListEntry> allProfileIds = new Vector<AddressListEntry>();
+    private static List<AddressListEntry> allProfileIds = new ArrayList<AddressListEntry>();
 
     public synchronized static void loadMicroProfilesInMemory(Cognoscenti cog) throws Exception {
         ConfigFile config = cog.getConfig();
@@ -64,7 +63,7 @@ public class MicroProfileMgr {
 
     public synchronized static void clearAllStaticVars() {
         microProfiles = new Hashtable<String, MicroProfileRecord>();
-        allProfileIds = new Vector<AddressListEntry>();
+        allProfileIds = new ArrayList<AddressListEntry>();
         profileFile = null;
     }
 
@@ -72,7 +71,7 @@ public class MicroProfileMgr {
     public static void refreshMicroProfilesHashTable() throws Exception
     {
         microProfiles = new Hashtable<String, MicroProfileRecord>();
-        allProfileIds = new Vector<AddressListEntry>();
+        allProfileIds = new ArrayList<AddressListEntry>();
 
         for (MicroProfileRecord profileRecord : getAllMicroProfileRecords()){
             String lowerCase = profileRecord.getId().toLowerCase();
@@ -81,13 +80,13 @@ public class MicroProfileMgr {
         }
     }
 
-    public static Vector<MicroProfileRecord> getAllMicroProfileRecords() throws Exception
+    public static List<MicroProfileRecord> getAllMicroProfileRecords() throws Exception
     {
         if (profileFile==null)
         {
             throw new ProgramLogicError("profileFile is null when it shoudl not be.  May not have been initialized correctly.");
         }
-        Vector<MicroProfileRecord> vc = profileFile.getChildren("microprofile", MicroProfileRecord.class);
+        List<MicroProfileRecord> vc = profileFile.getChildren("microprofile", MicroProfileRecord.class);
         return vc;
     }
 
@@ -96,7 +95,7 @@ public class MicroProfileMgr {
      * some with names, and others without.
      */
     public static List<AddressListEntry> getAllUsers() throws Exception {
-        Vector<AddressListEntry> res = new Vector<AddressListEntry>();
+        List<AddressListEntry> res = new ArrayList<AddressListEntry>();
         for (MicroProfileRecord mpr : getAllMicroProfileRecords()) {
             String dName = mpr.getDisplayName();
             if (dName!=null && dName.length()>0) {
@@ -152,10 +151,8 @@ public class MicroProfileMgr {
         if (profileFile==null) {
             throw new ProgramLogicError("profileFile is null when it shoudl not be.  May not have been initialized correctly.");
         }
-        Vector<MicroProfileRecord> vc = profileFile.getChildren("microprofile", MicroProfileRecord.class);
-        Enumeration<MicroProfileRecord> e = vc.elements();
-        while (e.hasMoreElements()) {
-            MicroProfileRecord child = e.nextElement();
+        List<MicroProfileRecord> vc = profileFile.getChildren("microprofile", MicroProfileRecord.class);
+        for (MicroProfileRecord child : vc) {
             if (id.equals(child.getAttribute("id"))) {
                 profileFile.removeChild(child);
                 refreshMicroProfilesHashTable();
@@ -171,7 +168,7 @@ public class MicroProfileMgr {
         child.setDisplayName(displayName);
     }
 
-    public static Vector<AddressListEntry> getAllProfileIds() throws Exception
+    public static List<AddressListEntry> getAllProfileIds() throws Exception
     {
         return allProfileIds;
     }

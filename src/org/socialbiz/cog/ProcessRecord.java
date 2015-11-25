@@ -20,10 +20,9 @@
 
 package org.socialbiz.cog;
 
-import org.socialbiz.cog.exception.ProgramLogicError;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
+
+import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -113,24 +112,21 @@ public class ProcessRecord extends BaseRecord
             return new LicensedURL[0];
         }
 
-        Vector<DOMFace> vect = ppEle.getChildren("parentProcess", DOMFace.class);
+        List<DOMFace> vect = ppEle.getChildren("parentProcess", DOMFace.class);
         LicensedURL[] parents = new LicensedURL[vect.size()];
-        Enumeration<DOMFace> en = vect.elements();
-        for (int i=0; en.hasMoreElements(); i++)
-        {
-            DOMFace ele = en.nextElement();
+        int i=0;
+        for (DOMFace ele : vect) {
 
             //need to migrate old documents in some cases
             //used to put the URL in the attribute called name
             //so if that exists, convert it over.
             String nameAttr = ele.getAttribute("name");
-            if (nameAttr.length()>0)
-            {
+            if (nameAttr.length()>0) {
                 ele.setAttribute("name", null);
                 ele.setTextContents(nameAttr);
             }
 
-            parents[i] = LicensedURL.parseDOMElement(ele);
+            parents[i++] = LicensedURL.parseDOMElement(ele);
         }
         return parents;
     }
@@ -243,7 +239,7 @@ public class ProcessRecord extends BaseRecord
             throws Exception
     {
         DOMFace historyContainer = requireChild("history", DOMFace.class);
-        Vector<HistoryRecord> vect = historyContainer.getChildren("event", HistoryRecord.class);
+        List<HistoryRecord> vect = historyContainer.getChildren("event", HistoryRecord.class);
         HistoryRecord.sortByTimeStamp(vect);
         return vect;
     }

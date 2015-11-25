@@ -20,8 +20,9 @@
 
 package org.socialbiz.cog.rest;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
@@ -192,7 +193,7 @@ public class ResourceBook implements NGResource
     public void loadContent() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        Vector<NGBook> books  = new Vector<NGBook>();
+        List<NGBook> books  = new ArrayList<NGBook>();
         if("*".equals(lid)){
             books = NGBook.getAllSites();
         }

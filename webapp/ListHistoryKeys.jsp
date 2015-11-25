@@ -11,22 +11,18 @@
 %><%@page import="java.util.Collections"
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.Properties"
-%><%@page import="java.util.Vector"
 %><%
     AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Can not run Admin page");
 
     Hashtable<String,String> allKeys = new Hashtable<String,String>();
-    Vector<String> results = new Vector();
+    List<String> results = new Vector();
 
-    for (NGPageIndex ngpi : ar.getCogInstance().getAllContainers())
-    {
+    for (NGPageIndex ngpi : ar.getCogInstance().getAllContainers()) {
         NGContainer ngc = ngpi.getContainer();
-        for (HistoryRecord hr : ngc.getAllHistory())
-        {
+        for (HistoryRecord hr : ngc.getAllHistory()) {
             String cKey = hr.getCombinedKey();
-            if (allKeys.get(cKey)==null)
-            {
+            if (allKeys.get(cKey)==null) {
                 allKeys.put(cKey, cKey);
                 results.add(cKey);
             }

@@ -20,11 +20,12 @@
 
 package org.socialbiz.cog;
 
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.socialbiz.cog.exception.NGException;
 
 /**
 * ReminderMgr manages the collection of reminders for a page
@@ -38,16 +39,16 @@ public class ReminderMgr extends DOMFace
     }
 
 
-    public Vector<ReminderRecord> getAllReminders()
+    public List<ReminderRecord> getAllReminders()
         throws Exception
     {
-        Vector<ReminderRecord> vc = getChildren("reminder", ReminderRecord.class);
+        List<ReminderRecord> vc = getChildren("reminder", ReminderRecord.class);
         return vc;
     }
 
-    public Vector<ReminderRecord> getOpenReminders() throws Exception {
-        Vector<ReminderRecord> vc = getChildren("reminder", ReminderRecord.class);
-        Vector<ReminderRecord> v = new Vector<ReminderRecord>();
+    public List<ReminderRecord> getOpenReminders() throws Exception {
+        List<ReminderRecord> vc = getChildren("reminder", ReminderRecord.class);
+        List<ReminderRecord> v = new ArrayList<ReminderRecord>();
         for (ReminderRecord rRec : vc) {
             if (rRec.isOpen()) {
                 v.add(rRec);
@@ -56,9 +57,9 @@ public class ReminderMgr extends DOMFace
         return v;
     }
 
-    public Vector<ReminderRecord> getUserReminders(UserProfile up)throws Exception
+    public List<ReminderRecord> getUserReminders(UserProfile up)throws Exception
     {
-        Vector<ReminderRecord> result = new Vector<ReminderRecord>();
+        List<ReminderRecord> result = new ArrayList<ReminderRecord>();
         for (ReminderRecord reminderRecord : getAllReminders()) {
             if(reminderRecord.isOpen() && up != null && up.hasAnyId(reminderRecord.getAssignee())){
                 result.add(reminderRecord);
@@ -68,10 +69,8 @@ public class ReminderMgr extends DOMFace
     }
 
     public ReminderRecord findReminderByID(String id) throws Exception {
-        Vector<ReminderRecord> v = getAllReminders();
-        Enumeration<ReminderRecord> e = v.elements();
-        while (e.hasMoreElements()) {
-            ReminderRecord rRec = e.nextElement();
+        List<ReminderRecord> v = getAllReminders();
+        for (ReminderRecord rRec : v) {
             if (id.equals(rRec.getId())) {
                 return rRec;
             }
@@ -93,7 +92,7 @@ public class ReminderMgr extends DOMFace
     }
 
     public boolean removeReminder(String id) throws Exception {
-        Vector<ReminderRecord> vc = getChildren("reminder", ReminderRecord.class);
+        List<ReminderRecord> vc = getChildren("reminder", ReminderRecord.class);
         for (ReminderRecord child : vc) {
             if (id.equals(child.getAttribute("id"))) {
                 removeChild(child);

@@ -3,7 +3,7 @@
 %><%@page import="org.socialbiz.cog.WatchRecord"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-    Vector<WatchRecord> watchList = uProf.getWatchList();
+    List<WatchRecord> watchList = uProf.getWatchList();
     boolean noneFound = watchList.size()==0;
 
     JSONArray wList = new JSONArray();

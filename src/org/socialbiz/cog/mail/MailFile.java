@@ -26,7 +26,6 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.NGPage;
@@ -117,7 +116,7 @@ public class MailFile extends JSONWrapper {
             String addressee,
             String subject,
             String emailBody,
-            Vector<String> attachIds) throws Exception {
+            List<String> attachIds) throws Exception {
 
         if (ngc == null) {
             throw new ProgramLogicError("createEmailRecord requires a non null ngc parameter");

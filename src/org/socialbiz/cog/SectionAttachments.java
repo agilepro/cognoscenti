@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -69,7 +68,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             return;
         }
 
-        Vector<AttachmentRecord> oldAtts = oldAttachmentsContainer.getChildren("attachment", AttachmentRecord.class);
+        List<AttachmentRecord> oldAtts = oldAttachmentsContainer.getChildren("attachment", AttachmentRecord.class);
         Hashtable<String,String> idset = new Hashtable<String,String>();
         sortByVersion(oldAtts);
         for(AttachmentRecord att : oldAtts) {
@@ -194,7 +193,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
     * does not duplication any id found here.
     */
     @Override
-    public void findIDs(Vector<String> v, NGSection sec)
+    public void findIDs(List<String> v, NGSection sec)
         throws Exception
     {
         //legacy upgrade...there are some old attachments sections that are to be automatically

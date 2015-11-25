@@ -10,7 +10,6 @@
 %><%@page import="org.socialbiz.cog.UtilityMethods"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Can not attach a document to this project.");
@@ -22,7 +21,7 @@
     ar.setPageAccessLevels(ngp);
 
     UserPage uPage = ar.getUserPage();
-    Vector<ConnectionSettings> connectionList = uPage.getAllConnectionSettings();
+    List<ConnectionSettings> connectionList = uPage.getAllConnectionSettings();
     if(connectionList.isEmpty()){
         throw new Exception("User has no connections");
     }

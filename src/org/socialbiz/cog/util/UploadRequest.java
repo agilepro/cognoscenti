@@ -22,6 +22,7 @@ package org.socialbiz.cog.util;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+
 import org.socialbiz.cog.exception.NGException;
 
 /* UploadRequest.java
@@ -29,7 +30,7 @@ import org.socialbiz.cog.exception.NGException;
  * Support request for file uploader in new gen
  *
  * This is implemented as a hast table of hashtables.  But, the index of the
- * inner hashtable is always an integer.  The inner should be a Vector (or a ArrayList)
+ * inner hashtable is always an integer.  The inner should be an ArrayList
  * because that is indexed by number, instead of by a hash object.
  */
 

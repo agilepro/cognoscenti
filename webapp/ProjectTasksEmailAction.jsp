@@ -33,7 +33,7 @@
 
     ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
-    Vector<AddressListEntry> sendTo = new Vector<AddressListEntry>();
+    List<AddressListEntry> sendTo = new ArrayList<AddressListEntry>();
     String thisPageAddress = ar.getResourceURL(ngp,"process.htm");
     String subject = "Action Items for: "+ngp.getFullName();
 
@@ -52,7 +52,7 @@
         if (emailto!=null && emailto.length()>0)
         {
             clone.write("<br/>\nAdditionally: ");
-            Vector<AddressListEntry> v2 = EmailSender.parseAddressList(emailto);
+            List<AddressListEntry> v2 = EmailSender.parseAddressList(emailto);
             appendUsersF(clone, v2, sendTo);
         }
 
@@ -66,23 +66,21 @@
 
 
         ProjectTasksEmailBody(clone, ngp, 1, thisPageAddress, 1);
-        Vector addressOnly = new Vector();
+        List addressOnly = new ArrayList();
         clone.write("\n<p></p>");
         writeUsers(clone, sendTo, addressOnly);
         clone.write("</body></html>");
 
         EmailSender.quickEmail(addressOnly, null, subject, bodyWriter.toString());
 
-        Enumeration e3 = addressOnly.elements();
         StringBuffer nameList = new StringBuffer();
-        while (e3.hasMoreElements())
-        {
-            String addr = (String) e3.nextElement();
-            nameList.append(addr);
-            if (e3.hasMoreElements())
-            {
+        boolean isNotFirst = false;
+        while (String addr : addressOnly) {
+            if (isNotFirst) {
                 nameList.append(", ");
             }
+            nameList.append(addr);
+            isNotFirst = true;
         }
 
         //OK, done, so write history about it
@@ -100,46 +98,34 @@
 
 
 
-public void appendUsersF(AuthRequest clone, List<AddressListEntry> members, Vector collector)
-    throws Exception
-{
-    for (AddressListEntry ale : members)
-    {
-        Enumeration e2 = collector.elements();
+public void appendUsersF(AuthRequest clone, List<AddressListEntry> members, List<AddressListEntry> collector)
+            throws Exception {
+    for (AddressListEntry ale : members) {
         boolean found = false;
-        while (e2.hasMoreElements())
-        {
-            AddressListEntry coll = (AddressListEntry)e2.nextElement();
-            if (coll.hasAnyId(ale.getUniversalId()))
-            {
+        for (AddressListEntry coll:collector) {
+            if (coll.hasAnyId(ale.getUniversalId())) {
                 found = true;
                 break;
             }
         }
-        if (!found)
-        {
+        if (!found) {
             collector.add(ale);
         }
     }
 }
 
 
-public void writeUsers(AuthRequest clone, Vector collector, Vector addressOnly)
+public void writeUsers(AuthRequest clone, List<AddressListEntry> collector, List<String> addressOnly)
     throws Exception
 {
     clone.write("\n<p>This message sent to:");
-    Enumeration e = collector.elements();
-    while (e.hasMoreElements())
-    {
-        AddressListEntry ale = (AddressListEntry)e.nextElement();
+    for (AddressListEntry ale : collector) {
         String email = ale.getEmail();
         ale.writeLink(clone);
-        if (email!=null && email.length()>0)
-        {
+        if (email!=null && email.length()>0) {
             addressOnly.add(email);
         }
-        else
-        {
+        else {
             clone.write("(no email) ");
         }
     }

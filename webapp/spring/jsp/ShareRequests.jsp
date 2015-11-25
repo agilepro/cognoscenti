@@ -51,7 +51,7 @@
             NGPage aPage = ngpi.getPage();
 
             ReminderMgr rMgr = aPage.getReminderMgr();
-            Vector<ReminderRecord> rVec = rMgr.getUserReminders(ar.getUserProfile());
+            List<ReminderRecord> rVec = rMgr.getUserReminders(ar.getUserProfile());
             AddressListEntry ale = null;
             for(ReminderRecord reminder : rVec)
             {

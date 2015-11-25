@@ -17,7 +17,6 @@
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Hashtable"
-%><%@page import="java.util.Vector"
 %><%
     ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Unable to see user profile.");
@@ -58,7 +57,7 @@
         long lastLogin = uProf.getLastLogin();
         long lastUpdated = uProf.getLastUpdated();
         ValueElement[] favs = uProf.getFavorites();
-        Vector<WatchRecord> watchList = uProf.getWatchList();
+        List<WatchRecord> watchList = uProf.getWatchList();
 
         boolean viewingSelf = ar.getUserProfile().getKey().equals(uProf.getKey());
 
@@ -91,25 +90,18 @@
         if (watchList != null)
         {
             Hashtable visitDate = new Hashtable();
-            Enumeration e = watchList.elements();
-            Vector watchedProjects = new Vector();
-            while (e.hasMoreElements())
-            {
-                WatchRecord wr = (WatchRecord)e.nextElement();
+            List<NGPageIndex> watchedProjects = new ArrayList<NGPageIndex>();
+            for (WatchRecord wr : watchList) {
                 String pageKey = wr.getPageKey();
                 NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
-                if (ngpi!=null)
-                {
+                if (ngpi!=null) {
                     watchedProjects.add(ngpi);
                     visitDate.put(ngpi.containerKey, new Long(wr.getLastSeen()));
                 }
             }
 
             NGPageIndex.sortInverseChronological(watchedProjects);
-            e = watchedProjects.elements();
-            while (e.hasMoreElements())
-            {
-                NGPageIndex ngpi = (NGPageIndex) e.nextElement();
+            for (NGPageIndex ngpi : watchedProjects) {
                 long  changeTime = 0;
                 ar.write("<tr><td><a href=\"");
                 ar.writeHtml(ar.retPath);
@@ -156,26 +148,18 @@
 <%
 
         UserPage uPage = ar.getUserPage();
-        Vector allTemplates = uPage.getProjectTemplates();
-        if (allTemplates != null)
-        {
-            Enumeration e = allTemplates.elements();
-            Vector sortedTemplates = new Vector();
-            while (e.hasMoreElements())
-            {
-                String pageKey = (String)e.nextElement();
+        List<String> allTemplates = uPage.getProjectTemplates();
+        if (allTemplates != null) {
+            List<NGPageIndex> sortedTemplates = new ArrayList<NGPageIndex>();
+            for (String pageKey : allTemplates) {
                 NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
-                if (ngpi!=null)
-                {
+                if (ngpi!=null) {
                     sortedTemplates.add(ngpi);
                 }
             }
 
             NGPageIndex.sortInverseChronological(sortedTemplates);
-            e = sortedTemplates.elements();
-            while (e.hasMoreElements())
-            {
-                NGPageIndex ngpi = (NGPageIndex) e.nextElement();
+            for (NGPageIndex ngpi : sortedTemplates) {
                 long  changeTime = 0;
                 ar.write("<tr><td><a href=\"");
                 ar.writeHtml(ar.retPath);

@@ -160,7 +160,7 @@ public class ExceptionBase extends Exception {
      *
      * List of resource bundles identified by the locale they belong to. The key
      * of the hashmap is the locale. The value related value is a list (
-     * <code>Vector</code>) of resource bundles that are available for the
+     * <code>ArrayList</code>) of resource bundles that are available for the
      * locale.
      */
     private static HashMap<String, ResourceBundle> ibpmResourceBundles = null;

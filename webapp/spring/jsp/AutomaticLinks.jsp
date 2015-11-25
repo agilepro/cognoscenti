@@ -18,7 +18,7 @@
     JSONArray recentList = new JSONArray();
     NGSession ngsession = ar.ngsession;
     if (ngsession!=null) {
-        Vector<RUElement> recent = ngsession.recentlyVisited;
+        List<RUElement> recent = ngsession.recentlyVisited;
         RUElement.sortByDisplayName(recent);
         for (RUElement rue : recent) {
             NGPageIndex angpi = ar.getCogInstance().getContainerIndexByKey(rue.key);

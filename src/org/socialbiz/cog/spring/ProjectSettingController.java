@@ -20,9 +20,8 @@
 
 package org.socialbiz.cog.spring;
 
-import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -235,13 +234,13 @@ public class ProjectSettingController extends BaseController {
             + "&isAccessThroughEmail=yes&"
             + AccessControl.getAccessRoleRequestParams(container, roleRequestRecord);
 
-        Vector<OptOutAddr> initialList = new Vector<OptOutAddr>();
+        List<OptOutAddr> initialList = new ArrayList<OptOutAddr>();
         OptOutAddr.appendUsersFromRole(container, "Administrators", initialList);
         OptOutAddr.appendUsersFromRole(container, "Members", initialList);
 
         // filter out users that who have no profile and have never logged in.
         // Only send this request to real users, not just email addresses
-        Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
+        List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
         for (OptOutAddr ooa : initialList) {
             if (ooa.isUserWithProfile()) {
                 sendTo.add(ooa);
@@ -284,7 +283,7 @@ public class ProjectSettingController extends BaseController {
 
         EmailSender.queueEmailNGC(sendTo, container,
                 "Role Requested by " + ar.getBestUserId(),
-                bodyWriter.toString(), null, new Vector<String>(), ar.getCogInstance());
+                bodyWriter.toString(), null, new ArrayList<String>(), ar.getCogInstance());
 
     }
 

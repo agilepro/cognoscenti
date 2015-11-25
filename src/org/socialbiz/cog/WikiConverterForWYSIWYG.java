@@ -20,8 +20,7 @@
 
 package org.socialbiz.cog;
 
-import java.io.StringWriter;
-import java.util.Vector;
+import java.util.List;
 
 import org.workcast.streams.MemFile;
 
@@ -106,9 +105,9 @@ public class WikiConverterForWYSIWYG extends WikiConverter
                 linkAddr = linkText;
             }
             else {
-                Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkText);
+                List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkText);
                 if (foundPages.size() >= 1) {
-                    NGPageIndex foundPI = foundPages.firstElement();
+                    NGPageIndex foundPI = foundPages.get(0);
                     linkAddr = ar.baseURL + ar.getResourceURL(foundPI, "frontPage.htm");
                 }
                 else {

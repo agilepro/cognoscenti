@@ -24,10 +24,10 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
@@ -76,7 +76,7 @@ public class ErrorLog extends DOMFile {
     }
 
     public List<ErrorLogDetails> getAllDetails() throws Exception {
-        Vector<ErrorLogDetails> list = new Vector<ErrorLogDetails>();
+        List<ErrorLogDetails> list = new ArrayList<ErrorLogDetails>();
         for (ErrorLogDetails errorLogDetails : getChildren("error", ErrorLogDetails.class)) {
             list.add(errorLogDetails);
         }

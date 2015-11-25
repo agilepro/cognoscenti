@@ -22,7 +22,6 @@ package org.socialbiz.cog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
@@ -75,7 +74,7 @@ public class CustomRole extends DOMFace implements NGRole
     public List<AddressListEntry> getDirectPlayers() throws Exception
     {
         List<AddressListEntry> list=new ArrayList<AddressListEntry>();
-        Vector<String> members = getVector("member");
+        List<String> members = getVector("member");
         for (String memberID : members)
         {
             list.add(AddressListEntry.newEntryFromStorage(memberID));
@@ -222,11 +221,10 @@ public class CustomRole extends DOMFace implements NGRole
         addPlayer(newMember);
     }
 
-    public Vector<AddressListEntry> getMatchedFragment(String frag)throws Exception {
-        Vector<AddressListEntry> result = new Vector<AddressListEntry>();
-        for (AddressListEntry ale : getDirectPlayers())
-        {
-            if(ale.hasAddressMatchingFrag(frag)){
+    public List<AddressListEntry> getMatchedFragment(String frag)throws Exception {
+        List<AddressListEntry> result = new ArrayList<AddressListEntry>();
+        for (AddressListEntry ale : getDirectPlayers()) {
+            if(ale.hasAddressMatchingFrag(frag)) {
                 result.add(ale);
             }
         }

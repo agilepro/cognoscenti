@@ -16,7 +16,6 @@
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.util.Enumeration"
-%><%@page import="java.util.Vector"
 %><%
     ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Unable to see user profile.");
@@ -48,7 +47,7 @@
     long lastLogin = uProf.getLastLogin();
     long lastUpdated = uProf.getLastUpdated();
     ValueElement[] favs = uProf.getFavorites();
-    Vector<WatchRecord> watchList = uProf.getWatchList();
+    List<WatchRecord> watchList = uProf.getWatchList();
     List<IDRecord> allIds = uProf.getIdList();
 
     boolean viewingSelf = ar.getUserProfile().getKey().equals(uProf.getKey());
@@ -238,16 +237,11 @@
                 <tbody>
 
 <%
-        if (watchList != null)
-        {
-            Enumeration e = watchList.elements();
-            while (e.hasMoreElements())
-            {
-                WatchRecord wr = (WatchRecord)e.nextElement();
+        if (watchList != null) {
+            for (WatchRecord wr : watchList) {
                 NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(wr.getPageKey());
                 long  changeTime = 0;
-                if (ngpi!=null)
-                {
+                if (ngpi!=null) {
                     ar.write("<tr><td><a href=\"");
                     ar.writeHtml(ar.retPath);
                     ar.writeHtml(ar.getResourceURL(ngpi, "public.htm"));

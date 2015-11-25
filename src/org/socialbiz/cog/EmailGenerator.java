@@ -24,7 +24,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
@@ -135,7 +134,7 @@ public class EmailGenerator extends DOMFace {
         return getVector("roleName");
     }
 
-    public void setRoleNames(Vector<String> newVal) throws Exception {
+    public void setRoleNames(List<String> newVal) throws Exception {
         setVector("roleName", newVal);
     }
 
@@ -143,7 +142,7 @@ public class EmailGenerator extends DOMFace {
         return getVector("alsoTo");
     }
 
-    public void setAlsoTo(Vector<String> newVal) throws Exception {
+    public void setAlsoTo(List<String> newVal) throws Exception {
         setVector("alsoTo", newVal);
     }
 
@@ -171,7 +170,7 @@ public class EmailGenerator extends DOMFace {
         return getVector("attachment");
     }
 
-    public void setAttachments(Vector<String> newVal) throws Exception {
+    public void setAttachments(List<String> newVal) throws Exception {
         setVector("attachment", newVal);
     }
 
@@ -262,8 +261,8 @@ public class EmailGenerator extends DOMFace {
 
 
 
-    public Vector<OptOutAddr> expandAddresses(AuthRequest ar, NGPage ngp) throws Exception {
-        Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
+    public List<OptOutAddr> expandAddresses(AuthRequest ar, NGPage ngp) throws Exception {
+        List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
         for (String roleName : getRoleNames()) {
             NGRole role = ngp.getRole(roleName);
             if (role!=null) {
@@ -295,7 +294,7 @@ public class EmailGenerator extends DOMFace {
 
 
     public void constructEmailRecords(AuthRequest ar, NGPage ngp, MailFile mailFile) throws Exception {
-        Vector<OptOutAddr> sendTo = expandAddresses(ar, ngp);
+        List<OptOutAddr> sendTo = expandAddresses(ar, ngp);
         NoteRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
 
         StringBuffer historyNameList = new StringBuffer();
@@ -337,7 +336,7 @@ public class EmailGenerator extends DOMFace {
         //if you really want the files attached to the email message, then include a list of
         //their attachment ids here
         List<AttachmentRecord> attachList = NGWebUtils.getSelectedAttachments(ar, ngp);
-        Vector<String> attachIds = new Vector<String>();
+        List<String> attachIds = new ArrayList<String>();
         for (String attId : getAttachments()) {
             AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(attId);
             attachList.add(aRec);
@@ -552,7 +551,7 @@ public class EmailGenerator extends DOMFace {
         if (obj.has("attachments")) {
             //this pulls the universal id from the attachment info object, nothing else
             JSONArray attInfo = obj.getJSONArray("attachments");
-            Vector<String> newSetting = new Vector<String>();
+            List<String> newSetting = new ArrayList<String>();
             for (int i=0; i<attInfo.length(); i++) {
                 JSONObject oneAtt = attInfo.getJSONObject(i);
                 String uid = oneAtt.getString("universalid");

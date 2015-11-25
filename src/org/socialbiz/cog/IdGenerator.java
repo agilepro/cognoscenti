@@ -20,7 +20,7 @@
 
 package org.socialbiz.cog;
 
-import java.util.Vector;
+import java.util.List;
 
 
 /**
@@ -68,7 +68,7 @@ public class IdGenerator
     * Generated four digit value will be random, and will not
     * be oneof the values in the vector.
     */
-    public synchronized static String generateFourDigit(Vector<String> existingIds)
+    public synchronized static String generateFourDigit(List<String> existingIds)
         throws Exception
     {
         int seed = (int) (System.currentTimeMillis() % 10000);
@@ -84,7 +84,7 @@ public class IdGenerator
         return id;
     }
 
-    private static boolean idAlreadyExists(Vector<String> existingIds, String currentId) {
+    private static boolean idAlreadyExists(List<String> existingIds, String currentId) {
         if (existingIds == null) {
             return false;
         }

@@ -22,7 +22,6 @@ package org.socialbiz.cog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
 
@@ -122,7 +121,7 @@ public class RoleSpecialBase {
 
     }
 
-    public Vector<AddressListEntry> getMatchedFragment(String frag)
+    public List<AddressListEntry> getMatchedFragment(String frag)
             throws Exception {
         // TODO Auto-generated method stub
         return null;

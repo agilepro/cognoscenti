@@ -26,7 +26,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Vector;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -91,7 +91,7 @@ public class RssServlet extends javax.servlet.http.HttpServlet
             Element channelEle = DOMUtils.createChildElement(doc, rssEle, "channel");
             if (status.equals(RssServlet.STATUS_ALL))
             {
-                Vector<GoalRecord> allTask = th.getAllTasks();
+                List<GoalRecord> allTask = th.getAllTasks();
                 DOMUtils.createChildElement(doc, channelEle, "title", "My All Tasks");
                 DOMUtils.createChildElement(doc, channelEle, "link", serverURL+"MyTaskList.jsp");
                 DOMUtils.createChildElement(doc, channelEle, "description", "List of all tasks");
@@ -99,7 +99,7 @@ public class RssServlet extends javax.servlet.http.HttpServlet
             }
             else if (status.equals(RssServlet.STATUS_ACTIVE))
             {
-                Vector<GoalRecord> activeTask = th.getActiveTasks();
+                List<GoalRecord> activeTask = th.getActiveTasks();
                 DOMUtils.createChildElement(doc, channelEle, "title", "My Active Tasks");
                 DOMUtils.createChildElement(doc, channelEle, "link", serverURL+"MyTaskList.jsp");
                 DOMUtils.createChildElement(doc, channelEle, "description", "List of active tasks");
@@ -107,7 +107,7 @@ public class RssServlet extends javax.servlet.http.HttpServlet
             }
             else if (status.equals(RssServlet.STATUS_COMPLETED))
             {
-                Vector<GoalRecord> completedTask = th.getCompletedTasks();
+                List<GoalRecord> completedTask = th.getCompletedTasks();
                 DOMUtils.createChildElement(doc, channelEle, "title", "My Completed Tasks");
                 DOMUtils.createChildElement(doc, channelEle, "link", serverURL+"MyTaskList.jsp");
                 DOMUtils.createChildElement(doc, channelEle, "description", "List of completed tasks");
@@ -115,7 +115,7 @@ public class RssServlet extends javax.servlet.http.HttpServlet
             }
             else if (status.equals(RssServlet.STATUS_FUTURE))
             {
-                Vector<GoalRecord> futureTask = th.getFutureTasks();
+                List<GoalRecord> futureTask = th.getFutureTasks();
                 DOMUtils.createChildElement(doc, channelEle, "title", "My Future Tasks");
                 DOMUtils.createChildElement(doc, channelEle, "link", serverURL+"MyTaskList.jsp");
                 DOMUtils.createChildElement(doc, channelEle, "description", "List of future tasks");
@@ -132,7 +132,7 @@ public class RssServlet extends javax.servlet.http.HttpServlet
         }
     }
 
-    private void createItems(Document doc, Element channelEle, Vector<GoalRecord> items,
+    private void createItems(Document doc, Element channelEle, List<GoalRecord> items,
             String serverURL, TaskHelper th) throws Exception {
         if (doc == null || channelEle == null || items == null) {
             return;

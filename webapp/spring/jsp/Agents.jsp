@@ -25,7 +25,7 @@
     for (AgentRule oneRef : agentRules) {
         allAgents.put(oneRef.getJSON());
     }
-    Vector<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
+    List<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
 
 %>
 <script type="text/javascript">

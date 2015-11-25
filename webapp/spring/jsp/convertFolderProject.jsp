@@ -36,7 +36,7 @@
         parentPath = parent.toString().substring(stripLen).replace("\\","/");
     }
 
-    Vector<File> folders = new Vector<File>();
+    List<File> folders = new ArrayList<File>();
     int fileCount = 0;
     for (File poss : children) {
         if (poss.isDirectory()) {
@@ -48,7 +48,7 @@
     }
 
     UserProfile  uProf =ar.getUserProfile();
-    Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
+    List<NGPageIndex> templates = new ArrayList<NGPageIndex>();
     if(uProf != null){
         for(TemplateRecord tr : uProf.getTemplateList()){
             String pageKey = tr.getPageKey();

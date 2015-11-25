@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -387,9 +386,9 @@ public class EmailSender extends TimerTask {
     * MailFile archive and sent.
     */
     public static void containerEmail(OptOutAddr ooa, NGContainer ngc,
-            String subject, String emailBody, String from, Vector<String> attachIds, Cognoscenti cog) throws Exception {
+            String subject, String emailBody, String from, List<String> attachIds, Cognoscenti cog) throws Exception {
         ooa.assertValidEmail();
-        Vector<OptOutAddr> addressList = new Vector<OptOutAddr>();
+        ArrayList<OptOutAddr> addressList = new ArrayList<OptOutAddr>();
         addressList.add(ooa);
         queueEmailNGC(addressList, ngc, subject, emailBody, from, attachIds, cog);
     }
@@ -398,8 +397,8 @@ public class EmailSender extends TimerTask {
     * Stores an email message in the NGPage project workspace, that will LATER be moved to the
     * MailFile archive and sent.
     */
-    public static void queueEmailNGC(Vector<OptOutAddr> addresses,
-            NGContainer ngc, String subject, String emailBody, String from, Vector<String> attachIds, Cognoscenti cog)
+    public static void queueEmailNGC(List<OptOutAddr> addresses,
+            NGContainer ngc, String subject, String emailBody, String from, List<String> attachIds, Cognoscenti cog)
             throws Exception {
         if (subject == null || subject.length() == 0) {
             throw new ProgramLogicError(
@@ -429,7 +428,7 @@ public class EmailSender extends TimerTask {
      * MailFile archive and sent.
      */
     private static void createEmailRecordInternal(NGContainer ngc, String from,
-            Vector<OptOutAddr> addresses, String subject, String emailBody, Vector<String> attachIds,
+            List<OptOutAddr> addresses, String subject, String emailBody, List<String> attachIds,
             Cognoscenti cog)
             throws Exception {
 
@@ -474,7 +473,7 @@ public class EmailSender extends TimerTask {
      */
     public static void generalMailToOne(OptOutAddr ooa, String from, String subject,
             String emailBody, Cognoscenti cog) throws Exception {
-        Vector<OptOutAddr> v = new Vector<OptOutAddr>();
+        List<OptOutAddr> v = new ArrayList<OptOutAddr>();
         v.add(ooa);
         generalMailToList(v, from, subject, emailBody, cog);
     }
@@ -492,7 +491,7 @@ public class EmailSender extends TimerTask {
      * Email is stored in the GlobalMailArchive momentarily before actually
      * sending it.
      */
-    public static void generalMailToList(Vector<OptOutAddr> addresses, String from,
+    public static void generalMailToList(List<OptOutAddr> addresses, String from,
             String subject, String emailBody, Cognoscenti cog) throws Exception {
         if (subject == null || subject.length() == 0) {
             throw new ProgramLogicError("simpleEmail requires a non null subject parameter");

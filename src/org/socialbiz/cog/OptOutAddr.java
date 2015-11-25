@@ -21,7 +21,6 @@
 package org.socialbiz.cog;
 
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.workcast.streams.MemFile;
@@ -144,7 +143,7 @@ public class OptOutAddr {
      * in the list. Adds a OptOutRolePlayer type of address.
      */
     public static void appendUsersFromRole(NGContainer ngc, String roleName,
-            Vector<OptOutAddr> collector) throws Exception {
+            List<OptOutAddr> collector) throws Exception {
         List<AddressListEntry> players = ngc.getRoleOrFail(roleName)
                 .getExpandedPlayers(ngc);
         for (AddressListEntry ale : players) {
@@ -159,7 +158,7 @@ public class OptOutAddr {
      * in the list. Adds a OptOutDirectAddress type of address.
      */
     public static void appendUsers(List<AddressListEntry> members,
-            Vector<OptOutAddr> collector) throws Exception {
+            List<OptOutAddr> collector) throws Exception {
         for (AddressListEntry ale : members) {
             appendOneUser(new OptOutDirectAddress(ale), collector);
         }
@@ -171,7 +170,7 @@ public class OptOutAddr {
      * checks all the email addresses that a user might have registered here.
      */
     public static void appendOneUser(OptOutAddr newser,
-            Vector<OptOutAddr> collector) throws Exception {
+            List<OptOutAddr> collector) throws Exception {
         for (OptOutAddr ooa : collector) {
             if (ooa.matches(newser)) {
                 return;
@@ -180,7 +179,7 @@ public class OptOutAddr {
         collector.add(newser);
     }
 
-    public static void removeFromList(Vector<OptOutAddr> sendTo, String email) {
+    public static void removeFromList(List<OptOutAddr> sendTo, String email) {
         OptOutAddr found = null;
         for (OptOutAddr ooa : sendTo) {
             if (ooa.matches(email)) {

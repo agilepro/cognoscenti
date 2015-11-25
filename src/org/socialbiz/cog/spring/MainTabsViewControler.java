@@ -22,7 +22,6 @@ package org.socialbiz.cog.spring;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -577,7 +576,7 @@ public class MainTabsViewControler extends BaseController {
                 searchResults = SearchManager.performSearch(ar, searchText, pf, b);
             }
             else {
-                searchResults = new Vector<SearchResultRecord>();
+                searchResults = new ArrayList<SearchResultRecord>();
             }
             request.setAttribute("searchResults",searchResults);
             return  new ModelAndView("showSearchResult");
@@ -615,7 +614,7 @@ public class MainTabsViewControler extends BaseController {
                 searchResults = SearchManager.performSearch(ar, searchText, searchProject, siteId);
             }
             else {
-                searchResults = new Vector<SearchResultRecord>();
+                searchResults = new ArrayList<SearchResultRecord>();
             }
 
             JSONArray resultList = new JSONArray();

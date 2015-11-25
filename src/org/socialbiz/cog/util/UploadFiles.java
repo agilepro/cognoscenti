@@ -21,51 +21,44 @@
 package org.socialbiz.cog.util;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @publish extension
  */
 public class UploadFiles {
 
-    UploadFiles()
-    {
-        m_files = new Vector<UploadFile>();
+    UploadFiles() {
+        m_files = new ArrayList<UploadFile>();
     }
 
-    protected void addFile(UploadFile newFile) throws Exception
-    {
-        if (newFile == null)
-        {
+    protected void addFile(UploadFile newFile) throws Exception {
+        if (newFile == null) {
             throw new IllegalArgumentException("Null file passed to addFile.  File must not be null.");
         }
         m_files.add(newFile);
     }
 
-    public UploadFile getFile(int index)
-    {
-        if (index < 0)
-        {
+    public UploadFile getFile(int index) {
+        if (index < 0) {
             throw new IllegalArgumentException("File's index " + index
                     + " cannot be a negative value.");
         }
         int last = getCount();
-        if (index >= last)
-        {
+        if (index >= last) {
             throw new IllegalArgumentException("File's index " + index
                     + " is greater than the number of files being held.");
         }
-        UploadFile retval = m_files.elementAt(index);
-        if (retval == null)
-        {
+        UploadFile retval = m_files.get(index);
+        if (retval == null) {
             throw new IllegalArgumentException(
                     "Something is wrong with the collection of files.  Index '"+index+"' returned a null value.");
         }
         return retval;
     }
 
-    public int getCount()
-    {
+    public int getCount() {
         return m_files.size();
     }
 
@@ -80,5 +73,5 @@ public class UploadFiles {
         return tmp;
     }
 
-    private Vector<UploadFile> m_files;
+    private List<UploadFile> m_files;
 }

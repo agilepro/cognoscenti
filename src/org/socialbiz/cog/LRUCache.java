@@ -20,8 +20,9 @@
 
 package org.socialbiz.cog;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
 * This is a Least Recently Used Cache.
@@ -32,19 +33,17 @@ import java.util.Hashtable;
 */
 public class LRUCache
 {
-    private Vector<NGPage>    vec;
+    private List<NGPage> listOfPages;
     private Hashtable<String,NGPage> hash;
     private int       cacheSize;
 
-    public LRUCache(int numberToCache)
-    {
+    public LRUCache(int numberToCache) {
         cacheSize = numberToCache;
         emptyCache();
     }
 
-    public synchronized void emptyCache()
-    {
-        vec = new Vector<NGPage>(cacheSize);
+    public synchronized void emptyCache() {
+        listOfPages = new ArrayList<NGPage>(cacheSize);
         hash = new Hashtable<String,NGPage>(cacheSize);
     }
 
@@ -98,7 +97,7 @@ public class LRUCache
     public synchronized void unstore(String id) {
         NGPage o = hash.get(id);
         if (o!=null) {
-            vec.remove(o);
+            listOfPages.remove(o);
             hash.remove(id);
         }
         if (hash.containsKey(id)) {
@@ -113,27 +112,23 @@ public class LRUCache
     * If an object already exists with that id, then this new object
     * will replace it.
     */
-    public synchronized void store(String id, NGPage o)
-    {
+    public synchronized void store(String id, NGPage o) {
         if (!id.equals(o.getFilePath().toString())) {
             throw new RuntimeException("Trying to store object for "+id+" has a path of "+o.getFilePath()+"!");
         }
         NGPage prev = hash.get(id);
-        if (prev!=null)
-        {
-            vec.remove(prev);
+        if (prev!=null) {
+            listOfPages.remove(prev);
             hash.remove(prev);
         }
-        else
-        {
+        else {
             //then, if cache full, remove the oldest ones
-            while (vec.size()>=cacheSize)
-            {
-                prev = vec.remove(cacheSize-1);
+            while (listOfPages.size()>=cacheSize) {
+                prev = listOfPages.remove(cacheSize-1);
                 hash.remove(prev);
             }
         }
-        vec.insertElementAt(o, 0);
+        listOfPages.add(0,o);
         hash.put(id, o);
     }
 

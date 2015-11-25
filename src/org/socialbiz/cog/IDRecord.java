@@ -20,12 +20,11 @@
 
 package org.socialbiz.cog;
 
-import org.socialbiz.cog.exception.ProgramLogicError;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Vector;
-import java.util.Comparator;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -77,14 +76,10 @@ public class IDRecord extends DOMFace
     * add all of the id records for a particular user into
     * the provided vector.
     */
-    public static void findIDRecords(UserProfile user, Vector<IDRecord> results)
-        throws Exception
-    {
-        Vector<IDRecord> chilluns = user.getChildren("idrec", IDRecord.class);
-        Enumeration<IDRecord> e = chilluns.elements();
-        while (e.hasMoreElements())
-        {
-            IDRecord ele = e.nextElement();
+    public static void findIDRecords(UserProfile user, List<IDRecord> results)
+            throws Exception {
+        List<IDRecord> chilluns = user.getChildren("idrec", IDRecord.class);
+        for (IDRecord ele : chilluns) {
             results.add(ele);
         }
     }

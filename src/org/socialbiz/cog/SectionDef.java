@@ -20,7 +20,8 @@
 
 package org.socialbiz.cog;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
 * a monomorphic class which holds details about a section definition
@@ -53,8 +54,8 @@ public class SectionDef
     public boolean required   = false;
 
     //
-    private static Vector<SectionDef> allDefs = null;
-    private static Vector<SectionFormat> allFormats = null;
+    private static List<SectionDef> allDefs = null;
+    private static List<SectionFormat> allFormats = null;
     private static SectionFormat defaultUnknownSectionFormat = null;
 
     public SectionDef(SectionFormat newFormat, String newName, int view, int edit, boolean depr, String dName, boolean req)
@@ -86,8 +87,8 @@ public class SectionDef
     @SuppressWarnings("deprecation")
     private static void initialize()
     {
-        allFormats = new Vector<SectionFormat>();
-        allDefs = new Vector<SectionDef>();
+        allFormats = new ArrayList<SectionFormat>();
+        allDefs = new ArrayList<SectionDef>();
         defaultUnknownSectionFormat = new SectionUnknown();
 
         SectionFormat cannonNotes =      new SectionForNotes();

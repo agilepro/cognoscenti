@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -66,7 +65,7 @@ public class SuperAdminLogFile extends DOMFile {
      * within the last 100 days.
      */
     public List<NGBook> getAllNewSites(Cognoscenti cog) throws Exception {
-        Vector<AdminEvent> allEvents = getEventsParent().getChildren("event",
+        List<AdminEvent> allEvents = getEventsParent().getChildren("event",
                 AdminEvent.class);
         List<NGBook> newSites = new ArrayList<NGBook>();
         long oneHundredDaysAgo = System.currentTimeMillis()-(86000*1000*100);
@@ -95,7 +94,7 @@ public class SuperAdminLogFile extends DOMFile {
      * the new ones are left.
      */
     public List<UserProfile> getAllNewRegisteredUsers() throws Exception {
-        Vector<AdminEvent> allEvents = getEventsParent().getChildren("event",
+        List<AdminEvent> allEvents = getEventsParent().getChildren("event",
                 AdminEvent.class);
         List<UserProfile> newUsers = new ArrayList<UserProfile>();
         for (AdminEvent event : allEvents) {

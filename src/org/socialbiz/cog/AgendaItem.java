@@ -1,7 +1,7 @@
 package org.socialbiz.cog;
 
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.List;
 
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -77,34 +77,34 @@ public class AgendaItem extends DOMFace {
     }
 
 
-    public Vector<String> getActionItems()  throws Exception {
+    public List<String> getActionItems()  throws Exception {
         return getVector("actionId");
     }
     public void addActionItemId(String goalId)  throws Exception {
         this.addVectorValue("actionId", goalId);
     }
-    public void setActionItems(Vector<String> newVal) throws Exception {
+    public void setActionItems(List<String> newVal) throws Exception {
         setVector("actionId", newVal);
     }
 
-    public Vector<String> getDocList()  throws Exception {
+    public List<String> getDocList()  throws Exception {
         return getVector("docList");
     }
     public void addDocId(String goalId)  throws Exception {
         this.addVectorValue("docList", goalId);
     }
-    public void setDocList(Vector<String> newVal) throws Exception {
+    public void setDocList(List<String> newVal) throws Exception {
         setVector("docList", newVal);
     }
 
-    public Vector<String> getPresenters()  throws Exception {
+    public List<String> getPresenters()  throws Exception {
         return getVector("presenters");
     }
-    public void setPresenters(Vector<String> newVal) throws Exception {
+    public void setPresenters(List<String> newVal) throws Exception {
         setVector("presenters", newVal);
     }
 
-    public Vector<CommentRecord> getComments()  throws Exception {
+    public List<CommentRecord> getComments()  throws Exception {
         return getChildren("comment", CommentRecord.class);
     }
     public CommentRecord getComment(long timeStamp)  throws Exception {

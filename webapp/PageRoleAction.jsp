@@ -93,7 +93,7 @@
             throw new Exception("Please check your action, the id ("+id+") is too small to be useful on this site");
         }
 
-        Vector<AddressListEntry> emailList = AddressListEntry.parseEmailList(id);
+        List<AddressListEntry> emailList = AddressListEntry.parseEmailList(id);
         for (AddressListEntry addressListEntry : emailList) {
             role.addPlayerIfNotPresent(addressListEntry);
         }

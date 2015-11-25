@@ -22,7 +22,7 @@ package org.socialbiz.cog.spring;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Vector;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -164,7 +164,7 @@ public class JSONController extends BaseController {
 
 
     public static boolean doesProjectExist(AuthRequest ar, String projectName) throws Exception {
-        Vector<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(projectName);
+        List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(projectName);
         if (foundPages.size() > 0) {
             return true;
         }

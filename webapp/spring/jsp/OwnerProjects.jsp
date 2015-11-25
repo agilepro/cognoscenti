@@ -3,7 +3,7 @@
 %><%@page import="org.socialbiz.cog.NotificationRecord"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-    Vector<NGPageIndex> ownedProjs = ar.getCogInstance().getAllPagesForAdmin(uProf);
+    List<NGPageIndex> ownedProjs = ar.getCogInstance().getAllPagesForAdmin(uProf);
     boolean noneFound = ownedProjs.size()==0;
 
     JSONArray projList = new JSONArray();

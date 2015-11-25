@@ -39,14 +39,14 @@ Required parameters:
         throw new Exception("Unable to find the remote action item record");
     }
 
-    List<HistoryRecord> histRecs = new Vector<HistoryRecord>();
+    List<HistoryRecord> histRecs = new ArrayList<HistoryRecord>();
     pageTitle = uProf.getName();
 
     UserProfile  operatingUser =ar.getUserProfile();
     boolean viewingSelf = uProf.getKey().equals(operatingUser.getKey());
 
-    Vector<NGBook> bookList =  new Vector<NGBook>();
-    Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
+    List<NGBook> bookList =  new ArrayList<NGBook>();
+    List<NGPageIndex> templates = new ArrayList<NGPageIndex>();
     for(TemplateRecord tr : uProf.getTemplateList()){
         String pageKey = tr.getPageKey();
         NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);

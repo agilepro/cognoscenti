@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -41,10 +40,10 @@ public class NGBook extends ContainerCommon implements NGContainer {
     // The following are the indices which are used by book finding and
     // reading. Initialized by scanAllBooks() method.
     private static Hashtable<String, NGBook> keyToSite = null;
-    private static Vector<NGBook> allSites = null;
+    private static List<NGBook> allSites = null;
 
-    private Vector<String> existingIds = null;
-    private Vector<String> displayNames;
+    private List<String> existingIds = null;
+    private List<String> displayNames;
     private final BookInfoRecord siteInfoRec;
     private final NGRole executiveRole;
     private final NGRole ownerRole;
@@ -210,7 +209,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
         }
     }
 
-    public static Vector<NGBook> getAllSites() {
+    public static List<NGBook> getAllSites() {
         // might do a copy here if we fear that the receiver will corrupt this
         // vector
         if (allSites!=null) {
@@ -218,7 +217,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
         }
 
         //never return a null when the return value is a collection
-        return new Vector<NGBook>();
+        return new ArrayList<NGBook>();
     }
 
     public static void registerSite(NGBook foundSite) throws Exception {
@@ -255,9 +254,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
     }
 
     public String[] getSiteNames() {
-        String[] bogusVal = new String[displayNames.size()];
-        displayNames.copyInto(bogusVal);
-        return bogusVal;
+        return displayNames.toArray(new String[0]);
     }
 
     public void setSiteNames(String[] newNames) {
@@ -324,7 +321,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
     //TODO:get rid of statics, put them into the Cognoscenti object
     public synchronized static void initStaticVars() {
         keyToSite = new Hashtable<String, NGBook>();
-        allSites = new Vector<NGBook>();
+        allSites = new ArrayList<NGBook>();
     }
 
     public static NGBook createNewSite(String key, String name, Cognoscenti cog) throws Exception {
@@ -458,7 +455,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
      * into the vector so that we can generate another ID and assure it does not
      * duplication any id found here.
      */
-    public void findIDs(Vector<String> v) throws Exception {
+    public void findIDs(List<String> v) throws Exception {
         // shouldn't be any attachments. But count them if there are any
         List<AttachmentRecord> attachments = getAllAttachments();
         for (AttachmentRecord att : attachments) {
@@ -469,7 +466,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
     @Override
     public String getUniqueOnPage() throws Exception {
         if (existingIds == null) {
-            existingIds = new Vector<String>();
+            existingIds = new ArrayList<String>();
             findIDs(existingIds);
         }
         return IdGenerator.generateFourDigit(existingIds);
@@ -506,7 +503,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
         List<RoleRequestRecord> requestList = new ArrayList<RoleRequestRecord>();
         DOMFace rolelist = siteInfoRec.requireChild("Role-Requests", DOMFace.class);
-        Vector<RoleRequestRecord> children = rolelist.getChildren("requests",
+        List<RoleRequestRecord> children = rolelist.getChildren("requests",
                 RoleRequestRecord.class);
         for (RoleRequestRecord rrr : children) {
             requestList.add(rrr);
@@ -614,7 +611,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
     @Override
     public List<HistoryRecord> getAllHistory() throws Exception {
         DOMFace historyContainer = requireChild("history", DOMFace.class);
-        Vector<HistoryRecord> vect = historyContainer.getChildren("event", HistoryRecord.class);
+        List<HistoryRecord> vect = historyContainer.getChildren("event", HistoryRecord.class);
         HistoryRecord.sortByTimeStamp(vect);
         return vect;
     }
@@ -721,7 +718,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
      * is risky.
      */
     public static List<String> getAllThemes(Cognoscenti cog) {
-        Vector<String> ret = new Vector<String>();
+        List<String> ret = new ArrayList<String>();
         File themeRoot = cog.getConfig().getFileFromRoot("theme");
         for (File child : themeRoot.listFiles()) {
             ret.add(child.getName());
@@ -1023,9 +1020,9 @@ public class NGBook extends ContainerCommon implements NGContainer {
      * Sites have a set of licenses
      */
     @Override
-    public Vector<License> getLicenses() throws Exception {
-        Vector<LicenseRecord> vc = siteInfoRec.getChildren("license", LicenseRecord.class);
-        Vector<License> v = new Vector<License>();
+    public List<License> getLicenses() throws Exception {
+        List<LicenseRecord> vc = siteInfoRec.getChildren("license", LicenseRecord.class);
+        List<License> v = new ArrayList<License>();
         for (License child : vc) {
             v.add(child);
         }
@@ -1034,7 +1031,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
     @Override
     public boolean removeLicense(String id) throws Exception {
-        Vector<LicenseRecord> vc = siteInfoRec.getChildren("license", LicenseRecord.class);
+        List<LicenseRecord> vc = siteInfoRec.getChildren("license", LicenseRecord.class);
         for (LicenseRecord child : vc) {
             if (id.equals(child.getId())) {
                 siteInfoRec.removeChild(child);

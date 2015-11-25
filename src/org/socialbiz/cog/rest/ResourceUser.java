@@ -20,7 +20,8 @@
 
 package org.socialbiz.cog.rest;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.DOMUtils;
@@ -267,7 +268,7 @@ public class ResourceUser implements NGResource
             profile.setHomePage(homePage);
         }
         Element element_favorites  = DOMUtils.getChildElement(element_uprofile, "favorites");
-        Vector<ValueElement> favVect = new Vector<ValueElement>();
+        List<ValueElement> favVect = new ArrayList<ValueElement>();
         for (Element element_fav : DOMUtils.getChildElementsList(element_favorites)) {
             String favname = element_fav.getAttribute("name");
             String favadd = element_fav.getAttribute("address");
@@ -275,8 +276,7 @@ public class ResourceUser implements NGResource
             favVect.add(fav);
         }
 
-        ValueElement[] favorites = new ValueElement[favVect.size()];
-        favVect.copyInto(favorites);
+        ValueElement[] favorites = favVect.toArray(new ValueElement[0]);
         profile.setFavorites(favorites);
 
         profile.setLastUpdated(lar.nowTime);

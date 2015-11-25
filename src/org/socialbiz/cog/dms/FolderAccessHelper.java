@@ -24,12 +24,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
-import org.socialbiz.cog.exception.NGException;
-import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AttachmentVersion;
 import org.socialbiz.cog.AuthRequest;
@@ -38,13 +37,15 @@ import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserPage;
+import org.socialbiz.cog.exception.NGException;
+import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.util.UploadFile;
 import org.socialbiz.cog.util.UploadFiles;
 
 public class FolderAccessHelper {
 
-    private static Vector<LocalFolderConfig> loaclConnections = null;
-    private static Vector<CVSConfig> cvsConnections = null;
+    private static List<LocalFolderConfig> loaclConnections = null;
+    private static List<CVSConfig> cvsConnections = null;
 
     AuthRequest ar;
 
@@ -59,7 +60,7 @@ public class FolderAccessHelper {
 
 
     public static void initLocalConnections(Cognoscenti cog){
-        loaclConnections = new Vector<LocalFolderConfig>();
+        loaclConnections = new ArrayList<LocalFolderConfig>();
         String lclConn = cog.getConfig().getProperty("localConnections");
         if(lclConn == null){
             return;
@@ -83,7 +84,7 @@ public class FolderAccessHelper {
 
     }
     public static void initCVSConnections(Cognoscenti cog){
-        cvsConnections = new Vector<CVSConfig>();
+        cvsConnections = new ArrayList<CVSConfig>();
         String cvsConn = cog.getConfig().getProperty("cvsConnections");
         if(cvsConn == null){
             return;
@@ -456,7 +457,7 @@ public class FolderAccessHelper {
     }
 
 
-    public static Vector<LocalFolderConfig> getLoclConnections(){
+    public static List<LocalFolderConfig> getLoclConnections(){
         //Test
         if(loaclConnections == null) {
             throw new RuntimeException("FolderAccessHelper is not initialized");
@@ -464,7 +465,7 @@ public class FolderAccessHelper {
         return loaclConnections;
     }
 
-    public static Vector<CVSConfig> getCVSConnections(){
+    public static List<CVSConfig> getCVSConnections(){
         if(cvsConnections == null) {
             throw new RuntimeException("FolderAccessHelper is not initialized");
         }
@@ -472,7 +473,7 @@ public class FolderAccessHelper {
     }
 
     private static CVSConfig getCVSConfig(String module)throws Exception{
-        Vector<CVSConfig> v = getCVSConnections();
+        List<CVSConfig> v = getCVSConnections();
         for(int i=0; i<v.size(); i++){
             String rmodule = v.get(i).getRepository();
             if(rmodule.equals(module)){
@@ -557,10 +558,9 @@ public class FolderAccessHelper {
 
     }
 
-    public Vector<ConnectionSettings> getAvailableConnections(String resourceAddress)throws Exception
-    {
+    public List<ConnectionSettings> getAvailableConnections(String resourceAddress)throws Exception {
         UserPage up = ar.getUserPage();
-        Vector<ConnectionSettings> filteredConnectionSettingList = new Vector<ConnectionSettings>();
+        List<ConnectionSettings> filteredConnectionSettingList = new ArrayList<ConnectionSettings>();
         for(ConnectionSettings cSet : up.getAllConnectionSettings()){
             if(!cSet.isDeleted()){
 

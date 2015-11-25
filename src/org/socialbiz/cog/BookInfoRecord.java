@@ -20,7 +20,8 @@
 
 package org.socialbiz.cog;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -72,9 +73,9 @@ public class BookInfoRecord  extends DOMFace
     }
 
 
-    public Vector<String> getPageNames() {
-        Vector<String> vc = getVector("bookName");
-        Vector<String> vccleaned = new Vector<String>();
+    public List<String> getPageNames() {
+        List<String> vc = getVector("bookName");
+        List<String> vccleaned = new ArrayList<String>();
         for (String chl : vc) {
             String aName = chl.trim();
             if (aName.length() > 0) {

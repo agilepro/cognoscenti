@@ -19,9 +19,7 @@
 %><%@page import="org.socialbiz.cog.rest.TaskHelper"
 %><%@page import="java.io.Writer"
 %><%@page import="java.net.URLEncoder"
-%><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Hashtable"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Unable to see status report.");
@@ -52,9 +50,9 @@
     }
     List<ProjectLink> projects = stat.getProjects();
 
-    Vector<WatchRecord> watchList = uProf.getWatchList();
-    Vector<NGPageIndex> watchedProjects = new Vector<NGPageIndex>();
-    Hashtable seenProjects = new Hashtable();
+    List<WatchRecord> watchList = uProf.getWatchList();
+    List<NGPageIndex> watchedProjects = new ArrayList<NGPageIndex>();
+    List seenProjects = new Hashtable();
     for (WatchRecord wr : watchList) {
         String pageKey = wr.getPageKey();
         NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
@@ -66,7 +64,7 @@
 
     TaskHelper th = new TaskHelper(uProf.getUniversalId(), "");
     th.scanAllTask(ar.getCogInstance());
-    Vector<GoalRecord> myActive = th.getActiveTasks();
+    List<GoalRecord> myActive = th.getActiveTasks();
     for (GoalRecord tr : myActive)
     {
         NGContainer ngc = th.getPageForTask(tr);

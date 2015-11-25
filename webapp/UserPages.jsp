@@ -11,7 +11,6 @@
 %><%@page import="java.io.File"
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Properties"
-%><%@page import="java.util.Vector"
 %><%@page import="org.w3c.dom.Element"
 %><%
     ar = AuthRequest.getOrCreate(request, response, out);
@@ -67,17 +66,13 @@
 
 
 <%
-
-    Vector v = ar.getCogInstance().getAllPagesForAdmin(uProf);
-    Enumeration en1 = v.elements();
-    for (int i=0; en1.hasMoreElements(); i++)
-    {
-        NGPageIndex ngpi = (NGPageIndex)en1.nextElement();
+    int i=0;
+    for (NGPageIndex ngpi : ar.getCogInstance().getAllPagesForAdmin(uProf)) {
         String linkAddr = ar.retPath + "p/" + ngpi.containerKey + "/public.htm";
 %>
         <tr>
             <td>
-                <%=(i+1)%>
+                <%=(++i)%>
             </td>
             <td>
                 <a href="<%ar.writeHtml(linkAddr);%>" title="navigate to the page"><%ar.writeHtml( ngpi.containerName);%></a>

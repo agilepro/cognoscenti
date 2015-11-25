@@ -134,7 +134,7 @@ Optional Parameters:
     public void displayFolderForUser(AuthRequest ar,ResourceEntity folderEntity) throws Exception
     {
         FolderAccessHelper fdh = new FolderAccessHelper(ar);
-        Vector<ResourceEntity> entityList = folderEntity.getChidEntityList();
+        List<ResourceEntity> entityList = folderEntity.getChidEntityList();
         ConnectionType cType = folderEntity.getConnection();
 
         ar.write("<div class=\"generalArea\">");
@@ -167,7 +167,7 @@ Optional Parameters:
         ar.write("\n<td>Delete</td>");
         ar.write("\n</tr>");
 
-        Vector<ResourceEntity> fileList = new Vector<ResourceEntity>();
+        List<ResourceEntity> fileList = new ArrayList<ResourceEntity>();
         for (ResourceEntity entity : entityList)
         {
             if (entity.isFile())
