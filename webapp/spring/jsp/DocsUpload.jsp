@@ -71,6 +71,8 @@ app.controller('myCtrl', function($scope, $http) {
     }
     $scope.startUpload = function(oneProgress) {
         oneProgress.status = "Starting";
+        oneProgress.loaded = 0;
+        oneProgress.percent = 0;
         oneProgress.labelMap = $scope.filterMap;
         var postURL = "<%=remoteProjectLink%>";
         var postdata = '{"operation": "tempFile"}';
@@ -88,13 +90,26 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.actualUpload = function(oneProgress) {
         oneProgress.status = "Uploading";
         var postURL = "<%=remoteProjectLink%>";
-        $http.put(oneProgress.tempFileURL, oneProgress.file)
-        .success( function(data) {
+
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener("progress", function(e){
+          $scope.$apply( function(){
+            if(e.lengthComputable){
+              oneProgress.loaded = e.loaded;
+              oneProgress.percent = Math.round(e.loaded * 100 / e.total);
+              console.log("progress event: "+oneProgress.loaded+" / "+e.total+"  ==  "+oneProgress.percent+"   "+oneProgress.status);
+            } else {
+              oneProgress.percent = 50;
+            }
+          });
+        }, false);
+        xhr.upload.addEventListener("load", function(data) {
             $scope.nameUploadedFile(oneProgress);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+        }, false);
+        xhr.upload.addEventListener("error", $scope.reportError, false);
+        xhr.upload.addEventListener("abort", $scope.reportError, false);
+        xhr.open("PUT", oneProgress.tempFileURL);
+        xhr.send(oneProgress.file);
     };
     $scope.nameUploadedFile = function(oneProgress) {
         oneProgress.status = "Finishing";
@@ -219,14 +234,23 @@ app.controller('myCtrl', function($scope, $http) {
                           <div >
                               <div style="float:left;"><b>{{fp.file.name}}</b></div>
 
-                              <div style="float:right;">{{fp.file.size}} bytes
-                              {{fp.status}}</div>
+                              <div style="float:right;">{{fp.status}}</div>
                               <div style="clear:both;"></div>
                           </div>
                           <div ng-hide="fp.done">
                              Description:<br/>
                              <textarea ng-model="fp.description" class="form-control"></textarea>
                           </div>
+                          <div style="padding:5px;">
+                              <div style="text-align:center">{{fp.status}}:  {{fp.loaded|number}} of {{fp.file.size|number}} bytes</div>
+                              <div class="progress">
+                                  <div class="progress-bar progress-bar-success" role="progressbar"
+                                       aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
+                                       style="width:{{fp.percent}}%">
+                                  </div>
+                              </div>
+                          </div>
+
                           <div ng-hide="fp.done">
                               <button ng-click="startUpload(fp)" class="btn btn-primary">Upload</button>
                               <button ng-click="cancelUpload(fp)" class="btn btn-primary">Cancel</button>
