@@ -310,10 +310,15 @@
         <put-attribute name="title" value="Convert Folder" />
         <put-attribute name="body" value="/spring/jsp/convertFolderProject.jsp" />
     </definition>
-    <definition name="UserAccountSetting" extends="slimLayout">
-        <put-attribute name="title" value="Admin" />
+    <definition name="SiteAdmin" extends="slimLayout">
+        <put-attribute name="title" value="Site Admin" />
         <put-attribute name="headerType" value="site" />
-        <put-attribute name="body" value="/spring/jsp/UserAccountSetting.jsp" />
+        <put-attribute name="body" value="/spring/jsp/SiteAdmin.jsp" />
+    </definition>
+    <definition name="SiteUsers" extends="slimLayout">
+        <put-attribute name="title" value="Site Users" />
+        <put-attribute name="headerType" value="site" />
+        <put-attribute name="body" value="/spring/jsp/SiteUsers.jsp" />
     </definition>
 
     <definition name="UserAccounts" extends="slimLayout">
@@ -597,6 +602,10 @@
     <definition name="UserSettings" extends="slimLayout">
         <put-attribute name="title" value="User Settings" />
         <put-attribute name="body" value="/spring/jsp/UserSettings.jsp" />
+    </definition>
+    <definition name="FindPerson" extends="slimLayout">
+        <put-attribute name="title" value="User Settings" />
+        <put-attribute name="body" value="/spring/jsp/FindPerson.jsp" />
     </definition>
 
     <definition name="displayTaskInfo" extends="slimLayout">

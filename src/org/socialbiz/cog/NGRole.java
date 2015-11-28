@@ -128,6 +128,22 @@ public interface NGRole extends NGLabel {
 
     public List<AddressListEntry> getMatchedFragment(String frag)throws Exception;
 
+    /**
+     * This is a maintenance method.  When one person leaves the scene, the owner of the
+     * site may wish to move all of their assignments (of any kind) to another user.
+     * It may also be that a user has changed their email address, and wants to update
+     * all the locations of the old address to the new address.   This function accomplished
+     * that on a role, but note that it works on the "id" level (email address) and not the
+     * user level, since one user might have both addresses.
+     * @param sourceId the email address that you are looking for.  If this address is
+     *      not found in the Role then this method does nothing.  If this is found multiple
+     *      times, all instances of the address will be removed.
+     * @param destId the email address that the sourceId is to be replaced with.  If this
+     *      destId is already in the role it should take care not to duplicate it.
+     * @return true if at least one sourceId was removed from the role.  
+     *      Return false if no instances of the source were found
+     */
+    public boolean replaceId(String sourceId, String destId);
 
 
 }

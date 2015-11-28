@@ -21,6 +21,8 @@
 package org.socialbiz.cog;
 
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -97,9 +99,8 @@ public class AuthDummy extends AuthRequest
     * and parse it into an array os string values, properly converting
     * each element of the array for URL encoding.
     */
-    public String[] getParsedPath()
-    {
-        return new String[0];
+    public List<String> getParsedPath() {
+        return new ArrayList<String>();
     }
 
     @SuppressWarnings("unused")

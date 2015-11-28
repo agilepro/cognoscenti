@@ -114,7 +114,7 @@ public class AuthRequest
 
     //the relative path parsed and properly URLDecoded into an
     //array of string.
-    private String[] parsedPath = null;
+    private List<String> parsedPath = null;
 
     /**
     * baseURL is the full external global URL path to the base of the application
@@ -423,10 +423,9 @@ public class AuthRequest
     * and parse it into an array os string values, properly converting
     * each element of the array for URL encoding.
     */
-    public String[] getParsedPath()
+    public List<String> getParsedPath()
     {
-        if (parsedPath!=null)
-        {
+        if (parsedPath!=null) {
             return parsedPath;
         }
         Object URIObj =  req.getAttribute("javax.servlet.forward.request_uri");
@@ -447,23 +446,21 @@ public class AuthRequest
 
         int bindx = indx + ctxtroot.length() + 1;
 
-        String[] p = UtilityMethods.splitOnDelimiter(requrl.substring(bindx), '/');
-
+        List<String> rawPath = UtilityMethods.splitString(requrl.substring(bindx), '/');
+        List<String> decodedPath = new ArrayList<String>();
+        
         //must do the URLDecoding AFTER parsing the slashes out
-        for (int i=0; i<p.length; i++)
-        {
-            try
-            {
-                p[i] = URLDecoder.decode(p[i], "UTF-8");
+        //but remember that browsers will reject URLEncoded slash character!
+        for (String token : rawPath) {
+            try {
+                decodedPath.add(URLDecoder.decode(token, "UTF-8"));
             }
-            catch (java.io.UnsupportedEncodingException e)
-            {
+            catch (java.io.UnsupportedEncodingException e) {
                 //it is not possible that UTF-8 is not supported
                 //but in that case, leave it encoded.
             }
         }
-
-        parsedPath = p;
+        parsedPath = decodedPath;
         return parsedPath;
     }
 
@@ -1327,12 +1324,10 @@ public class AuthRequest
     * than one character, and if it is not the name of a jsp file
     * then it is a new UI request.
     */
-    private void determineNewUI()
-    {
-        String[] path = getParsedPath();
-        if (path.length > 0)
-        {
-            String firstToken = path[0];
+    private void determineNewUI() {
+        List<String> path = getParsedPath();
+        if (path.size() > 0) {
+            String firstToken = path.get(0);
             if(firstToken.equals("t") || firstToken.equals("v")) {
                 newUI = true;
             }

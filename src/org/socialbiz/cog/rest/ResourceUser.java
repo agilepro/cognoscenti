@@ -45,7 +45,7 @@ public class ResourceUser implements NGResource
     private ResourceStatus lrstatus;
     private AuthRequest lar;
     private int statuscode = 200;
-    private String[] parsedPath;
+    private List<String> parsedPath;
     private String methodname = "";
 
     public ResourceUser(String serverURL, AuthRequest ar)
@@ -75,11 +75,10 @@ public class ResourceUser implements NGResource
 
     public void executeRequest()throws Exception
     {
-        String token2 = parsedPath[2];
-        setId(parsedPath[1]);
+        String token2 = parsedPath.get(2);
+        setId(parsedPath.get(1));
 
-        if(parsedPath.length != 3)
-        {
+        if(parsedPath.size() != 3) {
             throw new ProgramLogicError("A request for user information needs exactly three values in the path.");
         }
 

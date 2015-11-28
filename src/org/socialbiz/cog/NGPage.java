@@ -1787,6 +1787,23 @@ public class NGPage extends ContainerCommon implements NGContainer
             return;   //only one thing at a time
         }
     }
+    
+    
+    public int replaceUserAcrossWorkspace(String sourceUser, String destUser) throws Exception {
+        int count = 0;
+        for (GoalRecord goal : this.getAllGoals()) {
+            NGRole assignee = goal.getAssigneeRole();
+            if (assignee.replaceId(sourceUser, destUser)) {
+                count++;
+            }
+        }
+        for (NGRole role : this.getAllRoles()) {
+            if (role.replaceId(sourceUser, destUser)) {
+                count++;
+            }
+        }
+        return count;
+    }
 
     public JSONObject getConfigJSON() throws Exception {
         ProcessRecord process = getProcess();

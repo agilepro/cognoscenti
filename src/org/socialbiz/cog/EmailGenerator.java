@@ -439,13 +439,12 @@ public class EmailGenerator extends DOMFace {
             }
 
             String choices = selectedNote.getChoices();
-            String[] choiceArray = UtilityMethods
-                    .splitOnDelimiter(choices, ',');
+            List<String> choiceArray = UtilityMethods.splitString(choices, ',');
             UserProfile up = ale.getUserProfile();
-            if (up != null && choiceArray.length > 0) {
+            if (up != null && choiceArray.size() > 0) {
                 selectedNote.getOrCreateUserResponse(up);
             }
-            if (choiceArray.length > 0 & includeBody) {
+            if (choiceArray.size() > 0 & includeBody) {
                 ar.write("\n<p><font color=\"blue\"><i>This request has some response options.  Use the <a href=\"");
                 ar.write(noteURL);
                 ar.write("#Response\" title=\"Response form on the web\">web page</a> to respond to choose between: ");

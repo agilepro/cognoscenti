@@ -430,8 +430,8 @@ public class NGBook extends ContainerCommon implements NGContainer {
      */
     public static boolean isLibFolder(File folder, Cognoscenti cog) throws Exception {
         // where is the site going to go?
-        String[] libFolders = cog.getConfig().getArrayProperty("libFolder");
-        if (libFolders.length == 0) {
+        List<String> libFolders = cog.getConfig().getArrayProperty("libFolder");
+        if (libFolders.size() == 0) {
             throw new Exception("You must have a setting for 'libFolder' in order to create a new site.");
         }
 
@@ -861,8 +861,10 @@ public class NGBook extends ContainerCommon implements NGContainer {
             }
             testNum++;
         }
-    }
-
+    }    
+    
+    
+    
     @Override
     public boolean isFrozen() throws Exception {
         return false;

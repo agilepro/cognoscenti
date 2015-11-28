@@ -41,6 +41,7 @@ import javax.servlet.http.HttpSessionContext;
 
 import org.socialbiz.cog.exception.NGException;
 
+@SuppressWarnings("unused")
 public class HttpNestedRequest implements HttpServletRequest
 {
     private Hashtable<String,Object> attribs = new Hashtable<String,Object>();

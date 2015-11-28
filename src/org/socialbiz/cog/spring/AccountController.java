@@ -20,16 +20,19 @@
 
 package org.socialbiz.cog.spring;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.HistoricActions;
 import org.socialbiz.cog.NGBook;
+import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
 import org.socialbiz.cog.UserManager;
-import org.socialbiz.cog.UtilityMethods;
 import org.socialbiz.cog.exception.NGException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.workcast.json.JSONObject;
 
 @Controller
 public class AccountController extends BaseController {
@@ -263,8 +267,8 @@ public class AccountController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/$/admin.htm", method = RequestMethod.GET)
-    public ModelAndView showSiteSettingTab(@PathVariable String siteId,
+    @RequestMapping(value = "/{siteId}/$/SiteAdmin.htm", method = RequestMethod.GET)
+    public ModelAndView SiteAdmin(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
@@ -278,15 +282,36 @@ public class AccountController extends BaseController {
                 return modelAndView;
             }
 
-            modelAndView = new ModelAndView("UserAccountSetting");
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("visibility_value", "3");
-            request.setAttribute("pageTitle", site.getFullName());
+            modelAndView = new ModelAndView("SiteAdmin");
             return modelAndView;
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.admin.page", new Object[]{siteId}, ex);
+            throw new Exception("Unable to handle SiteAdmin.htm for site '"+siteId+"'", ex);
         }
     }
+
+
+    @RequestMapping(value = "/{siteId}/$/SiteUsers.htm", method = RequestMethod.GET)
+    public ModelAndView SiteUsers(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            if(!ar.isLoggedIn()){
+                return showWarningView(ar, "message.loginalert.see.page");
+            }
+            NGBook site = prepareSiteView(ar, siteId);
+            ModelAndView modelAndView = executiveCheckViews(ar);
+            if (modelAndView != null) {
+                return modelAndView;
+            }
+
+            modelAndView = new ModelAndView("SiteUsers");
+            return modelAndView;
+        }catch(Exception ex){
+            throw new Exception("Unable to handle SiteUsers.htm for site '"+siteId+"'", ex);
+        }
+    }
+
 
     @RequestMapping(value = "/{siteId}/$/account_settings.htm", method = RequestMethod.GET)
     public ModelAndView showProjectSettingsTab(@PathVariable String siteId,
@@ -422,6 +447,7 @@ public class AccountController extends BaseController {
         }
     }
 
+    /*
     public String pasreFullname(String fullNames) throws Exception {
 
         String assigness = "";
@@ -442,7 +468,8 @@ public class AccountController extends BaseController {
         }
         return assigness;
     }
-
+*/
+    
 //This is a pretty horrible function.  It is used to support the old style of
 //auto complete when entering user names.
 //However this really does not site well with the angular approach
@@ -492,4 +519,49 @@ public class AccountController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/{siteId}/$/replaceUsers.json", method = RequestMethod.POST)
+    public void getGoalHistory(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            JSONObject incoming = getPostedObject(ar);
+            String sourceUser = incoming.getString("sourceUser");
+            String destUser = incoming.getString("destUser");
+            List<NGPageIndex> listOfSpaces = null;
+            {
+                NGBook ngb = ar.getCogInstance().getSiteById(siteId);
+                ar.setPageAccessLevels(ngb);
+                ar.assertAdmin("Must be owner of a site to replace users.");
+                listOfSpaces = ar.getCogInstance().getAllProjectsInSite(siteId);
+                NGPageIndex.clearLocksHeldByThisThread();
+            }
+            int count = 0;
+            for(NGPageIndex ngpi : listOfSpaces) {
+                if (!ngpi.isProject()) {
+                    continue;
+                }
+                NGPage ngp = ngpi.getPage();
+                System.out.println("Changing '"+sourceUser+"' to '"+destUser+"' in ("+ngp.getFullName()+")");
+                int found = ngp.replaceUserAcrossWorkspace(sourceUser, destUser);
+                if (found>0) {
+                    System.out.println("     found "+found+" and saving.");
+                    ngpi.nextScheduledAction = ngp.nextActionDue();
+                    ngp.save();
+                }
+                count += found;
+                NGPageIndex.clearLocksHeldByThisThread();
+            }
+                    
+            JSONObject jo = new JSONObject();
+            jo.put("updated", count);
+            jo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to create Action Item for minutes of meeting.", ex);
+            streamException(ee, ar);
+        }
+    }
+    
+    
+    
 }

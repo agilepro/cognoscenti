@@ -20,35 +20,34 @@
 
 package org.socialbiz.cog.rest;
 
-import org.socialbiz.cog.exception.NGException;
-import org.socialbiz.cog.exception.ProgramLogicError;
-import org.socialbiz.cog.AuthRequest;
-import org.socialbiz.cog.DOMUtils;
-import org.socialbiz.cog.NGPage;
-import org.socialbiz.cog.NGPageIndex;
-import org.socialbiz.cog.SectionTask;
-import org.socialbiz.cog.GoalRecord;
-import org.workcast.streams.HTMLWriter;
-
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.socialbiz.cog.AuthRequest;
+import org.socialbiz.cog.DOMUtils;
+import org.socialbiz.cog.GoalRecord;
+import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.SectionTask;
+import org.socialbiz.cog.exception.NGException;
+import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.traversal.DocumentTraversal;
 import org.w3c.dom.traversal.NodeFilter;
 import org.w3c.dom.traversal.NodeIterator;
+import org.workcast.streams.HTMLWriter;
 
 public class ResourceLocater
 {
@@ -58,7 +57,7 @@ public class ResourceLocater
 
     Document            linxml;
     NGResource          lresource;
-    String[]            parsedPath;
+    List<String>        parsedPath;
     String              serverURL;
     ResourceStatus      lrstatus;
     String              reqpath;
@@ -136,7 +135,7 @@ public class ResourceLocater
     private NGResource getResource2() throws Exception
     {
 
-        String token0 = parsedPath[0];
+        String token0 = parsedPath.get(0);
         try
         {
             //if it starts with a "b" it is a book
@@ -147,7 +146,7 @@ public class ResourceLocater
             //if it starts with a "p" is is a page
             else if("p".equals(token0))
             {
-                String token2 = parsedPath[2];
+                String token2 = parsedPath.get(2);
                 if(token2.startsWith(NGResource.RESOURCE_RELAY))
                 {
                     return handleRelayRequest();
@@ -197,25 +196,22 @@ public class ResourceLocater
     private String getPathElement(int index)
         throws Exception
     {
-        if (parsedPath==null)
-        {
+        if (parsedPath==null) {
             parsedPath = ar.getParsedPath();
         }
-        if (index >= parsedPath.length)
-        {
+        if (index >= parsedPath.size()) {
             return null;
         }
-        return parsedPath[index];
+        return parsedPath.get(index);
     }
 
     //TODO: this method should be within the ResourcePage class
     private NGResource handlePageRequest() throws Exception
     {
-        if (parsedPath.length<3)
-        {
+        if (parsedPath.size()<3) {
             throw new ProgramLogicError("resource paths that start with 'p' must have two slashes after the p.");
         }
-        String token2 = parsedPath[2];     //resource within leaf
+        String token2 = parsedPath.get(2);     //resource within leaf
 
         //first check if it is a search request, which always has the form
         //     p/factory/search.xml?qs={query}
@@ -228,15 +224,15 @@ public class ResourceLocater
 
         //everything else needs a page resource
         ResourcePage rp = new ResourcePage(serverURL,ar);
-        rp.setId(parsedPath[1]);
+        rp.setId(parsedPath.get(1));
         rp.setResourceStatus(lrstatus);
         rp.setinput(linxml);
 
 
         String token3 = null;              //section name
-        if (parsedPath.length>3)
+        if (parsedPath.size()>3)
         {
-            token3 = parsedPath[3];     //section name
+            token3 = parsedPath.get(3);     //section name
         }
 
         //   p/{pagekey}/s/....  is a section request
@@ -256,16 +252,15 @@ public class ResourceLocater
         //YYYY is the license id
         if(NGResource.RESOURCE_LICENCE.equals(token2))
         {
-            if (parsedPath.length<5)
+            if (parsedPath.size()<5)
             {
                 throw new ProgramLogicError("A license request must have five elements in the resource path.");
             }
-            if(!NGResource.DATA_LICENSE_XML.equals(parsedPath[4]))
-            {
+            if(!NGResource.DATA_LICENSE_XML.equals(parsedPath.get(4))) {
                 throw new ProgramLogicError("A license request must have the resource 'license.xml' at the end of the path.");
             }
 
-            rp.setLicenseId(parsedPath[3]);
+            rp.setLicenseId(parsedPath.get(3));
             if("GET".equals(methodname))
             {
                 rp.loadLicense();
@@ -290,8 +285,7 @@ public class ResourceLocater
         }
 
 
-        if(parsedPath.length != 3)
-        {
+        if(parsedPath.size() != 3) {
             throw new ProgramLogicError("A page resource request must have exactly three elements in the path");
         }
 
@@ -372,29 +366,26 @@ public class ResourceLocater
     // handle resources like   p/{pagekey}/s/{secname}/...
     private NGResource handlePageSectionRequest(ResourcePage rp) throws Exception
     {
-        if(!"p".equals(parsedPath[0]))
-        {
+        if(!"p".equals(parsedPath.get(0))) {
             throw new ProgramLogicError("first element of path must be 'p'");
         }
-        if(!"s".equals(parsedPath[2]))
-        {
+        if(!"s".equals(parsedPath.get(2))) {
             throw new ProgramLogicError("third element of path must be 's'");
         }
 
 
         ResourceSection rs = new ResourceSection(serverURL,ar, rp, lrstatus, linxml);
-        rs.setPageId(parsedPath[1]);
-        rs.setName(parsedPath[3]);
+        rs.setPageId(parsedPath.get(1));
+        rs.setName(parsedPath.get(3));
 
 
-        if (parsedPath.length<5)
-        {
+        if (parsedPath.size()<5) {
             throw new ProgramLogicError("paths requesting information on a section must have a minimum of 5 segments in the path");
         }
 
         String token5 = getPathElement(5);
 
-        String sectionLevelResource = parsedPath[4];
+        String sectionLevelResource = parsedPath.get(4);
 
         //  if path is   p/{pagekey}/s/{secname}/section.xml
         // then deal with the section as a whole
@@ -435,20 +426,19 @@ public class ResourceLocater
             return rs;
         }
 
-        if (parsedPath.length<6)
-        {
+        if (parsedPath.size()<6) {
             throw new ProgramLogicError("paths requesting information on a Tasks with id must have a minimum of 6 segments in the path");
         }
 
         rs.setId(token5);
         //it must be Tasks section, and there must be an "id" next
-        if ("Tasks".equals(parsedPath[3]) && "id".equals(parsedPath[4]))
+        if ("Tasks".equals(parsedPath.get(3)) && "id".equals(parsedPath.get(4)))
         {
-            rs.setId(parsedPath[5]);
+            rs.setId(parsedPath.get(5));
             //this would be the place to handle tasks
         }
 
-        String data_type =parsedPath[parsedPath.length-1];
+        String data_type =parsedPath.get(parsedPath.size()-1);
 
         if("GET".equals(methodname))
         {
@@ -508,21 +498,21 @@ public class ResourceLocater
     // this is not really a "section" but instead it is a tasklist
     private NGResource handleGlobalSectionRequest() throws Exception
     {
-        if(!"s".equals(parsedPath[0]))
+        if(!"s".equals(parsedPath.get(0)))
         {
             throw new ProgramLogicError("first element of path must be 's'");
         }
-        if(!"Tasks".equals(parsedPath[1]))
+        if(!"Tasks".equals(parsedPath.get(1)))
         {
             throw new ProgramLogicError("second element of path must be 'Tasks'");
         }
-        if(!"f".equals(parsedPath[2]))
+        if(!"f".equals(parsedPath.get(2)))
         {
             throw new ProgramLogicError("third element of path must be 'f'");
         }
 
         ResourceSection rs = new ResourceSection(serverURL,ar,null, lrstatus, linxml);
-        String data_type =getPathElement(parsedPath.length-1);
+        String data_type =getPathElement(parsedPath.size()-1);
         rs.setName("Tasks");
         if("GET".equals(methodname))
         {
@@ -614,8 +604,7 @@ public class ResourceLocater
 
     private NGResource handleUserRequest()throws Exception
     {
-        if(!"u".equals(parsedPath[0]))
-        {
+        if(!"u".equals(parsedPath.get(0))) {
             throw new ProgramLogicError("first element of path must be 'u'");
         }
 
@@ -632,16 +621,14 @@ public class ResourceLocater
     private NGResource handleSearchRequest()throws Exception
     {
         String searchText= ar.req.getParameter("qs");
-        if(searchText == null)
-        {
+        if(searchText == null) {
             throw new ProgramLogicError("Query to search on must be passed in a parameter 'qs'");
         }
         ResourcePage rp = new ResourcePage(serverURL,ar);
         rp.setResourceStatus(lrstatus);
         rp.setinput(linxml);
 
-        if(parsedPath.length != 3)
-        {
+        if(parsedPath.size() != 3) {
             throw new ProgramLogicError("Invalid Request");
         }
 
@@ -837,12 +824,12 @@ public class ResourceLocater
     {
         StringTokenizer st = new StringTokenizer(path, "/");
         int tokencnt = st.countTokens();
-        parsedPath = new String[tokencnt];
+        parsedPath = new ArrayList<String>();
         for(int i=0; i<tokencnt; i++)
         {
             try {
                 String pathElement = st.nextToken();
-                parsedPath[i] = URLDecoder.decode(pathElement, "UTF-8");
+                parsedPath.add(URLDecoder.decode(pathElement, "UTF-8"));
             }
             catch (java.io.UnsupportedEncodingException e){
                     //it is not possible that UTF-8 is not supported

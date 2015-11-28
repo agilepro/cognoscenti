@@ -28,7 +28,9 @@ import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpSession;
@@ -47,11 +49,18 @@ public class UtilityMethods {
         }
     }
 
+    /**
+     * Split a string into an array.
+     * This method NEVER returns a null.
+     * If passed a null, or a zero length string, it returns an empty array
+     * 
+     * @deprecated use {@link #splitString(String, char)} instead
+     */
     static public String[] splitOnDelimiter(String str, char delim) {
-        Vector<String> vec = splitString(str, delim);
+        List<String> vec = splitString(str, delim);
         String[] result = new String[vec.size()];
         for (int i = 0; i < vec.size(); i++) {
-            result[i] = (vec.elementAt(i));
+            result[i] = (vec.get(i));
         }
         return result;
     }
@@ -75,8 +84,8 @@ public class UtilityMethods {
      *   ","        gives   {}
      * </pre>
      */
-    static public Vector<String> splitString(String str, char delim) {
-        Vector<String> vec = new Vector<String>();
+    static public List<String> splitString(String str, char delim) {
+        ArrayList<String> vec = new ArrayList<String>();
         if (str==null) {
             return vec;
         }

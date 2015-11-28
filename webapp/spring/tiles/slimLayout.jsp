@@ -40,7 +40,6 @@
 
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-    <link href="<%=ar.retPath%>css/bootstrap-ext.css" rel="styleSheet" type="text/css" media="screen" />
 
     <title><tiles:getAsString name="title"/><%
     if(title!=null) {

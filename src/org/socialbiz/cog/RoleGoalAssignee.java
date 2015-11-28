@@ -57,10 +57,7 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         if (assigneeList == null) {
             return list;
         }
-        String[] assignees = UtilityMethods.splitOnDelimiter(assigneeList, ',');
-        if (assignees == null) {
-            return list;
-        }
+        List<String> assignees = UtilityMethods.splitString(assigneeList, ',');
         for (String assignee : assignees) {
             if (assignee.length() > 0) {
                 list.add(new AddressListEntry(assignee));
@@ -106,11 +103,11 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         }
     }
 
-    private String getList() throws Exception {
+    private String getList() {
         return goal.getAssigneeCommaSeparatedList();
     }
 
-    private void setList(String newVal) throws Exception {
+    private void setList(String newVal) {
         goal.setAssigneeCommaSeparatedList(newVal);
     }
 
@@ -145,4 +142,41 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         throw new Exception("getJSON has not been implemented on RoleGoalAssignee");
     }
 
+    
+    /**
+     * This will replace the assignee of an goal with another, avoiding
+     * any duplication.
+     */
+    public boolean replaceId(String sourceId, String destId) {
+        String assigneeList = getList();
+        if (assigneeList == null) {
+            return false;
+        }
+        
+        //first a clear search path to see if one is there.
+        List<String> assignees = UtilityMethods.splitString(assigneeList, ',');
+        boolean foundOne = false;
+        for (String oneAss : assignees) {
+            if (oneAss.equalsIgnoreCase(sourceId)) {
+                foundOne = true;
+            }
+        }
+        if (!foundOne) {
+            return false;
+        }
+        
+        //since we found one, now reconstruct the assignee list
+        StringBuffer result = new StringBuffer();
+        result.append(destId);
+        for (String oneAss : assignees) {
+            //be sure not to duplicate the destId ... one might have already been in there.
+            if (!oneAss.equalsIgnoreCase(sourceId) && !oneAss.equalsIgnoreCase(destId)) {
+                result.append(",");
+                result.append(oneAss);
+            }
+        }
+        setList(result.toString());
+        return true;
+    }
+    
 }

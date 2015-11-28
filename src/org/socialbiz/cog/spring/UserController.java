@@ -1299,6 +1299,25 @@ public class UserController extends BaseController {
     }
 
 
+    @RequestMapping(value="/updateMicroProfile.json", method = RequestMethod.POST)
+    public void updateMicroProfile(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        try{
+            AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not update user contacts.");
+                
+            JSONObject received = this.getPostedObject(ar);
+            String emailId = received.getString("uid");
+            String idDisplayName = received.getString("name");
+            MicroProfileMgr.setDisplayName(emailId, idDisplayName);
+            MicroProfileMgr.save();
+
+            received.write(ar.w, 2, 2);
+            ar.flush();            
+        }catch(Exception ex){
+            throw new NGException("nugen.operation.fail.edit.micro.profile", null, ex);
+        }
+    }
+
     @RequestMapping(value="/editMicroProfileDetail.form", method = RequestMethod.POST)
     public ModelAndView editMicroProfileDetail(
 
@@ -1320,6 +1339,7 @@ public class UserController extends BaseController {
             throw new NGException("nugen.operation.fail.edit.micro.profile", null, ex);
         }
     }
+
 
     @RequestMapping(value="/getPeopleYouMayKnowList.ajax", method = RequestMethod.POST)
     public void getPeopleYouMayKnowList(
@@ -1908,6 +1928,29 @@ public class UserController extends BaseController {
                 null, new ArrayList<String>(), ar.getCogInstance());
     }
 
+
+    @RequestMapping(value = "/FindPerson.htm", method = RequestMethod.GET)
+    public ModelAndView FindPerson(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            if(!ar.isLoggedIn()){
+                return showWarningView(ar, "message.loginalert.see.page");
+            }
+            String userKey = ar.reqParam("uid");
+            UserProfile searchedFor = UserManager.findUserByAnyId(userKey);
+            if (searchedFor!=null) {
+                //so if we find it, just redirect to the settings page
+                response.sendRedirect(ar.retPath+"v/"+searchedFor.getKey()+"/userSettings.htm");
+                return null;
+            }
+            return new ModelAndView("FindPerson");
+
+
+        }catch(Exception ex){
+            throw new Exception("Failure trying to find user", ex);
+        }
+    }
 
 
 }

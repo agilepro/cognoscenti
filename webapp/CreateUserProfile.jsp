@@ -19,7 +19,7 @@
 
     String userToFind = ar.reqParam("id");
 
-    String go  = "FindUser.jsp?id="+URLEncoder.encode(userToFind,"UTF-8");
+    String go  = "FindPerson.jsp?uid="+URLEncoder.encode(userToFind,"UTF-8");
 
     String openid = userToFind;
 

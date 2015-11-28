@@ -34,10 +34,11 @@ app.controller('myCtrl', function($scope, $http) {
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
+<%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Site Settings
+            Site Administration
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -45,7 +46,7 @@ app.controller('myCtrl', function($scope, $http) {
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="">Do Nothing</a></li>
+                  href="#" ng-click="">No Options at this Time</a></li>
             </ul>
           </span>
 

@@ -172,15 +172,12 @@ public class ConfigFile {
      * separated by semicolons. The values can not themselves have semicolons in
      * them. This method will split them and return a proper array.
      */
-    public String[] getArrayProperty(String name) {
+    public List<String> getArrayProperty(String name) {
         if (props == null) {
-            return null;
+            return new ArrayList<String>();
         }
         String list = props.getProperty(name);
-        if (list == null) {
-            return new String[0];
-        }
-        String[] vals = UtilityMethods.splitOnDelimiter(list, ';');
+        List<String> vals = UtilityMethods.splitString(list, ';');
         return vals;
     }
 
@@ -274,9 +271,9 @@ public class ConfigFile {
         return getGenericFolderOrFail("attachFolder", "oldattach");
     }
     public List<File> getSiteFolders() throws Exception {
-        String[] libFolders = getArrayProperty("libFolder");
+        List<String> libFolders = getArrayProperty("libFolder");
         List<File> allSiteFiles = new ArrayList<File>();
-        if (libFolders==null || libFolders.length==0) {
+        if (libFolders==null || libFolders.size()==0) {
             File parentPath = getParentFolderOrFail();
             File newFolder = new File(parentPath, "sites");
             if (!newFolder.exists()) {

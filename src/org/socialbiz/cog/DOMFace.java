@@ -125,10 +125,10 @@ public class DOMFace
     public int getAttributeInt(String attrName) {
         return safeConvertInt(getAttribute(attrName));
     }
-    public boolean getAttributeBool(String attrName)  throws Exception {
+    public boolean getAttributeBool(String attrName) {
         return "true".equals(getAttribute(attrName));
     }
-    public void setAttributeBool(String attrName, boolean newVal) throws Exception {
+    public void setAttributeBool(String attrName, boolean newVal) {
         if (newVal) {
             setAttribute(attrName, "true");
         }

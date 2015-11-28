@@ -48,7 +48,7 @@ public class ResourceBook implements NGResource
     private ResourceStatus lrstatus;
     private AuthRequest ar;
     private int statuscode = 200;
-    private String[] parsedPath;
+    private List<String> parsedPath;
 
     public ResourceBook(String serverURL, AuthRequest _ar)
     {
@@ -413,15 +413,14 @@ public class ResourceBook implements NGResource
         throws Exception
     {
 
-        String token1 = parsedPath[1];
-        String token2 = parsedPath[2];
+        String token1 = parsedPath.get(1);
+        String token2 = parsedPath.get(2);
 
         setResourceStatus(lrstatus);
         setinput(linxml);
         setId(token1);
 
-        if(parsedPath.length != 3)
-        {
+        if(parsedPath.size() != 3) {
             throw new ProgramLogicError("A request for book information needs exactly three values in the path.");
         }
 

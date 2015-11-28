@@ -564,12 +564,12 @@ public class GoalRecord extends BaseRecord {
     }
 
     //TODO: this should be changed to vector form to avoid problems with commas
-    public String getAssigneeCommaSeparatedList() throws Exception {
+    public String getAssigneeCommaSeparatedList() {
         return getScalar("assignee");
     }
 
     //TODO: this should be changed to vector form to avoid problems with commas
-    public void setAssigneeCommaSeparatedList(String newVal) throws Exception {
+    public void setAssigneeCommaSeparatedList(String newVal) {
         setScalar("assignee", newVal);
     }
 

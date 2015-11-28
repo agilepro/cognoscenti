@@ -46,8 +46,12 @@
           "href": "roleRequest.htm"
         },
         {
+          "name": "Site Users",
+          "href": "SiteUsers.htm"
+        },
+        {
           "name": "Site Administration",
-          "href": "admin.htm"
+          "href": "SiteAdmin.htm"
         }
       ]
   }

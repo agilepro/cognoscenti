@@ -36,7 +36,6 @@
     String upstreamLink = ngp.getUpstreamLink();
 
     String[] names = ngp.getPageNames();
-    String thisPageAddress = ar.getResourceURL(ngp,"admin.htm");
 
     ProcessRecord process = ngp.getProcess();
     String parentKey = ngp.getParentKey();

@@ -152,7 +152,7 @@
 
                         var formatNameUrl = function(elCell, oRecord, oColumn, sData)
                         {
-                            elCell.innerHTML = '<a href="<%=ar.retPath%>FindUser.jsp?id=' + encodeURIComponent(oRecord.getData("LastModifiedBy")) + '">' + sData + "</a>";
+                            elCell.innerHTML = '<a href="<%=ar.retPath%>FindPerson.jsp?uid=' + encodeURIComponent(oRecord.getData("LastModifiedBy")) + '">' + sData + "</a>";
                         };
                         var myColumnDefs = [
                             {key:"No",label:"No",formatter:YAHOO.widget.DataTable.formatNumber,sortable:true,resizeable:true},

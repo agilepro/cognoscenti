@@ -20,12 +20,35 @@
 
 package org.socialbiz.cog;
 
-/**
- * gutted class.  Remove it after a few days.
- */
-public class RoleGoalReviewer {
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-    private RoleGoalReviewer() {
+public class UserPermission extends DOMFace
+{
+
+    public UserPermission(Document doc, Element ele, DOMFace p) {
+        super(doc, ele, p);
+    }
+    
+    public String getName() {
+        return getAttribute("name");
+    }
+    public void setName(String newName) {
+        setAttribute("name", newName);
     }
 
+    public String getId() {
+        return getAttribute("id");
+    }
+    public void setId(String newId) {
+        setAttribute("id", newId);
+    }
+
+    public boolean isFull() {
+        return getAttributeBool("full");
+    }
+    public void setFull(boolean isFull) {
+        setAttributeBool("full", isFull);
+    }
+    
 }

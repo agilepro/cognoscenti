@@ -272,14 +272,11 @@ app.controller('myCtrl', function($scope, $http) {
         if (person[0].name) {
             return person[0].name;
         }
-        return "Unknown "+uid;
+        return "("+uid+")";
     }
     $scope.getLink = function(uid) {
         var person = $scope.getPeople(uid);
-        if (person.length==0) {
-            return uid;
-        }
-        return "<%=ar.retPath%>v/"+person[0].key+"/userSettings.htm";
+        return "<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(uid);
     }
 
 });
@@ -455,7 +452,7 @@ function addvalue() {
                 </span>
 
                 <div class="taskOverview">Assigned to:
-                   <span class="red" ng-repeat="ass in rec.assignees"><a href="{{getLink(ass)}}">{{getName(ass)}}</a>, </span>
+                   <span class="red" ng-repeat="ass in rec.assignees"><a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a>, </span>
 
                 </div>
                 <div ng-show="rec.show" id="{{rec.id}}_1" style="max-width:800px;">

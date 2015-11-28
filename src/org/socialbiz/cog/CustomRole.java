@@ -230,6 +230,30 @@ public class CustomRole extends DOMFace implements NGRole
         }
         return result;
     }
+    
+    public boolean replaceId(String sourceId, String destId) {
+        List<String> players = getVector("member");
+        boolean foundOne=false;
+        for (String playerId : players) {
+            if (playerId.equalsIgnoreCase(sourceId)) {
+                foundOne = true;
+            }
+        }
+        if (!foundOne) {
+            return false;
+        }
+        List<String> newPlayers =  new ArrayList<String>();
+        newPlayers.add(destId);
+        foundOne=false;
+        for (String playerId : players) {
+            if (!playerId.equalsIgnoreCase(sourceId)
+                && !playerId.equalsIgnoreCase(destId)) {
+                newPlayers.add(playerId);
+            }
+        }
+        setVector("member", newPlayers);
+        return true;
+    }
 
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
