@@ -117,13 +117,10 @@ public class RoleSpecialBase {
     }
 
     public void addPlayerIfNotPresent(AddressListEntry member) throws Exception {
-        // TODO Auto-generated method stub
-
+        throw new Exception("addPlayerIfNotPresent not implemented");
     }
 
-    public List<AddressListEntry> getMatchedFragment(String frag)
-            throws Exception {
-        // TODO Auto-generated method stub
+    public List<AddressListEntry> getMatchedFragment(String frag) throws Exception {
         return null;
     }
 

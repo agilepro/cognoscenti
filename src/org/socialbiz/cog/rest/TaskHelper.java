@@ -174,17 +174,14 @@ public class TaskHelper
     * generate an XML dom tree from the tasks specifically mentioned by ID.
     */
     public void generateXPDLTaskInfo(NGPage ngp, Document doc, Element element_activities, String dataIds)
-        throws Exception
-    {
-        String[] idList = null;
+            throws Exception {
+        List<String> idList = null;
         if (dataIds!= null) {
-            idList = UtilityMethods.splitOnDelimiter(dataIds,',');
+            idList = UtilityMethods.splitString(dataIds,',');
         }
         registerAllGoalsOnPage(ngp);
-        for(GoalRecord tr : allTask)
-        {
-            if(!isRequested(tr.getId(), idList))
-            {
+        for(GoalRecord tr : allTask) {
+            if(!isRequested(tr.getId(), idList)) {
                 continue;
             }
             Element actEle = DOMUtils.createChildElement(doc, element_activities, "activity");
@@ -193,7 +190,7 @@ public class TaskHelper
         }
     }
 
-    private  boolean isRequested(String id, String[] idList) throws Exception
+    private  boolean isRequested(String id, List<String> idList) throws Exception
     {
         if(idList == null){
             return true;

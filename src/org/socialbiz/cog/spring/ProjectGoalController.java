@@ -98,7 +98,7 @@ public class ProjectGoalController extends BaseController {
     public static String parseEmailId(String assigneTo) throws Exception {
 
         String assignessEmail = "";
-        String[] emails = UtilityMethods.splitOnDelimiter(assigneTo, ',');
+        List<String> emails = UtilityMethods.splitString(assigneTo, ',');
 
         for (String email : emails) {
             if (!email.equals("")) {

@@ -276,7 +276,7 @@ public class AccountController extends BaseController {
             if(!ar.isLoggedIn()){
                 return showWarningView(ar, "message.loginalert.see.page");
             }
-            NGBook site = prepareSiteView(ar, siteId);
+            prepareSiteView(ar, siteId);
             ModelAndView modelAndView = executiveCheckViews(ar);
             if (modelAndView != null) {
                 return modelAndView;
@@ -299,7 +299,7 @@ public class AccountController extends BaseController {
             if(!ar.isLoggedIn()){
                 return showWarningView(ar, "message.loginalert.see.page");
             }
-            NGBook site = prepareSiteView(ar, siteId);
+            prepareSiteView(ar, siteId);
             ModelAndView modelAndView = executiveCheckViews(ar);
             if (modelAndView != null) {
                 return modelAndView;

@@ -27,9 +27,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+
+import org.socialbiz.cog.UtilityMethods;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.socialbiz.cog.UtilityMethods;
 
 
 public class CVSAccess extends ConnectionTypeBase {
@@ -42,7 +43,6 @@ public class CVSAccess extends ConnectionTypeBase {
     }
 
     public boolean createFolder(String path) throws Exception {
-        // TODO Auto-generated method stub
         updateSandBox(path);
         File tmpFile = new File(path);
 

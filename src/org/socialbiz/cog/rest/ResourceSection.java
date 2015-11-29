@@ -404,43 +404,36 @@ public class ResourceSection  implements NGResource
         }
     }
 
-    private void deleteAttachments(NGPage ngp) throws Exception
-    {
+    private void deleteAttachments(NGPage ngp) throws Exception {
         lar.assertAdmin("");
         NGSection ngs = ngp.getSectionOrFail(lname);
-        String[] attchList = UtilityMethods.splitOnDelimiter(lid,',');
+        List<String> attchList = UtilityMethods.splitString(lid,',');
         SectionAttachments.removeAttachments(lar, ngs, attchList);
     }
-    private void deleteTasks(NGPage ngp) throws Exception
-    {
+    private void deleteTasks(NGPage ngp) throws Exception {
         lar.assertAdmin("");
         NGSection ngs = ngp.getSectionOrFail(lname);
         SectionTask taskForm = (SectionTask) ngs.getFormat();
-        String[] taskList = UtilityMethods.splitOnDelimiter(lid,',');
-        for(int i=0; i<taskList.length; i++)
-        {
-            taskForm.removeTask(taskList[i], ngs);
+        List<String> taskList = UtilityMethods.splitString(lid,',');
+        for(String oneTask : taskList) {
+            taskForm.removeTask(oneTask, ngs);
         }
     }
-    private void deleteNotes(NGPage ngp) throws Exception
-    {
+    private void deleteNotes(NGPage ngp) throws Exception {
         NGSection ngs = ngp.getSectionOrFail(lname);
-        String[] cmtList = UtilityMethods.splitOnDelimiter(lid,',');
-        for(int i=0; i<cmtList.length; i++)
-        {
-            NoteRecord ei = SectionForNotes.getLeaflet(cmtList[i], ngs);
+        List<String> cmtList = UtilityMethods.splitString(lid,',');
+        for(String oneCmt : cmtList) {
+            NoteRecord ei = SectionForNotes.getLeaflet(oneCmt, ngs);
             if (ei != null) {
                 ngs.removeChild(ei);
             }
         }
     }
 
-    public void loadSubprocess() throws Exception
-    {
-
+    public void loadSubprocess() throws Exception {
     }
-    public void loadTaskList(String filter) throws Exception
-    {
+    
+    public void loadTaskList(String filter) throws Exception {
         ltype = NGResource.TYPE_XML;
         TaskHelper th = new TaskHelper(lar.getBestUserId(), lserverURL);
         th.scanAllTask(lar.getCogInstance());
@@ -977,35 +970,29 @@ public class ResourceSection  implements NGResource
         return modVal;
     }
 
-    private static boolean isRequested(String id, String dataIds) throws Exception
-    {
-        if(dataIds == null){
+    private static boolean isRequested(String id, String dataIds) throws Exception {
+        if(dataIds == null) {
             return true;
         }
-        String[] idList = UtilityMethods.splitOnDelimiter(dataIds,',');
-        for(int i=0; i<idList.length; i++){
-            if(id.equalsIgnoreCase(idList[i]))
-            {
+        List<String> idList = UtilityMethods.splitString(dataIds,',');
+        for(String oneId : idList) {
+            if(id.equalsIgnoreCase(oneId)) {
                 return true;
             }
         }
         return false;
     }
 
-    public int getStatusCode()
-    {
+    public int getStatusCode() {
         return statuscode;
     }
 
-    public static String getSectionElementName(String name) throws Exception
-    {
-          if(name == null) {
+    public static String getSectionElementName(String name) throws Exception {
+        if(name == null) {
             throw new ProgramLogicError("Section name can not be null.");
         }
-
-          name = name.trim();
-
-          if(name.equals("Description")
+        name = name.trim();
+        if(name.equals("Description")
             || name.equals("Public Description")
             || name.equals("Notes")
             || name.equals("Author Notes")
@@ -1039,17 +1026,14 @@ public class ResourceSection  implements NGResource
         }
     }
 
-    private  void loadTaskData(String dataIds) throws Exception
-    {
+    private  void loadTaskData(String dataIds) throws Exception {
         ltype = NGResource.TYPE_XML;
         NGPageIndex ngpi = lar.getCogInstance().getContainerIndexByKey(lpageid);
-        if (ngpi==null)
-        {
+        if (ngpi==null) {
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.page.not.found",new Object[]{lid});
         }
-        if (!ngpi.isProject())
-        {
+        if (!ngpi.isProject()) {
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
         }

@@ -632,16 +632,14 @@ public class ProjectSettingController extends BaseController {
     private static String pasreFullname(String fullNames) throws Exception
     {
         String assigness = "";
-        String[] fullnames = UtilityMethods.splitOnDelimiter(fullNames, ',');
-        for(int i=0; i<fullnames.length; i++){
-            String fname = fullnames[i];
+        List<String> fullnames = UtilityMethods.splitString(fullNames, ',');
+        for(String fname : fullnames){
             int bindx = fname.indexOf('<');
             int length = fname.length();
             if(bindx > 0){
                 fname = fname.substring(bindx+1,length-1);
             }
             assigness = assigness + "," + fname;
-
         }
         if(assigness.startsWith(",")){
             assigness = assigness.substring(1);

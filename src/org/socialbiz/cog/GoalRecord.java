@@ -458,14 +458,14 @@ public class GoalRecord extends BaseRecord {
     }
 
     public void writeUserLinks(AuthRequest ar) throws Exception {
-        String[] assignees = UtilityMethods.splitOnDelimiter(
+        List<String> assignees = UtilityMethods.splitString(
                 getAssigneeCommaSeparatedList(), ',');
         writeLinks(ar, assignees);
     }
 
-    private void writeLinks(AuthRequest ar, String[] assignees)
+    private void writeLinks(AuthRequest ar, List<String> assignees)
             throws Exception {
-        if (assignees == null || assignees.length == 0) {
+        if (assignees == null || assignees.size() == 0) {
             // nobody is assigned to this task
             return;
         }

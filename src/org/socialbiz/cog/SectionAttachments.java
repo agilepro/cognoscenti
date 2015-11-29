@@ -136,21 +136,18 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
     * pass ar=null if you do not want any history records created
     * recording that the document was removed.
     */
-    public static void removeAttachments( AuthRequest ar, NGSection ngs, String[] fileIdsToBeRemoved)
+    public static void removeAttachments( AuthRequest ar, NGSection ngs, List<String> fileIdsToBeRemoved)
         throws Exception
     {
-        if (fileIdsToBeRemoved == null || fileIdsToBeRemoved.length == 0)
-        {
+        if (fileIdsToBeRemoved == null || fileIdsToBeRemoved.size() == 0) {
             //nothing to do
             return;
         }
 
         // remove the files that were marked for delete.
-        for (String fileid : fileIdsToBeRemoved)
-        {
+        for (String fileid : fileIdsToBeRemoved) {
             AttachmentRecord att = ngs.parent.findAttachmentByID(fileid);
-            if (att!=null)
-            {
+            if (att!=null) {
                 ngs.parent.deleteAttachment(fileid,ar);
                 att.createHistory(ar, ngs.parent, HistoryRecord.EVENT_DOC_REMOVED, "");
             }

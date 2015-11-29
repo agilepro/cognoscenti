@@ -575,9 +575,8 @@ public class ResourcePage implements NGResource
             licenseList = ngp.getLicenses();
         }
         else {
-            String[] lids = UtilityMethods.splitOnDelimiter(licenseId, ',');
-            for (int i = 0; i < lids.length; i++) {
-                String id = lids[i];
+            List<String> lids = UtilityMethods.splitString(licenseId, ',');
+            for (String id: lids) {
                 License lr = ngp.getLicense(id);
                 licenseList.add(lr);
             }
@@ -637,25 +636,21 @@ public class ResourcePage implements NGResource
 
     }
 
-    public void deleteLicense()throws Exception
-    {
+    public void deleteLicense()throws Exception {
         ltype = NGResource.TYPE_XML;
         NGPage ngp = getPageMustExist();
 
         ar.assertMember("");
 
-        if(licenseId == null)
-        {
+        if(licenseId == null) {
             lrstatus.setStatusCode(404);
             throw new ProgramLogicError ("To delete a license you need to use factory address");
         }
 
-        String[] lids = UtilityMethods.splitOnDelimiter(licenseId, ',');
+        List<String> lids = UtilityMethods.splitString(licenseId, ',');
 
         String newids = "";
-        for(int i=0; i<lids.length; i++)
-        {
-            String id =lids[i];
+        for(String id : lids) {
             ngp.removeLicense(id);
             newids = newids +"," + id;
         }
@@ -686,16 +681,14 @@ public class ResourcePage implements NGResource
             throw new ProgramLogicError ("To update a license you need to use factory address");
         }
 
-        String[] lids = UtilityMethods.splitOnDelimiter(licenseId, ',');
+        List<String> lids = UtilityMethods.splitString(licenseId, ',');
 
         Element element_licenses = ResourceSection.findElement(lindoc.getDocumentElement(), "licenses");
         for (Element element_license : DOMUtils.getChildElementsList(element_licenses)) {
             String id = element_license.getAttribute("id");
             boolean doupdate = false;
-            for(int i=0; i<lids.length; i++)
-            {
-                if(lids[i].equals(id))
-                {
+            for(String lid : lids) {
+                if(lid.equals(id)) {
                     doupdate = true;
                     break;
                 }
