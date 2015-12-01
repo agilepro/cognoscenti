@@ -183,10 +183,8 @@ public class MailFile extends JSONWrapper {
         List<MailInst> allEmail = getAllMessages();
 
         for (MailInst inst : allEmail) {
-
             if (MailInst.READY_TO_GO.equals(inst.getStatus())) {
                 inst.sendPreparedMessageImmediately(mailer);
-                //now lets remember that this email was sent ... in case other messages bomb out
                 save();
             }
         }

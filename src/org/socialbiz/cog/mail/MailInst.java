@@ -133,24 +133,42 @@ public class MailInst extends JSONWrapper {
     }
 
 
-    public void sendPreparedMessageImmediately(Mailer mailer) throws Exception {
+    /**
+     * send the message.
+     * This routine does NOT throw an exception if the mailing fails.
+     *
+     * Any exception thrown in the course of sending a message is stored
+     * in the exception field of the given message.  And false returned.
+     *
+     * @return either it returns
+     *         (true) because it sent the mail and marked it so
+     *         (false) if it can't sent the message
+     *
+     */
+    public boolean sendPreparedMessageImmediately(Mailer mailer) {
 
         long sendTime = System.currentTimeMillis();
-
-        //check that server is configured to send email
-        if (!"smtp".equals(mailer.getProperty("mail.transport.protocol"))) {
-            //if protocol is set to anything else, then just ignore this request
-            //this is an easy way to disable the sending of email across board
-            setStatus(EmailRecord.SKIPPED);
-            setLastSentDate(sendTime);
-            System.out.println("Email skipped, not sent, mail.transport.protocol!=smtp ");
-            return;
-        }
-
-        String addressee = "(Initial value)";
-
         Transport transport = null;
+        String addressee = "UNSPECIFIED";
+
         try {
+
+
+            //check that server is configured to send email, this is OLD functionality
+            //to allow testing the server when there was no SMTP server availble.
+            //Now we have kMail to simulate a server anywhere, so it is better to
+            //use that instead.
+            if (!"smtp".equals(mailer.getProperty("mail.transport.protocol"))) {
+                //if protocol is set to anything else, then just ignore this request
+                //this is an easy way to disable the sending of email across board
+                setStatus(EmailRecord.SKIPPED);
+                setLastSentDate(sendTime);
+                System.out.println("DEPRECATED: Email skipped, not sent because mail.transport.protocol!=smtp ");
+                System.out.println("            Please use kMail instead of setting mail.transport.protocol to a strange value.");
+                return true;  //act like mail was sent
+            }
+
+
             Authenticator authenticator = new MyAuthenticator(mailer.getProperties());
             Session mailSession = Session.getInstance(mailer.getProperties(), authenticator);
             mailSession.setDebug("true".equals(mailer.getProperty("mail.debug")));
@@ -209,11 +227,19 @@ public class MailInst extends JSONWrapper {
 
             setStatus(EmailRecord.SENT);
             setLastSentDate(sendTime);
+            return true;
         } catch (Exception me) {
-            setStatus(EmailRecord.FAILED);
-            setLastSentDate(sendTime);
-            setExceptionMessage(me);
-            throw new Exception("failed while sending a simple message: "+getSubject()+", TO:"+addressee, me);
+            try {
+                System.out.println("Failed ("+new Date()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): "
+                        + me);
+                setStatus(EmailRecord.FAILED);
+                setLastSentDate(sendTime);
+                setExceptionMessage(me);
+            }
+            catch (Exception eee) {
+                System.out.println("EXCEPTION within EXCEPTION: "+eee);
+            }
+            return false;
         } finally {
             if (transport != null) {
                 try {

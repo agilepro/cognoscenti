@@ -174,6 +174,9 @@ public class DailyDigest {
                         debugEvidence.write("\n<li>isSuperAdmin returned wrong result in double check test</li>");
                     }
                 }
+
+                //formatTaskListForEmail is going to clear locks, so clear here before entering
+                NGPageIndex.clearLocksHeldByThisThread();
                 numTasks = formatTaskListForEmail(clone, up);
 
                 //writeReminders will walk through a bunch of pages and all locks must be
