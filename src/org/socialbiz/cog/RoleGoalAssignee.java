@@ -23,6 +23,7 @@ package org.socialbiz.cog;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.socialbiz.cog.util.StringCounter;
 import org.workcast.json.JSONObject;
 
 /**
@@ -142,7 +143,19 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         throw new Exception("getJSON has not been implemented on RoleGoalAssignee");
     }
 
-    
+
+    public void countIdentifiersInRole(StringCounter sc) {
+        String assigneeList = getList();
+        if (assigneeList == null) {
+            return;
+        }
+
+        for (String id : UtilityMethods.splitString(assigneeList, ',')) {
+            sc.increment(id);
+        }
+    }
+
+
     /**
      * This will replace the assignee of an goal with another, avoiding
      * any duplication.
@@ -152,7 +165,7 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         if (assigneeList == null) {
             return false;
         }
-        
+
         //first a clear search path to see if one is there.
         List<String> assignees = UtilityMethods.splitString(assigneeList, ',');
         boolean foundOne = false;
@@ -164,7 +177,7 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         if (!foundOne) {
             return false;
         }
-        
+
         //since we found one, now reconstruct the assignee list
         StringBuffer result = new StringBuffer();
         result.append(destId);
@@ -178,5 +191,5 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         setList(result.toString());
         return true;
     }
-    
+
 }

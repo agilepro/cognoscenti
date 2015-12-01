@@ -642,7 +642,7 @@ public class UserProfile extends DOMFace implements UserRef
             cleanName = cleanName.substring(0,28);
         }
         String usable = getUniversalId();
-        String olink = "FindPerson.jsp?uid=";
+        String olink = "v/FindPerson.htm?uid=";
         String nlink ="";
         if(ar.isNewUI()){
             nlink= "v/" + getKey() + "/userSettings.htm";

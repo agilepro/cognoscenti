@@ -22,6 +22,8 @@ package org.socialbiz.cog;
 
 import java.util.List;
 
+import org.socialbiz.cog.util.StringCounter;
+
 /**
 * Interface of all objects that define a role.
 *
@@ -140,10 +142,11 @@ public interface NGRole extends NGLabel {
      *      times, all instances of the address will be removed.
      * @param destId the email address that the sourceId is to be replaced with.  If this
      *      destId is already in the role it should take care not to duplicate it.
-     * @return true if at least one sourceId was removed from the role.  
+     * @return true if at least one sourceId was removed from the role.
      *      Return false if no instances of the source were found
      */
     public boolean replaceId(String sourceId, String destId);
 
+    public void countIdentifiersInRole(StringCounter sc);
 
 }

@@ -159,6 +159,7 @@ public class DailyDigest {
 
                 if (containers.size() > 0) {
                     clone.write("<div style=\"margin-top:15px;margin-bottom:20px;\"><span style=\"font-size:24px;font-weight:bold;\">Workspace Updates</span>&nbsp;&nbsp;&nbsp;");
+                    NGPageIndex.clearLocksHeldByThisThread();
                     numberOfUpdates += constructDailyDigestEmail(clone, containers,
                             historyStartTime, processingStartTime);
                     clone.write("</div>");
@@ -242,6 +243,7 @@ public class DailyDigest {
     public static int constructDailyDigestEmail(AuthRequest clone,
             List<NGPageIndex> containers,
             long historyRangeStart, long historyRangeEnd) throws Exception {
+        NGPageIndex.assertNoLocksOnThread();
         int totalHistoryCount = 0;
         boolean needsFirst = true;
 
@@ -317,6 +319,7 @@ public class DailyDigest {
             clone.write("\n</tr>");
             clone.write("</tbody>");
             clone.write("</table>");
+            NGPageIndex.clearLocksHeldByThisThread();
         }
         return totalHistoryCount;
     }

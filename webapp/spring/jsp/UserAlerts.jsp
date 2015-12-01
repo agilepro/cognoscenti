@@ -110,7 +110,8 @@ app.controller('myCtrl', function($scope, $http) {
     </p>
 
     <%
-    DailyDigest.constructDailyDigestEmail(ar,containers,lastSendTime,ar.nowTime);
+     NGPageIndex.clearLocksHeldByThisThread();
+     DailyDigest.constructDailyDigestEmail(ar,containers,lastSendTime,ar.nowTime);
 
     out.flush();
 

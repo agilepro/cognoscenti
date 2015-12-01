@@ -21,6 +21,7 @@
 package org.socialbiz.cog;
 
 import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -513,9 +514,18 @@ public class NGPageIndex {
         }
         String ctid = "tid:" + Thread.currentThread().getId();
         if (lockMap.containsKey(ctid)) {
-            throw new Exception("program logic error: Thread is holding a lock when it should not.  "
+
+            //This is a pernicious problem that might cause a deadlock, so make a big deal in the
+            //log file so that it gets fixed proactively.  You need the stack trace to fix it,
+            //so go ahead and put the stack trace in the log file.
+            Exception e = new Exception("program logic error: Thread is holding a lock when it should not.  "
                     +"Method that is controlling locks must only be called when no locks are being held.  "
                     +"Clear all locks and all references to locked objects before calling this method.");
+            System.out.println("\n\n~~~~~~ THREAD LOCK VIOLATION ~~~~~~~"+new Date());
+            PrintStream ps = new PrintStream(System.out);
+            e.printStackTrace(ps);
+            System.out.println("~~~~~~ THIS IS PROGRAM LOGIC ERROR ~~~~~~~\n\n");
+            throw e;
         }
     }
 

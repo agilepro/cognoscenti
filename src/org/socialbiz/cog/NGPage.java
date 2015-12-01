@@ -36,6 +36,7 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
+import org.socialbiz.cog.util.StringCounter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
@@ -1787,8 +1788,13 @@ public class NGPage extends ContainerCommon implements NGContainer
             return;   //only one thing at a time
         }
     }
-    
-    
+
+    public void countIdentifiersInWorkspace(StringCounter sc) throws Exception {
+        for (NGRole role : this.getAllRoles()) {
+            role.countIdentifiersInRole(sc);
+        }
+    }
+
     public int replaceUserAcrossWorkspace(String sourceUser, String destUser) throws Exception {
         int count = 0;
         for (GoalRecord goal : this.getAllGoals()) {

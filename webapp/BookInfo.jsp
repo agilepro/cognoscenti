@@ -7,6 +7,7 @@
 %><%@page import="org.socialbiz.cog.NGPageIndex"
 %><%@page import="org.socialbiz.cog.NGSection"
 %><%@page import="org.socialbiz.cog.UserProfile"
+%><%@page import="org.socialbiz.cog.util.StringCounter"
 %><%@page import="java.io.File"
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Properties"
@@ -117,23 +118,25 @@
         </tr>
 <%
     }
-    else if (!ar.isMember())
-    {
-%>
-    <tr><form action="BookMemberAction.jsp" method="post">
-        <input type="hidden" name="userid" value="<% ar.writeHtml(ar.getBestUserId()); %>">
-        <input type="hidden" name="b" value="<% ar.writeHtml(b); %>">
-        <input type="hidden" name="encodingGuard" value="<%ar.writeHtml("\u6771\u4eac");%>"/>
-        <input type="hidden" name="level" value="1">
-        <td><input type="submit" value="Request to be Executive"></td>
-        </form>
-        </tr>
-<%
-    }
 
     writeOutUsers(ar, book_members,  NGPage.ROLE_MEMBER,
                   "Executives ("+ngb.getFullName()+")"            ,
                   2, b);
+
+    %><p>List of all identifiers in site</p><ul><%
+
+    StringCounter scnt = new StringCounter();
+    List<NGPageIndex> allOfEm = ar.getCogInstance().getAllProjectsInSite(b);
+    for (NGPageIndex ngpi : allOfEm) {
+        NGPageIndex.clearLocksHeldByThisThread();
+        NGPage ngp = ngpi.getPage();
+        ngp.countIdentifiersInWorkspace(scnt);
+    }
+
+    for (String sid : scnt.keySet() ) {
+        %><li><% ar.writeHtml(sid); %>: <%=scnt.getCount(sid)%></li><%
+    }
+    %></ul><%
 
     if (ar.isMember() || ar.isSuperAdmin())
     {

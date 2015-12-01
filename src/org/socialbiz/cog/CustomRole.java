@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.socialbiz.cog.util.StringCounter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
@@ -230,7 +231,13 @@ public class CustomRole extends DOMFace implements NGRole
         }
         return result;
     }
-    
+
+    public void countIdentifiersInRole(StringCounter sc) {
+        for (String id : getVector("member")) {
+            sc.increment(id);
+        }
+    }
+
     public boolean replaceId(String sourceId, String destId) {
         List<String> players = getVector("member");
         boolean foundOne=false;
