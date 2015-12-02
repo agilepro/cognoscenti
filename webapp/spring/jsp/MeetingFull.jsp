@@ -435,12 +435,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.changeMeetingState = function(newState) {
         $scope.meeting.state = newState;
+        //$scope.savePartialMeeting(['state']);
         $scope.saveMeeting();
     };
-    $scope.changeItemState = function(item, newState) {
-        item.status = newState;
-        $scope.saveMeeting();
-    };
+    //$scope.changeItemState = function(item, newState) {
+    //    item.status = newState;
+    //    $scope.saveMeeting();
+    //};
     $scope.changeGoalState = function(goal, newState) {
         goal.prospects = newState;
         $scope.saveGoal(goal);
@@ -668,9 +669,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return res;
     }
     $scope.addPresenter = function(item, person) {
-        console.log("entering addPresenter");
         var notPresent = true;
-        console.log("Person is "+person.name);
         item.presenters.map( function(b) {
             if (b == person.uid) {
                 notPresent = false;
@@ -733,14 +732,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.putGetMeetingInfo(saveRecord);
         $scope.nowEditing="nothing";
     }
-    $scope.startNewComment = function(item, isPoll) {
+    $scope.startNewComment = function(item, isPoll, cmt) {
         item.newComment = {};
         item.newComment.choices = ["Consent", "Object"];
         item.newComment.html="";
         item.newComment.poll=isPoll;
+        if (cmt) {
+            item.newComment.replyTo = cmt.time;
+        }
         $scope.toggleEditor(8,item.id)
     }
-    $scope.createNewComment = function(item) {
+    $scope.saveNewComment = function(item) {
         var itemCopy = {};
         itemCopy.id = item.id;
         itemCopy.newComment = item.newComment;
@@ -788,6 +790,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         item.newComment.html = cmt.html;
         item.newComment.time = cmt.time + 1;
         item.newComment.poll = true;
+        item.newComment.replyTo = cmt.time;
         item.newPoll = true;
         $scope.toggleEditor(8,item.id);
     }
@@ -825,6 +828,75 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       //cancel action
     });
   };
+
+    $scope.replyToComment = function(item,cmt) {
+        item.newComment = {}
+        item.newComment.myReplyTo = cmt.time;
+        item.newComment.myPoll = false;
+    }
+
+    $scope.findComment = function(item, timeStamp) {
+        return item.comments.find( function(item) {
+            return item.time == timeStamp;
+        });
+    }
+
+    $scope.getResponse = function(cmt) {
+        var selected = cmt.responses.filter( function(item) {
+            return item.user=="<%ar.writeJS(currentUser);%>";
+        });
+        return selected;
+    }
+    $scope.updateResponse = function(cmt, response) {
+        var selected = cmt.responses.filter( function(item) {
+            return item.user!="<%ar.writeJS(currentUser);%>";
+        });
+        selected.push(response);
+        cmt.responses = selected;
+        //should pass the agent item so we can just save it....
+        $scope.saveMeeting();
+    }
+
+    $scope.openResponseEditor = function (cmt) {
+
+        var selected = $scope.getResponse(cmt);
+        var selResponse = {};
+        if (selected.length == 0) {
+            selResponse.user = "<%ar.writeJS(currentUser);%>";
+            selResponse.userName = "<%ar.writeJS(currentUserName);%>";
+            selResponse.choice = cmt.choices[0];
+            selResponse.isNew = true;
+        }
+        else {
+            selResponse = JSON.parse(JSON.stringify(selected[0]));
+        }
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html',
+            controller: 'ModalResponseCtrl',
+            size: 'lg',
+            resolve: {
+                response: function () {
+                    return selResponse;
+                },
+                cmt: function () {
+                    return cmt;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (response) {
+            var cleanResponse = {};
+            cleanResponse.html = response.html;
+            cleanResponse.user = response.user;
+            cleanResponse.userName = response.userName;
+            cleanResponse.choice = response.choice;
+            $scope.updateResponse(cmt, cleanResponse);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
 
 });
 
@@ -891,12 +963,15 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
         goal.prospects = newState;
         $scope.saveGoal(goal);
     };
+
+
 });
 
 </script>
 
+<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
 
-<div ng-app="myApp" ng-controller="myCtrl">
+<div ng-app="myApp" ng-controller="myCtrl" ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
@@ -1389,19 +1464,48 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
       <table ng-show="showItemMap[item.id]">
       <tr ng-repeat="cmt in item.comments">
            <td style="width:50px;vertical-align:top;padding:15px;">
-               <img class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
+               <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
            </td>
            <td>
-               <div class="leafContent comment-outer">
-                   <div style="">
+               <div class="comment-outer">
+                   <div>
+                       <div class="dropdown" style="float:left">
+                           <button class="btn btn-default dropdown-toggle" type="button" id="menu" data-toggle="dropdown" style="margin-right:10px;">
+                               <span class="caret"></span>
+                           </button>
+                           <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
+                              <li role="presentation" ng-show="cmt.user=='<%=uProf.getUniversalId()%>'">
+                                  <a role="menuitem" ng-click="toggleEditor(7,cmt.time)">Edit Your Comment</a></li>
+                              <li role="presentation" ng-show="cmt.poll">
+                                  <a role="menuitem" ng-click="openResponseEditor(cmt)">Create/Edit Response:</a></li>
+                              <li role="presentation" ng-show="cmt.poll">
+                                  <a role="menuitem" ng-click="cmt.poll=false;saveComment(item,cmt)">Close Response Period</a></li>
+                              <li role="presentation" ng-show="cmt.poll">
+                                  <a role="menuitem" ng-click="createModifiedProposal(item,cmt)">Make Modified Proposal</a></li>
+                              <li role="presentation" ng-hide="cmt.poll">
+                                  <a role="menuitem" ng-click="startNewComment(item, false, cmt)">Reply (not working)</a></li>
+                           </ul>
+                       </div>
+
                        <span ng-hide="cmt.poll"><i class="fa fa-comments-o"></i></span>
                        <span ng-show="cmt.poll"><i class="fa fa-star-o"></i></span>
-                       &nbsp; {{cmt.time | date}} - <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm"><span class="red">{{cmt.userName}}</span></a>
-                       <span ng-click="toggleEditor(7,cmt.time)" ng-show="cmt.user=='<%=uProf.getUniversalId()%>'">- <a href="">EDIT</a></span>
+                       &nbsp; {{cmt.time | date}} -
+                       <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
+                          <span class="red">{{cmt.userName}}</span>
+                       </a>
+                       <span ng-hide="cmt.emailSent">-email pending-</span>
+                         <span ng-show="cmt.replyTo">
+                             <span ng-hide="cmt.poll">In reply to
+                                 <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
+                                 <i class="fa fa-comments-o"></i> {{findComment(item,cmt.replyTo).userName}}</a></span>
+                             <span ng-show="cmt.poll">Based on
+                                 <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
+                                 <i class="fa fa-star-o"></i> {{findComment(item,cmt.replyTo).userName}}</a></span>
+                         </span>
+
                    </div>
-                   <div class="comment-inner"
-                        ng-hide="isEditing(7,cmt.time)">
-                     <div ng-bind-html="cmt.html"></div>
+                   <div class="leafContent comment-inner" ng-hide="isEditing(7,cmt.time)">
+                       <div ng-bind-html="cmt.html"></div>
                    </div>
 
                     <div class="well leafContent" style="width:100%" ng-show="isEditing(7,cmt.time)">
@@ -1426,32 +1530,17 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                        </td>
                    </tr>
                    </table>
+                   <div ng-show="cmt.replies.length>0 && cmt.poll">
+                       See proposals:
+                       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
+                           <i class="fa fa-star-o"></i> {{findComment(item,reply).userName}}</a> </span>
+                   </div>
+                   <div ng-show="cmt.replies.length>0 && !cmt.poll">
+                       See replies:
+                       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
+                           <i class="fa fa-comments-o"></i> {{findComment(item,reply).userName}}</a> </span>
+                   </div>
 
-                   <div ng-show="cmt.poll && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                       <button class="btn btn-default" ng-click="cmt.poll=false;saveComment(item,cmt)">Close Response Period</button>
-                       <button class="btn btn-default" ng-click="createModifiedProposal(item,cmt)">Make Modified Proposal</button>
-                   </div>
-                   <div ng-show="cmt.poll && !isEditing(9,cmt.time) && cmt.user!='<%ar.writeJS(currentUser);%>'">
-                       Respond: <span ng-repeat="choice in cmt.choices">&nbsp;
-                           <button class="btn btn-primary" ng-click="startResponse(cmt, choice)">
-                               {{choice}}
-                           </button>
-                       </span>&nbsp;
-                       <button class="btn btn-default" ng-click="createModifiedProposal(item,cmt)">Make Modified Proposal</button>
-                   </div>
-                   <div ng-show="cmt.poll && isEditing(9,cmt.time) && cmt.user!='<%ar.writeJS(currentUser);%>'">
-                       <h2>Your Response: <%ar.writeHtml(currentUserName);%></h2>
-                       <div ng-repeat="myResp in getMyResponse(cmt)">
-                          <div class="form-inline form-group">
-                              Choice:  <select class="form-control" ng-model="myResp.choice" ng-options="onch as onch for onch in cmt.choices"></select>
-                          </div>
-                          <div ng-model="myResp.html"
-                              ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-                              text-angular="" class="" style="width:100%;"></div>
-                       </div>
-                      <button ng-click="saveComment(item,cmt);stopEditing()" class="btn btn-danger">Save Response</button>
-                      <button ng-click="stopEditing()" class="btn btn-danger">Cancel</button>
-                   </div>
                </div>
            </td>
       </tr>
@@ -1470,9 +1559,9 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                   ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
                   text-angular="" class="" style="width:100%;"></div>
 
-              <button ng-click="createNewComment(item);stopEditing()" class="btn btn-danger" ng-hide="item.newComment.poll">
+              <button ng-click="saveNewComment(item);stopEditing()" class="btn btn-danger" ng-hide="item.newComment.poll">
                   Create <i class="fa fa-comments-o"></i> Comment</button>
-              <button ng-click="createNewComment(item);stopEditing()" class="btn btn-danger" ng-show="item.newComment.poll">
+              <button ng-click="saveNewComment(item);stopEditing()" class="btn btn-danger" ng-show="item.newComment.poll">
                   Create <i class="fa fa-star-o"></i> Proposal</button>
               <button ng-click="stopEditing()" class="btn btn-danger">Cancel</button>
               &nbsp;

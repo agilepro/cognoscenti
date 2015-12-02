@@ -115,12 +115,11 @@ public class AgendaItem extends DOMFace {
         }
         return null;
     }
-    public void addComment(AuthRequest ar, String newComment, boolean isPoll)  throws Exception {
+    public CommentRecord addComment(AuthRequest ar)  throws Exception {
         CommentRecord newCR = createChild("comment", CommentRecord.class);
         newCR.setTime(ar.nowTime);
         newCR.setUser(ar.getUserProfile());
-        newCR.setContentHtml(ar, newComment);
-        newCR.setPoll(isPoll);
+        return newCR;
     }
 
     /**
@@ -189,6 +188,14 @@ public class AgendaItem extends DOMFace {
         }
         return aiInfo;
     }
+    private CommentRecord findComment(long timeStamp) throws Exception {
+        for (CommentRecord cr : this.getComments()) {
+            if (cr.getTime() == timeStamp) {
+                return cr;
+            }
+        }
+        return null;
+    }
 
 
     public void updateFromJSON(AuthRequest ar, JSONObject input) throws Exception {
@@ -223,12 +230,18 @@ public class AgendaItem extends DOMFace {
         }
         if (input.has("newComment")) {
             JSONObject newComment = input.getJSONObject("newComment");
-            String newValue = newComment.getString("html");
-            boolean isPoll = false;
-            if (newComment.has("poll")) {
-                isPoll = newComment.getBoolean("poll");
+            CommentRecord cr = addComment(ar);
+            cr.updateFromJSON(newComment, ar);
+            if (newComment.has("replyTo")) {
+                long replyToValue = newComment.getLong("replyTo");
+                CommentRecord source = this.findComment(replyToValue);
+                if (source!=null) {
+                    source.addOneToReplies(cr.getTime());
+                }
+                else {
+                    System.out.println("did not find any comment with this time value: "+replyToValue);
+                }
             }
-            addComment(ar, newValue, isPoll);
         }
         if (input.has("comments")) {
             JSONArray comments = input.getJSONArray("comments");

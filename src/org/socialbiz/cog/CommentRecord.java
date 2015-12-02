@@ -300,10 +300,13 @@ public class CommentRecord extends DOMFace {
                 resList.add(sn);
             }
         }
-        for (ResponseRecord rr : getResponses()) {
-            ScheduledNotification sn = rr.getScheduledNotification(ngp, noteOrMeet, this);
-            if (!sn.isSent()) {
-                resList.add(sn);
+        if (isPoll()) {
+            //there can be responses only if this is a "poll" type comment (a proposal)
+            for (ResponseRecord rr : getResponses()) {
+                ScheduledNotification sn = rr.getScheduledNotification(ngp, noteOrMeet, this);
+                if (!sn.isSent()) {
+                    resList.add(sn);
+                }
             }
         }
     }
