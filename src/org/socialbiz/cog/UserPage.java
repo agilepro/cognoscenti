@@ -755,8 +755,6 @@ public class UserPage extends ContainerCommon
         JSONArray list = new JSONArray();
 
         for (NGPageIndex ngpi : cog.getAllContainers()) {
-            // start by clearing any outstanding locks in every loop
-            NGPageIndex.clearLocksHeldByThisThread();
 
             if (!ngpi.isProject()) {
                 continue;
@@ -776,7 +774,9 @@ public class UserPage extends ContainerCommon
 
                 list.put(gr.getJSON4Goal(aPage));
             }
-        }
+            // clean out any outstanding locks in every loop
+            NGPageIndex.clearLocksHeldByThisThread();
+       }
 
         return list;
     }

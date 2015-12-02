@@ -2,6 +2,8 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.EmailRecord"
 %><%@page import="org.socialbiz.cog.OptOutAddr"
+%><%@page import="org.socialbiz.cog.mail.MailFile"
+%><%@page import="org.socialbiz.cog.mail.MailInst"
 %><%
 
     String pageId      = ar.reqParam("pageId");
@@ -10,9 +12,15 @@
     ar.assertMember("Must be a member to see meetings");
     NGBook ngb = ngp.getSite();
 
+    File folder = ngp.getFilePath().getParentFile();
+    File emailFilePath = new File(folder, "mailArchive.json");
+
+    MailFile archive = MailFile.readOrCreate(emailFilePath);
+
+
     JSONArray emailList = new JSONArray();
-    for (EmailRecord eRec : ngp.getAllEmail() ) {
-        emailList.put(eRec.getJSON());
+    for (MailInst mi : archive.getAllMessages() ) {
+        emailList.put(mi.getJSON());
     }
 
 /* PROTOTYPE EMAIL RECORD
@@ -54,16 +62,9 @@ app.controller('myCtrl', function($scope, $http) {
             res = $scope.emailList;
         }
         else {
-            $scope.emailList.map( function(oneEmail) {
-                var foundIt = oneEmail.subject.toLowerCase().indexOf(searchVal)>=0;
-                oneEmail.to.map( function( oneTo ) {
-                    if (oneTo.toLowerCase().indexOf(searchVal)>=0) {
-                        foundIt = true;
-                    }
-                });
-                if (foundIt) {
-                    res.push(oneEmail);
-                };
+            res = $scope.emailList.filter( function(oneEmail) {
+                return (oneEmail.Subject.toLowerCase().indexOf(searchVal)>=0)
+                    || (oneEmail.Addressee.toLowerCase().indexOf(searchVal)>=0);
             });
         }
         res = res.sort( function(a,b) {
@@ -83,11 +84,11 @@ app.controller('myCtrl', function($scope, $http) {
     }
 
     $scope.bestDate = function(rec) {
-        if (rec.status == "Sent" || rec.status == "Failed") {
-            return rec.sendDate;
+        if (rec.Status == "Sent" || rec.Status == "Failed") {
+            return rec.LastSentDate;
         }
         else {
-            return (new Date()).getTime();
+            return rec.CreateDate;
         }
     }
 });
@@ -130,10 +131,10 @@ app.controller('myCtrl', function($scope, $http) {
                 <td width="100px">Send Date</td>
             </tr>
             <tr ng-repeat="rec in getFiltered()|limitTo: 50">
-                <td>{{namePart(rec.from)}}</td>
-                <td>{{rec.subject}}</td>
-                <td><span ng-repeat="addr in rec.to">{{addr}}, </span></td>
-                <td>{{rec.status}}</td>
+                <td>{{namePart(rec.From)}}</td>
+                <td>{{rec.Subject}}</td>
+                <td>{{rec.Addressee}}</td>
+                <td>{{rec.Status}}</td>
                 <td>{{bestDate(rec) |date:'M/d/yy H:mm'}}</td>
             </tr>
         </table>

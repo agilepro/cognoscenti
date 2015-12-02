@@ -21,4 +21,10 @@ public class JSONWrapper {
             return t;
         }
     }
+
+    public JSONObject getJSON() {
+        return kernel;
+    }
+
+
 }

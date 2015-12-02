@@ -1,5 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
+%><%@page import="org.socialbiz.cog.UserCache"
+%><%@page import="org.socialbiz.cog.UserCacheMgr"
 %><%
 
     UserProfile uProf = (UserProfile)request.getAttribute("userProfile");
@@ -16,8 +18,10 @@
     boolean viewingSelf = uProf.getKey().equals(operatingUser.getKey());
     String loggingUserName=uProf.getName();
 
-    UserPage uPage = uProf.getUserPage();
-    JSONArray workList = uPage.getWorkListJSON(uProf, ar.getCogInstance());
+
+    UserCache userCache = ar.getCogInstance().getUserCacheMgr().getCache(uProf.getKey());
+    JSONArray workList = userCache.getActionItems();
+    JSONArray proposalList = userCache.getProposals();
 
 %>
 
@@ -26,6 +30,7 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.workList = <%workList.write(out,2,4);%>;
+    $scope.proposalList = <%proposalList.write(out,2,4);%>;
     $scope.filterVal = "";
     $scope.filterPast = false;
     $scope.filterCurrent = true;
@@ -42,44 +47,32 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.getRows = function() {
         var lcfilter = $scope.filterVal.toLowerCase();
-        var res = [];
-        var last = $scope.workList.length;
-        for (var i=0; i<last; i++) {
-            var rec = $scope.workList[i];
-            var state = rec.state;
-            switch (state) {
+        var res = $scope.workList.filter( function(item) {
+
+            switch (item.state) {
                 case 0:
                     break;
                 case 1:
                     if (!$scope.filterFuture) {
-                        continue;
+                        return false;
                     }
                     break;
                 case 2:
                 case 3:
                 case 4:
                     if (!$scope.filterCurrent) {
-                        continue;
+                        return false;
                     }
                     break;
                 default:
                     if (!$scope.filterPast) {
-                        continue;
+                        return false;
                     }
-                    break;
             }
-
-            if (rec.synopsis.toLowerCase().indexOf(lcfilter)>=0) {
-                res.push(rec);
-            }
-            else if (rec.description.toLowerCase().indexOf(lcfilter)>=0) {
-                res.push(rec);
-            }
-            else if (rec.projectname.toLowerCase().indexOf(lcfilter>=0)) {
-                res.push(rec);
-            }
-
-        }
+            return ((item.synopsis.toLowerCase().indexOf(lcfilter)>=0) ||
+                  (item.description.toLowerCase().indexOf(lcfilter)>=0) ||
+                  (item.projectname.toLowerCase().indexOf(lcfilter)>=0));
+        });
         return res;
     }
 
@@ -141,5 +134,36 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             </table>
         </div>
+
+
+
+        <div class="generalSettings">
+
+            <table class="gridTable2" width="100%">
+            <tr class="gridTableHeader">
+                <td width="16px"></td>
+                <td width="200px">Proposal</td>
+                <td width="200px">Topic</td>
+                <td width="100px">Workspace</td>
+                <td width="100px">Site</td>
+            </tr>
+            <tr ng-repeat="rec in proposalList">
+                <td >
+                    <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/task{{rec.id}}.htm">{{rec.synopsis}}</a>
+                </td>
+                <td>{{rec.description | limitTo: 150}}</td>
+                <td>
+                    <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/frontPage.htm">{{rec.projectname}}</a>
+                </td>
+                <td>
+                    <a href="../../t/{{rec.siteKey}}/$/accountListProjects.htm">{{rec.sitename}}</a>
+                </td>
+            </tr>
+            </table>
+        </div>
+
+
+
+
     </div>
 </div>

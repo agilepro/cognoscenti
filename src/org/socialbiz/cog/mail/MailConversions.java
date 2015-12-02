@@ -54,6 +54,7 @@ public class MailConversions {
         ngp.clearAllEmail();
     }
 
+    /*
     public static void sendAllMail(File projectfolder, AuthRequest ar) throws Exception {
 
         File emailFilePath = new File(projectfolder, "mailArchive.json");
@@ -73,7 +74,7 @@ public class MailConversions {
             }
         }
     }
-
+*/
 
 
 }

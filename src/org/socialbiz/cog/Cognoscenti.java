@@ -40,6 +40,7 @@ public class Cognoscenti {
     //hold on to the servlet context in case you need it later
     private ConfigFile theConfig;
     private File rootFolder;
+    private UserCacheMgr userCacheMgr;
 
     //managing the known containers
     //TODO: get rid of this static variable
@@ -132,6 +133,9 @@ System.out.println("Cognoscenti Server Object == Start the Server");
     public ConfigFile getConfig() {
         return theConfig;
     }
+    public UserCacheMgr getUserCacheMgr() {
+        return userCacheMgr;
+    }
 
     //TODO: get rid of this static
     public static String getServerGlobalId() {
@@ -199,6 +203,8 @@ System.out.println("Cognoscenti Server Object == Start the Server");
 
             AuthDummy.initializeDummyRequest(this);
             UserManager.loadUpUserProfilesInMemory(this);
+            userCacheMgr = new UserCacheMgr(this);
+
             File attachFolderFile = theConfig.getAttachFolderOrFail();
             AttachmentVersionSimple.attachmentFolder = attachFolderFile;
             NGPageIndex.initAllStaticVars();
