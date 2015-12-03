@@ -1190,7 +1190,7 @@ public class GoalRecord extends BaseRecord {
         //don't send email if there is no assignee.  Wait till there is an assignee
         if (isActive(getState()) && getAssigneeRole().getDirectPlayers().size()>0) {
             GScheduledNotification sn = new GScheduledNotification(ngp, this);
-            if (!sn.isSent()) {
+            if (sn.needsSending()) {
                 resList.add(sn);
             }
         }
@@ -1204,8 +1204,8 @@ public class GoalRecord extends BaseRecord {
             ngp  = _ngp;
             goal = _goal;
         }
-        public boolean isSent() throws Exception {
-            return goal.getEmailSendTime() <= 0;
+        public boolean needsSending() throws Exception {
+            return goal.getEmailSendTime() > 0;
         }
 
         public long timeToSend() throws Exception {
@@ -1214,7 +1214,7 @@ public class GoalRecord extends BaseRecord {
 
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             goal.goalEmailRecord(ar, ngp, mailFile);
-            if (!isSent()) {
+            if (needsSending()) {
                 System.out.println("ERROR: for some reason it did not get move to the mailFile?");
             }
         }

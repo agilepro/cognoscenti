@@ -196,8 +196,8 @@ public class ResponseRecord extends DOMFace
             cr   = _cr;
             rr   = _rr;
         }
-        public boolean isSent() throws Exception {
-            return rr.getEmailSent();
+        public boolean needsSending() throws Exception {
+            return !rr.getEmailSent();
         }
 
         public long timeToSend() throws Exception {

@@ -99,8 +99,8 @@ public class NoteRecord extends DOMFace implements EmailContext {
     public void setTargetRole(String newVal) throws Exception {
         setAttribute("targetRole", newVal);
     }
-    
-    
+
+
     public long getLastEdited()
     {
         return safeConvertLong(getScalar("created"));
@@ -898,7 +898,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
              String htmlValue = newComment.getString("html");
              CommentRecord cr = addComment(ar, htmlValue);
              cr.updateFromJSON(newComment, ar);
-             
+
              //if this NEW comment is a reply, find the source of that
              //and mark it to know about this comment.
              long replyTo = newComment.optLong("replyTo", 0);
@@ -975,7 +975,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
      public void gatherUnsentScheduledNotification(NGPage ngp,
              ArrayList<ScheduledNotification> resList) throws Exception {
          ScheduledNotification sn = getScheduledNotification(ngp);
-         if (sn!=null && !sn.isSent()) {
+         if (sn!=null && sn.needsSending()) {
              resList.add(sn);
          }
          for (CommentRecord cr : getComments()) {
@@ -996,8 +996,8 @@ public class NoteRecord extends DOMFace implements EmailContext {
              ngp  = _ngp;
              note = _note;
          }
-         public boolean isSent() throws Exception {
-             return note.getEmailSent();
+         public boolean needsSending() throws Exception {
+             return !note.getEmailSent();
          }
 
          public long timeToSend() throws Exception {

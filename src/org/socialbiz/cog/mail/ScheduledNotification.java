@@ -4,7 +4,11 @@ import org.socialbiz.cog.AuthRequest;
 
 public interface ScheduledNotification {
 
-    public boolean isSent() throws Exception;
+    /**
+     * @return true when there is something to send.
+     *         return false if there is no need to send anything more
+     */
+    public boolean needsSending() throws Exception;
 
     public long timeToSend() throws Exception;
 

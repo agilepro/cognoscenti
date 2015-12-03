@@ -598,8 +598,8 @@ public class EmailGenerator extends DOMFace {
             ngp  = _ngp;
             eg = _eg;
         }
-        public boolean isSent() throws Exception {
-            return eg.getState()==EG_STATE_SENT;
+        public boolean needsSending() throws Exception {
+            return eg.getState()!=EG_STATE_SENT;
         }
 
         public long timeToSend() throws Exception {

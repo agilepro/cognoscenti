@@ -79,7 +79,6 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
 
         String origin = req.getHeader("Origin");
         if (origin==null || origin.length()==0) {
-            System.out.println("COG-LAuth: got a null origin header???");
             //this does not always work, but what else can we do?
             origin="*";
         }
@@ -125,7 +124,6 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
         resp.setContentType("application/json");
         try {
             w = resp.getWriter();
-            System.out.println("COG-LAuth POST: "+pathInfo);
             AuthStatus aStat = AuthStatus.getAuthStatus(req.getSession());
 
             //receive the JSONObject
@@ -158,7 +156,6 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
                 }
 
                 if (!chg1.equals(chg2)) {
-                    System.out.println("COG-LAuth - challenge ("+chg1+") does not match passed ("+chg2+")");
                     aStat.clearChallenge();
                     throw new Exception("Got a request to verify a token and challenge that is not that which was given out.  Authentication transaction aborted.");
                 }

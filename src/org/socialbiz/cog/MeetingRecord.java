@@ -82,14 +82,14 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         setAttribute("meetingType", Long.toString(newVal));
     }
 
-    
+
     public String getTargetRole()  throws Exception {
         return getAttribute("targetRole");
     }
     public void setTargetRole(String newVal) throws Exception {
         setAttribute("targetRole", newVal);
     }
-    
+
     public List<AgendaItem> getAgendaItems() throws Exception {
         return getChildren("agenda", AgendaItem.class);
     }
@@ -134,10 +134,10 @@ public class MeetingRecord extends DOMFace implements EmailContext {
      * Reminder time is the amount of time (in minutes) before
      * the meeting to automatically send everyone the reminder.
      */
-    public int getReminderTime()  throws Exception {
+    public int getReminderAdvance()  throws Exception {
         return safeConvertInt(getAttribute("reminderTime"));
     }
-    public void setReminderTime(int newVal) throws Exception {
+    public void setReminderAdvance(int newVal) throws Exception {
         setAttribute("reminderTime", Integer.toString(newVal));
     }
 
@@ -219,7 +219,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         meetingInfo.put("meetingType", getMeetingType());
         String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingInfo());
         meetingInfo.put("meetingInfo", htmlVal);
-        meetingInfo.put("reminderTime",getReminderTime());
+        meetingInfo.put("reminderTime",getReminderAdvance());
         meetingInfo.put("reminderSent",getReminderSent());
         meetingInfo.put("owner",       getOwner());
         return meetingInfo;
@@ -280,7 +280,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             hasSetMeetingInfo = true;
         }
         if (input.has("reminderTime")) {
-            setReminderTime(input.getInt("reminderTime"));
+            setReminderAdvance(input.getInt("reminderTime"));
             hasSetMeetingInfo = true;
         }
         if (input.has("reminderSent")) {
@@ -491,8 +491,6 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             }
             emg.setOwner(meetingOwner);
             emg.setFrom(meetingOwner);
-            //UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
-            //AuthRequest impersonateOwner = new AuthDummy(originalSender, ar.w, ar.getCogInstance());
             emg.constructEmailRecords(ar, ngp, mailFile);
             setReminderSent(ar.nowTime);
         }
@@ -554,7 +552,13 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
     public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
         MScheduledNotification sn = new MScheduledNotification(ngp, this);
-        if (!sn.isSent()) {
+        if (sn.needsSending()) {
+
+            //DEBUG -- what are meeting notifications being sent multiple times!
+            if (sn.timeToSend()<System.currentTimeMillis()) {
+                System.out.println("TimeToSend:  "+new Date(sn.timeToSend())+",  ACTUALLY SENT: "+new Date(getReminderAdvance())+" for MEETING: "+getName());
+            }
+
             resList.add(sn);
         }
         for (AgendaItem ai : this.getAgendaItems()) {
@@ -571,16 +575,17 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             ngp  = _ngp;
             meet = _meet;
         }
-        public boolean isSent() throws Exception {
+        public boolean needsSending() throws Exception {
             long reminderTime = timeToSend();
             long reminderSent = meet.getReminderSent();
-            //the reminder was sent at some point after it was due, so it has been sent
-            return (reminderSent > reminderTime);
+            //the reminder has not been sent AFTER the time to send,
+            //then it still needs to be sent.
+            return (reminderTime>0 && reminderSent < reminderTime);
         }
 
         public long timeToSend() throws Exception {
             long meetStart = meet.getStartTime();
-            int delta = meet.getReminderTime();
+            int delta = meet.getReminderAdvance();
             if (delta<=0) {
                 return -1;
             }
@@ -588,9 +593,12 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         }
 
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+            System.out.println("SENDING MEETING NOTICE: "+new Date()+" with SENDTIME: "+new Date(timeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
             meet.sendReminderEmail(ar, ngp, mailFile);
-            if (!isSent()) {
-                System.out.println("STRANGE: the meeting was just sent, but it does not think so.");
+
+            //test to see that all the logic is right
+            if (needsSending()) {
+                System.out.println("STRANGE: the meeting was just sent, but it does not think so. SENDTIME: "+new Date(timeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
             }
         }
 

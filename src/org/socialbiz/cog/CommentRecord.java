@@ -296,7 +296,7 @@ public class CommentRecord extends DOMFace {
             ArrayList<ScheduledNotification> resList) throws Exception {
         if (!getEmailSent()) {
             ScheduledNotification sn = new CRScheduledNotification(ngp, noteOrMeet, this);
-            if (!sn.isSent()) {
+            if (sn.needsSending()) {
                 resList.add(sn);
             }
         }
@@ -304,7 +304,7 @@ public class CommentRecord extends DOMFace {
             //there can be responses only if this is a "poll" type comment (a proposal)
             for (ResponseRecord rr : getResponses()) {
                 ScheduledNotification sn = rr.getScheduledNotification(ngp, noteOrMeet, this);
-                if (!sn.isSent()) {
+                if (sn.needsSending()) {
                     resList.add(sn);
                 }
             }
@@ -322,8 +322,8 @@ public class CommentRecord extends DOMFace {
             noteOrMeet = _noteOrMeet;
             cr   = _cr;
         }
-        public boolean isSent() throws Exception {
-            return cr.getEmailSent();
+        public boolean needsSending() throws Exception {
+            return !cr.getEmailSent();
         }
 
         public long timeToSend() throws Exception {

@@ -1737,9 +1737,6 @@ public class NGPage extends ContainerCommon implements NGContainer
         if (first!=null) {
             System.out.println("Found the next event to be: "+first.selfDescription()+" at "
                      +new Date(first.timeToSend()));
-            if (first.isSent()) {
-                System.out.println("BUT it was sent!");
-            }
         }
         return nextTime;
     }

@@ -122,7 +122,6 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         //allow scripts to read this data from a browser.
         String origin = req.getHeader("Origin");
         if (origin==null || origin.length()==0) {
-            System.out.println("COG-LAuth: got a null origin header???");
             //this does not always work, but what else can we do?
             origin="*";
         }
