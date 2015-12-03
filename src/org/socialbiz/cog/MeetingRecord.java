@@ -594,9 +594,15 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             System.out.println("SENDING MEETING NOTICE: "+new Date()+" with SENDTIME: "+new Date(timeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
-            meet.sendReminderEmail(ar, ngp, mailFile);
 
-            //test to see that all the logic is right
+            if (timeToSend() > ar.nowTime) {
+                System.out.println("MEETING NOTIFICATION BUG:  Request to send when TimeToSend ("
+                     +new Date(timeToSend())+") is still in the future!");
+                return;
+            }
+
+            meet.sendReminderEmail(ar, ngp, mailFile);
+             //test to see that all the logic is right
             if (needsSending()) {
                 System.out.println("STRANGE: the meeting was just sent, but it does not think so. SENDTIME: "+new Date(timeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
             }

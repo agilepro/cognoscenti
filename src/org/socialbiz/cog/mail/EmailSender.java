@@ -262,7 +262,9 @@ public class EmailSender extends TimerTask {
                 for (ScheduledNotification sn : resList) {
                     count++;
                     System.out.println("BACKGROUND: Notification "+count+" of "+total+": "+sn.selfDescription());
-                    sn.sendIt(ar, emailArchive);
+                    if (sn.timeToSend()<nowTime) {
+                        sn.sendIt(ar, emailArchive);
+                    }
                 }
 
                 ngpi.nextScheduledAction = ngp.nextActionDue();
