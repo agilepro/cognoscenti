@@ -348,11 +348,11 @@ public class AttachmentRecord extends DOMFace {
     }
 
     public int getVersion() {
-        return safeConvertInt(getAttribute("version"));
+        return getAttributeInt("version");
     }
 
     public void setVersion(int version) {
-        setAttribute("version", Integer.toString(version));
+        setAttributeInt("version", version);
     }
 
     public String getOriginalFilename() {

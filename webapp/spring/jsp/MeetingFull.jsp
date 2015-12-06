@@ -29,6 +29,7 @@
         allRoles.put(aRole.getName());
     }
 
+    JSONArray allLabels = ngp.getJSONLabels();
 
     JSONArray allPeople = UserManager.getUniqueUsersJSON();
 
@@ -149,6 +150,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
+    $scope.allLabels = <%allLabels.write(out,2,4);%>;
 
     $scope.newAssignee = "";
     $scope.newGoal = {};
@@ -799,35 +801,35 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location="docinfo"+doc.id+".htm";
     }
 
-  $scope.openDueDate = function (item, goal) {
+    $scope.openModalActionItem = function (item, goal) {
 
-    var modalInstance = $modal.open({
-      animation: false,
-      templateUrl: 'myModalDueDate.html',
-      controller: 'ModalInstanceCtrl',
-      size: 'lg',
-      resolve: {
-        item: function () {
-          return item;
-        },
-        goal: function () {
-          return goal;
-        }
-      }
-    });
-
-    modalInstance.result.then(function (modifiedGoal) {
-        $scope.goalList.map( function(item) {
-            if (item.id == modifiedGoal.id) {
-                item.duedate = modifiedGoal.duedate;
-                item.status = modifiedGoal.status;
+        var modalInstance = $modal.open({
+          animation: false,
+          templateUrl: '<%=ar.retPath%>templates/ModalActionItem.html',
+          controller: 'ModalActionItemCtrl',
+          size: 'lg',
+          resolve: {
+            item: function () {
+              return item;
+            },
+            goal: function () {
+              return goal;
             }
+          }
         });
-        $scope.saveGoal(modifiedGoal);
-    }, function () {
-      //cancel action
-    });
-  };
+
+        modalInstance.result.then(function (modifiedGoal) {
+            $scope.goalList.map( function(item) {
+                if (item.id == modifiedGoal.id) {
+                    item.duedate = modifiedGoal.duedate;
+                    item.status = modifiedGoal.status;
+                }
+            });
+            $scope.saveGoal(modifiedGoal);
+        }, function () {
+          //cancel action
+        });
+    };
 
     $scope.replyToComment = function(item,cmt) {
         item.newComment = {}
@@ -859,6 +861,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.openResponseEditor = function (cmt) {
 
+        console.log("ITEM COMMENT", cmt);
+        if (cmt.choices.length==0) {
+            console.log("This comment has no choices on it!");
+            cmt.choices = ["Consent", "Object"];
+        }
+
         var selected = $scope.getResponse(cmt);
         var selResponse = {};
         if (selected.length == 0) {
@@ -868,7 +876,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             selResponse.isNew = true;
         }
         else {
-            selResponse = JSON.parse(JSON.stringify(selected[0]));
+            selResponse = selected[0];
         }
 
         var modalInstance = $modal.open({
@@ -878,10 +886,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             size: 'lg',
             resolve: {
                 response: function () {
-                    return selResponse;
+                    return JSON.parse(JSON.stringify(selResponse));
                 },
                 cmt: function () {
-                    return cmt;
+                    return JSON.parse(JSON.stringify(cmt));
                 }
             }
         });
@@ -898,78 +906,65 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
+    $scope.openDecisionEditor = function (item, cmt) {
+
+        var newDecision = {
+            html: cmt.html,
+            labelMap: {},
+            sourceId: $scope.meeting.id,
+            sourceType: 7,
+            sourceCmt: cmt.time
+        };
+
+        var decisionModalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/DecisionModal.html',
+            controller: 'DecisionModalCtrl',
+            size: 'lg',
+            resolve: {
+                decision: function () {
+                    return JSON.parse(JSON.stringify(newDecision));
+                },
+                allLabels: function() {
+                    return $scope.allLabels;
+                }
+            }
+        });
+
+        decisionModalInstance.result
+        .then(function (newDecision) {
+            newDecision.num="~new~";
+            newDecision.sourceType = 7;
+            newDecision.universalid="~new~";
+            var postURL = "updateDecision.json?did=~new~";
+            var postData = angular.toJson(newDecision);
+            $http.post(postURL, postData)
+            .success( function(data) {
+                var relatedComment = data.sourceCmt;
+                item.comments.map( function(cmt) {
+                    if (cmt.time == relatedComment) {
+                        cmt.decision = "" + data.num;
+                        $scope.saveComment(item, cmt);
+                    }
+                });
+            })
+            .error( function(data, status, headers, config) {
+                $scope.reportError(data);
+            });
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
 });
 
-app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal) {
 
-  $scope.item = item;
-  $scope.goal = goal;
-  $scope.goalDueDate = goal;
-
-  $scope.ok = function () {
-      $scope.goal.duedate = $scope.goalDueDate.getTime();
-      $modalInstance.close($scope.goal);
-  };
-
-  $scope.cancel = function () {
-      $modalInstance.dismiss('cancel');
-  };
-
-    $scope.datePickOptions = {
-        formatYear: 'yyyy',
-        startingDay: 1
-    };
-    $scope.datePickDisable = function(date, mode) {
-        return false;
-    };
-    $scope.dummyDate1 = new Date();
-    $scope.datePickOpen = false;
-    $scope.openDatePicker = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        $scope.datePickOpen = true;
-    };
-    $scope.extractDateParts = function() {
-        if ($scope.goal.duedate<=0) {
-            $scope.goalDueDate = new Date();
-        }
-        else {
-            $scope.goalDueDate = new Date($scope.goal.duedate);
-        }
-    };
-    $scope.extractDateParts();
-    $scope.goalStateStyle = function(goal) {
-        if (goal.prospects=="good") {
-            return "background-color:lightgreen";
-        }
-        if (goal.prospects=="ok") {
-            return "background-color:yellow";
-        }
-        if (goal.prospects=="bad") {
-            return "background-color:red";
-        }
-        return "background-color:lavender";
-    }
-    $scope.goalStateName = function(goal) {
-        if (goal.prospects=="good") {
-            return "Good";
-        }
-        if (goal.prospects=="ok") {
-            return "Warnings";
-        }
-        return "Trouble";
-    };
-    $scope.changeGoalState = function(goal, newState) {
-        goal.prospects = newState;
-        $scope.saveGoal(goal);
-    };
-
-
-});
 
 </script>
 
+<script src="<%=ar.retPath%>templates/ModalActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
+<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl" ng-cloak>
 
@@ -1344,7 +1339,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
               <td>
               <span ng-repeat="person in goal.assignTo"> {{person.name}}<br/></span>
               </td>
-              <td ng-click="openDueDate(item,goal)" style="width:100px;">
+              <td ng-click="openModalActionItem(item,goal)" style="width:100px;">
               <span ng-show="goal.duedate>=0">{{goal.duedate|date}} </span>
               </td>
               <td style="width:120px;">
@@ -1361,7 +1356,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                   <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
                        title="In trouble" >
               </td>
-              <td style="max-width:300px;" ng-click="openDueDate(item,goal)">
+              <td style="max-width:300px;" ng-click="openModalActionItem(item,goal)">
                 {{goal.status}}
               </td>
            </tr>
@@ -1479,11 +1474,11 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                               <li role="presentation" ng-show="cmt.poll">
                                   <a role="menuitem" ng-click="openResponseEditor(cmt)">Create/Edit Response:</a></li>
                               <li role="presentation" ng-show="cmt.poll">
-                                  <a role="menuitem" ng-click="cmt.poll=false;saveComment(item,cmt)">Close Response Period</a></li>
-                              <li role="presentation" ng-show="cmt.poll">
                                   <a role="menuitem" ng-click="createModifiedProposal(item,cmt)">Make Modified Proposal</a></li>
                               <li role="presentation" ng-hide="cmt.poll">
-                                  <a role="menuitem" ng-click="startNewComment(item, false, cmt)">Reply (not working)</a></li>
+                                  <a role="menuitem" ng-click="startNewComment(item, false, cmt)">Reply</a></li>
+                              <li role="presentation" ng-show="cmt.poll">
+                                  <a role="menuitem" ng-click="openDecisionEditor(item, cmt)">Create New Decision</a></li>
                            </ul>
                        </div>
 
@@ -1522,11 +1517,13 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                    <table style="min-width:500px;" ng-show="cmt.poll && !isEditing(9,cmt.time)">
                    <tr ng-repeat="resp in cmt.responses">
                        <td style="padding:5px;max-width:100px;">
-                           <b>{{resp.choice}}</b><br/>
+                           <b>{{resp.choice}}</b>
+                           <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>'" ng-click="openResponseEditor(cmt)" style="cursor:pointer;">&nbsp; <a href="#"><i class="fa fa-edit"></i></a></span>
+                           <br/>
                            {{resp.userName}}
                        </td>
                        <td style="padding:5px;">
-                          <div ng-bind-html="resp.html"></div>
+                          <div class="leafContent comment-inner" ng-bind-html="resp.html"></div>
                        </td>
                    </tr>
                    </table>
@@ -1539,6 +1536,9 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
                        See replies:
                        <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
                            <i class="fa fa-comments-o"></i> {{findComment(item,reply).userName}}</a> </span>
+                   </div>
+                   <div ng-show="cmt.decision">
+                       See Linked Decision: <a href="decisionList.htm#DEC{{cmt.decision}}">#{{cmt.decision}}</a>
                    </div>
 
                </div>
@@ -1582,73 +1582,7 @@ app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, item, goal
     Refreshed {{refreshCount}} times.   {{refreshStatus}}<br/>
     reminder sent {{meeting.reminderSent | date:'M/d/yy H:mm'}}
 
-    <script type="text/ng-template" id="myModalDueDate.html">
-        <div class="modal-header">
-            <h3 class="modal-title">Edit Action Item</h3>
-        </div>
-        <div class="modal-body">
-          <table id="displayTable">
-            <tr>
-              <td style="padding:10px;">
-                Summary:
-              </td>
-              <td style="padding:10px;">
-                {{goal.synopsis}} ~ {{goal.description}}
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:10px;">
-                Prospect:
-              </td>
-              <td style="padding:10px;">
-                  <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
-                       title="Good shape" ng-click="changeGoalState(goal, 'good')">
-                  <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
-                       title="Good shape">
-                  <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
-                       title="Warning" ng-click="changeGoalState(goal, 'ok')">
-                  <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
-                       title="Warning" >
-                  <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
-                       title="In trouble" ng-click="changeGoalState(goal, 'bad')">
-                  <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
-                       title="In trouble" >
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:10px;">
-                Due Date:
-              </td>
-              <td style="padding:10px;">
-                <input type="text"
-                style="width:200px;"
-                class="form-control"
-                datepicker-popup="dd-MMMM-yyyy"
-                ng-model="goalDueDate"
-                is-open="datePickOpen"
-                min-date="minDate"
-                datepicker-options="datePickOptions"
-                date-disabled="datePickDisable(date, mode)"
-                ng-required="true"
-                ng-click="openDatePicker($event)"
-                close-text="Close"/>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:10px;">
-                Status:
-              </td>
-              <td style="padding:10px;">
-                <textarea ng-model="goal.status" class="form-control" style="width:400px"></textarea>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="ok()">Save</button>
-            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-        </div>
-    </script>
+
 
 </div>
 

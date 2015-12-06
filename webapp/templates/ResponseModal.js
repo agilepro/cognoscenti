@@ -2,13 +2,13 @@ console.log("loaded the ModalResponseCtrl-0");
 
 app.controller('ModalResponseCtrl', function ($scope, $modalInstance, response, cmt) {
 
-    console.log("loaded the ModalInstanceCtrl");
+    console.log("loaded the ModalResponseCtrl");
 
     $scope.response = response;
     $scope.cmt = cmt;
 
-    console.log("RESPONSE IS: "+JSON.stringify(response));
-    console.log("CMT IS: "+JSON.stringify(cmt));
+    console.log("RESPONSE IS: ",response);
+    console.log("CMT IS is  is: ",cmt);
 
     if (!$scope.response.choice) {
         $scope.response.choice = cmt.choices[0];

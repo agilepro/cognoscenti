@@ -357,7 +357,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         <div ng-bind-html="rec.html" style="max-width:800px;"></div>
                     </div>
                     <div ng-show="rec.sourceType==4">
-                        See source <a href="<%=ar.retPath%>{{rec.sourceUrl}}">proposal</a>
+                        See topic <a href="<%=ar.retPath%>{{rec.sourceUrl}}">proposal</a>
+                    </div>
+                    <div ng-show="rec.sourceType==7">
+                        See meeting <a href="<%=ar.retPath%>{{rec.sourceUrl}}">proposal</a>
                     </div>
                   </div>
                 </td>

@@ -1,8 +1,8 @@
 console.log("loaded the ModalInstanceCtrl-0");
 
-app.controller('ModalInstanceCtrl', function ($scope, $modalInstance, decision, allLabels) {
+app.controller('DecisionModalCtrl', function ($scope, $modalInstance, decision, allLabels) {
 
-    console.log("loaded the ModalInstanceCtrl");
+    console.log("loaded the DecisionModalCtrl");
 
     $scope.decision = decision;
     $scope.allLabels = allLabels;

@@ -92,7 +92,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
 
     $scope.fixUpChoices = function() {
-        $scope.noteInfo.comments.map( function(cmt) {
+        $scope.noteInfo.comments.forEach( function(cmt) {
             if (!cmt.choices || cmt.choices.length==0) {
                 cmt.choices = ["Consent", "Object"];
             }
@@ -397,10 +397,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             sourceCmt: cmt.time
         };
 
-        var modalInstance = $modal.open({
+        var decisionModalInstance = $modal.open({
             animation: false,
             templateUrl: '<%=ar.retPath%>templates/DecisionModal.html',
-            controller: 'ModalInstanceCtrl',
+            controller: 'DecisionModalCtrl',
             size: 'lg',
             resolve: {
                 decision: function () {
@@ -412,7 +412,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             }
         });
 
-        modalInstance.result.then(function (modifiedDecision) {
+        decisionModalInstance.result.then(function (modifiedDecision) {
             $scope.createDecision(modifiedDecision);
         }, function () {
             //cancel action - nothing really to do
@@ -573,8 +573,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                   <a role="menuitem" ng-click="startResponse(cmt)">Create/Edit Response:</a></li>
                               <li role="presentation" ng-show="cmt.poll && editCmt=='NOTHING'">
                                   <a role="menuitem" ng-click="createModifiedProposal(cmt)">Make Modified Proposal</a></li>
-                              <li role="presentation" ng-show="cmt.poll && editCmt=='NOTHING' && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                                  <a role="menuitem" ng-click="cmt.poll=false;updateComment(cmt)">Close Response Period</a></li>
                               <li role="presentation" ng-show="!cmt.poll && editCmt=='NOTHING'">
                                   <a role="menuitem" ng-click="replyToComment(cmt)">Reply</a></li>
                               <li role="presentation" ng-show="cmt.poll && !cmt.decision && editCmt=='NOTHING'">

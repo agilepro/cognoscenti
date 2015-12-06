@@ -1,3 +1,5 @@
+<html>
+<body>
 <style>
     .ta-editor.form-control.myform2-height  {
         height: 200px;
@@ -6,11 +8,15 @@
     }
 </style>
 <div class="modal-header">
-    <h3 class="modal-title">{{response.userName}} - Response to Proposal</h3>
+    <h3>{{response.userName}} - Response to Proposal</h3>
 </div>
 <div class="modal-body">
-    <div class="form-inline form-group">
-        Choice:  <select class="form-control" ng-model="response.choice" ng-options="onch as onch for onch in cmt.choices"></select>
+    <div class="leafContent">
+        <div class="comment-inner" ng-bind-html="cmt.html"></div>
+    </div>
+    <div class="form-inline form-group" style="padding:10px;">
+        Choice:  <select class="form-control" ng-model="response.choice"
+            ng-options="onch as onch for onch in cmt.choices"></select>
     </div>
     <div ng-model="response.html"
         ta-text-editor-class="form-control myform2-height"
@@ -27,4 +33,5 @@
     <button class="btn btn-warning" type="button" ng-click="cancel()">
         Cancel</button>
 </div>
-
+</body>
+</html>

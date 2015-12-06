@@ -1,0 +1,66 @@
+
+<div class="modal-header">
+    <h3 class="modal-title">Edit Action Item</h3>
+</div>
+<div class="modal-body">
+  <table id="displayTable">
+    <tr>
+      <td style="padding:10px;">
+        Summary:
+      </td>
+      <td style="padding:10px;">
+        {{goal.synopsis}} ~ {{goal.description}}
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:10px;">
+        Prospect:
+      </td>
+      <td style="padding:10px;">
+          <img src="../../../assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
+               title="Good shape" ng-click="changeGoalState(goal, 'good')">
+          <img src="../../../assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
+               title="Good shape">
+          <img src="../../../assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
+               title="Warning" ng-click="changeGoalState(goal, 'ok')">
+          <img src="../../../assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
+               title="Warning" >
+          <img src="../../../assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
+               title="In trouble" ng-click="changeGoalState(goal, 'bad')">
+          <img src="../../../assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
+               title="In trouble" >
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:10px;">
+        Due Date:
+      </td>
+      <td style="padding:10px;">
+        <input type="text"
+        style="width:200px;"
+        class="form-control"
+        datepicker-popup="dd-MMMM-yyyy"
+        ng-model="goalDueDate"
+        is-open="datePickOpen"
+        min-date="minDate"
+        datepicker-options="datePickOptions"
+        date-disabled="datePickDisable(date, mode)"
+        ng-required="true"
+        ng-click="openDatePicker($event)"
+        close-text="Close"/>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:10px;">
+        Status:
+      </td>
+      <td style="padding:10px;">
+        <textarea ng-model="goal.status" class="form-control" style="width:400px"></textarea>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="ok()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>

@@ -56,10 +56,10 @@ public class AgendaItem extends DOMFace {
      * Lower values are before higher values.
      */
     public int getPosition() {
-        return safeConvertInt(getAttribute("position"));
+        return getAttributeInt("position");
     }
     public void setPosition(int newVal) throws Exception {
-        setAttribute("position", Integer.toString(newVal));
+        setAttributeInt("position", newVal);
     }
 
     public String getNotes()  throws Exception {
@@ -70,10 +70,17 @@ public class AgendaItem extends DOMFace {
     }
 
     public int getStatus() {
-        return safeConvertInt(getAttribute("status"));
+        return getAttributeInt("status");
     }
     public void setStatus(int newVal) throws Exception {
-        setAttribute("status", Integer.toString(newVal));
+        setAttributeInt("status", newVal);
+    }
+
+    public boolean getReadyToGo() {
+        return getAttributeBool("readyToGo");
+    }
+    public void setReadyToGo(boolean newVal) throws Exception {
+        setAttributeBool("readyToGo", newVal);
     }
 
 
@@ -168,6 +175,7 @@ public class AgendaItem extends DOMFace {
         aiInfo.put("subject",   getSubject());
         aiInfo.put("duration",  getDuration());
         aiInfo.put("status",    getStatus());
+        aiInfo.put("readyToGo", getReadyToGo());
         String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getDesc());
         aiInfo.put("desc",      htmlVal);
         aiInfo.put("position",  getPosition());
@@ -215,6 +223,10 @@ public class AgendaItem extends DOMFace {
         if (input.has("status")) {
             setStatus(input.getInt("status"));
         }
+        if (input.has("readyToGo")) {
+            setReadyToGo(input.getBoolean("readyToGo"));
+        }
+        
         if (input.has("notes")) {
             String html = input.getString("notes");
             setNotes(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));

@@ -62,10 +62,10 @@ public class EmailGenerator extends DOMFace {
     public final int EG_STATE_SENT      = 3;
 
     public int getState() {
-        return safeConvertInt(getAttribute("state"));
+        return getAttributeInt("state");
     }
     public void setState(int newVal) {
-        setAttribute("state", Integer.toString(newVal));
+        setAttributeInt("state", newVal);
     }
 
 

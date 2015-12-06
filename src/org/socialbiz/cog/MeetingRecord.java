@@ -55,10 +55,10 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
     public int getState()  throws Exception {
-        return safeConvertInt(getAttribute("state"));
+        return getAttributeInt("state");
     }
     public void setState(int newVal) throws Exception {
-        setAttribute("state", Integer.toString(newVal));
+        setAttributeInt("state", newVal);
     }
 
     public long getStartTime()  throws Exception {
@@ -69,17 +69,17 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
     public long getDuration()  throws Exception {
-        return safeConvertLong(getAttribute("duration"));
+        return getAttributeLong("duration");
     }
     public void setDuration(long newVal) throws Exception {
-        setAttribute("duration", Long.toString(newVal));
+        setAttributeLong("duration", newVal);
     }
 
     public long getMeetingType() {
-        return safeConvertInt(getAttribute("meetingType"));
+        return getAttributeInt("meetingType");
     }
     public void setMeetingType(int newVal) {
-        setAttribute("meetingType", Long.toString(newVal));
+        setAttributeInt("meetingType", newVal);
     }
 
 
@@ -135,10 +135,10 @@ public class MeetingRecord extends DOMFace implements EmailContext {
      * the meeting to automatically send everyone the reminder.
      */
     public int getReminderAdvance()  throws Exception {
-        return safeConvertInt(getAttribute("reminderTime"));
+        return getAttributeInt("reminderTime");
     }
     public void setReminderAdvance(int newVal) throws Exception {
-        setAttribute("reminderTime", Integer.toString(newVal));
+        setAttributeInt("reminderTime", newVal);
     }
 
     /**
