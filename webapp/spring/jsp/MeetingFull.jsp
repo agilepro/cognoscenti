@@ -158,6 +158,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.myUserId = "<% ar.writeJS(ar.getBestUserId()); %>";
     $scope.actionItemFilter = "";
     $scope.realDocumentFilter = "";
+    $scope.showRollCall = false;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -183,7 +184,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.showItemMap[item.id] = true;
         });
     }
-    $scope.showAll();
 
     $scope.datePickOptions = {
         formatYear: 'yyyy',
@@ -437,13 +437,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.changeMeetingState = function(newState) {
         $scope.meeting.state = newState;
-        //$scope.savePartialMeeting(['state']);
-        $scope.saveMeeting();
+        $scope.savePartialMeeting(['state']);
     };
-    //$scope.changeItemState = function(item, newState) {
-    //    item.status = newState;
-    //    $scope.saveMeeting();
-    //};
     $scope.changeGoalState = function(goal, newState) {
         goal.prospects = newState;
         $scope.saveGoal(goal);
@@ -495,14 +490,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (readyToSave.id=="~new~") {
             postURL = "agendaAdd.json?id="+$scope.meeting.id;
         }
+        console.log("SAVE MEETING: ", readyToSave);
         var postdata = angular.toJson(readyToSave);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
+            console.log("---- SERVER: ", data);
             $scope.meeting = data;
             $scope.extractDateParts();
             $scope.editHead=false;
             $scope.editDesc=false;
+            $scope.extractPeopleSituation();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -690,6 +688,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         item.presenters = newSet;
     }
+    $scope.toggleReady = function(item) {
+        if (!item.readyToGo) {
+            var x = window.confirm( "Have you attached all presentations, \n and is the rest of the information \n about the agenda item up to date?  \nClick 'OK' when everything is ready.");
+            if (!x) {
+                return;
+            }
+        }
+        item.readyToGo=!item.readyToGo
+        $scope.saveAgendaItemParts(item, ['readyToGo']);
+    }
 
     $scope.findPersonName = function(email) {
         var person = {name: email};
@@ -801,6 +809,54 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location="docinfo"+doc.id+".htm";
     }
 
+    $scope.mySitch = [];
+
+    $scope.extractPeopleSituation = function() {
+        var selRole = $scope.allLabels.find( function(item) {
+            return item.name === $scope.meeting.targetRole;
+        });
+        var rez = [];
+        $scope.mySitch = [];
+        selRole.players.forEach( function(item) {
+            var current = $scope.meeting.rollCall.find( function(rc) {
+                return rc.uid === item.uid;
+            });
+            if (current) {
+                current.name = item.name;
+                current.key = item.key;
+            }
+            else {
+                current =  {
+                    uid: item.uid,
+                    name: item.name,
+                    key: item.key,
+                    attend: "Unknown",
+                    situation: ""
+                };
+                $scope.meeting.rollCall.push(current);
+            }
+            if (item.uid === "<% ar.writeJS(currentUser); %>") {
+                $scope.mySitch = [current];
+            }
+            rez.push(current);
+        });
+        $scope.peopleStatus = rez;
+    }
+
+//There is a strange bug in Angular that you can't call the method directly
+//so since this value does not change, storing the result here.
+    $scope.extractPeopleSituation();
+
+
+    console.log("MEETING", $scope.meeting);
+    console.log("MY SITCH", $scope.mySitch);
+    console.log("SCOPE", $scope);
+
+
+    $scope.saveSituation = function() {
+        $scope.savePartialMeeting(['rollCall']);
+    }
+
     $scope.openModalActionItem = function (item, goal) {
 
         var modalInstance = $modal.open({
@@ -832,7 +888,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
 
     $scope.replyToComment = function(item,cmt) {
-        item.newComment = {}
+        item.newComment = {};
         item.newComment.myReplyTo = cmt.time;
         item.newComment.myPoll = false;
     }
@@ -962,9 +1018,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </script>
 
-<script src="<%=ar.retPath%>templates/ModalActionItemCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
-<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
+<style>
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+</style>
 
 <div ng-app="myApp" ng-controller="myCtrl" ng-cloak>
 
@@ -982,6 +1040,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation"><a role="menuitem" tabindex="-1"
+                  href="#" ng-click="showAll()" >Show All Items</a></li>
+              <li role="presentation"><a role="menuitem" tabindex="-1"
+                  href="#" ng-click="showRollCall=!showRollCall" >Show Roll Call</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   href="#" ng-click="createAgendaItem()" >Create Agenda Item</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -1170,6 +1232,49 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </tr>
     </table>
 
+<!-- THIS IS THE ROLL CALL SECTION -->
+
+
+    <div class="comment-outer" style="margin:40px" ng-show="mySitch.length>0">
+      <div><h2 style="margin:5px"><% ar.writeHtml(currentUserName); %>, will you attend?</h2></div>
+      <div ng-repeat="sitch in mySitch" class="comment-inner">
+        <div class="form-inline form-group" style="margin:20px">
+            <select ng-model="sitch.attend" class="form-control">
+                <option>Unknown</option>
+                <option>Yes</option>
+                <option>Maybe</option>
+                <option>No</option>
+            </select>
+            Details:
+            <input type="text" ng-model="sitch.situation" class="form-control" style="width:400px;">
+            <button class="btn btn-primary" ng-click="saveSituation()">Save</button>
+        </div>
+
+      </div>
+    </div>
+
+
+
+    <div class="comment-outer" ng-show="showRollCall">
+      <div style="float:right" ng-click="showRollCall=false"><i class="fa fa-close"></i></div>
+      <div>Roll Call</div>
+      <table class="table">
+      <tr>
+          <th>Name</th>
+          <th>Attending</th>
+          <th>Situation</th>
+      </tr>
+      <tr class="comment-inner" ng-repeat="pers in peopleStatus">
+          <td>{{pers.name}}</td>
+          <td>{{pers.attend}}</td>
+          <td>{{pers.situation}}</td>
+      </tr>
+      </table>
+    </div>
+
+
+
+
 <div ng-repeat="item in meeting.agenda">
     <div style="border: 1px solid lightgrey;border-radius:10px;margin-top:20px;">
     <table >
@@ -1179,6 +1284,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <td style="width:100%">
           <div style="padding:5px;">
             <span style="font-size:130%;font-weight: bold;" ng-click="showItemMap[item.id]=!showItemMap[item.id]">{{item.position}}. {{item.subject}} &nbsp; </span>
+            <span class="dropdown" ng-show="showItemMap[item.id]">
+               <button class="btn btn-default dropdown-toggle" type="button" id="menu" data-toggle="dropdown" style="margin-right:10px;">
+                   <span class="caret"></span>
+               </button>
+               <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
+                  <li role="presentation" >
+                      <a role="menuitem" ng-click="toggleEditor(2,item.id)">Item Settings</a></li>
+                  <li role="presentation" >
+                      <a role="menuitem" ng-click="startEdit(item)">Edit Description</a></li>
+                  <li role="presentation" >
+                      <a role="menuitem" ng-click="toggleEditor(3,item.id)">Attach Docs</a></li>
+                  <li role="presentation" >
+                      <a role="menuitem" ng-click="toggleEditor(4,item.id)">Create Action Item</a></li>
+                  <li role="presentation" >
+                      <a role="menuitem" ng-click="toggleEditor(9,item.id)">Attach Action Items</a></li>
+                  <li role="presentation" >
+                      <a role="menuitem" ng-click="toggleReady(item)">Toggle Ready</a></li>
+               </ul>
+            </span>
             <span ng-show="showItemMap[item.id] && meeting.state<3">
                 ( <i class="fa fa-cogs meeting-icon" ng-click="toggleEditor(2,item.id)"
                     title="Agenda Item Settings"></i>
@@ -1191,6 +1315,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <i class="fa fa-tasks meeting-icon" ng-click="toggleEditor(9,item.id)"
                     title="Manage Action Items"></i> )
             </span>
+            <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
+                 ng-click="toggleReady(item)"
+                 title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
+                 ng-hide="item.readyToGo" style="width:24px;height=24px;">
+            <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
+                 ng-click="toggleReady(item)"
+                 title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
+                 ng-show="item.readyToGo"  style="width:24px;height=24px;">
             <div>
                 <i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i><span ng-repeat="pres in getPresenters(item)">, {{pres.name}}</span>
             </div>
@@ -1200,7 +1332,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div class="form-inline form-group">
               Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"/>
               Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>
-              <button ng-click="saveAgendaItemParts(item, ['subject','duration'])" class="btn btn-danger">Save</button>
+              <button ng-click="saveAgendaItemParts(item, ['subject','duration','presenters'])" class="btn btn-danger">Save</button>
               <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
             </div>
             <div class="form-inline form-group">
@@ -1585,5 +1717,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 </div>
+
+<script src="<%=ar.retPath%>templates/ModalActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
+<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
+
 
 

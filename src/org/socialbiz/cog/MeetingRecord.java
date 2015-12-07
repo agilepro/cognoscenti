@@ -222,6 +222,23 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         meetingInfo.put("reminderTime",getReminderAdvance());
         meetingInfo.put("reminderSent",getReminderSent());
         meetingInfo.put("owner",       getOwner());
+        
+        JSONArray rollCall = new JSONArray();
+        for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
+            JSONObject sub = new JSONObject();
+            //user id
+            sub.put("uid", onePerson.getAttribute("uid"));
+            
+            // yse, no, maybe
+            sub.put("attend", onePerson.getScalar("attend"));
+            
+            // a comment about their situation
+            sub.put("situation", onePerson.getScalar("situation"));
+            rollCall.put(sub);
+        }
+        meetingInfo.put("rollCall",  rollCall);
+        
+        meetingInfo.put("attended", constructJSONArray(this.getVector("attended")));
         return meetingInfo;
     }
 
@@ -295,6 +312,24 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             setOwner(input.getString("owner"));
         }
 
+        if (input.has("rollCall")) {
+            JSONArray roleCall = input.getJSONArray("rollCall");
+            for (int i=0; i<roleCall.length(); i++) {
+                JSONObject onePerson = roleCall.getJSONObject(i);
+                String personId = onePerson.getString("uid");
+                DOMFace found = getChildAttribute(personId, DOMFace.class, "uid");
+                if (found==null) {
+                    found = createChildWithID("rollCall", DOMFace.class, "uid", personId);
+                }
+                found.setScalar("attend", onePerson.getString("attend"));
+                found.setScalar("situation", onePerson.getString("situation"));
+            }
+        }
+        
+        if (input.has("attended")) {
+            this.setVector("attended", constructVector(input.getJSONArray("attended")));
+        }
+                
         //fix up the owner if needed .. schema migration
         //TODO: remove after Dec 2015
         String owner = getOwner();

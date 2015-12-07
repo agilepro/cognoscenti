@@ -270,7 +270,9 @@ public class CustomRole extends DOMFace implements NGRole
         jObj.put("requirements", getRequirements());
         JSONArray shortList = new JSONArray();
         for (AddressListEntry player : getDirectPlayers()) {
-            shortList.put( player.getJSON() );
+            if (player.getUniversalId().length()>0) {
+                shortList.put( player.getJSON() );
+            }
         }
         jObj.put("players", shortList);
         //shortList = new JSONArray();

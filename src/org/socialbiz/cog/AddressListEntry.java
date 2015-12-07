@@ -554,8 +554,12 @@ public class AddressListEntry implements UserRef
 
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
-        jObj.put("name", getName());
         jObj.put("uid", getUniversalId());
+        String name = getName();
+        if (name == null || name.length()==0) {
+            name = this.getUniversalId();
+        }
+        jObj.put("name", name);
         if (user!=null) {
             jObj.put("key", user.getKey());
         }
