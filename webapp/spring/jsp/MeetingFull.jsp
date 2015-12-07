@@ -348,9 +348,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         $scope.saveAgendaItem(item);
     }
-    $scope.foo = function(val) {
-        alert("foo is ("+val+")");
-    }
     $scope.removeDocFromItem = function(item, doc, filter) {
         //this is the strangest thing.  If the filter is not
         //passed and reset, it will mysterously be cleared.
@@ -1012,6 +1009,34 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
+
+    $scope.openAttachDocument = function (item) {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html',
+            controller: 'AttachDocumentCtrl',
+            size: 'lg',
+            resolve: {
+                docList: function () {
+                    return JSON.parse(JSON.stringify(item.docList));
+                },
+                attachmentList: function() {
+                    return $scope.attachmentList;
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (docList) {
+            item.docList = docList;
+            $scope.saveAgendaItem(item);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
+
 });
 
 
@@ -1294,7 +1319,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   <li role="presentation" >
                       <a role="menuitem" ng-click="startEdit(item)">Edit Description</a></li>
                   <li role="presentation" >
-                      <a role="menuitem" ng-click="toggleEditor(3,item.id)">Attach Docs</a></li>
+                      <a role="menuitem" ng-click="openAttachDocument(item)">Attach Docs</a></li>
                   <li role="presentation" >
                       <a role="menuitem" ng-click="toggleEditor(4,item.id)">Create Action Item</a></li>
                   <li role="presentation" >
@@ -1308,7 +1333,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     title="Agenda Item Settings"></i>
                 <i class="fa fa-pencil-square-o meeting-icon" ng-click="startEdit(item)"
                     title="Edit Description"></i>
-                <i class="fa fa-book meeting-icon" ng-click="toggleEditor(3,item.id)"
+                <i class="fa fa-book meeting-icon" ng-click="openAttachDocument(item)"
                     title="Agenda Item Attached Documents"></i>
                 <i class="fa fa-flag meeting-icon" ng-click="toggleEditor(4,item.id)"
                     title="Create New Action Item"></i>
@@ -1328,7 +1353,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
           </div>
 
-          <div ng-show="isEditing(2,item.id)" class="well">
+          <div ng-show="isEditing(2,item.id)" class="well" style="margin:20px">
             <div class="form-inline form-group">
               Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"/>
               Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>
@@ -1721,6 +1746,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <script src="<%=ar.retPath%>templates/ModalActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 
 
 

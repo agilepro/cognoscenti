@@ -1,0 +1,65 @@
+<style>
+  .docTable {
+      width:100%;
+  }
+  .docTable tr td {
+      padding:2px;
+  }
+  .docTable tr td button {
+      height:25px;
+      width:25px;
+      padding:2px;
+      margin:2px;
+  }
+</style>
+
+<div class="modal-header">
+    <h3 class="modal-title">Attach Documents</h3>
+</div>
+<div class="modal-body">
+   <div >
+      <div> Filter <input type="text" ng-model="realDocumentFilter"> </div>
+      <table style="width:100%"><tr>
+      <td style="width:50%;vertical-align:top;padding:20px;">
+        <div style="max-height:400px;overflow: auto">
+          <table class="docTable">
+            <tr>
+               <td colspan="4">
+
+               </td>
+            </tr>
+            <tr ng-repeat="doc in filterDocs()">
+                <td><img src="../../../assets/images/iconFile.png"/> {{doc.name}} </td>
+                <td>
+                    <button ng-click="addDocToItem(doc)" ng-hide="itemHasDoc(doc)"
+                        class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
+                    <button  ng-show="itemHasDoc(doc)"
+                        class="btn">&nbsp; &nbsp;</button>
+                </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+      <td style="width:50%;vertical-align:top;padding:20px;">
+        <div style="max-height:400px;overflow: auto">
+          <table class="docTable">
+            <tr ng-repeat="doc in itemDocs()">
+                <td><img src="../../../assets/images/iconFile.png"/> {{doc.name}} </td>
+                <td>
+                    <button ng-click="removeDocFromItem(doc)"
+                        class="btn"><i class="fa fa-close"></i> &nbsp;</button>
+                </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+      </tr>
+      </table>
+   </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary"
+        type="button" ng-click="ok()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">
+        Cancel</button>
+</div>
