@@ -801,11 +801,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 //so since this value does not change, storing the result here.
     $scope.extractPeopleSituation();
 
-
-    console.log("MEETING", $scope.meeting);
-    console.log("MY SITCH", $scope.mySitch);
-    console.log("SCOPE", $scope);
-
+    $scope.showSelfRegister = function() {
+        return ($scope.mySitch.length>0 && $scope.meeting.state < 3);
+    }
 
     $scope.saveSituation = function() {
         $scope.savePartialMeeting(['rollCall']);
@@ -858,6 +856,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return item.user=="<%ar.writeJS(currentUser);%>";
         });
         return selected;
+    }
+    $scope.noResponseYet = function(cmt) {
+        var whatNot = $scope.getResponse(cmt);
+        return (whatNot.length == 0);
     }
     $scope.updateResponse = function(cmt, response) {
         var selected = cmt.responses.filter( function(item) {
@@ -1217,7 +1219,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <!-- THIS IS THE ROLL CALL SECTION -->
 
 
-    <div class="comment-outer" style="margin:40px" ng-show="mySitch.length>0">
+    <div class="comment-outer" style="margin:40px" ng-show="showSelfRegister()">
       <div><h2 style="margin:5px"><% ar.writeHtml(currentUserName); %>, will you attend?</h2></div>
       <div ng-repeat="sitch in mySitch" class="comment-inner">
         <div class="form-inline form-group" style="margin:20px">
@@ -1604,12 +1606,31 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    <tr ng-repeat="resp in cmt.responses">
                        <td style="padding:5px;max-width:100px;">
                            <b>{{resp.choice}}</b>
-                           <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>'" ng-click="openResponseEditor(cmt)" style="cursor:pointer;">&nbsp; <a href="#"><i class="fa fa-edit"></i></a></span>
                            <br/>
                            {{resp.userName}}
                        </td>
+                       <td>
+                         <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>'" ng-click="openResponseEditor(cmt)" style="cursor:pointer;">
+                           <a href="#" title="Edit your response to this proposal"><i class="fa fa-edit"></i></a>
+                         </span>
+                       </td>
                        <td style="padding:5px;">
                           <div class="leafContent comment-inner" ng-bind-html="resp.html"></div>
+                       </td>
+                   </tr>
+                   <tr ng-show="noResponseYet(cmt)">
+                       <td style="padding:5px;max-width:100px;">
+                           <b>????</b>
+                           <br/>
+                           <% ar.writeHtml(currentUserName); %>
+                       </td>
+                       <td>
+                         <span ng-click="openResponseEditor(cmt)" style="cursor:pointer;">
+                           <a href="#" title="Create a response to this proposal"><i class="fa fa-edit"></i></a>
+                         </span>
+                       </td>
+                       <td style="padding:5px;">
+                          <div class="leafContent comment-inner"><i>Click edit button to register a response.</i></div>
                        </td>
                    </tr>
                    </table>
