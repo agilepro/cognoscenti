@@ -66,15 +66,15 @@ Optional Parameters:
 
 
 
-        JSONArray attachments = new JSONArray();
+        JSONArray docList = new JSONArray();
         String att  = ar.defParam("att", null);
         if (att!=null) {
             AttachmentRecord attRec = ngp.findAttachmentByID(att);
             if (attRec!=null) {
-                attachments.put(attRec.getJSON4Doc(ar, ngp));
+                docList.put(attRec.getUniversalId());
             }
         }
-        emailInfo.put("attachments", attachments);
+        emailInfo.put("docList", docList);
 
         emailInfo.put("from", userFromAddress);
         emailInfo.put("alsoTo", new JSONArray());
@@ -123,7 +123,7 @@ Optional Parameters:
     $scope.emailInfo = {
       "alsoTo": [],
       "attachFiles": false,
-      "attachments": [],
+      "docList": [],
       "excludeResponders": false,
       "from": "Keith Swenson «kswenson@us.fujitsu.com»",
       "id": "~new~",
@@ -173,7 +173,7 @@ Optional Parameters:
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
@@ -211,32 +211,6 @@ app.controller('myCtrl', function($scope, $http) {
         }
         $scope.emailInfo.alsoTo = newVal;
         $scope.newEmailAddress = val;
-    }
-    $scope.addAttachment = function(val) {
-        if (!val) {
-            return;
-        }
-        if (!val.universalid) {
-            return;   //must be a real document record
-        }
-        $scope.newAttachment = "";
-        for (var i=0; i<$scope.emailInfo.attachments.length; i++) {
-            if (val == $scope.emailInfo.attachments[i]) {
-                return;
-            }
-        }
-        $scope.emailInfo.attachments.push(val);
-    }
-    $scope.removeAttachment = function(val) {
-        var newVal = [];
-        for( var i=0; i<$scope.emailInfo.attachments.length; i++) {
-            var sample = $scope.emailInfo.attachments[i];
-            if (sample.name!=val) {
-                newVal.push(sample);
-            }
-        }
-        $scope.emailInfo.attachments = newVal;
-        $scope.newAttachment = val;
     }
 
     $scope.saveEmail = function() {
@@ -365,6 +339,49 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.meetingMinutes = $scope.meetingTime.getMinutes();
     };
     $scope.extractDateParts();
+
+
+    $scope.itemHasDoc = function(doc) {
+        var res = false;
+        var found = $scope.emailInfo.docList.forEach( function(docid) {
+            if (docid == doc.universalid) {
+                res = true;
+            }
+        });
+        return res;
+    }
+    $scope.getDocs = function() {
+        return $scope.attachmentList.filter( function(oneDoc) {
+            return $scope.itemHasDoc(oneDoc);
+        });
+    }
+
+
+    $scope.openAttachDocument = function () {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html',
+            controller: 'AttachDocumentCtrl',
+            size: 'lg',
+            resolve: {
+                docList: function () {
+                    return JSON.parse(JSON.stringify($scope.emailInfo.docList));
+                },
+                attachmentList: function() {
+                    return $scope.attachmentList;
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (docList) {
+            $scope.emailInfo.docList = docList;
+            $scope.saveEmail();
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
 
 });
 
@@ -525,34 +542,18 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr><td style="height:30px"></td></tr>
             <tr>
-                <td class="gridTableColummHeader" valign="top">Include these Attachments:</td>
+                <td class="gridTableColummHeader" valign="top">Attachments:</td>
                 <td style="width:20px;"></td>
                 <td>
                   <div>
-                      <span class="dropdown" ng-repeat="doc in emailInfo.attachments">
-                        <button class="btn dropdown-toggle" type="button" id="menu1"
-                          data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;">
-                        {{shortDoc(doc.name)}}</button>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                          <li role="presentation"><a role="menuitem" tabindex="-1"
-                              ng-click="removeAttachment(doc.name)">Remove Document:<br/>{{doc.name}}</a></li>
-                        </ul>
+                      <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default"  style="margin:4px;"
+                           ng-click="navigateToDoc(doc)">
+                              <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
                       </span>
-                      <span >
-                        <button class="btn btn-sm btn-primary" ng-click="showAddDoc=!showAddDoc"
-                            style="margin:2px;padding: 2px 5px;font-size: 11px;">+</button>
-                      </span>
+                      <button class="btn btn-sm btn-primary" ng-click="openAttachDocument()"
+                          title="Attach a document">
+                          ADD </button>
                   </div>
-            </tr>
-            <tr><td style="height:10px"></td></tr>
-            <tr ng-show="showAddDoc">
-                <td ></td>
-                <td style="width:20px;"></td>
-                <td class="form-inline form-group">
-                    <button ng-click="addAttachment(newAttachment);showAddDoc=false" class="btn btn-primary">Add Document</button>
-                    <input type="text" ng-model="newAttachment"  class="form-control" placeholder="Enter Document Name"
-                     style="width:350px;" typeahead="att as att.name for att in attachmentList | filter:$viewValue | limitTo:8">
-                </td>
             </tr>
             <tr><td style="height:30px"></td></tr>
             <tr>
@@ -663,6 +664,8 @@ if (overrideAddress!=null && overrideAddress.length()>0) {
         </table>
     </div>
 </div>
+
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 
 <%!
 

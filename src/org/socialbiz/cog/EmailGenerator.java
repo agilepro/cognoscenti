@@ -498,10 +498,10 @@ public class EmailGenerator extends DOMFace {
         for (String attId : getAttachments()) {
             AttachmentRecord atRec = ngp.findAttachmentByUidOrNull(attId);
             if (atRec!=null) {
-                attachmentInfo.put(atRec.getJSON4Doc(ar, ngp));
+                attachmentInfo.put(atRec.getUniversalId());
             }
         }
-        obj.put("attachments", attachmentInfo);
+        obj.put("docList", attachmentInfo);
 
         String noteId = getNoteId();
         if (noteId!=null && noteId.length()>0) {
@@ -547,16 +547,8 @@ public class EmailGenerator extends DOMFace {
         if (obj.has("alsoTo")) {
             setAlsoTo(constructVector(obj.getJSONArray("alsoTo")));
         }
-        if (obj.has("attachments")) {
-            //this pulls the universal id from the attachment info object, nothing else
-            JSONArray attInfo = obj.getJSONArray("attachments");
-            List<String> newSetting = new ArrayList<String>();
-            for (int i=0; i<attInfo.length(); i++) {
-                JSONObject oneAtt = attInfo.getJSONObject(i);
-                String uid = oneAtt.getString("universalid");
-                newSetting.add(uid);
-            }
-            setAttachments(newSetting);
+        if (obj.has("docList")) {
+            setAttachments(constructVector(obj.getJSONArray("docList")));
         }
         if (obj.has("excludeResponders")) {
             setExcludeResponders(obj.getBoolean("excludeResponders"));

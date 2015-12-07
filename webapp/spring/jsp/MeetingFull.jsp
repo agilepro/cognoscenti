@@ -231,32 +231,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return $scope.meeting.agenda;
     };
 
-    $scope.itemDocs = function(item) {
-        var res = [];
-        for (var j=0; j<item.docList.length; j++) {
-            var docId = item.docList[j];
-            for(var i=0; i<$scope.attachmentList.length; i++) {
-                var oneDoc = $scope.attachmentList[i];
-                if (oneDoc.universalid == docId) {
-                    res.push(oneDoc);
-                }
+    $scope.itemHasDoc = function(item, doc) {
+        var res = false;
+        var found = item.docList.forEach( function(docid) {
+            if (docid == doc.universalid) {
+                res = true;
             }
-        }
+        });
         return res;
     }
-    $scope.filterDocs = function(filter) {
-        var res = [];
-        var filterlc = filter.toLowerCase();
-        for(var i=0; i<$scope.attachmentList.length; i++) {
-            var oneDoc = $scope.attachmentList[i];
-            if (filterlc.length==0 || oneDoc.name.toLowerCase().indexOf(filterlc)>=0) {
-                res.push(oneDoc);
-            }
-            else if (oneDoc.description.toLowerCase().indexOf(filterlc)>=0) {
-                res.push(oneDoc);
-            }
-        }
-        return res;
+    $scope.itemDocs = function(item) {
+        return $scope.attachmentList.filter( function(oneDoc) {
+            return $scope.itemHasDoc(item, oneDoc);
+        });
     }
     $scope.itemGoals = function(item) {
         var res = [];
@@ -331,36 +318,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             }
         }
         item.actionItems = res;
-        $scope.saveAgendaItem(item);
-    }
-    $scope.itemHasDoc = function(item, doc) {
-        for (var j=0; j<item.docList.length; j++) {
-            if (item.docList[j] == doc.universalid) {
-                return true;
-            }
-        }
-        return false;
-    }
-    $scope.addDocToItem = function(item, doc, filter) {
-        $scope.realDocumentFilter = filter;
-        if (!$scope.itemHasDoc(item, doc)) {
-            item.docList.push(doc.universalid);
-        }
-        $scope.saveAgendaItem(item);
-    }
-    $scope.removeDocFromItem = function(item, doc, filter) {
-        //this is the strangest thing.  If the filter is not
-        //passed and reset, it will mysterously be cleared.
-        //Something clears it before this line.
-        $scope.realDocumentFilter = filter;
-        var res = [];
-        for (var j=0; j<item.docList.length; j++) {
-            var aiId = item.docList[j];
-            if (aiId != doc.universalid) {
-                res.push(aiId);
-            }
-        }
-        item.docList = res;
         $scope.saveAgendaItem(item);
     }
 
@@ -1421,34 +1378,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </td>
       </tr>
 
-                          <!--  AGENDA ADD DOCUMENTS -->
-      <tr ng-show="showItemMap[item.id]">
-        <td ng-show="isEditing(3,item.id)" style="width:100%">
-           <div class="well" style="margin:10px;">
-              <div style="float:right;"><i class="fa fa-close meeting-icon" ng-click="toggleEditor(3,item.id)"></i></div>
-              <div><b>Add Document to this Agenda Item</b></div>
-              <table class="table">
-                <tr>
-                   <td colspan="4">
-                      Filter <input type="text" ng-model="realDocumentFilter"> {{realDocumentFilter}}
-                   </td>
-                </tr>
-                <tr ng-repeat="doc in filterDocs(realDocumentFilter+'')">
-                    <td><img src="<%=ar.retPath%>assets/images/iconFile.png"/> {{doc.name}} </td>
-                    <td></td>
-                    <td>
-                        <button ng-click="addDocToItem(item, doc, realDocumentFilter)" ng-hide="itemHasDoc(item,doc)">Add</button>
-                        <button ng-click="removeDocFromItem(item, doc, realDocumentFilter)" ng-show="itemHasDoc(item,doc)">Remove</button>
-                    </td>
-                    </td>
-                </tr>
-                <tr>
-                   <td><button>Add All Above</button></td>
-                </tr>
-             </table>
-           </div>
-        </td>
-      </tr>
 
                           <!--  AGENDA Action ITEMS -->
       <tr><td style="height:15px"></td></tr>

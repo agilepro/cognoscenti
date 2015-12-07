@@ -176,50 +176,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
+    $scope.itemHasDoc = function(doc) {
+        var res = false;
+        var found = $scope.noteInfo.docList.forEach( function(docid) {
+            if (docid == doc.universalid) {
+                res = true;
+            }
+        });
+        return res;
+    }
     $scope.getDocs = function() {
-        var res = [];
-        $scope.noteInfo.docList.map( function(docId) {
-            $scope.attachmentList.map( function(oneDoc) {
-                if (oneDoc.universalid == docId) {
-                    res.push(oneDoc);
-                }
-            });
+        return $scope.attachmentList.filter( function(oneDoc) {
+            return $scope.itemHasDoc(oneDoc);
         });
-        return res;
     }
-    $scope.filterDocs = function(filter) {
-        var res = [];
-        for(var i=0; i<$scope.attachmentList.length; i++) {
-            var oneDoc = $scope.attachmentList[i];
-            if (oneDoc.name.indexOf(filter)>=0) {
-                res.push(oneDoc);
-            }
-            else if (oneDoc.description.indexOf(filter)>=0) {
-                res.push(oneDoc);
-            }
-        }
-        return res;
-    }
-    $scope.addAttachment = function(doc) {
-        for (var i=0; i<$scope.noteInfo.docList.length; i++) {
-            if (doc.universalid == $scope.noteInfo.docList[i]) {
-                alert("Document already attached: "+doc.name);
-                return;
-            }
-        }
-        $scope.noteInfo.docList.push(doc.universalid);
-        $scope.saveDocs();
-        $scope.newAttachment = "";
-    }
-    $scope.removeAttachment = function(doc) {
-        var newVal = [];
-        $scope.noteInfo.docList.map( function(docId) {
-            if (docId!=doc.universalid) {
-                newVal.push(docId);
-            }
-        });
-        $scope.noteInfo.docList = newVal;
-        $scope.saveDocs();
+    $scope.navigateToDoc = function(doc) {
+        window.location="docinfo"+doc.id+".htm";
     }
 
     $scope.getResponse = function(cmt) {
@@ -418,11 +390,36 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             //cancel action - nothing really to do
         });
     };
+
+    $scope.openAttachDocument = function () {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html',
+            controller: 'AttachDocumentCtrl',
+            size: 'lg',
+            resolve: {
+                docList: function () {
+                    return JSON.parse(JSON.stringify($scope.noteInfo.docList));
+                },
+                attachmentList: function() {
+                    return $scope.attachmentList;
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (docList) {
+            $scope.noteInfo.docList = docList;
+            $scope.saveEdits(['docList']);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
 });
 
 </script>
-<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
-<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
@@ -468,14 +465,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div class="generalHeading" style="margin-top:50px;"></div>
 
     <div>
-          Labels:
+          <span style="width:150px">Labels:</span>
           <span class="dropdown" ng-repeat="role in allLabels">
             <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
                data-toggle="dropdown" style="background-color:{{role.color}};"
                ng-show="hasLabel(role.name)">{{role.name}}</button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                <li role="presentation"><a role="menuitem" title="{{add}}"
-                  ng-click="toggleLabel(role)">Remove Role:<br/>{{role.name}}</a></li>
+                  ng-click="toggleLabel(role)">Remove Label:<br/>{{role.name}}</a></li>
             </ul>
           </span>
           <span>
@@ -494,40 +491,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
     <div style="width:100%">
-      <div>
-          <div class="dropdown" ng-repeat="doc in getDocs()">
-            <a href="docinfo{{doc.id}}.htm">
-                <img src="<%=ar.retPath%>assets/images/iconFile.png" ng-show="'FILE'==doc.attType">
-                <img src="<%=ar.retPath%>assets/images/iconUrl.png" ng-show="'URL'==doc.attType">
-                {{doc.name}}</a>
-          </div>
-      </div>
-    </div>
     <div>
-      Attachments:
-      <span class="dropdown" ng-repeat="doc in getDocs()">
-        <button class="btn dropdown-toggle" type="button" id="menu1"
-          data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;">
-        {{doc.name}}</button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="removeAttachment(doc)">Remove Document:<br/>{{doc.name}}</a></li>
-        </ul>
+      <span style="width:150px">Attachments:</span>
+      <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default"  style="margin:4px;"
+           ng-click="navigateToDoc(doc)">
+              <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
       </span>
-      <span ng-show="getDocs().length==0 && canUpdate"><i>no documents attached</i></span>
-      <button class="btn dropdown-toggle btn-primary" ng-click="showAdd=!showAdd"
-          style="margin:2px;padding: 2px 5px;font-size: 11px;" title="Attach a document">
-          + </button>
-    </div>
-    <div ng-show="showAdd">
-
-        <div class="form-inline form-group" style="padding-top:10px;">
-
-            <button ng-click="addAttachment(newAttachment);showAdd=false" class="btn btn-primary">Add Document</button>
-            <input type="text" ng-model="newAttachment"  class="form-control" placeholder="Enter Document Name"
-             style="width:350px;" typeahead="att as att.name for att in filterDocs($viewValue) | limitTo:12">
-        </div>
-
+      <button class="btn btn-sm btn-primary" ng-click="openAttachDocument()"
+          title="Attach a document">
+          ADD </button>
     </div>
 
 
@@ -709,4 +681,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 
 </div>
+
+<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
+<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
+
 <%out.flush();%>
