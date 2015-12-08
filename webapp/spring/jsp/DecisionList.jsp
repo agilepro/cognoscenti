@@ -250,7 +250,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         var modalInstance = $modal.open({
             animation: false,
             templateUrl: '<%=ar.retPath%>templates/DecisionModal.html',
-            controller: 'ModalInstanceCtrl',
+            controller: 'DecisionModalCtrl',
             size: 'lg',
             resolve: {
                 decision: function () {
@@ -272,7 +272,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 </script>
-<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
@@ -373,6 +372,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 </div>
+
+<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 
 
 

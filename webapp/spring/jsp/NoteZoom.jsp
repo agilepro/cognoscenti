@@ -203,6 +203,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         return selected;
     }
+    $scope.noResponseYet = function(cmt) {
+        var whatNot = $scope.getResponse(cmt);
+        return (whatNot.length == 0);
+    }
     $scope.updateResponse = function(cmt, response) {
         var selected = [];
         cmt.responses.map( function(item) {
@@ -506,14 +510,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div style="height:30px;"></div>
 
     <style>
-    .comment-outer-box {
+    .comment-outer {
         border: 1px solid lightgrey;
         border-radius:8px;
         padding:5px;
         margin-top:15px;
         background-color:#EEE
     }
-    .comment-inner-box {
+    .comment-inner {
         border: 1px solid lightgrey;
         border-radius:6px;
         padding:5px;
@@ -530,7 +534,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
            </td>
            <td>
-               <div class="comment-outer-box">
+               <div class="comment-outer">
                    <div>
                      <div>
 
@@ -567,7 +571,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                          <div style="clear:both"></div>
                       </div>
                    </div>
-                   <div class="leafContent comment-inner-box" ng-hide="editCmt==cmt.time">
+                   <div class="leafContent comment-inner" ng-hide="editCmt==cmt.time">
                        <div ng-bind-html="cmt.html"></div>
                    </div>
 
@@ -588,14 +592,42 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        <col style="width:100px">
                        <col width="width:1*">
                        <tr ng-repeat="resp in cmt.responses">
-                           <td style="padding:5px">
+                           <td style="padding:5px;max-width:100px;">
                                <b>{{resp.choice}}</b><br/>
                                {{resp.userName}}
                            </td>
+                           <td>
+                             <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>'"
+                                   ng-click="startResponse(cmt)"
+                                   style="cursor:pointer;">
+                               <a href="#" title="Edit your response to this proposal">
+                                   <i class="fa fa-edit"></i>
+                               </a>
+                             </span>
+                           </td>
                            <td >
-                               <div class="comment-inner-box leafContent">
+                               <div class="comment-inner leafContent">
                                   <div ng-bind-html="resp.html"></div>
                                </div>
+                           </td>
+                       </tr>
+                       <tr ng-show="noResponseYet(cmt)">
+                           <td style="padding:5px;max-width:100px;">
+                               <b>????</b>
+                               <br/>
+                               <% ar.writeHtml(currentUserName); %>
+                           </td>
+                           <td>
+                             <span ng-click="startResponse(cmt)" style="cursor:pointer;">
+                               <a href="#" title="Create a response to this proposal">
+                                 <i class="fa fa-edit"></i>
+                               </a>
+                             </span>
+                           </td>
+                           <td >
+                              <div class="comment-inner leafContent">
+                                  <i>Click edit button to register a response.</i>
+                              </div>
                            </td>
                        </tr>
                    </table>
