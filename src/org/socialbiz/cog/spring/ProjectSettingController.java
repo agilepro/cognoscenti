@@ -326,7 +326,7 @@ public class ProjectSettingController extends BaseController {
                 ngc.saveFile(ar, "Resolved role "+roleName);
             }
             else {
-                ngc.save("Unknown", ar.nowTime, "Resolved role "+roleName, ar.getCogInstance());
+                ngc.saveWithoutAuthenticatedUser("Unknown", ar.nowTime, "Resolved role "+roleName, ar.getCogInstance());
             }
             JSONObject repo = new JSONObject();
             repo.put("state", rrr.getState());

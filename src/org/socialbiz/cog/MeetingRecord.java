@@ -24,7 +24,9 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     public MeetingRecord(Document doc, Element ele, DOMFace p) {
         super(doc, ele, p);
     }
-
+    
+    
+    
     public String getId()  throws Exception {
         return getAttribute("id");
     }

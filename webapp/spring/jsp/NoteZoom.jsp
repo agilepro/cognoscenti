@@ -600,7 +600,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                              <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>'"
                                    ng-click="startResponse(cmt)"
                                    style="cursor:pointer;">
-                               <a href="#" title="Edit your response to this proposal">
+                               <a href="#cmt{{cmt.time}}" title="Edit your response to this proposal">
                                    <i class="fa fa-edit"></i>
                                </a>
                              </span>
@@ -619,7 +619,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                            </td>
                            <td>
                              <span ng-click="startResponse(cmt)" style="cursor:pointer;">
-                               <a href="#" title="Create a response to this proposal">
+                               <a href="#cmt{{cmt.time}}" title="Create a response to this proposal">
                                  <i class="fa fa-edit"></i>
                                </a>
                              </span>

@@ -438,7 +438,7 @@ public class CreateProjectController extends BaseController {
         }
 
         ngPage.setSite(site);
-        ngPage.save(uProf.getUniversalId(), nowTime, "Creating a workspace", cog);
+        ngPage.saveWithoutAuthenticatedUser(uProf.getUniversalId(), nowTime, "Creating a workspace", cog);
 
         cog.makeIndex(ngPage);
 

@@ -20,10 +20,13 @@ public class UserCacheMgr {
         }
     }
 
-    public void needRecalc(List<String> userWhoMightHaveChanges) {
-        for (String aUser :userWhoMightHaveChanges ) {
+    public void needRecalc(List<String> usersWhoMightHaveChanges) {
+        for (String aUser :usersWhoMightHaveChanges ) {
             needsRecalc.add(aUser);
         }
+    }
+    public void needRecalc(UserProfile userWhoMightHaveChanges) {
+        needsRecalc.add(userWhoMightHaveChanges.getKey());
     }
 
     public UserCache getCache(String userKey) throws Exception {

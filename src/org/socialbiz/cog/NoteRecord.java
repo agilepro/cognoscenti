@@ -94,7 +94,11 @@ public class NoteRecord extends DOMFace implements EmailContext {
     }
 
     public String getTargetRole()  throws Exception {
-        return getAttribute("targetRole");
+        String target = getAttribute("targetRole");
+        if (target==null || target.length()==0) {
+            return "Members";
+        }
+        return target;
     }
     public void setTargetRole(String newVal) throws Exception {
         setAttribute("targetRole", newVal);

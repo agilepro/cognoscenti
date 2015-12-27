@@ -465,7 +465,7 @@ public class UserPage extends ContainerCommon
     }
 
 
-    public void save(String modUser, long modTime, String comment, Cognoscenti cog)
+    public void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog)
             throws Exception {
         userInfo.setModTime(modTime);
         userInfo.setModUser(modUser);

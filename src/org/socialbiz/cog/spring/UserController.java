@@ -303,8 +303,8 @@ public class UserController extends BaseController {
         return redirectBrowser(ar,"userActiveTasks.htm");
     }
 
-    private ModelAndView displayTaskList(HttpServletRequest request, HttpServletResponse response,
-            String userKey, String level, String viewName) throws Exception {
+    private ModelAndView displayUserModelAndView(HttpServletRequest request, HttpServletResponse response,
+            String userKey, String viewName) throws Exception {
         try {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
@@ -312,9 +312,7 @@ public class UserController extends BaseController {
             }
             UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
 
-            request.setAttribute("title", userBeingViewed.getName());
             ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, viewName);
-            modelAndView.addObject("active", level);
             return modelAndView;
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
@@ -325,28 +323,41 @@ public class UserController extends BaseController {
     public ModelAndView userActiveTasks(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        return displayTaskList(request, response, userKey, "0", "UserActiveTasks");
+        return displayUserModelAndView(request, response, userKey, "UserActiveTasks");
     }
 
+    @RequestMapping(value = "/{userKey}/userMissingResponses.htm", method = RequestMethod.GET)
+    public ModelAndView userMissingResponses(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        return displayUserModelAndView(request, response, userKey, "UserMissingResponses");
+    }
+    
+    //TODO: eliminate unnecessary address
     @RequestMapping(value = "/{userKey}/userCompletedTasks.htm", method = RequestMethod.GET)
     public ModelAndView userCompletedTasks(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        return displayTaskList(request, response, userKey, "1", "UserCompletedTasks");
+        response.sendRedirect("userActiveTasks.htm");
+        return null;
     }
 
+    //TODO: eliminate unnecessary address
     @RequestMapping(value = "/{userKey}/userFutureTasks.htm", method = RequestMethod.GET)
     public ModelAndView userFutureTasks(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        return displayTaskList(request, response, userKey, "2", "UserFutureTasks");
+        response.sendRedirect("userActiveTasks.htm");
+        return null;
     }
 
+    //TODO: eliminate unnecessary address
     @RequestMapping(value = "/{userKey}/userAllTasks.htm", method = RequestMethod.GET)
     public ModelAndView userAllTasks(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        return displayTaskList(request, response, userKey, "3", "UserAllTasks");
+        response.sendRedirect("userActiveTasks.htm");
+        return null;
     }
 
     @RequestMapping(value = "/{userKey}/ShareRequests.htm", method = RequestMethod.GET)

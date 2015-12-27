@@ -45,6 +45,18 @@ public class CommentRecord extends DOMFace {
         setAttributeLong("time", newVal);
     }
 
+    public long getDueDate() {
+        long dueDate = getAttributeLong("dueDate");
+        if (dueDate <= 0) {
+            //default duedate to one day from when created
+            dueDate = getTime() + 24*60*60*1000;
+        }
+        return dueDate;
+    }
+    public void setDueDate(long newVal) throws Exception {
+        setAttributeLong("dueDate", newVal);
+    }
+
     public boolean isPoll()  throws Exception {
         return "true".equals(getAttribute("poll"));
     }
@@ -162,6 +174,12 @@ public class CommentRecord extends DOMFace {
         }
 
         for (OptOutAddr ooa : sendTo) {
+            if (isPoll()) {
+                UserProfile toProfile = UserManager.findUserByAnyId(ooa.getEmail());
+                if (toProfile!=null) {
+                    ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
+                }
+            }
             constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile, mailFile);
         }
         setEmailSent(true);
@@ -226,6 +244,7 @@ public class CommentRecord extends DOMFace {
         commInfo.put("userName", ale.getName());
         commInfo.put("userKey",  userKey);
         commInfo.put("time",     getTime());
+        commInfo.put("dueDate",  getDueDate());
         commInfo.put("poll",     isPoll());
         commInfo.put("emailSent",getEmailSent());
         commInfo.put("replyTo",  getReplyTo());
@@ -282,6 +301,9 @@ public class CommentRecord extends DOMFace {
         }
         if (input.has("replyTo")) {
             setReplyTo(input.getLong("replyTo"));
+        }
+        if (input.has("dueDate")) {
+            setDueDate(input.getLong("dueDate"));
         }
         if (input.has("replies")) {
             setReplies(constructVectorLong(input.getJSONArray("replies")));

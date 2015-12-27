@@ -283,7 +283,7 @@ public interface NGContainer
     public String getThemePath();
 
     public void saveFile(AuthRequest ar, String comment) throws Exception;
-    public void save(String modUser, long modTime, String comment, Cognoscenti cog)throws Exception;
+    public void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog)throws Exception;
 
     /**
     * Returns a globally unique for the container (project/book/userpage) by combining

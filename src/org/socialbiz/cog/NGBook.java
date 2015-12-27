@@ -884,7 +884,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
     }
 
     @Override
-    public void save(String modUser, long modTime, String comment, Cognoscenti cog) throws Exception {
+    public void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog) throws Exception {
         try {
             siteInfoRec.setModTime(modTime);
             siteInfoRec.setModUser(modUser);

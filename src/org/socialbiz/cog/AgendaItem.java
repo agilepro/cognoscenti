@@ -25,6 +25,7 @@ public class AgendaItem extends DOMFace {
             clearLock();
         }
     }
+    
 
     public String getId()  throws Exception {
         return getAttribute("id");

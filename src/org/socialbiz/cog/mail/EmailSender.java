@@ -451,7 +451,7 @@ public class EmailSender extends TimerTask {
             emailRec.setSubject(subject);
             emailRec.setProjectId(ngc.getKey());
             emailRec.setAttachmentIds(attachIds);
-            ngc.save("SERVER", System.currentTimeMillis(), "Sending an email message", cog);
+            ngc.saveWithoutAuthenticatedUser("SERVER", System.currentTimeMillis(), "Sending an email message", cog);
 
 //            EmailRecordMgr.triggerNextMessageSend();
         } catch (Exception e) {

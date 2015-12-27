@@ -563,6 +563,10 @@
         <put-attribute name="title" value="User Action Items" />
         <put-attribute name="body" value="/spring/jsp/UserActiveTasks.jsp" />
     </definition>
+    <definition name="UserMissingResponses" extends="slimLayout">
+        <put-attribute name="title" value="User Missing Responses" />
+        <put-attribute name="body" value="/spring/jsp/UserMissingResponses.jsp" />
+    </definition>
 
     <definition name="ShareRequests" extends="baseLayout">
         <put-attribute name="title" value="User Action Items" />

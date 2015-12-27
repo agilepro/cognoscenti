@@ -1116,8 +1116,11 @@ public class GoalRecord extends BaseRecord {
                 creatorProfile = commenter.getUserProfile();
             }
 
-
             for (OptOutAddr ooa : sendTo) {
+                UserProfile toProfile = UserManager.findUserByAnyId(ooa.getEmail());
+                if (toProfile!=null) {
+                    ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
+                }
                 constructEmailRecordOneUser(ar, ngp, ooa, creatorProfile, mailFile);
             }
             System.out.println("Marking ActionItem as SENT: "+getSynopsis());

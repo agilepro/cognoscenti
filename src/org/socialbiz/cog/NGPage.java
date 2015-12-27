@@ -385,7 +385,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     public void saveFile(AuthRequest ar, String comment) throws Exception {
         try {
             setLastModify(ar);
-            save(ar.getBestUserId(), ar.nowTime, comment, ar.getCogInstance());
+            saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime, comment, ar.getCogInstance());
 
             if (prjSite!=null) {
                 prjSite.saveFile(ar, comment);
@@ -399,7 +399,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
 
     //Added new method without using ar parameter to save contents (Need to discuss)
     @Override
-    public void save(String modUser, long modTime, String comment, Cognoscenti cog) throws Exception
+    public void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog) throws Exception
     {
         pageInfo.setModTime(modTime);
         pageInfo.setModUser(modUser);
@@ -413,7 +413,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     {
         try {
             save();
-
+            
             //update the in memory index because the file has changed
             refreshOutboundLinks(cog);
 
