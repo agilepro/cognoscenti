@@ -21,35 +21,39 @@
 package org.socialbiz.cog;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
 import org.workcast.streams.HTMLWriter;
 
 /**
-* NGProj is a Container that represents a Workspace.
-* This kind of project exists anywhere in a library hierarchy.
+* NGWorkspace is a Container that represents a Workspace.
+* This kind of project/page/workspace exists anywhere in a site hierarchy.
 * The old project (NGPage) existed only in a single date folder, and all the attachments
-* existed in the attachment folder.
+* existed in the attachment folder.  The old NGPage is not used anymore,
+* but exists in name only in the class hierarchy.
 *
-* This project is represented by a folder anywhere on disk,
+* This workspace is represented by a folder in a site hierarchy,
 * and the attachments are just files within that folder.
 * The project file itself has a reserved name ".cog/ProjInfo.xml"
 * and the old versions of attachments are in the ".cog" folder as well.
 */
-public class NGProj extends NGPage {
+public class NGWorkspace extends NGPage {
     /**
-    * This project inhabits a folder on disk, and this is the path to the folder.
+    * This workspace inhabits a folder on disk, and this is the path to the folder.
     */
     public File containingFolder;
 
 
-    public NGProj(File theFile, Document newDoc, NGBook site) throws Exception {
+    public NGWorkspace(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc, site);
 
         String name = theFile.getName();
@@ -61,7 +65,7 @@ public class NGProj extends NGPage {
         else if (name.equalsIgnoreCase("ProjInfo.xml")) {
             if (!cogFolder.getName().equalsIgnoreCase(".cog")) {
                 throw new Exception("Something is wrong with the data folder structure.  "
-                        +"Tried to open a NGProj file named "+name
+                        +"Tried to open a NGWorkspace file named "+name
                         +" except it should be in a folder named .cog, however "
                         +"it was in a folder named "+cogFolder.getName());
             }
@@ -69,7 +73,7 @@ public class NGProj extends NGPage {
         }
         else {
             throw new Exception("Something is wrong with the data folder structure.  "
-                    +"Tried to open a NGProj file named "+name
+                    +"Tried to open a NGWorkspace file named "+name
                     +" and don't know what to do with that.");
         }
 
@@ -93,20 +97,45 @@ public class NGProj extends NGPage {
         else {
             throw new Exception("don't know how to make key for "+theFile);
         }
-
-        //debug code to identify why projects are becoming named pageinfo
-        if (getKey().equalsIgnoreCase("pageinfo")) {
-            throw new Exception("for some reason this page is STILL called pageinfo ... should not be: "+theFile);
-        }
     }
 
 
-    public static NGProj readProjAbsolutePath(File theFile) throws Exception {
-        NGPage newPage = NGPage.readPageAbsolutePath(theFile);
-        if (!(newPage instanceof NGProj)) {
-            throw new Exception("Attempt to create an NGProj when there is already a NGPage at "+theFile+".  Are you trying to create a NGProj INSIDE the NGPage data folder?");
+    public static NGWorkspace readWorkspaceAbsolutePath(File theFile) throws Exception {
+        if (!theFile.exists()) {
+            throw new NGException("nugen.exception.file.not.exist", new Object[]{theFile});
         }
-        return (NGProj) newPage;
+        try {
+            String fullFilePath = theFile.toString();
+
+            //look in the cache
+            NGWorkspace newPage = pageCache.recall(fullFilePath);
+            if (newPage==null) {
+                Document newDoc;
+                InputStream is = new FileInputStream(theFile);
+                newDoc = DOMUtils.convertInputStreamToDocument(is, false, false);
+                is.close();
+                if (NGBook.fileIsInDataPath(theFile)) {
+                    //since moving to the site scheme, all the workspaces should be site folder
+                    //this is old code left from when all project/pages were in a single folder.
+                    //remove this after Jan 2016
+                    throw new Exception("I found a file in the data path which should never happen: "+theFile);
+                }
+                else {
+                    newPage = new NGWorkspace(theFile, newDoc, null);
+                }
+            }
+
+            //store into the cache.  Note, there is possibility
+            //that another thread picks this up before we are done with it...
+            //need to implement page lock mechanism to prevent this, and that
+            //means having reliable clean-up code to store at the end of use.
+            //Probably should lock the file reliably....
+            pageCache.store(fullFilePath, newPage);
+            return newPage;
+        }
+        catch (Exception e) {
+            throw new NGException("nugen.exception.unable.to.read.file",new Object[]{theFile}, e);
+        }
     }
 
 

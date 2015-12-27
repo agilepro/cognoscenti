@@ -234,7 +234,7 @@ public class NGPageIndex {
     public NGContainer getContainer() throws Exception {
         setLock();
         if (containerType == CONTAINER_TYPE_PROJECT) {
-            return NGProj.readProjAbsolutePath(containerPath);
+            return NGWorkspace.readWorkspaceAbsolutePath(containerPath);
         }
         else if (containerType == CONTAINER_TYPE_SITE) {
             return NGBook.readSiteByKey(containerKey);
@@ -603,7 +603,7 @@ public class NGPageIndex {
         containerKey = container.getKey();
 
         if (container instanceof NGPage) {
-            if (container instanceof NGProj) {
+            if (container instanceof NGWorkspace) {
                 containerType = CONTAINER_TYPE_PROJECT;
             }
             else {

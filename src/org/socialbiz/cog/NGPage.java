@@ -23,8 +23,6 @@ package org.socialbiz.cog;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -47,7 +45,7 @@ import org.workcast.json.JSONObject;
 * "Page" is the old term, "Leaf" is also an old term, avoid these.
 * The current term for the user interaction is "Workspace"
 */
-public class NGPage extends ContainerCommon implements NGContainer
+public abstract class NGPage extends ContainerCommon implements NGContainer
 {
 
     public PageInfoRecord pageInfo;
@@ -330,8 +328,8 @@ public class NGPage extends ContainerCommon implements NGContainer
 
     }
 
-
-    public static NGPage readPageAbsolutePath(File theFile) throws Exception {
+/*
+    protected static NGWorkspace readPageAbsolutePath(File theFile) throws Exception {
         if (!theFile.exists()) {
             throw new NGException("nugen.exception.file.not.exist", new Object[]{theFile});
         }
@@ -339,17 +337,19 @@ public class NGPage extends ContainerCommon implements NGContainer
             String fullFilePath = theFile.toString();
 
             //look in the cache
-            NGPage newPage = pageCache.recall(fullFilePath);
+            NGWorkspace newPage = pageCache.recall(fullFilePath);
             if (newPage==null) {
                 Document newDoc;
                 InputStream is = new FileInputStream(theFile);
                 newDoc = DOMUtils.convertInputStreamToDocument(is, false, false);
                 is.close();
                 if (NGBook.fileIsInDataPath(theFile)) {
-                    newPage = new NGPage(theFile, newDoc, null);
+                    //since moving to the site scheme, all the workspaces should be site folder
+                    //this is old code left from when all project/pages were in a single folder.
+                    throw new Exception("I found a file in the data path which should never happen: "+theFile);
                 }
                 else {
-                    newPage = new NGProj(theFile, newDoc, null);
+                    newPage = new NGWorkspace(theFile, newDoc, null);
                 }
             }
 
@@ -365,7 +365,8 @@ public class NGPage extends ContainerCommon implements NGContainer
             throw new NGException("nugen.exception.unable.to.read.file",new Object[]{theFile}, e);
         }
     }
-
+*/
+    
     /**
      * Clears the current page from the cache.
      * This is the global "rollback" function.  It does not undo any changes

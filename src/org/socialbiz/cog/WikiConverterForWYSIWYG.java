@@ -78,6 +78,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter
         int barPos = linkURL.indexOf("|");
         String linkText = linkURL.trim();
         String linkAddr = null;
+        String titleValue = linkURL;
 
         if (barPos >= 0) {
             //We have both a link text, and a link address, so use them.
@@ -118,8 +119,22 @@ public class WikiConverterForWYSIWYG extends WikiConverter
             }
         }
 
+        boolean isExternal = (linkAddr.startsWith("http") && linkAddr.indexOf("/") >= 0);
+        String target = null;
+        if (isExternal) {
+            target = "_blank";
+            titleValue = "This link leads to an external page";
+        }
+        
+        
         ar.write("<a href=\"");
         ar.write(linkAddr);
+        ar.write("\" title=\"");
+        ar.writeHtml(titleValue);
+        if (target != null) {
+            ar.write("\" target=\"");
+            ar.writeHtml(target);
+        }
         ar.write("\">");
         ar.writeHtml(linkText);
         ar.write("</a>");

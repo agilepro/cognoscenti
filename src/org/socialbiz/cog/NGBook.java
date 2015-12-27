@@ -28,6 +28,7 @@ import java.util.List;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
+import org.workcast.json.JSONObject;
 
 /**
  * An site is a collection of pages. This allows a collection of pages to share
@@ -996,7 +997,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
 //            newPage = new NGPage(newFilePath, newDoc, this);
         }
         else {
-            newPage = new NGProj(newFilePath, newDoc, this);
+            newPage = new NGWorkspace(newFilePath, newDoc, this);
         }
         newPage.setKey(newKey);
 
@@ -1087,5 +1088,41 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
         return true;
     }
+    
+    public File getStatsFilePath() {
+        File siteFolder = getSiteRootFolder();
+        File cogFolder = new File(siteFolder, ".cog");
+        return new File(cogFolder, "stats.json");
+        
+    }
 
+    public WorkspaceStats getRecentStats(Cognoscenti cog) throws Exception {
+        File statsFile = getStatsFilePath();
+        long timeStamp = statsFile.lastModified();
+        long recentEnough = System.currentTimeMillis() - 24*60*60*1000;
+        if (timeStamp>recentEnough) {
+            return getStatsFile();
+        }
+        
+        //we should figure out how to do this at a time when all the 
+        //projects are being scanned for some other purpose....
+        WorkspaceStats siteStats = new WorkspaceStats();
+        for (NGPageIndex ngpi : cog.getAllProjectsInSite(this.getKey())) {
+            NGPage ngp = ngpi.getPage();
+            siteStats.gatherFromWorkspace(ngp);
+        }
+        saveStatsFile(siteStats);
+        return siteStats;
+    }
+    
+    public WorkspaceStats getStatsFile() throws Exception {
+        JSONObject jo = JSONObject.readFromFile(getStatsFilePath());
+        return WorkspaceStats.fromJSON(jo);
+    }
+
+    public void saveStatsFile(WorkspaceStats stats) throws Exception {
+        JSONObject jo = stats.getJSON();
+        jo.writeToFile(getStatsFilePath());
+    }
+    
 }

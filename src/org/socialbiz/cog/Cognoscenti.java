@@ -518,7 +518,7 @@ System.out.println("Cognoscenti Server Object == Start the Server");
         // page files for data folder
         for (File aProjPath : allPageFiles) {
             try {
-                NGPage aPage = NGPage.readPageAbsolutePath(aProjPath);
+                NGWorkspace aPage = NGWorkspace.readWorkspaceAbsolutePath(aProjPath);
                 makeIndex(aPage);
             }
             catch (Exception eig) {
@@ -528,7 +528,7 @@ System.out.println("Cognoscenti Server Object == Start the Server");
         // now process the project files if any
         for (File aProjPath : allProjectFiles) {
             try {
-                NGProj aProj = NGProj.readProjAbsolutePath(aProjPath);
+                NGWorkspace aProj = NGWorkspace.readWorkspaceAbsolutePath(aProjPath);
                 makeIndex(aProj);
             }
             catch (Exception eig) {

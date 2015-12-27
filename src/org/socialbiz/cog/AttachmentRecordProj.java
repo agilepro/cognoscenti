@@ -48,7 +48,7 @@ public class AttachmentRecordProj extends AttachmentRecord
 
     public void setContainer(NGContainer newCon) throws Exception
     {
-        if (!(newCon instanceof NGProj)) {
+        if (!(newCon instanceof NGWorkspace)) {
             throw new Exception("Problem: ProjectAttachment should only belong to NGProject, but somehow got a different kind of container.");
         }
         container = newCon;
@@ -59,7 +59,7 @@ public class AttachmentRecordProj extends AttachmentRecord
         if (container==null) {
             throw new Exception("ProjectAttachment record has not be innitialized correctly, there is no container setting.");
         }
-        File folder = ((NGProj)container).containingFolder;
+        File folder = ((NGWorkspace)container).containingFolder;
         File docFile = new File(folder, oldName);
         File newFile = new File(folder, newName);
         if (docFile.exists()) {
@@ -70,7 +70,7 @@ public class AttachmentRecordProj extends AttachmentRecord
             //it is possible that user is 'fixing' the project by changing the name of an attachment
             //record to the name of an existing file.  IF this is the case, there may have been a
             //record of an "extra" file.  This will eliminate that.
-            ((NGProj)container).removeExtrasByName(newName);
+            ((NGWorkspace)container).removeExtrasByName(newName);
         }
     }
 
@@ -81,12 +81,12 @@ public class AttachmentRecordProj extends AttachmentRecord
     */
     public List<AttachmentVersion> getVersions(NGContainer ngc)
         throws Exception {
-        if (!(ngc instanceof NGProj)) {
+        if (!(ngc instanceof NGWorkspace)) {
             throw new Exception("Problem: ProjectAttachment should only belong to NGProject, "
                     +"but somehow got a different kind of container.");
         }
 
-        File projectFolder = ((NGProj)ngc).containingFolder;
+        File projectFolder = ((NGWorkspace)ngc).containingFolder;
         if (projectFolder==null) {
             throw new Exception("NGProject container has no containing folder????");
         }
@@ -107,10 +107,10 @@ public class AttachmentRecordProj extends AttachmentRecord
     public AttachmentVersion streamNewVersion(NGContainer ngc, InputStream contents,
             String userId, long timeStamp) throws Exception {
 
-        if (!(ngc instanceof NGProj)) {
+        if (!(ngc instanceof NGWorkspace)) {
             throw new Exception("Problem: ProjectAttachment should only belong to NGProject, but somehow got a different kind of container.");
         }
-        File projectFolder = ((NGProj)ngc).containingFolder;
+        File projectFolder = ((NGWorkspace)ngc).containingFolder;
         if (projectFolder==null) {
             throw new Exception("NGProject container has no containing folder????");
         }
@@ -141,7 +141,7 @@ public class AttachmentRecordProj extends AttachmentRecord
         if (highest!=null) {
             ver = highest.getNumber();
         }
-        File projectFolder = ((NGProj)ngc).containingFolder;
+        File projectFolder = ((NGWorkspace)ngc).containingFolder;
         String attachName = getDisplayName();
         for (File testFile : projectFolder.listFiles())
         {
@@ -157,7 +157,7 @@ public class AttachmentRecordProj extends AttachmentRecord
      * Takes the working copy, and make a new internal, backed up copy.
      */
     public void commitWorkingCopy(NGContainer ngc) throws Exception {
-        File projectFolder = ((NGProj)ngc).containingFolder;
+        File projectFolder = ((NGWorkspace)ngc).containingFolder;
         if (!projectFolder.exists()) {
             throw new Exception("Strange, this workspace's folder does not exist.  "
                     + "Something must be wrong: "+projectFolder);

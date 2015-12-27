@@ -536,8 +536,8 @@ public class WikiConverter
                 ar.writeHtml(linkName);
                 ar.write("\"/>");
             }
-        } else // not an image
-        {
+        } 
+        else { // not an image
             if (pageExists) {
                 ar.write("<a href=\"");
                 ar.writeHtml(linkAddr);

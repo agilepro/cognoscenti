@@ -64,7 +64,7 @@ public class AttachmentRecord extends DOMFace {
     }
 
     public void setContainer(NGContainer newCon) throws Exception {
-        if (newCon instanceof NGProj) {
+        if (newCon instanceof NGWorkspace) {
             throw new Exception(
                     "Problem: AttachmentRecord should NOT belong to NGProject, but somehow got one.");
         }
@@ -373,7 +373,7 @@ public class AttachmentRecord extends DOMFace {
     public List<AttachmentVersion> getVersions(NGContainer ngc) throws Exception {
 
         // debug code
-        if (ngc instanceof NGProj) {
+        if (ngc instanceof NGWorkspace) {
             throw new Exception( "Program Logic Error: Attachment Record found on a NGProj object."
                     + "  Should be ProjectAttachment instead!");
         }
@@ -552,7 +552,7 @@ public class AttachmentRecord extends DOMFace {
             String userId, long timeStamp) throws Exception {
 
         // debug code
-        if (ngc instanceof NGProj) {
+        if (ngc instanceof NGWorkspace) {
             throw new Exception( "Program Logic Error: Attachment Record found on a NGProj object."
                     + "  Should be ProjectAttachment instead!");
         }

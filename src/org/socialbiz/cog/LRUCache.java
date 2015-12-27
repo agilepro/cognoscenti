@@ -33,8 +33,8 @@ import java.util.List;
 */
 public class LRUCache
 {
-    private List<NGPage> listOfPages;
-    private Hashtable<String,NGPage> hash;
+    private List<NGWorkspace> listOfPages;
+    private Hashtable<String,NGWorkspace> hash;
     private int       cacheSize;
 
     public LRUCache(int numberToCache) {
@@ -43,8 +43,8 @@ public class LRUCache
     }
 
     public synchronized void emptyCache() {
-        listOfPages = new ArrayList<NGPage>(cacheSize);
-        hash = new Hashtable<String,NGPage>(cacheSize);
+        listOfPages = new ArrayList<NGWorkspace>(cacheSize);
+        hash = new Hashtable<String,NGWorkspace>(cacheSize);
     }
 
     /**
@@ -74,11 +74,11 @@ public class LRUCache
     * make the first thread to request the page much much faster
     * and this reduces the possibility of simultaneous access.
     */
-    public synchronized NGPage recall(String id) {
+    public synchronized NGWorkspace recall(String id) {
         if (id==null) {
             throw new RuntimeException("NULL value passed for the cache key in LRUCache.recall");
         }
-        NGPage o = hash.get(id);
+        NGWorkspace o = hash.get(id);
         if (o!=null) {
             unstore(id);
             if (!id.equals(o.getFilePath().toString())) {
@@ -112,11 +112,11 @@ public class LRUCache
     * If an object already exists with that id, then this new object
     * will replace it.
     */
-    public synchronized void store(String id, NGPage o) {
+    public synchronized void store(String id, NGWorkspace o) {
         if (!id.equals(o.getFilePath().toString())) {
             throw new RuntimeException("Trying to store object for "+id+" has a path of "+o.getFilePath()+"!");
         }
-        NGPage prev = hash.get(id);
+        NGWorkspace prev = hash.get(id);
         if (prev!=null) {
             listOfPages.remove(prev);
             hash.remove(prev);

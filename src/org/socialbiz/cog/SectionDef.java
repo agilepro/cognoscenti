@@ -108,7 +108,6 @@ public class SectionDef
         //the rest of these are deprecated
         SectionFormat canonWiki = new SectionWiki();
         SectionFormat canonLink =        new SectionLink();
-        SectionFormat canonPoll =        new SectionPoll();
         SectionFormat canonPrivate =     new SectionPrivate();
 
 
@@ -116,8 +115,6 @@ public class SectionDef
         //deprecated sections
         allDefs.add(new SectionDef(canonLink, "See Also", ANON_ACCESS, MEMBER_ACCESS,
                                    true, "XXX Public Links", false));
-        allDefs.add(new SectionDef(canonPoll, "Poll", MEMBER_ACCESS, MEMBER_ACCESS,
-                                   true, "XXX Poll", false));
         allDefs.add(new SectionDef(canonWiki, "Member Content", MEMBER_ACCESS, MEMBER_ACCESS,
                                    true, "XXX Content", false));
         allDefs.add(new SectionDef(canonWiki, "Description", ANON_ACCESS,   MEMBER_ACCESS,

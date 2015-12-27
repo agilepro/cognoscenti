@@ -343,7 +343,7 @@ Parameter used :
                                 title="Updates for the logged in user">Updates</a></li>
                         <li>|</li>
                         <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/userActiveTasks.htm"
-                                title="Action Items for the logged in user">Goals</a></li>
+                                title="Action Items for the logged in user">Action Items</a></li>
                         <li>|</li>
                         <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/userProfile.htm?active=1"
                                 title="Profile for the logged in user">Settings</a></li>
