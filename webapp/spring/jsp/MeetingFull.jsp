@@ -153,6 +153,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
 
     $scope.newAssignee = "";
+    $scope.newAttendee = "";
     $scope.newGoal = {};
     $scope.newPerson = "";
     $scope.myUserId = "<% ar.writeJS(ar.getBestUserId()); %>";
@@ -447,19 +448,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         console.log("SAVE MEETING: ", readyToSave);
         var postdata = angular.toJson(readyToSave);
         $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
+        var promise = $http.post(postURL ,postdata)
+        promise.success( function(data) {
             console.log("---- SERVER: ", data);
             $scope.meeting = data;
             $scope.extractDateParts();
             $scope.editHead=false;
             $scope.editDesc=false;
             $scope.extractPeopleSituation();
-        })
-        .error( function(data, status, headers, config) {
+        });
+        promise.error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
+        return promise;
     };
+    $scope.refreshMeetingPromise = function() {
+        return $scope.putGetMeetingInfo({});
+    }
     $scope.createAgendaItemImmediate = function() {
         var newAgenda = {subject: "New Agenda Item",duration: 10,position:9999,docList:[], actionItems:[]};
 
@@ -662,6 +667,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         return person.name;
     }
+    $scope.findPerson = function(email) {
+        return $scope.allPeople.find( function(item) {
+            return (item.uid == email)
+        });
+    }
 
     $scope.createMinutes = function() {
         var postURL = "createMinutes.json?id="+$scope.meeting.id;
@@ -802,7 +812,52 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.extractPeopleSituation();
 
     $scope.showSelfRegister = function() {
-        return ($scope.mySitch.length>0 && $scope.meeting.state < 3);
+        return ($scope.mySitch.length>0 && $scope.meeting.state <= 1);
+    }
+    $scope.editAttendees = function() {
+        return ($scope.meeting.state == 2);
+    }
+    $scope.showAttendees = function() {
+        return ($scope.meeting.state >= 3);
+    }
+    $scope.addYouself = function() {
+        $scope.newAttendee = '<%=currentUser%>';
+        $scope.addAttendee();
+    }
+    $scope.addAttendee = function() {
+        var needAdd = true;
+        if (!$scope.newAttendee) {
+            return;
+        }
+        var promise = $scope.refreshMeetingPromise();
+        promise.success( function() {
+            $scope.meeting.attended.forEach( function(item) {
+                if (item==$scope.newAttendee) {
+                    needAdd = false;
+                }
+            });
+            if (needAdd) {
+                $scope.meeting.attended.push($scope.newAttendee);
+            }
+            $scope.newAttendee = "";
+            $scope.savePartialMeeting(['attended']);
+        });
+    }
+    $scope.removeAttendee  = function(person) {
+        var promise = $scope.refreshMeetingPromise();
+        promise.success( function() {
+            if (confirm("Remove "+person.name+" from attendee list?")) {
+                $scope.meeting.attended = $scope.meeting.attended.filter( function(item) {
+                    return (item!=person.uid);
+                });
+            }
+            $scope.savePartialMeeting(['attended']);
+        });
+    }
+    $scope.getAttended = function() {
+        return $scope.meeting.attended.map( function(item) {
+            return $scope.findPerson(item);
+        });
     }
 
     $scope.saveSituation = function() {
@@ -1235,6 +1290,29 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
 
       </div>
+    </div>
+
+    <div class="comment-outer" style="margin:40px" ng-show="editAttendees()">
+      <div><h2 style="margin:5px">Attendance List</h2></div>
+      <div class="comment-inner">
+        <div class="form-inline form-group" style="margin:20px">
+           Attendees:
+           <button class="btn btn-sm" ng-repeat="person in getAttended()" style="margin:3px;"
+                   ng-click="removeAttendee(person)">{{person.name}}</button>
+        </div>
+        <div class="form-inline form-group" style="margin:20px">
+            <button class="btn btn-primary" ng-click="addYouself()">Add Yourself</button> &nbsp;
+            <button class="btn btn-primary" ng-click="addAttendee()">Add By Email Address: </button>
+            <input type="text" ng-model="newAttendee" class="form-control" placeholder="Enter email address"
+               typeahead="person.uid as person.name for person in getPeople($viewValue) | limitTo:12">
+        </div>
+      </div>
+    </div>
+
+    <div class="leafContent" ng-show="showAttendees()">
+       Attendees:
+       <button class="btn btn-sm" ng-repeat="person in getAttended()"
+               style="margin:3px;">{{person.name}}</button>
     </div>
 
 
