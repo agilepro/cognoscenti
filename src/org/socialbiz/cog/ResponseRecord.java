@@ -55,7 +55,8 @@ public class ResponseRecord extends DOMFace
             return true;
         }
 
-        //schema migration.  If the email was not sent, and the item was created
+        //schema migration BEFORE schema version 101
+        //If the email was not sent, and the item was created
         //more than 1 week ago, then go ahead and mark it as sent, because it is
         //too late to send.   This is important while adding this automatic email
         //sending because there are a lot of old records that have never been marked

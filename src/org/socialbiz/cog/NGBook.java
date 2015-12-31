@@ -114,6 +114,14 @@ public class NGBook extends ContainerCommon implements NGContainer {
         }
     }
 
+    
+    public void schemaUpgrade() throws Exception {
+        moveOldMembersToRole();
+    }
+    public int currentSchemaVersion() {
+        return 13;
+    }
+    
     /**
      * SCHEMA MIGRATION CODE - old schema required members to be children of a
      * tag 'members' and also prospective memebers in a tag 'pmembers' This code

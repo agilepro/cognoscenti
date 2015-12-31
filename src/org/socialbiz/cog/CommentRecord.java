@@ -13,15 +13,37 @@ import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
 
 public class CommentRecord extends DOMFace {
+    
+    public static final int COMMENT_TYPE_SIMPLE    = 1;
+    public static final int COMMENT_TYPE_PROPOSAL  = 2;
+    public static final int COMMENT_TYPE_REQUEST   = 3;
+
+    public static final int COMMENT_STATE_DRAFT   = 11;
+    public static final int COMMENT_STATE_OPEN    = 12;
+    public static final int COMMENT_STATE_CLOSED  = 13;
+    
 
     public CommentRecord(Document doc, Element ele, DOMFace p) {
-        super(doc, ele, p);
+        super(doc, ele, p);       
+    }
+    
+    public void schemaMigration() throws Exception {
+        //schema migration before version 101 of NGWorkspace
+        getEmailSent();
+        getCommentType();
+        //state added in version 101 of schema
+        getState();
+        
+        for (ResponseRecord rr : getResponses()) {
+            //schema migration before version 101 of NGWorkspace
+            rr.getEmailSent();
+        }
     }
 
-    public String getContent()  throws Exception {
+    public String getContent() {
         return getScalar("content");
     }
-    public void setContent(String newVal) throws Exception {
+    public void setContent(String newVal) {
         setScalar("content", newVal);
     }
     public String getContentHtml(AuthRequest ar)  throws Exception {
@@ -30,19 +52,81 @@ public class CommentRecord extends DOMFace {
     public void setContentHtml(AuthRequest ar, String newHtml) throws Exception {
         setContent(HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
     }
+    
+    /**
+     * The 'outcome' is the result of a question, or a quick response round
+     */
+    public String getOutcomeHtml(AuthRequest ar)  throws Exception {
+        return WikiConverterForWYSIWYG.makeHtmlString(ar, getScalar("outcome"));
+    }
+    public void setOutcomeHtml(AuthRequest ar, String newHtml) throws Exception {
+        setScalar("outcome", HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
+    }
 
-    public AddressListEntry getUser()  throws Exception {
+    public AddressListEntry getUser()  {
         return new AddressListEntry(getAttribute("user"));
     }
-    public void setUser(UserRef newVal) throws Exception {
+    public void setUser(UserRef newVal) {
         setAttribute("user", newVal.getUniversalId());
     }
 
+    public int getCommentType() {
+        int ct =  getAttributeInt("commentType");
+        if (ct<=0) {
+            //schema migration from BEFORE schema version 101
+            //old attribute was boolean "poll" where true was a 
+            //proposal, and false was a simple comment.  This is 
+            //replaced by the commentType which has three or more
+            //values.
+            if ("true".equals(getAttribute("poll"))) {
+                ct = COMMENT_TYPE_PROPOSAL;
+            }
+            else {
+                ct = COMMENT_TYPE_SIMPLE;
+            }
+            setCommentType(ct);
+            clearAttribute("poll");
+        }
+        return ct;
+    }
+    public void setCommentType(int newVal) {
+        setAttributeInt("commentType", newVal);
+    }
+    
     public long getTime() {
         return getAttributeLong("time");
     }
     public void setTime(long newVal) throws Exception {
         setAttributeLong("time", newVal);
+    }
+
+    public int getState() {
+        int state = getAttributeInt("state");
+        
+        //schema migration from BEFORE version 101
+        if (state<COMMENT_STATE_DRAFT || state > COMMENT_STATE_CLOSED) {
+            if (getCommentType() == COMMENT_TYPE_SIMPLE) {
+                //simple comments go directly to closed
+                state = COMMENT_STATE_CLOSED;
+            }
+            else if (getTime()<System.currentTimeMillis()-14*24*60*60*1000) {
+                //if more than 2 weeks old, close it
+                state = COMMENT_STATE_CLOSED;
+            }
+            else {
+                //default everything to open state
+                state = COMMENT_STATE_OPEN;
+            }
+            setState(state);
+        }
+        return state;
+    }
+    public void setState(int newVal) {
+        if (newVal<COMMENT_STATE_DRAFT || newVal > COMMENT_STATE_CLOSED) {
+            //default value used instead of a funny value
+            newVal = COMMENT_STATE_OPEN;
+        }
+        setAttributeInt("state", newVal);
     }
 
     public long getDueDate() {
@@ -55,18 +139,6 @@ public class CommentRecord extends DOMFace {
     }
     public void setDueDate(long newVal) throws Exception {
         setAttributeLong("dueDate", newVal);
-    }
-
-    public boolean isPoll()  throws Exception {
-        return "true".equals(getAttribute("poll"));
-    }
-    public void setPoll(boolean isPoll) throws Exception {
-        if (isPoll) {
-            setAttribute("poll", "true");
-        }
-        else {
-            clearAttribute("poll");
-        }
     }
 
     public List<ResponseRecord> getResponses() throws Exception  {
@@ -138,7 +210,8 @@ public class CommentRecord extends DOMFace {
             return true;
         }
 
-        //schema migration.  If the email was not sent, and the item was created
+        //schema migration BEFORE version 101
+        //If the email was not sent, and the item was created
         //more than 1 week ago, then go ahead and mark it as sent, because it is
         //too late to send.   This is important while adding this automatic email
         //sending because there are a lot of old records that have never been marked
@@ -174,7 +247,7 @@ public class CommentRecord extends DOMFace {
         }
 
         for (OptOutAddr ooa : sendTo) {
-            if (isPoll()) {
+            if (this.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
                 UserProfile toProfile = UserManager.findUserByAnyId(ooa.getEmail());
                 if (toProfile!=null) {
                     ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
@@ -198,15 +271,19 @@ public class CommentRecord extends DOMFace {
         clone.write("<html><body>");
 
         String topicAddress = ar.baseURL + noteOrMeet.getResourceURL(clone, ngp) + "#cmt" + getTime();
-        String emailSubject;
-        String cmtType;
-        if (this.isPoll()) {
-            emailSubject = noteOrMeet.emailSubject()+": NEW Proposal";
-            cmtType = "proposal";
-        }
-        else {
-            emailSubject = noteOrMeet.emailSubject()+": NEW Comment";
-            cmtType = "comment";
+        String emailSubject = "???";
+        String cmtType = "comment";
+        switch (this.getCommentType()) {
+            case CommentRecord.COMMENT_TYPE_SIMPLE:
+                emailSubject = noteOrMeet.emailSubject()+": NEW Comment";
+                break;
+            case CommentRecord.COMMENT_TYPE_PROPOSAL:
+                emailSubject = noteOrMeet.emailSubject()+": NEW Proposal";
+                cmtType = "proposal";
+                break;
+            case CommentRecord.COMMENT_TYPE_REQUEST:
+                emailSubject = noteOrMeet.emailSubject()+": NEW Question";
+                cmtType = "question";
         }
         AddressListEntry ale = commenterProfile.getAddressListEntry();
 
@@ -244,8 +321,9 @@ public class CommentRecord extends DOMFace {
         commInfo.put("userName", ale.getName());
         commInfo.put("userKey",  userKey);
         commInfo.put("time",     getTime());
+        commInfo.put("state",    getState());
         commInfo.put("dueDate",  getDueDate());
-        commInfo.put("poll",     isPoll());
+        commInfo.put("commentType",getCommentType());
         commInfo.put("emailSent",getEmailSent());
         commInfo.put("replyTo",  getReplyTo());
         JSONArray replyList = new JSONArray();
@@ -254,11 +332,15 @@ public class CommentRecord extends DOMFace {
         }
         commInfo.put("replies",  replyList);
         commInfo.put("decision", getDecision());
+
+        //this is temporary
+        commInfo.put("poll",     getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE);
         return commInfo;
     }
     public JSONObject getHtmlJSON(AuthRequest ar) throws Exception {
         JSONObject commInfo = getJSON();
         commInfo.put("html", getContentHtml(ar));
+        commInfo.put("outcome", getOutcomeHtml(ar));
         JSONArray responses = new JSONArray();
         for (ResponseRecord rr : getResponses()) {
             responses.put(rr.getJSON(ar));
@@ -277,8 +359,12 @@ public class CommentRecord extends DOMFace {
                 String html = input.getString("html");
                 setContentHtml(ar, html);
             }
-            if (input.has("poll")) {
-                setPoll(input.getBoolean("poll"));
+            if (input.has("outcome")) {
+                String html = input.getString("outcome");
+                setOutcomeHtml(ar, html);
+            }
+            if (input.has("commentType")) {
+                setCommentType(input.getInt("commentType"));
             }
             if (input.has("choices")) {
                 setChoices(constructVector(input.getJSONArray("choices")));
@@ -302,6 +388,9 @@ public class CommentRecord extends DOMFace {
         if (input.has("replyTo")) {
             setReplyTo(input.getLong("replyTo"));
         }
+        if (input.has("state")) {
+            setState(input.getInt("state"));
+        }
         if (input.has("dueDate")) {
             setDueDate(input.getLong("dueDate"));
         }
@@ -322,7 +411,7 @@ public class CommentRecord extends DOMFace {
                 resList.add(sn);
             }
         }
-        if (isPoll()) {
+        if (getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
             //there can be responses only if this is a "poll" type comment (a proposal)
             for (ResponseRecord rr : getResponses()) {
                 ScheduledNotification sn = rr.getScheduledNotification(ngp, noteOrMeet, this);
@@ -345,6 +434,9 @@ public class CommentRecord extends DOMFace {
             cr   = _cr;
         }
         public boolean needsSending() throws Exception {
+            if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT) {
+                return false;
+            }
             return !cr.getEmailSent();
         }
 

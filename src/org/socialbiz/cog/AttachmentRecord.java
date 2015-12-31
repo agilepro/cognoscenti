@@ -939,6 +939,47 @@ public class AttachmentRecord extends DOMFace {
         newCR.setContentHtml(ar, newComment);
     }
 
+    
+    /**
+     * Returns all the meetinsg that have agenda items that are linked to this document 
+     * attachment.  Should this return agenda items, as well?
+     */
+    public List<MeetingRecord> getLinkedMeetings(NGPage ngc) throws Exception {
+        ArrayList<MeetingRecord> allMeetings = new ArrayList<MeetingRecord>();
+        String nid = this.getUniversalId();
+        for (MeetingRecord meet : ngc.getMeetings()) {
+            boolean found = false;
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                for (String docId : ai.getDocList()) {
+                    if (nid.equals(docId)) {
+                        found = true;
+                    }
+                }
+            }
+            if (found) {
+                allMeetings.add(meet);
+            }
+        }
+        return allMeetings;
+    }
+
+    
+    public List<NoteRecord> getLinkedTopics(NGPage ngc) throws Exception {
+        ArrayList<NoteRecord> allTopics = new ArrayList<NoteRecord>();
+        String nid = this.getUniversalId();
+        for (NoteRecord topic : ngc.getAllNotes()) {
+            boolean found = false;
+            for (String docId : topic.getDocList()) {
+                if (nid.equals(docId)) {
+                    found = true;
+                }
+            }
+            if (found) {
+                allTopics.add(topic);
+            }
+        }
+        return allTopics;
+    }
 
     public JSONObject getJSON4Doc(AuthRequest ar, NGPage ngp) throws Exception {
         JSONObject thisDoc = new JSONObject();

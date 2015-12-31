@@ -181,7 +181,7 @@ public class DataFeedServlet extends HttpServlet {
             DOMUtils.createChildElement(doc, resultEle, "LastModifiedTime", timeVal);
         }
 
-        // TODO Duplicate Code.
+        // ?? Duplicate Code.
         resultSetEle.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
         resultSetEle.setAttribute("totalResultsAvailable", Integer.toString(records.size()));
         resultSetEle.setAttribute("totalResultsReturned", Integer.toString(records.size()));
@@ -245,7 +245,7 @@ public class DataFeedServlet extends HttpServlet {
             DOMUtils.createChildElement(doc, resultEle, "timePeriod", String.valueOf(rec.taskDue));
         }
 
-        // TODO Duplicate Code.
+        // ?? Duplicate Code.
         resultSetEle.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
         resultSetEle.setAttribute("totalResultsAvailable", String.valueOf(records.size()));
         resultSetEle.setAttribute("totalResultsReturned", String.valueOf(records.size()));

@@ -64,7 +64,7 @@ public class WorkspaceStats {
     
     private void countComments(List<CommentRecord> comments) throws Exception {
         for (CommentRecord comm : comments) {
-            if (!comm.isPoll()) {
+            if (comm.getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE) {
                 numComments++;
                 commentsPerUser.increment(comm.getUser().getUniversalId());
             }

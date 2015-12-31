@@ -98,7 +98,7 @@ public class XHTMLValidator {
             if (errors.hasErrors()) {
                 // If found an error. Logger it with the page to make it easier
                 // to trace.
-                // TODO This is using a non localized string conversion.
+                // Note This is using a non localized string conversion.
                 String message = "There where validation errors for "
                         + requestUri + ":\n" + errors.getErrorMessage() + "\n";
 

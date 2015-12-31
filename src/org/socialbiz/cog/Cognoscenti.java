@@ -35,7 +35,7 @@ public class Cognoscenti {
     public boolean isInitialized = false;
     public boolean initializingNow = false;
     //TODO: get rid of this static variable
-    public static String serverId = "XXX";
+    private static String serverId = "XXX";
 
     //hold on to the servlet context in case you need it later
     private ConfigFile theConfig;
@@ -44,9 +44,9 @@ public class Cognoscenti {
 
     //managing the known containers
     //TODO: get rid of this static variable
-    public static List<NGPageIndex> allContainers;
-    public static Hashtable<String, NGPageIndex> keyToContainer;
-    public static Hashtable<String, NGPageIndex> upstreamToContainer;
+    private static List<NGPageIndex> allContainers;
+    private static Hashtable<String, NGPageIndex> keyToContainer;
+    private static Hashtable<String, NGPageIndex> upstreamToContainer;
 
     // there may be a number of pages that have unsent email, and so this is a
     // list of keys, but there can be extras in this list without problem

@@ -660,11 +660,10 @@ public class NoteRecord extends DOMFace implements EmailContext {
           }
           return null;
       }
-      public CommentRecord addComment(AuthRequest ar, String htmlInput)  throws Exception {
+      public CommentRecord addComment(AuthRequest ar)  throws Exception {
           CommentRecord newCR = createChild("comment", CommentRecord.class);
           newCR.setTime(ar.nowTime);
           newCR.setUser(ar.getUserProfile());
-          newCR.setContentHtml(ar, htmlInput);
           return newCR;
       }
 
@@ -744,6 +743,24 @@ public class NoteRecord extends DOMFace implements EmailContext {
           return histRecs;
       }
 
+      public List<MeetingRecord> getLinkedMeetings(NGPage ngc) throws Exception {
+          ArrayList<MeetingRecord> allMeetings = new ArrayList<MeetingRecord>();
+          String nid = this.getId();
+          for (MeetingRecord meet : ngc.getMeetings()) {
+              boolean found = false;
+              for (AgendaItem ai : meet.getAgendaItems()) {
+                  if (nid.equals(ai.getTopicLink())) {
+                      found = true;
+                  }
+              }
+              if (found) {
+                  allMeetings.add(meet);
+              }
+          }
+          return allMeetings;
+      }
+
+      
       public void topicEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note, MailFile mailFile) throws Exception {
           List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
           String targetRole = note.getTargetRole();
@@ -827,7 +844,13 @@ public class NoteRecord extends DOMFace implements EmailContext {
      public JSONObject getJSONWithComments(AuthRequest ar) throws Exception {
          JSONObject noteData = getJSONWithHtml(ar);
          JSONArray allCommentss = new JSONArray();
+         UserProfile thisUser = ar.getUserProfile();
          for (CommentRecord cr : getComments()) {
+             if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT 
+                      && !thisUser.hasAnyId(cr.getUser().getEmail())) {
+                 //skip draft email from other people
+                 continue;
+             }
              allCommentss.put(cr.getHtmlJSON(ar));
          }
          noteData.put("comments",  allCommentss);
@@ -897,41 +920,24 @@ public class NoteRecord extends DOMFace implements EmailContext {
          if (noteObj.has("data")) {
              setWiki(noteObj.getString("data"));
          }
-         if (noteObj.has("newComment")) {
-             JSONObject newComment = noteObj.getJSONObject("newComment");
-             String htmlValue = newComment.getString("html");
-             CommentRecord cr = addComment(ar, htmlValue);
-             cr.updateFromJSON(newComment, ar);
-
-             //if this NEW comment is a reply, find the source of that
-             //and mark it to know about this comment.
-             long replyTo = newComment.optLong("replyTo", 0);
-             if (replyTo>0) {
-                 System.out.println("Found a reply to value in new comment: "+replyTo);
-                 CommentRecord source = this.findComment(replyTo);
-                 if (source!=null) {
-                     System.out.println("added forward into comment: "+replyTo);
-                     source.addOneToReplies(cr.getTime());
-                 }
-                 else {
-                     System.out.println("did not find any comment with this value: "+replyTo);
-                 }
-             }
-             else {
-                 System.out.println("NO replyto information: ");
-             }
-         }
          //if there is a comments, then IF the creator of the comment is the currently
          //logged in user, and the timestamps match, then update the html part
+         //a timeStamp -1 means it is new.
          if (noteObj.has("comments")) {
              JSONArray allComments = noteObj.getJSONArray("comments");
              for (int i=0; i<allComments.length(); i++) {
                  JSONObject oneComment = allComments.getJSONObject(i);
                  long timeStamp = oneComment.getLong("time");
-                 //find a comment matching this timeStamp and also the right user
-                 for (CommentRecord existComm : getComments()) {
-                     if (timeStamp == existComm.getTime()) {
-                         existComm.updateFromJSON(oneComment, ar);
+                 if (timeStamp <= 0) {
+                     CommentRecord newComment = addComment(ar);  
+                     newComment.updateFromJSON(oneComment, ar);
+                 }
+                 else {
+                     //find a comment matching this timeStamp and also the right user
+                     for (CommentRecord existComm : getComments()) {
+                         if (timeStamp == existComm.getTime()) {
+                             existComm.updateFromJSON(oneComment, ar);
+                         }
                      }
                  }
              }

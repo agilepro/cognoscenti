@@ -48,6 +48,14 @@ Required parameters:
 
     AddressListEntry ale = new AddressListEntry(attachment.getModifiedBy());
 
+    JSONArray linkedMeetings = new JSONArray();
+    for (MeetingRecord meet : attachment.getLinkedMeetings(ngp)) {
+        linkedMeetings.put(meet.getListableJSON(ar));
+    }
+    JSONArray linkedTopics = new JSONArray();
+    for (NoteRecord note : attachment.getLinkedTopics(ngp)) {
+        linkedTopics.put(note.getJSON(ngp));
+    }
 
 %>
 
@@ -65,6 +73,9 @@ document.title="<% ar.writeJS(attachment.getDisplayName());%>";
 var app = angular.module('myApp', ['ui.bootstrap','textAngular']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.docInfo = <%docInfo.write(out,2,4);%>;
+    $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
+    $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
+
     $scope.myComment = "";
     $scope.canUpdate = <%=canAccessDoc%>;
 
@@ -97,6 +108,12 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     };
+    $scope.navigateToTopic = function(topic) {
+        window.location="noteZoom"+topic.id+".htm";
+    }
+    $scope.navigateToMeeting = function(meet) {
+        window.location="meetingFull.htm?id="+meet.id;
+    }
 
 });
 </script>
@@ -205,6 +222,24 @@ app.controller('myCtrl', function($scope, $http) {
                         <td style="width: 20px;"></td>
                         <td><% ar.writeHtml(editUser); %></td>
                     </tr>
+                    <tr>
+                        <td class="gridTableColummHeader">Linked Meetings:</td>
+                        <td style="width: 20px;"></td>
+                        <td><span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default"  style="margin:4px;"
+                               ng-click="navigateToMeeting(meet)">
+                               <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="gridTableColummHeader">Linked Topics:</td>
+                        <td style="width: 20px;"></td>
+                        <td><span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default"  style="margin:4px;"
+                               ng-click="navigateToTopic(topic)">
+                               <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
+                            </span>
+                        </td>
+                    </tr>
 <%}%>
                 </table>
             </td>
@@ -215,10 +250,10 @@ app.controller('myCtrl', function($scope, $http) {
         <tr>
             <td class="gridTableColummHeader"></td>
             <td style="width: 20px;"></td>
-            <%
-                if (attachment.getVisibility() == SectionDef.PUBLIC_ACCESS || (attachment.getVisibility() == SectionDef.MEMBER_ACCESS && (ar.isLoggedIn() || canAccessDoc)))
-                {
-            %>
+<%
+if (attachment.getVisibility() == SectionDef.PUBLIC_ACCESS || (attachment.getVisibility() == SectionDef.MEMBER_ACCESS && (ar.isLoggedIn() || canAccessDoc)))
+{
+%>
             <td>
             <%if("FILE".equals(attachment.getType())){ %> <a
                 href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>"><img

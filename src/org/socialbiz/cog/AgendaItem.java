@@ -63,6 +63,16 @@ public class AgendaItem extends DOMFace {
         setAttributeInt("position", newVal);
     }
 
+    /**
+     * An agenda item can be linked to a discussion topic
+     */
+    public String getTopicLink() {
+        return getAttribute("topicLink");
+    }
+    public void setTopicLink(String newVal) throws Exception {
+        setAttribute("topicLink", newVal);
+    }
+    
     public String getNotes()  throws Exception {
         return getScalar("notes");
     }
@@ -176,6 +186,7 @@ public class AgendaItem extends DOMFace {
         aiInfo.put("subject",   getSubject());
         aiInfo.put("duration",  getDuration());
         aiInfo.put("status",    getStatus());
+        aiInfo.put("topicLink", getTopicLink());
         aiInfo.put("readyToGo", getReadyToGo());
         String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getDesc());
         aiInfo.put("desc",      htmlVal);
@@ -231,6 +242,10 @@ public class AgendaItem extends DOMFace {
         if (input.has("notes")) {
             String html = input.getString("notes");
             setNotes(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
+        }
+        if (input.has("topicLink")) {
+            String topicLink = input.getString("topicLink");
+            setTopicLink(topicLink);
         }
         if (input.has("actionItems")) {
             setActionItems(constructVector(input.getJSONArray("actionItems")));

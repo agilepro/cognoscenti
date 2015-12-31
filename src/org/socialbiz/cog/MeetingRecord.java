@@ -206,6 +206,22 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         }
     }
 
+    /**
+     * Find all the agenda items that are linked to a particular document.
+     * Pass in the universal id of the document attachment.
+     */
+    public List<AgendaItem> getDocumentLinkedAgendaItems(String docUniversalId) throws Exception {
+        ArrayList<AgendaItem> allItems = new ArrayList<AgendaItem>();
+        for (AgendaItem ai : this.getAgendaItems()) {
+            for (String docId : ai.getDocList()) {
+                if (docUniversalId.equals(docId)) {
+                    allItems.add(ai);
+                }
+            }
+        }
+        return allItems;
+    }
+
 
     /**
      * A small object suitable for lists of meetings

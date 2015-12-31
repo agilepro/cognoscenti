@@ -86,6 +86,13 @@ public class UserPage extends ContainerCommon
         }
     }
 
+    public void schemaUpgrade() throws Exception {
+        //nothing to do.....
+    }
+    public int currentSchemaVersion() {
+        return 51;
+    }
+
 
     public void saveUserPage(AuthRequest ar, String comment) throws Exception {
         saveFile(ar,comment);

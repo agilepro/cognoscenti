@@ -25,11 +25,13 @@ Required parameter:
     UserProfile uProf = ar.getUserProfile();
     String currentUser = "NOBODY";
     String currentUserName = "NOBODY";
+    String currentUserKey = "NOBODY";
     if (uProf!=null) {
         //this page can be viewed when not logged in, possibly with special permissions.
         //so you can't assume that uProf is non-null
         currentUser = uProf.getUniversalId();
         currentUserName = uProf.getName();
+        currentUserKey = uProf.getKey();
     }
 
     String lid = ar.reqParam("lid");
@@ -47,6 +49,11 @@ Required parameter:
     JSONArray history = new JSONArray();
     for (HistoryRecord hist : note.getNoteHistory(ngp)) {
         history.put(hist.getJSON(ngp, ar));
+    }
+
+    JSONArray linkedMeetings = new JSONArray();
+    for (MeetingRecord meet : note.getLinkedMeetings(ngp)) {
+        linkedMeetings.put(meet.getListableJSON(ar));
     }
 
 %>
@@ -80,6 +87,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.canUpdate = <%=canUpdate%>;
     $scope.history = <%history.write(out,2,4);%>
+    $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>
+
+    $scope.currentTime = (new Date()).getTime();
 
     $scope.isEditing = false;
 
@@ -100,13 +110,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.fixUpChoices();
 
-//which editor is open
-    $scope.editCmt = "NOTHING";
-
-
 
     $scope.myComment = "";
-    $scope.myPoll = false;
+    $scope.myCommentType = 1;   //simple comment
     $scope.myReplyTo = 0;
 
     $scope.saveEdits = function(fields) {
@@ -129,18 +135,26 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
-    $scope.createComment = function() {
-        var saveRecord = {};
-        saveRecord.id = $scope.noteInfo.id;
-        saveRecord.universalid = $scope.noteInfo.universalid;
-        saveRecord.newComment = {};
-        saveRecord.newComment.html = $scope.myComment;
-        saveRecord.newComment.poll = $scope.myPoll;
-        if ($scope.myReplyTo>0) {
-            saveRecord.newComment.replyTo = $scope.myReplyTo;
+    $scope.postComment = function(cmt) {
+        cmt.state = 12;
+        if (cmt.commentType == 1) {
+            //simple comments go all the way to closed
+            cmt.state = 13;
         }
-        $scope.savePartial(saveRecord);
-        $scope.editCmt='NOTHING';
+        $scope.updateComment(cmt);
+    }
+    $scope.closeComment = function(cmt) {
+        cmt.state = 13;
+        if (cmt.commentType>1) {
+            $scope.openOutcomeEditor(cmt);
+        }
+        else {
+            $scope.updateComment(cmt);
+        }
+    }
+    $scope.reopenComment = function(cmt) {
+        cmt.state = 12;
+        $scope.updateComment(cmt);
     }
     $scope.updateComment = function(cmt) {
         var saveRecord = {};
@@ -149,13 +163,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         saveRecord.comments = [];
         saveRecord.comments.push(cmt);
         $scope.savePartial(saveRecord);
-        $scope.editCmt='NOTHING';
     }
     $scope.saveDocs = function() {
         var saveRecord = {};
         saveRecord.id = $scope.noteInfo.id;
         saveRecord.universalid = $scope.noteInfo.universalid;
         saveRecord.docList = $scope.noteInfo.docList;
+        $scope.savePartial(saveRecord);
+    }
+    $scope.saveLabels = function() {
+        var saveRecord = {};
+        saveRecord.id = $scope.noteInfo.id;
+        saveRecord.universalid = $scope.noteInfo.universalid;
+        saveRecord.labelMap = $scope.noteInfo.labelMap;
         $scope.savePartial(saveRecord);
     }
 
@@ -172,6 +192,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
+            alert("ERROR");
             $scope.reportError(data);
         });
     };
@@ -193,6 +214,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.navigateToDoc = function(doc) {
         window.location="docinfo"+doc.id+".htm";
     }
+    $scope.navigateToMeeting = function(meet) {
+        window.location="meetingFull.htm?id="+meet.id;
+    }
 
     $scope.getResponse = function(cmt) {
         var selected = [];
@@ -203,7 +227,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         return selected;
     }
-    $scope.noResponseYet = function(cmt) {
+    $scope.needsUserResponse = function(cmt) {
+        if (cmt.state!=12) { //not open
+            return false;
+        }
         var whatNot = $scope.getResponse(cmt);
         return (whatNot.length == 0);
     }
@@ -234,26 +261,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.openResponseEditor(cmt)
     }
 
-    $scope.startEdit = function(cmt) {
-        $scope.editCmt  = cmt.time;
-    }
-
-    $scope.stopEdit = function() {
-        $scope.editCmt  = 'NOTHING';
-    }
-
-    $scope.createModifiedProposal = function(cmt) {
-        $scope.editCmt  = 'NEW';
-        $scope.myComment = cmt.html;
-        $scope.myReplyTo = cmt.time;
-        $scope.myPoll = true;
-    }
-    $scope.replyToComment = function(cmt) {
-        $scope.editCmt  = 'NEW';
-        $scope.myReplyTo = cmt.time;
-        $scope.myPoll = false;
-        //$anchorScroll("#CommentEditor");
-    }
     $scope.getComments = function() {
         var res = [];
         $scope.noteInfo.comments.map( function(item) {
@@ -275,8 +282,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.commentTypeName = function(cmt) {
-        if (cmt.poll) {
+        if (cmt.commentType==2) {
             return "Proposal";
+        }
+        if (cmt.commentType==3) {
+            return "Question";
         }
         return "Comment";
     }
@@ -296,8 +306,93 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.toggleLabel = function(label) {
         $scope.noteInfo.labelMap[label.name] = !$scope.noteInfo.labelMap[label.name];
+        $scope.saveLabels();
+    }
+    $scope.stateStyle = function(cmt) {
+        if (cmt.state==11) {
+            return "background-color:yellow;";
+        }
+        if (cmt.state==12) {
+            return "background-color:#DEF;";
+        }
+        return "background-color:#EEE;";
+    }
+    $scope.calcDueDisplay = function(cmt) {
+        if (cmt.commentType==1) {
+            return "";
+        }
+        if (cmt.state==13) {
+            return "";
+        }
+        var diff = Math.trunc((cmt.dueDate-$scope.currentTime) / 60000);
+        if (diff<0) {
+            return "overdue";
+        }
+        if (diff<120) {
+            return "due in "+diff+" minutes";
+        }
+        diff = Math.trunc(diff / 60);
+        if (diff<48) {
+            return "due in "+diff+" hours";
+        }
+        diff = Math.trunc(diff / 24);
+        if (diff<8) {
+            return "due in "+diff+" days";
+        }
+        diff = Math.trunc(diff / 7);
+        return "due in "+diff+" weeks";
     }
 
+    $scope.createModifiedProposal = function(cmt) {
+        $scope.openCommentCreator(2,cmt.time,cmt.html);  //proposal
+    }
+    $scope.replyToComment = function(cmt) {
+        $scope.openCommentCreator(1,cmt.time);  //simple comment
+    }
+    $scope.openCommentCreator = function(type, replyTo, defaultBody) {
+        var newComment = {};
+        newComment.time = -1;
+        newComment.commentType = type;
+        newComment.state = 11;
+        newComment.isNew = true;
+        newComment.user = "<%ar.writeJS(currentUser);%>";
+        newComment.userName = "<%ar.writeJS(currentUserName);%>";
+        newComment.userKey = "<%ar.writeJS(currentUserKey);%>";
+        if (replyTo) {
+            newComment.replyTo = replyTo;
+        }
+        if (defaultBody) {
+            newComment.html = defaultBody;
+        }
+        $scope.openCommentEditor(newComment);
+    }
+
+
+    $scope.openCommentEditor = function (cmt) {
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/CommentModal.html?t=<%=System.currentTimeMillis()%>',
+            controller: 'CommentModalCtrl',
+            size: 'lg',
+            resolve: {
+                cmt: function () {
+                    return JSON.parse(JSON.stringify(cmt));
+                }
+            }
+        });
+
+        modalInstance.result.then(function (returnedCmt) {
+            var cleanCmt = {};
+            cleanCmt.time = cmt.time;
+            cleanCmt.html = returnedCmt.html;
+            cleanCmt.state = returnedCmt.state;
+            cleanCmt.commentType = returnedCmt.commentType;
+            $scope.updateComment(cleanCmt);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
 
     $scope.openResponseEditor = function (cmt) {
 
@@ -315,7 +410,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html',
+            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html?t=<%=System.currentTimeMillis()%>',
             controller: 'ModalResponseCtrl',
             size: 'lg',
             resolve: {
@@ -340,6 +435,32 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
+
+    $scope.openOutcomeEditor = function (cmt) {
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html?t=<%=System.currentTimeMillis()%>',
+            controller: 'OutcomeModalCtrl',
+            size: 'lg',
+            resolve: {
+                cmt: function () {
+                    return JSON.parse(JSON.stringify(cmt));
+                }
+            }
+        });
+
+        modalInstance.result.then(function (returnedCmt) {
+            var cleanCmt = {};
+            cleanCmt.time = cmt.time;
+            cleanCmt.outcome = returnedCmt.outcome;
+            cleanCmt.state = returnedCmt.state;
+            cleanCmt.commentType = returnedCmt.commentType;
+            $scope.updateComment(cleanCmt);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
 
 
     $scope.createDecision = function(newDecision) {
@@ -431,6 +552,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
+            <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
             {{noteInfo.subject}}
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
@@ -506,6 +628,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           ADD </button>
     </div>
 
+    <div>
+      <span style="width:150px">Meetings:</span>
+      <span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default"  style="margin:4px;"
+           ng-click="navigateToMeeting(meet)">
+            <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
+      </span>
+    </div>
+
 
     <div style="height:30px;"></div>
 
@@ -534,7 +664,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
            </td>
            <td>
-               <div class="comment-outer">
+               <div class="comment-outer" style="{{stateStyle(cmt)}}">
                    <div>
                      <div>
 
@@ -543,65 +673,65 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="margin-right:10px;">
                            <span class="caret"></span></button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation" ng-show="editCmt=='NOTHING' && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                                  <a role="menuitem" ng-click="startEdit(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.poll && editCmt=='NOTHING'">
+                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && (cmt.state<13 || cmt.commentType==1)">
+                                  <a role="menuitem" ng-click="openCommentEditor(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.state==13 && cmt.commentType>1">
+                                  <a role="menuitem" ng-click="reopenComment(cmt)">Reopen Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                                  <a role="menuitem" ng-click="postComment(cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-show="cmt.state==12 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                                  <a role="menuitem" ng-click="closeComment(cmt)">Close Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.state==13 && cmt.commentType>1">
+                                  <a role="menuitem" ng-click="openOutcomeEditor(cmt)">Edit the Final Outcome</a></li>
+                              <li role="presentation" ng-show="cmt.commentType>1 && cmt.state==12">
                                   <a role="menuitem" ng-click="startResponse(cmt)">Create/Edit Response:</a></li>
-                              <li role="presentation" ng-show="cmt.poll && editCmt=='NOTHING'">
+                              <li role="presentation" ng-show="cmt.commentType==2">
                                   <a role="menuitem" ng-click="createModifiedProposal(cmt)">Make Modified Proposal</a></li>
-                              <li role="presentation" ng-show="!cmt.poll && editCmt=='NOTHING'">
+                              <li role="presentation" ng-show="cmt.commentType==1">
                                   <a role="menuitem" ng-click="replyToComment(cmt)">Reply</a></li>
-                              <li role="presentation" ng-show="cmt.poll && !cmt.decision && editCmt=='NOTHING'">
+                              <li role="presentation" ng-show="cmt.commentType==2 && !cmt.decision">
                                   <a role="menuitem" ng-click="openDecisionEditor(cmt)">Create New Decision</a></li>
                            </ul>
 <% } %>
                          </div>
-                         <span ng-hide="cmt.poll"><i class="fa fa-comments-o"></i></span>
-                         <span ng-show="cmt.poll"><i class="fa fa-star-o"></i></span>
+                         <span ng-show="cmt.commentType==1"><i class="fa fa-comments-o" style="font-size:130%"></i></span>
+                         <span ng-show="cmt.commentType==2"><i class="fa fa-star-o" style="font-size:130%"></i></span>
+                         <span ng-show="cmt.commentType==3"><i class="fa fa-question-circle" style="font-size:130%"></i></span>
                          &nbsp; {{cmt.time | date}} - <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm"><span class="red">{{cmt.userName}}</span></a>
                          <span ng-hide="cmt.emailSent">-email pending-</span>
                          <span ng-show="cmt.replyTo">
-                             <span ng-hide="cmt.poll">In reply to
+                             <span ng-hide="cmt.commentType>1">In reply to
                                  <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
                                  <i class="fa fa-comments-o"></i> {{findComment(cmt.replyTo).userName}}</a></span>
-                             <span ng-show="cmt.poll">Based on
+                             <span ng-show="cmt.commentType>1">Based on
                                  <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
                                  <i class="fa fa-star-o"></i> {{findComment(cmt.replyTo).userName}}</a></span>
                          </span>
+                         <span style="float:right;color:green;">{{calcDueDisplay(cmt)}}</span>
                          <div style="clear:both"></div>
                       </div>
                    </div>
-                   <div class="leafContent comment-inner" ng-hide="editCmt==cmt.time">
+                   <div ng-show="cmt.state==11">
+                       Draft {{commentTypeName(cmt)}} needs posting to be seen by others
+                   </div>
+                   <div class="leafContent comment-inner">
                        <div ng-bind-html="cmt.html"></div>
                    </div>
 
-<% if (isLoggedIn) { %>
-                    <div class="well leafContent" style="width:100%" ng-show="editCmt==cmt.time">
-                      <div ng-model="cmt.html"
-                          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-                          text-angular="" class="" style="width:100%;"></div>
-
-                      <button ng-click="updateComment(cmt);stopEdit()" class="btn btn-danger">Save Changes</button>
-                      <button ng-click="stopEdit()" class="btn btn-danger">Cancel</button>
-                      &nbsp;
-                      <input type="checkbox" ng-model="cmt.poll"> Proposal</button>
-                    </div>
-<% } %>
-
-                   <table style="min-width:500px;" ng-show="cmt.poll">
+                   <table style="min-width:500px;" ng-show="cmt.commentType>1">
                        <col style="width:100px">
                        <col width="width:1*">
                        <tr ng-repeat="resp in cmt.responses">
                            <td style="padding:5px;max-width:100px;">
-                               <b>{{resp.choice}}</b><br/>
-                               {{resp.userName}}
+                               <div ng-show="cmt.commentType==12"><b>{{resp.choice}}</b></div>
+                               <div>{{resp.userName}}</div>
                            </td>
                            <td>
-                             <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>'"
+                             <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>' && cmt.state==12"
                                    ng-click="startResponse(cmt)"
                                    style="cursor:pointer;">
                                <a href="#cmt{{cmt.time}}" title="Edit your response to this proposal">
-                                   <i class="fa fa-edit"></i>
+                                   <i class="fa fa-edit" style="font-size:140%"></i>
                                </a>
                              </span>
                            </td>
@@ -611,16 +741,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                </div>
                            </td>
                        </tr>
-                       <tr ng-show="noResponseYet(cmt)">
+                       <tr ng-show="needsUserResponse(cmt)">
                            <td style="padding:5px;max-width:100px;">
-                               <b>????</b>
-                               <br/>
-                               <% ar.writeHtml(currentUserName); %>
+                               <div ng-show="cmt.commentType==12"><b>????</b></div>
+                               <div><% ar.writeHtml(currentUserName); %></div>
                            </td>
                            <td>
                              <span ng-click="startResponse(cmt)" style="cursor:pointer;">
                                <a href="#cmt{{cmt.time}}" title="Create a response to this proposal">
-                                 <i class="fa fa-edit"></i>
+                                 <i class="fa fa-edit" style="font-size:140%"></i>
                                </a>
                              </span>
                            </td>
@@ -631,15 +760,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                            </td>
                        </tr>
                    </table>
+                   <div class="leafContent comment-inner" ng-show="cmt.state==13 && cmt.commentType>1">
+                       <div ng-bind-html="cmt.outcome"></div>
+                   </div>
                    <div ng-show="cmt.decision">
                        See Linked Decision: <a href="decisionList.htm#DEC{{cmt.decision}}">#{{cmt.decision}}</a>
                    </div>
-                   <div ng-show="cmt.replies.length>0 && cmt.poll">
+                   <div ng-show="cmt.replies.length>0 && cmt.commentType>1">
                        See proposals:
                        <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
                            <i class="fa fa-star-o"></i> {{findComment(reply).userName}}</a> </span>
                    </div>
-                   <div ng-show="cmt.replies.length>0 && !cmt.poll">
+                   <div ng-show="cmt.replies.length>0 && !cmt.commentType>1">
                        See replies:
                        <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
                            <i class="fa fa-comments-o"></i> {{findComment(reply).userName}}</a> </span>
@@ -657,24 +789,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <td></td>
     <td>
     <div ng-show="canUpdate">
-        <div ng-show="editCmt=='NOTHING'" style="margin:20px;">
-            <button ng-click="myPoll=false;editCmt='NEW'" class="btn btn-default">
+        <div style="margin:20px;">
+            <button ng-click="openCommentCreator(1)" class="btn btn-default">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="myPoll=true;editCmt='NEW'" class="btn btn-default">
+            <button ng-click="openCommentCreator(2)" class="btn btn-default">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
-        </div>
-        <div class="well leafContent" style="width:100%" ng-show="editCmt=='NEW'" id="CommentEditor">
-          <div ng-model="myComment"
-              ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-              text-angular="" class="" style="width:100%;"></div>
-
-          <button ng-click="createComment()" class="btn btn-danger" ng-hide="myPoll">
-              Create <i class="fa fa-comments-o"></i> Comment</button>
-          <button ng-click="createComment()" class="btn btn-danger" ng-show="myPoll">
-              Create <i class="fa fa-star-o"></i> Proposal</button>
-          <button ng-click="myComment='';myPoll=false;editCmt='NOTHING'" class="btn btn-danger">Cancel</button>
-          &nbsp;
-          <input type="checkbox" ng-model="myPoll"> Proposal</button>
+            <button ng-click="openCommentCreator(3)" class="btn btn-default">
+                Create New <i class="fa  fa-question-circle"></i> Question</button>
         </div>
     </div>
     <div ng-hide="canUpdate">
@@ -717,5 +838,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 <script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/CommentModal.js"></script>
+<script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>
 
 <%out.flush();%>

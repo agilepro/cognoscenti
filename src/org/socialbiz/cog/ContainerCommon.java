@@ -55,6 +55,72 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
         infoParent    = getInfoParent();
     }
 
+    
+    /**
+     * Here is how schema version works.   Each major file object will declare what
+     * the current schema version and set it here for saving in the file.
+     * A file is ALWAYS written at the current schema version.
+     * 
+     * Every time a file is read, all the schema upgrades are applied on reading, generally
+     * in the constructor.  So the version of the file IN MEMORY is always the latest schema,
+     * so you can always write out the memory and always the latest schema.
+     * 
+     * But ... lots of files a read but not written.  So the file on disk might be many schema versions
+     * behind.
+     * 
+     * Before saving, if the schema had been out of date, then a 
+     * pass is made to touch all the sub-objects, and make sure that all objects are at the
+     * current schema level.  Then the file is written.
+     * 
+     * RULE FOR MANAGING VERSION
+     * Every time any schema change is that requires schema update, the whole file schema
+     * versions is incremented.  You must make sure that the schema update method touches 
+     * that component (with a constructor so that it is certain to be upgraded.  The we are 
+     * assured that the entire file is current and can be written.
+     * 
+     * EXAMPLE
+     * You have a file with schema version 68.
+     * You make a change in the CommentRecord that requires a schema migration.
+     * (1) You bump the schema version to 69.
+     * (2) You make a comment that the CommentRecord change is what caused increment to 69.
+     * (3) You make sure that the schemaUpgrade method touches (and upgrades) all comments.
+     * 
+     * That is it.  The reason for making the comment is because in the future, we might be able
+     * to determine that there no longer exist any files (anywhere in the world) with schema <= 68.  
+     * When that happens we will be able to remove the code that does the schema migration to 69.
+     * 
+     * The next schema change, anywhere in the code, will bump the schema version to 70 and the
+     * same assurances about making sure that schemaUpgrade touches the object in the right way.
+     */
+    public int getSchemaVersion()  {
+        return getAttributeInt("schemaVersion");
+    }
+    /**
+     * Only set schema version AFTER schemaUpgrade has been called and you know that the schema
+     * is guaranteed to be up to date.
+     */
+    private void setSchemaVersion(int val)  {
+        setAttributeInt("schemaVersion", val);
+    }
+    /**
+     * The implementation of this must touch all objects in the file and make sure that 
+     * the internal structure is set to the latest schema.
+     */
+    abstract public void schemaUpgrade() throws Exception;
+    abstract public int currentSchemaVersion();
+    
+    public void save() throws Exception {
+        int sv = getSchemaVersion();
+        int current = currentSchemaVersion();
+        if (sv<current) {
+            schemaUpgrade();
+            setSchemaVersion(current);
+        }
+        super.save();
+    }
+
+    
+    
     /**
     * schema migration ...
     * make sure that all topics and documents have universal ids.

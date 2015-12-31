@@ -99,6 +99,31 @@ public class NGWorkspace extends NGPage {
         }
     }
 
+    public void schemaUpgrade() throws Exception {
+        getAllAttachments();
+        this.getAllEmail();
+        this.getAllGoals();
+        this.getAllHistory();
+        this.getAllLabels();
+        for (NoteRecord note : this.getAllNotes()) {
+            for (CommentRecord comm : note.getComments()) {
+                //schema migration from before 101
+                comm.schemaMigration();
+            }
+        }
+        this.getAllRoles();
+        for (MeetingRecord meet : getMeetings()) {
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                for (CommentRecord comm : ai.getComments()) {
+                    //schema migration from before 101
+                    comm.schemaMigration();
+                }
+            }
+        }
+    }
+    public int currentSchemaVersion() {
+        return 101;
+    }
 
     public static NGWorkspace readWorkspaceAbsolutePath(File theFile) throws Exception {
         if (!theFile.exists()) {

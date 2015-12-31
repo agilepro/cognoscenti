@@ -86,6 +86,13 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.meetingTime.setHours($scope.meetingHour, $scope.meetingMinutes,0,0);
         $scope.meeting.startTime = $scope.meetingTime.getTime();
         $scope.meeting.state = 1;
+        $scope.meeting.attended = [];
+        $scope.meeting.rollCall = [];
+        $scope.meeting.reminderSent = -1;
+        $scope.meeting.id = "~new~";
+        $scope.meeting.agenda.forEach( function(agendaitem) {
+            agendaitem.readyToGo = false;
+        });
         var postdata = angular.toJson($scope.meeting);
         $scope.showError=false;
         $http.post(postURL ,postdata)
