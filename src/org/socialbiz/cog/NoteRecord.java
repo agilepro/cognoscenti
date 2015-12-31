@@ -760,7 +760,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
           return allMeetings;
       }
 
-      
+
       public void topicEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note, MailFile mailFile) throws Exception {
           List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
           String targetRole = note.getTargetRole();
@@ -846,8 +846,9 @@ public class NoteRecord extends DOMFace implements EmailContext {
          JSONArray allCommentss = new JSONArray();
          UserProfile thisUser = ar.getUserProfile();
          for (CommentRecord cr : getComments()) {
-             if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT 
-                      && !thisUser.hasAnyId(cr.getUser().getEmail())) {
+             if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT
+                   && (thisUser==null
+                      || !thisUser.hasAnyId(cr.getUser().getEmail()))) {
                  //skip draft email from other people
                  continue;
              }
@@ -929,7 +930,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
                  JSONObject oneComment = allComments.getJSONObject(i);
                  long timeStamp = oneComment.getLong("time");
                  if (timeStamp <= 0) {
-                     CommentRecord newComment = addComment(ar);  
+                     CommentRecord newComment = addComment(ar);
                      newComment.updateFromJSON(oneComment, ar);
                  }
                  else {
