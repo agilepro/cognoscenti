@@ -256,6 +256,8 @@ public class AgendaItem extends DOMFace {
         if (input.has("presenters")) {
             setPresenters(constructVector(input.getJSONArray("presenters")));
         }
+        //TODO; this is not needed anymore
+        /*
         if (input.has("newComment")) {
             JSONObject newComment = input.getJSONObject("newComment");
             CommentRecord cr = addComment(ar);
@@ -271,14 +273,32 @@ public class AgendaItem extends DOMFace {
                 }
             }
         }
+        */
         if (input.has("comments")) {
             JSONArray comments = input.getJSONArray("comments");
             for (int i=0; i<comments.length(); i++) {
                 JSONObject cmt = comments.getJSONObject(i);
                 long timeStamp = cmt.getLong("time");
-                CommentRecord cr = getComment(timeStamp);
-                if (cr!=null) {
+                //timeStamp of 0 or -1 means to create it
+                if (timeStamp>0) {
+                    CommentRecord cr = getComment(timeStamp);
+                    if (cr!=null) {
+                        cr.updateFromJSON(cmt, ar);
+                    }
+                }
+                else {
+                    CommentRecord cr = addComment(ar);
                     cr.updateFromJSON(cmt, ar);
+                    if (cmt.has("replyTo")) {
+                        long replyToValue = cmt.getLong("replyTo");
+                        CommentRecord source = this.findComment(replyToValue);
+                        if (source!=null) {
+                            source.addOneToReplies(cr.getTime());
+                        }
+                        else {
+                            System.out.println("New comment reply to time value, cannot find corresponding comment: "+replyToValue);
+                        }
+                    }
                 }
             }
         }

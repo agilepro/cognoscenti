@@ -31,14 +31,9 @@ app.controller('AttachDocumentCtrl', function($scope, $modalInstance, docList, a
         });
     }
     $scope.addDocToItem = function(doc) {
-        console.log("ADDING docmuent "+doc.universalid+":", doc);
         if (!$scope.itemHasDoc(doc)) {
             $scope.docList.push(doc.universalid);
         }
-        else {
-            console.log("But it already has "+doc.universalid);
-        }
-        console.log("docList is", $scope.docList);
     }
     $scope.removeDocFromItem = function(doc) {
         $scope.docList = $scope.docList.filter( function(docid) {

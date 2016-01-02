@@ -4,6 +4,7 @@
 %><%@page import="java.text.SimpleDateFormat"
 %><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%@page import="org.socialbiz.cog.MicroProfileMgr"
+%><%@page import="org.socialbiz.cog.AgendaItem"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%!
 
@@ -75,6 +76,26 @@ Required parameters:
     }
 
     JSONArray allPeople = UserManager.getUniqueUsersJSON();
+    JSONArray linkedTopics = new JSONArray();
+    String goalUniversalId = currentTaskRecord.getUniversalId();
+    for (NoteRecord aNote : ngp.getAllNotes()) {
+        for (String linkedAction : aNote.getActionList()) {
+            if (linkedAction.equals(goalUniversalId)) {
+                linkedTopics.put(aNote.getJSON(ngp));
+            }
+        }
+    }
+
+    JSONArray linkedMeetings = new JSONArray();
+    for (MeetingRecord meet : ngp.getMeetings()) {
+        for (AgendaItem ai : meet.getAgendaItems()) {
+            for (String actionId : ai.getActionItems()) {
+                if (actionId.equals(goalUniversalId)) {
+                    linkedMeetings.put(meet.getListableJSON(ar));
+                }
+            }
+        }
+    }
 
 
 /*** PROTOTYPE
@@ -120,6 +141,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.subGoals  = <%subGoals.write(out,2,4);%>;
     $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.allHist   = <%allHist.write(out,2,4);%>;
+    $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
+    $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
 
     $scope.newPerson = "";
 
@@ -316,6 +339,12 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return res;
     }
+    $scope.navigateToTopic = function(oneTopic) {
+        window.location="noteZoom"+oneTopic.id+".htm";
+    }
+    $scope.navigateToMeeting = function(meet) {
+        window.location="meetingFull.htm?id="+meet.id;
+    }
 
 });
 
@@ -488,6 +517,28 @@ function addvalue() {
                          title="In trouble" ng-click="setProspects('bad')">
                     <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goalInfo.prospects=='bad'"
                          title="In trouble">
+                </span>
+            </td>
+        </tr>
+        <tr><td height="20px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Linked Topics:</td>
+            <td style="width:20px;"></td>
+            <td >
+                <span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default"  style="margin:4px;"
+                    ng-click="navigateToTopic(topic)">
+                    <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
+                </span>
+            </td>
+        </tr>
+        <tr><td height="10px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Linked Meetings:</td>
+            <td style="width:20px;"></td>
+            <td >
+                <span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default"  style="margin:4px;"
+                    ng-click="navigateToMeeting(meet)">
+                    <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
                 </span>
             </td>
         </tr>

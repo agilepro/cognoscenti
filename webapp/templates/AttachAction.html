@@ -1,0 +1,65 @@
+<style>
+  .docTable {
+      width:100%;
+  }
+  .docTable tr td {
+      padding:2px;
+  }
+  .docTable tr td button {
+      height:25px;
+      width:25px;
+      padding:2px;
+      margin:2px;
+  }
+</style>
+
+<div class="modal-header">
+    <h3 class="modal-title">Attach Action Items</h3>
+</div>
+<div class="modal-body">
+   <div >
+      <div> Filter <input type="text" ng-model="realFilter"> </div>
+      <table style="width:100%"><tr>
+      <td style="width:50%;vertical-align:top;padding:20px;">
+        <div style="max-height:400px;overflow: auto">
+          <table class="docTable">
+            <tr>
+               <td colspan="4">
+
+               </td>
+            </tr>
+            <tr ng-repeat="act in filterActions()">
+                <td> {{act.synopsis | limitTo:50}} </td>
+                <td>
+                    <button ng-click="addActionToList(act)" ng-hide="itemHasAction(act)"
+                        class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
+                    <button  ng-show="itemHasAction(act)"
+                        class="btn">&nbsp; &nbsp;</button>
+                </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+      <td style="width:50%;vertical-align:top;padding:20px;">
+        <div style="max-height:400px;overflow: auto">
+          <table class="docTable">
+            <tr ng-repeat="act in itemActions()">
+                <td> {{act.synopsis | limitTo:50 }} </td>
+                <td>
+                    <button ng-click="removeActionFromList(act)"
+                        class="btn"><i class="fa fa-close"></i> &nbsp;</button>
+                </td>
+            </tr>
+          </table>
+        </div>
+      </td>
+      </tr>
+      </table>
+   </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary"
+        type="button" ng-click="ok()">Save</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">
+        Cancel</button>
+</div>

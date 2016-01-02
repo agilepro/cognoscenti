@@ -56,6 +56,8 @@ Required parameter:
         linkedMeetings.put(meet.getListableJSON(ar));
     }
 
+    JSONArray allGoals     = ngp.getJSONGoals();
+
 %>
 
 <!-- something in here is needed for the html bind -->
@@ -88,6 +90,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.canUpdate = <%=canUpdate%>;
     $scope.history = <%history.write(out,2,4);%>
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>
+    $scope.allGoals = <%allGoals.write(out,2,4);%>
 
     $scope.currentTime = (new Date()).getTime();
 
@@ -120,14 +123,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         var rec = {};
         rec.id = $scope.noteInfo.id
         rec.universalid = $scope.noteInfo.universalid;
-        fields.map( function(fieldName) {
+        fields.forEach( function(fieldName) {
             rec[fieldName] = $scope.noteInfo[fieldName];
+            console.log("SAVING: "+fieldName);
         });
         var postdata = angular.toJson(rec);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.noteInfo = data;
+            console.log("GOT NOTE SAVED", data);
             $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
@@ -211,11 +216,28 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return $scope.itemHasDoc(oneDoc);
         });
     }
+    $scope.itemHasAction = function(oneAct) {
+        var res = false;
+        var found = $scope.noteInfo.actionList.forEach( function(actionId) {
+            if (actionId == oneAct.universalid) {
+                res = true;
+            }
+        });
+        return res;
+    }
+    $scope.getActions = function() {
+        return $scope.allGoals.filter( function(oneAct) {
+            return $scope.itemHasAction(oneAct);
+        });
+    }
     $scope.navigateToDoc = function(doc) {
         window.location="docinfo"+doc.id+".htm";
     }
     $scope.navigateToMeeting = function(meet) {
         window.location="meetingFull.htm?id="+meet.id;
+    }
+    $scope.navigateToAction = function(oneAct) {
+        window.location="task"+oneAct.id+".htm";
     }
 
     $scope.getResponse = function(cmt) {
@@ -542,6 +564,32 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
+    $scope.openAttachAction = function (item) {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/AttachAction.html',
+            controller: 'AttachActionCtrl',
+            size: 'lg',
+            resolve: {
+                selectedActions: function () {
+                    return $scope.noteInfo.actionList;
+                },
+                allActions: function() {
+                    return JSON.parse(JSON.stringify($scope.allGoals));
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (selectedActionItems) {
+            $scope.noteInfo.actionList = selectedActionItems;
+            $scope.saveEdits(['actionList']);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
 });
 
 </script>
@@ -634,6 +682,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
            ng-click="navigateToMeeting(meet)">
             <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
       </span>
+    </div>
+
+    <div>
+      <span style="width:150px">Action Items:</span>
+      <span ng-repeat="act in getActions()" class="btn btn-sm btn-default"  style="margin:4px;"
+           ng-click="navigateToAction(act)">
+            <i class="fa fa-flag" style="font-size:130%"></i> {{act.synopsis}}
+      </span>
+      <button class="btn btn-sm btn-primary" ng-click="openAttachAction()"
+          title="Attach an Action Item">
+          ADD </button>
     </div>
 
 
@@ -840,5 +899,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/CommentModal.js"></script>
 <script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>
+<script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 
 <%out.flush();%>

@@ -15,18 +15,27 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
         });
         return rez;
     }
-    $scope.itemHasDoc = function(doc) {
-        return $scope.selectedTopic == doc.id;
+    $scope.itemHasDoc = function(oneTopic) {
+        return $scope.selectedTopic == oneTopic.universalid;
     }
     $scope.itemDocs = function() {
-        return $scope.attachmentList.filter( function(oneDoc) {
-            return $scope.itemHasDoc(oneDoc);
+        return $scope.attachmentList.filter( function(oneTopic) {
+            return $scope.itemHasDoc(oneTopic);
         });
     }
-    $scope.addDocToItem = function(doc) {
-        $scope.selectedTopic = doc.id;
+    $scope.findSubject = function() {
+        var foundSubj = "";
+        $scope.attachmentList.forEach( function(oneTopic) {
+            if ($scope.itemHasDoc(oneTopic)) {
+                foundSubj = oneTopic.subject;
+            }
+        });
+        return foundSubj;
     }
-    $scope.removeDocFromItem = function(doc) {
+    $scope.addDocToItem = function(oneTopic) {
+        $scope.selectedTopic = oneTopic.universalid;
+    }
+    $scope.removeDocFromItem = function(oneTopic) {
         $scope.selectedTopic = "";
     }
 

@@ -668,14 +668,21 @@ public class NoteRecord extends DOMFace implements EmailContext {
       }
 
 
-      public List<String> getDocList()  throws Exception {
+      public List<String> getDocList() {
           return getVector("docList");
       }
-      public void addDocId(String goalId)  throws Exception {
+      public void addDocId(String goalId) {
           this.addVectorValue("docList", goalId);
       }
-      public void setDocList(List<String> newVal) throws Exception {
+      public void setDocList(List<String> newVal) {
           setVector("docList", newVal);
+      }
+
+      public List<String> getActionList() {
+          return getVector("actionList");
+      }
+      public void setActionList(List<String> newVal) {
+          setVector("actionList", newVal);
       }
 
       /**
@@ -746,10 +753,14 @@ public class NoteRecord extends DOMFace implements EmailContext {
       public List<MeetingRecord> getLinkedMeetings(NGPage ngc) throws Exception {
           ArrayList<MeetingRecord> allMeetings = new ArrayList<MeetingRecord>();
           String nid = this.getId();
+          String uid = this.getUniversalId();
           for (MeetingRecord meet : ngc.getMeetings()) {
               boolean found = false;
               for (AgendaItem ai : meet.getAgendaItems()) {
-                  if (nid.equals(ai.getTopicLink())) {
+                  if (uid.equals(ai.getTopicLink())) {
+                      found = true;
+                  } else if (nid.equals(ai.getTopicLink())) {
+                      //for a while local id was being saved....so look for that as well.
                       found = true;
                   }
               }
@@ -828,7 +839,8 @@ public class NoteRecord extends DOMFace implements EmailContext {
           thisNote.put("deleted",   isDeleted());
           thisNote.put("draft",     isDraftNote());
           thisNote.put("pin",       this.getPinOrder());
-          thisNote.put("docList", constructJSONArray(getDocList()));
+          thisNote.put("docList",   constructJSONArray(getDocList()));
+          thisNote.put("actionList", constructJSONArray(getActionList()));
           JSONObject labelMap = new JSONObject();
           for (NGLabel lRec : getLabels(ngp) ) {
               labelMap.put(lRec.getName(), true);
@@ -945,6 +957,9 @@ public class NoteRecord extends DOMFace implements EmailContext {
          }
          if (noteObj.has("docList")) {
              setDocList(constructVector(noteObj.getJSONArray("docList")));
+         }
+         if (noteObj.has("actionList")) {
+             setActionList(constructVector(noteObj.getJSONArray("actionList")));
          }
          if (noteObj.has("labelMap")) {
              JSONObject labelMap = noteObj.getJSONObject("labelMap");

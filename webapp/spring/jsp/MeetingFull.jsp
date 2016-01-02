@@ -13,6 +13,7 @@
     UserProfile uProf = ar.getUserProfile();
     String currentUser = uProf.getUniversalId();
     String currentUserName = uProf.getName();
+    String currentUserKey = uProf.getKey();
 
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngp.findMeeting(meetId);
@@ -22,7 +23,7 @@
     }
     JSONObject meetingInfo = mRec.getFullJSON(ar, ngp);
     JSONArray attachmentList = ngp.getJSONAttachments(ar);
-    JSONArray goalList     = ngp.getJSONGoals();
+    JSONArray allGoals     = ngp.getJSONGoals();
 
     JSONArray allRoles = new JSONArray();
     for (NGRole aRole : ngp.getAllRoles()) {
@@ -151,7 +152,7 @@
 var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
-    $scope.goalList = <%goalList.write(out,2,4);%>;
+    $scope.allGoals = <%allGoals.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
@@ -254,8 +255,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     }
     $scope.itemTopics = function(item) {
-        return $scope.allTopics.filter( function(oneDoc) {
-            return item.topicLink == oneDoc.id;
+        return $scope.allTopics.filter( function(oneTopic) {
+            return item.topicLink == oneTopic.universalid;
         });
     }
 
@@ -263,8 +264,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         var res = [];
         for (var j=0; j<item.actionItems.length; j++) {
             var aiId = item.actionItems[j];
-            for(var i=0; i<$scope.goalList.length; i++) {
-                var oneGoal = $scope.goalList[i];
+            for(var i=0; i<$scope.allGoals.length; i++) {
+                var oneGoal = $scope.allGoals[i];
                 if (oneGoal.universalid == aiId) {
                     res.push(oneGoal);
                 }
@@ -278,8 +279,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.filterGoals = function(actionItemFilter) {
         var res = [];
         var fil = actionItemFilter.toLowerCase();
-        for(var i=0; i<$scope.goalList.length; i++) {
-            var oneGoal = $scope.goalList[i];
+        for(var i=0; i<$scope.allGoals.length; i++) {
+            var oneGoal = $scope.allGoals[i];
             if (oneGoal.state<2 || oneGoal.state>4) {
                 continue;
             }
@@ -531,8 +532,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             alert("must enter a description of the action item");
             return;
         }
-        for(var i=0; i<$scope.goalList.length; i++) {
-            var oneItem = $scope.goalList[i];
+        for(var i=0; i<$scope.allGoals.length; i++) {
+            var oneItem = $scope.allGoals[i];
             if (oneItem.synposis == newSynop) {
                 item.actionItems.push(oneItem.universalid);
                 $scope.newGoal = {};
@@ -557,7 +558,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
-            $scope.goalList.push(data);
+            $scope.allGoals.push(data);
             item.actionItems.push(data.universalid);
             $scope.newGoal = {};
         })
@@ -727,7 +728,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (cmt) {
             item.newComment.replyTo = cmt.time;
         }
-        $scope.toggleEditor(8,item.id)
+        $scope.openCommentEditor(8,item.id)
     }
     $scope.saveNewComment = function(item) {
         var itemCopy = {};
@@ -743,6 +744,41 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.saveAgendaItem(itemCopy);
     }
 
+    $scope.stateStyle = function(cmt) {
+        if (cmt.state==11) {
+            return "background-color:yellow;";
+        }
+        if (cmt.state==12) {
+            return "background-color:#DEF;";
+        }
+        return "background-color:#EEE;";
+    }
+    $scope.commentTypeName = function(cmt) {
+        if (cmt.commentType==2) {
+            return "Proposal";
+        }
+        if (cmt.commentType==3) {
+            return "Question";
+        }
+        return "Comment";
+    }
+    $scope.postComment = function(item, cmt) {
+        cmt.state = 12;
+        if (cmt.commentType == 1) {
+            //simple comments go all the way to closed
+            cmt.state = 13;
+        }
+        $scope.saveComment(item, cmt);
+    }
+    $scope.closeComment = function(item, cmt) {
+        cmt.state = 13;
+        if (cmt.commentType>1) {
+            $scope.openOutcomeEditor(item, cmt);
+        }
+        else {
+            $scope.saveComment(item, cmt);
+        }
+    }
 
     $scope.getMyResponse = function(cmt) {
         cmt.choices = ["Consent", "Object"]
@@ -764,29 +800,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return selected;
     }
 
-    $scope.startResponse = function(cmt, pickedChoice) {
-        $scope.toggleEditor(9,cmt.time);
-        var myList = $scope.getMyResponse(cmt);
-        if (myList.length>0) {
-            myList[0].choice = pickedChoice;
-        }
-    }
-
-    $scope.createModifiedProposal = function(item, cmt) {
-        item.newComment = {}
-        item.newComment.html = cmt.html;
-        item.newComment.time = cmt.time + 1;
-        item.newComment.poll = true;
-        item.newComment.replyTo = cmt.time;
-        item.newPoll = true;
-        $scope.toggleEditor(8,item.id);
-    }
-
     $scope.navigateToDoc = function(doc) {
         window.location="docinfo"+doc.id+".htm";
     }
-    $scope.navigateToTopic = function(topicid) {
-        window.location="noteZoom"+topicid+".htm";
+    $scope.navigateToTopic = function(topicId) {
+        var localId = null;
+        $scope.allTopics.forEach( function(oneTopic) {
+            if (topicId == oneTopic.universalid) {
+                localId = oneTopic.id;
+            }
+        });
+        if (localId) {
+            window.location="noteZoom"+localId+".htm";
+        }
+        else {
+            alert("Sorry, can't seem to find a discussion topic with the id: "+topicId);
+        }
     }
 
     $scope.mySitch = [];
@@ -898,7 +927,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
 
         modalInstance.result.then(function (modifiedGoal) {
-            $scope.goalList.map( function(item) {
+            $scope.allGoals.map( function(item) {
                 if (item.id == modifiedGoal.id) {
                     item.duedate = modifiedGoal.duedate;
                     item.status = modifiedGoal.status;
@@ -988,6 +1017,80 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             //cancel action - nothing really to do
         });
     };
+
+    $scope.openCommentCreator = function(item, type, replyTo, defaultBody) {
+        var newComment = {};
+        newComment.time = -1;
+        newComment.commentType = type;
+        newComment.state = 11;
+        newComment.isNew = true;
+        newComment.user = "<%ar.writeJS(currentUser);%>";
+        newComment.userName = "<%ar.writeJS(currentUserName);%>";
+        newComment.userKey = "<%ar.writeJS(currentUserKey);%>";
+        if (replyTo) {
+            alert("Setting ReplyTo to : "+replyTo);
+            newComment.replyTo = replyTo;
+        }
+        if (defaultBody) {
+            newComment.html = defaultBody;
+        }
+        $scope.openCommentEditor(item, newComment);
+    }
+
+    $scope.openCommentEditor = function (item, cmt) {
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/CommentModal.html?t=<%=System.currentTimeMillis()%>',
+            controller: 'CommentModalCtrl',
+            size: 'lg',
+            resolve: {
+                cmt: function () {
+                    return JSON.parse(JSON.stringify(cmt));
+                }
+            }
+        });
+
+        modalInstance.result.then(function (returnedCmt) {
+            var cleanCmt = {};
+            cleanCmt.time = cmt.time;
+            cleanCmt.html = returnedCmt.html;
+            cleanCmt.state = returnedCmt.state;
+            cleanCmt.commentType = returnedCmt.commentType;
+            cleanCmt.replyTo = returnedCmt.replyTo;
+            $scope.saveComment(item, cleanCmt);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
+    $scope.openOutcomeEditor = function (item, cmt) {
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html?t=<%=System.currentTimeMillis()%>',
+            controller: 'OutcomeModalCtrl',
+            size: 'lg',
+            resolve: {
+                cmt: function () {
+                    return JSON.parse(JSON.stringify(cmt));
+                }
+            }
+        });
+
+        modalInstance.result.then(function (returnedCmt) {
+            var cleanCmt = {};
+            cleanCmt.time = cmt.time;
+            cleanCmt.outcome = returnedCmt.outcome;
+            cleanCmt.state = returnedCmt.state;
+            cleanCmt.commentType = returnedCmt.commentType;
+            $scope.saveComment(item, cleanCmt);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
+
 
     $scope.openDecisionEditor = function (item, cmt) {
 
@@ -1085,13 +1188,44 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
 
         attachModalInstance.result
-        .then(function (selectedTopic) {
+        .then(function (selectedTopic, topicName) {
             item.topicLink = selectedTopic;
+            $scope.allTopics.forEach( function(oneTopic) {
+                if (selectedTopic == oneTopic.universalid) {
+                    item.subject = oneTopic.subject;
+                }
+            });
+            $scope.saveAgendaItem(item);
         }, function () {
             //cancel action - nothing really to do
         });
     };
 
+    $scope.openAttachAction = function (item) {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/AttachAction.html',
+            controller: 'AttachActionCtrl',
+            size: 'lg',
+            resolve: {
+                selectedActions: function () {
+                    return item.actionItems;
+                },
+                allActions: function() {
+                    return JSON.parse(JSON.stringify($scope.allGoals));
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (selectedActionItems) {
+            item.actionItems = selectedActionItems;
+            $scope.saveAgendaItem(item);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
 
 });
 
@@ -1402,7 +1536,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <td style="width:100%">
           <div style="padding:5px;">
             <span class="agendaTitle" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
-                {{item.position}}. {{item.subject}} </span>  &nbsp;
+                {{item.position}}.
+                <i ng-show="item.topicLink" class="fa fa-lightbulb-o"></i>
+                {{item.subject}} </span>  &nbsp;
             <span class="dropdown" ng-show="showItemMap[item.id]">
                <button class="btn btn-default dropdown-toggle" type="button" id="menu"
                        data-toggle="dropdown" style="margin-right:10px;">
@@ -1410,33 +1546,21 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                </button>
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                   <li role="presentation" >
-                      <a role="menuitem" ng-click="toggleEditor(2,item.id)">Item Settings</a></li>
+                      <a role="menuitem" ng-click="toggleEditor(2,item.id)"><i class="fa fa-cogs"></i> Item Settings</a></li>
                   <li role="presentation" >
-                      <a role="menuitem" ng-click="startEdit(item)">Edit Description</a></li>
+                      <a role="menuitem" ng-click="startEdit(item)"><i class="fa fa-pencil-square-o"></i> Edit Description</a></li>
+                  <li role="presentation"  ng-hide="item.topicLink">
+                      <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i> Attach Docs</a></li>
+                  <li role="presentation" ng-hide="item.topicLink">
+                      <a role="menuitem" ng-click="toggleEditor(4,item.id)" ><i class="fa fa-flag-o"></i> Create Action Item</a></li>
+                  <li role="presentation" ng-hide="item.topicLink">
+                      <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i> Attach Action Items</a></li>
                   <li role="presentation" >
-                      <a role="menuitem" ng-click="openAttachDocument(item)">Attach Docs</a></li>
+                      <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i> Toggle Ready Flag</a></li>
                   <li role="presentation" >
-                      <a role="menuitem" ng-click="toggleEditor(4,item.id)">Create Action Item</a></li>
-                  <li role="presentation" >
-                      <a role="menuitem" ng-click="toggleEditor(9,item.id)">Attach Action Items</a></li>
-                  <li role="presentation" >
-                      <a role="menuitem" ng-click="toggleReady(item)">Toggle Ready</a></li>
-                  <li role="presentation" >
-                      <a role="menuitem" ng-click="openAttachTopics(item)">Attach Discussion Topic</a></li>
+                      <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i> Set Discussion Topic</a></li>
 
                </ul>
-            </span>
-            <span ng-show="showItemMap[item.id] && meeting.state<3">
-                ( <i class="fa fa-cogs meeting-icon" ng-click="toggleEditor(2,item.id)"
-                    title="Agenda Item Settings"></i>
-                <i class="fa fa-pencil-square-o meeting-icon" ng-click="startEdit(item)"
-                    title="Edit Description"></i>
-                <i class="fa fa-book meeting-icon" ng-click="openAttachDocument(item)"
-                    title="Agenda Item Attached Documents"></i>
-                <i class="fa fa-flag meeting-icon" ng-click="toggleEditor(4,item.id)"
-                    title="Create New Action Item"></i>
-                <i class="fa fa-tasks meeting-icon" ng-click="toggleEditor(9,item.id)"
-                    title="Manage Action Items"></i> )
             </span>
             <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
                  ng-click="toggleReady(item)"
@@ -1526,7 +1650,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
            </div>
         </td>
       </tr>
-      <tr ng-show="showItemMap[item.id]">
+      <tr ng-show="showItemMap[item.id] && !item.topicLink">
         <td>
            <div style="margin:10px;">
               <b>Attachments: </b>
@@ -1668,35 +1792,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
         </td>
       </tr>
-                          <!--  AGENDA ADD ACTION ITEMS -->
-      <tr ng-show="showItemMap[item.id]">
-        <td ng-show="isEditing(9,item.id)" style="width:100%">
-           <div class="well" style="margin:10px;">
-              <div style="float:right;"><i class="fa fa-close meeting-icon" ng-click="toggleEditor(9,item.id)"></i></div>
-              <div><b>Add Action Item to this Agenda Item</b></div>
-              <table class="table">
-                <tr>
-                   <td colspan="4">
-                      Filter <input type="text" ng-model="actionItemFilter">
-                   </td>
-                </tr>
-                <tr ng-repeat="goal in filterGoalsForItem(actionItemFilter, item)">
-                    <td><img src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"/> {{goal.synopsis}} </td>
-                    <td><span ng-repeat="person in goal.assignTo"> {{person.name}} <br/></span></td>
-                    <td>
-                        <button ng-click="addGoalToItem(item, goal)" ng-hide="itemHasGoal(item,goal)">Add</button>
-                        <button ng-click="removeGoalFromItem(item, goal)" ng-show="itemHasGoal(item,goal)">Remove</button>
-                    </td>
-                    </td>
-                </tr>
-                <tr>
-                   <td><button>Add All Above</button></td>
-                </tr>
-             </table>
-           </div>
-        </td>
-      </tr>
-
 
       </table>
       </div>
@@ -1708,7 +1803,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
            </td>
            <td>
-               <div class="comment-outer">
+               <div class="comment-outer"  style="{{stateStyle(cmt)}}">
                    <div>
                        <div class="dropdown" style="float:left">
                            <button class="btn btn-default dropdown-toggle" type="button" id="menu" data-toggle="dropdown" style="margin-right:10px;">
@@ -1716,51 +1811,45 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                            </button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                               <li role="presentation" ng-show="cmt.user=='<%=uProf.getUniversalId()%>'">
-                                  <a role="menuitem" ng-click="toggleEditor(7,cmt.time)">Edit Your Comment</a></li>
-                              <li role="presentation" ng-show="cmt.poll">
+                                  <a role="menuitem" ng-click="openCommentEditor(item,cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-show="cmt.commentType>1">
                                   <a role="menuitem" ng-click="openResponseEditor(cmt)">Create/Edit Response:</a></li>
-                              <li role="presentation" ng-show="cmt.poll">
-                                  <a role="menuitem" ng-click="createModifiedProposal(item,cmt)">Make Modified Proposal</a></li>
-                              <li role="presentation" ng-hide="cmt.poll">
-                                  <a role="menuitem" ng-click="startNewComment(item, 1, cmt)">Reply</a></li>
-                              <li role="presentation" ng-show="cmt.poll">
+                              <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                                  <a role="menuitem" ng-click="postComment(item, cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-show="cmt.state==12 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                                  <a role="menuitem" ng-click="closeComment(item, cmt)">Close Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-hide="cmt.commentType>1">
+                                  <a role="menuitem" ng-click="openCommentCreator(item,1,cmt.time)">Reply</a></li>
+                              <li role="presentation" ng-show="cmt.commentType>1">
+                                  <a role="menuitem" ng-click="openCommentCreator(item,2,cmt.time,cmt.html)">Make Modified Proposal</a></li>
+                              <li role="presentation" ng-show="cmt.commentType>1">
                                   <a role="menuitem" ng-click="openDecisionEditor(item, cmt)">Create New Decision</a></li>
                            </ul>
                        </div>
 
-                       <span ng-hide="cmt.poll"><i class="fa fa-comments-o"></i></span>
-                       <span ng-show="cmt.poll"><i class="fa fa-star-o"></i></span>
+                       <span ng-show="cmt.commentType==1"><i class="fa fa-comments-o" style="font-size:130%"></i></span>
+                       <span ng-show="cmt.commentType==2"><i class="fa fa-star-o" style="font-size:130%"></i></span>
+                       <span ng-show="cmt.commentType==3"><i class="fa fa-question-circle" style="font-size:130%"></i></span>
                        &nbsp; {{cmt.time | date}} -
                        <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
                           <span class="red">{{cmt.userName}}</span>
                        </a>
                        <span ng-hide="cmt.emailSent">-email pending-</span>
                          <span ng-show="cmt.replyTo">
-                             <span ng-hide="cmt.poll">In reply to
+                             <span ng-show="cmt.commentType==1">In reply to
                                  <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
                                  <i class="fa fa-comments-o"></i> {{findComment(item,cmt.replyTo).userName}}</a></span>
-                             <span ng-show="cmt.poll">Based on
+                             <span ng-show="cmt.commentType>1">Based on
                                  <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
                                  <i class="fa fa-star-o"></i> {{findComment(item,cmt.replyTo).userName}}</a></span>
                          </span>
 
                    </div>
-                   <div class="leafContent comment-inner" ng-hide="isEditing(7,cmt.time)">
+                   <div class="leafContent comment-inner">
                        <div ng-bind-html="cmt.html"></div>
                    </div>
 
-                    <div class="well leafContent" style="width:100%" ng-show="isEditing(7,cmt.time)">
-                      <div ng-model="cmt.html"
-                          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-                          text-angular="" class="" style="width:100%;"></div>
-
-                      <button ng-click="saveComment(item,cmt);stopEditing()" class="btn btn-danger">Save Changes</button>
-                      <button ng-click="revertAllEdits();stopEditing()" class="btn btn-danger">Cancel</button>
-                      &nbsp;
-                      <input type="checkbox" ng-model="cmt.poll"> Proposal</button>
-                    </div>
-
-                   <table style="min-width:500px;" ng-show="cmt.poll && !isEditing(9,cmt.time)">
+                   <table style="min-width:500px;" ng-show="cmt.commentType>1">
                    <tr ng-repeat="resp in cmt.responses">
                        <td style="padding:5px;max-width:100px;">
                            <b>{{resp.choice}}</b>
@@ -1776,7 +1865,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                           <div class="leafContent comment-inner" ng-bind-html="resp.html"></div>
                        </td>
                    </tr>
-                   <tr ng-show="noResponseYet(cmt)">
+                   <tr ng-show="noResponseYet(cmt) && cmt.state==12">
                        <td style="padding:5px;max-width:100px;">
                            <b>????</b>
                            <br/>
@@ -1792,12 +1881,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        </td>
                    </tr>
                    </table>
-                   <div ng-show="cmt.replies.length>0 && cmt.poll">
+                   <div class="leafContent comment-inner" ng-show="cmt.state==13 && cmt.commentType>1">
+                       <div ng-bind-html="cmt.outcome"></div>
+                   </div>
+                   <div ng-show="cmt.replies.length>0 && cmt.commentType>1">
                        See proposals:
                        <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
                            <i class="fa fa-star-o"></i> {{findComment(item,reply).userName}}</a> </span>
                    </div>
-                   <div ng-show="cmt.replies.length>0 && !cmt.poll">
+                   <div ng-show="cmt.replies.length>0 && cmt.commentType==1">
                        See replies:
                        <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
                            <i class="fa fa-comments-o"></i> {{findComment(item,reply).userName}}</a> </span>
@@ -1812,26 +1904,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       <tr>
         <td></td>
         <td>
-        <div ng-hide="isEditing(8,item.id)" style="margin:20px;">
-            <button ng-click="startNewComment(item, 1)" class="btn btn-default">
+        <div ng-hide="item.topicLink" style="margin:20px;">
+            <button ng-click="openCommentCreator(item, 1)" class="btn btn-default">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="startNewComment(item, 2)" class="btn btn-default">
+            <button ng-click="openCommentCreator(item, 2)" class="btn btn-default">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
-        </div>
-        <div ng-show="isEditing(8,item.id)">
-            <div class="well leafContent" style="width:100%">
-              <div ng-model="item.newComment.html"
-                  ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-                  text-angular="" class="" style="width:100%;"></div>
-
-              <button ng-click="saveNewComment(item);stopEditing()" class="btn btn-danger" ng-hide="item.newComment.poll">
-                  Create <i class="fa fa-comments-o"></i> Comment</button>
-              <button ng-click="saveNewComment(item);stopEditing()" class="btn btn-danger" ng-show="item.newComment.poll">
-                  Create <i class="fa fa-star-o"></i> Proposal</button>
-              <button ng-click="stopEditing()" class="btn btn-danger">Cancel</button>
-              &nbsp;
-              <input type="checkbox" ng-model="item.newComment.poll"> Proposal</button>
-            </div>
+            <button ng-click="openCommentCreator(item, 3)" class="btn btn-default">
+                Create New <i class="fa fa-question-circle"></i> Question</button>
         </div>
         </td>
       </tr>
@@ -1852,10 +1931,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </div>
 
 <script src="<%=ar.retPath%>templates/ModalActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/CommentModal.js"></script>
 <script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
+<script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachTopicCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 
 
 
