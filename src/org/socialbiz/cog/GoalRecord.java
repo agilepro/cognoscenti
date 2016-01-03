@@ -1013,7 +1013,7 @@ public class GoalRecord extends BaseRecord {
             setDuration(goalObj.getLong("duration"));
         }
         if (goalObj.has("rank")) {
-            setPriority(goalObj.getInt("rank"));
+            setRank(goalObj.getInt("rank"));
         }
         if (goalObj.has("ui")) {
             setRemoteUpdateURL(goalObj.getString("ui"));

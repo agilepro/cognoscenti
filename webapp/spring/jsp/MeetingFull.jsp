@@ -567,6 +567,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         $scope.stopEditing();
     };
+
+    $scope.replaceGoal = function(goal) {
+        var newList = $scope.allGoals.filter( function(item) {
+            return item.id != goal.id;
+        });
+        newList.push(goal);
+        $scope.allGoals = newList;
+    }
+
     $scope.saveGoal = function(goal) {
         var postURL = "updateGoal.json?gid="+goal.id;
         var objForUpdate = {};
@@ -581,7 +590,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.showAccomplishment=false;
         $http.post(postURL, postdata)
         .success( function(data) {
-            goal.prospects = data.prospects;  //update back with official value
+            $scope.replaceGoal(data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);

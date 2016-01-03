@@ -21,7 +21,6 @@
 package org.socialbiz.cog.spring;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -615,7 +614,7 @@ public class ProjectGoalController extends BaseController {
 
 
 
-
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/setOrderTasks.ajax", method = RequestMethod.POST)
     public void updateOrderTasks( @PathVariable String pageId,@RequestParam String indexString,
             HttpServletRequest request,
@@ -683,6 +682,7 @@ public class ProjectGoalController extends BaseController {
         }
         NGWebUtils.sendResponse(ar, responseMessage);
     }
+    */
 
     @RequestMapping(value = "/{siteId}/{pageId}/updateGoal.json", method = RequestMethod.POST)
     public void updateGoal(@PathVariable String siteId,@PathVariable String pageId,
@@ -740,7 +740,7 @@ public class ProjectGoalController extends BaseController {
             HistoryRecord.createHistoryRecord(ngp, gr.getId(),
                     HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar,
                     comments);
-
+            ngp.renumberGoalRanks();
             ngp.saveFile(ar, "Updated action item "+gid);
             JSONObject repo = gr.getJSON4Goal(ngp);
             repo.write(ar.w, 2, 2);
@@ -750,6 +750,53 @@ public class ProjectGoalController extends BaseController {
             streamException(ee, ar);
         }
     }
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/updateMultiGoal.json", method = RequestMethod.POST)
+    public void updateMultiGoal(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            ar.setPageAccessLevels(ngp);
+            ar.assertMember("Must be a member to create a action item.");
+            ar.assertNotFrozen(ngp);
+
+            JSONObject goalEnvelope = getPostedObject(ar);
+            JSONArray goalList = goalEnvelope.getJSONArray("list");
+            JSONArray responseList = new JSONArray();
+            
+            int last = goalList.length();
+            for (int i=0; i<last; i++) {
+                JSONObject goalInfo = goalList.getJSONObject(i);
+                String gid = goalInfo.getString("id");
+                GoalRecord gr = null;
+                boolean isNew = "~new~".equals(gid);
+                if (isNew) {
+                    gr = ngp.createGoal(ar.getBestUserId());
+                    goalInfo.put("universalid", gr.getUniversalId());
+                }
+                else {
+                    gr = ngp.getGoalOrFail(gid);
+                }
+    
+                gr.updateGoalFromJSON(goalInfo, ngp, ar);
+                responseList.put(gr.getJSON4Goal(ngp));
+            }
+            
+            //TODO: maybe this should return ALL the goals since they all 
+            //might change when renumbered
+            ngp.renumberGoalRanks();
+            
+            ngp.saveFile(ar, "Updated multiple action items");
+            JSONObject repo = new JSONObject();
+            repo.put("list",  responseList);
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to update multiple Action Items", ex);
+            streamException(ee, ar);
+        }
+    }    
 
     @RequestMapping(value = "/{siteId}/{pageId}/getGoalHistory.json", method = RequestMethod.GET)
     public void getGoalHistory(@PathVariable String siteId,@PathVariable String pageId,

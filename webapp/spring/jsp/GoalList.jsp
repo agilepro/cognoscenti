@@ -122,6 +122,9 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.findGoals = function() {
         var lcFilterList = $scope.filter.toLowerCase().split(" ");
+        $scope.allGoals.sort( function(a,b) {
+            return a.rank-b.rank;
+        });
         var src = $scope.allGoals;
         for (var j=0; j<lcFilterList.length; j++) {
             var lcfilter = lcFilterList[j];
@@ -158,18 +161,98 @@ app.controller('myCtrl', function($scope, $http) {
             src = res;
         }
         var allReqLabels = $scope.allLabelFilters();
-        for (var j=0; j<allReqLabels.length; j++) {
-            var requiredLabel = allReqLabels[j].name;
+        allReqLabels.forEach( function(label) {
+            var requiredLabel = label.name;
             var res = [];
-            src.map( function(rec) {
+            src.forEach( function(rec) {
                 if (rec.labelMap[requiredLabel]) {
                     res.push(rec);
                 }
             });
             src = res;
-        }
+        });
         return src;
     };
+
+    $scope.swapItems = function(item, amt) {
+        var list = $scope.findGoals();
+
+        var foundAt = -1;
+        var index = -1;
+        list.forEach( function(ele) {
+            index++;
+            if (ele.id == item.id) {
+                foundAt = index;
+            }
+        });
+        if (foundAt<0) {
+            alert("Could not find the item in the current filtered list: "+item.synopsis);
+        }
+        var otherPos = foundAt + amt;
+        if (otherPos<0) {
+            alert("can't move up off the beginning of the list");
+        }
+        if (otherPos>=list.length) {
+            alert("can't move down off the end of the list");
+        }
+        var otherItem = list[otherPos];
+        var otherRank = otherItem.rank;
+        otherItem.rank = item.rank;
+        item.rank = otherRank;
+
+        $scope.saveGoals([otherItem,item]);
+    }
+
+    $scope.replaceGoal = function(goal) {
+        var newList = $scope.allGoals.filter( function(item) {
+            return item.id != goal.id;
+        });
+        newList.push(goal);
+        $scope.allGoals = newList;
+    }
+    $scope.saveGoal = function(goal) {
+        var postURL = "updateGoal.json?gid="+goal.id;
+        var objForUpdate = {};
+        objForUpdate.id = goal.id;
+        objForUpdate.universalid = goal.universalid;
+        objForUpdate.rank = goal.rank;  //only thing that could have been changed
+        var postdata = angular.toJson(objForUpdate);
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            $scope.replaceGoal(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    $scope.saveGoals = function(goalList) {
+        var postURL = "updateMultiGoal.json";
+        var objectList = [];
+
+        goalList.forEach( function(item) {
+            var objForUpdate = {};
+            objForUpdate.id = item.id;
+            objForUpdate.universalid = item.universalid;
+            objForUpdate.rank = item.rank;  //only thing that could have been changed
+            objectList.push(objForUpdate);
+        });
+        var envelope = {};
+        envelope.list = objectList;
+
+        var postdata = angular.toJson(envelope);
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            data.list.forEach( function(dataItem) {
+                $scope.replaceGoal(dataItem);
+            });
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+
 
     $scope.makeState = function(rec, newState) {
         var newRec = {};
@@ -222,7 +305,7 @@ app.controller('myCtrl', function($scope, $http) {
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
-   };
+    };
 
     $scope.datePickOptions = {
         formatYear: 'yyyy',
@@ -278,6 +361,7 @@ app.controller('myCtrl', function($scope, $http) {
         var person = $scope.getPeople(uid);
         return "<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(uid);
     }
+
 
 });
 
@@ -416,14 +500,19 @@ function addvalue() {
                 <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation"><a role="menuitem" tabindex="-1"
+                  <li role="presentation"><a role="menuitem"
                       href="task{{rec.id}}.htm">Edit Action Item</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      ng-click="swapItems(rec, -1)">Move Up</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      ng-click="swapItems(rec, 1)">Move Down</a></li>
                   <li role="presentation" ng-show="rec.state<2">
-                      <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 2)">
+                      <a role="menuitem" ng-click="makeState(rec, 2)">
                           <img src="<%=ar.retPath%>assets/goalstate/small2.gif" alt="accepted"  />
                           Start & Offer
                       </a>
                   </li>
+
                   <li role="presentation" ng-show="rec.state==2">
                       <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 3)">
                           <img src="<%=ar.retPath%>assets/goalstate/small3.gif" alt="accepted"  />
