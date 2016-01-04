@@ -569,14 +569,14 @@ function addvalue() {
                 </span>
             </td>
         </tr>
-        <tr><td height="20px"></td></tr>
+        <tr><td height="50px"></td></tr>
         <tr>
             <td class="gridTableColummHeader">Linked Documents:</td>
             <td style="width:20px;"></td>
             <td >
                 <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default"  style="margin:4px;"
                     ng-click="navigateToDoc(doc)">
-                    <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{doc.name}}
+                    <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
                 </span>
                   <button class="btn btn-sm btn-primary" ng-click="openAttachDocument()"
                       title="Attach a document">
