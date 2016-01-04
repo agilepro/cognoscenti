@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -983,21 +984,41 @@ public class UserProfile extends DOMFace implements UserRef
 
 
 
-    public String getImage()
-    {
+    public String getImage() {
         return getScalar("image");
     }
 
-    public void setImage(String newImage)
-    {
-        if (newImage == null)
-        {
+    public void setImage(String newImage) {
+        if (newImage == null) {
             newImage = "";
         }
-        if (!newImage.equals(name))
-        {
+        if (!newImage.equals(name)) {
             setScalar("image", newImage);
         }
+    }
+    
+    /**
+     * Check to see if the user has an image.  If so, leave it there,
+     * if not, then copy one of the default images for this user.
+     */
+    public void assureImage(Cognoscenti cog) throws Exception {
+        File imageFolder = cog.getConfig().getFileFromRoot("users");
+        if (!imageFolder.exists()) {
+            throw new Exception("Can't find the user folder!: "+imageFolder);
+        }
+        File imageFile = new File(imageFolder, getKey()+".jpg");
+        if (imageFile.exists()) {
+            System.out.println("The image file EXISTS for user: "+imageFile);
+            return;
+        }
+        System.out.println("Did not find an image file for user "+getKey());
+        char uidLetter = this.getUniversalId().charAt(0);
+        File defaultFile =  new File(imageFolder, "fake-"+uidLetter+".jpg");
+        if (!defaultFile.exists()) {
+            throw new Exception("The default user image file is missing!: "+defaultFile);
+        }
+        UtilityMethods.copyFileContents(defaultFile, imageFile);
+        System.out.println("Copied an image file for user "+getKey()+" from: "+defaultFile);
     }
 
     public List<SiteRequest> getUsersSiteRequests() throws Exception {

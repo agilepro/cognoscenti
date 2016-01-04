@@ -1628,16 +1628,17 @@ public class UserController extends BaseController {
             UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
 
             UserProfile loggedInUser = ar.getUserProfile();
+            
             String userName = loggedInUser.getName();
 
             if (userName==null || userName.length()==0) {
                 userName = loggedInUser.getKey();
             }
-            if (userName.length()>28)
-            {
+            if (userName.length()>28) {
                 userName = userName.substring(0,28);
             }
 
+            uProf.assureImage(ar.getCogInstance());
             NGContainer ngp =null;
 
             String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );

@@ -624,7 +624,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div class="leafContent" ng-hide="isEditing">
       <div ng-bind-html="noteInfo.html"></div>
-      <div><br/><i>Last modified by <a href="findUser.htm?uid={{noteInfo.modUser.uid}}"><span class="red">{{noteInfo.modUser.name}}</span></a> on {{noteInfo.modTime|date}}</i></div>
+      <div><br/><i>Last modified by <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{noteInfo.modUser.uid}}"><span class="red">{{noteInfo.modUser.name}}</span></a> on {{noteInfo.modTime|date}}</i></div>
     </div>
     <div class="well leafContent" ng-show="isEditing">
       <div ng-model="noteInfo.html"
@@ -688,7 +688,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       <span style="width:150px">Action Items:</span>
       <span ng-repeat="act in getActions()" class="btn btn-sm btn-default"  style="margin:4px;"
            ng-click="navigateToAction(act)">
-            <i class="fa fa-flag" style="font-size:130%"></i> {{act.synopsis}}
+             <img src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif"> {{act.synopsis}}
       </span>
       <button class="btn btn-sm btn-primary" ng-click="openAttachAction()"
           title="Attach an Action Item">

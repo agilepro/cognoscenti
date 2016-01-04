@@ -219,7 +219,7 @@ public class ConfigFile {
     }
 
     /**
-     * Checks that the supplied path exists, and that it is a directory. Throws
+     * Checks that the supplied full path exists, and that it is a directory. Throws
      * standard errors if it is not.
      */
     public File getFolderOrFail(String folderPath) throws Exception {

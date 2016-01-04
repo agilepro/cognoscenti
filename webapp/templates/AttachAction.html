@@ -29,7 +29,7 @@
                </td>
             </tr>
             <tr ng-repeat="act in filterActions()">
-                <td> {{act.synopsis | limitTo:50}} </td>
+                <td> <img src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}} </td>
                 <td>
                     <button ng-click="addActionToList(act)" ng-hide="itemHasAction(act)"
                         class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
@@ -44,7 +44,7 @@
         <div style="max-height:400px;overflow: auto">
           <table class="docTable">
             <tr ng-repeat="act in itemActions()">
-                <td> {{act.synopsis | limitTo:50 }} </td>
+                <td> <img src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50 }} </td>
                 <td>
                     <button ng-click="removeActionFromList(act)"
                         class="btn"><i class="fa fa-close"></i> &nbsp;</button>

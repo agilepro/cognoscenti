@@ -3,7 +3,7 @@ package org.socialbiz.cog.mail;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.socialbiz.cog.AuthRequest;
+
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.NGPage;

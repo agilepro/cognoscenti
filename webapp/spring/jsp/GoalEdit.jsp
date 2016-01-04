@@ -219,14 +219,14 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.saveGoal();
     }
     $scope.removePerson = function(person) {
-        var res = [];
-        $scope.goalInfo.assignTo.map( function(one) {
-            if (person.uid != one.uid) {
-                res.push(one);
-            }
+        var res = $scope.goalInfo.assignTo.map( function(one) {
+            return (person.uid != one.uid);
         });
         $scope.goalInfo.assignTo = res;
         $scope.saveGoal();
+    }
+    $scope.visitPlayer = function(player) {
+        window.location = "<%=ar.retPath%>v/FindPerson.htm?uid="+player.uid;
     }
     $scope.bestName = function(person) {
         if (person.name) {
@@ -408,8 +408,10 @@ function addvalue() {
                    data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;">
                    {{bestName(person)}}</button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                   <li role="presentation"><a role="menuitem" title="{{person}} {{person.uid}}"
+                   <li role="presentation"><a role="menuitem" title="{{person.name}} {{person.uid}}"
                       ng-click="removePerson(person)">Remove Address:<br/>{{person.name}}<br/>{{person.uid}}</a></li>
+                   <li role="presentation"><a role="menuitem" title="Visit {{person.name}}" target="_blank"
+                      href="<%=ar.retPath%>v/FindPerson.htm?uid={{person.uid}}">Visit User Page</li>
                 </ul>
               </span>
               <span >

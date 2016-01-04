@@ -125,7 +125,7 @@ app.controller('myCtrl', function($scope, $http) {
             var uid = player.substring(pos).trim();
             player = {name: name, uid: uid};
         }
-        $scope.roleInfo.players.map( function(one) {
+        $scope.roleInfo.players.forEach( function(one) {
             if (player.uid == one.uid) {
                 found = true;
             }
@@ -136,13 +136,13 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.newPlayer = "";
     }
     $scope.removePlayer = function(player) {
-        var res = [];
-        $scope.roleInfo.players.map( function(one) {
-            if (player.uid != one.uid) {
-                res.push(one);
-            }
+        var res = $scope.roleInfo.players.filter( function(one) {
+            return (player.uid != one.uid);
         });
         $scope.roleInfo.players = res;
+    }
+    $scope.visitPlayer = function(player) {
+        window.location = "<%=ar.retPath%>v/FindPerson.htm?uid="+player.uid;
     }
     $scope.deleteRole = function() {
         var key = $scope.roleInfo.name;
@@ -270,6 +270,8 @@ app.controller('myCtrl', function($scope, $http) {
                         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                            <li role="presentation"><a role="menuitem" title="{{player}}"
                               ng-click="removePlayer(player)">Remove Player:<br/>{{player.name}}<br/>{{player.uid}}</a></li>
+                           <li role="presentation"><a role="menuitem" title="Visit {{player.name}}" target="_blank"
+                              href="<%=ar.retPath%>v/FindPerson.htm?uid={{player.uid}}">Visit Player Page</li>
                         </ul>
                       </span>
                       <span >

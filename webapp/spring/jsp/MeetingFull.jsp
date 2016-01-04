@@ -818,6 +818,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             if (topicId == oneTopic.universalid) {
                 localId = oneTopic.id;
             }
+            else if (topicId == oneTopic.id) {
+                localId = oneTopic.id;
+            }
         });
         if (localId) {
             window.location="noteZoom"+localId+".htm";
