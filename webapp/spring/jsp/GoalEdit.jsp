@@ -97,6 +97,8 @@ Required parameters:
         }
     }
 
+    JSONArray attachmentList = ngp.getJSONAttachments(ar);
+
 
 /*** PROTOTYPE
 
@@ -134,7 +136,7 @@ Required parameters:
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.goalInfo  = <%goalInfo.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
@@ -143,6 +145,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.allHist   = <%allHist.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
+    $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
 
     $scope.newPerson = "";
 
@@ -346,6 +349,50 @@ app.controller('myCtrl', function($scope, $http) {
         window.location="meetingFull.htm?id="+meet.id;
     }
 
+    $scope.itemHasDoc = function(doc) {
+        var res = false;
+        var found = $scope.goalInfo.docLinks.forEach( function(docid) {
+            if (docid == doc.universalid) {
+                res = true;
+            }
+        });
+        return res;
+    }
+    $scope.getDocs = function() {
+        return $scope.attachmentList.filter( function(oneDoc) {
+            return $scope.itemHasDoc(oneDoc);
+        });
+    }
+
+    $scope.navigateToDoc = function(doc) {
+        window.location="docinfo"+doc.id+".htm";
+    }
+    $scope.openAttachDocument = function () {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html',
+            controller: 'AttachDocumentCtrl',
+            size: 'lg',
+            resolve: {
+                docList: function () {
+                    return JSON.parse(JSON.stringify($scope.goalInfo.docLinks));
+                },
+                attachmentList: function() {
+                    return $scope.attachmentList;
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (docList) {
+            $scope.goalInfo.docLinks = docList;
+            $scope.saveGoal(['docLinks']);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
 });
 
 function addvalue() {
@@ -523,6 +570,20 @@ function addvalue() {
             </td>
         </tr>
         <tr><td height="20px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Linked Documents:</td>
+            <td style="width:20px;"></td>
+            <td >
+                <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default"  style="margin:4px;"
+                    ng-click="navigateToDoc(doc)">
+                    <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{doc.name}}
+                </span>
+                  <button class="btn btn-sm btn-primary" ng-click="openAttachDocument()"
+                      title="Attach a document">
+                      ADD </button>
+            </td>
+        </tr>
+        <tr><td height="10px"></td></tr>
         <tr>
             <td class="gridTableColummHeader">Linked Topics:</td>
             <td style="width:20px;"></td>
@@ -1010,5 +1071,6 @@ function addvalue() {
 
 </div>
 
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 
 

@@ -900,6 +900,17 @@ public class GoalRecord extends BaseRecord {
         setVector("labels", labelNames);
     }
 
+    /**
+     * Documents that are linked to this action item
+     * This is an array of string, each string value is 
+     * a universalid of a document
+     */
+    public void setDocLinks(List<String> newVal) {
+        setVector("docLinks", newVal);
+    }
+    public List<String> getDocLinks() {
+        return getVector("docLinks");
+    }
 
     public JSONObject getJSON4Goal(NGPage ngp) throws Exception {
         JSONObject thisGoal = new JSONObject();
@@ -944,7 +955,8 @@ public class GoalRecord extends BaseRecord {
         for (NGLabel lRec : getLabels(ngp) ) {
             labelMap.put(lRec.getName(), true);
         }
-        thisGoal.put("labelMap",      labelMap);
+        thisGoal.put("labelMap",  labelMap);
+        thisGoal.put("docLinks",  constructJSONArray(getDocLinks()));
 
         return thisGoal;
     }
@@ -1067,6 +1079,9 @@ public class GoalRecord extends BaseRecord {
                 }
             }
             setLabels(selectedLabels);
+        }
+        if (goalObj.has("docLinks")) {
+            setDocLinks(constructVector(goalObj.getJSONArray("docLinks")));
         }
 
     }

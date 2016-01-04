@@ -57,6 +57,19 @@ Required parameters:
         linkedTopics.put(note.getJSON(ngp));
     }
 
+    JSONArray linkedGoals = new JSONArray();
+    for (GoalRecord goal : ngp.getAllGoals()) {
+        boolean found = false;
+        for (String otherId : goal.getDocLinks()) {
+            if (otherId.equals(attachment.getUniversalId())) {
+                found = true;
+            }
+        }
+        if (found) {
+            linkedGoals.put(goal.getJSON4Goal(ngp));
+        }
+    }
+
 %>
 
 <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
@@ -75,6 +88,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.docInfo = <%docInfo.write(out,2,4);%>;
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
+    $scope.linkedGoals = <%linkedGoals.write(out,2,4);%>;
 
     $scope.myComment = "";
     $scope.canUpdate = <%=canAccessDoc%>;
@@ -108,6 +122,9 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     };
+    $scope.navigateToActionItem = function(act) {
+        window.location="task"+act.id+".htm";
+    }
     $scope.navigateToTopic = function(topic) {
         window.location="noteZoom"+topic.id+".htm";
     }
@@ -223,11 +240,11 @@ app.controller('myCtrl', function($scope, $http) {
                         <td><% ar.writeHtml(editUser); %></td>
                     </tr>
                     <tr>
-                        <td class="gridTableColummHeader">Linked Meetings:</td>
+                        <td class="gridTableColummHeader">Linked Action Items:</td>
                         <td style="width: 20px;"></td>
-                        <td><span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default"  style="margin:4px;"
-                               ng-click="navigateToMeeting(meet)">
-                               <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
+                        <td><span ng-repeat="act in linkedGoals" class="btn btn-sm btn-default"  style="margin:4px;"
+                               ng-click="navigateToActionItem(act)">
+                               <img src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif">  {{act.synopsis}}
                             </span>
                         </td>
                     </tr>
@@ -237,6 +254,15 @@ app.controller('myCtrl', function($scope, $http) {
                         <td><span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default"  style="margin:4px;"
                                ng-click="navigateToTopic(topic)">
                                <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="gridTableColummHeader">Linked Meetings:</td>
+                        <td style="width: 20px;"></td>
+                        <td><span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default"  style="margin:4px;"
+                               ng-click="navigateToMeeting(meet)">
+                               <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
                             </span>
                         </td>
                     </tr>
