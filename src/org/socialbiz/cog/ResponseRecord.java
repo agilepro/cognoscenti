@@ -131,7 +131,14 @@ public class ResponseRecord extends DOMFace
         clone.write("<html><body>");
 
         String topicAddress = ar.baseURL + noteOrMeet.getResourceURL(clone, ngp) + "#cmt" + cr.getTime();
-        String emailSubject = noteOrMeet.emailSubject()+": Proposal "+getChoice()+" response";
+        String emailSubject = "??";
+        switch (cr.getCommentType()) {
+            case CommentRecord.COMMENT_TYPE_PROPOSAL:
+                emailSubject = noteOrMeet.emailSubject()+": proposal response ("+getChoice()+")";
+            case CommentRecord.COMMENT_TYPE_REQUEST:
+                emailSubject = noteOrMeet.emailSubject()+": answer for question";
+        }
+        
         AddressListEntry ale = commenterProfile.getAddressListEntry();
 
         clone.write("\n<p>From: ");

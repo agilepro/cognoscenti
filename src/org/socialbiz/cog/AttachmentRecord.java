@@ -949,10 +949,16 @@ public class AttachmentRecord extends DOMFace {
         String nid = this.getUniversalId();
         for (MeetingRecord meet : ngc.getMeetings()) {
             boolean found = false;
-            for (AgendaItem ai : meet.getAgendaItems()) {
-                for (String docId : ai.getDocList()) {
-                    if (nid.equals(docId)) {
-                        found = true;
+            if (nid.equals(meet.getMinutesId())) {
+                //include the meeting that declared this topic to be its minutes
+                found = true;
+            }
+            else {
+                for (AgendaItem ai : meet.getAgendaItems()) {
+                    for (String docId : ai.getDocList()) {
+                        if (nid.equals(docId)) {
+                            found = true;
+                        }
                     }
                 }
             }

@@ -84,7 +84,7 @@ app.controller('myCtrl', function($scope, $http) {
             postURL = "roleUpdate.json?op=Create";
         }
         else {
-            $scope.allRoles.map( function(aRole) {
+            $scope.allRoles.forEach( function(aRole) {
                 if (aRole.name == key) {
                     aRole.color  = $scope.roleInfo.color;
                     aRole.players  = $scope.roleInfo.players;
@@ -94,7 +94,17 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
-            $scope.closePanel();
+            $scope.roleInfo = data;
+            var newRoles = [];
+            $scope.allRoles.forEach( function (item) {
+                if (item.name==key) {
+                    newRoles.push(data);
+                }
+                else {
+                    newroles.push(item);
+                }
+            });
+            $scope.allRoles = newRoles;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -269,9 +279,9 @@ app.controller('myCtrl', function($scope, $http) {
                            {{bestPart(player)}}</button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                            <li role="presentation"><a role="menuitem" title="{{player}}"
-                              ng-click="removePlayer(player)">Remove Player:<br/>{{player.name}}<br/>{{player.uid}}</a></li>
+                              ng-click="removePlayer(player);updateRole()">Remove Player:<br/>{{player.name}}<br/>{{player.uid}}</a></li>
                            <li role="presentation"><a role="menuitem" title="Visit {{player.name}}" target="_blank"
-                              href="<%=ar.retPath%>v/FindPerson.htm?uid={{player.uid}}">Visit Player Page</li>
+                              href="<%=ar.retPath%>v/FindPerson.htm?uid={{player.uid}}">Visit Player Page</a></li>
                         </ul>
                       </span>
                       <span >
@@ -286,7 +296,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <td ></td>
                     <td style="width:20px;"></td>
                     <td  colspan="2" class="form-inline form-group">
-                        <button ng-click="addPlayer(newPlayer);showAddPlayer=false" class="form-control btn btn-primary">
+                        <button ng-click="addPlayer(newPlayer);showAddPlayer=false;updateRole()" class="form-control btn btn-primary">
                             Add </button>
                         <input type="text" ng-model="newPlayer"  class="form-control"
                             placeholder="Enter Email Address" style="width:250px;"

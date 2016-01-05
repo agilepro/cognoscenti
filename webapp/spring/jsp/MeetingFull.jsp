@@ -779,6 +779,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         $scope.saveComment(item, cmt);
     }
+    $scope.deleteComment = function(item, cmt) {
+        cmt.deleteMe = true;
+        $scope.saveComment(item, cmt);
+    }
     $scope.closeComment = function(item, cmt) {
         cmt.state = 13;
         if (cmt.commentType>1) {
@@ -1828,6 +1832,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                   <a role="menuitem" ng-click="openResponseEditor(cmt)">Create/Edit Response:</a></li>
                               <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="postComment(item, cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                                  <a role="menuitem" ng-click="deleteComment(item, cmt)">Delete Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.state==12 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="closeComment(item, cmt)">Close Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-hide="cmt.commentType>1">
@@ -1864,9 +1870,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    <table style="min-width:500px;" ng-show="cmt.commentType>1">
                    <tr ng-repeat="resp in cmt.responses">
                        <td style="padding:5px;max-width:100px;">
-                           <b>{{resp.choice}}</b>
-                           <br/>
-                           {{resp.userName}}
+                           <div ng-show="cmt.commentType==2"><b>{{resp.choice}}</b></div>
+                           <div>{{resp.userName}}</div>
                        </td>
                        <td>
                          <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>'" ng-click="openResponseEditor(cmt)" style="cursor:pointer;">

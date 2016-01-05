@@ -118,7 +118,8 @@ public class UserCache {
     
     private void addPollIfNoResponse(JSONArray list, CommentRecord cr,
             UserProfile up, NGPage aPage, String address) throws Exception {
-        if (cr.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
+        if (cr.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE &&
+                cr.getState()==CommentRecord.COMMENT_STATE_OPEN) {
             ResponseRecord rr = cr.getResponse(up);
             if (rr==null) {
                 //add proposal info if there is no response from this user

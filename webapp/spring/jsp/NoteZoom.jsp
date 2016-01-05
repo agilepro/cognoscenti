@@ -148,6 +148,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         $scope.updateComment(cmt);
     }
+    $scope.deleteComment = function(cmt) {
+        cmt.deleteMe = true;
+        $scope.updateComment(cmt);
+    }
     $scope.closeComment = function(cmt) {
         cmt.state = 13;
         if (cmt.commentType>1) {
@@ -738,6 +742,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                   <a role="menuitem" ng-click="reopenComment(cmt)">Reopen Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="postComment(cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                                  <a role="menuitem" ng-click="deleteComment(cmt)">Delete Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.state==12 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="closeComment(cmt)">Close Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.state==13 && cmt.commentType>1">

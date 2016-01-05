@@ -239,6 +239,7 @@ app.controller('myCtrl', function($scope, $http) {
                         <td style="width: 20px;"></td>
                         <td><% ar.writeHtml(editUser); %></td>
                     </tr>
+<%}%>
                     <tr>
                         <td class="gridTableColummHeader">Linked Action Items:</td>
                         <td style="width: 20px;"></td>
@@ -266,7 +267,6 @@ app.controller('myCtrl', function($scope, $http) {
                             </span>
                         </td>
                     </tr>
-<%}%>
                 </table>
             </td>
         </tr>

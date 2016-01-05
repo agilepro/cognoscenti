@@ -258,6 +258,18 @@ public class CommentRecord extends DOMFace {
         setEmailSent(true);
     }
 
+    public String commentTypeName() {
+        switch (this.getCommentType()) {
+            case CommentRecord.COMMENT_TYPE_SIMPLE:
+                return "comment";
+            case CommentRecord.COMMENT_TYPE_PROPOSAL:
+                return "proposal";
+            case CommentRecord.COMMENT_TYPE_REQUEST:
+                return "question";
+        }
+        throw new RuntimeException("Program Logic Error: This comment type is missing a name: "+this.getCommentType());
+    }
+    
     private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
             UserProfile commenterProfile, MailFile mailFile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
@@ -271,20 +283,8 @@ public class CommentRecord extends DOMFace {
         clone.write("<html><body>");
 
         String topicAddress = ar.baseURL + noteOrMeet.getResourceURL(clone, ngp) + "#cmt" + getTime();
-        String emailSubject = "???";
-        String cmtType = "comment";
-        switch (this.getCommentType()) {
-            case CommentRecord.COMMENT_TYPE_SIMPLE:
-                emailSubject = noteOrMeet.emailSubject()+": NEW Comment";
-                break;
-            case CommentRecord.COMMENT_TYPE_PROPOSAL:
-                emailSubject = noteOrMeet.emailSubject()+": NEW Proposal";
-                cmtType = "proposal";
-                break;
-            case CommentRecord.COMMENT_TYPE_REQUEST:
-                emailSubject = noteOrMeet.emailSubject()+": NEW Question";
-                cmtType = "question";
-        }
+        String cmtType = commentTypeName();
+        String emailSubject =  noteOrMeet.emailSubject()+": NEW "+cmtType;
         AddressListEntry ale = commenterProfile.getAddressListEntry();
 
         clone.write("\n<p>From: ");

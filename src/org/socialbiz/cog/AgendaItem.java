@@ -139,6 +139,12 @@ public class AgendaItem extends DOMFace {
         newCR.setUser(ar.getUserProfile());
         return newCR;
     }
+    public void deleteComment(long timeStamp)  throws Exception {
+        CommentRecord selectedForDelete = findComment(timeStamp);
+        if (selectedForDelete!=null) {
+            this.removeChild(selectedForDelete);
+        }
+    }
 
     /**
      * This is the edit lock mechanism.  Before making a change the
@@ -256,37 +262,13 @@ public class AgendaItem extends DOMFace {
         if (input.has("presenters")) {
             setPresenters(constructVector(input.getJSONArray("presenters")));
         }
-        //TODO; this is not needed anymore
-        /*
-        if (input.has("newComment")) {
-            JSONObject newComment = input.getJSONObject("newComment");
-            CommentRecord cr = addComment(ar);
-            cr.updateFromJSON(newComment, ar);
-            if (newComment.has("replyTo")) {
-                long replyToValue = newComment.getLong("replyTo");
-                CommentRecord source = this.findComment(replyToValue);
-                if (source!=null) {
-                    source.addOneToReplies(cr.getTime());
-                }
-                else {
-                    System.out.println("did not find any comment with this time value: "+replyToValue);
-                }
-            }
-        }
-        */
         if (input.has("comments")) {
             JSONArray comments = input.getJSONArray("comments");
             for (int i=0; i<comments.length(); i++) {
                 JSONObject cmt = comments.getJSONObject(i);
                 long timeStamp = cmt.getLong("time");
                 //timeStamp of 0 or -1 means to create it
-                if (timeStamp>0) {
-                    CommentRecord cr = getComment(timeStamp);
-                    if (cr!=null) {
-                        cr.updateFromJSON(cmt, ar);
-                    }
-                }
-                else {
+                if (timeStamp<=0) {
                     CommentRecord cr = addComment(ar);
                     cr.updateFromJSON(cmt, ar);
                     if (cmt.has("replyTo")) {
@@ -298,6 +280,16 @@ public class AgendaItem extends DOMFace {
                         else {
                             System.out.println("New comment reply to time value, cannot find corresponding comment: "+replyToValue);
                         }
+                    }
+                }
+                else if (cmt.has("deleteMe")) {
+                    //a special flag in the comment indicates it should be removed
+                    deleteComment(timeStamp);
+                }
+                else {
+                    CommentRecord cr = getComment(timeStamp);
+                    if (cr!=null) {
+                        cr.updateFromJSON(cmt, ar);
                     }
                 }
             }

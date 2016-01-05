@@ -29,6 +29,9 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.proposalList = <%proposalList.write(out,2,4);%>;
+    $scope.proposalList.sort( function(a,b) {
+        return a.dueDate-b.dueDate;
+    });
     $scope.filterVal = "";
     $scope.filterPast = false;
     $scope.filterCurrent = true;

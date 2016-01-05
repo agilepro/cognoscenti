@@ -666,6 +666,12 @@ public class NoteRecord extends DOMFace implements EmailContext {
           newCR.setUser(ar.getUserProfile());
           return newCR;
       }
+      public void deleteComment(long timeStamp)  throws Exception {
+          CommentRecord selectedForDelete = findComment(timeStamp);
+          if (selectedForDelete!=null) {
+              this.removeChild(selectedForDelete);
+          }
+      }
 
 
       public List<String> getDocList() {
@@ -944,6 +950,10 @@ public class NoteRecord extends DOMFace implements EmailContext {
                  if (timeStamp <= 0) {
                      CommentRecord newComment = addComment(ar);
                      newComment.updateFromJSON(oneComment, ar);
+                 }
+                 else if (oneComment.has("deleteMe")) {
+                     //a special flag in the comment indicates it should be removed
+                     deleteComment(timeStamp);
                  }
                  else {
                      //find a comment matching this timeStamp and also the right user
