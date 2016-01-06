@@ -6,10 +6,9 @@ import java.util.List;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
-public class AgendaItem extends DOMFace {
+public class AgendaItem extends CommentContainer {
 
     public static final int STATUS_GOOD = 1;
     public static final int STATUS_MID  = 2;
@@ -25,7 +24,7 @@ public class AgendaItem extends DOMFace {
             clearLock();
         }
     }
-    
+
 
     public String getId()  throws Exception {
         return getAttribute("id");
@@ -72,7 +71,7 @@ public class AgendaItem extends DOMFace {
     public void setTopicLink(String newVal) throws Exception {
         setAttribute("topicLink", newVal);
     }
-    
+
     public String getNotes()  throws Exception {
         return getScalar("notes");
     }
@@ -122,29 +121,6 @@ public class AgendaItem extends DOMFace {
         setVector("presenters", newVal);
     }
 
-    public List<CommentRecord> getComments()  throws Exception {
-        return getChildren("comment", CommentRecord.class);
-    }
-    public CommentRecord getComment(long timeStamp)  throws Exception {
-        for (CommentRecord cr : getComments()) {
-            if (timeStamp == cr.getTime()) {
-                return cr;
-            }
-        }
-        return null;
-    }
-    public CommentRecord addComment(AuthRequest ar)  throws Exception {
-        CommentRecord newCR = createChild("comment", CommentRecord.class);
-        newCR.setTime(ar.nowTime);
-        newCR.setUser(ar.getUserProfile());
-        return newCR;
-    }
-    public void deleteComment(long timeStamp)  throws Exception {
-        CommentRecord selectedForDelete = findComment(timeStamp);
-        if (selectedForDelete!=null) {
-            this.removeChild(selectedForDelete);
-        }
-    }
 
     /**
      * This is the edit lock mechanism.  Before making a change the
@@ -184,7 +160,7 @@ public class AgendaItem extends DOMFace {
     }
 
     /**
-     * A small object suitable for lists of agenda items
+     * full JSON representation including all comments, etc.
      */
     public JSONObject getJSON(AuthRequest ar) throws Exception {
         JSONObject aiInfo = new JSONObject();
@@ -203,24 +179,13 @@ public class AgendaItem extends DOMFace {
         aiInfo.put("docList", constructJSONArray(getDocList()));
         aiInfo.put("presenters", constructJSONArray(getPresenters()));
 
-        JSONArray allCommentss = new JSONArray();
-        for (CommentRecord cr : getComments()) {
-            allCommentss.put(cr.getHtmlJSON(ar));
-        }
-        aiInfo.put("comments",  allCommentss);
+        addJSONComments(ar, aiInfo);
+
         AddressListEntry locker = getLockUser();
         if (locker!=null) {
             aiInfo.put("lockUser",  locker.getJSON());
         }
         return aiInfo;
-    }
-    private CommentRecord findComment(long timeStamp) throws Exception {
-        for (CommentRecord cr : this.getComments()) {
-            if (cr.getTime() == timeStamp) {
-                return cr;
-            }
-        }
-        return null;
     }
 
 
@@ -244,7 +209,7 @@ public class AgendaItem extends DOMFace {
         if (input.has("readyToGo")) {
             setReadyToGo(input.getBoolean("readyToGo"));
         }
-        
+
         if (input.has("notes")) {
             String html = input.getString("notes");
             setNotes(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
@@ -262,38 +227,9 @@ public class AgendaItem extends DOMFace {
         if (input.has("presenters")) {
             setPresenters(constructVector(input.getJSONArray("presenters")));
         }
-        if (input.has("comments")) {
-            JSONArray comments = input.getJSONArray("comments");
-            for (int i=0; i<comments.length(); i++) {
-                JSONObject cmt = comments.getJSONObject(i);
-                long timeStamp = cmt.getLong("time");
-                //timeStamp of 0 or -1 means to create it
-                if (timeStamp<=0) {
-                    CommentRecord cr = addComment(ar);
-                    cr.updateFromJSON(cmt, ar);
-                    if (cmt.has("replyTo")) {
-                        long replyToValue = cmt.getLong("replyTo");
-                        CommentRecord source = this.findComment(replyToValue);
-                        if (source!=null) {
-                            source.addOneToReplies(cr.getTime());
-                        }
-                        else {
-                            System.out.println("New comment reply to time value, cannot find corresponding comment: "+replyToValue);
-                        }
-                    }
-                }
-                else if (cmt.has("deleteMe")) {
-                    //a special flag in the comment indicates it should be removed
-                    deleteComment(timeStamp);
-                }
-                else {
-                    CommentRecord cr = getComment(timeStamp);
-                    if (cr!=null) {
-                        cr.updateFromJSON(cmt, ar);
-                    }
-                }
-            }
-        }
+
+        updateCommentsFromJSON(input, ar);
+
         if (input.has("setLock")) {
             AddressListEntry currentLocker = getLockUser();
             if (currentLocker==null) {

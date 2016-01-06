@@ -1044,7 +1044,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         newComment.userName = "<%ar.writeJS(currentUserName);%>";
         newComment.userKey = "<%ar.writeJS(currentUserKey);%>";
         if (replyTo) {
-            alert("Setting ReplyTo to : "+replyTo);
             newComment.replyTo = replyTo;
         }
         if (defaultBody) {

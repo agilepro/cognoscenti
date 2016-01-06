@@ -413,6 +413,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             cleanCmt.time = cmt.time;
             cleanCmt.html = returnedCmt.html;
             cleanCmt.state = returnedCmt.state;
+            cleanCmt.replyTo = returnedCmt.replyTo;
             cleanCmt.commentType = returnedCmt.commentType;
             $scope.updateComment(cleanCmt);
         }, function () {
@@ -836,7 +837,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
                            <i class="fa fa-star-o"></i> {{findComment(reply).userName}}</a> </span>
                    </div>
-                   <div ng-show="cmt.replies.length>0 && !cmt.commentType>1">
+                   <div ng-show="cmt.replies.length>0 && cmt.commentType==1">
                        See replies:
                        <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
                            <i class="fa fa-comments-o"></i> {{findComment(reply).userName}}</a> </span>

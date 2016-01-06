@@ -13,7 +13,7 @@ import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
 
 public class CommentRecord extends DOMFace {
-    
+
     public static final int COMMENT_TYPE_SIMPLE    = 1;
     public static final int COMMENT_TYPE_PROPOSAL  = 2;
     public static final int COMMENT_TYPE_REQUEST   = 3;
@@ -21,23 +21,39 @@ public class CommentRecord extends DOMFace {
     public static final int COMMENT_STATE_DRAFT   = 11;
     public static final int COMMENT_STATE_OPEN    = 12;
     public static final int COMMENT_STATE_CLOSED  = 13;
-    
+
 
     public CommentRecord(Document doc, Element ele, DOMFace p) {
-        super(doc, ele, p);       
+        super(doc, ele, p);
+
+        //a simple comment should never be 'open'.
+        //insure here that it goes to 'closed' state
+        //maybe this can be removed once all the existing simple comments are closed
+        if (getCommentType()==COMMENT_TYPE_SIMPLE  &&
+                getState()==COMMENT_STATE_OPEN) {
+            setState(COMMENT_STATE_CLOSED);
+        }
     }
-    
+
     public void schemaMigration() throws Exception {
         //schema migration before version 101 of NGWorkspace
         getEmailSent();
         getCommentType();
         //state added in version 101 of schema
         getState();
-        
+
         for (ResponseRecord rr : getResponses()) {
             //schema migration before version 101 of NGWorkspace
             rr.getEmailSent();
         }
+
+        //needed for version 101 schema ... a few comments got
+        //created incorrectly
+        if (getCommentType()==COMMENT_TYPE_SIMPLE  &&
+                getState()==COMMENT_STATE_OPEN) {
+            setState(COMMENT_STATE_CLOSED);
+        }
+
     }
 
     public String getContent() {
@@ -52,7 +68,7 @@ public class CommentRecord extends DOMFace {
     public void setContentHtml(AuthRequest ar, String newHtml) throws Exception {
         setContent(HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
     }
-    
+
     /**
      * The 'outcome' is the result of a question, or a quick response round
      */
@@ -74,8 +90,8 @@ public class CommentRecord extends DOMFace {
         int ct =  getAttributeInt("commentType");
         if (ct<=0) {
             //schema migration from BEFORE schema version 101
-            //old attribute was boolean "poll" where true was a 
-            //proposal, and false was a simple comment.  This is 
+            //old attribute was boolean "poll" where true was a
+            //proposal, and false was a simple comment.  This is
             //replaced by the commentType which has three or more
             //values.
             if ("true".equals(getAttribute("poll"))) {
@@ -92,7 +108,7 @@ public class CommentRecord extends DOMFace {
     public void setCommentType(int newVal) {
         setAttributeInt("commentType", newVal);
     }
-    
+
     public long getTime() {
         return getAttributeLong("time");
     }
@@ -102,7 +118,7 @@ public class CommentRecord extends DOMFace {
 
     public int getState() {
         int state = getAttributeInt("state");
-        
+
         //schema migration from BEFORE version 101
         if (state<COMMENT_STATE_DRAFT || state > COMMENT_STATE_CLOSED) {
             if (getCommentType() == COMMENT_TYPE_SIMPLE) {
@@ -182,6 +198,18 @@ public class CommentRecord extends DOMFace {
         setScalar("replyTo", replyVal);
     }
 
+    /**
+     * This is the duration (in minutes) that the question or
+     * proposal should be 'open' before automatically closing.
+     * @return
+     */
+    public int getDuration() {
+        return getAttributeInt("duration");
+    }
+    public void setDuration(int replyVal) {
+        setAttributeInt("duration", replyVal);
+    }
+
     public String getDecision() {
         return getScalar("decision");
     }
@@ -199,7 +227,26 @@ public class CommentRecord extends DOMFace {
     }
     public void addOneToReplies(long replyValue) {
         String val = Long.toString(replyValue);
+        for (Long aReply : getReplies()) {
+            if (aReply.longValue()==replyValue) {
+                //found it already there, nothing more to do
+                return;
+            }
+        }
+        //if we get here we did not find anything, so go ahead and add it
         addVectorValue("replies", val);
+    }
+    public void removeFromReplies(long replyValue) {
+        String foundVal = null;
+        for(String val : getVector("replies")) {
+            long longVal = safeConvertLong(val);
+            if (longVal == replyValue) {
+                foundVal = val;
+            }
+        }
+        if (foundVal!=null) {
+            removeVectorValue("replies", foundVal);
+        }
     }
     public void setReplies(List<Long> replies) {
         setVectorLong("replies", replies);
@@ -269,7 +316,7 @@ public class CommentRecord extends DOMFace {
         }
         throw new RuntimeException("Program Logic Error: This comment type is missing a name: "+this.getCommentType());
     }
-    
+
     private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
             UserProfile commenterProfile, MailFile mailFile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
@@ -353,6 +400,8 @@ public class CommentRecord extends DOMFace {
     public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
         UserRef owner = getUser();
         UserProfile user = ar.getUserProfile();
+        boolean wasDraft = getState()==COMMENT_STATE_DRAFT;
+
         //only update the comment if that user is the one logged in
         if (user.equals(owner)) {
             if (input.has("html")) {
@@ -399,6 +448,18 @@ public class CommentRecord extends DOMFace {
         }
         if (input.has("decision")) {
             setDecision(input.getString("decision"));
+        }
+
+        //A simple comment should never be "open", only draft or closed, so assure that here
+        if (getCommentType()==COMMENT_TYPE_SIMPLE  &&
+                getState()==COMMENT_STATE_OPEN) {
+            setState(COMMENT_STATE_CLOSED);
+        }
+        boolean isNowDraft = getState()==COMMENT_STATE_DRAFT;
+        if (wasDraft && !isNowDraft) {
+            //this is the key transition that starts everything going
+            //the related reply back-pointer and the timeout is set
+            //int openDuration =
         }
     }
 

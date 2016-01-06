@@ -41,7 +41,7 @@ import org.workcast.streams.MemFile;
 * Leaflet is the old term for this, we prefer the term Topic now everywhere.
 * (Used to be called LeafletRecord, but name changed March 2013)
 */
-public class NoteRecord extends DOMFace implements EmailContext {
+public class NoteRecord extends CommentContainer implements EmailContext {
 
     //This is actually one week before the server started, and is used mainly in the
     //startup methods for an arbitrary time long enough ago that automated notifications
@@ -61,6 +61,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
         }
     }
 
+    /*
     public void copyFrom(NoteRecord other) {
         setOwner(other.getOwner());
         setLastEdited(other.getLastEdited());
@@ -72,6 +73,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
         setTags(other.getTags());
         setChoices(other.getChoices());
     }
+    */
 
     public String getId()
     {
@@ -649,31 +651,6 @@ public class NoteRecord extends DOMFace implements EmailContext {
           setWiki(wikiText);
       }
 
-      public List<CommentRecord> getComments()  throws Exception {
-          return getChildren("comment", CommentRecord.class);
-      }
-      public CommentRecord findComment(long timestamp)  throws Exception {
-          for (CommentRecord cr : getComments()) {
-              if (cr.getTime() == timestamp) {
-                  return cr;
-              }
-          }
-          return null;
-      }
-      public CommentRecord addComment(AuthRequest ar)  throws Exception {
-          CommentRecord newCR = createChild("comment", CommentRecord.class);
-          newCR.setTime(ar.nowTime);
-          newCR.setUser(ar.getUserProfile());
-          return newCR;
-      }
-      public void deleteComment(long timeStamp)  throws Exception {
-          CommentRecord selectedForDelete = findComment(timeStamp);
-          if (selectedForDelete!=null) {
-              this.removeChild(selectedForDelete);
-          }
-      }
-
-
       public List<String> getDocList() {
           return getVector("docList");
       }
@@ -861,18 +838,7 @@ public class NoteRecord extends DOMFace implements EmailContext {
      }
      public JSONObject getJSONWithComments(AuthRequest ar) throws Exception {
          JSONObject noteData = getJSONWithHtml(ar);
-         JSONArray allCommentss = new JSONArray();
-         UserProfile thisUser = ar.getUserProfile();
-         for (CommentRecord cr : getComments()) {
-             if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT
-                   && (thisUser==null
-                      || !thisUser.hasAnyId(cr.getUser().getEmail()))) {
-                 //skip draft email from other people
-                 continue;
-             }
-             allCommentss.put(cr.getHtmlJSON(ar));
-         }
-         noteData.put("comments",  allCommentss);
+         addJSONComments(ar, noteData);
          return noteData;
      }
 
@@ -939,32 +905,9 @@ public class NoteRecord extends DOMFace implements EmailContext {
          if (noteObj.has("data")) {
              setWiki(noteObj.getString("data"));
          }
-         //if there is a comments, then IF the creator of the comment is the currently
-         //logged in user, and the timestamps match, then update the html part
-         //a timeStamp -1 means it is new.
-         if (noteObj.has("comments")) {
-             JSONArray allComments = noteObj.getJSONArray("comments");
-             for (int i=0; i<allComments.length(); i++) {
-                 JSONObject oneComment = allComments.getJSONObject(i);
-                 long timeStamp = oneComment.getLong("time");
-                 if (timeStamp <= 0) {
-                     CommentRecord newComment = addComment(ar);
-                     newComment.updateFromJSON(oneComment, ar);
-                 }
-                 else if (oneComment.has("deleteMe")) {
-                     //a special flag in the comment indicates it should be removed
-                     deleteComment(timeStamp);
-                 }
-                 else {
-                     //find a comment matching this timeStamp and also the right user
-                     for (CommentRecord existComm : getComments()) {
-                         if (timeStamp == existComm.getTime()) {
-                             existComm.updateFromJSON(oneComment, ar);
-                         }
-                     }
-                 }
-             }
-         }
+
+         updateCommentsFromJSON(noteObj, ar);
+
          if (noteObj.has("docList")) {
              setDocList(constructVector(noteObj.getJSONArray("docList")));
          }
