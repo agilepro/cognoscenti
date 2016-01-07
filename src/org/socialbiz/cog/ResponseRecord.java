@@ -120,8 +120,14 @@ public class ResponseRecord extends DOMFace
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
             CommentRecord cr, UserProfile commenterProfile, MailFile mailFile) throws Exception  {
+        
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
+        }
+
+        UserProfile toProfile = UserManager.findUserByAnyId(ooa.getEmail());
+        if (toProfile!=null) {
+            ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
         }
 
         MemFile body = new MemFile();

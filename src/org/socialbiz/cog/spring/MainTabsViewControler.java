@@ -338,16 +338,19 @@ public class MainTabsViewControler extends BaseController {
              JSONObject noteInfo = getPostedObject(ar);
              NoteRecord note = ngp.getNote(nid);
 
-             boolean isCreateComment = noteInfo.has("newComment");
-             if (isCreateComment) {
-                 JSONObject newComment = noteInfo.getJSONObject("newComment");
-                 String comment = newComment.getString("html");
-                 comment = GetFirstHundredNoHtml(comment);
-                 HistoryRecord.createHistoryRecord(ngp, note.getId(),
-                         HistoryRecord.CONTEXT_TYPE_LEAFLET,
-                         HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
-             }
-
+             if (noteInfo.has("comments")) {
+                 JSONArray commentsToUpdate = noteInfo.getJSONArray("comments");
+                 int numCmts = commentsToUpdate.length();
+                 for (int i=0; i<numCmts; i++) {
+                     JSONObject aCmt = commentsToUpdate.getJSONObject(i);
+                     if (aCmt.getLong("time")<=0) {
+                         String comment = GetFirstHundredNoHtml(aCmt.getString("html"));
+                         HistoryRecord.createHistoryRecord(ngp, note.getId(),
+                                 HistoryRecord.CONTEXT_TYPE_LEAFLET,
+                                 HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
+                     }
+                 }
+             };
 
              note.updateNoteFromJSON(noteInfo, ar);
 

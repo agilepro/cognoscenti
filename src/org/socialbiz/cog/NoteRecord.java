@@ -30,7 +30,6 @@ import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
 
@@ -114,18 +113,6 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     public void setLastEdited(long newCreated)
     {
         setScalar("created", Long.toString(newCreated));
-    }
-
-    @Deprecated
-    public String getLastEditedBy()
-    {
-         return getScalar("modifiedby");
-    }
-
-    @Deprecated
-    public void setLastEditedBy(String newModifier)
-    {
-        setScalar("modifiedby", newModifier);
     }
 
     public UserRef getModUser() {
