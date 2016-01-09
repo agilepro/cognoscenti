@@ -144,12 +144,17 @@ public class OptOutAddr {
      */
     public static void appendUsersFromRole(NGContainer ngc, String roleName,
             List<OptOutAddr> collector) throws Exception {
-        List<AddressListEntry> players = ngc.getRoleOrFail(roleName)
-                .getExpandedPlayers(ngc);
-        for (AddressListEntry ale : players) {
-            OptOutAddr.appendOneUser(new OptOutRolePlayer(ale, ngc.getKey(), roleName),
-                    collector);
-        }
+		try {
+			List<AddressListEntry> players = ngc.getRoleOrFail(roleName)
+					.getExpandedPlayers(ngc);
+			for (AddressListEntry ale : players) {
+				OptOutAddr.appendOneUser(new OptOutRolePlayer(ale, ngc.getKey(), roleName),
+						collector);
+			}
+		}
+		catch (Exception e) {
+			throw new Exception("Unable to append users from the role ("+roleName+") on project ("+ngc.getFullName()+")");
+		}
     }
 
 
