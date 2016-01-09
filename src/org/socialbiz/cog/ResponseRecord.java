@@ -137,14 +137,15 @@ public class ResponseRecord extends DOMFace
         clone.write("<html><body>");
 
         String topicAddress = ar.baseURL + noteOrMeet.getResourceURL(clone, ngp) + "#cmt" + cr.getTime();
-        String emailSubject = "??";
+        String detailMsg = "??";
         switch (cr.getCommentType()) {
             case CommentRecord.COMMENT_TYPE_PROPOSAL:
-                emailSubject = noteOrMeet.emailSubject()+": proposal response ("+getChoice()+")";
+                detailMsg = "proposal response ("+getChoice()+")";
             case CommentRecord.COMMENT_TYPE_REQUEST:
-                emailSubject = noteOrMeet.emailSubject()+": answer for question";
+                detailMsg = "answer for question";
         }
-        
+        String emailSubject =  noteOrMeet.emailSubject()+": "+detailMsg;
+
         AddressListEntry ale = commenterProfile.getAddressListEntry();
 
         clone.write("\n<p>From: ");
@@ -153,7 +154,7 @@ public class ResponseRecord extends DOMFace
         ngp.writeContainerLink(clone, 40);
         clone.write("\n<br/>\nProposal <b>");
         clone.writeHtml(getChoice());
-        clone.write("</b> response on a proposal on topic <a href=\"");
+        clone.write("</b> "+detailMsg+" on topic <a href=\"");
         clone.write(topicAddress);
         clone.write("\">");
         clone.writeHtml(noteOrMeet.emailSubject());
@@ -161,7 +162,7 @@ public class ResponseRecord extends DOMFace
 
         clone.write(this.getHtml(ar));
 
-        clone.write("<hr/>\nIn Response to the Proposal: <br/>");
+        clone.write("<hr/>\nIn Response to: <br/>");
         clone.write("\n<div style=\"color:#A9A9A9\">");
         clone.write(cr.getContentHtml(ar));
         clone.write("\n</div>");

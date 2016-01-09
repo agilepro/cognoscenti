@@ -148,12 +148,15 @@ public class OptOutAddr {
 			List<AddressListEntry> players = ngc.getRoleOrFail(roleName)
 					.getExpandedPlayers(ngc);
 			for (AddressListEntry ale : players) {
-				OptOutAddr.appendOneUser(new OptOutRolePlayer(ale, ngc.getKey(), roleName),
-						collector);
+			    String email = ale.getEmail();
+			    if (email!=null && email.length()>0) {
+    				OptOutAddr.appendOneUser(new OptOutRolePlayer(ale, ngc.getKey(), roleName),
+    						collector);
+			    }
 			}
 		}
 		catch (Exception e) {
-			throw new Exception("Unable to append users from the role ("+roleName+") on project ("+ngc.getFullName()+")");
+			throw new Exception("Unable to append users from the role ("+roleName+") in workspace ("+ngc.getFullName()+")",e);
 		}
     }
 
