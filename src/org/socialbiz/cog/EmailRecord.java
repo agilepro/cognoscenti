@@ -224,18 +224,18 @@ public class EmailRecord extends DOMFace
      * Read attachments into cache so that all the information to send
      * a file is held in memory and there is no chance for failure.
      */
-    public void prepareForSending(NGContainer ngc) throws Exception {
+    public void prepareForSending(NGWorkspace ngw) throws Exception {
         attachmentContents = new Hashtable<String, MemFile>();
         attachmentPaths = new Hashtable<String, File>();
 
         for (String oneId : getAttachmentIds()) {
 
-            AttachmentRecord attach = ngc.findAttachmentByID(oneId);
+            AttachmentRecord attach = ngw.findAttachmentByID(oneId);
             if (attach==null) {
                 //attachments might get removed in the mean time, just ignore them
                 continue;
             }
-            AttachmentVersion aVer = attach.getLatestVersion(ngc);
+            AttachmentVersion aVer = attach.getLatestVersion(ngw);
             if (aVer==null) {
                 continue;
             }

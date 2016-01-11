@@ -88,21 +88,21 @@ public interface NGContainer
     * An attachment is a document attached to a project (NGPage), a site (NGBook)
     * or a user (UserPage)
     */
-    public List<AttachmentRecord> getAllAttachments() throws Exception;
+    //public List<AttachmentRecord> getAllAttachments() throws Exception;
 
-    public AttachmentRecord findAttachmentByName(String name) throws Exception;
+    //public AttachmentRecord findAttachmentByName(String name) throws Exception;
 
-    public AttachmentRecord findAttachmentByNameOrFail(String name) throws Exception;
+    //public AttachmentRecord findAttachmentByNameOrFail(String name) throws Exception;
 
-    public AttachmentRecord findAttachmentByID(String id) throws Exception;
+    //public AttachmentRecord findAttachmentByID(String id) throws Exception;
 
-    public AttachmentRecord findAttachmentByIDOrFail(String id) throws Exception;
+    //public AttachmentRecord findAttachmentByIDOrFail(String id) throws Exception;
 
-    public AttachmentRecord createAttachment() throws Exception;
+    //public AttachmentRecord createAttachment() throws Exception;
 
-    public void deleteAttachment(String id,AuthRequest ar) throws Exception;
-    public void unDeleteAttachment(String id) throws Exception;
-    public void eraseAttachmentRecord(String id) throws Exception;
+    //public void deleteAttachment(String id,AuthRequest ar) throws Exception;
+    //public void unDeleteAttachment(String id) throws Exception;
+    //public void eraseAttachmentRecord(String id) throws Exception;
 
     /**
      * This is effectively the "empty trashcan" operation.  Documents that

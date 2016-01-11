@@ -5,12 +5,12 @@
 %><%
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngp);
+    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngw);
     ar.assertMember("Must be a member to see meetings");
-    NGBook ngb = ngp.getSite();
+    NGBook ngb = ngw.getSite();
 
-    JSONArray eGenList = ngp.getJSONEmailGenerators(ar);
+    JSONArray eGenList = ngw.getJSONEmailGenerators(ar);
 
 
 

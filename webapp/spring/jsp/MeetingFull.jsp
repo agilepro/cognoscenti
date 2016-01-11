@@ -7,35 +7,35 @@
     ar.assertLoggedIn("Must be logged in to see anything about a meeting");
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngp);
-    NGBook ngb = ngp.getSite();
+    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngw);
+    NGBook ngb = ngw.getSite();
     UserProfile uProf = ar.getUserProfile();
     String currentUser = uProf.getUniversalId();
     String currentUserName = uProf.getName();
     String currentUserKey = uProf.getKey();
 
     String meetId          = ar.reqParam("id");
-    MeetingRecord mRec     = ngp.findMeeting(meetId);
+    MeetingRecord mRec     = ngw.findMeeting(meetId);
     String targetRole = mRec.getTargetRole();
     if (targetRole==null || targetRole.length()==0) {
-        mRec.setTargetRole(ngp.getPrimaryRole().getName());
+        mRec.setTargetRole(ngw.getPrimaryRole().getName());
     }
-    JSONObject meetingInfo = mRec.getFullJSON(ar, ngp);
-    JSONArray attachmentList = ngp.getJSONAttachments(ar);
-    JSONArray allGoals     = ngp.getJSONGoals();
+    JSONObject meetingInfo = mRec.getFullJSON(ar, ngw);
+    JSONArray attachmentList = ngw.getJSONAttachments(ar);
+    JSONArray allGoals     = ngw.getJSONGoals();
 
     JSONArray allRoles = new JSONArray();
-    for (NGRole aRole : ngp.getAllRoles()) {
+    for (NGRole aRole : ngw.getAllRoles()) {
         allRoles.put(aRole.getName());
     }
 
     JSONArray allTopics = new JSONArray();
-    for (NoteRecord aNote : ngp.getAllNotes()) {
-        allTopics.put(aNote.getJSON(ngp));
+    for (NoteRecord aNote : ngw.getAllNotes()) {
+        allTopics.put(aNote.getJSON(ngw));
     }
 
-    JSONArray allLabels = ngp.getJSONLabels();
+    JSONArray allLabels = ngw.getJSONLabels();
 
     JSONArray allPeople = UserManager.getUniqueUsersJSON();
 
@@ -1560,19 +1560,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    <span class="caret"></span>
                </button>
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-                  <li role="presentation" >
+                  <li role="presentation">
                       <a role="menuitem" ng-click="toggleEditor(2,item.id)"><i class="fa fa-cogs"></i> Item Settings</a></li>
-                  <li role="presentation" >
+                  <li role="presentation">
                       <a role="menuitem" ng-click="startEdit(item)"><i class="fa fa-pencil-square-o"></i> Edit Description</a></li>
-                  <li role="presentation"  ng-hide="item.topicLink">
+                  <li role="presentation">
                       <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i> Attach Docs</a></li>
-                  <li role="presentation" ng-hide="item.topicLink">
+                  <li role="presentation">
                       <a role="menuitem" ng-click="toggleEditor(4,item.id)" ><i class="fa fa-flag-o"></i> Create Action Item</a></li>
-                  <li role="presentation" ng-hide="item.topicLink">
+                  <li role="presentation">
                       <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i> Attach Action Items</a></li>
-                  <li role="presentation" >
+                  <li role="presentation">
                       <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i> Toggle Ready Flag</a></li>
-                  <li role="presentation" >
+                  <li role="presentation">
                       <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i> Set Discussion Topic</a></li>
 
                </ul>
@@ -1665,7 +1665,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
            </div>
         </td>
       </tr>
-      <tr ng-show="showItemMap[item.id] && !item.topicLink">
+      <tr ng-show="showItemMap[item.id]">
         <td>
            <div style="margin:10px;">
               <b>Attachments: </b>
@@ -1920,7 +1920,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       <tr>
         <td></td>
         <td>
-        <div ng-hide="item.topicLink" style="margin:20px;">
+        <div style="margin:20px;">
             <button ng-click="openCommentCreator(item, 1)" class="btn btn-default">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
             <button ng-click="openCommentCreator(item, 2)" class="btn btn-default">

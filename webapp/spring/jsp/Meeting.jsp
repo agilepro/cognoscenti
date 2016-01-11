@@ -6,29 +6,29 @@
 
 
     String pageId = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngp);
+    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngw);
     ar.assertMember("Must be a member to see meetings");
-    NGBook ngb = ngp.getSite();
+    NGBook ngb = ngw.getSite();
     String meetId          = ar.reqParam("id");
-    MeetingRecord oneRef   = ngp.findMeeting(meetId);
-    JSONObject meetingInfo = oneRef.getFullJSON(ar, ngp);
-    JSONArray attachmentList = ngp.getJSONAttachments(ar);
+    MeetingRecord oneRef   = ngw.findMeeting(meetId);
+    JSONObject meetingInfo = oneRef.getFullJSON(ar, ngw);
+    JSONArray attachmentList = ngw.getJSONAttachments(ar);
 
     String minutesId = oneRef.getMinutesId();
     if (minutesId!=null) {
-        NoteRecord  nr = ngp.getNoteByUidOrNull(minutesId);
+        NoteRecord  nr = ngw.getNoteByUidOrNull(minutesId);
         if (nr==null) {
             //schema migration to move to universal id
-            nr = ngp.getNote(minutesId);
+            nr = ngw.getNote(minutesId);
         }
         if (nr!=null) {
             meetingInfo.put("minutesLocalId", nr.getId());
         }
     }
 
-    JSONObject backlogInfo = ngp.getAgendaItemBacklog().getFullJSON(ar, ngp);
-    JSONArray goalList = ngp.getJSONGoals();
+    JSONObject backlogInfo = ngw.getAgendaItemBacklog().getFullJSON(ar, ngw);
+    JSONArray goalList = ngw.getJSONGoals();
 
 %>
 

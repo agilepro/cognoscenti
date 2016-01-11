@@ -33,10 +33,10 @@ import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.IdGenerator;
 import org.socialbiz.cog.License;
 import org.socialbiz.cog.LicensedURL;
-import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGSection;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.NoteRecord;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.SectionAttachments;
@@ -497,9 +497,9 @@ public class ResourceSection  implements NGResource
     {
         Element sec_attchments = DOMUtils.createChildElement(loutdoc, element_sec, "attachments");
 
-        NGContainer ngc = ngs.parent;
+        NGWorkspace ngw = (NGWorkspace) ngs.parent;
 
-        List<AttachmentRecord> allAtts = ngc.getAllAttachments();
+        List<AttachmentRecord> allAtts = ngw.getAllAttachments();
 
         for (AttachmentRecord arec : allAtts) {
 
@@ -522,10 +522,10 @@ public class ResourceSection  implements NGResource
             sec_attchment.setAttribute("id", id);
 
             //TODO: temporary just get the very first license in the list ... do better later
-            NGPage ngp = (NGPage)ngc;
+            NGPage ngp = (NGPage)ngw;
             License lr = ngp.getLicenses().get(0);
 
-            String permaLink = arec.getLicensedAccessURL(lar, (NGPage)ngc, lr.getId());
+            String permaLink = arec.getLicensedAccessURL(lar, (NGPage)ngw, lr.getId());
             DOMUtils.createChildElement(loutdoc, sec_attchment, "address", permaLink);
 
             DOMUtils.createChildElement(loutdoc, sec_attchment, "universalid", arec.getUniversalId());
@@ -533,7 +533,7 @@ public class ResourceSection  implements NGResource
             DOMUtils.createChildElement(loutdoc, sec_attchment, "name", arec.getNiceName());
 
             if ("FILE".equals(attachmentType)) {
-                String size = Long.toString(arec.getFileSize(ngc));
+                String size = Long.toString(arec.getFileSize(ngw));
                 DOMUtils.createChildElement(loutdoc, sec_attchment, "size", size);
             }
 

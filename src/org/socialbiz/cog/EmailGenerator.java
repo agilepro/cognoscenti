@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
-import org.socialbiz.cog.spring.NGWebUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
@@ -293,7 +292,7 @@ public class EmailGenerator extends DOMFace {
     }
 
 
-    public void constructEmailRecords(AuthRequest ar, NGPage ngp, MailFile mailFile) throws Exception {
+    public void constructEmailRecords(AuthRequest ar, NGWorkspace ngp, MailFile mailFile) throws Exception {
         List<OptOutAddr> sendTo = expandAddresses(ar, ngp);
         NoteRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
 
@@ -314,7 +313,7 @@ public class EmailGenerator extends DOMFace {
         setSendDate(ar.nowTime);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord noteRec, OptOutAddr ooa, MailFile mailFile)
+    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, NoteRecord noteRec, OptOutAddr ooa, MailFile mailFile)
             throws Exception  {
         String userAddress = ooa.getEmail();
         if (userAddress==null || userAddress.length()==0) {
@@ -335,7 +334,8 @@ public class EmailGenerator extends DOMFace {
 
         //if you really want the files attached to the email message, then include a list of
         //their attachment ids here
-        List<AttachmentRecord> attachList = NGWebUtils.getSelectedAttachments(ar, ngp);
+        //TODO: remove the reference to a class is spring module
+        List<AttachmentRecord> attachList = getSelectedAttachments(ar, ngp);
         List<String> attachIds = new ArrayList<String>();
         for (String attId : getAttachments()) {
             AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(attId);
@@ -371,6 +371,21 @@ public class EmailGenerator extends DOMFace {
         mailFile.createEmailWithAttachments(ngp, getFrom(), ooa.getEmail(), getSubject(), bodyChunk.toString(), attachIds);
     }
 
+    
+    private static List<AttachmentRecord> getSelectedAttachments(AuthRequest ar,
+            NGWorkspace ngw) throws Exception {
+        List<AttachmentRecord> res = new ArrayList<AttachmentRecord>();
+        for (AttachmentRecord att : ngw.getAllAttachments()) {
+            String paramId = "attach" + att.getId();
+            if (ar.defParam(paramId, null) != null) {
+                res.add(att);
+            }
+        }
+        return res;
+    }
+
+    
+    
     //TODO: change this to use a TEMPLATE approach, when loops are allowed
     public static void writeNoteAttachmentEmailBody(AuthRequest ar,
             NGPage ngp, NoteRecord selectedNote,
@@ -477,7 +492,7 @@ public class EmailGenerator extends DOMFace {
     }
 
 
-    public JSONObject getJSON(AuthRequest ar, NGPage ngp) throws Exception {
+    public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw) throws Exception {
         JSONObject obj = new JSONObject();
         obj.put("id", getId());
         obj.put("from", getFrom());
@@ -496,7 +511,7 @@ public class EmailGenerator extends DOMFace {
 
         JSONArray attachmentInfo = new JSONArray();
         for (String attId : getAttachments()) {
-            AttachmentRecord atRec = ngp.findAttachmentByUidOrNull(attId);
+            AttachmentRecord atRec = ngw.findAttachmentByUidOrNull(attId);
             if (atRec!=null) {
                 attachmentInfo.put(atRec.getUniversalId());
             }
@@ -505,16 +520,16 @@ public class EmailGenerator extends DOMFace {
 
         String noteId = getNoteId();
         if (noteId!=null && noteId.length()>0) {
-            NoteRecord nr = ngp.getNoteByUidOrNull(noteId);
+            NoteRecord nr = ngw.getNoteByUidOrNull(noteId);
             if (nr!=null) {
-                obj.put("noteInfo", nr.getJSONWithWiki(ngp));
+                obj.put("noteInfo", nr.getJSONWithWiki(ngw));
             }
         }
         String meetingId = getMeetingId();
         if (meetingId!=null && meetingId.length()>0) {
-            MeetingRecord meet = ngp.findMeetingOrNull(meetingId);
+            MeetingRecord meet = ngw.findMeetingOrNull(meetingId);
             if (meet!=null) {
-                obj.put("meetingInfo", meet.getFullJSON(ar, ngp));
+                obj.put("meetingInfo", meet.getFullJSON(ar, ngw));
             }
         }
 
@@ -574,20 +589,20 @@ public class EmailGenerator extends DOMFace {
         }
     }
 
-    public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
+    public void gatherUnsentScheduledNotification(NGWorkspace ngw, ArrayList<ScheduledNotification> resList) throws Exception {
         if (getState()==EG_STATE_SCHEDULED) {
-            EGScheduledNotification sn = new EGScheduledNotification(ngp, this);
+            EGScheduledNotification sn = new EGScheduledNotification(ngw, this);
             resList.add(sn);
         }
     }
 
 
     private class EGScheduledNotification implements ScheduledNotification {
-        NGPage ngp;
-        EmailGenerator eg;
+        private NGWorkspace ngw;
+        private EmailGenerator eg;
 
-        public EGScheduledNotification( NGPage _ngp, EmailGenerator _eg) {
-            ngp  = _ngp;
+        public EGScheduledNotification( NGWorkspace _ngp, EmailGenerator _eg) {
+            ngw  = _ngp;
             eg = _eg;
         }
         public boolean needsSending() throws Exception {
@@ -599,7 +614,7 @@ public class EmailGenerator extends DOMFace {
         }
 
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
-            eg.constructEmailRecords(ar, ngp, mailFile);
+            eg.constructEmailRecords(ar, ngw, mailFile);
         }
 
         public String selfDescription() throws Exception {

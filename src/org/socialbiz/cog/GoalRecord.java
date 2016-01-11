@@ -126,19 +126,6 @@ public class GoalRecord extends BaseRecord {
         return sub;
     }
 
-    public int getState() throws Exception {
-        String stateVal = getScalar("state");
-        return safeConvertInt(stateVal);
-    }
-
-    public void setState(int newVal) throws Exception {
-        int prevState = getState();
-        setScalar("state", Integer.toString(newVal));
-        if (prevState != newVal) {
-            handleStateChangeEvent(getProject());
-        }
-    }
-
     public void setStateAndAct(int newVal, AuthRequest ar) throws Exception {
         int prevState = getState();
         if (newVal==prevState) {
@@ -176,17 +163,18 @@ public class GoalRecord extends BaseRecord {
         setState(newVal);
     }
 
-    private void handleStateChangeEvent(NGPage ngp) throws Exception {
+    protected void handleStateChangeEvent() throws Exception {
 
-        if (ngp == null) {
+        NGWorkspace ngw = getProject();
+        if (ngw == null) {
             throw new ProgramLogicError(
                     "handleStateChangeEvent needs a NGPage parameter");
         }
 
-        List<GoalRecord> goalList = ngp.getAllGoals();
+        List<GoalRecord> goalList = ngw.getAllGoals();
         if (goalList == null || goalList.size() == 0) {
             throw new ProgramLogicError(
-                    "Unable to find any action items on the workspace : " + ngp.getKey());
+                    "Unable to find any action items on the workspace : " + ngw.getKey());
         }
 
         int state = getState();
@@ -213,7 +201,7 @@ public class GoalRecord extends BaseRecord {
         startTheNextTask(goalList);
 
         // update the state of the process.
-        ProcessRecord process = ngp.getProcess();
+        ProcessRecord process = ngw.getProcess();
         process.updateStatusFromGoals(goalList);
     }
 
@@ -591,8 +579,8 @@ public class GoalRecord extends BaseRecord {
 
     // /////////////// DEPRECATED METHODS ////////////////////
 
-    public NGPage getProject() {
-        return ((NGSection) getParent()).parent;
+    public NGWorkspace getProject() {
+        return (NGWorkspace) ((NGSection) getParent()).parent;
     }
 
     /**

@@ -8,13 +8,13 @@
     ar.assertLoggedIn("Must be logged in to see anything about a user");
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngp);
-    NGBook ngb = ngp.getSite();
+    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngw);
+    NGBook ngb = ngw.getSite();
 
     String meetId          = ar.reqParam("id");
-    MeetingRecord oneRef   = ngp.findMeeting(meetId);
-    JSONObject meetingInfo = oneRef.getFullJSON(ar, ngp);
+    MeetingRecord oneRef   = ngw.findMeeting(meetId);
+    JSONObject meetingInfo = oneRef.getFullJSON(ar, ngw);
 
 %>
 <style>

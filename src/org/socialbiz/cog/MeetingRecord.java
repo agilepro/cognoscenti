@@ -265,16 +265,16 @@ public class MeetingRecord extends DOMFace implements EmailContext {
      * @return
      * @throws Exception
      */
-    public JSONObject getFullJSON(AuthRequest ar, NGPage ngp) throws Exception {
+    public JSONObject getFullJSON(AuthRequest ar, NGWorkspace ngw) throws Exception {
         JSONObject meetingInfo = getListableJSON(ar);
         JSONArray aiArray = new JSONArray();
         for (AgendaItem ai : getAgendaItems()) {
-            aiArray.put(ai.getJSON(ar));
+            aiArray.put(ai.getJSON(ar, ngw, this));
         }
         meetingInfo.put("agenda", aiArray);
         String mid = getMinutesId();
         if (mid!=null && mid.length()>0) {
-            NoteRecord  nr = ngp.getNoteByUidOrNull(mid);
+            NoteRecord  nr = ngw.getNoteByUidOrNull(mid);
             if (nr!=null) {
                 meetingInfo.put("minutesId",      mid);
                 meetingInfo.put("minutesLocalId", nr.getId());
@@ -363,7 +363,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
      * If the id is "~new~" if will create an agenda item.
      * This is most useful to change the order of the items.
      */
-    public void updateAgendaFromJSON(JSONObject input, AuthRequest ar, NGPage ngp) throws Exception {
+    public void updateAgendaFromJSON(JSONObject input, AuthRequest ar, NGWorkspace ngw) throws Exception {
         JSONArray agenda = input.optJSONArray("agenda");
         if (agenda==null) {
             return;
@@ -377,13 +377,13 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             }
             AgendaItem ai = null;
             if ("~new~".equals(aid)) {
-                ai = createAgendaItem(ngp);
+                ai = createAgendaItem(ngw);
             }
             else {
                 ai = findAgendaItem(aid);
             }
             if (ai!=null) {
-                ai.updateFromJSON(ar,aiobj);
+                ai.updateFromJSON(ar,aiobj,ngw);
             }
         }
         renumberItems();  //sort & fix any numbering problems
@@ -393,7 +393,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
      * This takes a meeting JSONObject, the agenda portion
      * and it create new cloned agenda items for each in the array.
      */
-    public void createAgendaFromJSON(JSONObject input, AuthRequest ar, NGPage ngp) throws Exception {
+    public void createAgendaFromJSON(JSONObject input, AuthRequest ar, NGWorkspace ngw) throws Exception {
         JSONArray agenda = input.optJSONArray("agenda");
         if (agenda==null) {
             //in some cases there is no agenda
@@ -403,8 +403,8 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         for (int i=0; i<last; i++) {
             JSONObject aiobj = agenda.getJSONObject(i);
             if (aiobj.has("selected") && aiobj.getBoolean("selected")) {
-                AgendaItem ai = createAgendaItem(ngp);
-                ai.updateFromJSON(ar, aiobj);
+                AgendaItem ai = createAgendaItem(ngw);
+                ai.updateFromJSON(ar, aiobj, ngw);
             }
         }
         renumberItems();  //sort & fix any numbering problems
@@ -524,11 +524,11 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
 
-    public void sendReminderEmail(AuthRequest ar, NGPage ngp, MailFile mailFile) throws Exception {
+    public void sendReminderEmail(AuthRequest ar, NGWorkspace ngw, MailFile mailFile) throws Exception {
         try {
 
             //TODO: make a non-persistent version of EmailGenerator -- no real reason to save this
-            EmailGenerator emg = ngp.createEmailGenerator();
+            EmailGenerator emg = ngw.createEmailGenerator();
             emg.setSubject("Reminder for meeting: "+this.getName());
             List<String> names = new ArrayList<String>();
             String tRole = getTargetRole();
@@ -544,12 +544,12 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             }
             emg.setOwner(meetingOwner);
             emg.setFrom(meetingOwner);
-            emg.constructEmailRecords(ar, ngp, mailFile);
+            emg.constructEmailRecords(ar, ngw, mailFile);
             setReminderSent(ar.nowTime);
         }
         catch (Exception e) {
             throw new Exception("Unable to send reminder email for meeting '"+getName()
-                    +"' in workspace '"+ngp.getFullName()+"'",e);
+                    +"' in workspace '"+ngw.getFullName()+"'",e);
         }
     }
 
@@ -603,7 +603,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
 
-    public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
+    public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList) throws Exception {
         MScheduledNotification sn = new MScheduledNotification(ngp, this);
         if (sn.needsSending()) {
 
@@ -621,11 +621,11 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
 
     private class MScheduledNotification implements ScheduledNotification {
-        NGPage ngp;
+        NGWorkspace ngw;
         MeetingRecord meet;
 
-        public MScheduledNotification( NGPage _ngp, MeetingRecord _meet) {
-            ngp  = _ngp;
+        public MScheduledNotification( NGWorkspace _ngp, MeetingRecord _meet) {
+            ngw  = _ngp;
             meet = _meet;
         }
         public boolean needsSending() throws Exception {
@@ -654,7 +654,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 return;
             }
 
-            meet.sendReminderEmail(ar, ngp, mailFile);
+            meet.sendReminderEmail(ar, ngw, mailFile);
              //test to see that all the logic is right
             if (needsSending()) {
                 System.out.println("STRANGE: the meeting was just sent, but it does not think so. SENDTIME: "+new Date(timeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));

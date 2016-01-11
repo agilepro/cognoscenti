@@ -36,13 +36,13 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
-public class AttachmentRecord extends DOMFace {
+public abstract class AttachmentRecord extends DOMFace {
     private static String ATTACHMENT_ATTB_RLINK = "rlink";
     private static String ATTACHMENT_ATTB_RCTIME = "rctime";
     public static String ATTACHMENT_ATTB_RLMTIME = "rlmtime";
 
     private String niceName = null;
-    protected NGContainer container = null;
+    protected NGWorkspace container = null;
 
     public AttachmentRecord(Document doc, Element definingElement, DOMFace attachmentContainer) {
         super(doc, definingElement, attachmentContainer);
@@ -63,11 +63,7 @@ public class AttachmentRecord extends DOMFace {
         clearVector("accessRole");
     }
 
-    public void setContainer(NGContainer newCon) throws Exception {
-        if (newCon instanceof NGWorkspace) {
-            throw new Exception(
-                    "Problem: AttachmentRecord should NOT belong to NGProject, but somehow got one.");
-        }
+    public void setContainer(NGWorkspace newCon) throws Exception {
         container = newCon;
     }
 
@@ -217,11 +213,7 @@ public class AttachmentRecord extends DOMFace {
         return name.equalsIgnoreCase(dName);
     }
 
-    public void updateActualFile(String oldName, String newName) throws Exception {
-        // for AttachmentRecord and Simple versioning system, there is nothing
-        // to do
-        // but ProjectAttachment needs to do something here...
-    }
+    public abstract void updateActualFile(String oldName, String newName) throws Exception;
 
     public String getLicensedAccessURL(AuthRequest ar, NGPage ngp, String licenseId)
             throws Exception {
@@ -367,44 +359,10 @@ public class AttachmentRecord extends DOMFace {
 
     /**
      * Get a list of all the versions of this attachment that exist. The
-     * container is needed so that each attachment can caluculate its own name
+     * container is needed so that each attachment can calculate its own name
      * properly.
      */
-    public List<AttachmentVersion> getVersions(NGContainer ngc) throws Exception {
-
-        // debug code
-        if (ngc instanceof NGWorkspace) {
-            throw new Exception( "Program Logic Error: Attachment Record found on a NGProj object."
-                    + "  Should be ProjectAttachment instead!");
-        }
-
-        // code must determine HERE what kind of versioning system is being used
-        // currently we only have the simple versioning system.
-        // When another system is provided, the switch to choose between them
-        // will be here.
-
-        List<AttachmentVersion> list = AttachmentVersionSimple.getSimpleVersions(ngc.getKey(),
-                this.getId());
-
-        if (list.size() > 0) {
-            // file system order is not always in order of version number...
-            Collections.sort(list, new AttachmentVersionComparator());
-            return list;
-        }
-
-        // there is a special case that must be considered, and that is for
-        // documents that have been around since before the versioning system
-        // was put in place. in those cases the storage name is stored
-        // in the getURI place
-
-        File source = new File(AttachmentVersionSimple.attachmentFolder, getStorageFileName());
-        if (source.exists()) {
-            // if the file is there, add it to the empty list
-            list.add(new AttachmentVersionSimple(source, 1, true));
-        }
-
-        return list;
-    }
+    public abstract List<AttachmentVersion> getVersions(NGContainer ngc) throws Exception;
 
     /**
      * Just get the last version. This is the one the user is most often
@@ -479,11 +437,7 @@ public class AttachmentRecord extends DOMFace {
      *
      * Returns null if versioning system does not have working copy.
      */
-    public AttachmentVersion getWorkingCopy(NGContainer ngc) throws Exception {
-        //the simple version system does not have any working copy, and therefor
-        //can not return anything for this.
-        return null;
-    }
+    public abstract AttachmentVersion getWorkingCopy(NGContainer ngc) throws Exception;
 
     public AttachmentVersion getHighestCommittedVersion(NGContainer ngc) throws Exception {
         List<AttachmentVersion> list = getVersions(ngc);
@@ -501,11 +455,7 @@ public class AttachmentRecord extends DOMFace {
     /**
      * Takes the working copy, and make a new internal, backed up copy.
      */
-    public void commitWorkingCopy(NGContainer ngc) throws Exception {
-        //the simple version system does not have any working copy, and therefor
-        //can not return anything for this.
-        return;
-    }
+    public abstract  void commitWorkingCopy(NGContainer ngc) throws Exception;
 
     /**
      * Pass the version list in to find out whether this attachment is
@@ -548,33 +498,8 @@ public class AttachmentRecord extends DOMFace {
         return streamNewVersion(ngc, contents, ar.getBestUserId(), ar.nowTime);
     }
 
-    public AttachmentVersion streamNewVersion(NGContainer ngc, InputStream contents,
-            String userId, long timeStamp) throws Exception {
-
-        // debug code
-        if (ngc instanceof NGWorkspace) {
-            throw new Exception( "Program Logic Error: Attachment Record found on a NGProj object."
-                    + "  Should be ProjectAttachment instead!");
-        }
-
-        String fileExtension = "";
-        String displayName = getNiceName();
-        int dotPos = displayName.lastIndexOf(".");
-        if (dotPos > 0) {
-            fileExtension = displayName.substring(dotPos + 1);
-        }
-
-        AttachmentVersion av = AttachmentVersionSimple.getNewSimpleVersion(ngc.getKey(), getId(),
-                fileExtension, contents);
-
-        // update the record
-        setVersion(av.getNumber());
-        setStorageFileName(av.getLocalFile().getName());
-        setModifiedDate(timeStamp);
-        setModifiedBy(userId);
-
-        return av;
-    }
+    public abstract AttachmentVersion streamNewVersion(NGContainer ngc, InputStream contents,
+            String userId, long timeStamp) throws Exception;
 
     public static void sortVersions(List<AttachmentVersion> list) {
         Collections.sort(list, new AttachmentVersionComparator());
@@ -1082,7 +1007,7 @@ public class AttachmentRecord extends DOMFace {
             throw new Exception("Error trying to update the record for an action item with UID ("
                     +getUniversalId()+") with post from action item with UID ("+universalid+")");
         }
-        boolean changed = updateFromJSON(docInfo, (NGPage)ar.ngp, ar);
+        boolean changed = updateFromJSON(docInfo, (NGWorkspace)ar.ngp, ar);
 
         if (docInfo.has("name")) {
             String newName = docInfo.getString("name");

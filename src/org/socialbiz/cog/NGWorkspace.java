@@ -28,10 +28,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.socialbiz.cog.exception.NGException;
+import org.socialbiz.cog.mail.MailFile;
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
+import org.workcast.json.JSONArray;
 import org.workcast.streams.HTMLWriter;
 
 /**
@@ -77,6 +81,8 @@ public class NGWorkspace extends NGPage {
                     +" and don't know what to do with that.");
         }
 
+        //upgrade all the note, document, and task records
+        cleanUpTaskUniversalId();
     }
 
     @Override
@@ -99,24 +105,26 @@ public class NGWorkspace extends NGPage {
         }
     }
 
-    public void schemaUpgrade() throws Exception {
-        getAllAttachments();
-        this.getAllEmail();
-        this.getAllGoals();
-        this.getAllHistory();
-        this.getAllLabels();
-        for (NoteRecord note : this.getAllNotes()) {
-            for (CommentRecord comm : note.getComments()) {
-                //schema migration from before 101
-                comm.schemaMigration();
-            }
-        }
-        this.getAllRoles();
-        for (MeetingRecord meet : getMeetings()) {
-            for (AgendaItem ai : meet.getAgendaItems()) {
-                for (CommentRecord comm : ai.getComments()) {
+    public void schemaUpgrade(int fromLevel, int toLevel) throws Exception {
+        if (fromLevel<101) {
+            getAllAttachments();
+            this.getAllEmail();
+            this.getAllGoals();
+            this.getAllHistory();
+            this.getAllLabels();
+            for (NoteRecord note : this.getAllNotes()) {
+                for (CommentRecord comm : note.getComments()) {
                     //schema migration from before 101
                     comm.schemaMigration();
+                }
+            }
+            this.getAllRoles();
+            for (MeetingRecord meet : getMeetings()) {
+                for (AgendaItem ai : meet.getAgendaItems()) {
+                    for (CommentRecord comm : ai.getComments()) {
+                        //schema migration from before 101
+                        comm.schemaMigration();
+                    }
                 }
             }
         }
@@ -295,4 +303,165 @@ public class NGWorkspace extends NGPage {
     public File getContainingFolder() {
         return containingFolder;
     }
+
+    public JSONArray getJSONEmailGenerators(AuthRequest ar) throws Exception {
+        JSONArray val = new JSONArray();
+        List<EmailGenerator> gg = getAllEmailGenerators();
+        int limit = 200;
+        for (EmailGenerator egen : gg) {
+            val.put(egen.getJSON(ar, this));
+            if (limit--<0) {
+                System.out.println("LIMIT: stopped including EmailGenerators at 200 out of "+gg.size());
+                break;
+            }
+        }
+        return val;
+    }
+
+
+    /**
+     * Return the time of the next automated action.  If there are multiple
+     * scheduled actions, this returns the time of the next one.
+     *
+     * A negative number means there are no scheduled events.
+     */
+    public long nextActionDue() throws Exception {
+        //initialize to some time next year
+        long nextTime = System.currentTimeMillis() + 31000000000L;
+        for (EmailRecord er : getAllEmail()) {
+            if (er.statusReadyToSend()) {
+                //there is no scheduled time for sending email .. it just is scheduled
+                //immediately and supposed to be sent as soon as possible after that
+                //so return now minus 1 minutes
+                long reminderTime = System.currentTimeMillis()-60000;
+                if (reminderTime < nextTime) {
+                    System.out.println("Workspace has email that needs to be collected");
+                    nextTime = reminderTime;
+                }
+            }
+        }
+
+        ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
+        gatherUnsentScheduledNotification(resList);
+
+        ScheduledNotification first = null;
+        //Now scan all the standard scheduled notifications
+        for (ScheduledNotification sn : resList) {
+            long timeToAct = sn.timeToSend();
+            if (timeToAct < nextTime) {
+                nextTime = timeToAct;
+                first = sn;
+            }
+        }
+        if (first!=null) {
+            System.out.println("Found the next event to be: "+first.selfDescription()+" at "
+                     +new Date(first.timeToSend()));
+        }
+        return nextTime;
+    }
+
+
+    public void gatherUnsentScheduledNotification(ArrayList<ScheduledNotification> resList) throws Exception {
+        for (MeetingRecord meeting : getMeetings()) {
+            meeting.gatherUnsentScheduledNotification(this, resList);
+        }
+        for (NoteRecord note : this.getAllNotes()) {
+            note.gatherUnsentScheduledNotification(this, resList);
+        }
+        for (EmailGenerator eg : getAllEmailGenerators()) {
+            eg.gatherUnsentScheduledNotification(this, resList);
+        }
+        for (GoalRecord goal : getAllGoals()) {
+            goal.gatherUnsentScheduledNotification(this, resList);
+        }
+    }
+    /**
+     * Acts on and performs a SINGLE scheduled action that is scheduled to be done
+     * before the current time.  Actions are done one at a time so that the calling
+     * code can decide to save the page before calling to execute the next action,
+     * or to spread a large number of actions out a bit.
+     *
+     * This should ONLY be called on the background email thread.
+     */
+    public void performScheduledAction(AuthRequest ar, MailFile mailFile) throws Exception {
+
+        ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
+        gatherUnsentScheduledNotification(resList);
+        ScheduledNotification earliest = null;
+        long nextTime = System.currentTimeMillis() + 31000000000L;
+
+        for (ScheduledNotification sn : resList) {
+            if (sn.timeToSend() < nextTime) {
+                earliest = sn;
+                nextTime = sn.timeToSend();
+            }
+        }
+
+        if (earliest!=null) {
+            earliest.sendIt(ar, mailFile);
+            System.out.println("BACKGROUND: Just sent: "+earliest.selfDescription());
+            return;   //only one thing at a time
+        }
+    }
+
+
+    /**
+    * schema migration ...
+    * make sure that all tasks have universal ids.
+    * do this here because the GoalRecord constructor
+    * does not easily know what the container is.
+    */
+    private void cleanUpTaskUniversalId() throws Exception {
+
+        cleanUpNoteAndDocUniversalId();
+
+        for (GoalRecord goal : getAllGoals()) {
+            String uid = goal.getUniversalId();
+            if (uid==null || uid.length()==0) {
+                uid = getContainerUniversalId() + "@" + goal.getId();
+                goal.setUniversalId(uid);
+            }
+            long lastModTime = goal.getModifiedDate();
+            if (lastModTime<=0) {
+                String lastModUser = "";
+                for (HistoryRecord hist : goal.getTaskHistory(this)) {
+                    if (hist.getTimeStamp()>lastModTime) {
+                        lastModTime = hist.getTimeStamp();
+                        lastModUser = hist.getResponsible();
+                    }
+                }
+                goal.setModifiedDate(lastModTime);
+                goal.setModifiedBy(lastModUser);
+            }
+        }
+    }
+
+
+    /**
+    * schema migration ...
+    * make sure that all topics and documents have universal ids.
+    * do this here because the NoteRecord & AttachmentRecord constructor
+    * does not easily know what the container is.
+    */
+    private void cleanUpNoteAndDocUniversalId() throws Exception {
+        //schema migration ...
+        //make sure that all topics have universal ids.
+        for (NoteRecord lr : getAllNotes()) {
+            String uid = lr.getUniversalId();
+            if (uid==null || uid.length()==0) {
+                uid = getContainerUniversalId() + "@" + lr.getId();
+                lr.setUniversalId(uid);
+            }
+        }
+
+        //and the same for documents
+        for (AttachmentRecord att : getAllAttachments()) {
+            String uid = att.getUniversalId();
+            if (uid==null || uid.length()==0) {
+                uid = getContainerUniversalId() + "@" + att.getId();
+                att.setUniversalId(uid);
+            }
+        }
+    }
+
 }

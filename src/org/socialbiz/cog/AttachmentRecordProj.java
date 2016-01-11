@@ -46,11 +46,7 @@ public class AttachmentRecordProj extends AttachmentRecord
         super (doc, definingElement, attachmentContainer);
     }
 
-    public void setContainer(NGContainer newCon) throws Exception
-    {
-        if (!(newCon instanceof NGWorkspace)) {
-            throw new Exception("Problem: ProjectAttachment should only belong to NGProject, but somehow got a different kind of container.");
-        }
+    public void setContainer(NGWorkspace newCon) throws Exception {
         container = newCon;
     }
 

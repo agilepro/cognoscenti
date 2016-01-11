@@ -10,14 +10,14 @@
     ar.assertMember("Must be a member to see meetings");
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngp);
-    NGBook ngb = ngp.getSite();
+    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngw);
+    NGBook ngb = ngw.getSite();
     String meetId      = ar.reqParam("id");
-    MeetingRecord meeting = ngp.findMeeting(meetId);
+    MeetingRecord meeting = ngw.findMeeting(meetId);
     String agendaId      = ar.reqParam("aid");
 
-    JSONObject meetingInfo = meeting.getFullJSON(ar, ngp);
+    JSONObject meetingInfo = meeting.getFullJSON(ar, ngw);
     JSONObject agendaInfo = null;
 
     boolean isNew = "~new~".equals(agendaId);
@@ -33,8 +33,8 @@
         agendaInfo = selectedItem.getJSON(ar);
     }
 
-    JSONArray goalList = ngp.getJSONGoals();
-    JSONArray attachmentList = ngp.getJSONAttachments(ar);
+    JSONArray goalList = ngw.getJSONGoals();
+    JSONArray attachmentList = ngw.getJSONAttachments(ar);
 
     JSONArray allPeople = UserManager.getUniqueUsersJSON();
 

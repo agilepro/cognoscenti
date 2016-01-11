@@ -28,8 +28,8 @@ import org.socialbiz.cog.AccessControl;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.HistoryRecord;
-import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.ReminderMgr;
 import org.socialbiz.cog.ReminderRecord;
 import org.socialbiz.cog.UserManager;
@@ -80,7 +80,7 @@ public class UploadFileController extends BaseController {
         ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             //Handling special case for Multipart request
             ar.req = request;
 
@@ -94,9 +94,9 @@ public class UploadFileController extends BaseController {
             if(rid != null){
                 // rid is not null its mean request to upload a document has come from 'Reminders To Share Document'
                 requestFromReminder = true;
-                ReminderMgr mgr = ngp.getReminderMgr();
+                ReminderMgr mgr = ngw.getReminderMgr();
                 reminderRecord = mgr.findReminderByIDOrFail(rid);
-                canAccessToReminder = AccessControl.canAccessReminder(ar, ngp, reminderRecord);
+                canAccessToReminder = AccessControl.canAccessReminder(ar, ngw, reminderRecord);
 
                 //find the user profile of the user that created the reminder, and set the user
                 //of record for this request to be that user.   Allows the rest of the request
@@ -109,7 +109,7 @@ public class UploadFileController extends BaseController {
                 ar.assertLoggedIn(ar.getMessageFromPropertyFile("message.can.not.upload.attachment", null));
             }
 
-            ar.assertNotFrozen(ngp);
+            ar.assertNotFrozen(ngw);
             request.setCharacterEncoding("UTF-8");
 
             if (file.getSize() == 0) {
@@ -130,11 +130,11 @@ public class UploadFileController extends BaseController {
             String comment = ar.defParam("comment", "");
             String desiredName = ar.defParam("name", null);
 
-            AttachmentHelper.uploadNewDocument(ar, ngp, file, desiredName, visibility, comment, "");
+            AttachmentHelper.uploadNewDocument(ar, ngw, file, desiredName, visibility, comment, "");
 
             if(reminderRecord != null){
                 reminderRecord.setClosed();
-                ngp.save();
+                ngw.save();
             }
             if (go==null) {
                 modelAndView = createRedirectView(ar, "listAttachments.htm");
@@ -279,8 +279,8 @@ public class UploadFileController extends BaseController {
         ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.create.link.url");
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-            ar.assertNotFrozen(ngp);
+            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
+            ar.assertNotFrozen(ngw);
 
             String visibility = ar.reqParam("visibility");
 
@@ -288,14 +288,14 @@ public class UploadFileController extends BaseController {
             String taskUrl = ar.reqParam("taskUrl");
             String ftype = ar.reqParam("ftype");
 
-            AttachmentRecord attachment = ngp.createAttachment();
+            AttachmentRecord attachment = ngw.createAttachment();
             String proposedName = taskUrl;
 
             if(taskUrl.contains("/")){
                 proposedName = taskUrl.substring(taskUrl.lastIndexOf("/")+1);
             }
 
-            AttachmentHelper.setDisplayName(ngp, attachment, proposedName);
+            AttachmentHelper.setDisplayName(ngw, attachment, proposedName);
 
             attachment.setDescription(comment);
             attachment.setModifiedBy(ar.getBestUserId());
@@ -307,11 +307,11 @@ public class UploadFileController extends BaseController {
                 attachment.setVisibility(2);
             }
 
-            HistoryRecord.createHistoryRecord(ngp, attachment.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
+            HistoryRecord.createHistoryRecord(ngw, attachment.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
                     ar.nowTime, HistoryRecord.EVENT_DOC_ADDED, ar, "Created Link URL");
 
             attachment.setStorageFileName(taskUrl);
-            ngp.saveFile(ar, "Created Link URL");
+            ngw.saveFile(ar, "Created Link URL");
             modelAndView = createRedirectView(ar, "listAttachments.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.create.link.url.to.project", new Object[]{pageId,siteId} , ex);
@@ -439,8 +439,8 @@ public class UploadFileController extends BaseController {
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.create.attachment");
             ar.req = request;
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-            ar.assertNotFrozen(ngp);
+            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
+            ar.assertNotFrozen(ngw);
             ar.assertMember("Unable to create attachments.");
 
             String action   = ar.reqParam("action");
@@ -459,17 +459,17 @@ public class UploadFileController extends BaseController {
                 FolderAccessHelper fah = new FolderAccessHelper(ar);
                 if(isNewUpload.equals("yes"))
                 {
-                    fah.attachDocument(ent, ngp, comment, attachmentDisplayName, visibility, readonly);
+                    fah.attachDocument(ent, ngw, comment, attachmentDisplayName, visibility, readonly);
                 }else
                 {
-                    AttachmentHelper.updateRemoteAttachment(ar, ngp, comment, ent.getPath(), ent.getFolderId(), attachmentDisplayName, visibility);
+                    AttachmentHelper.updateRemoteAttachment(ar, ngw, comment, ent.getPath(), ent.getFolderId(), attachmentDisplayName, visibility);
                 }
 
             }else{
                 throw new ProgramLogicError("Don't understand the operation: "+ action);
             }
 
-            ngp.saveFile(ar, "Modified attachments");
+            ngw.saveFile(ar, "Modified attachments");
             response.sendRedirect(ar.baseURL+"t/"+siteId+"/"+pageId+"/listAttachments.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.remote.attachment", new Object[]{pageId,siteId} , ex);
@@ -576,16 +576,16 @@ public class UploadFileController extends BaseController {
         try {
             ar = getLoggedInAuthRequest(request, response, "message.must.be.login");
             String containerId=  ar.reqParam("containerId") ;
-            NGContainer ngc = ar.getCogInstance().getProjectByKeyOrFail(containerId);
-            ar.setPageAccessLevels(ngc);
+            NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(containerId);
+            ar.setPageAccessLevels(ngw);
             String aid = ar.reqParam("aid");
-            AttachmentRecord attachment = ngc.findAttachmentByID(aid);
+            AttachmentRecord attachment = ngw.findAttachmentByID(aid);
             if(attachment == null){
-                throw new NGException("nugen.exception.no.attachment.found", new Object[]{aid, ngc.getFullName()});
+                throw new NGException("nugen.exception.no.attachment.found", new Object[]{aid, ngw.getFullName()});
             }
             attachment.clearDeleted();
             message = NGWebUtils.getJSONMessage(Constant.SUCCESS , "" , "");
-            ngc.saveContent( ar, "Modified attachments");
+            ngw.saveContent( ar, "Modified attachments");
         }
         catch(Exception ex){
             message = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
@@ -761,8 +761,8 @@ public class UploadFileController extends BaseController {
             String pageId = ar.reqParam("pageId");
             String isEditMode = ar.reqParam("editing");
 
-            NGContainer ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-            AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
+            NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            AttachmentRecord attachment = ngw.findAttachmentByIDOrFail(aid);
 
             //attachment.clearDeleted();
             if(attachment != null){
@@ -773,9 +773,9 @@ public class UploadFileController extends BaseController {
                 }
                 responseText = NGWebUtils.getJSONMessage(Constant.SUCCESS , "" , "");
             }else{
-                throw new NGException("nugen.exception.no.attachment.found", new Object[]{aid, ngp.getFullName()});
+                throw new NGException("nugen.exception.no.attachment.found", new Object[]{aid, ngw.getFullName()});
             }
-            ngp.saveContent( ar, "Modified attachments");
+            ngw.saveContent( ar, "Modified attachments");
         }
         catch (Exception ex) {
             responseText = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());

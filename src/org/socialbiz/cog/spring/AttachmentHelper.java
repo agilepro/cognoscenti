@@ -27,8 +27,8 @@ import java.io.FileOutputStream;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.HistoryRecord;
-import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionAttachments;
 import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.dms.ConnectionType;
@@ -45,7 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class AttachmentHelper {
 
     public static void uploadNewDocument(AuthRequest ar,
-                                            NGContainer ngc,
+                                            NGWorkspace ngc,
                                             MultipartFile file,
                                             String desiredName,
                                             String visibility,
@@ -166,7 +166,7 @@ public class AttachmentHelper {
         return dName;
     }
 
-    public static void setDisplayName(NGContainer ngp, AttachmentRecord attachment,
+    public static void setDisplayName(NGWorkspace ngw, AttachmentRecord attachment,
             String proposedName) throws Exception {
         String currentName = attachment.getDisplayName();
         if (currentName.equals(proposedName)) {
@@ -201,7 +201,7 @@ public class AttachmentHelper {
         //TODO: remove deleted documents from project folder
         //so they do not cause a name clash that can not be seen.
 
-        AttachmentRecord att = ngp.findAttachmentByName(trialName);
+        AttachmentRecord att = ngw.findAttachmentByName(trialName);
         int iteration = 0;
         while (att != null) {
 
@@ -209,7 +209,7 @@ public class AttachmentHelper {
                 //This may be an attempt by the user to "reclaim" an attachment that had
                 //been renamed, and discovered as a EXTRA file.   If this is the
                 //case, then remove the EXTRA record.
-                ngp.eraseAttachmentRecord(att.getId());
+                ngw.eraseAttachmentRecord(att.getId());
                 att = null;
             }
             else {
@@ -224,7 +224,7 @@ public class AttachmentHelper {
                     attachment.setDisplayName(trialName);
                     return;
                 }
-                att = ngp.findAttachmentByName(trialName);
+                att = ngw.findAttachmentByName(trialName);
             }
         }
         // if we get here, then there exists no other attachment with the trial
@@ -236,15 +236,14 @@ public class AttachmentHelper {
      * This is a method to find a file, and output the file as a
      * stream of bytes to the request output stream.
      */
-    public static void serveUpFileNewUI(AuthRequest ar, NGContainer ngp, String fileName, int version)
-        throws Exception
-    {
+    public static void serveUpFileNewUI(AuthRequest ar, NGWorkspace ngp, String fileName, int version)
+            throws Exception {
         SectionAttachments.serveUpFileNewUI(ar,ngp,fileName,version);
     }
 
     public static void updateRemoteAttachment(
             AuthRequest ar,
-            NGPage ngp, String comment, String rpath, String id,
+            NGWorkspace ngp, String comment, String rpath, String id,
             String name, String visibility) throws Exception {
 
         String aid = ar.reqParam("aid");

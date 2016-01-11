@@ -129,39 +129,27 @@ public class BaseRecord extends DOMFace
         setScalar("actionScripts", newVal);
     }
 
-    public long getDueDate()
-        throws Exception
-    {
+    public long getDueDate() {
         String endDate = getScalar("dueDate");
         return safeConvertLong(endDate);
     }
-    public void setDueDate(long newVal)
-        throws Exception
-    {
+    public void setDueDate(long newVal) throws Exception {
         setScalar("dueDate", Long.toString(newVal));
     }
 
-    public long getStartDate()
-        throws Exception
-    {
+    public long getStartDate() {
         String startDate = getScalar("startDate");
         return safeConvertLong(startDate);
     }
-    public void setStartDate(long newVal)
-        throws Exception
-    {
+    public void setStartDate(long newVal) {
         setScalar("startDate", Long.toString(newVal));
     }
 
-    public long getEndDate()
-        throws Exception
-    {
+    public long getEndDate() {
         String endDate = getScalar("endDate");
         return safeConvertLong(endDate);
     }
-    public void setEndDate(long newVal)
-        throws Exception
-    {
+    public void setEndDate(long newVal) {
         setScalar("endDate", Long.toString(newVal));
     }
 
@@ -282,7 +270,41 @@ public class BaseRecord extends DOMFace
         return false;
     }
 
+    protected void handleStateChangeEvent() throws Exception {
+        //do nothing at the BaseRecord level
+    }
+    
+    public int getState() {
+        String stateVal = getScalar("state");
+        return safeConvertInt(stateVal);
+    }
 
+    public void setState(int newVal) throws Exception {
+        int prevState = getState();
+        setScalar("state", Integer.toString(newVal));
+        if (prevState != newVal) {
+            handleStateChangeEvent();
+        }
+    }
+
+    
+    public boolean wasActiveAtTime(long startTime, long endTime) {
+        if (GoalRecord.isFuture(getState())) {
+            //Exclude anything that is future now, because it must have been future then
+            return false;
+        }
+        if (getStartDate()>endTime) {
+            //Exclude anything that was started after the time period ended
+            return false;
+        }
+        if (GoalRecord.isFinal(getState()) && getEndDate()<startTime) {
+            //Exclude anything that is completed now, and was completed before the time period
+            return false;
+        }
+        //everything else must have been started before the time period ended, and
+        //ended after the time period started, so return true        
+        return true;
+    }
 
 /**
 * In June 2015 this was changed to the new location and names of the
@@ -358,9 +380,5 @@ public class BaseRecord extends DOMFace
 
        //end of upgrade code
     }
-
-
-
-
 
 }

@@ -223,8 +223,8 @@ public class NGPageIndex {
         return tagTerm.targetLeaves;
     }
 
-    public NGPage getPage() throws Exception {
-        return (NGPage) getContainer();
+    public NGWorkspace getPage() throws Exception {
+        return (NGWorkspace) getContainer();
     }
 
     /**
@@ -359,7 +359,11 @@ public class NGPageIndex {
     }
 
     public boolean isProject() {
-        return (containerType == CONTAINER_TYPE_PROJECT || containerType == CONTAINER_TYPE_PAGE);
+        //just being paranoid here -- can remove after Feb 2016
+        if (containerType == CONTAINER_TYPE_PAGE) {
+            throw new RuntimeException("Found a PAGE type object, should never happen");
+        }
+        return (containerType == CONTAINER_TYPE_PROJECT);
     }
 
     public static void postEventMsg(String emsg) {
@@ -633,15 +637,15 @@ public class NGPageIndex {
 
         initIndexForHashTags(container);
 
-        if (container instanceof NGPage) {
-            NGPage ngp = (NGPage) container;
-            NGBook ngb = ngp.getSite();
+        if (container instanceof NGWorkspace) {
+            NGWorkspace ngw = (NGWorkspace) container;
+            NGBook ngb = ngw.getSite();
             if (ngb != null) {
                 pageBookName = ngb.getFullName();
                 pageBookKey = ngb.getKey();
             }
-            nextScheduledAction = ngp.nextActionDue();
-            parentKey = ngp.getParentKey();
+            nextScheduledAction = ngw.nextActionDue();
+            parentKey = ngw.getParentKey();
         }
         else {
             nextScheduledAction = -1;

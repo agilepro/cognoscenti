@@ -37,6 +37,7 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGRole;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.NoteRecord;
 import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.UserPage;
@@ -95,10 +96,10 @@ public class NGWebUtils {
         return count;
     }
 
-    public static int getDocumentCount(NGContainer ngc, int displayLevel)
+    public static int getDocumentCount(NGWorkspace ngw, int displayLevel)
             throws Exception {
         int noOfDocs = 0;
-        for (AttachmentRecord attachment : ngc.getAllAttachments()) {
+        for (AttachmentRecord attachment : ngw.getAllAttachments()) {
             if (attachment.getVisibility() != displayLevel
                     || attachment.isDeleted()) {
                 continue;
@@ -108,9 +109,9 @@ public class NGWebUtils {
         return noOfDocs;
     }
 
-    public static int getDeletedDocumentCount(NGContainer ngc) throws Exception {
+    public static int getDeletedDocumentCount(NGWorkspace ngw) throws Exception {
         int noOfDocs = 0;
-        for (AttachmentRecord attachment : ngc.getAllAttachments()) {
+        for (AttachmentRecord attachment : ngw.getAllAttachments()) {
             if (!attachment.isDeleted()) {
                 continue;
             }
@@ -163,18 +164,6 @@ public class NGWebUtils {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         ar.assertLoggedIn(assertLoggedInMsg);
         return ar;
-    }
-
-    public static List<AttachmentRecord> getSelectedAttachments(AuthRequest ar,
-            NGContainer ngp) throws Exception {
-        List<AttachmentRecord> res = new ArrayList<AttachmentRecord>();
-        for (AttachmentRecord att : ngp.getAllAttachments()) {
-            String paramId = "attach" + att.getId();
-            if (ar.defParam(paramId, null) != null) {
-                res.add(att);
-            }
-        }
-        return res;
     }
 
     public static List<AddressListEntry> getExistingContacts(UserPage up)

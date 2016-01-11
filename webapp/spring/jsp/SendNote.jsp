@@ -27,8 +27,8 @@ Optional Parameters:
 */
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngp);
+    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngw);
     ar.assertMember("Must be a member to send email");
     UserProfile uProf = ar.getUserProfile();
     AddressListEntry uAle = new AddressListEntry(uProf);
@@ -37,8 +37,8 @@ Optional Parameters:
     String eGenId      = ar.defParam("id", null);
     JSONObject emailInfo = null;
     if (eGenId!=null) {
-        EmailGenerator eGen = ngp.getEmailGeneratorOrFail(eGenId);
-        emailInfo = eGen.getJSON(ar, ngp);
+        EmailGenerator eGen = ngw.getEmailGeneratorOrFail(eGenId);
+        emailInfo = eGen.getJSON(ar, ngw);
     }
     else {
         String targetRole = null;
@@ -52,7 +52,7 @@ Optional Parameters:
         String noteId = ar.defParam("noteId", null);
 
         if (noteId!=null) {
-            NoteRecord noteRec = ngp.getNoteOrFail(noteId);
+            NoteRecord noteRec = ngw.getNoteOrFail(noteId);
             if(mailSubject == null){
                 mailSubject = noteRec.getSubject();
             }
@@ -69,7 +69,7 @@ Optional Parameters:
         JSONArray docList = new JSONArray();
         String att  = ar.defParam("att", null);
         if (att!=null) {
-            AttachmentRecord attRec = ngp.findAttachmentByID(att);
+            AttachmentRecord attRec = ngw.findAttachmentByID(att);
             if (attRec!=null) {
                 docList.put(attRec.getUniversalId());
             }
@@ -86,9 +86,9 @@ Optional Parameters:
 
         String meetId      = ar.defParam("meet", null);
         if (meetId!=null && meetId.length()>0) {
-            MeetingRecord mr = ngp.findMeeting(meetId);
+            MeetingRecord mr = ngw.findMeeting(meetId);
             if (mr!=null) {
-                emailInfo.put("meetingInfo", mr.getFullJSON(ar, ngp));
+                emailInfo.put("meetingInfo", mr.getFullJSON(ar, ngw));
                 if(mailSubject == null){
                     mailSubject = "Meeting: "+mr.getNameAndDate();
                 }
@@ -97,7 +97,7 @@ Optional Parameters:
         }
 
         if(mailSubject == null){
-            mailSubject = "Message from Workspace "+ngp.getFullName();
+            mailSubject = "Message from Workspace "+ngw.getFullName();
         }
         emailInfo.put("subject", mailSubject);
         JSONArray defaultRoles = new JSONArray();
@@ -112,11 +112,11 @@ Optional Parameters:
     }
 
     JSONArray allRoles = new JSONArray();
-    for (NGRole role : ngp.getAllRoles()) {
+    for (NGRole role : ngw.getAllRoles()) {
         allRoles.put( role.getJSON() );
     }
-    JSONArray attachmentList = ngp.getJSONAttachments(ar);
-    JSONArray allPeople = ngp.getAllPeopleInProject();
+    JSONArray attachmentList = ngw.getJSONAttachments(ar);
+    JSONArray allPeople = ngw.getAllPeopleInProject();
 
 /* PROTOTYPE
 
@@ -423,7 +423,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <td class="form-inline form-group">
                     <select ng-model="emailInfo.from"  class="form-control" style="width: 380px">
                       <option value="<% ar.writeHtml(userFromAddress); %>"><% ar.writeHtml(userFromAddress); %></option>
-                      <option value="<% ar.writeHtml(composeFromAddress(ngp)); %>"><% ar.writeHtml(composeFromAddress(ngp)); %></option>
+                      <option value="<% ar.writeHtml(composeFromAddress(ngw)); %>"><% ar.writeHtml(composeFromAddress(ngw)); %></option>
                     </select>
                       <span class="dropdown">
                         <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -657,7 +657,7 @@ if (overrideAddress!=null && overrideAddress.length()>0) {
                     These links take you to a sample message for a fictional user
                     email address "sample@example.com" that such a person would see
                     <span ng-repeat="role in allRoles">
-                        <a href="<%=ar.retPath%>t/EmailAdjustment.htm?p=<%=URLEncoder.encode(pageId,"UTF-8")%>&st=role&role={{role.name}}&email=sample@example.com&mn=<%=URLEncoder.encode(ngp.emailDependentMagicNumber("sample@example.com"),"UTF-8")%>">{{role.name}}</a>,
+                        <a href="<%=ar.retPath%>t/EmailAdjustment.htm?p=<%=URLEncoder.encode(pageId,"UTF-8")%>&st=role&role={{role.name}}&email=sample@example.com&mn=<%=URLEncoder.encode(ngw.emailDependentMagicNumber("sample@example.com"),"UTF-8")%>">{{role.name}}</a>,
                     </span>
                 </td>
             </tr>

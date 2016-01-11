@@ -86,6 +86,25 @@ public class CommentContainer extends DOMFace {
         thisContainer.put("comments",  allCommentss);
     }
 
+    public void addJSONComments(AuthRequest ar, JSONObject thisContainer, long startTime, long endTime) throws Exception {
+        JSONArray allCommentss = new JSONArray();
+        UserProfile thisUser = ar.getUserProfile();
+        for (CommentRecord cr : getComments()) {
+            if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT
+                    && (thisUser==null
+                    || !thisUser.hasAnyId(cr.getUser().getEmail()))) {
+                //skip draft email from other people
+                continue;
+            }
+            if (cr.getTime()<startTime || cr.getTime()>endTime) {
+                //ignore comment created before or after the period
+                continue;
+            }
+            allCommentss.put(cr.getHtmlJSON(ar));
+        }
+        thisContainer.put("comments",  allCommentss);
+    }
+
     public void updateCommentsFromJSON(JSONObject noteObj, AuthRequest ar) throws Exception {
 
         //if there is a comments, then IF the creator of the comment is the currently

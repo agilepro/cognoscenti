@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.dms.ConnectionSettings;
@@ -316,8 +317,8 @@ public class RemoteLinkController extends BaseController {
         ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.must.be.login.to.perform.action");
-            NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
-            if(nGPage.isFrozen()){
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            if(ngw.isFrozen()){
                 throw new NGException("nugen.project.freezed.msg",null);
             }
             UserPage uPage = ar.getUserPage();
@@ -363,12 +364,12 @@ public class RemoteLinkController extends BaseController {
                 if (!connectionHealth.equals("Healthy")) {
                     throw new NGException("nugen.exception.unhealthy.connection", new Object[]{folderId});
                 }
-                fah.createCopyInRepository(null, nGPage, aid, ar.reqParam("rlink"), folderId,false);
+                fah.createCopyInRepository(null, ngw, aid, ar.reqParam("rlink"), folderId,false);
                 response.sendRedirect(ar.baseURL+"t/"+siteId+"/"+pageId+"/listAttachments.htm");
 
             }else if(action.equals("UnlinkFromRepository")){
 
-                AttachmentHelper.unlinkDocFromRepository(ar, aid, nGPage);
+                AttachmentHelper.unlinkDocFromRepository(ar, aid, ngw);
                 response.sendRedirect(ar.baseURL+"t/"+siteId+"/"+pageId+"/listAttachments.htm");
 
             }else if(action.equals("ChangeURL")){
@@ -378,7 +379,7 @@ public class RemoteLinkController extends BaseController {
                 ConnectionType cType = ar.getUserPage().getConnectionOrFail(folderId);
                 String newRelativePath = cType.getInternalPathOrFail(newPath);
                 String rFilename = newRelativePath.substring(newRelativePath.lastIndexOf('/') + 1);
-                AttachmentHelper.updateRemoteAttachment(ar, nGPage, null, newRelativePath, folderId, rFilename, null);
+                AttachmentHelper.updateRemoteAttachment(ar, ngw, null, newRelativePath, folderId, rFilename, null);
                 response.sendRedirect(ar.baseURL+"t/"+siteId+"/"+pageId+"/listAttachments.htm");
 
             }else{

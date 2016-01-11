@@ -86,7 +86,7 @@ public class UserPage extends ContainerCommon
         }
     }
 
-    public void schemaUpgrade() throws Exception {
+    public void schemaUpgrade(int fromLevel, int toLevel) throws Exception {
         //nothing to do.....
     }
     public int currentSchemaVersion() {
@@ -750,6 +750,17 @@ public class UserPage extends ContainerCommon
     public void purgeDeletedAttachments() throws Exception {
         throw new Exception("purgeDeletedAttachments should never be needed on User");
     }
+    
+    @Override
+    public List<AttachmentRecord> getAllAttachments() throws Exception {
+        throw new Exception("getAllAttachments should never be needed on User Page");
+    }
+    @Override
+    public AttachmentRecord createAttachment() throws Exception {
+        throw new Exception("createAttachment should never be needed on User Page");
+    }
+
+
 
 
     // operation get task list.

@@ -96,11 +96,6 @@ public class NGBook extends ContainerCommon implements NGContainer {
         // just in case this is an old site object, we need to look for and
         // copy members from the members tag into the role itself
         moveOldMembersToRole();
-
-        // upgrade all the note records
-        cleanUpNoteAndDocUniversalId();
-        //clear this out if it exists here, add this in future
-        //setScalar("name", null);
     }
 
     private void assureNameExists() {
@@ -114,14 +109,16 @@ public class NGBook extends ContainerCommon implements NGContainer {
         }
     }
 
-    
-    public void schemaUpgrade() throws Exception {
-        moveOldMembersToRole();
+
+    public void schemaUpgrade(int fromLevel, int toLevel) throws Exception {
+        if (fromLevel<13) {
+            moveOldMembersToRole();
+        }
     }
     public int currentSchemaVersion() {
         return 13;
     }
-    
+
     /**
      * SCHEMA MIGRATION CODE - old schema required members to be children of a
      * tag 'members' and also prospective memebers in a tag 'pmembers' This code
@@ -644,8 +641,13 @@ public class NGBook extends ContainerCommon implements NGContainer {
     }
 
     /**
-     * overridden in Site to make sure this is never needed
+     * overridden in Site to make sure these are never needed
      */
+    @Override
+    public List<AttachmentRecord> getAllAttachments() throws Exception {
+        throw new Exception("getAllAttachments should never be needed on Site");
+    }
+
     @Override
     public AttachmentRecord findAttachmentByID(String id) throws Exception {
         throw new Exception("findAttachmentByID should never be needed on Site");
@@ -870,10 +872,10 @@ public class NGBook extends ContainerCommon implements NGContainer {
             }
             testNum++;
         }
-    }    
-    
-    
-    
+    }
+
+
+
     @Override
     public boolean isFrozen() throws Exception {
         return false;
@@ -1096,12 +1098,12 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
         return true;
     }
-    
+
     public File getStatsFilePath() {
         File siteFolder = getSiteRootFolder();
         File cogFolder = new File(siteFolder, ".cog");
         return new File(cogFolder, "stats.json");
-        
+
     }
 
     public WorkspaceStats getRecentStats(Cognoscenti cog) throws Exception {
@@ -1111,8 +1113,8 @@ public class NGBook extends ContainerCommon implements NGContainer {
         if (timeStamp>recentEnough) {
             return getStatsFile();
         }
-        
-        //we should figure out how to do this at a time when all the 
+
+        //we should figure out how to do this at a time when all the
         //projects are being scanned for some other purpose....
         WorkspaceStats siteStats = new WorkspaceStats();
         for (NGPageIndex ngpi : cog.getAllProjectsInSite(this.getKey())) {
@@ -1122,7 +1124,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
         saveStatsFile(siteStats);
         return siteStats;
     }
-    
+
     public WorkspaceStats getStatsFile() throws Exception {
         JSONObject jo = JSONObject.readFromFile(getStatsFilePath());
         return WorkspaceStats.fromJSON(jo);
@@ -1132,5 +1134,5 @@ public class NGBook extends ContainerCommon implements NGContainer {
         JSONObject jo = stats.getJSON();
         jo.writeToFile(getStatsFilePath());
     }
-    
+
 }

@@ -201,7 +201,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
-            alert("ERROR");
             $scope.reportError(data);
         });
     };

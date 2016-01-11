@@ -32,6 +32,7 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
@@ -94,19 +95,19 @@ public class BaseController {
      *
      * Will ALSO set two request attributes needed by the JSP files.
      */
-    public static NGPage registerRequiredProject(AuthRequest ar, String siteId, String pageId) throws Exception
+    public static NGWorkspace registerRequiredProject(AuthRequest ar, String siteId, String pageId) throws Exception
     {
         ar.req.setAttribute("pageId",     pageId);
         ar.req.setAttribute("book",       siteId);
         ar.req.setAttribute("headerType", "project");
         ar.getCogInstance().getSiteByIdOrFail(siteId);
-        NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-        if (!siteId.equals(ngp.getSiteKey())) {
+        NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+        if (!siteId.equals(ngw.getSiteKey())) {
             throw new NGException("nugen.operation.fail.account.match", new Object[]{pageId,siteId});
         }
-        ar.setPageAccessLevels(ngp);
-        ar.req.setAttribute("title", ngp.getFullName());
-        return ngp;
+        ar.setPageAccessLevels(ngw);
+        ar.req.setAttribute("title", ngw.getFullName());
+        return ngw;
     }
 
     public static NGBook prepareSiteView(AuthRequest ar, String siteId) throws Exception

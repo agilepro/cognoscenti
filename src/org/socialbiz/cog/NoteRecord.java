@@ -60,20 +60,6 @@ public class NoteRecord extends CommentContainer implements EmailContext {
         }
     }
 
-    /*
-    public void copyFrom(NoteRecord other) {
-        setOwner(other.getOwner());
-        setLastEdited(other.getLastEdited());
-        setModUser(other.getModUser());
-        setSubject(other.getSubject());
-        setWiki(other.getWiki());
-        setVisibility(other.getVisibility());
-        setEffectiveDate(other.getEffectiveDate());
-        setTags(other.getTags());
-        setChoices(other.getChoices());
-    }
-    */
-
     public String getId()
     {
         return getAttribute("id");
@@ -653,6 +639,22 @@ public class NoteRecord extends CommentContainer implements EmailContext {
       }
       public void setActionList(List<String> newVal) {
           setVector("actionList", newVal);
+      }
+      /**
+       * Return all the Action Items that were 'live' during the specified
+       * time period.  We only know the state that it is now, and timestamp 
+       * that if was started and ended.   Exclude anything that was closed before the time period
+       * began.  Exclude anything that had not yet started by the time period end.
+       */
+      public List<String> getActionItemsAtTime(NGWorkspace ngw, long startTime, long endTime) throws Exception {
+          ArrayList<String> res = new ArrayList<String>();
+          for (String possible : getActionList()) {
+              GoalRecord gr = ngw.getGoalOrNull(possible);
+              if (gr!=null && gr.wasActiveAtTime(startTime, endTime)) {
+                  res.add(possible);
+              }
+          }
+          return res;
       }
 
       /**

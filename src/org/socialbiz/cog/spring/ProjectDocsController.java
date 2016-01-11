@@ -33,6 +33,7 @@ import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionAttachments;
 import org.socialbiz.cog.WikiToPDF;
 import org.socialbiz.cog.dms.FolderAccessHelper;
@@ -121,12 +122,12 @@ public class ProjectDocsController extends BaseController {
         try{
             NGPageIndex.assertNoLocksOnThread();
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
 
             String attachmentName = docName+"."+ext;
-            AttachmentRecord att = nGPage.findAttachmentByNameOrFail(attachmentName);
+            AttachmentRecord att = ngw.findAttachmentByNameOrFail(attachmentName);
 
-            boolean canAccessDoc = AccessControl.canAccessDoc(ar, nGPage, att);
+            boolean canAccessDoc = AccessControl.canAccessDoc(ar, ngw, att);
 
             if(!canAccessDoc){
                  sendRedirectToLogin(ar);
@@ -149,7 +150,7 @@ public class ProjectDocsController extends BaseController {
             // versions might have a different extension....  Removed complicated logic.
             ar.resp.setHeader( "Content-Disposition", "attachment; filename=\"" + attachmentName + "\"" );
 
-            AttachmentVersion attachmentVersion = SectionAttachments.getVersionOrLatest(nGPage,attachmentName,version);
+            AttachmentVersion attachmentVersion = SectionAttachments.getVersionOrLatest(ngw,attachmentName,version);
             ar.resp.setHeader( "Content-Length", Long.toString(attachmentVersion.getFileSize()) );
 
             InputStream fis = attachmentVersion.getInputStream();
@@ -157,8 +158,8 @@ public class ProjectDocsController extends BaseController {
             //NOTE: now that we have the input stream, we can let go of the project.  This is important
             //to prevent holding the lock for the entire time that it takes for the client to download
             //the file.  Remember, slow clients might take minutes to download a large file.
-            NGPageIndex.releaseLock(nGPage);
-            nGPage=null;
+            NGPageIndex.releaseLock(ngw);
+            ngw=null;
 
             ar.streamBytesOut(fis);
             fis.close();

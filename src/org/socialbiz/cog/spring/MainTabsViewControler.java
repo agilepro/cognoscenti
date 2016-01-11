@@ -40,6 +40,7 @@ import org.socialbiz.cog.MicroProfileMgr;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.NoteRecord;
 import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
@@ -751,27 +752,27 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngp);
+              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to create a meeting.");
-              ar.assertNotFrozen(ngp);
+              ar.assertNotFrozen(ngw);
               JSONObject meetingInfo = getPostedObject(ar);
               String name = meetingInfo.getString("name");
               if (name==null || name.length()==0) {
                   throw new Exception("You must supply a meeting name to create a meeting.");
               }
-              MeetingRecord newMeeting = ngp.createMeeting();
+              MeetingRecord newMeeting = ngw.createMeeting();
               newMeeting.setOwner(ar.getBestUserId());
-              removeCompletedActionItems(ngp, meetingInfo);
+              removeCompletedActionItems(ngw, meetingInfo);
               newMeeting.updateFromJSON(meetingInfo, ar);
-              newMeeting.createAgendaFromJSON(meetingInfo, ar, ngp);
+              newMeeting.createAgendaFromJSON(meetingInfo, ar, ngw);
               newMeeting.setState(1);
-              HistoryRecord.createHistoryRecord(ngp, newMeeting.getId(),
+              HistoryRecord.createHistoryRecord(ngw, newMeeting.getId(),
                       HistoryRecord.CONTEXT_TYPE_MEETING,
                       HistoryRecord.EVENT_TYPE_CREATED, ar, "");
 
-              ngp.saveFile(ar, "Created new Meeting");
-              JSONObject repo = newMeeting.getFullJSON(ar, ngp);
+              ngw.saveFile(ar, "Created new Meeting");
+              JSONObject repo = newMeeting.getFullJSON(ar, ngw);
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -821,16 +822,16 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngp);
+              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to create a meeting.");
-              ar.assertNotFrozen(ngp);
+              ar.assertNotFrozen(ngw);
               String id = ar.reqParam("id");
-              MeetingRecord meeting = ngp.findMeeting(id);
+              MeetingRecord meeting = ngw.findMeeting(id);
               JSONObject meetingInfo = getPostedObject(ar);
 
               meeting.updateFromJSON(meetingInfo, ar);
-              meeting.updateAgendaFromJSON(meetingInfo, ar, ngp);
+              meeting.updateAgendaFromJSON(meetingInfo, ar, ngw);
 
               if (meetingInfo.has("agenda")) {
                   JSONArray agenda = meetingInfo.getJSONArray("agenda");
@@ -841,7 +842,7 @@ public class MainTabsViewControler extends BaseController {
                           if (newComment.has("html")) {
                               String comment = newComment.getString("html");
                               comment = GetFirstHundredNoHtml(comment);
-                              HistoryRecord.createHistoryRecord(ngp, meeting.getId(),
+                              HistoryRecord.createHistoryRecord(ngw, meeting.getId(),
                                       HistoryRecord.CONTEXT_TYPE_MEETING,
                                       HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
                           }
@@ -850,8 +851,8 @@ public class MainTabsViewControler extends BaseController {
               }
 
 
-              ngp.saveFile(ar, "Updated Meeting");
-              JSONObject repo = meeting.getFullJSON(ar, ngp);
+              ngw.saveFile(ar, "Updated Meeting");
+              JSONObject repo = meeting.getFullJSON(ar, ngw);
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -909,26 +910,26 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngp);
+              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to create a meeting.");
-              ar.assertNotFrozen(ngp);
+              ar.assertNotFrozen(ngw);
               String id = ar.reqParam("id");
-              MeetingRecord meeting = ngp.findMeeting(id);
+              MeetingRecord meeting = ngw.findMeeting(id);
               JSONObject agendaInfo = getPostedObject(ar);
 
               String subject = agendaInfo.getString("subject");
               if (subject==null || subject.length()==0) {
                   throw new Exception("You must supply a agenda subject to create an agenda item.");
               }
-              AgendaItem ai = meeting.createAgendaItem(ngp);
+              AgendaItem ai = meeting.createAgendaItem(ngw);
               ai.setPosition(99999);
               ai.setSubject(subject);
-              ai.updateFromJSON(ar, agendaInfo);
+              ai.updateFromJSON(ar, agendaInfo, ngw);
 
               meeting.renumberItems();
-              ngp.saveFile(ar, "Created new Agenda Item");
-              JSONObject repo = ai.getJSON(ar);
+              ngw.saveFile(ar, "Created new Agenda Item");
+              JSONObject repo = ai.getJSON(ar, ngw, meeting);
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -968,14 +969,14 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngp);
+              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to move an agenda item.");
-              ar.assertNotFrozen(ngp);
+              ar.assertNotFrozen(ngw);
               String src = ar.reqParam("src");
               String dest = ar.reqParam("dest");
-              MeetingRecord meeting = ngp.findMeeting(src);
-              MeetingRecord destMeeting = ngp.findMeeting(dest);
+              MeetingRecord meeting = ngw.findMeeting(src);
+              MeetingRecord destMeeting = ngw.findMeeting(dest);
               JSONObject agendaInfo = getPostedObject(ar);
               String agendaId = agendaInfo.getString("id");
               meeting.removeAgendaItem(agendaId);
@@ -983,13 +984,13 @@ public class MainTabsViewControler extends BaseController {
 
               AgendaItem ai = destMeeting.findAgendaItemOrNull(agendaId);
               if (ai==null) {
-                  ai = destMeeting.createAgendaItem(ngp);
+                  ai = destMeeting.createAgendaItem(ngw);
               }
               agendaInfo.put("position", 99999);
-              ai.updateFromJSON(ar,agendaInfo);
+              ai.updateFromJSON(ar,agendaInfo, ngw);
               destMeeting.renumberItems();
-              ngp.saveFile(ar, "Move Agenda Item");
-              JSONObject repo = ai.getJSON(ar);
+              ngw.saveFile(ar, "Move Agenda Item");
+              JSONObject repo = ai.getJSON(ar, ngw, meeting);
               repo.write(ar.w, 2, 2);
               ar.flush();
           } catch(Exception ex){
@@ -1026,12 +1027,12 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngp);
+              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to update an agenda item.");
-              ar.assertNotFrozen(ngp);
+              ar.assertNotFrozen(ngw);
               String id = ar.reqParam("id");
-              MeetingRecord meeting = ngp.findMeeting(id);
+              MeetingRecord meeting = ngw.findMeeting(id);
               String aid = ar.reqParam("aid");
               AgendaItem ai = null;
               if (!"~new~".equals(aid)) {
@@ -1041,7 +1042,7 @@ public class MainTabsViewControler extends BaseController {
                   }
               }
               else {
-                  ai = meeting.createAgendaItem(ngp);
+                  ai = meeting.createAgendaItem(ngw);
               }
               JSONObject agendaInfo = getPostedObject(ar);
 
@@ -1058,10 +1059,10 @@ public class MainTabsViewControler extends BaseController {
               }
 
               //everything else updated here
-              ai.updateFromJSON(ar, agendaInfo);
+              ai.updateFromJSON(ar, agendaInfo, ngw);
 
-              ngp.saveFile(ar, "Updated Agenda Item");
-              JSONObject repo = ai.getJSON(ar);
+              ngw.saveFile(ar, "Updated Agenda Item");
+              JSONObject repo = ai.getJSON(ar, ngw, meeting);
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1076,30 +1077,30 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngp);
+              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to update an agenda item.");
-              ar.assertNotFrozen(ngp);
+              ar.assertNotFrozen(ngw);
               String id = ar.reqParam("id");
-              MeetingRecord meeting = ngp.findMeeting(id);
+              MeetingRecord meeting = ngw.findMeeting(id);
 
               NoteRecord nr = null;
               String minId =  meeting.getMinutesId();
               if (minId!=null && minId.length()>0) {
-                  nr = ngp.getNoteByUidOrNull(minId);
+                  nr = ngw.getNoteByUidOrNull(minId);
               }
               if (nr==null) {
-                  nr = ngp.createNote();
+                  nr = ngw.createNote();
                   nr.setSubject("Minutes for Meeting: "+meeting.getName());
                   meeting.setMinutesId(nr.getUniversalId());
               }
-              nr.setWiki(meeting.generateMinutes(ar,  ngp));
+              nr.setWiki(meeting.generateMinutes(ar,  ngw));
               nr.setModUser(ar.getUserProfile());
 
               //now copy all the attachment references across
               for (AgendaItem ai : meeting.getAgendaItems()) {
                   for (String aid : ai.getDocList()) {
-                      AttachmentRecord att = ngp.findAttachmentByID(aid);
+                      AttachmentRecord att = ngw.findAttachmentByID(aid);
                       if (att!=null) {
                           nr.addDocId(aid);
                       }
@@ -1107,8 +1108,8 @@ public class MainTabsViewControler extends BaseController {
               }
               nr.setLastEdited(ar.nowTime);
 
-              ngp.saveFile(ar, "Created Topic for minutes of meeting.");
-              JSONObject repo = meeting.getFullJSON(ar, ngp);
+              ngw.saveFile(ar, "Created Topic for minutes of meeting.");
+              JSONObject repo = meeting.getFullJSON(ar, ngw);
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){

@@ -194,15 +194,15 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
         throws Exception
     {
         //legacy upgrade...there are some old attachments sections that are to be automatically
-        //deleted or migrated during scema migration.  Unfortunately, there are some calls to
+        //deleted or migrated during schema migration.  Unfortunately, there are some calls to
         //get unique ids during schema migration, and possibly before this section has had a
         //chance to be migrated.  So rather than bomb out, the search of IDs should search even
         //outdated or legacy sections. The idea begin findIds is that finding more IDs is better
         //than skipping IDs and possibly causing a clash.
 
-        List<AttachmentRecord> attChildren = sec.getChildren("attachment", AttachmentRecord.class);
-        for (AttachmentRecord att : attChildren) {
-            v.add(att.getId());
+        List<DOMFace> attChildren = sec.getChildren("attachment", DOMFace.class);
+        for (DOMFace att : attChildren) {
+            v.add(att.getAttribute("id"));
         }
     }
 
@@ -221,7 +221,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
     * This is a method to find a file, and output the file as a
     * stream of bytes to the request output stream.
     */
-    public static void serveUpFileNewUI(AuthRequest ar, NGContainer ngp, String fileName, int version)
+    public static void serveUpFileNewUI(AuthRequest ar, NGWorkspace ngp, String fileName, int version)
         throws Exception
     {
         if (ngp==null) {
@@ -272,7 +272,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
      * Specified version is returns, except if specified version does not exist, and then the latest
      * version is returned.   Throws exceptions if no version or no contents can be found.
      */
-    public static AttachmentVersion getVersionOrLatest(NGContainer ngp, String fileName, int version)
+    public static AttachmentVersion getVersionOrLatest(NGWorkspace ngp, String fileName, int version)
             throws Exception {
         try {
             AttachmentRecord att = null;

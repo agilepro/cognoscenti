@@ -39,6 +39,7 @@ import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGLabel;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.RoleRequestRecord;
 import org.socialbiz.cog.UserManager;
@@ -755,19 +756,19 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String id = "";
         try{
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to create an email generator.");
             JSONObject eGenInfo = getPostedObject(ar);
 
             id = eGenInfo.getString("id");
             EmailGenerator eGen = null;
             if ("~new~".equals(id)) {
-                eGen = ngp.createEmailGenerator();
+                eGen = ngw.createEmailGenerator();
                 eGen.setOwner(ar.getBestUserId());
             }
             else {
-                eGen = ngp.getEmailGeneratorOrFail(id);
+                eGen = ngw.getEmailGeneratorOrFail(id);
             }
 
             //the 'owner' is always the last person who saves the record. The email can
@@ -791,8 +792,8 @@ public class ProjectSettingController extends BaseController {
                 eGen.scheduleEmail(ar);
             }
 
-            ngp.saveFile(ar, "Updated Email Generator "+id);
-            JSONObject repo = eGen.getJSON(ar, ngp);
+            ngw.saveFile(ar, "Updated Email Generator "+id);
+            JSONObject repo = eGen.getJSON(ar, ngw);
             repo.write(ar.w, 2, 2);
             ar.flush();
         }

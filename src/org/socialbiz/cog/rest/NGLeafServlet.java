@@ -31,8 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AuthRequest;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionAttachments;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -263,20 +263,20 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
                 return;
             }
 
-            NGPage ngp = ngpi.getPage();
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ngpi.getPage();
+            ar.setPageAccessLevels(ngw);
 
             // see if this is an attachment
             if (resource.startsWith("a/")) {
                 String attachmentName = resource.substring(2);
-                SectionAttachments.serveUpFileNewUI(ar, ngp, attachmentName, -1);
+                SectionAttachments.serveUpFileNewUI(ar, ngw, attachmentName, -1);
                 return;
             }
             if (resource.equals("process.xml")) {
-                ngp.genProcessData(ar);
+                ngw.genProcessData(ar);
             } else if (resource.endsWith("wfxml")) {
                 if (resource.equals("process.wfxml")) {
-                    ngp.genProcessData(ar);
+                    ngw.genProcessData(ar);
                 } else if (resource.startsWith("act")) {
                     // format is act0000.wfxml where 0000 might be any 4
                     // digit identifier
@@ -288,12 +288,12 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
                             throw new NGException("nugen.exception.id.for.activity.invalid",null);
                         }
                     }
-                    ngp.genActivityData(ar, idstr);
+                    ngw.genActivityData(ar, idstr);
                 } else {
                     throw new NGException("nugen.exception.non.understandable.request",null);
                 }
             } else if (resource.equals("process.txt")) {
-                ngp.writePlainText(ar);
+                ngw.writePlainText(ar);
                 ar.flush();
             } else {
                 throw new NGException("nugen.exception.page.resouce.incorrect", new Object[]{resource});

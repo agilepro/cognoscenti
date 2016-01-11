@@ -354,13 +354,13 @@ System.out.println("Cognoscenti Server Object == Start the Server");
      * Fails if the key is not matched with anything, or if the key
      * is for a site.
      */
-    public NGPage getProjectByKeyOrFail(String key) throws Exception {
+    public NGWorkspace getProjectByKeyOrFail(String key) throws Exception {
         NGPageIndex ngpi = getContainerIndexByKeyOrFail(key);
         NGContainer ngc = ngpi.getContainer();
-        if (!(ngc instanceof NGPage)) {
+        if (!(ngc instanceof NGWorkspace)) {
             throw new NGException("nugen.exception.container.not.project", new Object[] { key });
         }
-        return (NGPage) ngc;
+        return (NGWorkspace) ngc;
     }
 
     /**

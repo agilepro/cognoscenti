@@ -45,8 +45,8 @@ import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.NGContainer;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.SuperAdminLogFile;
 import org.socialbiz.cog.exception.NGException;
@@ -238,7 +238,7 @@ public class EmailSender extends TimerTask {
             {
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
-                NGPage ngp = (NGPage) ngpi.getContainer();
+                NGWorkspace ngp = ngpi.getPage();
 
                 //first, move all the email messages that have been stored in the project from foreground events.
                 MailConversions.moveEmails(ngp, emailArchive, cog);
@@ -252,7 +252,7 @@ public class EmailSender extends TimerTask {
             {
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
-                NGPage ngp = (NGPage) ngpi.getContainer();
+                NGWorkspace ngp = ngpi.getPage();
 
                 ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
                 ngp.gatherUnsentScheduledNotification(resList);

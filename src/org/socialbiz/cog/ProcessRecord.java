@@ -42,9 +42,7 @@ public class ProcessRecord extends BaseRecord
         accessLicense();
     }
 
-   public int getState()
-        throws Exception
-    {
+   public int getState() {
         String stateVal = getScalar("state");
         return (int) safeConvertLong(stateVal);
     }

@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.HistoricActions;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
 import org.socialbiz.cog.UserManager;
@@ -540,13 +540,13 @@ public class AccountController extends BaseController {
                 if (!ngpi.isProject()) {
                     continue;
                 }
-                NGPage ngp = ngpi.getPage();
-                System.out.println("Changing '"+sourceUser+"' to '"+destUser+"' in ("+ngp.getFullName()+")");
-                int found = ngp.replaceUserAcrossWorkspace(sourceUser, destUser);
+                NGWorkspace ngw = ngpi.getPage();
+                System.out.println("Changing '"+sourceUser+"' to '"+destUser+"' in ("+ngw.getFullName()+")");
+                int found = ngw.replaceUserAcrossWorkspace(sourceUser, destUser);
                 if (found>0) {
                     System.out.println("     found "+found+" and saving.");
-                    ngpi.nextScheduledAction = ngp.nextActionDue();
-                    ngp.save();
+                    ngpi.nextScheduledAction = ngw.nextActionDue();
+                    ngw.save();
                 }
                 count += found;
                 NGPageIndex.clearLocksHeldByThisThread();

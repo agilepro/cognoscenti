@@ -162,7 +162,9 @@ public class AgendaItem extends CommentContainer {
     /**
      * full JSON representation including all comments, etc.
      */
-    public JSONObject getJSON(AuthRequest ar) throws Exception {
+    public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw, MeetingRecord meet) throws Exception {
+        NoteRecord linkedTopic = ngw.getNoteByUidOrNull(getTopicLink());
+        
         JSONObject aiInfo = new JSONObject();
         aiInfo.put("id",        getId());
         aiInfo.put("subject",   getSubject());
@@ -175,11 +177,20 @@ public class AgendaItem extends CommentContainer {
         aiInfo.put("position",  getPosition());
         htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getNotes());
         aiInfo.put("notes",     htmlVal);
-        aiInfo.put("actionItems", constructJSONArray(getActionItems()));
-        aiInfo.put("docList", constructJSONArray(getDocList()));
         aiInfo.put("presenters", constructJSONArray(getPresenters()));
-
-        addJSONComments(ar, aiInfo);
+        
+        if (linkedTopic!=null) {
+            long includeCommentRangeStart = meet.getStartTime() - 7*24*60*60*1000;
+            long includeCommentRangeEnd = meet.getStartTime() + 7*24*60*60*1000;
+            aiInfo.put("actionItems", constructJSONArray(linkedTopic.getActionList()));
+            aiInfo.put("docList", constructJSONArray(linkedTopic.getDocList()));
+            linkedTopic.addJSONComments(ar, aiInfo, includeCommentRangeStart, includeCommentRangeEnd);
+        }
+        else {
+            aiInfo.put("actionItems", constructJSONArray(getActionItems()));
+            aiInfo.put("docList", constructJSONArray(getDocList()));
+            addJSONComments(ar, aiInfo);
+        }
 
         AddressListEntry locker = getLockUser();
         if (locker!=null) {
@@ -189,7 +200,9 @@ public class AgendaItem extends CommentContainer {
     }
 
 
-    public void updateFromJSON(AuthRequest ar, JSONObject input) throws Exception {
+    public void updateFromJSON(AuthRequest ar, JSONObject input, NGWorkspace ngw) throws Exception {
+        NoteRecord linkedTopic = ngw.getNoteByUidOrNull(getTopicLink());
+        
         if (input.has("subject")) {
             setSubject(input.getString("subject"));
         }
@@ -218,17 +231,34 @@ public class AgendaItem extends CommentContainer {
             String topicLink = input.getString("topicLink");
             setTopicLink(topicLink);
         }
-        if (input.has("actionItems")) {
-            setActionItems(constructVector(input.getJSONArray("actionItems")));
+        
+        if (linkedTopic!=null) {
+            //Comments, Goals, and Attachments come from the linked item, if an item
+            //is linked, as well as Decisions (when implemented).
+            linkedTopic.updateCommentsFromJSON(input, ar);
+            if (input.has("actionItems")) {
+                //note: this sets the ENTIRE list, and so you must not have selected
+                //from the original list of action items.
+                linkedTopic.setActionList(constructVector(input.getJSONArray("actionItems")));
+            }
+            if (input.has("docList")) {
+                linkedTopic.setDocList(constructVector(input.getJSONArray("docList")));
+            }
         }
-        if (input.has("docList")) {
-            setDocList(constructVector(input.getJSONArray("docList")));
+        else {
+            updateCommentsFromJSON(input, ar);
+            if (input.has("actionItems")) {
+                setActionItems(constructVector(input.getJSONArray("actionItems")));
+            }
+            if (input.has("docList")) {
+                setDocList(constructVector(input.getJSONArray("docList")));
+            }
         }
+
         if (input.has("presenters")) {
             setPresenters(constructVector(input.getJSONArray("presenters")));
         }
 
-        updateCommentsFromJSON(input, ar);
 
         if (input.has("setLock")) {
             AddressListEntry currentLocker = getLockUser();
