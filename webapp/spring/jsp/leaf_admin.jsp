@@ -14,9 +14,9 @@
 
     String pageId      = ar.reqParam("pageId");
     NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageId);
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngp);
-    NGBook ngb = ngp.getSite();
+    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngw);
+    NGBook ngb = ngw.getSite();
     Cognoscenti cog = ar.getCogInstance();
 
     UserProfile up = ar.getUserProfile();
@@ -32,22 +32,22 @@
     }
     NGPageIndex.sortInverseChronological(templates);
 
-    String thisPage = ar.getResourceURL(ngp,"admin.htm");
-    String allTasksPage = ar.getResourceURL(ngp,"projectAllTasks.htm");
+    String thisPage = ar.getResourceURL(ngw,"admin.htm");
+    String allTasksPage = ar.getResourceURL(ngw,"projectAllTasks.htm");
 
-    String upstreamLink = ngp.getUpstreamLink();
+    String upstreamLink = ngw.getUpstreamLink();
 
-    String[] names = ngp.getPageNames();
+    String[] names = ngw.getPageNames();
 
-    ProcessRecord process = ngp.getProcess();
-    String parentKey = ngp.getParentKey();
+    ProcessRecord process = ngw.getProcess();
+    String parentKey = ngw.getParentKey();
     NGPageIndex parentIndex = cog.getContainerIndexByKey(parentKey);
     String parentName = "";
     if (parentIndex!=null) {
         parentName = parentIndex.containerName;
     }
 
-    JSONObject projectInfo = ngp.getConfigJSON();
+    JSONObject projectInfo = ngw.getConfigJSON();
     projectInfo.put("parentName", parentName);
 
 
@@ -70,7 +70,7 @@
     }
 
     WorkspaceStats wStats = new WorkspaceStats();
-    wStats.gatherFromWorkspace(ngp);
+    wStats.gatherFromWorkspace(ngw);
 
 %>
 
@@ -187,7 +187,7 @@ app.filter('escape', function() {
                             <td><input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>">
                                 <input type="hidden" name="encodingGuard" value="%E6%9D%B1%E4%BA%AC"/>
                                 <input type="hidden" name="go" value="<%ar.writeHtml(ar.getCompleteURL());%>">
-                                <input type="text" class="form-control" style="width:300px" name="newName" value="<%ar.writeHtml(ngp.getFullName());%>">
+                                <input type="text" class="form-control" style="width:300px" name="newName" value="<%ar.writeHtml(ngw.getFullName());%>">
                             </td>
                         </tr>
                         <tr><td style="height:5px" colspan="3"></td></tr>
@@ -207,7 +207,7 @@ app.filter('escape', function() {
                         <td></td>
                     </tr>
                     <input type="hidden" name="p"
-                            value="<%ar.writeHtml(ngp.getFullName());%>">
+                            value="<%ar.writeHtml(ngw.getFullName());%>">
                     <input type="hidden" name="go"
                             value="<%ar.writeHtml(thisPage);%>">
                     <input type="hidden" name="encodingGuard"
@@ -353,7 +353,7 @@ app.filter('escape', function() {
             <div class="generalContent">
                 <div class="generalHeading paddingTop">Future Scheduled Actions</div>
                 <div>
-                   Next Action due: {{<%=ngp.nextActionDue()%>|date:'M/d/yy H:mm'}}
+                   Next Action due: {{<%=ngw.nextActionDue()%>|date:'M/d/yy H:mm'}}
                 </div>
                 <div>
                    Index says: {{<%=ngpi.nextScheduledAction%>|date:'M/d/yy H:mm'}}
@@ -371,7 +371,7 @@ app.filter('escape', function() {
 
                     //Now scan all the comments on all the topics
                     int ii = 0;
-                    ngp.gatherUnsentScheduledNotification(allUnsent);
+                    ngw.gatherUnsentScheduledNotification(allUnsent);
                     for (ScheduledNotification sn : allUnsent) {
                         if (sn!=null) {
                             long timeToAct = sn.timeToSend();
