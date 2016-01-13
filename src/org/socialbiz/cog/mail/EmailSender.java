@@ -238,13 +238,13 @@ public class EmailSender extends TimerTask {
             {
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
-                NGWorkspace ngp = ngpi.getPage();
+                NGWorkspace ngw = ngpi.getPage();
 
                 //first, move all the email messages that have been stored in the project from foreground events.
-                MailConversions.moveEmails(ngp, emailArchive, cog);
+                MailConversions.moveEmails(ngw, emailArchive, cog);
 
-                ngpi.nextScheduledAction = ngp.nextActionDue();
-                ngp.save();
+                ngpi.nextScheduledAction = ngw.nextActionDue();
+                ngw.save();
                 NGPageIndex.clearLocksHeldByThisThread();
                 emailArchive.save();
             }
@@ -252,10 +252,10 @@ public class EmailSender extends TimerTask {
             {
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
-                NGWorkspace ngp = ngpi.getPage();
+                NGWorkspace ngw = ngpi.getPage();
 
                 ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
-                ngp.gatherUnsentScheduledNotification(resList);
+                ngw.gatherUnsentScheduledNotification(resList);
 
                 int total = resList.size();
                 int count = 0;
@@ -267,8 +267,8 @@ public class EmailSender extends TimerTask {
                     }
                 }
 
-                ngpi.nextScheduledAction = ngp.nextActionDue();
-                ngp.save(); //save all the changes from the removal of email and scheduling of events
+                ngpi.nextScheduledAction = ngw.nextActionDue();
+                ngw.save(); //save all the changes from the removal of email and scheduling of events
                 NGPageIndex.clearLocksHeldByThisThread();
 
                 //now we can go an actually send the email in the mailArchive

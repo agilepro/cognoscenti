@@ -9,7 +9,6 @@
 %><%@page import="org.socialbiz.cog.SectionFormat"
 %><%@page import="org.socialbiz.cog.SectionUtil"
 %><%@page import="org.socialbiz.cog.BaseRecord"
-%><%@page import="org.socialbiz.cog.ProcessRecord"
 %><%@page import="org.socialbiz.cog.GoalRecord"
 %><%@page import="org.socialbiz.cog.UserProfile"
 %><%@page import="org.socialbiz.cog.UtilityMethods"

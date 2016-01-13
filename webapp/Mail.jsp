@@ -8,7 +8,6 @@
 %><%@page import="org.socialbiz.cog.NGSection"
 %><%@page import="org.socialbiz.cog.SectionUtil"
 %><%@page import="org.socialbiz.cog.GoalRecord"
-%><%@page import="org.socialbiz.cog.ProcessRecord"
 %><%
     request.setCharacterEncoding("UTF-8");
     long starttime = System.currentTimeMillis();

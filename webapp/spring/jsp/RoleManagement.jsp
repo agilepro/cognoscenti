@@ -5,17 +5,18 @@
     ar.assertLoggedIn("Must be logged in to edit roles");
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngp);
-    NGBook ngb = ngp.getSite();
+    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngw);
+    NGBook ngb = ngw.getSite();
+    UserProfile uProf = ar.getUserProfile();
 
     JSONArray allRoles = new JSONArray();
 
-    for (NGRole aRole : ngp.getAllRoles()) {
+    for (NGRole aRole : ngw.getAllRoles()) {
         JSONObject rollo = new JSONObject();
         rollo.put("name", aRole.getName());
         rollo.put("color", aRole.getColor());
-        List<AddressListEntry> players = aRole.getExpandedPlayers(ngp);
+        List<AddressListEntry> players = aRole.getExpandedPlayers(ngw);
         rollo.put("count", players.size());
         JSONArray playlist = new JSONArray();
         for (AddressListEntry ale: players) {
@@ -35,7 +36,7 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.roleInfo = {};
     $scope.showInput = false;
@@ -198,6 +199,49 @@ app.controller('myCtrl', function($scope, $http) {
             return "fake-"+ch+".jpg";
         }
     }
+
+    $scope.sendEmailLoginRequest = function(message) {
+        var postURL = "<%=ar.getSystemProperty("identityProvider")%>?openid.mode=apiSendInvite";
+        var postdata = JSON.stringify(message);
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            alert("message has been sent to "+message.userId);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+
+    $scope.openInviteSender = function (player) {
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/InviteModal.html?t=<%=System.currentTimeMillis()%>',
+            controller: 'InviteModalCtrl',
+            size: 'lg',
+            resolve: {
+                email: function () {
+                    return player.uid;
+                },
+                msg: function() {
+                    return "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
+                    +" participate in the "+$scope.roleInfo.name+" role of the project '<%ar.writeHtml(ngw.getFullName());%>'."
+                    +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
+                    +" participate directly with the others throught the site.";
+                }
+            }
+        });
+
+        modalInstance.result.then(function (message) {
+            message.userId = player.uid;
+            message.name = player.name;
+            message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngw, "frontPage.htm")%>";
+            $scope.sendEmailLoginRequest(message);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
 });
 
 </script>
@@ -282,6 +326,8 @@ app.controller('myCtrl', function($scope, $http) {
                               ng-click="removePlayer(player);updateRole()">Remove Player:<br/>{{player.name}}<br/>{{player.uid}}</a></li>
                            <li role="presentation"><a role="menuitem" title="Visit {{player.name}}" target="_blank"
                               href="<%=ar.retPath%>v/FindPerson.htm?uid={{player.uid}}">Visit Player Page</a></li>
+                           <li role="presentation"><a role="menuitem" title="Send invite to {{player.name}}"
+                              ng-click="openInviteSender(player)">Send Invite</a></li>
                         </ul>
                       </span>
                       <span >
@@ -337,4 +383,5 @@ app.controller('myCtrl', function($scope, $http) {
 
 
 </div>
+<script src="<%=ar.retPath%>templates/InviteModal.js"></script>
 

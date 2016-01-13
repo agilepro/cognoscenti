@@ -8,7 +8,6 @@
 %><%@page import="org.socialbiz.cog.NGPage"
 %><%@page import="org.socialbiz.cog.NGPageIndex"
 %><%@page import="org.socialbiz.cog.NGSection"
-%><%@page import="org.socialbiz.cog.ProcessRecord"
 %><%@page import="org.socialbiz.cog.SectionFormat"
 %><%@page import="org.socialbiz.cog.SectionUtil"
 %><%@page import="org.socialbiz.cog.GoalRecord"
@@ -87,7 +86,6 @@ else
         </thead>
         <tbody>
 <%
-    ProcessRecord process = ngp.getProcess();
 
     // use this hashtable for "name" lookup.
     Hashtable<String,GoalRecord> taskHash = new Hashtable<String,GoalRecord>();
@@ -96,8 +94,6 @@ else
         taskHash.put(task.getId(), task);
     }
 
-    String synopsis = process.getSynopsis();
-    String desc = process.getDescription();
     List<HistoryRecord> histRecs = ngp.getAllHistory();
 
     for (HistoryRecord history : histRecs)

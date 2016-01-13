@@ -5,7 +5,6 @@
 %><%@page import="org.socialbiz.cog.NGPage"
 %><%@page import="org.socialbiz.cog.NGPageIndex"
 %><%@page import="org.socialbiz.cog.NGSection"
-%><%@page import="org.socialbiz.cog.ProcessRecord"
 %><%@page import="org.socialbiz.cog.SectionDef"
 %><%@page import="org.socialbiz.cog.SectionFormat"
 %><%@page import="org.socialbiz.cog.SectionUtil"
@@ -22,7 +21,6 @@
     ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
     ngb = ngp.getSite();
     ar.setPageAccessLevels(ngp);
-    ProcessRecord process = ngp.getProcess();
 
     pageTitle = "Add Attachment to "+ngp.getFullName();
     ar.assertMember("Can not attach a document to this project.");%>

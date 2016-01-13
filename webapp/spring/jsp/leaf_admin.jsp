@@ -39,7 +39,6 @@
 
     String[] names = ngw.getPageNames();
 
-    ProcessRecord process = ngw.getProcess();
     String parentKey = ngw.getParentKey();
     NGPageIndex parentIndex = cog.getContainerIndexByKey(parentKey);
     String parentName = "";

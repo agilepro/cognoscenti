@@ -103,7 +103,6 @@
         int max, long startTime, long endTime, StringWriter wikiNote)
         throws Exception
     {
-        ProcessRecord pr = ngp.getProcess();
         List<GoalRecord> grlist = ngp.getAllGoals();
         GoalRecord.sortTasksByRank(grlist);
 

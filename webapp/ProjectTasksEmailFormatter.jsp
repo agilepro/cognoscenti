@@ -28,7 +28,6 @@
     public void outputProcess(AuthRequest ar, NGPage ngp, int level, String thisPageAddress, int max)
         throws Exception
     {
-        ProcessRecord pr = ngp.getProcess();
         List<GoalRecord> grlist = ngp.getAllGoals();
         GoalRecord.sortTasksByRank(grlist);
 

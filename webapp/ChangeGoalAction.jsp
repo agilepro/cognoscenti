@@ -23,7 +23,6 @@
         String goal = ar.defParam("goal","");
         String purpose = ar.defParam("purpose","");
         String beam = ar.defParam("beam","");
-        ProcessRecord process = ngp.getProcess();
         process.setSynopsis(goal);
         process.setDescription(purpose);
         ngp.setUpstreamLink(beam);

@@ -7,7 +7,6 @@
 %><%@page import="org.socialbiz.cog.NGPage"
 %><%@page import="org.socialbiz.cog.NGPageIndex"
 %><%@page import="org.socialbiz.cog.NGSection"
-%><%@page import="org.socialbiz.cog.ProcessRecord"
 %><%@page import="org.socialbiz.cog.SectionForNotes"
 %><%@page import="org.socialbiz.cog.SectionDef"
 %><%@page import="org.socialbiz.cog.SectionFormat"
