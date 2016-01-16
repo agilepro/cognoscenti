@@ -71,7 +71,7 @@ public class CommentContainer extends DOMFace {
 /////////////////////////// JSON ///////////////////////////////
 
 
-    public void addJSONComments(AuthRequest ar, JSONObject thisContainer) throws Exception {
+    public JSONArray getAllComments(AuthRequest ar) throws Exception {
         JSONArray allCommentss = new JSONArray();
         UserProfile thisUser = ar.getUserProfile();
         for (CommentRecord cr : getComments()) {
@@ -83,10 +83,13 @@ public class CommentContainer extends DOMFace {
             }
             allCommentss.put(cr.getHtmlJSON(ar));
         }
-        thisContainer.put("comments",  allCommentss);
+        return allCommentss;
+    }
+    public void addJSONComments(AuthRequest ar, JSONObject thisContainer) throws Exception {
+        thisContainer.put("comments",  getAllComments(ar));
     }
 
-    public void addJSONComments(AuthRequest ar, JSONObject thisContainer, long startTime, long endTime) throws Exception {
+    public JSONArray getCommentTimeFrame(AuthRequest ar, long startTime, long endTime) throws Exception {
         JSONArray allCommentss = new JSONArray();
         UserProfile thisUser = ar.getUserProfile();
         for (CommentRecord cr : getComments()) {
@@ -102,7 +105,10 @@ public class CommentContainer extends DOMFace {
             }
             allCommentss.put(cr.getHtmlJSON(ar));
         }
-        thisContainer.put("comments",  allCommentss);
+        return allCommentss;
+    }
+    public void addJSONComments(AuthRequest ar, JSONObject thisContainer, long startTime, long endTime) throws Exception {
+        thisContainer.put("comments",  getCommentTimeFrame(ar, startTime, endTime));
     }
 
     public void updateCommentsFromJSON(JSONObject noteObj, AuthRequest ar) throws Exception {
@@ -125,6 +131,8 @@ public class CommentContainer extends DOMFace {
                 linkReplyToSource(newComment);
             }
             else {
+                //comment type 4 ... for meetings will not be found
+                //and so will never be updated
                 CommentRecord cr = findComment(timeStamp);
                 if (cr!=null) {
                     if (oneComment.has("deleteMe")) {

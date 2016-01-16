@@ -30,6 +30,7 @@ import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
 
@@ -827,7 +828,16 @@ public class NoteRecord extends CommentContainer implements EmailContext {
      }
      public JSONObject getJSONWithComments(AuthRequest ar) throws Exception {
          JSONObject noteData = getJSONWithHtml(ar);
-         addJSONComments(ar, noteData);
+         JSONArray comments = getAllComments(ar);
+         for (MeetingRecord meet : getLinkedMeetings(((NGPage)ar.ngp))) {
+             JSONObject specialMeetingComment = new JSONObject();
+             specialMeetingComment.put("emailSent", true);
+             specialMeetingComment.put("meet", meet.getListableJSON(ar));
+             specialMeetingComment.put("time", meet.getStartTime());
+             specialMeetingComment.put("commentType", 4);
+             comments.put(specialMeetingComment);
+         }
+         noteData.put("comments", comments);
          return noteData;
      }
 

@@ -43,17 +43,13 @@ Required parameter:
     }
 
     JSONObject noteInfo = note.getJSONWithComments(ar);
+	JSONArray comments = noteInfo.getJSONArray("comments");
     JSONArray attachmentList = ngp.getJSONAttachments(ar);
     JSONArray allLabels = ngp.getJSONLabels();
 
     JSONArray history = new JSONArray();
     for (HistoryRecord hist : note.getNoteHistory(ngp)) {
         history.put(hist.getJSON(ngp, ar));
-    }
-
-    JSONArray linkedMeetings = new JSONArray();
-    for (MeetingRecord meet : note.getLinkedMeetings(ngp)) {
-        linkedMeetings.put(meet.getListableJSON(ar));
     }
 
     JSONArray allGoals     = ngp.getJSONGoals();
@@ -89,7 +85,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.canUpdate = <%=canUpdate%>;
     $scope.history = <%history.write(out,2,4);%>
-    $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>
     $scope.allGoals = <%allGoals.write(out,2,4);%>
 
     $scope.currentTime = (new Date()).getTime();
@@ -343,7 +338,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return "background-color:#EEE;";
     }
     $scope.calcDueDisplay = function(cmt) {
-        if (cmt.commentType==1) {
+        if (cmt.commentType==1 || cmt.commentType==4) {
             return "";
         }
         if (cmt.state==13) {
@@ -681,14 +676,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 
     <div>
-      <span style="width:150px">Meetings:</span>
-      <span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default"  style="margin:4px;"
-           ng-click="navigateToMeeting(meet)">
-            <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
-      </span>
-    </div>
-
-    <div>
       <span style="width:150px">Action Items:</span>
       <span ng-repeat="act in getActions()" class="btn btn-sm btn-default"  style="margin:4px;"
            ng-click="navigateToAction(act)">
@@ -762,7 +749,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                          <span ng-show="cmt.commentType==1"><i class="fa fa-comments-o" style="font-size:130%"></i></span>
                          <span ng-show="cmt.commentType==2"><i class="fa fa-star-o" style="font-size:130%"></i></span>
                          <span ng-show="cmt.commentType==3"><i class="fa fa-question-circle" style="font-size:130%"></i></span>
-                         &nbsp; {{cmt.time | date}} - <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm"><span class="red">{{cmt.userName}}</span></a>
+                         <span ng-show="cmt.commentType==4"><i class="fa fa-gavel" style="font-size:130%"></i></span>
+                         &nbsp; {{cmt.time | date}} - 
+                         <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
+                             <span class="red">{{cmt.userName}}</span>
+                         </a>
                          <span ng-hide="cmt.emailSent">-email pending-</span>
                          <span ng-show="cmt.replyTo">
                              <span ng-hide="cmt.commentType>1">In reply to
@@ -779,8 +770,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    <div ng-show="cmt.state==11">
                        Draft {{commentTypeName(cmt)}} needs posting to be seen by others
                    </div>
-                   <div class="leafContent comment-inner">
+                   <div class="leafContent comment-inner" ng-hide="cmt.meet">
                        <div ng-bind-html="cmt.html"></div>
+                   </div>
+                   <div ng-show="cmt.meet" class="btn btn-sm btn-default"  style="margin:4px;"
+                       ng-click="navigateToMeeting(cmt.meet)">
+                        <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}} @ {{cmt.meet.startTime | date}}
                    </div>
 
                    <table style="min-width:500px;" ng-show="cmt.commentType>1">
