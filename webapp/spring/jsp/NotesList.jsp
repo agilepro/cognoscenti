@@ -13,6 +13,16 @@
 
 
     UserProfile up = ar.getUserProfile();
+    String currentUser = "NOBODY";
+    String currentUserName = "NOBODY";
+    String currentUserKey = "NOBODY";
+    if (up!=null) {
+        //this page can be viewed when not logged in, possibly with special permissions.
+        //so you can't assume that up is non-null
+        currentUser = up.getUniversalId();
+        currentUserName = up.getName();
+        currentUserKey = up.getKey();
+    }
 
     List<NoteRecord> aList = ngp.getAllNotes();
 
@@ -88,7 +98,7 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.notes = <%notes.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.filter = "";
@@ -226,6 +236,57 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.notes = res;
     }
 
+    $scope.openTopicCreator = function() {
+		
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/CreateTopicModal.html?t=<%=System.currentTimeMillis()%>',
+            controller: 'CreateTopicModalCtrl',
+            size: 'lg',
+            resolve: {
+            }
+        });
+
+        modalInstance.result.then(function (createdTopic) {
+			var newTopic = {}
+            newTopic.id = "~new~";
+			newTopic.html = createdTopic.html;
+			newTopic.subject = createdTopic.subject;
+			newTopic.modUser = {};
+			newTopic.modUser.uid = "<%ar.writeJS(currentUser);%>";
+			newTopic.modUser.name = "<%ar.writeJS(currentUserName);%>";
+			newTopic.modUser.key = "<%ar.writeJS(currentUserKey);%>";
+            var returnedCmt = createdTopic.comments[0];
+            var cleanCmt = {};
+            cleanCmt.time = -1;
+            cleanCmt.html = returnedCmt.html;
+            cleanCmt.state = returnedCmt.state;
+            cleanCmt.replyTo = returnedCmt.replyTo;
+            cleanCmt.commentType = returnedCmt.commentType;
+			cleanCmt.user = "<%ar.writeJS(currentUser);%>";
+			cleanCmt.userName = "<%ar.writeJS(currentUserName);%>";
+			cleanCmt.userKey = "<%ar.writeJS(currentUserKey);%>";
+			newTopic.comments=[];
+			newTopic.comments.push(cleanCmt);
+			
+			var postURL = "noteHtmlUpdate.json?nid=~new~";
+			var postdata = angular.toJson(newTopic);
+			alert(postdata);
+			$scope.showError=false;
+			$http.post(postURL ,postdata)
+			.success( function(data) {
+				window.location = "noteZoom"+data.id+".htm";
+			})
+			.error( function(data, status, headers, config) {
+				$scope.reportError(data);
+			});
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    }
+
+
+	
 });
 
 </script>
@@ -241,16 +302,24 @@ app.controller('myCtrl', function($scope, $http) {
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
+                    Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="showFilter=true"> Show Filter</a>
+              <li role="presentation"><a role="menuitem" ng-click="showFilter=true"> 
+			      Show Filter</a>
               </li>
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="editNote.htm?public=true"> Create New Topic </a>
+              <li role="presentation"><a role="menuitem" ng-click="openTopicCreator()"> 
+			      Create New Topic </a>
               </li>
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="sendNote.htm">
-                  <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> Send Email</a>
+			  
+              <li role="presentation"><a role="menuitem" href="sendNote.htm">
+                  <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> 
+				  Send Email</a>
               </li>
-              <li role="presentation"><a role="menuitem" href="exportPDF.htm"> Create PDF</a>
+              <li role="presentation"><a role="menuitem" href="exportPDF.htm"> 
+			      Create PDF</a>
+              </li>
+              <li role="presentation"><a role="menuitem" href="editNote.htm?public=true"> 
+			      OLD Create Topic </a>
               </li>
             </ul>
           </span>
@@ -345,6 +414,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 </div>
 
+<script src="<%=ar.retPath%>templates/CreateTopicModal.js"></script>
 
 
 

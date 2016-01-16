@@ -912,6 +912,21 @@ public abstract class AttachmentRecord extends DOMFace {
         return allTopics;
     }
 
+    /***
+     * The purge date is a date that is set up in advance to automatically
+     * delete the document.  This is useful for large files that you want to
+     * automatically get rid of in the future.
+     */
+    public long getPurgeDate() {
+        return getAttributeLong("purgeDate");
+    }
+    public void setPurgeDate(long val) {
+        setAttributeLong("purgeDate", val);
+    }
+
+   
+    
+    
     public JSONObject getJSON4Doc(AuthRequest ar, NGPage ngp) throws Exception {
         JSONObject thisDoc = new JSONObject();
         String univ = getUniversalId();
@@ -929,6 +944,7 @@ public abstract class AttachmentRecord extends DOMFace {
         thisDoc.put("upstream",     isUpstream());
         thisDoc.put("deleted",      isDeleted());
         thisDoc.put("attType",      getType());
+        thisDoc.put("purgeDate",    getPurgeDate());
 
         JSONObject labelMap = new JSONObject();
         for (NGLabel lRec : getLabels() ) {
@@ -984,6 +1000,10 @@ public abstract class AttachmentRecord extends DOMFace {
                 setStorageFileName(docInfo.getString("url"));
                 changed = true;
             }
+        }
+        if (docInfo.has("purgeDate")) {
+            setPurgeDate(docInfo.getLong("purgeDate"));
+            changed = true;
         }
 
         return changed;

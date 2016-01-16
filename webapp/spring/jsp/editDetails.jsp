@@ -62,6 +62,30 @@ var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.docInfo = <%docInfo.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
+    $scope.today = (new Date()).getTime();
+    $scope.convertDays = function(time) {
+        var fract = (time-$scope.today)/(24*60*60*1000);
+        return Math.floor(fract+.4);
+    }
+
+    $scope.futureDays = 30;
+    if ($scope.docInfo.purgeDate>0) {
+        $scope.futureDays = $scope.convertDays($scope.docInfo.purgeDate);
+    }
+
+    $scope.startPurge = function() {
+        $scope.docInfo.purgeDate = $scope.today + ($scope.futureDays*24*60*60*1000);
+    }
+    $scope.stopPurge = function() {
+        $scope.docInfo.purgeDate = 0;
+    }
+    $scope.setDays = function() {
+        //first, make sure that the future days is reasonable
+        if ($scope.futureDays<=1) {
+            $scope.futureDays = 1;
+        }
+        $scope.docInfo.purgeDate = $scope.today + ($scope.futureDays*24*60*60*1000);
+    }
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -338,7 +362,22 @@ app.controller('myCtrl', function($scope, $http) {
             </td>
         </tr>
 
-        <tr><td style="height:20px"></td></tr>
+        <tr><td style="height:10px"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Storage Term:</td>
+            <td style="width:20px;"></td>
+            <td>
+                <div ng-hide="docInfo.purgeDate" class="form-inline form-group">
+                    <button class="btn btn-default" ng-click="startPurge()"><i class="fa  fa-square-o"></i> Purge</button></div>
+                <div ng-show="docInfo.purgeDate" class="form-inline form-group">
+                    <button class="btn btn-default" ng-click="stopPurge()" style="margin-right:20px">
+                        <i class="fa  fa-check-square-o"></i> Purge in {{convertDays(docInfo.purgeDate)}} days</button>
+                    <button ng-click="setDays()" class="btn btn-primary">Set</button>
+                    <input ng-model="futureDays" type="text" class="form-control"/>
+                </div>
+            </td>
+        </tr>
+        <tr><td style="height:10px"></td></tr>
         <tr>
             <td class="gridTableColummHeader"></td>
             <td style="width:20px;"></td>

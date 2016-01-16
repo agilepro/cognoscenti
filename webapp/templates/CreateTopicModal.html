@@ -1,0 +1,44 @@
+<html>
+<body>
+<style>
+    .ta-editor.form-control.myform1-height  {
+        height: 80px;
+        min-height: 80px;
+    }
+    .ta-editor.form-control.myform2-height  {
+        height: 200px;
+        min-height: 200px;
+    }
+</style>
+<div class="modal-header">
+    <h3>Create New Discussion Topic</h3>
+</div>
+<div class="modal-body">
+    <div class="form-inline form-group">
+	    Subject: 
+		<input ng-model="topic.subject" class="form-control" style="width:400px" autofocus tabindex="0">
+	</div>
+    <div>Briefly describe the Topic</div>
+    <div ng-model="topic.html"
+        ta-text-editor-class="form-control myform1-height"
+        ta-html-editor-class="form-control myform1-height"
+        ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
+        text-angular="" class="leafContent" tabindex="0">
+    </div>    
+    <div>Start the discussion on the Topic</div>
+	<div ng-model="cmt.html"
+        ta-text-editor-class="form-control myform2-height"
+        ta-html-editor-class="form-control myform2-height"
+        ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
+        text-angular="" class="leafContent" tabindex="0">
+    </div>
+</div>
+<div class="modal-footer">
+      <button ng-click="ok(11)" class="btn btn-primary" ng-show="cmt.state<=11">
+            Create Topic with Draft Comment</button>
+      <button ng-click="ok(12);stopEdit()" class="btn btn-primary">
+            Create &amp; Post Comment</button>
+      <button ng-click="cancel()" class="btn btn-warning">Cancel</button>
+</div>
+</body>
+</html>
