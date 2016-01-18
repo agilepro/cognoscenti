@@ -19,6 +19,9 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, cmt) {
         if ($scope.cmt.commentType==3) {
             return "Question";
         }
+        if ($scope.cmt.commentType==5) {
+            return "Minutes";
+        }
         return "Comment";
     }
 

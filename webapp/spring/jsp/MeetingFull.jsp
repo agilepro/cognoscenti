@@ -769,6 +769,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (cmt.commentType==3) {
             return "Question";
         }
+        if (cmt.commentType==5) {
+            return "Minutes";
+        }
         return "Comment";
     }
     $scope.postComment = function(item, cmt) {
@@ -1072,6 +1075,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             cleanCmt.html = returnedCmt.html;
             cleanCmt.state = returnedCmt.state;
             cleanCmt.commentType = returnedCmt.commentType;
+            if (cleanCmt.state==12) {
+                if (cleanCmt.commentType==1 || cleanCmt.commentType==5) {
+                    cleanCmt.state=13;
+                }
+            }
             cleanCmt.replyTo = returnedCmt.replyTo;
             $scope.saveComment(item, cleanCmt);
         }, function () {
@@ -1827,7 +1835,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                               <li role="presentation" ng-show="cmt.user=='<%=uProf.getUniversalId()%>'">
                                   <a role="menuitem" ng-click="openCommentEditor(item,cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.commentType>1">
+                              <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
                                   <a role="menuitem" ng-click="openResponseEditor(cmt)">Create/Edit Response:</a></li>
                               <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="postComment(item, cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
@@ -1835,11 +1843,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                   <a role="menuitem" ng-click="deleteComment(item, cmt)">Delete Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.state==12 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="closeComment(item, cmt)">Close Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-hide="cmt.commentType>1">
+                              <li role="presentation" ng-show="cmt.commentType==1">
                                   <a role="menuitem" ng-click="openCommentCreator(item,1,cmt.time)">Reply</a></li>
-                              <li role="presentation" ng-show="cmt.commentType>1">
+                              <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
                                   <a role="menuitem" ng-click="openCommentCreator(item,2,cmt.time,cmt.html)">Make Modified Proposal</a></li>
-                              <li role="presentation" ng-show="cmt.commentType>1">
+                              <li role="presentation" ng-show="cmt.commentType==2">
                                   <a role="menuitem" ng-click="openDecisionEditor(item, cmt)">Create New Decision</a></li>
                            </ul>
                        </div>
@@ -1847,6 +1855,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        <span ng-show="cmt.commentType==1"><i class="fa fa-comments-o" style="font-size:130%"></i></span>
                        <span ng-show="cmt.commentType==2"><i class="fa fa-star-o" style="font-size:130%"></i></span>
                        <span ng-show="cmt.commentType==3"><i class="fa fa-question-circle" style="font-size:130%"></i></span>
+                      <span ng-show="cmt.commentType==5"><i class="fa fa-file-code-o" style="font-size:130%"></i></span>
                        &nbsp; {{cmt.time | date}} -
                        <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
                           <span class="red">{{cmt.userName}}</span>
@@ -1866,7 +1875,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        <div ng-bind-html="cmt.html"></div>
                    </div>
 
-                   <table style="min-width:500px;" ng-show="cmt.commentType>1">
+                   <table style="min-width:500px;" ng-show="cmt.commentType==2 || cmt.commentType==3">
                    <tr ng-repeat="resp in cmt.responses">
                        <td style="padding:5px;max-width:100px;">
                            <div ng-show="cmt.commentType==2"><b>{{resp.choice}}</b></div>
@@ -1897,7 +1906,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        </td>
                    </tr>
                    </table>
-                   <div class="leafContent comment-inner" ng-show="cmt.state==13 && cmt.commentType>1">
+                   <div class="leafContent comment-inner" ng-show="cmt.state==13 && (cmt.commentType==2 || cmt.commentType==3)">
                        <div ng-bind-html="cmt.outcome"></div>
                    </div>
                    <div ng-show="cmt.replies.length>0 && cmt.commentType>1">
@@ -1927,6 +1936,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
             <button ng-click="openCommentCreator(item, 3)" class="btn btn-default">
                 Create New <i class="fa fa-question-circle"></i> Question</button>
+            <button ng-click="openCommentCreator(item, 5)" class="btn btn-default">
+                Create New <i class="fa fa-file-code-o"></i> Minutes</button>
         </div>
         </td>
       </tr>

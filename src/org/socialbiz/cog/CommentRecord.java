@@ -17,6 +17,8 @@ public class CommentRecord extends DOMFace {
     public static final int COMMENT_TYPE_SIMPLE    = 1;
     public static final int COMMENT_TYPE_PROPOSAL  = 2;
     public static final int COMMENT_TYPE_REQUEST   = 3;
+    public static final int COMMENT_TYPE_MEETING   = 4;
+    public static final int COMMENT_TYPE_MINUTES   = 5;
 
     public static final int COMMENT_STATE_DRAFT   = 11;
     public static final int COMMENT_STATE_OPEN    = 12;
@@ -257,6 +259,12 @@ public class CommentRecord extends DOMFace {
             return true;
         }
 
+        //minutes are never sent, so mark that now as having been sent
+        if (getCommentType()==CommentRecord.COMMENT_TYPE_MINUTES) {
+            setEmailSent(true);
+            return true;
+        }
+        
         //schema migration BEFORE version 101
         //If the email was not sent, and the item was created
         //more than 1 week ago, then go ahead and mark it as sent, because it is
@@ -496,6 +504,11 @@ public class CommentRecord extends DOMFace {
         }
         public boolean needsSending() throws Exception {
             if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT) {
+                //draft records do not get email sent
+                return false;
+            }
+            if (cr.getCommentType()==CommentRecord.COMMENT_TYPE_MINUTES) {
+                //minutes don't have email sent not ever so mark sent
                 return false;
             }
             return !cr.getEmailSent();
