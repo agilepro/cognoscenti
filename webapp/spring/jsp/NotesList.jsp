@@ -108,6 +108,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.filterMap = {};
     $scope.openMap = {};
     $scope.showFilter = true;
+    $scope.allowPrivate = <%=ngb.getAllowPrivate()%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -378,7 +379,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                           <a role="menuitem" tabindex="-1" href="sendNote.htm?noteId={{rec.id}}">Send Email</a></li>
                       <li role="presentation" ng-hide="rec.public">
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteViz(rec)">Make <img src="<%=ar.retPath%>assets/images/iconPublic.png"> Public</a></li>
-                      <li role="presentation" ng-show="rec.public">
+                      <li role="presentation" ng-show="rec.public && allowPrivate">
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteViz(rec)">Make <img src="<%=ar.retPath%>assets/images/iconMember.png"> Member Only</a></li>
                       <li role="presentation">
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Delete <img src="<%=ar.retPath%>deletedLink.gif"> Topic</a></li>

@@ -44,6 +44,7 @@ import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.NoteRecord;
 import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
+import org.socialbiz.cog.SectionDef;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
@@ -332,6 +333,7 @@ public class MainTabsViewControler extends BaseController {
          String nid = "";
          try{
              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+             NGBook ngb = ngp.getSite();
              ar.setPageAccessLevels(ngp);
              ar.assertMember("Must be a member to update a topic contents.");
              ar.assertNotFrozen(ngp);
@@ -354,6 +356,11 @@ public class MainTabsViewControler extends BaseController {
              };
 
              note.updateNoteFromJSON(noteInfo, ar);
+             
+             //enforce no private
+             if (!ngb.getAllowPrivate()) {
+                 note.setVisibility(SectionDef.PUBLIC_ACCESS);
+             }
 
              ngp.saveFile(ar, "Updated Topic Contents");
 

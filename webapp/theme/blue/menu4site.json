@@ -19,11 +19,13 @@
         },
         {
           "name": "Clone Remote Workspace",
-          "href": "accountCloneProject.htm"
+          "href": "accountCloneProject.htm",
+          "experiment": true
         },
         {
           "name": "Convert Folder to Workspace",
-          "href": "convertFolderProject.htm"
+          "href": "convertFolderProject.htm",
+          "experiment": true
         }
       ]
   },

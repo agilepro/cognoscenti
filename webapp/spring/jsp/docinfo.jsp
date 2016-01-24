@@ -31,7 +31,7 @@ Required parameters:
 
 
     String access = "Member Only";
-    if (attachment.getVisibility()<=1) {
+    if (attachment.isPublic()) {
         access = "Public";
     }
 
@@ -277,8 +277,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td class="gridTableColummHeader"></td>
             <td style="width: 20px;"></td>
 <%
-if (attachment.getVisibility() == SectionDef.PUBLIC_ACCESS || (attachment.getVisibility() == SectionDef.MEMBER_ACCESS && (ar.isLoggedIn() || canAccessDoc)))
-{
+if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc))) {
 %>
             <td>
             <%if("FILE".equals(attachment.getType())){ %> <a

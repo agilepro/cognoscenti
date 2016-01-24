@@ -96,7 +96,8 @@ public class NGWebUtils {
         return count;
     }
 
-    public static int getDocumentCount(NGWorkspace ngw, int displayLevel)
+    /*
+      public static int getDocumentCount(NGWorkspace ngw, int displayLevel)
             throws Exception {
         int noOfDocs = 0;
         for (AttachmentRecord attachment : ngw.getAllAttachments()) {
@@ -108,6 +109,7 @@ public class NGWebUtils {
         }
         return noOfDocs;
     }
+    */
 
     public static int getDeletedDocumentCount(NGWorkspace ngw) throws Exception {
         int noOfDocs = 0;

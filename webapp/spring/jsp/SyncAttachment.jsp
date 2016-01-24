@@ -404,11 +404,7 @@ public int attachmentDisplay(AuthRequest ar, NGPage ngp) throws Exception
         long diff = (ar.nowTime - attachment.getModifiedDate())/1000;
         ar.writeHtml(String.valueOf(diff));
         ar.write("</td>");
-
-        ar.write("<td>");
-        ar.writeHtml(String.valueOf(attachment.getVisibility()));
-        ar.write("</td>");
-
+        ar.write("<td>"+attachment.isPublic()+"</td>");
         ar.write("</tr>");
         countRows++;
     }

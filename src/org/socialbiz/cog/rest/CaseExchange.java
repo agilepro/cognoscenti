@@ -20,7 +20,6 @@
 
 package org.socialbiz.cog.rest;
 
-import org.w3c.dom.Document;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.DOMFace;
@@ -29,6 +28,7 @@ import org.socialbiz.cog.License;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NoteRecord;
 import org.socialbiz.cog.UtilityMethods;
+import org.w3c.dom.Document;
 
 public class CaseExchange {
     AuthRequest ar;
@@ -80,7 +80,7 @@ public class CaseExchange {
         for (AttachmentRecord att : ngp.getAllAttachments()) {
 
             // first check if this license has access
-            if (att.getVisibility() == 1) {
+            if (att.isPublic()) {
                 // public document, so everyone can get it
             }
             else if (isMember) {

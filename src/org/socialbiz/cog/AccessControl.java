@@ -44,7 +44,7 @@ public class AccessControl {
     public static boolean canAccessDoc(AuthRequest ar, NGContainer ngc, AttachmentRecord attachRec)
         throws Exception {
         //first, anyone can access a public document
-        if (attachRec.getVisibility() == SectionDef.PUBLIC_ACCESS) {
+        if (attachRec.isPublic()) {
             return true;
         }
 

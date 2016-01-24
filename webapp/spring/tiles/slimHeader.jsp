@@ -58,6 +58,7 @@ Parameter used :
     boolean isSiteHeader    = headerTypeStr.equals("site");
     boolean isUserHeader    = headerTypeStr.equals("user");
     boolean isProjectHeader = headerTypeStr.equals("project");
+    boolean showExperimental= false;
 
     if (isSiteHeader) {
         if (bookId==null) {
@@ -109,9 +110,11 @@ Parameter used :
         pageTitle = ngp.getFullName();
         if(ngp instanceof NGPage) {
             ngb = ((NGPage)ngp).getSite();
+            showExperimental = ngb.getShowExperimental();
         }
         else if(ngp instanceof NGBook) {
             ngb = ((NGBook)ngp);
+            showExperimental = ngb.getShowExperimental();
         }
         if (ngp.isDeleted())
         {
@@ -181,8 +184,12 @@ Parameter used :
 
             var subs=oneTab.subs;
             for(var  i=0;i<subs.length ;i++){
-
                 var oneSub = subs[i];
+                if (oneSub.experiment) {
+                    if (<%=!showExperimental%>) {
+                        continue;
+                    }
+                }
                 var mainElement = document.getElementById(oneTab.ref);
                 var newli= document.createElement('li');
                 var newlink = document.createElement('a');

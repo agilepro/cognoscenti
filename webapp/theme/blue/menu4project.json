@@ -35,7 +35,8 @@
         },
         {
           "name": "Generate PDF",
-          "href": "exportPDF.htm"
+          "href": "exportPDF.htm",
+          "experiment": true
         }
       ]
   },
@@ -91,15 +92,18 @@
         },
         {
           "name": "Synchonize",
-          "href": "SyncAttachment.htm"
+          "href": "SyncAttachment.htm",
+          "experiment": true
         },
         {
           "name": "Reminders",
-          "href": "reminders.htm"
+          "href": "reminders.htm",
+          "experiment": true
         },
         {
           "name": "Ask Someone to Attach File",
-          "href": "emailReminder.htm"
+          "href": "emailReminder.htm",
+          "experiment": true
         },
         {
           "name": "Deleted Documents",
@@ -143,11 +147,13 @@
         },
         {
           "name": "Streaming Links",
-          "href": "streamingLinks.htm"
+          "href": "streamingLinks.htm",
+          "experiment": true
         },
         {
           "name": "Synchronize Upstream",
-          "href": "synchronizeUpstream.htm"
+          "href": "synchronizeUpstream.htm",
+          "experiment": true
         }
       ]
   }

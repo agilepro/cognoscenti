@@ -49,7 +49,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import org.springframework.web.servlet.ModelAndView;
-import org.workcast.json.JSONObject;
 
 @Controller
 public class UploadFileController extends BaseController {
@@ -301,11 +300,7 @@ public class UploadFileController extends BaseController {
             attachment.setModifiedBy(ar.getBestUserId());
             attachment.setModifiedDate(ar.nowTime);
             attachment.setType(ftype);
-            if (visibility.equals("PUB")) {
-                attachment.setVisibility(1);
-            } else {
-                attachment.setVisibility(2);
-            }
+            attachment.setPublic(visibility.equals("PUB"));
 
             HistoryRecord.createHistoryRecord(ngw, attachment.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
                     ar.nowTime, HistoryRecord.EVENT_DOC_ADDED, ar, "Created Link URL");
@@ -646,6 +641,9 @@ public class UploadFileController extends BaseController {
         }
     }
 
+    
+    /*
+    
     @RequestMapping(value = "/getDocumentDetail.ajax", method = RequestMethod.POST)
     public void createLeaflet(HttpServletRequest request, HttpServletResponse response)
            throws Exception {
@@ -673,6 +671,7 @@ public class UploadFileController extends BaseController {
        }
        NGWebUtils.sendResponse(ar, responseText);
    }
+   */
 
     @RequestMapping(value = "/{siteId}/{pageId}/CreateCopy.htm", method = RequestMethod.GET)
     protected ModelAndView CreateCopy(@PathVariable String siteId,

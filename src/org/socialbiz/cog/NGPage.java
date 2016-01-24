@@ -1685,6 +1685,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         
         //read only information from the site
         projectInfo.put("showExperimental", this.getSite().getShowExperimental());
+        projectInfo.put("allowPrivate", this.getSite().getAllowPrivate());
         
         return projectInfo;
     }

@@ -62,15 +62,18 @@
         },
         {
           "name": "Remote Profiles",
-          "href": "RemoteProfiles.htm"
+          "href": "RemoteProfiles.htm",
+          "experiment": true
         },
         {
           "name": "Remote Action Items",
-          "href": "userRemoteTasks.htm"
+          "href": "userRemoteTasks.htm",
+          "experiment": true
         },
         {
           "name": "Personal Assistant",
-          "href": "Agents.htm"
+          "href": "Agents.htm",
+          "experiment": true
         }
       ]
   },
@@ -86,11 +89,13 @@
         },
         {
           "name": "Contacts",
-          "href": "userContacts.htm"
+          "href": "userContacts.htm",
+          "experiment": true
         },
         {
           "name": "Connections",
-          "href": "userConnections.htm"
+          "href": "userConnections.htm",
+          "experiment": true
         },
         {
           "name": "Sites",

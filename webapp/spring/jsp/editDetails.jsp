@@ -28,6 +28,8 @@
     boolean isGone     = atype.equals("GONE");
     boolean isURL      = "URL".equals(atype);
     boolean isFile     = "FILE".equals(atype);
+    boolean allowPrivate = ngp.getSite().getAllowPrivate();
+    
     List<AttachmentVersion> vers = attachment.getVersions(ngp);
     boolean isGhost = vers.size()==0;
     boolean isModified = attachment.hasUncommittedChanges(vers);
@@ -66,6 +68,10 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.convertDays = function(time) {
         var fract = (time-$scope.today)/(24*60*60*1000);
         return Math.floor(fract+.4);
+    }
+    $scope.allowPrivate = <%=allowPrivate%>;
+    if (!$scope.allowPrivate) {
+        $scope.docInfo.public = true;
     }
 
     $scope.futureDays = 30;
@@ -306,13 +312,12 @@ app.controller('myCtrl', function($scope, $http) {
             <td class="gridTableColummHeader"  valign="top">Permission:</td>
             <td style="width:20px;"></td>
             <td  valign="top">
-            <% if (attachment.getVisibility()>1) {
+            <% if (!attachment.isPublic()) {
                    String publicNotAllowedMsg = "";
                    if("yes".equals(ngp.getAllowPublic())){
             %>
-                       <input type="checkbox" name="visPublic"  value="PUB"/>
-                       <img src="<%=ar.retPath %>assets/images/iconPublic.png" name="PUB" alt="Public"
-                            title="Public"/ > Public Access
+                       <input type="checkbox" ng-model="docInfo.public" ng-disabled="!allowPrivate" >
+                       <img src="<%=ar.retPath %>assets/images/iconPublic.png"> Public Access
             <%
                    }else{
                        publicNotAllowedMsg = ar.getMessageFromPropertyFile("public.attachments.not.allowed", null);
@@ -320,8 +325,8 @@ app.controller('myCtrl', function($scope, $http) {
                    }
                } else {
             %>
-                   <input type="checkbox" name="visPublic" value="PUB" checked="checked"/>
-                   <img src="<%=ar.retPath %>assets/images/iconPublic.png" name="PUB" alt="Public" title="Public"/ > Public Access
+                   <input type="checkbox" ng-model="docInfo.public" ng-disabled="!allowPrivate" />
+                   <img src="<%=ar.retPath %>assets/images/iconPublic.png" name="PUB" alt="Public" title="Public"/> Public Access
             <% } %>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <input type="checkbox" name="visMember" value="MEM" checked="checked" disabled="disabled"/>

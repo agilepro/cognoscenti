@@ -23,7 +23,7 @@
 
     String p = ar.reqParam("p");
     String oid = ar.defParam("oid", "Create");
-    int visibility = DOMFace.safeConvertInt(ar.defParam("viz", "2"));
+    boolean isPublic = DOMFace.safeConvertInt(ar.defParam("viz", "2"))!=2;
     ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
     if (ngp.isDeleted())
     {
@@ -61,7 +61,7 @@
         NoteRecord cr = ngp.getNoteOrFail(oid);
         sectionValue = cr.getWiki();
         subject = cr.getSubject();
-        visibility = cr.getVisibility();
+        isPublic = cr.isPublic();
         effDate = cr.getEffectiveDate();
         choices = cr.getChoices();
         pinOrder = cr.getPinOrder();
@@ -108,32 +108,17 @@
     ar.write("</textarea>");
     ar.write("\n<br/>\nNote can be seen by: ");
     ar.write("\n<input type=\"radio\" name=\"visibility\" value=\"1\"");
-    if (visibility==1)
+    if (isPublic)
     {
         ar.write(" checked=\"checked\"");
     }
     ar.write("/> Public ");
     ar.write("\n<input type=\"radio\" name=\"visibility\" value=\"2\"");
-    if (visibility!=1 && visibility!=3 && visibility!=4)
+    if (!isPublic)
     {
         ar.write(" checked=\"checked\"");
     }
     ar.write("/> Member ");
-    ar.write("\n<input type=\"radio\" name=\"visibility\" value=\"4\"");
-    if (visibility==4)
-    {
-        ar.write(" checked=\"checked\"");
-    }
-    ar.write("/> Private ");
-    if (ngp.secondaryPermission(ar.getUserProfile()))    //if you are administrator
-    {
-        ar.write("\n<input type=\"radio\" name=\"visibility\" value=\"3\"");
-        if (visibility==3)
-        {
-    ar.write(" checked=\"checked\"");
-        }
-        ar.write("/> Admin ");
-    }
     ar.write("\n<br/>\nEffective Date: ");
     ar.write("<input type=\"text\" name=\"effDate\" id=\"effDate\" ");
     ar.write("size=\"20\" value=\"");

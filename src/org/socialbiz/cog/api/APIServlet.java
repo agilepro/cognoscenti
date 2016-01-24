@@ -618,7 +618,6 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
         String urlRoot = ar.baseURL + "api/" + resDec.siteId + "/$/?lic="+licenseId;
         root.put("siteinfo", urlRoot);
-//        root.put("hostinfo", ar.baseURL + "api/$/$/");
         root.put("name", resDec.site.getFullName());
         root.put("id", resDec.site.getKey());
         root.put("deleted", resDec.site.isDeleted());

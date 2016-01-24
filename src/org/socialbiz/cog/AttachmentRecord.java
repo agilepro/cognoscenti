@@ -47,12 +47,6 @@ public abstract class AttachmentRecord extends DOMFace {
     public AttachmentRecord(Document doc, Element definingElement, DOMFace attachmentContainer) {
         super(doc, definingElement, attachmentContainer);
 
-        // MIGRATION CODE, remove when oldest document is later than Dec 2009
-        // if not otherwise specified, all documents will be member only
-        if (getVisibility() == 0) {
-            setVisibility(2);
-        }
-
         //retire the separate roleAccess and labels records, and make a single
         //consolidated list.  This migrates any existing roleAccess entries to the
         //labels vector.  Migration added June 2015, however roles on attachments
@@ -76,7 +70,7 @@ public abstract class AttachmentRecord extends DOMFace {
         setModifiedBy(other.getModifiedBy());
         setModifiedDate(other.getModifiedDate());
         setDescription(other.getDescription());
-        setVisibility(other.getVisibility());
+        setPublic(other.isPublic());
         setType(other.getType());
         setStorageFileName(other.getStorageFileName());
     }
@@ -312,11 +306,11 @@ public abstract class AttachmentRecord extends DOMFace {
      * SectionDef.ADMIN_ACCESS = 3; -- future expansion possibility
      * SectionDef.PRIVATE_ACCESS = 4; -- future expansion possibility
      */
-    public int getVisibility() {
+    private int getVisibility() {
         return (int) safeConvertLong(getScalar("visibility"));
     }
 
-    public void setVisibility(int viz) {
+    private void setVisibility(int viz) {
         if (viz < SectionDef.PUBLIC_ACCESS) {
             throw new RuntimeException("Visibility of an attachment can not be set to a value "
                     + "less than one.  Attempt to set visibility to " + viz);
@@ -1073,12 +1067,12 @@ public abstract class AttachmentRecord extends DOMFace {
 
 
     /**
-     * @deprecated use getRemoteCombo().getComboString() instead
-     */
+     * deprecated use getRemoteCombo().getComboString() instead
+     *
     @Deprecated
     public String getRemoteLink() {
         return getAttribute(ATTACHMENT_ATTB_RLINK);
-    }
+    }*/
 
     /**
      * delete all the files on disk or in DB, presumably just
@@ -1088,7 +1082,6 @@ public abstract class AttachmentRecord extends DOMFace {
      * the documents are really, truly deleted.
      */
     public void purgeAllVersions(NGContainer ngc) throws Exception {
-//        List<AttachmentVersion> cleanList = ;
         for (AttachmentVersion av : getVersions(ngc)) {
             av.purgeLocalFile();
         }

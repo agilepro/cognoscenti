@@ -109,7 +109,7 @@
         <tr>
             <td>Visibility</td>
             <td class="Odd">
-            <% if (attachment.getVisibility()>1) { %>
+            <% if (attachment.isPublic()) { %>
                 YES Public Access,
             <% } else { %>
                 NO Public Access,

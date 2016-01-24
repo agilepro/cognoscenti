@@ -459,7 +459,7 @@ public class EmailListener extends TimerTask{
             if(attachment == null){
                 attachment =  ngp.createAttachment();
                 attachment.setDisplayName(fileName);
-                attachment.setVisibility(1);
+                attachment.setPublic(true);
             }
             else {
                 version = attachment.getVersion();

@@ -71,11 +71,7 @@ public class AttachmentHelper {
         attachment.setType("FILE");
         attachment.setVersion(1);
 
-        if (visibility != null && visibility.equals("*PUB*")) {
-            attachment.setVisibility(1);
-        } else {
-            attachment.setVisibility(2);
-        }
+        attachment.setPublic(visibility != null && visibility.equals("*PUB*"));
 
         setDisplayName(ngc, attachment, assureExtension(desiredName, fileName));
         saveUploadedFile(ar, attachment, file);
@@ -260,11 +256,7 @@ public class AttachmentHelper {
         }
 
         if(visibility!=null){
-            if (visibility.equals("PUB")) {
-                attachment.setVisibility(1);
-            } else {
-                attachment.setVisibility(2);
-            }
+            attachment.setPublic(visibility.equals("PUB"));
         }
         AttachmentHelper.setDisplayName(ngp, attachment, name);
 

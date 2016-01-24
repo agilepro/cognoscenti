@@ -166,7 +166,7 @@
 
             //if the attachment is not public, then display only if the user is a
             //member of the page
-            if (attachment.getVisibility()>1) {
+            if (!attachment.isPublic()) {
                 if (!isMember) {
                     continue;
                 }
@@ -332,7 +332,7 @@
             if (attachment.isDeleted()) {
                 ar.write("DEL");
             }
-            else if (attachment.getVisibility()<=1)
+            else if (attachment.isPublic())
             {
                 ar.write("PUB");
             }

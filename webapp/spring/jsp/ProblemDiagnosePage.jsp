@@ -93,7 +93,7 @@ Required parameter:
             <form name="problemDiagnose" id="problemDiagnose" action="problemDiagnose.form" method="post">
                 <input type="hidden" name="action" id="actionType" value=""/>
                 <input type="hidden" name="aid" value="<%ar.writeHtml(aid);%>">
-                <input type="hidden" name="atype" value="<%ar.writeHtml(String.valueOf(attachment.getVisibility()));%>">
+                <input type="hidden" name="atype" value="<%if (attachment.isPublic()) {ar.write("1");} else {ar.write("2");}%>">
                 <input type="hidden" name="rlink" value="<%ar.writeHtml(url);%>"/>
                 <input type="hidden" name="connectionHealth" value="<%ar.writeHtml(connectionHealth);%>">
                 <table border="0px solid red" class="linkWizard">

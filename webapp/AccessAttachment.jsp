@@ -37,8 +37,7 @@
 
     String type     = attachment.getType();
     String access = "Member Only";
-    if (attachment.getVisibility()<=1)
-    {
+    if (attachment.isPublic()) {
         access = "Public";
     }
 
