@@ -671,13 +671,13 @@ public class NGPageIndex {
         term.targetLeaves.add(this);
         nameTermsTmp.add(term);
 
-        String[] containerNames = container.getContainerNames();
-        if (containerNames.length > 0) {
+        List<String> containerNames = container.getContainerNames();
+        if (containerNames.size() > 0) {
             // picks the first name as the nicest, official, name
-            containerName = containerNames[0];
+            containerName = containerNames.get(0);
         }
-        for (int i = 0; i < containerNames.length; i++) {
-            String name = containerNames[i];
+        for (int i = 0; i < containerNames.size(); i++) {
+            String name = containerNames.get(i);
             term = NGTerm.findTerm(name);
             if (term == null) {
                 // this is not a good name, ignore it

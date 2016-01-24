@@ -56,7 +56,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
     public NGBook(File theFile, Document newDoc) throws Exception {
         super(theFile, newDoc);
         siteInfoRec = requireChild("bookInfo", BookInfoRecord.class);
-        displayNames = siteInfoRec.getPageNames();
+        displayNames = siteInfoRec.getSiteNames();
         assureNameExists();
 
         String fileName = theFile.getName();
@@ -259,25 +259,6 @@ public class NGBook extends ContainerCommon implements NGContainer {
         return key;
     }
 
-    public String[] getSiteNames() {
-        return displayNames.toArray(new String[0]);
-    }
-
-    public void setSiteNames(String[] newNames) {
-        if (newNames==null) {
-            throw new RuntimeException("setSiteNames was passed a null string array");
-        }
-        if (newNames.length<1) {
-            throw new RuntimeException("setSiteNames was passed a zero length string array");
-        }
-        siteInfoRec.setPageNames(newNames);
-        displayNames = siteInfoRec.getPageNames();
-        assureNameExists();
-
-        //schema migration ... clean this out if it exists at this point
-        setScalar("name", null);
-    }
-
     public String getStyleSheet() {
         String ss = getScalar("styleSheet");
         if (ss == null) {
@@ -359,9 +340,9 @@ public class NGBook extends ContainerCommon implements NGContainer {
         NGBook newBook = new NGBook(theFile, newDoc);
 
         // set default values
-        String[] nameSet = new String[1];
-        nameSet[0] = name;
-        newBook.setSiteNames(nameSet);
+        List<String> nameSet = new ArrayList<String>();
+        nameSet.add(name);
+        newBook.setContainerNames(nameSet);
         newBook.setStyleSheet("PageViewer.css");
         newBook.setLogo("logo.gif");
 
@@ -580,14 +561,26 @@ public class NGBook extends ContainerCommon implements NGContainer {
     }
 
     @Override
-    public String[] getContainerNames() {
-        return getSiteNames();
+    public List<String> getContainerNames() {
+        return displayNames;
     }
 
     @Override
-    public void setContainerNames(String[] nameSet) {
-        setSiteNames(nameSet);
+    public void setContainerNames(List<String> newNames) {
+        if (newNames==null) {
+            throw new RuntimeException("setSiteNames was passed a null string array");
+        }
+        if (newNames.size()<1) {
+            throw new RuntimeException("setSiteNames was passed a zero length string array");
+        }
+        siteInfoRec.setSiteNames(newNames);
+        displayNames = siteInfoRec.getSiteNames();
+        assureNameExists();
+
+        //schema migration ... clean this out if it exists at this point
+        setScalar("name", null);
     }
+
 
     @Override
     public long getLastModifyTime() throws Exception {
@@ -881,6 +874,28 @@ public class NGBook extends ContainerCommon implements NGContainer {
         return false;
     }
 
+    
+    /**
+     * Whether to show or hide experimental features.  
+     */
+    public boolean getShowExperimental() throws Exception {
+        return siteInfoRec.getAttributeBool("showExperimental");
+    }
+    public void setShowExperimental(boolean val) throws Exception {
+        siteInfoRec.setAttributeBool("showExperimental", val);
+    }
+    
+    
+    /**
+     * Ony paying customers can have private information  
+     */
+    public boolean getAllowPrivate() throws Exception {
+        return siteInfoRec.getAttributeBool("allowPrivate");
+    }
+    public void setAllowPrivate(boolean val) throws Exception {
+        siteInfoRec.setAttributeBool("allowPrivate", val);
+    }
+    
     // //////////////////// DEPRECATED METHODS//////////////////
 
     @Override
@@ -928,7 +943,8 @@ public class NGBook extends ContainerCommon implements NGContainer {
         projectKey = findUniqueKeyInSite(cog, projectKey);
         File projectFile = new File(expectedLoc, projectKey + ".sp");
         NGPage ngp = createProjectAtPath(up, projectFile, projectKey, nowTime, cog);
-        String[] nameSet = new String[] { projectName };
+        List<String> nameSet = new ArrayList<String>();
+        nameSet.add(projectName);
         ngp.setPageNames(nameSet);
         return ngp;
     }
@@ -1135,4 +1151,38 @@ public class NGBook extends ContainerCommon implements NGContainer {
         jo.writeToFile(getStatsFilePath());
     }
 
+    
+    
+    public JSONObject getConfigJSON() throws Exception {
+        JSONObject jo = new JSONObject();
+        jo.put("key", this.getKey());
+        jo.put("names", constructJSONArray(getContainerNames()));
+        jo.put("rootFolder", this.getSiteRootFolder());
+        jo.put("description", this.getDescription());
+        jo.put("theme", getThemeName());
+        jo.put("showExperimental", getShowExperimental());
+        jo.put("allowPrivate", getAllowPrivate());
+        
+        return jo;
+    }
+
+    public void updateConfigJSON(JSONObject jo) throws Exception {
+        if (jo.has("description")) {
+            setDescription( jo.getString("description"));
+        }
+        if (jo.has("theme")) {
+            setThemeName( jo.getString("theme"));
+        }
+        if (jo.has("names")) {
+            setContainerNames( constructVector(jo.getJSONArray("names")));
+        }
+        if (jo.has("showExperimental")) {
+            setShowExperimental( jo.getBoolean("showExperimental"));
+        }
+        if (jo.has("allowPrivate")) {
+            setAllowPrivate( jo.getBoolean("allowPrivate"));
+        }
+    }
+    
+    
 }

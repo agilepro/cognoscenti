@@ -48,7 +48,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     public PageInfoRecord pageInfo;
     public ReminderMgr reminderMgr;
 
-    protected String[] displayNames;
+    protected List<String> displayNames;
     protected List<NGSection> sectionElements = null;
     protected NGBook prjSite;
     protected List<String> existingIds = null;
@@ -86,7 +86,8 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         if (smallName.endsWith(".sp")) {
             smallName = smallName.substring(0, smallName.length()-3);
         }
-        displayNames = new String[] {smallName};
+        displayNames = new ArrayList<String>();
+        displayNames.add(smallName);
 
         pageInfo = requireChild("pageInfo", PageInfoRecord.class);
 
@@ -615,18 +616,18 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         if (displayNames == null) {
             return "Uninitialized (displayNames is null)";
         }
-        if (displayNames.length == 0) {
+        if (displayNames.size() == 0) {
             return "Uninitialized (displayNames contains zero items)";
         }
-        return displayNames[0];
+        return displayNames.get(0);
     }
 
-    public String[] getPageNames()
+    public List<String> getPageNames()
     {
         return displayNames;
     }
 
-    public void setPageNames(String[] newNames)
+    public void setPageNames(List<String> newNames)
     {
         pageInfo.setPageNames(newNames);
         displayNames = pageInfo.getPageNames();
@@ -968,8 +969,8 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
 
     public void writePlainText(AuthRequest ar) throws Exception
     {
-        for (int i=0; i<displayNames.length; i++) {
-            ar.write(displayNames[i]);
+        for (int i=0; i<displayNames.size(); i++) {
+            ar.write(displayNames.get(i));
             ar.write("\n");
         }
 
@@ -1123,13 +1124,13 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
 
 
     @Override
-    public String[] getContainerNames(){
+    public List<String> getContainerNames(){
         return getPageNames();
     }
 
 
     @Override
-    public void setContainerNames(String[] nameSet) {
+    public void setContainerNames(List<String> nameSet) {
          setPageNames(nameSet);
     }
 
@@ -1681,6 +1682,10 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         projectInfo.put("deleted", isDeleted());
         projectInfo.put("upstream", getUpstreamLink());
         projectInfo.put("projectMail", getProjectMailId());
+        
+        //read only information from the site
+        projectInfo.put("showExperimental", this.getSite().getShowExperimental());
+        
         return projectInfo;
     }
 

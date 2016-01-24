@@ -9,7 +9,6 @@
     String accountId = ar.reqParam("accountId");
     NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(accountId);
     String pageAddress = ar.getResourceURL(ngb,"personal.htm");
-    String[] names = ngb.getSiteNames();
     JSONObject siteInfo = new JSONObject();
 
 %>

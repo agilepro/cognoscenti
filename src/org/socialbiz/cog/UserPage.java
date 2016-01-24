@@ -258,7 +258,7 @@ public class UserPage extends ContainerCommon
     public long getLastModifyTime()throws Exception {
         return userInfo.getModTime();
     }
-    public String[] getContainerNames()
+    public List<String> getContainerNames()
     {
         throw new RuntimeException("getContainerNames not implemented on UserPage");
     }
@@ -284,13 +284,12 @@ public class UserPage extends ContainerCommon
     }
 
 
-    public String getReminderLink(AuthRequest ar, String reminderId)
-            throws Exception {
+    public String getReminderLink(AuthRequest ar, String reminderId) throws Exception {
         throw new ProgramLogicError("Not Implemented");
     }
 
 
-    public void setContainerNames(String[] nameSet) {
+    public void setContainerNames(List<String> nameSet) {
         throw new ProgramLogicError("You can not set the container names of a user page");
     }
 

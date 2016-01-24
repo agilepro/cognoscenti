@@ -210,8 +210,8 @@ public interface NGContainer
      */
     public File getFilePath();
 
-    public String[] getContainerNames();
-    public void setContainerNames(String[] nameSet);
+    public List<String> getContainerNames();
+    public void setContainerNames(List<String> nameSet);
 
     public ReminderMgr getReminderMgr() throws Exception;
 

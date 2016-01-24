@@ -157,13 +157,11 @@ public class ResourcePage implements NGResource
 
         String name = DOMUtils.textValueOfChild(element_page, "name", true);
         String abbreviation = DOMUtils.textValueOfChild(element_page, "abbreviation", true);
-        String[] nameSet = new String[1];
-        if (abbreviation!=null)
-        {
-            nameSet = new String[2];
-            nameSet[1]=abbreviation;
+        List<String> nameSet = new ArrayList<String>();
+        nameSet.add(name);
+        if (abbreviation!=null) {
+            nameSet.add(abbreviation);
         }
-        nameSet[0] = name;
 
         ngp.setPageNames(nameSet);
         ngp.setSite(ngb);

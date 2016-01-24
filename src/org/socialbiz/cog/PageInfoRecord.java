@@ -107,7 +107,7 @@ public class PageInfoRecord extends DOMFace
     }
 
 
-    String[] getPageNames() {
+    List<String> getPageNames() {
         List<String> vc = getVector("pageName");
         List<String> vccleaned = new ArrayList<String>();
         for (String chl : vc) {
@@ -117,18 +117,16 @@ public class PageInfoRecord extends DOMFace
             }
         }
 
-        return vccleaned.toArray(new String[0]);
+        return vccleaned;
     }
 
-    public void setPageNames(String[] newNames)
-    {
+    public void setPageNames(List<String> newNames) {
+        //TODO: this can be replaced with setVectorValue
         DOMUtils.removeAllNamedChild(fEle, "pageName");
-        for (int i=0; i<newNames.length; i++)
-        {
-            String aName = newNames[i].trim();
+        for (int i=0; i<newNames.size(); i++) {
+            String aName = newNames.get(i).trim();
             //only save names that are non-null
-            if (aName.length()>0)
-            {
+            if (aName.length()>0) {
                 addVectorValue("pageName", aName);
             }
         }

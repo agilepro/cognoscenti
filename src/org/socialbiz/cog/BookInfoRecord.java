@@ -73,7 +73,7 @@ public class BookInfoRecord  extends DOMFace
     }
 
 
-    public List<String> getPageNames() {
+    public List<String> getSiteNames() {
         List<String> vc = getVector("bookName");
         List<String> vccleaned = new ArrayList<String>();
         for (String chl : vc) {
@@ -85,12 +85,12 @@ public class BookInfoRecord  extends DOMFace
         return vccleaned;
     }
 
-    public void setPageNames(String[] newNames)
+    public void setSiteNames(List<String> newNames)
     {
         DOMUtils.removeAllNamedChild(fEle, "bookName");
-        for (int i=0; i<newNames.length; i++)
+        for (int i=0; i<newNames.size(); i++)
         {
-            String aName = newNames[i].trim();
+            String aName = newNames.get(i).trim();
             //only save names that are non-null
             if (aName.length()>0)
             {
@@ -127,12 +127,11 @@ public class BookInfoRecord  extends DOMFace
     public String getAllowPublic() {
         return getAttribute("allowPublic");
     }
-
     public void setAllowPublic(String allowPublic) {
         setAttribute("allowPublic", allowPublic);
     }
 
-
+    
     /**
     * Different sites can have different style sheets (themes)
     * This is the path to the folder that holds the theme files

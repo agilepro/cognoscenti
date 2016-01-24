@@ -1,5 +1,7 @@
 package org.socialbiz.cog.test;
 
+import java.util.List;
+
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPageIndex;
@@ -81,7 +83,6 @@ public class TestBuildSite implements TestSet {
         testString("getDescription default should be empty string", testSite.getDescription(), "");
         testString("getThemePath default", testSite.getDescription(), "");
 
-        testStringArray("getSiteNames default", testSite.getSiteNames(), siteName+"|");
         testStringArray("getContainerNames default", testSite.getContainerNames(), siteName+"|");
         testLong("getLastModifyTime default should be zero", testSite.getLastModifyTime(), 0);
         testBoolean("isDeleted default should be false", testSite.isDeleted(), false);
@@ -112,7 +113,6 @@ public class TestBuildSite implements TestSet {
         testString("getDescription default should be empty string", testSite.getDescription(), "");
         testString("getThemePath default", testSite.getDescription(), "");
 
-        testStringArray("getSiteNames default", testSite.getSiteNames(), siteName+"|");
         testStringArray("getContainerNames default", testSite.getContainerNames(), siteName+"|");
         testLong("getLastModifyTime default should be zero", testSite.getLastModifyTime(), 0);
         testBoolean("isDeleted default should be false", testSite.isDeleted(), false);
@@ -198,6 +198,16 @@ public class TestBuildSite implements TestSet {
     }
 
     private void testStringArray(String id, String[] testVal, String expectedVal) throws Exception {
+        assertNotNull(id, testVal);
+        StringBuffer sb = new StringBuffer();
+        for (String val : testVal) {
+            sb.append(val);
+            sb.append("|");
+        }
+        testString(id, sb.toString(), expectedVal);
+    }
+
+    private void testStringArray(String id, List<String> testVal, String expectedVal) throws Exception {
         assertNotNull(id, testVal);
         StringBuffer sb = new StringBuffer();
         for (String val : testVal) {

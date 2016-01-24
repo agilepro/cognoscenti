@@ -79,6 +79,30 @@ public class AdminController extends BaseController {
     }
 
 
+    @RequestMapping(value = "/{siteId}/$/updateSiteInfo.json", method = RequestMethod.POST)
+    public void updateSiteInfo(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGBook ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
+            ar.setPageAccessLevels(ngb);
+            ar.assertAdmin("Must be an admin to change site info.");
+            JSONObject newConfig = getPostedObject(ar);
+
+            ngb.updateConfigJSON(newConfig);
+
+            ngb.saveContent(ar, "Updating workspace settings");
+            JSONObject repo = ngb.getConfigJSON();
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to create meeting.", ex);
+            streamException(ee, ar);
+        }
+    }
+
+    
+    
     @RequestMapping(value = "/{siteId}/{project}/changeGoal.form", method = RequestMethod.POST)
     public ModelAndView changeGoalHandler(@PathVariable String siteId,@PathVariable String project,
             HttpServletRequest request,
@@ -121,18 +145,16 @@ public class AdminController extends BaseController {
             ar.assertAdmin("Unable to change the name of this page.");
 
             String newName = ar.reqParam("newName");
-            String[] nameSet = ngp.getPageNames();
+            List<String> nameSet = ngp.getPageNames();
 
             //first, see if the new name is one of the old names, and if so
             //just rearrange the list
             int oldPos = findString(nameSet, newName);
-            if (oldPos<0)
-            {
-                //we did not find the value, so just insert it
-                nameSet = insertFront(nameSet, newName);
+            if (oldPos<0) {
+                //we did not find the value, so just insert it at the beginning
+                nameSet.add(0, newName);
             }
-            else
-            {
+            else {
                 insertRemove(nameSet, newName, oldPos);
             }
             ngp.setPageNames(nameSet);
@@ -146,6 +168,7 @@ public class AdminController extends BaseController {
         return modelAndView;
     }
 
+    //TODO: just update the list of names instead of separate operations to add and delete
     @RequestMapping(value = "/{siteId}/{project}/deletePreviousProjectName.htm", method = RequestMethod.GET)
     public ModelAndView deletePreviousAccountNameHandler(@PathVariable String siteId, @PathVariable String project,
             HttpServletRequest request,
@@ -162,12 +185,11 @@ public class AdminController extends BaseController {
 
             String oldName = ar.reqParam("oldName");
 
-            String[] nameSet = ngp.getPageNames();
+            List<String> nameSet = ngp.getPageNames();
             int oldPos = findString(nameSet, oldName);
 
-            if (oldPos>=0)
-            {
-                nameSet = shrink(nameSet, oldPos);
+            if (oldPos>=0) {
+                nameSet.remove(oldPos);
                 ngp.setPageNames(nameSet);
             }
             ngp.saveFile(ar, "Change Name Action");
@@ -179,6 +201,7 @@ public class AdminController extends BaseController {
         return modelAndView;
     }
 
+    //TODO: just update the list of names instead of separate operations to add and delete
     @RequestMapping(value = "/{siteId}/$/changeAccountName.form", method = RequestMethod.POST)
     public ModelAndView changeAccountNameHandler(@PathVariable String siteId,
             HttpServletRequest request,
@@ -193,20 +216,18 @@ public class AdminController extends BaseController {
             ar.assertAdmin("Unable to change the name of this page.");
 
             String newName = ar.reqParam("newName");
-            String[] nameSet = ngb.getSiteNames();
+            List<String> nameSet = ngb.getContainerNames();
             //first, see if the new name is one of the old names, and if so
             //just rearrange the list
             int oldPos = findString(nameSet, newName);
-            if (oldPos<0)
-            {
+            if (oldPos<0) {
                 //we did not find the value, so just insert it
-                nameSet = insertFront(nameSet, newName);
+                nameSet.add(0, newName);
             }
-            else
-            {
+            else {
                 insertRemove(nameSet, newName, oldPos);
             }
-            ngb.setSiteNames(nameSet);
+            ngb.setContainerNames(nameSet);
 
             ngb.saveFile(ar, "Change Name Action");
 
@@ -217,6 +238,7 @@ public class AdminController extends BaseController {
         return modelAndView;
     }
 
+    //TODO: probably not needed any more
     @RequestMapping(value = "/{siteId}/$/changeAccountDescription.form", method = RequestMethod.POST)
     public ModelAndView changeAccountDescriptionHandler(@PathVariable String siteId,
             HttpServletRequest request,
@@ -266,13 +288,12 @@ public class AdminController extends BaseController {
 
             String oldName = ar.reqParam("oldName");
 
-            String[] nameSet = site.getSiteNames();
+            List<String> nameSet = site.getContainerNames();
             int oldPos = findString(nameSet, oldName);
 
-            if (oldPos>=0)
-            {
-                nameSet = shrink(nameSet, oldPos);
-                site.setSiteNames(nameSet);
+            if (oldPos>=0) {
+                nameSet.remove(oldPos);
+                site.setContainerNames(nameSet);
             }
 
             site.saveFile(ar, "Change Name Action");
@@ -287,12 +308,12 @@ public class AdminController extends BaseController {
     // compare the sanitized versions of the names in the array, and if
     // the val equals one, return the index of that string, otherwise
     // return -1
-    public int findString(String[] array, String val)
+    public int findString(List<String> array, String val)
     {
         String sanVal = SectionWiki.sanitize(val);
-        for (int i=0; i<array.length; i++)
+        for (int i=0; i<array.size(); i++)
         {
-            String san2 = SectionWiki.sanitize(array[i]);
+            String san2 = SectionWiki.sanitize(array.get(i));
             if (sanVal.equals(san2))
             {
                 return i;
@@ -305,16 +326,9 @@ public class AdminController extends BaseController {
     //in the array up to the specified point.  The value at that position
     //will be effectively removed.  The values after that position remain
     //unchanged.
-    public void insertRemove(String[] array, String val, int position)
-    {
-        String replaceVal = val;
-        for (int i=0; i<position; i++)
-        {
-            String tmp = array[i];
-            array[i] = replaceVal;
-            replaceVal = tmp;
-        }
-        array[position] = replaceVal;
+    public void insertRemove(List<String> array, String val, int position) {
+        array.remove(position);
+        array.add(0, val);
     }
 
     //insert at beginning, Returns a new string array that is
@@ -327,23 +341,6 @@ public class AdminController extends BaseController {
         for (int i=0; i<len; i++)
         {
             ret[i+1] = array[i];
-        }
-        return ret;
-    }
-
-    //insert at beginning, Returns a new string array that is
-    //one value larger
-    public String[] shrink(String[] array, int pos)
-    {
-        int len = array.length;
-        String[] ret = new String[len-1];
-        for (int i=0; i<pos; i++)
-        {
-            ret[i] = array[i];
-        }
-        for (int i=pos+1; i<len; i++)
-        {
-            ret[i-1] = array[i];
         }
         return ret;
     }

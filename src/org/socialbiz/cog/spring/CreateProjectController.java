@@ -21,6 +21,8 @@
 package org.socialbiz.cog.spring;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -410,7 +412,8 @@ public class CreateProjectController extends BaseController {
                 pageKey = pageKey.substring(0,20);
             }
             ngPage = site.createProjectByKey(uProf, pageKey, nowTime, cog);
-            String[] nameSet = new String[] { projectName };
+            List<String> nameSet = new ArrayList<String>();
+            nameSet.add(projectName);
             ngPage.setPageNames(nameSet);
         }
         else {
