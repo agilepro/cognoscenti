@@ -222,10 +222,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.saveGoal();
     }
     $scope.removePerson = function(person) {
-        var res = $scope.goalInfo.assignTo.map( function(one) {
+        var res = $scope.goalInfo.assignTo.filter( function(one) {
             return (person.uid != one.uid);
         });
         $scope.goalInfo.assignTo = res;
+        console.log("About to Save:", res);
         $scope.saveGoal();
     }
     $scope.visitPlayer = function(player) {
@@ -458,7 +459,7 @@ function addvalue() {
                    <li role="presentation"><a role="menuitem" title="{{person.name}} {{person.uid}}"
                       ng-click="removePerson(person)">Remove Address:<br/>{{person.name}}<br/>{{person.uid}}</a></li>
                    <li role="presentation"><a role="menuitem" title="Visit {{person.name}}" target="_blank"
-                      href="<%=ar.retPath%>v/FindPerson.htm?uid={{person.uid}}">Visit User Page</li>
+                      href="<%=ar.retPath%>v/FindPerson.htm?uid={{person.uid}}">Visit User Page</a></li>
                 </ul>
               </span>
               <span >

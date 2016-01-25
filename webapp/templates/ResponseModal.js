@@ -27,7 +27,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, response, 
             return "Proposal";
         }
         if ($scope.cmt.commentType==3) {
-            return "Question";
+            return "Round";
         }
         return "Comment";
     }

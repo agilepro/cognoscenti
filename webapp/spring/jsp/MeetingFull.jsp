@@ -767,7 +767,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return "Proposal";
         }
         if (cmt.commentType==3) {
-            return "Question";
+            return "Round";
         }
         if (cmt.commentType==5) {
             return "Minutes";
@@ -1935,7 +1935,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <button ng-click="openCommentCreator(item, 2)" class="btn btn-default">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
             <button ng-click="openCommentCreator(item, 3)" class="btn btn-default">
-                Create New <i class="fa fa-question-circle"></i> Question</button>
+                Create New <i class="fa fa-question-circle"></i> Round</button>
             <button ng-click="openCommentCreator(item, 5)" class="btn btn-default">
                 Create New <i class="fa fa-file-code-o"></i> Minutes</button>
         </div>

@@ -306,7 +306,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return "Proposal";
         }
         if (cmt.commentType==3) {
-            return "Question";
+            return "Round";
         }
         return "Comment";
     }
@@ -855,7 +855,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <button ng-click="openCommentCreator(2)" class="btn btn-default">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
             <button ng-click="openCommentCreator(3)" class="btn btn-default">
-                Create New <i class="fa  fa-question-circle"></i> Question</button>
+                Create New <i class="fa  fa-question-circle"></i> Round</button>
         </div>
     </div>
     <div ng-hide="canUpdate">
