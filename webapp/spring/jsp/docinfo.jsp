@@ -277,7 +277,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td class="gridTableColummHeader"></td>
             <td style="width: 20px;"></td>
 <%
-if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc))) {
+if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
 %>
             <td>
             <%if("FILE".equals(attachment.getType())){ %> <a

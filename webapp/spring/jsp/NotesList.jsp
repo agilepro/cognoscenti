@@ -272,7 +272,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 			
 			var postURL = "noteHtmlUpdate.json?nid=~new~";
 			var postdata = angular.toJson(newTopic);
-			alert(postdata);
 			$scope.showError=false;
 			$http.post(postURL ,postdata)
 			.success( function(data) {
