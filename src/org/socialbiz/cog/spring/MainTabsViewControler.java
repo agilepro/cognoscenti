@@ -158,7 +158,7 @@ public class MainTabsViewControler extends BaseController {
             else {
                 registerRequiredProject(ar, siteId, pageId);
             }
-            ModelAndView modelAndView= checkLoginMember(ar);
+            ModelAndView modelAndView= checkLogin(ar);
             if (modelAndView!=null) {
                 return modelAndView;
             }

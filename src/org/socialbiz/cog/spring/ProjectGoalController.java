@@ -321,7 +321,7 @@ public class ProjectGoalController extends BaseController {
                     return showWarningView(ar, "message.login.to.see.task.detail");
                 }
                 if(!ar.isMember()){
-                    return showWarningView(ar, "nugen.process.edit.task.memberlogin");
+                    return new ModelAndView("WarningNotMember");
                 }
                 throw new Exception("Program Logic Error: logged in member should be able to see task.");
             }

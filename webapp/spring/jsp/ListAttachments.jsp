@@ -22,6 +22,16 @@
     }
 
     JSONArray allLabels = ngp.getJSONLabels();
+    
+    String showLimitedMessage = "";
+    if (!ngb.getAllowPrivate()) {
+        //don't make any message if the site does not allow private documents
+    } else if (!ar.isLoggedIn()) {
+        showLimitedMessage = "You are not logged in.  You might see more documents if you log in and if you are a member of the workspace.";
+    }
+    else if (!isMember) {
+        showLimitedMessage = "You are not a member of this workspace.  You might see more documents if you were a member of the workspace.";
+    }
 
 
 /* DOC RECORD PROTOTYPE
@@ -61,6 +71,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    
+    $scope.showLimitedMessage = "<% ar.writeJS(showLimitedMessage); %>";
 
     $scope.allLabels.sort( function(a,b) {
         if (a.name < b.name) {
@@ -306,6 +318,11 @@ app.controller('myCtrl', function($scope, $http) {
                 </span>
             </td>
             <td>{{rec.modifiedtime|date}}</td>
+        </tr>
+        <tr ng-show="showLimitedMessage">
+            <td colspan="5">
+                <div class="guideVocal">{{showLimitedMessage}}</div>
+            </td>
         </tr>
     </table>
 </div>

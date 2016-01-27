@@ -29,7 +29,8 @@
                </td>
             </tr>
             <tr ng-repeat="doc in filterDocs()">
-                <td><img src="../../../assets/images/iconFile.png"/> {{doc.name}} </td>
+                <td ng-click="addDocToItem(doc)"  title="{{doc.name}}" style="cursor:pointer">
+                    <img src="../../../assets/images/iconFile.png"/> {{doc.name|limitTo:40}} </td>
                 <td>
                     <button ng-click="addDocToItem(doc)" ng-hide="itemHasDoc(doc)"
                         class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
@@ -44,7 +45,8 @@
         <div style="max-height:400px;overflow: auto">
           <table class="docTable">
             <tr ng-repeat="doc in itemDocs()">
-                <td><img src="../../../assets/images/iconFile.png"/> {{doc.name}} </td>
+                <td ng-click="addDocToItem(doc)"  title="{{doc.name}}" style="cursor:pointer">
+                    <img src="../../../assets/images/iconFile.png""/> {{doc.name|limitTo:40}} </td>
                 <td>
                     <button ng-click="removeDocFromItem(doc)"
                         class="btn"><i class="fa fa-close"></i> &nbsp;</button>

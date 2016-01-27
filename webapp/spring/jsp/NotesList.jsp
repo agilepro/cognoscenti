@@ -318,8 +318,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               <li role="presentation"><a role="menuitem" href="exportPDF.htm"> 
 			      Create PDF</a>
               </li>
-              <li role="presentation"><a role="menuitem" href="editNote.htm?public=true"> 
-			      OLD Create Topic </a>
+              <li role="presentation"><a role="menuitem" href="searchAllNotes.htm"> 
+			      Search All Topics </a>
               </li>
             </ul>
           </span>

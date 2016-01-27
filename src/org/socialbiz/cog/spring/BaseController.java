@@ -206,19 +206,34 @@ emaio is provided by the SSOFI so no need to manipulate it here
      * @return a ModelAndView object that will tell the user what is wrong.
      *         and return a NULL if logged in, member, and all config is OK
      */
-    protected ModelAndView checkLoginMember(AuthRequest ar) throws Exception {
+    protected ModelAndView checkLogin(AuthRequest ar) throws Exception {
         if(!ar.isLoggedIn()){
             return showWarningView(ar, "nugen.project.login.msg");
         }
         if (needsToSetName(ar)) {
             return new ModelAndView("requiredName");
         }
+        return null;
+    }
+
+    /**
+     * This is a set of checks that results in different views depending on the state
+     * of the user.  Particularly: must be logged in, must have a name, must have an email
+     * address, and must be a member of the page, so the page has to be set as well.
+     * @return a ModelAndView object that will tell the user what is wrong.
+     *         and return a NULL if logged in, member, and all config is OK
+     */
+    protected ModelAndView checkLoginMember(AuthRequest ar) throws Exception {
+        ModelAndView mav = checkLogin(ar);
+        if (mav!=null) {
+            return mav;
+        }
         if (ar.ngp==null) {
             throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGPage on the AuthRequest.");
         }
         if(!ar.isMember()){
             ar.req.setAttribute("roleName", "Members");
-            return showWarningView(ar, "nugen.project.member.msg");
+            return new ModelAndView("WarningNotMember");
         }
         if (UserManager.getAllSuperAdmins(ar).size()==0) {
             return showWarningView(ar, "nugen.missingSuperAdmin");

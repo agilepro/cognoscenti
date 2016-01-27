@@ -290,45 +290,6 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         }
 
     }
-
-/*
-    protected static NGWorkspace readPageAbsolutePath(File theFile) throws Exception {
-        if (!theFile.exists()) {
-            throw new NGException("nugen.exception.file.not.exist", new Object[]{theFile});
-        }
-        try {
-            String fullFilePath = theFile.toString();
-
-            //look in the cache
-            NGWorkspace newPage = pageCache.recall(fullFilePath);
-            if (newPage==null) {
-                Document newDoc;
-                InputStream is = new FileInputStream(theFile);
-                newDoc = DOMUtils.convertInputStreamToDocument(is, false, false);
-                is.close();
-                if (NGBook.fileIsInDataPath(theFile)) {
-                    //since moving to the site scheme, all the workspaces should be site folder
-                    //this is old code left from when all project/pages were in a single folder.
-                    throw new Exception("I found a file in the data path which should never happen: "+theFile);
-                }
-                else {
-                    newPage = new NGWorkspace(theFile, newDoc, null);
-                }
-            }
-
-            //store into the cache.  Note, there is possibility
-            //that another thread picks this up before we are done with it...
-            //need to implement page lock mechanism to prevent this, and that
-            //means having reliable clean-up code to store at the end of use.
-            //Probably should lock the file reliably....
-            pageCache.store(fullFilePath, newPage);
-            return newPage;
-        }
-        catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.read.file",new Object[]{theFile}, e);
-        }
-    }
-*/
     
     /**
      * Clears the current page from the cache.

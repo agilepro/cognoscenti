@@ -4,6 +4,7 @@
 %><%
     UserProfile up = ar.getUserProfile();
     AddressListEntry ale = up.getAddressListEntry();
+    String description = "";
     
 %>
 <style>

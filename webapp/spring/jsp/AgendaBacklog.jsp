@@ -119,21 +119,21 @@ app.controller('myCtrl', function($scope, $http) {
                     <tr id="trspath">
                         <td class="gridTableColummHeader">Subject:</td>
                         <td style="width:20px;"></td>
-                        <td colspan="2"><input type="text" ng-model="newAgendaItem.subject" class="inputGeneral" size="69" /></td>
+                        <td colspan="2"><input type="text" ng-model="newAgendaItem.subject" class="form-control" size="69" /></td>
                     </tr>
-                    <tr><td style="height:30px"></td></tr>
+                    <tr><td style="height:10px"></td></tr>
                     <tr id="trspath">
                         <td class="gridTableColummHeader">Description:</td>
                         <td style="width:20px;"></td>
-                        <td colspan="2"><textarea ng-model="newAgendaItem.desc" rows="5" cols="69"/></textarea></td>
+                        <td colspan="2"><textarea ng-model="newAgendaItem.desc" rows="5" cols="69" class="form-control" /></textarea></td>
                     </tr>
-                    <tr><td style="height:30px"></td></tr>
+                    <tr><td style="height:10px"></td></tr>
                     <tr id="trspath">
                         <td class="gridTableColummHeader">Duration:</td>
                         <td style="width:20px;"></td>
-                        <td colspan="2"><input type="text" ng-model="newAgendaItem.duration" class="inputGeneral" size="40" /></td>
+                        <td colspan="2"><input type="text" ng-model="newAgendaItem.duration" class="form-control" size="40" /></td>
                     </tr>
-                    <tr><td style="height:30px"></td></tr>
+                    <tr><td style="height:10px"></td></tr>
                     <tr>
                         <td class="gridTableColummHeader"></td>
                         <td style="width:20px;"></td>

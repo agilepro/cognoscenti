@@ -118,6 +118,13 @@ public class CommentRecord extends DOMFace {
         setAttributeLong("time", newVal);
     }
 
+    public long getPostTime() {
+        return getAttributeLong("postTime");
+    }
+    public void setPostTime(long newVal) throws Exception {
+        setAttributeLong("postTime", newVal);
+    }
+
     public int getState() {
         int state = getAttributeInt("state");
 
@@ -311,6 +318,7 @@ public class CommentRecord extends DOMFace {
             constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile, mailFile);
         }
         setEmailSent(true);
+        setPostTime(ar.nowTime);
     }
 
     public String commentTypeName() {
@@ -376,6 +384,7 @@ public class CommentRecord extends DOMFace {
         commInfo.put("userName", ale.getName());
         commInfo.put("userKey",  userKey);
         commInfo.put("time",     getTime());
+        commInfo.put("postTime", getPostTime());
         commInfo.put("state",    getState());
         commInfo.put("dueDate",  getDueDate());
         commInfo.put("commentType",getCommentType());
@@ -444,6 +453,9 @@ public class CommentRecord extends DOMFace {
         }
         if (input.has("replyTo")) {
             setReplyTo(input.getLong("replyTo"));
+        }
+        if (input.has("postTime")) {
+            setPostTime(input.getLong("postTime"));
         }
         if (input.has("state")) {
             setState(input.getInt("state"));

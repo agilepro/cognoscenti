@@ -66,18 +66,33 @@ app.controller('myCtrl', function($scope, $http) {
 
 </script>
 
-<div class="content tab03" style="display:block;" ng-app="myApp" ng-controller="myCtrl">
-    <div class="section_body">
-        <div style="height:10px;"></div>
+<div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
 
-        <div class="generalHeading">Workspaces that belong to this site</div>
-        <div>Filter <input ng-model="filter"></div>
+    <div class="generalHeading" style="height:40px">
+        <div  style="float:left;margin-top:8px;">
+            Workspaces that belong to this site
+        </div>
+        <!--div class="rightDivContent" style="margin-right:100px;">
+          <span class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            Options: <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation"><a role="menuitem" tabindex="-1"
+                  href="#" ng-click="" >Do Nothing</a></li>
+            </ul>
+          </span>
+
+        </div-->
+    </div>
+
+
+        <div class="well">Filter <input ng-model="filter"></div>
         <div style="height:10px;"></div>
 
-        <table class="gridTable2" width="100%">
-            <tr class="gridTableHeader">
+        <table class="table" width="100%">
+            <tr >
                 <td width="50px"></td>
                 <td width="200px">Workspace</td>
                 <td width="100px">Changed</td>

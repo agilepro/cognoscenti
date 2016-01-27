@@ -38,7 +38,6 @@ import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.RemoteGoal;
-import org.socialbiz.cog.SectionWiki;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.UserProfile;
@@ -385,7 +384,7 @@ public class CreateProjectController extends BaseController {
             throws Exception {
         UserProfile uProf = ar.getUserProfile();
         long nowTime       = ar.nowTime;
-        String projectName = ar.reqParam("projectname");
+        String projectName = ar.reqParam("projectname").trim();
         String loc         = ar.defParam("loc", null);
         String upstream    = ar.defParam("upstream", null);
         NGPage newPage = createPage(uProf, site, projectName, loc, upstream, nowTime, ar.getCogInstance());
@@ -393,6 +392,40 @@ public class CreateProjectController extends BaseController {
         return newPage;
     }
 
+    
+    private static String makeGoodSearchableName(String source) {
+        StringBuffer result = new StringBuffer();
+        source = source.trim();
+        int last = source.length();
+        boolean betweenWords = false;
+        for (int i=0; i<last; i++) {
+            char ch = source.charAt(i);
+            boolean addAChar = false;
+            if (ch >= 'a' && ch <= 'z') {
+                addAChar = true;
+            }
+            else if (ch >= '0' && ch <= '9') {
+                addAChar = true;
+            }
+            else if (ch >= 'A' && ch <= 'Z') {
+                ch = (char) (ch + 32);
+                addAChar = true;
+            }
+            if (addAChar) {
+                result.append(ch);
+                betweenWords = false;
+            }
+            else {
+                if (!betweenWords) {
+                    result.append('-');
+                    betweenWords = true;
+                }
+            }
+        }
+        return result.toString();
+    }
+    
+    
 /**
  * The loc parameter is a path to a place where the folder already exists, and
  * we want to convert an existing folder to a project.
@@ -407,9 +440,9 @@ public class CreateProjectController extends BaseController {
         NGPage ngPage = null;
         if (loc==null){
             //normal, create a brand new empty project
-            String pageKey = SectionWiki.sanitize(projectName);
-            if (pageKey.length()>20) {
-                pageKey = pageKey.substring(0,20);
+            String pageKey = makeGoodSearchableName(projectName);
+            if (pageKey.length()>30) {
+                pageKey = pageKey.substring(0,30);
             }
             ngPage = site.createProjectByKey(uProf, pageKey, nowTime, cog);
             List<String> nameSet = new ArrayList<String>();

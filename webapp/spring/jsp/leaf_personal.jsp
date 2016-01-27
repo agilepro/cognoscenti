@@ -136,7 +136,7 @@ app.controller('myCtrl', function($scope, $http) {
         <div  style="float:left;margin-top:8px;">
             Personal Settings
         </div>
-        <div class="rightDivContent" style="margin-right:100px;">
+        <!--div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
@@ -146,7 +146,7 @@ app.controller('myCtrl', function($scope, $http) {
             </ul>
           </span>
 
-        </div>
+        </div-->
     </div>
 
         <table class="table" style="width:100%;">
@@ -221,7 +221,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr class="gridTableHeader">
                 <td colspan="4">
-                    <div class="generalHeadingBorderLess">Roles You Play</div>
+                    <div class="generalHeadingBorderLess" style="margin-top:50px;">Roles You Play</div>
                 </td>
             </tr>
             <tr ng-repeat="role in rolePlayer()">
@@ -245,7 +245,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr class="gridTableHeader">
                 <td colspan="4">
-                    <div class="generalHeadingBorderLess">Roles Request Pending</div>
+                    <div class="generalHeadingBorderLess" style="margin-top:50px;">Roles Request Pending</div>
                 </td>
             </tr>
             <tr ng-repeat="role in rolePending()">
@@ -269,7 +269,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr class="gridTableHeader">
                 <td colspan="3">
-                    <div class="generalHeadingBorderLess">Roles You Don't Play</div>
+                    <div class="generalHeadingBorderLess" style="margin-top:50px;">Roles You Don't Play</div>
                 </td>
             </tr>
             <tr ng-repeat="role in roleNonPlayer()">

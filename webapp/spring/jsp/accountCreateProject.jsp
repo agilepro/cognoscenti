@@ -14,9 +14,17 @@ Required parameter:
     ar.assertLoggedIn("Must be logged in to create a workspace");
 
     String accountKey = ar.reqParam("accountId");
+    NGBook site = ar.getCogInstance().getSiteByIdOrFail(accountKey);
 
     UserProfile  uProf =ar.getUserProfile();
     List<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
+    JSONArray templateList = new JSONArray();
+    for (NGPageIndex ngpi : templates) {
+        JSONObject jo = new JSONObject();
+        jo.put("key", ngpi.containerKey);
+        jo.put("name", ngpi.containerName);
+        templateList.put(jo);
+    }
 
     String upstream = ar.defParam("upstream", "");
     String desc = ar.defParam("desc", "");
@@ -24,6 +32,20 @@ Required parameter:
 
 %>
 
+<script>
+
+var app = angular.module('myApp', ['ui.bootstrap']);
+app.controller('myCtrl', function($scope, $http) {
+    $scope.siteInfo = <% site.getConfigJSON().write(ar.w,2,4); %>;
+    $scope.accountKey = "<%ar.writeJS(accountKey);%>";
+    $scope.upstream = "<%ar.writeJS(upstream);%>";
+    $scope.pname = "<%ar.writeJS(pname);%>";
+    $scope.desc = "<%ar.writeJS(desc);%>";
+    $scope.templateList = <% templateList.write(ar.w,2,4); %>;
+
+});
+</script>
+    
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
@@ -32,7 +54,7 @@ Required parameter:
         <div  style="float:left;margin-top:8px;">
             Create Workspace in this Site
         </div>
-        <div class="rightDivContent" style="margin-right:100px;">
+        <!--div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
@@ -42,7 +64,7 @@ Required parameter:
             </ul>
           </span>
 
-        </div>
+        </div-->
     </div>
 
 
@@ -58,7 +80,7 @@ Required parameter:
                        <tr>
                            <td class="createInput" style="padding:0px;">
                                <input type="text" class="inputCreateButton" name="projectname"
-                                   value="<%ar.writeHtml(pname);%>"/>
+                                   ng-model="pname"/>
                            </td>
                            <td><button type="submit" class="createButton"></button></td>
                        </tr>
@@ -70,7 +92,7 @@ Required parameter:
                 <table id="assignTask">
                     <tr><td width="148" class="gridTableColummHeader_2" style="height:20px"></td></tr>
                     <tr>
-                        <td width="148" class="gridTableColummHeader_2">Select Template:</td>
+                        <td width="148" class="gridTableColummHeader">Select Template:</td>
                         <td style="width:20px;"></td>
                         <td><Select class="form-control" id="templateName" name="templateName">
                                 <option value="" selected>Select</option>
@@ -85,14 +107,13 @@ Required parameter:
                         </td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td width="148" class="gridTableColummHeader_2">Upstream Link:</td>
+                    <tr ng-show="siteInfo.showExperimental">
+                        <td width="148" class="gridTableColummHeader">Upstream Link:</td>
                         <td style="width:20px;"></td>
                         <td><input type="text" class="form-control" style="width:368px" size="50" name="upstream"
-                            value="<%ar.writeHtml(upstream);%>"/>
+                            ng-model="upstream"/>
                         </td>
                     </tr>
-                    <tr><td style="height:20px"></td></tr>
                 </table>
                </td>
             </tr>

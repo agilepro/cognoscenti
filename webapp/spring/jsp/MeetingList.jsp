@@ -150,6 +150,9 @@ app.controller('myCtrl', function($scope, $http) {
                   href="#" ng-click="newMeeting.meetingType=1;showInput=true">New Circle Meeting</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   href="#" ng-click="newMeeting.meetingType=2;showInput=true">New Operational Meeting</a></li>
+              <li role="presentation" class="divider"></li>
+              <li role="presentation"><a role="menuitem" tabindex="-1"
+                  href="agendaBacklog.htm">Agenda Item Backlog</a></li>
             </ul>
           </span>
 

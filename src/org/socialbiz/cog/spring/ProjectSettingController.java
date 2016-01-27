@@ -432,7 +432,7 @@ public class ProjectSettingController extends BaseController {
                 modelAndView=new ModelAndView("Warning");
             }else if(!ar.isMember()){
                 request.setAttribute("property_msg_key", "nugen.projecthome.rolerequest.memberlogin");
-                modelAndView=new ModelAndView("Warning");
+                modelAndView=new ModelAndView("WarningNotMember");
             }else{
                 modelAndView=new ModelAndView("RoleRequest");
                 modelAndView.addObject("page", nGPage);
@@ -666,7 +666,7 @@ public class ProjectSettingController extends BaseController {
             }
             if(!ar.isMember()){
                 ar.req.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.project.member.msg");
+                return new ModelAndView("WarningNotMember");
             }
 
 
@@ -693,7 +693,7 @@ public class ProjectSettingController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.projectsettings.listEmail.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
 
             modelAndView=new ModelAndView("ListEmail");
@@ -717,7 +717,7 @@ public class ProjectSettingController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.projectsettings.listEmail.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
 
             modelAndView=new ModelAndView("EmailSent");
@@ -866,7 +866,7 @@ public class ProjectSettingController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.projectsettings.listEmail.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
 
             return new ModelAndView("LabelList");

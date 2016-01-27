@@ -203,7 +203,7 @@ public class UploadFileController extends BaseController {
                 modelAndView = createNamedView(siteId, pageId, ar, "Warning");
             }else if(!ar.isMember()){
                 request.setAttribute("property_msg_key", "nugen.attachment.send.email.reminder.memberlogin");
-                modelAndView = createNamedView(siteId, pageId, ar, "Warning");
+                modelAndView = createNamedView(siteId, pageId, ar, "WarningNotMember");
             }else{
                 modelAndView = createNamedView(siteId, pageId, ar, "ReminderEmail");
                 request.setAttribute("isNewUpload", "yes");
@@ -376,7 +376,7 @@ public class UploadFileController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.attachment.emailreminders.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
             if(ngp.isFrozen()){
                 return showWarningView(ar, "nugen.generatInfo.Frozen");
@@ -407,7 +407,7 @@ public class UploadFileController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.attachment.linkattachmenttoproject.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
             if(ngp.isFrozen()){
                 return showWarningView(ar, "nugen.generatInfo.Frozen");
@@ -513,7 +513,7 @@ public class UploadFileController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.attachment.edit.doc.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
             if(ngp.isFrozen()){
                 return showWarningView(ar, "nugen.generatInfo.Frozen");
@@ -545,7 +545,7 @@ public class UploadFileController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.attachment.file.version.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
             String aid = ar.reqParam("aid");
             ngp.findAttachmentByIDOrFail(aid);
@@ -609,6 +609,7 @@ public class UploadFileController extends BaseController {
                 request.setAttribute("property_msg_key", "nugen.project.remind.doc.login.msg");
             }else if(!ar.isMember()){
                 request.setAttribute("property_msg_key", "nugen.attachment.remind.doc.memberlogin");
+                return createNamedView(siteId, pageId, ar, "WarningNotMember");
             }else {
                 //basically, the reminder should have been display, and we have no idea now why not
                 throw new Exception("Program Logic Error ... something is wrong with the canAccessReminder method");
@@ -689,7 +690,7 @@ public class UploadFileController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.attachment.createcopy.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
             if(ngp.isFrozen()){
                 return showWarningView(ar, "nugen.generatInfo.Frozen");
@@ -798,7 +799,7 @@ public class UploadFileController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.attachment.send.email.reminder.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
 
             modelAndView = createNamedView(siteId, pageId, ar, "viewReminder");

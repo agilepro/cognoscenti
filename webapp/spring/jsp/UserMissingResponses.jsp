@@ -90,7 +90,7 @@ app.controller('myCtrl', function($scope, $http) {
         <div  style="float:left;margin-top:8px;">
             Missing Responses of <% ar.writeHtml(uProf.getName()); %>
         </div>
-        <div class="rightDivContent" style="margin-right:100px;">
+        <!--div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
@@ -100,7 +100,7 @@ app.controller('myCtrl', function($scope, $http) {
             </ul>
           </span>
 
-        </div>
+        </div-->
     </div>
 
 

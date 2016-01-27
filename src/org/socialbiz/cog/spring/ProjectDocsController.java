@@ -258,7 +258,7 @@ public class ProjectDocsController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.projecthome.reminders.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
@@ -285,7 +285,7 @@ public class ProjectDocsController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.attachment.uploadattachment.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
             if(ngp.isFrozen()){
                 return showWarningView(ar, "nugen.generatInfo.Frozen");
@@ -317,7 +317,7 @@ public class ProjectDocsController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.attachment.uploadattachment.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
             if(ngp.isFrozen()){
                 return showWarningView(ar, "nugen.generatInfo.Frozen");
@@ -374,7 +374,7 @@ public class ProjectDocsController extends BaseController {
             }
             if(!ar.isMember()){
                 request.setAttribute("roleName", "Members");
-                return showWarningView(ar, "nugen.attachment.uploadattachment.memberlogin");
+                return new ModelAndView("WarningNotMember");
             }
             if(ngp.isFrozen()){
                 return showWarningView(ar, "nugen.generatInfo.Frozen");

@@ -30,7 +30,7 @@
     }
     else {
         AgendaItem selectedItem = meeting.findAgendaItem(agendaId);
-        agendaInfo = selectedItem.getJSON(ar);
+        agendaInfo = selectedItem.getJSON(ar,ngw,meeting);
     }
 
     JSONArray goalList = ngw.getJSONGoals();

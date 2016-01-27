@@ -24,6 +24,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    $scope.hasResults = false;
+    $scope.actualSearch = "";
 
     $scope.doSearch = function() {
         var postURL = "searchNotes.json";
@@ -32,11 +34,19 @@ app.controller('myCtrl', function($scope, $http) {
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.results = data;
+            $scope.hasResults = ($scope.results.length>0);
+            $scope.actualSearch = $scope.query.searchFilter;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
     };
+    
+    $scope.clearResults = function() {
+        $scope.results = [];
+        $scope.hasResults = false;
+        $scope.actualSearch = "";
+    }
 
 });
 </script>
@@ -56,14 +66,14 @@ app.controller('myCtrl', function($scope, $http) {
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
-                  ng-click="results = []">Clear Results</a></li>
+                  ng-click="clearResults()">Clear Results</a></li>
             </ul>
           </span>
 
         </div>
     </div>
 
-    <table class="">
+    <table>
         <tr ng-hide="editGoalInfo">
             <td class="gridTableColummHeader">Search For:</td>
             <td style="width:20px;"></td>
@@ -95,9 +105,9 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
     </table>
 
-    <div style="height:30px"></div>
+    <div style="height:60px"></div>
 
-    <table class="gridTable2" width="100%">
+    <table class="table" width="100%">
         <tr class="gridTableHeader">
             <td width="200px">Site/Workspace</td>
             <td width="200px">Topic</td>
@@ -107,6 +117,13 @@ app.controller('myCtrl', function($scope, $http) {
             <td>{{row.siteName}} / <a href="<%=ar.retPath%>{{row.projectLink}}">{{row.projectName}}</a></td>
             <td><a href="<%=ar.retPath%>{{row.noteLink}}">{{row.noteSubject}}</a></td>
             <td>{{row.modTime | date}}</td>
+        </tr>
+        <tr ng-hide="hasResults">
+           <td colspan="5">
+           <div class="guideVocal"> 
+              No results for the search string: {{actualSearch}}
+           </div>
+           </td>
         </tr>
     </table>
 
