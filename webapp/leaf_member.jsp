@@ -61,7 +61,7 @@
               </form>
             <%
             }
-            writeLeaflets(ngp, ar, SectionDef.MEMBER_ACCESS);
+            writeLeaflets(ngp, ar, false);
         }
 
         out.flush();

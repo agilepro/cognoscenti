@@ -134,7 +134,7 @@
         return assigness;
     }
 
-    private void writeLeaflets(NGPage ngp, AuthRequest ar, int accessLevel)
+    private void writeLeaflets(NGPage ngp, AuthRequest ar, boolean showPublic)
         throws Exception
     {
         ar.write("\n <div class=\"section\"> ");
@@ -149,16 +149,15 @@
         ar.write("\n     </div> ");
 
         ar.write("\n     <div class=\"section_body\"> ");
+        int accessLevel = 2;
+        if (showPublic) {
+            accessLevel = 1;
+        }
         List<NoteRecord> vizComments = ngp.getVisibleNotes(ar, accessLevel);
 
         int i = -1;
         for (NoteRecord cr : vizComments) {
             i++;
-            int commentLevel = cr.getVisibility();
-            if (commentLevel != accessLevel) {
-                throw new Exception(
-                        "Hmmm, get visible comments not working quite right because I should not see an element at a different visibility level at this point.");
-            }
             displayOldLeaflet(ar, ngp, cr, i);
         }
 
@@ -254,7 +253,7 @@
             SectionUtil.nicePrintTime(ar, cr.getEffectiveDate(), ar.nowTime);
             ar.write("</i>)");
         }
-        ar.write(" viz="+cr.getVisibility());
+        ar.write(" viz="+cr.isPublic());
         ar.write("\n</div></div>");
 
         ar.write("\n</div>");
@@ -471,135 +470,6 @@
             }
             if (!found) {
                 collector.add(ale);
-            }
-        }
-    }
-
-
-    public static void writeLeafletEmailBody(AuthRequest ar, NGPage ngp, NoteRecord leaflet,
-            boolean tempmem, AddressListEntry ale, String note, boolean includeBody)
-        throws Exception
-    {
-        String pageURL    = ar.retPath + ar.getResourceURL(ngp, "");
-        String lic = "";
-        if (tempmem)
-        {
-            License lobj = ngp.getProcess().accessLicense();
-            lic = lobj.getId();
-            pageURL     = LicensedURL.addLicense(pageURL, lic);
-        }
-        ar.write("<p>Note From ");
-        ar.getUserProfile().writeLink(ar);
-        ar.write("</p>");
-        ar.write("\n<p>");
-        ar.writeHtml(note);
-        List<AttachmentRecord> selAtt = NGWebUtils.getSelectedAttachments(ar, ngp);
-        if (selAtt.size()>0)
-        {
-            ar.write("</p>");
-            ar.write("\n<p><b>Attachments:</b> (click links for secure access to documents)<ul> ");
-            for (AttachmentRecord att : selAtt)
-            {
-                ar.write("<li><a href=\"");
-                ar.write(ar.retPath);
-                ar.write("AccessAttachment.jsp?p=");
-                ar.writeURLData(ngp.getKey());
-                ar.write("&aid=");
-                ar.writeURLData(att.getId());
-                ar.write("\">");
-                ar.writeHtml(att.getNiceName());
-                ar.write("</a></li> ");
-            }
-            ar.write("</ul></p>");
-        }
-
-
-        if (leaflet!=null)
-        {
-            String leafletURL = ar.retPath + ar.getResourceURL(ngp, leaflet);
-            if (tempmem)
-            {
-                leafletURL  = LicensedURL.addLicense(leafletURL, lic);
-            }
-            if (includeBody)
-            {
-                ar.write("\n<p><font color=\"blue\"><i>The web page is copied below.  You can access the most recent, ");
-                ar.write("most up to date version on the web at the following link: <a href=\"");
-                ar.write(leafletURL);
-                ar.write("\" title=\"Access the latest version of this message\">");
-                ar.writeHtml(leaflet.getSubject());
-                ar.write("</a></i></font></p>");
-                ar.write("\n<hr/>\n");
-
-                WikiConverter.writeWikiAsHtml(ar, leaflet.getWiki());
-                ar.write("\n<hr/>");
-            }
-            else
-            {
-                ar.write("\n<p><font color=\"blue\"><i>Access the web page using the following link: <a href=\"");
-                ar.write(leafletURL);
-                ar.write("\" title=\"Access the latest version of this message\">");
-                ar.writeHtml(leaflet.getSubject());
-                ar.write("</a></i></font></p>");
-                ar.write("\n<hr/>\n");
-            }
-
-            String choices = leaflet.getChoices();
-            String[] choiceArray = UtilityMethods.splitOnDelimiter(choices, ',');
-            String userData = "";
-            String userChoice = "";
-
-            UserProfile up = ale.getUserProfile();
-            if (up!=null && choiceArray.length>0)
-            {
-                LeafletResponseRecord llr = leaflet.getOrCreateUserResponse(up);
-                userData = llr.getData();
-                userChoice = llr.getChoice();
-            }
-            if (choiceArray.length>0 & includeBody)
-            {
-                ar.write("<form method=\"post\" action=\"");
-                ar.write(ar.retPath);
-                ar.write("LeafletResponseAction.jsp\">\n<input type=\"hidden\" name=\"p\" value=\"");
-                ar.writeHtml(ngp.getKey());
-                ar.write("\">\n<input type=\"hidden\" name=\"lid\" value=\"");
-                ar.writeHtml(leaflet.getId());
-                ar.write("\">\n<input type=\"hidden\" name=\"lic\" value=\"");
-                ar.writeHtml(lic);
-                ar.write("\">\n<input type=\"hidden\" name=\"uid\" value=\"");
-                ar.writeHtml(ale.getUniversalId());
-                ar.write("\">\n<input type=\"hidden\" name=\"go\" value=\"");
-                ar.writeHtml(ar.getResourceURL(ngp,leaflet));
-                ar.write("\">");
-                ar.write("<p><font color=\"blue\"><i>You may use this form to respond.  On email clients ");
-                ar.write("that do not display forms, you must use the <a href=\"");
-                ar.write(leafletURL);
-                ar.write("#Response\" title=\"Response form on the web\">web page</a> to respond.</i></font></p>");
-                ar.write("\n<table>");
-                ar.write("\n<tr><td>Response</td><td>");
-
-                for (String ach : choiceArray)
-                {
-                    String isChecked = "";
-                    if (ach.equals(userChoice)) {
-                        isChecked = " checked=\"checked\"";
-                    }
-                    ar.write("<input type=\"submit\" name=\"choice\"");
-                    ar.write(" value=\"");
-                    ar.writeHtml(ach);
-                    ar.write("\">");
-                    ar.write(" &nbsp; ");
-                }
-                ar.write("</td></tr>");
-                ar.write("<tr><td>Reason / <br/>Comment</td><td><textarea name=\"data\">");
-                ar.writeHtml(userData);
-                ar.write("</textarea></td></tr>");
-                ar.write("<tr><td>User ID:</td><td><input type=\"text\" name=\"uid\" value=\"");
-                ar.writeHtml(ale.getUniversalId());
-                ar.write("\" size=\"50\"></td></tr>");
-                ar.write("<tr><td></td><td><input type=\"hidden\" name=\"action\" value=\"Update Your Response\"></td></tr>");
-                ar.write("</table>");
-                ar.write("</form>");
             }
         }
     }

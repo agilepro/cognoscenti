@@ -57,7 +57,7 @@
 
 <%
         }
-        writeLeaflets(ngp, ar, SectionDef.PUBLIC_ACCESS);
+        writeLeaflets(ngp, ar, true);
         out.flush();
 %>
 <%@ include file="Footer.jsp"%>

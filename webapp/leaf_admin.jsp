@@ -32,10 +32,6 @@
 
     if ("a".equals(xxx)) {
         MailConversions.moveEmails(ngp, cogFolder, ar.getCogInstance());
-    } else if ("b".equals(xxx)) {
-        System.out.println("STARTING EMAIL: "+cogFolder);
-        MailConversions.sendAllMail(cogFolder, ar);
-        System.out.println("ENDING EMAIL");
     } else if ("c".equals(xxx)) {
         System.out.println("STARTING test: "+cogFolder);
         MailFile mf = MailFile.readOrCreate(new File(cogFolder, "MailArchive.json"));
@@ -50,7 +46,7 @@
     ar.retPath="../../";
     List<NGSection> allSecs = ngp.getAllSections();
 
-    String[] names = ngp.getPageNames();
+    //List<String> names = ngp.getContainerNames();
 
     ngb = ngp.getSite();
     if (ngb==null)
@@ -84,7 +80,6 @@
       </form>
     <%
         }
-        writeLeaflets(ngp, ar, SectionDef.ADMIN_ACCESS);
     %>
 
 

@@ -55,7 +55,6 @@
     for (NGBook ngb : allAccounts)
     {
         List<NGPageIndex> allProjects = ar.getCogInstance().getAllProjectsInSite(ngb.key);
-        List<AttachmentRecord> allDocs = ngb.getAllAttachments();
         List<NoteRecord> allNotes = ngb.getAllNotes();
         NGRole owner = ngb.getSecondaryRole();
 %>
@@ -63,7 +62,7 @@
                 <td><a href="BookPages.jsp?b=<%ar.writeHtml(ngb.getKey());%>" title="List all the projects in this account">
                     <%ar.writeHtml(ngb.getFullName());%></a></td>
                 <td><%=allProjects.size()%></td>
-                <td><%=allDocs.size()%></td>
+                <td>0</td>
                 <td><%=allNotes.size()%></td>
                 <td><%
                     for (AddressListEntry ale : owner.getDirectPlayers())

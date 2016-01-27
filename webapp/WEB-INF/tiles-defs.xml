@@ -479,6 +479,10 @@
         <put-attribute name="title" value="Warning" />
         <put-attribute name="body" value="/spring/jsp/Warning.jsp" />
     </definition>
+    <definition name="WarningNotMember" extends="slimLayout">
+        <put-attribute name="title" value="WarningNotMember" />
+        <put-attribute name="body" value="/spring/jsp/WarningNotMember.jsp" />
+    </definition>
 
     <definition name="requiredName" extends="baseLayoutWithoutLeftPanel">
         <put-attribute name="title" value="Warning" />

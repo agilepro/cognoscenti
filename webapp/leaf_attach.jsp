@@ -141,7 +141,7 @@
 %>
 <%@ include file="Footer.jsp"%>
 <%@ include file="functions.jsp"%>
-<%!public static void displayAttachments(AuthRequest ar, NGContainer ngp)  throws Exception
+<%!public static void displayAttachments(AuthRequest ar, NGPage ngp)  throws Exception
     {
         UserProfile up = ar.getUserProfile();
 

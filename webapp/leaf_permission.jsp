@@ -30,7 +30,7 @@
     boolean isMember = ar.isMember();
     boolean isAdmin = ar.isAdmin();
 
-    String[] names = ngp.getPageNames();
+    //List<String> names = ngp.getContainerNames();
 
     ngb = ngp.getSite();
     if (ngb==null)

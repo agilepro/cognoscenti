@@ -40,7 +40,7 @@
     if (hookLink==null) {
         hookLink = (String) session.getAttribute("hook");
     }
-    NGPage hookPage = null;
+    NGPage hookPage = null; 
     if (hookLink!=null)
     {
         NGPageIndex ngpi2 = ar.getCogInstance().getContainerIndexByKey(hookLink);
@@ -122,22 +122,16 @@ else
         <table><%
             for (NoteRecord lr : hookPage.getAllNotes()) {
 
-                int viz = lr.getVisibility();
-                if (viz != SectionDef.PUBLIC_ACCESS && viz != SectionDef.MEMBER_ACCESS) {
-                    continue;
-                }
+                boolean viz = lr.isPublic();
                 ar.write("\n<tr><td align=\"right\" width=\"70\">");
                 if (lr.isDeleted()) {
                     ar.write("Deleted");
                 }
-                else if (viz == SectionDef.PUBLIC_ACCESS) {
+                else if (viz) {
                     ar.write("Public");
                 }
-                else if (viz == SectionDef.MEMBER_ACCESS) {
+                else  {
                     ar.write("Member");
-                }
-                else {
-                    ar.write("Other");
                 }
                 ar.write("</td><td><input type=\"checkbox\" name=\"note\" value=\"");
                 ar.write(lr.getId());
@@ -155,18 +149,15 @@ else
             for (AttachmentRecord tar : hookPage.getAllAttachments()) {
 
                 ar.write("\n<tr><td align=\"right\" width=\"70\">");
-                int viz = tar.getVisibility();
+                boolean viz = tar.isPublic();
                 if (tar.isDeleted()) {
                     ar.write("Deleted");
                 }
-                else if (viz == SectionDef.PUBLIC_ACCESS) {
+                else if (viz) {
                     ar.write("Public");
                 }
-                else if (viz == SectionDef.MEMBER_ACCESS) {
-                    ar.write("Member");
-                }
                 else {
-                    ar.write("Other");
+                    ar.write("Member");
                 }
                 ar.write("</td><td><input type=\"checkbox\" name=\"doc\" value=\"");
                 ar.write(tar.getId());

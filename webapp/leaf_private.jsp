@@ -216,7 +216,6 @@
           </form>
         <%
         }
-        writeLeaflets(ngp, ar, 4);
     }
 
     out.flush();

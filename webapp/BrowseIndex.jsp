@@ -66,11 +66,10 @@
         %></ol><%
 
         %><p>NGPage Names<b></b></p><ol><%
-        String[] pageNames = ngp.getPageNames();
-        for (int i=0; i<pageNames.length; i++)
-        {
-            %><li>String: <a href="BrowseIndex.jsp?p=<%ar.writeURLData(pageNames[i]);%>"><%
-            ar.writeHtml(pageNames[i]);
+        List<String> pageNames = ngp.getContainerNames();
+        for (String oneName : pageNames) {
+            %><li>String: <a href="BrowseIndex.jsp?p=<%ar.writeURLData(oneName);%>"><%
+            ar.writeHtml(oneName);
             %></a></li><%
         }
         %></ol><%

@@ -24,21 +24,20 @@
     {
         String newName = ar.reqParam("newName");
         List newNameSet = new Vector();
-        String[] nameSet = ngp.getPageNames();
+        List<String> nameSet = ngp.getContainerNames();
 
         boolean isNew = true;
 
         //first, see if the new name is one of the old names, and if so
         //just rearrange the list
         int oldPos = findString(nameSet, newName);
-        if (oldPos<0)
-        {
+        if (oldPos<0) {
             //we did not find the value, so just insert it
-            nameSet = insertFront(nameSet, newName);
+            nameSet.add(0, newName);
         }
-        else
-        {
-            insertRemove(nameSet, newName, oldPos);
+        else {
+            nameSet.remove(oldPos);
+            nameSet.add(0,newName);
         }
         ngp.setPageNames(nameSet);
     }
@@ -46,12 +45,11 @@
     {
         String oldName = ar.reqParam("oldName");
 
-        String[] nameSet = ngp.getPageNames();
+        List<String> nameSet = ngp.getContainerNames();
         int oldPos = findString(nameSet, oldName);
 
-        if (oldPos>=0)
-        {
-            nameSet = shrink(nameSet, oldPos);
+        if (oldPos>=0) {
+            nameSet.remove(oldPos);
             ngp.setPageNames(nameSet);
         }
     }

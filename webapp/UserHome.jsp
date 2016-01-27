@@ -291,11 +291,7 @@
                         + URLEncoder.encode(go, "UTF-8");
                 ar.write("  <a href=\"");
                 ar.writeHtml(addLink);
-                ar.write("\"><img allign=\"absbottom\" src=\"");
-                ar.write(ar.retPath);
-                ar.write("add.gif\" title=\"Upload\">");
-                ar.write("</a>");
-                ar.write("&nbsp;&nbsp;");
+                ar.write("\">ADD</a>&nbsp;&nbsp;");
 
                 String updateLink = ar.retPath
                         + "updateFolder.jsp"

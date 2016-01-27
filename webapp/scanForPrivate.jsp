@@ -28,58 +28,9 @@
     File thisDir = new File(dataFolder);
     File[] chilluns = thisDir.listFiles();
 
-    int limit=800;
-
-    for (int i=0; i<chilluns.length && limit>0; i++) {
-
-        File chile = chilluns[i];
-        if (chile.isDirectory()) {
-    continue;
-        }
-        String cname = chile.getName();
-        if (!cname.endsWith(".sp")) {
-    continue;
-        }
-        NGPage aPage = NGPage.readPageAbsolutePath(chile);
-
-        List<NoteRecord> notes = aPage.getAllNotes();
-
-        int numSects = 0;
-
-        for (NoteRecord note : notes)
-        {
-    if (note.getVisibility()==4)
-    {
-        numSects++;
-    }
-        }
-
-        if (numSects==0)
-        {
-    continue;
-        }
-
-        ar.write("\n<li>");
-        ar.write(Integer.toString(numSects));
-        ar.write(" private topics in file ");
-        ar.writeHtml(aPage.getFullName());
-        ar.write("</li>");
-
-        ar.write("\n<ul>");
-
-        for (NoteRecord note : notes)
-        {
-    if (note.getVisibility()==4)
-    {
-        ar.write("\n  <li>");
-        ar.writeHtml(note.getOwner());
-        ar.write("</li>");
-    }
-        }
-        ar.write("\n</ul>");
 
 
-    }
+
 %>
 </ul>
 </body>

@@ -37,7 +37,7 @@
 
     String upstreamLink = ngw.getUpstreamLink();
 
-    String[] names = ngw.getPageNames();
+    List<String> names = ngw.getContainerNames();
 
     String parentKey = ngw.getParentKey();
     NGPageIndex parentIndex = cog.getContainerIndexByKey(parentKey);
@@ -52,9 +52,9 @@
 
 
     JSONArray oldNameArray = new JSONArray();
-    for (int i = 1; i < names.length; i++) {
+    for (int i = 1; i < names.size(); i++) {
         //skip the first name since that is the current name
-        oldNameArray.put(names[i]);
+        oldNameArray.put(names.get(i));
     }
 
     JSONArray allProjects = new JSONArray();
@@ -63,8 +63,8 @@
             continue;
         }
         JSONObject pInfo = new JSONObject();
-        pInfo.put("name", ngpi.containerName);
-        pInfo.put("key", ngpi.containerKey);
+        pInfo.put("name", ngpis.containerName);
+        pInfo.put("key", ngpis.containerKey);
         allProjects.put(pInfo);
     }
 
@@ -165,10 +165,12 @@ app.filter('escape', function() {
             <div class="generalHeading"><fmt:message key="nugen.generatInfo.PageNameCaption"/> </div>
             <div class="generalContent">
                 <ul class="bulletLinks">
+                <li >{{projectInfo.name}}</li>
+                <li ng-repeat="name in oldNameArray">{{name}}</li>
                 <%
-                    for (int i = 0; i < names.length; i++) {
+                    for (String oneName : names) {
                             ar.write("<li>");
-                            ar.writeHtml( names[i]);
+                            ar.writeHtml(oneName);
                             ar.write("</li>\n");
                         }
                 %>
@@ -230,18 +232,10 @@ app.filter('escape', function() {
                 <table width="720px">
                     <tr><td style="height:5px"></td></tr>
                     <tr>
-                        <td class="gridTableColummHeader_2">Goal:</td>
-                        <td style="width:20px;"></td>
-                        <td>
-                            <input type="text" name="goal" class="form-control" ng-model="projectInfo.goal">
-                        </td>
-                    </tr>
-                    <tr><td style="height:5px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2" valign="top">Purpose:</td>
+                        <td class="gridTableColummHeader_2">Public Purpose:</td>
                         <td style="width:20px;"></td>
                         <td><textarea name="purpose" class="form-control" ng-model="projectInfo.purpose"
-                              rows="4"></textarea></td>
+                              rows="4" placeholder="Enter a public description of the work that will be done in this workspace"></textarea></td>
                     </tr>
                     <tr><td style="height:8px"></td></tr>
                     <tr>
