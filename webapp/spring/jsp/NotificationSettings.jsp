@@ -99,8 +99,8 @@ app.controller('myCtrl', function($scope, $http) {
 
 <div ng-repeat="prj in partProjects" style="border: 1px solid lightgrey;border-radius:10px;margin-top:20px;padding:5px;background-color:#F8EEEE;">
     <span class="dropdown">
-        <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            <span class="caret"></span></button>
+        <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+            data-toggle="dropdown"> <span class="caret"></span> </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
             <li role="presentation" ng-repeat="role in prj.roles">
                 <a role="menuitem" tabindex="-1" ng-click="stopRole(prj, role)">Stop playing {{role}}</a>

@@ -1064,3 +1064,21 @@ input.inputReadonlyLink{
   padding: 15px;
 }
 
+
+/******** FOR all the menus needing a pulldown mienu without text ******/
+.specCaretBtn {
+    width:25px;
+    height:18px;
+    padding:0px;
+    margin-right:5px;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+.specCaretBtn span {
+    margin:0px;
+    padding:0px;
+}

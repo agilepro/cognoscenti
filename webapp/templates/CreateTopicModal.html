@@ -16,21 +16,13 @@
 <div class="modal-body">
     <div class="form-inline form-group">
 	    Subject: 
-		<input ng-model="topic.subject" class="form-control" style="width:400px" autofocus tabindex="0">
+		<input ng-model="topic.subject" class="form-control" style="width:400px">
 	</div>
     <div>Briefly describe the Topic</div>
-    <div ng-model="topic.html"
-        ta-text-editor-class="form-control myform1-height"
-        ta-html-editor-class="form-control myform1-height"
-        ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-        text-angular="" class="leafContent" tabindex="0">
+    <div ng-model="topic.html" ui-tinymce="tinymceOptions" class="leafContent">
     </div>    
     <div>Start the discussion on the Topic</div>
-	<div ng-model="cmt.html"
-        ta-text-editor-class="form-control myform2-height"
-        ta-html-editor-class="form-control myform2-height"
-        ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-        text-angular="" class="leafContent" tabindex="0">
+	<div ng-model="cmt.html" ui-tinymce="tinymceOptions" class="leafContent">
     </div>
 </div>
 <div class="modal-footer">

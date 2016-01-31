@@ -82,11 +82,6 @@
 
 %>
 
-<link href="<%=ar.retPath%>jscript/textAngular.css" rel="stylesheet" />
-<script src="<%=ar.retPath%>jscript/textAngular-rangy.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular-sanitize.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular.min.js"></script>
-
 <style>
     .meeting-icon {
        cursor:pointer;
@@ -97,7 +92,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.notes = <%notes.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
@@ -244,6 +239,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             templateUrl: '<%=ar.retPath%>templates/CreateTopicModal.html?t=<%=System.currentTimeMillis()%>',
             controller: 'CreateTopicModalCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
             }
         });
@@ -367,8 +363,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div style="border: 1px solid lightgrey;border-radius:10px;margin-top:20px;padding:5px;background-color:#F8EEEE;">
                 <div id="headline" >
                   <span class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                    <span class="caret"></span></button>
+                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                        data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                       <li role="presentation">
                           <a role="menuitem" tabindex="-1" href="noteZoom{{rec.id}}.htm">Full Details</a></li>

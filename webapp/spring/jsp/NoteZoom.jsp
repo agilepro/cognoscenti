@@ -56,12 +56,6 @@ Required parameter:
 
 %>
 
-<!-- something in here is needed for the html bind -->
-<link href="<%=ar.retPath%>jscript/textAngular.css" rel="stylesheet" />
-<script src="<%=ar.retPath%>jscript/textAngular-rangy.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular-sanitize.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular.min.js"></script>
-
 <style>
 .ta-editor {
     min-height: 150px;
@@ -78,7 +72,7 @@ Required parameter:
 <script type="text/javascript">
 document.title="<% ar.writeJS(note.getSubject());%>";
 
-var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
@@ -86,7 +80,20 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.canUpdate = <%=canUpdate%>;
     $scope.history = <%history.write(out,2,4);%>
     $scope.allGoals = <%allGoals.write(out,2,4);%>
+    
+    $scope.tinymceOptions = {
+		handle_event_callback: function (e) {
+		// put logic here for keypress 
+		},
+        inline: false,
+        menubar: false,
+        body_class: 'leafContent',
+        statusbar: false,
+        height:400,
+        toolbar: "h1, bold, italic, formatselect, cut, copy, paste, bullist, outdent, indent, undo, redo"
+	};
 
+ 
     $scope.currentTime = (new Date()).getTime();
 
     $scope.isEditing = false;
@@ -113,6 +120,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.myCommentType = 1;   //simple comment
     $scope.myReplyTo = 0;
 
+    $scope.saveEdit = function() {
+        $scope.saveEdits(['html','subject']);
+        $scope.isEditing = false;
+    }
+    $scope.cancelEdit = function() {
+        $scope.isEditing = false;
+    }
     $scope.saveEdits = function(fields) {
         var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
         var rec = {};
@@ -395,6 +409,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             templateUrl: '<%=ar.retPath%>templates/CommentModal.html?t=<%=System.currentTimeMillis()%>',
             controller: 'CommentModalCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
@@ -434,6 +449,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             templateUrl: '<%=ar.retPath%>templates/ResponseModal.html?t=<%=System.currentTimeMillis()%>',
             controller: 'ModalResponseCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
                 response: function () {
                     return selResponse;
@@ -464,6 +480,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html?t=<%=System.currentTimeMillis()%>',
             controller: 'OutcomeModalCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
@@ -622,19 +639,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 
     <div class="leafContent" ng-hide="isEditing">
-      <div ng-bind-html="noteInfo.html"></div>
-      <div><br/><i>Last modified by <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{noteInfo.modUser.uid}}"><span class="red">{{noteInfo.modUser.name}}</span></a> on {{noteInfo.modTime|date}}</i></div>
+    	<div  ng-bind-html="noteInfo.html"></div>
     </div>
-    <div class="well leafContent" ng-show="isEditing">
-      <div ng-model="noteInfo.html"
-          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-          text-angular="" class="leafContent"></div>
-
-      <button ng-click="saveEdits(['html']);isEditing=false" class="btn btn-danger">Save</button>
-      <button ng-click="saveEdits([]);isEditing=false" class="btn btn-danger">Cancel</button>
+    <div class="leafContent" ng-show="isEditing">
+        <input type="text" class="form-control" ng-model="noteInfo.subject">
+        <div style="height:15px"></div>
+    	<div ui-tinymce="tinymceOptions" ng-model="noteInfo.html"></div>
+        <div style="height:15px"></div>
+        <button class="btn btn-primary" ng-click="saveEdit()">Save</button>
+        <button class="btn btn-primary" ng-click="cancelEdit()">Cancel</button>
     </div>
+    
 
-
+    
     <div class="generalHeading" style="margin-top:50px;"></div>
 
     <div>
@@ -720,8 +737,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
                          <div class="dropdown" style="float:left">
 <% if (isLoggedIn) { %>
-                           <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="margin-right:10px;">
-                           <span class="caret"></span></button>
+                            <button class="dropdown-toggle specCaretBtn" type="button"  id="menu1" 
+                                data-toggle="dropdown"> <span class="caret"></span> </button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                               <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && (cmt.state<13 || cmt.commentType==1)">
                                   <a role="menuitem" ng-click="openCommentEditor(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
@@ -865,11 +882,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </tr>
 
 </table>
-
-
-
-
-
 
 
     <div class="generalHeading">History</div>

@@ -219,6 +219,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             templateUrl: '<%=ar.retPath%>templates/InviteModal.html?t=<%=System.currentTimeMillis()%>',
             controller: 'InviteModalCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
                 email: function () {
                     return player.uid;

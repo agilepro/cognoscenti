@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"
@@ -17,20 +17,26 @@
     <meta http-equiv="imagetoolbar" content="no" />
 
     <!-- INCLUDE the ANGULAR JS library -->
-    <script type="text/javascript" src="<%=ar.baseURL%>jscript/angular.js"></script>
-    <script type="text/javascript" src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
-    <script type="text/javascript" src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
-    <script type="text/javascript" src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/angular.js"></script>
+    <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
+
+    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
+    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
+    <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
 
     <link href="<%=ar.baseURL%>css/body.css" rel="styleSheet" type="text/css" media="screen" />
     <script type="text/javascript" src="<%=ar.baseURL%>jscript/nugen_plain.js"></script>
 
     <link href="<%=ar.retPath%>css/tabs.css" rel="styleSheet" type="text/css" media="screen" />
 
-    <script type="text/javascript" src="<%=ar.baseURL%>jscript/common.js"></script>
-    <script type="text/javascript" src="<%=ar.baseURL%>jfunc.js"></script>
-    <script type="text/javascript" src="<%=ar.baseURL%>jscript/tabs.js"></script>
+    <script src="<%=ar.baseURL%>jscript/common.js"></script>
+    <script src="<%=ar.baseURL%>jfunc.js"></script>
+    <script src="<%=ar.baseURL%>jscript/tabs.js"></script>
 
+    <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
+          data-semver="4.3.0" data-require="font-awesome@*" />
     <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
 
     <link href="<%=ar.retPath%>css/reset.css" rel="styleSheet" type="text/css" media="screen" />
@@ -38,8 +44,6 @@
     <link href="<%=ar.retPath%>css/global.css" rel="styleSheet" type="text/css" media="screen" />
     <link href="<%=ar.retPath%><%=themePath%>theme.css" rel="styleSheet" type="text/css" media="screen" />
 
-    <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
-          data-semver="4.3.0" data-require="font-awesome@*" />
 
     <title><tiles:getAsString name="title"/><%
     if(title!=null) {

@@ -75,15 +75,9 @@
 */
 %>
 
-<link href="<%=ar.retPath%>jscript/textAngular.css" rel="stylesheet" />
-<script src="<%=ar.retPath%>jscript/textAngular-rangy.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular-sanitize.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular.min.js"></script>
-
-
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.meeting    = <%meetingInfo.write(out,2,4);%>;
     $scope.isNew      = <%=isNew%>;
@@ -100,6 +94,18 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.errorTrace = "";
     $scope.showTrace = false;
     $scope.exception  = {};
+
+    $scope.tinymceOptions = {
+		handle_event_callback: function (e) {
+		// put logic here for keypress 
+		},
+        inline: false,
+        menubar: false,
+        body_class: 'leafContent',
+        statusbar: false,
+        toolbar: "h1, bold, italic, formatselect, cut, copy, paste, bullist, outdent, indent, undo, redo"
+	};
+
 
     $scope.findActionItem = function(searchId) {
         for(var i=0; i<$scope.goalList.length; i++) {
@@ -303,11 +309,8 @@ app.controller('myCtrl', function($scope, $http) {
                 <tr>
                     <td class="gridTableColummHeader">Description:</td>
                     <td style="width:20px;"></td>
-                    <td colspan="2" ng-show="meeting.state<=1"><textarea ng-model="agendaItem.desc"  class="form-control" style="width:450px;"></textarea></td>
-                    <td colspan="2" ng-show="meeting.state>=2">
-                       <div class="leafContent">
-                         <div ng-bind-html="agendaItem.desc"></div>
-                       </div>
+                    <td colspan="2">
+                       <div ui-tinymce="tinymceOptions" ng-model="agendaItem.desc"></div>
                     </td>
                 </tr>
                 <tr><td style="height:10px"></td></tr>

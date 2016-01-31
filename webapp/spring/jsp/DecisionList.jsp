@@ -76,16 +76,9 @@ Required parameters:
 
 %>
 
-<link href="<%=ar.retPath%>jscript/textAngular.css" rel="stylesheet" />
-<script src="<%=ar.retPath%>jscript/textAngular-rangy.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular-sanitize.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular.min.js"></script>
-
-
-
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allDecisions = <%allDecisions.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
@@ -249,9 +242,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/DecisionModal.html',
+            templateUrl: '<%=ar.retPath%>templates/DecisionModal.html?t='+(new Date()).getTime(),
             controller: 'DecisionModalCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
                 decision: function () {
                     return JSON.parse(JSON.stringify(decision));
@@ -329,8 +323,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
              style="background: linear-gradient(#EEE, white); margin: 5px;border-style:solid;border-color:#FFF;border-width:12px">
                 <td style="padding:3px;vertical-align:top;margin:5px;">
                   <div class="dropdown" style="padding:4px">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                    <span class="caret"></span></button>
+                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                        data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                       <li role="presentation"><a role="menuitem" tabindex="-1"
                           ng-click="openDecisionEditor(rec)">Edit Decision</a></li>

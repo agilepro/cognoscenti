@@ -121,11 +121,6 @@
 
 %>
 
-<link href="<%=ar.retPath%>jscript/textAngular.css" rel="stylesheet" />
-<script src="<%=ar.retPath%>jscript/textAngular-rangy.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular-sanitize.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular.min.js"></script>
-
 <style>
     .meeting-icon {
        cursor:pointer;
@@ -147,9 +142,9 @@
     }
 </style>
 
-<script type="text/javascript">
+<script>
 
-var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
     $scope.allGoals = <%allGoals.write(out,2,4);%>;
@@ -177,6 +172,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         errorPanelHandler($scope, serverErr);
     };
 
+	$scope.tinymceOptions = {
+		handle_event_callback: function (e) {
+		// put logic here for keypress 
+		},
+        inline: false,
+        menubar: false,
+        body_class: 'leafContent',
+        statusbar: false,
+        toolbar: "bold, italic, formatselect, cut, copy, paste, bullist, outdent, indent, undo, redo"
+	};
 
     $scope.showItemMap = {};
     $scope.nowEditing = "nothing";
@@ -335,8 +340,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         item.actionItems = res;
         $scope.saveAgendaItem(item);
     }
-
-
 
     $scope.stateName = function() {
         if ($scope.meeting.state<=1) {
@@ -935,6 +938,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           templateUrl: '<%=ar.retPath%>templates/ModalActionItem.html',
           controller: 'ModalActionItemCtrl',
           size: 'lg',
+          backdrop: "static",
           resolve: {
             item: function () {
               return item;
@@ -1012,9 +1016,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html',
+            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html?d='+new Date().getTime(),
             controller: 'ModalResponseCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
                 response: function () {
                     return JSON.parse(JSON.stringify(selResponse));
@@ -1062,6 +1067,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             templateUrl: '<%=ar.retPath%>templates/CommentModal.html?t=<%=System.currentTimeMillis()%>',
             controller: 'CommentModalCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
@@ -1094,6 +1100,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html?t=<%=System.currentTimeMillis()%>',
             controller: 'OutcomeModalCtrl',
             size: 'lg',
+            backdrop: "static",
+            keyboard: false,
             resolve: {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
@@ -1468,12 +1476,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
            </div>
         </td>
         <td ng-show="isEditing(6,'0')" style="width:100%">
-           <div class="well leafContent">
-             <div ng-model="meeting.meetingInfo" ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]" text-angular="" class="leafContent"></div>
-
-             <button ng-click="savePartialMeeting(['meetingInfo'])" class="btn btn-danger">Save</button>
-             <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
-           </div>
+            <div class="well leafContent">
+                <!--div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo" 
+                     class="leafContent" style="min-height:200px;" ></div-->
+                <button ng-click="savePartialMeeting(['meetingInfo'])" class="btn btn-danger">Save</button>
+                <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
+            </div>
         </td>
       </tr>
     </table>
@@ -1563,11 +1571,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <i ng-show="item.topicLink" class="fa fa-lightbulb-o"></i>
                 {{item.subject}} </span>  &nbsp;
             <span class="dropdown" ng-show="showItemMap[item.id]">
-               <button class="btn btn-default dropdown-toggle" type="button" id="menu"
-                       data-toggle="dropdown" style="margin-right:10px;">
-                   <span class="caret"></span>
-               </button>
-               <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
+                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                    data-toggle="dropdown"> <span class="caret"></span> </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                   <li role="presentation">
                       <a role="menuitem" ng-click="toggleEditor(2,item.id)"><i class="fa fa-cogs"></i> Item Settings</a></li>
                   <li role="presentation">
@@ -1653,7 +1659,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </td>
         <td ng-show="isEditing(1,item.id) && myUserId == item.lockUser.uid" style="width:100%">
            <div class="well leafContent">
-             <div ng-model="item.desc" ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]" text-angular="" class="leafContent"></div>
+             <!--div ng-model="item.desc" ui-tinymce="tinymceOptions"></div-->
 
              <button ng-click="saveAgendaItemParts(item, ['desc'])" class="btn btn-danger">Save</button>
              <button ng-click="cancelEdit(item)" class="btn btn-danger">Cancel</button>
@@ -1703,8 +1709,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
            <tr ng-repeat="goal in itemGoals(item)" style="margin-left:30px;">
               <td>
                   <span class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" >
-                          <span class="caret"></span></button>
+                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                        data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                       <li role="presentation"><a role="menuitem"
                           ng-click="changeGoalState(goal, 'good')">Good</a></li>
@@ -1829,8 +1835,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                <div class="comment-outer"  style="{{stateStyle(cmt)}}">
                    <div>
                        <div class="dropdown" style="float:left">
-                           <button class="btn btn-default dropdown-toggle" type="button" id="menu" data-toggle="dropdown" style="margin-right:10px;">
-                               <span class="caret"></span>
+                           <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                               data-toggle="dropdown"> <span class="caret"></span> </button>
                            </button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                               <li role="presentation" ng-show="cmt.user=='<%=uProf.getUniversalId()%>'">

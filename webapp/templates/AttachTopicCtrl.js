@@ -7,8 +7,8 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
     $scope.filterDocs = function() {
         var filterlc = $scope.realDocumentFilter.toLowerCase();
         var rez =  $scope.attachmentList.filter( function(oneDoc) {
-            return (filterlc.length==0
-                || oneDoc.subject.toLowerCase().indexOf(filterlc)>=0);
+            return (!oneDoc.deleted && (filterlc.length==0
+                || oneDoc.subject.toLowerCase().indexOf(filterlc)>=0));
         });
         rez = rez.sort( function(a,b) {
             return b.modTime - a.modTime;

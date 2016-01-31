@@ -16,6 +16,9 @@ Required parameters:
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
     UserProfile uProf = ar.getUserProfile();
+    String currentUser = uProf.getUniversalId();
+    String currentUserName = uProf.getName();
+    String currentUserKey = uProf.getKey();
 
 
     String aid      = ar.reqParam("aid");
@@ -74,17 +77,11 @@ Required parameters:
 
 <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
 
-<!-- something in here is needed for the html bind -->
-<link href="<%=ar.retPath%>jscript/textAngular.css" rel="stylesheet" />
-<script src="<%=ar.retPath%>jscript/textAngular-rangy.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular-sanitize.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular.min.js"></script>
-
 <script type="text/javascript">
 document.title="<% ar.writeJS(attachment.getDisplayName());%>";
 
-var app = angular.module('myApp', ['ui.bootstrap','textAngular']);
-app.controller('myCtrl', function($scope, $http) {
+var app = angular.module('myApp', ['ui.bootstrap','ui.tinymce', 'ngSanitize']);
+app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.docInfo = <%docInfo.write(out,2,4);%>;
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
@@ -101,11 +98,12 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
 
-    $scope.saveComment = function() {
+    $scope.saveComment = function(cmt) {
         var saveRecord = {};
         saveRecord.id = $scope.docInfo.id;
         saveRecord.universalid = $scope.docInfo.universalid;
-        saveRecord.newComment = $scope.myComment;
+        saveRecord.comments = [];
+        saveRecord.comments.push(cmt);
         $scope.isCreatingComment = false;
         $scope.savePartial(saveRecord);
     }
@@ -131,6 +129,69 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.navigateToMeeting = function(meet) {
         window.location="meetingFull.htm?id="+meet.id;
     }
+    $scope.commentTypeName = function(cmt) {
+        if (cmt.commentType==2) {
+            return "Proposal";
+        }
+        if (cmt.commentType==3) {
+            return "Round";
+        }
+        if (cmt.commentType==5) {
+            return "Minutes";
+        }
+        return "Comment";
+    }
+
+    $scope.openCommentCreator = function(type, replyTo, defaultBody) {
+        var newComment = {};
+        newComment.time = -1;
+        newComment.commentType = type;
+        newComment.state = 11;
+        newComment.isNew = true;
+        newComment.user = "<%ar.writeJS(currentUser);%>";
+        newComment.userName = "<%ar.writeJS(currentUserName);%>";
+        newComment.userKey = "<%ar.writeJS(currentUserKey);%>";
+        if (replyTo) {
+            newComment.replyTo = replyTo;
+        }
+        if (defaultBody) {
+            newComment.html = defaultBody;
+        }
+        $scope.openCommentEditor(newComment);
+    }
+
+    $scope.openCommentEditor = function (cmt) {
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/CommentModal.html?t=<%=System.currentTimeMillis()%>',
+            controller: 'CommentModalCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                cmt: function () {
+                    return JSON.parse(JSON.stringify(cmt));
+                }
+            }
+        });
+
+        modalInstance.result.then(function (returnedCmt) {
+            var cleanCmt = {};
+            cleanCmt.time = cmt.time;
+            cleanCmt.html = returnedCmt.html;
+            cleanCmt.state = returnedCmt.state;
+            cleanCmt.commentType = returnedCmt.commentType;
+            if (cleanCmt.state==12) {
+                if (cleanCmt.commentType==1 || cleanCmt.commentType==5) {
+                    cleanCmt.state=13;
+                }
+            }
+            cleanCmt.replyTo = returnedCmt.replyTo;
+            $scope.saveComment(cleanCmt);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
 
 });
 </script>
@@ -315,11 +376,25 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
             <td>
 
                 <div ng-repeat="cmt in docInfo.comments">
-                   <div class="leafContent" style="border: 1px solid lightgrey;border-radius:8px;padding:5px;margin-top:15px;background-color:#EEE">
+                   <div style="border: 1px solid lightgrey;border-radius:8px;padding:5px;margin-top:15px;background-color:#EEE">
+                       <div class="dropdown" style="float:left">
+                           <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                               data-toggle="dropdown"> <span class="caret"></span> </button>
+                           <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
+                              <li role="presentation" ng-show="cmt.user=='<%=uProf.getUniversalId()%>'">
+                                  <a role="menuitem" ng-click="openCommentEditor(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-show="cmt.commentType==1">
+                                  <a role="menuitem" ng-click="openCommentCreator(item,1,cmt.time)">Reply</a></li>
+                              <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
+                                  <a role="menuitem" ng-click="openCommentCreator(item,2,cmt.time,cmt.html)">Make Modified Proposal</a></li>
+                              <li role="presentation" ng-show="cmt.commentType==2">
+                                  <a role="menuitem" ng-click="openDecisionEditor(item, cmt)">Create New Decision</a></li>
+                           </ul>
+                       </div>
                        <div style="">
                            <i class="fa fa-comments-o"></i> Comment {{cmt.time | date}} - <a href="#"><span class="red">{{cmt.userName}}</span></a>
                        </div>
-                       <div class="" ng-click="startEdit(cmt)" style="border: 1px solid lightgrey;border-radius:6px;padding:5px;background-color:white">
+                       <div class="leafContent" ng-click="openCommentEditor(cmt)" style="border: 1px solid lightgrey;border-radius:6px;padding:5px;background-color:white">
                          <div ng-bind-html="cmt.html"></div>
                        </div>
                    </div>
@@ -329,16 +404,8 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
 
 
                 <div ng-show="canUpdate">
-                    <div class="well leafContent" style="width:100%" ng-show="isCreatingComment">
-                      <div ng-model="myComment"
-                          ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-                          text-angular="" class="" style="width:100%;"></div>
-
-                      <button ng-click="saveComment()" class="btn btn-danger">Create <i class="fa fa-comments-o"></i> Comment</button>
-                          <button ng-click="isCreatingComment=false" class="btn btn-danger">Cancel</button>
-                    </div>
                     <div ng-hide="isCreatingComment" style="margin:20px;">
-                        <button ng-click="isCreatingComment=true" class="btn btn-default">
+                        <button ng-click="openCommentCreator(1)" class="btn btn-default">
                             Create New <i class="fa fa-comments-o"></i> Comment</button>
                     </div>
                 </div>
@@ -366,3 +433,5 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
     </table>
 
 </div>
+
+<script src="<%=ar.retPath%>templates/CommentModal.js"></script>

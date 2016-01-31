@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
-public abstract class AttachmentRecord extends DOMFace {
+public abstract class AttachmentRecord extends CommentContainer {
     private static String ATTACHMENT_ATTB_RLINK = "rlink";
     private static String ATTACHMENT_ATTB_RCTIME = "rctime";
     public static String ATTACHMENT_ATTB_RLMTIME = "rlmtime";
@@ -848,6 +848,7 @@ public abstract class AttachmentRecord extends DOMFace {
         return "";
     }
 
+    /*
     public List<CommentRecord> getComments()  throws Exception {
         return getChildren("comment", CommentRecord.class);
     }
@@ -857,7 +858,7 @@ public abstract class AttachmentRecord extends DOMFace {
         newCR.setUser(ar.getUserProfile());
         newCR.setContentHtml(ar, newComment);
     }
-
+    */
     
     /**
      * Returns all the meetinsg that have agenda items that are linked to this document 
@@ -984,11 +985,14 @@ public abstract class AttachmentRecord extends DOMFace {
             setLabels(selectedLabels);
             changed = true;
         }
+        //TODO: this is probably not needed any more
         if (docInfo.has("newComment")) {
             String newValue = docInfo.getString("newComment");
-            addComment(ar, newValue);
+            CommentRecord newCr = addComment(ar);
+            newCr.setContentHtml(ar, newValue);
             changed = true;
         }
+        
         if (docInfo.has("url")) {
             if ("URL".equals(getType())) {
                 setStorageFileName(docInfo.getString("url"));
@@ -999,6 +1003,8 @@ public abstract class AttachmentRecord extends DOMFace {
             setPurgeDate(docInfo.getLong("purgeDate"));
             changed = true;
         }
+        
+        updateCommentsFromJSON(docInfo, ar);
 
         return changed;
     }

@@ -370,8 +370,8 @@ app.controller('myCtrl', function($scope, $http) {
         <tr class="gridTableHeader">
             <td width="50px">
               <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                   <span class="caret"></span>
+                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                    data-toggle="dropdown"> <span class="caret"></span> </button>
                 </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
@@ -389,8 +389,8 @@ app.controller('myCtrl', function($scope, $http) {
         <tr ng-repeat="rec in getUnmarked()">
             <td>
               <div class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                <span class="caret"></span></button>
+                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                    data-toggle="dropdown"> <span class="caret"></span> </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="docinfo{{rec.id}}.htm">Access Document</a></li>

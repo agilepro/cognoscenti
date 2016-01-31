@@ -64,11 +64,6 @@
 %>
 
 
-<link href="<%=ar.retPath%>jscript/textAngular.css" rel="stylesheet" />
-<script src="<%=ar.retPath%>jscript/textAngular-rangy.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular-sanitize.min.js"></script>
-<script src="<%=ar.retPath%>jscript/textAngular.min.js"></script>
-
 <style>
 .ta-editor {
     min-height: 300px;
@@ -103,7 +98,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap', 'textAngular']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
     $scope.isCreate = <%=isCreate%>;
@@ -119,6 +114,19 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
 
+    $scope.tinymceOptions = {
+		handle_event_callback: function (e) {
+		// put logic here for keypress 
+		},
+        inline: false,
+        menubar: false,
+        body_class: 'leafContent',
+        statusbar: false,
+        height:400,
+        toolbar: "h1, bold, italic, formatselect, cut, copy, paste, bullist, outdent, indent, undo, redo"
+	};
+
+    
     $scope.saveContents = function(rec) {
         var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
         var postdata = angular.toJson($scope.noteInfo);
@@ -204,14 +212,8 @@ app.controller('myCtrl', function($scope, $http) {
                 <input ng-model="noteInfo.subject" class="form-control" style="width:450px;" placeholder="Enter a name for the topic here">
             </div>
 
-            <div text-angular-toolbar name="statictoolbar" class="statictoolbar"
-                ta-toolbar="[['h1','h2','h3','p'],['ul','indent','outdent'],['bold','italics'],['clear','insertLink'],['undo','redo']]"></div>
-
-            <div ng-model="noteInfo.html"
-                ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-                ta-target-toolbars='statictoolbar'
-                text-angular="" class="leafContent">
-            </div>
+            <div ui-tinymce="tinymceOptions" ng-model="noteInfo.html"></div>
+            
         </td>
     </tr>
 
