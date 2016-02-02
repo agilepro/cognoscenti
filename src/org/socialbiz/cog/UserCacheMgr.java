@@ -22,19 +22,26 @@ public class UserCacheMgr {
 
     public void needRecalc(List<String> usersWhoMightHaveChanges) {
         for (String aUser :usersWhoMightHaveChanges ) {
+            System.out.println("USERCACHE: this user needs recalc: "+aUser);
             needsRecalc.add(aUser);
         }
     }
     public void needRecalc(UserProfile userWhoMightHaveChanges) {
-        needsRecalc.add(userWhoMightHaveChanges.getKey());
+        String aUser = userWhoMightHaveChanges.getKey();
+        System.out.println("USERCACHE: this user needs recalc: "+aUser);
+        needsRecalc.add(aUser);
     }
 
     public UserCache getCache(String userKey) throws Exception {
         UserCache theCache = new UserCache(cog, userKey);
         if (needsRecalc.contains(userKey)) {
+            System.out.println("USERCACHE: refreshed cache for: "+userKey);
             theCache.refreshCache(cog);
             theCache.save();
             needsRecalc.remove(userKey);
+        }
+        else {
+            System.out.println("USERCACHE: did not refresh cache this time for: "+userKey);
         }
         return theCache;
     }

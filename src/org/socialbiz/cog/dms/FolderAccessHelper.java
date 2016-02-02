@@ -66,6 +66,7 @@ public class FolderAccessHelper {
             return;
         }
         lclConn = lclConn.replace('[', ' ');
+        //TODO: get rid of StringTokenizer
         StringTokenizer st = new StringTokenizer(lclConn, "]");
         while (st.hasMoreTokens()) {
             String tok = st.nextToken();
@@ -90,10 +91,12 @@ public class FolderAccessHelper {
             return;
         }
         cvsConn = cvsConn.replace('[', ' ');
+        //TODO: get rid of StringTokenizer
         StringTokenizer st = new StringTokenizer(cvsConn, "]");
 
         while (st.hasMoreTokens()) {
             String tok = st.nextToken();
+            //TODO: get rid of StringTokenizer
             StringTokenizer cst = new StringTokenizer(tok, ",");
             Properties cvsProp = new Properties();
             while(cst.hasMoreTokens()){

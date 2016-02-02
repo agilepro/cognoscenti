@@ -18,7 +18,6 @@
 %><%@page import="org.w3c.dom.Element"
 %><%@page import="java.io.File"
 %><%@page import="java.io.FileReader"
-%><%@page import="java.util.StringTokenizer"
 %><%@page import="java.lang.StringBuffer"
 %><%@page import="java.net.HttpURLConnection"
 %><%@page import="java.net.URL"

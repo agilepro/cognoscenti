@@ -172,16 +172,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         errorPanelHandler($scope, serverErr);
     };
 
-	$scope.tinymceOptions = {
-		handle_event_callback: function (e) {
-		// put logic here for keypress 
-		},
-        inline: false,
-        menubar: false,
-        body_class: 'leafContent',
-        statusbar: false,
-        toolbar: "bold, italic, formatselect, cut, copy, paste, bullist, outdent, indent, undo, redo"
-	};
+    $scope.tinymceOptions = standardTinyMCEOptions();
+    $scope.tinymceOptions.height = 300;
 
     $scope.showItemMap = {};
     $scope.nowEditing = "nothing";

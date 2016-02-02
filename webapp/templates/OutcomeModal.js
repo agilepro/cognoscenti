@@ -4,6 +4,9 @@ app.controller('OutcomeModalCtrl', function ($scope, $modalInstance, cmt) {
 
     $scope.cmt = cmt;
 
+    $scope.tinymceOptions = standardTinyMCEOptions();
+    $scope.tinymceOptions.height = 300;
+
     $scope.ok = function () {
         $modalInstance.close($scope.cmt);
     };

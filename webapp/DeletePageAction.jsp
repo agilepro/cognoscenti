@@ -10,7 +10,6 @@
 %><%@page import="java.util.Enumeration"
 %><%@page import="java.util.Hashtable"
 %><%@page import="java.util.Properties"
-%><%@page import="java.util.StringTokenizer"
 %><%AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Can't delete a project.");
 

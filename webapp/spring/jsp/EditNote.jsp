@@ -114,18 +114,8 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
 
-    $scope.tinymceOptions = {
-		handle_event_callback: function (e) {
-		// put logic here for keypress 
-		},
-        inline: false,
-        menubar: false,
-        body_class: 'leafContent',
-        statusbar: false,
-        height:400,
-        toolbar: "h1, bold, italic, formatselect, cut, copy, paste, bullist, outdent, indent, undo, redo"
-	};
-
+    $scope.tinymceOptions = standardTinyMCEOptions();
+    $scope.tinymceOptions.height = 400;
     
     $scope.saveContents = function(rec) {
         var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;

@@ -822,6 +822,7 @@ public class ResourceLocater
     private void setRequestTokens(String path)
         throws Exception
     {
+        //TODO: get rid of StringTokenizer
         StringTokenizer st = new StringTokenizer(path, "/");
         int tokencnt = st.countTokens();
         parsedPath = new ArrayList<String>();

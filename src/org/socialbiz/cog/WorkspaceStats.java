@@ -6,7 +6,7 @@ import org.socialbiz.cog.util.NameCounter;
 import org.workcast.json.JSONObject;
 
 public class WorkspaceStats {
-    
+
     public int numTopics     = 0;  //notes
     public int numDocs       = 0;
     public int numMeetings   = 0;
@@ -15,7 +15,7 @@ public class WorkspaceStats {
     public int numProposals  = 0;
     public long sizeDocuments= 0;
     public long sizeArchives = 0;
-    
+
     public NameCounter topicsPerUser      = new NameCounter();
     public NameCounter docsPerUser        = new NameCounter();
     public NameCounter commentsPerUser    = new NameCounter();
@@ -23,9 +23,9 @@ public class WorkspaceStats {
     public NameCounter proposalsPerUser   = new NameCounter();
     public NameCounter responsesPerUser   = new NameCounter();
     public NameCounter unrespondedPerUser = new NameCounter();
-    
+
     public void gatherFromWorkspace(NGPage ngp) throws Exception {
-        
+
         for (NoteRecord topic : ngp.getAllNotes()) {
             numTopics++;
             topicsPerUser.increment(topic.getOwner());
@@ -57,11 +57,11 @@ public class WorkspaceStats {
                 countComments(ai.getComments());
             }
         }
-        for (DecisionRecord dr : ngp.getDecisions()) {
+        for (@SuppressWarnings("unused") DecisionRecord dr : ngp.getDecisions()) {
             numDecisions++;
         }
     }
-    
+
     private void countComments(List<CommentRecord> comments) throws Exception {
         for (CommentRecord comm : comments) {
             if (comm.getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE) {
@@ -84,7 +84,7 @@ public class WorkspaceStats {
         numProposals  += other.numProposals;
         sizeDocuments += other.sizeDocuments;
         sizeArchives  += other.sizeArchives;
-        
+
         topicsPerUser.addAllCounts(other.topicsPerUser);
         docsPerUser.addAllCounts(other.docsPerUser);
         commentsPerUser.addAllCounts(other.commentsPerUser);
@@ -93,7 +93,7 @@ public class WorkspaceStats {
         responsesPerUser.addAllCounts(other.responsesPerUser);
         unrespondedPerUser.addAllCounts(other.unrespondedPerUser);
     }
-    
+
     public JSONObject getJSON() throws Exception {
         JSONObject jo = new JSONObject();
         jo.put("numTopics",     numTopics);
@@ -113,7 +113,7 @@ public class WorkspaceStats {
         jo.put("unrespondedPerUser", unrespondedPerUser.getJSON());
         return jo;
     }
-    
+
     public static WorkspaceStats fromJSON(JSONObject jo) throws Exception {
         WorkspaceStats res = new WorkspaceStats();
         res.numTopics = jo.getInt("numTopics");
@@ -133,5 +133,5 @@ public class WorkspaceStats {
         res.unrespondedPerUser.fromJSON(jo.getJSONObject("unrespondedPerUser"));
         return res;
     }
-    
+
 }

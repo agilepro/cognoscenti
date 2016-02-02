@@ -3,7 +3,6 @@
 %><%@page import="org.socialbiz.cog.AuthRequest"
 %><%@page import="org.socialbiz.cog.HTMLWriterLineFeed"
 %><%@page import="java.util.Enumeration"
-%><%@page import="java.util.StringTokenizer"
 %><%@page import="java.io.PrintWriter"
 %><%@page import="org.apache.commons.httpclient.HttpException"
 %><%@page import="org.apache.commons.httpclient.HttpURL"

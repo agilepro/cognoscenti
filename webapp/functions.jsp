@@ -685,6 +685,7 @@
         ar.write("</a>");
 
         if (folderId != null) {
+            //TODO: get rid of StringTokenizer
             StringTokenizer st = new StringTokenizer(folderId, "/");
             while (st.hasMoreTokens()) {
                 String tok = st.nextToken();

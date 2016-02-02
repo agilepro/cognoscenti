@@ -51,6 +51,46 @@
         ar.write(title);
     }
     %></title>
+    
+    
+    
+<script>
+tinyMCE.PluginManager.add('stylebuttons', function(editor, url) {
+  ['p', 'h1', 'h2', 'h3'].forEach(function(name){
+   editor.addButton("style-" + name, {
+       tooltip: "Toggle " + name,
+         text: name.toUpperCase(),
+         onClick: function() { editor.execCommand('mceToggleFormat', false, name); },
+         onPostRender: function() {
+             var self = this, setup = function() {
+                 editor.formatter.formatChanged(name, function(state) {
+                     self.active(state);
+                 });
+             };
+             editor.formatter ? setup() : editor.on('init', setup);
+         }
+     })
+  });
+});
+
+function standardTinyMCEOptions() {
+    return {
+		handle_event_callback: function (e) {
+		// put logic here for keypress 
+		},
+        plugins: "link,stylebuttons",
+        inline: false,
+        menubar: false,
+        body_class: 'leafContent',
+        statusbar: false,
+        toolbar: "style-p, style-h1, style-h2, style-h3, bullist, outdent, indent | bold, italic, link |  cut, copy, paste, undo, redo",
+        target_list: false,
+        link_title: false
+	};
+}
+</script>
+
+
 </head>
 <body>
     <!-- Start SLIM body wrapper -->
