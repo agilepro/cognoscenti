@@ -137,6 +137,13 @@ Parameter used :
         loginInfo.put("verified", true);
         loginInfo.put("msg", "Previously logged into server");
     }
+    else {
+        //use this to indicate the very first display, before the page knows anything
+        loginInfo.put("haveNotCheckedYet", true);
+    }
+    JSONObject loginConfig = new JSONObject();
+    loginConfig.put("providerUrl", ar.getSystemProperty("identityProvider"));
+    loginConfig.put("serverUrl",   ar.baseURL);
 
 
     String currentPageURL = ar.getCompleteURL();
@@ -157,21 +164,10 @@ Parameter used :
         throw new Exception("Can not find a menu file for: "+menuFile.toString());
     }
 
-    FileInputStream fis = new FileInputStream(menuFile);
-    InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-
     %>
-<script type="text/javascript">
+<script>
 
-    menuStruct = <%
-        char[] buf = new char[200];
-        int amt = isr.read(buf);
-        while (amt>0) {
-            out.write(buf, 0, amt);
-            amt = isr.read(buf);
-        }
-        isr.close();
-    %>;
+    menuStruct = <%StreamHelper.copyFileToWriter(menuFile, out, "UTF-8");%>;
 
     function buildMainMenuBar(newStyleTabs){
 
@@ -246,22 +242,12 @@ Parameter used :
     var pageId = '';
 </script>
 
-    <link rel="stylesheet" href="<%=ar.retPath%>css/autocomplete.css" media="screen" type="text/css">
-    <script type="text/javascript" src="<%=ar.retPath%>jscript/autocomplete.js"></script>
+    <!--link rel="stylesheet" href="<%=ar.retPath%>css/autocomplete.css" media="screen" type="text/css">
+    <script type="text/javascript" src="<%=ar.retPath%>jscript/autocomplete.js"></script-->
 
-    <link href="<%=ar.retPath%>css/lightWindow.css" rel="styleSheet" type="text/css" media="screen" />
+    <!--link href="<%=ar.retPath%>css/lightWindow.css" rel="styleSheet" type="text/css" media="screen" /-->
 
-    <%if(headerTypeStr!=null){ %>
-        <script type="text/javascript" src="<%=ar.retPath%>jscript/ddlevelsmenu.js"></script>
-    <%} %>
-
-
-    <%if(headerTypeStr.equalsIgnoreCase("index")){ %>
-        <script type="text/javascript" src="<%=ar.retPath%>jscript/prototype.js"></script>
-        <script type="text/javascript" src="<%=ar.retPath%>jscript/effects.js"></script>
-        <script type="text/javascript" src="<%=ar.retPath%>jscript/lightWindow.js"></script>
-    <%} %>
-
+    <script type="text/javascript" src="<%=ar.retPath%>jscript/ddlevelsmenu.js"></script>
 
 
 <% if (!isSiteHeader) { %>
@@ -301,7 +287,7 @@ Parameter used :
            <% } %>
            <br />
            <%
-            if(headerTypeStr.equals("user")) {
+            if(isUserHeader) {
                 if(userRecord!=null){
                     String userName = userRecord.getName();
                     if(userName.length()>60){
@@ -314,7 +300,7 @@ Parameter used :
                     ar.write("</span>");
                 }
             }
-            else if(headerTypeStr.equals("site")) {
+            else if(isSiteHeader) {
                 if(pageTitle!=null){
                     ar.write("Site: <span title=\"");
                     ar.write(pageTitle);
@@ -424,7 +410,7 @@ Parameter used :
 
     </div>
 
-<script type="text/javascript">
+<script>
    buildMainMenuBar(menuStruct);
 </script>
 
@@ -469,149 +455,30 @@ function validateDelimEmails(field) {
 }
 
 
-loggedInBeforePageFetch = <%=ar.isLoggedIn()%>;
-loggedInNow = <%=ar.isLoggedIn()%>;
-loginInfo = <% loginInfo.write(out, 2, 2); %>;
-providerUrl = '<%ar.writeJS(ar.getSystemProperty("identityProvider"));%>';
-serverUrl   = '<%ar.writeJS(ar.baseURL);%>';
-responseCode = 0;
-
-function getJSON(url, passedFunction) {
-    console.log("calling GET");
-    var xhr = new XMLHttpRequest();
-    globalForXhr = xhr;
-    xhr.open("GET", url, true);
-    xhr.withCredentials = true;
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            try {
-                responseCode = xhr.status;
-                passedFunction(JSON.parse(xhr.responseText));
-            }
-            catch (e) {
-                alert("Got an exception ("+e+") whille trying to handle: "+url);
-            }
-        }
-    }
-    xhr.send();
-}
-
-
-function postJSON(url, data, passedFunction) {
-    console.log("calling POST");
-    var xhr = new XMLHttpRequest();
-    globalForXhr = xhr;
-    xhr.open("POST", url, true);
-    xhr.withCredentials = true;
-    xhr.setRequestHeader("Content-Type","text/plain");
-    //xhr.setRequestHeader("Content-Type","application/json");
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            try {
-                responseCode = xhr.status;
-                passedFunction(JSON.parse(xhr.responseText));
-            }
-            catch (e) {
-                alert("Got an exception ("+e+") whille trying to handle: "+url);
-            }
-        }
-    }
-    xhr.send(JSON.stringify(data));
-}
-
-function queryTheProvider() {
-    var pUrl = providerUrl + "?openid.mode=apiWho";
-    getJSON(pUrl, function(data) {
-        loginInfo = data;
-        displayWelcomeMessage();
-        if (data.userId) {
-            requestChallenge();
-        }
-    });
-}
-
-function requestChallenge() {
-    var pUrl = serverUrl + "auth/getChallenge";
-    postJSON(pUrl, loginInfo, function(data) {
-        loginInfo = data;
-        displayWelcomeMessage();
-        getToken();
-    });
-}
-
-function getToken() {
-    var pUrl  = providerUrl + "?openid.mode=apiGenerate";
-    postJSON(pUrl, loginInfo, function(data) {
-        loginInfo = data;
-        displayWelcomeMessage();
-        verifyToken();
-    });
-}
-
-function verifyToken() {
-    var pUrl = serverUrl + "auth/verifyToken";
-    postJSON(pUrl, loginInfo, function(data) {
-        loginInfo = data;
-        if (loginInfo.verified) {
-            loggedInNow=true;
-            window.location.reload();
-        }
-        else {
-            alert("Internal Error: was not able to verify token: "+JSON.stringify(data));
-        }
-        displayWelcomeMessage();
-    });
-}
-
-function logOutProvider() {
-    var pUrl = providerUrl + "?openid.mode=apiLogout";
-    postJSON(pUrl, loginInfo, function(data) {
-        loginInfo = data;
-        logOutServer();
-    });
-}
-function logOutServer() {
-    var pUrl = serverUrl + "auth/logout";
-    postJSON(pUrl, loginInfo, function(data) {
-        loginInfo = data;
-        loggedInNow = false;
-        displayWelcomeMessage();
-        window.location.reload();
-    });
-}
-
-
-function displayWelcomeMessage() {
+function displayWelcomeMessage(info) {
     var y = document.getElementById("welcomeMessage");
-    if (responseCode==0) {
+    if (info.haveNotCheckedYet) {
         y.innerHTML = 'Checking identity, please <a href="'
-            +providerUrl
-            +'&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">Login</a>.';
+            +loginConfig.providerUrl
+            +'&go='+window.location+'">Login</a>.';
     }
-    else if (!loginInfo.userName) {
+    else if (!info.userName) {
         y.innerHTML = 'Not logged in, please <a href="'
-            +providerUrl
-            +'?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">Login</a>.';
+            +loginConfig.providerUrl
+            +'?openid.mode=quick&go='+window.location+'">Login</a>.';
     }
-    else if (loggedInNow == false) {
-        y.innerHTML = 'Hello <b>'+loginInfo.userName+'</b>.  Attempting Automatic Login.';
-    }
-    else if (loggedInBeforePageFetch != loggedInNow) {
-        //just refresh page
-        y.innerHTML = '<a href="<%=currentPageURL%>#time=FORCE_REFRESH_SOMEHOW">Refresh Page</a>';
+    else if (!info.verified) {
+        y.innerHTML = 'Hello <b>'+info.userName+'</b>.  Attempting Automatic Login.';
     }
     else {
-        y.innerHTML = 'Welcome <b>'+loginInfo.userName+'</b>.  <a target="_blank" href="'
-            +providerUrl
-            +'?openid.mode=logout&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">Logout</a>.';
+        y.innerHTML = 'Welcome <b>'+info.userName+'</b>.  <a target="_blank" href="'
+            +loginConfig.providerUrl
+            +'?openid.mode=logout&go='+window.location+'">Logout</a>.';
     }
 }
 
-<% if (!ar.isLoggedIn()) { %>
-queryTheProvider();
-<% } %>
 
-
+initLogin(<% loginConfig.write(out, 2, 2); %>, <% loginInfo.write(out, 2, 2); %>, displayWelcomeMessage);
 </script>
 <!-- END slimHeader.jsp -->
 <% out.flush(); %>

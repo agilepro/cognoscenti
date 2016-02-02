@@ -762,7 +762,11 @@ function addvalue() {
         </tr>
     </table>
 
-
+<script>
+function updateVal(){
+  flag=true;
+}
+</script>
 
 
 

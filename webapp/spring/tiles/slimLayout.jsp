@@ -27,7 +27,8 @@
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
 
     <link href="<%=ar.baseURL%>css/body.css" rel="styleSheet" type="text/css" media="screen" />
-    <script type="text/javascript" src="<%=ar.baseURL%>jscript/nugen_plain.js"></script>
+    <script src="<%=ar.baseURL%>jscript/nugen_plain.js"></script>
+    <script src="<%=ar.baseURL%>jscript/slap.js"></script>
 
     <link href="<%=ar.retPath%>css/tabs.css" rel="styleSheet" type="text/css" media="screen" />
 
@@ -44,7 +45,7 @@
     <link href="<%=ar.retPath%>css/global.css" rel="styleSheet" type="text/css" media="screen" />
     <link href="<%=ar.retPath%><%=themePath%>theme.css" rel="styleSheet" type="text/css" media="screen" />
 
-
+    
     <title><tiles:getAsString name="title"/><%
     if(title!=null) {
         ar.write(" : ");

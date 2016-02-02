@@ -248,9 +248,25 @@
            </td>
         </tr>
         </form>
-        <script>
-              initCal();
-        </script>
+<script>
+function initCal(){
+    setUPCal("dueDate","btn_dueDate");
+}
+function setUPCal(fieldName,buttonName){
+    Calendar.setup({
+        inputField     :    fieldName,  // id of the input field
+        ifFormat       :    "%m/%d/%Y",                // format of the input field
+        showsTime      :    true,                        // show the time
+        electric       :    false,                       // update date/time only after clicking
+        date           :    new Date(),                  // show the time
+        button         :    buttonName,      // trigger for the calendar (button ID)
+        align          :    "Bl",                      // alignment (defaults to "Bl")
+        singleClick    :    true
+    });
+}
+
+initCal();
+</script>
 
        <% }  %>
 

@@ -1,37 +1,7 @@
-   function initCal(){
-        setUPCal("dueDate","btn_dueDate");
-      }
-
    function openWin(url){
        window.open(url);
        return false;
    }
-
-      function setUPCal(fieldName,buttonName){
-
-           Calendar.setup({
-        inputField     :    fieldName,  // id of the input field
-        ifFormat       :    "%m/%d/%Y",                // format of the input field
-        showsTime      :    true,                        // show the time
-        electric       :    false,                       // update date/time only after clicking
-        date           :    new Date(),                  // show the time
-        button         :    buttonName,      // trigger for the calendar (button ID)
-        align          :    "Bl",                      // alignment (defaults to "Bl")
-        singleClick    :    true
-    });
-    }
-
-
-      function submitForm(){
-          throw "I don't believe submitForm is being used";
-      if(!validate()){
-        alert(projectNameRequiredAlert);
-          return false;
-      }
-
-       return isProjectExist();
-  }
-
 
 
 function validate(){
@@ -42,153 +12,9 @@ function validate(){
     return false;
 }
 
-function updateVal(){
-  flag=true;
-}
-
 
 <!-- menu moved -->
 
-
-
-    function formatText(val){
-      var bar = val.split("<");
-          var level=0;
-          var updatedValue="";
-          var liHTML=false;
-          var bold=false;
-          var italics=false;
-
-          for(var i = 0;i<bar.length;i++){
-            var clazz = "\"";
-          var ch =bar[i];
-
-          if (ch.startsWith("ul>")) {
-            level++;
-            updatedValue+="<ul>";
-            continue;
-          }
-          else if (ch.startsWith("li>")) {
-            for (var j = 0; j < level; j++) {
-              // line=line.replaceFirst(ul1CloseHTML,"");
-              clazz += "u";
-            }
-            liHTML=true;
-
-            var newLI = ch.replace("li", "<li class=" + clazz+" \"");
-            updatedValue+=newLI;
-            continue;
-          }
-          else if(ch.startsWith("/ul>")){
-            level--;
-            updatedValue+="</ul>";
-            continue;
-          }
-          else if(ch.startsWith("/li>")){
-            updatedValue+="</li>\n";
-            continue;
-          }
-          else if(ch.match('bold;')){
-            var text = ch.substring(ch.indexOf('>')+1);
-
-            if(ch.match('italic;')){
-              updatedValue+="<b><i>"+text;
-              bold=true;
-              italics=true;
-            }
-            else{
-              updatedValue+="<b>"+text;
-              bold=true;
-            }
-
-            continue;
-          }
-          else if(ch.match('italic;')){
-            var text = ch.substring(ch.indexOf('>')+1);
-            updatedValue+="<i>"+text;
-            italics=true;
-            continue;
-          }
-          else if(ch.startsWith("span")){
-            var text = ch.substring(ch.indexOf('>')+1);
-            updatedValue+=text;
-            continue;
-
-          }
-          else if((bold || italics) && ch.startsWith("br")){
-            if(italics){
-              updatedValue+="</i>";
-              var text = ch.substring(ch.indexOf('>')+1);
-              alert(text)
-              updatedValue+="\n\r<i>"+text;
-              italics=true;
-            }
-            if(bold){
-              updatedValue+="</b>";
-              var text = ch.substring(ch.indexOf('>')+1);
-              updatedValue+="\n\r<b>"+text;
-              bold=true;
-            }
-
-          }
-          else if(ch.match('/span>')){
-
-            if(italics){
-              updatedValue+="</i>";
-              italics=false;
-            }
-            if(bold){
-              updatedValue+="</b>";
-              bold=false;
-            }
-            var text = ch.substring(ch.indexOf('>')+1);
-            updatedValue+=text;
-            continue;
-          }
-          else if(ch.startsWith('div')){
-            updatedValue+=ch.substring(ch.indexOf('>')+1);
-            continue;
-          }
-          else if(ch.startsWith('/div')){
-            updatedValue+="";
-            continue;
-          }
-          else if(ch!=""){
-            if(ch.indexOf(">")!=-1){
-              if(isAcceptableHtmlTag(ch)){
-                if((ch.substring(0,ch.indexOf('>')+1)).indexOf("\s")!=-1){
-                  var tag='';
-                  if(!("<"+ch).startsWith('<a')){
-                    tag=ch.substring(0,ch.indexOf(' '));
-                  }else{
-                    tag='a '+ch.substring(ch.indexOf('href'));
-                    tag=tag.substring(0,tag.indexOf('>'));
-                  }
-                  var content='';
-                  if(ch.indexOf('>')!=ch.length){
-                    content=ch.substring(ch.indexOf('>')+1);
-                  }
-
-                  updatedValue+="<"+tag+">"+content;
-                }else{
-                  updatedValue+="<"+ch;
-                }
-              }
-              else{
-                var content=ch.substring(ch.indexOf('>')+1);
-                updatedValue+=content;
-              }
-
-            }
-            else
-              updatedValue+=ch+"\n";
-
-            continue;
-          }
-        }
-          return updatedValue;
-
-        }
 
         String.prototype.startsWith = function(str) {
           return (this.match("^"+str)==str);
@@ -405,36 +231,6 @@ var formSubmitResponse ={
              }
           }
 
-
-var toggel = false;
-function expandCollapseAll(cpath){
-  var allDivs = document.getElementsByTagName("div");
-  for(index=0;index < allDivs.length ; index++){
-    if(allDivs[index].id.startsWith('comment')){
-      if(!toggel){
-        allDivs[index].style.display = "block";
-      }else{
-        allDivs[index].style.display = "";
-      }
-      var hyphen_index = allDivs[index].id.indexOf("-");
-      var headingId = "leafHeading"+allDivs[index].id.substring(hyphen_index+1);
-      expandCollapseLeaflets(allDivs[index].id,cpath,headingId);
-
-    }
-
-  }
-  if(toggel){
-    toggel = false;
-    document.getElementById("expand_collapse").innerHTML = "[+]";
-    document.getElementById("expand_collapse").title = "Expand All";
-  }else{
-    document.getElementById("expand_collapse").innerHTML = "[-]";
-    document.getElementById("expand_collapse").title = "Collapse All";
-    toggel = true;
-  }
-
-
-}
 
 var showHistoryToggel = false;
 

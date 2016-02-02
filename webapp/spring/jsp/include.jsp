@@ -69,6 +69,7 @@
 %><%@page import="org.w3c.dom.Element"
 %><%@page import="org.workcast.json.JSONArray"
 %><%@page import="org.workcast.json.JSONObject"
+%><%@page import="org.workcast.streams.StreamHelper"
 %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
 %><%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
 %><%
