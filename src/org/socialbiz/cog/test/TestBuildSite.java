@@ -197,16 +197,6 @@ public class TestBuildSite implements TestSet {
         }
     }
 
-    private void testStringArray(String id, String[] testVal, String expectedVal) throws Exception {
-        assertNotNull(id, testVal);
-        StringBuffer sb = new StringBuffer();
-        for (String val : testVal) {
-            sb.append(val);
-            sb.append("|");
-        }
-        testString(id, sb.toString(), expectedVal);
-    }
-
     private void testStringArray(String id, List<String> testVal, String expectedVal) throws Exception {
         assertNotNull(id, testVal);
         StringBuffer sb = new StringBuffer();

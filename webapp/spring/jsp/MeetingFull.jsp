@@ -627,6 +627,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.refreshStatus = "No refresh because currently making a comment";
             return;   //don't refresh when editing
         }
+        if (true) {
+            $scope.refreshStatus = "No refresh because it doesn't work with TinyMCE editor";
+            return;   //don't refresh when editing
+        }
         $scope.refreshStatus = "Refreshing";
         $scope.putGetMeetingInfo( {} );
         $scope.refreshCount++;
@@ -1469,8 +1473,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </td>
         <td ng-show="isEditing(6,'0')" style="width:100%">
             <div class="well leafContent">
-                <!--div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo" 
-                     class="leafContent" style="min-height:200px;" ></div-->
+                <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo" 
+                     class="leafContent" style="min-height:200px;" ></div>
                 <button ng-click="savePartialMeeting(['meetingInfo'])" class="btn btn-danger">Save</button>
                 <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
             </div>
@@ -1651,7 +1655,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </td>
         <td ng-show="isEditing(1,item.id) && myUserId == item.lockUser.uid" style="width:100%">
            <div class="well leafContent">
-             <!--div ng-model="item.desc" ui-tinymce="tinymceOptions"></div-->
+             <div ng-model="item.desc" ui-tinymce="tinymceOptions"></div>
 
              <button ng-click="saveAgendaItemParts(item, ['desc'])" class="btn btn-danger">Save</button>
              <button ng-click="cancelEdit(item)" class="btn btn-danger">Cancel</button>
