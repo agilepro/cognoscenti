@@ -303,28 +303,22 @@
             {
                 ar.write("<a href=\"");
                 ar.writeHtml(editLink);
-                ar.write("\" title=\"Modify your settings for this attachment\"><img src=\"");
-                ar.write(ar.retPath);
+                ar.write("\" title=\"Modify your settings for this attachment\"> ");
                 if (readStatus==HistoryRecord.EVENT_DOC_APPROVED)
                 {
-                    ar.write("ts_completed.gif");
+                    ar.write("DONE ");
                 }
                 else if (readStatus==HistoryRecord.EVENT_DOC_REJECTED)
                 {
-                    ar.write("ts_waiting.gif");
+                    ar.write("WAIT ");
                 }
                 else if (readStatus==HistoryRecord.EVENT_DOC_SKIPPED)
                 {
-                    ar.write("ts_skipped.gif");
+                    ar.write("SKIP ");
                 }
                 else
                 {
-                    ar.write("ts_initial.gif");
-                }
-                ar.write("\">");
-                if (!matchesVersion)
-                {
-                    ar.write("(previous)");
+                    ar.write("INIT ");
                 }
                 ar.write("</a>");
             }

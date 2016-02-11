@@ -765,6 +765,10 @@ public class NoteRecord extends CommentContainer implements EmailContext {
               constructEmailRecordOneUser(ar, ngp, note, ooa, creatorProfile, mailFile);
           }
           setEmailSent(true);
+          
+          //when the email is sent, update the time
+          //of the entire note so that it appears at the top of list.
+          note.setLastEdited(ar.nowTime);
       }
 
       private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord note, OptOutAddr ooa,

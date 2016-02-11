@@ -272,13 +272,14 @@ app.controller('myCtrl', function($scope, $http) {
     }
 
     $scope.getPeople = function(viewValue) {
+        var viewValLC = viewValue.toLowerCase();
         var newVal = [];
         for( var i=0; i<$scope.allPeople.length; i++) {
             var onePeople = $scope.allPeople[i];
-            if (onePeople.uid.indexOf(viewValue)>=0) {
+            if (onePeople.uid.toLowerCase().indexOf(viewValLC)>=0) {
                 newVal.push(onePeople);
             }
-            else if (onePeople.name.indexOf(viewValue)>=0) {
+            else if (onePeople.name.toLowerCase().indexOf(viewValLC)>=0) {
                 newVal.push(onePeople);
             }
         }

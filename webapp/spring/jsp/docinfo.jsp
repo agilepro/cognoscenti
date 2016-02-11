@@ -16,9 +16,14 @@ Required parameters:
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
     UserProfile uProf = ar.getUserProfile();
-    String currentUser = uProf.getUniversalId();
-    String currentUserName = uProf.getName();
-    String currentUserKey = uProf.getKey();
+    String currentUser = "";
+    String currentUserName = "";
+    String currentUserKey = "";
+    if (uProf!=null) {
+        currentUser = uProf.getUniversalId();
+        currentUserName = uProf.getName();
+        currentUserKey = uProf.getKey();
+    }
 
 
     String aid      = ar.reqParam("aid");
@@ -381,7 +386,7 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
                            <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
                                data-toggle="dropdown"> <span class="caret"></span> </button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-                              <li role="presentation" ng-show="cmt.user=='<%=uProf.getUniversalId()%>'">
+                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="openCommentEditor(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.commentType==1">
                                   <a role="menuitem" ng-click="openCommentCreator(item,1,cmt.time)">Reply</a></li>

@@ -14,11 +14,20 @@
 </style>
 
 <div class="modal-header">
-    <h3 class="modal-title">Attach Action Items</h3>
+    <h3 class="modal-title" style="float:left">Attach Action Items</h3>
+      <button ng-click="createMode=true" class="btn btn-default" style="float:right;margin-right:15px;">
+          Create New Action Item
+      </button>
+      <button ng-click="createMode=false" class="btn btn-default" style="float:right;margin-right:15px;">
+          Pick Existing Action Items
+      </button>
+    <div style="clear: both"></div>
 </div>
 <div class="modal-body">
-   <div >
-      <div> Filter <input type="text" ng-model="realFilter"> </div>
+   <div ng-hide="createMode">
+      <div> 
+          Filter <input type="text" ng-model="realFilter"> 
+      </div>
       <table style="width:100%"><tr>
       <td style="width:50%;vertical-align:top;padding:20px;">
         <div style="max-height:400px;overflow: auto">
@@ -56,10 +65,63 @@
       </tr>
       </table>
    </div>
+   <div ng-show="createMode">
+        <div >
+            <table>
+               <tr>
+                    <td class="gridTableColummHeader">Synopsis:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2">
+                        <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
+                    </td>
+               </tr>
+               <tr><td style="height:10px"></td></tr>
+               <tr>
+                    <td class="gridTableColummHeader">Assignee:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2">
+                        <input type="text" ng-model="newGoal.assignee" class="form-control" placeholder="Who should do it"
+                           typeahead="person as person.name for person in getPeople($viewValue) | limitTo:12">
+                    </td>
+                </tr>
+                <tr><td style="height:10px"></td></tr>
+                <tr>
+                    <td class="gridTableColummHeader">Description:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2">
+                        <textarea type="text" ng-model="newGoal.description" class="form-control"
+                            style="width:450px;height:100px" placeholder="Details"></textarea>
+                    </td>
+                </tr>
+                <tr><td style="height:10px"></td></tr>
+                <tr>
+                    <td class="gridTableColummHeader">Due Date:</td>
+                    <td style="width:20px;"></td>
+                    <td colspan="2">
+                        <input type="text"
+                            style="width:150;margin-top:10px;"
+                            class="form-control"
+                            datepicker-popup="dd-MMMM-yyyy"
+                            ng-model="dummyDate1"
+                            is-open="datePickOpen1"
+                            min-date="minDate"
+                            datepicker-options="datePickOptions"
+                            date-disabled="datePickDisable(date, mode)"
+                            ng-required="true"
+                            ng-click="openDatePicker1($event)"
+                            close-text="Close"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+   </div>
+   <div style="clear: both"></div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary"
+    <button class="btn btn-primary" ng-hide="createMode"
         type="button" ng-click="ok()">Save</button>
+    <button class="btn btn-primary" ng-show="createMode"
+        type="button" ng-click="createActionItem()">Create Action Item</button>
     <button class="btn btn-warning" type="button" ng-click="cancel()">
         Cancel</button>
 </div>

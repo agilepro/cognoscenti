@@ -53,6 +53,7 @@ Required parameter:
     }
 
     JSONArray allGoals     = ngp.getJSONGoals();
+    JSONArray allPeople = UserManager.getUniqueUsersJSON();
 
 %>
 
@@ -80,6 +81,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.canUpdate = <%=canUpdate%>;
     $scope.history = <%history.write(out,2,4);%>
     $scope.allGoals = <%allGoals.write(out,2,4);%>
+    $scope.allPeople = <%allPeople.write(out,2,4);%>;
     
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 400;
@@ -436,7 +438,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html',
             controller: 'ModalResponseCtrl',
             size: 'lg',
             backdrop: "static",
@@ -467,7 +469,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html',
             controller: 'OutcomeModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -574,7 +576,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachAction.html',
+            templateUrl: '<%=ar.retPath%>templates/AttachAction.html?t=<%=System.currentTimeMillis()%>',
             controller: 'AttachActionCtrl',
             size: 'lg',
             resolve: {
@@ -582,7 +584,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     return $scope.noteInfo.actionList;
                 },
                 allActions: function() {
-                    return JSON.parse(JSON.stringify($scope.allGoals));
+                    return $scope.allGoals;
+                },
+                allPeople: function() {
+                    return $scope.allPeople;
                 }
             }
         });

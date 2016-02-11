@@ -1158,10 +1158,10 @@ public class MainTabsViewControler extends BaseController {
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to create a action item.");
               ar.assertNotFrozen(ngp);
-              String id = ar.reqParam("id");
-              MeetingRecord meeting = ngp.findMeeting(id);
-              String aid = ar.reqParam("aid");
-              AgendaItem ai = meeting.findAgendaItem(aid);
+              //String id = ar.reqParam("id");
+              //MeetingRecord meeting = ngp.findMeeting(id);
+              //String aid = ar.reqParam("aid");
+              //AgendaItem ai = meeting.findAgendaItem(aid);
 
               JSONObject goalInfo = getPostedObject(ar);
               GoalRecord gr = ngp.createGoal(ar.getBestUserId());
@@ -1169,7 +1169,7 @@ public class MainTabsViewControler extends BaseController {
               //create the history record here.
               HistoryRecord.createHistoryRecord(ngp, gr.getId(),
                       HistoryRecord.CONTEXT_TYPE_TASK, HistoryRecord.EVENT_TYPE_CREATED, ar,
-                      "on meeting: "+meeting.getName());
+                      "action item synopsis: "+gr.getSynopsis());
 
               //currently the update from JSON is designed for upstream sync.
               //There is a check that requires this to do the update.
@@ -1180,7 +1180,7 @@ public class MainTabsViewControler extends BaseController {
               if (gr.getCreator()==null || gr.getCreator().length()==0) {
                   throw new Exception("can not set the creator");
               }
-              ai.addActionItemId(gr.getUniversalId());
+              //ai.addActionItemId(gr.getUniversalId());
 
               ngp.saveFile(ar, "Created action item for minutes of meeting.");
               JSONObject repo = gr.getJSON4Goal(ngp);

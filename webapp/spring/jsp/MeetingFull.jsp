@@ -178,12 +178,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.showItemMap = {};
     $scope.nowEditing = "nothing";
     $scope.editComment = false;
-    $scope.sortItems = function() {
-        $scope.meeting.agenda.sort( function(a, b){
-            return a.position - b.position;
-        });
-        return $scope.meeting.agenda;
-    };
 
     $scope.showAll = function() {
         $scope.meeting.agenda.map( function(item) {
@@ -211,15 +205,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $event.stopPropagation();
         $scope.datePickOpen1 = true;
     };
-    $scope.extractDateParts = function() {
-        $scope.meetingTime = new Date($scope.meeting.startTime);
-        $scope.meetingHour = $scope.meetingTime.getHours();
-        $scope.meetingMinutes = $scope.meetingTime.getMinutes();
-        $scope.sortItems();
-    };
-    $scope.extractDateParts();
-
-    $scope.sortItems = function() {
+    $scope.sortItemsB = function() {
         $scope.meeting.agenda.sort( function(a, b){
             return a.position - b.position;
         } );
@@ -229,6 +215,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             var item = $scope.meeting.agenda[i];
             item.position = i+1;
             item.schedule = runTime;
+            item.isBlank = false;
+            if (item.subject=="BREAK" || item.subject=="LUNCH" || item.subject=="DINNER") {
+                item.isBlank = true;
+            }
             runDur = runDur + item.duration;
             runTime = new Date( runTime.getTime() + (item.duration*60000) );
         }
@@ -236,7 +226,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.meeting.totalDuration = runDur;
         return $scope.meeting.agenda;
     };
-
+    $scope.extractDateParts = function() {
+        $scope.meetingTime = new Date($scope.meeting.startTime);
+        $scope.meetingHour = $scope.meetingTime.getHours();
+        $scope.meetingMinutes = $scope.meetingTime.getMinutes();
+        $scope.sortItemsB();
+    };
+    $scope.extractDateParts();
+    
     $scope.itemHasDoc = function(item, doc) {
         var res = false;
         var found = item.docList.forEach( function(docid) {
@@ -413,7 +410,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.meetingTime.setSeconds(0);
         $scope.meeting.startTime = $scope.meetingTime.getTime();
 
-        $scope.sortItems();
+        $scope.sortItemsB();
         $scope.putGetMeetingInfo($scope.meeting);
     };
     $scope.savePartialMeeting = function(fieldList) {
@@ -989,6 +986,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         //should pass the agent item so we can just save it....
         $scope.saveMeeting();
     }
+    $scope.moveItem = function(item,amt) {
+        var thisPos = item.position;
+        var otherPos = thisPos + amt;
+        if (otherPos<=0) {
+            return;
+        }
+        if (otherPos>$scope.meeting.agenda.length) {
+            return;
+        }
+        console.log("swapping "+thisPos+" with "+otherPos+"");
+        $scope.meeting.agenda.forEach( function(x) {
+            if (x.position==otherPos) {
+                x.position=thisPos;
+            }
+        });
+        item.position=otherPos;
+        $scope.saveMeeting();
+    }
 
     $scope.openResponseEditor = function (cmt) {
 
@@ -1232,7 +1247,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachAction.html',
+            templateUrl: '<%=ar.retPath%>templates/AttachAction.html?t=<%=System.currentTimeMillis()%>',
             controller: 'AttachActionCtrl',
             size: 'lg',
             resolve: {
@@ -1240,7 +1255,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     return item.actionItems;
                 },
                 allActions: function() {
-                    return JSON.parse(JSON.stringify($scope.allGoals));
+                    return $scope.allGoals;
+                },
+                allPeople: function() {
+                    return $scope.allPeople;
                 }
             }
         });
@@ -1265,6 +1283,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
   display: none !important;
 }
 
+.blankTitle {
+    font-size: 130%;
+    font-weight: bold;
+}
 .agendaTitle {
     font-size: 130%;
     font-weight: bold;
@@ -1551,50 +1573,94 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </table>
     </div>
 
-
-
+<style>
+.agendaItemFull {
+    border: 1px solid lightgrey;
+    border-radius:10px;
+    margin-top:20px;
+}
+.agendaItemBlank {
+    background-color:lightgray;
+    margin-top:20px;
+}
+</style>
+<script>
+</script>
 
 <div ng-repeat="item in meeting.agenda">
-    <div style="border: 1px solid lightgrey;border-radius:10px;margin-top:20px;">
-    <table >
+    <div class="agendaItemBlank" ng-show="item.isBlank">
+      <div style="padding:5px;">
+        <div style="width:100%">
+                <span class="blankTitle" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
+                    {{item.subject}} </span>  &nbsp;
+                <span class="dropdown">
+                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                        data-toggle="dropdown"> <span class="caret"></span> </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="toggleEditor(2,item.id)"><i class="fa fa-cogs"></i> Item Settings</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i> Move Up</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i> Move Down</a></li>
+                    </ul>
+                </span>
+                <span>
+                    <i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i>
+                </span>
+        </div>
+      </div>
+    </div>
+    <div class="agendaItemFull"  ng-hide="item.isBlank">
+    <table style="width:100%">
 
                           <!--  AGENDA HEADER -->
       <tr>
         <td style="width:100%">
           <div style="padding:5px;">
-            <span class="agendaTitle" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
-                {{item.position}}.
-                <i ng-show="item.topicLink" class="fa fa-lightbulb-o"></i>
-                {{item.subject}} </span>  &nbsp;
-            <span class="dropdown" ng-show="showItemMap[item.id]">
-                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-                    data-toggle="dropdown"> <span class="caret"></span> </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-                  <li role="presentation">
-                      <a role="menuitem" ng-click="toggleEditor(2,item.id)"><i class="fa fa-cogs"></i> Item Settings</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" ng-click="startEdit(item)"><i class="fa fa-pencil-square-o"></i> Edit Description</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i> Attach Docs</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" ng-click="toggleEditor(4,item.id)" ><i class="fa fa-flag-o"></i> Create Action Item</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i> Attach Action Items</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i> Toggle Ready Flag</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i> Set Discussion Topic</a></li>
+            <div style="width:100%">
+                <span class="agendaTitle" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
+                    {{item.position}}.
+                    <i ng-show="item.topicLink" class="fa fa-lightbulb-o"></i>
+                    {{item.subject}} </span>  &nbsp;
+                <span class="dropdown">
+                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                        data-toggle="dropdown"> <span class="caret"></span> </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="toggleEditor(2,item.id)"><i class="fa fa-cogs"></i> Item Settings</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i> Move Up</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i> Move Down</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="startEdit(item)"><i class="fa fa-pencil-square-o"></i> Edit Description</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i> Attach Docs</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="toggleEditor(4,item.id)" ><i class="fa fa-flag-o"></i> Create Action Item</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i> Attach Action Items</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i> Toggle Ready Flag</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i> Set Discussion Topic</a></li>
 
-               </ul>
-            </span>
-            <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
-                 ng-click="toggleReady(item)"
-                 title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
-                 ng-hide="item.readyToGo || isCompleted()" style="width:24px;height=24px;">
-            <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
-                 ng-click="toggleReady(item)"
-                 title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
-                 ng-show="item.readyToGo && !isCompleted()"  style="width:24px;height=24px;">
+                   </ul>
+                </span>
+                <span style="float:right" ng-hide="item.readyToGo || isCompleted()" >
+                    <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
+                         ng-click="toggleReady(item)"
+                         title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
+                         style="width:24px;height=24px;float:right">
+                     </span>
+                <span style="float:right" ng-show="item.readyToGo && !isCompleted()"  >
+                    <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
+                         ng-click="toggleReady(item)"
+                         title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
+                         style="width:24px;height=24px">
+                     </span>
+            </div>
             <div>
                 <i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i><span ng-repeat="pres in getPresenters(item)">, {{pres.name}}</span>
             </div>
@@ -1644,7 +1710,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </tr>
 
                           <!--  AGENDA BODY -->
-      <tr ng-show="showItemMap[item.id]">
+      <tr ng-show="showItemMap[item.id] || isEditing(1,item.id)">
         <td ng-hide="isEditing(1,item.id) && myUserId == item.lockUser.uid" style="width:100%">
            <button ng-show="item.lockUser.uid && item.lockUser.uid.length>0" class="btn btn-sm" style="background-color:lightyellow;margin-left:20px;">
                {{item.lockUser.name}} is editing.
@@ -1822,7 +1888,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </div>
 
                           <!--  AGENDA comments -->
-      <table ng-show="showItemMap[item.id]">
+      <table ng-show="showItemMap[item.id] && !item.isBlank" >
       <tr ng-repeat="cmt in item.comments">
            <td style="width:50px;vertical-align:top;padding:15px;">
                <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
