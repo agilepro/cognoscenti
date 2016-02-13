@@ -13,7 +13,7 @@ Required parameter:
 */
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGWorkspace ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
 
     boolean isLoggedIn = ar.isLoggedIn();
@@ -27,7 +27,7 @@ Required parameter:
     String currentUser = "NOBODY";
     String currentUserName = "NOBODY";
     String currentUserKey = "NOBODY";
-    if (uProf!=null) {
+    if (isLoggedIn) {
         //this page can be viewed when not logged in, possibly with special permissions.
         //so you can't assume that uProf is non-null
         currentUser = uProf.getUniversalId();
@@ -56,9 +56,12 @@ Required parameter:
     JSONArray allGoals     = ngp.getJSONGoals();
     JSONArray allPeople = UserManager.getUniqueUsersJSON();
 
-    LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
-    String remoteProjectLink = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngp.getKey()
+    String docSpaceURL = "";
+    if (uProf!=null) {
+        LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
+        docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngp.getKey()
                     + "/summary.json?lic="+lfu.getId();
+    }
 
 %>
 
@@ -92,7 +95,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.tinymceOptions.height = 400;
  
     $scope.currentTime = (new Date()).getTime();
-    $scope.remoteProjectLink = "<%ar.writeJS(remoteProjectLink);%>";
+    $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
 
     $scope.isEditing = false;
 
@@ -567,7 +570,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     return $scope.attachmentList;
                 },
                 docSpaceURL: function() {
-                    return $scope.remoteProjectLink;
+                    return $scope.docSpaceURL;
                 }
             }
         });
@@ -624,6 +627,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             {{noteInfo.subject}}
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
+<%if (isLoggedIn) { %>
           <span class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
@@ -638,13 +642,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   href="sendNote.htm?noteId={{noteInfo.id}}">Send Topic By Email</a></li>
             </ul>
           </span>
-
+<% } %>
         </div>
     </div>
 
     <div class="leafContent" ng-hide="isEditing">
     	<div  ng-bind-html="noteInfo.html"></div>
     </div>
+<%if (isLoggedIn) { %>
     <div class="leafContent" ng-show="isEditing">
         <input type="text" class="form-control" ng-model="noteInfo.subject">
         <div style="height:15px"></div>
@@ -653,7 +658,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <button class="btn btn-primary" ng-click="saveEdit()">Save</button>
         <button class="btn btn-primary" ng-click="cancelEdit()">Cancel</button>
     </div>
-    
+<% } %>
 
     
     <div class="generalHeading" style="margin-top:50px;"></div>
@@ -669,6 +674,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   ng-click="toggleLabel(role)">Remove Label:<br/>{{role.name}}</a></li>
             </ul>
           </span>
+<%if (isLoggedIn) { %>
           <span>
              <span class="dropdown">
                <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
@@ -681,6 +687,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                </ul>
              </span>
           </span>
+<% } %>
     </div>
 
 
@@ -691,9 +698,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
            ng-click="navigateToDoc(doc)">
               <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
       </span>
+<%if (isLoggedIn) { %>
       <button class="btn btn-sm btn-primary" ng-click="openAttachDocument()"
           title="Attach a document">
           ADD </button>
+<% } %>
     </div>
 
     <div>
@@ -702,9 +711,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
            ng-click="navigateToAction(act)">
              <img src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif"> {{act.synopsis}}
       </span>
+<%if (isLoggedIn) { %>
       <button class="btn btn-sm btn-primary" ng-click="openAttachAction()"
           title="Attach an Action Item">
           ADD </button>
+<% } %>
     </div>
 
 

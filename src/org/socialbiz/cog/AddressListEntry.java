@@ -481,13 +481,18 @@ public class AddressListEntry implements UserRef
     public static String cleanQuotes(String eAddress) throws Exception {
         int braketStart = eAddress.lastIndexOf('«');
         int braketEnd   = eAddress.lastIndexOf('»');
-        if (braketStart < 0 && braketEnd < 0) {
-            return eAddress;
+        if (braketStart >= 0 && braketEnd >= 0) {
+            if (braketStart < 0 || braketEnd < 0 || braketEnd <= braketStart) {
+                throw new Exception("Got an address with only a start laquo or only an end raquo -- the address should have both start and end, or none");
+            }
+            eAddress =  eAddress.substring(0, braketStart) + '<' + eAddress.substring(braketStart+1, braketEnd) + '>';
         }
-        if (braketStart < 0 || braketEnd < 0 || braketEnd <= braketStart) {
-            throw new Exception("Got an address with only a start laquo or only an end raquo -- the address should have both start and end, or none");
+        if (eAddress.indexOf("\"")>=0) {
+            //we have to get rid of all the double quotes as well, replace them with spaces
+            //for the email that is actually being sent.
+            eAddress = eAddress.replace('\"', ' ');
         }
-        return eAddress.substring(0, braketStart) + '<' + eAddress.substring(braketStart+1, braketEnd) + '>';
+        return eAddress;
     }
 
     /**

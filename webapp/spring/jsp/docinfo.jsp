@@ -12,7 +12,7 @@ Required parameters:
 */
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGWorkspace ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
     UserProfile uProf = ar.getUserProfile();

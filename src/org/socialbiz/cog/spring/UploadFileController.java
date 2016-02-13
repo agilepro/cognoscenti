@@ -642,37 +642,7 @@ public class UploadFileController extends BaseController {
         }
     }
 
-    
-    /*
-    
-    @RequestMapping(value = "/getDocumentDetail.ajax", method = RequestMethod.POST)
-    public void createLeaflet(HttpServletRequest request, HttpServletResponse response)
-           throws Exception {
-       String responseText = null;
-       AuthRequest ar = null;
-       try {
-           ar = getLoggedInAuthRequest(request, response, "message.must.be.login");
-           String aid = ar.reqParam("aid");
-           String pageId = ar.reqParam("pageId");
-
-           NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-           AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
-
-           JSONObject paramMap = new JSONObject();
-           paramMap.put(Constant.MSG_TYPE, Constant.SUCCESS);
-           paramMap.put("aid", aid);
-           paramMap.put("description", attachment.getDescription());
-           paramMap.put("permission", String.valueOf(attachment.getVisibility()));
-           paramMap.put("accessName", attachment.getDisplayName());
-           responseText = paramMap.toString();
-       }
-       catch (Exception ex) {
-           responseText = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
-           ar.logException("Caught by getDocumentDetail.ajax", ex);
-       }
-       NGWebUtils.sendResponse(ar, responseText);
-   }
-   */
+   
 
     @RequestMapping(value = "/{siteId}/{pageId}/CreateCopy.htm", method = RequestMethod.GET)
     protected ModelAndView CreateCopy(@PathVariable String siteId,

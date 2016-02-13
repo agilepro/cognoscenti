@@ -41,7 +41,7 @@ public class AccessControl {
     * Side Effect: if the right magic number is found in URL, the session is marked
     * and this special access capability will persist as long as the session does.
     */
-    public static boolean canAccessDoc(AuthRequest ar, NGContainer ngc, AttachmentRecord attachRec)
+    public static boolean canAccessDoc(AuthRequest ar, NGWorkspace ngc, AttachmentRecord attachRec)
         throws Exception {
         //first, anyone can access a public document
         if (attachRec.isPublic()) {
@@ -72,7 +72,37 @@ public class AccessControl {
                 return true;
             }
         }
+        
+        //now check to see if you have any special access to a MEETING that has attached
+        //this document.  In that case you are allowed access as well!
+        for (MeetingRecord meet : attachRec.getLinkedMeetings(ngc)) {
+            if (canAccessMeeting(ar, ngc, meet)) {
+                //have to remember that you have access to this attachment to allow download
+                ar.setSpecialSessionAccess(resourceId);
+                return true;
+            }
+        }
 
+        //now check to see if you have any special access to a Discussion Topic that has attached
+        //this document.  In that case you are allowed access as well!
+        for (NoteRecord note : attachRec.getLinkedTopics(ngc)) {
+            if (canAccessNote(ar, ngc, note)) {
+                //have to remember that you have access to this attachment to allow download
+                ar.setSpecialSessionAccess(resourceId);
+                return true;
+            }
+        }
+        
+        //now check to see if you have any special access to a Action Item that has attached
+        //this document.  In that case you are allowed access as well!
+        for (GoalRecord goal : attachRec.getLinkedGoals(ngc)) {
+            if (canAccessGoal(ar, ngc, goal)) {
+                //have to remember that you have access to this attachment to allow download
+                ar.setSpecialSessionAccess(resourceId);
+                return true;
+            }
+        }
+        
         return false;
     }
 
@@ -292,4 +322,40 @@ public class AccessControl {
         return accessDocParam;
     }
 
+    public static boolean canAccessMeeting(AuthRequest ar, NGContainer ngc, MeetingRecord meet) throws Exception {
+        //then, if user is logged in, and is a member, then can access
+        if (ar.isLoggedIn()) {
+            UserProfile user = ar.getUserProfile();
+            if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
+                return true;
+            }
+        }
+
+        //then, check to see if there is any special condition in session
+        String resourceId = "meet:"+meet.getId()+":"+ngc.getKey();
+        if (ar.hasSpecialSessionAccess(resourceId)) {
+            return true;
+        }
+
+        //now, check the query parameters, and if appropriate, set up the special access
+        //url must have "mndoc"  (magic number for doc)
+        String mnm = ar.defParam("mnm", null);
+        if (mnm != null) {
+            String expectedMN = ngc.emailDependentMagicNumber(resourceId);
+            if (expectedMN.equals(mnm)) {
+                ar.setSpecialSessionAccess(resourceId);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static String getAccessMeetParams(NGContainer ngc, MeetingRecord meet) throws Exception{
+        String resourceId = "meet:"+meet.getId()+":"+ngc.getKey();
+        String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
+        return "mnm=" + encodedValue;
+    }
+
+    
 }

@@ -143,9 +143,19 @@ public class UserCache {
     }
 
     public JSONArray getActionItems() throws Exception {
-        return cacheObj.getJSONArray("actionItems");
+        //TODO: somehow this can be in a state of not being initialized.
+        //this test prevents a problem, but still wonder why it exists on new users
+        if (cacheObj.has("actionItems")) {
+            return cacheObj.getJSONArray("actionItems");
+        }
+        return new JSONArray();
     }
     public JSONArray getProposals() throws Exception {
-        return cacheObj.getJSONArray("proposals");
+        //TODO: somehow this can be in a state of not being initialized.
+        //this test prevents a problem, but still wonder why it exists on new users
+        if (cacheObj.has("proposals")) {
+            return cacheObj.getJSONArray("proposals");
+        }
+        return new JSONArray();
     }
 }

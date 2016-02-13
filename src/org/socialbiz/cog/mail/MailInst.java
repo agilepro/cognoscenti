@@ -232,12 +232,14 @@ public class MailInst extends JSONWrapper {
             try {
                 System.out.println("Failed ("+new Date()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): "
                         + me);
+                me.printStackTrace(System.out);
                 setStatus(EmailRecord.FAILED);
                 setLastSentDate(sendTime);
                 setExceptionMessage(me);
             }
             catch (Exception eee) {
                 System.out.println("EXCEPTION within EXCEPTION: "+eee);
+                eee.printStackTrace(System.out);
             }
             return false;
         } finally {
@@ -246,6 +248,7 @@ public class MailInst extends JSONWrapper {
                     transport.close();
                 } catch (Exception ce) { /* ignore this exception */
                     System.out.println("transport.close() threw an exception in a finally block!  Ignored!");
+                    ce.printStackTrace(System.out);
                 }
             }
         }

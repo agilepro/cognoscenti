@@ -2,28 +2,45 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.MeetingRecord"
 %><%@page import="org.socialbiz.cog.LicenseForUser"
+%><%@page import="org.socialbiz.cog.AccessControl"
 %><%@page import="org.socialbiz.cog.MicroProfileMgr"
 %><%
-
-    ar.assertLoggedIn("Must be logged in to see anything about a meeting");
 
     String pageId      = ar.reqParam("pageId");
     NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngw);
-    NGBook ngb = ngw.getSite();
-    UserProfile uProf = ar.getUserProfile();
-    String currentUser = uProf.getUniversalId();
-    String currentUserName = uProf.getName();
-    String currentUserKey = uProf.getKey();
-
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngw.findMeeting(meetId);
+
+    if (!AccessControl.canAccessMeeting(ar, ngw, mRec)) {
+        throw new Exception("Please log in to see this meeting.");
+    }
+
+    NGBook ngb = ngw.getSite();
+    UserProfile uProf = ar.getUserProfile();
+    boolean isLoggedIn = (uProf!=null);
+    String currentUser = "";
+    String currentUserName = "Unknown";
+    String currentUserKey = "";
+    if (isLoggedIn) {
+        currentUser = uProf.getUniversalId();
+        currentUserName = uProf.getName();
+        currentUserKey = uProf.getKey();
+    }
+
     String targetRole = mRec.getTargetRole();
     if (targetRole==null || targetRole.length()==0) {
         mRec.setTargetRole(ngw.getPrimaryRole().getName());
     }
     JSONObject meetingInfo = mRec.getFullJSON(ar, ngw);
-    JSONArray attachmentList = ngw.getJSONAttachments(ar);
+    JSONArray attachmentList = new JSONArray();
+    for (AttachmentRecord doc : ngw.getAllAttachments()) {
+        if (doc.isDeleted()) {
+            continue;
+        }
+        attachmentList.put(doc.getJSON4Doc(ar, ngw));
+    }
+    
     JSONArray allGoals     = ngw.getJSONGoals();
 
     JSONArray allRoles = new JSONArray();
@@ -40,10 +57,14 @@
 
     JSONArray allPeople = UserManager.getUniqueUsersJSON();
 
-    LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
-    String docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngw.getKey()
+    String docSpaceURL = "";
+
+    if (uProf!=null) {
+        LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
+        docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngw.getKey()
                     + "/summary.json?lic="+lfu.getId();
-    
+    }
+
 /* PROTOTYPE
 
     $scope.meeting = {
@@ -238,7 +259,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.sortItemsB();
     };
     $scope.extractDateParts();
-    
+
     $scope.itemHasDoc = function(item, doc) {
         var res = false;
         var found = item.docList.forEach( function(docid) {
@@ -1316,6 +1337,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
+<%if (isLoggedIn) { %>    
         <div  style="float:left">
             <span class="dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
@@ -1361,6 +1383,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           </span>
 
         </div>
+<% } %>        
     </div>
 
 
@@ -1372,12 +1395,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <i class="fa fa-gavel" style="font-size:130%"></i>
                 {{meeting.name}} @ {{meeting.startTime|date: "h:mma 'on' dd-MMM-yyyy"}}
             </span>
+<%if (isLoggedIn) { %>
             <span ng-show="meeting.state<3">
                 (
                 <i class="fa fa-cogs meeting-icon" ng-click="toggleEditor(5,'0')"></i>
                 <i class="fa fa-pencil-square-o meeting-icon" ng-click="toggleEditor(6,'0')"></i>
                 )
             </span>
+<% } %>            
           </div>
            <div class="well leafContent" ng-show="isEditing(5,'0')">
              <table>
@@ -1503,7 +1528,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </td>
         <td ng-show="isEditing(6,'0')" style="width:100%">
             <div class="well leafContent">
-                <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo" 
+                <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
                      class="leafContent" style="min-height:200px;" ></div>
                 <button ng-click="savePartialMeeting(['meetingInfo'])" class="btn btn-danger">Save</button>
                 <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
@@ -1562,6 +1587,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </span>
     </div>
 
+<%if (!isLoggedIn) { %>
+    <div class="leafContent">
+        Log in to see more details about this meeting.
+    </div>
+<% } %>
 
 
     <div class="comment-outer" ng-show="showRollCall">
@@ -1601,8 +1631,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <div style="width:100%">
                 <span class="blankTitle" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
                     {{item.subject}} </span>  &nbsp;
+<%if (isLoggedIn) { %>
                 <span class="dropdown">
-                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                       <li role="presentation">
@@ -1613,6 +1644,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                           <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i> Move Down</a></li>
                     </ul>
                 </span>
+<% } %>
                 <span>
                     <i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i>
                 </span>
@@ -1631,8 +1663,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     {{item.position}}.
                     <i ng-show="item.topicLink" class="fa fa-lightbulb-o"></i>
                     {{item.subject}} </span>  &nbsp;
+<%if (isLoggedIn) { %>
                 <span class="dropdown">
-                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                       <li role="presentation">
@@ -1659,13 +1692,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                          ng-click="toggleReady(item)"
                          title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
                          style="width:24px;height=24px;float:right">
-                     </span>
+                </span>
                 <span style="float:right" ng-show="item.readyToGo && !isCompleted()"  >
                     <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
                          ng-click="toggleReady(item)"
                          title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
                          style="width:24px;height=24px">
-                     </span>
+                </span>
+<% } %>
             </div>
             <div>
                 <i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i><span ng-repeat="pres in getPresenters(item)">, {{pres.name}}</span>
@@ -1755,9 +1789,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    ng-click="navigateToDoc(doc)">
                       <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
               </span>
+<%if (isLoggedIn) { %>
               <button class="btn btn-sm btn-primary" ng-click="openAttachDocument(item)"
                   title="Attach a document">
                   ADD </button>
+<% } %>
            </div>
         </td>
       </tr>
@@ -1780,7 +1816,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
            <tr ng-repeat="goal in itemGoals(item)" style="margin-left:30px;">
               <td>
                   <span class="dropdown">
-                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                       <li role="presentation"><a role="menuitem"
@@ -1906,11 +1942,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                <div class="comment-outer"  style="{{stateStyle(cmt)}}">
                    <div>
                        <div class="dropdown" style="float:left">
-                           <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                           <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
                                data-toggle="dropdown"> <span class="caret"></span> </button>
                            </button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-                              <li role="presentation" ng-show="cmt.user=='<%=uProf.getUniversalId()%>'">
+                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="openCommentEditor(item,cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
                                   <a role="menuitem" ng-click="openResponseEditor(cmt)">Create/Edit Response:</a></li>
@@ -2003,6 +2039,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                </div>
            </td>
       </tr>
+<%if (isLoggedIn) { %>
       <tr>
         <td></td>
         <td>
@@ -2018,9 +2055,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
         </td>
       </tr>
+<% } %>
     </table>
     </div>
 
+<%if (isLoggedIn) { %>
     <hr/>
     <div style="margin:20px;">
         <button ng-click="createAgendaItem()" class="btn">Create New Agenda Item</button>
@@ -2030,6 +2069,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     Refreshed {{refreshCount}} times.   {{refreshStatus}}<br/>
     reminder sent {{meeting.reminderSent | date:'M/d/yy H:mm'}}
 
+<% } %>
 
 
 </div>

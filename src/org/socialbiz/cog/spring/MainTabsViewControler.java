@@ -1222,10 +1222,16 @@ public class MainTabsViewControler extends BaseController {
 
           try{
               AuthRequest ar = AuthRequest.getOrCreate(request, response);
-              registerRequiredProject(ar, siteId, pageId);
-              ModelAndView modelAndView= checkLoginMember(ar);
-              if (modelAndView!=null) {
-                  return modelAndView;
+              NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+              
+              String id = ar.reqParam("id");
+              MeetingRecord meet = ngw.findMeeting(id);
+              boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
+              if (!canAccess) {
+                  ModelAndView modelAndView= checkLoginMember(ar);
+                  if (modelAndView!=null) {
+                      return modelAndView;
+                  }
               }
 
               return new ModelAndView("MeetingFull");

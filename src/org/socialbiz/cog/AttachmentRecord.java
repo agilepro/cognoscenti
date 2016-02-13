@@ -848,17 +848,6 @@ public abstract class AttachmentRecord extends CommentContainer {
         return "";
     }
 
-    /*
-    public List<CommentRecord> getComments()  throws Exception {
-        return getChildren("comment", CommentRecord.class);
-    }
-    public void addComment(AuthRequest ar, String newComment)  throws Exception {
-        CommentRecord newCR = createChild("comment", CommentRecord.class);
-        newCR.setTime(ar.nowTime);
-        newCR.setUser(ar.getUserProfile());
-        newCR.setContentHtml(ar, newComment);
-    }
-    */
     
     /**
      * Returns all the meetinsg that have agenda items that are linked to this document 
@@ -906,6 +895,24 @@ public abstract class AttachmentRecord extends CommentContainer {
         }
         return allTopics;
     }
+    
+    public List<GoalRecord> getLinkedGoals(NGPage ngc) throws Exception {
+        ArrayList<GoalRecord> allGoals = new ArrayList<GoalRecord>();
+        String nid = this.getUniversalId();
+        for (GoalRecord goal : ngc.getAllGoals()) {
+            boolean found = false;
+            for (String otherId : goal.getDocLinks()) {
+                if (nid.equals(otherId)) {
+                    found = true;
+                }
+            }
+            if (found) {
+                allGoals.add(goal);
+            }
+        }
+        return allGoals;
+    }
+    
 
     /***
      * The purge date is a date that is set up in advance to automatically

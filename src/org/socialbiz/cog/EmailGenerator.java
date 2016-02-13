@@ -480,6 +480,8 @@ public class EmailGenerator extends DOMFace {
             ar.write("\n<p><i>The meeting agenda is copied below. You can access the most recent, ");
             ar.write("most up to date version on the web at the following link:</i> <a href=\"");
             ar.write(meetingURL);
+            ar.write("&");
+            ar.write(AccessControl.getAccessMeetParams(ngp, meeting));
             ar.write("\" title=\"Access the latest version of this meeting\"><b>");
             ar.writeHtml(meeting.getName());
             ar.write("</b></a></i><p>");
