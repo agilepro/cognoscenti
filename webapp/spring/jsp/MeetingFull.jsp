@@ -1,6 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.MeetingRecord"
+%><%@page import="org.socialbiz.cog.LicenseForUser"
 %><%@page import="org.socialbiz.cog.MicroProfileMgr"
 %><%
 
@@ -39,6 +40,10 @@
 
     JSONArray allPeople = UserManager.getUniqueUsersJSON();
 
+    LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
+    String docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngw.getKey()
+                    + "/summary.json?lic="+lfu.getId();
+    
 /* PROTOTYPE
 
     $scope.meeting = {
@@ -1189,7 +1194,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html',
+            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html?t=<%=System.currentTimeMillis()%>',
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
@@ -1198,6 +1203,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 },
                 attachmentList: function() {
                     return $scope.attachmentList;
+                },
+                docSpaceURL: function() {
+                    return "<%ar.writeJS(docSpaceURL);%>";
                 }
             }
         });
@@ -1252,7 +1260,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             size: 'lg',
             resolve: {
                 selectedActions: function () {
-                    return item.actionItems;
+                    return JSON.parse(JSON.stringify(item.actionItems));
                 },
                 allActions: function() {
                     return $scope.allGoals;
@@ -1636,11 +1644,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       <li role="presentation">
                           <a role="menuitem" ng-click="startEdit(item)"><i class="fa fa-pencil-square-o"></i> Edit Description</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i> Attach Docs</a></li>
+                          <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i> Docs Add/Remove</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="toggleEditor(4,item.id)" ><i class="fa fa-flag-o"></i> Create Action Item</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i> Attach Action Items</a></li>
+                          <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i> Action Items Add/Remove</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i> Toggle Ready Flag</a></li>
                       <li role="presentation">
@@ -1749,17 +1755,20 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    ng-click="navigateToDoc(doc)">
                       <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
               </span>
+              <button class="btn btn-sm btn-primary" ng-click="openAttachDocument(item)"
+                  title="Attach a document">
+                  ADD </button>
            </div>
         </td>
       </tr>
 
 
                           <!--  AGENDA Action ITEMS -->
-      <tr><td style="height:15px"></td></tr>
-      <tr ng-show="showItemMap[item.id]">
+      <tr ng-show="showItemMap[item.id] && itemGoals(item).length>0">
         <td ng-hide="isEditing(4,item.id)" style="width:100%">
+           <div style="height:15px"></div>
            <table class="table">
-           <tr ng-show="itemGoals(item).length>0">
+           <tr>
               <th></th>
               <th></th>
               <th>Synopsis</th>

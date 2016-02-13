@@ -193,7 +193,6 @@ app.controller('myCtrl', function($scope, $http) {
                     <td style="width:20px;"></td>
                     <td>
                         <div id="holder" class="nicenice">Drop Files Here</div>
-                        <!--input ng-model="browsedFile" type="file"/-->
                     </td>
                 </tr>
                 <tr><td style="height:10px"></td></tr>

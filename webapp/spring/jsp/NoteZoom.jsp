@@ -2,6 +2,7 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.AccessControl"
 %><%@page import="org.socialbiz.cog.LeafletResponseRecord"
+%><%@page import="org.socialbiz.cog.LicenseForUser"
 %><%@page import="org.socialbiz.cog.MicroProfileMgr"
 %><%/*
 Required parameter:
@@ -55,6 +56,10 @@ Required parameter:
     JSONArray allGoals     = ngp.getJSONGoals();
     JSONArray allPeople = UserManager.getUniqueUsersJSON();
 
+    LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
+    String remoteProjectLink = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngp.getKey()
+                    + "/summary.json?lic="+lfu.getId();
+
 %>
 
 <style>
@@ -87,6 +92,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.tinymceOptions.height = 400;
  
     $scope.currentTime = (new Date()).getTime();
+    $scope.remoteProjectLink = "<%ar.writeJS(remoteProjectLink);%>";
 
     $scope.isEditing = false;
 
@@ -550,7 +556,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html',
+            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html?t=<%=System.currentTimeMillis()%>',
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
@@ -559,6 +565,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 },
                 attachmentList: function() {
                     return $scope.attachmentList;
+                },
+                docSpaceURL: function() {
+                    return $scope.remoteProjectLink;
                 }
             }
         });

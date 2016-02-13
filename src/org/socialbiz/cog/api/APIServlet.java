@@ -520,6 +520,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             att.updateDocFromJSON(newDocObj, ar);
             String userUpdate = newDocObj.optString("modifieduser");
             if (userUpdate==null) {
+                //TODO: for some reason this is not working, and user is not getting set
                 userUpdate = resDec.lic.getCreator();
             }
             long timeUpdate = newDocObj.optLong("modifiedtime");

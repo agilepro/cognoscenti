@@ -267,6 +267,7 @@ public class AttachmentHelper {
         }
 
         attachment.setModifiedDate(ar.nowTime);
+        attachment.setModifiedBy(ar.getBestUserId());
         attachment.setAttachTime(ar.nowTime);
 
         ResourceEntity re = cType.getResourceEntity(rpath, false);

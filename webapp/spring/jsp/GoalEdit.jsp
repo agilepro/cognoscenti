@@ -4,6 +4,7 @@
 %><%@page import="java.text.SimpleDateFormat"
 %><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%@page import="org.socialbiz.cog.MicroProfileMgr"
+%><%@page import="org.socialbiz.cog.LicenseForUser"
 %><%@page import="org.socialbiz.cog.AgendaItem"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%!
@@ -31,6 +32,7 @@ Required parameters:
 
     String taskId = ar.reqParam("taskId");
     GoalRecord currentTaskRecord=ngp.getGoalOrFail(taskId);
+    NGBook site = ngp.getSite();
 
     UserProfile uProf = ar.getUserProfile();
 
@@ -98,6 +100,10 @@ Required parameters:
     }
 
     JSONArray attachmentList = ngp.getJSONAttachments(ar);
+    
+    LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
+    String docSpaceURL = ar.baseURL +  "api/" + site.getKey() + "/" + ngp.getKey()
+                    + "/summary.json?lic="+lfu.getId();
 
 
 /*** PROTOTYPE
@@ -372,7 +378,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html',
+            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html?t=<%=System.currentTimeMillis()%>',
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
@@ -381,6 +387,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 },
                 attachmentList: function() {
                     return $scope.attachmentList;
+                },
+                docSpaceURL: function() {
+                    return "<%ar.writeJS(docSpaceURL);%>";
                 }
             }
         });
