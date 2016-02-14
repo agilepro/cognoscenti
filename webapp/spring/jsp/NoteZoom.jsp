@@ -815,7 +815,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        <col width="width:1*">
                        <tr ng-repeat="resp in cmt.responses">
                            <td style="padding:5px;max-width:100px;">
-                               <div ng-show="cmt.commentType==12"><b>{{resp.choice}}</b></div>
+                               <div ng-show="cmt.commentType==2"><b>{{resp.choice}}</b></div>
                                <div>{{resp.userName}}</div>
                            </td>
                            <td>
@@ -835,7 +835,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        </tr>
                        <tr ng-show="needsUserResponse(cmt)">
                            <td style="padding:5px;max-width:100px;">
-                               <div ng-show="cmt.commentType==12"><b>????</b></div>
+                               <div ng-show="cmt.commentType==2"><b>????</b></div>
                                <div><% ar.writeHtml(currentUserName); %></div>
                            </td>
                            <td>
