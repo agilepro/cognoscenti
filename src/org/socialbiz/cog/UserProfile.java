@@ -21,6 +21,7 @@
 package org.socialbiz.cog;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -606,9 +607,7 @@ public class UserProfile extends DOMFace implements UserRef
     * Makes it a link if you are logged in and if
     * this is not a static site.
     */
-    public void writeLink(AuthRequest ar)
-        throws Exception
-    {
+    public void writeLink(AuthRequest ar) throws Exception {
         boolean makeItALink = ar.isLoggedIn() && !ar.isStaticSite();
         writeLinkInternal(ar, makeItALink);
     }
@@ -617,57 +616,36 @@ public class UserProfile extends DOMFace implements UserRef
     * Writes the name of the user as a link regardless of whether
     * user is logged in or not
     */
-    public void writeLinkAlways(AuthRequest ar)
-        throws Exception
-    {
+    public void writeLinkAlways(AuthRequest ar) throws Exception {
         writeLinkInternal(ar, true);
     }
 
 
-    private void writeLinkInternal(AuthRequest ar, boolean makeItALink)
-        throws Exception
-    {
+    private void writeLinkInternal(AuthRequest ar, boolean makeItALink) throws Exception {
         String cleanName = getName();
-        if (cleanName==null || cleanName.length()<1)
-        {
+        if (cleanName==null || cleanName.length()==0) {
             //if they don't have a name, use their email address or openid (if no email address)
             cleanName = getUniversalId();
         }
-        if (cleanName==null || cleanName.length()<1)
-        {
-            //if they don't have an email addres, use their key
+        if (cleanName==null || cleanName.length()==0) {
+            //if they don't have an email address, use their key
             cleanName = getKey();
         }
-        if (cleanName.length()>28)
-        {
+        if (cleanName.length()>28) {
             cleanName = cleanName.substring(0,28);
         }
-        String usable = getUniversalId();
-        String olink = "v/FindPerson.htm?uid=";
-        String nlink ="";
-        if(ar.isNewUI()){
-            nlink= "v/" + getKey() + "/userSettings.htm";
-        }else{
-            nlink= "v/" + getKey() + "/watchedProjects.htm";
-        }
-        if (makeItALink)
-        {
+        String olink = "v/FindPerson.htm?uid="+URLEncoder.encode(getUniversalId(), "UTF-8");
+        if (makeItALink) {
             ar.write("<a href=\"");
             ar.write(ar.retPath);
-            if(ar.isNewUI()){
-                ar.write(nlink);
-            }else {
-                ar.write(olink);
-                ar.writeURLData(usable);
-            }
+            ar.write(olink);
             ar.write("\" title=\"access the profile of this user, if one exists\">");
             ar.write("<span class=\"red\">");
             ar.writeHtml(cleanName);
             ar.write("</span>");
             ar.write("</a>");
         }
-        else
-        {
+        else {
             ar.writeHtml(cleanName);
         }
     }

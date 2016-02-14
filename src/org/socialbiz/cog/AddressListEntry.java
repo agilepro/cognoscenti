@@ -282,14 +282,11 @@ public class AddressListEntry implements UserRef
     */
     public void writeLink(AuthRequest ar) throws Exception
     {
-        if (user != null)
-        {
+        if (user != null) {
             user.writeLink(ar);
-            if (!ar.isStaticSite())
-            {
+            if (!ar.isStaticSite()) {
                 String email = getEmail();
-                if (email==null || email.length()==0)
-                {
+                if (email==null || email.length()==0) {
                     ar.write(" <img src=\"");
                     ar.write(ar.retPath);
                     ar.write("warning.gif\">");
@@ -298,47 +295,30 @@ public class AddressListEntry implements UserRef
             return;
         }
 
-
+        boolean makeItALink = ar.isLoggedIn() && !ar.isStaticSite();
         MicroProfileRecord record = MicroProfileMgr.findMicroProfileById(rawAddress);
-        if (record != null)
-        {
+        if (record != null) {
             record.writeLink(ar);
             return;
         }
 
-        //no profile, and no micro profile, so just work with what ALE has
-        String cleanName = SectionUtil.cleanName(getName());
-        if (cleanName.length()> 28)
-        {
-            cleanName = cleanName.substring(0,28);
-        }
-
-        if (!ar.isLoggedIn() || ar.isStaticSite())
-        {
-            ar.writeHtml(cleanName);
-            return;
-        }
-
-        MicroProfileRecord.writeSpecificLink(ar, cleanName, rawAddress);
+        MicroProfileRecord.writeSpecificLink(ar, SectionUtil.cleanName(getName()),
+                rawAddress,  makeItALink);
     }
 
 
-    public boolean isRoleRef()
-    {
+    public boolean isRoleRef() {
         return isRole;
     }
 
-    public void setRoleRef(boolean newVal)
-    {
+    public void setRoleRef(boolean newVal) {
         isRole = newVal;
     }
 
 
-    public String getStorageRepresentation()
-    {
+    public String getStorageRepresentation() {
         String memberID = getUniversalId();
-        if (isRoleRef())
-        {
+        if (isRoleRef()) {
             memberID = "%"+memberID;
         }
         return memberID;

@@ -20,6 +20,8 @@
 
 package org.socialbiz.cog;
 
+import java.net.URLEncoder;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -49,46 +51,31 @@ public class MicroProfileRecord extends DOMFace {
 
     public void writeLink(AuthRequest ar) throws Exception {
         boolean makeItALink = ar.isLoggedIn() && !ar.isStaticSite();
-        writeLinkInternal(ar, makeItALink);
+        writeSpecificLink(ar, getDisplayName(), getId(), makeItALink);
     }
-
-    private void writeLinkInternal(AuthRequest ar, boolean makeItALink) throws Exception {
-        String cleanName = getDisplayName();
-
-        if (makeItALink)
-        {
-            writeSpecificLink(ar, getDisplayName(), getId());
-        }
-        else
-        {
-            ar.writeHtml(cleanName);
-        }
-
-    }
-
 
     /**
     * Creates a link for a displayname and id.  If you don't have a display name
     * pass a nullstring in, and the id will be used instead.
     */
-    public static void writeSpecificLink(AuthRequest ar, String displayName, String id)
-        throws Exception
-    {
-        ar.write("<a href=\"javascript:\" onclick=\"javascript:editDetail(");
-        ar.writeQuote4JS(id);
-        ar.write(", ");
-        ar.writeQuote4JS(displayName);
-        ar.write(",this,");
-        ar.writeQuote4JS(ar.getCompleteURL());
-        ar.write(");\">");
-        ar.write("<span class=\"red\">");
-
-        if(displayName.length() > 0){
-            ar.writeHtml(displayName);
-        }else{
-            ar.write(id);
+    public static void writeSpecificLink(AuthRequest ar, String cleanName, String id, boolean makeItALink)
+            throws Exception {
+        String olink = "v/FindPerson.htm?uid="+URLEncoder.encode(id, "UTF-8");
+        if (cleanName.length()>28)  {
+            cleanName = cleanName.substring(0,28);
         }
-        ar.write("</span>");
-        ar.write("</a>");
+        if (makeItALink) {
+            ar.write("<a href=\"");
+            ar.write(ar.retPath);
+            ar.write(olink);
+            ar.write("\" title=\"access the profile of this user, if one exists\">");
+            ar.write("<span class=\"red\">");
+            ar.writeHtml(cleanName);
+            ar.write("</span>");
+            ar.write("</a>");
+        }
+        else {
+            ar.writeHtml(cleanName);
+        }
     }
 }

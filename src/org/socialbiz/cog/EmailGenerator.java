@@ -350,8 +350,8 @@ public class EmailGenerator extends DOMFace {
         if (meetId!=null && meetId.length()>0) {
             meeting = ngp.findMeeting(meetId);
             for (AgendaItem ai : meeting.getAgendaItems()) {
-                for (String doc : ai.getDocList()) {
-                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(doc);
+                for (String docId : ai.getDocList()) {
+                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(docId);
                     attachList.add(aRec);
                     if (getAttachFiles()) {
                         attachIds.add(aRec.getId());
@@ -476,19 +476,17 @@ public class EmailGenerator extends DOMFace {
         }
 
         if (meeting!=null) {
-            String meetingURL = ar.retPath + ar.getResourceURL(ngp, "meetingFull.htm?id="+meeting.getId());
-            ar.write("\n<p><i>The meeting agenda is copied below. You can access the most recent, ");
-            ar.write("most up to date version on the web at the following link:</i> <a href=\"");
+            String meetingURL = ar.retPath + ar.getResourceURL(ngp, "meetingFull.htm?id="+meeting.getId()
+                    +"&"+AccessControl.getAccessMeetParams(ngp, meeting));
+            ar.write("\n<p><i>Meeting agenda copied below. Use this link: </i><a href=\"");
             ar.write(meetingURL);
-            ar.write("&");
-            ar.write(AccessControl.getAccessMeetParams(ngp, meeting));
             ar.write("\" title=\"Access the latest version of this meeting\"><b>");
             ar.writeHtml(meeting.getName());
-            ar.write("</b></a></i><p>");
+            ar.write("</b></a><i> to access the most recent, ");
+            ar.write("most up to date version on the web.</i><p>");
 
-            String meetWiki = meeting.generateWikiRep(ar,  ngp);
             ar.write("\n<hr/>\n<div class=\"leafContent\" >");
-            WikiConverter.writeWikiAsHtml(ar, meetWiki);
+            meeting.generateReminderHtml(ar,  ngp);
             ar.write("</div>");
         }
     }

@@ -49,7 +49,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         setScalar("owner", newVal);
     }
 
-    public String getMeetingInfo()  throws Exception {
+    public String getMeetingDescription()  throws Exception {
         return getScalar("meetingInfo");
     }
     public void setMeetingInfo(String newVal) throws Exception {
@@ -175,7 +175,6 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         }
     }
 
-
     /**
      * Gives all the agenda items sequential increasing numbers
      */
@@ -183,8 +182,15 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         List<AgendaItem> tempList = getAgendaItems();
         Collections.sort(tempList, new AgendaItemPositionComparator());
         int pos = 0;
+        int num = 0;
         for (AgendaItem ai : tempList) {
-            ai.setPosition( (++pos) );
+            ai.setPosition(++pos);
+            if (ai.isSpacer()) {
+                ai.setNumber(-1);
+            }
+            else {
+                ai.setNumber(++num);
+            }
         }
     }
 
@@ -235,7 +241,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         meetingInfo.put("startTime",   getStartTime());
         meetingInfo.put("duration",    getDuration());
         meetingInfo.put("meetingType", getMeetingType());
-        String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingInfo());
+        String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingDescription());
         meetingInfo.put("meetingInfo", htmlVal);
         meetingInfo.put("reminderTime",getReminderAdvance());
         meetingInfo.put("reminderSent",getReminderSent());
@@ -419,13 +425,18 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         StringBuilder sb = new StringBuilder();
         Calendar cal = Calendar.getInstance();
 
-        sb.append("!!!Meeting: "+getNameAndDate());
+        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("hh:mm 'on' dd-MMM-yyyy");
+        String dateRep = DATE_FORMAT.format(new Date(getStartTime()));
+        
+        sb.append("!!!"+getName());
+
+        sb.append("\n\n!!");
+        sb.append(dateRep);
 
         sb.append("\n\n");
+        sb.append(getMeetingDescription());
 
-        sb.append(getMeetingInfo());
-
-        sb.append("\n\n!!!Agenda");
+        sb.append("\n\n!!Agenda");
 
         long itemTime = this.getStartTime();
 
@@ -436,13 +447,24 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             sb.append(ai.getSubject());
             cal.setTimeInMillis(itemTime);
             sb.append("\n\n"+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+            long minutes = ai.getDuration();
+            long finishTime = itemTime + (minutes*60*1000);
+            cal.setTimeInMillis(finishTime);
+            sb.append(" - "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
             sb.append(" (");
             sb.append(Long.toString(ai.getDuration()));
             sb.append(" minutes)");
             itemTime = itemTime + (ai.getDuration()*60*1000);
+            boolean isFirst = true;
             for (String presenter : ai.getPresenters()) {
                 AddressListEntry ale = new AddressListEntry(presenter);
-                sb.append(", ");
+                if (isFirst) {
+                    sb.append(" Presented by: ");
+                }
+                else {
+                    sb.append(", ");
+                }
+                isFirst = false;
                 sb.append(ale.getName());
             }
         }
@@ -450,6 +472,72 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         return sb.toString();
     }
 
+    
+    public void generateReminderHtml(AuthRequest ar, NGPage ngp) throws Exception {
+
+        ar.write("<h1>");
+        ar.writeHtml(getName());
+        ar.write("</h1>");
+
+        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("hh:mm 'on' dd-MMM-yyyy");
+        String dateRep = DATE_FORMAT.format(new Date(getStartTime()));
+        ar.write("\n<h2>");
+        ar.writeHtml(dateRep);
+        ar.write("</h2>");
+
+        ar.write("\n<div class=\"leafContent\" >");
+        WikiConverter.writeWikiAsHtml(ar, getMeetingDescription());
+        ar.write("</div>");
+        
+
+        ar.write("\n<h2>Agenda</h2>");
+
+        long itemTime = this.getStartTime();
+
+        Calendar cal = Calendar.getInstance();
+        for (AgendaItem ai : getSortedAgendaItems()) {
+            long minutes = ai.getDuration();
+            if (ai.isSpacer()) {
+                ar.write("<p>");
+                ar.writeHtml(ai.getSubject());
+                 cal.setTimeInMillis(itemTime);
+                ar.write(" - " + cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+                itemTime = itemTime + (minutes*60*1000);
+                cal.setTimeInMillis(itemTime);
+                ar.write(" - "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+                ar.write(" ("+minutes+" minutes) </p>");
+            }
+            else {
+                ar.write("\n<h3>");
+                ar.write(Integer.toString(ai.getNumber()));
+                ar.write(". ");
+                ar.writeHtml(ai.getSubject());
+                ar.write("</h3>");
+    
+                cal.setTimeInMillis(itemTime);
+                ar.write("\n<p>"+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+                itemTime = itemTime + (minutes*60*1000);
+                cal.setTimeInMillis(itemTime);
+                ar.write(" - "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+                ar.write(" ("+minutes+" minutes)");
+                boolean isFirst = true;
+                for (String presenter : ai.getPresenters()) {
+                    AddressListEntry ale = new AddressListEntry(presenter);
+                    if (isFirst) {
+                        ar.write(" Presented by: ");
+                    }
+                    else {
+                        ar.write(", ");
+                    }
+                    isFirst = false;
+                    ale.writeLink(ar);
+                }
+            }
+        }
+    }
+    
+    
+    
     public String generateMinutes(AuthRequest ar, NGPage ngp) throws Exception {
         StringBuilder sb = new StringBuilder();
         Calendar cal = Calendar.getInstance();
@@ -458,7 +546,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
         sb.append("\n\n");
 
-        sb.append(getMeetingInfo());
+        sb.append(getMeetingDescription());
 
         sb.append("\n\n");
         sb.append("See original meeting: [");
@@ -473,18 +561,31 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
         for (AgendaItem ai : getSortedAgendaItems()) {
             sb.append("\n\n!");
-            sb.append(Integer.toString(ai.getPosition()));
-            sb.append(". ");
+            if (!ai.isSpacer()) {
+                sb.append(Integer.toString(ai.getNumber()));
+                sb.append(". ");
+            }
             sb.append(ai.getSubject());
             cal.setTimeInMillis(itemTime);
             sb.append("\n\n"+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+            long minutes = ai.getDuration();
+            long finishTime = itemTime + (minutes*60*1000);
+            cal.setTimeInMillis(finishTime);
+            sb.append(" - "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
             sb.append(" (");
             sb.append(Long.toString(ai.getDuration()));
             sb.append(" minutes)");
             itemTime = itemTime + (ai.getDuration()*60*1000);
+            boolean isFirst = true;
             for (String presenter : ai.getPresenters()) {
                 AddressListEntry ale = new AddressListEntry(presenter);
-                sb.append(", ");
+                if (isFirst) {
+                    sb.append(" Presented by: ");
+                }
+                else {
+                    sb.append(", ");
+                }
+                isFirst = false;
                 sb.append(ale.getName());
             }
 

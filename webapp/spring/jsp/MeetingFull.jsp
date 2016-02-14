@@ -1660,7 +1660,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <div style="padding:5px;">
             <div style="width:100%">
                 <span class="agendaTitle" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
-                    {{item.position}}.
+                    {{item.number}}.
                     <i ng-show="item.topicLink" class="fa fa-lightbulb-o"></i>
                     {{item.subject}} </span>  &nbsp;
 <%if (isLoggedIn) { %>

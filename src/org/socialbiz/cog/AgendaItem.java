@@ -23,6 +23,12 @@ public class AgendaItem extends CommentContainer {
         if (lockTime>0 && lockTime < System.currentTimeMillis()-30*60000) {
             clearLock();
         }
+        
+        //transitional
+        String name = getSubject();
+        if ("BREAK".equals(name) || "LUNCH".equals(name) || "DINNER".equals(name)) {
+            setSpacer(true);
+        }
     }
 
 
@@ -30,21 +36,21 @@ public class AgendaItem extends CommentContainer {
         return getAttribute("id");
     }
 
-    public String getSubject()  throws Exception {
+    public String getSubject() {
         return getScalar("subject");
     }
     public void setSubject(String newVal) throws Exception {
         setScalar("subject", newVal);
     }
 
-    public String getDesc()  throws Exception {
+    public String getDesc() {
         return getScalar("desc");
     }
     public void setDesc(String newVal) throws Exception {
         setScalar("desc", newVal);
     }
 
-    public long getDuration()  throws Exception {
+    public long getDuration() {
         return safeConvertLong(getAttribute("duration"));
     }
     public void setDuration(long newVal) throws Exception {
@@ -62,6 +68,30 @@ public class AgendaItem extends CommentContainer {
         setAttributeInt("position", newVal);
     }
 
+    /**
+     * This value represents the visible number of the agenda.
+     * Not all of the agenda items count.  Spacers don't count.
+     */
+    public int getNumber() {
+        return getAttributeInt("number");
+    }
+    public void setNumber(int newVal) throws Exception {
+        setAttributeInt("number", newVal);
+    }
+    
+    /**
+     * Some agenda items are numbered and some are just spacers,
+     * like BREAK, LUNCH, and DINNER.  This flag says that this
+     * item is just a spacer.
+     */
+    public boolean isSpacer() {
+        return getAttributeBool("isSpacer");
+    }
+    public void setSpacer(boolean val) {
+        setAttributeBool("isSpacer", val);
+    }
+
+    
     /**
      * An agenda item can be linked to a discussion topic
      */
@@ -175,6 +205,8 @@ public class AgendaItem extends CommentContainer {
         String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getDesc());
         aiInfo.put("desc",      htmlVal);
         aiInfo.put("position",  getPosition());
+        aiInfo.put("number",    getNumber());
+        aiInfo.put("isSpacer",  isSpacer());
         htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getNotes());
         aiInfo.put("notes",     htmlVal);
         aiInfo.put("presenters", constructJSONArray(getPresenters()));
@@ -271,6 +303,9 @@ public class AgendaItem extends CommentContainer {
             if (currentLocker!=null && ar.getUserProfile().equals(currentLocker)) {
                 clearLock();
             }
+        }
+        if (input.has("isSpacer")) {
+            setSpacer(input.getBoolean("isSpacer"));
         }
 
     }
