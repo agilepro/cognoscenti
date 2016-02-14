@@ -21,12 +21,15 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     public static final int MEETING_TYPE_OPERATIONAL = 2;
 
 
-    public MeetingRecord(Document doc, Element ele, DOMFace p) {
+    public MeetingRecord(Document doc, Element ele, DOMFace p) throws Exception {
         super(doc, ele, p);
+
+        //new "number" field added, and this initializes it
+        renumberItems();
     }
-    
-    
-    
+
+
+
     public String getId()  throws Exception {
         return getAttribute("id");
     }
@@ -246,22 +249,22 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         meetingInfo.put("reminderTime",getReminderAdvance());
         meetingInfo.put("reminderSent",getReminderSent());
         meetingInfo.put("owner",       getOwner());
-        
+
         JSONArray rollCall = new JSONArray();
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
             JSONObject sub = new JSONObject();
             //user id
             sub.put("uid", onePerson.getAttribute("uid"));
-            
+
             // yse, no, maybe
             sub.put("attend", onePerson.getScalar("attend"));
-            
+
             // a comment about their situation
             sub.put("situation", onePerson.getScalar("situation"));
             rollCall.put(sub);
         }
         meetingInfo.put("rollCall",  rollCall);
-        
+
         meetingInfo.put("attended", constructJSONArray(this.getVector("attended")));
         return meetingInfo;
     }
@@ -349,11 +352,11 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 found.setScalar("situation", onePerson.getString("situation"));
             }
         }
-        
+
         if (input.has("attended")) {
             this.setVector("attended", constructVector(input.getJSONArray("attended")));
         }
-                
+
         //fix up the owner if needed .. schema migration
         //TODO: remove after Dec 2015
         String owner = getOwner();
@@ -427,7 +430,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
         SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("hh:mm 'on' dd-MMM-yyyy");
         String dateRep = DATE_FORMAT.format(new Date(getStartTime()));
-        
+
         sb.append("!!!"+getName());
 
         sb.append("\n\n!!");
@@ -472,7 +475,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         return sb.toString();
     }
 
-    
+
     public void generateReminderHtml(AuthRequest ar, NGPage ngp) throws Exception {
 
         ar.write("<h1>");
@@ -488,7 +491,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         ar.write("\n<div class=\"leafContent\" >");
         WikiConverter.writeWikiAsHtml(ar, getMeetingDescription());
         ar.write("</div>");
-        
+
 
         ar.write("\n<h2>Agenda</h2>");
 
@@ -513,7 +516,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 ar.write(". ");
                 ar.writeHtml(ai.getSubject());
                 ar.write("</h3>");
-    
+
                 cal.setTimeInMillis(itemTime);
                 ar.write("\n<p>"+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
                 itemTime = itemTime + (minutes*60*1000);
@@ -535,9 +538,9 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             }
         }
     }
-    
-    
-    
+
+
+
     public String generateMinutes(AuthRequest ar, NGPage ngp) throws Exception {
         StringBuilder sb = new StringBuilder();
         Calendar cal = Calendar.getInstance();
@@ -622,7 +625,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             for (CommentRecord cr : ai.getComments()) {
                 if (cr.getCommentType() == CommentRecord.COMMENT_TYPE_MINUTES) {
                     sb.append("\n\n''Minutes:''\n\n");
-                    sb.append(cr.getContent());                    
+                    sb.append(cr.getContent());
                 }
             }
         }
