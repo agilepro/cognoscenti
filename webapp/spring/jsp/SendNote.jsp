@@ -2,6 +2,7 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="org.socialbiz.cog.CustomRole"
+%><%@page import="org.socialbiz.cog.LicenseForUser"
 %><%@page import="org.socialbiz.cog.EmailGenerator"
 %><%@page import="org.socialbiz.cog.MeetingRecord"
 %><%!
@@ -118,6 +119,14 @@ Optional Parameters:
     JSONArray attachmentList = ngw.getJSONAttachments(ar);
     JSONArray allPeople = ngw.getAllPeopleInProject();
 
+    String docSpaceURL = "";
+
+    if (uProf!=null) {
+        LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
+        docSpaceURL = ar.baseURL +  "api/" + ngw.getSiteKey() + "/" + ngw.getKey()
+                    + "/summary.json?lic="+lfu.getId();
+    }
+    
 /* PROTOTYPE
 
     $scope.emailInfo = {
@@ -355,6 +364,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return $scope.itemHasDoc(oneDoc);
         });
     }
+    $scope.navigateToDoc = function(doc) {
+        window.location="docinfo"+doc.id+".htm";
+    }
 
 
     $scope.openAttachDocument = function () {
@@ -370,6 +382,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 },
                 attachmentList: function() {
                     return $scope.attachmentList;
+                },
+                docSpaceURL: function() {
+                    return "<%ar.writeJS(docSpaceURL);%>";
                 }
             }
         });
