@@ -531,15 +531,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.getPeople = function(viewValue) {
         var newVal = [];
-        for( var i=0; i<$scope.allPeople.length; i++) {
-            var onePeople = $scope.allPeople[i];
-            if (onePeople.uid.indexOf(viewValue)>=0) {
+        var viewValueLC = viewValue.toLowerCase();
+        $scope.allPeople.forEach( function(onePeople) {
+            if (onePeople.uid.toLowerCase().indexOf(viewValueLC)>=0) {
                 newVal.push(onePeople);
             }
-            else if (onePeople.name.indexOf(viewValue)>=0) {
+            else if (onePeople.name.toLowerCase().indexOf(viewValueLC)>=0) {
                 newVal.push(onePeople);
             }
-        }
+        });
         return newVal;
     }
 

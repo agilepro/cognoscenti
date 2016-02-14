@@ -252,7 +252,7 @@ public class UserManager
 
     public static UserProfile createUserProfile(String guid) throws Exception {
         if (profileFile==null) {
-            throw new ProgramLogicError("profileFile is null when it shoudl not be.  May not have been initialized correctly.");
+            throw new ProgramLogicError("profileFile is null when it should not be.  May not have been initialized correctly.");
         }
         UserProfile nu = profileFile.createChild("userprofile", UserProfile.class);
         if (guid!=null) {

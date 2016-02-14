@@ -228,7 +228,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     return "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
                     +" participate in the "+$scope.roleInfo.name+" role of the project '<%ar.writeHtml(ngw.getFullName());%>'."
                     +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
-                    +" participate directly with the others throught the site.";
+                    +" participate directly with the others through the site.";
                 }
             }
         });
