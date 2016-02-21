@@ -285,8 +285,12 @@ public class EmailGenerator extends DOMFace {
             }
         }
         if (getIncludeSelf()) {
-            AddressListEntry aleself = new AddressListEntry(ar.getUserProfile());
-            OptOutAddr.appendOneUser(new OptOutDirectAddress(aleself), sendTo);
+            //TODO: the 'from' is not always the user who caused this email to be sent.
+            String from = getFrom();
+            if (from!=null && from.length()>0) {
+                AddressListEntry aleself = AddressListEntry.parseCombinedAddress(from);
+                OptOutAddr.appendOneUser(new OptOutDirectAddress(aleself), sendTo);
+            }
         }
         return sendTo;
     }
@@ -371,7 +375,7 @@ public class EmailGenerator extends DOMFace {
         mailFile.createEmailWithAttachments(ngp, getFrom(), ooa.getEmail(), getSubject(), bodyChunk.toString(), attachIds);
     }
 
-    
+
     private static List<AttachmentRecord> getSelectedAttachments(AuthRequest ar,
             NGWorkspace ngw) throws Exception {
         List<AttachmentRecord> res = new ArrayList<AttachmentRecord>();
@@ -384,8 +388,8 @@ public class EmailGenerator extends DOMFace {
         return res;
     }
 
-    
-    
+
+
     //TODO: change this to use a TEMPLATE approach, when loops are allowed
     public static void writeNoteAttachmentEmailBody(AuthRequest ar,
             NGPage ngp, NoteRecord selectedNote,

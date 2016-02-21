@@ -11,6 +11,11 @@
     ar.setPageAccessLevels(ngw);
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngw.findMeeting(meetId);
+    
+    //comment or uncomment depending on whether you are in development testing mode
+    String templateCacheDefeater = "";
+    //String templateCacheDefeater = "?t="+System.currentTimeMillis();
+    
 
     if (!AccessControl.canAccessMeeting(ar, ngw, mRec)) {
         throw new Exception("Please log in to see this meeting.");
@@ -64,6 +69,8 @@
         docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngw.getKey()
                     + "/summary.json?lic="+lfu.getId();
     }
+    
+    MeetingRecord backlog = ngw.getAgendaItemBacklog();
 
 /* PROTOTYPE
 
@@ -179,6 +186,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.allTopics = <%allTopics.write(out,2,4);%>;
+    $scope.backlogId = <%=backlog.getId()%>;
 
 
     $scope.newAssignee = "";
@@ -201,15 +209,27 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 300;
 
+    //control what is open and closed
     $scope.showItemMap = {};
-    $scope.nowEditing = "nothing";
-    $scope.editComment = false;
+    $scope.editMeetingInfo = false;
+    $scope.editMeetingDesc = false;
+    $scope.editItemDetailsMap = {};
+    $scope.editItemDescMap = {};
+    
+    $scope.stopEditing =  function() {
+        $scope.editMeetingInfo = false;
+        $scope.editMeetingDesc = false;
+        $scope.editItemDetailsMap = {};
+        $scope.editItemDescMap = {};
+    }
 
+    
     $scope.showAll = function() {
         $scope.meeting.agenda.map( function(item) {
             $scope.showItemMap[item.id] = true;
         });
     }
+    console.log("Received URL is "+window.location);
 
     $scope.datePickOptions = {
         formatYear: 'yyyy',
@@ -497,35 +517,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.refreshMeetingPromise = function() {
         return $scope.putGetMeetingInfo({});
     }
-    $scope.createAgendaItemImmediate = function() {
-        var newAgenda = {subject: "New Agenda Item",duration: 10,position:9999,docList:[], actionItems:[]};
-
-        postURL = "agendaAdd.json?id="+$scope.meeting.id;
-        var postdata = angular.toJson(newAgenda);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            $scope.meeting.agenda.push(data);
-            $scope.nowEditing=data.id+"x2";
-            $scope.editHead=false;
-            $scope.editDesc=false;
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
     $scope.createAgendaItem = function() {
         var newAgenda = {
             subject: "New Agenda Item",
             id:"~new~",
             duration:10,
             position:$scope.meeting.agenda.length+1,
+            number: "?",
             docList:[],
             presenters:[],
             actionItems:[]
         };
         $scope.meeting.agenda.push(newAgenda);
-        $scope.nowEditing=newAgenda.id+"x2";
+        $scope.editItemDetailsMap[newAgenda.id]=true;
     };
 
 
@@ -615,44 +619,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
-    $scope.toggleEditor = function(whichone, itemid) {
-        var combo = itemid+"x"+whichone;
-        if ($scope.nowEditing == combo) {
-            $scope.nowEditing = "nothing";
-            return;
-        }
-        if ($scope.nowEditing == "nothing") {
-            $scope.nowEditing = combo;
-            return;
-        }
-        $scope.nowEditing = combo;
-    }
-    $scope.stopEditing =  function() {
-        $scope.nowEditing = "nothing";
-    }
-
-    $scope.isEditing = function(whichone, itemid) {
-        var combo = itemid+"x"+whichone;
-        return $scope.nowEditing == combo;
-    }
-
     $scope.refresh = function() {
         if ($scope.meeting.state!=2) {
             $scope.refreshStatus = "No refresh because meeting is not being run";
             return;  //don't set of refresh unless in run mode
         }
         window.setTimeout( function() {$scope.refresh()}, 60000);
-        if ($scope.nowEditing != "nothing") {
+        var nowEditing = $scope.editMeetingDesc;
+        $scope.editItemDescMap.forEach( function(item) {
+            if (item==true) {
+                nowEditing = true;
+            }
+        });
+        if (nowEditing) {
             $scope.refreshStatus = "No refresh because currently editing";
-            return;   //don't refresh when editing
-        }
-        if ($scope.editComment) {
-            $scope.refreshStatus = "No refresh because currently making a comment";
-            return;   //don't refresh when editing
+            return;   
         }
         if (true) {
             $scope.refreshStatus = "No refresh because it doesn't work with TinyMCE editor";
-            return;   //don't refresh when editing
+            return;
         }
         $scope.refreshStatus = "Refreshing";
         $scope.putGetMeetingInfo( {} );
@@ -733,24 +718,37 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
-    $scope.startEdit = function(item) {
+    $scope.startEditLockDescription = function(item) {
         var rec = {};
         rec.id = item.id;
         rec.setLock = true;
         var saveRecord = {};
         saveRecord.agenda = [rec];
         $scope.putGetMeetingInfo(saveRecord);
-        $scope.nowEditing=item.id+"x1"
+        $scope.showItemMap[item.id]=true;
+        $scope.editItemDescMap[item.id]=true;
     }
-    $scope.cancelEdit = function(item) {
+    $scope.saveEditUnlockDesciption = function(item) {
+        var rec = {};
+        rec.id = item.id;
+        rec.clearLock = true;
+        rec.desc = item.desc;
+        var saveRecord = {};
+        saveRecord.agenda = [rec];
+        $scope.putGetMeetingInfo(saveRecord);
+        $scope.editItemDescMap[item.id]=false;
+    }
+    $scope.cancelEditUnlockDesciption = function(item) {
         var rec = {};
         rec.id = item.id;
         rec.clearLock = true;
         var saveRecord = {};
         saveRecord.agenda = [rec];
         $scope.putGetMeetingInfo(saveRecord);
-        $scope.nowEditing="nothing";
+        $scope.editItemDescMap[item.id]=false;
     }
+    
+    
     $scope.startNewComment = function(item, theType, cmt) {
         item.newComment = {};
         item.newComment.choices = ["Consent", "Object"];
@@ -950,11 +948,26 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.savePartialMeeting(['rollCall']);
     }
 
+    $scope.moveItemToBacklog = function(item) {
+        var delId = item.id;
+        var postURL = "agendaMove.json?src="+$scope.meeting.id+"&dest="+$scope.backlogId;
+        var postdata = angular.toJson(item);
+        $scope.showError=false;
+        $http.post(postURL,postdata)
+        .success( function(data) {
+            $scope.refreshMeetingPromise();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    
+    
     $scope.openModalActionItem = function (item, goal) {
 
         var modalInstance = $modal.open({
           animation: false,
-          templateUrl: '<%=ar.retPath%>templates/ModalActionItem.html',
+          templateUrl: '<%=ar.retPath%>templates/ModalActionItem.html<%=templateCacheDefeater%>',
           controller: 'ModalActionItemCtrl',
           size: 'lg',
           backdrop: "static",
@@ -1053,7 +1066,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html?d='+new Date().getTime(),
+            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html<%=templateCacheDefeater%>',
             controller: 'ModalResponseCtrl',
             size: 'lg',
             backdrop: "static",
@@ -1101,7 +1114,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/CommentModal.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
             controller: 'CommentModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -1134,7 +1147,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html<%=templateCacheDefeater%>',
             controller: 'OutcomeModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -1172,7 +1185,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var decisionModalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/DecisionModal.html',
+            templateUrl: '<%=ar.retPath%>templates/DecisionModal.html<%=templateCacheDefeater%>',
             controller: 'DecisionModalCtrl',
             size: 'lg',
             resolve: {
@@ -1215,7 +1228,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html<%=templateCacheDefeater%>',
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
@@ -1245,7 +1258,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachTopic.html',
+            templateUrl: '<%=ar.retPath%>templates/AttachTopic.html<%=templateCacheDefeater%>',
             controller: 'AttachTopicCtrl',
             size: 'lg',
             resolve: {
@@ -1276,7 +1289,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachAction.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/AttachAction.html<%=templateCacheDefeater%>',
             controller: 'AttachActionCtrl',
             size: 'lg',
             resolve: {
@@ -1398,13 +1411,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%if (isLoggedIn) { %>
             <span ng-show="meeting.state<3">
                 (
-                <i class="fa fa-cogs meeting-icon" ng-click="toggleEditor(5,'0')"></i>
-                <i class="fa fa-pencil-square-o meeting-icon" ng-click="toggleEditor(6,'0')"></i>
+                <i class="fa fa-cogs meeting-icon" ng-click="editMeetingInfo=true"></i>
+                <i class="fa fa-pencil-square-o meeting-icon" ng-click="editMeetingDesc=true"></i>
                 )
             </span>
 <% } %>            
           </div>
-           <div class="well leafContent" ng-show="isEditing(5,'0')">
+           <div class="well leafContent" ng-show="editMeetingInfo">
              <table>
                 <tr><td style="height:10px"></td></tr>
                 <tr id="trspath">
@@ -1521,12 +1534,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </td>
       </tr>
       <tr>
-        <td ng-hide="isEditing(6,'0')" style="width:100%">
+        <td ng-hide="editMeetingDesc" style="width:100%">
            <div class="leafContent">
              <div ng-bind-html="meeting.meetingInfo"></div>
            </div>
         </td>
-        <td ng-show="isEditing(6,'0')" style="width:100%">
+        <td ng-show="editMeetingDesc" style="width:100%">
             <div class="well leafContent">
                 <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
                      class="leafContent" style="min-height:200px;" ></div>
@@ -1637,7 +1650,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                       <li role="presentation">
-                          <a role="menuitem" ng-click="toggleEditor(2,item.id)"><i class="fa fa-cogs"></i> Item Settings</a></li>
+                          <a role="menuitem" ng-click="editItemDetailsMap[item.id]=true;showItemMap[item.id]=true"><i class="fa fa-cogs"></i> Item Settings</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i> Move Up</a></li>
                       <li role="presentation">
@@ -1669,21 +1682,30 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                       <li role="presentation">
-                          <a role="menuitem" ng-click="toggleEditor(2,item.id)"><i class="fa fa-cogs"></i> Item Settings</a></li>
+                          <a role="menuitem" ng-click="editItemDetailsMap[item.id]=true;showItemMap[item.id]=true"><i class="fa fa-cogs"></i> Item Settings</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i> Move Up</a></li>
+                          <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i> 
+                             Move Up</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i> Move Down</a></li>
+                          <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i> 
+                             Move Down</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="startEdit(item)"><i class="fa fa-pencil-square-o"></i> Edit Description</a></li>
+                          <a role="menuitem" ng-click="startEditLockDescription(item)"><i class="fa fa-pencil-square-o"></i>   Edit Description</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i> Docs Add/Remove</a></li>
+                          <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i> 
+                             Docs Add/Remove</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i> Action Items Add/Remove</a></li>
+                          <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i> 
+                             Action Items Add/Remove</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i> Toggle Ready Flag</a></li>
+                          <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i> 
+                             Toggle Ready Flag</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i> Set Discussion Topic</a></li>
+                          <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i> 
+                              Set Discussion Topic</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="moveItemToBacklog(item)"><i class="fa fa-trash"></i> 
+                              Remove Item</a></li>
 
                    </ul>
                 </span>
@@ -1706,7 +1728,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
           </div>
 
-          <div ng-show="isEditing(2,item.id)" class="well" style="margin:20px">
+          <div ng-show="editItemDetailsMap[item.id]" class="well" style="margin:20px">
             <div class="form-inline form-group">
                 Linked Topic: <button ng-repeat="topic in itemTopics(item)" ng-click="visitTopic(item)" class="btn btn-sm btn-default">
                     {{topic.subject}}</button>
@@ -1750,8 +1772,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </tr>
 
                           <!--  AGENDA BODY -->
-      <tr ng-show="showItemMap[item.id] || isEditing(1,item.id)">
-        <td ng-hide="isEditing(1,item.id) && myUserId == item.lockUser.uid" style="width:100%">
+      <tr ng-show="showItemMap[item.id]">
+        <td ng-hide="editItemDescMap[item.id] && myUserId == item.lockUser.uid" style="width:100%">
            <button ng-show="item.lockUser.uid && item.lockUser.uid.length>0" class="btn btn-sm" style="background-color:lightyellow;margin-left:20px;">
                {{item.lockUser.name}} is editing.
            </button>
@@ -1759,18 +1781,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
              <div ng-bind-html="item.desc"></div>
            </div>
         </td>
-        <td ng-show="isEditing(1,item.id) && myUserId == item.lockUser.uid" style="width:100%">
+        <td ng-show="editItemDescMap[item.id] && myUserId == item.lockUser.uid" style="width:100%">
            <div class="well leafContent">
              <div ng-model="item.desc" ui-tinymce="tinymceOptions"></div>
 
-             <button ng-click="saveAgendaItemParts(item, ['desc'])" class="btn btn-danger">Save</button>
-             <button ng-click="cancelEdit(item)" class="btn btn-danger">Cancel</button>
+             <button ng-click="saveEditUnlockDesciption(item)" class="btn btn-danger">Save</button>
+             <button ng-click="cancelEditUnlockDesciption(item)" class="btn btn-danger">Cancel</button>
            </div>
         </td>
       </tr>
 
                           <!--  AGENDA ATTACHMENTS -->
-      <tr ng-show="showItemMap[item.id] && !isEditing(2,item.id)" >
+      <tr ng-show="showItemMap[item.id] && itemTopics(item).length>0" >
         <td>
            <div style="margin:10px;">
               <b>Discussion Topic: </b>
@@ -1801,7 +1823,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
                           <!--  AGENDA Action ITEMS -->
       <tr ng-show="showItemMap[item.id] && itemGoals(item).length>0">
-        <td ng-hide="isEditing(4,item.id)" style="width:100%">
+        <td style="width:100%">
            <div style="height:15px"></div>
            <table class="table">
            <tr>
@@ -1867,65 +1889,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               </td>
            </tr>
            </table>
-        </td>
-        <td ng-show="isEditing(4,item.id)" style="width:100%">
-            <div class="well generalSettings">
-                <table>
-                   <tr>
-                        <td class="gridTableColummHeader">Synopsis:</td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2">
-                            <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
-                        </td>
-                   </tr>
-                   <tr><td style="height:10px"></td></tr>
-                   <tr>
-                        <td class="gridTableColummHeader">Assignee:</td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2">
-                            <input type="text" ng-model="newGoal.assignee" class="form-control" placeholder="Who should do it"
-                               typeahead="person as person.name for person in getPeople($viewValue) | limitTo:12">
-                        </td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Description:</td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2">
-                            <textarea type="text" ng-model="newGoal.description" class="form-control"
-                                style="width:450px;height:100px" placeholder="Details"></textarea>
-                        </td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Due Date:</td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2">
-                            <input type="text"
-                                style="width:150;margin-top:10px;"
-                                class="form-control"
-                                datepicker-popup="dd-MMMM-yyyy"
-                                ng-model="dummyDate1"
-                                is-open="datePickOpen1"
-                                min-date="minDate"
-                                datepicker-options="datePickOptions"
-                                date-disabled="datePickDisable(date, mode)"
-                                ng-required="true"
-                                ng-click="openDatePicker1($event)"
-                                close-text="Close"/>
-                        </td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader"></td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2">
-                            <button class="btn btn-primary" ng-click="createActionItem(item)">Create New Action Item</button>
-                            <button class="btn btn-primary" ng-click="revertAllEdits()">Cancel</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
         </td>
       </tr>
 
