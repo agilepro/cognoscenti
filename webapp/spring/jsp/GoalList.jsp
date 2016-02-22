@@ -550,7 +550,9 @@ function addvalue() {
                          <span class="red" ng-repeat="ass in rec.requesters"><a href="{{getLink(ass)}}">{{getName(ass)}}</a>, </span>
                     </div>
                     <div class="taskStatus">Description: {{rec.description}}</div>
-                    <div class="taskStatus">Priority:  <span style="color:red">{{rec.priority}}</span></div>
+                    <div class="taskStatus">Priority:  <span style="color:red">{{rec.priority}}</span>
+                        <span ng-show="rec.needEmail"> - email scheduled - </span>
+                    </div>
                     <div class="taskStatus">Status: {{rec.status}}  - (rank {{rec.rank}})</div>
                     <div class="taskToolBar">
                         Action:

@@ -752,7 +752,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
            </td>
            <td>
                <div class="comment-outer" style="{{stateStyle(cmt)}}">
-                   <div>
                      <div>
 
                          <div class="dropdown" style="float:left">
@@ -802,7 +801,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                          <span style="float:right;color:green;">{{calcDueDisplay(cmt)}}</span>
                          <div style="clear:both"></div>
                       </div>
-                   </div>
                    <div ng-show="cmt.state==11">
                        Draft {{commentTypeName(cmt)}} needs posting to be seen by others
                    </div>
@@ -904,24 +902,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
     <div class="generalHeading">History</div>
-        <table >
-            <tr><td style="height:10px"></td></tr>
-            <tr ng-repeat="rec in history">
-                    <td class="projectStreamIcons"  style="padding:10px;">
-                        <img class="img-circle" src="<%=ar.retPath%>users/{{rec.responsible.image}}" alt="" width="50" height="50" /></td>
-                    <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
-                        {{rec.time|date}} -
-                        <a href="<%=ar.retPath%>v/{{rec.responsible.key}}/userSettings.htm" title="access the profile of this user, if one exists">
-                            <span class="red">{{rec.responsible.name}}</span>
-                        </a>
-                        <br/>
-                        {{rec.ctxType}} -
-                        <a href="">{{rec.ctxName}}</a> was {{rec.event}} - {{rec.comment}}
-                        <br/>
+    <table >
+        <tr><td style="height:10px"></td></tr>
+        <tr ng-repeat="rec in history">
+                <td class="projectStreamIcons"  style="padding:10px;">
+                    <img class="img-circle" src="<%=ar.retPath%>users/{{rec.responsible.image}}" alt="" width="50" height="50" /></td>
+                <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
+                    {{rec.time|date}} -
+                    <a href="<%=ar.retPath%>v/{{rec.responsible.key}}/userSettings.htm" title="access the profile of this user, if one exists">
+                        <span class="red">{{rec.responsible.name}}</span>
+                    </a>
+                    <br/>
+                    {{rec.ctxType}} -
+                    <a href="">{{rec.ctxName}}</a> was {{rec.event}} - {{rec.comment}}
+                    <br/>
 
-                    </td>
-            </tr>
-        </table>
+                </td>
+        </tr>
+    </table>
     </div>
 
 </div>

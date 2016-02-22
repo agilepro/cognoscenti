@@ -93,7 +93,7 @@ public class GoalRecord extends BaseRecord {
 
     public void setCreator(String newVal) throws Exception {
         if (newVal==null || newVal.length()==0) {
-            throw new Exception("Whyis the creator being set to null string?");
+            throw new Exception("Why is the creator being set to null string?");
         }
         setScalar("creator", newVal);
     }
@@ -145,6 +145,11 @@ public class GoalRecord extends BaseRecord {
                 setStartDate(ar.nowTime);
             }
             setPercentComplete(100);
+
+            //if it was not final before, and now it is final, then notify
+            if (!isFinal(prevState)) {
+                setSendEmail();
+            }
         }
         else if (isStarted(newVal)) {
             long begin = getStartDate();
@@ -153,12 +158,19 @@ public class GoalRecord extends BaseRecord {
             }
             //since it is NOT final, clear the end date
             setEndDate(0);
+            //if it was not final before, and now it is final, then notify
+            if (!isStarted(prevState)) {
+                setSendEmail();
+            }
         }
         else {
             //neither started nor final, so clear both dates
             setStartDate(0);
             setEndDate(0);
             setPercentComplete(0);
+            if (isStarted(prevState) || isFinal(prevState)) {
+                setSendEmail();
+            }
         }
         setState(newVal);
     }
@@ -372,7 +384,7 @@ public class GoalRecord extends BaseRecord {
     }
 
     /**
-     * User may never set the percent complete. This method forces the percetn
+     * User may never set the percent complete. This method forces the percent
      * complete retrieved to be zero if the task has not been started, and 100
      * if it is completed, and it is the stored value for everything else.
      */
@@ -890,7 +902,7 @@ public class GoalRecord extends BaseRecord {
 
     /**
      * Documents that are linked to this action item
-     * This is an array of string, each string value is 
+     * This is an array of string, each string value is
      * a universalid of a document
      */
     public void setDocLinks(List<String> newVal) {
@@ -917,6 +929,7 @@ public class GoalRecord extends BaseRecord {
         thisGoal.put("duration",  getDuration());
         thisGoal.put("rank",      getRank());
         thisGoal.put("prospects", getProspects());
+        thisGoal.put("needEmail", needSendEmail());
 
         thisGoal.put("projectname", ngp.getFullName());
         thisGoal.put("projectKey", ngp.getKey());
@@ -1050,7 +1063,7 @@ public class GoalRecord extends BaseRecord {
             int numPeopleAfter = assigneeRole.getDirectPlayers().size();
             if (numPeopleBefore != numPeopleAfter) {
                 //if the assignee number changes, send email in 5 minutes
-                setEmailSendTime(ar.nowTime);
+                setSendEmail();
             }
         }
         else if (goalObj.has("assignee")) {
@@ -1074,11 +1087,19 @@ public class GoalRecord extends BaseRecord {
 
     }
 
-    public long getEmailSendTime()  throws Exception {
-        return getAttributeLong("emailSendTime");
+    //This used to be a time scheduled to send the email, but it was only lbeing used
+    //as a boolean, so now the API is a boolean.
+    public boolean needSendEmail()  throws Exception {
+        return getAttributeLong("emailSendTime")>0;
     }
-    public void setEmailSendTime(long newVal) throws Exception {
-        setAttributeLong("emailSendTime", newVal);
+    public void setSendEmail() throws Exception {
+        setAttributeLong("emailSendTime", System.currentTimeMillis());
+    }
+    public void clearSendEmail() throws Exception {
+        setAttributeLong("emailSendTime", 0);
+    }
+    public long getEmailSendTime() throws Exception {
+        return getAttributeLong("emailSendTime");
     }
 
 
@@ -1087,24 +1108,22 @@ public class GoalRecord extends BaseRecord {
 
     public void goalEmailRecord(AuthRequest ar, NGPage ngp, MailFile mailFile) throws Exception {
         try {
-            if (getEmailSendTime()<=0) {
+            if (!needSendEmail()) {
                 throw new Exception("Program Logic Error: attempt to send email on action item when no schedule for sending is set");
             }
-            if (getEmailSendTime()>ar.nowTime) {
-                throw new Exception("Program Logic Error: attempt to send email on action item when it is not yet time to send it");
-            }
+            boolean isStarted = isStarted(getState());
+
             NGRole assigneeRole = getAssigneeRole();
             List<AddressListEntry> players = assigneeRole.getExpandedPlayers(ngp);
-            if (players.size()==0) {
-                System.out.println("no assignee yet .... so wait");
+            if (players.size()==0 && !isStarted) {
+                System.out.println("no assignee yet, and not started .... so wait");
+                clearSendEmail();
                 return;
             }
 
-            List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
-            OptOutAddr.appendUsers(players, sendTo);
-
+            //add the creator to recipients
+            String creator = this.getCreator();
             UserProfile creatorProfile = null;
-            String creator = getCreator();
             if (creator==null || creator.length()==0) {
                 //if action item not set correctly, then use the owner of the page as the 'from' person
                 NGRole owners = ngp.getSecondaryRole();
@@ -1119,6 +1138,21 @@ public class GoalRecord extends BaseRecord {
                 creatorProfile = commenter.getUserProfile();
             }
 
+
+            //add the creator to recipients
+            boolean found = false;
+            for (AddressListEntry ale : players) {
+                if (ale.hasAnyId(creator)) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                players.add(new AddressListEntry(creator));
+            }
+
+            List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
+            OptOutAddr.appendUsers(players, sendTo);
+
             for (OptOutAddr ooa : sendTo) {
                 UserProfile toProfile = UserManager.findUserByAnyId(ooa.getEmail());
                 if (toProfile!=null) {
@@ -1127,7 +1161,7 @@ public class GoalRecord extends BaseRecord {
                 constructEmailRecordOneUser(ar, ngp, ooa, creatorProfile, mailFile);
             }
             System.out.println("Marking ActionItem as SENT: "+getSynopsis());
-            setEmailSendTime(0);
+            clearSendEmail();
         }
         catch (Exception e) {
             throw new Exception("Unable to send email for Action Item: "+getSynopsis(), e);
@@ -1139,6 +1173,10 @@ public class GoalRecord extends BaseRecord {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
         }
+
+        //note that assignee means different things in this next line
+        boolean recipientIsAssignedTask = isAssignee(ooa.getAssignee());
+
         if (requesterProfile==null) {
             System.out.println("DATA PROBLEM: action item came from a person without a profile ("+getCreator()+") ignoring");
             return;
@@ -1148,30 +1186,47 @@ public class GoalRecord extends BaseRecord {
         AuthRequest clone = new AuthDummy(requesterProfile, body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
-        clone.write("<html><body>");
+        clone.write("<html>\n<body>\n<style>.niceTable tr td { padding:8px }</style>");
 
         String topicAddress = ar.baseURL + clone.getResourceURL(ngp, "task"+getId()+".htm");
         String emailSubject = "Action Item: "+getSynopsis();
+        int state           = getState();
+        String stateNameStr = stateName(state);
         AddressListEntry ale = requesterProfile.getAddressListEntry();
 
-        clone.write("\n<p>From: ");
-        ale.writeLink(clone);
-        clone.write("&nbsp; \n    Workspace: ");
+        clone.write("\n<p>Workspace: ");
         ngp.writeContainerLink(clone, 40);
-        clone.write("</p>\n<hr/>\n");
+        clone.write("\n&nbsp; Action Item: <a href=\""+topicAddress+"\">");
+        clone.writeHtml(getSynopsis());
+        clone.write("</a></p>\n<hr/>\n<p>");
 
-        clone.write("You have been assigned to this activity: <br/>");
+        if (isFinal(state)) {
+            clone.write("Action item has been closed as <b>");
+            clone.writeHtml(stateNameStr);
+            clone.write("</b>: ");
+        }
+        else if (isFuture(state)) {
+            clone.write("Action item is marked to be done in the future: ");
+        }
+        else if (recipientIsAssignedTask) {
+            clone.write("Action item is assigned to you -- <b>");
+            clone.writeHtml(stateNameStr);
+            clone.write("</b>: ");
+        }
+        else {
+            clone.write("Action item has recently changed state or assignees: ");
+        }
 
-        clone.write("<table><tr><td>Synopsis:</td>\n  <td>");
+        clone.write("\n</p>\n<table class=\"niceTable\">\n<tr><td>Synopsis:</td>\n  <td>");
         clone.write("\n<a href=\""+topicAddress+"\">");
         clone.writeHtml(getSynopsis());
         clone.write("</a></td></tr>\n");
 
-        clone.write("<tr><td>Requested by:</td>\n  <td>");
+        clone.write("\n<tr><td>Requested by:</td>\n  <td>");
         ale.writeLink(clone);
         clone.write("</td></tr>\n");
 
-        clone.write("<tr><td>Assigned to:</td>\n  <td>");
+        clone.write("\n<tr><td>Assigned to:</td>\n  <td>");
         boolean needComma = false;
         for (AddressListEntry person : getAssigneeRole().getExpandedPlayers(ngp)) {
             if (needComma) {
@@ -1182,8 +1237,13 @@ public class GoalRecord extends BaseRecord {
         }
         clone.write("</td></tr>\n");
 
-        clone.write("<tr><td>Description:</td>\n  <td>");
+        clone.write("\n<tr><td>Description:</td>\n  <td>");
         clone.writeHtml(getDescription());
+        clone.write("</td></tr>\n");
+
+        clone.write("\n<tr><td>State:</td>\n  <td>");
+        clone.writeHtml(stateNameStr);
+
         clone.write("</td></tr>\n</table>\n");
         ooa.writeUnsubscribeLink(clone);
         clone.write("</body></html>");
@@ -1194,11 +1254,8 @@ public class GoalRecord extends BaseRecord {
 
     public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
         //don't send email if there is no assignee.  Wait till there is an assignee
-        if (isActive(getState()) && getAssigneeRole().getDirectPlayers().size()>0) {
-            GScheduledNotification sn = new GScheduledNotification(ngp, this);
-            if (sn.needsSending()) {
-                resList.add(sn);
-            }
+        if (needSendEmail()) {
+            resList.add(new GScheduledNotification(ngp, this));
         }
     }
 
@@ -1211,11 +1268,16 @@ public class GoalRecord extends BaseRecord {
             goal = _goal;
         }
         public boolean needsSending() throws Exception {
-            return goal.getEmailSendTime() > 0;
+            return goal.needSendEmail();
         }
 
         public long timeToSend() throws Exception {
-            return goal.getEmailSendTime();
+            if (needsSending()) {
+                return getEmailSendTime();
+            }
+            else {
+                return 0;
+            }
         }
 
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {

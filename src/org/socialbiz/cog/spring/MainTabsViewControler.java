@@ -356,7 +356,7 @@ public class MainTabsViewControler extends BaseController {
              };
 
              note.updateNoteFromJSON(noteInfo, ar);
-             
+
              //enforce no private
              if (!ngb.getAllowPrivate()) {
                  note.setVisibility(SectionDef.PUBLIC_ACCESS);
@@ -403,7 +403,7 @@ public class MainTabsViewControler extends BaseController {
          return res.toString();
      }
 
-     
+
      @RequestMapping(value = "/{siteId}/{pageId}/getNoteHistory.json", method = RequestMethod.GET)
      public void getGoalHistory(@PathVariable String siteId,@PathVariable String pageId,
              HttpServletRequest request, HttpServletResponse response) {
@@ -425,7 +425,7 @@ public class MainTabsViewControler extends BaseController {
              streamException(ee, ar);
          }
      }
-     
+
     //allow a user to change their email subscriptions, including opt out
     //even when not logged in.
     @RequestMapping(value = "/EmailAdjustment.htm", method = RequestMethod.GET)
@@ -1158,10 +1158,6 @@ public class MainTabsViewControler extends BaseController {
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to create a action item.");
               ar.assertNotFrozen(ngp);
-              //String id = ar.reqParam("id");
-              //MeetingRecord meeting = ngp.findMeeting(id);
-              //String aid = ar.reqParam("aid");
-              //AgendaItem ai = meeting.findAgendaItem(aid);
 
               JSONObject goalInfo = getPostedObject(ar);
               GoalRecord gr = ngp.createGoal(ar.getBestUserId());
@@ -1180,7 +1176,6 @@ public class MainTabsViewControler extends BaseController {
               if (gr.getCreator()==null || gr.getCreator().length()==0) {
                   throw new Exception("can not set the creator");
               }
-              //ai.addActionItemId(gr.getUniversalId());
 
               ngp.saveFile(ar, "Created action item for minutes of meeting.");
               JSONObject repo = gr.getJSON4Goal(ngp);
@@ -1223,7 +1218,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               AuthRequest ar = AuthRequest.getOrCreate(request, response);
               NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
-              
+
               String id = ar.reqParam("id");
               MeetingRecord meet = ngw.findMeeting(id);
               boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
