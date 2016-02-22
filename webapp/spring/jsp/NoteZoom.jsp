@@ -660,6 +660,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 <% } %>
 
+    <div style="color:lightgrey;font-style:italic">Last modified: {{noteInfo.modTime|date}}</div>
     
     <div class="generalHeading" style="margin-top:50px;"></div>
 
@@ -701,7 +702,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%if (isLoggedIn) { %>
       <button class="btn btn-sm btn-primary" ng-click="openAttachDocument()"
           title="Attach a document">
-          ADD </button>
+          Add/Remove <i class="fa fa-book"></i> Documents </button>
 <% } %>
     </div>
 
@@ -714,7 +715,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%if (isLoggedIn) { %>
       <button class="btn btn-sm btn-primary" ng-click="openAttachAction()"
           title="Attach an Action Item">
-          ADD </button>
+          Add/Remove <i class="fa fa-flag"></i> Action Items </button>
 <% } %>
     </div>
 

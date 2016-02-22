@@ -643,7 +643,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
       }
       /**
        * Return all the Action Items that were 'live' during the specified
-       * time period.  We only know the state that it is now, and timestamp 
+       * time period.  We only know the state that it is now, and timestamp
        * that if was started and ended.   Exclude anything that was closed before the time period
        * began.  Exclude anything that had not yet started by the time period end.
        */
@@ -765,7 +765,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
               constructEmailRecordOneUser(ar, ngp, note, ooa, creatorProfile, mailFile);
           }
           setEmailSent(true);
-          
+
           //when the email is sent, update the time
           //of the entire note so that it appears at the top of list.
           note.setLastEdited(ar.nowTime);
@@ -952,7 +952,9 @@ public class NoteRecord extends CommentContainer implements EmailContext {
      public String selfDescription() throws Exception {
          return "(Note) "+getSubject();
      }
-
+     public void markTimestamp(long newTime) throws Exception {
+         this.setLastEdited(newTime);
+     }
 
      public void gatherUnsentScheduledNotification(NGPage ngp,
              ArrayList<ScheduledNotification> resList) throws Exception {

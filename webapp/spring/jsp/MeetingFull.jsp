@@ -626,8 +626,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         window.setTimeout( function() {$scope.refresh()}, 60000);
         var nowEditing = $scope.editMeetingDesc;
-        $scope.editItemDescMap.forEach( function(item) {
-            if (item==true) {
+        Object.keys($scope.editItemDescMap).forEach( function(key) {
+            if ($scope.editItemDescMap[key]==true) {
                 nowEditing = true;
             }
         });

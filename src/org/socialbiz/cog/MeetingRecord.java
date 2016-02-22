@@ -711,7 +711,9 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     public String selfDescription() throws Exception {
         return "(Meeting) "+getNameAndDate();
     }
-
+    public void markTimestamp(long newTime) throws Exception {
+        //the meeting does not care about the timestamp that an comment is emailed.
+    }
 
     public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList) throws Exception {
         MScheduledNotification sn = new MScheduledNotification(ngp, this);

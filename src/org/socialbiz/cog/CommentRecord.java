@@ -271,7 +271,7 @@ public class CommentRecord extends DOMFace {
             setEmailSent(true);
             return true;
         }
-        
+
         //schema migration BEFORE version 101
         //If the email was not sent, and the item was created
         //more than 1 week ago, then go ahead and mark it as sent, because it is
@@ -319,6 +319,7 @@ public class CommentRecord extends DOMFace {
         }
         setEmailSent(true);
         setPostTime(ar.nowTime);
+        noteOrMeet.markTimestamp(ar.nowTime);
     }
 
     public String commentTypeName() {
