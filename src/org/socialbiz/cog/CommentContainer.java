@@ -129,6 +129,20 @@ public class CommentContainer extends DOMFace {
                 CommentRecord newComment = addComment(ar);
                 newComment.updateFromJSON(oneComment, ar);
                 linkReplyToSource(newComment);
+
+                //if you add a comment, then you also get this project on your watch list
+                UserProfile uProf = ar.getUserProfile();
+                String pageKey = ar.ngp.getKey();
+                boolean found = false;
+                for (WatchRecord sr : uProf.getWatchList()) {
+                    if (pageKey.equals(sr.getPageKey())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    uProf.setWatch(pageKey, ar.nowTime);
+                }
             }
             else {
                 //comment type 4 ... for meetings will not be found
