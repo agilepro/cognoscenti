@@ -15,12 +15,6 @@
              class="leafContent" style="min-height:200px;" ></div>
     </div>
     <div style="height:15px;"></div>
-    <!--div ng-model="cmt.html"
-        ta-text-editor-class="form-control myform2-height"
-        ta-html-editor-class="form-control myform2-height"
-        ta-toolbar="[['h1','h2','h3','p','ul','indent','outdent'],['bold','italics','clear','insertLink'],['undo','redo']]"
-        text-angular="" class="leafContent" autofocus>
-    </div-->
     <div class="form-inline form-group">
        State: <select class="form-control" ng-model="cmt.state">
                   <option value="11">Draft</option>
@@ -33,6 +27,21 @@
                   <option value="3">Round</option>
                   <option value="5">Minutes</option>
               </select>
+              
+       <span ng-show="cmt.commentType==2 || cmt.commentType==3" style="margin-left:20px">
+          Due Date:  <input type="text"
+                            style="width:150;"
+                            class="form-control"
+                            datepicker-popup="dd-MMMM-yyyy"
+                            ng-model="dummyDate1"
+                            is-open="datePickOpen1"
+                            min-date="minDate"
+                            datepicker-options="datePickOptions"
+                            date-disabled="datePickDisable(date, mode)"
+                            ng-required="true"
+                            ng-click="openDatePicker1($event)"
+                            close-text="Close"/>
+        </span>
     </div>
 </div>
 <div class="modal-footer">

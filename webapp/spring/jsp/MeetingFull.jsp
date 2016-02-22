@@ -229,7 +229,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.showItemMap[item.id] = true;
         });
     }
-    console.log("Received URL is "+window.location);
+    
+    if (window.location.href.indexOf("#cmt")>0) {
+        console.log("Received URL has a #cmt in it: "+window.location.href);
+        $scope.showAll();
+    }
 
     $scope.datePickOptions = {
         formatYear: 'yyyy',
@@ -796,8 +800,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.postComment = function(item, cmt) {
         cmt.state = 12;
-        if (cmt.commentType == 1) {
-            //simple comments go all the way to closed
+        if (cmt.commentType == 1 || cmt.commentType == 5 ) {
+            //simple comments & minutes go all the way to closed
             cmt.state = 13;
         }
         $scope.saveComment(item, cmt);
@@ -1005,7 +1009,32 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return item.time == timeStamp;
         });
     }
-
+    $scope.currentTime = (new Date()).getTime();
+    $scope.calcDueDisplay = function(cmt) {
+        if (cmt.commentType==1 || cmt.commentType==4) {
+            return "";
+        }
+        if (cmt.state==13) {
+            return "";
+        }
+        var diff = Math.trunc((cmt.dueDate-$scope.currentTime) / 60000);
+        if (diff<0) {
+            return "overdue";
+        }
+        if (diff<120) {
+            return "due in "+diff+" minutes";
+        }
+        diff = Math.trunc(diff / 60);
+        if (diff<48) {
+            return "due in "+diff+" hours";
+        }
+        diff = Math.trunc(diff / 24);
+        if (diff<8) {
+            return "due in "+diff+" days";
+        }
+        diff = Math.trunc(diff / 7);
+        return "due in "+diff+" weeks";
+    }
     $scope.getResponse = function(cmt) {
         var selected = cmt.responses.filter( function(item) {
             return item.user=="<%ar.writeJS(currentUser);%>";
@@ -1130,13 +1159,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             cleanCmt.time = cmt.time;
             cleanCmt.html = returnedCmt.html;
             cleanCmt.state = returnedCmt.state;
-            cleanCmt.commentType = returnedCmt.commentType;
-            if (cleanCmt.state==12) {
-                if (cleanCmt.commentType==1 || cleanCmt.commentType==5) {
-                    cleanCmt.state=13;
-                }
-            }
             cleanCmt.replyTo = returnedCmt.replyTo;
+            cleanCmt.commentType = returnedCmt.commentType;
+            cleanCmt.dueDate = returnedCmt.dueDate;
             $scope.saveComment(item, cleanCmt);
         }, function () {
             //cancel action - nothing really to do
@@ -1931,21 +1956,26 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        <span ng-show="cmt.commentType==1"><i class="fa fa-comments-o" style="font-size:130%"></i></span>
                        <span ng-show="cmt.commentType==2"><i class="fa fa-star-o" style="font-size:130%"></i></span>
                        <span ng-show="cmt.commentType==3"><i class="fa fa-question-circle" style="font-size:130%"></i></span>
-                      <span ng-show="cmt.commentType==5"><i class="fa fa-file-code-o" style="font-size:130%"></i></span>
+                       <span ng-show="cmt.commentType==5"><i class="fa fa-file-code-o" style="font-size:130%"></i></span>
                        &nbsp; {{cmt.time | date}} -
                        <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
                           <span class="red">{{cmt.userName}}</span>
                        </a>
                        <span ng-hide="cmt.emailSent">-email pending-</span>
-                         <span ng-show="cmt.replyTo">
+                       <span ng-show="cmt.replyTo">
                              <span ng-show="cmt.commentType==1">In reply to
                                  <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
                                  <i class="fa fa-comments-o"></i> {{findComment(item,cmt.replyTo).userName}}</a></span>
                              <span ng-show="cmt.commentType>1">Based on
                                  <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
                                  <i class="fa fa-star-o"></i> {{findComment(item,cmt.replyTo).userName}}</a></span>
-                         </span>
+                       </span>
+                       <span style="float:right;color:green;">{{calcDueDisplay(cmt)}}</span>
+                       <div style="clear:both"></div>
 
+                   </div>
+                   <div ng-show="cmt.state==11">
+                       Draft {{commentTypeName(cmt)}} needs posting to be seen by others
                    </div>
                    <div class="leafContent comment-inner">
                        <div ng-bind-html="cmt.html"></div>

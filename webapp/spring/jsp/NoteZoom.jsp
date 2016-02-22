@@ -11,6 +11,10 @@ Required parameter:
     2. lid    : This is id of note (NoteRecord).
 
 */
+    //comment or uncomment depending on whether you are in development testing mode
+    //String templateCacheDefeater = "";
+    String templateCacheDefeater = "?t="+System.currentTimeMillis();
+
 
     String pageId      = ar.reqParam("pageId");
     NGWorkspace ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
@@ -152,7 +156,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.postComment = function(cmt) {
         cmt.state = 12;
-        if (cmt.commentType == 1) {
+        if (cmt.commentType == 1 || cmt.commentType == 5) {
             //simple comments go all the way to closed
             cmt.state = 13;
         }
@@ -170,10 +174,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         else {
             $scope.updateComment(cmt);
         }
-    }
-    $scope.reopenComment = function(cmt) {
-        cmt.state = 12;
-        $scope.updateComment(cmt);
     }
     $scope.updateComment = function(cmt) {
         var saveRecord = {};
@@ -323,6 +323,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (cmt.commentType==3) {
             return "Round";
         }
+        if (cmt.commentType==5) {
+            return "Minutes";
+        }
         return "Comment";
     }
     $scope.refreshHistory = function() {
@@ -407,7 +410,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/CommentModal.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
             controller: 'CommentModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -425,6 +428,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             cleanCmt.state = returnedCmt.state;
             cleanCmt.replyTo = returnedCmt.replyTo;
             cleanCmt.commentType = returnedCmt.commentType;
+            cleanCmt.dueDate = returnedCmt.dueDate;
             $scope.updateComment(cleanCmt);
         }, function () {
             //cancel action - nothing really to do
@@ -447,7 +451,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html',
+            templateUrl: '<%=ar.retPath%>templates/ResponseModal.html<%=templateCacheDefeater%>',
             controller: 'ModalResponseCtrl',
             size: 'lg',
             backdrop: "static",
@@ -478,7 +482,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html',
+            templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html<%=templateCacheDefeater%>',
             controller: 'OutcomeModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -535,7 +539,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var decisionModalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/DecisionModal.html',
+            templateUrl: '<%=ar.retPath%>templates/DecisionModal.html<%=templateCacheDefeater%>',
             controller: 'DecisionModalCtrl',
             size: 'lg',
             resolve: {
@@ -559,7 +563,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html<%=templateCacheDefeater%>',
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
@@ -588,7 +592,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachAction.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/AttachAction.html<%=templateCacheDefeater%>',
             controller: 'AttachActionCtrl',
             size: 'lg',
             resolve: {
@@ -756,18 +760,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                             <button class="dropdown-toggle specCaretBtn" type="button"  id="menu1" 
                                 data-toggle="dropdown"> <span class="caret"></span> </button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && (cmt.state<13 || cmt.commentType==1)">
+                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="openCommentEditor(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.state==13 && cmt.commentType>1">
-                                  <a role="menuitem" ng-click="reopenComment(cmt)">Reopen Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="postComment(cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="deleteComment(cmt)">Delete Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.state==12 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="closeComment(cmt)">Close Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.state==13 && cmt.commentType>1">
-                                  <a role="menuitem" ng-click="openOutcomeEditor(cmt)">Edit the Final Outcome</a></li>
+                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.state==13 && 
+                                  (cmt.commentType==2 || cmt.commentType==3)">
+                                  <a role="menuitem" ng-click="openOutcomeEditor(cmt)">Edit the Outcome</a></li>
                               <li role="presentation" ng-show="cmt.commentType>1 && cmt.state==12">
                                   <a role="menuitem" ng-click="startResponse(cmt)">Create/Edit Response:</a></li>
                               <li role="presentation" ng-show="cmt.commentType==2">
@@ -782,7 +785,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                          <span ng-show="cmt.commentType==1"><i class="fa fa-comments-o" style="font-size:130%"></i></span>
                          <span ng-show="cmt.commentType==2"><i class="fa fa-star-o" style="font-size:130%"></i></span>
                          <span ng-show="cmt.commentType==3"><i class="fa fa-question-circle" style="font-size:130%"></i></span>
-                         <span ng-show="cmt.commentType==4"><i class="fa fa-gavel" style="font-size:130%"></i></span>
+                         <span ng-show="cmt.commentType==5"><i class="fa fa-file-code-o" style="font-size:130%"></i></span>
                          &nbsp; {{cmt.time | date}} - 
                          <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
                              <span class="red">{{cmt.userName}}</span>
@@ -811,11 +814,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}} @ {{cmt.meet.startTime | date}}
                    </div>
 
-                   <table style="min-width:500px;" ng-show="cmt.commentType>1">
+                   <table style="min-width:500px;" ng-show="cmt.commentType==2 || cmt.commentType==3">
                        <col style="width:100px">
                        <col width="width:1*">
                        <tr ng-repeat="resp in cmt.responses">
-                           <td style="padding:5px;max-width:100px;">
+                           <td style="padding:5px;max-width:150px;">
                                <div ng-show="cmt.commentType==2"><b>{{resp.choice}}</b></div>
                                <div>{{resp.userName}}</div>
                            </td>
@@ -853,7 +856,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                            </td>
                        </tr>
                    </table>
-                   <div class="leafContent comment-inner" ng-show="cmt.state==13 && cmt.commentType>1">
+                   <div class="leafContent comment-inner" ng-show="cmt.state==13 && (cmt.commentType==2 || cmt.commentType==3)">
                        <div ng-bind-html="cmt.outcome"></div>
                    </div>
                    <div ng-show="cmt.decision">
