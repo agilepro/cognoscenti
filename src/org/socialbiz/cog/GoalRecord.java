@@ -1189,9 +1189,13 @@ public class GoalRecord extends BaseRecord {
         clone.write("<html>\n<body>\n<style>.niceTable tr td { padding:8px }</style>");
 
         String topicAddress = ar.baseURL + clone.getResourceURL(ngp, "task"+getId()+".htm");
-        String emailSubject = "Action Item: "+getSynopsis();
         int state           = getState();
         String stateNameStr = stateName(state);
+        String overdueStr = "";
+        if (this.getDueDate()<ar.nowTime) {
+            overdueStr = " Overdue!";
+        }
+        String emailSubject = "Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr;
         AddressListEntry ale = requesterProfile.getAddressListEntry();
 
         clone.write("\n<p>Workspace: ");

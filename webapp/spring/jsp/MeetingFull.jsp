@@ -864,14 +864,32 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.mySitch = [];
 
     $scope.extractPeopleSituation = function() {
-        var selRole = $scope.allLabels.find( function(item) {
-            return item.name === $scope.meeting.targetRole;
+        if (Array.isArray) {
+            if (!Array.isArray($scope.allLabels)) {
+                console.log("allLabels is NOT an array");
+                return;
+            }
+            else {
+                console.log("allLabels IS an array");
+            }
+        }
+        else {
+            console.log("NO isArray function");
+        }
+        var selRole = {};
+        $scope.allLabels.forEach( function(item) {
+            if (item.name === $scope.meeting.targetRole) {
+                selRole = item;
+            }
         });
         var rez = [];
         $scope.mySitch = [];
         selRole.players.forEach( function(item) {
-            var current = $scope.meeting.rollCall.find( function(rc) {
-                return rc.uid === item.uid;
+            var current;
+            $scope.meeting.rollCall.forEach( function(rc) {
+                if (rc.uid === item.uid) {
+                    current = rc;
+                }
             });
             if (current) {
                 current.name = item.name;

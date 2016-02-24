@@ -490,7 +490,7 @@ public class EmailGenerator extends DOMFace {
             ar.write("most up to date version on the web.</i><p>");
 
             ar.write("\n<hr/>\n<div class=\"leafContent\" >");
-            meeting.generateReminderHtml(ar,  ngp);
+            meeting.generateReminderHtml(ar,  ngp, ale);
             ar.write("</div>");
         }
     }

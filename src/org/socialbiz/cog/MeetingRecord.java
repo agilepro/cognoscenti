@@ -476,9 +476,65 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
 
-    public void generateReminderHtml(AuthRequest ar, NGPage ngp) throws Exception {
+    public void generateReminderHtml(AuthRequest ar, NGPage ngp, AddressListEntry ale) throws Exception {
 
-        ar.write("<h1>");
+        //notice section
+        List<GoalRecord> overDue = new ArrayList<GoalRecord>();
+        List<GoalRecord> almostDue = new ArrayList<GoalRecord>();
+        List<AgendaItem> presentingList = new ArrayList<AgendaItem>();
+        for (AgendaItem ai : this.getAgendaItems()) {
+            for (String presenter : ai.getPresenters()) {
+                if (ale.hasAnyId(presenter)) {
+                    presentingList.add(ai);
+                }
+            }
+
+            for (String actionId : ai.getActionItems()) {
+                GoalRecord goal = ngp.getGoalOrNull(actionId);
+                if (goal!=null) {
+                    if (goal.isAssignee(ale)) {
+                        if (BaseRecord.isFinal(goal.getState())) {
+                            continue;
+                        }
+
+                        if (goal.getDueDate()<ar.nowTime){
+                            overDue.add(goal);
+                        }
+                        else if (goal.getDueDate()< (ar.nowTime + (7*24*60*60*1000))) {
+                            almostDue.add(goal);
+                        }
+                    }
+                }
+            }
+        }
+
+        String workspaceAddress = ar.baseURL + ar.getResourceURL(ngp, "");
+        if (overDue.size()>0 || almostDue.size()>0 || presentingList.size()>0 ) {
+
+            ar.write("\n<div style=\"border:5px solid red;padding:10px;\">");
+            ar.write("Notice about this meeting:");
+            ar.write("\n<ul>");
+            for (GoalRecord goal : overDue) {
+                ar.write("\n<li><b>Overdue</b> action item: <a href=\"" + workspaceAddress + "task"+goal.getId()+".htm\">");
+                ar.writeHtml(goal.getSynopsis());
+                ar.write("</a></li>");
+            }
+            for (AgendaItem agit : presentingList) {
+                ar.write("\n<li>You are presenting agenda item: <b>");
+                ar.writeHtml(agit.getSubject());
+                ar.write("</b></li>");
+            }
+            for (GoalRecord goal : almostDue) {
+                ar.write("\n<li>Due soon: <a href=\"" + workspaceAddress + "task"+goal.getId()+".htm\">");
+                ar.writeHtml(goal.getSynopsis());
+                ar.write("</a></li>");
+            }
+            ar.write("\n</ul>");
+            ar.write("</div>");
+        }
+
+
+        ar.write("\n<h1>");
         ar.writeHtml(getName());
         ar.write("</h1>");
 
@@ -525,7 +581,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 ar.write(" ("+minutes+" minutes)");
                 boolean isFirst = true;
                 for (String presenter : ai.getPresenters()) {
-                    AddressListEntry ale = new AddressListEntry(presenter);
+                    AddressListEntry pale = new AddressListEntry(presenter);
                     if (isFirst) {
                         ar.write(" Presented by: ");
                     }
@@ -533,7 +589,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                         ar.write(", ");
                     }
                     isFirst = false;
-                    ale.writeLink(ar);
+                    pale.writeLink(ar);
                 }
             }
         }
