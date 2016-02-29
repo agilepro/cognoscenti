@@ -1,15 +1,6 @@
 <html>
 <body>
-<style>
-    .ta-editor.form-control.myform1-height  {
-        height: 80px;
-        min-height: 80px;
-    }
-    .ta-editor.form-control.myform2-height  {
-        height: 200px;
-        min-height: 200px;
-    }
-</style>
+
 <div class="modal-header">
     <h3>Create New Discussion Topic</h3>
 </div>
@@ -19,14 +10,14 @@
 		<input ng-model="topic.subject" class="form-control" style="width:400px">
 	</div>
     <div>Briefly describe the Topic</div>
-    <div ng-model="topic.html" ui-tinymce="tinymceOptions" class="leafContent">
+    <div ng-model="topic.html" ui-tinymce="tinymceOptions1" class="leafContent" style="max-height:200px;height:200px">
     </div>    
     <div>Start the discussion on the Topic</div>
-	<div ng-model="cmt.html" ui-tinymce="tinymceOptions" class="leafContent">
+	<div ng-model="cmt.html" ui-tinymce="tinymceOptions2" class="leafContent">
     </div>
 </div>
 <div class="modal-footer">
-      <button ng-click="ok(11)" class="btn btn-primary" ng-show="cmt.state<=11">
+      <button ng-click="ok(11)" class="btn btn-warning" ng-show="cmt.state<=11">
             Create Topic with Draft Comment</button>
       <button ng-click="ok(12);stopEdit()" class="btn btn-primary">
             Create &amp; Post Comment</button>

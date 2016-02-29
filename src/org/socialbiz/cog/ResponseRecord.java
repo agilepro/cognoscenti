@@ -103,9 +103,14 @@ public class ResponseRecord extends DOMFace
             targetRole = "Members";
         }
         OptOutAddr.appendUsersFromRole(ngp, targetRole, sendTo);
+        
+        //add the commenter in case missing from the target role
+        AddressListEntry commenter1 = cr.getUser();
+        OptOutAddr.appendOneDirectUser(commenter1, sendTo);
+        
 
-        AddressListEntry commenter = new AddressListEntry(getUserId());
-        UserProfile commenterProfile = commenter.getUserProfile();
+        AddressListEntry responder = new AddressListEntry(getUserId());
+        UserProfile commenterProfile = responder.getUserProfile();
         if (commenterProfile==null) {
             System.out.println("DATA PROBLEM: proposal response came from a person without a profile ("+getUserId()+") ignoring");
             setEmailSent(true);

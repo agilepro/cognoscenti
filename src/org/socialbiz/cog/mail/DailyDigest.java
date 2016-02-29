@@ -248,78 +248,88 @@ public class DailyDigest {
         boolean needsFirst = true;
 
         for (NGPageIndex ngpi : containers) {
-            NGContainer container = ngpi.getContainer();
-            List<HistoryRecord> histRecs = container.getHistoryRange(
-                    historyRangeStart, historyRangeEnd);
-            if (histRecs.size() == 0) {
-                // skip this if there is nothing to show
-                continue;
+            if (ngpi==null) {
+                throw new Exception("How did I get a null value by iterating a List collection?");
             }
-            String url = clone.retPath
-                    + clone.getDefaultURL(container);
-
-            if (needsFirst) {
-                clone.write("<a href=\"");
-                clone.write(clone.baseURL);
-                clone.write("v/");
-                clone.writeURLData(clone.getUserProfile().getKey());
-                clone.write("/userAlerts.htm\">View Latest</a></div>");
-
-                needsFirst = false;
-            }
-
-            clone.write("\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">");
-            clone.write("<thead>");
-            clone.write("\n<tr>");
-            clone.write("\n<td style=\"height:30px\" colspan=\"2\" valign=\"top\">");
-
-            clone.write("<h4><img border=\"0\" align=\"middle\" src=\"");
-            clone.write(clone.baseURL);
-            clone.write("assets/iconProject.png");
-            clone.write("\" alt=\"Workspace");
-            clone.write("\"/>&nbsp;&nbsp;<a href=\"");
-
-            clone.write(url);
-            clone.write("\">");
-            clone.writeHtml(container.getFullName());
-            clone.write("</a></h4></td>");
-            clone.write("\n</tr>");
-            clone.write("\n</thead>");
-            clone.write("<tbody>");
-
-            for (HistoryRecord history : histRecs) {
-                ++totalHistoryCount;
-
-                clone.write("<tr>");
-                clone.write("<td style=\"width:25px\"></td><td>&bull;&nbsp;&nbsp;");
-                // dummy link for the sorting purpose.
-                clone.write("<a href=\"");
-                clone.write(Long.toString(history.getTimeStamp()));
-                clone.write("\"></a>");
-
-                // Get Localized string
-                history.writeLocalizedHistoryMessage(container, clone);
-                SectionUtil.nicePrintTime(clone.w, history.getTimeStamp(),
-                        clone.nowTime);
-                if (history.getContextType() != HistoryRecord.CONTEXT_TYPE_PERMISSIONS
-                        && history.getComments() != null
-                        && history.getComments().length() > 0) {
-                    clone.write("<br/>Comments: &raquo;&nbsp;");
-                    clone.writeHtml(history.getComments());
+            try {
+                NGContainer container = ngpi.getContainer();
+                List<HistoryRecord> histRecs = container.getHistoryRange(
+                        historyRangeStart, historyRangeEnd);
+                if (histRecs.size() == 0) {
+                    // skip this if there is nothing to show
+                    continue;
                 }
-
-                clone.write("</td>");
-                clone.write("</tr>");
+                String url = clone.retPath
+                        + clone.getDefaultURL(container);
+    
+                if (needsFirst) {
+                    clone.write("<a href=\"");
+                    clone.write(clone.baseURL);
+                    clone.write("v/");
+                    clone.writeURLData(clone.getUserProfile().getKey());
+                    clone.write("/userAlerts.htm\">View Latest</a></div>");
+    
+                    needsFirst = false;
+                }
+    
+                clone.write("\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">");
+                clone.write("<thead>");
                 clone.write("\n<tr>");
-                clone.write("\n  <td style=\"height:5px\"></td>");
+                clone.write("\n<td style=\"height:30px\" colspan=\"2\" valign=\"top\">");
+    
+                clone.write("<h4><img border=\"0\" align=\"middle\" src=\"");
+                clone.write(clone.baseURL);
+                clone.write("assets/iconProject.png");
+                clone.write("\" alt=\"Workspace");
+                clone.write("\"/>&nbsp;&nbsp;<a href=\"");
+    
+                clone.write(url);
+                clone.write("\">");
+                clone.writeHtml(container.getFullName());
+                clone.write("</a></h4></td>");
                 clone.write("\n</tr>");
+                clone.write("\n</thead>");
+                clone.write("<tbody>");
+    
+                for (HistoryRecord history : histRecs) {
+                    ++totalHistoryCount;
+    
+                    clone.write("<tr>");
+                    clone.write("<td style=\"width:25px\"></td><td>&bull;&nbsp;&nbsp;");
+                    // dummy link for the sorting purpose.
+                    clone.write("<a href=\"");
+                    clone.write(Long.toString(history.getTimeStamp()));
+                    clone.write("\"></a>");
+    
+                    // Get Localized string
+                    history.writeLocalizedHistoryMessage(container, clone);
+                    SectionUtil.nicePrintTime(clone.w, history.getTimeStamp(),
+                            clone.nowTime);
+                    if (history.getContextType() != HistoryRecord.CONTEXT_TYPE_PERMISSIONS
+                            && history.getComments() != null
+                            && history.getComments().length() > 0) {
+                        clone.write("<br/>Comments: &raquo;&nbsp;");
+                        clone.writeHtml(history.getComments());
+                    }
+    
+                    clone.write("</td>");
+                    clone.write("</tr>");
+                    clone.write("\n<tr>");
+                    clone.write("\n  <td style=\"height:5px\"></td>");
+                    clone.write("\n</tr>");
+                }
+                clone.write("\n<tr>");
+                clone.write("\n  <td style=\"height:15px\"></td>");
+                clone.write("\n</tr>");
+                clone.write("</tbody>");
+                clone.write("</table>");
             }
-            clone.write("\n<tr>");
-            clone.write("\n  <td style=\"height:15px\"></td>");
-            clone.write("\n</tr>");
-            clone.write("</tbody>");
-            clone.write("</table>");
-            NGPageIndex.clearLocksHeldByThisThread();
+            catch (Exception e) {
+                throw new Exception("Error while processing container: "+ngpi.containerName, e);
+            }
+            finally {
+                NGPageIndex.clearLocksHeldByThisThread();
+            }
         }
         return totalHistoryCount;
     }

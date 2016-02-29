@@ -1136,6 +1136,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
         for (NGPageIndex ngpi : cog.getAllProjectsInSite(this.getKey())) {
             NGPage ngp = ngpi.getPage();
             siteStats.gatherFromWorkspace(ngp);
+            siteStats.numWorkspaces++;
         }
         saveStatsFile(siteStats);
         return siteStats;

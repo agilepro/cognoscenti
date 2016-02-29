@@ -1,7 +1,6 @@
 package org.socialbiz.cog;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.socialbiz.cog.mail.MailFile;
@@ -38,6 +37,21 @@ public class CommentRecord extends DOMFace {
     }
 
     public void schemaMigration() throws Exception {
+        
+        //if the comment was created before Feb 24, 2016, then mark the closed
+        //email as being sent to disable closed email to avoid sending email for all
+        //the old, closed records in the database.
+        if (getTime()<1456272000) {
+            //don't send the closed email for these records created when there was
+            //no closed email.
+            setCloseEmailSent(true);
+            
+            //Also set the regular sent email flag.  If mail not sent by now, it should
+            //never be sent.
+            setEmailSent(true);
+        }
+        
+        
         //schema migration before version 101 of NGWorkspace
         getEmailSent();
         getCommentType();
@@ -125,6 +139,13 @@ public class CommentRecord extends DOMFace {
         setAttributeLong("postTime", newVal);
     }
 
+    /**
+     * Should be one of these states:
+     * 
+     * COMMENT_STATE_DRAFT
+     * COMMENT_STATE_OPEN
+     * COMMENT_STATE_CLOSED
+     */
     public int getState() {
         int state = getAttributeInt("state");
 
@@ -261,7 +282,23 @@ public class CommentRecord extends DOMFace {
         setVectorLong("replies", replies);
     }
 
-    public boolean getEmailSent()  throws Exception {
+    public boolean needCreateEmailSent() {
+        if (getState()==CommentRecord.COMMENT_STATE_DRAFT) {
+            //never send email for draft
+            return false;
+        }
+        if (getCommentType()==CommentRecord.COMMENT_TYPE_MINUTES) {
+            //never send email for minutes
+            return false;
+        }
+        if (getTime()<1456272000) {
+            //if this was created before Feb 24, 2016, then don't send any email
+            return false;
+        }
+        return !getEmailSent();
+    }
+    
+    public boolean getEmailSent() {
         if (getAttributeBool("emailSent")) {
             return true;
         }
@@ -279,17 +316,37 @@ public class CommentRecord extends DOMFace {
         //sending because there are a lot of old records that have never been marked
         //as being sent.   Need to set them as being sent so they are not sent now.
         if (getTime() < NoteRecord.ONE_WEEK_AGO) {
-            System.out.println("CommentRecord Migration: will never send email due "+new Date(getTime()));
             setEmailSent(true);
             return true;
         }
 
         return false;
     }
-    public void setEmailSent(boolean newVal) throws Exception {
+    public void setEmailSent(boolean newVal) {
         setAttributeBool("emailSent", newVal);
     }
 
+    
+    public boolean needCloseEmailSent() {
+        if (getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE || getCommentType()==CommentRecord.COMMENT_TYPE_MINUTES) {
+            return false;
+        }
+        if (getState()!=CommentRecord.COMMENT_STATE_CLOSED) {
+            return false;
+        }
+        if (getTime()<1456272000) {
+            //if this was created before Feb 24, 2016, then don't send any email
+            return false;
+        }
+        return !getCloseEmailSent();
+    }
+    
+    public boolean getCloseEmailSent() {
+        return getAttributeBool("closeEmailSent");
+    }
+    public void setCloseEmailSent(boolean newVal) {
+        setAttributeBool("closeEmailSent", newVal);
+    }
 
 
     public void commentEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
@@ -299,8 +356,11 @@ public class CommentRecord extends DOMFace {
             targetRole = "Members";
         }
         OptOutAddr.appendUsersFromRole(ngp, targetRole, sendTo);
-
+        
+        //add the commenter in case missing from the target role
         AddressListEntry commenter = getUser();
+        OptOutAddr.appendOneDirectUser(commenter, sendTo);
+        
         UserProfile commenterProfile = commenter.getUserProfile();
         if (commenterProfile==null) {
             System.out.println("DATA PROBLEM: comment came from a person without a profile ("+getUser().getEmail()+") ignoring");
@@ -317,7 +377,15 @@ public class CommentRecord extends DOMFace {
             }
             constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile, mailFile);
         }
-        setEmailSent(true);
+        
+        if (getState()==CommentRecord.COMMENT_STATE_CLOSED) {
+            //if sending the close email, also mark the other email as sent
+            setCloseEmailSent(true);
+            setEmailSent(true);
+        }
+        else {
+            setEmailSent(true);
+        }
         setPostTime(ar.nowTime);
         noteOrMeet.markTimestamp(ar.nowTime);
     }
@@ -339,6 +407,8 @@ public class CommentRecord extends DOMFace {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
         }
+        //simple types go straight to closed, but we still need to send the 'created' message
+        boolean isClosed = getState()==CommentRecord.COMMENT_STATE_CLOSED && getCommentType()!=CommentRecord.COMMENT_TYPE_SIMPLE;
 
         MemFile body = new MemFile();
         AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
@@ -348,14 +418,20 @@ public class CommentRecord extends DOMFace {
 
         String topicAddress = ar.baseURL + noteOrMeet.getResourceURL(clone, ngp) + "#cmt" + getTime();
         String cmtType = commentTypeName();
-        String emailSubject =  noteOrMeet.emailSubject()+": NEW "+cmtType;
+        String emailType = "New ";
+        if (isClosed) {
+            emailType = "Closed ";
+        }
+        String emailSubject =  noteOrMeet.emailSubject()+": "+emailType+cmtType;
         AddressListEntry ale = commenterProfile.getAddressListEntry();
 
         clone.write("\n<p>From: ");
         ale.writeLink(clone);
         clone.write("&nbsp; \n    Workspace: ");
         ngp.writeContainerLink(clone, 40);
-        clone.write("\n<br/>\nNew <b>");
+        clone.write("\n<br/>\n");
+        clone.write(emailType);
+        clone.write(" <b>");
         clone.write(cmtType);
         clone.write("</b> on topic <a href=\"");
         clone.write(topicAddress);
@@ -363,7 +439,15 @@ public class CommentRecord extends DOMFace {
         clone.writeHtml(noteOrMeet.emailSubject());
         clone.write("</a></p>\n<hr/>\n");
 
-        clone.write(this.getContentHtml(ar));
+        if (!isClosed) {
+            clone.write(this.getContentHtml(ar));
+        }
+        else {
+            clone.write("\n<div style=\"color:#A9A9A9\">");
+            clone.write(this.getContentHtml(ar));
+            clone.write("\n</div>\n<hr/>");
+            clone.write(this.getOutcomeHtml(ar));
+        }
 
         ooa.writeUnsubscribeLink(clone);
         clone.write("</body></html>");
@@ -389,7 +473,7 @@ public class CommentRecord extends DOMFace {
         commInfo.put("state",    getState());
         commInfo.put("dueDate",  getDueDate());
         commInfo.put("commentType",getCommentType());
-        commInfo.put("emailSent",getEmailSent());
+        commInfo.put("emailPending",needCreateEmailSent()||needCloseEmailSent());  //display only
         commInfo.put("replyTo",  getReplyTo());
         JSONArray replyList = new JSONArray();
         for (Long val : getReplies()) {
@@ -487,18 +571,17 @@ public class CommentRecord extends DOMFace {
 
     public void gatherUnsentScheduledNotification(NGPage ngp, EmailContext noteOrMeet,
             ArrayList<ScheduledNotification> resList) throws Exception {
-        if (!getEmailSent()) {
-            ScheduledNotification sn = new CRScheduledNotification(ngp, noteOrMeet, this);
-            if (sn.needsSending()) {
-                resList.add(sn);
-            }
+        ScheduledNotification sn = new CRScheduledNotification(ngp, noteOrMeet, this);
+        if (sn.needsSending()) {
+            resList.add(sn);
         }
+
         if (getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
             //there can be responses only if this is a "poll" type comment (a proposal)
             for (ResponseRecord rr : getResponses()) {
-                ScheduledNotification sn = rr.getScheduledNotification(ngp, noteOrMeet, this);
-                if (sn.needsSending()) {
-                    resList.add(sn);
+                ScheduledNotification snr = rr.getScheduledNotification(ngp, noteOrMeet, this);
+                if (snr.needsSending()) {
+                    resList.add(snr);
                 }
             }
         }
@@ -524,7 +607,16 @@ public class CommentRecord extends DOMFace {
                 //minutes don't have email sent not ever so mark sent
                 return false;
             }
-            return !cr.getEmailSent();
+            if (cr.getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE) {
+                //simple comments are created but not closed
+                return cr.needCreateEmailSent();
+            }
+            if (cr.getState()==CommentRecord.COMMENT_STATE_CLOSED) {
+                return cr.needCloseEmailSent();
+            }
+            else {
+                return cr.needCreateEmailSent();
+            }
         }
 
         public long timeToSend() throws Exception {

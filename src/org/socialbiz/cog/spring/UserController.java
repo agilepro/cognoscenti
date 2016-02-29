@@ -332,6 +332,13 @@ public class UserController extends BaseController {
             throws Exception {
         return displayUserModelAndView(request, response, userKey, "UserMissingResponses");
     }
+
+    @RequestMapping(value = "/{userKey}/userOpenRounds.htm", method = RequestMethod.GET)
+    public ModelAndView userOpenRounds(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        return displayUserModelAndView(request, response, userKey, "UserOpenRounds");
+    }
     
     //TODO: eliminate unnecessary address
     @RequestMapping(value = "/{userKey}/userCompletedTasks.htm", method = RequestMethod.GET)

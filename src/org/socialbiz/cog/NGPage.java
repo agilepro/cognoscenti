@@ -38,25 +38,27 @@ import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 /**
-* NGPage is a Container that represents a Workspace.
+* NGPage is an abstract parent of a NGWorkspace.
+* A Workspace is the main container of a project/circle/etc.
 * "Page" is the old term, "Leaf" is also an old term, avoid these.
 * The current term for the user interaction is "Workspace"
+* This should all be moved into NGWorkspace to simplify.
 */
 public abstract class NGPage extends ContainerCommon implements NGContainer
 {
 
-    public PageInfoRecord pageInfo;
-    public ReminderMgr reminderMgr;
+    private PageInfoRecord pageInfo;
+    private ReminderMgr reminderMgr;
 
     protected List<String> displayNames;
     protected List<NGSection> sectionElements = null;
     protected NGBook prjSite;
     protected List<String> existingIds = null;
 
-
-    public static final int CAT_ANONYMOUS = -1;
-    public static final int CAT_PUBLIC    = 0;
-
+/*
+    private static final int CAT_ANONYMOUS = -1;
+    private static final int CAT_PUBLIC    = 0;
+*/
 
 
     //Least Recently Used Cache .... keep copies of the last ten

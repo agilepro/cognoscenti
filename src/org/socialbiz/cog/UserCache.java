@@ -45,9 +45,11 @@ public class UserCache {
     public void refreshCache(Cognoscenti cog) throws Exception {
 
         NGPageIndex.assertNoLocksOnThread();
+        long nowTime= System.currentTimeMillis();
 
         JSONArray actionItemList = new JSONArray();
         JSONArray proposalList = new JSONArray();
+        JSONArray openRounds = new JSONArray();
 
         UserProfile up = UserManager.getUserProfileByKey(userKey);
 
@@ -84,7 +86,7 @@ public class UserCache {
                 }
                 String address = "noteZoom"+aNote.getId()+".htm";
                 for (CommentRecord cr : aNote.getComments()) {
-                    addPollIfNoResponse(proposalList, cr, up, aPage, address);
+                    addPollIfNoResponse(proposalList, openRounds, cr, up, aPage, address, nowTime);
                 }
             }
             for (MeetingRecord meet : aPage.getMeetings()) {
@@ -101,7 +103,7 @@ public class UserCache {
                 String address = "meetingFull.htm?id="+meet.getId();
                 for (AgendaItem ai : meet.getAgendaItems()) {
                     for (CommentRecord cr : ai.getComments()) {
-                        addPollIfNoResponse(proposalList, cr, up, aPage, address);
+                        addPollIfNoResponse(proposalList, openRounds, cr, up, aPage, address, nowTime);
                     }
                 }
             }
@@ -114,10 +116,11 @@ public class UserCache {
 
         cacheObj.put("actionItems", actionItemList);
         cacheObj.put("proposals", proposalList);
+        cacheObj.put("openRounds", openRounds);
     }
     
-    private void addPollIfNoResponse(JSONArray list, CommentRecord cr,
-            UserProfile up, NGPage aPage, String address) throws Exception {
+    private void addPollIfNoResponse(JSONArray proposalList, JSONArray openRounds, CommentRecord cr,
+            UserProfile up, NGPage aPage, String address, long nowTime) throws Exception {
         if (cr.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE &&
                 cr.getState()==CommentRecord.COMMENT_STATE_OPEN) {
             ResponseRecord rr = cr.getResponse(up);
@@ -125,21 +128,29 @@ public class UserCache {
                 //add proposal info if there is no response from this user
                 //seems a bit overkill to have everything, but then,
                 //everything is there for displaying a list...
-                JSONObject jo = cr.getJSON();
-                String prop = cr.getContent();
-                if (prop.length()>100) {
-                    prop = prop.substring(0,100);
-                }
-                jo.put("content", prop);
-                jo.put("workspaceKey", aPage.getKey());
-                jo.put("workspaceName", aPage.getFullName());
-                NGBook site = aPage.getSite();
-                jo.put("siteKey", site.getKey());
-                jo.put("siteName", site.getFullName());
-                jo.put("address", address+"#cmt"+cr.getTime());
-                list.put(jo);
+                addRecordToList(proposalList, cr,  aPage, address);
+            }
+            if (up.equals(cr.getUser())) {
+                //If user created this round, then remember that ... because it is still open
+                addRecordToList(openRounds, cr,  aPage, address);
             }
         }
+    }
+    
+    private void addRecordToList(JSONArray list, CommentRecord cr, NGPage aPage, String address) throws Exception {
+        JSONObject jo = cr.getJSON();
+        String prop = cr.getContent();
+        if (prop.length()>100) {
+            prop = prop.substring(0,100);
+        }
+        jo.put("content", prop);
+        jo.put("workspaceKey", aPage.getKey());
+        jo.put("workspaceName", aPage.getFullName());
+        NGBook site = aPage.getSite();
+        jo.put("siteKey", site.getKey());
+        jo.put("siteName", site.getFullName());
+        jo.put("address", address+"#cmt"+cr.getTime());
+        list.put(jo);
     }
 
     public JSONArray getActionItems() throws Exception {
@@ -155,6 +166,17 @@ public class UserCache {
         //this test prevents a problem, but still wonder why it exists on new users
         if (cacheObj.has("proposals")) {
             return cacheObj.getJSONArray("proposals");
+        }
+        return new JSONArray();
+    }
+    
+    /**
+     * Get a list of the comments (proposals and rounds) that still open
+     * but not yet closed, whether overdue or not.
+     */
+    public JSONArray getOpenRounds() throws Exception {
+        if (cacheObj.has("openRounds")) {
+            return cacheObj.getJSONArray("openRounds");
         }
         return new JSONArray();
     }

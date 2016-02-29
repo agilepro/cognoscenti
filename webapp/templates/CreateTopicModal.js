@@ -11,8 +11,10 @@ app.controller('CreateTopicModalCtrl', function ($scope, $modalInstance) {
 	$scope.cmt.state = 11;
 	$scope.cmt.isNew = true;
 
-    $scope.tinymceOptions = standardTinyMCEOptions();
-    $scope.tinymceOptions.height = 300;
+    $scope.tinymceOptions1 = standardTinyMCEOptions();
+    $scope.tinymceOptions1.height = 150;
+    $scope.tinymceOptions2 = standardTinyMCEOptions();
+    $scope.tinymceOptions2.height = 250;
     
     $scope.ok = function (state) {
         $scope.cmt.state = state;

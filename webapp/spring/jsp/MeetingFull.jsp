@@ -1979,7 +1979,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
                           <span class="red">{{cmt.userName}}</span>
                        </a>
-                       <span ng-hide="cmt.emailSent">-email pending-</span>
+                       <span ng-show="cmt.emailPending">-email pending-</span>
                        <span ng-show="cmt.replyTo">
                              <span ng-show="cmt.commentType==1">In reply to
                                  <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">

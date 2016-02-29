@@ -571,6 +571,10 @@
         <put-attribute name="title" value="User Missing Responses" />
         <put-attribute name="body" value="/spring/jsp/UserMissingResponses.jsp" />
     </definition>
+    <definition name="UserOpenRounds" extends="slimLayout">
+        <put-attribute name="title" value="User Open Rounds" />
+        <put-attribute name="body" value="/spring/jsp/UserOpenRounds.jsp" />
+    </definition>
 
     <definition name="ShareRequests" extends="baseLayout">
         <put-attribute name="title" value="User Action Items" />

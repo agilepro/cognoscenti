@@ -12,7 +12,9 @@
         if (!ngpi.isProject()) {
             continue;
         }
-        projList.put(ngpi.getJSON4List());
+        JSONObject jo = ngpi.getJSON4List();
+        jo.put("parentKey", ngpi.parentKey);
+        projList.put(jo);
     }
 
 /** RECORD PROTOTYPE
@@ -61,6 +63,21 @@ app.controller('myCtrl', function($scope, $http) {
         }
         return res;
     }
+    $scope.getWorkspaceName = function(wsKey) {
+        var res = null;
+        $scope.projList.forEach( function(item) {
+           if (item.pageKey == wsKey) {
+               res = item;
+           } 
+        });
+        if (res) {
+            return res.name;
+        }
+        else {
+            return wsKey;
+        }
+    }
+    
     $scope.sortItems();
 });
 
@@ -96,6 +113,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <td width="50px"></td>
                 <td width="200px">Workspace</td>
                 <td width="100px">Changed</td>
+                <td width="100px">Parent</td>
             </tr>
             <tr ng-repeat="rec in getRows()">
                 <td>
@@ -114,6 +132,7 @@ app.controller('myCtrl', function($scope, $http) {
                     </a>
                 </td>
                 <td>{{rec.changed|date}}</span></td>
+                <td><a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.parentKey}}/frontPage.htm">{{getWorkspaceName(rec.parentKey)}}</a></td>
             </tr>
         </table>
 

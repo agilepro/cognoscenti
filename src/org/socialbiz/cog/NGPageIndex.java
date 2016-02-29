@@ -442,7 +442,6 @@ public class NGPageIndex {
                         ctid, this.containerKey, lockedBy }, lockedByAuditException);
             }
 
-            System.out.println("~ locking "+this.containerKey);
             lockedBy = thisThread;
             lockedByAuditException = new Exception("Audit lock hold by " + ctid + " pageId: "
                     + containerKey);
@@ -477,7 +476,6 @@ public class NGPageIndex {
                         .println("LOCK ERROR - clear lock called when thread does not have lock!");
                 return;
             }
-            System.out.println("~ unlocking "+this.containerKey);
             this.lockedBy = 0;
             this.lockedByAuditException = null;
             lockBlq.add(LOCK_ID);

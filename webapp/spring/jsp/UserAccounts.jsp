@@ -2,6 +2,7 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.SiteRequest"
 %><%@page import="org.socialbiz.cog.SiteReqFile"
+%><%@page import="org.socialbiz.cog.WorkspaceStats"
 %><%
     ar.assertLoggedIn("Must be logged in to see anything about a user");
 
@@ -24,6 +25,9 @@
         jObj.put("siteKey",  site.getKey());
         jObj.put("siteDesc", site.getDescription());
         jObj.put("name",     site.getFullName());
+        WorkspaceStats stats = site.getRecentStats(ar.getCogInstance());
+        jObj.put("numWorkspaces", stats.numWorkspaces);
+        jObj.put("numTopics", stats.numTopics);
         siteList.put(jObj);
     }
 
@@ -99,14 +103,16 @@ app.controller('myCtrl', function($scope, $http) {
                 <tr class="gridTableHeader">
                     <td>Site Name</td>
                     <td>Site Description</td>
+                    <td>Workspaces</td>
+                    <td>Topics</td>
                 </tr>
                 <tr ng-repeat="rec in siteList">
                     <td>
                         <a href="<%=ar.retPath%>t/{{rec.siteKey}}/$/accountListProjects.htm" title="navigate to the site">{{rec.name}}</a>
                     </td>
-                    <td>
-                        {{rec.siteDesc}}
-                    </td>
+                    <td>{{rec.siteDesc}}</td>
+                    <td>{{rec.numWorkspaces}}</td>
+                    <td>{{rec.numTopics}}</td>
                 </tr>
             </table>
 

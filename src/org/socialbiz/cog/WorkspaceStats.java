@@ -15,6 +15,7 @@ public class WorkspaceStats {
     public int numProposals  = 0;
     public long sizeDocuments= 0;
     public long sizeArchives = 0;
+    public int numWorkspaces = 0;  //only for a site will this be anything other than 1
 
     public NameCounter topicsPerUser      = new NameCounter();
     public NameCounter docsPerUser        = new NameCounter();
@@ -76,6 +77,12 @@ public class WorkspaceStats {
     }
 
     public void addAllStats(WorkspaceStats other) {
+        
+        //this is incremented to count the number of smaller collections that have
+        //been aggregated into this statistics collection.  This is useful mainly
+        //for sites which collect all the values from their workspaces.
+        numWorkspaces++;
+        
         numTopics     += other.numTopics;
         numDocs       += other.numDocs;
         numMeetings   += other.numMeetings;
@@ -104,6 +111,7 @@ public class WorkspaceStats {
         jo.put("numProposals",  numProposals);
         jo.put("sizeDocuments", sizeDocuments);
         jo.put("sizeArchives",  sizeArchives);
+        jo.put("numWorkspaces",  numWorkspaces);
         jo.put("topicsPerUser",      topicsPerUser.getJSON());
         jo.put("docsPerUser",        docsPerUser.getJSON());
         jo.put("commentsPerUser",    commentsPerUser.getJSON());
@@ -124,6 +132,9 @@ public class WorkspaceStats {
         res.numProposals = jo.getInt("numProposals");
         res.sizeDocuments = jo.getLong("sizeDocuments");
         res.sizeArchives = jo.getLong("sizeArchives");
+        if (jo.has("numWorkspaces")) {
+            res.numWorkspaces = jo.getInt("numWorkspaces");
+        }
         res.topicsPerUser.fromJSON(jo.getJSONObject("topicsPerUser"));
         res.docsPerUser.fromJSON(jo.getJSONObject("docsPerUser"));
         res.commentsPerUser.fromJSON(jo.getJSONObject("commentsPerUser"));

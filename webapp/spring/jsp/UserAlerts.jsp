@@ -58,7 +58,14 @@ Required Parameters:
         for (NotificationRecord tr : notifications) {
             String pageId = tr.getPageKey();
             NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageId);
-            containers.add(ngpi);
+            if (ngpi==null) {
+                continue;
+                //this can happen if you have something to do in a project that is no longer 
+                //in the project.  Right now we ignore them....
+            }
+            else {
+                containers.add(ngpi);
+            }
         }
     }
 %>
@@ -111,6 +118,9 @@ app.controller('myCtrl', function($scope, $http) {
 
     <%
      NGPageIndex.clearLocksHeldByThisThread();
+     if (containers==null) {
+         throw new Exception("How did containers get to be null?");
+     }
      DailyDigest.constructDailyDigestEmail(ar,containers,lastSendTime,ar.nowTime);
 
     out.flush();

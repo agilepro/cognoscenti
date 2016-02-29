@@ -186,6 +186,12 @@ public class OptOutAddr {
         }
         collector.add(newser);
     }
+    public static void appendOneDirectUser(AddressListEntry enteredAddress,
+            List<OptOutAddr> collector) throws Exception {
+        appendOneUser(new OptOutDirectAddress(enteredAddress), collector);
+    }
+    
+    
 
     public static void removeFromList(List<OptOutAddr> sendTo, String email) {
         OptOutAddr found = null;
