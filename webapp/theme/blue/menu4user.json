@@ -61,6 +61,10 @@
           "href": "userMissingResponses.htm"
         },
         {
+          "name": "Open Proposals & Rounds",
+          "href": "userOpenRounds.htm"
+        },
+        {
           "name": "Remote Profiles",
           "href": "RemoteProfiles.htm",
           "experiment": true

@@ -103,11 +103,11 @@ public class ResponseRecord extends DOMFace
             targetRole = "Members";
         }
         OptOutAddr.appendUsersFromRole(ngp, targetRole, sendTo);
-        
+
         //add the commenter in case missing from the target role
         AddressListEntry commenter1 = cr.getUser();
         OptOutAddr.appendOneDirectUser(commenter1, sendTo);
-        
+
 
         AddressListEntry responder = new AddressListEntry(getUserId());
         UserProfile commenterProfile = responder.getUserProfile();
@@ -125,7 +125,7 @@ public class ResponseRecord extends DOMFace
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
             CommentRecord cr, UserProfile commenterProfile, MailFile mailFile) throws Exception  {
-        
+
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
         }
@@ -145,9 +145,10 @@ public class ResponseRecord extends DOMFace
         String detailMsg = "??";
         switch (cr.getCommentType()) {
             case CommentRecord.COMMENT_TYPE_PROPOSAL:
-                detailMsg = "proposal response ("+getChoice()+")";
+                detailMsg = "Proposal ("+getChoice()+") response";
             case CommentRecord.COMMENT_TYPE_REQUEST:
-                detailMsg = "answer for question";
+                detailMsg = "Quick round response";
+
         }
         String emailSubject =  noteOrMeet.emailSubject()+": "+detailMsg;
 
@@ -157,9 +158,9 @@ public class ResponseRecord extends DOMFace
         ale.writeLink(clone);
         clone.write("&nbsp; \n    Workspace: ");
         ngp.writeContainerLink(clone, 40);
-        clone.write("\n<br/>\nProposal <b>");
-        clone.writeHtml(getChoice());
-        clone.write("</b> "+detailMsg+" on topic <a href=\"");
+        clone.write("\n<br/>\n<b>");
+        clone.writeHtml(detailMsg);
+        clone.write("</b> on topic <a href=\"");
         clone.write(topicAddress);
         clone.write("\">");
         clone.writeHtml(noteOrMeet.emailSubject());
@@ -167,7 +168,7 @@ public class ResponseRecord extends DOMFace
 
         clone.write(this.getHtml(ar));
 
-        clone.write("<hr/>\nIn Response to: <br/>");
+        clone.write("<hr/>\nIn response to: <br/>");
         clone.write("\n<div style=\"color:#A9A9A9\">");
         clone.write(cr.getContentHtml(ar));
         clone.write("\n</div>");

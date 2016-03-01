@@ -37,21 +37,21 @@ public class CommentRecord extends DOMFace {
     }
 
     public void schemaMigration() throws Exception {
-        
+
         //if the comment was created before Feb 24, 2016, then mark the closed
         //email as being sent to disable closed email to avoid sending email for all
         //the old, closed records in the database.
-        if (getTime()<1456272000) {
+        if (getTime()<1456272000000L) {
             //don't send the closed email for these records created when there was
             //no closed email.
             setCloseEmailSent(true);
-            
+
             //Also set the regular sent email flag.  If mail not sent by now, it should
             //never be sent.
             setEmailSent(true);
         }
-        
-        
+
+
         //schema migration before version 101 of NGWorkspace
         getEmailSent();
         getCommentType();
@@ -86,7 +86,7 @@ public class CommentRecord extends DOMFace {
     }
 
     /**
-     * The 'outcome' is the result of a question, or a quick response round
+     * The 'outcome' is the result of a proposal, or a quick response round
      */
     public String getOutcomeHtml(AuthRequest ar)  throws Exception {
         return WikiConverterForWYSIWYG.makeHtmlString(ar, getScalar("outcome"));
@@ -141,7 +141,7 @@ public class CommentRecord extends DOMFace {
 
     /**
      * Should be one of these states:
-     * 
+     *
      * COMMENT_STATE_DRAFT
      * COMMENT_STATE_OPEN
      * COMMENT_STATE_CLOSED
@@ -291,13 +291,13 @@ public class CommentRecord extends DOMFace {
             //never send email for minutes
             return false;
         }
-        if (getTime()<1456272000) {
+        if (getTime()<1456272000000L) {
             //if this was created before Feb 24, 2016, then don't send any email
             return false;
         }
         return !getEmailSent();
     }
-    
+
     public boolean getEmailSent() {
         if (getAttributeBool("emailSent")) {
             return true;
@@ -326,7 +326,7 @@ public class CommentRecord extends DOMFace {
         setAttributeBool("emailSent", newVal);
     }
 
-    
+
     public boolean needCloseEmailSent() {
         if (getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE || getCommentType()==CommentRecord.COMMENT_TYPE_MINUTES) {
             return false;
@@ -334,13 +334,14 @@ public class CommentRecord extends DOMFace {
         if (getState()!=CommentRecord.COMMENT_STATE_CLOSED) {
             return false;
         }
-        if (getTime()<1456272000) {
+
+        if (getTime() < 1456272000000L) {
             //if this was created before Feb 24, 2016, then don't send any email
             return false;
         }
         return !getCloseEmailSent();
     }
-    
+
     public boolean getCloseEmailSent() {
         return getAttributeBool("closeEmailSent");
     }
@@ -356,11 +357,11 @@ public class CommentRecord extends DOMFace {
             targetRole = "Members";
         }
         OptOutAddr.appendUsersFromRole(ngp, targetRole, sendTo);
-        
+
         //add the commenter in case missing from the target role
         AddressListEntry commenter = getUser();
         OptOutAddr.appendOneDirectUser(commenter, sendTo);
-        
+
         UserProfile commenterProfile = commenter.getUserProfile();
         if (commenterProfile==null) {
             System.out.println("DATA PROBLEM: comment came from a person without a profile ("+getUser().getEmail()+") ignoring");
@@ -377,7 +378,7 @@ public class CommentRecord extends DOMFace {
             }
             constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile, mailFile);
         }
-        
+
         if (getState()==CommentRecord.COMMENT_STATE_CLOSED) {
             //if sending the close email, also mark the other email as sent
             setCloseEmailSent(true);
@@ -397,7 +398,7 @@ public class CommentRecord extends DOMFace {
             case CommentRecord.COMMENT_TYPE_PROPOSAL:
                 return "proposal";
             case CommentRecord.COMMENT_TYPE_REQUEST:
-                return "question";
+                return "round";
         }
         throw new RuntimeException("Program Logic Error: This comment type is missing a name: "+this.getCommentType());
     }

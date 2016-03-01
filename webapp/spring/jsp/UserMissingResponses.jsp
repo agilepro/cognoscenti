@@ -45,6 +45,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    $scope.nowTime = new Date().getTime();
 
     $scope.getRows = function() {
         var lcfilter = $scope.filterVal.toLowerCase();
@@ -76,6 +77,14 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return res;
     }
+    $scope.dueStyle = function(rec) {
+        if (rec.dueDate < $scope.nowTime) {
+            return "color:red;font-weight:bold;"
+        }
+        else {
+            return "";
+        }
+    }
 
 });
 
@@ -88,7 +97,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Missing Responses of <% ar.writeHtml(uProf.getName()); %>
+            Items that <% ar.writeHtml(uProf.getName()); %> needs to respond to.
         </div>
         <!--div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -127,7 +136,7 @@ app.controller('myCtrl', function($scope, $http) {
                     {{rec.userName}}
                 </td>
                 <td>
-                    {{rec.dueDate|date}}
+                    <span style="{{dueStyle(rec)}}">{{rec.dueDate|date}}</span>
                 </td>
             </tr>
             </table>
