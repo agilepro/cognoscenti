@@ -900,16 +900,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </table>
 
-
+<%!
+/*
     <div class="generalHeading">History</div>
     <table >
         <tr><td style="height:10px"></td></tr>
         <tr ng-repeat="rec in history">
                 <td class="projectStreamIcons"  style="padding:10px;">
-                    <img class="img-circle" src="<%=ar.retPath%>users/{{rec.responsible.image}}" alt="" width="50" height="50" /></td>
+                    <img class="img-circle" src="<<ar.retPath>>users/{{rec.responsible.image}}" alt="" width="50" height="50" /></td>
                 <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
                     {{rec.time|date}} -
-                    <a href="<%=ar.retPath%>v/{{rec.responsible.key}}/userSettings.htm" title="access the profile of this user, if one exists">
+                    <a href="<<ar.retPath>>v/{{rec.responsible.key}}/userSettings.htm" title="access the profile of this user, if one exists">
                         <span class="red">{{rec.responsible.name}}</span>
                     </a>
                     <br/>
@@ -921,6 +922,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </tr>
     </table>
     </div>
+*/
+%>
 
 </div>
 

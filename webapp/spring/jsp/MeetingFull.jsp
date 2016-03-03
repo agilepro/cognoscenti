@@ -1745,7 +1745,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                              Toggle Ready Flag</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i> 
-                              Set Discussion Topic</a></li>
+                              <span ng-hide="item.topicLink">Set</span>
+                              <span ng-show="item.topicLink">Change</span> 
+                              Discussion Topic</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="moveItemToBacklog(item)"><i class="fa fa-trash"></i> 
                               Remove Item</a></li>
@@ -1775,7 +1777,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div class="form-inline form-group">
                 Linked Topic: <button ng-repeat="topic in itemTopics(item)" ng-click="visitTopic(item)" class="btn btn-sm btn-default">
                     {{topic.subject}}</button>
-                <button ng-click="openAttachTopics(item)" class="btn btn-primary">Change Topic</button>
+                <button ng-click="openAttachTopics(item)" class="btn btn-primary">
+                    <span ng-hide="item.topicLink">Set</span>
+                    <span ng-show="item.topicLink">Change</span> Topic
+                </button>
             </div>
             <div class="form-inline form-group" ng-hide="item.topicLink">
               Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"/>
