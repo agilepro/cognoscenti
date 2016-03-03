@@ -74,36 +74,16 @@ public class UserCache {
                 actionItemList.put(gr.getJSON4Goal(aPage));
             }
             for (NoteRecord aNote : aPage.getAllNotes()) {
-                String targetRoleName = aNote.getTargetRole();
-                NGRole targetRole = aPage.getRole(targetRoleName);
-                if (targetRole==null) {
-                    //ignore notes that have invalid target role
-                    continue;
-                }
-                if (!targetRole.isPlayer(up)) {
-                    //ignore notes that this user is not a player of target role
-                    continue;
-                }
                 String address = "noteZoom"+aNote.getId()+".htm";
                 for (CommentRecord cr : aNote.getComments()) {
-                    addPollIfNoResponse(proposalList, openRounds, cr, up, aPage, address, nowTime);
+                    addPollIfNoResponse(proposalList, openRounds, cr, up, aPage, aNote.getTargetRole(), address, nowTime);
                 }
             }
             for (MeetingRecord meet : aPage.getMeetings()) {
-                String targetRoleName = meet.getTargetRole();
-                NGRole targetRole = aPage.getRole(targetRoleName);
-                if (targetRole==null) {
-                    //ignore notes that have invalid target role
-                    continue;
-                }
-                if (!targetRole.isPlayer(up)) {
-                    //ignore notes that this user is not a player of target role
-                    continue;
-                }
                 String address = "meetingFull.htm?id="+meet.getId();
                 for (AgendaItem ai : meet.getAgendaItems()) {
                     for (CommentRecord cr : ai.getComments()) {
-                        addPollIfNoResponse(proposalList, openRounds, cr, up, aPage, address, nowTime);
+                        addPollIfNoResponse(proposalList, openRounds, cr, up, aPage, meet.getTargetRole(), address, nowTime);
                     }
                 }
             }
@@ -120,19 +100,25 @@ public class UserCache {
     }
     
     private void addPollIfNoResponse(JSONArray proposalList, JSONArray openRounds, CommentRecord cr,
-            UserProfile up, NGPage aPage, String address, long nowTime) throws Exception {
-        if (cr.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE &&
-                cr.getState()==CommentRecord.COMMENT_STATE_OPEN) {
-            ResponseRecord rr = cr.getResponse(up);
-            if (rr==null) {
-                //add proposal info if there is no response from this user
-                //seems a bit overkill to have everything, but then,
-                //everything is there for displaying a list...
-                addRecordToList(proposalList, cr,  aPage, address);
-            }
+            UserProfile up, NGPage aPage, String targetRoleName, String address, long nowTime) throws Exception {
+        if (cr.getState()!=CommentRecord.COMMENT_STATE_CLOSED) {
             if (up.equals(cr.getUser())) {
-                //If user created this round, then remember that ... because it is still open
+                //first ... is this the owner, and if overdue let them know
+                //If user created this round, then remember that ... because it is still open or draft
                 addRecordToList(openRounds, cr,  aPage, address);
+            }
+            
+            
+            //second .. see if there is a response needed.
+            NGRole targetRole = aPage.getRole(targetRoleName);
+            if (targetRole!=null && targetRole.isPlayer(up)) { 
+                ResponseRecord rr = cr.getResponse(up);
+                if (rr==null) {
+                    //add proposal info if there is no response from this user
+                    //seems a bit overkill to have everything, but then,
+                    //everything is there for displaying a list...
+                    addRecordToList(proposalList, cr,  aPage, address);
+                }
             }
         }
     }

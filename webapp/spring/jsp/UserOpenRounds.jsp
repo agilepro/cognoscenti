@@ -136,7 +136,8 @@ app.controller('myCtrl', function($scope, $http) {
                     {{rec.userName}}
                 </td>
                 <td >
-                    <span style="{{dueStyle(rec)}}">{{rec.dueDate|date}}</span>
+                    <span ng-show="rec.state==11" style="background-color:yellow">DRAFT</span>
+                    <span ng-hide="rec.state==11" style="{{dueStyle(rec)}}">{{rec.dueDate|date}}</span>
                 </td>
             </tr>
             </table>
