@@ -149,7 +149,10 @@ Required parameters:
 
     JSONArray myMeetings = new JSONArray();
     for (MeetingRecord meet : ngp.getMeetings()) {
-        if (meet.getState() == 99) {
+        if (meet.getState() > 1) {
+            continue;
+        }
+        if (meet.isBacklogContainer()) {
             continue;
         }
         myMeetings.put(meet.getListableJSON(ar));
@@ -210,14 +213,67 @@ app.controller('myCtrl', function($scope, $http) {
         }
 
         var minx = 70;
-        var xwidth = 210;
-        var disp = xwidth / ($scope.children.length-1);
-        for (var i=0; i<len; i++) {
-            $scope.children[i].x = minx + (disp*i);
-            $scope.children[i].y = yPos + (i%2 * 10*len);
+        if (len<6) {
+            var xwidth = 210;
+            var disp = xwidth / ($scope.children.length-1);
+            for (var i=0; i<len; i++) {
+                $scope.children[i].x = minx + (disp*i);
+                $scope.children[i].y = yPos + (i%2 * 10*len);
+            }
+            return;
+        }
+        
+        var amtLeft = len;
+        var pos = 0;
+        while (len-pos >= 5) {
+            $scope.children[pos].x = minx;
+            $scope.children[pos].y = yPos;
+            pos++;
+            $scope.children[pos].x = minx+105;
+            $scope.children[pos].y = yPos;            
+            pos++;
+            $scope.children[pos].x = minx+210;
+            $scope.children[pos].y = yPos;
+            pos++;
+            yPos += 50;
+            $scope.children[pos].x = minx+52;
+            $scope.children[pos].y = yPos;
+            pos++;
+            $scope.children[pos].x = minx+157;
+            $scope.children[pos].y = yPos;
+            pos++;
+            yPos += 50;
+        }
+        if (len-pos >= 1) {
+            $scope.children[pos].x = minx;
+            $scope.children[pos].y = yPos;
+            pos++;
+        }
+        if (len-pos >= 1) {
+            $scope.children[pos].x = minx+105;
+            $scope.children[pos].y = yPos;
+            pos++;
+        }
+        if (len-pos >= 1) {
+            $scope.children[pos].x = minx+210;
+            $scope.children[pos].y = yPos;
+            pos++;
+        }
+        yPos += 50;
+        if (len-pos >= 1) {
+            $scope.children[pos].x = minx+52;
+            $scope.children[pos].y = yPos;
+            pos++;
         }
     }
     $scope.layoutChildren();
+    $scope.maxLength = 350;
+    $scope.children.forEach( function(item) {
+        if (item.y+50 > $scope.maxLength) {
+            $scope.maxLength = item.y+50;
+        }
+    });
+
 
     $scope.getHistory = function() {
         if ($scope.filter.length==0) {
@@ -252,6 +308,10 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.ellipse = function(workspace) {
         window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/frontPage.htm";
     }
+    $scope.topLevel = function(workspace) {
+        window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/frontTop.htm";
+    }
+  
 });
 </script>
 
@@ -297,14 +357,14 @@ app.controller('myCtrl', function($scope, $http) {
           <div ng-repeat="hist in recentChanges">
              <ul>
                <li>
-                 <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>
+                 <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName|limitTo:28}}</a>
                </li>
              </ul>
           </div>
           <h1>Upcoming Meetings</h1>
           <ul>
             <li ng-repeat="meet in myMeetings">
-              <a href="meetingFull.htm?id={{meet.id}}">{{meet.name}}</a>
+              <a href="meetingFull.htm?id={{meet.id}}">{{meet.name}} @ {{meet.startTime|date}}</a>
             </li>
           </ul>
           <h1>Your Action Items</h1>
@@ -318,7 +378,7 @@ app.controller('myCtrl', function($scope, $http) {
              {{hist.time|date}} -
              <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
 
-             {{hist.ctxType}} <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>
+             {{hist.ctxType}} <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName|limitTo:28}}</a>
              was {{hist.event}}.
              <br/>
              <i>{{hist.comments}}</i>
@@ -327,7 +387,7 @@ app.controller('myCtrl', function($scope, $http) {
     </td>
     <td style="width:350px;vertial-align:top;">
        <div class="tripleColumn leafContent">
-           <svg height="350px" width="350px">
+           <svg height="{{maxLength}}px" width="350px">
                <g ng-show="parent.key">
                    <ellipse cx="179" cy="69" rx="70" ry="35"
                         style="fill:gray;stroke:gray" ></ellipse>
@@ -339,6 +399,14 @@ app.controller('myCtrl', function($scope, $http) {
                       <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;"
                            ng-click="ellipse(parent)">{{parent.name}}</div>
                    </foreignObject>
+               </g>
+               <g ng-hide="parent.key">
+                   <ellipse cx="179" cy="69" rx="19" ry="18"
+                        style="fill:gray;stroke:gray" ></ellipse>
+                   <line x1="177" y1="85" x2="177" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
+                   <line x1="173" y1="85" x2="173" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
+                   <ellipse cx="175" cy="65" rx="19" ry="18"  ng-click="topLevel(thisCircle)"
+                        style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer" ></ellipse>
                </g>
                <ellipse cx="179" cy="179" rx="80" ry="40" ng-click="ellipse(thisCircle)"
                     style="fill:gray;stroke:gray" ></ellipse>
@@ -379,7 +447,7 @@ app.controller('myCtrl', function($scope, $http) {
                <li ng-repeat="person in otherMembers">{{person.name}}</li>
                </ul>
            </div>
-           <div style="margin:5px;">
+           <div style="margin:5px;" ng-show="parent.name">
                <h1>Parent Circle</h1>
                <ul>
                <li><a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/frontPage.htm">{{parent.name}}</a>

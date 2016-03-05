@@ -81,8 +81,12 @@
     </definition>
 
     <definition name="FrontPage" extends="slimLayout">
-        <put-attribute name="title" value="History" />
+        <put-attribute name="title" value="FrontPage" />
         <put-attribute name="body" value="/spring/jsp/FrontPage.jsp" />
+    </definition>
+    <definition name="FrontTop" extends="slimLayout">
+        <put-attribute name="title" value="FrontTop" />
+        <put-attribute name="body" value="/spring/jsp/FrontTop.jsp" />
     </definition>
     <definition name="history" extends="slimLayout">
         <put-attribute name="title" value="History" />

@@ -223,6 +223,27 @@ public class MainTabsViewControler extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/frontTop.htm", method = RequestMethod.GET)
+    public ModelAndView frontTop(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+
+            registerRequiredProject(ar, siteId, pageId);
+            ModelAndView modelAndView= checkLoginMember(ar);
+            if (modelAndView!=null) {
+                return modelAndView;
+            }
+
+            request.setAttribute("messages", context);
+            return new ModelAndView("FrontTop");
+        }catch(Exception ex){
+            throw new NGException("nugen.operation.fail.project.history.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+
+
 
      @RequestMapping(value = "/index.htm", method = RequestMethod.GET)
      public ModelAndView showLandingPage(HttpServletRequest request, HttpServletResponse response)
