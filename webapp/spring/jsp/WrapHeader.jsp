@@ -1,4 +1,4 @@
-<!-- BEGIN slimHeader.jsp -->
+<!-- BEGIN WrapHeader.jsp -->
 <%!
 /*
 
@@ -402,5 +402,5 @@ function displayWelcomeMessage(info) {
 
 initLogin(<% loginConfig.write(out, 2, 2); %>, <% loginInfo.write(out, 2, 2); %>, displayWelcomeMessage);
 </script>
-<!-- END slimHeader.jsp -->
+<!-- END WrapHeader.jsp -->
 <% out.flush(); %>

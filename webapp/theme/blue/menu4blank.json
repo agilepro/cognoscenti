@@ -1,9 +1,11 @@
-[
-  {
-    "level":1,
-    "name": "Welcome Page",
-    "href": "index.htm",
-    "ref": "ddsubmenu1",
-    "subs":   []
-  }
-]
+{
+    mainList: [
+      {
+        "level":1,
+        "name": "Welcome Page",
+        "href": "index.htm",
+        "ref": "ddsubmenu1",
+        "subs":   []
+      }
+    ]
+}

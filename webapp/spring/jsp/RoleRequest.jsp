@@ -146,8 +146,6 @@ app.controller('myCtrl', function($scope, $http) {
             <td >Requested by</td>
             <td >Description</td>
             <td >State</td>
-            <td >Request Id</td>
-            <td >Completed</td>
         </tr>
         <tr ng-repeat="rec in allRoleRequests">
             <td>
@@ -166,9 +164,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td>{{rec.modified|date}}</td>
             <td><a href="<%=ar.retPath%>v/{{rec.requestKey}}/userSettings.htm">{{rec.requestName}}</a></td>
             <td>{{rec.description}}</td>
-            <td>{{rec.state}}</td>
-            <td>{{rec.id}}</td>
-            <td><img src="<%=ar.retPath%>assets/iconWarning.png" ng-hide="rec.completed"></td>
+            <td>{{rec.state}} <img src="<%=ar.retPath%>assets/iconWarning.png" ng-hide="rec.completed"></td>
         </tr>
     </table>
 

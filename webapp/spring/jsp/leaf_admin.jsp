@@ -73,7 +73,7 @@
 
 %>
 
-
+<fmt:setBundle basename="messages"/>
 <script type="text/javascript" language="JavaScript">
 
 var app = angular.module('myApp', ['ui.bootstrap']);
@@ -286,17 +286,6 @@ app.filter('escape', function() {
                             {{lookUpName(projectInfo.parentKey)}}
                         </td>
                     </tr>
-
-
-                    <!--tr><td style="height:5px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2">Default Location:</td>
-                        <td  style="width:20px;"></td>
-                        <td>
-                            <input type="button" class="btn btn-primary" name="action"
-                                value="Browse" onclick="browse()">
-                        </td>
-                    </tr-->
 
                     <tr><td style="height:15px"></td></tr>
                     <tr>

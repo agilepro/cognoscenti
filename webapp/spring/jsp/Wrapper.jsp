@@ -3,10 +3,15 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"
 %><%
-    String title=(String)request.getAttribute("title");
-    String themePath = ar.getThemePath();
     long renderStart = System.currentTimeMillis();
+    
+    //this is the most important setting .. it is the name of the JSP file
+    //that is being wrapped with a standard header and a footer.
+    String templateName = ar.reqParam("wrappedJSP")+".jsp";
 
+    
+    String title = ar.defParam("title", templateName);
+    String themePath = ar.getThemePath();
     Cognoscenti cog = ar.getCogInstance();
 
 //pageTitle is a very strange variable.  It mostly is used to hold the value displayed
@@ -78,11 +83,14 @@
     }
     JSONObject menuWrapper = JSONObject.readFromFile(menuFile);
     JSONArray mainList = menuWrapper.getJSONArray("mainList");
+    
 
 %>
-<!-- BEGIN slimLayout.jsp -->
+<!-- BEGIN Wrapper.jsp Layout-->
 <html>
 <head>
+    <fmt:setBundle basename="messages"/>
+    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="Content-Language" content="en-us" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
@@ -118,12 +126,7 @@
     <link href="<%=ar.retPath%><%=themePath%>theme.css" rel="styleSheet" type="text/css" media="screen" />
 
     
-    <title><tiles:getAsString name="title"/><%
-    if(title!=null) {
-        ar.write(" : ");
-        ar.write(title);
-    }
-    %></title>
+    <title><% ar.writeHtml(title); %></title>
     
     
     
@@ -171,7 +174,7 @@ function standardTinyMCEOptions() {
 
 <!-- Begin Top Navigation Area -->
 <div class="topNav">
-<%@ include file="slimHeader.jsp" %>
+<%@ include file="WrapHeader.jsp" %>
 </div>
 <!-- End Top Navigation Area -->
 
@@ -183,7 +186,7 @@ function standardTinyMCEOptions() {
                 <td valign="top">
                     <!-- Begin mainContent (Body area) -->
                         <div id="mainContent">
-<tiles:insertAttribute name="body" />
+<jsp:include page="<%=templateName%>" />
                         </div>
                     <!-- End mainContent (Body area) -->
                 </td>
@@ -197,7 +200,7 @@ function standardTinyMCEOptions() {
 <div id="siteFooter">
     <div id="siteFooterRight">
         <div id="siteFooterCenter">
-<%@ include file="slimFooter.jsp" %>
+<%@ include file="WrapFooter.jsp" %>
         </div>
     </div>
 </div>
@@ -207,4 +210,4 @@ function standardTinyMCEOptions() {
     <!-- End body wrapper -->
 </body>
 </html>
-<!-- END slimLayout.jsp - - <%= (System.currentTimeMillis()-renderStart) %> ms -->
+<!-- END Wrapper.jsp Layout - - <%= (System.currentTimeMillis()-renderStart) %> ms -->

@@ -5,6 +5,8 @@
     String property_msg_key = ar.reqParam("property_msg_key");
 
 %>
+
+<fmt:setBundle basename="messages"/>
     <div class="generalArea">
         <div class="generalContent">
             <img src="<%=ar.retPath %>assets/iconAlertBig.gif" title="Alert">&nbsp;&nbsp;

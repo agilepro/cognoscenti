@@ -2077,7 +2077,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%if (isLoggedIn) { %>
     <hr/>
-    <div style="margin:20px;">
+    <div style="margin:20px;" ng-show="meeting.state<3">
         <button ng-click="createAgendaItem()" class="btn">Create New Agenda Item</button>
     </div>
 

@@ -47,11 +47,6 @@ public class RoleRequestRecord extends DOMFace {
         setAttribute("state", state);
     }
 
-    public long getCreatedDate() {
-        String timeAttrib = getAttribute("createdDate");
-        return safeConvertLong(timeAttrib);
-    }
-
     public String getRequestedBy() {
         return getScalar("requestedBy");
     }
@@ -69,12 +64,11 @@ public class RoleRequestRecord extends DOMFace {
     }
 
     public long getModifiedDate() {
-        String timeAttrib = getAttribute("modifiedDate");
-        return safeConvertLong(timeAttrib);
+        return getAttributeLong("modifiedDate");
     }
 
     public void setModifiedDate(long modifiedDate) {
-        setAttribute("modifiedDate", Long.toString(modifiedDate));
+        setAttributeLong("modifiedDate", modifiedDate);
     }
 
     public String getModifiedBy() {

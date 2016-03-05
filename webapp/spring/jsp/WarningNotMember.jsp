@@ -3,8 +3,26 @@
 %><%@page import="org.socialbiz.cog.RoleRequestRecord"
 %><%
     UserProfile up = ar.getUserProfile();
+    String userId = ar.getBestUserId();
     AddressListEntry ale = up.getAddressListEntry();
     String description = "";
+    
+    NGContainer ngc = ar.ngp;
+    boolean isRequested = false;
+    String requestState = "";
+    String requestMsg = "";
+    long latestDate = 0;
+    
+    for (RoleRequestRecord rrr : ngc.getAllRoleRequest()) {
+        if (up.hasAnyId(rrr.getRequestedBy())) {
+            if (rrr.getModifiedDate()>latestDate) {
+                isRequested = true;
+                requestMsg = rrr.getRequestDescription();
+                requestState = rrr.getState();
+                latestDate = rrr.getModifiedDate();
+            }
+        }
+    }
     
 %>
 <style>
@@ -20,7 +38,13 @@ var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.atts = "ss";
     $scope.enterMode = false;
-    $scope.enterRequest = "";
+    $scope.enterRequest = "<% ar.writeJS(requestMsg); %>";
+    $scope.requestState = "<% ar.writeJS(requestState); %>";
+    $scope.isRequested = <%=isRequested%>;
+    $scope.requestDate = <%=latestDate%>;
+    $scope.reportError = function(data) {
+        $scope.errorMsg = JSON.stringify(data);
+    }
     
     $scope.takeStep = function() {
         if (!$scope.enterMode) {
@@ -28,9 +52,28 @@ app.controller('myCtrl', function($scope, $http) {
             return;
         }
         else {
-            alert("Sorry, not implemented yet.");
+            $scope.roleChange();
         }
     }
+
+    $scope.roleChange = function() {
+        var data = {};
+        data.op = 'Join';
+        data.roleId = 'Members';
+        data.desc = $scope.enterRequest;
+        var postURL = "rolePlayerUpdate.json";
+        var postdata = angular.toJson(data);
+        $scope.showError=false;
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            alert("OK, you have requested membership")
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    
+    
 });
 
 </script>
@@ -69,10 +112,15 @@ app.controller('myCtrl', function($scope, $http) {
                 <td>
                 <%         
                    NGRole admins = ar.ngp.getSecondaryRole(); 
+                   boolean needsComma = false;
                    for (AddressListEntry player : admins.getExpandedPlayers(ar.ngp)) {
+                       if (needsComma) {
+                           ar.write(", ");
+                       }
                        ar.write("<span>");
                        player.writeLink(ar);
-                       ar.write(", </span>");
+                       ar.write("</span>");
+                       needsComma = true;
                    }
                 %>
                 </td>
@@ -91,7 +139,13 @@ app.controller('myCtrl', function($scope, $http) {
             </table>
         </div>
         <div ng-hide="enterMode" class="generalContent warningBox">
-            If you think you should be a member then please:  
+            <div ng-show="isRequested">
+                 You requested membership on {{requestDate|date}}.<br/>
+                 The status of that request is: <b>{{requestState}}</b>.
+            </div>
+            <div ng-hide="isRequested">
+                If you think you should be a member then please:  
+            </div>
         </div>
         <div ng-show="enterMode" class="generalContent warningBox">
             <div>Enter a reason to join the workspace:</div>
@@ -101,6 +155,8 @@ app.controller('myCtrl', function($scope, $http) {
             <button class="btn btn-primary" ng-click="takeStep()">Request Membership</button>
         </div>
       </td></tr></table>
+      
+      {{errorMsg}}
     </div>
 
 </div>

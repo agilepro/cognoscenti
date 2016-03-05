@@ -81,7 +81,92 @@ public class BaseController {
         return new ModelAndView("Warning");
     }
 
+    
+    
+    //////////////////////// JSP Wrapping and Streaming ////////////////////////////
 
+    protected static void streamJSP(AuthRequest ar, String jspName) throws Exception {
+        //just to make sure there are no DOUBLE pages being sent
+        if (ar.req.getAttribute("wrappedJSP")!=null) {
+            throw new Exception("wrappedJSP has already been set to ("+ar.req.getAttribute("wrappedJSP")
+                     +") when trying to set it to ("+jspName+")");
+        }
+        
+        ar.req.setAttribute("wrappedJSP", jspName);
+        ar.invokeJSP("/spring/jsp/Wrapper.jsp");
+    }
+
+    protected static void streamJSPWarning(AuthRequest ar, String why) throws Exception {
+        ar.req.setAttribute("property_msg_key", why);
+        streamJSP(ar,"Warning");
+    }
+    
+    public static void showJSPAnonymous(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
+        try{
+            registerRequiredProject(ar, siteId, pageId);
+            streamJSP(ar, jspName);
+        }
+        catch(Exception ex){
+            System.out.println("Unable to prepare JSP view of "+jspName+": "+ex.toString());
+            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+        }
+    }
+
+    public static void showJSPLoggedIn(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
+        try{
+            if(!ar.isLoggedIn()){
+                ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
+                streamJSP(ar, "Warning");
+                return;
+            }
+            if (needsToSetName(ar)) {
+                streamJSP(ar, "requiredName");
+                return;
+            }
+            registerRequiredProject(ar, siteId, pageId);
+            streamJSP(ar, jspName);
+        }
+        catch(Exception ex){
+            System.out.println("Unable to prepare JSP view of "+jspName+": "+ex.toString());
+            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+        }
+    }
+    
+    
+    public static void showJSPMembers(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
+        try{
+            registerRequiredProject(ar, siteId, pageId);
+            if(!ar.isLoggedIn()){
+                ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
+                streamJSP(ar, "Warning");
+                return;
+            }
+            if (needsToSetName(ar)) {
+                streamJSP(ar, "requiredName");
+                return;
+            }
+            if (ar.ngp==null) {
+                throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGPage on the AuthRequest.");
+            }
+            if(!ar.isMember()){
+                ar.req.setAttribute("roleName", "Members");
+                streamJSP(ar, "WarningNotMember");
+                return;
+            }
+            if (UserManager.getAllSuperAdmins(ar).size()==0) {
+                ar.req.setAttribute("property_msg_key", "nugen.missingSuperAdmin");
+                streamJSP(ar, "Warning");
+                return;
+            }
+            streamJSP(ar, jspName);
+        }
+        catch(Exception ex){
+            System.out.println("Unable to prepare JSP view of "+jspName+": "+ex.toString());
+            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+        }
+    }
+    
+    
 
     /**
      * This is a convenience function for all handlers that have the account and project
@@ -178,7 +263,7 @@ public class BaseController {
         return null;
     }
 
-    protected boolean needsToSetName(AuthRequest ar) throws Exception {
+    protected static boolean needsToSetName(AuthRequest ar) throws Exception {
         if (!ar.isLoggedIn()) {
             return false;
         }
@@ -187,17 +272,6 @@ public class BaseController {
         return displayName == null || displayName.length()==0;
     }
 
-/*
-emaio is provided by the SSOFI so no need to manipulate it here
-    protected boolean needsToSetEmail(AuthRequest ar) throws Exception {
-        if (!ar.isLoggedIn()) {
-            return false;
-        }
-        UserProfile up = ar.getUserProfile();
-        String email = up.getPreferredEmail();
-        return email == null || email.length()==0;
-    }
-*/
 
     /**
      * This is a set of checks that results in different views depending on the state

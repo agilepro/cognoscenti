@@ -60,37 +60,132 @@ import org.workcast.streams.MemFile;
 
 @Controller
 public class ProjectSettingController extends BaseController {
-
+    
+    
+    
+    //////////////////////// MAIN VIEWS ////////////////////////////
+    
     @RequestMapping(value = "/{siteId}/{pageId}/personal.htm", method = RequestMethod.GET)
     public ModelAndView showPersonalTab(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
-
-            if (!ar.isLoggedIn()) {
-                return showWarningView(ar, "nugen.project.personal.login.msg");
-            }
-
-            //signing up as member or other operations require name and email address
-            if (needsToSetName(ar)) {
-                return new ModelAndView("requiredName");
-            }
-
-            ModelAndView modelAndView = new ModelAndView("personal");
-            request.setAttribute("visibility_value", "4");
-
-            modelAndView.addObject("page", nGPage);
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            return modelAndView;
-        }
-        catch (Exception ex) {
-            throw new NGException("nugen.operation.fail.project.personal.page", new Object[] {
-                    pageId, siteId }, ex);
-        }
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPLoggedIn(ar,siteId,pageId, "leaf_personal");
+        return null;
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/roleManagement.htm", method = RequestMethod.GET)
+    public ModelAndView roleManagement(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "RoleManagement");
+        return null;
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/roleRequest.htm", method = RequestMethod.GET)
+    public ModelAndView remindersTab(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "RoleRequest");
+        return null;
+    }
+
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/admin.htm", method = RequestMethod.GET)
+    public ModelAndView showAdminTab(@PathVariable String siteId,
+            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "leaf_admin");
+        return null;
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/labelList.htm", method = RequestMethod.GET)
+    public ModelAndView labelList(
+            @PathVariable String pageId, @PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "LabelList");
+        return null;
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/listEmail.htm", method = RequestMethod.GET)
+    public ModelAndView getEmailRecordsPage( @PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "ListEmail");
+        return null;
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/emailSent.htm", method = RequestMethod.GET)
+    public ModelAndView emailSent( @PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "EmailSent");
+        return null;
+    }
+
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/streamingLinks.htm", method = RequestMethod.GET)
+    public ModelAndView streamingLinks(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "StreamingLinks");
+        return null;
+    }
+
+    
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/sendNote.htm", method = RequestMethod.GET)
+    public ModelAndView sendNote(
+            @PathVariable String pageId, @PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "SendNote");
+        return null;
+    }
+
+
+    @RequestMapping(value = "/{siteId}/{pageId}/synchronizeUpstream.htm", method = RequestMethod.GET)
+    public ModelAndView synchronizeUpstream(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "synchronizeUpstream");
+        return null;
+    }
+
+
+
+    
+    
+    
+    ////////////////////////////// REDIRECTS ///////////////////////////////////
+    
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/permission.htm", method = RequestMethod.GET)
+    public ModelAndView permission(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        return redirectBrowser(ar, "roleManagement.htm");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/EditRole.htm", method = RequestMethod.GET)
+    public ModelAndView editRole(@PathVariable String siteId,@PathVariable String pageId,
+            @RequestParam String roleName, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        return redirectBrowser(ar, "roleManagement.htm");
+    }
+
+    
+    
+    //////////////////////// REST REQUESTS ///////////////////////////
+    
     @RequestMapping(value = "/{siteId}/{pageId}/personalUpdate.json", method = RequestMethod.POST)
     public void personalUpdate(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -164,11 +259,12 @@ public class ProjectSettingController extends BaseController {
                 if (role.isPlayer(up)) {
                     //don't do anything
                 }
-                else if (rrr!=null && !rrr.isCompleted()){
-
-                }
                 else {
-                    rrr = ngp.createRoleRequest(roleId, up.getUniversalId(), ar.nowTime, up.getUniversalId(), "");
+                    String requestDesc = "";
+                    if (personalInfo.has("desc")) {
+                        requestDesc = personalInfo.getString("desc");
+                    }
+                    rrr = ngp.createRoleRequest(roleId, up.getUniversalId(), ar.nowTime, up.getUniversalId(), requestDesc);
 
                     NGRole adminRole = ngp.getSecondaryRole();
                     NGRole executiveRole = ngp.getSite().getRole("Executives");//getSecondaryRole();
@@ -341,108 +437,6 @@ public class ProjectSettingController extends BaseController {
         }
     }
 
-
-    @RequestMapping(value = "/{siteId}/{pageId}/permission.htm", method = RequestMethod.GET)
-    public ModelAndView showPermissionTab(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-
-            NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
-            List<CustomRole> roles = nGPage.getAllRoles();
-
-            ModelAndView modelAndView= checkLoginMember(ar);
-            if (modelAndView!=null) {
-                return modelAndView;
-            }
-
-            modelAndView = new ModelAndView("permission");
-
-            //TODO: eliminate these unnecessary parameters
-            request.setAttribute("roles", roles);
-            modelAndView.addObject("page", nGPage);
-
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.permission.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/roleManagement.htm", method = RequestMethod.GET)
-    public ModelAndView roleManagement(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerRequiredProject(ar, siteId, pageId);
-
-            ModelAndView modelAndView= checkLoginMember(ar);
-            if (modelAndView!=null) {
-                return modelAndView;
-            }
-
-            return new ModelAndView("RoleManagement");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.permission.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/EditRole.htm", method = RequestMethod.GET)
-    public ModelAndView editRole(@PathVariable String siteId,@PathVariable String pageId,
-            @RequestParam String roleName,
-            HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
-
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            NGContainer nGPage  = registerRequiredProject(ar, siteId, pageId);
-
-            List<CustomRole> roles = nGPage.getAllRoles();
-
-            modelAndView = new ModelAndView("EditRole");
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("roleName", roleName);
-            request.setAttribute("roles", roles);
-            request.setAttribute("title", " : " + nGPage.getFullName());
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.edit.role.page", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-
-    }
-    @RequestMapping(value = "/{siteId}/{pageId}/roleRequest.htm", method = RequestMethod.GET)
-    public ModelAndView remindersTab(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-
-            NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
-            ar.setPageAccessLevels(nGPage);
-            if(!ar.isLoggedIn()){
-                request.setAttribute("property_msg_key", "nugen.project.role.request.login.msg");
-                modelAndView=new ModelAndView("Warning");
-            }else if(!ar.isMember()){
-                request.setAttribute("property_msg_key", "nugen.projecthome.rolerequest.memberlogin");
-                modelAndView=new ModelAndView("WarningNotMember");
-            }else{
-                modelAndView=new ModelAndView("RoleRequest");
-                modelAndView.addObject("page", nGPage);
-            }
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.role.request.page", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-
-    }
 
     //TODO: eliminate this routine
     @RequestMapping(value = "/{siteId}/{pageId}/pageRoleAction.form", method = RequestMethod.POST)
@@ -649,106 +643,6 @@ public class ProjectSettingController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/admin.htm", method = RequestMethod.GET)
-    public ModelAndView showAdminTab(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.login.msg");
-            }
-            //signing up as member or other operations require name and email address
-            if (needsToSetName(ar)) {
-                return new ModelAndView("requiredName");
-            }
-            if(!ar.isMember()){
-                ar.req.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-
-
-            request.setAttribute("visibility_value", "3");
-            return new ModelAndView("leaf_admin");
-        }catch (Exception ex) {
-            throw new NGException("nugen.operation.fail.project.admin.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
-
-
-
-    @RequestMapping(value = "/{siteId}/{pageId}/listEmail.htm", method = RequestMethod.GET)
-    public ModelAndView getEmailRecordsPage( @PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = null;
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.upload.email.reminder.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-
-            modelAndView=new ModelAndView("ListEmail");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.emailrecords.page", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/emailSent.htm", method = RequestMethod.GET)
-    public ModelAndView emailSent( @PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = null;
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.upload.email.reminder.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-
-            modelAndView=new ModelAndView("EmailSent");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.emailrecords.page", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/sendNote.htm", method = RequestMethod.GET)
-    public ModelAndView sendNote(
-            @PathVariable String pageId, @PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerRequiredProject(ar, siteId, pageId);
-            if (!ar.isLoggedIn()) {
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-
-            ar.preserveRealRequestURL();
-            return new ModelAndView("SendNote");
-        }
-        catch (Exception ex) {
-            throw new NGException("nugen.operation.fail.project.sent.note.by.email.page",
-                null, ex);
-        }
-    }
-
-
 
     @RequestMapping(value = "/{siteId}/{pageId}/emailGeneratorUpdate.json", method = RequestMethod.POST)
     public void emailGeneratorUpdate(@PathVariable String siteId,@PathVariable String pageId,
@@ -803,79 +697,6 @@ public class ProjectSettingController extends BaseController {
         }
     }
 
-
-    @RequestMapping(value = "/{siteId}/{pageId}/streamingLinks.htm", method = RequestMethod.GET)
-    public ModelAndView streamingLinks(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= checkLoginMember(ar);
-            if (modelAndView!=null) {
-                return modelAndView;
-            }
-
-            modelAndView = new ModelAndView("StreamingLinks");
-            request.setAttribute("visibility_value", "4");
-
-            modelAndView.addObject("page", nGPage);
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            return modelAndView;
-        }
-        catch (Exception ex) {
-            throw new NGException("nugen.operation.fail.project.personal.page", new Object[] {
-                    pageId, siteId }, ex);
-        }
-    }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/synchronizeUpstream.htm", method = RequestMethod.GET)
-    public ModelAndView synchronizeUpstream(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= checkLoginMember(ar);
-            if (modelAndView!=null) {
-                return modelAndView;
-            }
-
-            modelAndView = new ModelAndView("synchronizeUpstream");
-            request.setAttribute("visibility_value", "4");
-
-            modelAndView.addObject("page", nGPage);
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            return modelAndView;
-        }
-        catch (Exception ex) {
-            throw new NGException("nugen.operation.fail.project.personal.page", new Object[] {
-                    pageId, siteId }, ex);
-        }
-    }
-
-
-    @RequestMapping(value = "/{siteId}/{pageId}/labelList.htm", method = RequestMethod.GET)
-    public ModelAndView labelList(
-            @PathVariable String pageId, @PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerRequiredProject(ar, siteId, pageId);
-            if (!ar.isLoggedIn()) {
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-
-            return new ModelAndView("LabelList");
-        }
-        catch (Exception ex) {
-            throw new NGException("nugen.operation.fail.project.sent.note.by.email.page",
-                null, ex);
-        }
-    }
 
     @RequestMapping(value = "/{siteId}/{pageId}/labelUpdate.json", method = RequestMethod.POST)
     public void labelUpdate(@PathVariable String siteId,@PathVariable String pageId,

@@ -20,7 +20,6 @@
 
 package org.socialbiz.cog.spring;
 
-import java.io.File;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,7 +52,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
-import org.workcast.streams.StreamHelper;
 
 /**
  * This class will handle all requests managing process/tasks. Currently this is
@@ -72,6 +70,74 @@ public class ProjectGoalController extends BaseController {
     public static final String SUCCESS_REMOTE = "success_remote";
     public static final String REMOTE_PROJECT = "Remote_project";
     public static final String LOCAL_PROJECT = "Local_Project";
+    
+    
+    
+    ///////////////////////// MAIN VIEWS ////////////////////////////////////
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/goalList.htm", method = RequestMethod.GET)
+    public ModelAndView goalList(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "GoalList");
+        return null;
+    }
+
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/task{taskId}.htm", method = RequestMethod.GET)
+    public void displayTask(@PathVariable String siteId,
+        @PathVariable String pageId,  @PathVariable String taskId,
+        HttpServletRequest request,   HttpServletResponse response)
+            throws Exception
+    {
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+
+            GoalRecord goal = ngp.getGoalOrFail(taskId);
+            boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, goal);
+
+            if(!canAccessGoal){
+                if(!ar.isLoggedIn()){
+                    streamJSPWarning(ar, "message.login.to.see.task.detail");
+                    return;
+                }
+                if(!ar.isMember()){
+                    streamJSP(ar, "WarningNotMember");
+                    return;
+                }
+                throw new Exception("Program Logic Error: logged in member should be able to see task.");
+            }
+            request.setAttribute("taskId", taskId);
+
+            if(!ar.isLoggedIn()){
+                streamJSP(ar, "displayTaskInfo");
+            }
+            else if(goal.isPassive()) {
+                streamJSP(ar, "displayPassiveGoal");
+            }
+            else{
+                request.setAttribute("bookList",ar.getUserProfile().findAllMemberSites());
+                streamJSP(ar, "GoalEdit");
+            }
+
+        }catch(Exception ex){
+            throw new NGException("nugen.operation.fail.project.edit.task.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/decisionList.htm", method = RequestMethod.GET)
+    public ModelAndView decisionList(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "DecisionList");
+        return null;
+    }
+
+    
+    
+    ////////////////////////// FORM SUBMISSIONS //////////////////////////////
+    
 
     @RequestMapping(value = "/{siteId}/{pageId}/CreateTask.form", method = RequestMethod.POST)
     public ModelAndView createTask(@PathVariable String siteId, @PathVariable String pageId,
@@ -303,70 +369,6 @@ public class ProjectGoalController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/task{taskId}.htm", method = RequestMethod.GET)
-    public ModelAndView displayTask(@PathVariable String siteId,
-        @PathVariable String pageId,  @PathVariable String taskId,
-        HttpServletRequest request,   HttpServletResponse response)
-            throws Exception
-    {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
-
-            GoalRecord goal = ngp.getGoalOrFail(taskId);
-            boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, goal);
-
-            if(!canAccessGoal){
-                if(!ar.isLoggedIn()){
-                    return showWarningView(ar, "message.login.to.see.task.detail");
-                }
-                if(!ar.isMember()){
-                    return new ModelAndView("WarningNotMember");
-                }
-                throw new Exception("Program Logic Error: logged in member should be able to see task.");
-            }
-
-            ModelAndView modelAndView = null;
-            if(!ar.isLoggedIn()){
-                modelAndView=new ModelAndView("displayTaskInfo");
-            }
-            else if(goal.isPassive()) {
-                modelAndView=new ModelAndView("displayPassiveGoal");
-            }
-            else{
-                modelAndView=new ModelAndView("GoalEdit");
-                request.setAttribute("bookList",ar.getUserProfile().findAllMemberSites());
-            }
-
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("taskId", taskId);
-            return modelAndView;
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.edit.task.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/goalList.htm", method = RequestMethod.GET)
-    public ModelAndView goalList(@PathVariable String siteId, @PathVariable String pageId,
-        HttpServletRequest request,   HttpServletResponse response)  throws Exception
-    {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerRequiredProject(ar, siteId, pageId);
-
-            ModelAndView modelAndView= checkLoginMember(ar);
-            if (modelAndView!=null) {
-                return modelAndView;
-            }
-
-            modelAndView=new ModelAndView("GoalList");
-            return modelAndView;
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.edit.task.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
 
     @RequestMapping(value = "/{siteId}/{pageId}/updateTaskStatus.ajax", method = RequestMethod.POST)
     public void handleActivityUpdates(@PathVariable String siteId, @PathVariable String pageId,@RequestParam String pId,
@@ -556,11 +558,13 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
+    /*
     @RequestMapping(value = "/errorPage.htm", method = RequestMethod.GET)
      public ModelAndView errorPage(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         return new ModelAndView("commonError");
     }
+    */
 
     @RequestMapping(value = "/subProcess.ajax", method = RequestMethod.POST)
     public void searchSubProcess(HttpServletRequest request,
@@ -614,75 +618,7 @@ public class ProjectGoalController extends BaseController {
 
 
 
-    /*
-    @RequestMapping(value = "/{siteId}/{pageId}/setOrderTasks.ajax", method = RequestMethod.POST)
-    public void updateOrderTasks( @PathVariable String pageId,@RequestParam String indexString,
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
 
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        String responseMessage = "";
-        try{
-            ar.assertLoggedIn("You need to login to perform this function.");
-
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-            ar.setPageAccessLevels(ngp);
-            ar.assertMember("Must be a member of a workspace to reorder tasks.");
-            ar.assertNotFrozen(ngp);
-
-            List<GoalRecord> tasks = ngp.getAllGoals();
-
-            //Get the ranks of all the tasks from the browser
-            List<String> idlist = UtilityMethods.splitString(indexString, ',');
-            int last = idlist.size();
-            int[] previous = new int[last];
-
-            for (int i=0; i<last; i++){
-                String taskId=idlist.get(i);
-                boolean found = false;
-                for (GoalRecord task : tasks) {
-                    if(task.getId().equals(taskId)){
-                        previous[i] = task.getRank();
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    throw new NGException("nugen.exception.task.not.found", new Object[]{taskId});
-                }
-            }
-
-            //sort the array so that the tasks will be in order
-            Arrays.sort(previous);
-
-            //set the ranks back into the tasks so they take the spot that the
-            //other task was in.  In effect, when you reorder tasks, they take
-            //the same absolute position that the other task used to have.
-            for (int i=0; i<last; i++){
-                String taskId=idlist.get(i);
-                for (GoalRecord task : tasks) {
-                    if(task.getId().equals(taskId)){
-                        task.setRank(previous[i]);
-                        break;
-                    }
-                }
-            }
-
-            //clean up and normalize into canonical form
-            ngp.renumberGoalRanks();
-
-            JSONObject paramMap = new JSONObject();
-            paramMap.put(Constant.MSG_TYPE,SUCCESS_LOCAL);
-            paramMap.put(Constant.MSG_DETAIL,"Update Order Successfull");
-            responseMessage = paramMap.toString();
-            ngp.saveFile(ar, "Reordered the tasks");
-        }catch (Exception ex) {
-            responseMessage = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
-            ar.logException("Caught by SUCCESS_LOCAL.ajax", ex);
-        }
-        NGWebUtils.sendResponse(ar, responseMessage);
-    }
-    */
 
     @RequestMapping(value = "/{siteId}/{pageId}/updateGoal.json", method = RequestMethod.POST)
     public void updateGoal(@PathVariable String siteId,@PathVariable String pageId,
@@ -821,27 +757,6 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/decisionList.htm", method = RequestMethod.GET)
-    public ModelAndView decisionList(@PathVariable String siteId, @PathVariable String pageId,
-        HttpServletRequest request,   HttpServletResponse response)  throws Exception
-    {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerRequiredProject(ar, siteId, pageId);
-
-            ModelAndView modelAndView= checkLoginMember(ar);
-            if (modelAndView!=null) {
-                return modelAndView;
-            }
-
-            modelAndView=new ModelAndView("DecisionList");
-            return modelAndView;
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.edit.task.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
-
     @RequestMapping(value = "/{siteId}/{pageId}/updateDecision.json", method = RequestMethod.POST)
     public void updateDecision(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -888,6 +803,7 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/{filename}.html", method = RequestMethod.GET)
     public void modalHandler(@PathVariable String siteId,
             @PathVariable String pageId, @PathVariable String filename,
@@ -908,5 +824,5 @@ public class ProjectGoalController extends BaseController {
             streamException(ee, ar);
         }
     }
-
+*/
 }

@@ -1,4 +1,4 @@
-<!-- BEGIN slimFooter.jsp -->
+<!-- BEGIN WrapFooter.jsp -->
 <%
 /*
 
@@ -35,5 +35,5 @@ Optional Parameter:
         </table>
     </div>
 <% out.flush(); %>
-<!-- END slimFooter.jsp -->
+<!-- END WrapFooter.jsp -->
 

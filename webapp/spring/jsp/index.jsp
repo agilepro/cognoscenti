@@ -9,7 +9,7 @@
     }
 
 %>
-
+<!-- index.jsp -->
 <style type="text/css">
     html {
         background-color:#C1BFC0;
