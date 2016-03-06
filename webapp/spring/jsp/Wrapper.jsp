@@ -10,10 +10,13 @@
     String templateName = ar.reqParam("wrappedJSP")+".jsp";
 
     
-    String title = ar.defParam("title", templateName);
+    String title = ar.defParam("title", templateName); 
     String themePath = ar.getThemePath();
     Cognoscenti cog = ar.getCogInstance();
 
+    UserProfile loggedUser = ar.getUserProfile();
+    
+    
 //pageTitle is a very strange variable.  It mostly is used to hold the value displayed
 //just above the menu.  Usually "Workspace: My Workspace"   or "Site: my Site" or "User: Joe User"
 //Essentially this depends upon the header type (workspace, site, or user).
@@ -83,6 +86,13 @@
     }
     JSONObject menuWrapper = JSONObject.readFromFile(menuFile);
     JSONArray mainList = menuWrapper.getJSONArray("mainList");
+    
+    boolean weaverMenus = false;
+    String loggedKey = "";
+    if (ar.isLoggedIn()) {
+        weaverMenus = loggedUser.getWeaverMenu();
+        loggedKey = loggedUser.getKey();
+    }
     
 
 %>
@@ -174,7 +184,11 @@ function standardTinyMCEOptions() {
 
 <!-- Begin Top Navigation Area -->
 <div class="topNav">
+<% if (weaverMenus) { %>
+<%@ include file="WrapHeader2.jsp" %>
+<% } else { %>
 <%@ include file="WrapHeader.jsp" %>
+<% } %>
 </div>
 <!-- End Top Navigation Area -->
 

@@ -102,6 +102,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td width="200px">Workspace</td>
             <td width="100px">Changed</td>
             <td width="100px">Visited</td>
+            <td width="100px">Site</td>
         </tr>
         <tr ng-repeat="rec in getRows()">
             <td>
@@ -123,6 +124,7 @@ app.controller('myCtrl', function($scope, $http) {
             </td>
             <td>{{rec.changed|date}}</span></td>
             <td>{{rec.visited|date}}</span></td>
+            <td>{{rec.siteKey}}</span></td>
         </tr>
     </table>
 

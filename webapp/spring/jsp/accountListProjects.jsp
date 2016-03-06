@@ -3,12 +3,15 @@
 %><%@page import="org.socialbiz.cog.NotificationRecord"
 %><%
     UserProfile uProf = ar.getUserProfile();
+    Cognoscenti cog = ar.getCogInstance();
+    
     List<NGPageIndex> ownedProjs = ar.getCogInstance().getAllContainers();
     boolean noneFound = ownedProjs.size()==0;
     String accountKey = ar.reqParam("accountId");
+    NGBook site = cog.getSiteByIdOrFail(accountKey);
 
     JSONArray projList = new JSONArray();
-    for (NGPageIndex ngpi : ar.getCogInstance().getAllProjectsInSite(accountKey)) {
+    for (NGPageIndex ngpi : cog.getAllProjectsInSite(accountKey)) {
         if (!ngpi.isProject()) {
             continue;
         }
@@ -33,6 +36,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    $scope.site = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.projList = <%projList.write(out,2,4);%>;
     $scope.noneFound = <%=noneFound%>;
     $scope.filter = "";
@@ -89,19 +93,19 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Workspaces that belong to this site
+            Workspaces that belong to site '{{site.names[0]}}'
         </div>
-        <!--div class="rightDivContent" style="margin-right:100px;">
+        <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="" >Do Nothing</a></li>
+              <li role="presentation"><a role="menuitem"
+                  href="accountCreateProject.htm" >Create New Workspace</a></li>
             </ul>
           </span>
 
-        </div-->
+        </div>
     </div>
 
 

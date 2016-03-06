@@ -20,6 +20,8 @@
 
 package org.socialbiz.cog;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -103,4 +105,18 @@ public class WatchRecord extends DOMFace
         return getAttributeLong("lastseen");
     }
 
+    
+    public static void sortByChangeDate(List<WatchRecord> watchList) {
+        Collections.sort(watchList, new WatchComparator());
+    }
+    
+    private static class WatchComparator implements Comparator<WatchRecord> {
+        public WatchComparator() {
+        }
+
+        @Override
+        public int compare(WatchRecord arg0, WatchRecord arg1) {
+            return (int)(arg0.getLastSeen() - arg1.getLastSeen());
+        }
+    }
 }

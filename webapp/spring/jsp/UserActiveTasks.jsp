@@ -9,6 +9,10 @@
         throw new NGException("nugen.exception.cant.find.user",null);
     }
 
+    NGPageIndex.clearLocksHeldByThisThread();
+    UserCache userCache = ar.getCogInstance().getUserCacheMgr().getCache(uProf.getKey());
+    JSONArray workList = userCache.getActionItems();
+
     UserProfile  operatingUser =ar.getUserProfile();
     if (operatingUser==null) {
         //this should never happen, and if it does it is not the users fault
@@ -18,9 +22,6 @@
     boolean viewingSelf = uProf.getKey().equals(operatingUser.getKey());
     String loggingUserName=uProf.getName();
 
-
-    UserCache userCache = ar.getCogInstance().getUserCacheMgr().getCache(uProf.getKey());
-    JSONArray workList = userCache.getActionItems();
 
 %>
 

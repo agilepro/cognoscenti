@@ -56,9 +56,12 @@
 %><%@page import="org.socialbiz.cog.UserPage"
 %><%@page import="org.socialbiz.cog.UserProfile"
 %><%@page import="org.socialbiz.cog.UserRef"
+%><%@page import="org.socialbiz.cog.UserCache"
 %><%@page import="org.socialbiz.cog.UtilityMethods"
 %><%@page import="org.socialbiz.cog.UtilityMethods"
 %><%@page import="org.socialbiz.cog.WikiConverter"
+%><%@page import="org.socialbiz.cog.WorkspaceStats"
+%><%@page import="org.socialbiz.cog.WatchRecord"
 %><%@page import="org.socialbiz.cog.dms.RemoteLinkCombo"
 %><%@page import="org.socialbiz.cog.dms.ResourceEntity"
 %><%@page import="org.socialbiz.cog.exception.NGException"
@@ -75,3 +78,5 @@
 %><%
     AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
 %>
+<fmt:setBundle basename="messages"/>
+

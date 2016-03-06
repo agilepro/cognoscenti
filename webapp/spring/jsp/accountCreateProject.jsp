@@ -52,7 +52,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
-            Create Workspace in this Site
+            Create Workspace in Site '{{siteInfo.names[0]}}'
         </div>
         <!--div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">

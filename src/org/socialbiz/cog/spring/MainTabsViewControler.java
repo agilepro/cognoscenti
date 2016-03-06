@@ -46,8 +46,6 @@ import org.socialbiz.cog.SectionDef;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,65 +57,46 @@ import org.workcast.json.JSONObject;
 @Controller
 public class MainTabsViewControler extends BaseController {
 
-    private ApplicationContext context;
-    @Autowired
-    public void setContext(ApplicationContext context) {
-        this.context = context;
-    }
-
-
     
     //////////////////////////////// REDIRECTS ///////////////////////////////////
     
     @RequestMapping(value = "/{siteId}/{pageId}/projectHome.htm", method = RequestMethod.GET)
-    public ModelAndView projectHome(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "frontPage.htm");
+    public void projectHome(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)throws Exception {
+        response.sendRedirect("frontPage.htm");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/public.htm", method = RequestMethod.GET)
-    public ModelAndView publicssssss(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "frontPage.htm");
+    public void publicssssss(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        response.sendRedirect("frontPage.htm");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/member.htm", method = RequestMethod.GET)
-    public ModelAndView member(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "frontPage.htm");
+    public void member(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        response.sendRedirect("frontPage.htm");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/deletedNotes.htm", method = RequestMethod.GET)
-    public ModelAndView deletedNotes(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "frontPage.htm");
+    public void deletedNotes(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        response.sendRedirect("frontPage.htm");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/draftNotes.htm", method = RequestMethod.GET)
-    public ModelAndView draftNotes(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "frontPage.htm");
+    public void draftNotes(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        response.sendRedirect("frontPage.htm");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/process.htm", method = RequestMethod.GET)
-    public ModelAndView showProcessTab(@PathVariable String siteId,@PathVariable String pageId,
+    public void showProcessTab(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "frontPage.htm");
+        response.sendRedirect("frontPage.htm");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/projectActiveTasks.htm", method = RequestMethod.GET)
-    public ModelAndView projectActiveTasks(@PathVariable String siteId,@PathVariable String pageId,
+    public void projectActiveTasks(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "frontPage.htm");
+        response.sendRedirect("frontPage.htm");
     }
 
 
@@ -125,55 +104,59 @@ public class MainTabsViewControler extends BaseController {
     /////////////////////////// MAIN VIEWS //////////////////////////////////////////
     
     @RequestMapping(value = "/{siteId}/{pageId}/notesList.htm", method = RequestMethod.GET)
-    public ModelAndView notesList(@PathVariable String siteId,@PathVariable String pageId,
+    public void notesList(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPAnonymous(ar, siteId, pageId, "NotesList");
-        return null;
     }
 
     
     @RequestMapping(value = "/{siteId}/{pageId}/automaticLinks.htm", method = RequestMethod.GET)
-    public ModelAndView automaticLinks(@PathVariable String siteId,@PathVariable String pageId,
+    public void automaticLinks(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
            throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "AutomaticLinks");
-        return null;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/frontTop.htm", method = RequestMethod.GET)
-    public ModelAndView frontTop(@PathVariable String siteId,@PathVariable String pageId,
+    public void frontTop(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "FrontTop");
-        return null;
     }
     
     @RequestMapping(value = "/{siteId}/{pageId}/frontPage.htm", method = RequestMethod.GET)
-    public ModelAndView frontPage(@PathVariable String siteId,@PathVariable String pageId,
+    public void frontPage(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "FrontPage");
-        return null;
+        showJSPMembers(ar, siteId, pageId, "../jsp/FrontPage");
+    }
+
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/SiteHome.htm", method = RequestMethod.GET)
+    public void siteHome(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "../jsp/SiteHome");
     }
 
     
     @RequestMapping(value = "/{siteId}/{pageId}/history.htm", method = RequestMethod.GET)
-    public ModelAndView showHistoryTab(@PathVariable String siteId,@PathVariable String pageId,
+    public void showHistoryTab(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "leaf_history");
-        return null;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/noteZoom{lid}.htm", method = RequestMethod.GET)
-    public ModelAndView displayOneLeaflet(@PathVariable String lid, @PathVariable String pageId,
+    public void displayOneLeaflet(@PathVariable String lid, @PathVariable String pageId,
            @PathVariable String siteId, HttpServletRequest request, HttpServletResponse response)
            throws Exception {
        try{
@@ -188,7 +171,6 @@ public class MainTabsViewControler extends BaseController {
            else {
                showJSPMembers(ar, siteId, pageId, "NoteZoom");
            }
-           return null;
        }catch(Exception ex){
            throw new NGException("nugen.operation.fail.project.zoom.note.page", new Object[]{lid,pageId,siteId} , ex);
        }
@@ -198,15 +180,14 @@ public class MainTabsViewControler extends BaseController {
      * This is a view that prompts the user to specify how they want the PDF to be produced.
      */
     @RequestMapping(value = "/{siteId}/{pageId}/exportPDF.htm", method = RequestMethod.GET)
-    public ModelAndView exportPDF(HttpServletRequest request, HttpServletResponse response,
+    public void exportPDF(HttpServletRequest request, HttpServletResponse response,
             @PathVariable String pageId, @PathVariable String siteId) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "exportPDF");
-        return null;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingFull.htm", method = RequestMethod.GET)
-    public ModelAndView meetingFull(@PathVariable String siteId,@PathVariable String pageId,
+    public void meetingFull(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
@@ -222,55 +203,49 @@ public class MainTabsViewControler extends BaseController {
             }
 
             streamJSP(ar, "MeetingFull");
-            return null;
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/cloneMeeting.htm", method = RequestMethod.GET)
-    public ModelAndView cloneMeeting(@PathVariable String siteId,@PathVariable String pageId,
+    public void cloneMeeting(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "CloneMeeting");
-        return null;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/meeting.htm", method = RequestMethod.GET)
-    public ModelAndView meeting(@PathVariable String siteId,@PathVariable String pageId,
+    public void meeting(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "Meeting");
-        return null;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/agendaBacklog.htm", method = RequestMethod.GET)
-    public ModelAndView agendaBacklog(@PathVariable String siteId,@PathVariable String pageId,
+    public void agendaBacklog(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "AgendaBacklog");
-        return null;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/agendaItem.htm", method = RequestMethod.GET)
-    public ModelAndView agendaItem(@PathVariable String siteId,@PathVariable String pageId,
+    public void agendaItem(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "AgendaItem");
-        return null;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingList.htm", method = RequestMethod.GET)
-    public ModelAndView meetingList(@PathVariable String siteId,@PathVariable String pageId,
+    public void meetingList(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "MeetingList");
-        return null;
     }
 
 
@@ -633,9 +608,7 @@ public class MainTabsViewControler extends BaseController {
      */
     @RequestMapping(value = "/searchPublicNotes.htm")
     public ModelAndView searchPublicNotes(
-              HttpServletRequest request, HttpServletResponse response)
-              throws Exception {
-
+              HttpServletRequest request, HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             String searchText   = ar.defParam("searchText", "");

@@ -69,8 +69,6 @@ import org.socialbiz.cog.dms.FolderAccessHelper;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.mail.EmailSender;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -89,18 +87,13 @@ import org.workcast.streams.MemFile;
 @Controller
 public class UserController extends BaseController {
 
-    private ApplicationContext context;
-    @Autowired
-    public void setContext(ApplicationContext context) {
-        this.context = context;
-    }
-
     protected void initBinder(HttpServletRequest request,
             ServletRequestDataBinder binder) throws ServletException {
 
         binder.registerCustomEditor(byte[].class,new ByteArrayMultipartFileEditor());
     }
 
+    /*
     public static ModelAndView createModelAndView(AuthRequest ar,
             UserProfile up, String modelAndViewName) {
 
@@ -116,8 +109,32 @@ public class UserController extends BaseController {
         request.setAttribute("title", up.getName());
         return modelAndView;
     }
+    */
+    
+    public void streamJSPUserLoggedIn(AuthRequest ar, String userId, String jspName) throws Exception {
+        try {
+            if(!ar.isLoggedIn()){
+                ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
+                streamJSP(ar, "Warning");
+                return;
+            }
+            UserProfile up = UserManager.findUserByAnyIdOrFail(userId);
+            ar.req.setAttribute("userProfile", up);
+            ar.req.setAttribute("userKey", up.getKey());
+            streamJSP(ar, jspName);
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to prepare page ("+jspName+") for user ("+userId+")", e);
+        }
+    }
 
+    private void displayUserModelAndView(HttpServletRequest request, HttpServletResponse response,
+            String userKey, String viewName) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        streamJSPUserLoggedIn(ar, userKey, viewName);
+    }
 
+    
     @RequestMapping(value = "/{userKey}/userProfile.htm", method = RequestMethod.GET)
     public ModelAndView loadProfile(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -136,254 +153,233 @@ public class UserController extends BaseController {
         return redirectBrowser(ar,"watchedProjects.htm");
     }
 
+    
+    
+    
+    ////////////////////// MAIN VIEWS /////////////////////////
+    
+    
+    @RequestMapping(value = "/{userKey}/UserHome.htm", method = RequestMethod.GET)
+    public void userHome(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/UserHome");
+    }
+
+    
     @RequestMapping(value = "{userKey}/watchedProjects.htm", method = RequestMethod.GET)
-    public ModelAndView watchedProjects(@PathVariable String userKey,
+    public void watchedProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "WatchedProjects");
-            modelAndView.addObject( "messages", context );
-
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.userhome.page", new Object[]{userKey} , ex);
-        }
+        displayUserModelAndView(request, response, userKey, "../jsp/WatchedProjects");
     }
 
     @RequestMapping(value = "/{userKey}/notifiedProjects.htm", method = RequestMethod.GET)
-    public ModelAndView notifiedProjects(@PathVariable String userKey,
+    public void notifiedProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "NotifiedProjects");
-            modelAndView.addObject( "messages", context );
-
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.userhome.page", new Object[]{userKey} , ex);
-        }
+        displayUserModelAndView(request, response, userKey, "../jsp/NotifiedProjects");
     }
 
     @RequestMapping(value = "/{userKey}/ownerProjects.htm", method = RequestMethod.GET)
-    public ModelAndView ownerProjects(@PathVariable String userKey,
+    public void ownerProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-
-        try{
-
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "OwnerProjects");
-
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.userhome.page", new Object[]{userKey} , ex);
-        }
+        displayUserModelAndView(request, response, userKey, "../jsp/OwnerProjects");
     }
 
 
     @RequestMapping(value = "/{userKey}/templates.htm", method = RequestMethod.GET)
-    public ModelAndView templates(@PathVariable String userKey,
+    public void templates(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-
-        try{
-
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "Templates");
-            //modelAndView.addObject( "messages", context );
-
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.userhome.page", new Object[]{userKey} , ex);
-        }
+        displayUserModelAndView(request, response, userKey, "../jsp/Templates");
     }
 
     @RequestMapping(value = "/{userKey}/participantProjects.htm", method = RequestMethod.GET)
-    public ModelAndView participantProjects(@PathVariable String userKey,
+    public void participantProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-
-        try{
-
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "ParticipantProjects");
-
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.userhome.page", new Object[]{userKey} , ex);
-        }
+        displayUserModelAndView(request, response, userKey, "../jsp/ParticipantProjects");
     }
 
     @RequestMapping(value = "/{userKey}/allProjects.htm", method = RequestMethod.GET)
-    public ModelAndView allProjects(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        try{
-
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "AllProjects");
-
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.userhome.page", new Object[]{userKey} , ex);
-        }
+    public void allProjects(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/AllProjects");
     }
 
 
+    @RequestMapping(value = "/{userKey}/userCreateProject.htm", method = RequestMethod.GET)
+    public void userCreateProject(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response)  throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/UserCreateProject");
+    }
 
 
 
     @RequestMapping(value = "/{userKey}/userAlerts.htm", method = RequestMethod.GET)
-    public ModelAndView loadUserAlerts(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public void loadUserAlerts(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/UserAlerts");
+    }
 
+
+    @RequestMapping(value = "/{userKey}/userActiveTasks.htm", method = RequestMethod.GET)
+    public void userActiveTasks(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/UserActiveTasks");
+    }
+
+    @RequestMapping(value = "/{userKey}/userMissingResponses.htm", method = RequestMethod.GET)
+    public void userMissingResponses(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/UserMissingResponses");
+    }
+
+    @RequestMapping(value = "/{userKey}/userOpenRounds.htm", method = RequestMethod.GET)
+    public void userOpenRounds(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/UserOpenRounds");
+    }
+    
+
+    @RequestMapping(value = "/{userKey}/ShareRequests.htm", method = RequestMethod.GET)
+    public void ShareRequests(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/ShareRequests");
+    }
+
+    @RequestMapping(value = "/{userKey}/RemoteProfiles.htm", method = RequestMethod.GET)
+    public void remoteProfiles(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/RemoteProfiles");
+    }
+
+    @RequestMapping(value = "/{userKey}/Agents.htm", method = RequestMethod.GET)
+    public void Agents(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/Agents");
+    }
+    
+    @RequestMapping(value = "/{userKey}/userRemoteTasks.htm", method = RequestMethod.GET)
+    public void consolidatedTasks(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/UserRemoteTasks");
+    }
+
+    @RequestMapping(value = "/{userKey}/EditAgent.htm", method = RequestMethod.GET)
+    public void EditAgent(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if (ar.isLoggedIn()) {
+                //only check if the user logged in, because the display will fail on that case
+                UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
+                UserPage uPage = userBeingViewed.getUserPage();
+                String agentId = ar.reqParam("id");
+                AgentRule agent = uPage.findAgentRule(agentId);
+                if (agent==null) {
+                    throw new Exception("Unable to find an agent with id="+agentId);
+                }
             }
-
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, "UserAlerts");
-            modelAndView.addObject( "messages", context );
-            request.setAttribute("title", userBeingViewed.getName());
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.useralerts.page", new Object[]{userKey} , ex);
+            displayUserModelAndView(request, response, userKey, "../jsp/EditAgent");
         }
-    }
-
-
-    @RequestMapping(value = "/{userKey}/userTasks.htm", method = RequestMethod.GET)
-    public ModelAndView loadUserTasks(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar,"userActiveTasks.htm");
-    }
-
-    private ModelAndView displayUserModelAndView(HttpServletRequest request, HttpServletResponse response,
-            String userKey, String viewName) throws Exception {
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-
-            ModelAndView modelAndView = createModelAndView(ar, userBeingViewed, viewName);
-            return modelAndView;
-        }catch(Exception ex){
+        catch(Exception ex){
             throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
         }
     }
 
-    @RequestMapping(value = "/{userKey}/userActiveTasks.htm", method = RequestMethod.GET)
-    public ModelAndView userActiveTasks(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        return displayUserModelAndView(request, response, userKey, "UserActiveTasks");
+    @RequestMapping(value = "/{userKey}/userAccounts.htm", method = RequestMethod.GET)
+    public void loadUserAccounts(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        displayUserModelAndView(request, response, userKey, "../jsp/UserAccounts");
     }
 
-    @RequestMapping(value = "/{userKey}/userMissingResponses.htm", method = RequestMethod.GET)
-    public ModelAndView userMissingResponses(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        return displayUserModelAndView(request, response, userKey, "UserMissingResponses");
+    @RequestMapping(value = "/{userKey}/editUserProfile.htm")
+    public void changeUserProfile(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        request.setAttribute("userKey", userKey);
+        displayUserModelAndView(request, response, userKey, "../jsp/edituserprofile");
     }
 
-    @RequestMapping(value = "/{userKey}/userOpenRounds.htm", method = RequestMethod.GET)
-    public ModelAndView userOpenRounds(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        return displayUserModelAndView(request, response, userKey, "UserOpenRounds");
+    @RequestMapping(value = "/{userKey}/ViewRemoteTask.htm", method = RequestMethod.GET)
+    public void ViewRemoteTask(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        if(ar.isLoggedIn()){
+            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
+            UserPage uPage = userBeingViewed.getUserPage();
+            String accessUrl = ar.reqParam("url");
+            RemoteGoal rg =  uPage.findRemoteGoal(accessUrl);
+            if (rg==null) {
+                throw new Exception("unable to find a remote goal records with the url="+accessUrl);
+            }
+        }
+        streamJSPUserLoggedIn(ar, userKey, "ViewRemoteTask");
     }
+
+    /**
+    * This lists the connections so that a user can select one when browsing
+    * to attach a document.
+    */
+    @RequestMapping(value = "/{userKey}/ListConnections.htm", method = RequestMethod.GET)
+    public void folderDisplay(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        streamJSPUserLoggedIn(ar, userKey, "ListConnections");
+    }
+
+
+
+
+
+    
+
+    
+    ////////////////////// REDIRECTS ////////////////////////
     
     //TODO: eliminate unnecessary address
     @RequestMapping(value = "/{userKey}/userCompletedTasks.htm", method = RequestMethod.GET)
-    public ModelAndView userCompletedTasks(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public void userCompletedTasks(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.sendRedirect("userActiveTasks.htm");
-        return null;
     }
 
     //TODO: eliminate unnecessary address
     @RequestMapping(value = "/{userKey}/userFutureTasks.htm", method = RequestMethod.GET)
-    public ModelAndView userFutureTasks(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public void userFutureTasks(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.sendRedirect("userActiveTasks.htm");
-        return null;
     }
 
     //TODO: eliminate unnecessary address
     @RequestMapping(value = "/{userKey}/userAllTasks.htm", method = RequestMethod.GET)
-    public ModelAndView userAllTasks(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public void userAllTasks(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.sendRedirect("userActiveTasks.htm");
-        return null;
+    }
+    @RequestMapping(value = "/{userKey}/userTasks.htm", method = RequestMethod.GET)
+    public void loadUserTasks(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        response.sendRedirect("userActiveTasks.htm");
     }
 
-    @RequestMapping(value = "/{userKey}/ShareRequests.htm", method = RequestMethod.GET)
-    public ModelAndView ShareRequests(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-
-            return createModelAndView(ar, userBeingViewed, "ShareRequests");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
-        }
+    @RequestMapping(value = "/{userKey}/administration.htm", method = RequestMethod.GET)
+    public void loadAdministration(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        response.sendRedirect("emailListnerSettings.htm");
     }
 
+
+    
+    
+    
+    
+
+    
+    
+    
     @RequestMapping(value = "/{userKey}/RemoteProfileAction.form", method = RequestMethod.POST)
     public ModelAndView RemoteProfileAction(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -447,40 +443,6 @@ public class UserController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{userKey}/RemoteProfiles.htm", method = RequestMethod.GET)
-    public ModelAndView remoteProfiles(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-
-            return createModelAndView(ar, userBeingViewed, "RemoteProfiles");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
-        }
-    }
-
-    @RequestMapping(value = "/{userKey}/userRemoteTasks.htm", method = RequestMethod.GET)
-    public ModelAndView consolidatedTasks(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-
-            return createModelAndView(ar, userBeingViewed, "UserRemoteTasks");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
-        }
-    }
-
     @RequestMapping(value = "/{userKey}/AgentAction.json", method = RequestMethod.POST)
     public void AgentAction(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -515,71 +477,6 @@ public class UserController extends BaseController {
         }catch(Exception ex){
             Exception ee = new Exception("Unable to update Agent for user.", ex);
             streamException(ee, ar);
-        }
-    }
-
-    @RequestMapping(value = "/{userKey}/Agents.htm", method = RequestMethod.GET)
-    public ModelAndView Agents(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-
-            return createModelAndView(ar, userBeingViewed, "Agents");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
-        }
-    }
-
-
-    @RequestMapping(value = "/{userKey}/EditAgent.htm", method = RequestMethod.GET)
-    public ModelAndView EditAgent(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-            UserPage uPage = userBeingViewed.getUserPage();
-            String agentId = ar.reqParam("id");
-            AgentRule agent = uPage.findAgentRule(agentId);
-            if (agent==null) {
-                throw new Exception("Unable to find an agent with id="+agentId);
-            }
-
-            return createModelAndView(ar, userBeingViewed, "EditAgent");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
-        }
-    }
-
-
-    @RequestMapping(value = "/{userKey}/ViewRemoteTask.htm", method = RequestMethod.GET)
-    public ModelAndView ViewRemoteTask(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-            UserPage uPage = userBeingViewed.getUserPage();
-            String accessUrl = ar.reqParam("url");
-            RemoteGoal rg =  uPage.findRemoteGoal(accessUrl);
-            if (rg==null) {
-                throw new Exception("unable to find a remote goal records with the url="+accessUrl);
-            }
-
-            return createModelAndView(ar, userBeingViewed, "ViewRemoteTask");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
         }
     }
 
@@ -786,6 +683,7 @@ public class UserController extends BaseController {
                 profile.setName(ar.defParam("name", ""));
                 profile.setDescription(ar.defParam("description", ""));
                 profile.setNotificationPeriod(DOMFace.safeConvertInt(ar.defParam("notificationPeriod", "1")));
+                profile.setWeaverMenu(ar.defParam("weaverMenu", null) != null);
             }
 
             String email= ar.defParam("email", null);
@@ -891,41 +789,6 @@ public class UserController extends BaseController {
 
         NGWebUtils.sendResponse(ar, responseMessage);
     }
-
-    @RequestMapping(value = "/{userKey}/userAccounts.htm", method = RequestMethod.GET)
-    public ModelAndView loadUserAccounts(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Need to log in to see a user's sites.");
-            UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
-
-            return createModelAndView(ar, uProf, "UserAccounts");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.useraccounts.page", new Object[]{userKey} , ex);
-        }
-    }
-
-    @RequestMapping(value = "/{userKey}/userCreateProject.htm", method = RequestMethod.GET)
-    public ModelAndView userCreateProject(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Need to log in to create a workspace.");
-            UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
-
-            return createModelAndView(ar, uProf, "UserCreateProject");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.useraccounts.page", new Object[]{userKey} , ex);
-        }
-
-    }
-
-
 
     private File getUserImageFolder(HttpServletRequest request) {
         String path=request.getSession().getServletContext().getRealPath("/");
@@ -1078,37 +941,6 @@ public class UserController extends BaseController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/{userKey}/administration.htm", method = RequestMethod.GET)
-    public ModelAndView loadAdministration(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar,"emailListnerSettings.htm");
-    }
-
-    /**
-    * This lists the connections so that a user can select one when browsing
-    * to attach a document.
-    */
-    @RequestMapping(value = "/{userKey}/ListConnections.htm", method = RequestMethod.GET)
-    public ModelAndView folderDisplay(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Need to log in to see page.");
-            UserProfile up = UserManager.getUserProfileOrFail(userKey);
-
-            modelAndView = createModelAndView(ar, up, "ListConnections");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.list.connection.page", new Object[]{userKey} , ex);
-        }
-        return modelAndView;
-    }
-
 
     /**
     * user key must be valid and must be logged in user
@@ -1116,15 +948,12 @@ public class UserController extends BaseController {
     * path ALWAYS starts with a slash.  Use just a slash to get root.
     */
     @RequestMapping(value = "/{userKey}/folder{folderId}.htm", method = RequestMethod.GET)
-    public ModelAndView folderDisplay2(@PathVariable String userKey, @PathVariable String folderId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
+    public void folderDisplay2(@PathVariable String userKey, @PathVariable String folderId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         try{
             request.setAttribute("folderId", folderId);
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Need to log in to see remote folder page.");
-            UserProfile up = UserManager.getUserProfileOrFail(userKey);
             UserPage uPage = ar.getUserPage();
             String path = ar.defParam("path", "/");
 
@@ -1133,12 +962,11 @@ public class UserController extends BaseController {
             FolderAccessHelper fdh = new FolderAccessHelper(ar);
             fdh.getRemoteResource(folderId, path, true);
 
-            ModelAndView modelAndView = createModelAndView(ar, up, "FolderDisplay");
             request.setAttribute("path", path);
 
             //this is deprecated ... remove soon
             request.setAttribute("fid", folderId + path);
-            return modelAndView;
+            streamJSPUserLoggedIn(ar, userKey, "FolderDisplay");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.user.folder.page", new Object[]{userKey}, ex);
         }
@@ -1154,7 +982,6 @@ public class UserController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Need to log in to see page.");
-            UserProfile up = UserManager.getUserProfileOrFail(userKey);
             UserPage uPage = ar.getUserPage();
             uPage.getConnectionOrFail(folderId);
 
@@ -1165,10 +992,9 @@ public class UserController extends BaseController {
 
             String p = ar.reqParam("p");
             ar.getCogInstance().getProjectByKeyOrFail(p);
-
-            modelAndView = createModelAndView(ar, up, "BrowseConnection");
             request.setAttribute("folderId", folderId);
             request.setAttribute("path", path);
+            streamJSPUserLoggedIn(ar, userKey, "BrowseConnection");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.browse.connection.page", new Object[]{userKey}, ex);
         }
@@ -1177,41 +1003,35 @@ public class UserController extends BaseController {
 
 
     @RequestMapping(value = "/{userKey}/fd{folderId}/show.htm", method = RequestMethod.GET)
-    public ModelAndView folderDisplay3(@PathVariable String userKey, @PathVariable String folderId,
+    public void folderDisplay3(@PathVariable String userKey, @PathVariable String folderId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Need to log in to see remote folder page.");
-            UserProfile up = UserManager.getUserProfileOrFail(userKey);
             String path = "/";  //debug
-            modelAndView = createModelAndView(ar, up, "FolderDisplay");
             request.setAttribute("fid", folderId + path);
+            displayUserModelAndView(request, response, userKey, "../jsp/FolderDisplay");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.page", new Object[]{userKey}, ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/{userKey}/fd{folderId}/*/show.htm", method = RequestMethod.GET)
-    public ModelAndView folderDisplay4(@PathVariable String userKey, @PathVariable String folderId,
+    public void folderDisplay4(@PathVariable String userKey, @PathVariable String folderId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Need to log in to see remote folder page.");
-            UserProfile up = UserManager.getUserProfileOrFail(userKey);
             String path = "/";  //debug
-            modelAndView = createModelAndView(ar, up, "FolderDisplay");
             request.setAttribute("fid", folderId + path);
+            displayUserModelAndView(request, response, userKey, "../jsp/FolderDisplay");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.page", new Object[]{userKey}, ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value="/{userKey}/f{folderId}/remote.htm", method = RequestMethod.GET)
@@ -1384,25 +1204,19 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value="/{userKey}/confirmedAddIdView.htm", method = RequestMethod.GET)
-    public ModelAndView openConfirmedAddIdView(
+    public void openConfirmedAddIdView(
             @PathVariable String userKey,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        ModelAndView modelAndView = null;
         try{
-
             AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not open confirm page.");
-
-            modelAndView = new ModelAndView("confirmedAddIdView");
-            String realRequestURL = request.getRequestURL().toString();
-            request.setAttribute("realRequestURL", realRequestURL);
-
             request.setAttribute("userKey", ar.getUserProfile().getKey());
-        }catch(Exception ex){
+            displayUserModelAndView(request, response, userKey, "../jsp/confirmedAddIdView");
+        }
+        catch(Exception ex){
             throw new NGException("nugen.operation.fail.open.confirm.added.id.view", new Object[]{userKey}, ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value="/{userKey}/changeListenerSettings.form", method = RequestMethod.POST)
@@ -1439,24 +1253,21 @@ public class UserController extends BaseController {
 
 
     @RequestMapping(value = "/{userKey}/notificationSettings.htm", method = RequestMethod.GET)
-    public ModelAndView goToNotificationSetting(@PathVariable String userKey,
+    public void goToNotificationSetting(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
-            UserProfile userProfile = UserManager.getUserProfileOrFail(userKey);
-
-            if(!ar.hasSpecialSessionAccess("Notifications:"+userKey)){
-                if(!ar.isLoggedIn()){
-                    return showWarningView(ar, "message.loginalert.see.page");
-                }
+            if(ar.hasSpecialSessionAccess("Notifications:"+userKey)){
+                //need to show this even if not logged in
+                streamJSP(ar, "../jsp/NotificationSettings");
+                return;
             }
 
-            ModelAndView modelAndView = createModelAndView(ar, userProfile, "NotificationSettings");
-            modelAndView.addObject( "messages", context );
-            return modelAndView;
+            //this will fail if not logged in
+            displayUserModelAndView(request, response, userKey, "../jsp/NotificationSettings");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.open.notification.page", new Object[]{userKey} , ex);
         }
@@ -1620,169 +1431,137 @@ public class UserController extends BaseController {
 
 
     @RequestMapping(value = "/{userKey}/userSettings.htm", method = RequestMethod.GET)
-    public ModelAndView userSettings(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public void userSettings(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         try{
-
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-
-            UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
-
-            UserProfile loggedInUser = ar.getUserProfile();
-            
-            String userName = loggedInUser.getName();
-
-            if (userName==null || userName.length()==0) {
-                userName = loggedInUser.getKey();
-            }
-            if (userName.length()>28) {
-                userName = userName.substring(0,28);
-            }
-
-            uProf.assureImage(ar.getCogInstance());
-            NGContainer ngp =null;
-
-            String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
-            String bookForNewProject = ar.defParam( "bookKey", null );
-
-            if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
-                List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
-                if(foundPages.size()>0){
-                    NGPageIndex foundPage = foundPages.get( 0 );
-                    return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
+            if(ar.isLoggedIn()){
+                UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
+                UserProfile loggedInUser = ar.getUserProfile();
+                
+                String userName = loggedInUser.getName();
+    
+                if (userName==null || userName.length()==0) {
+                    userName = loggedInUser.getKey();
                 }
+                if (userName.length()>28) {
+                    userName = userName.substring(0,28);
+                }
+    
+                uProf.assureImage(ar.getCogInstance());
+    
+                String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
+                String bookForNewProject = ar.defParam( "bookKey", null );
+    
+                if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
+                    List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
+                    if(foundPages.size()>0){
+                        NGPageIndex foundPage = foundPages.get( 0 );
+                        response.sendRedirect(ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
+                        return;
+                    }
+                }
+    
+                request.setAttribute("book",    null);
+                request.setAttribute("ngpage",null);
+                request.setAttribute("userName",userName);
+                request.setAttribute("flag","true");
+                request.setAttribute("retPath",ar.retPath);
             }
-
-            request.setAttribute("book",    null);
-            request.setAttribute("ngpage",ngp);
-            request.setAttribute("userName",userName);
-            request.setAttribute("flag","true");
-            request.setAttribute("retPath",ar.retPath);
-            return createModelAndView(ar, uProf, "UserSettings");
+            displayUserModelAndView(request, response, userKey, "../jsp/UserSettings");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
         }
     }
 
 
-    @RequestMapping(value = "/{userId}/editUserProfile.htm")
-    public ModelAndView changeUserProfile(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
-        try
-        {
-            AuthRequest ar = AuthRequest.getOrCreate( request, response );
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            request.setAttribute( "realRequestURL", ar.getRequestURL() );
-        } catch (Exception ex)
-        {
-            throw new NGException("nugen.operation.fail.edit.userprofile.page", null , ex);
-        }
-        return new ModelAndView( "editUserProfile" );
-
-    }
-
-
     @RequestMapping(value = "/{userKey}/userContacts.htm", method = RequestMethod.GET)
-    public ModelAndView userContacts(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public void userContacts(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         try{
 
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
-
-            UserProfile loggedInUser = ar.getUserProfile();
-            String userName = loggedInUser.getName();
-
-            if (userName==null || userName.length()==0) {
-                userName = loggedInUser.getKey();
-            }
-            if (userName.length()>28) {
-                userName = userName.substring(0,28);
-            }
-
-            NGContainer ngp =null;
-
-            String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
-            String bookForNewProject = ar.defParam( "bookKey", null );
-
-            if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
-                List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
-                if(foundPages.size()>0){
-                    NGPageIndex foundPage = foundPages.get( 0 );
-                    return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
+            if(ar.isLoggedIn()){
+                UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
+    
+                UserProfile loggedInUser = ar.getUserProfile();
+                String userName = loggedInUser.getName();
+    
+                if (userName==null || userName.length()==0) {
+                    userName = loggedInUser.getKey();
                 }
+                if (userName.length()>28) {
+                    userName = userName.substring(0,28);
+                }
+    
+                NGContainer ngp =null;
+    
+                String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
+                String bookForNewProject = ar.defParam( "bookKey", null );
+    
+                if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
+                    List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
+                    if(foundPages.size()>0){
+                        NGPageIndex foundPage = foundPages.get( 0 );
+                        response.sendRedirect(ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
+                        return;
+                    }
+                }
+    
+                request.setAttribute("book",    null);
+                request.setAttribute("ngpage",ngp);
+                request.setAttribute("userName",userName);
+                request.setAttribute("flag","true");
+                request.setAttribute("retPath",ar.retPath);
             }
-
-            request.setAttribute("book",    null);
-            request.setAttribute("ngpage",ngp);
-            request.setAttribute("userName",userName);
-            request.setAttribute("flag","true");
-            request.setAttribute("retPath",ar.retPath);
-            return createModelAndView(ar, uProf, "UserContacts");
+            displayUserModelAndView(request, response, userKey, "../jsp/UserContacts");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
         }
     }
 
     @RequestMapping(value = "/{userKey}/userConnections.htm", method = RequestMethod.GET)
-    public ModelAndView userConnections(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
+    public void userConnections(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         try{
 
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            UserProfile up = UserManager.getUserProfileOrFail(userKey);
-
-            UserProfile loggedInUser = ar.getUserProfile();
-            String userName = loggedInUser.getName();
-
-            if (userName==null || userName.length()==0) {
-                userName = loggedInUser.getKey();
-            }
-            if (userName.length()>28) {
-                userName = userName.substring(0,28);
-            }
-
-            NGContainer ngp =null;
-
-            String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
-            String bookForNewProject = ar.defParam( "bookKey", null );
-
-            if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
-                List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
-                if(foundPages.size()>0){
-                    NGPageIndex foundPage = foundPages.get( 0 );
-                    return redirectBrowser(ar,ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
+            if(ar.isLoggedIn()){
+                UserProfile up = UserManager.getUserProfileOrFail(userKey);
+    
+                UserProfile loggedInUser = ar.getUserProfile();
+                String userName = loggedInUser.getName();
+    
+                if (userName==null || userName.length()==0) {
+                    userName = loggedInUser.getKey();
                 }
+                if (userName.length()>28) {
+                    userName = userName.substring(0,28);
+                }
+    
+                String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
+                String bookForNewProject = ar.defParam( "bookKey", null );
+    
+                if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
+                    List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
+                    if(foundPages.size()>0){
+                        NGPageIndex foundPage = foundPages.get( 0 );
+                        response.sendRedirect(ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
+                        return;
+                    }
+                }
+    
+                request.setAttribute("userName",userName);
+                request.setAttribute("flag","true");
+                request.setAttribute("retPath",ar.retPath);
             }
-
-            request.setAttribute("book",    null);
-            request.setAttribute("ngpage",ngp);
-            request.setAttribute("userName",userName);
-            request.setAttribute("flag","true");
-            request.setAttribute("retPath",ar.retPath);
-            return createModelAndView(ar, up, "UserConnections");
-        }catch(Exception ex){
+            displayUserModelAndView(request, response, userKey, "../jsp/UserConnections");
+        }
+        catch(Exception ex){
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
         }
     }

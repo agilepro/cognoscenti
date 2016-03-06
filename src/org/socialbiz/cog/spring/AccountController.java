@@ -46,6 +46,21 @@ import org.workcast.json.JSONObject;
 @Controller
 public class AccountController extends BaseController {
 
+    
+    ////////////////////// MAIN VIEWS ///////////////////////
+    
+    @RequestMapping(value = "/{siteId}/$/SiteAdmin.htm", method = RequestMethod.GET)
+    public void SiteAdmin(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response)throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar,siteId,null,"SiteAdmin");
+    }
+
+
+
+    
+    
+    
     @RequestMapping(value = "/{userKey}/requestAccount.htm", method = RequestMethod.GET)
     public ModelAndView requestSite(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -178,24 +193,9 @@ public class AccountController extends BaseController {
     public ModelAndView showSiteTaskTab(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            NGBook site = prepareSiteView(ar, siteId);
-            ModelAndView modelAndView = executiveCheckViews(ar);
-            if (modelAndView != null) {
-                return modelAndView;
-            }
-
-            modelAndView = new ModelAndView("accountListProjects");
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("pageTitle", site.getFullName());
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.process.page", new Object[]{siteId} , ex);
-        }
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, null, "accountListProjects");
+        return null;
     }
 
     @RequestMapping(value = "/{siteId}/$/accountCreateProject.htm", method = RequestMethod.GET)
@@ -263,29 +263,6 @@ public class AccountController extends BaseController {
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.account.process.page",
                     new Object[]{siteId} , ex);
-        }
-    }
-
-
-    @RequestMapping(value = "/{siteId}/$/SiteAdmin.htm", method = RequestMethod.GET)
-    public ModelAndView SiteAdmin(@PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            prepareSiteView(ar, siteId);
-            ModelAndView modelAndView = executiveCheckViews(ar);
-            if (modelAndView != null) {
-                return modelAndView;
-            }
-
-            modelAndView = new ModelAndView("SiteAdmin");
-            return modelAndView;
-        }catch(Exception ex){
-            throw new Exception("Unable to handle SiteAdmin.htm for site '"+siteId+"'", ex);
         }
     }
 

@@ -100,10 +100,28 @@ public class BaseController {
         ar.req.setAttribute("property_msg_key", why);
         streamJSP(ar,"Warning");
     }
+
+    protected static void streamJSPLoggedIn(AuthRequest ar, String jspName) throws Exception {
+        if(!ar.isLoggedIn()){
+            ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
+            streamJSP(ar, "Warning");
+            return;
+        }
+        if (needsToSetName(ar)) {
+            streamJSP(ar, "requiredName");
+            return;
+        }
+        streamJSP(ar, jspName);
+    }
     
     public static void showJSPAnonymous(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
-            registerRequiredProject(ar, siteId, pageId);
+            if (pageId==null) {
+                prepareSiteView(ar, siteId);
+            }
+            else {
+                registerRequiredProject(ar, siteId, pageId);
+            }
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
@@ -135,7 +153,6 @@ public class BaseController {
     
     public static void showJSPMembers(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
-            registerRequiredProject(ar, siteId, pageId);
             if(!ar.isLoggedIn()){
                 ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
                 streamJSP(ar, "Warning");
@@ -145,8 +162,11 @@ public class BaseController {
                 streamJSP(ar, "requiredName");
                 return;
             }
-            if (ar.ngp==null) {
-                throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGPage on the AuthRequest.");
+            if (pageId==null) {
+                prepareSiteView(ar, siteId);
+            }
+            else {
+                registerRequiredProject(ar, siteId, pageId);
             }
             if(!ar.isMember()){
                 ar.req.setAttribute("roleName", "Members");

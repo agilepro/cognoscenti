@@ -836,7 +836,21 @@ public class UserProfile extends DOMFace implements UserRef
         return ((disable!=null) && ("yes".equals(disable)));
     }
 
+    
+    
+    /**
+     * Whether or not to display WEAVER style menus
+     * @param val
+     */
+    public void setWeaverMenu(boolean val) {
+        setAttributeBool("weaverMenu", val);
+    }
+    public boolean getWeaverMenu() {
+        return getAttributeBool("weaverMenu");
+    }
 
+    
+    
     public List<TemplateRecord> getTemplateList()
     throws Exception
     {
@@ -1066,11 +1080,11 @@ public class UserProfile extends DOMFace implements UserRef
         return memberOfSites;
     }
 
-    //currently the same as AddressListEntry ... just name and address
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
         jObj.put("name", getName());
         jObj.put("uid", getUniversalId());
+        jObj.put("key", getKey());
         return jObj;
     }
 

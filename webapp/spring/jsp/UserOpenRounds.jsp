@@ -8,6 +8,10 @@
     if (uProf == null) {
         throw new NGException("nugen.exception.cant.find.user",null);
     }
+    NGPageIndex.clearLocksHeldByThisThread();
+    UserCache userCache = ar.getCogInstance().getUserCacheMgr().getCache(uProf.getKey());
+    JSONArray proposalList = userCache.getOpenRounds();
+
 
     UserProfile  operatingUser =ar.getUserProfile();
     if (operatingUser==null) {
@@ -18,9 +22,6 @@
     boolean viewingSelf = uProf.getKey().equals(operatingUser.getKey());
     String loggingUserName=uProf.getName();
 
-
-    UserCache userCache = ar.getCogInstance().getUserCacheMgr().getCache(uProf.getKey());
-    JSONArray proposalList = userCache.getOpenRounds();
 
 %>
 

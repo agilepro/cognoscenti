@@ -51,63 +51,55 @@ public class ProjectDocsController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/listAttachments.htm", method = RequestMethod.GET)
-    public ModelAndView listAttachments(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-
-            registerRequiredProject(ar, siteId, pageId);
-            //note, this page is available to the public!!!
-
-            return new ModelAndView("ListAttachments");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.attachment.page", new Object[]{pageId,siteId} , ex);
-        }
+    public void listAttachments(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        BaseController.showJSPAnonymous(ar, siteId, pageId, "ListAttachments");
     }
 
+    
     @RequestMapping(value = "/{siteId}/{pageId}/docsFolder.htm", method = RequestMethod.GET)
-    public ModelAndView docsFolder(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-
-            registerRequiredProject(ar, siteId, pageId);
-            //note, this page is available to the public!!!
-
-            return new ModelAndView("DocsFolder");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.attachment.page", new Object[]{pageId,siteId} , ex);
-        }
+    public void docsFolder(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsFolder");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/attachment.htm", method = RequestMethod.GET)
-    public ModelAndView showProjectHomeTab(@PathVariable String siteId,@PathVariable String pageId,
+    @RequestMapping(value = "/{siteId}/{pageId}/docsDeleted.htm", method = RequestMethod.GET)
+    public void showDeletedAttachments(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "listAttachments.htm");
+        BaseController.showJSPMembers(ar, siteId, pageId, "DocsDeleted");
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/docsUpload.htm", method = RequestMethod.GET)
+    protected void docsUpload(@PathVariable String siteId,
+            @PathVariable String pageId, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        BaseController.showJSPMembers(ar, siteId, pageId, "DocsUpload");
+    }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/docsDeleted.htm", method = RequestMethod.GET)
-    public ModelAndView showDeletedAttachments(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-
-            registerRequiredProject(ar, siteId, pageId);
-            ModelAndView modelAndView= checkLoginMember(ar);
-            if (modelAndView!=null) {
-                return modelAndView;
-            }
-            return new ModelAndView("DocsDeleted");
-        }
-        catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.delete.attachment.page", new Object[]{pageId,siteId} , ex);
-        }
+    /**
+     * Let the user decide how to add a document to the project
+     */
+    @RequestMapping(value = "/{siteId}/{pageId}/docsAdd.htm", method = RequestMethod.GET)
+    protected void docsAdd(@PathVariable String siteId,
+            @PathVariable String pageId, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        BaseController.showJSPMembers(ar, siteId, pageId, "DocsAdd");
+    }
+    
+    
+    
+    //////////////////////// REDIRECTS //////////////////////////////
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/attachment.htm", method = RequestMethod.GET)
+    public void showProjectHomeTab(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        response.sendRedirect("listAttachments.htm");
     }
 
 
@@ -268,39 +260,6 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
-    /**
-     * Let the user decide how to add a document to the project
-     */
-    @RequestMapping(value = "/{siteId}/{pageId}/docsAdd.htm", method = RequestMethod.GET)
-    protected ModelAndView docsAdd(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.upload.doc.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-            if(ngp.isFrozen()){
-                return showWarningView(ar, "nugen.generatInfo.Frozen");
-            }
-
-            modelAndView = createNamedView(siteId, pageId, ar, "DocsAdd");
-            request.setAttribute("isNewUpload", "yes");
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("title", ngp.getFullName());
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.upload.document.page", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-    }
 
 //This is the OLD way
     @RequestMapping(value = "/{siteId}/{pageId}/uploadDocument.htm", method = RequestMethod.GET)
@@ -335,28 +294,6 @@ public class ProjectDocsController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/docsUpload.htm", method = RequestMethod.GET)
-    protected ModelAndView docsUpload(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
-
-            ModelAndView modelAndView= checkLoginMember(ar);
-            if (modelAndView!=null) {
-                return modelAndView;
-            }
-            if(ngp.isFrozen()){
-                return showWarningView(ar, "nugen.generatInfo.Frozen");
-            }
-
-            return new ModelAndView("DocsUpload");
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.upload.document.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
 
 
 

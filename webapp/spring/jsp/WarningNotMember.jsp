@@ -13,6 +13,13 @@
     String requestMsg = "";
     long latestDate = 0;
     
+    String purpose = "";
+    if (ngc instanceof NGPage) {
+        purpose = ((NGPage)ngc).getProcess().getDescription();
+    }
+    NGRole primRole = ngc.getPrimaryRole();
+    String primRoleName = primRole.getName();
+    
     for (RoleRequestRecord rrr : ngc.getAllRoleRequest()) {
         if (up.hasAnyId(rrr.getRequestedBy())) {
             if (rrr.getModifiedDate()>latestDate) {
@@ -85,7 +92,7 @@ app.controller('myCtrl', function($scope, $http) {
         <img src="<%=ar.retPath %>assets/iconAlertBig.gif" title="Alert">
       </td><td>
         <div class="generalContent warningBox">
-            <% ale.writeLink(ar); %> is not a "<b class="red">Member</b>" of this workspace.
+            <% ale.writeLink(ar); %> is not in "<b class="red"><%ar.writeHtml(primRoleName);%></b>" role of this workspace.
         </div>
       </td></tr>
       <tr><td>
@@ -130,7 +137,7 @@ app.controller('myCtrl', function($scope, $http) {
                     Purpose: 
                 </td>
                 <td>
-                   <% ar.writeHtml(((NGPage)ar.ngp).getProcess().getDescription()); %>
+                   <% ar.writeHtml(purpose); %>
                 </td>
               </tr>
               <tr>

@@ -1,21 +1,19 @@
-<!-- BEGIN WrapHeader.jsp -->
+<!-- BEGIN WrapHeader2.jsp -->
 <%
-/*
 
-Parameter used :
-
-    1. pageTitle    : Used to retrieve the page title from request.
-    2. userKey      : This is Key of user who is logged in.
-    3. pageId       : Id of a Workspace, used to fetch details of Workspace (NGPage).
-    4. book         : This is key of a site, used here to get details of an Site (NGBook).
-    5. viewingSelf  : This parameter is used to check if user is viewing himself/herself or other profile.
-    6. headerType   : Used to check the header type whether it is from site, workspace or user on the basis of
-                      it corrosponding tabs are displayed
-    7. accountId    : This is key of a site, used here to get details of an Site (NGBook).
-
-*/
-
-
+    String mainWorkspaceId = "";
+    String mainSiteId = "";
+    String mainSiteName = "";
+    if (ar.isLoggedIn()) {
+        List<WatchRecord> wl = loggedUser.getWatchList();
+        if (wl.size()>0) {
+            mainWorkspaceId = wl.get(0).getPageKey();
+            NGPageIndex ngpi = cog.getContainerIndexByKey(mainWorkspaceId);
+            mainSiteId = ngpi.pageBookKey;
+            NGBook site = ar.getCogInstance().getSiteByIdOrFail(mainSiteId);
+            mainSiteName = site.getFullName();
+        }
+    }
 
 
 //We always POST to an address that consumes the data, and then redirects to a display page,
@@ -87,8 +85,6 @@ Parameter used :
         trncatePageTitle=pageTitle.substring(0,60)+"...";
     }
 
-    boolean isWeaver = menuWrapper.has("weaver");
-
     %>
 <script>
 
@@ -155,6 +151,10 @@ Parameter used :
 
         //TODO: convert to an Angular approach
         ddlevelsmenu.setup("tabs", "topbar");
+    }
+    
+    function changePage(dest) {
+        window.location = dest;
     }
 
 </script>
@@ -249,20 +249,20 @@ Parameter used :
                     {
                         uProf = ar.getUserProfile();
                 %>
-                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/watchedProjects.htm"
+                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(loggedKey);%>/watchedProjects.htm"
                                 title="Workspaces for the logged in user">Workspaces</a></li>
                         <li>|</li>
-                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/userAlerts.htm"
+                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(loggedKey);%>/userAlerts.htm"
                                 title="Updates for the logged in user">Updates</a></li>
                         <li>|</li>
-                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/userActiveTasks.htm"
+                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(loggedKey);%>/userActiveTasks.htm"
                                 title="Actions the user needs to attend to">To Do</a></li>
                         <li>|</li>
-                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/userProfile.htm?active=1"
+                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(loggedKey);%>/userProfile.htm?active=1"
                                 title="Profile for the logged in user">Settings</a></li>
                         <%if(ar.isSuperAdmin()){ %>
                             <li>|</li>
-                            <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(uProf.getKey());%>/emailListnerSettings.htm" title="Administration">Administration</a></li>
+                            <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(loggedKey);%>/emailListnerSettings.htm" title="Administration">Administration</a></li>
                         <%} %>
                         <li>|</li>
                         <li class="text last"><a onclick="logOutProvider();">Log Out</a></li>
@@ -305,32 +305,91 @@ Parameter used :
     <!-- End siteMasthead -->
 
     <!-- Begin mainNavigation -->
-    <div id="mainNavigationLeft">
+
+    <div>
+    <div id="mainNavigationLeft" >
         <div id="mainNavigationCenter">
             <div id="mainNavigationRight">
             </div>
         </div>
-        <div id="mainNavigation">
+        <div id="mainNavigation" style="height:100px">
+            <ul id="tabs" >
+             <div  class="btn-group" style="margin-left:15px">
 
-            <ul id="tabs">
+                <button class="btn btn-default" style="background:transparent;" 
+                onClick="changePage('<%=ar.retPath%>v/<%=loggedKey%>/UserHome.htm')">
+                My Home</button>
+                <button class="btn btn-default" style="background:transparent;"
+                onClick="changePage('<%=ar.retPath%>t/<%=mainSiteId%>/<%=mainWorkspaceId%>/frontPage.htm')">
+                My Workspaces</button>
+                <button class="btn btn-default" style="background:transparent;"
+                onClick="changePage('<%=ar.retPath%>t/<%=mainSiteId%>/$/accountListProjects.htm')">
+                My Sites</button>
+                <button class="btn btn-default" style="background:transparent;"
+                onClick="alert('Add not implemented yet')">Add</button>
+                <button class="btn btn-default" style="background:transparent;"
+                onClick="alert('Help not implemented yet')">Help</button>
+                <button class="btn btn-default" style="background:transparent;"> ----------------- </button>
+                <button class="btn btn-default" style="background:transparent;"
+                onClick="alert('Search not implemented yet')">Search</button>
 
-            </ul>
+             </div>
+           </ul>
         </div>
 
-        <!--Top Drop Down Menu for workspace section HTML Starts Here -->
-            <ul id="ddsubmenu1" class="ddsubmenustyle"></ul>
-            <ul id="ddsubmenu2" class="ddsubmenustyle"></ul>
-            <ul id="ddsubmenu3" class="ddsubmenustyle"></ul>
-            <ul id="ddsubmenu4" class="ddsubmenustyle"></ul>
-            <ul id="ddsubmenu5" class="ddsubmenustyle"></ul>
-            <ul id="ddsubmenu6" class="ddsubmenustyle"></ul>
-
     </div>
+         <div  class="btn-group" style="margin-left:15px">
 
-    <script>
-       buildMainMenuBar(menuStruct);
-    </script>
+            
+           <%
+            if(isUserHeader) {
+                if(userRecord!=null){
+                    String userName = userRecord.getName();
+                    if(userName.length()>60){
+                        userName=userName.substring(0,60)+"...";
+                    }
+                    %><button class="btn" onClick="changePage('UserHome.htm')"><%ar.writeHtml(userName);%></button><%
+                }%>
+            <button class="btn btn-default" onClick="changePage('userActiveTasks.htm')">To Do</button>
+            <button class="btn btn-default" onClick="alert('not sure what Topics should do')">Topics</button>
+            <button class="btn btn-default" onClick="changePage('userSettings.htm')">Settings</button>
+            <button class="btn btn-default" onClick="changePage('watchedProjects.htm')">Watched</button>
+            <button class="btn btn-default" onClick="changePage('ownerProjects.htm')">*Administered*</button>
+            <button class="btn btn-default" onClick="changePage('templates.htm')">*Templates*</button>
+            <button class="btn btn-default" onClick="changePage('participantProjects.htm')">*Participants*</button>
+            <button class="btn btn-default" onClick="changePage('allProjects.htm')">*All*</button>
+                    <%
+            }
+            else if(isSiteHeader) {
+                if(mainSiteName!=null){
+                    %><button class="btn" onClick="changePage('accountListProjects.htm')"><%ar.writeHtml(mainSiteName);%></button><%
+                }%>
+            <button class="btn btn-default" onClick="alert('not sure what Members should do')">Members</button>
+            <button class="btn btn-default" onClick="changePage('accountListProjects.htm')">Workspaces</button>
+            <button class="btn btn-default" onClick="alert('not sure what Policies should do')">Policies</button>
+            <button class="btn btn-default" onClick="alert('not sure what News should do')">News</button>
+            <button class="btn btn-default" onClick="changePage('SiteAdmin.htm')">Org Admin</button>
+                    <%
+            }
+            else {
+                if(pageTitle!=null){
+                    %><button class="btn" onClick="changePage('frontPage.htm')">
+                    <%ar.writeHtml(trncatePageTitle);%></button><%
+                }%>
+            <button class="btn btn-default" onClick="changePage('meetingList.htm')">Meetings</button>
+            <button class="btn btn-default" onClick="changePage('notesList.htm')">Topics</button>
+            <button class="btn btn-default" onClick="changePage('listAttachments.htm')">Documents</button>
+            <button class="btn btn-default" onClick="changePage('admin.htm')">Workspace Admin</button>
+            <button class="btn btn-default" onClick="changePage('labelList.htm')">*Labels*</button>
+            <button class="btn btn-default" onClick="changePage('roleManagement.htm')">*Roles*</button>
+            <button class="btn btn-default" onClick="changePage('personal.htm')">*Personal*</button>
+            <button class="btn btn-default" onClick="changePage('decisionList.htm')">*Decisions*</button>
+                    <%
+            }
+            %>
 
+         </div>
+    </div>
 
 <!-- End mainNavigation -->
 
@@ -398,5 +457,5 @@ function displayWelcomeMessage(info) {
 
 initLogin(<% loginConfig.write(out, 2, 2); %>, <% loginInfo.write(out, 2, 2); %>, displayWelcomeMessage);
 </script>
-<!-- END WrapHeader.jsp -->
+<!-- END WrapHeader2.jsp -->
 <% out.flush(); %>
