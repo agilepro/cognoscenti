@@ -68,6 +68,22 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.openActionItems.sort( function(a,b) {
         return a.duedate-b.duedate;
     });
+    $scope.siteList.sort( function(a,b) {
+        return a.numWorkspaces-b.numWorkspaces;
+    });
+    $scope.wList.sort( function(a,b) {
+        return b.changed-a.changed;
+    });
+    $scope.fixLength = function(str) {
+        if (str.length>28) {
+            return str.substring(0,28);
+        }
+        if (str.length<6) {
+            return str + "------";
+        }
+        return str;
+    }
+
 });
 </script>
 
@@ -115,7 +131,7 @@ app.controller('myCtrl', function($scope, $http) {
                <li  ng-repeat="item in openActionItems | limitTo: 10">
                  <img src="<%=ar.retPath%>/assets/goalstate/small{{item.state}}.gif">
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.projectKey}}/task{{item.id}}.htm">
-                 {{item.synopsis|limitTo:28}}</a>
+                 {{fixLength(item.synopsis)}}</a>
                </li>
                <li>
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm">See all action items...</a>
@@ -126,7 +142,7 @@ app.controller('myCtrl', function($scope, $http) {
           <div>
              <ul>
                <li ng-repeat="item in proposals | limitTo: 10">
-                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{item.content|limitTo:28}}</a>
+                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixLength(item.content)}}</a>
                </li>
                <li>
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userMissingResponses.htm">See all ...</a>
@@ -137,7 +153,7 @@ app.controller('myCtrl', function($scope, $http) {
           <div>
              <ul>
                <li ng-repeat="item in openRounds | limitTo: 10">
-                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{item.content|limitTo:28}}</a>
+                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixLength(item.content)}}</a>
                </li>
                <li>
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm">See all...</a>
@@ -158,7 +174,7 @@ app.controller('myCtrl', function($scope, $http) {
                <ul>
                <li ng-repeat="item in wList | limitTo: 10">
                    <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.pageKey}}/frontPage.htm">
-                   {{item.name}}
+                   {{fixLength(item.name)}}
                    </a>
                </li>
                <li>
@@ -171,7 +187,7 @@ app.controller('myCtrl', function($scope, $http) {
                <ul>
                <li ng-repeat="item in siteList | limitTo: 10">
                    <a href="<%=ar.retPath%>t/{{item.key}}/$/accountListProjects.htm">
-                   {{item.names[0]}}
+                   {{fixLength(item.names[0])}}
                    </a>
                </li>
                <li>

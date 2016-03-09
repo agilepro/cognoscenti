@@ -74,7 +74,26 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return res;
     }
-
+    $scope.bestDate = function(rec) {
+        if (rec.duedate> 0) {
+            return rec.duedate;
+        }
+        if (rec.modifiedtime > 0) {
+            return rec.modifiedtime;
+        }
+        if (rec.startdate > 0) {
+            return rec.startdate;
+        }
+        return rec.enddate;
+    }
+    
+    $scope.workList.sort( function(a,b) {
+        return ($scope.bestDate(a)-$scope.bestDate(b)); 
+    });
+    
+    $scope.navigateRec = function(rec) {
+        window.location = "../../t/"+rec.siteKey+"/"+rec.projectKey+"/task"+rec.id+".htm";
+    }
 });
 
 </script>
@@ -102,27 +121,34 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
         <div >
-            Filter: <input ng-model="filterVal"> {{filterVal}}
+            Filter: <input ng-model="filterVal"> 
                 <input type="checkbox" ng-model="filterPast"> Past
                 <input type="checkbox" ng-model="filterCurrent"> Current
                 <input type="checkbox" ng-model="filterFuture"> Future
         </div>
 
+<style>
+.selectableRow:hover {background:lightblue;cursor:pointer;}
+</style>
+        
+        
         <div class="generalSettings">
 
             <table class="gridTable2" width="100%">
             <tr class="gridTableHeader">
                 <td width="16px"></td>
-                <td width="200px">Action Item</td>
-                <td width="200px">Description</td>
+                <td width="300px">Action Item - Description</td>
+                <td width="100px">Due Date</td>
                 <td width="100px">Workspace</td>
             </tr>
-            <tr ng-repeat="rec in getRows()">
+            <tr ng-repeat="rec in getRows()" ng-click="navigateRec(rec)" class="selectableRow">
                 <td width="16px"><img src="<%= ar.retPath %>/assets/goalstate/small{{rec.state}}.gif"> </td>
                 <td >
-                    <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/task{{rec.id}}.htm">{{rec.synopsis}}</a>
+                    <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/task{{rec.id}}.htm">
+                        {{rec.synopsis}}
+                    </a> - {{rec.description | limitTo: 250}}
                 </td>
-                <td>{{rec.description | limitTo: 150}}</td>
+                <td>{{bestDate(rec)|date}}</td>
                 <td>
                     <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/frontPage.htm">{{rec.projectname}}</a>
                 </td>

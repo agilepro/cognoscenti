@@ -10,7 +10,11 @@
     String templateName = ar.reqParam("wrappedJSP")+".jsp";
 
     
-    String title = ar.defParam("title", templateName); 
+    String title = ar.defParam("title", ar.reqParam("wrappedJSP")); 
+    int slashPos = title.lastIndexOf("/");
+    if (slashPos>=0) {
+        title = title.substring(slashPos+1);
+    }
     String themePath = ar.getThemePath();
     Cognoscenti cog = ar.getCogInstance();
 
@@ -174,7 +178,7 @@ function standardTinyMCEOptions() {
         link_title: false
 	};
 }
-</script>
+ </script>
 
 
 </head>

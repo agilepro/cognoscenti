@@ -318,13 +318,16 @@
 
                 <button class="btn btn-default" style="background:transparent;" 
                 onClick="changePage('<%=ar.retPath%>v/<%=loggedKey%>/UserHome.htm')">
-                My Home</button>
+                Home</button>
                 <button class="btn btn-default" style="background:transparent;"
                 onClick="changePage('<%=ar.retPath%>t/<%=mainSiteId%>/<%=mainWorkspaceId%>/frontPage.htm')">
-                My Workspaces</button>
+                Workspaces</button>
                 <button class="btn btn-default" style="background:transparent;"
                 onClick="changePage('<%=ar.retPath%>t/<%=mainSiteId%>/$/accountListProjects.htm')">
-                My Sites</button>
+                Sites</button>
+                <button class="btn btn-default" style="background:transparent;"
+                onClick="changePage('<%=ar.retPath%>t/<%=mainSiteId%>/$/accountListProjects.htm')">
+                Organization</button>
                 <button class="btn btn-default" style="background:transparent;"
                 onClick="alert('Add not implemented yet')">Add</button>
                 <button class="btn btn-default" style="background:transparent;"
@@ -354,20 +357,17 @@
             <button class="btn btn-default" onClick="alert('not sure what Topics should do')">Topics</button>
             <button class="btn btn-default" onClick="changePage('userSettings.htm')">Settings</button>
             <button class="btn btn-default" onClick="changePage('watchedProjects.htm')">Watched</button>
-            <button class="btn btn-default" onClick="changePage('ownerProjects.htm')">*Administered*</button>
-            <button class="btn btn-default" onClick="changePage('templates.htm')">*Templates*</button>
-            <button class="btn btn-default" onClick="changePage('participantProjects.htm')">*Participants*</button>
-            <button class="btn btn-default" onClick="changePage('allProjects.htm')">*All*</button>
+            <button class="btn btn-default" onClick="changePage('templates.htm')">Templates</button>
+            <button class="btn btn-default" onClick="changePage('ownerProjects.htm')">Administered</button>
+            <button class="btn btn-default" onClick="changePage('participantProjects.htm')">Participant</button>
+            <button class="btn btn-default" onClick="changePage('allProjects.htm')">All</button>
                     <%
             }
             else if(isSiteHeader) {
                 if(mainSiteName!=null){
                     %><button class="btn" onClick="changePage('accountListProjects.htm')"><%ar.writeHtml(mainSiteName);%></button><%
                 }%>
-            <button class="btn btn-default" onClick="alert('not sure what Members should do')">Members</button>
             <button class="btn btn-default" onClick="changePage('accountListProjects.htm')">Workspaces</button>
-            <button class="btn btn-default" onClick="alert('not sure what Policies should do')">Policies</button>
-            <button class="btn btn-default" onClick="alert('not sure what News should do')">News</button>
             <button class="btn btn-default" onClick="changePage('SiteAdmin.htm')">Org Admin</button>
                     <%
             }
@@ -379,11 +379,12 @@
             <button class="btn btn-default" onClick="changePage('meetingList.htm')">Meetings</button>
             <button class="btn btn-default" onClick="changePage('notesList.htm')">Topics</button>
             <button class="btn btn-default" onClick="changePage('listAttachments.htm')">Documents</button>
+            <button class="btn btn-default" onClick="changePage('goalList.htm')">Action Items</button>
             <button class="btn btn-default" onClick="changePage('admin.htm')">Workspace Admin</button>
-            <button class="btn btn-default" onClick="changePage('labelList.htm')">*Labels*</button>
-            <button class="btn btn-default" onClick="changePage('roleManagement.htm')">*Roles*</button>
-            <button class="btn btn-default" onClick="changePage('personal.htm')">*Personal*</button>
-            <button class="btn btn-default" onClick="changePage('decisionList.htm')">*Decisions*</button>
+            <button class="btn btn-default" onClick="changePage('labelList.htm')">Labels</button>
+            <button class="btn btn-default" onClick="changePage('roleManagement.htm')">Roles</button>
+            <button class="btn btn-default" onClick="changePage('decisionList.htm')">Decisions</button>
+            <button class="btn btn-default" onClick="changePage('personal.htm')">Personal</button>
                     <%
             }
             %>
