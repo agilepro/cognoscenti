@@ -1,6 +1,11 @@
 <!-- BEGIN WrapHeader2.jsp -->
 <%
 
+//We always POST to an address that consumes the data, and then redirects to a display page,
+//so the display page (like this one) should never experience a POST request
+    ar.assertNotPost();
+
+    
     String mainWorkspaceId = "";
     String mainSiteId = "";
     String mainSiteName = "";
@@ -14,11 +19,13 @@
             mainSiteName = site.getFullName();
         }
     }
+    String accountKey = ar.defParam("accountId", null);
+    NGBook site = null;
+    if (accountKey!=null) {
+        site = cog.getSiteByIdOrFail(accountKey);
+        mainSiteName = site.getFullName();
+    }
 
-
-//We always POST to an address that consumes the data, and then redirects to a display page,
-//so the display page (like this one) should never experience a POST request
-    ar.assertNotPost();
 
 //TODO: determine what this does.
     String deletedWarning = "";
@@ -36,8 +43,7 @@
     }
 
 
-    if (ngp!=null)
-    {
+    if (ngp!=null) {
         ar.setPageAccessLevels(ngp);
         pageTitle = ngp.getFullName();
         if(ngp instanceof NGPage) {
@@ -48,12 +54,10 @@
             ngb = ((NGBook)ngp);
             showExperimental = ngb.getShowExperimental();
         }
-        if (ngp.isDeleted())
-        {
+        if (ngp.isDeleted()) {
             deletedWarning = "<img src=\""+ar.retPath+"deletedLink.gif\"> (DELETED)";
         }
-        else if (ngp.isFrozen())
-        {
+        else if (ngp.isFrozen()) {
             deletedWarning = " &#10052; (Frozen)";
         }
     }
@@ -86,72 +90,16 @@
     }
 
     %>
+<style>
+#newMasthead{
+  height:46px;
+  background-color:transparent;
+}
+</style>
+
 <script>
 
     menuStruct = <%mainList.write(out,2,4);%>;
-
-    function buildMainMenuBar(newStyleTabs){
-
-        for(var j=0;j<newStyleTabs.length ;j++){
-
-            var oneTab = newStyleTabs[j];
-            if (oneTab.level><%=exposeLevel%>) {
-                continue;
-            }
-
-            var subs=oneTab.subs;
-            for(var  i=0;i<subs.length ;i++){
-                var oneSub = subs[i];
-                if (oneSub.experiment) {
-                    if (<%=!showExperimental%>) {
-                        continue;
-                    }
-                }
-                var mainElement = document.getElementById(oneTab.ref);
-                var newli= document.createElement('li');
-                var newlink = document.createElement('a');
-                var newspan = document.createElement('span');
-                newlink.setAttribute('href',oneSub.href);
-                newlink.setAttribute('href',oneSub.href);
-                newspan.innerHTML=oneSub.name;
-                newlink.appendChild(newspan);
-                newli.appendChild(newlink);
-                mainElement.appendChild(newli);
-            }
-        }
-
-        var mainElement = document.getElementById("tabs");
-
-        for(var  i=0;i<newStyleTabs.length ;i++){
-
-            var oneTab = newStyleTabs[i];
-            if (oneTab.level><%=exposeLevel%>) {
-                continue;
-            }
-
-            var newli   = document.createElement('li');
-            var newlink = document.createElement('a');
-
-            var newspan = document.createElement('span');
-
-            newlink.setAttribute('href',oneTab.href);
-            newlink.setAttribute('rel',oneTab.ref);
-
-            if(i==0){
-                newli.className = 'mainNavLink1';
-            }
-
-            newspan.innerHTML=oneTab.name;
-
-            newlink.appendChild(newspan);
-            newli.appendChild(newlink);
-            mainElement.appendChild(newli);
-
-        }
-
-        //TODO: convert to an Angular approach
-        ddlevelsmenu.setup("tabs", "topbar");
-    }
     
     function changePage(dest) {
         window.location = dest;
@@ -162,9 +110,11 @@
 
 <script type="text/javascript">
     var retPath ='<%=ar.retPath%>';
-    var headerType = '';
+    var headerType = '<%=headerTypeStr%>';
     var book='';
-    var pageId = '';
+    var pageId = '<%=pageId%>';
+    var userKey = "<%=userKey%>";
+    var isSuperAdmin = "<%=ar.isSuperAdmin()%>";
 </script>
 
 <script type="text/javascript" src="<%=ar.retPath%>jscript/ddlevelsmenu.js"></script>
@@ -172,20 +122,13 @@
 
 <% if (!isSiteHeader) { %>
     <script>
-        headerType = "<%=headerTypeStr%>";
-        var userKey = "<%=userKey%>";
-        var isSuperAdmin = "<%=ar.isSuperAdmin()%>";
         <% if (pageId != null && bookId != null) { %>
-          pageId='<%=pageId%>';
           book='<%=bookId%>';
         <% } %>
     </script>
 
 <% } else if(isSiteHeader){ %>
      <script>
-        headerType = "<%=headerTypeStr%>";
-        var userKey = "<%=userKey%>";
-
         <% if(accountId != null){ %>
         var accountId='<%=accountId %>';
         <% } else if(pageId!=null){ %>
@@ -197,15 +140,8 @@
 
 
     <!-- Begin siteMasthead -->
-    <div id="siteMasthead">
-        <img id="logoInterstage" src="<%=ar.retPath%><%=ar.getThemePath()%>logo.gif" alt="Logo" width="145" height="38" />
+    <div id="newMasthead">
         <div id="consoleName">
-           <% if(ngb!=null){ %>
-           Site: <a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/accountListProjects.htm"
-                     title="View the Site for this page"><%ar.writeHtml(ngb.getFullName());%></a>
-
-           <% } %>
-           <br />
            <%
             if(isUserHeader) {
                 if(userRecord!=null){
@@ -214,7 +150,7 @@
                         userName=userName.substring(0,60)+"...";
                     }
                     ar.write("User: <span title=\"");
-                    ar.write(userName);
+                    ar.writeHtml(userName);
                     ar.write("\">");
                     ar.writeHtml(userName);
                     ar.write("</span>");
@@ -223,7 +159,7 @@
             else if(isSiteHeader) {
                 if(pageTitle!=null){
                     ar.write("Site: <span title=\"");
-                    ar.write(pageTitle);
+                    ar.writeHtml(pageTitle);
                     ar.write("\">");
                     ar.writeHtml(trncatePageTitle);
                     ar.write(deletedWarning);
@@ -233,7 +169,7 @@
             else {
                 if(pageTitle!=null){
                     ar.write("Workspace: <span title=\"");
-                    ar.write(pageTitle);
+                    ar.writeHtml(pageTitle);
                     ar.write("\">");
                     ar.writeHtml(trncatePageTitle);
                     ar.write(deletedWarning);
@@ -241,6 +177,11 @@
                 }
             }
             %>
+           <% if(ngb!=null){ %>
+           Site: <a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/accountListProjects.htm"
+                     title="View the Site for this page"><%ar.writeHtml(ngb.getFullName());%></a>
+
+           <% } %>
         </div>
         <div id="globalLinkArea">
           <ul id="globalLinks">
@@ -320,19 +261,19 @@
                 onClick="changePage('<%=ar.retPath%>v/<%=loggedKey%>/UserHome.htm')">
                 Home</button>
                 <button class="btn btn-default" style="background:transparent;"
-                onClick="changePage('<%=ar.retPath%>t/<%=mainSiteId%>/<%=mainWorkspaceId%>/frontPage.htm')">
+                onClick="changePage('<%=ar.retPath%>v/<%=loggedKey%>/watchedProjects.htm')">
                 Workspaces</button>
                 <button class="btn btn-default" style="background:transparent;"
-                onClick="changePage('<%=ar.retPath%>t/<%=mainSiteId%>/$/accountListProjects.htm')">
+                onClick="changePage('<%=ar.retPath%>v/<%=loggedKey%>/userAccounts.htm')">
                 Sites</button>
                 <button class="btn btn-default" style="background:transparent;"
-                onClick="changePage('<%=ar.retPath%>t/<%=mainSiteId%>/$/accountListProjects.htm')">
+                onClick="alert('Organization not implemented yet')">
                 Organization</button>
                 <button class="btn btn-default" style="background:transparent;"
                 onClick="alert('Add not implemented yet')">Add</button>
                 <button class="btn btn-default" style="background:transparent;"
                 onClick="alert('Help not implemented yet')">Help</button>
-                <button class="btn btn-default" style="background:transparent;"> ----------------- </button>
+                <input class="input" type="text" style="padding:3px;margin:3px"></input>
                 <button class="btn btn-default" style="background:transparent;"
                 onClick="alert('Search not implemented yet')">Search</button>
 
@@ -367,8 +308,8 @@
                 if(mainSiteName!=null){
                     %><button class="btn" onClick="changePage('accountListProjects.htm')"><%ar.writeHtml(mainSiteName);%></button><%
                 }%>
-            <button class="btn btn-default" onClick="changePage('accountListProjects.htm')">Workspaces</button>
-            <button class="btn btn-default" onClick="changePage('SiteAdmin.htm')">Org Admin</button>
+            <button class="btn btn-default" onClick="changePage('accountListProjects.htm')">Workspaces in Site</button>
+            <button class="btn btn-default" onClick="changePage('SiteAdmin.htm')">Site Admin</button>
                     <%
             }
             else {

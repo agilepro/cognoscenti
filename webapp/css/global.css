@@ -114,26 +114,6 @@ select, textarea {
 .hidden{
   display:none;
 }
-.floatRight{
-  float:right;
-  margin:0px;
-  padding:0px;
-}
-.floatLeft{
-  float:left;
-  margin:0px;
-  padding:0px;
-}
-.textRight{
-  float:right;
-  margin:-5px 30px 0px 0px;
-}
-.textLeft{
-  padding:0px 0px 0px 10px;
-}
-.underline{
-  text-decoration:underline;
-}
 
 .labelButton{
   margin:1px;
