@@ -92,7 +92,7 @@
     %>
 <style>
 #newMasthead{
-  height:46px;
+  height:66px;
   background-color:transparent;
 }
 </style>
@@ -275,7 +275,7 @@
                 onClick="alert('Help not implemented yet')">Help</button>
                 <input class="input" type="text" style="padding:3px;margin:3px"></input>
                 <button class="btn btn-default" style="background:transparent;"
-                onClick="alert('Search not implemented yet')">Search</button>
+                onClick="changePage('<%=ar.retPath%>v/<%=loggedKey%>/searchAllNotes.htm')">Search</button>
 
              </div>
            </ul>

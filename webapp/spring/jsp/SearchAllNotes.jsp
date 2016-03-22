@@ -74,31 +74,34 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
     <table>
-        <tr ng-hide="editGoalInfo">
+        <tr >
             <td class="gridTableColummHeader">Search For:</td>
             <td style="width:20px;"></td>
             <td><input ng-model="query.searchFilter" class="form-control" style="width:450px;"></td>
         </tr>
-        <tr ng-hide="editGoalInfo"><td height="10px"></td></tr>
-        <tr ng-hide="editGoalInfo">
-            <td class="gridTableColummHeader">Sites:</td>
+        <tr ><td height="10px"></td></tr>
+        <tr >
+            <td class="gridTableColummHeader">Workspaces:</td>
             <td style="width:20px;"></td>
             <td>
-              <div class="form-inline form-group">
-                  <select ng-model="query.searchSite" class="form-control" style="width:150px;">
-                      <option value="one">This Site</option>
-                      <option value="all">All Sites</option>
-                  </select>
-                  Workspaces:
+              <div class="form-inline form-group" style="margin:0px">
                   <select ng-model="query.searchProject" class="form-control" style="width:150px;">>
                       <option value="all">All Workspaces</option>
                       <option value="member">Member Workspaces</option>
                       <option value="owner">Owned Workspaces</option>
                   </select>
+                  <span>
+                      <span class="gridTableColummHeader">Sites:</span>
+                      <select ng-model="query.searchSite" class="form-control" style="width:150px;">
+                          <option value="one">This Site</option>
+                          <option value="all">All Sites</option>
+                      </select>
+                  </span>
               </div>
             </td>
         </tr>
-        <tr ng-hide="editGoalInfo">
+        <tr ><td height="10px"></td></tr>
+        <tr >
             <td class="gridTableColummHeader"></td>
             <td style="width:20px;"></td>
             <td><button ng-click="doSearch()" class="btn btn-primary">Search</button></td>

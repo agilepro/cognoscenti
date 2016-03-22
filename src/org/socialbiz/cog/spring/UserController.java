@@ -330,6 +330,13 @@ public class UserController extends BaseController {
         streamJSPUserLoggedIn(ar, userKey, "ListConnections");
     }
 
+    @RequestMapping(value = "/{userKey}/searchAllNotes.htm")
+    public void searchAllNotes(@PathVariable String userKey,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        request.setAttribute("userKey", userKey);
+        displayUserModelAndView(request, response, userKey, "../jsp/SearchAllNotes");
+    }
+
 
 
 
@@ -1574,25 +1581,6 @@ public class UserController extends BaseController {
         return modelAndView;
     }
 
-
-    @RequestMapping(value = "/{userKey}/searchAllNotes.htm", method = RequestMethod.GET)
-    public ModelAndView searchAllNotes(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-           throws Exception {
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-
-            return new ModelAndView("SearchAllNotes");
-
-        }catch(Exception ex){
-            throw new Exception("failure searching with userid: "+userKey, ex);
-        }
-    }
 
     @RequestMapping(value = "/{userKey}/searchNotes.json", method = RequestMethod.POST)
     public void searchPublicNotesJSON(@PathVariable String userKey,

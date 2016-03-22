@@ -358,7 +358,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div style="height:20px;"></div>
 
-
+        <div>
+            <button class="btn btn-default" ng-click="openTopicCreator()"> 
+			    Create New Topic </a>
+            </button>
+        </div>
         <div ng-repeat="rec in getRows()">
             <div style="border: 1px solid lightgrey;border-radius:10px;margin-top:20px;padding:5px;background-color:#F8EEEE;">
                 <div id="headline" >

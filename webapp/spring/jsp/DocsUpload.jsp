@@ -29,7 +29,7 @@
     border-radius: 5px;
     padding: 25px;
     text-align: center;
-    font: 20pt bold;
+    font: 20pt bold Georgia,Tahoma,sans-serif;
     color: #bbb;
     margin-bottom: 20px;
     width:500px;

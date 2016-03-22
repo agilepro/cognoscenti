@@ -1082,3 +1082,13 @@ input.inputReadonlyLink{
     margin:0px;
     padding:0px;
 }
+
+.instruction {
+    font: 18pt bold Georgia,Tahoma,sans-serif;
+    color: #bbb;
+    float:left;
+}
+.modal-title {
+    font: 16pt sans-serif;
+}
+}

@@ -15,21 +15,11 @@
 .lvl-over {
     background-color: lawngreen;
 }
-.instruction {
-    font: 18pt bold;
-    color: #bbb;
-    float:left;
-}
+
 </style>
 
 <div class="modal-header">
     <h3 class="modal-title" style="float:left">Attach Documents</h3>
-    <button ng-click="uploadMode=true" class="btn btn-default" style="float:right;margin-right:15px;">
-        Upload Document
-    </button>
-    <button ng-click="uploadMode=false" class="btn btn-default" style="float:right;margin-right:15px;">
-        Pick Existing Document
-    </button>
     <div style="clear: both"></div>
 </div>
 <div class="modal-body {{greenOnDrag()}}"  style="min-height:300px" 
@@ -42,15 +32,19 @@
       <td style="width:50%;vertical-align:top;padding:20px;">
         <div style="max-height:400px;overflow: auto">
           <table class="docTable">
-            <tr ng-repeat="doc in filterDocs()">
-                <td ng-click="addDocToItem(doc)"  title="{{doc.name}}" style="cursor:pointer">
+            <tr ng-repeat="doc in filterDocs()" ng-click="addDocToItem(doc)" style="cursor:pointer" 
+                title="Click to add document to the list.">
+                <td >
                     <img src="../../../assets/images/iconFile.png"/> {{doc.name|limitTo:40}} </td>
                 <td>
-                    <button ng-click="addDocToItem(doc)" ng-hide="itemHasDoc(doc)"
+                    <button ng-hide="itemHasDoc(doc)"
                         class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
                     <button  ng-show="itemHasDoc(doc)"
-                        class="btn">&nbsp; &nbsp;</button>
+                        class="btn" title="Document is already added.">&nbsp; &nbsp;</button>
                 </td>
+            </tr>
+            <tr ng-show="filterDocs().length==0">
+                <td class="instruction">No documents to choose from.<br/><br/>Drag and drop a document to upload.</td>
             </tr>
           </table>
         </div>
@@ -58,13 +52,17 @@
       <td style="width:50%;vertical-align:top;padding:20px;">
         <div style="max-height:400px;overflow: auto">
           <table class="docTable">
-            <tr ng-repeat="doc in itemDocs()">
-                <td ng-click="addDocToItem(doc)"  title="{{doc.name}}" style="cursor:pointer">
-                    <img src="../../../assets/images/iconFile.png""/> {{doc.name|limitTo:40}} </td>
+            <tr ng-repeat="doc in itemDocs()" ng-click="removeDocFromItem(doc)" 
+                title="Click to remove document from list." style="cursor:pointer">
+                <td >
+                    <img src="../../../assets/images/iconFile.png"/> {{doc.name|limitTo:40}} </td>
                 <td>
-                    <button ng-click="removeDocFromItem(doc)"
-                        class="btn"><i class="fa fa-close"></i> &nbsp;</button>
+                    <button class="btn"><i class="fa fa-close"></i> &nbsp;</button>
                 </td>
+            </tr>
+            <tr ng-show="itemDocs().length==0">
+                <td class="instruction">Nothing attached.<br/><br/>
+                <span ng-show="filterDocs().length>0">Click on a document on the left, to add to the attachments listed here on the right.</span></td>
             </tr>
           </table>
         </div>
