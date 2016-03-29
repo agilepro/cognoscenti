@@ -1192,7 +1192,8 @@ public class GoalRecord extends BaseRecord {
         int state           = getState();
         String stateNameStr = stateName(state);
         String overdueStr = "";
-        if (this.getDueDate()<ar.nowTime) {
+        if (!BaseRecord.isFinal(state) && this.getDueDate()<ar.nowTime) {
+            //if it is not finished and past due date, then say that
             overdueStr = " Overdue!";
         }
         String emailSubject = "Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr;
