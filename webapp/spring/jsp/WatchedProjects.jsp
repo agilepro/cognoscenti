@@ -2,6 +2,7 @@
 %><%@include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.WatchRecord"
 %><%
+
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
     List<WatchRecord> watchList = uProf.getWatchList();
     boolean noneFound = watchList.size()==0;
@@ -18,7 +19,7 @@
         wList.put(wObj);
     }
 
-/** RECORD PROTOTYPE
+/** RECORD PROTOTYPE 
       {
         "changed": 1433079860881,
         "name": "Secular Coalition for America",

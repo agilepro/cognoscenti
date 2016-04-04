@@ -10,6 +10,7 @@
     String templateName = ar.reqParam("wrappedJSP")+".jsp";
 
     
+    
     String title = ar.defParam("title", ar.reqParam("wrappedJSP")); 
     int slashPos = title.lastIndexOf("/");
     if (slashPos>=0) {

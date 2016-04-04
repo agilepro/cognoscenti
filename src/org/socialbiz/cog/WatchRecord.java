@@ -105,13 +105,16 @@ public class WatchRecord extends DOMFace
         return getAttributeLong("lastseen");
     }
 
-    
-    public static void sortByChangeDate(List<WatchRecord> watchList) {
-        Collections.sort(watchList, new WatchComparator());
+
+    public static void sortBySeenDate(List<WatchRecord> watchList) {
+        Collections.sort(watchList, new WatchSeenComparator());
     }
-    
-    private static class WatchComparator implements Comparator<WatchRecord> {
-        public WatchComparator() {
+    public static void sortByChangeDate(List<WatchRecord> watchList, Cognoscenti cog) {
+        Collections.sort(watchList, new WatchChangeComparator(cog));
+    }
+
+    private static class WatchSeenComparator implements Comparator<WatchRecord> {
+        public WatchSeenComparator() {
         }
 
         @Override
@@ -119,4 +122,43 @@ public class WatchRecord extends DOMFace
             return (int)(arg0.getLastSeen() - arg1.getLastSeen());
         }
     }
+
+    private static class WatchChangeComparator implements Comparator<WatchRecord> {
+        Cognoscenti cog;
+
+        public WatchChangeComparator(Cognoscenti _cog) {
+            cog = _cog;
+        }
+
+        @Override
+        public int compare(WatchRecord arg0, WatchRecord arg1) {
+            try {
+                NGPageIndex ngpi0 = cog.getContainerIndexByKey(arg0.getPageKey());
+                long time0 = 0;
+                if (ngpi0!=null) {
+                    time0 = ngpi0.lastChange;
+                }
+                NGPageIndex ngpi1 = cog.getContainerIndexByKey(arg1.getPageKey());
+                long time1 = 0;
+                if (ngpi1!=null) {
+                    time1 = ngpi1.lastChange;
+                }
+                if (time0 > time1) {
+                    return 1;
+                }
+                else if (time0==time1) {
+                    return 0;
+                }
+                else {
+                    return -1;
+                }
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
+
 }

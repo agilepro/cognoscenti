@@ -13,7 +13,14 @@ Required parameters:
 
     UserProfile loggedUser = ar.getUserProfile();
     NGPageIndex.clearLocksHeldByThisThread();
-    UserCache userCache = ar.getCogInstance().getUserCacheMgr().getCache(loggedUser.getKey());
+    Cognoscenti cog = ar.getCogInstance();
+    
+    UserCache userCache = cog.getUserCacheMgr().getCache(loggedUser.getKey());
+    
+    String refresh = ar.defParam("ref", null);
+    if (refresh!=null) {
+        userCache.refreshCache(cog);
+    }
 
     JSONArray actionItems = userCache.getActionItems();
     JSONArray openActionItems = new JSONArray();
@@ -28,6 +35,8 @@ Required parameters:
     JSONArray openRounds = userCache.getOpenRounds();
 
     List<WatchRecord> watchList = loggedUser.getWatchList();
+//    WatchRecord.sortByChangeDate(watchList, cog);
+    
     JSONArray wList = new JSONArray();
     for (WatchRecord wr : watchList) {
         String pageKey = wr.getPageKey();
@@ -39,6 +48,7 @@ Required parameters:
         wObj.put("visited", wr.getLastSeen());
         wList.put(wObj);
     }
+    
     JSONArray siteList = new JSONArray();
     for (NGBook site : loggedUser.findAllMemberSites()) {
         JSONObject jObj = site.getConfigJSON();
@@ -62,9 +72,6 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.siteList    = <%siteList.write(out,2,4);%>;
     $scope.loggedUser  = <% loggedUser.getJSON().write(out,2,4);%>;
     
-    $scope.wList.sort( function(a,b) {
-        return a.changed-b.changed;
-    });
     $scope.openActionItems.sort( function(a,b) {
         return a.duedate-b.duedate;
     });
@@ -103,8 +110,8 @@ app.controller('myCtrl', function($scope, $http) {
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem"
                   href="userAlerts.htm">User Alerts</a></li>
-              <li role="presentation"><a role="menuitem" href="">
-			      Do Nothing </a>
+              <li role="presentation"><a role="menuitem" href="UserHome.htm?ref=<%=ar.nowTime%>">
+			      Recalculate Page</a>
               </li>
             </ul>
           </span>
@@ -134,7 +141,7 @@ app.controller('myCtrl', function($scope, $http) {
                  {{fixLength(item.synopsis)}}</a>
                </li>
                <li>
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm">See all action items...</a>
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm" class="btn btn-sm btn-default">See all action items...</a>
                </li>
              </ul>
           </div>
@@ -145,7 +152,7 @@ app.controller('myCtrl', function($scope, $http) {
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixLength(item.content)}}</a>
                </li>
                <li>
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userMissingResponses.htm">See all ...</a>
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userMissingResponses.htm" class="btn btn-sm btn-default">See all ...</a>
                </li>
              </ul>
           </div>
@@ -156,7 +163,7 @@ app.controller('myCtrl', function($scope, $http) {
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixLength(item.content)}}</a>
                </li>
                <li>
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm">See all...</a>
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm" class="btn btn-sm btn-default">See all...</a>
                </li>
              </ul>
           </div>
@@ -178,7 +185,7 @@ app.controller('myCtrl', function($scope, $http) {
                    </a>
                </li>
                <li>
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm">See all...</a>
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm" class="btn btn-sm btn-default">See all...</a>
                </li>
                </ul>
            </div>
@@ -191,7 +198,7 @@ app.controller('myCtrl', function($scope, $http) {
                    </a>
                </li>
                <li>
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userAccounts.htm">See all...</a>
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userAccounts.htm" class="btn btn-sm btn-default">See all...</a>
                </li>
                </ul>
            </div>
