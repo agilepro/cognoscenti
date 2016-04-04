@@ -755,7 +755,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.startNewComment = function(item, theType, cmt) {
         item.newComment = {};
-        item.newComment.choices = ["Consent", "Object"];
+        item.newComment.choices = ["Consent", "Objection"];
         item.newComment.html="";
         item.newComment.commentType=theType;
         if (cmt) {
@@ -821,7 +821,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.getMyResponse = function(cmt) {
-        cmt.choices = ["Consent", "Object"]
+        cmt.choices = ["Consent", "Objection"]
         var selected = [];
         if (cmt.user=="<%ar.writeJS(currentUser);%>") {
             return selected;
@@ -1096,7 +1096,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         console.log("ITEM COMMENT", cmt);
         if (cmt.choices.length==0) {
             console.log("This comment has no choices on it!");
-            cmt.choices = ["Consent", "Object"];
+            cmt.choices = ["Consent", "Objection"];
+            if (cmt.choices[1]=="Object") {
+                cmt.choices[1]="Objection";
+            }
         }
 
         var selected = $scope.getResponse(cmt);

@@ -114,7 +114,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.fixUpChoices = function() {
         $scope.noteInfo.comments.forEach( function(cmt) {
             if (!cmt.choices || cmt.choices.length==0) {
-                cmt.choices = ["Consent", "Object"];
+                cmt.choices = ["Consent", "Objection"];
+            }
+            if (cmt.choices[1]=="Object") {
+                cmt.choices[1]="Objection";
             }
         });
     }

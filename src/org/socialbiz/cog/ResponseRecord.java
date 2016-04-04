@@ -143,9 +143,12 @@ public class ResponseRecord extends DOMFace
 
         String topicAddress = ar.baseURL + noteOrMeet.getResourceURL(clone, ngp) + "#cmt" + cr.getTime();
         String detailMsg = "??";
+        boolean isProposal = false;
         switch (cr.getCommentType()) {
             case CommentRecord.COMMENT_TYPE_PROPOSAL:
                 detailMsg = "Proposal ("+getChoice()+") response";
+                isProposal = true;
+                break;
             case CommentRecord.COMMENT_TYPE_REQUEST:
                 detailMsg = "Quick round response";
 
@@ -166,6 +169,11 @@ public class ResponseRecord extends DOMFace
         clone.writeHtml(noteOrMeet.emailSubject());
         clone.write("</a></p>\n<hr/>\n");
 
+        if (isProposal) {
+            clone.write("<p>Choice: <b>");
+            clone.writeHtml(this.getChoice());
+            clone.write("</b></p>\n");
+        }
         clone.write(this.getHtml(ar));
 
         clone.write("<hr/>\nIn response to: <br/>");
