@@ -53,27 +53,6 @@ public interface NGContainer
     public  String getKey();
 
 
-    /**
-    * Topics are the basic block of rich text (wiki) that appear on the userinterface.
-    * Topics can only appear on projects (NGPage).
-    */
-    public List<NoteRecord> getAllNotes() throws Exception;
-
-    public List<NoteRecord> getVisibleNotes(AuthRequest ar,int displayLevel) throws Exception;
-    public List<NoteRecord> getDeletedNotes(AuthRequest ar) throws Exception;
-
-    public List<NoteRecord> getDraftNotes(AuthRequest ar) throws Exception;
-
-    public NoteRecord getNote(String id) throws Exception;
-
-    public NoteRecord getNoteOrFail(String id) throws Exception;
-
-    public NoteRecord createNote() throws Exception;
-
-    public void deleteNote(String id,AuthRequest ar) throws Exception;
-    public void unDeleteNote(String id,AuthRequest ar) throws Exception;
-
-
     /*
      * output links to display in history logs
      */
@@ -84,25 +63,6 @@ public interface NGContainer
     public void writeDocumentLink(AuthRequest ar, String documentId, int len) throws Exception;
 
 
-    /**
-    * An attachment is a document attached to a project (NGPage), a site (NGBook)
-    * or a user (UserPage)
-    */
-    //public List<AttachmentRecord> getAllAttachments() throws Exception;
-
-    //public AttachmentRecord findAttachmentByName(String name) throws Exception;
-
-    //public AttachmentRecord findAttachmentByNameOrFail(String name) throws Exception;
-
-    //public AttachmentRecord findAttachmentByID(String id) throws Exception;
-
-    //public AttachmentRecord findAttachmentByIDOrFail(String id) throws Exception;
-
-    //public AttachmentRecord createAttachment() throws Exception;
-
-    //public void deleteAttachment(String id,AuthRequest ar) throws Exception;
-    //public void unDeleteAttachment(String id) throws Exception;
-    //public void eraseAttachmentRecord(String id) throws Exception;
 
     /**
      * This is effectively the "empty trashcan" operation.  Documents that

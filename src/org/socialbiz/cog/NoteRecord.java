@@ -42,6 +42,15 @@ import org.workcast.streams.MemFile;
 * (Used to be called LeafletRecord, but name changed March 2013)
 */
 public class NoteRecord extends CommentContainer implements EmailContext {
+    
+    public static final String DISCUSSION_PHASE_DRAFT               = "Draft";
+    public static final String DISCUSSION_PHASE_FREEFORM            = "Freeform";
+    public static final String DISCUSSION_PHASE_PICTURE_FORMING     = "Forming";
+    public static final String DISCUSSION_PHASE_PROPOSAL_SHAPING    = "Shaping";
+    public static final String DISCUSSION_PHASE_PROPOSAL_FINALIZING = "Finalizing";
+    public static final String DISCUSSION_PHASE_RESOLVED            = "Resolved";
+    public static final String DISCUSSION_PHASE_TRASH               = "Trash";
+    public static final String DISCUSSION_PHASE_MOVED               = "Moved";
 
     //This is actually one week before the server started, and is used mainly in the
     //startup methods for an arbitrary time long enough ago that automated notifications
@@ -49,35 +58,48 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     //not be updated -- it remains the time a week before starting the server.
     public static final long ONE_WEEK_AGO = System.currentTimeMillis() - 7*24*60*60*1000;
 
-    public NoteRecord(Document definingDoc, Element definingElement, DOMFace new_ngs)
-    {
+    public NoteRecord(Document definingDoc, Element definingElement, DOMFace new_ngs) {
         super(definingDoc, definingElement, new_ngs);
 
         //assure that visibility is set, default to the visibility to member
         int viz = getVisibility();
-        if (viz<1 || viz>4)
-        {
+        if (viz<1 || viz>4) {
             setVisibility(2);
+        }
+        
+        //convert to using discussion phase instead of older deleted indicator
+        //NGPage schema 101 -> 102 migration
+        String currentPhase = getDiscussionPhase(); 
+        if (currentPhase==null || currentPhase.length()==0) {
+            //by default everything is freeform, unless deleted or possibly draft
+            currentPhase = DISCUSSION_PHASE_FREEFORM;
+            
+            String delAttr = getAttribute("deleteUser");
+            String saveAsDraft = getAttribute("saveAsDraft");
+            if (delAttr!=null && delAttr.length()>0) {
+                currentPhase = DISCUSSION_PHASE_TRASH;
+            }
+            else if(saveAsDraft != null && saveAsDraft.equals("yes")) {
+                currentPhase = DISCUSSION_PHASE_DRAFT;
+            }
+            clearAttribute("saveAsDraft");
+            setDiscussionPhase(currentPhase);
         }
     }
 
-    public String getId()
-    {
+    public String getId() {
         return getAttribute("id");
     }
-    public void setId(String newId)
-    {
+    public void setId(String newId) {
         setAttribute("id", newId);
     }
 
 
     //TODO: is this properly supported?  Should be an AddressListEntry
-    public String getOwner()
-    {
+    public String getOwner() {
         return getScalar("owner");
     }
-    public void setOwner(String newOwner)
-    {
+    public void setOwner(String newOwner) {
         setScalar("owner", newOwner);
     }
 
@@ -150,19 +172,15 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     * SectionDef.PRIVATE_ACCESS = 4;
     *
     */
-    public int getVisibility()
-    {
+    public int getVisibility() {
         return (int) safeConvertLong(getScalar("visibility"));
     }
-    public void setVisibility(int newData)
-    {
+    public void setVisibility(int newData) {
         //the "anonymous" case must be converted to public
-        if (newData<1)
-        {
+        if (newData<1) {
             newData=1;
         }
-        else if (newData>4)
-        {
+        else if (newData>4) {
             newData=2;
         }
         setScalar("visibility", Integer.toString(newData));
@@ -208,17 +226,14 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     * When effective date is not set, use last saved date instead.
     * These will be the same a lot of the time.
     */
-    public long getEffectiveDate()
-    {
+    public long getEffectiveDate() {
         long effDate = safeConvertLong(getScalar("effective"));
-        if (effDate==0)
-        {
+        if (effDate==0)  {
             return getLastEdited();
         }
         return effDate;
     }
-    public void setEffectiveDate(long newEffective)
-    {
+    public void setEffectiveDate(long newEffective) {
         setScalar("effective", Long.toString(newEffective));
     }
 
@@ -231,19 +246,15 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     * effective date.
     * Default: 0
     */
-    public long getPinOrder()
-    {
+    public long getPinOrder() {
         long pin = safeConvertLong(getScalar("pin"));
-        if (pin < 0)
-        {
+        if (pin < 0) {
             pin = 0;
         }
         return pin;
     }
-    public void setPinOrder(long newPinOrder)
-    {
-        if (newPinOrder < 0)
-        {
+    public void setPinOrder(long newPinOrder) {
+        if (newPinOrder < 0) {
             newPinOrder = 0;
         }
         setScalar("pin", Long.toString(newPinOrder));
@@ -252,8 +263,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     /**
     * Given a vector, this will fill the vector with tag terms
     */
-    public void fillTags(List<String> result)
-    {
+    public void fillTags(List<String> result) {
         fillVectorValues(result, "tag");
     }
 
@@ -261,31 +271,27 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     /**
     * Returns a vector of string tag values
     */
-    public List<String> getTags()
-    {
+    public List<String> getTags() {
         return getVector("tag");
     }
     /**
     * Given a vector of string, this tag terms for this comment
     */
-    public void setTags(List<String> newVal)
-    {
+    public void setTags(List<String> newVal) {
         setVector("tag", newVal);
     }
 
     /**
     * Returns a vector of string choice values
     */
-    public String getChoices()
-    {
+    public String getChoices() {
         return getScalar("choices");
     }
 
     /**
     * Given a vector of string, this choices for this topic
     */
-    public void setChoices(String choices)
-    {
+    public void setChoices(String choices) {
         setScalar("choices", choices);
     }
 
@@ -466,15 +472,36 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     }
 
     /**
-    * Marking a Topic as deleted means that we SET the deleted time.
-    * If there is no deleted time, then it is not deleted.
-    * A Topic that is deleted remains in the archive until a later
+     * Discussion Phase is an overall state of the note object.
+     * These are the phases:
+     * Draft - private, not publicized, one person only
+     * Freeform - just a general discussion topic, freeform
+     * Picture Forming
+     * Proposal Shaping
+     * Proposal Finalizing
+     * Resolved
+     * Closed
+     * Trash - this overlaps with deleted.
+     */
+    public String getDiscussionPhase() {
+        return getAttribute("discussionPhase");
+    }
+    public void setDiscussionPhase(String newPhase) {
+        String oldPhase = getDiscussionPhase();
+        if (newPhase.equals(oldPhase)) {
+            return;
+        }
+        setAttribute("discussionPhase", newPhase);
+    }
+    
+    /**
+    * Marking a Topic as deleted means that we SET the phase to trash.
+    * A Topic that is deleted / trash remains in the archive until a later
     * date, when garbage has been collected.
     */
-    public boolean isDeleted()
-    {
-        String delAttr = getAttribute("deleteUser");
-        return (delAttr!=null&&delAttr.length()>0);
+    public boolean isDeleted() {
+        String currentPhase = getDiscussionPhase();
+        return (DISCUSSION_PHASE_TRASH.equals(currentPhase));
     }
 
     /**
@@ -483,36 +510,25 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     * Set the date to zero in order to clear the deleted flag
     * and make the topic to be not-deleted
     */
-    public void setDeleted(AuthRequest ar)
-    {
+    public void setTrashPhase(AuthRequest ar) {
         setAttribute("deleteDate", Long.toString(ar.nowTime));
         setAttribute("deleteUser", ar.getBestUserId());
+        setDiscussionPhase("Trash");
     }
-    public void clearDeleted()
-    {
+    public void clearTrashPhase() {
         setAttribute("deleteDate", null);
         setAttribute("deleteUser", null);
+        setDiscussionPhase("Freeform");
     }
-    public long getDeleteDate()
-    {
+    public long getDeleteDate() {
         return getAttributeLong("deleteDate");
     }
-    public String getDeleteUser()
-    {
+    public String getDeleteUser() {
         return getAttribute("deleteUser");
     }
 
-    public void setSaveAsDraft(String saveAsDraft){
-        setAttribute("saveAsDraft", saveAsDraft);
-    }
-
-    public boolean isDraftNote(){
-        String saveAsDraft = getAttribute("saveAsDraft");
-        if(saveAsDraft != null && saveAsDraft.equals("yes")){
-            return true;
-        }else{
-            return false;
-        }
+    public boolean isDraftNote() {
+        return (DISCUSSION_PHASE_DRAFT.equals(getDiscussionPhase()));
     }
 
     /**
@@ -815,7 +831,8 @@ public class NoteRecord extends CommentContainer implements EmailContext {
           thisNote.put("public",    isPublic());
           thisNote.put("deleted",   isDeleted());
           thisNote.put("draft",     isDraftNote());
-          thisNote.put("pin",       this.getPinOrder());
+          thisNote.put("discussionPhase", getDiscussionPhase());
+          thisNote.put("pin",       getPinOrder());
           thisNote.put("docList",   constructJSONArray(getDocList()));
           thisNote.put("actionList", constructJSONArray(getActionList()));
           JSONObject labelMap = new JSONObject();
@@ -896,12 +913,12 @@ public class NoteRecord extends CommentContainer implements EmailContext {
                  //only set if not already set so that the user & date does
                  //not get changed on every update
                  if (!isDeleted()) {
-                     setDeleted(ar);
+                     setTrashPhase(ar);
                  }
              }
              else {
                   if (isDeleted()) {
-                     clearDeleted();
+                     clearTrashPhase();
                  }
              }
          }
@@ -931,6 +948,10 @@ public class NoteRecord extends CommentContainer implements EmailContext {
          if (noteObj.has("pin")) {
              setPinOrder(noteObj.getInt("pin"));
          }
+         if (noteObj.has("discussionPhase")) {
+             setDiscussionPhase(noteObj.getString("discussionPhase"));
+         }
+         
      }
      public void updateHtmlFromJSON(AuthRequest ar, JSONObject noteObj) throws Exception {
          if (noteObj.has("html")) {

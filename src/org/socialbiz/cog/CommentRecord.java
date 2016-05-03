@@ -18,6 +18,7 @@ public class CommentRecord extends DOMFace {
     public static final int COMMENT_TYPE_REQUEST   = 3;
     public static final int COMMENT_TYPE_MEETING   = 4;
     public static final int COMMENT_TYPE_MINUTES   = 5;
+    public static final int COMMENT_TYPE_PHASE_CHANGE = 6;
 
     public static final int COMMENT_STATE_DRAFT   = 11;
     public static final int COMMENT_STATE_OPEN    = 12;
@@ -36,38 +37,40 @@ public class CommentRecord extends DOMFace {
         }
     }
 
-    public void schemaMigration() throws Exception {
+    public void schemaMigration(int fromLevel, int toLevel) throws Exception {
 
-        //if the comment was created before Feb 24, 2016, then mark the closed
-        //email as being sent to disable closed email to avoid sending email for all
-        //the old, closed records in the database.
-        if (getTime()<1456272000000L) {
-            //don't send the closed email for these records created when there was
-            //no closed email.
-            setCloseEmailSent(true);
-
-            //Also set the regular sent email flag.  If mail not sent by now, it should
-            //never be sent.
-            setEmailSent(true);
-        }
-
-
-        //schema migration before version 101 of NGWorkspace
-        getEmailSent();
-        getCommentType();
-        //state added in version 101 of schema
-        getState();
-
-        for (ResponseRecord rr : getResponses()) {
+        if (fromLevel<101) {
+            //if the comment was created before Feb 24, 2016, then mark the closed
+            //email as being sent to disable closed email to avoid sending email for all
+            //the old, closed records in the database.
+            if (getTime()<1456272000000L) {
+                //don't send the closed email for these records created when there was
+                //no closed email.
+                setCloseEmailSent(true);
+    
+                //Also set the regular sent email flag.  If mail not sent by now, it should
+                //never be sent.
+                setEmailSent(true);
+            }
+    
+    
             //schema migration before version 101 of NGWorkspace
-            rr.getEmailSent();
-        }
-
-        //needed for version 101 schema ... a few comments got
-        //created incorrectly
-        if (getCommentType()==COMMENT_TYPE_SIMPLE  &&
-                getState()==COMMENT_STATE_OPEN) {
-            setState(COMMENT_STATE_CLOSED);
+            getEmailSent();
+            getCommentType();
+            //state added in version 101 of schema
+            getState();
+    
+            for (ResponseRecord rr : getResponses()) {
+                //schema migration before version 101 of NGWorkspace
+                rr.getEmailSent();
+            }
+    
+            //needed for version 101 schema ... a few comments got
+            //created incorrectly
+            if (getCommentType()==COMMENT_TYPE_SIMPLE  &&
+                    getState()==COMMENT_STATE_OPEN) {
+                setState(COMMENT_STATE_CLOSED);
+            }
         }
 
     }

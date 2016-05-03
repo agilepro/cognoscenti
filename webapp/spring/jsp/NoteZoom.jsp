@@ -12,8 +12,8 @@ Required parameter:
 
 */
     //comment or uncomment depending on whether you are in development testing mode
-    //String templateCacheDefeater = "";
-    String templateCacheDefeater = "?t="+System.currentTimeMillis();
+    String templateCacheDefeater = "";
+    //String templateCacheDefeater = "?t="+System.currentTimeMillis();
 
 
     String pageId      = ar.reqParam("pageId");
@@ -390,6 +390,36 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.replyToComment = function(cmt) {
         $scope.openCommentCreator(1,cmt.time);  //simple comment
     }
+    
+    $scope.phaseNames = {
+        "Draft": "Draft",
+        "Freeform": "Freeform",
+        "Resolved": "Resolved",
+        "Forming": "Picture Forming",
+        "Shaping": "Proposal Shaping",
+        "Finalizing": "Proposal Finalizing",
+        "Trash": "In Trash"
+    }
+    $scope.showDiscussionPhase = function(phase) {
+        if (!phase) {
+            return "Unknown";
+        }
+        var name = $scope.phaseNames[phase];
+        if (name) {
+            return name;
+        }
+        return "?"+phase+"?";
+    }
+    $scope.getPhases = function() {
+        return ["Draft", "Freeform", "Resolved", "Forming", "Shaping", "Finalizing", "Trash"];
+    }
+    $scope.setPhase = function(newPhase) {
+        if ($scope.noteInfo.discussionPhase == newPhase) {
+            return;
+        }
+        $scope.noteInfo.discussionPhase = newPhase;
+        $scope.saveEdits(['discussionPhase']);
+    }
     $scope.openCommentCreator = function(type, replyTo, defaultBody) {
         var newComment = {};
         newComment.time = -1;
@@ -672,8 +702,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div class="generalHeading" style="margin-top:50px;"></div>
 
     <div>
-          <span style="width:150px">Labels:</span>
-          <span class="dropdown" ng-repeat="role in allLabels">
+        <span >Discussion Phase:</span>
+<%if (isLoggedIn) { %>
+          <span class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation" ng-repeat="phase in getPhases()"><a role="menuitem"
+                  ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
+            </ul>
+          </span>
+<% } %>
+    </div>
+    
+    <div>
+        <span style="width:150px">Labels:</span>
+        <span class="dropdown" ng-repeat="role in allLabels">
             <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
                data-toggle="dropdown" style="background-color:{{role.color}};"
                ng-show="hasLabel(role.name)">{{role.name}}</button>

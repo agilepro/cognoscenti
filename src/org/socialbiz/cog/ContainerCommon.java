@@ -348,92 +348,6 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
     }
 
 
-    //////////////////// NOTES ///////////////////////
-
-    public List<NoteRecord> getAllNotes() throws Exception {
-        return noteParent.getChildren("note", NoteRecord.class);
-    }
-
-    public List<NoteRecord> getVisibleNotes(AuthRequest ar, int displayLevel)
-            throws Exception {
-        List<NoteRecord> list=new ArrayList<NoteRecord>();
-        List<NoteRecord> fullList = getAllNotes();
-
-        for (NoteRecord note : fullList) {
-            if (note.isVisible(ar, displayLevel) && !note.isDeleted() && !note.isDraftNote()) {
-                list.add(note);
-            }
-        }
-        return list;
-    }
-
-
-    public NoteRecord getNote(String cmtId) throws Exception {
-        for (NoteRecord lr : getAllNotes()) {
-            if (cmtId.equals(lr.getId())) {
-                return lr;
-            }
-        }
-        return null;
-    }
-
-
-    public NoteRecord getNoteOrFail(String noteId) throws Exception {
-        NoteRecord ret =  getNote(noteId);
-        if (ret==null) {
-            throw new NGException("nugen.exception.unable.to.locate.note.with.id", new Object[]{noteId, getFullName()});
-        }
-        return ret;
-    }
-
-    public NoteRecord getNoteByUidOrNull(String universalId) throws Exception {
-        if (universalId==null) {
-            return null;
-        }
-        for (NoteRecord lr : getAllNotes()) {
-            if (universalId.equals(lr.getUniversalId())) {
-                return lr;
-            }
-        }
-        return null;
-    }
-
-
-    /** mark deleted, don't actually deleting the Topic. */
-    public void deleteNote(String id,AuthRequest ar) throws Exception {
-        NoteRecord ei = getNote( id );
-
-        ei.setDeleted( ar );
-    }
-
-    public void unDeleteNote(String id,AuthRequest ar) throws Exception {
-        NoteRecord ei = getNote( id );
-        ei.clearDeleted();
-    }
-
-
-
-    public List<NoteRecord> getDeletedNotes(AuthRequest ar)
-    throws Exception {
-        List<NoteRecord> list=new ArrayList<NoteRecord>();
-        List<NoteRecord> fullList = getAllNotes();
-
-        for (NoteRecord note : fullList) {
-            if (note.isDeleted()) {
-                list.add(note);
-            }
-        }
-        return list;
-    }
-
-
-    public NoteRecord createNote() throws Exception {
-        NoteRecord note = noteParent.createChild("note", NoteRecord.class);
-        String localId = getUniqueOnPage();
-        note.setId( localId );
-        note.setUniversalId(getContainerUniversalId() + "@" + localId);
-        return note;
-    }
 
     //////////////////// ROLES ///////////////////////
 
@@ -744,22 +658,6 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
 
         return gen.toString();
     }
-
-    public List<NoteRecord> getDraftNotes(AuthRequest ar)
-    throws Exception {
-        List<NoteRecord> list=new ArrayList<NoteRecord>();
-        if (ar.isLoggedIn()) {
-            List<NoteRecord> fullList = getAllNotes();
-            UserProfile thisUserId = ar.getUserProfile();
-            for (NoteRecord note : fullList) {
-                if (!note.isDeleted() && note.isDraftNote() && note.getModUser().equals(thisUserId)) {
-                    list.add(note);
-                }
-            }
-        }
-        return list;
-    }
-
 
     public RoleRequestRecord getRoleRequestRecordById(String requestId) throws Exception{
         RoleRequestRecord requestRecord = null;

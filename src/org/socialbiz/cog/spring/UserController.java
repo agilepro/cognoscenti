@@ -93,24 +93,6 @@ public class UserController extends BaseController {
         binder.registerCustomEditor(byte[].class,new ByteArrayMultipartFileEditor());
     }
 
-    /*
-    public static ModelAndView createModelAndView(AuthRequest ar,
-            UserProfile up, String modelAndViewName) {
-
-        HttpServletRequest request = ar.req;
-        ModelAndView modelAndView = new ModelAndView(modelAndViewName);
-
-        String realRequestURL = request.getRequestURL().toString();
-        request.setAttribute("realRequestURL", realRequestURL);
-
-        request.setAttribute("userKey", up.getKey());
-        request.setAttribute("userProfile", up);
-        request.setAttribute("pageTitle", "User: " + up.getName());
-        request.setAttribute("title", up.getName());
-        return modelAndView;
-    }
-    */
-    
     public void streamJSPUserLoggedIn(AuthRequest ar, String userId, String jspName) throws Exception {
         try {
             if(!ar.isLoggedIn()){

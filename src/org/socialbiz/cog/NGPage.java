@@ -55,11 +55,6 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     protected NGBook prjSite;
     protected List<String> existingIds = null;
 
-/*
-    private static final int CAT_ANONYMOUS = -1;
-    private static final int CAT_PUBLIC    = 0;
-*/
-
 
     //Least Recently Used Cache .... keep copies of the last ten
     //page objects in memory for reuse
@@ -225,37 +220,6 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         dataPath = path;
     }
 
-
-    /*
-    public static File getPathInDataFolder(String p)
-        throws Exception
-    {
-        if (dataPath==null)
-        {
-            throw new NGException("nugen.exception.datapath.not.initialized",null);
-        }
-        if (p.indexOf('/')>=0)
-        {
-            throw new NGException("nugen.exception.path.have.slash", new Object[]{p});
-        }
-        File theFile = new File(dataPath, p);
-        String fullPath = theFile.getPath();
-
-        String cleanUp1 = fullPath.substring(0,dataPath.length()).toLowerCase().replace('\\','/');
-        String cleanUp2 = dataPath.toLowerCase().replace('\\','/');
-
-        //this is a security check:
-        //The result of combining the path in this way, must result in a path
-        //that is still within the data folder, so check that the cannonical
-        //path starts with the data folder path.
-        if (!cleanUp1.equals(cleanUp2))
-        {
-            throw new NGException("nugen.exception.wrong.path", new Object[]{dataPath,fullPath,cleanUp2,cleanUp1});
-        }
-
-        return new File(fullPath);
-    }
-*/
 
     /**
      * To an existing project, add all the (1) Action Items (2) Roles of an
@@ -1078,6 +1042,110 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
 
     ///////////////// NOTES //////////////////////
 
+    public List<NoteRecord> getAllNotes() throws Exception {
+        return noteParent.getChildren("note", NoteRecord.class);
+    }
+
+    public List<NoteRecord> getVisibleNotes(AuthRequest ar, int displayLevel)
+            throws Exception {
+        List<NoteRecord> list=new ArrayList<NoteRecord>();
+        List<NoteRecord> fullList = getAllNotes();
+
+        for (NoteRecord note : fullList) {
+            if (note.isVisible(ar, displayLevel) && !note.isDeleted() && !note.isDraftNote()) {
+                list.add(note);
+            }
+        }
+        return list;
+    }
+
+    public List<NoteRecord> getDraftNotes(AuthRequest ar)
+    throws Exception {
+        List<NoteRecord> list=new ArrayList<NoteRecord>();
+        if (ar.isLoggedIn()) {
+            List<NoteRecord> fullList = getAllNotes();
+            UserProfile thisUserId = ar.getUserProfile();
+            for (NoteRecord note : fullList) {
+                if (!note.isDeleted() && note.isDraftNote() && note.getModUser().equals(thisUserId)) {
+                    list.add(note);
+                }
+            }
+        }
+        return list;
+    }
+
+
+    public NoteRecord getNote(String cmtId) throws Exception {
+        for (NoteRecord lr : getAllNotes()) {
+            if (cmtId.equals(lr.getId())) {
+                return lr;
+            }
+        }
+        return null;
+    }
+
+
+    public NoteRecord getNoteOrFail(String noteId) throws Exception {
+        NoteRecord ret =  getNote(noteId);
+        if (ret==null) {
+            throw new NGException("nugen.exception.unable.to.locate.note.with.id", new Object[]{noteId, getFullName()});
+        }
+        return ret;
+    }
+
+    public NoteRecord getNoteByUidOrNull(String universalId) throws Exception {
+        if (universalId==null) {
+            return null;
+        }
+        for (NoteRecord lr : getAllNotes()) {
+            if (universalId.equals(lr.getUniversalId())) {
+                return lr;
+            }
+        }
+        return null;
+    }
+
+
+    /** mark deleted, don't actually deleting the Topic. */
+    public void deleteNote(String id,AuthRequest ar) throws Exception {
+        NoteRecord ei = getNote( id );
+
+        ei.setTrashPhase( ar );
+    }
+
+    public void unDeleteNote(String id,AuthRequest ar) throws Exception {
+        NoteRecord ei = getNote( id );
+        ei.clearTrashPhase();
+    }
+
+
+
+    public List<NoteRecord> getDeletedNotes(AuthRequest ar)
+    throws Exception {
+        List<NoteRecord> list=new ArrayList<NoteRecord>();
+        List<NoteRecord> fullList = getAllNotes();
+
+        for (NoteRecord note : fullList) {
+            if (note.isDeleted()) {
+                list.add(note);
+            }
+        }
+        return list;
+    }
+
+
+    public NoteRecord createNote() throws Exception {
+        NoteRecord note = noteParent.createChild("note", NoteRecord.class);
+        String localId = getUniqueOnPage();
+        note.setId( localId );
+        note.setUniversalId(getContainerUniversalId() + "@" + localId);
+        note.setDiscussionPhase("Freeform");
+        return note;
+    }
+
+    
+    
+    
 
 
     @Override

@@ -121,7 +121,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
     /**
      * SCHEMA MIGRATION CODE - old schema required members to be children of a
-     * tag 'members' and also prospective memebers in a tag 'pmembers' This code
+     * tag 'members' and also prospective members in a tag 'pmembers' This code
      * migrates these to the standard Role object storage format, to a role
      * called 'Executives' The tag 'members' and 'pmembers' are removed from the
      * file.
@@ -601,10 +601,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
     }
 
     public void changeVisibility(String oid, AuthRequest ar) throws Exception {
-        int visibility = safeConvertInt(ar.reqParam("visibility"));
-        NoteRecord note = getNoteOrFail(oid);
-        note.setVisibility(visibility);
-        note.setEffectiveDate(SectionUtil.niceParseDate(ar.defParam("effDate", "")));
+        throw new Exception("Can not change the visibility of a note on a book, because there are no notes on books");
     }
 
     @Override

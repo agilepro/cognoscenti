@@ -29,7 +29,6 @@ import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.IdGenerator;
 import org.socialbiz.cog.License;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGSection;
@@ -337,7 +336,7 @@ public class ResourcePage implements NGResource
     public void loadSectionForNotes(Document loutdoc, NGSection ngs, Element element_sec,
         AuthRequest au, String lserverURL)throws Exception
     {
-        NGContainer ngc = ngs.parent;
+        NGPage ngc = ngs.parent;
         Element element_comments = DOMUtils.createChildElement(loutdoc, element_sec, "comments");
         for (NoteRecord note : ngc.getAllNotes()) {
 

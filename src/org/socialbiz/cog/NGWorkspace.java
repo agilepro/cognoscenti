@@ -115,7 +115,7 @@ public class NGWorkspace extends NGPage {
             for (NoteRecord note : this.getAllNotes()) {
                 for (CommentRecord comm : note.getComments()) {
                     //schema migration from before 101
-                    comm.schemaMigration();
+                    comm.schemaMigration(fromLevel, toLevel);
                 }
             }
             this.getAllRoles();
@@ -123,14 +123,19 @@ public class NGWorkspace extends NGPage {
                 for (AgendaItem ai : meet.getAgendaItems()) {
                     for (CommentRecord comm : ai.getComments()) {
                         //schema migration from before 101
-                        comm.schemaMigration();
+                        comm.schemaMigration(fromLevel, toLevel);
                     }
                 }
             }
         }
+        if (fromLevel<102) {
+            for (@SuppressWarnings("unused") NoteRecord nr : this.getAllNotes()) {
+                //just run the constructor
+            }
+        }
     }
     public int currentSchemaVersion() {
-        return 101;
+        return 102;
     }
 
     public static NGWorkspace readWorkspaceAbsolutePath(File theFile) throws Exception {

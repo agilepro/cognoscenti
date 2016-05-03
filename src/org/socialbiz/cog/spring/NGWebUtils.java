@@ -32,24 +32,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AddressListEntry;
-import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.HistoryRecord;
-import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGRole;
-import org.socialbiz.cog.NGWorkspace;
-import org.socialbiz.cog.NoteRecord;
-import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.exception.NGException;
 import org.workcast.json.JSONObject;
 
 public class NGWebUtils {
 
-    public static void nicePrintDate(Writer out, long timestamp)
+/*    public static void nicePrintDate(Writer out, long timestamp)
             throws Exception {
         SectionUtil.nicePrintDate(out, timestamp);
     }
+
 
     public static String getNicePrintDate(long timestamp) throws Exception {
         StringWriter out = new StringWriter(20);
@@ -67,22 +63,16 @@ public class NGWebUtils {
         out.write(value);
     }
 
-    public static int getNotesCount(NGContainer container, AuthRequest ar,
+
+    public static int getNotesCount(NGPage ngp, AuthRequest ar,
             int displayLevel) throws Exception {
-        int count = 0;
-        List<NoteRecord> notes = container.getVisibleNotes(ar, displayLevel);
-        if (notes != null) {
-            count = notes.size();
-        }
-        return count;
+        List<NoteRecord> notes = ngp.getVisibleNotes(ar, displayLevel);
+        return notes.size();
     }
 
-    public static int getDeletedNotesCount(NGContainer container, AuthRequest ar)
+    public static int getDeletedNotesCount(NGPage ngp, AuthRequest ar)
             throws Exception {
-        List<NoteRecord> notes = container.getDeletedNotes(ar);
-        if (notes == null) {
-            return 0;
-        }
+        List<NoteRecord> notes = ngp.getDeletedNotes(ar);
         return notes.size();
     }
 
@@ -96,7 +86,7 @@ public class NGWebUtils {
         return count;
     }
 
-    /*
+   
       public static int getDocumentCount(NGWorkspace ngw, int displayLevel)
             throws Exception {
         int noOfDocs = 0;
@@ -109,7 +99,7 @@ public class NGWebUtils {
         }
         return noOfDocs;
     }
-    */
+  
 
     public static int getDeletedDocumentCount(NGWorkspace ngw) throws Exception {
         int noOfDocs = 0;
@@ -121,16 +111,16 @@ public class NGWebUtils {
         }
         return noOfDocs;
     }
+*/
 
 
 
-
-
+/*
     public static void writeLocalizedHistoryMessage(HistoryRecord hr,
             NGContainer ngp, AuthRequest ar) throws Exception {
         hr.writeLocalizedHistoryMessage(ngp, ar);
     }
-
+*/
     public static String getExceptionMessageForAjaxRequest(Exception e,
             Locale locale) throws Exception {
         StringWriter stackOutput = new StringWriter();

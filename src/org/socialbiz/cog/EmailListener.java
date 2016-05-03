@@ -312,7 +312,7 @@ public class EmailListener extends TimerTask{
 
             note.setEffectiveDate(System.currentTimeMillis());
             note.setLastEdited(System.currentTimeMillis());
-            note.setSaveAsDraft("no");
+            note.setDiscussionPhase("Freeform");
 
             Address[] fromAdrs = message.getFrom();
             String fromAdd = getFromAddress(fromAdrs[0].toString());
