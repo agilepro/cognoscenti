@@ -31,14 +31,6 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
 import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
@@ -556,32 +548,6 @@ public class EmailSender extends TimerTask {
         return sb.toString();
     }
 
-    /**
-     * A simple authenticator class that gets the username and password
-     * from the properties object if mail.smtp.auth is set to true.
-     *
-     * documentation on javax.mail.Authenticator says that if you want
-     * authentication, return an object, otherwise return null.  So
-     * null is returned if no auth setting or user/password.
-     */
-    private static class MyAuthenticator extends javax.mail.Authenticator {
-        private Properties props;
-
-        public MyAuthenticator(Properties _props) {
-            props = _props;
-        }
-
-        protected PasswordAuthentication getPasswordAuthentication() {
-            if ("true".equals(props.getProperty("mail.smtp.auth"))) {
-                return new PasswordAuthentication(
-                        props.getProperty("mail.smtp.user"),
-                        props.getProperty("mail.smtp.password"));
-            }
-            return null;
-        }
-    }
-
-
 
     /**
      * Use this to attempt to detect mis-configurations, and give a reasonable
@@ -615,95 +581,5 @@ public class EmailSender extends TimerTask {
         }
     }
 
-    private static void dumpProperties(Properties props) {
-
-        for (String key : props.stringPropertyNames()) {
-            System.out.println("  ** Property "+key+" = "+props.getProperty(key));
-        }
-    }
-
-    /**
-     * use this to send a quick test message
-     * using the server configuration
-     */
-    public static void sendTestEmail() throws Exception {
-        Properties props = emailProperties;
-
-        try {
-            final String fromAddress = props.getProperty("mail.smtp.from");
-            if (fromAddress==null) {
-                throw new Exception("In order to send a test email, configure a setting for mail.smtp.from in the email properties file");
-            }
-            final String destAddress = props.getProperty("mail.smtp.testAddress");
-            if (destAddress==null) {
-                throw new Exception("In order to send a test email, configure a setting for mail.smtp.testAddress in the email properties file");
-            }
-            final String msgText = "This is a sample email message sent "+(new Date()).toString();
-
-            // these should be set already -- for GOOGLE
-            // props.put("mail.smtp.starttls.enable", "true");
-            // props.put("mail.smtp.auth", "true");
-            // props.put("mail.smtp.host", "smtp.gmail.com");
-            // props.put("mail.smtp.port", "587");
-
-            Authenticator authenticator = new MyAuthenticator(props);
-            Session session = Session.getInstance(props, authenticator);
-
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(fromAddress));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destAddress));
-            message.setSubject("Testing Subject");
-            message.setText(msgText);
-
-            Transport.send(message);
-
-            System.out.println("Sent test mail to " + destAddress);
-        }
-        catch (Exception e) {
-            System.out.println("ERROR sending email message");
-            dumpProperties(props);
-            e.printStackTrace();
-            throw e;
-        }
-
-    }
-
-    /**
-     * Sometimes testing email settings can be a pain, so this main routine
-     * allows for an easy way, in Eclipse or on the command line to
-     * test email sending without TomCat or anything else around.
-     *
-     * Parameters are:
-     * 0: your user name
-     * 1: your password
-     *
-     * Enter the other test values (destination address, from address, host, port)
-     * directly into the code below.
-     */
-    public static void main(String[] args) {
-        if (args.length < 2) {
-            System.out.println("Format: EmailSender <user> <password>");
-            return;
-        }
-        emailProperties = new Properties();
-
-        emailProperties.put("mail.smtp.starttls.enable", "true");
-        emailProperties.put("mail.smtp.auth", "true");
-        emailProperties.put("mail.smtp.host", "smtp.gmail.com");
-        emailProperties.put("mail.smtp.port", "587");
-        emailProperties.put("mail.smtp.user", args[0]);
-        emailProperties.put("mail.smtp.password",args[1]);
-        emailProperties.put("mail.smtp.from", "xxx@yyy.com");
-        emailProperties.put("mail.smtp.testAddress", "xxx@zzz.com");
-
-        try {
-            sendTestEmail();
-            return ;
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-            return ;
-        }
-    }
 
 }

@@ -22,8 +22,6 @@ package org.socialbiz.cog.mail;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,19 +71,8 @@ public class MailFile extends JSONWrapper {
     }
 
     public void save() throws Exception {
-        File folder = myPath.getParentFile();
-        File tempFile = new File(folder, "~temp."+myPath.getName()+System.currentTimeMillis());
-        FileOutputStream fos = new FileOutputStream(tempFile);
-        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-        kernel.write(osw, 2, 0);
-        //kernel.write(osw);
-        osw.flush();
-        osw.close();
-        fos.close();
-        if (myPath.exists()) {
-            myPath.delete();
-        }
-        tempFile.renameTo(myPath);
+        pruneOldRecords();
+        kernel.writeToFile(myPath);
     }
 
     public List<MailInst> getAllMessages() throws Exception {
@@ -97,11 +84,11 @@ public class MailFile extends JSONWrapper {
         }
         return ret;
     }
-    public void addMessage(MailInst mail) throws Exception {
+    void addMessage(MailInst mail) throws Exception {
         JSONArray msgs = this.getRequiredArray("msgs");
         msgs.put(mail.kernel);
     }
-    public MailInst createMessage() throws Exception {
+    MailInst createMessage() throws Exception {
         JSONArray msgs = this.getRequiredArray("msgs");
         JSONObject jo = new JSONObject();
         msgs.put(jo);
