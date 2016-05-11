@@ -47,24 +47,24 @@ public class CommentRecord extends DOMFace {
                 //don't send the closed email for these records created when there was
                 //no closed email.
                 setCloseEmailSent(true);
-    
+
                 //Also set the regular sent email flag.  If mail not sent by now, it should
                 //never be sent.
                 setEmailSent(true);
             }
-    
-    
+
+
             //schema migration before version 101 of NGWorkspace
             getEmailSent();
             getCommentType();
             //state added in version 101 of schema
             getState();
-    
+
             for (ResponseRecord rr : getResponses()) {
                 //schema migration before version 101 of NGWorkspace
                 rr.getEmailSent();
             }
-    
+
             //needed for version 101 schema ... a few comments got
             //created incorrectly
             if (getCommentType()==COMMENT_TYPE_SIMPLE  &&
@@ -250,6 +250,19 @@ public class CommentRecord extends DOMFace {
         setScalar("decision", replies);
     }
 
+    /**
+     * NewPhase is applicable only when the comment is indicating
+     * a phase change in a conversation.  It represents the phase
+     * that the conversation just changed to.  This value will be
+     * empty for other comment types.
+     */
+    public String getNewPhase() {
+        return getScalar("newPhase");
+    }
+    public void setNewPhase(String newPhase) {
+        setScalar("newPhase", newPhase);
+    }
+
     public List<Long> getReplies() {
         ArrayList<Long> ret = new ArrayList<Long>();
         for(String val : getVector("replies")) {
@@ -287,7 +300,11 @@ public class CommentRecord extends DOMFace {
 
     public boolean needCreateEmailSent() {
         if (getState()==CommentRecord.COMMENT_STATE_DRAFT) {
-            //never send email for draft
+            //never send email for draft or phase change
+            return false;
+        }
+        if (getCommentType()==CommentRecord.COMMENT_TYPE_PHASE_CHANGE) {
+            //never send email for phase change
             return false;
         }
         if (getCommentType()==CommentRecord.COMMENT_TYPE_MINUTES) {
@@ -331,7 +348,9 @@ public class CommentRecord extends DOMFace {
 
 
     public boolean needCloseEmailSent() {
-        if (getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE || getCommentType()==CommentRecord.COMMENT_TYPE_MINUTES) {
+        if (getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE
+            || getCommentType()==CommentRecord.COMMENT_TYPE_MINUTES
+            || getCommentType()==CommentRecord.COMMENT_TYPE_PHASE_CHANGE) {
             return false;
         }
         if (getState()!=CommentRecord.COMMENT_STATE_CLOSED) {
@@ -340,6 +359,7 @@ public class CommentRecord extends DOMFace {
 
         if (getTime() < 1456272000000L) {
             //if this was created before Feb 24, 2016, then don't send any email
+            setCloseEmailSent(true);
             return false;
         }
         return !getCloseEmailSent();
@@ -479,6 +499,7 @@ public class CommentRecord extends DOMFace {
         commInfo.put("commentType",getCommentType());
         commInfo.put("emailPending",needCreateEmailSent()||needCloseEmailSent());  //display only
         commInfo.put("replyTo",  getReplyTo());
+        commInfo.put("newPhase",  getNewPhase());
         JSONArray replyList = new JSONArray();
         for (Long val : getReplies()) {
             replyList.put(val.longValue());

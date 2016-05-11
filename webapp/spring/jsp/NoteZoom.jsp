@@ -806,7 +806,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                             <button class="dropdown-toggle specCaretBtn" type="button"  id="menu1" 
                                 data-toggle="dropdown"> <span class="caret"></span> </button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
+                              <li role="presentation" 
+                                  ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.commentType!=6">
                                   <a role="menuitem" ng-click="openCommentEditor(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="postComment(cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
@@ -845,13 +846,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                  <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
                                  <i class="fa fa-star-o"></i> {{findComment(cmt.replyTo).userName}}</a></span>
                          </span>
+                         <span ng-show="cmt.commentType==6" style="color:green">
+                             <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase</span>
                          <span style="float:right;color:green;">{{calcDueDisplay(cmt)}}</span>
                          <div style="clear:both"></div>
                       </div>
                    <div ng-show="cmt.state==11">
                        Draft {{commentTypeName(cmt)}} needs posting to be seen by others
                    </div>
-                   <div class="leafContent comment-inner" ng-hide="cmt.meet">
+                   <div class="leafContent comment-inner" ng-hide="cmt.meet || cmt.commentType==6">
                        <div ng-bind-html="cmt.html"></div>
                    </div>
                    <div ng-show="cmt.meet" class="btn btn-sm btn-default"  style="margin:4px;"

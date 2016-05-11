@@ -256,7 +256,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         }
 
     }
-    
+
     /**
      * Clears the current page from the cache.
      * This is the global "rollback" function.  It does not undo any changes
@@ -303,7 +303,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     {
         try {
             save();
-            
+
             //update the in memory index because the file has changed
             refreshOutboundLinks(cog);
 
@@ -1115,7 +1115,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
 
     public void unDeleteNote(String id,AuthRequest ar) throws Exception {
         NoteRecord ei = getNote( id );
-        ei.clearTrashPhase();
+        ei.clearTrashPhase(ar);
     }
 
 
@@ -1139,13 +1139,10 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         String localId = getUniqueOnPage();
         note.setId( localId );
         note.setUniversalId(getContainerUniversalId() + "@" + localId);
-        note.setDiscussionPhase("Freeform");
         return note;
     }
 
-    
-    
-    
+
 
 
     @Override
@@ -1713,11 +1710,11 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         projectInfo.put("deleted", isDeleted());
         projectInfo.put("upstream", getUpstreamLink());
         projectInfo.put("projectMail", getProjectMailId());
-        
+
         //read only information from the site
         projectInfo.put("showExperimental", this.getSite().getShowExperimental());
         projectInfo.put("allowPrivate", this.getSite().getAllowPrivate());
-        
+
         return projectInfo;
     }
 

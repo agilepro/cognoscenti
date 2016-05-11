@@ -42,7 +42,7 @@ import org.workcast.streams.MemFile;
 * (Used to be called LeafletRecord, but name changed March 2013)
 */
 public class NoteRecord extends CommentContainer implements EmailContext {
-    
+
     public static final String DISCUSSION_PHASE_DRAFT               = "Draft";
     public static final String DISCUSSION_PHASE_FREEFORM            = "Freeform";
     public static final String DISCUSSION_PHASE_PICTURE_FORMING     = "Forming";
@@ -66,14 +66,14 @@ public class NoteRecord extends CommentContainer implements EmailContext {
         if (viz<1 || viz>4) {
             setVisibility(2);
         }
-        
+
         //convert to using discussion phase instead of older deleted indicator
         //NGPage schema 101 -> 102 migration
-        String currentPhase = getDiscussionPhase(); 
+        String currentPhase = getDiscussionPhase();
         if (currentPhase==null || currentPhase.length()==0) {
             //by default everything is freeform, unless deleted or possibly draft
             currentPhase = DISCUSSION_PHASE_FREEFORM;
-            
+
             String delAttr = getAttribute("deleteUser");
             String saveAsDraft = getAttribute("saveAsDraft");
             if (delAttr!=null && delAttr.length()>0) {
@@ -83,7 +83,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
                 currentPhase = DISCUSSION_PHASE_DRAFT;
             }
             clearAttribute("saveAsDraft");
-            setDiscussionPhase(currentPhase);
+            setAttribute("discussionPhase", currentPhase);
         }
     }
 
@@ -486,14 +486,17 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     public String getDiscussionPhase() {
         return getAttribute("discussionPhase");
     }
-    public void setDiscussionPhase(String newPhase) {
+    public void setDiscussionPhase(String newPhase, AuthRequest ar) throws Exception {
         String oldPhase = getDiscussionPhase();
         if (newPhase.equals(oldPhase)) {
             return;
         }
+        CommentRecord cr = this.addComment(ar);
+        cr.setCommentType(CommentRecord.COMMENT_TYPE_PHASE_CHANGE);
+        cr.setNewPhase(newPhase);
         setAttribute("discussionPhase", newPhase);
     }
-    
+
     /**
     * Marking a Topic as deleted means that we SET the phase to trash.
     * A Topic that is deleted / trash remains in the archive until a later
@@ -510,15 +513,15 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     * Set the date to zero in order to clear the deleted flag
     * and make the topic to be not-deleted
     */
-    public void setTrashPhase(AuthRequest ar) {
+    public void setTrashPhase(AuthRequest ar) throws Exception {
         setAttribute("deleteDate", Long.toString(ar.nowTime));
         setAttribute("deleteUser", ar.getBestUserId());
-        setDiscussionPhase("Trash");
+        setDiscussionPhase("Trash", ar);
     }
-    public void clearTrashPhase() {
+    public void clearTrashPhase(AuthRequest ar) throws Exception {
         setAttribute("deleteDate", null);
         setAttribute("deleteUser", null);
-        setDiscussionPhase("Freeform");
+        setDiscussionPhase("Freeform", ar);
     }
     public long getDeleteDate() {
         return getAttributeLong("deleteDate");
@@ -918,7 +921,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
              }
              else {
                   if (isDeleted()) {
-                     clearTrashPhase();
+                     clearTrashPhase(ar);
                  }
              }
          }
@@ -949,9 +952,9 @@ public class NoteRecord extends CommentContainer implements EmailContext {
              setPinOrder(noteObj.getInt("pin"));
          }
          if (noteObj.has("discussionPhase")) {
-             setDiscussionPhase(noteObj.getString("discussionPhase"));
+             setDiscussionPhase(noteObj.getString("discussionPhase"), ar);
          }
-         
+
      }
      public void updateHtmlFromJSON(AuthRequest ar, JSONObject noteObj) throws Exception {
          if (noteObj.has("html")) {
