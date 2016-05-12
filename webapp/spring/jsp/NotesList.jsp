@@ -28,12 +28,19 @@
 
     JSONArray notes = new JSONArray();
     for (NoteRecord aNote : aList) {
+        
+        String discussionPhase = aNote.getDiscussionPhase();
 
         if (aNote.isPublic()) {
             notes.put( aNote.getJSONWithHtml(ar) );
         }
         else if (!ar.isLoggedIn()) {
             continue;
+        }
+        else if ("Draft".equals(discussionPhase)) {
+            if (ar.getUserProfile().hasAnyId(aNote.getModUser().getUniversalId())) {
+                notes.put( aNote.getJSONWithHtml(ar) );
+            }
         }
         else if (isMember) {
             notes.put( aNote.getJSONWithHtml(ar) );
@@ -65,7 +72,7 @@
         "deleted": false,
         "docList": [],
         "draft": false,
-        "html": "<h1>Minutes for Meeting: Status Update for May 19\n<\/h1><h2>1. Discuss the Weather\n<\/h2><p>\n(15 minutes) <i>hot toipc<\/i>\n<\/p>\n<p>\n<i>Notes:<\/i>\n<\/p>\n<ul>\n<li>\n No <b>thunder <\/b><i>storm <\/i>today.....\n<\/li>\n<li>\n none tomorow <b>either <\/b>klakj f\n<\/li>\n<\/ul>\n<p>\nasdflkj alsdkjf lkasjdflkj alsdfkj lasjdkf lkj klasdf\n<\/p>\n<h2>2. Discuss Barnacle Removal\n<\/h2><p>\n(15 minutes) <i>scraping required<\/i>\n<\/p>\n<p>\n<i>Notes:<\/i>\n<\/p>\n<p>\nA week from <b><i>Thursday <\/i><\/b>would be good......\n<\/p>\n<p>\nmore <b><i>info<\/i><\/b>here\n<\/p>\n<ul>\n<li>\n Action Item: <a href=\"http://kswenson-t902.corp.fc.local/cog/t/ktest/test-for-john/task9364.htm\">asdasd<\/a>\n<\/li>\n<li>\n Action Item: <a href=\"http://kswenson-t902.corp.fc.local/cog/t/ktest/test-for-john/task9985.htm\">Buy Scraping Tools<\/a>\n<\/li>\n<\/ul>\n<h2>3. Review Flag Repari\n<\/h2><p>\n(30 minutes)\n<\/p>\n<p>\n<i>Notes:<\/i>\n<\/p>\n<p>\nthese are the last notes!!!!\n<\/p>\n<ul>\n<li>\n Action Item: <a href=\"http://kswenson-t902.corp.fc.local/cog/t/ktest/test-for-john/task2317.htm\">Flag Review Work<\/a>\n<\/li>\n<\/ul>\n",
+        "html": "<h1>Minutes for Meeting: Status Update for May 19\n<\/h1><p>...\n<\/p>\n",
         "id": "6314",
         "labelMap": {},
         "modTime": 1434492969035,
@@ -249,6 +256,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             newTopic.id = "~new~";
 			newTopic.html = createdTopic.html;
 			newTopic.subject = createdTopic.subject;
+			newTopic.discussionPhase = createdTopic.phase;
 			newTopic.modUser = {};
 			newTopic.modUser.uid = "<%ar.writeJS(currentUser);%>";
 			newTopic.modUser.name = "<%ar.writeJS(currentUserName);%>";
@@ -281,7 +289,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     }
 
-
+    $scope.getTopicStyle = function(note) {
+        if (note.discussionPhase=="Draft") {
+            return "draftTopic";
+        }
+        else {
+            return "regularTopic";
+        }
+    }
 	
 });
 
@@ -355,6 +370,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
              </span>
         </span>
     </div>
+    
+    <style>
+    .regularTopic {
+        border: 1px solid lightgrey;
+        border-radius:10px;
+        margin-top:20px;
+        padding:5px;
+        background-color:#F8EEEE;
+    }
+    .draftTopic {
+        border: 1px solid lightgrey;
+        border-radius:10px;
+        margin-top:20px;
+        padding:5px;
+        background-color:yellow;
+    }
+    
+    </style>
 
     <div style="height:20px;"></div>
 
@@ -364,7 +397,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </button>
         </div>
         <div ng-repeat="rec in getRows()">
-            <div style="border: 1px solid lightgrey;border-radius:10px;margin-top:20px;padding:5px;background-color:#F8EEEE;">
+            <div class="{{getTopicStyle(rec)}}">
                 <div id="headline" >
                   <span class="dropdown">
                     <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
@@ -405,6 +438,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   &nbsp;
                   <a class="fa fa-minus-square-o meeting-icon" ng-click="openMap[rec.id]=false" ng-show="openMap[rec.id]"></a>
                   <a class="fa fa-plus-square-o meeting-icon" ng-click="openMap[rec.id]=true" ng-show="!openMap[rec.id]" title="preview this topic"></a>
+                   <span ng-show="rec.discussionPhase=='Draft'"> <b>-DRAFT-</b> </span>
                 </div>
                 <div class="leafContent" ng-show="openMap[rec.id]" style="background-color:white;border-radius:10px;margin:5px;">
                     <div ng-bind-html="rec.html"></div>
