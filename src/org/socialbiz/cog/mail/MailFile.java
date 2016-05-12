@@ -56,11 +56,16 @@ public class MailFile extends JSONWrapper {
             return new MailFile(path, newFile);
         }
         else {
-            FileInputStream fis = new FileInputStream(path);
-            JSONTokener jt = new JSONTokener(fis);
-            JSONObject newKernel = new JSONObject(jt);
-            fis.close();
-            return new MailFile(path, newKernel);
+            try{
+                FileInputStream fis = new FileInputStream(path);
+                JSONTokener jt = new JSONTokener(fis);
+                JSONObject newKernel = new JSONObject(jt);
+                fis.close();
+                return new MailFile(path, newKernel);
+            }
+            catch (Exception e) {
+                throw new Exception("Unable to read global email file: "+path);
+            }
         }
     }
 
@@ -183,6 +188,7 @@ public class MailFile extends JSONWrapper {
      * 9 months old -- removed entirely
      */
     public void pruneOldRecords() throws Exception {
+        /*
         long THREE_MONTHS_AGO = System.currentTimeMillis() - 90*24*60*60*1000;
         long NINE_MONTHS_AGO = System.currentTimeMillis() - 270*24*60*60*1000;
 
@@ -192,17 +198,19 @@ public class MailFile extends JSONWrapper {
         for (int i=0; i<last; i++) {
             JSONObject mailObject = oldList.getJSONObject(i);
             MailInst mailInst = new MailInst(mailObject);
-            long sendTime = mailInst.getLastSentDate();
-            if (sendTime<NINE_MONTHS_AGO) {
+            long created = mailInst.getCreateDate();
+            if (created<NINE_MONTHS_AGO) {
+                System.out.println("Dropping old message: "+mailInst.getSubject());
                 continue;
             }
-            if (sendTime<THREE_MONTHS_AGO) {
+            if (created<THREE_MONTHS_AGO) {
                 mailInst.setBodyText("*deleted*");
                 mailInst.setAttachmentFiles(new ArrayList<File>());
             }
             newEmailList.put(mailObject);
         }
         kernel.put("msgs", newEmailList);
+        */
     }
 
 }

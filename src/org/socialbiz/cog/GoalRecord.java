@@ -1192,7 +1192,7 @@ public class GoalRecord extends BaseRecord {
         int state           = getState();
         String stateNameStr = stateName(state);
         String overdueStr = "";
-        if (!BaseRecord.isFinal(state) && this.getDueDate()<ar.nowTime) {
+        if (!BaseRecord.isFinal(state) && this.getDueDate()<ar.nowTime && this.getDueDate()>0) {
             //if it is not finished and past due date, then say that
             overdueStr = " Overdue!";
         }
@@ -1248,6 +1248,9 @@ public class GoalRecord extends BaseRecord {
 
         clone.write("\n<tr><td>State:</td>\n  <td>");
         clone.writeHtml(stateNameStr);
+
+        clone.write("\n<tr><td>Due:</td>\n  <td>");
+        SectionUtil.nicePrintDateAndTime(clone.w,this.getDueDate());
 
         clone.write("</td></tr>\n</table>\n");
         ooa.writeUnsubscribeLink(clone);

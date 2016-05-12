@@ -185,6 +185,7 @@ public class EmailSender extends TimerTask {
             }
             catch (Exception e) {
                 System.out.println("FATAL ERROR HANDLING GLOBAL EMAIL: "+e.toString());
+                e.printStackTrace(System.out);
             }
         }
     }
