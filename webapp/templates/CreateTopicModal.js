@@ -3,6 +3,7 @@ app.controller('CreateTopicModalCtrl', function ($scope, $modalInstance) {
     $scope.topic = {};
 	$scope.topic.subject="";
 	$scope.topic.html="";
+	$scope.topic.phase="Freeform";
 	
     $scope.cmt = {};
 	$scope.cmt.html="";

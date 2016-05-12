@@ -8,6 +8,11 @@
     <div class="form-inline form-group">
 	    Subject: 
 		<input ng-model="topic.subject" class="form-control" style="width:400px">
+        &nbsp; Phase: 
+		<select ng-model="topic.phase" class="form-control" style="width:150px">
+            <option>Freeform</option>
+            <option>Draft</option>
+        </select>
 	</div>
     <div>Briefly describe the Topic</div>
     <div ng-model="topic.html" ui-tinymce="tinymceOptions1" class="leafContent" style="max-height:200px;height:200px">
