@@ -293,6 +293,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (note.discussionPhase=="Draft") {
             return "draftTopic";
         }
+        if (note.deleted) {
+            return "trashTopic";
+        }
         else {
             return "regularTopic";
         }
@@ -346,7 +349,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <span style="vertical-align:middle;" ng-show="<%=isMember%>"><input type="checkbox" ng-model="showVizMem">
             <img src="<%=ar.retPath%>assets/images/iconMember.png"> Member-Only</span>
         <span style="vertical-align:middle;" ng-show="<%=isMember%>"><input type="checkbox" ng-model="showVizDel">
-            <img src="<%=ar.retPath%>deletedLink.gif"> Deleted</span>
+            <img src="<%=ar.retPath%>deletedLink.gif"> Trash</span>
         <span class="dropdown" ng-repeat="role in allLabelFilters()">
             <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
                data-toggle="dropdown" style="background-color:{{role.color}};"
@@ -386,6 +389,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         padding:5px;
         background-color:yellow;
     }
+    .trashTopic {
+        border: 1px solid lightgrey;
+        border-radius:10px;
+        margin-top:20px;
+        padding:5px;
+        background-color:pink;
+    }
     
     </style>
 
@@ -409,12 +419,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                           <a role="menuitem" tabindex="-1" href="editNote.htm?nid={{rec.id}}" target="_blank">Edit Topic</a></li>
                       <li role="presentation">
                           <a role="menuitem" tabindex="-1" href="sendNote.htm?noteId={{rec.id}}">Send Email</a></li>
-                      <li role="presentation" ng-hide="rec.public">
+                      <li role="presentation" ng-hide="rec.public || rec.deleted">
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteViz(rec)">Make <img src="<%=ar.retPath%>assets/images/iconPublic.png"> Public</a></li>
                       <li role="presentation" ng-show="rec.public && allowPrivate">
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteViz(rec)">Make <img src="<%=ar.retPath%>assets/images/iconMember.png"> Member Only</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Delete <img src="<%=ar.retPath%>deletedLink.gif"> Topic</a></li>
+                      <li role="presentation" ng-hide="rec.deleted">
+                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Trash <img src="<%=ar.retPath%>deletedLink.gif"> Topic</a></li>
+                      <li role="presentation" ng-show="rec.deleted">
+                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Untrash <img src="<%=ar.retPath%>deletedLink.gif"> Topic</a></li>
                     </ul>
                   </span>
                   <span style="color:#220011;">
