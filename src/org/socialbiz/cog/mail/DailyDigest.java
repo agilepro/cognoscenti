@@ -51,14 +51,31 @@ public class DailyDigest {
             // events created AFTER this time, but before the end of this routine are
             // not lost during the processing.
             long processingStartTime = System.currentTimeMillis();
+            long threeYearsAgo = processingStartTime - (3L*365L*24L*3600L*1000L);
+
             debugWriter.write("</li>\n<li>Email being sent at: ");
             SectionUtil.nicePrintDateAndTime(debugWriter, processingStartTime);
+            debugWriter.write("</li>\n<li>Disabling users who have not accessed since: ");
+            SectionUtil.nicePrintDateAndTime(debugWriter, threeYearsAgo);
             debugWriter.write("</li>");
 
 
             // loop thru all the profiles to send out the email.
             UserProfile[] ups = UserManager.getAllUserProfiles();
             for (UserProfile up : ups) {
+                if (up.getDisabled()) {
+                    //skip all disabled users
+                    continue;
+                }
+                if (up.getLastLogin() > 0 && up.getLastLogin() < threeYearsAgo) {
+                    //automatically disable users who have not logged in in three years
+                    //TODO: what should be do if they have NEVER logged in?
+                    debugWriter.write("\n<li>User automatically disabled after three years no access: "+up.getUniversalId()+"</li>");
+                    System.out.println("DAILYDIGEST: User automatically disabled after three years no access: "+up.getUniversalId());
+                    up.setDisabled(true);
+                    continue;
+                }
+
                 handleOneUser(cog, arx, up, debugWriter, processingStartTime);
 
                 //this clears locks if there was an error during sending
@@ -261,28 +278,28 @@ public class DailyDigest {
                 }
                 String url = clone.retPath
                         + clone.getDefaultURL(container);
-    
+
                 if (needsFirst) {
                     clone.write("<a href=\"");
                     clone.write(clone.baseURL);
                     clone.write("v/");
                     clone.writeURLData(clone.getUserProfile().getKey());
                     clone.write("/userAlerts.htm\">View Latest</a></div>");
-    
+
                     needsFirst = false;
                 }
-    
+
                 clone.write("\n<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">");
                 clone.write("<thead>");
                 clone.write("\n<tr>");
                 clone.write("\n<td style=\"height:30px\" colspan=\"2\" valign=\"top\">");
-    
+
                 clone.write("<h4><img border=\"0\" align=\"middle\" src=\"");
                 clone.write(clone.baseURL);
                 clone.write("assets/iconProject.png");
                 clone.write("\" alt=\"Workspace");
                 clone.write("\"/>&nbsp;&nbsp;<a href=\"");
-    
+
                 clone.write(url);
                 clone.write("\">");
                 clone.writeHtml(container.getFullName());
@@ -290,17 +307,17 @@ public class DailyDigest {
                 clone.write("\n</tr>");
                 clone.write("\n</thead>");
                 clone.write("<tbody>");
-    
+
                 for (HistoryRecord history : histRecs) {
                     ++totalHistoryCount;
-    
+
                     clone.write("<tr>");
                     clone.write("<td style=\"width:25px\"></td><td>&bull;&nbsp;&nbsp;");
                     // dummy link for the sorting purpose.
                     clone.write("<a href=\"");
                     clone.write(Long.toString(history.getTimeStamp()));
                     clone.write("\"></a>");
-    
+
                     // Get Localized string
                     history.writeLocalizedHistoryMessage(container, clone);
                     SectionUtil.nicePrintTime(clone.w, history.getTimeStamp(),
@@ -311,7 +328,7 @@ public class DailyDigest {
                         clone.write("<br/>Comments: &raquo;&nbsp;");
                         clone.writeHtml(history.getComments());
                     }
-    
+
                     clone.write("</td>");
                     clone.write("</tr>");
                     clone.write("\n<tr>");
