@@ -169,8 +169,24 @@
           <a class="dropdown-toggle" data-toggle="dropdown" role="button" 
              aria-haspopup="true" aria-expanded="false">Sites <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Site 1</a></li>
-            <li><a href="#">Site 2</a></li>
+<%
+
+   Properties seenSite = new Properties();
+   for (RUElement rue : recent) {
+       if (seenSite.get(rue.siteKey)!=null) {
+           continue;
+       }
+       seenSite.put(rue.siteKey, rue.siteKey);
+       ar.write("\n<li><a href=\"");
+       ar.write(ar.retPath);
+       ar.write("t/");
+       ar.write(rue.siteKey);
+       ar.write("/$/accountListProjects.htm\">");
+       ar.writeHtml(rue.siteKey);
+       ar.write("</a></li>");   
+   }
+
+%>
             <li role="separator" class="divider"></li>
             <li><a href="<%=userRelPath%>userAccounts.htm">List Sites</a></li>
           </ul>
@@ -187,8 +203,12 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" 
              aria-haspopup="true" aria-expanded="false"><% ar.writeHtml(uProf.getName()); %><span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Log In</a></li>
-            <li><a href="#">Log Out</a></li>
+<% if (uProf==null) { %>
+            <li><a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
+                Log In</a></li>
+<% } else { %>
+            <li><a onclick='logOutProvider();'>Log Out</a></li>
+<% } %>
             <li><a href="<%=userRelPath%>userSettings.htm">Profile</a></li>
             <li><a href="<%=userRelPath%>userAlerts.htm">Updates</a></li>
             <li><a href="<%=userRelPath%>notificationSettings.htm">Notifications</a></li>
@@ -209,9 +229,8 @@
   <li><% ar.writeHtml(jspName); %></li>
 <% } else if(isSiteHeader) { %>
   <li>Site</li>
-           <% if(ngb!=null){ %>
-  <li><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/accountListProjects.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
-           <% } %>
+  <li><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/accountListProjects.htm">
+      <%ar.writeHtml(title);%></a></li>
   <li><% ar.writeHtml(jspName); %></li>
 <% } else { %>
   <li>Workspace</li>
@@ -221,7 +240,6 @@
   <li><% ar.writeHtml(jspName); %></li>
 <% } %>
 </ol>
-
 
 <% if(isSiteHeader) { %>
 
@@ -233,8 +251,6 @@
 </ul>
 
 <% } else if(!isUserHeader) { %>
-
-<p>jspName is <%=jspName%></p>
 
 <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
     <li<%if("Front Page".equals(jspName)){%> class="active"<%}%>><a href="frontPage.htm">Front Page</a></li>

@@ -211,6 +211,9 @@ app.controller('myCtrl', function($scope, $http) {
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation"><a role="menuitem" href="docsFolder.htm">
+                  Show Folders</a>
+              </li>
               <li role="presentation"><a role="menuitem" tabindex="-1" href="docsAdd.htm">
                   <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a>
               </li>
@@ -220,6 +223,10 @@ app.controller('myCtrl', function($scope, $http) {
               <li role="presentation"><a role="menuitem" href="SyncAttachment.htm">
                   <img src="<%= ar.retPath%>assets/iconSync.gif" width="13" height="15" alt="" /> Synchronize</a>
               </li>
+              <li role="presentation"><a role="menuitem" href="docsDeleted.htm">
+                  List Deleted Docs</a>
+              </li>
+              
             </ul>
           </span>
         </div>

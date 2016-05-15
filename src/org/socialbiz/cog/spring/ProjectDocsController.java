@@ -92,6 +92,45 @@ public class ProjectDocsController extends BaseController {
         BaseController.showJSPMembers(ar, siteId, pageId, "DocsAdd");
     }
     
+    @RequestMapping(value = "/{siteId}/{pageId}/docinfo{aid}.htm", method = RequestMethod.GET)
+    protected void docInfoView(@PathVariable String siteId,
+             @PathVariable String pageId, @PathVariable String aid,
+             HttpServletRequest request,  HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        //ngp.findAttachmentByIDOrFail(aid);
+        request.setAttribute("aid", aid);
+        BaseController.showJSPAnonymous(ar, siteId, pageId, "docinfo");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/editDetails{aid}.htm", method = RequestMethod.GET)
+    protected void editDetails(@PathVariable String siteId,
+             @PathVariable String pageId, @PathVariable String aid,
+             HttpServletRequest request,  HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        //ngp.findAttachmentByIDOrFail(aid);
+        request.setAttribute("aid", aid);
+        BaseController.showJSPAnonymous(ar, siteId, pageId, "editDetails");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/fileVersions.htm", method = RequestMethod.GET)
+    protected void fileVersions(@PathVariable String siteId,
+             @PathVariable String pageId, 
+             HttpServletRequest request,  HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        //ngp.findAttachmentByIDOrFail(aid);
+        request.setAttribute("aid", ar.reqParam("aid"));
+        BaseController.showJSPAnonymous(ar, siteId, pageId, "fileVersions");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/docsRevise.htm", method = RequestMethod.GET)
+    protected void docsRevise(@PathVariable String siteId,
+             @PathVariable String pageId, 
+             HttpServletRequest request,  HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        //ngp.findAttachmentByIDOrFail(aid);
+        request.setAttribute("aid", ar.reqParam("aid"));
+        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsRevise");
+    }
     
     
     //////////////////////// REDIRECTS //////////////////////////////
@@ -296,7 +335,7 @@ public class ProjectDocsController extends BaseController {
 
 
 
-
+/*
     @RequestMapping(value = "/{siteId}/{pageId}/docsRevise.htm", method = RequestMethod.GET)
     protected ModelAndView getUploadDocument2Form(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
@@ -331,6 +370,7 @@ public class ProjectDocsController extends BaseController {
         }
         return modelAndView;
     }
+    */
 
     @RequestMapping(value = "/{siteId}/{pageId}/SyncAttachment.htm", method = RequestMethod.GET)
     protected ModelAndView syncAttachment(@PathVariable String siteId,

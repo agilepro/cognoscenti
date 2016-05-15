@@ -202,6 +202,15 @@ public class AccountController extends BaseController {
     public ModelAndView accountCreateProject(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, null, "accountCreateProject");
+        return null;
+    }
+    /*
+    @RequestMapping(value = "/{siteId}/$/accountCreateProject.htm", method = RequestMethod.GET)
+    public ModelAndView accountCreateProject(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
@@ -220,7 +229,8 @@ public class AccountController extends BaseController {
             throw new NGException("nugen.operation.fail.account.process.page", new Object[]{siteId} , ex);
         }
     }
-
+*/
+    
     @RequestMapping(value = "/{siteId}/$/accountCloneProject.htm", method = RequestMethod.GET)
     public ModelAndView accountCloneProject(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)

@@ -139,6 +139,28 @@ app.filter('escape', function() {
     </div>
 
 
+    <div class="generalHeading" style="height:40px">
+        <div  style="float:left;margin-top:8px;">
+            Admin Settings
+        </div>
+        <div class="rightDivContent" style="margin-right:100px;">
+          <span class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            Options: <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation"><a role="menuitem" href="listEmail.htm">
+                  Email Prepared</a>
+              </li>
+              <li role="presentation"><a role="menuitem" href="emailSent.htm">
+                  Email Sent</a>
+              </li>
+              <li role="presentation"><a role="menuitem" href="roleRequest.htm">
+                  Role Requests</a>
+              </li>
+            </ul>
+          </span>
+        </div>
+    </div>
 
     <div>
 

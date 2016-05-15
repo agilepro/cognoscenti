@@ -237,39 +237,7 @@ public class UploadFileController extends BaseController {
         return modelAndView;
     }
 
-/*
-    @RequestMapping(value = "/{siteId}/{pageId}/updateAttachment.form", method = RequestMethod.POST)
-    protected ModelAndView updateAttachment(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response,
-            @RequestParam(value = "fname", required = false) MultipartFile file)
-            throws Exception {
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = getLoggedInAuthRequest(request, response, "message.must.be.login.to.perform.action");
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-            //Handling special case for Multipart request
-            ar.req = request;
 
-            ar.assertNotFrozen(ngp);
-
-            String action = ar.defParam("actionType", "");
-            if(action.equals("Unlink"))
-            {
-                String aid = ar.reqParam("aid");
-                AttachmentHelper.unlinkDocFromRepository(ar, aid, ngp);
-            }else
-            {
-                AttachmentHelper.updateAttachment(ar, file, ngp);
-            }
-
-            modelAndView = createRedirectView(ar, "listAttachments.htm");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.update.document", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-    }
-*/
 
     @RequestMapping(value = "/{siteId}/{pageId}/createLinkURL.form", method = RequestMethod.POST)
     protected ModelAndView createLinkURL(@PathVariable String siteId,
@@ -489,6 +457,7 @@ public class UploadFileController extends BaseController {
         return modelAndView;
     }
 
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/editDocumentForm.htm", method = RequestMethod.GET)
     protected ModelAndView getEditDocumentForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
@@ -531,6 +500,7 @@ public class UploadFileController extends BaseController {
         return modelAndView;
     }
 
+    
     @RequestMapping(value = "/{siteId}/{pageId}/fileVersions.htm", method = RequestMethod.GET)
     protected ModelAndView getFileVersion(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
@@ -561,7 +531,8 @@ public class UploadFileController extends BaseController {
         }
         return modelAndView;
     }
-
+*/
+    
     @RequestMapping(value = "/unDeleteAttachment.ajax", method = RequestMethod.POST)
     protected void unDeleteAttachment( HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -623,24 +594,6 @@ public class UploadFileController extends BaseController {
         }
      }
 
-
-    @RequestMapping(value = "/{siteId}/{pageId}/docinfo{docId}.htm", method = RequestMethod.GET)
-    protected ModelAndView docInfoView(@PathVariable String siteId,
-             @PathVariable String pageId, @PathVariable String docId,
-             HttpServletRequest request,  HttpServletResponse response) throws Exception
-    {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
-            ngp.findAttachmentByIDOrFail(docId);
-
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("aid", docId);
-            return createNamedView(siteId, pageId, ar, "docinfo");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.download.document.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
 
    
 

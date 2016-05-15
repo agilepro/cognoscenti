@@ -19,6 +19,12 @@ Required parameter:
     UserProfile  uProf =ar.getUserProfile();
     List<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
     JSONArray templateList = new JSONArray();
+    
+    JSONObject defaultOption = new JSONObject();
+    defaultOption.put("key", "");
+    defaultOption.put("name", "- None -");
+    //templateList.put(defaultOption);
+    
     for (NGPageIndex ngpi : templates) {
         JSONObject jo = new JSONObject();
         jo.put("key", ngpi.containerKey);
@@ -42,6 +48,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.pname = "<%ar.writeJS(pname);%>";
     $scope.desc = "<%ar.writeJS(desc);%>";
     $scope.templateList = <% templateList.write(ar.w,2,4); %>;
+    $scope.selectedTemplate = "";
 
 });
 </script>
@@ -50,73 +57,46 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
+    <div class="generalSubHeading" style="height:40px">
             Create Workspace in Site '{{siteInfo.names[0]}}'
-        </div>
-        <!--div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="" >Do Nothing</a></li>
-            </ul>
-          </span>
-
-        </div-->
     </div>
 
-
+<style>
+.spacey td {
+    padding:5px;
+}
+</style>
 <div class="generalContent">
    <form name="projectform" action="createprojectFromTemplate.form" method="post" autocomplete="off">
-        <table class="popups">
-           <tr><td style="height:30px"></td></tr>
+        <table class="spacey">
            <tr>
-                <td class="gridTableColummHeader_2 bigHeading">New Workspace Name:</td>
-                <td style="width:20px;"></td>
+                <td class="gridTableColummHeader_2">New Workspace Name:</td>
                 <td>
-                    <table cellpadding="0" cellspacing="0">
-                       <tr>
-                           <td class="createInput" style="padding:0px;">
-                               <input type="text" class="inputCreateButton" name="projectname"
+                    <input type="text" class="form-control" name="projectname"
                                    ng-model="pname"/>
-                           </td>
-                           <td><button type="submit" class="createButton"></button></td>
-                       </tr>
-                   </table>
-               </td>
+                </td>
             </tr>
             <tr>
-                <td colspan="3">
-                <table id="assignTask">
-                    <tr><td width="148" class="gridTableColummHeader_2" style="height:20px"></td></tr>
-                    <tr>
-                        <td width="148" class="gridTableColummHeader">Select Template:</td>
-                        <td style="width:20px;"></td>
-                        <td><Select class="form-control" id="templateName" name="templateName">
-                                <option value="" selected>Select</option>
-                                <%
-                                for (NGPageIndex ngpi : templates) {
-                                    %>
-                                    <option value="<%ar.writeHtml(ngpi.containerKey);%>" ><%ar.writeHtml(ngpi.containerName);%></option>
-                                    <%
-                                }
-                                %>
-                            </Select>
-                        </td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr ng-show="siteInfo.showExperimental">
-                        <td width="148" class="gridTableColummHeader">Upstream Link:</td>
-                        <td style="width:20px;"></td>
-                        <td><input type="text" class="form-control" style="width:368px" size="50" name="upstream"
-                            ng-model="upstream"/>
-                        </td>
-                    </tr>
-                </table>
-               </td>
+                <td></td>
+                <td>
+                    <button type="submit" class="btn btn-primary">Create Workspace</button>
+                </td>
+            </tr>
+            <tr>
+                <td class="gridTableColummHeader_2">Select Template:</td>
+                <td><select class="form-control" ng-model="selectedTemplate"
+                    ng-options="tmp.name for tmp in templateList">
+                    <option value="">-- choose template --</option>
+                </select>
+                </td>
+            </tr>
+            <tr ng-show="siteInfo.showExperimental">
+                <td class="gridTableColummHeader">Upstream Link:</td>
+                <td><input type="text" class="form-control" style="width:368px" size="50" name="upstream"
+                    ng-model="upstream"/>
+                </td>
             </tr>
        </table>
    </form>
+   
 

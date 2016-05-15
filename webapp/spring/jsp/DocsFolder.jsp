@@ -322,6 +322,9 @@ app.controller('myCtrl', function($scope, $http) {
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation"><a role="menuitem" href="listAttachments.htm">
+                  Show Without Folders</a>
+              </li>
               <li role="presentation"><a role="menuitem" tabindex="-1" href="docsAdd.htm?folder={{folderPathList()}}">
                   <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a>
               </li>

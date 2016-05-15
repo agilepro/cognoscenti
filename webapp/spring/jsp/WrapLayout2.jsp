@@ -57,6 +57,21 @@
     else if ("NoteZoom".equals(jspName)) {
         jspName = "Discussion Topic";
     }
+    else if ("docinfo".equals(jspName)) {
+        jspName = "Access Document";
+    }
+    else if ("DocsRevise".equals(jspName)) {
+        jspName = "Upload New Version";
+    }
+    else if ("editDetails".equals(jspName)) {
+        jspName = "Edit Doc Details";
+    }
+    else if ("fileVersions".equals(jspName)) {
+        jspName = "List Doc Versions";
+    }
+    else if ("UserAccounts".equals(jspName)) {
+        jspName = "Sites You Manage";
+    }
     
     
     
