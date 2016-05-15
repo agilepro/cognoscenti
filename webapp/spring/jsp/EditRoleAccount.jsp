@@ -284,7 +284,7 @@ app.controller('myCtrl', function($scope, $http) {
             </table>
 
         <div style="height:50px;"></div>
-        <div class="generalHeadingBorderLess">Players of Role '<%ar.writeHtml(roleName);%>'</div>
+        <div class="generalSubHeading">Players of Role '<%ar.writeHtml(roleName);%>'</div>
         <div class="generalContent">
             <table class="gridTable2" width="600px;">
             <tr ng-repeat="player in roleInfo.players">
@@ -292,7 +292,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             </table>
         </div>
-        <div class="generalHeadingBorderLess">Expanded List of Players of Role '<%ar.writeHtml(roleName);%>'</div>
+        <div class="generalSubHeading">Expanded List of Players of Role '<%ar.writeHtml(roleName);%>'</div>
         <div class="generalContent">
             <table class="gridTable2" width="600px;">
             <tr ng-repeat="player in roleInfo.expandedPlayers">

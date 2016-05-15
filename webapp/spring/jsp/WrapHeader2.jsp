@@ -4,7 +4,6 @@
 //We always POST to an address that consumes the data, and then redirects to a display page,
 //so the display page (like this one) should never experience a POST request
     ar.assertNotPost();
-
     
     String mainWorkspaceId = "";
     String mainSiteId = "";
@@ -89,13 +88,13 @@
         trncatePageTitle=pageTitle.substring(0,60)+"...";
     }
 
+    String userRelPath = ar.retPath + "v/"+uProf.getKey()+"/";
+    
+   
     %>
-<style>
-#newMasthead{
-  height:66px;
-  background-color:transparent;
-}
-</style>
+    <%!
+    
+    %>
 
 <script>
 
@@ -105,10 +104,6 @@
         window.location = dest;
     }
 
-</script>
-
-
-<script type="text/javascript">
     var retPath ='<%=ar.retPath%>';
     var headerType = '<%=headerTypeStr%>';
     var book='';
@@ -116,8 +111,6 @@
     var userKey = "<%=userKey%>";
     var isSuperAdmin = "<%=ar.isSuperAdmin()%>";
 </script>
-
-<script type="text/javascript" src="<%=ar.retPath%>jscript/ddlevelsmenu.js"></script>
 
 
 <% if (!isSiteHeader) { %>
@@ -137,207 +130,133 @@
      </script>
 <% } %>
 
+<nav class="navbar navbar-default">
+  <div >
+    <div class="navbar-header">
+        <a href="<%=userRelPath%>UserHome.htm" title="Weaver Home Page"><img src="<%=ar.retPath%>bits/weavericon.png"></a>
+    </div>
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" role="button" 
+             aria-haspopup="true" aria-expanded="false">Workspaces <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+<%
 
+   List<RUElement> recent = ar.getSession().recentlyVisited;
+   for (RUElement rue : recent) {
+       ar.write("\n<li><a href=\"");
+       ar.write(ar.retPath);
+       ar.write("t/");
+       ar.write(rue.siteKey);
+       ar.write("/");
+       ar.write(rue.key);
+       ar.write("/frontPage.htm\">");
+       ar.writeHtml(rue.displayName);
+       ar.write("</a></li>");   
+   }
 
-    <!-- Begin siteMasthead -->
-    <div id="newMasthead">
-        <div id="consoleName">
-           <%
-            if(isUserHeader) {
-                if(userRecord!=null){
-                    String userName = userRecord.getName();
-                    if(userName.length()>60){
-                        userName=userName.substring(0,60)+"...";
-                    }
-                    ar.write("User: <span title=\"");
-                    ar.writeHtml(userName);
-                    ar.write("\">");
-                    ar.writeHtml(userName);
-                    ar.write("</span>");
-                }
-            }
-            else if(isSiteHeader) {
-                if(pageTitle!=null){
-                    ar.write("Site: <span title=\"");
-                    ar.writeHtml(pageTitle);
-                    ar.write("\">");
-                    ar.writeHtml(trncatePageTitle);
-                    ar.write(deletedWarning);
-                    ar.write("</span>");
-                }
-            }
-            else {
-                if(pageTitle!=null){
-                    ar.write("Workspace: <span title=\"");
-                    ar.writeHtml(pageTitle);
-                    ar.write("\">");
-                    ar.writeHtml(trncatePageTitle);
-                    ar.write(deletedWarning);
-                    ar.write("</span>");
-                }
-            }
-            %>
+%>
+            <li role="separator" class="divider"></li>
+            <li><a href="<%=userRelPath%>watchedProjects.htm">Watched Workspaces</a></li>
+            <li><a href="<%=userRelPath%>templates.htm">Templates</a></li>
+            <li><a href="<%=userRelPath%>ownerProjects.htm">Administered</a></li>
+            <li><a href="<%=userRelPath%>participantProjects.htm">Participant</a></li>
+            <li><a href="<%=userRelPath%>allProjects.htm">All</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" role="button" 
+             aria-haspopup="true" aria-expanded="false">Sites <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Site 1</a></li>
+            <li><a href="#">Site 2</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="<%=userRelPath%>userAccounts.htm">List Sites</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="navbar-form navbar-left" role="search" action="searchAllNotes.htm">
+        <div class="form-group">
+          <input type="text" class="form-control" name="s" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" 
+             aria-haspopup="true" aria-expanded="false"><% ar.writeHtml(uProf.getName()); %><span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Log In</a></li>
+            <li><a href="#">Log Out</a></li>
+            <li><a href="<%=userRelPath%>userSettings.htm">Profile</a></li>
+            <li><a href="<%=userRelPath%>userAlerts.htm">Updates</a></li>
+            <li><a href="<%=userRelPath%>notificationSettings.htm">Notifications</a></li>
+<%if(ar.isSuperAdmin()){ %>
+            <li><a href="<%=userRelPath%>emailListnerSettings.htm">Administration</a></li>
+<%} %>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<ol class="breadcrumb">
+<% if(isUserHeader) { %>
+  <li>Users</li>
+  <li><a href="<%=userRelPath%>UserHome.htm"><% ar.writeHtml(uProf.getName()); %></a></li>
+  <li><% ar.writeHtml(jspName); %></li>
+<% } else if(isSiteHeader) { %>
+  <li>Site</li>
            <% if(ngb!=null){ %>
-           Site: <a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/accountListProjects.htm"
-                     title="View the Site for this page"><%ar.writeHtml(ngb.getFullName());%></a>
-
+  <li><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/accountListProjects.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
            <% } %>
-        </div>
-        <div id="globalLinkArea">
-          <ul id="globalLinks">
-                <%
-                    if(ar.isLoggedIn())
-                    {
-                        uProf = ar.getUserProfile();
-                %>
-                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(loggedKey);%>/watchedProjects.htm"
-                                title="Workspaces for the logged in user">Workspaces</a></li>
-                        <li>|</li>
-                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(loggedKey);%>/userAlerts.htm"
-                                title="Updates for the logged in user">Updates</a></li>
-                        <li>|</li>
-                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(loggedKey);%>/userActiveTasks.htm"
-                                title="Actions the user needs to attend to">To Do</a></li>
-                        <li>|</li>
-                        <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(loggedKey);%>/userProfile.htm?active=1"
-                                title="Profile for the logged in user">Settings</a></li>
-                        <%if(ar.isSuperAdmin()){ %>
-                            <li>|</li>
-                            <li><a href="<%=ar.retPath%>v/<%ar.writeHtml(loggedKey);%>/emailListnerSettings.htm" title="Administration">Administration</a></li>
-                        <%} %>
-                        <li>|</li>
-                        <li class="text last"><a onclick="logOutProvider();">Log Out</a></li>
-               <%
-                  }
-                  else
-                  {
-               %>
-                        <li><a href="<%=ar.retPath%>"
-                               title="Initial Introduction Page">Welcome Page</a></li>
-                        <li>|</li>
-                        <li class="text last">
-                            <a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">Login</a>
-                        </li>
-               <%
-                  }
-               %>
-            </ul>
-            </div>
-        <%
-        if (ar.isLoggedIn())
-        {
-            UserProfile uProf1 = ar.getUserProfile();
-            %>
-            <div id="welcomeMessage">
-                Welcome, <%uProf1.writeLink(ar); %>
-            </div>
-            <%
-        }
-        else
-        {
-            %>
-            <div id="welcomeMessage">
-                Browser compatibility or setting problem
-            </div>
-            <%
-        }
-        %>
-    </div>
-    <!-- End siteMasthead -->
+  <li><% ar.writeHtml(jspName); %></li>
+<% } else { %>
+  <li>Workspace</li>
+  <li><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/accountListProjects.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
+  <li><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/frontPage.htm">
+      <%ar.writeHtml(ngp.getFullName());%></a></li>
+  <li><% ar.writeHtml(jspName); %></li>
+<% } %>
+</ol>
 
-    <!-- Begin mainNavigation -->
 
-    <div>
-    <div id="mainNavigationLeft" >
-        <div id="mainNavigationCenter">
-            <div id="mainNavigationRight">
-            </div>
-        </div>
-        <div id="mainNavigation" style="height:100px">
-            <ul id="tabs" >
-             <div  class="btn-group" style="margin-left:15px">
+<% if(isSiteHeader) { %>
 
-                <button class="btn btn-default" style="background:transparent;" 
-                onClick="changePage('<%=ar.retPath%>v/<%=loggedKey%>/UserHome.htm')">
-                Home</button>
-                <button class="btn btn-default" style="background:transparent;"
-                onClick="changePage('<%=ar.retPath%>v/<%=loggedKey%>/watchedProjects.htm')">
-                Workspaces</button>
-                <button class="btn btn-default" style="background:transparent;"
-                onClick="changePage('<%=ar.retPath%>v/<%=loggedKey%>/userAccounts.htm')">
-                Sites</button>
-                <button class="btn btn-default" style="background:transparent;"
-                onClick="alert('Organization not implemented yet')">
-                Organization</button>
-                <button class="btn btn-default" style="background:transparent;"
-                onClick="alert('Add not implemented yet')">Add</button>
-                <button class="btn btn-default" style="background:transparent;"
-                onClick="alert('Help not implemented yet')">Help</button>
-                <input class="input" type="text" style="padding:3px;margin:3px"></input>
-                <button class="btn btn-default" style="background:transparent;"
-                onClick="changePage('<%=ar.retPath%>v/<%=loggedKey%>/searchAllNotes.htm')">Search</button>
+<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+    <li<%if("Workspaces in Site".equals(jspName)){%> class="active"<%}%>>
+        <a href="accountListProjects.htm">Workspaces in Site</a></li>
+    <li<%if("Site Admin".equals(jspName)){%> class="active"<%}%>>
+        <a href="SiteAdmin.htm">Site Admin</a></li>
+</ul>
 
-             </div>
-           </ul>
-        </div>
+<% } else if(!isUserHeader) { %>
 
-    </div>
-         <div  class="btn-group" style="margin-left:15px">
+<p>jspName is <%=jspName%></p>
 
-            
-           <%
-            if(isUserHeader) {
-                if(userRecord!=null){
-                    String userName = userRecord.getName();
-                    if(userName.length()>60){
-                        userName=userName.substring(0,60)+"...";
-                    }
-                    %><button class="btn" onClick="changePage('UserHome.htm')"><%ar.writeHtml(userName);%></button><%
-                }%>
-            <button class="btn btn-default" onClick="changePage('userActiveTasks.htm')">To Do</button>
-            <button class="btn btn-default" onClick="alert('not sure what Topics should do')">Topics</button>
-            <button class="btn btn-default" onClick="changePage('userSettings.htm')">Settings</button>
-            <button class="btn btn-default" onClick="changePage('watchedProjects.htm')">Watched</button>
-            <button class="btn btn-default" onClick="changePage('templates.htm')">Templates</button>
-            <button class="btn btn-default" onClick="changePage('ownerProjects.htm')">Administered</button>
-            <button class="btn btn-default" onClick="changePage('participantProjects.htm')">Participant</button>
-            <button class="btn btn-default" onClick="changePage('allProjects.htm')">All</button>
-                    <%
-            }
-            else if(isSiteHeader) {
-                if(mainSiteName!=null){
-                    %><button class="btn" onClick="changePage('accountListProjects.htm')"><%ar.writeHtml(mainSiteName);%></button><%
-                }%>
-            <button class="btn btn-default" onClick="changePage('accountListProjects.htm')">Workspaces in Site</button>
-            <button class="btn btn-default" onClick="changePage('SiteAdmin.htm')">Site Admin</button>
-                    <%
-            }
-            else {
-                if(pageTitle!=null){
-                    %><button class="btn" onClick="changePage('frontPage.htm')">
-                    <%ar.writeHtml(trncatePageTitle);%></button><%
-                }%>
-            <button class="btn btn-default" onClick="changePage('meetingList.htm')">Meetings</button>
-            <button class="btn btn-default" onClick="changePage('notesList.htm')">Topics</button>
-            <button class="btn btn-default" onClick="changePage('listAttachments.htm')">Documents</button>
-            <button class="btn btn-default" onClick="changePage('goalList.htm')">Action Items</button>
-            <button class="btn btn-default" onClick="changePage('admin.htm')">Workspace Admin</button>
-            <button class="btn btn-default" onClick="changePage('labelList.htm')">Labels</button>
-            <button class="btn btn-default" onClick="changePage('roleManagement.htm')">Roles</button>
-            <button class="btn btn-default" onClick="changePage('decisionList.htm')">Decisions</button>
-            <button class="btn btn-default" onClick="changePage('personal.htm')">Personal</button>
-                    <%
-            }
-            %>
+<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+    <li<%if("Front Page".equals(jspName)){%> class="active"<%}%>><a href="frontPage.htm">Front Page</a></li>
+    <li<%if("Meetings".equals(jspName)){%> class="active"<%}%>><a href="meetingList.htm">Meetings</a></li>
+    <li<%if("Topics".equals(jspName)){%> class="active"<%}%>><a href="notesList.htm">Topics</a></li>
+    <li<%if("Documents".equals(jspName)){%> class="active"<%}%>><a href="listAttachments.htm">Documents</a></li>
+    <li<%if("Action Items".equals(jspName)){%> class="active"<%}%>><a href="goalList.htm">Action Items</a></li>
+    <li<%if("Decisions".equals(jspName)){%> class="active"<%}%>><a href="decisionList.htm">Decisions</a></li>
+    <li<%if("Labels".equals(jspName)){%> class="active"<%}%>><a href="labelList.htm">Labels</a></li>
+    <li<%if("Roles".equals(jspName)){%> class="active"<%}%>><a href="roleManagement.htm">Roles</a></li>
+    <li<%if("Workspace Admin".equals(jspName)){%> class="active"<%}%>><a href="admin.htm">Workspace Admin</a></li>
+    <li<%if("Personal".equals(jspName)){%> class="active"<%}%>><a href="personal.htm">Personal</a></li>
+</ul>
 
-         </div>
-    </div>
+<% } %>
 
-<!-- End mainNavigation -->
+
+ 
+    <div id="welcomeMessage"></div>
+
 
 <script>
-
-
 function validateDelimEmails(field) {
     var count = 1;
     var result = "";

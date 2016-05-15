@@ -3,6 +3,8 @@
 %><%
 
     ar.assertLoggedIn("Must be logged in to see a list of meetings");
+    
+    String searchText = ar.defParam("s", "");
 
 %>
 
@@ -12,7 +14,7 @@ var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.results = [];
     $scope.query = {
-        searchFilter: "",
+        searchFilter: "<% ar.writeJS(searchText); %>",
         searchSite: "all",
         searchProject: "all"
     }
@@ -48,6 +50,9 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.actualSearch = "";
     }
 
+    <% if (searchText.length()>0) { %>
+    $scope.doSearch();
+    <% } %>
 });
 </script>
 

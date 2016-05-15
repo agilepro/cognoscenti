@@ -96,13 +96,11 @@ public class NGSession
 
 
 
-    public void addVisited(NGContainer ngp, long currentTime)
-    {
-        if (ngp==null)
-        {
+    public void addVisited(NGWorkspace ngp, long currentTime) {
+        if (ngp==null) {
             throw new ProgramLogicError("addVisited was called with a null parameter.  That should not happen");
         }
-        RUElement rue = new RUElement(ngp.getFullName(), ngp.getKey(), currentTime);
+        RUElement rue = new RUElement(ngp.getFullName(), ngp.getKey(), ngp.getSiteKey(),  currentTime);
         RUElement.addToRUVector(recentlyVisited, rue, currentTime, 12);
     }
 

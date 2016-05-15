@@ -659,10 +659,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
-            {{noteInfo.subject}}
-        </div>
         <div class="rightDivContent" style="margin-right:100px;">
 <%if (isLoggedIn) { %>
           <span class="dropdown">
@@ -681,6 +677,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           </span>
 <% } %>
         </div>
+    </div>
+    <div  class="generalSubHeading">
+        <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
+        {{noteInfo.subject}}
     </div>
 
     <div class="leafContent" ng-hide="isEditing">

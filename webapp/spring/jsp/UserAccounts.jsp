@@ -136,7 +136,7 @@ app.controller('myCtrl', function($scope, $http) {
 
         </div>
 
-        <div class="generalHeadingBorderLess" ng-show="requestList.length>0"><br/>Status of Site Requests</div>
+        <div class="generalSubHeading" ng-show="requestList.length>0"><br/>Status of Site Requests</div>
         <div class="generalContent" ng-show="requestList.length>0">
             <div id="accountRequestPaging"></div>
             <div id="accountRequestDiv">

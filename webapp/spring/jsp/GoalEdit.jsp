@@ -418,10 +418,6 @@ function addvalue() {
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            <img src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif" />
-            {{stateName[goalInfo.state]}} Action Item
-        </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -439,6 +435,10 @@ function addvalue() {
           </span>
 
         </div>
+    </div>
+    <div  class="generalSubHeading">
+        <img src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif" />
+        {{stateName[goalInfo.state]}} Action Item
     </div>
 
     <table width="100%" ng-hide="editGoalInfo">
@@ -780,7 +780,7 @@ function updateVal(){
 
 
                 <div class="TabbedPanelsContent" ng-show="showCreateSubProject">
-                    <div class="generalHeading">Create Sub Workspace</div>
+                    <div class="generalSubHeading">Create Sub Workspace</div>
                     <div class="well">
                         <div class="generalContent">
                     <%
@@ -881,7 +881,7 @@ function updateVal(){
                       </div>
                 </div>
                 <div class="TabbedPanelsContent" ng-show="showCreateSubGoal">
-                    <div class="generalHeading">Create Sub Action</div>
+                    <div class="generalSubHeading">Create Sub Action</div>
                     <div class="well">
                         <div id="container">
                             <form name="createSubTaskForm" action="createSubTask.form" method="post">
@@ -976,7 +976,7 @@ function updateVal(){
 
         <!-- ========================================================================= -->
         <div style="height:30px"></div>
-        <div class="generalHeading">History &amp; Accomplishments
+        <div class="generalSubHeading">History &amp; Accomplishments
         </div>
         <div>
                 <table >

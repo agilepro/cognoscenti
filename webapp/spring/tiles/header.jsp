@@ -96,6 +96,13 @@ Parameter used :
       var book='';
       var pageId = '';
    </script>
+   
+<!--dumping ground for styles specific to this page-->
+<style>
+#logoFujitsu{
+  vertical-align:-7px;
+}   
+</style>
 
     <link rel="stylesheet" href="<%=ar.retPath%>css/autocomplete.css" media="screen" type="text/css">
     <script type="text/javascript" src="<%=ar.retPath%>jscript/autocomplete.js"></script>

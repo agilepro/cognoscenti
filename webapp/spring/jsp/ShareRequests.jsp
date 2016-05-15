@@ -24,7 +24,7 @@
 
 %>
 <body class="yui-skin-sam">
-    <div class="generalHeadingBorderLess">Reminders To Share Document</div>
+    <div class="generalHeading">Reminders To Share Document</div>
     <div id="paging5"></div>
     <div id="reminderDiv">
         <table id="reminderTable">

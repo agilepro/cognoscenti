@@ -506,15 +506,14 @@ public class AuthRequest
         ngp = newNgp;
     }
 
-    public void setPageAccessLevels(NGContainer newNgp)
-        throws Exception
-    {
-        if (newNgp==null)
-        {
+    public void setPageAccessLevels(NGContainer newNgp) throws Exception {
+        if (newNgp==null) {
             throw new ProgramLogicError("setPageAccessLevels was called with a null parameter.  That should not happen");
         }
-        //record the fact that page was visited in this session
-        ngsession.addVisited(newNgp, nowTime);
+        //record the fact that workspace was visited in this session
+        if (newNgp instanceof NGWorkspace) {
+            ngsession.addVisited((NGWorkspace)newNgp, nowTime);
+        }
         setPageAccessLevelsWithoutVisit(newNgp);
     }
 

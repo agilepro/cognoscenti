@@ -32,13 +32,14 @@ public final class RUElement
 
     public long   timestamp;
     public String displayName;
+    public String siteKey;
     public String key;
 
-    public RUElement(String nDisplayName, String nKey, long nTimestamp)
-    {
-        timestamp   = nTimestamp;
-        displayName = nDisplayName;
-        key         = nKey;
+    public RUElement(String _DisplayName, String _key, String _siteKey, long _Timestamp) {
+        timestamp   = _Timestamp;
+        displayName = _DisplayName;
+        key         = _key;
+        siteKey     = _siteKey;
     }
 
 
@@ -61,23 +62,19 @@ public final class RUElement
         //check to see if it is already present, and look for oldest
         long oldestTimestamp = currentTime;
         RUElement oldest = null;
-        for (RUElement rue : v)
-        {
-            if (rue.key.equals(newElement.key))
-            {
+        for (RUElement rue : v) {
+            if (rue.key.equals(newElement.key)) {
                 rue.timestamp = currentTime;
                 return;
             }
             //if they are all equal to the current time,
             //then this will at least find one of them
-            if (rue.timestamp <= oldestTimestamp)
-            {
+            if (rue.timestamp <= oldestTimestamp) {
                 oldestTimestamp = rue.timestamp;
                 oldest = rue;
             }
         }
-        if (v.size()>max)
-        {
+        if (v.size()>max) {
             v.remove(oldest);
         }
         newElement.timestamp = currentTime;

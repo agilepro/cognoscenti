@@ -534,7 +534,7 @@ function addvalue() {
             </div>
             <div style="float: left;margin:3px;">
               <div>
-                <span style="font-size: 17px;cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}}</span>
+                <span style="cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}}</span>
                 <span ng-repeat="label in getGoalLabels(rec)">
                   <button class="btn btn-sm labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
                   {{label.name}}

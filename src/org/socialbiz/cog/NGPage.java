@@ -733,7 +733,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
 
                 AuthRequest ar4test = new AuthDummy(ar.getUserProfile(), testOut, ar.getCogInstance());
                 //ar4test.maxLevel = limitLevel;   <--no longer implemented, need to do something else
-                ar4test.setPageAccessLevels(this);
+                ar4test.setPageAccessLevels((NGWorkspace)this);
 
                 //write a dummy containing tag -- everything else will be within this
                 testOut.write("<editpage>");

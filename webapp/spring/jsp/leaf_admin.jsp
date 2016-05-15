@@ -134,21 +134,8 @@ app.filter('escape', function() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Admin Settings
-        </div>
-        <!--div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="">Do Nothing</a></li>
-            </ul>
-          </span>
-
-        </div-->
+    <div class="generalSubHeading" style="height:40px">
+        Admin Settings
     </div>
 
 
@@ -162,7 +149,7 @@ app.filter('escape', function() {
                     <fmt:param value='<%=ar.getBestUserId()%>'/>
                 </fmt:message><br/>
             </div>
-            <div class="generalHeading"><fmt:message key="nugen.generatInfo.PageNameCaption"/> </div>
+            <div class="generalSubHeading"><fmt:message key="nugen.generatInfo.PageNameCaption"/> </div>
             <div class="generalContent">
                 <ul class="bulletLinks">
                 <li >{{projectInfo.name}}</li>
@@ -228,7 +215,7 @@ app.filter('escape', function() {
                 </table>
             </div>
             <div class="generalContent">
-                <div class="generalHeading paddingTop">Workspace Settings</div>
+                <div class="generalSubHeading paddingTop">Workspace Settings</div>
                 <table width="720px">
                     <tr><td style="height:5px"></td></tr>
                     <tr>
@@ -301,7 +288,7 @@ app.filter('escape', function() {
 
 
             <div class="generalContent">
-                <div class="generalHeading paddingTop">Copy From Template</div>
+                <div class="generalSubHeading paddingTop">Copy From Template</div>
                 <table width="720px">
                   <form action="<%=ar.retPath%>CopyFromTemplate.jsp" method="post">
                   <input type="hidden" name="go" value="<%ar.writeHtml(allTasksPage);%>">
@@ -333,7 +320,7 @@ app.filter('escape', function() {
 <% } %>
 
             <div class="generalContent">
-                <div class="generalHeading paddingTop">Future Scheduled Actions</div>
+                <div class="generalSubHeading paddingTop">Future Scheduled Actions</div>
                 <div>
                    Next Action due: {{<%=ngw.nextActionDue()%>|date:'M/d/yy H:mm'}}
                 </div>
@@ -376,7 +363,7 @@ app.filter('escape', function() {
             </div>
 
             <div class="generalContent">
-                <div class="generalHeading paddingTop">Statistics</div>
+                <div class="generalSubHeading paddingTop">Statistics</div>
                 <table class="table">
                 <tr>
                    <td>Number of Topics:</td>
