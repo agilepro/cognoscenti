@@ -658,7 +658,43 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
+    <div style="height:40px;margin-bottom:15px">
+        <div class="leftDivContent">
+<%if (isLoggedIn) { %>
+          <span class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation" ng-repeat="phase in getPhases()"><a role="menuitem"
+                  ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
+            </ul>
+          </span>
+<% } %>
+          <span style="margin-left:20px">Labels:</span>
+          <span class="dropdown" ng-repeat="role in allLabels">
+            <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
+               data-toggle="dropdown" style="background-color:{{role.color}};"
+               ng-show="hasLabel(role.name)">{{role.name}}</button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+               <li role="presentation"><a role="menuitem" title="{{add}}"
+                  ng-click="toggleLabel(role)">Remove Label:<br/>{{role.name}}</a></li>
+            </ul>
+          </span>
+<%if (isLoggedIn) { %>
+          <span>
+             <span class="dropdown">
+               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+               style="padding: 2px 5px;font-size: 11px;"> + </button>
+               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                 <li role="presentation" ng-repeat="rolex in allLabels">
+                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
+                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
+                         {{rolex.name}}</button></li>
+               </ul>
+             </span>
+          </span>
+<% } %>
+        </div>
         <div class="rightDivContent" style="margin-right:100px;">
 <%if (isLoggedIn) { %>
           <span class="dropdown">
@@ -699,51 +735,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div style="color:lightgrey;font-style:italic">Last modified: {{noteInfo.modTime|date}}</div>
     
-    <div class="generalHeading" style="margin-top:50px;"></div>
-
-    <div>
-        <span >Discussion Phase:</span>
-<%if (isLoggedIn) { %>
-          <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation" ng-repeat="phase in getPhases()"><a role="menuitem"
-                  ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
-            </ul>
-          </span>
-<% } %>
-    </div>
-    
-    <div>
-        <span style="width:150px">Labels:</span>
-        <span class="dropdown" ng-repeat="role in allLabels">
-            <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
-               data-toggle="dropdown" style="background-color:{{role.color}};"
-               ng-show="hasLabel(role.name)">{{role.name}}</button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-               <li role="presentation"><a role="menuitem" title="{{add}}"
-                  ng-click="toggleLabel(role)">Remove Label:<br/>{{role.name}}</a></li>
-            </ul>
-          </span>
-<%if (isLoggedIn) { %>
-          <span>
-             <span class="dropdown">
-               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
-               style="padding: 2px 5px;font-size: 11px;"> + </button>
-               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                 <li role="presentation" ng-repeat="rolex in allLabels">
-                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
-                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
-                         {{rolex.name}}</button></li>
-               </ul>
-             </span>
-          </span>
-<% } %>
-    </div>
 
 
-    <div style="width:100%">
+
+    <div style="width:100%;margin-top:50px;">
     <div>
       <span style="width:150px">Attachments:</span>
       <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default"  style="margin:4px;"

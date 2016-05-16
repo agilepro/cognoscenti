@@ -222,7 +222,7 @@ app.controller('myCtrl', function($scope, $http) {
             }
             return;
         }
-        
+
         var amtLeft = len;
         var pos = 0;
         while (len-pos >= 5) {
@@ -230,7 +230,7 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.children[pos].y = yPos;
             pos++;
             $scope.children[pos].x = minx+105;
-            $scope.children[pos].y = yPos;            
+            $scope.children[pos].y = yPos;
             pos++;
             $scope.children[pos].x = minx+210;
             $scope.children[pos].y = yPos;
@@ -311,7 +311,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.topLevel = function(workspace) {
         window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/frontTop.htm";
     }
-  
+
 });
 </script>
 
@@ -331,7 +331,7 @@ app.controller('myCtrl', function($scope, $http) {
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem"
                   href="history.htm">Activity Stream</a></li>
-              <li role="presentation"><a role="menuitem" href="searchAllNotes.htm"> 
+              <li role="presentation"><a role="menuitem" href="searchAllNotes.htm">
 			      Search All Topics </a>
               </li>
             </ul>
@@ -341,52 +341,71 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
     <style>
-      .tripleColumn {
-          border: 1px solid white;
-          border-radius:5px;
-          padding:5px;
-          background-color:#FFFFFF;
-          margin:6px
+      .headingfont {
+          font-family: Arial, Helvetica, Verdana, sans-serif;
+          font-size:20px;
+          font-weight:normal;
       }
     </style>
 
-    <table><tr style="vertical-align:top;">
-    <td style="width:350px;vertial-align:top;">
-       <div class="tripleColumn leafContent">
-          <h1>Recent Updates</h1>
-          <div ng-repeat="hist in recentChanges">
-             <ul>
-               <li>
-                 <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName|limitTo:28}}</a>
-               </li>
-             </ul>
+<!-- COLUMN 1 -->
+      <div class="col-md-4 col-sm-12">
+
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">Recent Updates</div>
+          <div class="panel-body">
+            <div ng-repeat="hist in recentChanges">
+              <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName|limitTo:28}}</a>
+            </div>
           </div>
-          <h1>Upcoming Meetings</h1>
-          <ul>
-            <li ng-repeat="meet in myMeetings">
+        </div>
+
+
+
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">Upcoming Meetings</div>
+          <div class="panel-body">
+            <div ng-repeat="meet in myMeetings">
               <a href="meetingFull.htm?id={{meet.id}}">{{meet.name}} @ {{meet.startTime|date}}</a>
-            </li>
-          </ul>
-          <h1>Your Action Items</h1>
-          <ul>
-            <li ng-repeat="act in myActions">
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">Your Action Items</div>
+          <div class="panel-body">
+            <div ng-repeat="act in myActions">
               <a href="task{{act.id}}.htm">{{act.synopsis}}</a>
-            </li>
-          </ul>
-          <h1>Recent History</h1>
-          <div ng-repeat="hist in topHistory">
-             {{hist.time|date}} -
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">Recent History</div>
+          <div class="panel-body">
+            <div ng-repeat="hist in topHistory">
+              {{hist.time|date}} -
              <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
 
              {{hist.ctxType}} <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName|limitTo:28}}</a>
              was {{hist.event}}.
              <br/>
              <i>{{hist.comments}}</i>
+            </div>
           </div>
-       </div>
-    </td>
-    <td style="width:350px;vertial-align:top;">
-       <div class="tripleColumn leafContent">
+        </div>
+
+
+      </div>
+
+
+<!-- COLUMN 2 -->
+      <div class="col-md-4 col-sm-12">
            <svg height="{{maxLength}}px" width="350px">
                <g ng-show="parent.key">
                    <ellipse cx="179" cy="69" rx="70" ry="35"
@@ -432,39 +451,48 @@ app.controller('myCtrl', function($scope, $http) {
                </g>
            </svg>
        </div>
-    </td>
-    <td style="width:350px;vertial-align:top;">
-       <div class="tripleColumn leafContent">
-           <div style="margin:5px;">
-               <h1>Your Roles</h1>
-               <ul>
-               <li ng-repeat="role in yourRoles">{{role}}</li>
-               </ul>
-           </div>
-           <div style="margin:5px;">
-               <h1>Other Members</h1>
-               <ul>
-               <li ng-repeat="person in otherMembers">{{person.name}}</li>
-               </ul>
-           </div>
-           <div style="margin:5px;" ng-show="parent.name">
-               <h1>Parent Circle</h1>
-               <ul>
-               <li><a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/frontPage.htm">{{parent.name}}</a>
-               </li>
-               </ul>
-           </div>
-           <div style="margin:5px;">
-               <h1>Children Circles</h1>
-               <ul>
-               <li ng-repeat="child in children">
-                   <a href="<%=ar.retPath%>t/{{child.site}}/{{child.key}}/frontPage.htm">{{child.name}}</a>
-               </li>
-               </ul>
-           </div>
-       </div>
-    </td>
-    </tr></table>
 
+
+<!-- COLUMN 3 -->
+      <div class="col-md-4 col-sm-12">
+
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">Your Roles</div>
+          <div class="panel-body">
+            <div ng-repeat="role in yourRoles">
+              <a href="roleManagement.htm">{{role}}</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">Other Members</div>
+          <div class="panel-body">
+            <div ng-repeat="person in otherMembers">
+              {{person.name}}
+            </div>
+          </div>
+        </div>
+        
+
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">Parent Circle</div>
+          <div class="panel-body">
+            <div >
+              <a href="<%=ar.retPath%>t/{{parent.site}}/{{parent.key}}/frontPage.htm">{{parent.name}}</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">Children Circles</div>
+          <div class="panel-body">
+            <div ng-repeat="child in children">
+              <a href="<%=ar.retPath%>t/{{child.site}}/{{child.key}}/frontPage.htm">{{child.name}}</a>
+            </div>
+          </div>
+        </div>
+        
+      </div>
 
 </div>

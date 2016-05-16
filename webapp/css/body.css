@@ -679,6 +679,11 @@ input.inputLoginBtn:hover{
 .repositoryName{
   font-weight:bold;
 }
+.leftDivContent{
+  float: left;
+  padding-left: 20px;
+  height:16px;
+}
 .rightDivContent{
   float: right;
   padding-left: 20px;
