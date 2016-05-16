@@ -29,6 +29,7 @@
         userObj.put("name", userName);
         userObj.put("lastLogin", up.getLastLogin());
         userObj.put("key", up.getKey());
+        userObj.put("disabled", up.getDisabled());
         userObj.put("warning", up.getDisabled() || userName==null || userName.length()==0 || up.getPreferredEmail()==null);
         jUsers.put(userObj);
     }
@@ -91,6 +92,7 @@ app.controller('cogCtrl', function($scope) {
             <tr>
                 <th>User Name</th>
                 <th>Last Login</th>
+                <th></th>
                 <th>Key</th>
             </tr>
         </thead>
@@ -103,6 +105,7 @@ app.controller('cogCtrl', function($scope) {
                 </span>
             </td>
             <td> {{user.lastLogin| date:'yyyy-MM-dd HH:mm'}} </td>
+            <td><span ng-show="user.disabled"><img src="warning.gif" title="disabled user"></span></td>
             <td> <a href="<%=ar.retPath%>UserProfile.jsp?u={{user.key}}"
                    title="navigate to the profile for this user">{{user.key}}</a>
             </td>

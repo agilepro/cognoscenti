@@ -46,8 +46,6 @@
                 <tr>
                     <td>Site Id</td>
                     <td>#prj</td>
-                    <td>#docs</td>
-                    <td>#topics</td>
                     <td>Owners</td>
                     <td>Description</td>
                 </tr>
@@ -55,15 +53,13 @@
     for (NGBook ngb : allAccounts)
     {
         List<NGPageIndex> allProjects = ar.getCogInstance().getAllProjectsInSite(ngb.key);
-        List<NoteRecord> allNotes = ngb.getAllNotes();
+        //List<NoteRecord> allNotes = new List<NoteRecord>(); //ngb.getAllNotes();
         NGRole owner = ngb.getSecondaryRole();
 %>
             <tr valign="top">
                 <td><a href="BookPages.jsp?b=<%ar.writeHtml(ngb.getKey());%>" title="List all the projects in this account">
                     <%ar.writeHtml(ngb.getFullName());%></a></td>
                 <td><%=allProjects.size()%></td>
-                <td>0</td>
-                <td><%=allNotes.size()%></td>
                 <td><%
                     for (AddressListEntry ale : owner.getDirectPlayers())
                     {

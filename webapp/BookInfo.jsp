@@ -34,7 +34,6 @@
 
 <%@ include file="Header.jsp"%>
 
-
         <div class="pagenavigation">
             <div class="pagenav">
                 <div class="left"><%ar.writeHtml(ngb.getFullName());%> &raquo; Site Info</div>
@@ -88,6 +87,12 @@
     </div>
 
 
+<style>
+.mytable tr td {
+    padding:5px;
+}
+</style>
+
 <div class="section">
 <!-- ------------------------------------------------- -->
     <div class="section_title">
@@ -123,7 +128,8 @@
                   "Executives ("+ngb.getFullName()+")"            ,
                   2, b);
 
-    %><p>List of all identifiers in site</p><ul><%
+    %><p>List of all identifiers in site</p>
+    <table class="mytable"><%
 
     StringCounter scnt = new StringCounter();
     List<NGPageIndex> allOfEm = ar.getCogInstance().getAllProjectsInSite(b);
@@ -134,9 +140,33 @@
     }
 
     for (String sid : scnt.keySet() ) {
-        %><li><% ar.writeHtml(sid); %>: <%=scnt.getCount(sid)%></li><%
+        UserProfile upx = UserManager.findUserByAnyId(sid);
+        boolean isDisabled = false;
+        boolean hasProfile = (upx!=null);
+        if (hasProfile) {
+            isDisabled = upx.getDisabled();
+        }
+        String shortSid = sid;
+        if (sid.length()>30) {
+            shortSid = sid.substring(0,30);
+        }
+        %><tr><td><% 
+        ar.writeHtml(shortSid); 
+        %>:</td>
+        <td><%=scnt.getCount(sid)%></td>
+        <td><% if (isDisabled) {%> <img src="warning.gif" title="Disabled User"> <%}%> </td>
+        <td><% 
+            if (!hasProfile) {
+                %> - no profile - <%
+            } else {
+                %> <a href="UserProfile.jsp?u=<%=upx.getKey()%>"><% 
+                ar.writeHtml(upx.getName()); 
+                %></a> <%
+            }
+            %> </td>
+        </tr><%
     }
-    %></ul><%
+    %></table><%
 
     if (ar.isMember() || ar.isSuperAdmin())
     {
