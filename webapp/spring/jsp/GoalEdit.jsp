@@ -141,7 +141,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.goalInfo  = <%goalInfo.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
@@ -155,6 +155,61 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.newPerson = "";
 
+    $scope.tagEntry = [];
+    $scope.updateTagEntry = function() {
+        var newList = [];
+        $scope.goalInfo.assignTo.forEach( function(item) {
+           var nix = {};
+           nix.name = item.name; 
+           nix.uid  = item.uid; 
+           nix.key  = item.key; 
+           newList.push(nix)
+        });
+        $scope.tagEntry = newList;
+    }
+    $scope.updateTagEntry();
+    $scope.copyTagsToRecord = function() {
+        var newList = [];
+        $scope.tagEntry.forEach( function(item) {
+            var nix = {};
+            if (item.uid) {
+                nix.name = item.name; 
+                nix.uid  = item.uid; 
+                nix.key  = item.key;
+            }
+            else {
+                nix.name = item.name; 
+                nix.uid  = item.name;
+            }    
+           newList.push(nix)
+        });
+        $scope.goalInfo.assignTo = newList;
+        $scope.saveGoal();
+    }
+    $scope.$watch(function(scope) {
+        return $scope.tagEntry.length;
+    }, function() {
+        $scope.copyTagsToRecord();
+    });    
+    $scope.loadItems = function(query) {
+        var res = [];
+        var q = query.toLowerCase();
+        $scope.allPeople.forEach( function(person) {
+            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
+                return;
+            }
+            var nix = {};
+            nix.name = person.name; 
+            nix.uid  = person.uid; 
+            nix.key  = person.key; 
+            res.push(nix);
+        });
+        return res;
+    }
+    $scope.showUser = function(tag) {
+        //alert("gotcha:" + tag.name);
+    }
+    
     $scope.editGoalInfo = false;
     $scope.showCreateSubProject = false;
 
@@ -460,21 +515,13 @@ function addvalue() {
             <td class="gridTableColummHeader">Assigned To:</td>
             <td style="width:20px;"></td>
             <td>
-              <span class="dropdown" ng-repeat="person in goalInfo.assignTo">
-                <button class="btn btn-sm dropdown-toggle" type="button" id="menu1"
-                   data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;">
-                   {{bestName(person)}}</button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                   <li role="presentation"><a role="menuitem" title="{{person.name}} {{person.uid}}"
-                      ng-click="removePerson(person)">Remove Address:<br/>{{person.name}}<br/>{{person.uid}}</a></li>
-                   <li role="presentation"><a role="menuitem" title="Visit {{person.name}}" target="_blank"
-                      href="<%=ar.retPath%>v/FindPerson.htm?uid={{person.uid}}">Visit User Page</a></li>
+              <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+                  <auto-complete source="loadItems($query)"></auto-complete>
+              </tags-input>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                   <li role="presentation"><a role="menuitem" title="{{add}}"
+                      ng-click="">Remove Label:<br/>{{role.name}}</a></li>
                 </ul>
-              </span>
-              <span >
-                <button class="btn btn-sm btn-primary" ng-click="showAddEmail=!showAddEmail"
-                    style="margin:2px;padding: 2px 5px;font-size: 11px;">+</button>
-              </span>
             </td>
         </tr>
         <tr ng-show="showAddEmail"><td height="10px"></td></tr>
@@ -970,10 +1017,8 @@ function updateVal(){
                             </div>
                         </div>
                     </div>
-
-
-
-
+    
+    
         <!-- ========================================================================= -->
         <div style="height:30px"></div>
         <div class="generalSubHeading">History &amp; Accomplishments

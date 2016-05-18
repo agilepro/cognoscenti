@@ -246,7 +246,7 @@ table.datatable {
                                 <td colspan="2" class="projectStreamText">
                                     <%
 
-                                    NGWebUtils.writeLocalizedHistoryMessage(history, ngp, ar);
+                                    history.writeLocalizedHistoryMessage(ngp, ar);
                                     ar.write("<br/>");
                                     SectionUtil.nicePrintTime(out, history.getTimeStamp(), ar.nowTime);
                                     %>
