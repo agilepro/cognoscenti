@@ -13,9 +13,11 @@
         if (wl.size()>0) {
             mainWorkspaceId = wl.get(0).getPageKey();
             NGPageIndex ngpi = cog.getContainerIndexByKey(mainWorkspaceId);
-            mainSiteId = ngpi.pageBookKey;
-            NGBook site = ar.getCogInstance().getSiteByIdOrFail(mainSiteId);
-            mainSiteName = site.getFullName();
+            if (ngpi!=null) {
+                mainSiteId = ngpi.pageBookKey;
+                NGBook site = ar.getCogInstance().getSiteByIdOrFail(mainSiteId);
+                mainSiteName = site.getFullName();
+            }
         }
     }
     String accountKey = ar.defParam("accountId", null);

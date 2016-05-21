@@ -22,6 +22,7 @@ package org.socialbiz.cog.rest;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 
 import javax.servlet.ServletConfig;
@@ -32,8 +33,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.HttpServletResponseWithoutBug;
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.workcast.json.JSONObject;
+import org.workcast.streams.TemplateJSONRetriever;
 import org.workcast.streams.TemplateStreamer;
-import org.workcast.streams.TemplateTokenRetriever;
 
 /**
  * The emergency config servlet is used for special server states when the
@@ -121,7 +123,7 @@ public class EmergencyConfigServlet extends javax.servlet.http.HttpServlet {
                 displayMsgPage(req, resp, new Exception("Problem with this request: URL must have a 'go' parameter"), "Error.htm");
                 return;
             }
-            
+
             Cognoscenti cog = Cognoscenti.getInstance(req);
 
             if (cog.isRunning()) {
@@ -206,13 +208,83 @@ public class EmergencyConfigServlet extends javax.servlet.http.HttpServlet {
         resp.setContentType("text/html;charset=UTF-8");
         Cognoscenti cog = Cognoscenti.getInstance(req);
 
-        String go = req.getParameter("go");
-        ConfigTokenRetriever ctr = new ConfigTokenRetriever(go, cog.initializer.lastFailureMsg, cog);
+        TemplateJSONRetriever ctr = getRetriever(req, cog);
 
         File templateFile = cog.getConfig().getFileFromRoot("init/InitErrorDisplay.htm");
         TemplateStreamer.streamTemplate(out, templateFile, "UTF-8", ctr);
 
         out.flush();
+    }
+
+
+    private TemplateJSONRetriever getRetriever(HttpServletRequest req, Cognoscenti cog) throws Exception {
+
+        JSONObject jo = new JSONObject();
+        Exception ex = cog.initializer.lastFailureMsg;
+
+
+        if (ex!=null) {
+            StringBuffer exMsg = new StringBuffer("\r");
+            Throwable t = ex;
+            while (t!=null) {
+                exMsg.append(t.toString());
+                exMsg.append("\r");  //just white space
+                t = t.getCause();
+            }
+            jo.put("exceptionMsg", exMsg.toString());
+
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace(new PrintWriter(sw));
+            jo.put("exceptionTrace", sw.toString());
+        }
+
+        jo.put("serverState", cog.initializer.getServerStateString());
+        jo.put("go", req.getParameter("go"));
+        jo.put("msg", ex.toString());
+
+        paramTest(jo,cog, "baseURL");
+        paramTest(jo,cog, "localConnections");
+        pathTest(jo, cog, "libFolder");
+
+        return new TemplateJSONRetriever(jo);
+    }
+    private void paramTest(JSONObject jo, Cognoscenti cog, String paramName) throws Exception {
+        String paramValue = cog.getConfig().getProperty(paramName);
+        if (paramValue==null) {
+            jo.put("param "+paramName, "-- null value found --");
+            jo.put("color "+paramName, "red");
+        }
+        else if (paramValue.length()==0) {
+            jo.put("param "+paramName, "-- zero length value found --");
+            jo.put("color "+paramName, "red");
+        }
+        else {
+            jo.put("param "+paramName, paramValue);
+            jo.put("color "+paramName, "green");
+        }
+    }
+    private void pathTest(JSONObject jo, Cognoscenti cog, String paramName) throws Exception {
+        String paramValue = cog.getConfig().getProperty(paramName);
+        if (paramValue==null) {
+            jo.put("pathtest "+paramName, "-- null value found --");
+            jo.put("color "+paramName, "red");
+        }
+        else if (paramValue.length()==0) {
+            jo.put("pathtest "+paramName, "-- zero length value found --");
+            jo.put("color "+paramName, "red");
+        }
+        else {
+            File thisPath = new File(paramValue);
+            if (!thisPath.exists()) {
+                jo.put("pathtest "+paramName, paramValue + "(Path does NOT exist)");
+                jo.put("color "+paramName, "red");
+            }
+            else {
+                jo.put("pathtest "+paramName, paramValue + "(Path exists)");
+                jo.put("color "+paramName, "green");
+            }
+        }
+
     }
 
     /**
@@ -231,7 +303,7 @@ public class EmergencyConfigServlet extends javax.servlet.http.HttpServlet {
         if (go==null) {
             go = req.getRequestURL().toString();
         }
-        ConfigTokenRetriever ctr = new ConfigTokenRetriever(go, msg, cog);
+        TemplateJSONRetriever ctr = getRetriever(req, cog);
 
         File templateFile = cog.getConfig().getFileFromRoot("init/"+pageName);
         TemplateStreamer.streamTemplate(out, templateFile, "UTF-8", ctr);
@@ -311,137 +383,5 @@ public class EmergencyConfigServlet extends javax.servlet.http.HttpServlet {
     }
 
 
-
-    public static void writeHtml(Writer w, String t)
-        throws Exception
-    {
-        if (t==null)
-        {
-            return;  //treat it like an empty string, don't write "null"
-        }
-        for (int i=0; i<t.length(); i++)
-        {
-            char c = t.charAt(i);
-            switch (c)
-            {
-                case '&':
-                    w.write("&amp;");
-                    continue;
-                case '<':
-                    w.write("&lt;");
-                    continue;
-                case '>':
-                    w.write("&gt;");
-                    continue;
-                case '"':
-                    w.write("&quot;");
-                    continue;
-                default:
-                    w.write(c);
-                    continue;
-            }
-        }
-    }
-
-
-    private class ConfigTokenRetriever implements TemplateTokenRetriever {
-        String go;
-        Exception ex;
-        Cognoscenti cog;
-
-        ConfigTokenRetriever(String _go, Exception _e, Cognoscenti _cog) {
-            go = _go;
-            ex = _e;
-            cog = _cog;
-        }
-
-        @Override
-        public void writeTokenValue(Writer out, String tokenName) throws Exception {
-
-            if ("exceptionMsg".equals(tokenName)) {
-                Throwable t = ex;
-                out.write("\r");  //just white space
-                while (t!=null) {
-                    writeHtml(out, t.toString());
-                    out.write("\r");  //just white space
-                    t = t.getCause();
-                }
-            }
-            else if ("exceptionTrace".equals(tokenName)) {
-                ex.printStackTrace(new PrintWriter(out));
-            }
-            else if ("serverState".equals(tokenName)) {
-                writeHtml(out, cog.initializer.getServerStateString());
-            }
-            else if ("go".equals(tokenName)) {
-                writeHtml(out, go);
-            }
-            else if ("msg".equals(tokenName)) {
-                writeHtml(out, ex.toString());
-            }
-            else if (tokenName.startsWith("param ")) {
-                //must be "param name" where name is the name of a param
-                String paramName = tokenName.substring(6).trim();
-                String paramValue = cog.getConfig().getProperty(paramName);
-                if (paramValue==null) {
-                    out.write("<i>null value found</i>");
-                }
-                else if (paramValue.length()==0) {
-                    out.write("<i>zero length value found</i>");
-                }
-                else {
-                    writeHtml(out, paramValue);
-                }
-            }
-            else if (tokenName.startsWith("pathtest ")) {
-                //must be "param name" where name is the name of a config parameter
-                String paramName = tokenName.substring(9).trim();
-                String paramValue = cog.getConfig().getProperty(paramName);
-                if (paramValue==null) {
-                    out.write("<i>null value found</i>");
-                }
-                else if (paramValue.length()==0) {
-                    out.write("<i>zero length value found</i>");
-                }
-                else {
-                    File thisPath = new File(paramValue);
-                    if (!thisPath.exists()) {
-                        writeHtml(out, paramValue);
-                        out.write("<br/><i>This path does not exist on this server.</i>");
-                    }
-                    else {
-                        writeHtml(out, paramValue);
-                        out.write("<br/><i>This path exists on this server.</i>");
-                    }
-                }
-            }
-            else if (tokenName.startsWith("color ")) {
-                //must be "color name" where name is the name of a config parameter
-                //writes out 'red' or 'green' to indicate the color of the image to use
-                String paramName = tokenName.substring(6).trim();
-                String paramValue = cog.getConfig().getProperty(paramName);
-                if (paramValue==null) {
-                    out.write("red");
-                }
-                else if (paramValue.length()==0) {
-                    out.write("red");
-                }
-                else {
-                    File thisPath = new File(paramValue);
-                    if (!thisPath.exists()) {
-                        out.write("red");
-                    }
-                    else {
-                        out.write("green");
-                    }
-                }
-            }
-            else {
-                out.write("##(");
-                writeHtml(out, tokenName);
-                out.write(")##");
-            }
-        }
-    }
 
 }

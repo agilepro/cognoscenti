@@ -46,16 +46,6 @@ public class SuperAdminLogFile extends DOMFile {
 
     public static SuperAdminLogFile getInstance(Cognoscenti cog) throws Exception {
         File superAdminFile = new File( cog.getConfig().getUserFolderOrFail(), "SuperAdminInfo.xml");
-        if (!superAdminFile.exists()) {
-            //migration from old file in the data folder, to new file in user folder
-            //if there, copy contents, and delete old.
-            //migration started March 2014
-            File otherFile = new File( cog.getConfig().getDataFolderOrFail(), "superadmin.logs");
-            if (otherFile.exists()) {
-                UtilityMethods.copyFileContents(otherFile, superAdminFile);
-                otherFile.delete();
-            }
-        }
         Document newDoc = readOrCreateFile(superAdminFile, "super-admin");
         return new SuperAdminLogFile(superAdminFile, newDoc);
     }

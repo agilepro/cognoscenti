@@ -162,8 +162,6 @@
 <!-- BEGIN Wrapper.jsp Layout-->
 <html>
 <head>
-    <!--fmt:setBundle basename="messages"/-->
-    
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="Content-Language" content="en-us" />
     <meta http-equiv="Content-Style-Type" content="text/css" />

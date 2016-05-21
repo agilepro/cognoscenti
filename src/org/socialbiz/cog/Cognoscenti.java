@@ -205,8 +205,6 @@ System.out.println("Cognoscenti Server Object == Start the Server");
             UserManager.loadUpUserProfilesInMemory(this);
             userCacheMgr = new UserCacheMgr(this);
 
-            File attachFolderFile = theConfig.getAttachFolderOrFail();
-            AttachmentVersionSimple.attachmentFolder = attachFolderFile;
             NGPageIndex.initAllStaticVars();
             initIndexOfContainers();
             MicroProfileMgr.loadMicroProfilesInMemory(this);
@@ -481,8 +479,6 @@ System.out.println("Cognoscenti Server Object == Start the Server");
 
     private synchronized void initIndexOfContainers() throws Exception {
         if (allContainers == null) {
-            String path = theConfig.getProperty("dataFolder");
-            NGPage.initDataPath(path);
             scanAllPages();
         }
     }

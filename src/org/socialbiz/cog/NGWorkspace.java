@@ -152,15 +152,7 @@ public class NGWorkspace extends NGPage {
                 InputStream is = new FileInputStream(theFile);
                 newDoc = DOMUtils.convertInputStreamToDocument(is, false, false);
                 is.close();
-                if (NGBook.fileIsInDataPath(theFile)) {
-                    //since moving to the site scheme, all the workspaces should be site folder
-                    //this is old code left from when all project/pages were in a single folder.
-                    //remove this after Jan 2016
-                    throw new Exception("I found a file in the data path which should never happen: "+theFile);
-                }
-                else {
-                    newPage = new NGWorkspace(theFile, newDoc, null);
-                }
+                newPage = new NGWorkspace(theFile, newDoc, null);
             }
 
             //store into the cache.  Note, there is possibility

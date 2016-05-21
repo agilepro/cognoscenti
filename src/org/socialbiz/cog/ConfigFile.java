@@ -239,8 +239,6 @@ public class ConfigFile {
     public void assertConfigureCorrectInternal() throws Exception {
         Properties props = getConfigProperties();
 
-        getAttachFolderOrFail();
-        getDataFolderOrFail();
         getUserFolderOrFail();
         getSiteFolders();
 
@@ -263,12 +261,6 @@ public class ConfigFile {
      */
     public File getUserFolderOrFail() throws Exception {
         return getGenericFolderOrFail("userFolder", "user");
-    }
-    public File getDataFolderOrFail() throws Exception {
-        return getGenericFolderOrFail("dataFolder", "olddata");
-    }
-    public File getAttachFolderOrFail() throws Exception {
-        return getGenericFolderOrFail("attachFolder", "oldattach");
     }
     public List<File> getSiteFolders() throws Exception {
         List<String> libFolders = getArrayProperty("libFolder");

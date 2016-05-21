@@ -60,11 +60,6 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     //page objects in memory for reuse
     protected static LRUCache pageCache = new LRUCache(10);
 
-    // Data path must be known, and this is gotten from the session
-    // It can not change over the course of a server instance, so
-    // we can cache it here for use to find other data files.
-    protected static String    dataPath;
-
 
     public NGPage(File theFile, Document newDoc, NGBook site) throws Exception
     {
@@ -207,18 +202,18 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     */
     public synchronized static void clearAllStaticVars() {
         pageCache.emptyCache();
-        dataPath = null;
     }
 
     /**
     * This must be called and initialized BEFORE attempting to access
     * any page.
     */
+    /*
     public static void initDataPath(String path)
     {
         pageCache.emptyCache();
-        dataPath = path;
     }
+    */
 
 
     /**
@@ -733,7 +728,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
 
                 AuthRequest ar4test = new AuthDummy(ar.getUserProfile(), testOut, ar.getCogInstance());
                 //ar4test.maxLevel = limitLevel;   <--no longer implemented, need to do something else
-                ar4test.setPageAccessLevels((NGWorkspace)this);
+                ar4test.setPageAccessLevels(this);
 
                 //write a dummy containing tag -- everything else will be within this
                 testOut.write("<editpage>");

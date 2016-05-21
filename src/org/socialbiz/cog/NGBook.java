@@ -871,9 +871,9 @@ public class NGBook extends ContainerCommon implements NGContainer {
         return false;
     }
 
-    
+
     /**
-     * Whether to show or hide experimental features.  
+     * Whether to show or hide experimental features.
      */
     public boolean getShowExperimental() throws Exception {
         return siteInfoRec.getAttributeBool("showExperimental");
@@ -881,10 +881,10 @@ public class NGBook extends ContainerCommon implements NGContainer {
     public void setShowExperimental(boolean val) throws Exception {
         siteInfoRec.setAttributeBool("showExperimental", val);
     }
-    
-    
+
+
     /**
-     * Ony paying customers can have private information  
+     * Ony paying customers can have private information
      */
     public boolean getAllowPrivate() throws Exception {
         return siteInfoRec.getAttributeBool("allowPrivate");
@@ -892,7 +892,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
     public void setAllowPrivate(boolean val) throws Exception {
         siteInfoRec.setAttributeBool("allowPrivate", val);
     }
-    
+
     // //////////////////// DEPRECATED METHODS//////////////////
 
     @Override
@@ -917,17 +917,6 @@ public class NGBook extends ContainerCommon implements NGContainer {
                     new Object[] { getFilePath().toString() }, e);
         }
 
-    }
-
-//TODO: eliminate this method left over from earlier project structure
-    public static boolean fileIsInDataPath(File testFile) {
-        if (NGPage.dataPath==null) {
-            return false;
-        }
-        String fullPath = testFile.getPath();
-        String cleanUp1 = fullPath.toLowerCase().replace('\\', '/');
-        String cleanUp2 = NGPage.dataPath.toLowerCase().replace('\\', '/');
-        return cleanUp1.startsWith(cleanUp2);
     }
 
     public NGPage convertFolderToProj(AuthRequest ar, File expectedLoc) throws Exception {
@@ -1012,16 +1001,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
         }
 
         Document newDoc = readOrCreateFile(newFilePath, "page");
-        NGPage newPage = null;
-
-        //TODO: clean up this logic once we know it works
-        if (fileIsInDataPath(newFilePath)) {
-            throw new Exception("files in datapath no longer supported.  That is the old data way");
-//            newPage = new NGPage(newFilePath, newDoc, this);
-        }
-        else {
-            newPage = new NGWorkspace(newFilePath, newDoc, this);
-        }
+        NGPage newPage = new NGWorkspace(newFilePath, newDoc, this);
         newPage.setKey(newKey);
 
         // make the current user the author, and member, of the new page
@@ -1149,8 +1129,8 @@ public class NGBook extends ContainerCommon implements NGContainer {
         jo.writeToFile(getStatsFilePath());
     }
 
-    
-    
+
+
     public JSONObject getConfigJSON() throws Exception {
         JSONObject jo = new JSONObject();
         jo.put("key", this.getKey());
@@ -1160,7 +1140,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
         jo.put("theme", getThemeName());
         jo.put("showExperimental", getShowExperimental());
         jo.put("allowPrivate", getAllowPrivate());
-        
+
         return jo;
     }
 
@@ -1181,6 +1161,6 @@ public class NGBook extends ContainerCommon implements NGContainer {
             setAllowPrivate( jo.getBoolean("allowPrivate"));
         }
     }
-    
-    
+
+
 }

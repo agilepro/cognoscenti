@@ -42,20 +42,6 @@ public class MicroProfileMgr {
         //this is in {userFolder}/microprofiles.profile
         File theFile = new File(userFolder, "microprofiles.profile");
 
-        //check to see if it exists
-        if (!theFile.exists()) {
-            //this used to be in {dataFolder}/microprofiles.profile,  if it is there, then
-            //move it to the new location as an 'upgrade'
-            File dataFolder = config.getDataFolderOrFail();
-            if (dataFolder.exists()) {
-                File theOldFile = new File(dataFolder,"microprofiles.profile");
-                if (theOldFile.exists()) {
-                    UtilityMethods.copyFileContents(theOldFile,theFile);
-                    theOldFile.delete();
-                }
-            }
-        }
-
         Document newDoc = DOMFile.readOrCreateFile(theFile, "micro-profiles");
         profileFile = new DOMFile(theFile, newDoc);
         refreshMicroProfilesHashTable();

@@ -32,12 +32,12 @@ import org.w3c.dom.Document;
 
 /**
  * Holds New Site Requests
- * 
- * This is a RARELY used file.  Very rare to request a site, and 
+ *
+ * This is a RARELY used file.  Very rare to request a site, and
  * also rare to review, grant, or deny it.  We are talking about
  * less than 0.1% of the traffic.  So don't waste a lot of time
  * storing this in memory.
- * 
+ *
  * Requests are kept 100 days, and thrown away after that.
  * The site persists if granted, but otherwise forgotten about.
  *
@@ -75,7 +75,7 @@ public class SiteReqFile extends DOMFile {
         for (SiteRequest accountDetails : outOfDate) {
             siteReqFile.removeChild(accountDetails);
         }
-        
+
         Collections.sort(allRequests, new SortByDateComparator());
     }
 
@@ -239,16 +239,6 @@ public class SiteReqFile extends DOMFile {
         try {
             File userFolder = cog.getConfig().getUserFolderOrFail();
             requestFile = new File(userFolder, "siteRequests.xml");
-            if (!requestFile.exists()) {
-                //migration, this used to be in the data folder, so check there briefly
-                //and if the old file is found, copy it to the new location, then delete
-                //migration started March 2014
-                File otherFile = new File(cog.getConfig().getDataFolderOrFail(), "requeted.account");
-                if (otherFile.exists()) {
-                    UtilityMethods.copyFileContents(otherFile, requestFile);
-                    otherFile.delete();
-                }
-            }
             Document newDoc = readOrCreateFile(requestFile, "accounts-request");
             SiteReqFile site = new SiteReqFile(requestFile, newDoc);
             return site;
@@ -282,7 +272,7 @@ public class SiteReqFile extends DOMFile {
         }
         return deniedReqs;
     }
-    
+
     /**
      * Sort reverse chronological, so most recent is first
      *
@@ -290,7 +280,7 @@ public class SiteReqFile extends DOMFile {
     private static class SortByDateComparator implements Comparator<SiteRequest> {
 
         public SortByDateComparator() {}
-        
+
         @Override
         public int compare(SiteRequest arg0, SiteRequest arg1) {
             if (arg0.getModTime() == arg1.getModTime()) {

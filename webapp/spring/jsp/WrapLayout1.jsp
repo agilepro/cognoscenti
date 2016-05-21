@@ -109,6 +109,7 @@
     <link href="<%=ar.baseURL%>css/body.css" rel="styleSheet" type="text/css" media="screen" />
     <script src="<%=ar.baseURL%>jscript/nugen_plain.js"></script>
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
+    <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
 
     <link href="<%=ar.retPath%>css/tabs.css" rel="styleSheet" type="text/css" media="screen" />
 
@@ -124,6 +125,7 @@
     <link href="<%=ar.retPath%>css/ddlevelsmenu-base.css" rel="styleSheet" type="text/css" media="screen" />
     <link href="<%=ar.retPath%>css/global.css" rel="styleSheet" type="text/css" media="screen" />
     <link href="<%=ar.retPath%><%=themePath%>theme.css" rel="styleSheet" type="text/css" media="screen" />
+    <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
     
     <title><% ar.writeHtml(title); %></title>

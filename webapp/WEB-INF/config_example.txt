@@ -17,21 +17,6 @@ libFolder=c:/CognoscentiData/sites/
 userFolder=c:/CognoscentiData/user/
 
 
-# Data Folder
-# This is not needed on new installation.  Older servers had a 
-# folder for storing the data, not needed any more.
-# Can be any local path, include the complete path to the folder.
-# Make sure that this folder exists before you start.
-dataFolder=c:/CognoscentiData/olddata/
-
-# Attachment folder
-# This is not needed on new installation.  Older servers had a 
-# folder for storing the attachments, not needed any more.
-# Can be any local path, include the complete path to the folder.
-# Make sure that this folder exists before you start.
-attachFolder=c:/CognoscentiData/oldattach/
-
-
 # baseURL
 # This is the public base URL address which the browser will
 # use to access this server.  Used for redirection of the browser.

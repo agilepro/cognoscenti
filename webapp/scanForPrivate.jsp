@@ -14,7 +14,7 @@
 %><%AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Can not run test page.");
 
-    String dataFolder = ar.getSystemProperty("dataFolder");%>
+    throw new Exception("scan for private page needs to be rewritten for new site structure");
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
@@ -25,10 +25,6 @@
 <h3>Check for private topics</h3>
 <ul>
 <%
-    File thisDir = new File(dataFolder);
-    File[] chilluns = thisDir.listFiles();
-
-
 
 
 %>
