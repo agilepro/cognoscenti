@@ -1182,10 +1182,32 @@ public class GoalRecord extends BaseRecord {
             return;
         }
 
+
+       JSONObject data = new JSONObject();
+
         MemFile body = new MemFile();
         AuthRequest clone = new AuthDummy(requesterProfile, body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
+
+        data.put("baseURL", ar.baseURL);
+        data.put("taskUrl", clone.getResourceURL(ngp, "task"+getId()+".htm"));
+        LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
+        data.put("actionItem", this.getJSON4Goal(ngp, ar.baseURL, lfu));
+
+
+
+
+
+//still working on this.
+
+
+
+
+
+
+
+
         clone.write("<html>\n<body>\n<style>.niceTable tr td { padding:8px }</style>");
 
         String topicAddress = ar.baseURL + clone.getResourceURL(ngp, "task"+getId()+".htm");

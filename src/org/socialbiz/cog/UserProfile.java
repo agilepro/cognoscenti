@@ -603,6 +603,13 @@ public class UserProfile extends DOMFace implements UserRef
     }
 
     /**
+     * Make a link to this to provide information about the person
+     */
+    public String getLinkUrl() throws Exception {
+        return "v/FindPerson.htm?uid="+URLEncoder.encode(getUniversalId(), "UTF-8");
+    }
+
+    /**
     * Writes the name of the user.
     * Makes it a link if you are logged in and if
     * this is not a static site.
@@ -836,8 +843,8 @@ public class UserProfile extends DOMFace implements UserRef
         return ((disable!=null) && ("yes".equals(disable)));
     }
 
-    
-    
+
+
     /**
      * Whether or not to display WEAVER style menus
      * @param val
@@ -849,8 +856,8 @@ public class UserProfile extends DOMFace implements UserRef
         return getAttributeBool("weaverMenu");
     }
 
-    
-    
+
+
     public List<TemplateRecord> getTemplateList()
     throws Exception
     {
@@ -988,7 +995,7 @@ public class UserProfile extends DOMFace implements UserRef
             setScalar("image", newImage);
         }
     }
-    
+
     /**
      * Check to see if the user has an image.  If so, leave it there,
      * if not, then copy one of the default images for this user.

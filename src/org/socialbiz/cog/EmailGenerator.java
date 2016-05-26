@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog;
 
+import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,8 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
+import org.workcast.streams.TemplateJSONRetriever;
+import org.workcast.streams.TemplateStreamer;
 
 /**
  * People create this, and this creates emails, sent possibly in
@@ -331,14 +334,7 @@ public class EmailGenerator extends DOMFace {
             System.out.println("DATA PROBLEM: email generator came from a person without a profile ("+getOwner()+") ignoring");
             return;
         }
-        AuthRequest clone = new AuthDummy(originalSender, bodyChunk.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
-        clone.retPath = ar.baseURL;
-        clone.write("<html><body>");
 
-        //if you really want the files attached to the email message, then include a list of
-        //their attachment ids here
-        //TODO: remove the reference to a class is spring module
         List<AttachmentRecord> attachList = getSelectedAttachments(ar, ngp);
         List<String> attachIds = new ArrayList<String>();
         for (String attId : getAttachments()) {
@@ -365,7 +361,11 @@ public class EmailGenerator extends DOMFace {
         }
 
 
-        writeNoteAttachmentEmailBody(clone, ngp, noteRec, ooa.getAssignee(), getIntro(),
+        AuthRequest clone = new AuthDummy(originalSender, bodyChunk.getWriter(), ar.getCogInstance());
+        clone.setNewUI(true);
+        clone.retPath = ar.baseURL;
+
+        writeNoteAttachmentEmailBody1(clone, ngp, noteRec, ooa.getAssignee(), getIntro(),
                 getIncludeBody(), attachList, meeting);
 
         ooa.writeUnsubscribeLink(clone);
@@ -390,110 +390,67 @@ public class EmailGenerator extends DOMFace {
 
 
 
-    //TODO: change this to use a TEMPLATE approach, when loops are allowed
-    public static void writeNoteAttachmentEmailBody(AuthRequest ar,
-            NGPage ngp, NoteRecord selectedNote,
+    public static void writeNoteAttachmentEmailBody1(AuthRequest ar,
+            NGWorkspace ngp, NoteRecord selectedNote,
             AddressListEntry ale, String intro, boolean includeBody,
             List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
 
-
-        ar.write("<p><b>Note From:</b> ");
         UserProfile ownerProfile = ar.getUserProfile();
         if (ownerProfile==null) {
             throw new Exception("Some problem, so some reason the owner user profile is null");
         }
-        ownerProfile.writeLink(ar);
-        ar.write(" &nbsp; <b>Workspace:</b> ");
-        ngp.writeContainerLink(ar, 100);
-        ar.write("</p>");
-        ar.write("\n<div class=\"leafContent\" >");
-        WikiConverter.writeWikiAsHtml(ar, intro);
-        ar.write("</div>");
-        if (selAtt != null && selAtt.size() > 0) {
-            ar.write("</p>");
-            ar.write("\n<p><b>Attachments:</b> (click links for secure access to documents)<ul> ");
-            for (AttachmentRecord att : selAtt) {
-                ar.write("\n<li><a href=\"");
-                ar.write(ar.retPath);
-                ar.write(ar.getResourceURL(ngp, "docinfo" + att.getId()
-                        + ".htm?"));
-                ar.write(AccessControl.getAccessDocParams(ngp, att));
-                ar.write("\">");
-                ar.writeHtml(att.getNiceName());
-                ar.write("</a></li> ");
-            }
-            ar.write("</ul></p>");
-        }
-        if (selectedNote != null) {
-            String noteURL = ar.retPath + ar.getResourceURL(ngp, selectedNote)
-                    + "?" + AccessControl.getAccessNoteParams(ngp, selectedNote)
-                    + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8");
-            if (includeBody) {
-                ar.write("\n<p><i>The topic is copied below. You can access the most recent, ");
-                ar.write("most up to date version on the web at the following link:</i> <a href=\"");
-                ar.write(noteURL);
-                ar.write("\" title=\"Access the latest version of this message\"><b>");
-                if (selectedNote.getSubject() != "" && selectedNote.getSubject() != null) {
-                    ar.writeHtml(selectedNote.getSubject());
-                }
-                else {
-                    ar.writeHtml("Topic Link");
-                }
-                ar.write("</b></a></p>");
-                ar.write("\n<hr/>\n");
-                ar.write("\n<div class=\"leafContent\" >");
-                WikiConverter.writeWikiAsHtml(ar, selectedNote.getWiki());
-                ar.write("\n</div>");
-            }
-            else {
-                ar.write("\n<p><i>Access the web page using the following link:</i> <a href=\"");
-                ar.write(noteURL);
-                ar.write("\" title=\"Access the latest version of this topic\"><b>");
-                String noteSubj = selectedNote.getSubject();
-                if (noteSubj==null || noteSubj.length()==0) {
-                    noteSubj = "Topic has no name.";
-                }
-                ar.writeHtml(noteSubj);
-                ar.write("</b></a></p>");
-            }
 
-            String choices = selectedNote.getChoices();
-            List<String> choiceArray = UtilityMethods.splitString(choices, ',');
-            UserProfile up = ale.getUserProfile();
-            if (up != null && choiceArray.size() > 0) {
-                selectedNote.getOrCreateUserResponse(up);
-            }
-            if (choiceArray.size() > 0 & includeBody) {
-                ar.write("\n<p><font color=\"blue\"><i>This request has some response options.  Use the <a href=\"");
-                ar.write(noteURL);
-                ar.write("#Response\" title=\"Response form on the web\">web page</a> to respond to choose between: ");
-                int count = 0;
-                for (String ach : choiceArray) {
-                    count++;
-                    ar.write(" ");
-                    ar.write(Integer.toString(count));
-                    ar.write(". ");
-                    ar.writeHtml(ach);
-                }
-                ar.write("</i></font></p>\n");
+        //Gather all the data into a JSON structure
+        JSONObject data = new JSONObject();
+        data.put("baseUrl", ar.baseURL);
+        data.put("sender",  ownerProfile.getJSON());
+
+        data.put("workspaceName", ngp.getFullName());
+        data.put("workspaceUrl", ar.baseURL + ar.getDefaultURL(ngp) );
+
+        data.put("introHtml", WikiConverterForWYSIWYG.makeHtmlString(ar, intro));
+        JSONArray attachArray = new JSONArray();
+        for (AttachmentRecord att : selAtt) {
+            JSONObject oneAtt = new JSONObject();
+            oneAtt.put("url", ar.baseURL + ar.getResourceURL(ngp, "docinfo" + att.getId() + ".htm?")
+                    + AccessControl.getAccessDocParams(ngp, att));
+            oneAtt.put("name", att.getNiceName());
+            attachArray.put(oneAtt);
+        }
+        data.put("attach", attachArray);
+
+        if (selectedNote != null) {
+            data.put("noteUrl", ar.retPath + ar.getResourceURL(ngp, selectedNote)
+                + "?" + AccessControl.getAccessNoteParams(ngp, selectedNote)
+                + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
+            data.put("noteName", selectedNote.getSubject());
+            JSONObject noteObj = selectedNote.getJSONWithHtml(ar);
+            noteObj.put("noteUrl", ar.retPath + ar.getResourceURL(ngp, selectedNote)
+                    + "?" + AccessControl.getAccessNoteParams(ngp, selectedNote)
+                    + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
+            data.put("note", noteObj);
+            if (includeBody) {
+                data.put("includeTopic", "yes");
             }
         }
 
         if (meeting!=null) {
-            String meetingURL = ar.retPath + ar.getResourceURL(ngp, "meetingFull.htm?id="+meeting.getId()
-                    +"&"+AccessControl.getAccessMeetParams(ngp, meeting));
-            ar.write("\n<p><i>Meeting agenda copied below. Use this link: </i><a href=\"");
-            ar.write(meetingURL);
-            ar.write("\" title=\"Access the latest version of this meeting\"><b>");
-            ar.writeHtml(meeting.getName());
-            ar.write("</b></a><i> to access the most recent, ");
-            ar.write("most up to date version on the web.</i><p>");
+            JSONObject meetingObj = meeting.getFullJSON(ar, ngp);
+            meetingObj.put("meetingUrl", ar.retPath + ar.getResourceURL(ngp, "meetingFull.htm?id="+meeting.getId()
+                    +"&"+AccessControl.getAccessMeetParams(ngp, meeting)));
+            data.put("meeting", meetingObj);
+        }
 
-            ar.write("\n<hr/>\n<div class=\"leafContent\" >");
-            meeting.generateReminderHtml(ar,  ngp, ale);
-            ar.write("</div>");
+        File myTemplate = ar.getCogInstance().getConfig().getFileFromRoot("email/DiscussionTopicManual.htm");
+        if (myTemplate.exists()) {
+            TemplateJSONRetriever tjr = new TemplateJSONRetriever(data);
+            TemplateStreamer.streamTemplate(ar.w, myTemplate, "UTF-8", tjr);
+        }
+        else {
+            ar.write("Could not find template "+myTemplate);
         }
     }
+
 
 
     public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw) throws Exception {
