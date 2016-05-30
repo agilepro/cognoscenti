@@ -1,5 +1,6 @@
 package org.socialbiz.cog.mail;
 
+import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,15 +24,27 @@ import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
 import org.socialbiz.cog.SuperAdminLogFile;
+import org.socialbiz.cog.UserCache;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
+import org.workcast.json.JSONArray;
+import org.workcast.json.JSONObject;
+import org.workcast.json.JSONTokener;
 import org.workcast.streams.HTMLWriter;
 import org.workcast.streams.MemFile;
 
 public class DailyDigest {
 
+    private static boolean forceIt = false;
 
+    public static void forceDailyDigest(AuthRequest arx, Cognoscenti cog) throws Exception {
+        forceIt = true;
+        sendDailyDigest(arx, cog);
+        forceIt = false;
+    }
+    
+    
     /*
      * This method loops through all known users (with profiles) and sends an
      * email with their tasks on it.
@@ -39,6 +52,7 @@ public class DailyDigest {
     public static void sendDailyDigest(AuthRequest arx, Cognoscenti cog) throws Exception {
         MemFile debugStuff = new MemFile();
         Writer debugWriter = debugStuff.getWriter();
+        System.out.println("sendDailyDigest has been called.");
 
         try {
             NGPageIndex.assertNoLocksOnThread();
@@ -63,6 +77,7 @@ public class DailyDigest {
             // loop thru all the profiles to send out the email.
             UserProfile[] ups = UserManager.getAllUserProfiles();
             for (UserProfile up : ups) {
+                System.out.println("Considering user: "+up.getKey()+" which is "+up.getName());
                 if (up.getDisabled()) {
                     //skip all disabled users
                     continue;
@@ -125,7 +140,7 @@ public class DailyDigest {
             //it takes to run through all the users.  Don't want to kick a message to tomorrow just
             //because it is a few seconds earlier today.
             long nextNotificationMessageDue = historyStartTime + (up.getNotificationPeriod()*24*60*60*1000) - 3600000;
-            if (processingStartTime < nextNotificationMessageDue ) {
+            if (processingStartTime < nextNotificationMessageDue && !forceIt) {
                 //not yet time to send another notification message
                 return;
             }
@@ -137,16 +152,75 @@ public class DailyDigest {
             if (toAddress == null || toAddress.length() == 0) {
                 toAddress = realAddress;
             }
-            OptOutAddr ooa = new OptOutAddr(
-                AddressListEntry.parseCombinedAddress(realAddress));
-
 
             MemFile body = new MemFile();
             AuthDummy clone = new AuthDummy(up, body.getWriter(), cog);
             clone.nowTime = processingStartTime;
 
-            int numberOfUpdates = 0;
+            //the user cache contains all the action items, open rounds, and proposals for a user
+            UserCache userCache = cog.getUserCacheMgr().getCache(up.getKey());
+            //because this is background, it is a good time to refresh the data in the cache
+            //userCache.refreshCache(cog); 
+            int reportableThings = userCache.getActionItems().length();
+            reportableThings += userCache.getOpenRounds().length();
+            reportableThings += userCache.getProposals().length();
+            
+            System.out.println("User "+up.getKey()+" has "+userCache.getActionItems().length()+" action items.");
+            System.out.println("User "+up.getKey()+" has "+userCache.getOpenRounds().length()+" open rounds.");
+            System.out.println("User "+up.getKey()+" has "+userCache.getProposals().length()+" proposals.");
+            if (reportableThings==0) {
+                System.out.println("Nothing to report.  not sending daily digest.");
+            }
 
+            JSONObject data = userCache.getAsJSON();
+            MemFile mf = new MemFile();
+            Writer memWriter = mf.getWriter();
+            data.write(memWriter);
+            memWriter.flush();
+            data = new JSONObject(new JSONTokener(mf.getReader()));
+            
+            data.put("baseURL", clone.baseURL);
+            data.put("to",up.getJSON());
+            data.put("timeStart",historyStartTime);
+            data.put("timeEnd",processingStartTime);
+            
+            JSONArray notifyList = new JSONArray();
+            for (NotificationRecord record : up.getNotificationList()) {
+                NGPageIndex ngpi = cog.getContainerIndexByKey(record.getPageKey());
+                if (ngpi == null) {
+                    continue;
+                }
+                NGPage ngp = ngpi.getPage();
+                List<HistoryRecord> histRecs = ngp.getHistoryRange(
+                        historyStartTime, processingStartTime);
+                if (histRecs.size() == 0) {
+                    // skip this if there is no history
+                    continue;
+                }
+                JSONObject oneWorkspace = ngpi.getJSON4List();
+                JSONArray history = new JSONArray();
+                for (HistoryRecord oneHist : histRecs) {
+                    history.put(oneHist.getJSON(ngp, clone));
+                }
+                oneWorkspace.put("history",history);
+                notifyList.put(oneWorkspace);
+            }
+            data.put("notifyList", notifyList);
+
+            System.out.println("*********** DEBUG DUMP FOR EMAIL **************");
+            File userFolder = cog.getConfig().getUserFolderOrFail();
+            File debugDump = new File(userFolder, "debugDump"+up.getKey()+".json");
+            if (debugDump.exists()) {
+                debugDump.delete();
+            }
+            data.writeToFile(debugDump);
+           
+
+            OptOutAddr ooa = new OptOutAddr(
+                AddressListEntry.parseCombinedAddress(realAddress));
+
+            int numberOfUpdates = 0;
+            
             clone.write("<html><body>\n");
             clone.write("<p>Hello ");
             up.writeLinkAlways(clone);
@@ -233,6 +307,7 @@ public class DailyDigest {
                         up.getPreferredEmail());
                 debugEvidence.write("</li>");
             }
+
         } catch (Exception e) {
             EmailSender.threadLastMsgException = e;
             arx.logException(
@@ -251,6 +326,7 @@ public class DailyDigest {
             catch (Exception eeeeee) {
                 System.out.println("Exception while reporting an exception sending daily digest email to user: "+eeeeee);
             }
+
         }
     }
 
@@ -482,6 +558,14 @@ public class DailyDigest {
         ar.write(AccessControl.getAccessGoalParams(ngp, gr));
         ar.write("&ukey=");
         ar.writeURLData(up.getKey());
+    }
+    
+    private static String getActionItemURL(AuthRequest ar, NGPageIndex ngpi,
+            GoalRecord gr, UserProfile up) throws Exception {
+        NGPage ngp = (NGPage) ngpi.getContainer();
+        return ar.baseURL + "t/" + ngpi.pageBookKey + "/" + ngpi.containerKey + "/task"
+            + gr.getId() + ".htm?" + AccessControl.getAccessGoalParams(ngp, gr)
+            + "&ukey=" + up.getKey();
     }
 
     private static void writeProcessLinkUrl(AuthRequest ar, NGPageIndex ngpi)

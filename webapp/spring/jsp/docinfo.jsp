@@ -346,21 +346,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
 %>
             <td>
-            <%if("FILE".equals(attachment.getType())){ %> <a
-                href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>"><img
-                src="<%=ar.retPath%>download.gif" border="0"></a> <%}else if("URL".equals(attachment.getType())){ %>
-            <a href="#"
-                onclick="return openWin(<%ar.writeQuote4JS(permaLink); %>);"><img
-                src="<%=ar.retPath%>assets/btnAccessLinkURL.gif" border="0"></a> <%} %>
+            <%if("FILE".equals(attachment.getType())){ %> 
+                <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>"><img
+                src="<%=ar.retPath%>download.gif"></a> 
+            <%}else if("URL".equals(attachment.getType())){ %>
+            <a href="<%ar.write(permaLink); %>)" target="_blank"><img
+                src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
+            <%} %>
 
             </td>
         </tr>
-        <% if (ar.isLoggedIn() && !attachment.isDeleted() && "FILE".equals(attachment.getType()) ) { %>
-        <tr>
-            <td style="height: 20px"></td>
-        </tr>
-<% }
-    }
+<%  }
     else{
 %>
         <tr>
@@ -368,7 +364,7 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
             <td style="width: 20px;"></td>
             <td><a href="#"><img
                 src="<%=ar.retPath%>downloadInactive.gif" border="0"></a><br />
-            <span class="red">* You need to log in to download this
+            <span class="red">* You need to log in to access this
             document.</span></td>
         </tr>
 <%

@@ -166,4 +166,8 @@ public class UserCache {
         }
         return new JSONArray();
     }
+    
+    public JSONObject getAsJSON() {
+        return cacheObj;
+    }
 }

@@ -82,11 +82,12 @@ app.controller('myCtrl', function($scope, $http) {
         return b.changed-a.changed;
     });
     $scope.fixLength = function(str) {
+        str = str.trim();
         if (str.length>28) {
             return str.substring(0,28);
         }
-        if (str.length<6) {
-            return str + "------";
+        if (str.length==0) {
+            return "-No Name-";
         }
         return str;
     }
@@ -127,84 +128,143 @@ app.controller('myCtrl', function($scope, $http) {
           background-color:#FFFFFF;
           margin:6px
       }
+      .headingfont {
+          font-family: Arial, Helvetica, Verdana, sans-serif;
+          font-size:20px;
+          font-weight:normal;
+      }
     </style>
 
-    <table><tr style="vertical-align:top;">
-    <td style="width:350px;vertial-align:top;">
-       <div class="tripleColumn leafContent">
-          <h1>Top Action Items</h1>
-          <div>
-             <ul>
-               <li  ng-repeat="item in openActionItems | limitTo: 10">
-                 <img src="<%=ar.retPath%>/assets/goalstate/small{{item.state}}.gif">
+<!-- COLUMN 1 -->
+    <div class="col-md-4 col-sm-12">
+
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">
+              <div style="float:left">Top Action Items</div>
+              <div style="float:right">
+                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm">
+                      <i class="fa fa-search"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body">
+            <div  ng-repeat="item in openActionItems | limitTo: 10">
+                <img src="<%=ar.retPath%>/assets/goalstate/small{{item.state}}.gif">
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.projectKey}}/task{{item.id}}.htm">
                  {{fixLength(item.synopsis)}}</a>
-               </li>
-               <li>
+            </div>
+            <div ng-show="openActionItems.length>10">
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm" class="btn btn-sm btn-default">See all action items...</a>
-               </li>
-             </ul>
+            </div>
           </div>
-          <h1>Need to Respond</h1>
-          <div>
-             <ul>
-               <li ng-repeat="item in proposals | limitTo: 10">
+        </div>
+        
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">
+              <div style="float:left">Meetings</div>
+              <div style="float:right">
+                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/UserHome.htm">
+                      <i class="fa fa-search"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body">
+          (placeholder ... not implemented yet.)
+          </div>
+        </div>
+
+
+    </div>
+
+
+<!-- COLUMN 2 -->
+    <div class="col-md-4 col-sm-12">
+
+
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">
+              <div style="float:left">Need to Respond</div>
+              <div style="float:right">
+                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userMissingResponses.htm">
+                      <i class="fa fa-search"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body">
+              <div ng-repeat="item in proposals | limitTo: 10">
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixLength(item.content)}}</a>
-               </li>
-               <li>
+               </div>
+               <div ng-show="proposals.length>10">
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userMissingResponses.htm" class="btn btn-sm btn-default">See all ...</a>
-               </li>
-             </ul>
+               </div>
           </div>
-          <h1>Need to Complete</h1>
-          <div>
-             <ul>
-               <li ng-repeat="item in openRounds | limitTo: 10">
+        </div>
+        
+        
+        
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">
+              <div style="float:left">Need to Complete</div>
+              <div style="float:right">
+                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm">
+                      <i class="fa fa-search"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body">
+               <div ng-repeat="item in openRounds | limitTo: 10">
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixLength(item.content)}}</a>
-               </li>
-               <li>
+               </div>
+               <div ng-show="openRounds.length>10">
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm" class="btn btn-sm btn-default">See all...</a>
-               </li>
-             </ul>
+               </div>
           </div>
        </div>
-    </td>
-    <td style="width:350px;vertial-align:top;">
-       <div class="tripleColumn leafContent">
-           Some sort of cool graphic here.
-       </div>
-    </td>
-    <td style="width:350px;vertial-align:top;">
-       <div class="tripleColumn leafContent">
-           <div style="margin:5px;">
-               <h1>Workspaces you Watch</h1>
-               <ul>
-               <li ng-repeat="item in wList | limitTo: 10">
+    </div>
+
+
+<!-- COLUMN 3 -->
+    <div class="col-md-4 col-sm-12">
+
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">
+              <div style="float:left">Workspaces you Watch</div>
+              <div style="float:right">
+                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm">
+                      <i class="fa fa-search"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body">
+               <div ng-repeat="item in wList | limitTo: 10">
                    <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.pageKey}}/frontPage.htm">
                    {{fixLength(item.name)}}
                    </a>
-               </li>
-               <li>
+               </div>
+               <div ng-show="wList.length>10">
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm" class="btn btn-sm btn-default">See all...</a>
-               </li>
-               </ul>
-           </div>
-           <div style="margin:5px;">
-               <h1>Sites you Manage</h1>
-               <ul>
-               <li ng-repeat="item in siteList | limitTo: 10">
+               </div>
+          </div>
+        </div>
+        
+        
+        
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">
+              <div style="float:left">Sites you Manage</div>
+              <div style="float:right">
+                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userAccounts.htm">
+                      <i class="fa fa-search"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body">
+               <div ng-repeat="item in siteList | limitTo: 10">
                    <a href="<%=ar.retPath%>t/{{item.key}}/$/accountListProjects.htm">
                    {{fixLength(item.names[0])}}
                    </a>
-               </li>
-               <li>
+               </div>
+               <div ng-show="siteList.length>10">
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userAccounts.htm" class="btn btn-sm btn-default">See all...</a>
-               </li>
+               </div>
                </ul>
            </div>
        </div>
-    </td>
-    </tr></table>
+    </div>
 
 
 </div>
