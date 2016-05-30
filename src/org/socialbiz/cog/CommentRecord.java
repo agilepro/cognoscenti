@@ -600,8 +600,10 @@ public class CommentRecord extends DOMFace {
         if (sn.needsSending()) {
             resList.add(sn);
         }
-
-        if (getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
+        else if (getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
+            //only look for responses if the main comment has been sent.
+            //prevents problem with a response going before the comment gets out of draft
+            //
             //there can be responses only if this is a "poll" type comment (a proposal)
             for (ResponseRecord rr : getResponses()) {
                 ScheduledNotification snr = rr.getScheduledNotification(ngp, noteOrMeet, this);

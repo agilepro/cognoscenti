@@ -55,10 +55,6 @@ public class AccountController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar,siteId,null,"SiteAdmin");
     }
-
-
-
-    
     
     
     @RequestMapping(value = "/{userKey}/requestAccount.htm", method = RequestMethod.GET)
@@ -206,30 +202,6 @@ public class AccountController extends BaseController {
         showJSPMembers(ar, siteId, null, "accountCreateProject");
         return null;
     }
-    /*
-    @RequestMapping(value = "/{siteId}/$/accountCreateProject.htm", method = RequestMethod.GET)
-    public ModelAndView accountCreateProject(@PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            NGBook site = prepareSiteView(ar, siteId);
-            ModelAndView modelAndView = executiveCheckViews(ar);
-            if (modelAndView != null) {
-                return modelAndView;
-            }
-
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("pageTitle", site.getFullName());
-            return new ModelAndView("accountCreateProject");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.process.page", new Object[]{siteId} , ex);
-        }
-    }
-*/
     
     @RequestMapping(value = "/{siteId}/$/accountCloneProject.htm", method = RequestMethod.GET)
     public ModelAndView accountCloneProject(@PathVariable String siteId,
@@ -434,28 +406,6 @@ public class AccountController extends BaseController {
         }
     }
 
-    /*
-    public String pasreFullname(String fullNames) throws Exception {
-
-        String assigness = "";
-        String[] fullnames = UtilityMethods.splitOnDelimiter(fullNames, ',');
-        for(int i=0; i<fullnames.length; i++){
-            String fname = fullnames[i];
-           if(!fname.equalsIgnoreCase("")){
-                int bindx = fname.indexOf('<');
-                int length = fname.length();
-                if(bindx > 0){
-                    fname = fname.substring(bindx+1,length-1);
-                }
-                assigness = assigness + "," + fname;
-           }
-        }
-        if(assigness.startsWith(",")){
-            assigness = assigness.substring(1);
-        }
-        return assigness;
-    }
-*/
     
 //This is a pretty horrible function.  It is used to support the old style of
 //auto complete when entering user names.

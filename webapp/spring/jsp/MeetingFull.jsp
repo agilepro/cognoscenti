@@ -179,13 +179,15 @@
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
+    $scope.pageId = "<%ar.writeJS(pageId);%>";
+    $scope.meetId = "<%ar.writeJS(meetId);%>";
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
     $scope.allGoals = <%allGoals.write(out,2,4);%>;
-    $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
+    $scope.attachmentList = [];
     $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
-    $scope.allTopics = <%allTopics.write(out,2,4);%>;
+    $scope.allTopics = [];
     $scope.backlogId = <%=backlog.getId()%>;
 
 
@@ -196,7 +198,20 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.myUserId = "<% ar.writeJS(ar.getBestUserId()); %>";
     $scope.actionItemFilter = "";
     $scope.realDocumentFilter = "";
-    $scope.showRollCall = false;
+    
+    $scope.isRegistered = function() {
+        var registered = false;
+        $scope.meeting.rollCall.forEach( function(item) {
+            if (item.uid == '<%ar.writeJS(currentUser);%>') {
+                registered = ("Unknown" != item.attend);
+            }
+        });
+        return registered;
+    }
+    
+    //initialize based on being registered, but allow user to toggle later
+    $scope.showRollCall = $scope.isRegistered();
+    
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -708,6 +723,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.createMinutes = function() {
+        if ($scope.meeting.state != 3) {
+            alert("Put the meeting into completed mode before generating minutes.");
+            return;
+        }
         var postURL = "createMinutes.json?id="+$scope.meeting.id;
         var postdata = angular.toJson("");
         $scope.showError=false;
@@ -716,11 +735,77 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.meeting = data;
             $scope.showInput=false;
             $scope.extractDateParts();
+            $scope.refreshTopicList();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
     };
+    $scope.refreshAttachmentList = function() {
+        var getURL = "docsList.json";
+        $scope.showError=false;
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.attachmentList = data.docs;
+            sessionStorage.setItem("ws"+$scope.pageId+"attachList", JSON.stringify(data.docs));
+            console.log("Got the Attachment List");
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    var cachedAttachmentList = sessionStorage.getItem("ws"+$scope.pageId+"attachList");
+    if (cachedAttachmentList) {
+        $scope.attachmentList = JSON.parse(cachedAttachmentList);
+        console.log("Attachments found in session storage: ",$scope.attachmentList);
+        $scope.refreshAttachmentList(); //pick up any changes
+    }
+    else {
+        $scope.refreshAttachmentList();
+        console.log("Attachments NOT found in session storage")
+    }
+    
+    $scope.refreshTopicList = function() {
+        var getURL = "topicList.json";
+        $scope.showError=false;
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.allTopics = data.topics;
+            sessionStorage.setItem("ws"+$scope.pageId+"topicList", JSON.stringify(data.topics));
+            console.log("Got the Topic List");
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    var cachedTopicList = sessionStorage.getItem("ws"+$scope.pageId+"topicList");
+    if (cachedTopicList) {
+        $scope.allTopics = JSON.parse(cachedTopicList);
+        console.log("Topics found in session storage: ",$scope.allTopics);
+        $scope.refreshTopicList(); //pick up any changes
+    }
+    else {
+        $scope.refreshTopicList();
+        console.log("Topics NOT found in session storage")
+    }
+    
+    
+    
+    
+    $scope.getMinutesStyle = function() {
+        if ($scope.meeting.minutesId) {
+            var isDraft = true;
+            $scope.allTopics.forEach( function(oneTopic) {
+                if ($scope.meeting.minutesId == oneTopic.universalid) {
+                    isDraft = oneTopic.draft;
+                }
+            });
+            if (!isDraft) {
+                return "margin:4px;"
+            }
+        }
+        return "margin:4px;background-color:yellow;"
+    }
 
     $scope.startEditLockDescription = function(item) {
         var rec = {};
@@ -918,10 +1003,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.extractPeopleSituation();
 
     $scope.showSelfRegister = function() {
-        return ($scope.mySitch.length>0 && $scope.meeting.state <= 1);
+        return ($scope.meeting.state <= 1 && !$scope.showRollCall);
+    }
+    $scope.showRollBox = function() {
+        return $scope.showRollCall && $scope.meeting.state == 1
     }
     $scope.editAttendees = function() {
         return ($scope.meeting.state == 2);
+    }
+    $scope.toggleRollCall = function() {
+        $scope.showRollCall = !$scope.showRollCall;
     }
     $scope.isCompleted = function() {
         return ($scope.meeting.state >= 3);
@@ -968,6 +1059,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.saveSituation = function() {
         $scope.savePartialMeeting(['rollCall']);
+        $scope.showRollCall = $scope.isRegistered();
     }
 
     $scope.moveItemToBacklog = function(item) {
@@ -1419,7 +1511,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   href="#" ng-click="showAll()" >Show All Items</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="showRollCall=!showRollCall" >Show Roll Call</a></li>
+                  href="#" ng-click="toggleRollCall()" >Show Roll Call</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   href="#" ng-click="createAgendaItem()" >Create Agenda Item</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -1616,6 +1708,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
       </div>
     </div>
+    
 
     <div class="comment-outer" style="margin:40px" ng-show="editAttendees()">
       <div><h2 style="margin:5px">Attendance List</h2></div>
@@ -1641,7 +1734,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
     <div class="leafContent" ng-show="isCompleted() && meeting.minutesId">
        Official Minutes:
-      <span class="btn btn-sm btn-default"  style="margin:4px;" ng-click="navigateToTopic(meeting.minutesLocalId)">
+      <span class="btn btn-sm btn-default"  style="{{getMinutesStyle()}}" 
+            ng-click="navigateToTopic(meeting.minutesLocalId)">
            Minutes
       </span>
     </div>
@@ -1653,17 +1747,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <% } %>
 
 
-    <div class="comment-outer" ng-show="showRollCall">
-      <div style="float:right" ng-click="showRollCall=false"><i class="fa fa-close"></i></div>
+    <div class="comment-outer" ng-show="showRollBox()">
+      <div style="float:right" ng-click="toggleRollCall()"><i class="fa fa-close"></i></div>
       <div>Roll Call</div>
       <table class="table">
       <tr>
           <th>Name</th>
+          <th style="width:20px;"></th>
           <th>Attending</th>
           <th>Situation</th>
       </tr>
       <tr class="comment-inner" ng-repeat="pers in peopleStatus">
           <td>{{pers.name}}</td>
+          <td  style="width:20px;">
+              <div ng-show="pers.uid=='<%ar.writeJS(currentUser);%>'" style="cursor:pointer;"
+              ng-click="toggleRollCall()">
+                  <i class="fa fa-edit"></i></div></td>
           <td>{{pers.attend}}</td>
           <td>{{pers.situation}}</td>
       </tr>

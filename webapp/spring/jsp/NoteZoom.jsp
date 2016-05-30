@@ -420,6 +420,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.noteInfo.discussionPhase = newPhase;
         $scope.saveEdits(['discussionPhase']);
     }
+    $scope.getPhaseStyle = function() {
+        if ($scope.noteInfo.draft) {
+            return "background-color:yellow;";
+        }
+        return "";
+    }
+    
+    
     $scope.openCommentCreator = function(type, replyTo, defaultBody) {
         var newComment = {};
         newComment.time = -1;
@@ -714,7 +722,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <% } %>
         </div>
     </div>
-    <div  class="generalSubHeading">
+    <div  class="generalSubHeading" style="{{getPhaseStyle()}}">
         <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
         {{noteInfo.subject}}
     </div>

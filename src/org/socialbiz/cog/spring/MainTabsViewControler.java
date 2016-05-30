@@ -389,7 +389,36 @@ public class MainTabsViewControler extends BaseController {
          }
      }
 
+     @RequestMapping(value = "/{siteId}/{pageId}/topicList.json", method = RequestMethod.GET)
+     public void topicList(@PathVariable String siteId,@PathVariable String pageId,
+             HttpServletRequest request, HttpServletResponse response) {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         String nid = "";
+         try{
+             NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+             ar.setPageAccessLevels(ngw);
+             boolean isMember = ar.isMember();
 
+             JSONArray allTopics = new JSONArray();
+             for (NoteRecord aNote : ngw.getAllNotes()) {
+                 if (!isMember && !aNote.isPublic()) {
+                     //skip non public if not member
+                     continue;
+                 }
+                 allTopics.put(aNote.getJSON(ngw));
+             }
+             
+             JSONObject repo = new JSONObject();
+             repo.put("topics", allTopics);
+             repo.write(ar.w, 2, 2);
+             ar.flush();
+         }catch(Exception ex){
+             Exception ee = new Exception("Unable to updated topic "+nid+" contents", ex);
+             streamException(ee, ar);
+         }
+     }
+     
+     
      @RequestMapping(value = "/{siteId}/{pageId}/updateNote.json", method = RequestMethod.POST)
      public void updateNote(@PathVariable String siteId,@PathVariable String pageId,
              HttpServletRequest request, HttpServletResponse response) {
@@ -542,63 +571,6 @@ public class MainTabsViewControler extends BaseController {
         }
     }
 
-/*
-    @RequestMapping(value = "/{siteId}/{pageId}/leafletResponse.htm", method = RequestMethod.POST)
-    public ModelAndView handleLeafletResponse(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        ModelAndView modelAndView = null;
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
-
-            String go = ar.reqParam("go");
-            String action = ar.reqParam("action");
-
-            String lid = ar.reqParam("lid");
-            String data = ar.defParam("data", null);
-            String choice = ar.defParam("choice", null);
-
-            NoteRecord note = ngp.getNoteOrFail(lid);
-            LeafletResponseRecord llr;
-
-            String uid = ar.reqParam("uid");
-            UserProfile designatedUser = UserManager.findUserByAnyId(uid);
-            if (designatedUser == null) {
-                // As Micro-profile concept has been introduced, so
-                // Micro-profile will be created
-                // instead of creating a new user profile.
-                MicroProfileMgr.setDisplayName(uid, uid);
-                MicroProfileMgr.save();
-                //finds or creates a response for a user ID that has no profile.
-                llr = note.accessResponse(uid);
-            }
-            else {
-                //finds the response for a user with a profile
-                llr = note.getOrCreateUserResponse(designatedUser);
-            }
-
-            if (action.startsWith("Update")) {
-                //Note: we do not need to have "topic edit" permission here
-                //because we are only changing a response record.  We only need
-                //topic 'access' permissions which might come from magic number
-                if (AccessControl.canAccessNote(ar, ngp, note)) {
-                    llr.setData(data);
-                    llr.setChoice(choice);
-                    llr.setLastEdited(ar.nowTime);
-                    ngp.saveFile(ar, "Updated response to topic");
-                }
-            }
-            modelAndView = new ModelAndView(new RedirectView(go));
-        }
-        catch (Exception ex) {
-            throw new NGException("nugen.operation.fail.project.note.response", new Object[] {
-                    pageId, siteId }, ex);
-        }
-        return modelAndView;
-    }
-*/
-
 
 
 
@@ -677,30 +649,6 @@ public class MainTabsViewControler extends BaseController {
         }
     }
 
-
-/*
-    @RequestMapping(value = "/{siteId}/{pageId}/subprocess.htm", method = RequestMethod.GET)
-    public ModelAndView showSubProcessTab(@PathVariable String siteId,@PathVariable String pageId,
-              HttpServletRequest request, HttpServletResponse response,@RequestParam String subprocess)
-              throws Exception {
-
-        ModelAndView modelAndView = null;
-        try{
-            request.setAttribute("book", siteId);
-            request.setAttribute("pageId", pageId);
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.getCogInstance().getSiteByIdOrFail(siteId);
-            modelAndView=new ModelAndView("ProjectActiveTasks");
-
-            request.setAttribute("subprocess", subprocess);
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-        }
-        catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.subprocess.page", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-    }
-*/
     
 
       @RequestMapping(value = "/isNoteDeleted.ajax", method = RequestMethod.POST)
@@ -731,26 +679,6 @@ public class MainTabsViewControler extends BaseController {
          }
          NGWebUtils.sendResponse(ar, responseText);
      }
-
-      /*
-      @RequestMapping(value = "/closeWindow.htm", method = RequestMethod.GET)
-      public ModelAndView closeWindow(HttpServletRequest request, HttpServletResponse response)
-              throws Exception {
-
-          ModelAndView modelAndView = null;
-          try{
-              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-              if(!ar.isLoggedIn()){
-                  return showWarningView(ar, "message.loginalert.see.page");
-              }
-              modelAndView=new ModelAndView("closeWindow");
-              request.setAttribute("realRequestURL", ar.getRequestURL());
-          }catch(Exception ex){
-              throw new NGException("nugen.operation.fail.project.close.window", null , ex);
-          }
-          return modelAndView;
-      }
-      */
 
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingCreate.json", method = RequestMethod.POST)
@@ -1062,6 +990,7 @@ public class MainTabsViewControler extends BaseController {
               }
               nr.setWiki(meeting.generateMinutes(ar,  ngw));
               nr.setModUser(ar.getUserProfile());
+              nr.setDiscussionPhase(NoteRecord.DISCUSSION_PHASE_DRAFT, ar);
 
               //now copy all the attachment references across
               for (AgendaItem ai : meeting.getAgendaItems()) {

@@ -224,7 +224,7 @@ public class EmailSender extends TimerTask {
             File workspaceCogFolder = ngpi.containerPath.getParentFile();
             File emailArchiveFile = new File(workspaceCogFolder, "mailArchive.json");
 
-            //open and read the archive first .. it is safe becasue this is the only thread
+            //open and read the archive first .. it is safe because this is the only thread
             //that reads the email archive.
             MailFile emailArchive = MailFile.readOrCreate(emailArchiveFile);
 

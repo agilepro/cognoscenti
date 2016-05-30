@@ -982,20 +982,24 @@ public class NoteRecord extends CommentContainer implements EmailContext {
 
      public void gatherUnsentScheduledNotification(NGPage ngp,
              ArrayList<ScheduledNotification> resList) throws Exception {
-         ScheduledNotification sn = getScheduledNotification(ngp);
-         if (sn!=null && sn.needsSending()) {
+         ScheduledNotification sn = new NScheduledNotification(ngp, this);
+         if (sn.needsSending()) {
              resList.add(sn);
          }
-         for (CommentRecord cr : getComments()) {
-             cr.gatherUnsentScheduledNotification(ngp, this, resList);
+         else {
+             //only look for comments when the email for the note (topic) has been sent
+             //avoids problem of comment getting sent before the topic comes out of draft
+             for (CommentRecord cr : getComments()) {
+                 cr.gatherUnsentScheduledNotification(ngp, this, resList);
+             }
          }
      }
 
-
+/*
      public ScheduledNotification getScheduledNotification(NGPage ngp) {
          return new NScheduledNotification(ngp, this);
      }
-
+*/
      private class NScheduledNotification implements ScheduledNotification {
          NGPage ngp;
          NoteRecord note;
@@ -1005,7 +1009,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
              note = _note;
          }
          public boolean needsSending() throws Exception {
-             return !note.getEmailSent();
+             return !note.getEmailSent() && !note.isDraftNote();
          }
 
          public long timeToSend() throws Exception {

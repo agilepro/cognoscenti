@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 @Controller
@@ -334,44 +335,6 @@ public class ProjectDocsController extends BaseController {
 
 
 
-
-/*
-    @RequestMapping(value = "/{siteId}/{pageId}/docsRevise.htm", method = RequestMethod.GET)
-    protected ModelAndView getUploadDocument2Form(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.upload.revised.doc.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-            if(ngp.isFrozen()){
-                return showWarningView(ar, "nugen.generatInfo.Frozen");
-            }
-            String aid = ar.reqParam("aid");
-            ngp.findAttachmentByIDOrFail(aid);
-
-            modelAndView = createNamedView(siteId, pageId, ar, "DocsRevise");
-            ar.req.setAttribute("aid", aid);
-            request.setAttribute("isNewUpload", "yes");
-
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("title", ngp.getFullName());
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.upload.document.page", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-    }
-    */
-
     @RequestMapping(value = "/{siteId}/{pageId}/SyncAttachment.htm", method = RequestMethod.GET)
     protected ModelAndView syncAttachment(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
@@ -432,4 +395,33 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/docsList.json", method = RequestMethod.GET)
+    public void docsList(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            ar.setPageAccessLevels(ngw);
+            boolean isMember = ar.isMember();
+
+            JSONArray attachmentList = new JSONArray();
+            for (AttachmentRecord doc : ngw.getAllAttachments()) {
+                if (!isMember && !doc.isPublic()) {
+                    //skip non public documents if not a member
+                    continue;
+                }
+                attachmentList.put(doc.getJSON4Doc(ar, ngw));
+            }
+            
+            JSONObject repo = new JSONObject();
+            repo.put("docs", attachmentList);
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get the list of attachments ", ex);
+            streamException(ee, ar);
+        }
+    }
+    
 }
