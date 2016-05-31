@@ -16,7 +16,7 @@
 
 %>
 
-<% if (weaverMenus) { %>
+<% if (true) { %>
 <%@ include file="WrapLayout2.jsp" %>
 <% } else { %>
 <%@ include file="WrapLayout1.jsp" %>
