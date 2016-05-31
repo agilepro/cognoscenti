@@ -89,8 +89,15 @@ public class UserController extends BaseController {
 
     protected void initBinder(HttpServletRequest request,
             ServletRequestDataBinder binder) throws ServletException {
-
         binder.registerCustomEditor(byte[].class,new ByteArrayMultipartFileEditor());
+    }
+
+
+    protected UserProfile getUserToDisplay(AuthRequest ar, String userKey) throws Exception {
+        if ("$".equals(userKey) && ar.isLoggedIn()) {
+            userKey = ar.getBestUserId();
+        }
+        return UserManager.getUserProfileOrFail(userKey);
     }
 
     public void streamJSPUserLoggedIn(AuthRequest ar, String userId, String jspName) throws Exception {
@@ -100,7 +107,7 @@ public class UserController extends BaseController {
                 streamJSP(ar, "Warning");
                 return;
             }
-            UserProfile up = UserManager.findUserByAnyIdOrFail(userId);
+            UserProfile up = getUserToDisplay(ar, userId);
             ar.req.setAttribute("userProfile", up);
             ar.req.setAttribute("userKey", up.getKey());
             streamJSP(ar, jspName);
@@ -116,7 +123,7 @@ public class UserController extends BaseController {
         streamJSPUserLoggedIn(ar, userKey, viewName);
     }
 
-    
+
     @RequestMapping(value = "/{userKey}/userProfile.htm", method = RequestMethod.GET)
     public ModelAndView loadProfile(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -135,19 +142,19 @@ public class UserController extends BaseController {
         return redirectBrowser(ar,"watchedProjects.htm");
     }
 
-    
-    
-    
+
+
+
     ////////////////////// MAIN VIEWS /////////////////////////
-    
-    
+
+
     @RequestMapping(value = "/{userKey}/UserHome.htm", method = RequestMethod.GET)
     public void userHome(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         displayUserModelAndView(request, response, userKey, "../jsp/UserHome");
     }
 
-    
+
     @RequestMapping(value = "{userKey}/watchedProjects.htm", method = RequestMethod.GET)
     public void watchedProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -224,7 +231,7 @@ public class UserController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         displayUserModelAndView(request, response, userKey, "../jsp/UserOpenRounds");
     }
-    
+
 
     @RequestMapping(value = "/{userKey}/ShareRequests.htm", method = RequestMethod.GET)
     public void ShareRequests(@PathVariable String userKey,
@@ -243,7 +250,7 @@ public class UserController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         displayUserModelAndView(request, response, userKey, "../jsp/Agents");
     }
-    
+
     @RequestMapping(value = "/{userKey}/userRemoteTasks.htm", method = RequestMethod.GET)
     public void consolidatedTasks(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -257,7 +264,7 @@ public class UserController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if (ar.isLoggedIn()) {
                 //only check if the user logged in, because the display will fail on that case
-                UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
+                UserProfile userBeingViewed = getUserToDisplay(ar, userKey);
                 UserPage uPage = userBeingViewed.getUserPage();
                 String agentId = ar.reqParam("id");
                 AgentRule agent = uPage.findAgentRule(agentId);
@@ -290,7 +297,7 @@ public class UserController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         if(ar.isLoggedIn()){
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
+            UserProfile userBeingViewed = getUserToDisplay(ar, userKey);
             UserPage uPage = userBeingViewed.getUserPage();
             String accessUrl = ar.reqParam("url");
             RemoteGoal rg =  uPage.findRemoteGoal(accessUrl);
@@ -323,11 +330,11 @@ public class UserController extends BaseController {
 
 
 
-    
 
-    
+
+
     ////////////////////// REDIRECTS ////////////////////////
-    
+
     //TODO: eliminate unnecessary address
     @RequestMapping(value = "/{userKey}/userCompletedTasks.htm", method = RequestMethod.GET)
     public void userCompletedTasks(@PathVariable String userKey,
@@ -361,14 +368,14 @@ public class UserController extends BaseController {
     }
 
 
-    
-    
-    
-    
 
-    
-    
-    
+
+
+
+
+
+
+
     @RequestMapping(value = "/{userKey}/RemoteProfileAction.form", method = RequestMethod.POST)
     public ModelAndView RemoteProfileAction(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -381,7 +388,7 @@ public class UserController extends BaseController {
             String address = ar.reqParam("address");
             String go = ar.reqParam("go");
             String act = ar.reqParam("act");
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
+            UserProfile userBeingViewed = getUserToDisplay(ar, userKey);
             UserPage uPage = userBeingViewed.getUserPage();
             if ("Create".equals(act)) {
                 ProfileRef pr = uPage.findOrCreateProfileRef(address);
@@ -411,7 +418,7 @@ public class UserController extends BaseController {
             }
             String address = ar.reqParam("address");
             String act = ar.reqParam("act");
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
+            UserProfile userBeingViewed = getUserToDisplay(ar, userKey);
             UserPage uPage = userBeingViewed.getUserPage();
             if ("Create".equals(act)) {
                 ProfileRef pr = uPage.createProfileRefOrFail(address);
@@ -440,7 +447,7 @@ public class UserController extends BaseController {
         try{
             ar.assertLoggedIn("Must be logged in to look up agents.");
 
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
+            UserProfile userBeingViewed = getUserToDisplay(ar, userKey);
             UserPage uPage = userBeingViewed.getUserPage();
 
             String aid = ar.reqParam("aid");
@@ -804,7 +811,7 @@ public class UserController extends BaseController {
                 throw new NGException("nugen.exceptionhandling.file.size.exceeded",new Object[]{"500000000"});
             }
 
-            UserProfile profile = UserManager.getUserProfileOrFail(userKey);
+            UserProfile profile = getUserToDisplay(ar, userKey);
 
             String uploadedFileName = fileInPost.getOriginalFilename();
             if (uploadedFileName == null || uploadedFileName.length()==0) {
@@ -1131,7 +1138,7 @@ public class UserController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not update user contacts.");
-                
+
             JSONObject received = this.getPostedObject(ar);
             String emailId = received.getString("uid");
             String idDisplayName = received.getString("name");
@@ -1139,7 +1146,7 @@ public class UserController extends BaseController {
             MicroProfileMgr.save();
 
             received.write(ar.w, 2, 2);
-            ar.flush();            
+            ar.flush();
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.edit.micro.profile", null, ex);
         }
@@ -1279,7 +1286,7 @@ public class UserController extends BaseController {
             String emailId = ar.defParam("emailId", null);
 
             if(userKey != null){
-                UserProfile userProfile = UserManager.getUserProfileOrFail(userKey);
+                UserProfile userProfile = getUserToDisplay(ar, userKey);
                 String accessCode = ar.defParam("accessCode", null);
                 if(userProfile != null && userProfile.getAccessCode().equals(accessCode)){
                     ar.setSpecialSessionAccess("Notifications:"+userKey);
@@ -1311,7 +1318,7 @@ public class UserController extends BaseController {
 
             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
             ar.setPageAccessLevels(ngp);
-            UserProfile up = UserManager.getUserProfileOrFail(userKey);
+            UserProfile up = getUserToDisplay(ar, userKey);
 
             String sendDigest = ar.defParam("sendDigest", null);
             if(sendDigest != null && "never".equals(sendDigest)){
@@ -1426,23 +1433,23 @@ public class UserController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(ar.isLoggedIn()){
-                UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
+                UserProfile uProf = getUserToDisplay(ar, userKey);
                 UserProfile loggedInUser = ar.getUserProfile();
-                
+
                 String userName = loggedInUser.getName();
-    
+
                 if (userName==null || userName.length()==0) {
                     userName = loggedInUser.getKey();
                 }
                 if (userName.length()>28) {
                     userName = userName.substring(0,28);
                 }
-    
+
                 uProf.assureImage(ar.getCogInstance());
-    
+
                 String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
                 String bookForNewProject = ar.defParam( "bookKey", null );
-    
+
                 if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
                     List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
                     if(foundPages.size()>0){
@@ -1451,7 +1458,7 @@ public class UserController extends BaseController {
                         return;
                     }
                 }
-    
+
                 request.setAttribute("book",    null);
                 request.setAttribute("ngpage",null);
                 request.setAttribute("userName",userName);
@@ -1474,23 +1481,21 @@ public class UserController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
             if(ar.isLoggedIn()){
-                UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
-    
                 UserProfile loggedInUser = ar.getUserProfile();
                 String userName = loggedInUser.getName();
-    
+
                 if (userName==null || userName.length()==0) {
                     userName = loggedInUser.getKey();
                 }
                 if (userName.length()>28) {
                     userName = userName.substring(0,28);
                 }
-    
+
                 NGContainer ngp =null;
-    
+
                 String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
                 String bookForNewProject = ar.defParam( "bookKey", null );
-    
+
                 if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
                     List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
                     if(foundPages.size()>0){
@@ -1499,7 +1504,7 @@ public class UserController extends BaseController {
                         return;
                     }
                 }
-    
+
                 request.setAttribute("book",    null);
                 request.setAttribute("ngpage",ngp);
                 request.setAttribute("userName",userName);
@@ -1520,21 +1525,19 @@ public class UserController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
             if(ar.isLoggedIn()){
-                UserProfile up = UserManager.getUserProfileOrFail(userKey);
-    
                 UserProfile loggedInUser = ar.getUserProfile();
                 String userName = loggedInUser.getName();
-    
+
                 if (userName==null || userName.length()==0) {
                     userName = loggedInUser.getKey();
                 }
                 if (userName.length()>28) {
                     userName = userName.substring(0,28);
                 }
-    
+
                 String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
                 String bookForNewProject = ar.defParam( "bookKey", null );
-    
+
                 if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
                     List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
                     if(foundPages.size()>0){
@@ -1543,7 +1546,7 @@ public class UserController extends BaseController {
                         return;
                     }
                 }
-    
+
                 request.setAttribute("userName",userName);
                 request.setAttribute("flag","true");
                 request.setAttribute("retPath",ar.retPath);

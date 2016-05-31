@@ -44,7 +44,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.workcast.json.JSONObject;
 
 @Controller
-public class AccountController extends BaseController {
+public class SiteController extends BaseController {
 
     
     ////////////////////// MAIN VIEWS ///////////////////////

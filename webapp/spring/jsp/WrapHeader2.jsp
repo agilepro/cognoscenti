@@ -63,6 +63,15 @@
         }
     }
     UserProfile uProf = ar.getUserProfile();
+    //this is the base path for the all of the menu options.
+    //should not actually see any menu options if not logged in, however
+    //need to give a value for this.
+    String userRelPath = ar.retPath + "v/$/";
+    String userName = "GUEST";
+    if (uProf!=null) {
+        userRelPath = ar.retPath + "v/"+uProf.getKey()+"/";
+        userName = uProf.getName();
+    }
     int exposeLevel = 1;
     if (ar.isSuperAdmin()) {
         exposeLevel = 2;
@@ -89,14 +98,11 @@
     if (pageTitle!=null && pageTitle.length()>60){
         trncatePageTitle=pageTitle.substring(0,60)+"...";
     }
-
-    String userRelPath = ar.retPath + "v/"+uProf.getKey()+"/";
+    
     
    
     %>
-    <%!
-    
-    %>
+
 
 <script>
 
@@ -203,7 +209,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" 
-             aria-haspopup="true" aria-expanded="false"><% ar.writeHtml(uProf.getName()); %><span class="caret"></span></a>
+             aria-haspopup="true" aria-expanded="false"><% ar.writeHtml(userName); %><span class="caret"></span></a>
           <ul class="dropdown-menu">
 <% if (uProf==null) { %>
             <li><a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
@@ -227,7 +233,7 @@
 <ol class="breadcrumb">
 <% if(isUserHeader) { %>
   <li>Users</li>
-  <li><a href="<%=userRelPath%>UserHome.htm"><% ar.writeHtml(uProf.getName()); %></a></li>
+  <li><a href="<%=userRelPath%>UserHome.htm"><% ar.writeHtml(userName); %></a></li>
   <li><% ar.writeHtml(jspName); %></li>
 <% } else if(isSiteHeader) { %>
   <li>Site</li>
