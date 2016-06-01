@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +34,8 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
+import org.workcast.streams.TemplateJSONRetriever;
+import org.workcast.streams.TemplateStreamer;
 
 /**
 * A NoteRecord represents a Topic in a Workspace.
@@ -792,31 +795,34 @@ public class NoteRecord extends CommentContainer implements EmailContext {
 
       private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord note, OptOutAddr ooa,
               UserProfile commenterProfile, MailFile mailFile) throws Exception  {
+          Cognoscenti cog = ar.getCogInstance();
           if (!ooa.hasEmailAddress()) {
               return;  //ignore users without email addresses
           }
-
           MemFile body = new MemFile();
           AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
           clone.setNewUI(true);
           clone.retPath = ar.baseURL;
-          clone.write("<html><body>");
+          
+          JSONObject data = new JSONObject();
+          data.put("baseURL", ar.baseURL);
+          data.put("topicURL", ar.baseURL + ar.getResourceURL(ngp, this));
+          data.put("topic", this.getJSONWithHtml(ar));
+          data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));
+          data.put("wsName", ngp.getFullName());
+          
+          TemplateJSONRetriever tjr = new TemplateJSONRetriever(data);
 
-          String topicAddress = ar.baseURL + clone.getResourceURL(ngp, note);
-          String emailSubject = "New Topic: "+note.getSubject();
-          clone.write("<h2>New topic: <a href=\"");
-          clone.write(topicAddress);
-          clone.write("\">");
-          clone.writeHtml(note.getSubject());
-          clone.write("</a></h2>");
-
-          clone.write(this.getNoteHtml(ar));
+          File emailFolder = cog.getConfig().getFileFromRoot("email");
+          File templateFile = new File(emailFolder, "NewTopic.htm");
+          
+          TemplateStreamer.streamTemplate(clone.w, templateFile, "utf-8", tjr);
 
           ooa.writeUnsubscribeLink(clone);
           clone.write("</body></html>");
           clone.flush();
-          clone.flush();
 
+          String emailSubject = "New Topic: "+note.getSubject();
           mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, body.toString());
       }
 

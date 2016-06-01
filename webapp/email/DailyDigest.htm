@@ -1,0 +1,68 @@
+<html>
+<body>
+<p>Hello <a href="{{to.email}}" title="access the profile of this user, if one exists"><span class="red">{{to.name}}</span></a>,</p>
+<p>This is a daily digest from Cognoscenti for the time period starting <b>{{periodStart}}</b> and ending <b>{{periodEnd}}</b></p>
+<div style="margin-top:15px;margin-bottom:20px;">
+<span style="font-size:24px;font-weight:bold;">Workspace Updates</span>&nbsp;&nbsp;&nbsp;
+</div>
+<div style="margin-top:25px;margin-bottom:5px;">
+<span style="font-size:24px;font-weight:bold;">Task Updates</span>&nbsp;&nbsp;&nbsp;
+<a href="{{baseURL}}/v/ryuf1xq8lm8rzd/userActiveTasks.htm">View Latest</a></div>
+
+
+
+<table width="100%" cellpadding="0" cellspacing="0">
+<thead>
+<tr>
+<td style="height:30px" colspan="2" valign="top"><h4><a href="{{workspaceaddress}}">{{workspacename}}</a></h4></td>
+</tr>
+</thead>
+
+<tbody>
+{{!LOOP mod mods}}
+<tr><td style="width:25px"></td>
+    <td>&bull;&nbsp;&nbsp;<a href="1463832152606"></a>Action Item <a href="{{url}}">{{name}}</a> was modified by <a href="{{userref}}" title="access the profile of this user, if one exists"><span class="red">{{userhame}}</span></a> on {{date}}</td>
+</tr>
+{{!ENDLOOP}}
+</tbody></table>
+
+
+
+
+
+
+{{!IF actionItems}}
+<table width="600" class="Design8">
+<col width="30"/>
+<col width="500"/>
+<col width="100"/>
+
+
+<thead>
+<tr>
+<th> </th>
+<th>Name</th>
+<th>Due</th>
+</tr>
+</thead>
+<tbody>
+
+{{!LOOP item actionItems}}
+<tr valign="top">
+<td><a href="{{baseURL}}t/{{item.siteKey}}/{{item.projectKey}}/task{{item.id}}.htm" title="access current status of task"><img border="0" align="absbottom" src="{{}}" alt="Offered"/></a>&nbsp;</td><td><a href="{{baseURL}}{{}}" title="access current status of task">Look out Window</a> - <a href="{{}}" title="See the workspace containing this task">{{item.synopsis}}</a>
+<br/>Status: this is the status
+</td>
+<td>{{item.duedate}}
+</td>
+</tr>
+{{!ENDLOOP}}
+
+</tbody>
+</table>
+</tbody>
+</table>
+{{!ENDIF}}
+
+
+
+</body></html>

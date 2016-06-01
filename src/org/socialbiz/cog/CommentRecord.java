@@ -1,5 +1,6 @@
 package org.socialbiz.cog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
+import org.workcast.streams.TemplateJSONRetriever;
+import org.workcast.streams.TemplateStreamer;
 
 public class CommentRecord extends DOMFace {
 
@@ -428,6 +431,7 @@ public class CommentRecord extends DOMFace {
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
             UserProfile commenterProfile, MailFile mailFile) throws Exception  {
+        Cognoscenti cog = ar.getCogInstance();
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
         }
@@ -437,46 +441,46 @@ public class CommentRecord extends DOMFace {
         MemFile body = new MemFile();
         AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
+        
+        String opType = "New ";
+        if (isClosed) {
+            opType = "Closed ";
+        }
+        String cmtType = commentTypeName();
+        
+        JSONObject data = new JSONObject();
+        data.put("baseURL", ar.baseURL);
+        data.put("parentURL", ar.baseURL + noteOrMeet.getResourceURL(ar, ngp));
+        data.put("parentName", noteOrMeet.emailSubject());
+        data.put("commentURL", ar.baseURL + noteOrMeet.getResourceURL(ar, ngp)+ "#cmt" + getTime());
+        data.put("comment", this.getHtmlJSON(ar));
+        data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));
+        data.put("wsName", ngp.getFullName());
+        data.put("userURL", ar.baseURL + ar.getDefaultURL(ngp));
+        data.put("userName", ngp.getFullName());
+        data.put("opType", opType);
+        data.put("cmtType", cmtType);
+        data.put("isClosed", isClosed);
+        data.put("outcomeHtml", this.getOutcomeHtml(ar));
+        
+        
+        
         clone.retPath = ar.baseURL;
         clone.write("<html><body>");
 
-        String topicAddress = ar.baseURL + noteOrMeet.getResourceURL(clone, ngp) + "#cmt" + getTime();
-        String cmtType = commentTypeName();
-        String emailType = "New ";
-        if (isClosed) {
-            emailType = "Closed ";
-        }
-        String emailSubject =  noteOrMeet.emailSubject()+": "+emailType+cmtType;
-        AddressListEntry ale = commenterProfile.getAddressListEntry();
+        TemplateJSONRetriever tjr = new TemplateJSONRetriever(data);
 
-        clone.write("\n<p>From: ");
-        ale.writeLink(clone);
-        clone.write("&nbsp; \n    Workspace: ");
-        ngp.writeContainerLink(clone, 40);
-        clone.write("\n<br/>\n");
-        clone.write(emailType);
-        clone.write(" <b>");
-        clone.write(cmtType);
-        clone.write("</b> on topic <a href=\"");
-        clone.write(topicAddress);
-        clone.write("\">");
-        clone.writeHtml(noteOrMeet.emailSubject());
-        clone.write("</a></p>\n<hr/>\n");
+        File emailFolder = cog.getConfig().getFileFromRoot("email");
+        File templateFile = new File(emailFolder, "NewComment.htm");
+        
+        TemplateStreamer.streamTemplate(clone.w, templateFile, "utf-8", tjr);
 
-        if (!isClosed) {
-            clone.write(this.getContentHtml(ar));
-        }
-        else {
-            clone.write("\n<div style=\"color:#A9A9A9\">");
-            clone.write(this.getContentHtml(ar));
-            clone.write("\n</div>\n<hr/>");
-            clone.write(this.getOutcomeHtml(ar));
-        }
 
         ooa.writeUnsubscribeLink(clone);
         clone.write("</body></html>");
         clone.flush();
 
+        String emailSubject =  noteOrMeet.emailSubject()+": "+opType+cmtType;
         mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, body.toString());
     }
 
