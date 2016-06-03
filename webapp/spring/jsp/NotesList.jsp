@@ -6,9 +6,9 @@
 
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngp);
-    NGBook ngb = ngp.getSite();
+    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngw);
+    NGBook ngb = ngw.getSite();
     boolean isMember = ar.isMember();
 
 
@@ -24,7 +24,7 @@
         currentUserKey = up.getKey();
     }
 
-    List<NoteRecord> aList = ngp.getAllNotes();
+    List<NoteRecord> aList = ngw.getAllNotes();
 
     JSONArray notes = new JSONArray();
     for (NoteRecord aNote : aList) {
@@ -32,18 +32,18 @@
         String discussionPhase = aNote.getDiscussionPhase();
 
         if (aNote.isPublic()) {
-            notes.put( aNote.getJSONWithHtml(ar) );
+            notes.put( aNote.getJSONWithHtml(ar, ngw) );
         }
         else if (!ar.isLoggedIn()) {
             continue;
         }
         else if ("Draft".equals(discussionPhase)) {
             if (ar.getUserProfile().hasAnyId(aNote.getModUser().getUniversalId())) {
-                notes.put( aNote.getJSONWithHtml(ar) );
+                notes.put( aNote.getJSONWithHtml(ar, ngw) );
             }
         }
         else if (isMember) {
-            notes.put( aNote.getJSONWithHtml(ar) );
+            notes.put( aNote.getJSONWithHtml(ar, ngw) );
         }
         else {
             //run through all the roles here and see if any role
@@ -51,7 +51,7 @@
         }
     }
 
-    JSONArray allLabels = ngp.getJSONLabels();
+    JSONArray allLabels = ngw.getJSONLabels();
 
 
 /* NOTES RECORD PROTOTYPE

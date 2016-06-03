@@ -60,7 +60,7 @@ Optional Parameters:
             if(mailSubject==null || mailSubject.trim().length()==0){
                 mailSubject = "Sending Topic from Workspace";
             }
-            emailInfo.put("noteInfo", noteRec.getJSONWithHtml(ar));
+            emailInfo.put("noteInfo", noteRec.getJSONWithHtml(ar, ngw));
 
             targetRole = noteRec.getTargetRole();
         }

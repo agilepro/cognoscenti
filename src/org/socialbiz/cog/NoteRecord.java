@@ -767,7 +767,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
       }
 
 
-      public void topicEmailRecord(AuthRequest ar, NGPage ngp, NoteRecord note, MailFile mailFile) throws Exception {
+      public void topicEmailRecord(AuthRequest ar, NGWorkspace ngp, NoteRecord note, MailFile mailFile) throws Exception {
           List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
           String targetRole = note.getTargetRole();
           if (targetRole==null || targetRole.length()==0) {
@@ -793,7 +793,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
           note.setLastEdited(ar.nowTime);
       }
 
-      private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, NoteRecord note, OptOutAddr ooa,
+      private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, NoteRecord note, OptOutAddr ooa,
               UserProfile commenterProfile, MailFile mailFile) throws Exception  {
           Cognoscenti cog = ar.getCogInstance();
           if (!ooa.hasEmailAddress()) {
@@ -803,19 +803,19 @@ public class NoteRecord extends CommentContainer implements EmailContext {
           AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
           clone.setNewUI(true);
           clone.retPath = ar.baseURL;
-          
+
           JSONObject data = new JSONObject();
           data.put("baseURL", ar.baseURL);
           data.put("topicURL", ar.baseURL + ar.getResourceURL(ngp, this));
-          data.put("topic", this.getJSONWithHtml(ar));
+          data.put("topic", this.getJSONWithHtml(ar, ngp));
           data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));
           data.put("wsName", ngp.getFullName());
-          
+
           TemplateJSONRetriever tjr = new TemplateJSONRetriever(data);
 
           File emailFolder = cog.getConfig().getFileFromRoot("email");
           File templateFile = new File(emailFolder, "NewTopic.htm");
-          
+
           TemplateStreamer.streamTemplate(clone.w, templateFile, "utf-8", tjr);
 
           ooa.writeUnsubscribeLink(clone);
@@ -851,15 +851,15 @@ public class NoteRecord extends CommentContainer implements EmailContext {
           thisNote.put("labelMap",      labelMap);
           return thisNote;
      }
-     public JSONObject getJSONWithHtml(AuthRequest ar) throws Exception {
-         JSONObject noteData = getJSON(((NGPage)ar.ngp));
+     public JSONObject getJSONWithHtml(AuthRequest ar, NGWorkspace ngw) throws Exception {
+         JSONObject noteData = getJSON(ngw);
          noteData.put("html", getNoteHtml(ar));
          return noteData;
      }
-     public JSONObject getJSONWithComments(AuthRequest ar) throws Exception {
-         JSONObject noteData = getJSONWithHtml(ar);
+     public JSONObject getJSONWithComments(AuthRequest ar, NGWorkspace ngw) throws Exception {
+         JSONObject noteData = getJSONWithHtml(ar, ngw);
          JSONArray comments = getAllComments(ar);
-         for (MeetingRecord meet : getLinkedMeetings(((NGPage)ar.ngp))) {
+         for (MeetingRecord meet : getLinkedMeetings(ngw)) {
              JSONObject specialMeetingComment = new JSONObject();
              specialMeetingComment.put("emailSent", true);
              specialMeetingComment.put("meet", meet.getListableJSON(ar));
@@ -986,9 +986,9 @@ public class NoteRecord extends CommentContainer implements EmailContext {
          this.setLastEdited(newTime);
      }
 
-     public void gatherUnsentScheduledNotification(NGPage ngp,
+     public void gatherUnsentScheduledNotification(NGWorkspace ngw,
              ArrayList<ScheduledNotification> resList) throws Exception {
-         ScheduledNotification sn = new NScheduledNotification(ngp, this);
+         ScheduledNotification sn = new NScheduledNotification(ngw, this);
          if (sn.needsSending()) {
              resList.add(sn);
          }
@@ -996,22 +996,18 @@ public class NoteRecord extends CommentContainer implements EmailContext {
              //only look for comments when the email for the note (topic) has been sent
              //avoids problem of comment getting sent before the topic comes out of draft
              for (CommentRecord cr : getComments()) {
-                 cr.gatherUnsentScheduledNotification(ngp, this, resList);
+                 cr.gatherUnsentScheduledNotification(ngw, this, resList);
              }
          }
      }
 
-/*
-     public ScheduledNotification getScheduledNotification(NGPage ngp) {
-         return new NScheduledNotification(ngp, this);
-     }
-*/
-     private class NScheduledNotification implements ScheduledNotification {
-         NGPage ngp;
-         NoteRecord note;
 
-         public NScheduledNotification( NGPage _ngp, NoteRecord _note) {
-             ngp  = _ngp;
+     private class NScheduledNotification implements ScheduledNotification {
+         private NGWorkspace ngw;
+         private NoteRecord note;
+
+         public NScheduledNotification( NGWorkspace _ngp, NoteRecord _note) {
+             ngw  = _ngp;
              note = _note;
          }
          public boolean needsSending() throws Exception {
@@ -1023,7 +1019,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
          }
 
          public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
-             note.topicEmailRecord(ar,ngp,note, mailFile);
+             note.topicEmailRecord(ar,ngw,note, mailFile);
          }
 
          public String selfDescription() throws Exception {

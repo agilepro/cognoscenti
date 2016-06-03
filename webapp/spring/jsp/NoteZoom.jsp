@@ -17,8 +17,8 @@ Required parameter:
 
 
     String pageId      = ar.reqParam("pageId");
-    NGWorkspace ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngp);
+    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngw);
 
     boolean isLoggedIn = ar.isLoggedIn();
 
@@ -26,7 +26,7 @@ Required parameter:
     //magic numbers and tokens
     boolean canUpdate = ar.isMember();
 
-    NGBook ngb = ngp.getSite();
+    NGBook ngb = ngw.getSite();
     UserProfile uProf = ar.getUserProfile();
     String currentUser = "NOBODY";
     String currentUserName = "NOBODY";
@@ -40,30 +40,30 @@ Required parameter:
     }
 
     String lid = ar.reqParam("lid");
-    NoteRecord note = ngp.getNoteOrFail(lid);
+    NoteRecord note = ngw.getNoteOrFail(lid);
 
-    boolean canAccessNote  = AccessControl.canAccessNote(ar, ngp, note);
+    boolean canAccessNote  = AccessControl.canAccessNote(ar, ngw, note);
     if (!canAccessNote) {
         throw new Exception("Program Logic Error: this view should only display when user can actually access the note.");
     }
 
-    JSONObject noteInfo = note.getJSONWithComments(ar);
+    JSONObject noteInfo = note.getJSONWithComments(ar, ngw);
 	JSONArray comments = noteInfo.getJSONArray("comments");
-    JSONArray attachmentList = ngp.getJSONAttachments(ar);
-    JSONArray allLabels = ngp.getJSONLabels();
+    JSONArray attachmentList = ngw.getJSONAttachments(ar);
+    JSONArray allLabels = ngw.getJSONLabels();
 
     JSONArray history = new JSONArray();
-    for (HistoryRecord hist : note.getNoteHistory(ngp)) {
-        history.put(hist.getJSON(ngp, ar));
+    for (HistoryRecord hist : note.getNoteHistory(ngw)) {
+        history.put(hist.getJSON(ngw, ar));
     }
 
-    JSONArray allGoals     = ngp.getJSONGoals();
+    JSONArray allGoals     = ngw.getJSONGoals();
     JSONArray allPeople = UserManager.getUniqueUsersJSON();
 
     String docSpaceURL = "";
     if (uProf!=null) {
         LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
-        docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngp.getKey()
+        docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngw.getKey()
                     + "/summary.json?lic="+lfu.getId();
     }
 

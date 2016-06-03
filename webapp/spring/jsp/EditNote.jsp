@@ -6,16 +6,16 @@
 %><%
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngp);
+    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    ar.setPageAccessLevels(ngw);
     ar.assertMember("Must be a member to see meetings");
-    NGBook ngb = ngp.getSite();
+    NGBook ngb = ngw.getSite();
     String nid          = ar.defParam("nid", null);
     JSONObject noteInfo = null;
     boolean isCreate = (nid==null);
     if (!isCreate) {
-        NoteRecord note = ngp.getNote(nid);
-        noteInfo = note.getJSONWithComments(ar);
+        NoteRecord note = ngw.getNote(nid);
+        noteInfo = note.getJSONWithComments(ar, ngw);
     }
     else {
         noteInfo = new JSONObject();
@@ -27,9 +27,9 @@
         noteInfo.put("docList", new JSONArray());
     }
 
-    JSONArray allLabels = ngp.getJSONLabels();
+    JSONArray allLabels = ngw.getJSONLabels();
 
-    JSONArray attachmentList = ngp.getJSONAttachments(ar);
+    JSONArray attachmentList = ngw.getJSONAttachments(ar);
 
 
 /* NOTE PROTOTYPE

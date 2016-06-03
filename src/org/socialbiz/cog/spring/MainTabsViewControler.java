@@ -57,9 +57,9 @@ import org.workcast.json.JSONObject;
 @Controller
 public class MainTabsViewControler extends BaseController {
 
-    
+
     //////////////////////////////// REDIRECTS ///////////////////////////////////
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/projectHome.htm", method = RequestMethod.GET)
     public void projectHome(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
@@ -100,9 +100,9 @@ public class MainTabsViewControler extends BaseController {
     }
 
 
-    
+
     /////////////////////////// MAIN VIEWS //////////////////////////////////////////
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/notesList.htm", method = RequestMethod.GET)
     public void notesList(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -111,7 +111,7 @@ public class MainTabsViewControler extends BaseController {
         showJSPAnonymous(ar, siteId, pageId, "NotesList");
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/automaticLinks.htm", method = RequestMethod.GET)
     public void automaticLinks(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -128,7 +128,7 @@ public class MainTabsViewControler extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "FrontTop");
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/frontPage.htm", method = RequestMethod.GET)
     public void frontPage(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -137,7 +137,7 @@ public class MainTabsViewControler extends BaseController {
         showJSPMembers(ar, siteId, pageId, "../jsp/FrontPage");
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/SiteHome.htm", method = RequestMethod.GET)
     public void siteHome(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -146,7 +146,7 @@ public class MainTabsViewControler extends BaseController {
         showJSPMembers(ar, siteId, pageId, "../jsp/SiteHome");
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/history.htm", method = RequestMethod.GET)
     public void showHistoryTab(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -251,11 +251,11 @@ public class MainTabsViewControler extends BaseController {
 
 
 
-    
-    
-    
-    
-    
+
+
+
+
+
 
     @RequestMapping(value = "/{siteId}/{pageId}/searchAllNotes.htm", method = RequestMethod.GET)
     public ModelAndView searchAllNotes(@PathVariable String siteId,@PathVariable String pageId,
@@ -353,34 +353,34 @@ public class MainTabsViewControler extends BaseController {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          String nid = "";
          try{
-             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-             ar.setPageAccessLevels(ngp);
+             NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+             ar.setPageAccessLevels(ngw);
              ar.assertMember("Must be a member to update a topic contents.");
-             ar.assertNotFrozen(ngp);
+             ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
 
              NoteRecord note = null;
              int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
              if ("~new~".equals(nid)) {
-                 note = ngp.createNote();
+                 note = ngw.createNote();
                  noteInfo.put("universalid", note.getUniversalId());
                  eventType = HistoryRecord.EVENT_TYPE_CREATED;
              }
              else {
-                 note = ngp.getNote(nid);
+                 note = ngw.getNote(nid);
              }
 
              note.updateNoteFromJSON(noteInfo, ar);
              note.updateHtmlFromJSON(ar, noteInfo);
              note.setLastEdited(ar.nowTime);
              note.setModUser(new AddressListEntry(ar.getBestUserId()));
-             HistoryRecord.createHistoryRecord(ngp, note.getId(), HistoryRecord.CONTEXT_TYPE_LEAFLET,
+             HistoryRecord.createHistoryRecord(ngw, note.getId(), HistoryRecord.CONTEXT_TYPE_LEAFLET,
                      0, eventType, ar, "");
 
-             ngp.saveFile(ar, "Updated Topic Contents");
+             ngw.saveFile(ar, "Updated Topic Contents");
 
-             JSONObject repo = note.getJSONWithComments(ar);
+             JSONObject repo = note.getJSONWithComments(ar, ngw);
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -407,7 +407,7 @@ public class MainTabsViewControler extends BaseController {
                  }
                  allTopics.put(aNote.getJSON(ngw));
              }
-             
+
              JSONObject repo = new JSONObject();
              repo.put("topics", allTopics);
              repo.write(ar.w, 2, 2);
@@ -417,22 +417,22 @@ public class MainTabsViewControler extends BaseController {
              streamException(ee, ar);
          }
      }
-     
-     
+
+
      @RequestMapping(value = "/{siteId}/{pageId}/updateNote.json", method = RequestMethod.POST)
      public void updateNote(@PathVariable String siteId,@PathVariable String pageId,
              HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          String nid = "";
          try{
-             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-             NGBook ngb = ngp.getSite();
-             ar.setPageAccessLevels(ngp);
+             NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+             NGBook ngb = ngw.getSite();
+             ar.setPageAccessLevels(ngw);
              ar.assertMember("Must be a member to update a topic contents.");
-             ar.assertNotFrozen(ngp);
+             ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
-             NoteRecord note = ngp.getNote(nid);
+             NoteRecord note = ngw.getNote(nid);
 
              if (noteInfo.has("comments")) {
                  JSONArray commentsToUpdate = noteInfo.getJSONArray("comments");
@@ -441,7 +441,7 @@ public class MainTabsViewControler extends BaseController {
                      JSONObject aCmt = commentsToUpdate.getJSONObject(i);
                      if (aCmt.getLong("time")<=0) {
                          String comment = GetFirstHundredNoHtml(aCmt.getString("html"));
-                         HistoryRecord.createHistoryRecord(ngp, note.getId(),
+                         HistoryRecord.createHistoryRecord(ngw, note.getId(),
                                  HistoryRecord.CONTEXT_TYPE_LEAFLET,
                                  HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
                      }
@@ -455,9 +455,9 @@ public class MainTabsViewControler extends BaseController {
                  note.setVisibility(SectionDef.PUBLIC_ACCESS);
              }
 
-             ngp.saveFile(ar, "Updated Topic Contents");
+             ngw.saveFile(ar, "Updated Topic Contents");
 
-             JSONObject repo = note.getJSONWithComments(ar);
+             JSONObject repo = note.getJSONWithComments(ar, ngw);
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -649,7 +649,7 @@ public class MainTabsViewControler extends BaseController {
         }
     }
 
-    
+
 
       @RequestMapping(value = "/isNoteDeleted.ajax", method = RequestMethod.POST)
       public void isNoteDeleted(HttpServletRequest request, HttpServletResponse response)

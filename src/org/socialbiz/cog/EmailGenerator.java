@@ -364,6 +364,7 @@ public class EmailGenerator extends DOMFace {
         AuthRequest clone = new AuthDummy(originalSender, bodyChunk.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
+        clone.setPageAccessLevels(ngp);
 
         writeNoteAttachmentEmailBody1(clone, ngp, noteRec, ooa.getAssignee(), getIntro(),
                 getIncludeBody(), attachList, meeting);
@@ -424,7 +425,7 @@ public class EmailGenerator extends DOMFace {
                 + "?" + AccessControl.getAccessNoteParams(ngp, selectedNote)
                 + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
             data.put("noteName", selectedNote.getSubject());
-            JSONObject noteObj = selectedNote.getJSONWithHtml(ar);
+            JSONObject noteObj = selectedNote.getJSONWithHtml(ar, ngp);
             noteObj.put("noteUrl", ar.retPath + ar.getResourceURL(ngp, selectedNote)
                     + "?" + AccessControl.getAccessNoteParams(ngp, selectedNote)
                     + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
