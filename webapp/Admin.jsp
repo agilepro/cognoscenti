@@ -91,12 +91,6 @@
                </tr>
                 <tr>
                     <td>
-                        <input type="submit" name="action" value="Send Test Email"/>
-                        See if the server can send an email.
-                    </td>
-               </tr>
-                <tr>
-                    <td>
                         <input type="submit" name="action" value="Pause Server"/>
                         Put the server into paused mode.
                     </td>
@@ -105,6 +99,12 @@
                     <td>
                         <input type="submit" name="action" value="Restart Server"/>
                         Return to running from paused mode.
+                    </td>
+               </tr>
+                <tr>
+                    <td>
+                        <input type="submit" name="action" value="Send Daily Digest"/>
+                        now on demand, for testing.
                     </td>
                </tr>
         </form>

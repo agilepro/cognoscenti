@@ -9,6 +9,7 @@
 %><%@page import="org.socialbiz.cog.SectionUtil"
 %><%@page import="org.socialbiz.cog.UserManager"
 %><%@page import="org.socialbiz.cog.rest.ServerInitializer"
+%><%@page import="org.socialbiz.cog.mail.DailyDigest"
 %><%
 
     AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
@@ -48,9 +49,6 @@
         UserManager.removeDisabledUsers(cog);
         UserManager.reloadUserProfiles(cog);
     }
-    else if (action.equals("Send Test Email")) {
-        EmailSender.sendTestEmail();
-    }
     else if (action.equals("Pause Server")) {
         cog.pauseServer();
     }
@@ -65,6 +63,9 @@
                 ngp.purgeDeletedAttachments();
             }
         }
+    }
+    else if ("Send Daily Digest".equals(action)) {
+        DailyDigest.forceDailyDigest(ar, cog);
     }
     else {
         throw new Exception ("Unrecognized command: "+action);

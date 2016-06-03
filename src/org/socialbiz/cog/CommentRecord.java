@@ -466,7 +466,6 @@ public class CommentRecord extends DOMFace {
         
         
         clone.retPath = ar.baseURL;
-        clone.write("<html><body>");
 
         TemplateJSONRetriever tjr = new TemplateJSONRetriever(data);
 

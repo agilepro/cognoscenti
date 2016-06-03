@@ -20,6 +20,8 @@
 
 package org.socialbiz.cog;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +35,8 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
+import org.workcast.streams.TemplateJSONRetriever;
+import org.workcast.streams.TemplateStreamer;
 
 public class GoalRecord extends BaseRecord {
     public GoalRecord(Document definingDoc, Element definingElement, DOMFace p)
@@ -1174,8 +1178,11 @@ public class GoalRecord extends BaseRecord {
             return;  //ignore users without email addresses
         }
 
-        //note that assignee means different things in this next line
+        Cognoscenti cog = ar.getCogInstance();
+        //note that assignee means two different things in this next line
         boolean recipientIsAssignedTask = isAssignee(ooa.getAssignee());
+        
+        
 
         if (requesterProfile==null) {
             System.out.println("DATA PROBLEM: action item came from a person without a profile ("+getCreator()+") ignoring");
@@ -1183,7 +1190,7 @@ public class GoalRecord extends BaseRecord {
         }
 
 
-       JSONObject data = new JSONObject();
+        JSONObject data = new JSONObject();
 
         MemFile body = new MemFile();
         AuthRequest clone = new AuthDummy(requesterProfile, body.getWriter(), ar.getCogInstance());
@@ -1191,94 +1198,42 @@ public class GoalRecord extends BaseRecord {
         clone.retPath = ar.baseURL;
 
         data.put("baseURL", ar.baseURL);
-        data.put("taskUrl", clone.getResourceURL(ngp, "task"+getId()+".htm"));
-        LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
-        data.put("actionItem", this.getJSON4Goal(ngp, ar.baseURL, lfu));
+        data.put("actionItemURL", ar.baseURL + clone.getResourceURL(ngp, "task"+getId()+".htm"));
+        if (ooa.isUserWithProfile()) {
+            UserProfile recipient = ooa.getAssignee().getUserProfile();
+            LicenseForUser lfu = new LicenseForUser(recipient);
+            data.put("actionItem", this.getJSON4Goal(ngp, ar.baseURL, lfu));
+        }
+        else {
+            data.put("actionItem", this.getJSON4Goal(ngp));
+        }
+        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngp));
+        data.put("wsName", ngp.getFullName());
+        data.put("isFinal", isFinal(getState()));
+        data.put("isFuture", isFuture(getState()));
+        data.put("recipientIsAssignedTask", recipientIsAssignedTask);
+        data.put("requesterURL", ar.baseURL);
+        data.put("stateName", stateName(getState()));
+        SimpleDateFormat ff = new SimpleDateFormat("dd MMM yyyy, zzzz");
+        data.put("dueDateFmt", "m "+ff.format(this.getDueDate()) );
 
+        TemplateJSONRetriever tjr = new TemplateJSONRetriever(data);
 
+        File emailFolder = cog.getConfig().getFileFromRoot("email");
+        File templateFile = new File(emailFolder, "ActionItem.htm");
+        
+        TemplateStreamer.streamTemplate(clone.w, templateFile, "utf-8", tjr);
 
+        clone.flush();
 
-
-//still working on this.
-
-
-
-
-
-
-
-
-        clone.write("<html>\n<body>\n<style>.niceTable tr td { padding:8px }</style>");
-
-        String topicAddress = ar.baseURL + clone.getResourceURL(ngp, "task"+getId()+".htm");
-        int state           = getState();
-        String stateNameStr = stateName(state);
+        String stateNameStr = stateName(getState());
         String overdueStr = "";
-        if (!BaseRecord.isFinal(state) && this.getDueDate()<ar.nowTime && this.getDueDate()>0) {
+        if (!BaseRecord.isFinal(getState()) && this.getDueDate()<ar.nowTime && this.getDueDate()>0) {
             //if it is not finished and past due date, then say that
             overdueStr = " Overdue!";
         }
+
         String emailSubject = "Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr;
-        AddressListEntry ale = requesterProfile.getAddressListEntry();
-
-        clone.write("\n<p>Workspace: ");
-        ngp.writeContainerLink(clone, 40);
-        clone.write("\n&nbsp; Action Item: <a href=\""+topicAddress+"\">");
-        clone.writeHtml(getSynopsis());
-        clone.write("</a></p>\n<hr/>\n<p>");
-
-        if (isFinal(state)) {
-            clone.write("Action item has been closed as <b>");
-            clone.writeHtml(stateNameStr);
-            clone.write("</b>: ");
-        }
-        else if (isFuture(state)) {
-            clone.write("Action item is marked to be done in the future: ");
-        }
-        else if (recipientIsAssignedTask) {
-            clone.write("Action item is assigned to you -- <b>");
-            clone.writeHtml(stateNameStr);
-            clone.write("</b>: ");
-        }
-        else {
-            clone.write("Action item has recently changed state or assignees: ");
-        }
-
-        clone.write("\n</p>\n<table class=\"niceTable\">\n<tr><td>Synopsis:</td>\n  <td>");
-        clone.write("\n<a href=\""+topicAddress+"\">");
-        clone.writeHtml(getSynopsis());
-        clone.write("</a></td></tr>\n");
-
-        clone.write("\n<tr><td>Requested by:</td>\n  <td>");
-        ale.writeLink(clone);
-        clone.write("</td></tr>\n");
-
-        clone.write("\n<tr><td>Assigned to:</td>\n  <td>");
-        boolean needComma = false;
-        for (AddressListEntry person : getAssigneeRole().getExpandedPlayers(ngp)) {
-            if (needComma) {
-                clone.write(", ");
-            }
-            person.writeLink(clone);
-            needComma = true;
-        }
-        clone.write("</td></tr>\n");
-
-        clone.write("\n<tr><td>Description:</td>\n  <td>");
-        clone.writeHtml(getDescription());
-        clone.write("</td></tr>\n");
-
-        clone.write("\n<tr><td>State:</td>\n  <td>");
-        clone.writeHtml(stateNameStr);
-
-        clone.write("\n<tr><td>Due:</td>\n  <td>");
-        SectionUtil.nicePrintDateAndTime(clone.w,this.getDueDate());
-
-        clone.write("</td></tr>\n</table>\n");
-        ooa.writeUnsubscribeLink(clone);
-        clone.write("</body></html>");
-        clone.flush();
-
         mailFile.createEmailRecord(requesterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, body.toString());
     }
 

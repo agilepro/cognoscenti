@@ -32,6 +32,10 @@
                 <td><%=EmailSender.getProperty("mail.smtp.user")%></td>
             </tr>
             <tr>
+                <td>automated.email.delay</td>
+                <td><%=EmailSender.getProperty("automated.email.delay")%></td>
+            </tr>
+            <tr>
                 <td>overrideAddress</td>
                 <td><%=EmailSender.getProperty("overrideAddress")%></td>
             </tr>
