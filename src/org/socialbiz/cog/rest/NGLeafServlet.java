@@ -295,6 +295,14 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
             } else if (resource.equals("process.txt")) {
                 ngw.writePlainText(ar);
                 ar.flush();
+            } else if (resource.startsWith("noteZoom")) {
+                //stupid hack fix.  Some email was sent with the wrong path, and this
+                //fixes the path.  Can remove after Sept 2016
+                //there is no likelihood that email is sitting around after that.
+                System.out.println("HACK: fixxing bad link in email message, redirecting to note zoom in new UI: "+resource);
+                String relPath = "../../t/"+ngpi.pageBookKey+"/"+ngpi.containerKey+"/"+resource;
+                ar.resp.sendRedirect(relPath);
+                return;
             } else {
                 throw new NGException("nugen.exception.page.resouce.incorrect", new Object[]{resource});
             }

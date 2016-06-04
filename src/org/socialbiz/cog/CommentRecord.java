@@ -441,37 +441,45 @@ public class CommentRecord extends DOMFace {
         MemFile body = new MemFile();
         AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
-        
+
         String opType = "New ";
         if (isClosed) {
             opType = "Closed ";
         }
         String cmtType = commentTypeName();
-        
+        AddressListEntry owner = getUser();
+        UserProfile ownerProfile = owner.getUserProfile();
+
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
-        data.put("parentURL", ar.baseURL + noteOrMeet.getResourceURL(ar, ngp));
+        data.put("parentURL", ar.baseURL + noteOrMeet.getResourceURL(clone, ngp));
         data.put("parentName", noteOrMeet.emailSubject());
-        data.put("commentURL", ar.baseURL + noteOrMeet.getResourceURL(ar, ngp)+ "#cmt" + getTime());
+        data.put("commentURL", ar.baseURL + noteOrMeet.getResourceURL(clone, ngp)+ "#cmt" + getTime());
         data.put("comment", this.getHtmlJSON(ar));
-        data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));
+        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngp));
         data.put("wsName", ngp.getFullName());
-        data.put("userURL", ar.baseURL + ar.getDefaultURL(ngp));
-        data.put("userName", ngp.getFullName());
+        if (ownerProfile!=null) {
+            data.put("userURL", ar.baseURL + "v/"+ownerProfile.getKey()+"/userSettings.htm");
+            data.put("userName", ownerProfile.getName());
+        }
+        else {
+            data.put("userURL", ar.baseURL + "v/FindPerson.htm?uid="+owner.getUniversalId());
+            data.put("userName", owner.getUniversalId());
+        }
         data.put("opType", opType);
         data.put("cmtType", cmtType);
         data.put("isClosed", isClosed);
         data.put("outcomeHtml", this.getOutcomeHtml(ar));
-        
-        
-        
+
+
+
         clone.retPath = ar.baseURL;
 
         TemplateJSONRetriever tjr = new TemplateJSONRetriever(data);
 
         File emailFolder = cog.getConfig().getFileFromRoot("email");
         File templateFile = new File(emailFolder, "NewComment.htm");
-        
+
         TemplateStreamer.streamTemplate(clone.w, templateFile, "utf-8", tjr);
 
 

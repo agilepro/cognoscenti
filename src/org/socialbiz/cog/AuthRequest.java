@@ -163,7 +163,7 @@ public class AuthRequest
 
     Properties props = null;
 
-    private boolean newUI = false;
+    private boolean newUI = true;
     private boolean generateStatic = false;
 
     /**
@@ -448,7 +448,7 @@ public class AuthRequest
 
         List<String> rawPath = UtilityMethods.splitString(requrl.substring(bindx), '/');
         List<String> decodedPath = new ArrayList<String>();
-        
+
         //must do the URLDecoding AFTER parsing the slashes out
         //but remember that browsers will reject URLEncoded slash character!
         for (String token : rawPath) {
