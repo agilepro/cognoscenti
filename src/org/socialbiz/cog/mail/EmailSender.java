@@ -22,6 +22,7 @@ package org.socialbiz.cog.mail;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,6 +44,8 @@ import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.SuperAdminLogFile;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.workcast.json.JSONObject;
+import org.workcast.streams.MemFile;
 
 /**
  * Support class for sending email messages based on an email configuration
@@ -382,31 +385,11 @@ public class EmailSender extends TimerTask {
     * MailFile archive and sent.
     */
     public static void containerEmail(OptOutAddr ooa, NGContainer ngc,
-            String subject, String emailBody, String from, List<String> attachIds, Cognoscenti cog) throws Exception {
-        ooa.assertValidEmail();
-        ArrayList<OptOutAddr> addressList = new ArrayList<OptOutAddr>();
-        addressList.add(ooa);
-        queueEmailNGC(addressList, ngc, subject, emailBody, from, attachIds, cog);
-    }
-
-    /**
-    * Stores an email message in the NGPage project workspace, that will LATER be moved to the
-    * MailFile archive and sent.
-    */
-    public static void queueEmailNGC(List<OptOutAddr> addresses,
-            NGContainer ngc, String subject, String emailBody, String from, List<String> attachIds, Cognoscenti cog)
-            throws Exception {
+            String subject, File templateFile, JSONObject data, String from, 
+            List<String> attachIds, Cognoscenti cog) throws Exception {
         if (subject == null || subject.length() == 0) {
             throw new ProgramLogicError(
                     "queueEmailNGC requires a non null subject parameter");
-        }
-        if (emailBody == null || emailBody.length() == 0) {
-            throw new ProgramLogicError(
-                    "queueEmailNGC requires a non null body parameter");
-        }
-        if (addresses == null || addresses.size() == 0) {
-            throw new ProgramLogicError(
-                    "queueEmailNGC requires a non empty addresses parameter");
         }
         if (ngc == null) {
             throw new ProgramLogicError(
@@ -415,7 +398,15 @@ public class EmailSender extends TimerTask {
         if (from == null) {
             from = composeFromAddress(ngc);
         }
-        EmailSender.createEmailRecordInternal(ngc, from, addresses, subject, emailBody, attachIds, cog);
+        
+        MemFile bodyWriter = new MemFile();
+        Writer w = bodyWriter.getWriter();
+        ChunkTemplate.streamIt(w, templateFile, data);
+        w.flush();
+        
+        createEmailRecordInternal(ngc, from,
+                ooa, subject, bodyWriter.toString(), 
+                attachIds, cog);
     }
 
 
@@ -424,30 +415,23 @@ public class EmailSender extends TimerTask {
      * MailFile archive and sent.
      */
     private static void createEmailRecordInternal(NGContainer ngc, String from,
-            List<OptOutAddr> addresses, String subject, String emailBody, List<String> attachIds,
+            OptOutAddr ooa, String subject, String bodyValue, List<String> attachIds,
             Cognoscenti cog)
             throws Exception {
-
-        try {
-
-            // just checking here that all the addressees have a valid email address.
-            // they should not have gotten into the sendTo list without one.
-            for (OptOutAddr ooa : addresses) {
-                ooa.assertValidEmail();
-            }
+       try {
+            
+            ooa.assertValidEmail();
 
             EmailRecord emailRec = ngc.createEmail();
             emailRec.setStatus(EmailRecord.READY_TO_GO);
             emailRec.setFromAddress(from);
             emailRec.setCreateDate(System.currentTimeMillis());
-            emailRec.setAddressees(addresses);
-            emailRec.setBodyText(emailBody);
+            emailRec.setAddress(ooa);
+            emailRec.setBodyText(bodyValue);
             emailRec.setSubject(subject);
             emailRec.setProjectId(ngc.getKey());
             emailRec.setAttachmentIds(attachIds);
             ngc.saveWithoutAuthenticatedUser("SERVER", System.currentTimeMillis(), "Sending an email message", cog);
-
-//            EmailRecordMgr.triggerNextMessageSend();
         } catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.send.simple.msg",
                     new Object[] { from, subject }, e);

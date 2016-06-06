@@ -15,11 +15,15 @@
       title="access the profile of this user, if one exists">
    <span class="red">{{sender.name}}</span></a>
 &nbsp; <b>Workspace:</b> 
-   <a href="{{baseURL}}{{workspaceUrl}}">{{workspaceName}}</a></p>
+   <a href="{{workspaceUrl}}">{{workspaceName}}</a></p>
 <div >
+lalala
 {{!RAW introHtml}}
+lololo
 </div>
-{{!IF attach}}
+zzzzz
+((!IF attach))
+yyyyy
 <p><b>Attachments:</b> (click links for secure access to documents)
 <ul>
 {{!LOOP att attach}}
@@ -27,7 +31,8 @@
 {{!ENDLOOP}}
 </ul></p>
 {{!ENDIF}}
-
+xxxx
+((!IF note))
 {{!IF includeTopic}}
 <p><i>The topic is copied below. You can access the most recent, most up to date version on the web at the following link:</i> <a href="{{noteUrl}}" title="Access the latest version of this discussion topic"><b>{{note.subject}}</b></a></p>
 <hr/>
@@ -35,7 +40,15 @@
 {{!ELSE}}
 <p><i>Access the web page using the following link:</i> <a href="{{noteUrl}}" title="Access the latest version of this discussion topic"><b>{{note.subject}}</b></a></p>
 {{!ENDIF}}
-
+lmn
+((!ENDIF))
+ghi
 <hr/>
+abc
 </div>
+def
+<h2>DATA</h2>
+<pre>
+{{!DEBUG}}
+</pre>
 

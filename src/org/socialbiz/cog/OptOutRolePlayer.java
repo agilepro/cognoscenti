@@ -20,7 +20,9 @@
 
 package org.socialbiz.cog;
 
-import org.socialbiz.cog.AddressListEntry;
+import java.net.URLEncoder;
+
+import org.workcast.json.JSONObject;
 
 /**
 * This is for email messages which are sent to the Super Admin
@@ -74,6 +76,21 @@ public class OptOutRolePlayer extends OptOutAddr {
         clone.writeURLData(ngc.emailDependentMagicNumber(emailId));
         clone.write("\">withdraw from that role</a> if you no longer want to be involved and receive email for the role. ");
         writeConcludingPart(clone);
+    }
+    
+    public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
+        JSONObject jo = super.getUnsubscribeJSON(ar);
+        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKeyOrFail(containerID);
+        NGWorkspace ngw = ngpi.getPage();
+        String emailId = assignee.getEmail();
+        jo.put("leaveRole", ar.baseURL+"t/EmailAdjustment.htm?st=role&p="+containerID
+            +"&role="+URLEncoder.encode(roleName,"UTF-8")
+            +"&email="+URLEncoder.encode(emailId,"UTF-8")
+            +"&mn="+URLEncoder.encode(ngw.emailDependentMagicNumber(emailId),"UTF-8"));
+        jo.put("roleName",  roleName);
+        jo.put("wsURL", ar.baseURL + ar.getDefaultURL(ngpi));
+        jo.put("wsName", ngpi.containerName);
+        return jo;
     }
 
 }

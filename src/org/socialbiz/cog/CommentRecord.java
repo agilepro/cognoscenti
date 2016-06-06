@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.socialbiz.cog.mail.ChunkTemplate;
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -11,8 +12,6 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
-import org.workcast.streams.TemplateJSONRetriever;
-import org.workcast.streams.TemplateStreamer;
 
 public class CommentRecord extends DOMFace {
 
@@ -441,6 +440,7 @@ public class CommentRecord extends DOMFace {
         MemFile body = new MemFile();
         AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
+        clone.retPath = ar.baseURL;
 
         String opType = "New ";
         if (isClosed) {
@@ -469,22 +469,11 @@ public class CommentRecord extends DOMFace {
         data.put("opType", opType);
         data.put("cmtType", cmtType);
         data.put("isClosed", isClosed);
-        data.put("outcomeHtml", this.getOutcomeHtml(ar));
+        data.put("outcomeHtml", this.getOutcomeHtml(clone));
+        data.put("optout", ooa.getUnsubscribeJSON(clone));
 
-
-
-        clone.retPath = ar.baseURL;
-
-        TemplateJSONRetriever tjr = new TemplateJSONRetriever(data);
-
-        File emailFolder = cog.getConfig().getFileFromRoot("email");
-        File templateFile = new File(emailFolder, "NewComment.htm");
-
-        TemplateStreamer.streamTemplate(clone.w, templateFile, "utf-8", tjr);
-
-
-        ooa.writeUnsubscribeLink(clone);
-        clone.write("</body></html>");
+        File templateFile = cog.getConfig().getFileFromRoot("email/NewComment.chtml");
+        ChunkTemplate.streamIt(clone.w, templateFile, data);
         clone.flush();
 
         String emailSubject =  noteOrMeet.emailSubject()+": "+opType+cmtType;

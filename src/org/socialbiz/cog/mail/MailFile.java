@@ -116,9 +116,6 @@ public class MailFile extends JSONWrapper {
 
         MailInst mi = createEmailRecord(from, addressee, subject, emailBody);
 
-        //is this needed?
-        //emailRec.setProjectId(ngc.getKey());
-
         ArrayList<File> attachments = new ArrayList<File>();
         for (String id : attachIds) {
             File path = ngc.getAttachmentPathOrNull(id);
@@ -161,7 +158,27 @@ public class MailFile extends JSONWrapper {
             emailRec.setFrom(from);
             emailRec.setCreateDate(System.currentTimeMillis());
             emailRec.setAddressee(addressee);
-            emailRec.setBodyText(emailBody);
+            
+            //for some reason email is not able to handle the upper ascii
+            //even though it seems to correctly encoded, the decoding seems to 
+            //be confused on the other end.   Just escape for HTML and all
+            //should be OK.
+            //This is a horrible horrible hack ... but it works reliably.
+            //The problem seems to be the order of decoding the stream and the 
+            //quoted printable encoding.
+            StringBuilder sb = new StringBuilder();
+            for (int i=0; i<emailBody.length(); i++) {
+                char ch = emailBody.charAt(i);
+                if (ch<128) {
+                    sb.append(ch);
+                }
+                else {
+                    sb.append("&#");
+                    sb.append(Integer.toString((int)ch));
+                    sb.append(';');
+                }
+            }
+            emailRec.setBodyText(sb.toString());
             emailRec.setSubject(subject);
             return emailRec;
         }

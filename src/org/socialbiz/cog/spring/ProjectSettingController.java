@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog.spring;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AccessControl;
 import org.socialbiz.cog.AddressListEntry;
-import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
+import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.CustomRole;
 import org.socialbiz.cog.EmailGenerator;
 import org.socialbiz.cog.HistoricActions;
@@ -56,7 +57,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.workcast.json.JSONObject;
-import org.workcast.streams.MemFile;
 
 @Controller
 public class ProjectSettingController extends BaseController {
@@ -148,6 +148,16 @@ public class ProjectSettingController extends BaseController {
         return null;
     }
 
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/sendNoteView.htm", method = RequestMethod.GET)
+    public ModelAndView sendNoteView(
+            @PathVariable String pageId, @PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "sendNoteView");
+        return null;
+    }
+    
 
     @RequestMapping(value = "/{siteId}/{pageId}/synchronizeUpstream.htm", method = RequestMethod.GET)
     public ModelAndView synchronizeUpstream(@PathVariable String siteId, @PathVariable String pageId,
@@ -318,6 +328,7 @@ public class ProjectSettingController extends BaseController {
     private static void sendRoleRequestEmail(AuthRequest ar,
             RoleRequestRecord roleRequestRecord, NGContainer container)
             throws Exception {
+        Cognoscenti cog = ar.getCogInstance();
         UserProfile up = ar.getUserProfile();
         if (up == null) {
             throw new Exception(
@@ -334,54 +345,28 @@ public class ProjectSettingController extends BaseController {
         List<OptOutAddr> initialList = new ArrayList<OptOutAddr>();
         OptOutAddr.appendUsersFromRole(container, "Administrators", initialList);
         OptOutAddr.appendUsersFromRole(container, "Members", initialList);
+        
+        JSONObject data = new JSONObject();
+        data.put("baseURL", ar.baseURL);
+        data.put("requester", ar.getUserProfile().getJSON());
+        data.put("wsURL", ar.baseURL + ar.getDefaultURL(container));
+        data.put("wsName", container.getFullName());
+        data.put("roleName", roleRequestRecord.getRoleName());
+        data.put("comment", roleRequestRecord.getRequestDescription());
+        data.put("resourceURL", ar.baseURL + resourceURL);
+        
+        File templateFile = cog.getConfig().getFileFromRoot("email/RoleRequest.chtml");
 
         // filter out users that who have no profile and have never logged in.
         // Only send this request to real users, not just email addresses
-        List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
         for (OptOutAddr ooa : initialList) {
             if (ooa.isUserWithProfile()) {
-                sendTo.add(ooa);
+                data.put("optout", ooa.getUnsubscribeJSON(ar));
+                EmailSender.containerEmail(ooa, container,
+                    "Role Requested by " + ar.getBestUserId(),
+                    templateFile,  data, null, new ArrayList<String>(), ar.getCogInstance());
             }
         }
-
-        if (sendTo.size() == 0) {
-            throw new Exception(
-                    "sendRoleRequestEmail has been called when there are no valid Members or Administrators of the workspace to send the email to.");
-        }
-
-        String baseURL = ar.baseURL;
-
-        MemFile bodyWriter = new MemFile();
-        AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
-        clone.retPath = baseURL;
-        clone.write("<html><body>\n");
-        clone.write("<p>");
-        ar.getUserProfile().writeLink(clone);
-        clone.write(" has requested to join the role <b>'");
-        clone.writeHtml(roleRequestRecord.getRoleName());
-        clone.write("'</b> in the workspace '");
-        container.writeContainerLink(clone, 100);
-        clone.write("'.   <br/>Comment: <i>");
-        clone.writeHtml(roleRequestRecord.getRequestDescription());
-        clone.write("</i></p>\n");
-
-        clone.write("<p><a href=\"");
-        clone.write(baseURL);
-        clone.write(resourceURL);
-        clone.write("\">Click here to Accept/Deny</a></p>");
-
-        clone.write("<p>You can accept or deny this request because you are either an ");
-        clone.write("Administrator or Member of this workspace.   If you are not responsible for ");
-        clone.write("approving/rejecting this request  you can safely ignore and delete this message.</p>");
-        clone.write("\n<hr/>\n");
-        clone.write("</body></html>");
-        clone.flush();
-
-        EmailSender.queueEmailNGC(sendTo, container,
-                "Role Requested by " + ar.getBestUserId(),
-                bodyWriter.toString(), null, new ArrayList<String>(), ar.getCogInstance());
-
     }
 
 

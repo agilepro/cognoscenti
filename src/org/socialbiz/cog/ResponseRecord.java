@@ -20,10 +20,12 @@
 
 package org.socialbiz.cog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.socialbiz.cog.mail.ChunkTemplate;
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -130,18 +132,13 @@ public class ResponseRecord extends DOMFace
             return;  //ignore users without email addresses
         }
 
+        Cognoscenti cog = ar.getCogInstance();
         UserProfile toProfile = UserManager.findUserByAnyId(ooa.getEmail());
         if (toProfile!=null) {
             ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
         }
-
-        MemFile body = new MemFile();
-        AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
-        clone.retPath = ar.baseURL;
-        clone.write("<html><body>");
-
-        String topicAddress = ar.baseURL + noteOrMeet.getResourceURL(clone, ngp) + "#cmt" + cr.getTime();
+        AddressListEntry owner = new AddressListEntry(this.getUserId());
+        UserProfile ownerProfile = UserManager.findUserByAnyId(this.getUserId());
         String detailMsg = "??";
         boolean isProposal = false;
         switch (cr.getCommentType()) {
@@ -153,38 +150,50 @@ public class ResponseRecord extends DOMFace
                 detailMsg = "Quick round response";
 
         }
-        String emailSubject =  noteOrMeet.emailSubject()+": "+detailMsg;
+        
+        
+        
 
-        AddressListEntry ale = commenterProfile.getAddressListEntry();
-
-        clone.write("\n<p>From: ");
-        ale.writeLink(clone);
-        clone.write("&nbsp; \n    Workspace: ");
-        ngp.writeContainerLink(clone, 40);
-        clone.write("\n<br/>\n<b>");
-        clone.writeHtml(detailMsg);
-        clone.write("</b> on topic <a href=\"");
-        clone.write(topicAddress);
-        clone.write("\">");
-        clone.writeHtml(noteOrMeet.emailSubject());
-        clone.write("</a></p>\n<hr/>\n");
-
-        if (isProposal) {
-            clone.write("<p>Choice: <b>");
-            clone.writeHtml(this.getChoice());
-            clone.write("</b></p>\n");
+        MemFile body = new MemFile();
+        AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
+        clone.setNewUI(true);
+        clone.retPath = ar.baseURL;
+        
+        
+        JSONObject data = new JSONObject();
+        data.put("baseURL", ar.baseURL);
+        data.put("parentURL", ar.baseURL + noteOrMeet.getResourceURL(clone, ngp));
+        data.put("parentName", noteOrMeet.emailSubject());
+        data.put("commentURL", ar.baseURL + noteOrMeet.getResourceURL(clone, ngp)+ "#cmt" + getTime());
+        data.put("comment", cr.getHtmlJSON(ar));
+        data.put("response", this.getJSON(ar));
+        data.put("choice", this.getChoice());
+        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngp));
+        data.put("isProposal", isProposal);
+        data.put("wsName", ngp.getFullName());
+        if (ownerProfile!=null) {
+            data.put("userURL", ar.baseURL + "v/"+ownerProfile.getKey()+"/userSettings.htm");
+            data.put("userName", ownerProfile.getName());
         }
-        clone.write(this.getHtml(ar));
+        else {
+            data.put("userURL", ar.baseURL + "v/FindPerson.htm?uid="+owner.getUniversalId());
+            data.put("userName", owner.getUniversalId());
+        }
+        //data.put("cmtType", cmtType);
+        data.put("outcomeHtml", cr.getOutcomeHtml(clone));
+        data.put("optout", ooa.getUnsubscribeJSON(clone));
 
-        clone.write("<hr/>\nIn response to: <br/>");
-        clone.write("\n<div style=\"color:#A9A9A9\">");
-        clone.write(cr.getContentHtml(ar));
-        clone.write("\n</div>");
-        ooa.writeUnsubscribeLink(clone);
-        clone.write("</body></html>");
+        File emailFolder = cog.getConfig().getFileFromRoot("email");
+        File templateFile = new File(emailFolder, "NewResponse.chtml");
+        if (!templateFile.exists()) {
+            throw new Exception("Strange, the template file is missing: "+templateFile);
+        }
+
+        ChunkTemplate.streamIt(clone.w, templateFile, data);
         clone.flush();
-
+        
         String bodyStr = body.toString();
+        String emailSubject =  noteOrMeet.emailSubject()+": "+detailMsg;
         mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, bodyStr);
     }
 

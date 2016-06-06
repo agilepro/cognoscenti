@@ -20,7 +20,7 @@
 
 package org.socialbiz.cog;
 
-import org.socialbiz.cog.AddressListEntry;
+import org.workcast.json.JSONObject;
 
 /**
 * This is for email messages which are sent to the Super Admin
@@ -38,6 +38,12 @@ public class OptOutDirectAddress extends OptOutAddr {
         clone.write("You have received this message because the sender entered your email address directly into the "+
             "address prompt and not due to any automated email mechanism. ");
         writeConcludingPart(clone);
+    }
+    
+    public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
+        JSONObject jo = super.getUnsubscribeJSON(ar);
+        jo.put("isDirectAddress", true);
+        return jo;
     }
 
 }

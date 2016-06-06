@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.socialbiz.cog.mail.ChunkTemplate;
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -34,8 +35,6 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
-import org.workcast.streams.TemplateJSONRetriever;
-import org.workcast.streams.TemplateStreamer;
 
 /**
 * A NoteRecord represents a Topic in a Workspace.
@@ -811,15 +810,10 @@ public class NoteRecord extends CommentContainer implements EmailContext {
           data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));
           data.put("wsName", ngp.getFullName());
 
-          TemplateJSONRetriever tjr = new TemplateJSONRetriever(data);
-
           File emailFolder = cog.getConfig().getFileFromRoot("email");
-          File templateFile = new File(emailFolder, "NewTopic.htm");
+          File templateFile = new File(emailFolder, "NewTopic.chtml");
 
-          TemplateStreamer.streamTemplate(clone.w, templateFile, "utf-8", tjr);
-
-          ooa.writeUnsubscribeLink(clone);
-          clone.write("</body></html>");
+          ChunkTemplate.streamIt(clone.w, templateFile, data);
           clone.flush();
 
           String emailSubject = "New Topic: "+note.getSubject();

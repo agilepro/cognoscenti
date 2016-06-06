@@ -20,7 +20,7 @@
 
 package org.socialbiz.cog;
 
-import org.socialbiz.cog.AddressListEntry;
+import org.workcast.json.JSONObject;
 
 /**
 * This is for email messages which are sent to the Super Admin
@@ -40,4 +40,10 @@ public class OptOutSuperAdmin extends OptOutAddr {
         clone.write("work with the server administrator to change that.</font></p>");
     }
 
+    public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
+        JSONObject jo = super.getUnsubscribeJSON(ar);
+        jo.put("isSuperAdmin", true);
+        return jo;
+    }
+    
 }

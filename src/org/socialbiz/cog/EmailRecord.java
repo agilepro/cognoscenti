@@ -116,6 +116,34 @@ public class EmailRecord extends DOMFace
     }
 
 
+    /**
+     * Sets this email to go to a single address.
+     */
+    public void setAddress(OptOutAddr ooa) throws Exception {
+        removeAllNamedChild("to");
+
+        DOMFace assignee = createChild("to", DOMFace.class);
+        assignee.setAttribute("email", ooa.getEmail());
+        if (ooa instanceof OptOutRolePlayer) {
+            OptOutRolePlayer oorm = (OptOutRolePlayer) ooa;
+            assignee.setAttribute("ootype", "Role");
+            assignee.setAttribute("containerID", oorm.containerID);
+            assignee.setAttribute("roleName", oorm.roleName);
+        }
+        else if (ooa instanceof OptOutSuperAdmin) {
+            assignee.setAttribute("ootype", "Super");
+        }
+        else if (ooa instanceof OptOutIndividualRequest) {
+            assignee.setAttribute("ootype", "Indiv");
+        }
+        else if (ooa instanceof OptOutDirectAddress) {
+            assignee.setAttribute("ootype", "Direct");
+        }
+        else {
+            assignee.setAttribute("ootype", "Gen");
+        }
+    }
+    
     public void setAddressees(List<OptOutAddr> inad) throws Exception {
         removeAllNamedChild("to");
         for (OptOutAddr ooa : inad) {

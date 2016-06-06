@@ -21,13 +21,13 @@
 package org.socialbiz.cog;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.socialbiz.cog.mail.ChunkTemplate;
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -35,8 +35,6 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
-import org.workcast.streams.TemplateJSONRetriever;
-import org.workcast.streams.TemplateStreamer;
 
 public class GoalRecord extends BaseRecord {
     public GoalRecord(Document definingDoc, Element definingElement, DOMFace p)
@@ -1214,16 +1212,12 @@ public class GoalRecord extends BaseRecord {
         data.put("recipientIsAssignedTask", recipientIsAssignedTask);
         data.put("requesterURL", ar.baseURL);
         data.put("stateName", stateName(getState()));
-        SimpleDateFormat ff = new SimpleDateFormat("dd MMM yyyy, zzzz");
-        data.put("dueDateFmt", "m "+ff.format(this.getDueDate()) );
-
-        TemplateJSONRetriever tjr = new TemplateJSONRetriever(data);
+        data.put("optout", ooa.getUnsubscribeJSON(clone));
 
         File emailFolder = cog.getConfig().getFileFromRoot("email");
-        File templateFile = new File(emailFolder, "ActionItem.htm");
+        File templateFile = new File(emailFolder, "ActionItem.chtml");
         
-        TemplateStreamer.streamTemplate(clone.w, templateFile, "utf-8", tjr);
-
+        ChunkTemplate.streamIt(clone.w, templateFile, data);
         clone.flush();
 
         String stateNameStr = stateName(getState());

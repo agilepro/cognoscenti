@@ -43,6 +43,7 @@ import org.socialbiz.cog.AgentRule;
 import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.BaseRecord;
+import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.EmailListener;
 import org.socialbiz.cog.GoalRecord;
@@ -1668,35 +1669,26 @@ public class UserController extends BaseController {
     private static void sendRoleRequestApprovedOrRejectionEmail(AuthRequest ar,
             String addressee, String subject, String responseComment,
             NGContainer ngp, String roleName, String action) throws Exception {
+        Cognoscenti cog = ar.getCogInstance();
         MemFile bodyWriter = new MemFile();
         AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter.getWriter(), ar.getCogInstance());
-        OptOutAddr ooa = new OptOutIndividualRequest(new AddressListEntry(
-                addressee));
-
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
-        clone.write("<html><body>\n");
-        clone.write("You requested to join the role <b>'");
-        clone.writeHtml(roleName);
-        clone.write("'</b> on the workspace '");
-        ngp.writeContainerLink(clone, 100);
-        clone.write("'.</p><p>\n");
-        if ("approved".equalsIgnoreCase(action)) {
-            clone.write("Your request has been <b>accepted</b>. Now you can play the role of <b>'");
-            clone.write(roleName);
-            clone.write("'</b> in that workspace.");
+        OptOutAddr ooa = new OptOutIndividualRequest(new AddressListEntry(
+                addressee));
+        
+        JSONObject data = new JSONObject();
+        data.put("aseURL",  ar.baseURL);
+        data.put("roleName",  roleName);
+        data.put("wsURL", clone.baseURL + clone.getDefaultURL(ngp));
+        data.put("wsName", ngp.getFullName());
+        data.put("isApproved", "approved".equalsIgnoreCase(action));
+        data.put("responseComment", responseComment);
+        
+        File templateFile = cog.getConfig().getFileFromRoot("email/RoleResponse.chtml");
 
-        } else {
-            clone.write("Your request has been <b>denied</b>.");
-        }
-        clone.write("\n</p><p><i>Reason/Comment: </i>");
-        clone.writeHtml(responseComment);
-        clone.write("</p>");
-        clone.write("</body></html>");
-        clone.flush();
-
-        EmailSender.containerEmail(ooa, ngp, subject, bodyWriter.toString(),
-                null, new ArrayList<String>(), ar.getCogInstance());
+        EmailSender.containerEmail(ooa, ngp, subject, templateFile, data,
+                null, new ArrayList<String>(), cog);
     }
 
 

@@ -1,9 +1,11 @@
 package org.socialbiz.cog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.socialbiz.cog.mail.EmailSender;
+import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
 
 public class HistoricActions {
@@ -228,30 +230,23 @@ public class HistoricActions {
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
 
-        clone.write("<html><body>\n");
-        clone.write("<p>");
-        requestingUser.writeLink(clone);
-        clone.write(" has added you to the '");
-        clone.writeHtml(role);
-        clone.write("' role of the ");
-        container.writeContainerLink(clone, 100);
-        clone.write(" workspace.</p>");
 
-        if (receivingUser==null) {
-            clone.write("<p>Cognoscenti is a cloud-based service to help people manage the documents, ");
-            clone.write("topics, and action items of a workspace.  ");
-            clone.write("It uses an approach known as Adaptive Case Management (ACM).  ");
-            clone.write("By being added to this role, you will have some ability to access that workspace ");
-            clone.write("and to receive email from the people working on the workspace.</p>");
-            clone.write("<p>I've checked, and there is no user profile for you at this email address (");
-            clone.writeHtml(emailId);
-            clone.write(").  Creating a new login profile is free and easy.</p>");
-        }
         clone.flush();
+        
+        Cognoscenti cog = clone.getCogInstance();
+        File templateFile = cog.getConfig().getFileFromRoot("email/Invite.chtml");
+        
+        JSONObject data = new JSONObject();
+        data.put("requesting", requestingUser.getJSON());
+        data.put("roleName", role);
+        data.put("wsURL", clone.baseURL + clone.getDefaultURL(container));
+        data.put("wsName", container.getFullName());
+        data.put("optout", ooa.getUnsubscribeJSON(ar));
+        
 
         EmailSender.containerEmail(ooa, container, "Added to " + role
-                + " role of " + container.getFullName(), body.toString(),
-                null, new ArrayList<String>(), clone.getCogInstance());
+                + " role of " + container.getFullName(), templateFile, data,
+                null, new ArrayList<String>(), cog);
     }
 
 

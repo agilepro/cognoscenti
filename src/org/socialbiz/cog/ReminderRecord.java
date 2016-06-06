@@ -20,13 +20,15 @@
 
 package org.socialbiz.cog;
 
+import java.io.File;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.socialbiz.cog.mail.EmailSender;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.streams.MemFile;
+import org.workcast.json.JSONObject;
 
 /**
 * ReminderRecord hold the information about a reminder to attach a file
@@ -312,25 +314,34 @@ public class ReminderRecord extends DOMFace
         ar.write("\n<hr/>");
     }
 
-
+    public JSONObject getReminderEmailData(AuthRequest ar, NGContainer ngp) throws Exception {
+        AddressListEntry ale = new AddressListEntry(getModifiedBy());
+        JSONObject data = new JSONObject();
+        data.put("from", ale.getJSON());
+        data.put("instructions", getInstructions());
+        data.put("resourceURL", ar.baseURL+ar.getResourceURL(ngp, "remindAttachment.htm?")
+                +AccessControl.getAccessReminderParams(ngp, this)
+                +"&rid="+URLEncoder.encode(getId(),"UTF-8"));
+        data.put("fileDesc",  getFileDesc());
+        return data;
+    }
+    
     public static void reminderEmail(AuthRequest ar, String pageId,String reminderId,
             String emailto, NGContainer ngp) throws Exception {
 
+        Cognoscenti cog = ar.getCogInstance();
         ReminderMgr rMgr = ngp.getReminderMgr();
         ReminderRecord rRec = rMgr.findReminderByIDOrFail(reminderId);
         String subject = "Reminder to Upload: " + rRec.getSubject();
         List<AddressListEntry> addressList = AddressListEntry.parseEmailList(emailto);
         for (AddressListEntry ale : addressList) {
             OptOutAddr ooa = new OptOutAddr(ale);
-            MemFile body = new MemFile();
-            AuthRequest clone = new AuthDummy(ar.getUserProfile(), body.getWriter(), ar.getCogInstance());
-            clone.write("<html><body>");
-            rRec.writeReminderEmailBody(clone, ngp);
-
-            clone.write("</body></html>");
-            clone.flush();
-
-            EmailSender.containerEmail(ooa, ngp, subject, body.toString(), null, new ArrayList<String>(), ar.getCogInstance());
+            
+            JSONObject data = rRec.getReminderEmailData(ar, ngp);
+            
+            File templateFile = cog.getConfig().getFileFromRoot("email/Reminder.chtml");
+            
+            EmailSender.containerEmail(ooa, ngp, subject, templateFile, data, null, new ArrayList<String>(), cog);
         }
         if (ngp instanceof NGPage) {
             HistoryRecord.createHistoryRecord(ngp, reminderId,

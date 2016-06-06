@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.socialbiz.cog.mail.ChunkTemplate;
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -178,42 +179,27 @@ public class EmailGenerator extends DOMFace {
 
 
     public boolean getExcludeResponders() throws Exception {
-        return "true".equals(getAttribute("excludeResponders"));
+        return getAttributeBool("excludeResponders");
     }
 
     public void setExcludeResponders(boolean newVal) throws Exception {
-        if (newVal) {
-            setAttribute("excludeResponders", "true");
-        }
-        else {
-            setAttribute("excludeResponders", null);
-        }
+        this.setAttributeBool("excludeResponders", newVal);
     }
 
     public boolean getIncludeSelf() throws Exception {
-        return "true".equals(getAttribute("includeSelf"));
+        return getAttributeBool("includeSelf");
     }
 
     public void setIncludeSelf(boolean newVal) throws Exception {
-        if (newVal) {
-            setAttribute("includeSelf", "true");
-        }
-        else {
-            setAttribute("includeSelf", null);
-        }
+        this.setAttributeBool("includeSelf", newVal);
     }
 
     public boolean getMakeMembers() throws Exception {
-        return "true".equals(getAttribute("makeMembers"));
+        return getAttributeBool("makeMembers");
     }
 
     public void setMakeMembers(boolean newVal) throws Exception {
-        if (newVal) {
-            setAttribute("makeMembers", "true");
-        }
-        else {
-            setAttribute("makeMembers", null);
-        }
+        this.setAttributeBool("makeMembers", newVal);
     }
 
     /**
@@ -221,16 +207,11 @@ public class EmailGenerator extends DOMFace {
      * in the message, or whether the topic is simply linked.
      */
     public boolean getIncludeBody() throws Exception {
-        return "true".equals(getAttribute("includeBody"));
+        return getAttributeBool("includeBody");
     }
 
     public void setIncludeBody(boolean newVal) throws Exception {
-        if (newVal) {
-            setAttribute("includeBody", "true");
-        }
-        else {
-            setAttribute("includeBody", null);
-        }
+        this.setAttributeBool("includeBody", newVal);
     }
 
     /**
@@ -238,16 +219,11 @@ public class EmailGenerator extends DOMFace {
      * actual email attachments, or just to link to them in the message.
      */
     public boolean getAttachFiles() throws Exception {
-        return "true".equals(getAttribute("attachFiles"));
+        return getAttributeBool("attachFiles");
     }
 
     public void setAttachFiles(boolean newVal) throws Exception {
-        if (newVal) {
-            setAttribute("attachFiles", "true");
-        }
-        else {
-            setAttribute("attachFiles", null);
-        }
+        this.setAttributeBool("attachFiles", newVal);
     }
 
 
@@ -366,7 +342,7 @@ public class EmailGenerator extends DOMFace {
         clone.retPath = ar.baseURL;
         clone.setPageAccessLevels(ngp);
 
-        writeNoteAttachmentEmailBody1(clone, ngp, noteRec, ooa.getAssignee(), getIntro(),
+        writeNoteAttachmentEmailBody2(clone, ngp, noteRec, ooa.getAssignee(), getIntro(),
                 getIncludeBody(), attachList, meeting);
 
         ooa.writeUnsubscribeLink(clone);
@@ -388,22 +364,19 @@ public class EmailGenerator extends DOMFace {
         }
         return res;
     }
+    
 
-
-
-    public static void writeNoteAttachmentEmailBody1(AuthRequest ar,
+    private static JSONObject getJSONForTemplate(AuthRequest ar,
             NGWorkspace ngp, NoteRecord selectedNote,
             AddressListEntry ale, String intro, boolean includeBody,
             List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
-
         UserProfile ownerProfile = ar.getUserProfile();
         if (ownerProfile==null) {
             throw new Exception("Some problem, so some reason the owner user profile is null");
         }
-
         //Gather all the data into a JSON structure
         JSONObject data = new JSONObject();
-        data.put("baseUrl", ar.baseURL);
+        data.put("baseURL", ar.baseURL);
         data.put("sender",  ownerProfile.getJSON());
 
         data.put("workspaceName", ngp.getFullName());
@@ -440,7 +413,23 @@ public class EmailGenerator extends DOMFace {
             meetingObj.put("meetingUrl", ar.retPath + ar.getResourceURL(ngp, "meetingFull.htm?id="+meeting.getId()
                     +"&"+AccessControl.getAccessMeetParams(ngp, meeting)));
             data.put("meeting", meetingObj);
+            data.put("meetingTime", new Date(meeting.getStartTime()).toString());
         }
+        return data;
+    }
+
+    private static void writeNoteAttachmentEmailBody1(AuthRequest ar,
+            NGWorkspace ngp, NoteRecord selectedNote,
+            AddressListEntry ale, String intro, boolean includeBody,
+            List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
+
+        UserProfile ownerProfile = ar.getUserProfile();
+        if (ownerProfile==null) {
+            throw new Exception("Some problem, so some reason the owner user profile is null");
+        }
+
+        //Gather all the data into a JSON structure
+        JSONObject data = getJSONForTemplate(ar,ngp, selectedNote,ale, intro, includeBody, selAtt, meeting);
 
         File myTemplate = ar.getCogInstance().getConfig().getFileFromRoot("email/DiscussionTopicManual.htm");
         if (myTemplate.exists()) {
@@ -450,9 +439,24 @@ public class EmailGenerator extends DOMFace {
         else {
             ar.write("Could not find template "+myTemplate);
         }
+        ar.flush();
     }
 
+    private static void writeNoteAttachmentEmailBody2(AuthRequest ar,
+            NGWorkspace ngp, NoteRecord selectedNote,
+            AddressListEntry ale, String intro, boolean includeBody,
+            List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
 
+        UserProfile ownerProfile = ar.getUserProfile();
+        if (ownerProfile==null) {
+            throw new Exception("Some problem, so some reason the owner user profile is null");
+        }
+
+        JSONObject data = getJSONForTemplate(ar, ngp, selectedNote, ale, intro, includeBody, selAtt, meeting);
+
+        File myTemplate = ar.getCogInstance().getConfig().getFileFromRoot("email/DiscussionTopicManual.chtml");
+        ChunkTemplate.streamIt(ar.w, myTemplate, data);
+    }
 
     public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw) throws Exception {
         JSONObject obj = new JSONObject();

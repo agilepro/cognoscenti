@@ -1,0 +1,52 @@
+<html>
+<style>
+.emailbody {
+    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+    border: 2px solid skyblue;
+    padding:10px;
+    border-radius:10px;
+}
+.niceTable tr td { 
+    padding:8px 
+}
+.smallPrint {
+    font-size:-2;
+}
+</style>
+<body>
+<div class="emailbody">
+<!--TEMPLATE Reminder.chtml-->
+
+<p>From: <a href="{$from.url}">{$from.name|html}</a>, &nbsp; 
+Workspace: <a href="{$wsURL}">{$wsName}</a>
+</p>
+
+<p>You have been invited to upload a file so that it can 
+be shared (in a controlled manner) with others in 
+the workspace {$wsName}. Uploading the file will stop the email reminders. </p>
+<hr/>
+
+<p><b>Instructions:</b> {$instructions}</p>
+
+<p>Click on the following link or cut and paste the URL into a 
+web browser to access the page for uploading the file:</p>
+
+<p><a href="{$resourceURL}">{$resourceURL}</a></p>
+
+<p><b>Description of File:</b> {$fileDesc}</p>
+
+<p>Thank you.</p>
+<hr/>
+
+
+</div>
+
+<h2>DATA</h2>
+<pre>
+{$debugDump}
+</pre>
+
+
+
+
+</body></html>

@@ -20,9 +20,11 @@
 
 package org.socialbiz.cog;
 
+import java.net.URLEncoder;
 import java.util.List;
 
 import org.socialbiz.cog.exception.NGException;
+import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
 
 /**
@@ -114,7 +116,7 @@ public class OptOutAddr {
         writeSentToMsg(clone);
         writeConcludingPart(clone);
     }
-
+    
     protected void writeConcludingPart(AuthRequest clone) throws Exception {
         String emailId = assignee.getEmail();
         UserProfile up = UserManager.findUserByAnyId(emailId);
@@ -135,6 +137,23 @@ public class OptOutAddr {
             clone.write("  You have not created a profile at Cognoscenti, or have not ");
             clone.write("associated this address with your existing profile.</font></p>");
         }
+    }
+
+    public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
+        assertValidEmail();
+        UserProfile up = UserManager.findUserByAnyId(assignee.getEmail());
+        JSONObject jo = new JSONObject();
+        String emailId = assignee.getEmail();
+        jo.put("emailId", emailId);
+        if (up!=null) {
+            jo.put("unsubscribe", ar.baseURL+"v/unsubscribe.htm?accessCode="+up.getAccessCode()
+                +"&userKey="+up.getKey()
+                +"&emailId="+URLEncoder.encode(emailId,"UTF-8"));
+            jo.put("accessCode", up.getAccessCode());
+            jo.put("userKey", up.getKey());
+            jo.put("userId", up.getUniversalId());
+        }
+        return jo;
     }
 
 
