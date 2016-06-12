@@ -1,20 +1,7 @@
 <html>
-<style>
-.emailbody {
-    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
-    border: 2px solid skyblue;
-    padding:10px;
-    border-radius:10px;
-}
-.niceTable tr td { 
-    padding:8px 
-}
-.smallPrint {
-    font-size:-2;
-}
-</style>
+
 <body>
-<div class="emailbody">
+<div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
 <!--TEMPLATE RoleRequest.chtml-->
 
 <p> {$requesting.name} has added you to the '{$roleName}' role of the 

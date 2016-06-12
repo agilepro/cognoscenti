@@ -44,8 +44,14 @@ public class ChunkTemplate {
             else if (kewl instanceof String) {
                 res.put(key, (String)kewl);
             }
+            else if (kewl instanceof Boolean) {
+                if (((Boolean)kewl).booleanValue()) {
+                    //only insert a value if true .... do not put one if false
+                    res.put(key, "true");
+                }
+            }
             else {
-                res.put(key, kewl.toString());
+                res.put(key, kewl.toString() + " TYPE:"+kewl.getClass().getName());
             }
         }
         return res;
@@ -72,6 +78,18 @@ public class ChunkTemplate {
             }
             else if (kewl instanceof String) {
                 res.add((String)kewl);
+            }
+            else if (kewl instanceof Boolean) {
+                if (((Boolean)kewl).booleanValue()) {
+                    //only add a value if true .... do not put one if false
+                    res.add("true");
+                }
+                else {
+                    //not sure this works.   This only effects arrays of booleans
+                    //who would have an array of booleans?
+                    //we need to add something because we must preserve the positions
+                    res.add("");
+                }
             }
             else {
                 res.add(kewl.toString());

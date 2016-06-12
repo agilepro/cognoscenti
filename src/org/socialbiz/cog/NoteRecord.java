@@ -809,6 +809,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
           data.put("topic", this.getJSONWithHtml(ar, ngp));
           data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));
           data.put("wsName", ngp.getFullName());
+          data.put("optout", ooa.getUnsubscribeJSON(ar));
 
           File emailFolder = cog.getConfig().getFileFromRoot("email");
           File templateFile = new File(emailFolder, "NewTopic.chtml");

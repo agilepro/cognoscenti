@@ -34,8 +34,6 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
-import org.workcast.streams.TemplateJSONRetriever;
-import org.workcast.streams.TemplateStreamer;
 
 /**
  * People create this, and this creates emails, sent possibly in
@@ -342,11 +340,9 @@ public class EmailGenerator extends DOMFace {
         clone.retPath = ar.baseURL;
         clone.setPageAccessLevels(ngp);
 
-        writeNoteAttachmentEmailBody2(clone, ngp, noteRec, ooa.getAssignee(), getIntro(),
+        writeNoteAttachmentEmailBody2(clone, ngp, noteRec, ooa, getIntro(),
                 getIncludeBody(), attachList, meeting);
 
-        ooa.writeUnsubscribeLink(clone);
-        clone.write("</body></html>");
         clone.flush();
 
         mailFile.createEmailWithAttachments(ngp, getFrom(), ooa.getEmail(), getSubject(), bodyChunk.toString(), attachIds);
@@ -418,33 +414,9 @@ public class EmailGenerator extends DOMFace {
         return data;
     }
 
-    private static void writeNoteAttachmentEmailBody1(AuthRequest ar,
-            NGWorkspace ngp, NoteRecord selectedNote,
-            AddressListEntry ale, String intro, boolean includeBody,
-            List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
-
-        UserProfile ownerProfile = ar.getUserProfile();
-        if (ownerProfile==null) {
-            throw new Exception("Some problem, so some reason the owner user profile is null");
-        }
-
-        //Gather all the data into a JSON structure
-        JSONObject data = getJSONForTemplate(ar,ngp, selectedNote,ale, intro, includeBody, selAtt, meeting);
-
-        File myTemplate = ar.getCogInstance().getConfig().getFileFromRoot("email/DiscussionTopicManual.htm");
-        if (myTemplate.exists()) {
-            TemplateJSONRetriever tjr = new TemplateJSONRetriever(data);
-            TemplateStreamer.streamTemplate(ar.w, myTemplate, "UTF-8", tjr);
-        }
-        else {
-            ar.write("Could not find template "+myTemplate);
-        }
-        ar.flush();
-    }
-
     private static void writeNoteAttachmentEmailBody2(AuthRequest ar,
             NGWorkspace ngp, NoteRecord selectedNote,
-            AddressListEntry ale, String intro, boolean includeBody,
+            OptOutAddr ooa, String intro, boolean includeBody,
             List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
 
         UserProfile ownerProfile = ar.getUserProfile();
@@ -452,7 +424,8 @@ public class EmailGenerator extends DOMFace {
             throw new Exception("Some problem, so some reason the owner user profile is null");
         }
 
-        JSONObject data = getJSONForTemplate(ar, ngp, selectedNote, ale, intro, includeBody, selAtt, meeting);
+        JSONObject data = getJSONForTemplate(ar, ngp, selectedNote, ooa.getAssignee(), intro, includeBody, selAtt, meeting);
+        data.put("optout", ooa.getUnsubscribeJSON(ar));
 
         File myTemplate = ar.getCogInstance().getConfig().getFileFromRoot("email/DiscussionTopicManual.chtml");
         ChunkTemplate.streamIt(ar.w, myTemplate, data);
