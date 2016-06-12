@@ -76,9 +76,11 @@ public class BaseController {
         return new ModelAndView("DisplayException");
     }
 
-    protected static ModelAndView showWarningView(AuthRequest ar, String why) {
+    protected static ModelAndView showWarningView(AuthRequest ar, String why) throws Exception {
         ar.req.setAttribute("property_msg_key", why);
-        return new ModelAndView("Warning");
+        streamJSP(ar, "Warning");
+        //TODO: remove the return type on this method and work through the changes
+        return null;
     }
 
     
@@ -302,7 +304,8 @@ public class BaseController {
      */
     protected ModelAndView checkLogin(AuthRequest ar) throws Exception {
         if(!ar.isLoggedIn()){
-            return showWarningView(ar, "nugen.project.login.msg");
+            showWarningView(ar, "nugen.project.login.msg");
+            return null;
         }
         if (needsToSetName(ar)) {
             return new ModelAndView("requiredName");
@@ -330,7 +333,8 @@ public class BaseController {
             return new ModelAndView("WarningNotMember");
         }
         if (UserManager.getAllSuperAdmins(ar).size()==0) {
-            return showWarningView(ar, "nugen.missingSuperAdmin");
+            showWarningView(ar, "nugen.missingSuperAdmin");
+            return null;
         }
         return null;
     }
@@ -347,7 +351,8 @@ public class BaseController {
             return modelAndView;
         }
         if(ngp.isFrozen()){
-            return showWarningView(ar, "nugen.generatInfo.Frozen");
+            showWarningView(ar, "nugen.generatInfo.Frozen");
+            return null;
         }
         return null;
     }
@@ -360,14 +365,17 @@ public class BaseController {
      */
     protected ModelAndView executiveCheckViews(AuthRequest ar) throws Exception {
         if(!ar.isLoggedIn()){
-            return showWarningView(ar, "nugen.project.login.msg");
+            showWarningView(ar, "nugen.project.login.msg");
+            return null;
         }
         if(!ar.isMember()){
             ar.req.setAttribute("roleName", "Executive");
-            return showWarningView(ar, "nugen.project.executive.msg");
+            showWarningView(ar, "nugen.project.executive.msg");
+            return null;
         }
         if (UserManager.getAllSuperAdmins(ar).size()==0) {
-            return showWarningView(ar, "nugen.missingSuperAdmin");
+            showWarningView(ar, "nugen.missingSuperAdmin");
+            return null;
         }
         return null;
     }

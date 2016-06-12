@@ -154,8 +154,8 @@
     if (!menuFile.exists()) {
         throw new Exception("Can not find a menu file for: "+menuFile.toString());
     }
-    JSONObject menuWrapper = JSONObject.readFromFile(menuFile);
-    JSONArray mainList = menuWrapper.getJSONArray("mainList");
+    //JSONObject menuWrapper = JSONObject.readFromFile(menuFile);
+    //JSONArray mainList = menuWrapper.getJSONArray("mainList");
         
 
 %>

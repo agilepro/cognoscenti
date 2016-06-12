@@ -27,16 +27,19 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
     $scope.hasResults = false;
+    $scope.isSearching = true;
     $scope.actualSearch = "";
 
     $scope.doSearch = function() {
         var postURL = "searchNotes.json";
         var postdata = angular.toJson($scope.query);
         $scope.showError=false;
+        $scope.isSearching = true;
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.results = data;
             $scope.hasResults = ($scope.results.length>0);
+            $scope.isSearching = false;
             $scope.actualSearch = $scope.query.searchFilter;
         })
         .error( function(data, status, headers, config) {
@@ -128,8 +131,11 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
         <tr ng-hide="hasResults">
            <td colspan="5">
-           <div class="guideVocal"> 
-              No results for the search string: {{actualSearch}}
+           <div class="guideVocal" ng-hide="isSearching"> 
+             Did not find any results for search string: {{actualSearch}}
+           </div>
+           <div class="guideVocal" ng-show="isSearching"> 
+             Searching for results for string: {{actualSearch}}
            </div>
            </td>
         </tr>

@@ -106,6 +106,9 @@ public class SearchManager {
                     doc.add(new Field("NOTESUBJ", note.getSubject(), TextField.TYPE_STORED));
                     doc.add(new Field("LASTMODIFIEDTIME", Long.toString(note.getLastEdited()), TextField.TYPE_STORED));
                     doc.add(new Field("LASTMODIFIEDUSER", note.getModUser().getName(), TextField.TYPE_STORED));
+                    
+                    //first add the subject, then add the text of the note, then all the comments
+                    doc.add(new Field("BODY", note.getSubject(), TextField.TYPE_STORED));
                     doc.add(new Field("BODY", note.getWiki(), TextField.TYPE_STORED));
                     for (CommentRecord cr : note.getComments()) {
                         doc.add(new Field("BODY", cr.getContent(), TextField.TYPE_STORED));
@@ -121,7 +124,8 @@ public class SearchManager {
                     doc.add(new Field("MEETID", meet.getId(), TextField.TYPE_STORED));
                     doc.add(new Field("MEETNAME", meet.getName(), TextField.TYPE_STORED));
                     doc.add(new Field("LASTMODIFIEDTIME", Long.toString(meet.getStartTime()), TextField.TYPE_STORED));
-                    //doc.add(new Field("LASTMODIFIEDUSER", meet.getModUser().getName(), TextField.TYPE_STORED));
+                    
+                    doc.add(new Field("BODY", meet.getName(), TextField.TYPE_STORED));
                     doc.add(new Field("BODY", meet.generateWikiRep(ar, ngp), TextField.TYPE_STORED));
                     for (AgendaItem ai : meet.getAgendaItems()) {
                         for (CommentRecord cr : ai.getComments()) {

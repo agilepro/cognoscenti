@@ -1693,22 +1693,22 @@ public class UserController extends BaseController {
 
 
     @RequestMapping(value = "/FindPerson.htm", method = RequestMethod.GET)
-    public ModelAndView FindPerson(HttpServletRequest request, HttpServletResponse response)
+    public void FindPerson(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+                showWarningView(ar, "message.loginalert.see.page");
+                return;
             }
             String userKey = ar.reqParam("uid");
             UserProfile searchedFor = UserManager.findUserByAnyId(userKey);
             if (searchedFor!=null) {
                 //so if we find it, just redirect to the settings page
                 response.sendRedirect(ar.retPath+"v/"+searchedFor.getKey()+"/userSettings.htm");
-                return null;
+                return;
             }
-            return new ModelAndView("FindPerson");
-
+            streamJSP(ar, "FindPerson");
 
         }catch(Exception ex){
             throw new Exception("Failure trying to find user", ex);

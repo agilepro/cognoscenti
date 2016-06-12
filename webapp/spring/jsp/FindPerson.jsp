@@ -120,28 +120,4 @@ app.controller('myCtrl', function($scope, $http) {
       </div>
     </div>
 
-    <div class="panel panel-default" style="margin:50px;">
-      <div class="panel-heading">
-        Would you like to send an invation to this person?
-      </div>
-      <div class="panel-body">
-        <table class="spacy">
-          <tr>
-            <td>
-               Message:
-            </td>
-            <td>
-               <textarea ng-model="message" class="form-control"></textarea>
-            </td>
-          </tr>
-          <tr>
-            <td>
-            </td>
-            <td>
-               <button ng-click="sendInvite()" class="btn btn-primary">Send Inviation</button>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
 </div>

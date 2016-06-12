@@ -174,13 +174,7 @@ Optional Parameter:
                             <input type="radio" name="notificationPeriod" value="30" <% if(notePeriod>20) {ar.write("checked=\"checked\" ");} %>> Monthly
                         </td>
                     </tr>
-                     <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2"></td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2"><input type="checkbox" name="weaverMenu" <% if(uProf.getWeaverMenu()) {ar.write("checked=\"checked\" ");} %>/> Weaver Style Menus </td>
-                    </tr>
-                   <tr><td style="height:10px"></td></tr>
+                    <tr><td style="height:10px"></td></tr>
                     <tr>
                         <td class="gridTableColummHeader_2"></td>
                         <td style="width:20px;"></td>

@@ -24,9 +24,6 @@ Required parameters:
     Hashtable<String,String> seenBefore = new Hashtable<String,String>();
 
     for (HistoryRecord hist : histRecs) {
-        if (limit-- < 0) {
-            break;
-        }
         AddressListEntry ale = new AddressListEntry(hist.getResponsible());
         UserProfile responsible = ale.getUserProfile();
         String imagePath = "assets/photoThumbnail.gif";
@@ -87,15 +84,15 @@ Required parameters:
         }
         JSONObject jObj = hist.getJSON(ngp,ar);
         jObj.put("contextUrl", url );
-        /*
-        jObj.put("contextName", objName );
-        */
 
         //elliminate duplicate objects
         boolean seen = seenBefore.containsKey(objectKey);
         if (!seen && contextType!=HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
             seenBefore.put(objectKey,objectKey);
             recentChanges.put(jObj);
+            if (limit-- < 0) {
+                break;
+            }
         }
         topHistory.put(jObj);
     }

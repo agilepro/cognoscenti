@@ -261,18 +261,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 			newTopic.modUser.uid = "<%ar.writeJS(currentUser);%>";
 			newTopic.modUser.name = "<%ar.writeJS(currentUserName);%>";
 			newTopic.modUser.key = "<%ar.writeJS(currentUserKey);%>";
-            var returnedCmt = createdTopic.comments[0];
-            var cleanCmt = {};
-            cleanCmt.time = -1;
-            cleanCmt.html = returnedCmt.html;
-            cleanCmt.state = returnedCmt.state;
-            cleanCmt.replyTo = returnedCmt.replyTo;
-            cleanCmt.commentType = returnedCmt.commentType;
-			cleanCmt.user = "<%ar.writeJS(currentUser);%>";
-			cleanCmt.userName = "<%ar.writeJS(currentUserName);%>";
-			cleanCmt.userKey = "<%ar.writeJS(currentUserKey);%>";
-			newTopic.comments=[];
-			newTopic.comments.push(cleanCmt);
 			
 			var postURL = "noteHtmlUpdate.json?nid=~new~";
 			var postdata = angular.toJson(newTopic);

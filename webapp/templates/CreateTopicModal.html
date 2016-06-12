@@ -9,23 +9,21 @@
 	    Subject: 
 		<input ng-model="topic.subject" class="form-control" style="width:400px">
         &nbsp; Phase: 
-		<select ng-model="topic.phase" class="form-control" style="width:150px">
-            <option>Freeform</option>
-            <option>Draft</option>
+		<select ng-model="topic.phase" class="form-control" style="width:180px">
+            <option value="Freeform">Freeform Discussion</option>
+            <option value="Draft">Draft Topic</option>
+            <option value="Forming">Picture Forming</option>
         </select>
 	</div>
     <div>Briefly describe the Topic</div>
     <div ng-model="topic.html" ui-tinymce="tinymceOptions1" class="leafContent" style="max-height:200px;height:200px">
-    </div>    
-    <div>Start the discussion on the Topic</div>
-	<div ng-model="cmt.html" ui-tinymce="tinymceOptions2" class="leafContent">
-    </div>
+    </div> 
+    <div><i>Note: only describe the topic to be discussed.  Don't start discussing it here.
+         Start the discussion in a comment on this discussion topic.</i></div>
 </div>
 <div class="modal-footer">
-      <button ng-click="ok(11)" class="btn btn-warning" ng-show="cmt.state<=11">
-            Create Topic with Draft Comment</button>
-      <button ng-click="ok(12);stopEdit()" class="btn btn-primary">
-            Create &amp; Post Comment</button>
+      <button ng-click="ok()" class="btn btn-primary">
+            Create Discussion Topic</button>
       <button ng-click="cancel()" class="btn btn-warning">Cancel</button>
 </div>
 </body>

@@ -142,14 +142,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         rec.universalid = $scope.noteInfo.universalid;
         fields.forEach( function(fieldName) {
             rec[fieldName] = $scope.noteInfo[fieldName];
-            console.log("SAVING: "+fieldName);
         });
         var postdata = angular.toJson(rec);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.noteInfo = data;
-            console.log("GOT NOTE SAVED", data);
             $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
@@ -204,7 +202,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.savePartial = function(recordToSave) {
         var postURL = "updateNote.json?nid="+$scope.noteInfo.id;
         var postdata = angular.toJson(recordToSave);
-        console.log(postdata);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {

@@ -105,8 +105,6 @@
 
 
 <script>
-
-    menuStruct = <%mainList.write(out,2,4);%>;
     
     function changePage(dest) {
         window.location = dest;

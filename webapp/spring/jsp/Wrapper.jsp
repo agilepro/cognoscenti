@@ -6,20 +6,14 @@
     long renderStart = System.currentTimeMillis();
     UserProfile loggedUser = ar.getUserProfile();
     
-    boolean weaverMenus = false;
     String loggedKey = "";
     if (ar.isLoggedIn()) {
-        weaverMenus = loggedUser.getWeaverMenu();
         loggedKey = loggedUser.getKey();
     }
     
 
 %>
 
-<% if (true) { %>
 <%@ include file="WrapLayout2.jsp" %>
-<% } else { %>
-<%@ include file="WrapLayout1.jsp" %>
-<% } %>
 
 <!-- END Wrapper.jsp Layout - - <%= (System.currentTimeMillis()-renderStart) %> ms -->
