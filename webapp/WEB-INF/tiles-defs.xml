@@ -258,10 +258,6 @@
         <put-attribute name="title" value="Send Topic By Email" />
         <put-attribute name="body" value="/spring/jsp/SendNote.jsp" />
     </definition>
-    <definition name="EmailAdjustment" extends="slimLayout">
-        <put-attribute name="title" value="Adjust Email Subscriptions" />
-        <put-attribute name="body" value="/spring/jsp/EmailAdjustment.jsp" />
-    </definition>
     <definition name="NoteZoom" extends="slimLayout">
         <put-attribute name="title" value="Topic" />
         <put-attribute name="body" value="/spring/jsp/NoteZoom.jsp" />

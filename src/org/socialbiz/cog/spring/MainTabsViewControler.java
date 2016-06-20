@@ -200,6 +200,7 @@ public class MainTabsViewControler extends BaseController {
             boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
             if (!canAccess) {
                 showJSPMembers(ar, siteId, pageId, "MeetingFull");
+                return;
             }
 
             streamJSP(ar, "MeetingFull");
@@ -522,13 +523,13 @@ public class MainTabsViewControler extends BaseController {
     //allow a user to change their email subscriptions, including opt out
     //even when not logged in.
     @RequestMapping(value = "/EmailAdjustment.htm", method = RequestMethod.GET)
-    public ModelAndView emailAdjustment(HttpServletRequest request, HttpServletResponse response)
+    public void emailAdjustment(HttpServletRequest request, HttpServletResponse response)
         throws Exception {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.preserveRealRequestURL();
-            return new ModelAndView("EmailAdjustment");
+            streamJSP(ar, "EmailAdjustment");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.sent.note.by.email.page", null , ex);
         }
