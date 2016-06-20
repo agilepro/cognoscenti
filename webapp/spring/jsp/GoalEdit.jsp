@@ -169,6 +169,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.updateTagEntry();
     $scope.copyTagsToRecord = function() {
+        console.log("CALL to copyTagsToRecord");
         var newList = [];
         $scope.tagEntry.forEach( function(item) {
             var nix = {};
@@ -183,8 +184,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             }    
            newList.push(nix)
         });
+        var hasChanged = ($scope.goalInfo.assignTo.length != newList.length);
         $scope.goalInfo.assignTo = newList;
-        $scope.saveGoal();
+        if (hasChanged) {
+            $scope.saveGoal();
+        }
     }
     $scope.$watch(function(scope) {
         return $scope.tagEntry.length;
@@ -221,6 +225,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         errorPanelHandler($scope, serverErr);
     };
     $scope.setState = function(newState) {
+        console.log("CALL to setState");
         $scope.goalInfo.state=newState;
         $scope.saveGoal();
     }
@@ -240,6 +245,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.showAccomplishment=false;
         $http.post(postURL, postdata)
         .success( function(data) {
+            console.log("CALL to success from saveGoal");
             $scope.goalInfo = data;
             $scope.copyDatesToDummies();
             $scope.refreshHistory();
@@ -249,16 +255,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
     $scope.undoGoalChanges = function() {
-        var postURL = "updateGoal.json?gid="+$scope.goalInfo.id;
-        var dummyObj = {};
-        dummyObj.id = $scope.goalInfo.id;
-        dummyObj.universalid = $scope.goalInfo.universalid;
-        var postdata = angular.toJson(dummyObj);
+        var postURL = "fetchGoal.json?gid="+$scope.goalInfo.id;
         $scope.showError=false;
         $scope.editGoalInfo=false;
         $scope.showAccomplishment=false;
-        $http.post(postURL, postdata)
+        $http.get(postURL)
         .success( function(data) {
+            console.log("CALL to success from undoGoalChanges");
             $scope.goalInfo = data;
             $scope.copyDatesToDummies();
             $scope.refreshHistory();
@@ -268,10 +271,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
     $scope.saveAccomplishment = function() {
+        console.log("CALL to saveAccomplishment");
         $scope.goalInfo.newAccomplishment = $scope.newAccomplishment;
         $scope.saveGoal();
     }
     $scope.addPerson = function() {
+        console.log("CALL to addPerson");
         var player = $scope.newPerson;
         if (typeof player == "string") {
             var pos = player.lastIndexOf(" ");
@@ -283,6 +288,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.saveGoal();
     }
     $scope.removePerson = function(person) {
+        console.log("CALL to removePerson");
         var res = $scope.goalInfo.assignTo.filter( function(one) {
             return (person.uid != one.uid);
         });
@@ -344,6 +350,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return "background-color:lavender";
     }
     $scope.setProspects = function(newVal) {
+        console.log("CALL to setProspects");
         $scope.goalInfo.prospects = newVal;
         $scope.saveGoal();
         $scope.refreshHistory();
@@ -451,6 +458,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         attachModalInstance.result
         .then(function (docList) {
+            console.log("CALL to save from openAttachDocument");
             $scope.goalInfo.docLinks = docList;
             $scope.saveGoal(['docLinks']);
         }, function () {

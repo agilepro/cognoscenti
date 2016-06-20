@@ -70,11 +70,11 @@ public class ProjectGoalController extends BaseController {
     public static final String SUCCESS_REMOTE = "success_remote";
     public static final String REMOTE_PROJECT = "Remote_project";
     public static final String LOCAL_PROJECT = "Local_Project";
-    
-    
-    
+
+
+
     ///////////////////////// MAIN VIEWS ////////////////////////////////////
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/goalList.htm", method = RequestMethod.GET)
     public ModelAndView goalList(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
@@ -83,7 +83,7 @@ public class ProjectGoalController extends BaseController {
         return null;
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/task{taskId}.htm", method = RequestMethod.GET)
     public void displayTask(@PathVariable String siteId,
         @PathVariable String pageId,  @PathVariable String taskId,
@@ -125,7 +125,7 @@ public class ProjectGoalController extends BaseController {
             throw new NGException("nugen.operation.fail.project.edit.task.page", new Object[]{pageId,siteId} , ex);
         }
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/decisionList.htm", method = RequestMethod.GET)
     public ModelAndView decisionList(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
@@ -134,10 +134,10 @@ public class ProjectGoalController extends BaseController {
         return null;
     }
 
-    
-    
+
+
     ////////////////////////// FORM SUBMISSIONS //////////////////////////////
-    
+
 
     @RequestMapping(value = "/{siteId}/{pageId}/CreateTask.form", method = RequestMethod.POST)
     public ModelAndView createTask(@PathVariable String siteId, @PathVariable String pageId,
@@ -617,7 +617,26 @@ public class ProjectGoalController extends BaseController {
     }
 
 
-
+    @RequestMapping(value = "/{siteId}/{pageId}/fetchGoal.json", method = RequestMethod.GET)
+    public void fetchGoal(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String gid = "";
+        try{
+            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            ar.setPageAccessLevels(ngp);
+            ar.assertMember("Must be a member to see a action item.");
+            gid = ar.reqParam("gid");
+            GoalRecord gr = null;
+            gr = ngp.getGoalOrFail(gid);
+            JSONObject repo = gr.getJSON4Goal(ngp);
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to fetch Action Item ("+gid+")", ex);
+            streamException(ee, ar);
+        }
+    }
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/updateGoal.json", method = RequestMethod.POST)
@@ -653,29 +672,36 @@ public class ProjectGoalController extends BaseController {
 
             //now make the history description of what just happened
             StringBuffer inventedComment = new StringBuffer(goalInfo.optString("newAccomplishment"));
+            boolean hasChanged = false;
             if (previousState != gr.getState()) {
                 inventedComment.append(" State:");
                 inventedComment.append(BaseRecord.stateName(gr.getState()));
+                hasChanged = true;
             }
             if (!previousStatus.equals(gr.getStatus())) {
                 inventedComment.append(" Status:");
                 inventedComment.append(gr.getStatus());
+                hasChanged = true;
             }
             if (previousDue != gr.getDueDate()) {
                 inventedComment.append(" DueDate:");
                 inventedComment.append(SectionUtil.getNicePrintDate(gr.getDueDate()));
+                hasChanged = true;
             }
             if (!previousProspects.equals(gr.getProspects())) {
                 inventedComment.append(" Prospects:");
                 inventedComment.append(gr.getProspects());
+                hasChanged = true;
             }
 
-            String comments = inventedComment.toString();
+            if (hasChanged) {
+                String comments = inventedComment.toString();
 
-            //create the history record here.
-            HistoryRecord.createHistoryRecord(ngp, gr.getId(),
-                    HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar,
-                    comments);
+                //create the history record here.
+                HistoryRecord.createHistoryRecord(ngp, gr.getId(),
+                        HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar,
+                        comments);
+            }
             ngp.renumberGoalRanks();
             ngp.saveFile(ar, "Updated action item "+gid);
             JSONObject repo = gr.getJSON4Goal(ngp);
@@ -686,7 +712,7 @@ public class ProjectGoalController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/updateMultiGoal.json", method = RequestMethod.POST)
     public void updateMultiGoal(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -700,7 +726,7 @@ public class ProjectGoalController extends BaseController {
             JSONObject goalEnvelope = getPostedObject(ar);
             JSONArray goalList = goalEnvelope.getJSONArray("list");
             JSONArray responseList = new JSONArray();
-            
+
             int last = goalList.length();
             for (int i=0; i<last; i++) {
                 JSONObject goalInfo = goalList.getJSONObject(i);
@@ -714,15 +740,15 @@ public class ProjectGoalController extends BaseController {
                 else {
                     gr = ngp.getGoalOrFail(gid);
                 }
-    
+
                 gr.updateGoalFromJSON(goalInfo, ngp, ar);
                 responseList.put(gr.getJSON4Goal(ngp));
             }
-            
-            //TODO: maybe this should return ALL the goals since they all 
+
+            //TODO: maybe this should return ALL the goals since they all
             //might change when renumbered
             ngp.renumberGoalRanks();
-            
+
             ngp.saveFile(ar, "Updated multiple action items");
             JSONObject repo = new JSONObject();
             repo.put("list",  responseList);
@@ -732,7 +758,7 @@ public class ProjectGoalController extends BaseController {
             Exception ee = new Exception("Unable to update multiple Action Items", ex);
             streamException(ee, ar);
         }
-    }    
+    }
 
     @RequestMapping(value = "/{siteId}/{pageId}/getGoalHistory.json", method = RequestMethod.GET)
     public void getGoalHistory(@PathVariable String siteId,@PathVariable String pageId,
