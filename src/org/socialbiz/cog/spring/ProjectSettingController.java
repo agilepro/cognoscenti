@@ -21,6 +21,7 @@
 package org.socialbiz.cog.spring;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,11 +61,11 @@ import org.workcast.json.JSONObject;
 
 @Controller
 public class ProjectSettingController extends BaseController {
-    
-    
-    
+
+
+
     //////////////////////// MAIN VIEWS ////////////////////////////
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/personal.htm", method = RequestMethod.GET)
     public ModelAndView showPersonalTab(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
@@ -92,7 +93,7 @@ public class ProjectSettingController extends BaseController {
         return null;
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/admin.htm", method = RequestMethod.GET)
     public ModelAndView showAdminTab(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
@@ -128,7 +129,7 @@ public class ProjectSettingController extends BaseController {
         return null;
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/streamingLinks.htm", method = RequestMethod.GET)
     public ModelAndView streamingLinks(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -137,8 +138,8 @@ public class ProjectSettingController extends BaseController {
         return null;
     }
 
-    
-    
+
+
     @RequestMapping(value = "/{siteId}/{pageId}/sendNote.htm", method = RequestMethod.GET)
     public ModelAndView sendNote(
             @PathVariable String pageId, @PathVariable String siteId,
@@ -148,7 +149,7 @@ public class ProjectSettingController extends BaseController {
         return null;
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/sendNoteView.htm", method = RequestMethod.GET)
     public ModelAndView sendNoteView(
             @PathVariable String pageId, @PathVariable String siteId,
@@ -157,7 +158,7 @@ public class ProjectSettingController extends BaseController {
         showJSPMembers(ar, siteId, pageId, "sendNoteView");
         return null;
     }
-    
+
 
     @RequestMapping(value = "/{siteId}/{pageId}/synchronizeUpstream.htm", method = RequestMethod.GET)
     public ModelAndView synchronizeUpstream(@PathVariable String siteId, @PathVariable String pageId,
@@ -169,12 +170,12 @@ public class ProjectSettingController extends BaseController {
 
 
 
-    
-    
-    
+
+
+
     ////////////////////////////// REDIRECTS ///////////////////////////////////
-    
-    
+
+
     @RequestMapping(value = "/{siteId}/{pageId}/permission.htm", method = RequestMethod.GET)
     public ModelAndView permission(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -192,10 +193,10 @@ public class ProjectSettingController extends BaseController {
         return redirectBrowser(ar, "roleManagement.htm");
     }
 
-    
-    
+
+
     //////////////////////// REST REQUESTS ///////////////////////////
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/personalUpdate.json", method = RequestMethod.POST)
     public void personalUpdate(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -345,7 +346,7 @@ public class ProjectSettingController extends BaseController {
         List<OptOutAddr> initialList = new ArrayList<OptOutAddr>();
         OptOutAddr.appendUsersFromRole(container, "Administrators", initialList);
         OptOutAddr.appendUsersFromRole(container, "Members", initialList);
-        
+
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
         data.put("requester", ar.getUserProfile().getJSON());
@@ -354,7 +355,7 @@ public class ProjectSettingController extends BaseController {
         data.put("roleName", roleRequestRecord.getRoleName());
         data.put("comment", roleRequestRecord.getRequestDescription());
         data.put("resourceURL", ar.baseURL + resourceURL);
-        
+
         File templateFile = cog.getConfig().getFileFromRoot("email/RoleRequest.chtml");
 
         // filter out users that who have no profile and have never logged in.
@@ -540,12 +541,10 @@ public class ProjectSettingController extends BaseController {
             ngp.saveContent(ar, "added user "+id+" to role "+r);
 
            if(go!=null){
-               response.sendRedirect(go);
-           }else{
-               modelAndView = new ModelAndView(new RedirectView("EditRole.htm"));
-               // modelAndView.addObject works in case of redirect. It adds the parameter
-               // in query string.
-               modelAndView.addObject("roleName",r);
+               ar.resp.sendRedirect(go);
+           }
+           else{
+               ar.resp.sendRedirect("EditRole.htm?roleName="+URLEncoder.encode(r, "utf-8"));
            }
 
         }

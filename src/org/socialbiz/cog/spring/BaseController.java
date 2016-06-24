@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLEncoder;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,8 +84,8 @@ public class BaseController {
         return null;
     }
 
-    
-    
+
+
     //////////////////////// JSP Wrapping and Streaming ////////////////////////////
 
     protected static void streamJSP(AuthRequest ar, String jspName) throws Exception {
@@ -93,7 +94,7 @@ public class BaseController {
             throw new Exception("wrappedJSP has already been set to ("+ar.req.getAttribute("wrappedJSP")
                      +") when trying to set it to ("+jspName+")");
         }
-        
+
         ar.req.setAttribute("wrappedJSP", jspName);
         ar.invokeJSP("/spring/jsp/Wrapper.jsp");
     }
@@ -115,7 +116,7 @@ public class BaseController {
         }
         streamJSP(ar, jspName);
     }
-    
+
     public static void showJSPAnonymous(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             if (pageId==null) {
@@ -151,8 +152,8 @@ public class BaseController {
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
         }
     }
-    
-    
+
+
     public static void showJSPMembers(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             if(!ar.isLoggedIn()){
@@ -187,8 +188,8 @@ public class BaseController {
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
         }
     }
-    
-    
+
+
 
     /**
      * This is a convenience function for all handlers that have the account and project
@@ -251,10 +252,6 @@ public class BaseController {
         return ar;
     }
 
-    public ModelAndView createRedirectView(AuthRequest ar, String redirectAddress) throws Exception {
-        return new ModelAndView(new RedirectView(redirectAddress));
-    }
-
     public ModelAndView createNamedView(String siteId, String pageId,
             AuthRequest ar,  String viewName)
             throws Exception {
@@ -272,6 +269,25 @@ public class BaseController {
         return;
     }
 
+    /*
+    public ModelAndView createRedirectView(AuthRequest ar, String redirectAddress) throws Exception {
+        return new ModelAndView(new RedirectView(redirectAddress));
+    }
+    */
+
+
+    protected void redirectBrowser(AuthRequest ar, String pageURL, Properties props) throws Exception {
+        char joinChar = '?';
+        StringBuilder sb = new StringBuilder(pageURL);
+        for (String key : props.stringPropertyNames()) {
+            String val = props.getProperty(key);
+            sb.append(joinChar);
+            sb.append(key);
+            sb.append("=");
+            sb.append(URLEncoder.encode(val, "UTF-8"));
+        }
+        ar.resp.sendRedirect(sb.toString());
+    }
 
     /*
     * Pass in the relative URL and
@@ -279,8 +295,7 @@ public class BaseController {
     * It will return a null ModelAndView object so that you can
     * say "return redirectToURL(myurl);"
     */
-    protected ModelAndView redirectBrowser(AuthRequest ar, String pageURL) throws Exception
-    {
+    protected ModelAndView redirectBrowser(AuthRequest ar, String pageURL) throws Exception {
         ar.resp.sendRedirect(pageURL);
         return null;
     }

@@ -20,8 +20,10 @@
 
 package org.socialbiz.cog.spring;
 
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -202,56 +204,55 @@ public class RemoteLinkController extends BaseController {
         }
     }
 
+    //TODO: do we still need this?
     @RequestMapping(value = "/{siteId}/{pageId}/submitWebDevURL.form", method = RequestMethod.POST)
-    protected ModelAndView submitWebDevURL(@PathVariable String siteId,
+    protected void submitWebDevURL(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-            ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.must.be.login.to.perform.action");
             registerRequiredProject(ar, siteId, pageId);
 
             String rLink = ar.reqParam("rLink");
 
-            modelAndView = createRedirectView(ar, "WebDevURLForm.htm");
-            modelAndView.addObject("rLink", rLink);
+            ar.resp.sendRedirect("WebDevURLForm.htm?rLink="+URLEncoder.encode(rLink, "UTF-8"));
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.link.to.repository",
                     new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/webDevURL.form", method = RequestMethod.POST)
-    protected ModelAndView webDevURL(@PathVariable String siteId,
+    protected void webDevURL(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-            ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.must.be.login.to.perform.action");
             registerRequiredProject(ar, siteId, pageId);
             String action = ar.reqParam("action");
             String rlink = ar.reqParam("rlink");
 
+            String dest = null;
             if(action.equals("UseExistingConnection")){
                 String folderId = ar.reqParam("folderId");
-                modelAndView = createRedirectView(ar, "createLinkToRepositoryForm.htm");
-                modelAndView.addObject("folderId", folderId);
-            }else if(action.equals("CreateNewConnection")){
-                modelAndView = createRedirectView(ar, "createNewConnection.htm");
-            }else if(action.equals("AccessPublicDocument")){
-                modelAndView = createRedirectView(ar, "createLinkToRepositoryForm.htm");
-                modelAndView.addObject("folderId", "PUBLIC");
-            }else{
+                dest = "createLinkToRepositoryForm.htm?folderId="+URLEncoder.encode(folderId, "UTF-8")
+                            +"&rlink="+ URLEncoder.encode(rlink, "UTF-8");
+            }
+            else if(action.equals("CreateNewConnection")){
+                dest = "createNewConnection.htm?rlink="+ URLEncoder.encode(rlink, "UTF-8");
+            }
+            else if(action.equals("AccessPublicDocument")){
+                dest = "createLinkToRepositoryForm.htm?folderId=PUBLIC&rlink="+ URLEncoder.encode(rlink, "UTF-8");
+            }
+            else{
                 throw new ProgramLogicError("Don't understand the operation: "+ action);
             }
-            modelAndView.addObject("rlink", rlink);
+            ar.resp.sendRedirect(dest);
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.link.to.repository.page",
                     new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/createConnection.form", method = RequestMethod.POST)
@@ -279,11 +280,12 @@ public class RemoteLinkController extends BaseController {
             String isNewUpload = ar.defParam("isNewUpload", "yes");
             String aid = ar.defParam("aid", null);
 
-            modelAndView = createRedirectView(ar, "createLinkToRepositoryForm.htm");
-            modelAndView.addObject("aid", aid);
-            modelAndView.addObject("rlink", verifyEnt.getFullPath());
-            modelAndView.addObject("isNewUpload", isNewUpload);
-            modelAndView.addObject("folderId", cSet.getId());
+            Properties props = new Properties();
+            props.setProperty("aid", aid);
+            props.setProperty("rlink", verifyEnt.getFullPath());
+            props.setProperty("isNewUpload", isNewUpload);
+            props.setProperty("folderId", cSet.getId());
+            redirectBrowser(ar, "createLinkToRepositoryForm.htm", props);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.create.connection",
                     new Object[]{pageId,siteId} , ex);
@@ -311,10 +313,9 @@ public class RemoteLinkController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/problemDiagnose.form", method = RequestMethod.POST)
-    protected ModelAndView problemDiagnose(@PathVariable String siteId,
+    protected void problemDiagnose(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.must.be.login.to.perform.action");
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
@@ -334,31 +335,28 @@ public class RemoteLinkController extends BaseController {
                 String fullPath = ar.reqParam("rlink");
                 ResourceEntity verifyEnt = uPage.getResourceFromFullpath(folderId, fullPath);
 
-                modelAndView = createRedirectView(ar, "createLinkToRepositoryForm.htm");
-                modelAndView.addObject("rlink", fullPath);
-                modelAndView.addObject("folderId", verifyEnt.getFolderId());
-                modelAndView.addObject("aid", aid);
-                modelAndView.addObject("isNewUpload", "no");
-                modelAndView.addObject("atype", ar.reqParam("atype"));
-
-            }else if(action.equals("CreateNewConnection")){
-
-                String fullPath = ar.reqParam("rlink");
-
-                modelAndView = createRedirectView(ar, "createNewConnection.htm");
-                modelAndView.addObject("rlink", fullPath);
-                modelAndView.addObject("aid", aid);
-                modelAndView.addObject("isNewUpload", "no");
-                modelAndView.addObject("atype", ar.reqParam("atype"));
-
-            }else if(action.equals("ChangePassword")){
-
+                Properties params = new Properties();
+                params.setProperty("rlink", fullPath);
+                params.setProperty("folderId", verifyEnt.getFolderId());
+                params.setProperty("aid", aid);
+                params.setProperty("isNewUpload", "no");
+                params.setProperty("atype", ar.reqParam("atype"));
+                redirectBrowser(ar, "listAttachments.htm", params);
+            }
+            else if(action.equals("CreateNewConnection")){
+                Properties params = new Properties();
+                params.setProperty("rlink", ar.reqParam("rlink"));
+                params.setProperty("aid", aid);
+                params.setProperty("isNewUpload", "no");
+                params.setProperty("atype", ar.reqParam("atype"));
+                redirectBrowser(ar, "createNewConnection.htm", params);
+            }
+            else if(action.equals("ChangePassword")){
                 String folderId = ar.reqParam("folderId");
                 fah.changePassword(folderId);
                 response.sendRedirect(ar.baseURL+"t/"+siteId+"/"+pageId+"/listAttachments.htm");
-
-            }else if(action.equals("CreateCopy")){
-
+            }
+            else if(action.equals("CreateCopy")){
                 String connectionHealth = ar.reqParam("connectionHealth");
                 String folderId = ar.reqParam("folderId");
                 if (!connectionHealth.equals("Healthy")) {
@@ -366,14 +364,12 @@ public class RemoteLinkController extends BaseController {
                 }
                 fah.createCopyInRepository(null, ngw, aid, ar.reqParam("rlink"), folderId,false);
                 response.sendRedirect(ar.baseURL+"t/"+siteId+"/"+pageId+"/listAttachments.htm");
-
-            }else if(action.equals("UnlinkFromRepository")){
-
+            }
+            else if(action.equals("UnlinkFromRepository")){
                 AttachmentHelper.unlinkDocFromRepository(ar, aid, ngw);
                 response.sendRedirect(ar.baseURL+"t/"+siteId+"/"+pageId+"/listAttachments.htm");
-
-            }else if(action.equals("ChangeURL")){
-
+            }
+            else if(action.equals("ChangeURL")){
                 String folderId = ar.reqParam("folderId");
                 String newPath = ar.reqParam("newPath");
                 ConnectionType cType = ar.getUserPage().getConnectionOrFail(folderId);
@@ -381,8 +377,8 @@ public class RemoteLinkController extends BaseController {
                 String rFilename = newRelativePath.substring(newRelativePath.lastIndexOf('/') + 1);
                 AttachmentHelper.updateRemoteAttachment(ar, ngw, null, newRelativePath, folderId, rFilename, null);
                 response.sendRedirect(ar.baseURL+"t/"+siteId+"/"+pageId+"/listAttachments.htm");
-
-            }else{
+            }
+            else{
                 throw new ProgramLogicError("problemDiagnose.form does not understand the operation: "+ action);
             }
 
@@ -390,7 +386,6 @@ public class RemoteLinkController extends BaseController {
             throw new NGException("nugen.operation.fail.project.problem.diagnose",
                     new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/WebDevURLForm.htm", method = RequestMethod.GET)
@@ -471,11 +466,11 @@ public class RemoteLinkController extends BaseController {
         }
     }
 
+    //TODO: do we still need this?
     @RequestMapping(value = "/{siteId}/{pageId}/CreateCopyForm.form", method = RequestMethod.POST)
-    protected ModelAndView createCopyForm(@PathVariable String siteId,
+    protected void createCopyForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-            ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.must.be.login.to.perform.action");
             NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
@@ -488,18 +483,20 @@ public class RemoteLinkController extends BaseController {
 
 
             if(action.equals("ChooseFolder")){
-                modelAndView = createRedirectView(ar, "ChooseFolder.htm");
-                String folderId = ar.reqParam("folderId");
-                modelAndView.addObject("aid", aid);
-                modelAndView.addObject("folderId", folderId);
-                modelAndView.addObject("path", "/");
+                Properties props = new Properties();
+                props.setProperty("aid", aid);
+                props.setProperty("folderId", ar.reqParam("folderId"));
+                props.setProperty("path", "/");
+                redirectBrowser(ar, "ChooseFolder.htm", props);
 
-            }else if(action.equals("CreateNewConnection")){
-                modelAndView = createRedirectView(ar, "createConForExistingFile.htm");
-                modelAndView.addObject("aid", aid);
-                modelAndView.addObject("path", "/");
-
-            }else if(action.equals("ChooseDefLocation")){
+            }
+            else if(action.equals("CreateNewConnection")){
+                Properties props = new Properties();
+                props.setProperty("aid", aid);
+                props.setProperty("path", "/");
+                redirectBrowser(ar, "createConForExistingFile.htm", props);
+            }
+            else if(action.equals("ChooseDefLocation")){
 
                 ResourceEntity parent = nGPage.getDefRemoteFolder();
 
@@ -511,20 +508,21 @@ public class RemoteLinkController extends BaseController {
                 boolean isSuccess = fah.copyAttachmentToRemote(nGPage, aid, childEnt, false);
 
                 if(!isSuccess){
-                    modelAndView = createRedirectView(ar, "fileExists.htm");
-                    modelAndView.addObject("aid", aid);
-                    modelAndView.addObject("symbol", childEnt.getSymbol());
+                    Properties props = new Properties();
+                    props.setProperty("aid", aid);
+                    props.setProperty("symbol", childEnt.getSymbol());
+                    redirectBrowser(ar, "fileExists.htm", props);
                 }else{
-                    modelAndView = createRedirectView(ar, "listAttachments.htm");
+                    redirectBrowser(ar, "listAttachments.htm");
                 }
-            }else{
+            }
+            else{
                 throw new ProgramLogicError("CreateCopyForm.form does not understand the operation: "+ action);
             }
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.create.copy.from",
                     new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/ChooseFolder.htm", method = RequestMethod.GET)
@@ -585,10 +583,9 @@ public class RemoteLinkController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/PushToRepository.form", method = RequestMethod.POST)
-    protected ModelAndView pushToRepositoryForm(@PathVariable String siteId,
+    protected void pushToRepositoryForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-            ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.push.doc.to.repository");
             NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
@@ -604,25 +601,22 @@ public class RemoteLinkController extends BaseController {
             ResourceEntity parent = uPage.getResourceFromSymbol(symbol);
 
             FolderAccessHelper fah = new FolderAccessHelper(ar);
-
             ResourceEntity child = parent.getChild(att.getDisplayName());
-
             boolean isSuccess = fah.copyAttachmentToRemote(nGPage, aid, child, false);
 
             if(!isSuccess){
-                modelAndView = createRedirectView(ar, "fileExists.htm");
-                modelAndView.addObject("aid", aid);
-                modelAndView.addObject("symbol", child.getSymbol());
-            }else{
-                modelAndView = createRedirectView(ar, "listAttachments.htm");
+                Properties params = new Properties();
+                params.setProperty("aid", aid);
+                params.setProperty("symbol", child.getSymbol());
+                redirectBrowser(ar, "fileExists.htm", params);
             }
-
-
+            else{
+                redirectBrowser(ar, "listAttachments.htm");
+            }
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.push.to.repository",
                     new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/{userKey}/connectionAction.form", method = RequestMethod.POST)
@@ -802,10 +796,11 @@ public class RemoteLinkController extends BaseController {
 
             if(action.equals("createConnection")){
                 ConnectionSettings cSet = FolderAccessHelper.updateConnection(ar);
-                modelAndView = createRedirectView(ar, "ChooseFolder.htm");
-                modelAndView.addObject("folderId", cSet.getId());
-                modelAndView.addObject("aid", aid);
-                modelAndView.addObject("path", "/");
+                Properties props = new Properties();
+                props.setProperty("folderId", cSet.getId());
+                props.setProperty("aid", aid);
+                props.setProperty("path", "/");
+                redirectBrowser(ar, "ChooseFolder.htm", props);
             }else{
                 throw new ProgramLogicError("createConnectionToPushDoc.form does not understand the operation: "+ action);
             }
@@ -845,10 +840,9 @@ public class RemoteLinkController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/fileExists.form", method = RequestMethod.POST)
-    protected ModelAndView fileExistsForm(@PathVariable String siteId,
+    protected void fileExistsForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-            ModelAndView modelAndView = null;
         AuthRequest ar = getLoggedInAuthRequest(request, response, "message.must.be.login.to.perform.action");
         NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
         String aid = ar.reqParam("aid");
@@ -860,8 +854,8 @@ public class RemoteLinkController extends BaseController {
 
             String actionVal = ar.reqParam("actionVal");
             if(actionVal.equals("Cancel")){
-                modelAndView = createRedirectView(ar, "listAttachments.htm");
-                return modelAndView;
+                redirectBrowser(ar, "listAttachments.htm");
+                return;
             }
 
             String action = ar.reqParam("action");
@@ -875,12 +869,14 @@ public class RemoteLinkController extends BaseController {
             if(action.equals("link to existing document")){
 
                 AttachmentHelper.linkToRemoteFile(ar,nGPage,aid,remoteFile);
-                modelAndView = createRedirectView(ar, "listAttachments.htm");
+                redirectBrowser(ar, "listAttachments.htm");
+                return;
 
             }else if(action.equals("overwrite the existing document")){
 
                 fah.copyAttachmentToRemote(nGPage, aid, remoteFile, true);
-                modelAndView = createRedirectView(ar, "listAttachments.htm");
+                redirectBrowser(ar, "listAttachments.htm");
+                return;
 
             }else if(action.equals("store using different name")){
                 String newName = ar.reqParam("newName");
@@ -889,11 +885,14 @@ public class RemoteLinkController extends BaseController {
                 ResourceEntity child = parent.getChild(newName);
 
                 fah.copyAttachmentToRemote(nGPage, aid, child, false);
-                modelAndView = createRedirectView(ar, "listAttachments.htm");
+                redirectBrowser(ar, "listAttachments.htm");
+                return;
 
             }else if(action.equals("try again")){
-                modelAndView = createRedirectView(ar, "CreateCopy.htm");
-                modelAndView.addObject("aid", aid);
+                Properties props = new Properties();
+                props.setProperty("aid", aid);
+                redirectBrowser(ar, "listAttachments.htm", props);
+                return;
             }else {
                 throw new Exception("Don't understand action: "+action);
             }
@@ -902,6 +901,5 @@ public class RemoteLinkController extends BaseController {
             throw new NGException("nugen.operation.fail.resolve.remote.file.exists",
                     new Object[]{aid, pageId, path} , ex);
         }
-        return modelAndView;
     }
 }

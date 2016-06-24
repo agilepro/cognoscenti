@@ -70,13 +70,9 @@ public class UploadFileController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/upload.form", method = RequestMethod.POST)
-    protected ModelAndView uploadFile(  @PathVariable String siteId,
-                                        @PathVariable String pageId,
-                                        HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        @RequestParam("fname") MultipartFile file) throws Exception {
-
-        ModelAndView modelAndView = null;
+    protected void uploadFile(  @PathVariable String siteId, @PathVariable String pageId,
+                HttpServletRequest request, HttpServletResponse response,
+                @RequestParam("fname") MultipartFile file) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
@@ -136,7 +132,7 @@ public class UploadFileController extends BaseController {
                 ngw.save();
             }
             if (go==null) {
-                modelAndView = createRedirectView(ar, "listAttachments.htm");
+                response.sendRedirect("listAttachments.htm");
             }
             else {
                 response.sendRedirect(go);
@@ -144,15 +140,13 @@ public class UploadFileController extends BaseController {
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.upload.document", new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/emailReminder.form", method = RequestMethod.POST)
-    protected ModelAndView submitEmailReminderForAttachment(
+    protected void submitEmailReminderForAttachment(
             @PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.send.email");
             NGPage ngp = registerRequiredProject(ar, siteId, pageId);
@@ -180,11 +174,10 @@ public class UploadFileController extends BaseController {
                     ar.nowTime, HistoryRecord.EVENT_DOC_ADDED, ar, "Added Reminder for "+assignee);
 
             ngp.saveFile(ar, "Modified attachments");
-            modelAndView = createRedirectView(ar, "reminders.htm");
+            response.sendRedirect("reminders.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.email.reminder", new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
 
     }
 
@@ -217,11 +210,10 @@ public class UploadFileController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/resendemailReminder.htm", method = RequestMethod.POST)
-    protected ModelAndView resendEmailReminderForAttachment(
+    protected void resendEmailReminderForAttachment(
             @PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.resend.email.reminder");
             NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
@@ -230,20 +222,19 @@ public class UploadFileController extends BaseController {
             String emailto = ar.defParam("emailto", null);
             ReminderRecord.reminderEmail(ar, pageId, reminderId, emailto, ngp);
 
-            modelAndView = createRedirectView(ar, "reminders.htm");
+            response.sendRedirect("reminders.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.resend.email.reminder", new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
 
 
+    //TODO: do we
     @RequestMapping(value = "/{siteId}/{pageId}/createLinkURL.form", method = RequestMethod.POST)
-    protected ModelAndView createLinkURL(@PathVariable String siteId,
+    protected void createLinkURL(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.create.link.url");
             NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
@@ -275,11 +266,11 @@ public class UploadFileController extends BaseController {
 
             attachment.setStorageFileName(taskUrl);
             ngw.saveFile(ar, "Created Link URL");
-            modelAndView = createRedirectView(ar, "listAttachments.htm");
+
+            response.sendRedirect("listAttachments.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.create.link.url.to.project", new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
 
@@ -328,8 +319,8 @@ public class UploadFileController extends BaseController {
         }
     }
 
-    
-    
+
+
     @RequestMapping(value = "/{siteId}/{pageId}/emailReminder.htm", method = RequestMethod.GET)
     protected ModelAndView getEmailRemainderForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
@@ -500,7 +491,7 @@ public class UploadFileController extends BaseController {
         return modelAndView;
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/fileVersions.htm", method = RequestMethod.GET)
     protected ModelAndView getFileVersion(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
@@ -532,7 +523,7 @@ public class UploadFileController extends BaseController {
         return modelAndView;
     }
 */
-    
+
     @RequestMapping(value = "/unDeleteAttachment.ajax", method = RequestMethod.POST)
     protected void unDeleteAttachment( HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -595,7 +586,7 @@ public class UploadFileController extends BaseController {
      }
 
 
-   
+
 
     @RequestMapping(value = "/{siteId}/{pageId}/CreateCopy.htm", method = RequestMethod.GET)
     protected ModelAndView CreateCopy(@PathVariable String siteId,

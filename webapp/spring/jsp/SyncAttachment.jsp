@@ -257,7 +257,7 @@ public int attachmentDisplay(AuthRequest ar, NGPage ngp) throws Exception
             continue;
         }
 
-        String rLink = attachment.getRemoteLink();
+        String rLink = attachment.getRemoteCombo().getComboString();
         if(!attachment.hasRemoteLink()) {
             continue;
         }

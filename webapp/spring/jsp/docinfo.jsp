@@ -350,7 +350,7 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
                 <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>"><img
                 src="<%=ar.retPath%>download.gif"></a> 
             <%}else if("URL".equals(attachment.getType())){ %>
-            <a href="<%ar.write(permaLink); %>)" target="_blank"><img
+            <a href="<%ar.write(permaLink); %>" target="_blank"><img
                 src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
             <%} %>
 

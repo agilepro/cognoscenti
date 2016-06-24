@@ -25,29 +25,16 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
-import org.socialbiz.cog.BaseRecord;
-import org.socialbiz.cog.ErrorLog;
-import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
-import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.SectionWiki;
-import org.socialbiz.cog.UserManager;
-import org.socialbiz.cog.UserPage;
-import org.socialbiz.cog.dms.ResourceEntity;
 import org.socialbiz.cog.exception.NGException;
-import org.socialbiz.cog.exception.ProgramLogicError;
-import org.socialbiz.cog.mail.EmailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 import org.workcast.json.JSONObject;
-import org.workcast.streams.MemFile;
 
 @Controller
 public class AdminController extends BaseController {
@@ -101,17 +88,19 @@ public class AdminController extends BaseController {
         }
     }
 
-    
-    
+
+//TODO: is this still used?
+    /*
     @RequestMapping(value = "/{siteId}/{project}/changeGoal.form", method = RequestMethod.POST)
-    public ModelAndView changeGoalHandler(@PathVariable String siteId,@PathVariable String project,
+    public void changeGoalHandler(@PathVariable String siteId,@PathVariable String project,
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+                showWarningView(ar, "message.loginalert.see.page");
+                return;
             }
             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(project);
             ar.setPageAccessLevels(ngp);
@@ -123,20 +112,22 @@ public class AdminController extends BaseController {
             process.setDescription(ar.reqParam("purpose"));
 
             ngp.saveFile(ar, "Changed Goal and/or Purpose of Workspace");
+            ar.resp.sendRedirect("admin.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.admin.change.goal", new Object[]{project,siteId} , ex);
         }
-        return new ModelAndView(new RedirectView( "admin.htm"));
+
     }
+    */
 
 
+    //TODO: change this to a JSON post from the admin page
     @RequestMapping(value = "/{siteId}/{project}/changeProjectName.form", method = RequestMethod.POST)
-    public ModelAndView changeProjectNameHandler(@PathVariable String siteId,@PathVariable String project,
+    public void changeProjectNameHandler(@PathVariable String siteId,@PathVariable String project,
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception {
 
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("User must be logged in to change the name of workspace.");
@@ -161,21 +152,20 @@ public class AdminController extends BaseController {
 
             ngp.saveFile(ar, "Change Name Action");
 
-            modelAndView = new ModelAndView(new RedirectView( "admin.htm"));
+            ar.resp.sendRedirect("admin.htm");
+
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.admin.change.project.name", new Object[]{project,siteId} , ex);
         }
-        return modelAndView;
     }
 
     //TODO: just update the list of names instead of separate operations to add and delete
+    //TODO: change this to a JSON post
     @RequestMapping(value = "/{siteId}/{project}/deletePreviousProjectName.htm", method = RequestMethod.GET)
-    public ModelAndView deletePreviousAccountNameHandler(@PathVariable String siteId, @PathVariable String project,
+    public void deletePreviousAccountNameHandler(@PathVariable String siteId, @PathVariable String project,
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception {
-
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("User must be logged in to delete previous name of workspace.");
@@ -194,20 +184,20 @@ public class AdminController extends BaseController {
             }
             ngp.saveFile(ar, "Change Name Action");
 
-            modelAndView = new ModelAndView(new RedirectView( "admin.htm") );
+            ar.resp.sendRedirect("admin.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.admin.delete.previous.project.name", new Object[]{project,siteId} , ex);
         }
-        return modelAndView;
     }
 
     //TODO: just update the list of names instead of separate operations to add and delete
+    //TODO: is this still being used?
+    /*
     @RequestMapping(value = "/{siteId}/$/changeAccountName.form", method = RequestMethod.POST)
-    public ModelAndView changeAccountNameHandler(@PathVariable String siteId,
+    public void changeAccountNameHandler(@PathVariable String siteId,
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception {
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("User must be logged in to delete previous name of site.");
@@ -231,21 +221,20 @@ public class AdminController extends BaseController {
 
             ngb.saveFile(ar, "Change Name Action");
 
-            modelAndView = new ModelAndView(new RedirectView( "admin.htm"));
+            ar.resp.sendRedirect("admin.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.admin.change.account.name", new Object[]{siteId} , ex);
         }
-        return modelAndView;
     }
+    */
 
     //TODO: probably not needed any more
+    /*
     @RequestMapping(value = "/{siteId}/$/changeAccountDescription.form", method = RequestMethod.POST)
-    public ModelAndView changeAccountDescriptionHandler(@PathVariable String siteId,
+    public void changeAccountDescriptionHandler(@PathVariable String siteId,
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception {
-
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("User must be logged in to change description of site.");
@@ -264,21 +253,21 @@ public class AdminController extends BaseController {
 
             site.saveFile(ar, "Change Site Settings");
 
-            modelAndView = new ModelAndView(new RedirectView( "admin.htm"));
+            ar.resp.sendRedirect("admin.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.admin.change.account.description", new Object[]{siteId} , ex);
         }
-        return modelAndView;
 
     }
+    */
 
+    //TODO: is this still needed?
+    /*
     @RequestMapping(value = "/{siteId}/$/deletePreviousAccountName.htm", method = RequestMethod.GET)
-    public ModelAndView deletePreviousProjectNameHandler(@PathVariable String siteId,
+    public void deletePreviousProjectNameHandler(@PathVariable String siteId,
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception {
-
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("User must be logged in to delete previous name of site.");
@@ -298,12 +287,12 @@ public class AdminController extends BaseController {
 
             site.saveFile(ar, "Change Name Action");
 
-            modelAndView = new ModelAndView(new RedirectView( "admin.htm") );
+            ar.resp.sendRedirect("admin.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.admin.delete.previous.account.name", new Object[]{siteId} , ex);
         }
-        return modelAndView;
     }
+    */
 
     // compare the sanitized versions of the names in the array, and if
     // the val equals one, return the index of that string, otherwise
@@ -354,6 +343,7 @@ public class AdminController extends BaseController {
      * few errors.  We probably need to look for a better validator, or figure out
      * how to get it to be more careful.
      */
+    /*
     @RequestMapping(value = "/validateHtml.validate", method = RequestMethod.POST)
     public ModelAndView validateHtml(HttpServletRequest request,
             HttpServletResponse response)
@@ -375,7 +365,10 @@ public class AdminController extends BaseController {
         }
         return modelAndView;
     }
+    */
 
+
+    /*
     @RequestMapping(value = "/sendErrortoAdmin.ajax", method = RequestMethod.POST)
     public void sendErrorToAdmin(HttpServletRequest request,
             HttpServletResponse response)
@@ -402,7 +395,9 @@ public class AdminController extends BaseController {
         }
         NGWebUtils.sendResponse(ar, message);
     }
+    */
 
+    /*
     private static void sendErrorMessageEmail(AuthRequest ar,String errorDOM,String comments)
     throws Exception
     {
@@ -437,7 +432,9 @@ public class AdminController extends BaseController {
                 "Error report",
                 bodyWriter.toString(), ar.getCogInstance());
     }
+    */
 
+    /*
     @RequestMapping(value = "/{siteId}/{project}/updateProjectSettings.ajax", method = RequestMethod.POST)
     public void updateProjectSettings(@PathVariable String siteId,@PathVariable String project,
             HttpServletRequest request,
@@ -471,13 +468,13 @@ public class AdminController extends BaseController {
         }
         NGWebUtils.sendResponse(ar, responseMessage);
     }
+    */
 
+    //TODO: is this still being used?  Convert to JSON post
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/updateProjectSettings.form", method = RequestMethod.POST)
-    public ModelAndView updateProjectSettingsForm(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
-        ModelAndView modelAndView = null;
+    public void updateProjectSettingsForm(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)  throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("User must be logged in to change the goal/purpose of workspace.");
@@ -502,20 +499,21 @@ public class AdminController extends BaseController {
                     }
                 }
                 ngp.saveFile(ar, "Updated default location of workspace.");
-                modelAndView = new ModelAndView(new RedirectView( "admin.htm"));
-                modelAndView.addObject("folderId", null);
-                modelAndView.addObject("path", null);
+                ar.resp.sendRedirect("admin.htm");
             }else {
                 throw new ProgramLogicError("updateProjectSettingsForm does not understand action '"+action+"'");
             }
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.admin.update.project.settings", new Object[]{siteId,pageId} , ex);
         }
-        return modelAndView;
     }
+    */
 
+
+    //TOOD: switch this to a JSON post
+    /*
     @RequestMapping(value = "/{siteId}/{project}/changeProjectSettings.form", method = RequestMethod.POST)
-    public ModelAndView changeProjectSettings(@PathVariable String siteId,@PathVariable String project,
+    public void changeProjectSettings(@PathVariable String siteId,@PathVariable String project,
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception {
@@ -587,10 +585,11 @@ public class AdminController extends BaseController {
             //This preserves the old modified date and user.
             String oldModUser = ngp.getLastModifyUser();
             ngp.saveWithoutMarkingModified(oldModUser, "Changed Settings of Workspace", ar.getCogInstance());
+            ar.resp.sendRedirect("admin.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.admin.update.project.settings",
                     new Object[]{project,siteId} , ex);
         }
-        return new ModelAndView(new RedirectView( "admin.htm"));
     }
+    */
 }

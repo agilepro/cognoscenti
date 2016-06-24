@@ -33,7 +33,7 @@
     String lModifed = "false";
     String rModifed = "false";
     AttachmentRecord attch = ngp.findAttachmentByID(aid);
-    String rLink = attch.getRemoteLink();
+    String rLink = attch.getRemoteCombo().getComboString();
 
 
     String rfileName = rLink.substring(rLink.lastIndexOf('/') + 1);

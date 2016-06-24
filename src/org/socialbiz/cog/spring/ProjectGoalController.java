@@ -183,7 +183,7 @@ public class ProjectGoalController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/createSubTask.form", method = RequestMethod.POST)
-    public ModelAndView createSubTask(@PathVariable String siteId,
+    public void createSubTask(@PathVariable String siteId,
             @PathVariable String pageId, @RequestParam String taskId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -199,7 +199,7 @@ public class ProjectGoalController extends BaseController {
             NGWebUtils.updateUserContactAndSaveUserPage(ar, "Add",assignto);
 
             String go = ar.reqParam("go");
-            return new ModelAndView(new RedirectView(go));
+            ar.resp.sendRedirect(go);
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.create.sub.task", new Object[]{pageId,siteId} , ex);

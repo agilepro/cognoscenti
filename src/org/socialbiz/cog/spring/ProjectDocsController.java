@@ -58,7 +58,7 @@ public class ProjectDocsController extends BaseController {
         BaseController.showJSPAnonymous(ar, siteId, pageId, "ListAttachments");
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/docsFolder.htm", method = RequestMethod.GET)
     public void docsFolder(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -92,7 +92,7 @@ public class ProjectDocsController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         BaseController.showJSPMembers(ar, siteId, pageId, "DocsAdd");
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/docinfo{aid}.htm", method = RequestMethod.GET)
     protected void docInfoView(@PathVariable String siteId,
              @PathVariable String pageId, @PathVariable String aid,
@@ -115,7 +115,7 @@ public class ProjectDocsController extends BaseController {
 
     @RequestMapping(value = "/{siteId}/{pageId}/fileVersions.htm", method = RequestMethod.GET)
     protected void fileVersions(@PathVariable String siteId,
-             @PathVariable String pageId, 
+             @PathVariable String pageId,
              HttpServletRequest request,  HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         //ngp.findAttachmentByIDOrFail(aid);
@@ -125,17 +125,17 @@ public class ProjectDocsController extends BaseController {
 
     @RequestMapping(value = "/{siteId}/{pageId}/docsRevise.htm", method = RequestMethod.GET)
     protected void docsRevise(@PathVariable String siteId,
-             @PathVariable String pageId, 
+             @PathVariable String pageId,
              HttpServletRequest request,  HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         //ngp.findAttachmentByIDOrFail(aid);
         request.setAttribute("aid", ar.reqParam("aid"));
         BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsRevise");
     }
-    
-    
+
+
     //////////////////////// REDIRECTS //////////////////////////////
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/attachment.htm", method = RequestMethod.GET)
     public void showProjectHomeTab(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -278,23 +278,13 @@ public class ProjectDocsController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/reminders.htm", method = RequestMethod.GET)
-    public ModelAndView remindersTab(@PathVariable String siteId,@PathVariable String pageId,
+    public void remindersTab(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.reminders.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            return new ModelAndView("reminders");
+            showJSPMembers(ar, siteId, pageId, "reminders");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.reminder.page", new Object[]{pageId,siteId} , ex);
         }
@@ -336,20 +326,13 @@ public class ProjectDocsController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/SyncAttachment.htm", method = RequestMethod.GET)
-    protected ModelAndView syncAttachment(@PathVariable String siteId,
+    protected void syncAttachment(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-
-            ModelAndView modelAndView= checkLoginMember(ar);
-            if (modelAndView!=null) {
-                return modelAndView;
-            }
-
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            return new ModelAndView("SyncAttachment");
+            showJSPMembers(ar, siteId, pageId, "SyncAttachment");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.sync.share.point.attachment.page",
                     new Object[]{pageId,siteId} , ex);
@@ -395,7 +378,7 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/docsList.json", method = RequestMethod.GET)
     public void docsList(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -413,7 +396,7 @@ public class ProjectDocsController extends BaseController {
                 }
                 attachmentList.put(doc.getJSON4Doc(ar, ngw));
             }
-            
+
             JSONObject repo = new JSONObject();
             repo.put("docs", attachmentList);
             repo.write(ar.w, 2, 2);
@@ -423,5 +406,5 @@ public class ProjectDocsController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
+
 }
