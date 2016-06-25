@@ -409,7 +409,9 @@ public class EmailGenerator extends DOMFace {
             meetingObj.put("meetingUrl", ar.retPath + ar.getResourceURL(ngp, "meetingFull.htm?id="+meeting.getId()
                     +"&"+AccessControl.getAccessMeetParams(ngp, meeting)));
             data.put("meeting", meetingObj);
-            data.put("meetingTime", new Date(meeting.getStartTime()).toString());
+            
+            //TODO: this is temporary until templates can handle dates
+            data.put("meetingTime", SectionUtil.getNicePrintDate(meeting.getStartTime()));
         }
         return data;
     }

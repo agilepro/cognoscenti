@@ -50,6 +50,9 @@ public class ChunkTemplate {
                     res.put(key, "true");
                 }
             }
+            else if (kewl instanceof Long) {
+                res.put(key, ((Long)kewl).toString());
+            }
             else {
                 res.put(key, kewl.toString() + " TYPE:"+kewl.getClass().getName());
             }
@@ -112,6 +115,9 @@ public class ChunkTemplate {
         theme.setTemplateFolder(templateFile.getParentFile().toString());
         theme.setDefaultFileExtension("chtml");
         theme.setEncoding("UTF-8");
+        
+        //This allows {$myDate|date(YYYY-MM-dd)} style tokens in the file
+        theme.registerFilter(new ChunkFilterDate());
         
         Chunk c = theme.makeChunk(fileName);
                 

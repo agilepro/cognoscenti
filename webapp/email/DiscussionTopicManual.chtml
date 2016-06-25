@@ -41,7 +41,7 @@
 <h2><a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a></h2>
 
 <p>
-Scheduled time: <b>{$meetingTime}</b>
+Scheduled time: <b>{$meeting.startTime|date("MMM dd, YYYY  HH:mm z")}</b>
 </p>
 
 <p>
@@ -62,5 +62,6 @@ Scheduled time: <b>{$meetingTime}</b>
 </div>
 
 {% include OptOut %}
+
 
 </body></html>
