@@ -17,14 +17,14 @@
 <div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
 <!--TEMPLATE NewTopic.htm-->
 <p>Workspace: <a href="{$wsURL}">{$wsName|onempty(Unnamed Workspace)|html}</a>
-&nbsp; Action Item: <a href="{{actionItemURL}}">{{actionItem.synopsis}}</a></p>
+&nbsp; Action Item: <a href="{$actionItemURL}">{$actionItem.synopsis}</a></p>
 <hr/>
 <p>
-{% if ($isFinal) %}
+{% if ($isFinal == true) %}
 Action item has been closed as <b>{$actionItem.state}</b>:
-{% elseif ($isFuture) %}
+{% elseif ($isFuture == true) %}
 Action item is marked to be done in the future: 
-{% elseif ($recipientIsAssignedTask) %}
+{% elseif ($recipientIsAssignedTask == true) %}
 Action item is assigned to you:
 {% else %}
 Action item has recently changed state or assignees: 
@@ -34,7 +34,7 @@ Action item has recently changed state or assignees:
 <table class="niceTable">
 <tr>
     <td>Synopsis:</td>
-    <td><a href="{$actionItemURL}">{$actionItem.synopsis|onempty(No Synopsis)|html}}</a></td>
+    <td><a href="{$actionItemURL}">{$actionItem.synopsis|onempty(No Synopsis)|html}</a></td>
 </tr>
 <tr>
     <td>Requested by:</td> 
@@ -54,7 +54,7 @@ Action item has recently changed state or assignees:
 </tr>
 <tr>
     <td>Due:</td>
-    <td>{$actionItem.duedate|date(yyyy-MM-dd)}</td>
+    <td>{$actionItem.duedate|date("MMM dd, YYYY")}</td>
 </tr>
 </table>
 
@@ -62,5 +62,9 @@ Action item has recently changed state or assignees:
 
 {% include OptOut %}
 
+<hr/>
+<pre>
+{$debugDump}
+</pre>
 
 </body></html>

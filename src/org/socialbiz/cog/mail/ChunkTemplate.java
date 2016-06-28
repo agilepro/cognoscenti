@@ -16,11 +16,11 @@ import com.x5.template.Theme;
 
 /**
  * Chunk Template is an open source template library.
- * 
+ *
  * This class isolates all the special code needed to work with it.
  */
 public class ChunkTemplate {
-    
+
     public static HashMap<String,Object> convertToMap(JSONObject jo) throws Exception {
         HashMap<String,Object> res = new HashMap<String,Object> ();
         Set<String> keys = jo.keySet();
@@ -42,7 +42,7 @@ public class ChunkTemplate {
                 }
             }
             else if (kewl instanceof String) {
-                res.put(key, (String)kewl);
+                res.put(key, kewl);
             }
             else if (kewl instanceof Boolean) {
                 if (((Boolean)kewl).booleanValue()) {
@@ -53,13 +53,22 @@ public class ChunkTemplate {
             else if (kewl instanceof Long) {
                 res.put(key, ((Long)kewl).toString());
             }
+            else if (kewl instanceof Integer) {
+                res.put(key, ((Integer)kewl).toString());
+            }
+            else if (kewl instanceof Float) {
+                res.put(key, ((Float)kewl).toString());
+            }
+            else if (kewl instanceof Double) {
+                res.put(key, ((Double)kewl).toString());
+            }
             else {
                 res.put(key, kewl.toString() + " TYPE:"+kewl.getClass().getName());
             }
         }
         return res;
     }
-    
+
     public static List<Object> convertToList(JSONArray ja) throws Exception {
         if (ja.length()==0) {
             return null;
@@ -80,7 +89,7 @@ public class ChunkTemplate {
                 }
             }
             else if (kewl instanceof String) {
-                res.add((String)kewl);
+                res.add(kewl);
             }
             else if (kewl instanceof Boolean) {
                 if (((Boolean)kewl).booleanValue()) {
@@ -100,7 +109,7 @@ public class ChunkTemplate {
         }
         return res;
     }
-    
+
 
     public static void streamIt(Writer w, File templateFile, JSONObject data) throws Exception {
         if (!templateFile.exists()) {
@@ -115,12 +124,12 @@ public class ChunkTemplate {
         theme.setTemplateFolder(templateFile.getParentFile().toString());
         theme.setDefaultFileExtension("chtml");
         theme.setEncoding("UTF-8");
-        
+
         //This allows {$myDate|date(YYYY-MM-dd)} style tokens in the file
         theme.registerFilter(new ChunkFilterDate());
-        
+
         Chunk c = theme.makeChunk(fileName);
-                
+
         for (String key : data.keySet()) {
             Object kewl = data.get(key);
             if (kewl instanceof JSONObject) {
@@ -143,7 +152,7 @@ public class ChunkTemplate {
             }
         }
         c.set("debugDump", data.toString(2));
-        
+
 //        MemFile mf = new MemFile();
 //        Writer ww = mf.getWriter();
         c.render(w);
@@ -156,7 +165,7 @@ public class ChunkTemplate {
 //        fosw.close();
 //        System.out.println("CHUNK: file dumped to "+tempOutFile);
 //        mf.outToWriter(w);
-        w.flush();        
+        w.flush();
     }
 
 }

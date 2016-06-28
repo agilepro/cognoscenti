@@ -43,8 +43,8 @@ public class DailyDigest {
         sendDailyDigest(arx, cog);
         forceIt = false;
     }
-    
-    
+
+
     /*
      * This method loops through all known users (with profiles) and sends an
      * email with their tasks on it.
@@ -126,6 +126,7 @@ public class DailyDigest {
                 return;
             }
 
+            //this is the last time they were notified.
             long historyStartTime = up.getNotificationTime();
 
             //schema migration ... some users will not have this value set.
@@ -139,12 +140,22 @@ public class DailyDigest {
             //Calculate the time by adding the days and subtracting an hour to account for the time
             //it takes to run through all the users.  Don't want to kick a message to tomorrow just
             //because it is a few seconds earlier today.
-            long nextNotificationMessageDue = historyStartTime + (up.getNotificationPeriod()*24*60*60*1000) - 3600000;
-            if (processingStartTime < nextNotificationMessageDue && !forceIt) {
+            long timeSinceLastSend = processingStartTime - historyStartTime;
+            long hoursSinceLastSend = timeSinceLastSend / (1000*60*60);
+
+            //due to processing delays and integer arithmetic this will be either 23 or 24
+            //add a couple hours before dividing by 24 to round to the number of days
+            long daysSinceLastSend = ((hoursSinceLastSend+2) / 24);
+
+            if (daysSinceLastSend < up.getNotificationPeriod() && !forceIt) {
                 //not yet time to send another notification message
+                debugEvidence.write("\n<li>not yet time to send to user ");
+                HTMLWriter.writeHtml(debugEvidence, up.getPreferredEmail());
+                debugEvidence.write("with period "+up.getNotificationPeriod()+", only been "+daysSinceLastSend+" days.</li>");
                 return;
             }
 
+/*  Override address is no longer needed or useful now that we have KMail server
             // if this address is configured, then all email will go to that
             // email address, instead of the address in the profile.
             //String overrideAddress = EmailSender.getProperty("overrideAddress");
@@ -152,6 +163,7 @@ public class DailyDigest {
             if (toAddress == null || toAddress.length() == 0) {
                 toAddress = realAddress;
             }
+*/
 
             MemFile body = new MemFile();
             AuthDummy clone = new AuthDummy(up, body.getWriter(), cog);
@@ -160,11 +172,11 @@ public class DailyDigest {
             //the user cache contains all the action items, open rounds, and proposals for a user
             UserCache userCache = cog.getUserCacheMgr().getCache(up.getKey());
             //because this is background, it is a good time to refresh the data in the cache
-            //userCache.refreshCache(cog); 
+            userCache.refreshCache(cog);
             int reportableThings = userCache.getActionItems().length();
             reportableThings += userCache.getOpenRounds().length();
             reportableThings += userCache.getProposals().length();
-            
+
             System.out.println("User "+up.getKey()+" has "+userCache.getActionItems().length()+" action items.");
             System.out.println("User "+up.getKey()+" has "+userCache.getOpenRounds().length()+" open rounds.");
             System.out.println("User "+up.getKey()+" has "+userCache.getProposals().length()+" proposals.");
@@ -178,12 +190,12 @@ public class DailyDigest {
             data.write(memWriter);
             memWriter.flush();
             data = new JSONObject(new JSONTokener(mf.getReader()));
-            
+
             data.put("baseURL", clone.baseURL);
             data.put("to",up.getJSON());
             data.put("timeStart",historyStartTime);
             data.put("timeEnd",processingStartTime);
-            
+
             JSONArray notifyList = new JSONArray();
             for (NotificationRecord record : up.getNotificationList()) {
                 NGPageIndex ngpi = cog.getContainerIndexByKey(record.getPageKey());
@@ -214,13 +226,13 @@ public class DailyDigest {
                 debugDump.delete();
             }
             data.writeToFile(debugDump);
-           
+
 
             OptOutAddr ooa = new OptOutAddr(
                 AddressListEntry.parseCombinedAddress(realAddress));
 
             int numberOfUpdates = 0;
-            
+
             clone.write("<html><body>\n");
             clone.write("<p>Hello ");
             up.writeLinkAlways(clone);
@@ -559,7 +571,7 @@ public class DailyDigest {
         ar.write("&ukey=");
         ar.writeURLData(up.getKey());
     }
-    
+
     private static String getActionItemURL(AuthRequest ar, NGPageIndex ngpi,
             GoalRecord gr, UserProfile up) throws Exception {
         NGPage ngp = (NGPage) ngpi.getContainer();
