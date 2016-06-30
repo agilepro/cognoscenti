@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -89,7 +90,20 @@ public class CommentContainer extends DOMFace {
         thisContainer.put("comments",  getAllComments(ar));
     }
 
-    public JSONArray getCommentTimeFrame(AuthRequest ar, long startTime, long endTime) throws Exception {
+    public List<CommentRecord> getCommentTimeFrame(long startTime, long endTime) throws Exception {
+        List<CommentRecord> ret = new ArrayList<CommentRecord>();
+        for (CommentRecord cr : getComments()) {
+            if (cr.getTime()<startTime || cr.getTime()>endTime) {
+                //ignore comment created before or after the period
+                continue;
+            }
+            ret.add(cr);
+        }
+        return ret;
+    }
+
+
+    private JSONArray getCommentJSONTimeFrame(AuthRequest ar, long startTime, long endTime) throws Exception {
         JSONArray allCommentss = new JSONArray();
         UserProfile thisUser = ar.getUserProfile();
         for (CommentRecord cr : getComments()) {
@@ -108,7 +122,7 @@ public class CommentContainer extends DOMFace {
         return allCommentss;
     }
     public void addJSONComments(AuthRequest ar, JSONObject thisContainer, long startTime, long endTime) throws Exception {
-        thisContainer.put("comments",  getCommentTimeFrame(ar, startTime, endTime));
+        thisContainer.put("comments",  getCommentJSONTimeFrame(ar, startTime, endTime));
     }
 
     public void updateCommentsFromJSON(JSONObject noteObj, AuthRequest ar) throws Exception {

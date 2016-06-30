@@ -652,36 +652,74 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
             String ainotes = ai.getNotes();
 
+            //TODO: I don't think notes are used any more
             if (ainotes!=null && ainotes.length()>0) {
                 sb.append("\n\n''Notes:''\n\n");
                 sb.append(ainotes);
             }
-            for (String actionItemId : ai.getActionItems()) {
-                GoalRecord gr = ngp.getGoalOrNull(actionItemId);
-                if (gr!=null) {
-                    sb.append("\n\n* Action Item: [");
-                    sb.append(gr.getSynopsis());
-                    sb.append("|");
-                    sb.append(ar.baseURL);
-                    sb.append(ar.getResourceURL(ngp, "task"+gr.getId()+".htm"));
-                    sb.append("]");
+
+            NoteRecord linkedTopic = ngp.getNoteByUidOrNull(ai.getTopicLink());
+            if (linkedTopic==null) {
+                for (String actionItemId : ai.getActionItems()) {
+                    GoalRecord gr = ngp.getGoalOrNull(actionItemId);
+                    if (gr!=null) {
+                        sb.append("\n\n* Action Item: [");
+                        sb.append(gr.getSynopsis());
+                        sb.append("|");
+                        sb.append(ar.baseURL);
+                        sb.append(ar.getResourceURL(ngp, "task"+gr.getId()+".htm"));
+                        sb.append("]");
+                    }
+                }
+                for (String doc : ai.getDocList()) {
+                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(doc);
+                    if (aRec!=null) {
+                        sb.append("\n\n* Attachment: [");
+                        sb.append(aRec.getNiceName());
+                        sb.append("|");
+                        sb.append(ar.baseURL);
+                        sb.append(ar.getResourceURL(ngp, "docinfo"+aRec.getId()+".htm"));
+                        sb.append("]");
+                    }
+                }
+                for (CommentRecord cr : ai.getComments()) {
+                    if (cr.getCommentType() == CommentRecord.COMMENT_TYPE_MINUTES) {
+                        sb.append("\n\n''Minutes:''\n\n");
+                        sb.append(cr.getContent());
+                    }
                 }
             }
-            for (String doc : ai.getDocList()) {
-                AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(doc);
-                if (aRec!=null) {
-                    sb.append("\n\n* Attachment: [");
-                    sb.append(aRec.getNiceName());
-                    sb.append("|");
-                    sb.append(ar.baseURL);
-                    sb.append(ar.getResourceURL(ngp, "docinfo"+aRec.getId()+".htm"));
-                    sb.append("]");
+            else {
+
+                for (String actionItemId : linkedTopic.getActionList()) {
+                    GoalRecord gr = ngp.getGoalOrNull(actionItemId);
+                    if (gr!=null) {
+                        sb.append("\n\n* Action Item: [");
+                        sb.append(gr.getSynopsis());
+                        sb.append("|");
+                        sb.append(ar.baseURL);
+                        sb.append(ar.getResourceURL(ngp, "task"+gr.getId()+".htm"));
+                        sb.append("]");
+                    }
                 }
-            }
-            for (CommentRecord cr : ai.getComments()) {
-                if (cr.getCommentType() == CommentRecord.COMMENT_TYPE_MINUTES) {
-                    sb.append("\n\n''Minutes:''\n\n");
-                    sb.append(cr.getContent());
+                for (String doc : linkedTopic.getDocList()) {
+                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(doc);
+                    if (aRec!=null) {
+                        sb.append("\n\n* Attachment: [");
+                        sb.append(aRec.getNiceName());
+                        sb.append("|");
+                        sb.append(ar.baseURL);
+                        sb.append(ar.getResourceURL(ngp, "docinfo"+aRec.getId()+".htm"));
+                        sb.append("]");
+                    }
+                }
+                long includeCommentRangeStart = getStartTime() - 3*24*60*60*1000;
+                long includeCommentRangeEnd = getStartTime() + 3*24*60*60*1000;
+                for (CommentRecord cr : linkedTopic.getCommentTimeFrame(includeCommentRangeStart, includeCommentRangeEnd)) {
+                    if (cr.getCommentType() == CommentRecord.COMMENT_TYPE_MINUTES) {
+                        sb.append("\n\n''Minutes:''\n\n");
+                        sb.append(cr.getContent());
+                    }
                 }
             }
         }
