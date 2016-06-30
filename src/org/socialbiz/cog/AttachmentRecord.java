@@ -795,7 +795,7 @@ public abstract class AttachmentRecord extends CommentContainer {
         if (!(container instanceof NGPage)) {
             throw new ProgramLogicError("Container must be a Workspace style container.");
         }
-        NGPage ngp = (NGPage) container;
+        NGPage ngp = container;
         List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
             NGLabel aLabel = ngp.getLabelRecordOrNull(name);
@@ -848,9 +848,9 @@ public abstract class AttachmentRecord extends CommentContainer {
         return "";
     }
 
-    
+
     /**
-     * Returns all the meetinsg that have agenda items that are linked to this document 
+     * Returns all the meetinsg that have agenda items that are linked to this document
      * attachment.  Should this return agenda items, as well?
      */
     public List<MeetingRecord> getLinkedMeetings(NGPage ngc) throws Exception {
@@ -878,7 +878,7 @@ public abstract class AttachmentRecord extends CommentContainer {
         return allMeetings;
     }
 
-    
+
     public List<NoteRecord> getLinkedTopics(NGPage ngc) throws Exception {
         ArrayList<NoteRecord> allTopics = new ArrayList<NoteRecord>();
         String nid = this.getUniversalId();
@@ -895,7 +895,7 @@ public abstract class AttachmentRecord extends CommentContainer {
         }
         return allTopics;
     }
-    
+
     public List<GoalRecord> getLinkedGoals(NGPage ngc) throws Exception {
         ArrayList<GoalRecord> allGoals = new ArrayList<GoalRecord>();
         String nid = this.getUniversalId();
@@ -912,7 +912,7 @@ public abstract class AttachmentRecord extends CommentContainer {
         }
         return allGoals;
     }
-    
+
 
     /***
      * The purge date is a date that is set up in advance to automatically
@@ -926,9 +926,9 @@ public abstract class AttachmentRecord extends CommentContainer {
         setAttributeLong("purgeDate", val);
     }
 
-   
-    
-    
+
+
+
     public JSONObject getJSON4Doc(AuthRequest ar, NGPage ngp) throws Exception {
         JSONObject thisDoc = new JSONObject();
         String univ = getUniversalId();
@@ -999,7 +999,7 @@ public abstract class AttachmentRecord extends CommentContainer {
             newCr.setContentHtml(ar, newValue);
             changed = true;
         }
-        
+
         if (docInfo.has("url")) {
             if ("URL".equals(getType())) {
                 setStorageFileName(docInfo.getString("url"));
@@ -1010,7 +1010,7 @@ public abstract class AttachmentRecord extends CommentContainer {
             setPurgeDate(docInfo.getLong("purgeDate"));
             changed = true;
         }
-        
+
         updateCommentsFromJSON(docInfo, ar);
 
         return changed;
@@ -1026,6 +1026,30 @@ public abstract class AttachmentRecord extends CommentContainer {
         return thisDoc;
     }
 
+    private static String removeBadChars(String input) {
+        StringBuilder ret = new StringBuilder();
+        for (int i=0; i<input.length(); i++) {
+            char ch = input.charAt(i);
+            if (ch<32) {
+                continue;
+            }
+            switch (ch) {
+                case '<':
+                case '>':
+                case ':':
+                case '"':
+                case '/':
+                case '\\':
+                case '|':
+                case '?':
+                case '*':
+                    continue;
+                default:
+                    ret.append(ch);
+            }
+        }
+        return ret.toString();
+    }
 
     public boolean updateDocFromJSON(JSONObject docInfo, AuthRequest ar) throws Exception {
         String universalid = docInfo.getString("universalid");
@@ -1037,7 +1061,7 @@ public abstract class AttachmentRecord extends CommentContainer {
         boolean changed = updateFromJSON(docInfo, (NGWorkspace)ar.ngp, ar);
 
         if (docInfo.has("name")) {
-            String newName = docInfo.getString("name");
+            String newName = removeBadChars(docInfo.getString("name"));
             if (!newName.equals(getDisplayName())) {
                 AttachmentRecord otherFileWithSameName = container.findAttachmentByName(newName);
                 if (otherFileWithSameName!=null && (universalid.equals(otherFileWithSameName.getUniversalId()))) {
