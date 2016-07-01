@@ -910,7 +910,7 @@ public class MainTabsViewControler extends BaseController {
               repo.write(ar.w, 2, 2);
               ar.flush();
           } catch(Exception ex){
-              Exception ee = new Exception("Unable to movee agenda item.", ex);
+              Exception ee = new Exception("Unable to move agenda item.", ex);
               streamException(ee, ar);
           }
       }

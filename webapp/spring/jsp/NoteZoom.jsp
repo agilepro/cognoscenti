@@ -430,6 +430,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         newComment.time = -1;
         newComment.commentType = type;
         newComment.state = 11;
+        newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
         newComment.isNew = true;
         newComment.user = "<%ar.writeJS(currentUser);%>";
         newComment.userName = "<%ar.writeJS(currentUserName);%>";

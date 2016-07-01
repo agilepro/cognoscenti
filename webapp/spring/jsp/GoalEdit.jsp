@@ -590,11 +590,11 @@ function addvalue() {
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted
                           </a>
                       </li>
-                      <li role="presentation">
+                      <!--li role="presentation">
                           <a role="menuitem" tabindex="-1" href="#" ng-click="setState(4)">
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small4.gif"> Waiting
                           </a>
-                      </li>
+                      </li-->
                       <li role="presentation">
                           <a role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed
@@ -605,16 +605,16 @@ function addvalue() {
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small6.gif"> Skipped
                           </a>
                       </li>
-                      <li role="presentation">
+                      <!--li role="presentation">
                           <a role="menuitem" tabindex="-1" href="#" ng-click="setState(7)">
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small7.gif"> Reviewing
                           </a>
-                      </li>
-                      <li role="presentation">
+                      </li-->
+                      <!--li role="presentation">
                           <a role="menuitem" tabindex="-1" href="#" ng-click="setState(8)">
                               Mark <img src="<%=ar.retPath%>assets/goalstate/small8.gif"> Paused
                           </a>
-                      </li>
+                      </li-->
                     </ul>
                 </span>
                 &nbsp; Prospect:

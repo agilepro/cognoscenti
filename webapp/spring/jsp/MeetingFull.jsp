@@ -188,7 +188,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.allTopics = [];
-    $scope.backlogId = <%=backlog.getId()%>;
+    $scope.backlogId = "<%=backlog.getId()%>";
 
 
     $scope.newAssignee = "";
@@ -218,7 +218,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.errorTrace = "";
     $scope.showTrace = false;
     $scope.reportError = function(serverErr) {
+        console.log("Encountered problem: ",serverErr);
         errorPanelHandler($scope, serverErr);
+        window.scrollTo(0, 0);
     };
 
     $scope.tinymceOptions = standardTinyMCEOptions();
@@ -501,6 +503,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.saveAgendaItemParts = function(agendaItem, fieldList) {
         var itemCopy = {};
         itemCopy.id = agendaItem.id;
+        if (!agendaItem.subject || agendaItem.subject.length<1) {
+            alert("Please enter agenda item name");
+            return;
+        }
         fieldList.map( function(ele) {
             itemCopy[ele] = agendaItem[ele];
         });
@@ -538,7 +544,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.createAgendaItem = function() {
         var newAgenda = {
-            subject: "New Agenda Item",
             id:"~new~",
             duration:10,
             position:$scope.meeting.agenda.length+1,
@@ -1239,6 +1244,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         newComment.time = -1;
         newComment.commentType = type;
         newComment.state = 11;
+        newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
         newComment.isNew = true;
         newComment.user = "<%ar.writeJS(currentUser);%>";
         newComment.userName = "<%ar.writeJS(currentUserName);%>";
@@ -1877,7 +1883,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
           <div ng-show="editItemDetailsMap[item.id]" class="well" style="margin:20px">
             <div class="form-inline form-group">
-                Linked Topic: <button ng-repeat="topic in itemTopics(item)" ng-click="visitTopic(item)" class="btn btn-sm btn-default">
+                Linked Topic: <button ng-repeat="topic in itemTopics(item)" ng-click="visitTopic(item)" 
+                    class="btn btn-sm btn-default" placeholder="Enter Agenda Item Name">
                     {{topic.subject}}</button>
                 <button ng-click="openAttachTopics(item)" class="btn btn-primary">
                     <span ng-hide="item.topicLink">Set</span>
@@ -1885,7 +1892,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </button>
             </div>
             <div class="form-inline form-group" ng-hide="item.topicLink">
-              Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"/>
+              Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"  
+                           placeholder="Enter Agenda Item Name"/>
             </div>
             <div class="form-inline form-group">
               Presenters:
