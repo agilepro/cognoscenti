@@ -20,6 +20,12 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     public static final int MEETING_TYPE_CIRCLE = 1;
     public static final int MEETING_TYPE_OPERATIONAL = 2;
 
+    public static final int MEETING_STATE_DRAFT = 0;
+    public static final int MEETING_STATE_PLANNING = 1;
+    public static final int MEETING_STATE_RUNNING = 2;
+    public static final int MEETING_STATE_COMPLETED = 3;
+
+
 
     public MeetingRecord(Document doc, Element ele, DOMFace p) throws Exception {
         super(doc, ele, p);
@@ -233,9 +239,9 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
 
     /**
-     * A small object suitable for lists of meetings
+     * A vary small object suitable for notification event lists
      */
-    public JSONObject getListableJSON(AuthRequest ar) throws Exception {
+    public JSONObject getMinimalJSON() throws Exception {
         JSONObject meetingInfo = new JSONObject();
         meetingInfo.put("id",          getId());
         meetingInfo.put("name",        getName());
@@ -244,11 +250,20 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         meetingInfo.put("startTime",   getStartTime());
         meetingInfo.put("duration",    getDuration());
         meetingInfo.put("meetingType", getMeetingType());
-        String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingDescription());
-        meetingInfo.put("meetingInfo", htmlVal);
         meetingInfo.put("reminderTime",getReminderAdvance());
         meetingInfo.put("reminderSent",getReminderSent());
         meetingInfo.put("owner",       getOwner());
+        return meetingInfo;
+    }
+
+
+    /**
+     * A small object suitable for lists of meetings
+     */
+    public JSONObject getListableJSON(AuthRequest ar) throws Exception {
+        JSONObject meetingInfo = getMinimalJSON();
+        String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingDescription());
+        meetingInfo.put("meetingInfo", htmlVal);
 
         JSONArray rollCall = new JSONArray();
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){

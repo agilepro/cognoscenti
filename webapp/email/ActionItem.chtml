@@ -62,9 +62,5 @@ Action item has recently changed state or assignees:
 
 {% include OptOut %}
 
-<hr/>
-<pre>
-{$debugDump}
-</pre>
 
 </body></html>

@@ -33,6 +33,7 @@ Required parameters:
     }
     JSONArray proposals = userCache.getProposals();
     JSONArray openRounds = userCache.getOpenRounds();
+    JSONArray futureMeetings = userCache.getFutureMeetings();
 
     List<WatchRecord> watchList = loggedUser.getWatchList();
 //    WatchRecord.sortByChangeDate(watchList, cog);
@@ -65,9 +66,14 @@ Required parameters:
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    $scope.futureMeetings  = <%futureMeetings.write(out,2,4);%>;
+    $scope.futureMeetings.sort( function(a,b) {
+        return a.startTime - b.startTime;
+    });
     $scope.openActionItems = <%openActionItems.write(out,2,4);%>;
-    $scope.proposals   = <%proposals.write(out,2,4);%>;
     $scope.openRounds  = <%openRounds.write(out,2,4);%>;
+    $scope.proposals   = <%proposals.write(out,2,4);%>;
+    
     $scope.wList       = <%wList.write(out,2,4);%>;
     $scope.siteList    = <%siteList.write(out,2,4);%>;
     $scope.loggedUser  = <% loggedUser.getJSON().write(out,2,4);%>;
@@ -160,14 +166,19 @@ app.controller('myCtrl', function($scope, $http) {
         
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
-              <div style="float:left">Meetings</div>
+              <div style="float:left">Upcoming Meetings</div>
               <div style="float:right">
                   <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/UserHome.htm">
                       <i class="fa fa-search"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
-          (placeholder ... not implemented yet.)
+            <div  ng-repeat="item in futureMeetings | limitTo: 10">
+                
+                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">
+                 {{fixLength(item.name)}} @ {{item.startTime|date}}</a>
+            </div>
+            <!-- should have a button here to get to all meetings -->
           </div>
         </div>
 

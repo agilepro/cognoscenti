@@ -50,6 +50,7 @@ public class UserCache {
         JSONArray actionItemList = new JSONArray();
         JSONArray proposalList = new JSONArray();
         JSONArray openRounds = new JSONArray();
+        JSONArray futureMeetings = new JSONArray();
 
         UserProfile up = UserManager.getUserProfileByKey(userKey);
 
@@ -80,16 +81,29 @@ public class UserCache {
                 }
             }
             for (MeetingRecord meet : aPage.getMeetings()) {
+
+                if (meet.isBacklogContainer()) {
+                    //don't ever get anything from the backlog container
+                    continue;
+                }
+
                 String address = "meetingFull.htm?id="+meet.getId();
                 for (AgendaItem ai : meet.getAgendaItems()) {
                     for (CommentRecord cr : ai.getComments()) {
                         addPollIfNoResponse(proposalList, openRounds, cr, up, aPage, meet.getTargetRole(), address, nowTime);
                     }
                 }
+
+                //if the meeting is still planned to be run
+                if (meet.getState() == MeetingRecord.MEETING_STATE_PLANNING) {
+                    //now determine if the user is asked to attend this meeting
+                    NGRole targetRole = aPage.getRole(meet.getTargetRole());
+                    if (targetRole!=null && targetRole.isPlayer(up)) {
+                        addMeetingToList(futureMeetings, meet, aPage, address);
+                    }
+                }
             }
 
-            
-            
             // clean out any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();
        }
@@ -97,21 +111,25 @@ public class UserCache {
         cacheObj.put("actionItems", actionItemList);
         cacheObj.put("proposals", proposalList);
         cacheObj.put("openRounds", openRounds);
+        cacheObj.put("futureMeetings", futureMeetings);
     }
-    
+
     private void addPollIfNoResponse(JSONArray proposalList, JSONArray openRounds, CommentRecord cr,
             UserProfile up, NGPage aPage, String targetRoleName, String address, long nowTime) throws Exception {
-        if (cr.getState()!=CommentRecord.COMMENT_STATE_CLOSED) {
+
+        //Draft comments/proposals/etc should not ever create an alert for notification
+        //Closed ones should not either.  The only state we are worried about is OPEN
+        if (cr.getState()==CommentRecord.COMMENT_STATE_OPEN) {
             if (up.equals(cr.getUser())) {
                 //first ... is this the owner, and if overdue let them know
                 //If user created this round, then remember that ... because it is still open or draft
                 addRecordToList(openRounds, cr,  aPage, address);
             }
-            
-            
+
+
             //second .. see if there is a response needed.
             NGRole targetRole = aPage.getRole(targetRoleName);
-            if (targetRole!=null && targetRole.isPlayer(up)) { 
+            if (targetRole!=null && targetRole.isPlayer(up)) {
                 ResponseRecord rr = cr.getResponse(up);
                 if (rr==null) {
                     //add proposal info if there is no response from this user
@@ -121,8 +139,15 @@ public class UserCache {
                 }
             }
         }
+
+        //now check to see if there are any draft comments hanging around.
+        else if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT) {
+            if (up.equals(cr.getUser())) {
+                addRecordToList(openRounds, cr,  aPage, address);
+            }
+        }
     }
-    
+
     private void addRecordToList(JSONArray list, CommentRecord cr, NGPage aPage, String address) throws Exception {
         JSONObject jo = cr.getJSON();
         String prop = cr.getContent();
@@ -138,6 +163,19 @@ public class UserCache {
         jo.put("address", address+"#cmt"+cr.getTime());
         list.put(jo);
     }
+
+
+    private void addMeetingToList(JSONArray list, MeetingRecord meet, NGPage aPage, String address) throws Exception {
+        JSONObject jo = meet.getMinimalJSON();
+        jo.put("workspaceKey", aPage.getKey());
+        jo.put("workspaceName", aPage.getFullName());
+        NGBook site = aPage.getSite();
+        jo.put("siteKey", site.getKey());
+        jo.put("siteName", site.getFullName());
+        jo.put("address", address);
+        list.put(jo);
+    }
+
 
     public JSONArray getActionItems() throws Exception {
         //TODO: somehow this can be in a state of not being initialized.
@@ -155,7 +193,7 @@ public class UserCache {
         }
         return new JSONArray();
     }
-    
+
     /**
      * Get a list of the comments (proposals and rounds) that still open
      * but not yet closed, whether overdue or not.
@@ -166,7 +204,18 @@ public class UserCache {
         }
         return new JSONArray();
     }
-    
+
+
+    /**
+     * Get a list of the meetings you are assigned to.
+     */
+    public JSONArray getFutureMeetings() throws Exception {
+        if (cacheObj.has("futureMeetings")) {
+            return cacheObj.getJSONArray("futureMeetings");
+        }
+        return new JSONArray();
+    }
+
     public JSONObject getAsJSON() {
         return cacheObj;
     }
