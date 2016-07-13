@@ -264,16 +264,14 @@ public interface NGContainer
     public EmailRecord createEmail() throws Exception;
 
     /**
-     * Return a single email message that needs to be sent.
-     * It returns whatever happens to be the first one, and if there
-     * are multiple, there is no guarantee you will get the same one each time.
-     */
-    //public EmailRecord getEmailReadyToSend() throws Exception;
-
-    /**
      * Scan through the email on this project, and return the number of
-     * email messages on the page that have nto been sent yet.
+     * email messages on the page that have not been sent yet.
      */
     public int countEmailToSend() throws Exception;
+
+    /**
+     * figure out when the next background event is scheduled
+     */
+    public long nextActionDue() throws Exception;
 
  }

@@ -55,7 +55,7 @@ public class AttachmentRecordProj extends AttachmentRecord
         if (container==null) {
             throw new Exception("ProjectAttachment record has not be innitialized correctly, there is no container setting.");
         }
-        File folder = ((NGWorkspace)container).containingFolder;
+        File folder = container.containingFolder;
         File docFile = new File(folder, oldName);
         File newFile = new File(folder, newName);
         if (docFile.exists()) {
@@ -66,7 +66,7 @@ public class AttachmentRecordProj extends AttachmentRecord
             //it is possible that user is 'fixing' the project by changing the name of an attachment
             //record to the name of an existing file.  IF this is the case, there may have been a
             //record of an "extra" file.  This will eliminate that.
-            ((NGWorkspace)container).removeExtrasByName(newName);
+            container.removeExtrasByName(newName);
         }
     }
 
@@ -181,6 +181,31 @@ public class AttachmentRecordProj extends AttachmentRecord
             throw new NGException("nugen.exception.unable.to.rename.temp.file",
                 new Object[]{tempCogFile,specialVerFile});
         }
+    }
+
+    @Override
+    public String emailSubject() throws Exception {
+        return "Attachment: "+getDisplayName();
+    }
+
+    @Override
+    public String getTargetRole() throws Exception {
+        return "Members";
+    }
+
+    @Override
+    public String getResourceURL(AuthRequest ar, NGPage ngp) throws Exception {
+        return ar.getResourceURL(ngp,  "docinfo"+this.getId()+".htm");
+    }
+
+    @Override
+    public String selfDescription() throws Exception {
+        return "(Attachment) "+getDisplayName();
+    }
+
+    @Override
+    public void markTimestamp(long newTime) throws Exception {
+        // does not care about timestamp
     }
 
 }

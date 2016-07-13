@@ -31,12 +31,13 @@ import java.util.List;
 import org.socialbiz.cog.dms.RemoteLinkCombo;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
-public abstract class AttachmentRecord extends CommentContainer {
+public abstract class AttachmentRecord extends CommentContainer implements EmailContext {
     private static String ATTACHMENT_ATTB_RLINK = "rlink";
     private static String ATTACHMENT_ATTB_RCTIME = "rctime";
     public static String ATTACHMENT_ATTB_RLMTIME = "rlmtime";
@@ -1102,15 +1103,6 @@ public abstract class AttachmentRecord extends CommentContainer {
         return changed;
     }
 
-
-    /**
-     * deprecated use getRemoteCombo().getComboString() instead
-     *
-    @Deprecated
-    public String getRemoteLink() {
-        return getAttribute(ATTACHMENT_ATTB_RLINK);
-    }*/
-
     /**
      * delete all the files on disk or in DB, presumably just
      * before deleting this attachment record.  This effectively
@@ -1123,4 +1115,14 @@ public abstract class AttachmentRecord extends CommentContainer {
             av.purgeLocalFile();
         }
     }
+
+    public void gatherUnsentScheduledNotification(NGWorkspace ngw,
+            ArrayList<ScheduledNotification> resList) throws Exception {
+        //only look for comments when the email for the note (topic) has been sent
+        //avoids problem of comment getting sent before the topic comes out of draft
+        for (CommentRecord cr : getComments()) {
+            cr.gatherUnsentScheduledNotification(ngw, this, resList);
+        }
+    }
+
 }

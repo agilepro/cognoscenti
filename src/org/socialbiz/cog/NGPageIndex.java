@@ -642,12 +642,9 @@ public class NGPageIndex {
                 pageBookName = ngb.getFullName();
                 pageBookKey = ngb.getKey();
             }
-            nextScheduledAction = ngw.nextActionDue();
             parentKey = ngw.getParentKey();
         }
-        else {
-            nextScheduledAction = -1;
-        }
+        nextScheduledAction = container.nextActionDue();
     }
 
     /**

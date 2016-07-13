@@ -322,6 +322,7 @@ public class NGWorkspace extends NGPage {
      *
      * A negative number means there are no scheduled events.
      */
+    @Override
     public long nextActionDue() throws Exception {
         //initialize to some time next year
         long nextTime = System.currentTimeMillis() + 31000000000L;
@@ -370,6 +371,9 @@ public class NGWorkspace extends NGPage {
         }
         for (GoalRecord goal : getAllGoals()) {
             goal.gatherUnsentScheduledNotification(this, resList);
+        }
+        for (AttachmentRecord attach : this.getAllAttachments()) {
+            attach.gatherUnsentScheduledNotification(this, resList);
         }
     }
     /**

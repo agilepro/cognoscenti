@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.workcast.json.JSONObject;
 
@@ -1162,5 +1163,26 @@ public class NGBook extends ContainerCommon implements NGContainer {
         }
     }
 
+    /**
+     * the only thing you send from a Site is role request emails.
+     */
+    @Override
+    public long nextActionDue() throws Exception {
+        //initialize to some time next year
+        long nextTime = System.currentTimeMillis() + 31000000000L;
+        for (EmailRecord er : getAllEmail()) {
+            if (er.statusReadyToSend()) {
+                //there is no scheduled time for sending email .. it just is scheduled
+                //immediately and supposed to be sent as soon as possible after that
+                //so return now minus 1 minutes
+                long reminderTime = System.currentTimeMillis()-60000;
+                if (reminderTime < nextTime) {
+                    System.out.println("Workspace has email that needs to be collected");
+                    nextTime = reminderTime;
+                }
+            }
+        }
+        return nextTime;
+    }
 
 }

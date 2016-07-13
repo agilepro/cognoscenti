@@ -745,16 +745,6 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
         return email;
     }
 
-    /* Override
-    public EmailRecord getEmailReadyToSend() throws Exception {
-        for (EmailRecord er : getAllEmail()) {
-            if (er.statusReadyToSend()) {
-                return er;
-            }
-        }
-        return null;
-    }
-    */
 
     @Override
     public int countEmailToSend() throws Exception {
@@ -765,6 +755,13 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
             }
         }
         return count;
+    }
+
+    /**
+     * default container behavior is to return a date for next year some time.
+     */
+    public long nextActionDue() throws Exception {
+        return System.currentTimeMillis() + 31000000000L;
     }
 
     /**
