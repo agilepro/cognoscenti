@@ -219,11 +219,11 @@ public class EmailSender extends TimerTask {
             iCount++;
             System.out.println("BACKGROUND: workspace ("+ngpi.containerName+") due since "
                     +new Date(ngpi.nextScheduledAction));
-            if (!ngpi.isProject()) {
-                System.out.println("BACKGROUND: strange non-Page object has scheduled events --- ignoring it");
-                ngpi.nextScheduledAction = 0;
-                continue;
-            }
+            //if (!ngpi.isProject()) {
+            //    System.out.println("BACKGROUND: strange non-Page object has scheduled events --- ignoring it");
+            //    ngpi.nextScheduledAction = 0;
+            //    continue;
+            //}
 
             File workspaceCogFolder = ngpi.containerPath.getParentFile();
             File emailArchiveFile = new File(workspaceCogFolder, "mailArchive.json");
@@ -235,18 +235,18 @@ public class EmailSender extends TimerTask {
             {
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
-                NGWorkspace ngw = ngpi.getPage();
+                NGContainer ngw = ngpi.getContainer();
 
                 //first, move all the email messages that have been stored in the project from foreground events.
                 MailConversions.moveEmails(ngw, emailArchive, cog);
 
                 ngpi.nextScheduledAction = ngw.nextActionDue();
-                ngw.save();
+                ngw.saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime, "Moved email to email file", ar.getCogInstance());
                 NGPageIndex.clearLocksHeldByThisThread();
                 emailArchive.save();
             }
 
-            {
+            if (ngpi.isProject()){
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
                 NGWorkspace ngw = ngpi.getPage();

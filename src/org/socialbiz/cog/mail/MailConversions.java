@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.EmailRecord;
+import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
 
 public class MailConversions {
@@ -22,7 +24,7 @@ public class MailConversions {
         ngp.save();
     }
 
-    public static void moveEmails(NGPage ngp, MailFile newArchive, Cognoscenti cog) throws Exception {
+    public static void moveEmails(NGContainer ngp, MailFile newArchive, Cognoscenti cog) throws Exception {
         List<EmailRecord> allEmail = ngp.getAllEmail();
         for (EmailRecord er : allEmail) {
             List<OptOutAddr> allAddressees = er.getAddressees();
@@ -40,10 +42,13 @@ public class MailConversions {
                 inst.setExceptionMessage(er.getExceptionMessage());
                 inst.setCreateDate(er.getCreateDate());
                 ArrayList<File> attachments = new ArrayList<File>();
-                for (String id : er.getAttachmentIds()) {
-                    File path = ngp.getAttachmentPathOrNull(id);
-                    if (path!=null) {
-                        attachments.add(path);
+                if (ngp instanceof NGWorkspace) {
+                    NGWorkspace ngw = (NGWorkspace) ngp;
+                    for (String id : er.getAttachmentIds()) {
+                        File path = ngw.getAttachmentPathOrNull(id);
+                        if (path!=null) {
+                            attachments.add(path);
+                        }
                     }
                 }
                 inst.setAttachmentFiles(attachments);

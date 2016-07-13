@@ -262,6 +262,7 @@ public interface NGContainer
      * creates an email record and sets the ID to a unique value for this project
      */
     public EmailRecord createEmail() throws Exception;
+    public void clearAllEmail() throws Exception;
 
     /**
      * Scan through the email on this project, and return the number of

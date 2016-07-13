@@ -1185,4 +1185,15 @@ public class NGBook extends ContainerCommon implements NGContainer {
         return nextTime;
     }
 
+    @Override
+    public void writeContainerLink(AuthRequest ar, int len) throws Exception
+    {
+        ar.write("<a href=\"");
+        ar.write(ar.retPath);
+        ar.write(ar.getDefaultURL(this));
+        ar.write("\">");
+        ar.writeHtml(trimName(getFullName(), len));
+        ar.write( "</a>");
+    }
+
 }

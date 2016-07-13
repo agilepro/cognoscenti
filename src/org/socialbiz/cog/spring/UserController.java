@@ -906,12 +906,11 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/approveOrRejectRoleReqThroughMail.htm", method = RequestMethod.GET)
-    public ModelAndView gotoApproveOrRejectRoleReqPage(
+    public void gotoApproveOrRejectRoleReqPage(
             @PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGContainer ngc =  registerSiteOrProject(ar, siteId, pageId);
@@ -921,21 +920,19 @@ public class UserController extends BaseController {
             boolean canAccessPage = AccessControl.canAccessRoleRequest(ar, ngc, roleRequestRecord);
 
             if(!canAccessPage){
-                 return showWarningView(ar, "nugen.project.member.login.msg");
+                 showWarningView(ar, "nugen.project.member.login.msg");
             }
 
             String isAccessThroughEmail = ar.reqParam("isAccessThroughEmail");
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
 
-            modelAndView = new ModelAndView("RoleRequest");
-
             request.setAttribute("isAccessThroughEmail", isAccessThroughEmail);
             request.setAttribute("canAccessPage", canAccessPage);
+            streamJSP(ar, "RoleRequest");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.approve.reject.rolereq.page", null , ex);
         }
-        return modelAndView;
     }
 
 
@@ -1676,7 +1673,7 @@ public class UserController extends BaseController {
         clone.retPath = ar.baseURL;
         OptOutAddr ooa = new OptOutIndividualRequest(new AddressListEntry(
                 addressee));
-        
+
         JSONObject data = new JSONObject();
         data.put("aseURL",  ar.baseURL);
         data.put("roleName",  roleName);
@@ -1684,7 +1681,7 @@ public class UserController extends BaseController {
         data.put("wsName", ngp.getFullName());
         data.put("isApproved", "approved".equalsIgnoreCase(action));
         data.put("responseComment", responseComment);
-        
+
         File templateFile = cog.getConfig().getFileFromRoot("email/RoleResponse.chtml");
 
         EmailSender.containerEmail(ooa, ngp, subject, templateFile, data,

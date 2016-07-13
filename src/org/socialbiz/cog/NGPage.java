@@ -1662,13 +1662,6 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     }
 
 
-    /**
-     * This will delete all email records in the project (workspace)
-     */
-    public void clearAllEmail() throws Exception {
-        DOMFace mail = requireChild("mail", DOMFace.class);
-        mail.clearVector("email");
-    }
 
 
 
