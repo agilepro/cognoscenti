@@ -36,7 +36,7 @@
     UserProfile userRecord = null;
 
 //TODO: why test for pageTitle being null here?
-    if(pageTitle == null && pageId != null){
+    if(pageTitle == null && pageId != null && !"$".equals(pageId)){
         ngp  = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     }
     if(isUserHeader && userKey!=null){
@@ -254,6 +254,7 @@
         <a href="accountListProjects.htm">Workspaces in Site</a></li>
     <li<%if("Site Admin".equals(jspName)){%> class="active"<%}%>>
         <a href="SiteAdmin.htm">Site Admin</a></li>
+    <li><a href="roleManagement.htm">Roles</a></li>
 </ul>
 
 <% } else if(!isUserHeader) { %>

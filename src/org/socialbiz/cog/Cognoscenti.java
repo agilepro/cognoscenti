@@ -378,6 +378,33 @@ System.out.println("Cognoscenti Server Object == Start the Server");
     }
 
     /**
+     * This is for functions that operate the same on workspaces and sites.
+     * (for example roles)
+     * This is a convenience function that looks for either a workspace or
+     * a site.  If the pageID is not '$' then a workspace with that key is returned.
+     * If ifageID is '$', then the Site is returned with the siteId.
+     */
+    public NGContainer getWorkspaceOrSiteOrFail(String siteId, String pageId) throws Exception {
+        if ("$".equals(pageId)) {
+            NGPageIndex ngpi = getContainerIndexByKeyOrFail(siteId);
+            NGContainer ngc = ngpi.getContainer();
+            if (!(ngc instanceof NGBook)) {
+                throw new NGException("nugen.exception.container.not.account", new Object[] { siteId });
+            }
+            return ngc;
+        }
+        else {
+            NGPageIndex ngpi = getContainerIndexByKeyOrFail(pageId);
+            NGContainer ngc = ngpi.getContainer();
+            if (!(ngc instanceof NGWorkspace)) {
+                throw new NGException("nugen.exception.container.not.project", new Object[] { pageId });
+            }
+            return ngc;
+        }
+    }
+
+
+    /**
      * This is a convenience function that looks a particular site
      * up in the index, finds the index entry, and then IF it is a
      * site, returns that with the right type (NGBook)

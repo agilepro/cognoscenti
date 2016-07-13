@@ -3,7 +3,6 @@
 %><%@page import="org.socialbiz.cog.License"
 %><%@page import="org.socialbiz.cog.WorkspaceStats"
 %><%@page import="org.socialbiz.cog.util.NameCounter"
-%><%@page import="org.socialbiz.cog.BookInfoRecord"
 %><%@ include file="/spring/jsp/include.jsp"
 %><% 
 

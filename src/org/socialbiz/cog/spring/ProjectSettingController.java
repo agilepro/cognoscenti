@@ -56,7 +56,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 import org.workcast.json.JSONObject;
 
 @Controller
@@ -252,18 +251,19 @@ public class ProjectSettingController extends BaseController {
         String op = "Unknown";
         String roleId= "Unknown";
         try{
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-            ar.setPageAccessLevels(ngp);
-            ar.assertLoggedIn("Must be logged in to set personal settings.");
+            //NGContainer ngc = ar.getCogInstance().getWorkspaceOrSiteOrFail(siteId, pageId);
+            NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
+            ar.setPageAccessLevels(ngc);
+            ar.assertLoggedIn("Must be logged in to manipuate roles.");
             JSONObject personalInfo = getPostedObject(ar);
             UserProfile up = ar.getUserProfile();
 
             op = personalInfo.getString("op");
             roleId = personalInfo.getString("roleId");
 
-            NGRole role = ngp.getRoleOrFail(roleId);
+            NGRole role = ngc.getRoleOrFail(roleId);
             AddressListEntry ale = up.getAddressListEntry();
-            RoleRequestRecord rrr = ngp.getRoleRequestRecord(role.getName(),up.getUniversalId());
+            RoleRequestRecord rrr = ngc.getRoleRequestRecord(role.getName(),up.getUniversalId());
 
 
             if ("Join".equals(op)) {
@@ -275,24 +275,26 @@ public class ProjectSettingController extends BaseController {
                     if (personalInfo.has("desc")) {
                         requestDesc = personalInfo.getString("desc");
                     }
-                    rrr = ngp.createRoleRequest(roleId, up.getUniversalId(), ar.nowTime, up.getUniversalId(), requestDesc);
+                    rrr = ngc.createRoleRequest(roleId, up.getUniversalId(), ar.nowTime, up.getUniversalId(), requestDesc);
 
-                    NGRole adminRole = ngp.getSecondaryRole();
-                    NGRole executiveRole = ngp.getSite().getRole("Executives");//getSecondaryRole();
+                    NGRole adminRole = ngc.getSecondaryRole();
+                    boolean hasSpecialPermission = adminRole.isPlayer(ale);
 
-                    boolean isAdmin = adminRole.isPlayer(ale);
-                    boolean isExecutive = executiveRole.isPlayer(ale);
+                    if (!hasSpecialPermission && ngc instanceof NGWorkspace)  {
+                        NGRole executiveRole = ((NGWorkspace)ngc).getSite().getRole("Executives");//getSecondaryRole();
+                        hasSpecialPermission = executiveRole.isPlayer(ale);
+                    }
 
                     //Note: if there is no administrator for the project, then ANYONE is allowed to
                     //sign up as ANY role.  Once grabbed, that person is administrator.
                     boolean noAdmin = adminRole.getDirectPlayers().size()==0;
 
-                    if(isAdmin || (isExecutive && "Members".equals(roleId)) || noAdmin ) {
+                    if(hasSpecialPermission || noAdmin ) {
                         rrr.setState("Approved");
-                        ngp.addPlayerToRole(roleId,up.getUniversalId());
+                        ngc.addPlayerToRole(roleId,up.getUniversalId());
                     }
                     else{
-                        sendRoleRequestEmail(ar,rrr,ngp);
+                        sendRoleRequestEmail(ar,rrr,ngc);
                     }
                 }
             }
@@ -309,12 +311,12 @@ public class ProjectSettingController extends BaseController {
                 throw new Exception("Unable to understand the operation "+op);
             }
 
-            ngp.saveFile(ar, "Updated role "+roleId);
+            ngc.saveFile(ar, "Updated role "+roleId);
             JSONObject repo = new JSONObject();
             repo.put("op",  op);
             repo.put("success",  true);
             repo.put("player", role.isPlayer(up));
-            RoleRequestRecord rrr2 = ngp.getRoleRequestRecord(role.getName(),up.getUniversalId());
+            RoleRequestRecord rrr2 = ngc.getRoleRequestRecord(role.getName(),up.getUniversalId());
             repo.put("reqPending", (rrr2!=null && !rrr2.isCompleted()));
             repo.write(ar.w, 2, 2);
             ar.flush();
@@ -344,8 +346,8 @@ public class ProjectSettingController extends BaseController {
             + AccessControl.getAccessRoleRequestParams(container, roleRequestRecord);
 
         List<OptOutAddr> initialList = new ArrayList<OptOutAddr>();
-        OptOutAddr.appendUsersFromRole(container, "Administrators", initialList);
-        OptOutAddr.appendUsersFromRole(container, "Members", initialList);
+        OptOutAddr.appendUsersFromRole(container, container.getPrimaryRole().getName(), initialList);
+        OptOutAddr.appendUsersFromRole(container, container.getSecondaryRole().getName(), initialList);
 
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
@@ -425,6 +427,7 @@ public class ProjectSettingController extends BaseController {
 
 
     //TODO: eliminate this routine
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/pageRoleAction.form", method = RequestMethod.POST)
     public ModelAndView pageRoleAction(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -554,7 +557,7 @@ public class ProjectSettingController extends BaseController {
         }
         return modelAndView;
     }
-
+*/
 
     //This works for Sites as well as Projects
     @RequestMapping(value = "/{siteId}/{pageId}/roleUpdate.json", method = RequestMethod.POST)
@@ -563,13 +566,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "";
         try{
-            NGContainer ngc = null;
-            if ("$".equals(pageId)) {
-                ngc = ar.getCogInstance().getSiteByIdOrFail( siteId );
-            }
-            else {
-                ngc = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-            }
+            NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
             ar.setPageAccessLevels(ngc);
             //maybe this should be for admins?
             ar.assertMember("Must be a member to modify roles.");
@@ -608,6 +605,7 @@ public class ProjectSettingController extends BaseController {
      * email addresses.  Should make a list of AddressListEntry objects instead, or something
      * better.  But we have routines elsewhere that do that.  This is probably redundant.
      */
+    /*
     private static String pasreFullname(String fullNames) throws Exception
     {
         String assigness = "";
@@ -625,6 +623,7 @@ public class ProjectSettingController extends BaseController {
         }
         return assigness;
     }
+    */
 
 
 

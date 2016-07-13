@@ -45,7 +45,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
     private List<String> existingIds = null;
     private List<String> displayNames;
-    private final BookInfoRecord siteInfoRec;
+    private final SiteInfoRecord siteInfoRec;
     private final NGRole executiveRole;
     private final NGRole ownerRole;
 
@@ -55,7 +55,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
     public NGBook(File theFile, Document newDoc) throws Exception {
         super(theFile, newDoc);
-        siteInfoRec = requireChild("bookInfo", BookInfoRecord.class);
+        siteInfoRec = requireChild("bookInfo", SiteInfoRecord.class);
         displayNames = siteInfoRec.getSiteNames();
         assureNameExists();
 

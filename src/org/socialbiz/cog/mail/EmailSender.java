@@ -385,28 +385,31 @@ public class EmailSender extends TimerTask {
     * MailFile archive and sent.
     */
     public static void containerEmail(OptOutAddr ooa, NGContainer ngc,
-            String subject, File templateFile, JSONObject data, String from, 
+            String subject, File templateFile, JSONObject data, String from,
             List<String> attachIds, Cognoscenti cog) throws Exception {
         if (subject == null || subject.length() == 0) {
-            throw new ProgramLogicError(
-                    "queueEmailNGC requires a non null subject parameter");
+            throw new ProgramLogicError("containerEmail requires a non null subject parameter");
+        }
+        if (!templateFile.exists()) {
+            throw new ProgramLogicError("containerEmail was passed a template that does not exist: "
+                      +templateFile.toString());
         }
         if (ngc == null) {
-            throw new ProgramLogicError(
-                    "queueEmailNGC requires a non null ngc parameter");
+            throw new ProgramLogicError("containerEmail requires a non null ngc parameter");
         }
         if (from == null) {
             from = composeFromAddress(ngc);
         }
-        
+
         MemFile bodyWriter = new MemFile();
         Writer w = bodyWriter.getWriter();
         ChunkTemplate.streamIt(w, templateFile, data);
         w.flush();
-        
+
         createEmailRecordInternal(ngc, from,
-                ooa, subject, bodyWriter.toString(), 
+                ooa, subject, bodyWriter.toString(),
                 attachIds, cog);
+        System.out.println("containerEmail created for "+ooa.getEmail()+" from template "+templateFile.getName());
     }
 
 
@@ -419,7 +422,7 @@ public class EmailSender extends TimerTask {
             Cognoscenti cog)
             throws Exception {
        try {
-            
+
             ooa.assertValidEmail();
 
             EmailRecord emailRec = ngc.createEmail();

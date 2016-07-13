@@ -268,7 +268,8 @@ public interface NGContainer
      * It returns whatever happens to be the first one, and if there
      * are multiple, there is no guarantee you will get the same one each time.
      */
-    public EmailRecord getEmailReadyToSend() throws Exception;
+    //public EmailRecord getEmailReadyToSend() throws Exception;
+
     /**
      * Scan through the email on this project, and return the number of
      * email messages on the page that have nto been sent yet.

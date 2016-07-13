@@ -7,6 +7,9 @@
 %><%@page import="org.socialbiz.cog.UtilityMethods"
 %>
 <%
+    if (true) {
+        throw new Exception("I believe that BookMemberAction is no longer used");
+    }
     //constructing the AuthRequest object should always be the first thing
     //that a page does, so that everything can be set up correctly.
     AuthRequest ar = AuthRequest.getOrCreate(request, response, out);

@@ -20,8 +20,7 @@ Required parameters:
                   dropdown list of sites.
     3. taskId   : This parameter is id of a task and here it is used to get current task detail (GoalRecord)
                   and to pass current task id value when submitted.
-    4. book     : This request attribute provide the key of account which is used to select account from the
-                  list of all sites by-default when the page is rendered.
+
 
 */
 
@@ -33,6 +32,7 @@ Required parameters:
     String taskId = ar.reqParam("taskId");
     GoalRecord currentTaskRecord=ngp.getGoalOrFail(taskId);
     NGBook site = ngp.getSite();
+    String siteId = ngp.getSiteKey();
 
     UserProfile uProf = ar.getUserProfile();
 
@@ -53,9 +53,6 @@ Required parameters:
         }
     }
     NGPageIndex.sortInverseChronological(templates);
-
-    //NEEDED???
-    String book = (String)request.getAttribute("book");
 
     JSONObject goalInfo = currentTaskRecord.getJSON4Goal(ngp);
     JSONArray allLabels = ngp.getJSONLabels();
@@ -896,7 +893,7 @@ function updateVal(){
                                                 for (NGBook nGBook : bookList) {
                                                     String id =nGBook.getKey();
                                                     String bookName= nGBook.getFullName();
-                                                    if((book!=null && id.equalsIgnoreCase(book))) {
+                                                    if((siteId!=null && id.equalsIgnoreCase(siteId))) {
                                                         %><option value="<%=id%>" selected><%
                                                     }
                                                     else {

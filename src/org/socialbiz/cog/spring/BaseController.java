@@ -41,7 +41,6 @@ import org.socialbiz.cog.exception.ServletExit;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.json.JSONTokener;
@@ -165,7 +164,7 @@ public class BaseController {
                 streamJSP(ar, "requiredName");
                 return;
             }
-            if (pageId==null) {
+            if (pageId==null || "$".equals(pageId)) {
                 prepareSiteView(ar, siteId);
             }
             else {
@@ -205,9 +204,11 @@ public class BaseController {
      */
     public static NGWorkspace registerRequiredProject(AuthRequest ar, String siteId, String pageId) throws Exception
     {
-        ar.req.setAttribute("pageId",     pageId);
-        ar.req.setAttribute("book",       siteId);
         ar.req.setAttribute("headerType", "project");
+        ar.req.setAttribute("siteId",     siteId);
+        ar.req.setAttribute("pageId",     pageId);
+        //todo: eliminate this
+        ar.req.setAttribute("book",       siteId);
         ar.getCogInstance().getSiteByIdOrFail(siteId);
         NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
         if (!siteId.equals(ngw.getSiteKey())) {
@@ -220,9 +221,13 @@ public class BaseController {
 
     public static NGBook prepareSiteView(AuthRequest ar, String siteId) throws Exception
     {
-        ar.req.setAttribute("accountId", siteId);
-        ar.req.setAttribute("book",      siteId);
         ar.req.setAttribute("headerType", "site");
+        ar.req.setAttribute("siteId",    siteId);
+        ar.req.setAttribute("pageId",    "$");
+        //todo: eliminate this
+        ar.req.setAttribute("book",      siteId);
+        //todo: eliminate this
+        ar.req.setAttribute("accountId", siteId);
         NGBook account = ar.getCogInstance().getSiteByIdOrFail( siteId );
         ar.setPageAccessLevels(account);
         ar.req.setAttribute("title", account.getFullName());

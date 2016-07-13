@@ -5,18 +5,20 @@
     ar.assertLoggedIn("Must be logged in to edit roles");
 
     String pageId      = ar.reqParam("pageId");
-    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-    ar.setPageAccessLevels(ngw);
-    NGBook ngb = ngw.getSite();
+    String siteId      = ar.reqParam("siteId");
+    
+    //page must work for both workspaces and for sites
+    NGContainer ngc = ar.getCogInstance().getWorkspaceOrSiteOrFail(siteId, pageId);
+    ar.setPageAccessLevels(ngc);
     UserProfile uProf = ar.getUserProfile();
 
     JSONArray allRoles = new JSONArray();
 
-    for (NGRole aRole : ngw.getAllRoles()) {
+    for (NGRole aRole : ngc.getAllRoles()) {
         JSONObject rollo = new JSONObject();
         rollo.put("name", aRole.getName());
         rollo.put("color", aRole.getColor());
-        List<AddressListEntry> players = aRole.getExpandedPlayers(ngw);
+        List<AddressListEntry> players = aRole.getExpandedPlayers(ngc);
         rollo.put("count", players.size());
         JSONArray playlist = new JSONArray();
         for (AddressListEntry ale: players) {
@@ -226,7 +228,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 },
                 msg: function() {
                     return "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
-                    +" participate in the "+$scope.roleInfo.name+" role of the project '<%ar.writeHtml(ngw.getFullName());%>'."
+                    +" participate in the "+$scope.roleInfo.name+" role of the project '<%ar.writeHtml(ngc.getFullName());%>'."
                     +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
                     +" participate directly with the others through the site.";
                 }
@@ -236,7 +238,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         modalInstance.result.then(function (message) {
             message.userId = player.uid;
             message.name = player.name;
-            message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngw, "frontPage.htm")%>";
+            message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngc, "frontPage.htm")%>";
             $scope.sendEmailLoginRequest(message);
         }, function () {
             //cancel action - nothing really to do

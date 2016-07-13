@@ -1389,7 +1389,7 @@ public class AuthRequest
                         + ngpi.containerKey + "/frontPage.htm";
         }
         // for site go to the project list
-        return  "t/" + URLEncoder.encode(ngpi.pageBookKey, "UTF-8")+"/$/accountListProjects.htm";
+        return  "t/" + URLEncoder.encode(ngpi.containerKey, "UTF-8")+"/$/accountListProjects.htm";
     }
 
     public String getResourceURL(NGContainer ngp, NoteRecord note)

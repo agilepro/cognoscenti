@@ -745,7 +745,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
         return email;
     }
 
-    @Override
+    /* Override
     public EmailRecord getEmailReadyToSend() throws Exception {
         for (EmailRecord er : getAllEmail()) {
             if (er.statusReadyToSend()) {
@@ -754,6 +754,7 @@ public abstract class ContainerCommon extends DOMFile implements NGContainer
         }
         return null;
     }
+    */
 
     @Override
     public int countEmailToSend() throws Exception {

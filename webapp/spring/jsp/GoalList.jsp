@@ -10,8 +10,6 @@
 Required parameters:
 
     1. pageId   : This is the id of a workspace and here it is used to retrieve NGPage.
-    2. book     : This request attribute provide the key of account which is used to select account from the
-                  list of all sites by-default when the page is rendered.
 
 */
 
@@ -38,9 +36,6 @@ Required parameters:
         }
     }
     NGPageIndex.sortInverseChronological(templates);
-
-    //NEEDED???
-    String book = (String)request.getAttribute("book");
 
     JSONArray allLabels = ngp.getJSONLabels();
 

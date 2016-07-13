@@ -26,52 +26,43 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class BookInfoRecord  extends DOMFace
-{
+public class SiteInfoRecord extends DOMFace {
 
-    public BookInfoRecord(Document nDoc, Element nEle, DOMFace p)
-        throws Exception
-    {
+    public SiteInfoRecord(Document nDoc, Element nEle, DOMFace p)
+            throws Exception {
         super(nDoc, nEle, p);
-        //assure that the user list element is there
+        // assure that the user list element is there
         requireChild("roleList", DOMFace.class);
         requireChild("Role-Requests", DOMFace.class);
 
     }
 
-    public long getModTime()
-    {
+    public long getModTime() {
         return safeConvertLong(getAttribute("modTime"));
     }
-    public void setModTime(long newTime)
-    {
+
+    public void setModTime(long newTime) {
         setAttribute("modTime", Long.toString(newTime));
     }
 
-    public String getModUser()
-    {
+    public String getModUser() {
         return getAttribute("modUser");
     }
-    public void setModUser(String newUser)
-    {
+
+    public void setModUser(String newUser) {
         setAttribute("modUser", newUser);
     }
 
-    public String getSynopsis()
-        throws Exception
-    {
+    public String getSynopsis() throws Exception {
         return getScalar("synopsis");
     }
 
-    public void setSynopsis(String newVal)
-        throws Exception
-    {
+    public void setSynopsis(String newVal) throws Exception {
         if (newVal == null) {
             newVal = "";
         }
         setScalar("synopsis", newVal);
     }
-
 
     public List<String> getSiteNames() {
         List<String> vc = getVector("bookName");
@@ -85,71 +76,62 @@ public class BookInfoRecord  extends DOMFace
         return vccleaned;
     }
 
-    public void setSiteNames(List<String> newNames)
-    {
+    public void setSiteNames(List<String> newNames) {
         DOMUtils.removeAllNamedChild(fEle, "bookName");
-        for (int i=0; i<newNames.size(); i++)
-        {
+        for (int i = 0; i < newNames.size(); i++) {
             String aName = newNames.get(i).trim();
-            //only save names that are non-null
-            if (aName.length()>0)
-            {
+            // only save names that are non-null
+            if (aName.length() > 0) {
                 addVectorValue("bookName", aName);
             }
         }
     }
 
-    public boolean isDeleted()
-    {
+    public boolean isDeleted() {
         String delAttr = getAttribute("deleteUser");
-        return (delAttr!=null&&delAttr.length()>0);
+        return (delAttr != null && delAttr.length() > 0);
     }
 
-    public void setDeleted(AuthRequest ar)
-    {
+    public void setDeleted(AuthRequest ar) {
         setAttribute("deleteDate", Long.toString(ar.nowTime));
         setAttribute("deleteUser", ar.getBestUserId());
     }
-    public void clearDeleted()
-    {
+
+    public void clearDeleted() {
         setAttribute("deleteDate", null);
         setAttribute("deleteUser", null);
     }
-    public long getDeleteDate()
-    {
+
+    public long getDeleteDate() {
         return getAttributeLong("deleteDate");
     }
-    public String getDeleteUser()
-    {
+
+    public String getDeleteUser() {
         return getAttribute("deleteUser");
     }
 
     public String getAllowPublic() {
         return getAttribute("allowPublic");
     }
+
     public void setAllowPublic(String allowPublic) {
         setAttribute("allowPublic", allowPublic);
     }
 
-    
     /**
-    * Different sites can have different style sheets (themes)
-    * This is the path to the folder that holds the theme files
-    */
-    public String getThemePath()
-    {
+     * Different sites can have different style sheets (themes) This is the path
+     * to the folder that holds the theme files
+     */
+    public String getThemePath() {
         return getScalar("theme");
     }
-    public void setThemePath(String newName)
-    {
+
+    public void setThemePath(String newName) {
         setScalar("theme", newName);
     }
 
-    
     public static String themeImg(String theme) {
         return "theme/" + theme + "/themeIcon.gif";
     }
-
-
 
 }

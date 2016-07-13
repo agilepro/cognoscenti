@@ -49,9 +49,14 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.requestState = "<% ar.writeJS(requestState); %>";
     $scope.isRequested = <%=isRequested%>;
     $scope.requestDate = <%=latestDate%>;
-    $scope.reportError = function(data) {
-        $scope.errorMsg = JSON.stringify(data);
-    }
+
+    $scope.showError = false;
+    $scope.errorMsg = "";
+    $scope.errorTrace = "";
+    $scope.showTrace = false;
+    $scope.reportError = function(serverErr) {
+        errorPanelHandler($scope, serverErr);
+    };
     
     $scope.takeStep = function() {
         if (!$scope.enterMode) {
@@ -66,8 +71,9 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.roleChange = function() {
         var data = {};
         data.op = 'Join';
-        data.roleId = 'Members';
+        data.roleId = '<%ar.writeJS(primRoleName);%>';
         data.desc = $scope.enterRequest;
+        console.log("Requesting to ",data);
         var postURL = "rolePlayerUpdate.json";
         var postdata = angular.toJson(data);
         $scope.showError=false;
@@ -76,6 +82,7 @@ app.controller('myCtrl', function($scope, $http) {
             alert("OK, you have requested membership")
         })
         .error( function(data, status, headers, config) {
+            console.log("GOT ERROR ",data);
             $scope.reportError(data);
         });
     };
@@ -85,8 +92,12 @@ app.controller('myCtrl', function($scope, $http) {
 
 </script>
 
+<!--WarningNotMember.jsp-->
 <div ng-app="myApp" ng-controller="myCtrl">
 
+<%@include file="ErrorPanel.jsp"%>
+
+  
     <div class="generalArea">
       <table><tr><td>
         <img src="<%=ar.retPath %>assets/iconAlertBig.gif" title="Alert">
@@ -164,6 +175,7 @@ app.controller('myCtrl', function($scope, $http) {
       </td></tr></table>
       
       {{errorMsg}}
+      
     </div>
 
 </div>

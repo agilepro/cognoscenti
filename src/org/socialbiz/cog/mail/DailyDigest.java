@@ -219,6 +219,7 @@ public class DailyDigest {
             }
             data.put("notifyList", notifyList);
 
+            /*
             System.out.println("*********** DEBUG DUMP FOR EMAIL **************");
             File userFolder = cog.getConfig().getUserFolderOrFail();
             File debugDump = new File(userFolder, "debugDump"+up.getKey()+".json");
@@ -226,6 +227,7 @@ public class DailyDigest {
                 debugDump.delete();
             }
             data.writeToFile(debugDump);
+            */
 
 
             OptOutAddr ooa = new OptOutAddr(
@@ -572,6 +574,7 @@ public class DailyDigest {
         ar.writeURLData(up.getKey());
     }
 
+    /*
     private static String getActionItemURL(AuthRequest ar, NGPageIndex ngpi,
             GoalRecord gr, UserProfile up) throws Exception {
         NGPage ngp = (NGPage) ngpi.getContainer();
@@ -579,6 +582,7 @@ public class DailyDigest {
             + gr.getId() + ".htm?" + AccessControl.getAccessGoalParams(ngp, gr)
             + "&ukey=" + up.getKey();
     }
+    */
 
     private static void writeProcessLinkUrl(AuthRequest ar, NGPageIndex ngpi)
             throws Exception {

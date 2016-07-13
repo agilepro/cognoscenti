@@ -2,7 +2,6 @@
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="org.socialbiz.cog.License"
 %><%@ include file="/spring/jsp/include.jsp"
-%><%@page import="org.socialbiz.cog.BookInfoRecord"
 %><%
 
     ar.assertLoggedIn("");

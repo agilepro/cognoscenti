@@ -136,7 +136,7 @@
         //probably need a special header type for warnings...like not logged in
     }
     else if (isProjectHeader) {
-        if (pageId==null) {
+        if (pageId==null || "$".equals(pageId)) {
             throw new Exception("Program Logic Error: need a pageId passed to a workspace style header");
         }
     }
