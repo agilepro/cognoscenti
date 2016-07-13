@@ -199,10 +199,12 @@
         </li>
       </ul>
       <form class="navbar-form navbar-left" role="search" action="searchAllNotes.htm">
-        <div class="form-group">
+        <div class="form-group input-group">
           <input type="text" class="form-control" name="s" placeholder="Search">
+		  <div class="input-group-btn">
+			<button type="submit" class="btn btn-default" style="padding: 2px 5px 1px 5px;"><i class="material-icons" style="color:#777">search</i></button>
+		  </div>
         </div>
-        <button type="submit" class="btn btn-default">Submit</button>
       </form>
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">

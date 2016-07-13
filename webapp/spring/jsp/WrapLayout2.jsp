@@ -190,6 +190,9 @@
     <link href="<%=ar.retPath%>bits/weaverstyle.css" rel="styleSheet" type="text/css" media="screen" />
     <link href="<%=ar.retPath%>bits/weavertheme.css" rel="styleSheet" type="text/css" media="screen" />
 
+	<!-- INCLUDE Google Material Design Icons -->
+	<!-- TODO: Integrate the icon font file into the project -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <title><% ar.writeHtml(title); %></title>
     
