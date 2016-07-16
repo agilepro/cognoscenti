@@ -281,7 +281,7 @@ app.controller('myCtrl', function($scope, $http) {
                 </ul>
               </div>
             </td>
-            <td><b><a href="meetingFull.htm?id={{rec.id}}">{{rec.name}}</a></b> @ {{rec.startTime|date: "h:mma 'on' dd-MMM-yyyy"}}</td>
+            <td><b><a href="meetingFull.htm?id={{rec.id}}">{{rec.name}}</a></b> @ {{rec.startTime|date: "HH:mma 'on' dd-MMM-yyyy"}}</td>
             <td style="{{meetingStateStyle(rec.state)}}">{{meetingStateName(rec.state)}}</td>
             <td>{{rec.duration}}</td>
         </tr>

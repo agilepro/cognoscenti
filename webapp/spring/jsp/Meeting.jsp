@@ -305,7 +305,7 @@ app.controller('myCtrl', function($scope, $http) {
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
             Meeting: <a href="meetingFull.htm?id={{meeting.id}}">{{meeting.name}}</a>
-            @ {{meeting.startTime|date: "h:mma 'on' dd-MMM-yyyy"}}
+            @ {{meeting.startTime|date: "HH:mm 'on' dd-MMM-yyyy"}}
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -421,7 +421,7 @@ app.controller('myCtrl', function($scope, $http) {
               </div>
             </td>
             <td >
-                {{rec.schedule | date: 'hh:mm'}}</td>
+                {{rec.schedule | date: 'HH:mm'}}</td>
             <td><b>{{rec.position}}. {{rec.subject}}</b>
                 </td>
             <td style="line-height: 1.3;">{{rec.desc|limitTo:200}}</td>
@@ -441,7 +441,7 @@ app.controller('myCtrl', function($scope, $http) {
               </div>
             </td>
             <td >
-                {{meeting.endTime | date: 'hh:mm'}}
+                {{meeting.endTime | date: 'HH:mm'}}
             </td>
             <td>~end~</td>
             <td></td>

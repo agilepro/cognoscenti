@@ -1589,7 +1589,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <div class="leafContent">
             <span style="font-size:150%;font-weight: bold;">
                 <i class="fa fa-gavel" style="font-size:130%"></i>
-                {{meeting.name}} @ {{meeting.startTime|date: "h:mma 'on' dd-MMM-yyyy"}}
+                {{meeting.name}} @ {{meeting.startTime|date: "HH:mm 'on' dd-MMM-yyyy"}}
             </span>
 <%if (isLoggedIn) { %>
             <span ng-show="meeting.state<3">
@@ -1862,7 +1862,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </span>
 <% } %>
                 <span>
-                    <i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i>
+                    <i>{{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)</i>
                 </span>
         </div>
       </div>
@@ -1929,7 +1929,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <% } %>
             </div>
             <div>
-                <i>{{item.schedule | date: 'hh:mm'}} ({{item.duration}} minutes)</i><span ng-repeat="pres in getPresenters(item)">, {{pres.name}}</span>
+                <i>{{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)</i><span ng-repeat="pres in getPresenters(item)">, {{pres.name}}</span>
             </div>
           </div>
 

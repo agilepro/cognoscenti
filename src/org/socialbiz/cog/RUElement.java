@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.workcast.json.JSONObject;
+
 /**
 * Holds data for a Recently Used list
 */
@@ -40,6 +42,14 @@ public final class RUElement
         displayName = _DisplayName;
         key         = _key;
         siteKey     = _siteKey;
+    }
+
+    public JSONObject getJSON() throws Exception {
+        JSONObject rujo = new JSONObject();
+        rujo.put("siteKey", siteKey);
+        rujo.put("key", key);
+        rujo.put("displayName", displayName);
+        return rujo;
     }
 
 

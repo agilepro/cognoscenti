@@ -17,6 +17,7 @@
     NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngw);
     NGBook ngb = ngw.getSite();
+    boolean showExperimental = ngb.getShowExperimental();
     Cognoscenti cog = ar.getCogInstance();
 
     UserProfile up = ar.getUserProfile();
@@ -70,6 +71,16 @@
 
     WorkspaceStats wStats = new WorkspaceStats();
     wStats.gatherFromWorkspace(ngw);
+    
+    JSONArray recentWorkspaces = new JSONArray();
+    List<RUElement> recent = ar.getSession().recentlyVisited;    
+    for (RUElement rue : recent) {
+        JSONObject rujo = new JSONObject();
+        rujo.put("siteKey", rue.siteKey);
+        rujo.put("key", rue.key);
+        rujo.put("displayName", rue.displayName);
+        recentWorkspaces.put(rujo);      
+    }  
 
 %>
 
@@ -81,6 +92,13 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.oldNameArray = <%oldNameArray.write(out,2,4);%>;
     $scope.projectInfo = <%projectInfo.write(out,2,4);%>;
     $scope.allProjects = <%allProjects.write(out,2,4);%>;
+    $scope.recentWorkspaces = <%recentWorkspaces.write(out,2,4);%>;
+    
+    if (!$scope.projectInfo.parentName) {
+        $scope.projectInfo.parentName = "(unknown parent workspace)";
+    }
+    $scope.originalParentKey = $scope.projectInfo.parentKey;
+    $scope.originalParentName = $scope.projectInfo.parentName;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -128,6 +146,11 @@ app.filter('escape', function() {
 </script>
 
 
+<style>
+.spaceyTable tr td {
+    padding:8px;
+}
+</style>
 
 <!-- MAIN CONTENT SECTION START -->
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -189,22 +212,19 @@ app.filter('escape', function() {
 <% }else { %>
 
             <div>
-                <table>
+                <table class="spaceyTable">
                     <form action="changeProjectName.form" method="post" >
                         <tr>
                             <td class="gridTableColummHeader_2"><fmt:message key="nugen.generatInfo.PageNameCaption"/>:</td>
-                            <td style="width:20px;"></td>
                             <td><input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>">
                                 <input type="hidden" name="encodingGuard" value="%E6%9D%B1%E4%BA%AC"/>
                                 <input type="hidden" name="go" value="<%ar.writeHtml(ar.getCompleteURL());%>">
                                 <input type="text" class="form-control" style="width:300px" name="newName" value="<%ar.writeHtml(ngw.getFullName());%>">
                             </td>
                         </tr>
-                        <tr><td style="height:5px" colspan="3"></td></tr>
                         <tr>
 
                             <td class="gridTableColummHeader_2"></td>
-                            <td style="width:20px;"></td>
                             <td>
                                 <input type="submit" value='<fmt:message key="nugen.generatInfo.Button.Caption.Admin.ChangePage"/>'
                                        name="action" class="btn btn-primary">
@@ -213,7 +233,6 @@ app.filter('escape', function() {
                     </form>
                     <tr>
                         <td class="gridTableColummHeader_2"><fmt:message key="nugen.generatInfo.Admin.Page.PreviousDelete"/></td>
-                        <td style="width:20px;"></td>
                         <td></td>
                     </tr>
                     <input type="hidden" name="p"
@@ -224,7 +243,6 @@ app.filter('escape', function() {
                             value="%E6%9D%B1%E4%BA%AC" />
 
                 <tr ng-repeat="name in oldNameArray">
-                    <td></td>
                     <td></td>
                     <td>
                         <a href="deletePreviousProjectName.htm?action=delName&p=<%=URLEncoder.encode(pageId, "UTF-8")%>&oldName={{name|escape}}"
@@ -238,18 +256,14 @@ app.filter('escape', function() {
             </div>
             <div class="generalContent">
                 <div class="generalSubHeading paddingTop">Workspace Settings</div>
-                <table width="720px">
-                    <tr><td style="height:5px"></td></tr>
+                <table width="720px"  class="spaceyTable">
                     <tr>
                         <td class="gridTableColummHeader_2">Public Purpose:</td>
-                        <td style="width:20px;"></td>
                         <td><textarea name="purpose" class="form-control" ng-model="projectInfo.purpose"
                               rows="4" placeholder="Enter a public description of the work that will be done in this workspace"></textarea></td>
                     </tr>
-                    <tr><td style="height:8px"></td></tr>
                     <tr>
                         <td class="gridTableColummHeader_2" valign="top">Workspace Mode:</td>
-                        <td style="width:20px;"></td>
                         <td  valign="top">
 
                             <input type="checkbox" name="allowPublic" value="yes"
@@ -261,45 +275,39 @@ app.filter('escape', function() {
                         </td>
                     </tr>
                     <tr>
+                        <td class="gridTableColummHeader_2">Parent Circle:</td>
+                        <td>
+                            <select ng-model="projectInfo.parentKey" class="form-control" style="width:400px">
+                                <option value="{{originalParentKey}}">{{originalParentName}}</option>
+                                <option ng-repeat="ws in recentWorkspaces" value="{{ws.key}}">{{ws.displayName}}</option>
+                                </select>
+                        </td>
+                    </tr>
+<% if (showExperimental) { %>
+                    <tr>
                         <td class="gridTableColummHeader_2">Allow Public:</td>
-                        <td style="width:20px;"></td>
                         <td>
                             <input type="checkbox" name="allowPublic" value="yes"
                                 ng-model="projectInfo.allowPublic"/> {{projectInfo.allowPublic}}
                         </td>
                     </tr>
-                    <tr><td style="height:5px"></td></tr>
                     <tr>
                         <td class="gridTableColummHeader_2">Workspace Email id:</td>
-                        <td style="width:20px;"></td>
                         <td>
                             <input type="text" class="form-control"
                                    name="projectMailId" ng-model="projectInfo.projectMail" />
                         </td>
                     </tr>
-                    <tr><td style="height:5px"></td></tr>
                     <tr>
                         <td class="gridTableColummHeader_2">Upstream Clone:</td>
-                        <td style="width:20px;"></td>
                         <td>
                             <input type="text" class="form-control" style="width:450px" id="upstream"
                                    name="upstream" ng-model="projectInfo.upstream" />
                         </td>
                     </tr>
-                    <tr><td style="height:5px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2">Parent Circle:</td>
-                        <td style="width:20px;"></td>
-                        <td>
-                            <input type="text" ng-model="projectInfo.parentKey" class="form-control" style="width:100px"/>
-                            {{lookUpName(projectInfo.parentKey)}}
-                        </td>
-                    </tr>
-
-                    <tr><td style="height:15px"></td></tr>
+<% } %>
                     <tr>
                         <td class="gridTableColummHeader_2"></td>
-                        <td style="width:20px;"></td>
                         <td>
                             <button ng-click="saveProjectConfig();" class="btn btn-primary" >Update</button>
                         </td>
@@ -311,14 +319,14 @@ app.filter('escape', function() {
 
             <div class="generalContent">
                 <div class="generalSubHeading paddingTop">Copy From Template</div>
-                <table width="720px">
+                <table width="720px" class="spaceyTable">
                   <form action="<%=ar.retPath%>CopyFromTemplate.jsp" method="post">
                   <input type="hidden" name="go" value="<%ar.writeHtml(allTasksPage);%>">
                   <input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>">
                     <tr>
                         <td class="gridTableColummHeader_2">Template:</td>
                         <td style="width:20px;"></td>
-                        <td><select name="template">
+                        <td><select name="template" class="form-control" style="width:400px">
                         <%
                             for (NGPageIndex temp : templates) {
                             %>
