@@ -120,16 +120,6 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr><td height="30px"></td></tr>
             <tr>
-                <td class="gridTableColummHeader_2">Current Theme:</td>
-                <td style="width:20px;"></td>
-                <td>
-                    <select class="form-control" ng-model="siteInfo.theme" 
-                            ng-options="theme as theme for theme in allThemes">
-                    </select>
-                </td>
-            </tr>
-            <tr><td height="10px"></td></tr>
-            <tr>
                 <td class="gridTableColummHeader_2">Flags:</td>
                 <td style="width:20px;"></td>
                 <td><input type="checkbox" ng-model="siteInfo.showExperimental"> Show Experimental,  

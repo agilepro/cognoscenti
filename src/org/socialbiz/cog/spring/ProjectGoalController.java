@@ -584,11 +584,11 @@ public class ProjectGoalController extends BaseController {
 
             JSONObject param = new JSONObject();
             if (processLocation.equalsIgnoreCase("local")) {
-                param.put(Constant.MSG_TYPE, SUCCESS_LOCAL);
+                param.put("msgType", SUCCESS_LOCAL);
                 param.put(LOCAL_PROJECT, getLocalProcess(accoundID, projectID, ar));
             }else if(processLocation.equalsIgnoreCase("http")){
-                param.put(Constant.MSG_TYPE, SUCCESS_REMOTE);
-                param.put(Constant.MESSAGE, REMOTE_PROJECT);
+                param.put("msgType", SUCCESS_REMOTE);
+                param.put("msg", REMOTE_PROJECT);
             }
             responseMessage = param.toString();
         }catch(Exception ex){

@@ -149,10 +149,10 @@ public class JSONController extends BaseController {
         try {
             ar.getCogInstance().getSiteByIdOrFail(book);
             if (doesProjectExist(ar, projectName)) {
-                message = NGWebUtils.getJSONMessage(Constant.YES, context.getMessage(
+                message = NGWebUtils.getJSONMessage("yes", context.getMessage(
                         "nugen.userhome.project.name.already.exists",null, ar.getLocale()), "");
             } else {
-                message = NGWebUtils.getJSONMessage(Constant.No, projectName,"");
+                message = NGWebUtils.getJSONMessage("no", projectName,"");
             }
         } catch (Exception ex) {
             message = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar

@@ -348,6 +348,7 @@ public class MainTabsViewControler extends BaseController {
          }
      }
 
+
      @RequestMapping(value = "/{siteId}/{pageId}/noteHtmlUpdate.json", method = RequestMethod.POST)
      public void noteHtmlUpdate(@PathVariable String siteId,@PathVariable String pageId,
              HttpServletRequest request, HttpServletResponse response) {
@@ -390,6 +391,8 @@ public class MainTabsViewControler extends BaseController {
          }
      }
 
+
+
      @RequestMapping(value = "/{siteId}/{pageId}/topicList.json", method = RequestMethod.GET)
      public void topicList(@PathVariable String siteId,@PathVariable String pageId,
              HttpServletRequest request, HttpServletResponse response) {
@@ -418,6 +421,7 @@ public class MainTabsViewControler extends BaseController {
              streamException(ee, ar);
          }
      }
+
 
 
      @RequestMapping(value = "/{siteId}/{pageId}/updateNote.json", method = RequestMethod.POST)
@@ -451,9 +455,12 @@ public class MainTabsViewControler extends BaseController {
 
              note.updateNoteFromJSON(noteInfo, ar);
 
-             //enforce no private
+             //enforce no private BEFORE saving the update
              if (!ngb.getAllowPrivate()) {
-                 note.setVisibility(SectionDef.PUBLIC_ACCESS);
+                 if (note.getVisibility()!=SectionDef.PUBLIC_ACCESS) {
+                     throw new Exception("This workspace belongs to a site that does not allow private topics.  "
+                             +"See your site's license requirements to understand what restrictions exist there.");
+                 }
              }
 
              ngw.saveFile(ar, "Updated Topic Contents");
@@ -466,6 +473,7 @@ public class MainTabsViewControler extends BaseController {
              streamException(ee, ar);
          }
      }
+
 
      /*
       * Pull the first 100 character max from the string, but ignore anything
@@ -667,9 +675,9 @@ public class MainTabsViewControler extends BaseController {
              JSONObject paramMap = new JSONObject();
              NoteRecord note = ngp.getNoteOrFail(oid);
              if(note.isDeleted()){
-                 paramMap.put(Constant.MSG_TYPE, Constant.YES);
+                 paramMap.put("msgType", "yes");
              }else{
-                 paramMap.put(Constant.MSG_TYPE, Constant.No);
+                 paramMap.put("msgType", "no");
              }
 
              responseText = paramMap.toString();

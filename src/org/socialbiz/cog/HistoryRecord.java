@@ -886,7 +886,11 @@ history.task.subtask.add    113
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
             DecisionRecord dr = ngp.findDecisionOrNull(safeConvertInt(objectKey));
             if (dr!=null) {
-                return "#" + dr.getNumber();
+                String val = dr.getDecision();
+                if (val.length()>30) {
+                    val = val.substring(0,30);
+                }
+                return "#" + dr.getNumber() + ": " + val;
             }
         }
         return "Unknown";

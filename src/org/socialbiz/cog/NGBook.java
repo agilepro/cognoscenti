@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.workcast.json.JSONObject;
 

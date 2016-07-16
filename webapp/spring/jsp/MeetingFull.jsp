@@ -189,6 +189,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.allTopics = [];
     $scope.backlogId = "<%=backlog.getId()%>";
+       
 
 
     $scope.newAssignee = "";
@@ -746,6 +747,32 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.reportError(data);
         });
     };
+    $scope.postMinutes = function() {
+        if (!$scope.meeting.minutesId) {
+            alert("program logic error: don't know about any minutes to change the state of");
+            return;
+        }
+        var topicRecord = $scope.findTopicRecord($scope.meeting.minutesId)
+        if (!topicRecord) {
+            alert("program logic error: can't find a topic with the id "+$scope.meeting.minutesId);
+            return;
+        }
+        var postURL = "noteHtmlUpdate.json?nid="+topicRecord.id;
+        var rec = {};
+        rec.id = topicRecord.id;
+        rec.universalid = topicRecord.universalid;
+        rec.discussionPhase = "Freeform";
+        var postdata = angular.toJson(rec);
+        $scope.showError=false;
+        $http.post(postURL,postdata)
+        .success( function(data) {
+            $scope.refreshTopicList();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+
     $scope.refreshAttachmentList = function() {
         var getURL = "docsList.json";
         $scope.showError=false;
@@ -770,6 +797,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         console.log("Attachments NOT found in session storage")
     }
     
+    
+    $scope.findTopicRecord = function(topicId) {
+        var ret = null;
+        $scope.allTopics.forEach( function(oneTopic) {
+            if (topicId == oneTopic.universalid) {
+                ret = oneTopic;
+            }
+            else if (topicId == oneTopic.id) {
+                ret = oneTopic;
+            }
+        });
+        return ret;
+    }
     $scope.refreshTopicList = function() {
         var getURL = "topicList.json";
         $scope.showError=false;
@@ -777,7 +817,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         .success( function(data) {
             $scope.allTopics = data.topics;
             sessionStorage.setItem("ws"+$scope.pageId+"topicList", JSON.stringify(data.topics));
-            console.log("Got the Topic List");
+            $scope.minutesDraft = $scope.getMinutesIsDraft();
+            console.log("Got the Topic List", data.topics);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -799,19 +840,27 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.getMinutesStyle = function() {
         if ($scope.meeting.minutesId) {
-            var isDraft = true;
-            $scope.allTopics.forEach( function(oneTopic) {
-                if ($scope.meeting.minutesId == oneTopic.universalid) {
-                    isDraft = oneTopic.draft;
-                }
-            });
-            if (!isDraft) {
+            if (!$scope.minutesDraft) {
                 return "margin:4px;"
             }
         }
         return "margin:4px;background-color:yellow;"
     }
+    $scope.getMinutesIsDraft = function() {
+        var isDraft = true;
+        if ($scope.meeting.minutesId) {
+            var minutesTopic = $scope.findTopicRecord($scope.meeting.minutesId);
+            if (minutesTopic) {
+                isDraft = minutesTopic.draft;
+            }
+        }
+        console.log("Minutes draft: "+isDraft + " for "+$scope.meeting.minutesId);
+        return isDraft;
+    }
+    $scope.minutesDraft = $scope.getMinutesIsDraft();
 
+    
+    
     $scope.startEditLockDescription = function(item) {
         var rec = {};
         rec.id = item.id;
@@ -934,17 +983,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location="docinfo"+doc.id+".htm";
     }
     $scope.navigateToTopic = function(topicId) {
-        var localId = null;
-        $scope.allTopics.forEach( function(oneTopic) {
-            if (topicId == oneTopic.universalid) {
-                localId = oneTopic.id;
-            }
-            else if (topicId == oneTopic.id) {
-                localId = oneTopic.id;
-            }
-        });
-        if (localId) {
-            window.location="noteZoom"+localId+".htm";
+        var topicRecord = $scope.findTopicRecord(topicId);
+        if (topicRecord) {
+            window.location="noteZoom"+topicRecord.id+".htm";
         }
         else {
             alert("Sorry, can't seem to find a discussion topic with the id: "+topicId);
@@ -1529,8 +1570,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   ng-click="createMinutes()">Generate Minutes</a></li>
               <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"
                   href="noteZoom{{meeting.minutesLocalId}}.htm">View Minutes</a></li>
-              <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"  target="_blank"
-                  href="<%=ar.retPath%>t/editNote.htm?pid=<%ar.writeURLData(pageId);%>&nid={{meeting.minutesLocalId}}">Edit Minutes</a></li>
               <li role="presentation" class="divider"></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   href="cloneMeeting.htm?id={{meeting.id}}">Clone Meeting</a></li>
@@ -1739,11 +1778,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                style="margin:3px;">{{person.name}}</button>
     </div>
     <div class="leafContent" ng-show="isCompleted() && meeting.minutesId">
-       Official Minutes:
-      <span class="btn btn-sm btn-default"  style="{{getMinutesStyle()}}" 
-            ng-click="navigateToTopic(meeting.minutesLocalId)">
-           Minutes
-      </span>
+        <div ng-show="minutesDraft">
+           Draft Minutes:
+           <span class="btn btn-sm btn-default"  style="margin:4px;background-color:yellow;" 
+                 ng-click="navigateToTopic(meeting.minutesLocalId)">
+                 View Minutes
+           </span>
+           <span class="btn btn-sm btn-default"  style="margin:4px;" 
+                 ng-click="postMinutes(meeting.minutesLocalId)">
+                 Post Minutes as they are
+           </span>
+        </div>
+        <div ng-hide="minutesDraft">
+           Posted Minutes:
+           <span class="btn btn-sm btn-default"  style="margin:4px;" 
+                 ng-click="navigateToTopic(meeting.minutesLocalId)">
+                 View Minutes
+           </span>
+        </div>
     </div>
 
 <%if (!isLoggedIn) { %>

@@ -639,8 +639,7 @@ function createSubLinks(){
             new Tab(retPath+"t/"+book+"/"+pageId+"/frontPage.htm",   "List Topics"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/automaticLinks.htm","Automatic Links"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/searchAllNotes.htm","Search All Topics"),
-            new Tab(retPath+"t/"+book+"/"+pageId+"/exportPDF.htm",   "Generate PDF"),
-            new Tab(retPath+"t/"+book+"/"+pageId+"/editNote.htm?public=true",  "Create New Note &gt;")
+            new Tab(retPath+"t/"+book+"/"+pageId+"/exportPDF.htm",   "Generate PDF")
         ];
 
         var arrayOfTabs2 = [

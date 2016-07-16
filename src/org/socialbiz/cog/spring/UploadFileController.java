@@ -541,7 +541,7 @@ public class UploadFileController extends BaseController {
                 throw new NGException("nugen.exception.no.attachment.found", new Object[]{aid, ngw.getFullName()});
             }
             attachment.clearDeleted();
-            message = NGWebUtils.getJSONMessage(Constant.SUCCESS , "" , "");
+            message = NGWebUtils.getJSONMessage("success" , "" , "");
             ngw.saveContent( ar, "Modified attachments");
         }
         catch(Exception ex){
@@ -650,7 +650,7 @@ public class UploadFileController extends BaseController {
 
             if(rRec != null){
                 rMgr.removeReminder(rid);
-                message = NGWebUtils.getJSONMessage(Constant.SUCCESS , "" , "");
+                message = NGWebUtils.getJSONMessage("success" , "" , "");
             }else{
                 throw new NGException("nugen.exception.no.attachment.found", new Object[]{rid, ngc.getFullName()});
             }
@@ -685,7 +685,7 @@ public class UploadFileController extends BaseController {
                 }else{
                     attachment.clearEditMode();
                 }
-                responseText = NGWebUtils.getJSONMessage(Constant.SUCCESS , "" , "");
+                responseText = NGWebUtils.getJSONMessage("success" , "" , "");
             }else{
                 throw new NGException("nugen.exception.no.attachment.found", new Object[]{aid, ngw.getFullName()});
             }

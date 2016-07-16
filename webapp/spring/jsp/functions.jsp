@@ -128,12 +128,6 @@ It does NOT produce any output by itself.
         String pageRootURL = ar.retPath + "t/"+site.getKey()+"/"+ngp.getKey()+"/";
         return pageRootURL;
     }
-    public String getNoteEditorURL(AuthRequest ar, NGContainer ngc, String noteId) throws Exception  {
-        return ar.retPath + ar.getResourceURL(ngc, "editNote.htm")+"?nid=" + noteId;
-    }
-    public String getNoteCreatorURL(AuthRequest ar, NGContainer ngc, boolean isPublic)  throws Exception  {
-        return ar.retPath + ar.getResourceURL(ngc, "editNote.htm") + "?public=" + isPublic;
-    }
 
 
 

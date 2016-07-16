@@ -126,21 +126,21 @@ public class UserController extends BaseController {
 
 
     @RequestMapping(value = "/{userKey}/userProfile.htm", method = RequestMethod.GET)
-    public ModelAndView loadProfile(@PathVariable String userKey,
+    public void loadProfile(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar,"userSettings.htm");
+        redirectBrowser(ar,"userSettings.htm");
     }
 
     @RequestMapping(value = "/{userKey}/userHome.htm", method = RequestMethod.GET)
-    public ModelAndView loadUserHome(@PathVariable String userKey,
+    public void loadUserHome(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar,"watchedProjects.htm");
+        redirectBrowser(ar,"watchedProjects.htm");
     }
 
 
@@ -378,13 +378,14 @@ public class UserController extends BaseController {
 
 
     @RequestMapping(value = "/{userKey}/RemoteProfileAction.form", method = RequestMethod.POST)
-    public ModelAndView RemoteProfileAction(@PathVariable String userKey,
+    public void RemoteProfileAction(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+                showWarningView(ar, "message.loginalert.see.page");
+                return;
             }
             String address = ar.reqParam("address");
             String go = ar.reqParam("go");
@@ -403,7 +404,7 @@ public class UserController extends BaseController {
             }
             uPage.save();
 
-            return redirectBrowser(ar, go);
+            redirectBrowser(ar, go);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
         }
@@ -479,7 +480,7 @@ public class UserController extends BaseController {
 
 
     @RequestMapping(value = "/{userKey}/RefreshFromRemoteProfiles.form", method = RequestMethod.POST)
-    public ModelAndView RefreshFromRemoteProfiles(@PathVariable String userKey,
+    public void RefreshFromRemoteProfiles(@PathVariable String userKey,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         try{
@@ -497,7 +498,7 @@ public class UserController extends BaseController {
             }
             uPage.saveFile(ar, "Synchronized action items from remote profiles");
 
-            return redirectBrowser(ar,go);
+            redirectBrowser(ar,go);
 
         }catch(Exception ex){
             throw new Exception("Unable to refresh consolidates action items list from remote profiles", ex);
@@ -564,7 +565,7 @@ public class UserController extends BaseController {
             }
             UserManager.writeUserProfilesToFile();
 
-            paramMap.put(Constant.MSG_TYPE , Constant.SUCCESS);
+            paramMap.put("msgType" , "success");
             responseMessage = paramMap.toString();
         }
         catch(Exception ex){
@@ -642,7 +643,7 @@ public class UserController extends BaseController {
                 throw new NGException("nugen.exceptionhandling.system.not.understand.action",new Object[]{action});
             }
             JSONObject paramMap = new JSONObject();
-            paramMap.put(Constant.MSG_TYPE , Constant.SUCCESS);
+            paramMap.put("msgType" , "success");
             paramMap.put("action", action);
             responseMessage = paramMap.toString();
         }
@@ -655,7 +656,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/{userKey}/EditUserProfileAction.form", method = RequestMethod.POST)
-    public ModelAndView updateUserProfile(HttpServletRequest request, HttpServletResponse response,
+    public void updateUserProfile(HttpServletRequest request, HttpServletResponse response,
             @PathVariable String userKey)
     throws Exception {
         try{
@@ -663,7 +664,8 @@ public class UserController extends BaseController {
             ar.assertLoggedIn("Must be logged in in order to edit a user profile.");
             String action = ar.reqParam("action");
             if (action.equals("Cancel")) {
-                return redirectBrowser(ar,"userSettings.htm");
+                redirectBrowser(ar,"userSettings.htm");
+                return;
             }
 
             String u = ar.reqParam("u");
@@ -690,7 +692,7 @@ public class UserController extends BaseController {
 
             profile.setLastUpdated(ar.nowTime);
             UserManager.writeUserProfilesToFile();
-            return redirectBrowser(ar,"editUserProfile.htm?u="+userKey);
+            redirectBrowser(ar,"editUserProfile.htm?u="+userKey);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.edit.userprofile", new Object[]{userKey} , ex);
         }
@@ -774,7 +776,7 @@ public class UserController extends BaseController {
             }
 
             JSONObject paramMap = new JSONObject();
-            paramMap.put(Constant.MSG_TYPE , Constant.SUCCESS);
+            paramMap.put("msgType" , "success");
             paramMap.put("action", action);
             paramMap.put("roleName", roleName);
             responseMessage = paramMap.toString();
@@ -798,7 +800,7 @@ public class UserController extends BaseController {
 
 
     @RequestMapping(value = "/{userKey}/uploadImage.form", method = RequestMethod.POST)
-    protected ModelAndView uploadImageFile(HttpServletRequest request,
+    protected void uploadImageFile(HttpServletRequest request,
             HttpServletResponse response,
             @PathVariable String userKey,
             @RequestParam("fname") MultipartFile fileInPost) throws Exception {
@@ -859,7 +861,7 @@ public class UserController extends BaseController {
             profile.setLastUpdated(ar.nowTime);
             UserManager.writeUserProfilesToFile();
 
-            return redirectBrowser(ar,"editUserProfile.htm?u="+userKey);
+            redirectBrowser(ar,"editUserProfile.htm?u="+userKey);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.upload.user.image.page",
                     new Object[]{userKey} , ex);
@@ -894,7 +896,7 @@ public class UserController extends BaseController {
                 UserManager.writeUserProfilesToFile();
 
                 JSONObject paramMap = new JSONObject();
-                paramMap.put(Constant.MSG_TYPE , Constant.SUCCESS);
+                paramMap.put("msgType" , "success");
                 paramMap.put("modid", modid);
                 responseMessage = paramMap.toString();
             }
@@ -967,12 +969,11 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/{userKey}/BrowseConnection{folderId}.htm", method = RequestMethod.GET)
-    public ModelAndView folderDisplay5(@PathVariable String userKey,
+    public void folderDisplay5(@PathVariable String userKey,
             @PathVariable String folderId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Need to log in to see page.");
@@ -992,7 +993,6 @@ public class UserController extends BaseController {
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.browse.connection.page", new Object[]{userKey}, ex);
         }
-        return modelAndView;
     }
 
 
@@ -1051,7 +1051,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/addEmailToProfile.form", method = RequestMethod.POST)
-    public ModelAndView addEmailToProfile(HttpServletRequest request, HttpServletResponse response)
+    public void addEmailToProfile(HttpServletRequest request, HttpServletResponse response)
     throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -1081,14 +1081,14 @@ public class UserController extends BaseController {
             MicroProfileMgr.save();
 
             String go = ar.baseURL+"v/"+up.getKey()+"/userSettings.htm";
-            return redirectBrowser(ar,go);
+            redirectBrowser(ar,go);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.add.mail.to.profile", null, ex);
         }
     }
 
     @RequestMapping(value="/{userKey}/uploadContacts.form", method = RequestMethod.POST)
-    public ModelAndView uploadContacts(
+    public void uploadContacts(
             @PathVariable String userKey,
             HttpServletRequest request,
             HttpServletResponse response,
@@ -1124,7 +1124,7 @@ public class UserController extends BaseController {
             }
 
             request.getSession().setAttribute("contactList", contactsMap);
-            return redirectBrowser(ar,"contacts.htm");
+            redirectBrowser(ar,"contacts.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.upload.contacts", new Object[]{userKey}, ex);
         }
@@ -1151,7 +1151,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value="/editMicroProfileDetail.form", method = RequestMethod.POST)
-    public ModelAndView editMicroProfileDetail(
+    public void editMicroProfileDetail(
 
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -1165,7 +1165,7 @@ public class UserController extends BaseController {
 
             MicroProfileMgr.setDisplayName(emailId, idDisplayName);
             MicroProfileMgr.save();
-            return redirectBrowser(ar,go);
+            redirectBrowser(ar,go);
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.edit.micro.profile", null, ex);
@@ -1185,7 +1185,7 @@ public class UserController extends BaseController {
             String searchStr = ar.defParam("searchStr","");
 
             JSONObject parameters = new JSONObject();
-            parameters.put(Constant.MSG_TYPE , Constant.SUCCESS);
+            parameters.put("msgType" , "success");
             JSONArray array = getPeopleListInJSONArray(ar, searchStr);
             parameters.put("datatable", array );
 
@@ -1214,7 +1214,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value="/{userKey}/changeListenerSettings.form", method = RequestMethod.POST)
-    public ModelAndView changeListenerSettings(
+    public void changeListenerSettings(
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
@@ -1238,7 +1238,7 @@ public class UserController extends BaseController {
 
             emailListener.reStart();
 
-            return redirectBrowser(ar,"emailListnerSettings.htm");
+            redirectBrowser(ar,"emailListnerSettings.htm");
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.to.change.listener.settings", null, ex);
@@ -1268,7 +1268,7 @@ public class UserController extends BaseController {
     }
 
     @RequestMapping(value = "/unsubscribe.htm", method = RequestMethod.GET)
-    public ModelAndView unsubscribe(
+    public void unsubscribe(
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
@@ -1277,7 +1277,7 @@ public class UserController extends BaseController {
             if(ar.isLoggedIn()){
                 UserProfile profile = ar.getUserProfile();
                 ar.resp.sendRedirect(ar.baseURL+"v/"+profile.getKey()+"/notificationSettings.htm");
-                return null;
+                return;
             }
 
             String userKey = ar.defParam("userKey", null);
@@ -1289,20 +1289,20 @@ public class UserController extends BaseController {
                 if(userProfile != null && userProfile.getAccessCode().equals(accessCode)){
                     ar.setSpecialSessionAccess("Notifications:"+userKey);
                     ar.resp.sendRedirect(ar.baseURL+"v/"+userKey+"/notificationSettings.htm");
-                    return null;
+                    return;
                 }
             }else if(emailId != null){
-                return redirectBrowser(ar,"unsubscribemember.htm?emailId="+URLEncoder.encode(emailId, "UTF-8"));
+                redirectBrowser(ar,"unsubscribemember.htm?emailId="+URLEncoder.encode(emailId, "UTF-8"));
+                return;
             }
             sendRedirectToLogin(ar);
-            return null;
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.open.notification.page", null , ex);
         }
     }
 
     @RequestMapping(value="/{userKey}/saveNotificationSettings.form", method = RequestMethod.POST)
-    public ModelAndView saveNotificationSettings(
+    public void saveNotificationSettings(
             @PathVariable String userKey,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -1370,7 +1370,7 @@ public class UserController extends BaseController {
             }
 
             ngp.saveFile(ar,"updated notification settings");
-            return redirectBrowser(ar,"notificationSettings.htm");
+            redirectBrowser(ar,"notificationSettings.htm");
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.to.update.notification.settings", null, ex);
@@ -1396,12 +1396,10 @@ public class UserController extends BaseController {
         }
     }
 
+    /*
     @RequestMapping(value="/unsubscribemember.form", method = RequestMethod.POST)
-    public ModelAndView saveUnsubScribeMember(
-            HttpServletRequest request,
+    public void saveUnsubScribeMember(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar =  AuthRequest.getOrCreate(request, response);//NGWebUtils.getAuthRequest(request, response, "Can not update notification settings.");
 
@@ -1415,13 +1413,12 @@ public class UserController extends BaseController {
             removeFromRole(ngp, new AddressListEntry(emailId), stopRolePlayer);
             ngp.saveFile(ar, "unsubscribe member");
 
-            modelAndView = new ModelAndView(new RedirectView("unsubscribemember.htm"));
-            modelAndView.addObject( "emailId", emailId );
+            redirectBrowser(ar,"unsubscribemember.htm?emailId="+URLEncoder.encode(emailId, "UTF-8"));
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.to.update.notification.settings", null, ex);
         }
-        return modelAndView;
     }
+    */
 
 
     @RequestMapping(value = "/{userKey}/userSettings.htm", method = RequestMethod.GET)
@@ -1556,14 +1553,14 @@ public class UserController extends BaseController {
         }
     }
 
-
+/*
     @RequestMapping(value = "/accountRequestResult.htm", method = RequestMethod.GET)
     public ModelAndView accountRequestResult(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         ModelAndView modelAndView = new ModelAndView("accountRequestResult");
         return modelAndView;
     }
-
+*/
 
     @RequestMapping(value = "/{userKey}/searchNotes.json", method = RequestMethod.POST)
     public void searchPublicNotesJSON(@PathVariable String userKey,

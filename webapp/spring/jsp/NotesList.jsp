@@ -404,8 +404,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       <li role="presentation">
                           <a role="menuitem" tabindex="-1" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
                       <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="editNote.htm?nid={{rec.id}}" target="_blank">Edit Topic</a></li>
-                      <li role="presentation">
                           <a role="menuitem" tabindex="-1" href="sendNote.htm?noteId={{rec.id}}">Send Email</a></li>
                       <li role="presentation" ng-hide="rec.public || rec.deleted">
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteViz(rec)">Make <img src="<%=ar.retPath%>assets/images/iconPublic.png"> Public</a></li>
@@ -433,8 +431,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       </button>
                     </span>
                   </span>
-                  &nbsp;
-                  <a class="fa fa-pencil-square-o meeting-icon" href="editNote.htm?nid={{rec.id}}" title="edit this topic"></a>
                   &nbsp;
                   <a class="fa fa-minus-square-o meeting-icon" ng-click="openMap[rec.id]=false" ng-show="openMap[rec.id]"></a>
                   <a class="fa fa-plus-square-o meeting-icon" ng-click="openMap[rec.id]=true" ng-show="!openMap[rec.id]" title="preview this topic"></a>

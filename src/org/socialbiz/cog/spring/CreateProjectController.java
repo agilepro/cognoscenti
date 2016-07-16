@@ -80,9 +80,9 @@ public class CreateProjectController extends BaseController {
             String projects = getAllProjectFullNameList(matchKey, ar.getCogInstance());
 
             if(projects.length() >0){
-                message = NGWebUtils.getJSONMessage(Constant.SUCCESS , projects , "");
+                message = NGWebUtils.getJSONMessage("success" , projects , "");
             }else{
-                message = NGWebUtils.getJSONMessage(Constant.FAILURE , context.getMessage("nugen.no.project.found",null, ar.getLocale()) , "");
+                message = NGWebUtils.getJSONMessage("failure" , context.getMessage("nugen.no.project.found",null, ar.getLocale()) , "");
             }
         }
         catch(Exception ex){
@@ -392,7 +392,7 @@ public class CreateProjectController extends BaseController {
         return newPage;
     }
 
-    
+
     private static String makeGoodSearchableName(String source) {
         StringBuffer result = new StringBuffer();
         source = source.trim();
@@ -424,8 +424,8 @@ public class CreateProjectController extends BaseController {
         }
         return result.toString();
     }
-    
-    
+
+
 /**
  * The loc parameter is a path to a place where the folder already exists, and
  * we want to convert an existing folder to a project.

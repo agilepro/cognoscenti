@@ -29,6 +29,7 @@ package org.socialbiz.cog.spring;
 
 public class Constant {
 
+    /*
     public static final String FAILURE = "failure";
     public static final String SUCCESS = "success";
 
@@ -39,6 +40,7 @@ public class Constant {
     public static final String MESSAGE = "msg";
     public static final String MSG_DETAIL = "msgDetail";
     public static final String COMMENTS = "comments";
+*/
 
  // PRIVATE //
 

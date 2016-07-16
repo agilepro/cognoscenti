@@ -5,6 +5,12 @@
 %><%@ include file="functions.jsp"
 %><%
 
+if (false) {
+    throw new Exception("Don't use EditNote.jsp any more");
+}
+
+
+
     String pageId      = ar.reqParam("pageId");
     NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngw);

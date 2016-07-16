@@ -45,16 +45,16 @@ public class NGWebUtils {
             Locale locale) throws Exception {
         StringWriter stackOutput = new StringWriter();
         e.printStackTrace(new PrintWriter(stackOutput));
-        return getJSONMessage(Constant.FAILURE,
+        return getJSONMessage("failure",
                 NGException.getFullMessage(e, locale), stackOutput.toString());
     }
 
     public static String getJSONMessage(String msgType, String message,
             String comments) throws Exception {
         JSONObject jsonMsg = new JSONObject();
-        jsonMsg.put(Constant.MSG_TYPE, msgType);
-        jsonMsg.put(Constant.MESSAGE, message);
-        jsonMsg.put(Constant.COMMENTS, comments);
+        jsonMsg.put("msgType", msgType);
+        jsonMsg.put("msg", message);
+        jsonMsg.put("comments", comments);
         String res = jsonMsg.toString();
         return res;
     }

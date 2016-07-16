@@ -328,8 +328,6 @@ app.controller('myCtrl', function($scope, $http) {
                   href="#" ng-click="createMinutes()">Generate Minutes</a></li>
               <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"
                   href="noteZoom{{meeting.minutesLocalId}}.htm">View Minutes</a></li>
-              <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"  target="_blank"
-                  href="<%=ar.retPath%>t/editNote.htm?pid=<%ar.writeURLData(pageId);%>&nid={{meeting.minutesLocalId}}">Edit Minutes</a></li>
               <li role="presentation" class="divider"></li>
               <li role="presentation"><a role="menuitem"
                   href="meetingList.htm">List All Meetings</a></li>

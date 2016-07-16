@@ -21,7 +21,6 @@
 package org.socialbiz.cog.spring;
 
 import java.io.File;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +33,6 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.CustomRole;
 import org.socialbiz.cog.EmailGenerator;
-import org.socialbiz.cog.HistoricActions;
-import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.LabelRecord;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGLabel;
@@ -46,9 +43,6 @@ import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.RoleRequestRecord;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
-import org.socialbiz.cog.UtilityMethods;
-import org.socialbiz.cog.exception.NGException;
-import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.mail.EmailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
