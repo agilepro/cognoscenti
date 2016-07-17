@@ -97,6 +97,9 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
         AuthStatus aStat = AuthStatus.getAuthStatus(req.getSession());
         JSONObject jo = new JSONObject();
         try {
+            JSONArray providers = new JSONArray();
+            providers.put( trusterProviderUrl );
+            jo.put("providers", providers);
             if (aStat.isAuthenticated()) {
                 jo.put("msg",  "User logged in as "+aStat.getName());
                 jo.put("userId",  aStat.getId());
@@ -131,11 +134,15 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
             JSONTokener jt = new JSONTokener(is);
             JSONObject objIn = new JSONObject(jt);
             is.close();
+            JSONArray providers = new JSONArray();
+            providers.put( trusterProviderUrl );
+            objIn.put("providers",  providers);
 
             if (pathInfo.startsWith("/logout")) {
                 aStat.logout();
                 objIn = new JSONObject();
                 objIn.put("msg",  "User not logged in");
+                objIn.put("providers",  providers);
                 objIn.write(w, 2, 0);
                 w.flush();
             }

@@ -45,6 +45,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.colors = ["salmon","khaki","beige","lightgreen","orange","bisque","tomato","aqua","orchid","peachpuff","powderblue","lightskyblue"];
 
+    $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
+                    +" participate in a role of the project '<%ar.writeHtml(ngc.getFullName());%>'."
+                    +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
+                    +" participate directly with the others through the site.";
+    
     $scope.showInput = false;
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -104,7 +109,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     newRoles.push(data);
                 }
                 else {
-                    newroles.push(item);
+                    newRoles.push(item);
                 }
             });
             $scope.allRoles = newRoles;
@@ -143,10 +148,26 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 found = true;
             }
         });
-        if (!found) {
-            $scope.roleInfo.players.push(player);
-        }
+        $scope.showAddPlayer=false;
         $scope.newPlayer = "";
+        if (found) {
+            alert("That user is already a player of this role.");
+            return;
+        }
+        $scope.roleInfo.players.push(player);
+        $scope.updateRole();
+        var isNew = true;
+        $scope.allPeople.forEach( function(existingUser) {
+            if (existingUser.uid == player.uid) {
+                if (existingUser.key) {
+                    isNew = false;
+                }
+            }
+        });
+        if (isNew) {
+            //prompt to send an invite
+            $scope.openInviteSender(player);
+        }
     }
     $scope.removePlayer = function(player) {
         var res = $scope.roleInfo.players.filter( function(one) {
@@ -227,15 +248,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     return player.uid;
                 },
                 msg: function() {
-                    return "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
-                    +" participate in the "+$scope.roleInfo.name+" role of the project '<%ar.writeHtml(ngc.getFullName());%>'."
-                    +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
-                    +" participate directly with the others through the site.";
+                    return $scope.inviteMsg;
                 }
             }
         });
 
         modalInstance.result.then(function (message) {
+            $scope.inviteMsg = message.msg;
             message.userId = player.uid;
             message.name = player.name;
             message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngc, "frontPage.htm")%>";
@@ -345,7 +364,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <td ></td>
                     <td style="width:20px;"></td>
                     <td  colspan="2" class="form-inline form-group">
-                        <button ng-click="addPlayer(newPlayer);showAddPlayer=false;updateRole()" class="form-control btn btn-primary">
+                        <button ng-click="addPlayer(newPlayer)" class="form-control btn btn-primary">
                             Add </button>
                         <input type="text" ng-model="newPlayer"  class="form-control"
                             placeholder="Enter Email Address" style="width:250px;"
