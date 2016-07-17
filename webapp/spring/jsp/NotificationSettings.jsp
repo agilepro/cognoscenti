@@ -25,22 +25,23 @@
     }
 
     JSONArray partProjects = new JSONArray();
-    List<NGPageIndex> v = ar.getCogInstance().getProjectsUserIsPartOf(uProf);
-    NGPageIndex.sortInverseChronological(v);
-    for(NGPageIndex ngpi : v){
+    List<NGPageIndex> projectsUserIsPartOf = ar.getCogInstance().getProjectsUserIsPartOf(uProf);
+    NGPageIndex.sortInverseChronological(projectsUserIsPartOf);
+    for(NGPageIndex ngpi : projectsUserIsPartOf){
         NGPage ngp = ngpi.getPage();
-        JSONObject jo = new JSONObject();
-        jo.put("key", ngp.getKey());
-        jo.put("updated", ngp.getLastModifyTime());
-        jo.put("fullName", ngp.getFullName());
-        JSONArray roles = new JSONArray();
+        NGBook ngb = ngp.getSite();
         for (NGRole ngr : ngp.getAllRoles()) {
             if (ngr.isExpandedPlayer(uProf,ngp)) {
-                roles.put(ngr.getName());
-            }
+                JSONObject jo = new JSONObject();
+                jo.put("siteKey", ngb.getKey());
+                jo.put("key", ngp.getKey());
+                jo.put("updated", ngp.getLastModifyTime());
+                jo.put("fullName", ngp.getFullName());
+                jo.put("role", ngr.getName());
+                jo.put("desc", ngr.getDescription());
+                partProjects.put(jo);
+           }
         }
-        jo.put("roles", roles);
-        partProjects.put(jo);
     }
 
 %>
@@ -61,12 +62,26 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
 
-    $scope.stopRole = function(prj, role) {
-        alert('Sit tight, Soon we will allow you to stop being a player of the '+role+' role of the '+prj.fullName+' workspace.');
-    }
-
-    $scope.noImpl = function() {
-        alert('no implemented yet');
+    $scope.stopRole = function(prjrole) {
+        var conf = confirm('Confirm that you would like to withdraw from the '
+              +prjrole.role+' role of the '+prjrole.fullName+' workspace.');
+        if (conf) {
+            var postURL = "../removeMe.json?p="+encodeURIComponent(prjrole.key)
+                    +"&role="+encodeURIComponent(prjrole.role);
+            $http.get(postURL)
+            .success( function(data) {
+                var shorter = [];
+                $scope.partProjects.forEach( function(item) {
+                    if (item.key != prjrole.key  || item.role != prjrole.role) {
+                        shorter.push(item);
+                    }
+                });
+                $scope.partProjects = shorter;
+            })
+            .error( function(data, status, headers, config) {
+                $scope.reportError(data);
+            });
+        }
     }
 
 });
@@ -79,44 +94,27 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Unsubscribe from Notification
-        </div>
-        <!--div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="" ng-click="noImpl()">Do Nothing</a></li>
-            </ul>
-          </span>
-
-        </div-->
-    </div>
 
 
-<div ng-repeat="prj in partProjects" style="border: 1px solid lightgrey;border-radius:10px;margin-top:20px;padding:5px;background-color:#F8EEEE;">
-    <span class="dropdown">
-        <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-            data-toggle="dropdown"> <span class="caret"></span> </button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-            <li role="presentation" ng-repeat="role in prj.roles">
-                <a role="menuitem" tabindex="-1" ng-click="stopRole(prj, role)">Stop playing {{role}}</a>
-            </li>
-        </ul>
-    </span>
-    <b>{{prj.fullName}}</b> - {{prj.key}}
-    <div style="background-color:white;border-radius:5px;margin:5px;padding:10px;">
-        Workspace last updated: {{prj.updated|date}}
-        <br/>
-        You are playing the following roles:
-        <span ng-repeat="role in prj.roles">
-             {{role}}
-        </span>
-    </div>
+<div class="alert alert-warning">
+Please note: when you withdraw from a <b>'Members'</b> role of a workspace, 
+you will stop receiving email when meetings are called, when topics 
+are create, and when comments are made.  
+ALSO, you will no longer have any access to the workspace.  
+Withdrawing from a Members role means you are effectively leaving 
+the group that runs the workspace.
 </div>
+
+<table class="table">
+
+  <tr ng-repeat="prjrole in partProjects">
+    <td><b>{{prjrole.fullName}}</b><br/>
+        Updated: {{prjrole.updated|date}}</td>
+    <td><button ng-click="stopRole(prjrole)" class="btn btn-danger">Withdraw from {{prjrole.role}}</button></td>
+    <td style="color:gray;">{{prjrole.desc}}</td>
+  </tr>
+</table>
+
 
 
 

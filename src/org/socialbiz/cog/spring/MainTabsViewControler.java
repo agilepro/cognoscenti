@@ -581,6 +581,37 @@ public class MainTabsViewControler extends BaseController {
     }
 
 
+    /**
+     * This removes the logged in user from a specified role
+     * p == workspace id
+     * role == role name
+     */
+    @RequestMapping(value = "removeMe.json", method = RequestMethod.GET)
+    public void removeMe(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            ar.assertLoggedIn("Must be logged in modify role settings");
+            String p = ar.reqParam("p");
+            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+            String role = ar.reqParam("role");
+            NGRole specRole = ngp.getRoleOrFail(role);
+            specRole.removePlayer(ar.getUserProfile().getAddressListEntry());
+            ngp.saveFile(ar, "user removed themself from role "+role);
+
+            JSONObject results = new JSONObject();
+            results.put("result", "ok");
+            results.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to remove user from role.", ex);
+            streamException(ee, ar);
+        }
+    }
+
+
+
 
 
     /**
