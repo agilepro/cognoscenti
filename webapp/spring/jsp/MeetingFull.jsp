@@ -2127,13 +2127,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                   <a role="menuitem" ng-click="postComment(item, cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="deleteComment(item, cmt)">Delete Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.state==12 && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                                  <a role="menuitem" ng-click="closeComment(item, cmt)">Close Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-show="cmt.state==12">
+                                  <a role="menuitem" ng-click="closeComment(item, cmt)">Close {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.commentType==1">
                                   <a role="menuitem" ng-click="openCommentCreator(item,1,cmt.time)">Reply</a></li>
                               <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
                                   <a role="menuitem" ng-click="openCommentCreator(item,2,cmt.time,cmt.html)">Make Modified Proposal</a></li>
-                              <li role="presentation" ng-show="cmt.commentType==2">
+                              <li role="presentation" >
                                   <a role="menuitem" ng-click="openDecisionEditor(item, cmt)">Create New Decision</a></li>
                            </ul>
                        </div>
