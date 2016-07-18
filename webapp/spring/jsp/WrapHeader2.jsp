@@ -202,7 +202,7 @@
         <div class="form-group input-group">
           <input type="text" class="form-control" name="s" placeholder="Search">
 		  <div class="input-group-btn">
-			<button type="submit" class="btn btn-default" style="padding: 3px 5px 0px 5px;"><i class="material-icons" style="color:#777">search</i></button>
+			<button type="submit" class="btn btn-default" style="padding: 6px 8px;"><i class="fa fa-search" style="color:#777"></i></button>
 		  </div>
         </div>
       </form>
