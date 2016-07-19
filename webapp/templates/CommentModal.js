@@ -1,18 +1,20 @@
 
-app.controller('CommentModalCtrl', function ($scope, $modalInstance, cmt, parentScope) {
+app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, cmt, parentScope) {
 
     // initial comment object
     $scope.cmt = cmt;
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
     // are there unsaved changes?
-	$scope.unsaved = false;
-	
+	$scope.unsaved = 0;
 
 	// return a readable status message
 	$scope.getStatusMassage = function() {
-		if ($scope.unsaved) return "Unsaved changes";
-        else return "No changes";
+		switch ($scope.unsaved) {
+            case -1:    return "Autosave completed";
+            case 0:     return "No changes";
+            case 1:     return "Unsaved changes";
+        }
 	};
 	
     $scope.dummyDate1 = new Date();
@@ -31,13 +33,11 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, cmt, parent
         editor.on('Format', tinymceChangeTrigger);
 
     }
-    function tinymceInitTrigger(e) {
 
-    }
     function tinymceChangeTrigger(e, editor) {
         if (tinyMCE.activeEditor.getContent() != $scope.initialContent)
-            $scope.unsaved = true;
-        else $scope.unsaved = false;
+            $scope.unsaved = 1;
+        else $scope.unsaved = 0;
     }
 
     $scope.ok = function () {
@@ -48,20 +48,22 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, cmt, parent
                 $scope.cmt.state=13;
             }
         }
-        $scope.unsaved = false;
+        $scope.unsaved = 0;
+        $interval.cancel($scope.promiseAutosave);
         $modalInstance.close($scope.cmt);
     };
 
-    $scope.saveDraft = function() {
+    $scope.save = function() {
         $scope.cmt.dueDate = $scope.dummyDate1.getTime();
         $scope.parentScope.updateComment($scope.cmt);
-        $scope.unsaved = false;
+        $scope.unsaved = 0;
         $scope.cmt.isNew = false;
     }
 
     $scope.cancel = function () {
         var r = true;
-        if ($scope.unsaved) r = confirm('There are unsaved changes. Do you really want to cancel?');
+        if ($scope.unsaved == 1) r = confirm('There are unsaved changes. Do you really want to cancel?');
+        $interval.cancel($scope.promiseAutosave);
         if (r) $modalInstance.dismiss('cancel');
     };
 
@@ -98,5 +100,18 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, cmt, parent
     $scope.datePickDisable = function(date, mode) {
         return false;
     };
+
+    /** AUTOSAVE
+     * this part of the controller enables an autosave every 30 seconds
+     */
+    // TODO Make autosave interval configureable
+    // TODO Add autosave enable/disable to configuration
+    $scope.autosave = function() {
+        if ($scope.unsaved == 1) {
+            $scope.save();
+            $scope.unsaved = -1;
+        }
+    }
+    $scope.promiseAutosave = $interval($scope.autosave, 30000);
 
 });
