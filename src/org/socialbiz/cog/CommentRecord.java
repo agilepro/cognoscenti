@@ -374,6 +374,19 @@ public class CommentRecord extends DOMFace {
         setAttributeBool("closeEmailSent", newVal);
     }
 
+    /**
+     * If the resend message is set, then you are waiting for the email to be
+     * sent again, for the remaining people who have not responded, to a
+     * round or a proposal.  After sending, clear the message.
+     */
+    public String getResendMessage() {
+        return getScalar("resendMessage");
+    }
+    public void setResendMessage(String newVal) {
+        setScalar("resendMessage", newVal);
+    }
+
+
 
     public void commentEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
@@ -401,7 +414,7 @@ public class CommentRecord extends DOMFace {
                     ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
                 }
             }
-            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile, mailFile);
+            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile, mailFile, null);
         }
 
         if (getState()==CommentRecord.COMMENT_STATE_CLOSED) {
@@ -414,6 +427,53 @@ public class CommentRecord extends DOMFace {
         }
         setPostTime(ar.nowTime);
         noteOrMeet.markTimestamp(ar.nowTime);
+    }
+
+
+
+    public void commentResendRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
+        List<OptOutAddr> originalList = new ArrayList<OptOutAddr>();
+        String targetRole = noteOrMeet.getTargetRole();
+        if (targetRole==null || targetRole.length()==0) {
+            targetRole = "Members";
+        }
+        OptOutAddr.appendUsersFromRole(ngp, targetRole, originalList);
+        List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
+        for (OptOutAddr oneMem : originalList) {
+            //is there a response from this person, if not add to sendTo list.
+            boolean found = false;
+            for (ResponseRecord rr : getResponses()) {
+                if (oneMem.getAssignee().hasAnyId(rr.getUserId())) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                sendTo.add(oneMem);
+            }
+        }
+
+        //add the commenter in case missing from the target role
+        AddressListEntry commenter = getUser();
+        UserProfile commenterProfile = commenter.getUserProfile();
+        if (commenterProfile==null) {
+            System.out.println("DATA PROBLEM: comment came from a person without a profile ("+getUser().getEmail()+") ignoring");
+            setEmailSent(true);
+            return;
+        }
+
+        String resendMsg = this.getResendMessage();
+
+        for (OptOutAddr ooa : sendTo) {
+            if (this.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
+                UserProfile toProfile = UserManager.findUserByAnyId(ooa.getEmail());
+                if (toProfile!=null) {
+                    ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
+                }
+            }
+            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile, mailFile, resendMsg);
+        }
+
+        this.setResendMessage(null);
     }
 
     public String commentTypeName() {
@@ -429,7 +489,7 @@ public class CommentRecord extends DOMFace {
     }
 
     private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
-            UserProfile commenterProfile, MailFile mailFile) throws Exception  {
+            UserProfile commenterProfile, MailFile mailFile, String resendMessage) throws Exception  {
         Cognoscenti cog = ar.getCogInstance();
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
@@ -471,6 +531,7 @@ public class CommentRecord extends DOMFace {
         data.put("isClosed", isClosed);
         data.put("outcomeHtml", this.getOutcomeHtml(clone));
         data.put("optout", ooa.getUnsubscribeJSON(clone));
+        data.put("resendMessage", resendMessage);
 
         File templateFile = cog.getConfig().getFileFromRoot("email/NewComment.chtml");
         ChunkTemplate.streamIt(clone.w, templateFile, data);
@@ -579,6 +640,9 @@ public class CommentRecord extends DOMFace {
         if (input.has("decision")) {
             setDecision(input.getString("decision"));
         }
+        if (input.has("resendMessage")) {
+            setResendMessage(input.getString("resendMessage"));
+        }
 
         //A simple comment should never be "open", only draft or closed, so assure that here
         if (getCommentType()==COMMENT_TYPE_SIMPLE  &&
@@ -609,6 +673,14 @@ public class CommentRecord extends DOMFace {
                 ScheduledNotification snr = rr.getScheduledNotification(ngp, noteOrMeet, this);
                 if (snr.needsSending()) {
                     resList.add(snr);
+                }
+            }
+
+            String resend = getResendMessage();
+            if (resend!=null && resend.length()>0) {
+                CRResendNotification crrn = new CRResendNotification(ngp, noteOrMeet, this);
+                if (crrn.needsSending()) {
+                    resList.add(crrn);
                 }
             }
         }
@@ -660,5 +732,33 @@ public class CommentRecord extends DOMFace {
 
     }
 
+    private class CRResendNotification implements ScheduledNotification {
+        NGPage ngp;
+        EmailContext noteOrMeet;
+        CommentRecord cr;
+
+        public CRResendNotification( NGPage _ngp, EmailContext _noteOrMeet, CommentRecord _cr) {
+            ngp  = _ngp;
+            noteOrMeet = _noteOrMeet;
+            cr   = _cr;
+        }
+        public boolean needsSending() throws Exception {
+            String resend = getResendMessage();
+            return (resend!=null && resend.length()>0);
+        }
+
+        public long timeToSend() throws Exception {
+            return cr.getTime();
+        }
+
+        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+            cr.commentResendRecord(ar,ngp,noteOrMeet,mailFile);
+        }
+
+        public String selfDescription() throws Exception {
+            return "(Comment-Resend) "+cr.getUser().getName()+" on "+noteOrMeet.selfDescription();
+        }
+
+    }
 
 }

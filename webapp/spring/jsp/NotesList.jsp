@@ -310,7 +310,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 			      Show Filter</a>
               </li>
               <li role="presentation"><a role="menuitem" ng-click="openTopicCreator()"> 
-			      Create New Topic </a>
+			      Create New Topic</a>
               </li>
 			  
               <li role="presentation"><a role="menuitem" href="sendNote.htm">
@@ -391,7 +391,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         <div>
             <button class="btn btn-default" ng-click="openTopicCreator()"> 
-			    Create New Topic </a>
+			    Create New Topic
             </button>
         </div>
         <div ng-repeat="rec in getRows()">

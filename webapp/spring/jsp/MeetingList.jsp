@@ -171,7 +171,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
                         <input type="radio" ng-model="newMeeting.meetingType" value="1"
-                            class="form-control" /> Circle Meeting   &nbsp
+                            class="form-control" /> Circle Meeting   &nbsp;
                         <input type="radio" ng-model="newMeeting.meetingType" value="2"
                             class="form-control" /> Operational Meeting
                     </td>

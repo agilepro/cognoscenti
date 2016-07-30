@@ -216,10 +216,10 @@ app.filter('escape', function() {
                     <form action="changeProjectName.form" method="post" >
                         <tr>
                             <td class="gridTableColummHeader_2"><fmt:message key="nugen.generatInfo.PageNameCaption"/>:</td>
-                            <td><input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>">
+                            <td><input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>"/>
                                 <input type="hidden" name="encodingGuard" value="%E6%9D%B1%E4%BA%AC"/>
-                                <input type="hidden" name="go" value="<%ar.writeHtml(ar.getCompleteURL());%>">
-                                <input type="text" class="form-control" style="width:300px" name="newName" value="<%ar.writeHtml(ngw.getFullName());%>">
+                                <input type="hidden" name="go" value="<%ar.writeHtml(ar.getCompleteURL());%>"/>
+                                <input type="text" class="form-control" style="width:300px" name="newName" value="<%ar.writeHtml(ngw.getFullName());%>"/>
                             </td>
                         </tr>
                         <tr>
@@ -227,7 +227,7 @@ app.filter('escape', function() {
                             <td class="gridTableColummHeader_2"></td>
                             <td>
                                 <input type="submit" value='<fmt:message key="nugen.generatInfo.Button.Caption.Admin.ChangePage"/>'
-                                       name="action" class="btn btn-primary">
+                                       name="action" class="btn btn-primary"/>
                             </td>
                         </tr>
                     </form>

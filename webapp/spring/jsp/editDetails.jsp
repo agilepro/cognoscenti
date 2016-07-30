@@ -330,7 +330,7 @@ app.controller('myCtrl', function($scope, $http) {
             <% } %>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <input type="checkbox" name="visMember" value="MEM" checked="checked" disabled="disabled"/>
-            <img src="<%=ar.retPath %>assets/images/iconMember.png" name="MEM" alt="Member" title="Member"/ > Member Access
+            <img src="<%=ar.retPath %>assets/images/iconMember.png" name="MEM" alt="Member" title="Member" /> Member Access
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <input type="checkbox" name="visUpstream" value="UPS"
                    <%if(attachment.isUpstream()){%> checked="checked" <%}%>/>

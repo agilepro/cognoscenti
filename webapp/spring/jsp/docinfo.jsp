@@ -177,6 +177,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             resolve: {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
+                },
+                parentScope: function () {
+                    return $scope;
                 }
             }
         });

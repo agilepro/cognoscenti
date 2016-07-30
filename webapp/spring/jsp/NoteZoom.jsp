@@ -362,22 +362,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (cmt.state==13) {
             return "";
         }
-        var diff = Math.trunc((cmt.dueDate-$scope.currentTime) / 60000);
+        var diff = Math.floor((cmt.dueDate-$scope.currentTime) / 60000);
         if (diff<0) {
             return "overdue";
         }
         if (diff<120) {
             return "due in "+diff+" minutes";
         }
-        diff = Math.trunc(diff / 60);
+        diff = Math.floor(diff / 60);
         if (diff<48) {
             return "due in "+diff+" hours";
         }
-        diff = Math.trunc(diff / 24);
+        diff = Math.floor(diff / 24);
         if (diff<8) {
             return "due in "+diff+" days";
         }
-        diff = Math.trunc(diff / 7);
+        diff = Math.floor(diff / 7);
         return "due in "+diff+" weeks";
     }
 
@@ -423,6 +423,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "";
     }
+    $scope.sendReminderEmail = function(cmt) {
+        var msg = "Please make a response to this request";
+        cmt.resendMessage = msg;
+        $scope.updateComment(cmt);
+    }
     
     
     $scope.openCommentCreator = function(type, replyTo, defaultBody) {
@@ -456,6 +461,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             resolve: {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
+                },
+                parentScope: function () {
+                    return $scope;
                 }
             }
         });
@@ -745,8 +753,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
     <div style="width:100%;margin-top:50px;">
-    <div>
-      <span style="width:150px">Attachments:</span>
+     <span style="width:150px">Attachments:</span>
       <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default"  style="margin:4px;"
            ng-click="navigateToDoc(doc)">
               <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
@@ -825,8 +832,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                   <a role="menuitem" ng-click="createModifiedProposal(cmt)">Make Modified Proposal</a></li>
                               <li role="presentation" ng-show="cmt.commentType==1">
                                   <a role="menuitem" ng-click="replyToComment(cmt)">Reply</a></li>
-                              <li role="presentation" ng-show="cmt.commentType==2 && !cmt.decision">
+                              <li role="presentation" >
                                   <a role="menuitem" ng-click="openDecisionEditor(cmt)">Create New Decision</a></li>
+                              <li role="presentation" ng-show="cmt.state==12">
+                                  <a role="menuitem" ng-click="sendReminderEmail(cmt)">Remind People (email) to Respond</a></li>
+                                  
                            </ul>
 <% } %>
                          </div>

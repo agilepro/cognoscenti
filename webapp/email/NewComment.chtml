@@ -13,6 +13,11 @@ Workspace: <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a>
 </p>
 <hr/>
 
+{% if($resendMessage) %}
+<div style="background-color:yellow;padding:10px;margin:10px">{$resendMessage|html}</div>
+{% endif %}
+
+
 <div>
 {$comment.html}
 </div>
@@ -24,6 +29,5 @@ Workspace: <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a>
 </div>
 
 {% include OptOut %}
-
 
 </body></html>

@@ -723,9 +723,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return person.name;
     }
     $scope.findPerson = function(email) {
-        return $scope.allPeople.find( function(item) {
-            return (item.uid == email)
+        var retPerson = null;
+        $scope.allPeople.forEach( function(item) {
+            if (item.uid == email) {
+                retPerson = item;
+            }
         });
+        return retPerson;
     }
 
     $scope.createMinutes = function() {
@@ -1161,9 +1165,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.findComment = function(item, timeStamp) {
-        return item.comments.find( function(item) {
-            return item.time == timeStamp;
+        var foundComment = null;
+        item.comments.forEach( function(item) {
+            if ( item.time == timeStamp ) {
+                foundComment = item;
+            }
         });
+        return foundComment;
     }
     $scope.currentTime = (new Date()).getTime();
     $scope.calcDueDisplay = function(cmt) {
@@ -1310,6 +1318,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             resolve: {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
+                },
+                parentScope: function () {
+                    return $scope;
                 }
             }
         });
@@ -1608,7 +1619,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
                         <input type="radio" ng-model="meeting.meetingType" value="1"
-                            class="form-control" /> Circle Meeting   &nbsp
+                            class="form-control" /> Circle Meeting   &nbsp;
                         <input type="radio" ng-model="meeting.meetingType" value="2"
                             class="form-control" /> Operational Meeting
                     </td>
@@ -2116,7 +2127,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    <div>
                        <div class="dropdown" style="float:left">
                            <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
-                               data-toggle="dropdown"> <span class="caret"></span> </button>
+                               data-toggle="dropdown"> <span class="caret"></span>
                            </button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                               <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
