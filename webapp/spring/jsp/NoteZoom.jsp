@@ -800,7 +800,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
       <tr ng-repeat="cmt in getComments()">
            <td style="width:50px;max-width:50px;vertical-align:top;padding:5px;padding-top:15px">
-               <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
+               <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg"
+               title="{{cmt.userName}} - {{cmt.user}}">
            </td>
            <td>
                <div class="comment-outer" style="{{stateStyle(cmt)}}">

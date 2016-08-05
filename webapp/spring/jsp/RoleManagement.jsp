@@ -299,7 +299,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     </td>
                     <td style="align:right;padding:10px">
                         <span ng-repeat="player in role.players">
-                            <img sh-show="player.key" class="img-circle" src="<%=ar.retPath%>users/{{imageName(player)}}" style="width:32px;height:32px">
+                            <img sh-show="player.key" class="img-circle" src="<%=ar.retPath%>users/{{imageName(player)}}" style="width:32px;height:32px"
+                            title="{{player.name}} - {{player.uid}}">
                         </span>
                     </td>
                 </tr>

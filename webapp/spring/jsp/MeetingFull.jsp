@@ -2120,7 +2120,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       <table ng-show="showItemMap[item.id] && !item.isBlank" >
       <tr ng-repeat="cmt in item.comments">
            <td style="width:50px;vertical-align:top;padding:15px;">
-               <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg">
+               <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg"
+               title="{{cmt.userName}} - {{cmt.user}}">
            </td>
            <td>
                <div class="comment-outer"  style="{{stateStyle(cmt)}}">
