@@ -17,7 +17,12 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
         }
 	};
 	
-    $scope.dummyDate1 = new Date();
+	// register for updated cmt in parent
+	$scope.parentScope.$on("NewCmtCreated", function(event, cmt) { 
+		$scope.cmt = cmt; 
+	});
+    
+	$scope.dummyDate1 = new Date();
     if (cmt.dueDate>0) {
         $scope.dummyDate1 = new Date(cmt.dueDate);
     }
@@ -55,6 +60,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
 
     $scope.save = function() {
         $scope.cmt.dueDate = $scope.dummyDate1.getTime();
+		$scope.$$hashKey = 250;
         $scope.parentScope.updateComment($scope.cmt);
         $scope.unsaved = 0;
         $scope.cmt.isNew = false;

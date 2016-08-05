@@ -22,6 +22,10 @@ Required parameter:
 
     boolean isLoggedIn = ar.isLoggedIn();
 
+    //there might be a better way to measure this that takes into account
+    //magic numbers and tokens
+    boolean canUpdate = ar.isMember();
+
     NGBook ngb = ngw.getSite();
     UserProfile uProf = ar.getUserProfile();
     String currentUser = "NOBODY";
@@ -41,13 +45,6 @@ Required parameter:
     boolean canAccessNote  = AccessControl.canAccessNote(ar, ngw, note);
     if (!canAccessNote) {
         throw new Exception("Program Logic Error: this view should only display when user can actually access the note.");
-    }
-    
-    String targetRoleName = note.getTargetRole();
-    NGRole targetRole = ngw.getRoleOrFail(targetRoleName);
-    boolean canUpdate = false;
-    if (ar.isLoggedIn()) {
-        canUpdate = targetRole.isExpandedPlayer(ar.getUserProfile(), ngw);
     }
 
     JSONObject noteInfo = note.getJSONWithComments(ar, ngw);
@@ -145,12 +142,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         rec.universalid = $scope.noteInfo.universalid;
         fields.forEach( function(fieldName) {
             rec[fieldName] = $scope.noteInfo[fieldName];
+            console.log("SAVING: "+fieldName);
         });
         var postdata = angular.toJson(rec);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.noteInfo = data;
+            console.log("GOT NOTE SAVED", data);
             $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
@@ -205,6 +204,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.savePartial = function(recordToSave) {
         var postURL = "updateNote.json?nid="+$scope.noteInfo.id;
         var postdata = angular.toJson(recordToSave);
+        console.log(postdata);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
@@ -212,6 +212,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.fixUpChoices();
             $scope.myComment = "";
             $scope.refreshHistory();
+			$scope.$broadcast("NewCmtCreated", data.comments[data.comments.length - 1]);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -365,22 +366,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (cmt.state==13) {
             return "";
         }
-        var diff = Math.floor((cmt.dueDate-$scope.currentTime) / 60000);
+        var diff = Math.trunc((cmt.dueDate-$scope.currentTime) / 60000);
         if (diff<0) {
             return "overdue";
         }
         if (diff<120) {
             return "due in "+diff+" minutes";
         }
-        diff = Math.floor(diff / 60);
+        diff = Math.trunc(diff / 60);
         if (diff<48) {
             return "due in "+diff+" hours";
         }
-        diff = Math.floor(diff / 24);
+        diff = Math.trunc(diff / 24);
         if (diff<8) {
             return "due in "+diff+" days";
         }
-        diff = Math.floor(diff / 7);
+        diff = Math.trunc(diff / 7);
         return "due in "+diff+" weeks";
     }
 
@@ -426,23 +427,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "";
     }
-    $scope.sendReminderEmail = function(cmt) {
-        var msg = "Please make a response to this request";
-        cmt.resendMessage = msg;
-        $scope.updateComment(cmt);
-    }
     
     
     $scope.openCommentCreator = function(type, replyTo, defaultBody) {
-        if (!$scope.canUpdate) {
-            alert("Must be a member of target role in order to make a comment on this subject");
-            return;
-        }
         var newComment = {};
         newComment.time = -1;
         newComment.commentType = type;
         newComment.state = 11;
-        newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
         newComment.isNew = true;
         newComment.user = "<%ar.writeJS(currentUser);%>";
         newComment.userName = "<%ar.writeJS(currentUserName);%>";
@@ -469,9 +460,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
                 },
-                parentScope: function () {
-                    return $scope;
-                }
+                parentScope: function() { return $scope; }
             }
         });
 
@@ -491,10 +480,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.openResponseEditor = function (cmt) {
 
-        if (!$scope.canUpdate) {
-            alert("Must be a member of target role in order to respond on this subject");
-            return;
-        }
         var selected = $scope.getResponse(cmt);
         var selResponse = {};
         if (selected.length == 0) {
@@ -538,10 +523,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.openOutcomeEditor = function (cmt) {
 
-        if (!$scope.canUpdate) {
-            alert("Must be a member of target role in order to create an outcome on this subject");
-            return;
-        }
         var modalInstance = $modal.open({
             animation: false,
             templateUrl: '<%=ar.retPath%>templates/OutcomeModal.html<%=templateCacheDefeater%>',
@@ -569,10 +550,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
     $scope.createDecision = function(newDecision) {
-        if (!$scope.canUpdate) {
-            alert("Must be a member of target role in order to create a decision on this subject");
-            return;
-        }
         newDecision.num="~new~";
         newDecision.universalid="~new~";
         var postURL = "updateDecision.json?did=~new~";
@@ -595,10 +572,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.openDecisionEditor = function (cmt) {
 
-        if (!$scope.canUpdate) {
-            alert("Must be a member of target role in order to edit the attachments");
-            return;
-        }
         var newDecision = {
             html: cmt.html,
             labelMap: $scope.noteInfo.labelMap,
@@ -630,10 +603,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
 
     $scope.openAttachDocument = function () {
-        if (!$scope.canUpdate) {
-            alert("Must be a member of target role in order to edit the attachments");
-            return;
-        }
 
         var attachModalInstance = $modal.open({
             animation: true,
@@ -664,10 +633,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.openAttachAction = function (item) {
 
-        if (!$scope.canUpdate) {
-            alert("Must be a member of target role in order to edit the attachments");
-            return;
-        }
         var attachModalInstance = $modal.open({
             animation: true,
             templateUrl: '<%=ar.retPath%>templates/AttachAction.html<%=templateCacheDefeater%>',
@@ -784,7 +749,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
     <div style="width:100%;margin-top:50px;">
-     <span style="width:150px">Attachments:</span>
+    <div>
+      <span style="width:150px">Attachments:</span>
       <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default"  style="margin:4px;"
            ng-click="navigateToDoc(doc)">
               <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
@@ -841,7 +807,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                      <div>
 
                          <div class="dropdown" style="float:left">
-<% if (isLoggedIn && canUpdate) { %>
+<% if (isLoggedIn) { %>
                             <button class="dropdown-toggle specCaretBtn" type="button"  id="menu1" 
                                 data-toggle="dropdown"> <span class="caret"></span> </button>
                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -863,11 +829,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                   <a role="menuitem" ng-click="createModifiedProposal(cmt)">Make Modified Proposal</a></li>
                               <li role="presentation" ng-show="cmt.commentType==1">
                                   <a role="menuitem" ng-click="replyToComment(cmt)">Reply</a></li>
-                              <li role="presentation" >
+                              <li role="presentation" ng-show="cmt.commentType==2 && !cmt.decision">
                                   <a role="menuitem" ng-click="openDecisionEditor(cmt)">Create New Decision</a></li>
-                              <li role="presentation" ng-show="cmt.state==12">
-                                  <a role="menuitem" ng-click="sendReminderEmail(cmt)">Remind People (email) to Respond</a></li>
-                                  
                            </ul>
 <% } %>
                          </div>
@@ -927,7 +890,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                </div>
                            </td>
                        </tr>
-                       <tr ng-show="needsUserResponse(cmt) && canUpdate">
+                       <tr ng-show="needsUserResponse(cmt)">
                            <td style="padding:5px;max-width:100px;">
                                <div ng-show="cmt.commentType==2"><b>????</b></div>
                                <div><% ar.writeHtml(currentUserName); %></div>
