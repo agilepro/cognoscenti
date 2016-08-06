@@ -19,7 +19,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
 	
 	// register for updated cmt in parent
 	$scope.parentScope.$on("NewCmtCreated", function(event, cmt) { 
-		$scope.cmt = cmt; 
+		// set timestamp to timestamp of updated comment to prevent duplicates
+		$scope.cmt.time = cmt.time; 
 	});
     
 	$scope.dummyDate1 = new Date();
