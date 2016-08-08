@@ -4,7 +4,7 @@
 ***********************************************************************/
 
 body{
-  font-family:Arial, Helvetica, Verdana, sans-serif;
+  font-family: Arial, Helvetica, Verdana, sans-serif;
   font-size:13px;
   color:black;
   background-color:transparent;
@@ -32,6 +32,10 @@ img{
 #mainNavigation{
   float:left;
   top:66px;
+}
+
+#weaver-logo-header img {
+	margin: 5px;
 }
 
 .leftDivContent{

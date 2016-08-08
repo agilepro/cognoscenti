@@ -139,7 +139,7 @@
 <nav class="navbar navbar-default">
   <div >
     <div class="navbar-header">
-        <a href="<%=userRelPath%>UserHome.htm" title="Weaver Home Page"><img src="<%=ar.retPath%>bits/weavericon.png"></a>
+        <a id="weaver-logo-header" href="<%=userRelPath%>UserHome.htm" title="Weaver Home Page"><img src="<%=ar.retPath%>bits/weaver-logo-header.png"></a>
     </div>
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
