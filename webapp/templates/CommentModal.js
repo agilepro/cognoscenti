@@ -7,7 +7,9 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
     $scope.parentScope = parentScope;
     // are there unsaved changes?
 	$scope.unsaved = 0;
-
+	// controls if comment can be saved
+	$scope.saveDisabled = false;
+	
 	// return a readable status message
 	$scope.getStatusMassage = function() {
 		switch ($scope.unsaved) {
@@ -19,8 +21,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
 	
 	// register for updated cmt in parent
 	$scope.parentScope.$on("NewCmtCreated", function(event, cmt) { 
-		// set timestamp to timestamp of updated comment to prevent duplicates
 		$scope.cmt.time = cmt.time; 
+		$scope.saveDisabled = false;
 	});
     
 	$scope.dummyDate1 = new Date();
@@ -60,6 +62,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
     };
 
     $scope.save = function() {
+		$scope.saveDisabled = true;
         $scope.cmt.dueDate = $scope.dummyDate1.getTime();
 		$scope.$$hashKey = 250;
         $scope.parentScope.updateComment($scope.cmt);
@@ -68,9 +71,14 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
     }
 
     $scope.cancel = function () {
-        var r = true;
-        if ($scope.unsaved == 1) r = confirm('There are unsaved changes. Do you really want to cancel?');
+		
+		// warn message if there are unsaved changes
+		var r = true;
+        if ($scope.unsaved == 1) r = confirm('There are unsaved changes. Do you really want to close the dialog and loose them?');
+		
+		// stop autosave interval
         $interval.cancel($scope.promiseAutosave);
+		
         if (r) $modalInstance.dismiss('cancel');
     };
 
@@ -87,9 +95,16 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
         return "Comment";
     }
 
-    $scope.getVerb = function() {
+    $scope.getVerbHeader = function() {
         if ($scope.cmt.isNew) {
             return "Create";
+        }
+        return "Update";
+    }
+	
+	$scope.getVerbAction = function() {
+        if ($scope.cmt.isNew) {
+            return "Post";
         }
         return "Update";
     }

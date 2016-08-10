@@ -7,7 +7,7 @@
     }
 </style>
 <div class="modal-header">
-    <h3>{{getVerb()}} {{commentTypeName()}}</h3>
+    <h3>{{getVerbHeader()}} {{commentTypeName()}}</h3>
 </div>
 <div class="modal-body">
     <div>
@@ -47,7 +47,7 @@
 <div class="modal-footer">
 	<div class="row">
 		<div class="col-md-4 text-left" id='status'>
-            <button ng-click="save()" class="btn btn-link" ng-disabled="!unsaved" style="padding-left: 0">
+            <button ng-click="save()" class="btn btn-link" ng-disabled="((!unsaved) && (saveDisabled))" style="padding-left: 0">
                 <i class="fa fa-floppy-o" aria-hidden="true"></i>
                 <span class="text-info">{{getStatusMassage()}}</span>
             </button>
@@ -56,11 +56,11 @@
 		<div class="col-md-8 text-right">
 		  <!--button ng-click="ok(11)" class="btn btn-warning" ng-show="cmt.state<=11">
 				{{getVerb()}} Draft</button-->
-		  <button ng-click="cancel()" class="btn btn-default">Cancel</button>
+		  <button ng-click="cancel()" class="btn btn-default">Close</button>
 		  <!--button ng-click="ok(12);stopEdit()" class="btn btn-primary" ng-show="cmt.state<=11">
 				{{getVerb()}}</button-->
-		  <button ng-click="ok()" class="btn btn-primary">
-				Post</button>
+		  <button ng-click="ok()" class="btn btn-primary" ng-disabled="saveDisabled">
+				{{getVerbAction()}}</button>
 		</div>
 	</div>
 </div>
