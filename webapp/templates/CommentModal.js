@@ -74,7 +74,10 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
 		
 		// warn message if there are unsaved changes
 		var r = true;
-        if ($scope.unsaved == 1) r = confirm('There are unsaved changes. Do you really want to close the dialog and loose them?');
+		if ($scope.autosaveEnabled) {
+			$scope.save();
+		}
+        else if ($scope.unsaved == 1) r = confirm('There are unsaved changes. Do you really want to close the dialog and loose them?');
 		
 		// stop autosave interval
         $interval.cancel($scope.promiseAutosave);
@@ -141,6 +144,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
         }
     }
 	if ($scope.autosaveEnabled)
-		$scope.promiseAutosave = $interval($scope.autosave, 30000);
+		$scope.promiseAutosave = $interval($scope.autosave, 3000);
 
 });
