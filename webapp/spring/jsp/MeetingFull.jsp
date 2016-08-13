@@ -1319,9 +1319,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
                 },
-                parentScope: function () {
-                    return $scope;
-                }
+                parentScope: function() { return $scope; }
             }
         });
 

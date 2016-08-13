@@ -49,7 +49,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
     }
 
     $scope.ok = function () {
-        if ($scope.cmt.state == 11) $scope.cmt.state = 12;
+        if ($scope.cmt.state == 11 && $scope.autosaveEnabled) $scope.cmt.state = 12;
         $scope.cmt.dueDate = $scope.dummyDate1.getTime();
         if ($scope.cmt.state==12) {
             if ($scope.cmt.commentType==1 || $scope.cmt.commentType==5) {
@@ -104,7 +104,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
 	
 	$scope.getVerbAction = function() {
         if ($scope.cmt.isNew) {
-            return "Post";
+            return ($scope.autosaveEnabled) ? "Post" : "Save";
         }
         return "Update";
     }
@@ -128,12 +128,19 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
      */
     // TODO Make autosave interval configureable
     // TODO Add autosave enable/disable to configuration
+	
+	// check for updateComment() in parent scope to disable autosave
+	$scope.autosaveEnabled = true;
+	if ($scope.parentScope.updateComment == undefined)
+		$scope.autosaveEnabled = false;
+	
     $scope.autosave = function() {
         if ($scope.unsaved == 1) {
             $scope.save();
             $scope.unsaved = -1;
         }
     }
-    $scope.promiseAutosave = $interval($scope.autosave, 30000);
+	if ($scope.autosaveEnabled)
+		$scope.promiseAutosave = $interval($scope.autosave, 30000);
 
 });
