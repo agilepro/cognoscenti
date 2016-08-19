@@ -798,7 +798,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngw);
-              ar.assertMember("Must be a member to create a meeting.");
+              ar.assertMember("Must be a member to update a meeting.");
               ar.assertNotFrozen(ngw);
               String id = ar.reqParam("id");
               MeetingRecord meeting = ngw.findMeeting(id);
@@ -867,7 +867,7 @@ public class MainTabsViewControler extends BaseController {
           try{
               NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngw);
-              ar.assertMember("Must be a member to create a meeting.");
+              ar.assertMember("Must be a member to add an agenda item.");
               ar.assertNotFrozen(ngw);
               String id = ar.reqParam("id");
               MeetingRecord meeting = ngw.findMeeting(id);
@@ -1019,10 +1019,13 @@ public class MainTabsViewControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
 
               NoteRecord nr = null;
-              String minId =  meeting.getMinutesId();
-              if (minId!=null && minId.length()>0) {
-                  nr = ngw.getNoteByUidOrNull(minId);
-              }
+              //
+              //commented out:  ALWAYS create a new minutes, never overwrite an existing one.
+              //
+              //String minId =  meeting.getMinutesId();
+              //if (minId!=null && minId.length()>0) {
+              //    nr = ngw.getNoteByUidOrNull(minId);
+              //}
               if (nr==null) {
                   nr = ngw.createNote();
                   nr.setSubject("Minutes for Meeting: "+meeting.getName());

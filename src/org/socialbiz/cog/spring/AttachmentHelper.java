@@ -70,6 +70,11 @@ public class AttachmentHelper {
         attachment.setModifiedDate(ar.nowTime);
         attachment.setType("FILE");
         attachment.setVersion(1);
+        
+        //if the existing document is marked deleted, you want to clear
+        //that now that a new version has appeared.  Otherwise the new
+        //uploaded document remains deleted.
+        attachment.clearDeleted();
 
         attachment.setPublic(visibility != null && visibility.equals("*PUB*"));
 
