@@ -29,11 +29,15 @@
         File imageFile = new File(userFolder, key+".jpg");
         if (!imageFile.exists()) {
             String lc = anyone.getName().toLowerCase();
-            char ch = lc.charAt(0);
-            int i=1;
+            char ch = ' ';
+            int i=0;
             while (i<lc.length() && (ch<'a'||ch>'z')) {
                 ch = lc.charAt(i);
                 i++;
+            }
+            if (ch<'a'||ch>'z') {
+                //this will be the name of the question mark image
+                ch = '~';
             }
             File fakeFile = new File(userFolder, "fake-"+ch+".jpg");
             FileInputStream is = new FileInputStream(fakeFile);
