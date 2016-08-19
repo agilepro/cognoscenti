@@ -58,7 +58,8 @@ public class BaseController {
             return null;
         }
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return displayException(ar, ex);
+        displayException(ar, ex);
+        return null;
     }
 
     /**
@@ -69,11 +70,17 @@ public class BaseController {
      * system is truly breaking -- the support necessary to create the nice display
      * might not be functioning well enough to display anything.
      */
-    protected ModelAndView displayException(AuthRequest ar, Exception extd) {
-        long exceptionNO=ar.logException("Caught in user interface", extd);
-        ar.req.setAttribute("display_exception", extd);
-        ar.req.setAttribute("log_number", exceptionNO);
-        return new ModelAndView("DisplayException");
+    protected void displayException(AuthRequest ar, Exception extd) {
+        try {
+            long exceptionNO=ar.logException("Caught in user interface", extd);
+            ar.req.setAttribute("display_exception", extd);
+            ar.req.setAttribute("log_number", exceptionNO);
+            streamJSP(ar, "DisplayException");
+        }
+        catch (Exception e) {
+            System.out.println("%%%%%% Exception while reporting exception in BaseController");
+            e.printStackTrace(System.out);
+        }
     }
 
     protected static ModelAndView showWarningView(AuthRequest ar, String why) throws Exception {
@@ -273,12 +280,6 @@ public class BaseController {
         ar.resp.sendRedirect(loginUrl);
         return;
     }
-
-    /*
-    public ModelAndView createRedirectView(AuthRequest ar, String redirectAddress) throws Exception {
-        return new ModelAndView(new RedirectView(redirectAddress));
-    }
-    */
 
 
     protected void redirectBrowser(AuthRequest ar, String pageURL, Properties props) throws Exception {

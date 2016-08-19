@@ -696,7 +696,7 @@ public class ProjectSettingController extends BaseController {
                     if (other!=null) {
                         throw new Exception("Cannot create label '"+editedName+"' because a label already exists with that name.");
                     }
-                    label = ngp.findOrCreateLabelRecord(editedName);
+                    label = ngp.findOrCreateLabelRecord(editedName, labelInfo.getString("color"));
                 }
                 else {
                     if (!editedName.equals(labelName)) {
@@ -705,8 +705,8 @@ public class ProjectSettingController extends BaseController {
                         }
                     }
                     label.setName(editedName);
+                    label.setColor(labelInfo.getString("color"));
                 }
-                label.setColor(labelInfo.getString("color"));
             }
             else if ("Delete".equals(op)) {
                 if (label!=null && label instanceof LabelRecord) {

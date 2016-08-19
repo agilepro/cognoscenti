@@ -710,6 +710,26 @@ public class NoteRecord extends CommentContainer implements EmailContext {
           setVector("labels", labelNames);
       }
 
+      /**
+       * Check to see if a label is on the discussion topic,
+       * if not, add it
+       */
+      public void assureLabel(String labelName) throws Exception {
+          List<String> labels = getVector("labels");
+          for (String name : labels) {
+              if (name.equals(labelName)) {
+                  //found it, nothing left to do
+                  return;
+              }
+          }
+          labels.add(labelName);
+          //Since this is a 'set' type vector, always sort them so that they are
+          //stored in a consistent way ... so files are more easily compared
+          Collections.sort(labels);
+          setVector("labels", labels);
+      }
+
+
       public boolean getEmailSent()  throws Exception {
           if (getAttributeBool("emailSent")) {
               return true;

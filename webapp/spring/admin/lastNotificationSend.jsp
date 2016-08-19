@@ -1,31 +1,22 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="administration.jsp"
+%><%
+
+    long nextScheduleTime = EmailSender.getNextTime(lastSentTime);
+    boolean overDue = (ar.nowTime > nextScheduleTime);
+
+
+
+
 %>
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Last Notification Sent Time: <span id="elapsed_time"></span>
-        </div>
-        <!--div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="createAgendaItem()" >Do Nothing</a></li>
-            </ul>
-          </span>
-
-        </div-->
+    <div class="h1">
+            Latest Notification
     </div>
 
-        <%
-            long nextScheduleTime = EmailSender.getNextTime(lastSentTime);
-                boolean overDue = (ar.nowTime > nextScheduleTime);
-        %>
         <ul>
             <li>Last Notification Sent Time: <%
                 SectionUtil.nicePrintDateAndTime(out, lastSentTime);

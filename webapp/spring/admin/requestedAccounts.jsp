@@ -2,10 +2,10 @@
 %><%@page import="org.socialbiz.cog.SiteRequest"
 %><%@page import="org.socialbiz.cog.SiteReqFile"
 %><%@ include file="/spring/jsp/include.jsp"
-%><%ar.assertLoggedIn("New Site page should never be accessed when not logged in");
-    if (!ar.isSuperAdmin()) {
-        throw new Exception("New Site page should only be accessed by Super Admin");
-    }
+%><%
+
+    ar.assertLoggedIn("New Site page should never be accessed when not logged in");
+    ar.assertSuperAdmin("Must be a super admin to see new site page");
     UserProfile uProf=ar.getUserProfile();
     List<SiteRequest> superRequests = SiteReqFile.getAllSiteReqs();
 
@@ -62,21 +62,8 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            System Administrator: Site Requests
-        </div>
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="">Do Nothing</a></li>
-            </ul>
-          </span>
-
-        </div>
+    <div class="h1">
+        Requested Sites
     </div>
 
         <div id="accountRequestDiv">

@@ -1027,6 +1027,8 @@ public class MainTabsViewControler extends BaseController {
                   nr = ngw.createNote();
                   nr.setSubject("Minutes for Meeting: "+meeting.getName());
                   meeting.setMinutesId(nr.getUniversalId());
+                  ngw.findOrCreateLabelRecord("Minutes", "SkyBlue");
+                  nr.assureLabel("Minutes");
               }
               nr.setWiki(meeting.generateMinutes(ar,  ngw));
               nr.setModUser(ar.getUserProfile());

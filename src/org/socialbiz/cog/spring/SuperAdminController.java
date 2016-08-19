@@ -33,8 +33,6 @@ import org.socialbiz.cog.ErrorLog;
 import org.socialbiz.cog.HistoricActions;
 import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
-import org.socialbiz.cog.UserManager;
-import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,12 +55,12 @@ public class SuperAdminController extends BaseController {
      }
 
      @RequestMapping(value = "/{userKey}/errorLog.htm", method = RequestMethod.GET)
-     public ModelAndView errorLogPage(@PathVariable String userKey,HttpServletRequest request,
+     public void errorLogPage(@PathVariable String userKey,HttpServletRequest request,
              HttpServletResponse response)
      throws Exception {
          try{
              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             return adminModelSetUp(ar, userKey, "errorLog", "nugen.admin.subtab.errors.log");
+             adminModelSetUp(ar, userKey, "errorLog");
 
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
@@ -70,15 +68,14 @@ public class SuperAdminController extends BaseController {
      }
 
      @RequestMapping(value = "/{userKey}/emailListnerSettings.htm", method = RequestMethod.GET)
-     public ModelAndView emailListnerSettings(@PathVariable String userKey,
+     public void emailListnerSettings(@PathVariable String userKey,
              HttpServletRequest request, HttpServletResponse response)
              throws Exception {
 
 
          try{
              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             return adminModelSetUp(ar, userKey, "emailListnerSettings",
-                     "nugen.admin.subtab.email");
+             adminModelSetUp(ar, userKey, "emailListnerSettings");
 
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
@@ -86,13 +83,12 @@ public class SuperAdminController extends BaseController {
      }
 
      @RequestMapping(value = "/{userKey}/lastNotificationSend.htm", method = RequestMethod.GET)
-     public ModelAndView lastNotificationSend(@PathVariable String userKey,
+     public void lastNotificationSend(@PathVariable String userKey,
              HttpServletRequest request, HttpServletResponse response)
              throws Exception {
          try{
              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             return adminModelSetUp(ar, userKey, "lastNotificationSend",
-                     "nugen.admin.subtab.last.notification.send");
+             adminModelSetUp(ar, userKey, "lastNotificationSend");
 
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
@@ -100,24 +96,24 @@ public class SuperAdminController extends BaseController {
      }
 
      @RequestMapping(value = "/{userKey}/newUsers.htm", method = RequestMethod.GET)
-     public ModelAndView newUsers(@PathVariable String userKey,
+     public void newUsers(@PathVariable String userKey,
              HttpServletRequest request, HttpServletResponse response)
              throws Exception {
          try{
              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             return adminModelSetUp(ar, userKey, "newUsers", "nugen.admin.subtab.new.accounts");
+             adminModelSetUp(ar, userKey, "newUsers");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
          }
      }
 
      @RequestMapping(value = "/{userKey}/requestedAccounts.htm", method = RequestMethod.GET)
-     public ModelAndView requestedAccounts(@PathVariable String userKey,
+     public void requestedAccounts(@PathVariable String userKey,
              HttpServletRequest request, HttpServletResponse response)
              throws Exception {
          try{
              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             return adminModelSetUp(ar, userKey, "requestedAccounts", "nugen.admin.subtab.new.accounts");
+             adminModelSetUp(ar, userKey, "requestedAccounts");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
          }
@@ -245,27 +241,17 @@ public class SuperAdminController extends BaseController {
          ar.flush();
      }
 
-     private static ModelAndView adminModelSetUp(AuthRequest ar,
-              String userKey, String modelAndViewName, String subTabId) throws Exception {
+     private static void adminModelSetUp(AuthRequest ar,
+              String userKey, String jspName) throws Exception {
 
          if(!ar.isLoggedIn()){
-             return showWarningView(ar, "message.loginalert.see.page");
+             throw new NGException("nugen.project.login.msg",null);
          }
          if(!ar.isSuperAdmin()){
              throw new NGException("nugen.exceptionhandling.system.admin.rights",null);
          }
-         UserProfile up = UserManager.getUserProfileOrFail(userKey);
-         HttpServletRequest request = ar.req;
-         ModelAndView modelAndView = new ModelAndView(modelAndViewName);
-
-         String realRequestURL = request.getRequestURL().toString();
-         request.setAttribute("realRequestURL", realRequestURL);
-
-         request.setAttribute("title", up.getName());
-         request.setAttribute("userKey", up.getKey());
-         request.setAttribute("userProfile", up);
-         request.setAttribute("pageTitle", "User: " + up.getName());
-         return modelAndView;
+         ar.req.setAttribute("wrappedJSP", jspName);
+         ar.invokeJSP("/spring/admin/Wrapper.jsp");
      }
 
 }

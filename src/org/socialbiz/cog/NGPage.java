@@ -1632,11 +1632,14 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         return null;
     }
 
-    public NGLabel findOrCreateLabelRecord(String name) throws Exception {
+    public NGLabel findOrCreateLabelRecord(String name, String color) throws Exception {
         NGLabel label = getLabelRecordOrNull(name);
         if (label==null) {
             DOMFace labelList = requireChild("labelList", DOMFace.class);
             label = labelList.createChildWithID("label", LabelRecord.class, "name", name);
+            if (color!=null) {
+                label.setColor(color);
+            }
         }
         return label;
     }

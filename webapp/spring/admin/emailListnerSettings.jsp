@@ -1,16 +1,14 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="org.socialbiz.cog.EmailListener"
-%><%@page import="java.io.PrintWriter"
 %><%@ include file="/spring/jsp/include.jsp"
 %>
 <div class="content tab01" style="display:block;" >
     <div class="section_body">
-        <div style="height:10px;"></div>
-        <div class="generalHeading">Email Send Settings</div>
+        <div class="h1">Email Send Settings</div>
 
 
 
-        <table border="0px solid gray" class="gridTable" width="500">
+        <table class="table">
             <tr>
                 <td>mail.transport.protocol</td>
                 <td><%=EmailSender.getProperty("mail.transport.protocol")%></td>
@@ -42,7 +40,7 @@
         </table>
 
         <div style="height:10px;"></div>
-        <div class="generalHeading">Email Listener Settings</div>
+        <div class="h1">Email Listener Settings</div>
         <%
              Properties emailProperties = EmailListener.getEmailProperties();
              if(ar.getSuperAdminLogFile().getEmailListenerPropertiesFlag()){
@@ -55,7 +53,7 @@
             }
         %>
         <br/>
-        <table border="0px solid gray" class="gridTable" width="500">
+        <table class="table">
             <tr>
                 <td>POP3 Host</td>
                 <td><%=emailProperties.getProperty("mail.pop3.host")%></td>
