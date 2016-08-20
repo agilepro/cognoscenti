@@ -249,7 +249,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     
     if (window.location.href.indexOf("#cmt")>0) {
-        console.log("Received URL has a #cmt in it: "+window.location.href);
         $scope.showAll();
     }
 
@@ -523,12 +522,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (readyToSave.id=="~new~") {
             postURL = "agendaAdd.json?id="+$scope.meeting.id;
         }
-        console.log("SAVE MEETING: ", readyToSave);
         var postdata = angular.toJson(readyToSave);
         $scope.showError=false;
         var promise = $http.post(postURL ,postdata)
         promise.success( function(data) {
-            console.log("---- SERVER: ", data);
             $scope.meeting = data;
             $scope.extractDateParts();
             $scope.editHead=false;
@@ -784,7 +781,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         .success( function(data) {
             $scope.attachmentList = data.docs;
             sessionStorage.setItem("ws"+$scope.pageId+"attachList", JSON.stringify(data.docs));
-            console.log("Got the Attachment List");
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -793,12 +789,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     var cachedAttachmentList = sessionStorage.getItem("ws"+$scope.pageId+"attachList");
     if (cachedAttachmentList) {
         $scope.attachmentList = JSON.parse(cachedAttachmentList);
-        console.log("Attachments found in session storage: ",$scope.attachmentList);
         $scope.refreshAttachmentList(); //pick up any changes
     }
     else {
         $scope.refreshAttachmentList();
-        console.log("Attachments NOT found in session storage")
     }
     
     
@@ -822,7 +816,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.allTopics = data.topics;
             sessionStorage.setItem("ws"+$scope.pageId+"topicList", JSON.stringify(data.topics));
             $scope.minutesDraft = $scope.getMinutesIsDraft();
-            console.log("Got the Topic List", data.topics);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -831,12 +824,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     var cachedTopicList = sessionStorage.getItem("ws"+$scope.pageId+"topicList");
     if (cachedTopicList) {
         $scope.allTopics = JSON.parse(cachedTopicList);
-        console.log("Topics found in session storage: ",$scope.allTopics);
         $scope.refreshTopicList(); //pick up any changes
     }
     else {
         $scope.refreshTopicList();
-        console.log("Topics NOT found in session storage")
     }
     
     
@@ -858,7 +849,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 isDraft = minutesTopic.draft;
             }
         }
-        console.log("Minutes draft: "+isDraft + " for "+$scope.meeting.minutesId);
         return isDraft;
     }
     $scope.minutesDraft = $scope.getMinutesIsDraft();
@@ -919,6 +909,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         itemCopy.comments.push(cmt);
         $scope.saveAgendaItem(itemCopy);
     }
+    
 
     $scope.stateStyle = function(cmt) {
         if (cmt.state==11) {
@@ -1003,9 +994,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             if (!Array.isArray($scope.allLabels)) {
                 console.log("allLabels is NOT an array");
                 return;
-            }
-            else {
-                console.log("allLabels IS an array");
             }
         }
         else {
@@ -1227,7 +1215,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (otherPos>$scope.meeting.agenda.length) {
             return;
         }
-        console.log("swapping "+thisPos+" with "+otherPos+"");
         $scope.meeting.agenda.forEach( function(x) {
             if (x.position==otherPos) {
                 x.position=thisPos;
@@ -1239,9 +1226,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.openResponseEditor = function (cmt) {
 
-        console.log("ITEM COMMENT", cmt);
         if (cmt.choices.length==0) {
-            console.log("This comment has no choices on it!");
             cmt.choices = ["Consent", "Objection"];
             if (cmt.choices[1]=="Object") {
                 cmt.choices[1]="Objection";
@@ -1288,9 +1273,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
+    $scope.commentItemBeingEdited = 0;
+    $scope.updateComment = function(cmt) {
+        $scope.saveComment($scope.commentItemBeingEdited, cmt);
+    }
+    
     $scope.openCommentCreator = function(item, type, replyTo, defaultBody) {
         var newComment = {};
-        newComment.time = -1;
+        newComment.time = new Date().getTime();
         newComment.commentType = type;
         newComment.state = 11;
         newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
@@ -1308,6 +1298,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.openCommentEditor = function (item, cmt) {
+        $scope.commentItemBeingEdited = item;
 
         var modalInstance = $modal.open({
             animation: false,
@@ -1319,7 +1310,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
                 },
-                parentScope: function() { return $scope; }
+                parentScope: function() { 
+                    return $scope; 
+                }
             }
         });
 

@@ -12,8 +12,8 @@ Required parameter:
 
 */
     //comment or uncomment depending on whether you are in development testing mode
-    String templateCacheDefeater = "";
-    //String templateCacheDefeater = "?t="+System.currentTimeMillis();
+    //String templateCacheDefeater = "";
+    String templateCacheDefeater = "?t="+System.currentTimeMillis();
 
 
     String pageId      = ar.reqParam("pageId");
@@ -212,7 +212,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.fixUpChoices();
             $scope.myComment = "";
             $scope.refreshHistory();
-			$scope.$broadcast("NewCmtCreated", data.comments[data.comments.length - 1]);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -431,7 +430,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.openCommentCreator = function(type, replyTo, defaultBody) {
         var newComment = {};
-        newComment.time = -1;
+        newComment.time = new Date().getTime();
         newComment.commentType = type;
         newComment.state = 11;
         newComment.isNew = true;

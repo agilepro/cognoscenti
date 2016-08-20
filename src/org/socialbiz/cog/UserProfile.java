@@ -723,6 +723,25 @@ public class UserProfile extends DOMFace implements UserRef
     }
 
     /**
+    * Create a watch on a page.
+    * if none exists at this time.
+    */
+    public void assureWatch(String pageKey) throws Exception {
+        if (watchList == null) {
+            getWatchList();
+        }
+        for (WatchRecord sr : watchList) {
+            if (pageKey.equals(sr.getPageKey())) {
+                return;
+            }
+        }
+
+        //if none are found, then create one
+        WatchRecord sr = WatchRecord.createWatchRecord(this, pageKey, System.currentTimeMillis());
+        watchList.add(sr);
+    }
+
+    /**
     * Get rid of any watch of the specified page -- if there is any.
     */
     public void clearWatch(String pageKey)  throws Exception {

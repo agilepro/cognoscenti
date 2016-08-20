@@ -139,42 +139,33 @@ public class CommentContainer extends DOMFace {
         for (int i=0; i<allComments.length(); i++) {
             JSONObject oneComment = allComments.getJSONObject(i);
             long timeStamp = oneComment.getLong("time");
-            if (timeStamp <= 0) {
-                CommentRecord newComment = addComment(ar);
-                newComment.updateFromJSON(oneComment, ar);
-                linkReplyToSource(newComment);
+            //comment type 4 ... for meetings will not be found
+            //and so will never be updated
+            CommentRecord cr = findComment(timeStamp);
+            if (cr==null) {
+                //none found, so create one
+                cr = addComment(ar);
+                if (timeStamp>0) {
+                    //override the automatically created timestamp....
+                    cr.setTime(timeStamp);
+                }
+                cr.updateFromJSON(oneComment, ar);
+                linkReplyToSource(cr);
 
                 //if you add a comment, then you also get this project on your watch list
                 UserProfile uProf = ar.getUserProfile();
-                String pageKey = ar.ngp.getKey();
-                boolean found = false;
-                for (WatchRecord sr : uProf.getWatchList()) {
-                    if (pageKey.equals(sr.getPageKey())) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    uProf.setWatch(pageKey, ar.nowTime);
-                }
+                uProf.assureWatch(ar.ngp.getKey());
+            }
+            else if (oneComment.has("deleteMe")) {
+                //a special flag in the comment indicates it should be removed
+                //setting to draft will UNLINK this comment from the other
+                cr.setState(CommentRecord.COMMENT_STATE_DRAFT);
+                linkReplyToSource(cr);
+                deleteComment(timeStamp);
             }
             else {
-                //comment type 4 ... for meetings will not be found
-                //and so will never be updated
-                CommentRecord cr = findComment(timeStamp);
-                if (cr!=null) {
-                    if (oneComment.has("deleteMe")) {
-                        //a special flag in the comment indicates it should be removed
-                        //setting to draft will UNLINK this comment from the other
-                        cr.setState(CommentRecord.COMMENT_STATE_DRAFT);
-                        linkReplyToSource(cr);
-                        deleteComment(timeStamp);
-                    }
-                    else {
-                        cr.updateFromJSON(oneComment, ar);
-                        linkReplyToSource(cr);
-                    }
-                }
+                cr.updateFromJSON(oneComment, ar);
+                linkReplyToSource(cr);
             }
         }
     }

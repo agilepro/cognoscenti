@@ -19,12 +19,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
         }
 	};
 	
-	// register for updated cmt in parent
-	$scope.parentScope.$on("NewCmtCreated", function(event, cmt) { 
-		$scope.cmt.time = cmt.time; 
-		$scope.saveDisabled = false;
-	});
-    
 	$scope.dummyDate1 = new Date();
     if (cmt.dueDate>0) {
         $scope.dummyDate1 = new Date(cmt.dueDate);
@@ -48,18 +42,18 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
         else $scope.unsaved = 0;
     }
 
-    $scope.ok = function () {
-        if ($scope.cmt.state == 11 && $scope.autosaveEnabled) $scope.cmt.state = 12;
+    $scope.postIt = function () {
+        if ($scope.cmt.state == 11 && $scope.autosaveEnabled) {
+            $scope.cmt.state = 12;
+        }
         $scope.cmt.dueDate = $scope.dummyDate1.getTime();
         if ($scope.cmt.state==12) {
             if ($scope.cmt.commentType==1 || $scope.cmt.commentType==5) {
                 $scope.cmt.state=13;
             }
         }
-        $scope.unsaved = 0;
-        $interval.cancel($scope.promiseAutosave);
-        $modalInstance.close($scope.cmt);
-    };
+        $scope.saveAndClose();
+   };
 
     $scope.save = function() {
 		$scope.saveDisabled = true;
@@ -70,19 +64,16 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
         $scope.cmt.isNew = false;
     }
 
-    $scope.cancel = function () {
+    $scope.saveAndClose = function () {
 		
 		// warn message if there are unsaved changes
 		var r = true;
-		if ($scope.autosaveEnabled) {
-			$scope.save();
-		}
-        else if ($scope.unsaved == 1) r = confirm('There are unsaved changes. Do you really want to close the dialog and loose them?');
+		$scope.save();
 		
 		// stop autosave interval
         $interval.cancel($scope.promiseAutosave);
 		
-        if (r) $modalInstance.dismiss('cancel');
+        $modalInstance.dismiss('cancel');
     };
 
     $scope.commentTypeName = function() {
@@ -105,13 +96,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
         return "Update";
     }
 	
-	$scope.getVerbAction = function() {
-        if ($scope.cmt.isNew) {
-            return ($scope.autosaveEnabled) ? "Post" : "Save";
-        }
-        return "Update";
-    }
-    
     $scope.datePickOptions = {
         formatYear: 'yyyy',
         startingDay: 1
@@ -134,8 +118,9 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
 	
 	// check for updateComment() in parent scope to disable autosave
 	$scope.autosaveEnabled = true;
-	if ($scope.parentScope.updateComment == undefined)
+	if ($scope.parentScope.updateComment == undefined) {
 		$scope.autosaveEnabled = false;
+    }
 	
     $scope.autosave = function() {
         if ($scope.unsaved == 1) {
@@ -143,7 +128,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
             $scope.unsaved = -1;
         }
     }
-	if ($scope.autosaveEnabled)
-		$scope.promiseAutosave = $interval($scope.autosave, 3000);
+	if ($scope.autosaveEnabled) {
+		$scope.promiseAutosave = $interval($scope.autosave, 15000);
+    }
 
 });

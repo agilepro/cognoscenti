@@ -625,8 +625,9 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         sb.append("\n\n");
         sb.append("See original meeting: [");
         sb.append(getNameAndDate());
-        sb.append("|meetingFull.htm?id=");
-        sb.append(getId());
+        sb.append("|");
+        sb.append(ar.baseURL);
+        sb.append(ar.getResourceURL(ngp, "meetingFull.htm?id="+getId()));
         sb.append("]");
 
         sb.append("\n\n!!!Agenda");

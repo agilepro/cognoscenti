@@ -54,13 +54,9 @@
 
 		</div>
 		<div class="col-md-8 text-right">
-		  <!--button ng-click="ok(11)" class="btn btn-warning" ng-show="cmt.state<=11">
-				{{getVerb()}} Draft</button-->
-		  <button ng-click="cancel()" class="btn btn-default">Close</button>
-		  <!--button ng-click="ok(12);stopEdit()" class="btn btn-primary" ng-show="cmt.state<=11">
-				{{getVerb()}}</button-->
-		  <button ng-click="ok()" class="btn btn-primary" ng-disabled="saveDisabled">
-				{{getVerbAction()}}</button>
+		  <button ng-click="saveAndClose()" class="btn btn-default">Close</button>
+		  <button ng-click="postIt()" class="btn btn-primary" ng-show="cmt.state<=11">
+				Post</button>
 		</div>
 	</div>
 </div>
