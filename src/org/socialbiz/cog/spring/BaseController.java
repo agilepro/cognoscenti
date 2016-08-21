@@ -83,17 +83,81 @@ public class BaseController {
         }
     }
 
-    protected static ModelAndView showWarningView(AuthRequest ar, String why) throws Exception {
+    protected static void showWarningView(AuthRequest ar, String why) throws Exception {
         ar.req.setAttribute("property_msg_key", why);
         streamJSP(ar, "Warning");
-        //TODO: remove the return type on this method and work through the changes
-        return null;
     }
 
 
 
     //////////////////////// JSP Wrapping and Streaming ////////////////////////////
 
+    
+    /**
+     * This is a set of checks that results in different views depending on the state
+     * of the user.  Particularly: must be logged in, must have a name, must have an email
+     * address, and must be a member of the page, so the page has to be set as well.
+     * @return a ModelAndView object that will tell the user what is wrong.
+     *         and return a NULL if logged in, member, and all config is OK
+     */
+    protected static boolean checkLogin(AuthRequest ar) throws Exception {
+        if(!ar.isLoggedIn()){
+            showWarningView(ar, "nugen.project.login.msg");
+            return true;
+        }
+        if (needsToSetName(ar)) {
+            streamJSP(ar, "requiredName");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This is a set of checks that results in different views depending on the state
+     * of the user.  Particularly: must be logged in, must have a name, must have an email
+     * address, and must be a member of the page, so the page has to be set as well.
+     * @return a ModelAndView object that will tell the user what is wrong.
+     *         and return a NULL if logged in, member, and all config is OK
+     */
+    protected static boolean checkLoginMember(AuthRequest ar) throws Exception {
+        if (checkLogin(ar)) {
+            return true;
+        }
+        if (ar.ngp==null) {
+            throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGPage on the AuthRequest.");
+        }
+        if(!ar.isMember()){
+            ar.req.setAttribute("roleName", "Members");
+            streamJSP(ar, "WarningNotMember");
+            return true;
+        }
+        if (UserManager.getAllSuperAdmins(ar).size()==0) {
+            showWarningView(ar, "nugen.missingSuperAdmin");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks that the project is OK to be updated.  Should be used for
+     * forms that prompt for information to update the workspace.  In that
+     * case a frozen (or deleted) workspace should not prompt for that update.
+     * @throws Exception
+     */
+    protected static boolean checkLoginMemberFrozen(AuthRequest ar, NGPage ngp) throws Exception {
+        if (checkLoginMember(ar)) {
+            return true;
+        }
+        if(ngp.isFrozen()){
+            showWarningView(ar, "nugen.generatInfo.Frozen");
+            return true;
+        }
+        return false;
+    }
+
+    
+    
+    
     protected static void streamJSP(AuthRequest ar, String jspName) throws Exception {
         //just to make sure there are no DOUBLE pages being sent
         if (ar.req.getAttribute("wrappedJSP")!=null) {
@@ -105,32 +169,33 @@ public class BaseController {
         ar.invokeJSP("/spring/jsp/Wrapper.jsp");
     }
 
-    protected static void streamJSPWarning(AuthRequest ar, String why) throws Exception {
-        ar.req.setAttribute("property_msg_key", why);
-        streamJSP(ar,"Warning");
-    }
-
     protected static void streamJSPLoggedIn(AuthRequest ar, String jspName) throws Exception {
-        if(!ar.isLoggedIn()){
-            ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
-            streamJSP(ar, "Warning");
-            return;
-        }
-        if (needsToSetName(ar)) {
-            streamJSP(ar, "requiredName");
+        if (checkLogin(ar)){
             return;
         }
         streamJSP(ar, jspName);
     }
 
+    
+    /**
+     * This is useful for pages that work on Containers, both Projects and Sites
+     */
+    public static NGContainer registerSiteOrProject(AuthRequest ar, String siteId, String pageId) throws Exception
+    {
+        if (pageId==null || "$".equals(pageId)) {
+            ar.req.setAttribute("pageId",    "$");
+            return prepareSiteView(ar, siteId);
+        }
+        else {
+            return registerRequiredProject(ar, siteId, pageId );
+        }
+    }
+
+    
+    
     public static void showJSPAnonymous(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
-            if (pageId==null) {
-                prepareSiteView(ar, siteId);
-            }
-            else {
-                registerRequiredProject(ar, siteId, pageId);
-            }
+            registerSiteOrProject(ar, siteId, pageId);
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
@@ -141,16 +206,10 @@ public class BaseController {
 
     public static void showJSPLoggedIn(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
-            if(!ar.isLoggedIn()){
-                ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
-                streamJSP(ar, "Warning");
+            registerSiteOrProject(ar, siteId, pageId);
+            if (checkLogin(ar)){
                 return;
             }
-            if (needsToSetName(ar)) {
-                streamJSP(ar, "requiredName");
-                return;
-            }
-            registerRequiredProject(ar, siteId, pageId);
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
@@ -162,29 +221,8 @@ public class BaseController {
 
     public static void showJSPMembers(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
-            if(!ar.isLoggedIn()){
-                ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
-                streamJSP(ar, "Warning");
-                return;
-            }
-            if (needsToSetName(ar)) {
-                streamJSP(ar, "requiredName");
-                return;
-            }
-            if (pageId==null || "$".equals(pageId)) {
-                prepareSiteView(ar, siteId);
-            }
-            else {
-                registerRequiredProject(ar, siteId, pageId);
-            }
-            if(!ar.isMember()){
-                ar.req.setAttribute("roleName", "Members");
-                streamJSP(ar, "WarningNotMember");
-                return;
-            }
-            if (UserManager.getAllSuperAdmins(ar).size()==0) {
-                ar.req.setAttribute("property_msg_key", "nugen.missingSuperAdmin");
-                streamJSP(ar, "Warning");
+            registerSiteOrProject(ar, siteId, pageId);
+            if (checkLoginMember(ar)){
                 return;
             }
             streamJSP(ar, jspName);
@@ -231,28 +269,14 @@ public class BaseController {
         ar.req.setAttribute("headerType", "site");
         ar.req.setAttribute("siteId",    siteId);
         ar.req.setAttribute("pageId",    "$");
-        //todo: eliminate this
+        //TODO: eliminate this
         ar.req.setAttribute("book",      siteId);
-        //todo: eliminate this
+        //TODO: eliminate this
         ar.req.setAttribute("accountId", siteId);
-        NGBook account = ar.getCogInstance().getSiteByIdOrFail( siteId );
-        ar.setPageAccessLevels(account);
-        ar.req.setAttribute("title", account.getFullName());
-        return account;
-    }
-
-    /**
-     * This is useful for pages that work on Containers, both Projects and Sites
-     */
-    public static NGContainer registerSiteOrProject(AuthRequest ar, String siteId, String pageId) throws Exception
-    {
-        if ("$".equals(pageId)) {
-            ar.req.setAttribute("pageId",    "$");
-            return prepareSiteView(ar, siteId);
-        }
-        else {
-            return registerRequiredProject(ar, siteId, pageId );
-        }
+        NGBook site = ar.getCogInstance().getSiteByIdOrFail( siteId );
+        ar.setPageAccessLevels(site);
+        ar.req.setAttribute("title", site.getFullName());
+        return site;
     }
 
 
@@ -264,12 +288,13 @@ public class BaseController {
         return ar;
     }
 
+    //TODO: eliminate this and work through all the changes
     public ModelAndView createNamedView(String siteId, String pageId,
             AuthRequest ar,  String viewName)
             throws Exception {
         ar.req.setAttribute("book", siteId);
         ar.req.setAttribute("pageId", pageId);
-        ar.req.setAttribute("realRequestURL", ar.getRequestURL());
+        //ar.req.setAttribute("realRequestURL", ar.getRequestURL());
         return new ModelAndView(viewName);
     }
 
@@ -319,86 +344,23 @@ public class BaseController {
     /**
      * This is a set of checks that results in different views depending on the state
      * of the user.  Particularly: must be logged in, must have a name, must have an email
-     * address, and must be a member of the page, so the page has to be set as well.
-     * @return a ModelAndView object that will tell the user what is wrong.
-     *         and return a NULL if logged in, member, and all config is OK
-     */
-    protected ModelAndView checkLogin(AuthRequest ar) throws Exception {
-        if(!ar.isLoggedIn()){
-            showWarningView(ar, "nugen.project.login.msg");
-            return null;
-        }
-        if (needsToSetName(ar)) {
-            return new ModelAndView("requiredName");
-        }
-        return null;
-    }
-
-    /**
-     * This is a set of checks that results in different views depending on the state
-     * of the user.  Particularly: must be logged in, must have a name, must have an email
-     * address, and must be a member of the page, so the page has to be set as well.
-     * @return a ModelAndView object that will tell the user what is wrong.
-     *         and return a NULL if logged in, member, and all config is OK
-     */
-    protected ModelAndView checkLoginMember(AuthRequest ar) throws Exception {
-        ModelAndView mav = checkLogin(ar);
-        if (mav!=null) {
-            return mav;
-        }
-        if (ar.ngp==null) {
-            throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGPage on the AuthRequest.");
-        }
-        if(!ar.isMember()){
-            ar.req.setAttribute("roleName", "Members");
-            return new ModelAndView("WarningNotMember");
-        }
-        if (UserManager.getAllSuperAdmins(ar).size()==0) {
-            showWarningView(ar, "nugen.missingSuperAdmin");
-            return null;
-        }
-        return null;
-    }
-
-    /**
-     * Checks that the project is OK to be updated.  Should be used for
-     * forms that prompt for information to update the workspace.  In that
-     * case a frozen (or deleted) workspace should not prompt for that update.
-     * @throws Exception
-     */
-    protected ModelAndView checkLoginMemberFrozen(AuthRequest ar, NGPage ngp) throws Exception {
-        ModelAndView modelAndView = checkLoginMember(ar);
-        if (modelAndView!=null) {
-            return modelAndView;
-        }
-        if(ngp.isFrozen()){
-            showWarningView(ar, "nugen.generatInfo.Frozen");
-            return null;
-        }
-        return null;
-    }
-
-    /**
-     * This is a set of checks that results in different views depending on the state
-     * of the user.  Particularly: must be logged in, must have a name, must have an email
      * address, and must be a member of the page.
      * @return a ModelAndView object that will tell the user what is wrong.
      */
-    protected ModelAndView executiveCheckViews(AuthRequest ar) throws Exception {
-        if(!ar.isLoggedIn()){
-            showWarningView(ar, "nugen.project.login.msg");
-            return null;
+    protected boolean executiveCheckViews(AuthRequest ar) throws Exception {
+        if(checkLogin(ar)){
+            return true;
         }
         if(!ar.isMember()){
             ar.req.setAttribute("roleName", "Executive");
             showWarningView(ar, "nugen.project.executive.msg");
-            return null;
+            return true;
         }
         if (UserManager.getAllSuperAdmins(ar).size()==0) {
             showWarningView(ar, "nugen.missingSuperAdmin");
-            return null;
+            return true;
         }
-        return null;
+        return false;
     }
 
     protected JSONObject getPostedObject(AuthRequest ar) throws Exception {

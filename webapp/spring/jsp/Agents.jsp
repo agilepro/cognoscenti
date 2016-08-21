@@ -172,5 +172,15 @@ app.controller('myCtrl', function($scope, $http) {
                 </tr>
         </table>
     </div>
+    
+    
+    <div class="guideVocal" ng-show="noneFound">
+        User <% uProf.writeLink(ar); %> has not created any Personal Assistants.<br/>
+            <br/>
+            A personal assistant is a kind of automated  agent that can take actions 
+            for you automatically.  This is an experimental feature and not
+            completely implemented at this time.
+    </div>
+    
 </div>
 

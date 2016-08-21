@@ -9,6 +9,7 @@
     boolean noneFound = ownedProjs.size()==0;
     String accountKey = ar.reqParam("accountId");
     NGBook site = cog.getSiteByIdOrFail(accountKey);
+    boolean showExperimental = site.getShowExperimental();
 
     JSONArray projList = new JSONArray();
     for (NGPageIndex ngpi : cog.getAllProjectsInSite(accountKey)) {
@@ -40,6 +41,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.projList = <%projList.write(out,2,4);%>;
     $scope.noneFound = <%=noneFound%>;
     $scope.filter = "";
+    $scope.showExperimental = <%=showExperimental%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -102,6 +104,8 @@ app.controller('myCtrl', function($scope, $http) {
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem"
                   href="accountCreateProject.htm" >Create New Workspace</a></li>
+              <li role="presentation" ng-show="showExperimental"><a role="menuitem"
+                  href="accountCloneProject.htm" >Clone Remote Workspace</a></li>
             </ul>
           </span>
 

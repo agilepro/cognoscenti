@@ -361,11 +361,6 @@
         <put-attribute name="body" value="/spring/jsp/RequestAccount.jsp" />
     </definition>
 
-    <definition name="account_role_request" extends="slimLayout">
-        <put-attribute name="title" value="Role Requests" />
-        <put-attribute name="body" value="/spring/jsp/leaf_accountRoleRequest.jsp" />
-    </definition>
-
     <definition name="htmlValidator" extends="baseLayoutSimple">
         <put-attribute name="title" value="Result Of HTML Validation" />
         <put-attribute name="body" value="/spring/jsp/validateResult.jsp" />
@@ -497,11 +492,6 @@
     <definition name="confirmedAddIdView" extends="baseLayout">
         <put-attribute name="title" value="User Settings" />
         <put-attribute name="body" value="/spring/jsp/confirmedAddIdView.jsp" />
-    </definition>
-
-    <definition name="viewReminder" extends="baseLayout">
-        <put-attribute name="title" value="View Email Reminder" />
-        <put-attribute name="body" value="/spring/jsp/viewReminder.jsp" />
     </definition>
 
     <definition name="NotificationSettings" extends="slimLayout">

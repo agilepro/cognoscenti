@@ -265,15 +265,14 @@ public class MainTabsViewControler extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            if (checkLogin(ar)) {
+                return null;
+            }
             if ("$".equals(pageId)) {
                 prepareSiteView(ar, siteId);
             }
             else {
                 registerRequiredProject(ar, siteId, pageId);
-            }
-            ModelAndView modelAndView= checkLogin(ar);
-            if (modelAndView!=null) {
-                return modelAndView;
             }
             streamJSP(ar, "SearchAllNotes");
             return null;
@@ -321,25 +320,27 @@ public class MainTabsViewControler extends BaseController {
 
 
 
+     //TODO: I don't think editNote is being used any more.
+     
+     /*
      @RequestMapping(value = "/{siteId}/{pageId}/editNote.htm", method = RequestMethod.GET)
      public ModelAndView editNote(@PathVariable String pageId,
             @PathVariable String siteId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
          try{
              AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             if(!ar.isLoggedIn()){
-                 return showWarningView(ar, "message.loginalert.see.page");
+             if (checkLogin(ar)) {
+                 return null;
              }
              registerRequiredProject(ar, siteId, pageId);
-             ModelAndView modelAndView = checkLoginMember(ar);
-             if (modelAndView!=null) {
-                 return modelAndView;
+             if (checkLoginMember(ar)) {
+                 return null;
              }
 
              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
              ar.setPageAccessLevels(ngp);
              ar.assertMember("Need Member Access to Edit a Topic.");
-             modelAndView = new ModelAndView("EditNote");
+             ModelAndView modelAndView = new ModelAndView("EditNote");
              modelAndView.addObject("pageTitle",ngp.getFullName());
              request.setAttribute("title","Edit Topic: "+ ngp.getFullName());
              return modelAndView;
@@ -347,7 +348,7 @@ public class MainTabsViewControler extends BaseController {
              throw new NGException("nugen.operation.fail.project.create.note.page", null , ex);
          }
      }
-
+*/
 
      @RequestMapping(value = "/{siteId}/{pageId}/noteHtmlUpdate.json", method = RequestMethod.POST)
      public void noteHtmlUpdate(@PathVariable String siteId,@PathVariable String pageId,

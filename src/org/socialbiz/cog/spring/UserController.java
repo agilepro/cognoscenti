@@ -95,25 +95,25 @@ public class UserController extends BaseController {
 
     protected UserProfile getUserToDisplay(AuthRequest ar, String userKey) throws Exception {
         if ("$".equals(userKey) && ar.isLoggedIn()) {
-            userKey = ar.getBestUserId();
+            return ar.getUserProfile();
         }
         return UserManager.getUserProfileOrFail(userKey);
     }
 
-    public void streamJSPUserLoggedIn(AuthRequest ar, String userId, String jspName) throws Exception {
+    public void streamJSPUserLoggedIn(AuthRequest ar, String userKey, String jspName) throws Exception {
         try {
             if(!ar.isLoggedIn()){
                 ar.req.setAttribute("property_msg_key", "nugen.project.login.msg");
                 streamJSP(ar, "Warning");
                 return;
             }
-            UserProfile up = getUserToDisplay(ar, userId);
+            UserProfile up = getUserToDisplay(ar, userKey);
             ar.req.setAttribute("userProfile", up);
             ar.req.setAttribute("userKey", up.getKey());
             streamJSP(ar, jspName);
         }
         catch (Exception e) {
-            throw new Exception("Unable to prepare page ("+jspName+") for user ("+userId+")", e);
+            throw new Exception("Unable to prepare page ("+jspName+") for user ("+userKey+")", e);
         }
     }
 
@@ -382,8 +382,7 @@ public class UserController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
                 return;
             }
             String address = ar.reqParam("address");
@@ -1690,8 +1689,7 @@ public class UserController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
                 return;
             }
             String userKey = ar.reqParam("uid");

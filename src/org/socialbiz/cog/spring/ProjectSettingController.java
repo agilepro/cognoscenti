@@ -245,7 +245,6 @@ public class ProjectSettingController extends BaseController {
         String op = "Unknown";
         String roleId= "Unknown";
         try{
-            //NGContainer ngc = ar.getCogInstance().getWorkspaceOrSiteOrFail(siteId, pageId);
             NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
             ar.setPageAccessLevels(ngc);
             ar.assertLoggedIn("Must be logged in to manipuate roles.");

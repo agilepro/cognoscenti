@@ -35,6 +35,16 @@ Required parameter:
        document.getElementById("webDevURL").submit();
    }
 </script>
+<style>
+.bigNumber {
+    font-size: 20px;
+    text-align:right;
+}
+.instruct {
+    font-size: 14px;
+    padding:10px;
+}
+</style>
 <div>
         <div class="pageHeading">
             <fmt:message key="nugen.attachment.uploadattachment.LinkDocumentFromRepository" />
@@ -51,21 +61,18 @@ Required parameter:
                 <table border="0px solid red" class="linkWizard">
                     <tr><td style="height:40px"></td></tr>
                     <tr>
-                        <td colspan="3" class="linkWizardHeading">To access the document:</td>
+                        <td colspan="3" class="instruct">To access the document:</td>
                     </tr>
-                    <tr><td style="height:10px"></td></tr>
                     <tr>
-                        <td width="148" class="gridTableColummHeader"></td>
+                        <td ></td>
                         <td style="width:20px;"></td>
                         <td><span style="font-size:14px;"><% ar.writeHtml(rlink); %></span></td>
                     </tr>
-                    <tr><td style="height:10px"></td></tr>
                     <tr>
-                        <td colspan="3" class="linkWizardHeading">Do you want to:</td>
+                        <td colspan="3" class="instruct">Do you want to:</td>
                     </tr>
-                    <tr><td style="height:10px"></td></tr>
                     <tr>
-                        <td width="148" class="gridTableColummHeader">1.</td>
+                        <td width="148" class="bigNumber">1.</td>
                         <td style="width:20px;"></td>
                         <td>
                             <select name="folderId" class="form-control">
@@ -81,9 +88,8 @@ Required parameter:
                             </select>
                         </td>
                     </tr>
-                    <tr><td style="height:5px"></td></tr>
                     <tr>
-                        <td width="148" class="gridTableColummHeader"></td>
+                        <td ></td>
                         <td style="width:20px;"></td>
                         <td>
                             <input type="button" class="btn btn-primary"
@@ -91,13 +97,11 @@ Required parameter:
                                 onclick="submitWebDevURLForm('UseExistingConnection')">
                         </td>
                     </tr>
-                    <tr><td style="height:10px"></td></tr>
                     <tr>
-                        <td colspan="3" class="linkWizardHeading">Or:</td>
+                        <td colspan="3" class="instruct">Or:</td>
                     </tr>
-                    <tr><td style="height:15px"></td></tr>
                     <tr>
-                        <td width="148" class="gridTableColummHeader">2.</td>
+                        <td width="148" class="bigNumber">2.</td>
                         <td style="width:20px;"></td>
                         <td>
                             <input type="button" class="btn btn-primary"
@@ -106,10 +110,10 @@ Required parameter:
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="linkWizardHeading">Or:</td>
+                        <td colspan="3" class="instruct">Or:</td>
                     </tr>
                     <tr>
-                        <td width="148" class="gridTableColummHeader">3.</td>
+                        <td width="148" class="bigNumber">3.</td>
                         <td style="width:20px;"></td>
                         <td>
                             <input type="button" class="btn btn-primary"

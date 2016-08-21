@@ -3,7 +3,9 @@
 
 //We always POST to an address that consumes the data, and then redirects to a display page,
 //so the display page (like this one) should never experience a POST request
-    ar.assertNotPost();
+    if (!"DisplayException".equals(wrappedJSP)) {
+        ar.assertNotPost();
+    }
     
     String mainWorkspaceId = "";
     String mainSiteId = "";
@@ -323,12 +325,12 @@ function displayWelcomeMessage(info) {
     if (info.haveNotCheckedYet) {
         y.innerHTML = 'Checking identity, please <a href="'
             +loginConfig.providerUrl
-            +'&go='+window.location+'">Login</a>.';
+            +'&go='+window.location+'"><span class="btn btn-primary">Login</span></a>';
     }
     else if (!info.userName) {
         y.innerHTML = 'Not logged in, please <a href="'
             +loginConfig.providerUrl
-            +'?openid.mode=quick&go='+window.location+'">Login</a>.';
+            +'?openid.mode=quick&go='+window.location+'"><span class="btn btn-primary">Login</span></a>';
     }
     else if (!info.verified) {
         y.innerHTML = 'Hello <b>'+info.userName+'</b>.  Attempting Automatic Login.';

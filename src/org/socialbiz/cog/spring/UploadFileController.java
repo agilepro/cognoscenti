@@ -48,7 +48,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class UploadFileController extends BaseController {
@@ -62,11 +61,6 @@ public class UploadFileController extends BaseController {
             ServletRequestDataBinder binder) throws ServletException {
 
         binder.registerCustomEditor(byte[].class,new ByteArrayMultipartFileEditor());
-    }
-
-    private ModelAndView displayException(HttpServletRequest request, Exception extd) {
-        request.setAttribute("display_exception", extd);
-        return new ModelAndView("DisplayException");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/upload.form", method = RequestMethod.POST)
@@ -182,31 +176,16 @@ public class UploadFileController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/sendemailReminder.htm", method = RequestMethod.GET)
-    protected ModelAndView sendEmailReminderForAttachment(
+    protected void sendEmailReminderForAttachment(
             @PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                request.setAttribute("property_msg_key", "nugen.project.send.email.reminder.login.msg");
-                modelAndView = createNamedView(siteId, pageId, ar, "Warning");
-            }else if(!ar.isMember()){
-                request.setAttribute("property_msg_key", "nugen.attachment.send.email.reminder.memberlogin");
-                modelAndView = createNamedView(siteId, pageId, ar, "WarningNotMember");
-            }else{
-                modelAndView = createNamedView(siteId, pageId, ar, "ReminderEmail");
-                request.setAttribute("isNewUpload", "yes");
-            }
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("title", ngp.getFullName());
+            showJSPMembers(ar, siteId, pageId, "ReminderEmail");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.send.email.reminder", new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/resendemailReminder.htm", method = RequestMethod.POST)
@@ -275,24 +254,18 @@ public class UploadFileController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/linkURLToProject.htm", method = RequestMethod.GET)
-    protected ModelAndView getLinkURLToProjectForm(@PathVariable String siteId,
+    protected void getLinkURLToProjectForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
 
-            ModelAndView modelAndView = checkLoginMemberFrozen(ar, ngp);
-            if (modelAndView!=null) {
-                return modelAndView;
+            if (checkLoginMemberFrozen(ar, ngp)) {
+                return;
             }
 
-            modelAndView = createNamedView(siteId, pageId, ar, "linkURLToProject");
-            request.setAttribute("isNewUpload", "yes");
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("title", ngp.getFullName());
-            return modelAndView;
-
+            showJSPMembers(ar, siteId, pageId, "linkURLToProject");
         }
         catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.linkurl.to.project.page", new Object[]{pageId,siteId} , ex);
@@ -300,19 +273,18 @@ public class UploadFileController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/linkGoogleDoc.htm", method = RequestMethod.GET)
-    protected ModelAndView linkGoogleDoc(@PathVariable String siteId,
+    protected void linkGoogleDoc(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
 
-            ModelAndView modelAndView = checkLoginMemberFrozen(ar, ngp);
-            if (modelAndView!=null) {
-                return modelAndView;
+            if (checkLoginMemberFrozen(ar, ngp)) {
+                return;
             }
 
-            return createNamedView(siteId, pageId, ar, "linkGoogleDoc");
+            showJSPMembers(ar, siteId, pageId, "linkGoogleDoc");
         }
         catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.linkurl.to.project.page", new Object[]{pageId,siteId} , ex);
@@ -322,36 +294,27 @@ public class UploadFileController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/emailReminder.htm", method = RequestMethod.GET)
-    protected ModelAndView getEmailRemainderForm(@PathVariable String siteId,
+    protected void getEmailRemainderForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
 
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.upload.email.reminder.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-            if(ngp.isFrozen()){
-                return showWarningView(ar, "nugen.generatInfo.Frozen");
+            if (checkLoginMemberFrozen(ar, ngp)) {
+                return;
             }
 
-            modelAndView = createNamedView(siteId, pageId, ar, "emailreminder_form");
             request.setAttribute("isNewUpload", "yes");
-            request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title", ngp.getFullName());
+            showJSPMembers(ar, siteId, pageId, "emailreminder_form");
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.email.reminder.page", new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/linkRepository.htm", method = RequestMethod.GET)
     protected ModelAndView linkRepository(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
@@ -377,14 +340,13 @@ public class UploadFileController extends BaseController {
             modelAndView = createNamedView(siteId, pageId, ar, "linkfromrepository_form");
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("symbol", remoteFile.getSymbol());
-            request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title", ngp.getFullName());
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.link.to.repository.page", new Object[]{pageId,siteId} , ex);
         }
         return modelAndView;
     }
-
+*/
 
     @RequestMapping(value = "/{siteId}/{pageId}/remoteAttachmentAction.form", method = RequestMethod.POST)
     protected void remoteAttachmentAction(@PathVariable String siteId,
@@ -431,21 +393,16 @@ public class UploadFileController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/folderDisplay.htm", method = RequestMethod.GET)
-    protected ModelAndView folderDisplay(@PathVariable String siteId,
+    protected void folderDisplay(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.display.repository.folder");
-            registerRequiredProject(ar, siteId, pageId);
-
-            modelAndView = createNamedView(siteId, pageId, ar, "FolderDisplay");
             request.setAttribute("fid",ar.defParam("fid",null));
-            request.setAttribute("realRequestURL", ar.getRequestURL());
+            showJSPMembers(ar, siteId, pageId, "FolderDisplay");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.folder.page", new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
     /*
@@ -482,7 +439,6 @@ public class UploadFileController extends BaseController {
 
             modelAndView = createNamedView(siteId, pageId, ar, "editDetails");
             request.setAttribute("aid",aid);
-            request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title", ngp.getFullName());
 
         }catch(Exception ex){
@@ -513,7 +469,6 @@ public class UploadFileController extends BaseController {
 
             modelAndView = createNamedView(siteId, pageId, ar, "fileVersions");
             request.setAttribute("aid",aid);
-            request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title",ngp.getFullName());
 
 
@@ -552,7 +507,7 @@ public class UploadFileController extends BaseController {
     }
 
      @RequestMapping(value = "/{siteId}/{pageId}/remindAttachment.htm", method = RequestMethod.GET)
-     protected ModelAndView remindAttachment(@PathVariable String siteId,
+     protected void remindAttachment(@PathVariable String siteId,
                 @PathVariable String pageId, HttpServletRequest request,
                 HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -564,24 +519,24 @@ public class UploadFileController extends BaseController {
             ReminderMgr mgr = ngp.getReminderMgr();
             ReminderRecord reminderRecord = mgr.findReminderByIDOrFail(rid);
             if (AccessControl.canAccessReminder(ar, ngp, reminderRecord)) {
-                return createNamedView(siteId, pageId, ar, "remind_attachment");
+                showJSPMembers(ar, siteId, pageId, "remind_attachment");
+                return;
             }
 
             if(!ar.isLoggedIn()){
                 request.setAttribute("property_msg_key", "nugen.project.remind.doc.login.msg");
             }else if(!ar.isMember()){
                 request.setAttribute("property_msg_key", "nugen.attachment.remind.doc.memberlogin");
-                return createNamedView(siteId, pageId, ar, "WarningNotMember");
+                showJSPMembers(ar, siteId, pageId, "WarningNotMember");
             }else {
                 //basically, the reminder should have been display, and we have no idea now why not
                 throw new Exception("Program Logic Error ... something is wrong with the canAccessReminder method");
             }
-            return createNamedView(siteId, pageId, ar, "Warning");
+            showJSPMembers(ar, siteId, pageId, "Warning");
 
         }catch(Exception ex){
-            Exception extd = new NGException("nugen.operation.fail.project.reminder.attachment.page",
+            throw new NGException("nugen.operation.fail.project.reminder.attachment.page",
                     new Object[]{pageId,siteId} , ex);
-            return displayException(request, extd);
         }
      }
 
@@ -589,45 +544,33 @@ public class UploadFileController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/CreateCopy.htm", method = RequestMethod.GET)
-    protected ModelAndView CreateCopy(@PathVariable String siteId,
+    protected void CreateCopy(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response,
             @RequestParam(value = "fname", required = false) MultipartFile file)
             throws Exception {
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage ngp = registerRequiredProject(ar, siteId, pageId);
 
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.create.copy.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-            if(ngp.isFrozen()){
-                return showWarningView(ar, "nugen.generatInfo.Frozen");
+            if(checkLoginMemberFrozen(ar, ngp)){
+                return;
             }
 
-
-            modelAndView = createNamedView(siteId, pageId, ar, "CreateCopy");
             String aid = ar.reqParam("aid");
-
             AttachmentRecord attachment = ngp.findAttachmentByID(aid);
 
             if (attachment == null) {
                 throw new NGException("nugen.exception.attachment.not.found" ,new Object[]{ aid});
             }
             request.setAttribute("aid", aid);
-            request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title",  ngp.getFullName());
 
+            showJSPMembers(ar, siteId, pageId, "CreateCopy");
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.create.copy.page", new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/deleteReminder.ajax", method = RequestMethod.POST)
@@ -696,34 +639,6 @@ public class UploadFileController extends BaseController {
             ar.logException("Caught by setEditMode.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, responseText);
-    }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/viewEmailReminder.htm", method = RequestMethod.GET)
-    protected ModelAndView viewEmailReminderForAttachment(
-            @PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.send.email.reminder.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-
-            modelAndView = createNamedView(siteId, pageId, ar, "viewReminder");
-            request.setAttribute("isNewUpload", "yes");
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("title", ngp.getFullName());
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.send.email.reminder", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
     }
 
 

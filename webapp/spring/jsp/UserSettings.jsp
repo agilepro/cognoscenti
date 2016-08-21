@@ -79,6 +79,14 @@ app.controller('myCtrl', function($scope, $http) {
               <li role="presentation"><a role="menuitem" tabindex="-1" href="editUserProfile.htm?u={{userInfo.key}}" >
                         <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
                         Update Settings</a></li>
+              <li role="presentation" class="divider"></li>
+              <li role="presentation"><a role="menuitem" href="RemoteProfiles.htm" >
+                        Remote Profiles</a></li>
+              <li role="presentation"><a role="menuitem" href="userRemoteTasks.htm" >
+                        Remote Action Items</a></li>
+              <li role="presentation"><a role="menuitem" href="Agents.htm" >
+                        Personal Assistant</a></li>
+            </ul>
           </span>
 
         </div>

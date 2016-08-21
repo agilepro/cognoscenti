@@ -72,6 +72,9 @@
     else if ("UserAccounts".equals(jspName)) {
         jspName = "Sites You Manage";
     }
+    else if ("leaf_accountRoleRequest".equals(jspName)) {
+        jspName = "Site Role Request";
+    }
     
     
     

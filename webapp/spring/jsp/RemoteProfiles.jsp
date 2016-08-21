@@ -19,6 +19,7 @@
     boolean viewingSelf = uProf.getKey().equals(operatingUser.getKey());
     UserPage uPage = uProf.getUserPage();
     List<ProfileRef> remoteRefs = uPage.getProfileRefs();
+    boolean noneFound = remoteRefs.size()==0;
     JSONArray profs = new JSONArray();
     for (ProfileRef oneRef : remoteRefs) {
         JSONObject oneObj = new JSONObject();
@@ -34,6 +35,7 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope, $http) {
     $scope.profiles = <%profs.write(out,2,4);%>;
+    $scope.noneFound = <%=noneFound%>;
     $scope.go = "<%ar.writeJS(ar.getCompleteURL());%>";
     $scope.newURL = "";
     $scope.showInput = false;
@@ -154,4 +156,18 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
     </table>
 
+    
+    <div class="guideVocal" ng-show="noneFound">
+        User <% uProf.writeLink(ar); %> has not specified any remote profiles.<br/>
+            <br/>
+            A remote profile is a profile for yourself on a different host server.<br/>
+            <br/>
+            If you are using more than one Weaver server, then you can connect your
+            profile on this host, with the profile on the other host, and this will 
+            allow you to see a consolidated worklist (all tasks from both hosts) and
+            it will allow you to clone workspaces from one host to another.
+            This is quite advanced functionality and the regular user need not worry
+            about this functionality.  Most users do not need remote profiles.
+    </div>
+    
 </div>

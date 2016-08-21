@@ -818,8 +818,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                   <a role="menuitem" ng-click="postComment(cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
                                   <a role="menuitem" ng-click="deleteComment(cmt)">Delete Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.state==12 && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                                  <a role="menuitem" ng-click="closeComment(cmt)">Close Your {{commentTypeName(cmt)}}</a></li>
+                              <li role="presentation" ng-show="cmt.state==12">
+                                  <a role="menuitem" ng-click="closeComment(cmt)">Close  {{commentTypeName(cmt)}}</a></li>
                               <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.state==13 && 
                                   (cmt.commentType==2 || cmt.commentType==3)">
                                   <a role="menuitem" ng-click="openOutcomeEditor(cmt)">Edit the Outcome</a></li>

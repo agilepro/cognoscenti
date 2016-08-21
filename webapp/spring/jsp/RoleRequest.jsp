@@ -86,8 +86,6 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
-            //removeRec(rec.id);
-            //$scope.allRoleRequests.push(data);
             rec.state=data.state;
             rec.completed=data.completed;
         })

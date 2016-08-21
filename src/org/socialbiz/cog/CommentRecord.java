@@ -586,12 +586,12 @@ public class CommentRecord extends DOMFace {
     }
 
     public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
-        UserRef owner = getUser();
+        //UserRef owner = getUser();
         UserProfile user = ar.getUserProfile();
         boolean wasDraft = getState()==COMMENT_STATE_DRAFT;
 
         //only update the comment if that user is the one logged in
-        if (user.equals(owner)) {
+        //if (user.equals(owner)) {
             if (input.has("html")) {
                 String html = input.getString("html");
                 setContentHtml(ar, html);
@@ -606,7 +606,7 @@ public class CommentRecord extends DOMFace {
             if (input.has("choices")) {
                 setChoices(constructVector(input.getJSONArray("choices")));
             }
-        }
+        //}
         if (input.has("responses")) {
             JSONArray responses = input.getJSONArray("responses");
             System.out.println("Submitted to server comment responses: "+responses.toString());

@@ -97,12 +97,7 @@ public class ProjectGoalController extends BaseController {
             boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, goal);
 
             if(!canAccessGoal){
-                if(!ar.isLoggedIn()){
-                    streamJSPWarning(ar, "message.login.to.see.task.detail");
-                    return;
-                }
-                if(!ar.isMember()){
-                    streamJSP(ar, "WarningNotMember");
+                if (checkLoginMember(ar)) {
                     return;
                 }
                 throw new Exception("Program Logic Error: logged in member should be able to see task.");

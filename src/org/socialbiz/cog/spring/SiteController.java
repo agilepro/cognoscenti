@@ -56,43 +56,37 @@ public class SiteController extends BaseController {
         showJSPMembers(ar,siteId,null,"SiteAdmin");
     }
     
-    
     @RequestMapping(value = "/{userKey}/requestAccount.htm", method = RequestMethod.GET)
-    public ModelAndView requestSite(@PathVariable String userKey,
+    public void requestSite(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
+                return;
             }
             if (needsToSetName(ar)) {
-                return new ModelAndView("requiredName");
+                streamJSP(ar, "requiredName");
             }
             if (UserManager.getAllSuperAdmins(ar).size()==0) {
-                return showWarningView(ar, "nugen.missingSuperAdmin");
+                showWarningView(ar, "nugen.missingSuperAdmin");
+                return;
             }
 
-            ModelAndView modelAndView = new ModelAndView("RequestAccount");
-            request.setAttribute("userKey", userKey);
-            request.setAttribute("pageTitle", "New Site Request Form");
-            return modelAndView;
+            streamJSP(ar, "RequestAccount");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.account.request.page", null, ex);
         }
     }
 
     @RequestMapping(value = "/{userKey}/accountRequests.form", method = RequestMethod.POST)
-    public ModelAndView requestNewSite(@PathVariable
+    public void requestNewSite(@PathVariable
             String userKey, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
+            ar.assertLoggedIn("Must be logged in to request a site.");
 
             String action = ar.reqParam( "action" );
 
@@ -109,23 +103,23 @@ public class SiteController extends BaseController {
                 throw new Exception("Method requestNewSite does not understand the action: "+action);
             }
 
-            modelAndView = new ModelAndView(new RedirectView("userAccounts.htm"));
+            redirectBrowser(ar, "userAccounts.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.new.account.request", null , ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/{userKey}/acceptOrDeny.form", method = RequestMethod.POST)
-    public ModelAndView acceptOrDeny(HttpServletRequest request, HttpServletResponse response)
+    public void acceptOrDeny(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
+                return;
             }
             if(!ar.isSuperAdmin()){
-                return showWarningView(ar, "message.superadmin.required");
+                showWarningView(ar, "message.superadmin.required");
+                return;
             }
 
             String requestId = ar.reqParam("requestId");
@@ -148,7 +142,7 @@ public class SiteController extends BaseController {
             }
 
             //TODO: need a go parameter
-            return new ModelAndView(new RedirectView("requestedAccounts.htm"));
+            redirectBrowser(ar, "requestedAccounts.htm");
         }
         catch(Exception ex){
             throw new NGException("nugen.operation.fail.acceptOrDeny.account.request", null, ex);
@@ -161,24 +155,19 @@ public class SiteController extends BaseController {
     * and their current status.  Thus, only current executives and owners should see this.
     */
     @RequestMapping(value = "/{siteId}/$/roleRequest.htm", method = RequestMethod.GET)
-    public ModelAndView remindersTab(@PathVariable String siteId,
+    public void siteRoleRequest(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
+                return;
             }
-            NGBook site = prepareSiteView(ar, siteId);
-            ModelAndView modelAndView = executiveCheckViews(ar);
-            if (modelAndView != null) {
-                return modelAndView;
+            prepareSiteView(ar, siteId);
+            if (executiveCheckViews(ar)) {
+                return;
             }
-
-            modelAndView = new ModelAndView("account_role_request");
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("pageTitle", site.getFullName());
-            return modelAndView;
+            streamJSP(ar, "leaf_accountRoleRequest");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.account.role.request.page", new Object[]{siteId} , ex);
         }
@@ -190,7 +179,7 @@ public class SiteController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, null, "accountListProjects");
+        showJSPLoggedIn(ar, siteId, null, "accountListProjects");
         return null;
     }
 
@@ -204,23 +193,20 @@ public class SiteController extends BaseController {
     }
     
     @RequestMapping(value = "/{siteId}/$/accountCloneProject.htm", method = RequestMethod.GET)
-    public ModelAndView accountCloneProject(@PathVariable String siteId,
+    public void accountCloneProject(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if(checkLogin(ar)){
+                return;
             }
-            NGBook site = prepareSiteView(ar, siteId);
-            ModelAndView modelAndView = executiveCheckViews(ar);
-            if (modelAndView != null) {
-                return modelAndView;
+            prepareSiteView(ar, siteId);
+            if (executiveCheckViews(ar)) {
+                return;
             }
 
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("pageTitle", site.getFullName());
-            return new ModelAndView("accountCloneProject");
+            streamJSP(ar, "accountCloneProject");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.account.process.page", new Object[]{siteId} , ex);
         }
@@ -232,13 +218,12 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
+                return null;
             }
             prepareSiteView(ar, siteId);
-            ModelAndView modelAndView = executiveCheckViews(ar);
-            if (modelAndView != null) {
-                return modelAndView;
+            if (executiveCheckViews(ar)) {
+                return null;
             }
 
             return new ModelAndView("convertFolderProject");
@@ -255,17 +240,15 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
+                return null;
             }
             prepareSiteView(ar, siteId);
-            ModelAndView modelAndView = executiveCheckViews(ar);
-            if (modelAndView != null) {
-                return modelAndView;
+            if (executiveCheckViews(ar)) {
+                return null;
             }
 
-            modelAndView = new ModelAndView("SiteUsers");
-            return modelAndView;
+            return new ModelAndView("SiteUsers");
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUsers.htm for site '"+siteId+"'", ex);
         }
@@ -290,18 +273,19 @@ public class SiteController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
             String requestId = ar.reqParam("requestId");
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
+                return null;
             }
             if(!ar.isSuperAdmin()){
-                return showWarningView(ar, "message.superadmin.required");
+                showWarningView(ar, "message.superadmin.required");
+                return null;
             }
 
             //Note: the approval page works in two modes.
             //1. if you are super admin, you have buttons to grant or deny
             //2. if you are not super admin, you can see status, but can not change status
 
-            modelAndView = new ModelAndView("approveAccountThroughMail");
+            modelAndView = new ModelAndView("AccountApproval");
             modelAndView.addObject("requestId", requestId);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.account.approve.through.mail", null, ex);
@@ -315,13 +299,12 @@ public class SiteController extends BaseController {
     throws Exception {
         try {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
+                return null;
             }
             NGBook site = prepareSiteView(ar, siteId);
-            ModelAndView modelAndView = executiveCheckViews(ar);
-            if (modelAndView != null) {
-                return modelAndView;
+            if (executiveCheckViews(ar)) {
+                return null;
             }
 
             String roleName=ar.reqParam("rolename");
@@ -364,15 +347,14 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
+                return null;
             }
             NGBook site = prepareSiteView(ar, siteId);
-            ModelAndView modelAndView = executiveCheckViews(ar);
-            if (modelAndView != null) {
-                return modelAndView;
+            if (executiveCheckViews(ar)) {
+                return null;
             }
-            modelAndView = new ModelAndView("account_permission");
+            ModelAndView modelAndView = new ModelAndView("account_permission");
             request.setAttribute("headerType", "site");
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("pageTitle", site.getFullName());
@@ -389,8 +371,8 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
+                return null;
             }
             NGBook site = prepareSiteView(ar, siteId);
             //personal view is available to everyone, regardless of whether they
@@ -437,15 +419,14 @@ public class SiteController extends BaseController {
     throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
+            if (checkLogin(ar)) {
+                return null;
             }
             prepareSiteView(ar, siteId);
-            ModelAndView modelAndView = executiveCheckViews(ar);
-            if (modelAndView != null) {
-                return modelAndView;
+            if (executiveCheckViews(ar)) {
+                return null;
             }
-            modelAndView=new ModelAndView("editRoleAccount");
+            ModelAndView modelAndView=new ModelAndView("editRoleAccount");
             request.setAttribute("headerType", "site");
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("roleName", roleName);

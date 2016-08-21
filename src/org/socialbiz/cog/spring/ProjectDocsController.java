@@ -43,7 +43,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
@@ -290,13 +289,12 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
-
+/*
 //This is the OLD way
     @RequestMapping(value = "/{siteId}/{pageId}/uploadDocument.htm", method = RequestMethod.GET)
     protected ModelAndView getUploadDocumentForm(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = null;
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
@@ -312,17 +310,17 @@ public class ProjectDocsController extends BaseController {
                 return showWarningView(ar, "nugen.generatInfo.Frozen");
             }
 
-            modelAndView = createNamedView(siteId, pageId, ar, "uploadDocumentForm");
+            ModelAndView modelAndView = createNamedView(siteId, pageId, ar, "uploadDocumentForm");
             request.setAttribute("isNewUpload", "yes");
             request.setAttribute("realRequestURL", ar.getRequestURL());
             request.setAttribute("title", ngp.getFullName());
+            return modelAndView;
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.upload.document.page", new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
-
+*/
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/SyncAttachment.htm", method = RequestMethod.GET)

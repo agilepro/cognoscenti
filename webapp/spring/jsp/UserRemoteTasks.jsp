@@ -20,7 +20,9 @@
 
     UserPage uPage = uProf.getUserPage();
     JSONArray workList = new JSONArray();
-    for (RemoteGoal tr : uPage.getRemoteGoals()) {
+    List<RemoteGoal> allRG = uPage.getRemoteGoals();
+    boolean noneFound = allRG.size()==0;
+    for (RemoteGoal tr : allRG) {
         workList.put(tr.getJSONObject());
     }
 
@@ -35,6 +37,7 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.workList = <%workList.write(out,2,4);%>;
+    $scope.noneFound = <%=noneFound%>;
     $scope.filterVal = "";
     $scope.filterPast = false;
     $scope.filterCurrent = true;
@@ -147,4 +150,15 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
         </table>
     </div>
+    
+    
+    <div class="guideVocal" ng-show="noneFound">
+        User <% uProf.writeLink(ar); %> has not retrieved any remote action items.<br/>
+            <br/>
+            If you are using more than one Weaver server, 
+            and if you have remote profiles, you can retrieve action items from
+            those remote servers.
+            This is fairly advanced functionality, and the casual userneed not worry about it.
+    </div>
+    
 </div>

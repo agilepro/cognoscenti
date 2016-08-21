@@ -52,8 +52,6 @@ var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.partProjects = <%partProjects.write(out,2,4);%>;
 
-
-
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
@@ -61,6 +59,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    
+    $scope.hideNote = false;
 
     $scope.stopRole = function(prjrole) {
         var conf = confirm('Confirm that you would like to withdraw from the '
@@ -96,7 +96,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 
 
-<div class="alert alert-warning">
+<div class="alert alert-warning" ng-hide="hideNote" ng-click="hideNote=true">
 Please note: when you withdraw from a <b>'Members'</b> role of a workspace, 
 you will stop receiving email when meetings are called, when topics 
 are create, and when comments are made.  
@@ -105,15 +105,26 @@ Withdrawing from a Members role means you are effectively leaving
 the group that runs the workspace.
 </div>
 
-<table class="table">
+<style>
+.padded { padding:10px }
+.bottomline { border-bottom: 1px solid lightgray; background-color: yellow }
+</style>
 
-  <tr ng-repeat="prjrole in partProjects">
-    <td><b>{{prjrole.fullName}}</b><br/>
-        Updated: {{prjrole.updated|date}}</td>
-    <td><button ng-click="stopRole(prjrole)" class="btn btn-danger">Withdraw from {{prjrole.role}}</button></td>
-    <td style="color:gray;">{{prjrole.desc}}</td>
-  </tr>
-</table>
+  <div ng-repeat="prjrole in partProjects">
+        <div class="col-xs-12 col-sm-6 col-md-3 padded">
+            <b>{{prjrole.fullName}}</b><br/>
+            Updated: {{prjrole.updated|date}}
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-3 padded">
+            <button ng-click="stopRole(prjrole)" class="btn btn-danger">Withdraw from {{prjrole.role}}</button>
+        </div>
+        <div class="col-xs-12 col-md-6 padded">
+            {{prjrole.desc}}
+        </div>
+     <div class="col-xs-12 col-sm-12 col-md-12 bottomline">
+     </div>
+  </div>
+
 
 
 

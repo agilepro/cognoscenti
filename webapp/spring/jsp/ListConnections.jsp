@@ -15,6 +15,8 @@ Required parameter:
     String pageId = ar.reqParam("pageId");
     String aid    = ar.defParam("aid", "");
     String fndDefLoctn    = ar.defParam("fndDefLoctn", "false");
+    
+    UserProfile uProf = ar.getUserProfile();
 %>
 <script type="text/javascript">
 
@@ -102,3 +104,21 @@ Required parameter:
        }
 
     }%>
+    
+    
+    <div class="guideVocal" >
+        User <% uProf.writeLink(ar); %> has not created any Connections.<br/>
+        <br/>
+        A connection is a pre-authenticated link to a document repository.
+        When you access a document repository that requires a user name and password,
+        you can save your use name and password in a connection to use it in the future.
+        The connection will be used when you 'synchronize' a document in this workspace 
+        with the copy of it in the document repository.  This is saved with the attached
+        document so that other workspace members can synchronize without you personally
+        having to do it.
+        <br/><br/>
+        This is an advanced functionality used only with external document repositories
+        and is not available for you at this time.
+        
+    </div>
+    

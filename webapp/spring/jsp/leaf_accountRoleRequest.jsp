@@ -2,6 +2,7 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.ConfigFile"
 %><%@page import="org.socialbiz.cog.RoleRequestRecord"
+%><%@page import="org.socialbiz.cog.AccessControl"
 %><%
 
     ar.assertLoggedIn("");
@@ -13,15 +14,20 @@
     List<RoleRequestRecord> roleRequestRecordList = ngb.getAllRoleRequest();
     JSONArray allRequests = new JSONArray();
     for (RoleRequestRecord rrr : roleRequestRecordList) {
-        JSONObject jo = new JSONObject();
-        jo.put("requestId", rrr.getRequestId());
-        jo.put("roleName", rrr.getRoleName());
-        jo.put("modifiedDate", rrr.getModifiedDate());
-        jo.put("description", rrr.getRequestDescription());
-        jo.put("state", rrr.getState());
-        jo.put("response", rrr.getResponseDescription());
-        jo.put("requestedBy", rrr.getRequestedBy());
-        allRequests.put(jo);
+        JSONObject nrrr = new JSONObject();
+        UserProfile uPro = UserManager.findUserByAnyId(rrr.getRequestedBy());
+        nrrr.put("id", rrr.getRequestId());
+        nrrr.put("state", rrr.getState());
+        nrrr.put("requestKey", uPro.getKey());
+        nrrr.put("requestName", uPro.getName());
+        nrrr.put("roleName", rrr.getRoleName());
+        nrrr.put("modified", rrr.getModifiedDate());
+        nrrr.put("modBy", rrr.getModifiedBy());
+        nrrr.put("completed", rrr.isCompleted());
+        nrrr.put("description", rrr.getRequestDescription());
+        nrrr.put("response", rrr.getResponseDescription());
+        nrrr.put("mn", AccessControl.getAccessRoleRequestParams(ngb, rrr));
+        allRequests.put(nrrr);
     }
 
 %>
@@ -40,18 +46,36 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
 
+    $scope.update = function(op, rec) {
+        var msg = {};
+        msg.op = op;
+        msg.rrId = rec.id;
+        var postURL = "roleRequestResolution.json?"+rec.mn;
+        var postdata = angular.toJson(msg);
+        $scope.showError=false;
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            rec.state=data.state;
+            rec.completed=data.completed;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    
 });
 
 </script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
+<%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
             Role Requests
         </div>
-        <div class="rightDivContent" style="margin-right:100px;">
+        <!--div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
@@ -61,7 +85,7 @@ app.controller('myCtrl', function($scope, $http) {
             </ul>
           </span>
 
-        </div>
+        </div-->
     </div>
 
 
@@ -72,7 +96,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <table class="table">
                     <thead>
                         <tr>
-                            <th >Request Id</th>
+                            <th ></th>
                             <th >Role Name</th>
                             <th >Date</th>
                             <th >Requested by</th>
@@ -82,10 +106,21 @@ app.controller('myCtrl', function($scope, $http) {
                     </thead>
                     <tbody>
                         <tr ng-repeat="rec in allRequests">
-                            <td>{{rec.requestId}}</td>
+                            <td>
+                              <div class="dropdown">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                                <span class="caret"></span></button>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                                  <li role="presentation">
+                                      <a role="menuitem" href="#" ng-click="update('Approve', rec)">Approve Request</a></li>
+                                  <li role="presentation">
+                                      <a role="menuitem" href="#" ng-click="update('Reject', rec)">Reject Request</a></li>
+                                </ul>
+                              </div>
+                            </td>
                             <td>{{rec.roleName}}</td>
-                            <td>{{rec.modifiedDate|date}}</td>
-                            <td>{{rec.requestedBy}}</td>
+                            <td>{{rec.modified|date}}</td>
+                            <td>{{rec.requestName}}</td>
                             <td>{{rec.description}}</td>
                             <td>{{rec.state}}</td>
                         </tr>
