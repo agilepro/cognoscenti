@@ -46,7 +46,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class RemoteLinkController extends BaseController {
@@ -249,10 +248,9 @@ public class RemoteLinkController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/createConnection.form", method = RequestMethod.POST)
-    protected ModelAndView createConnection(@PathVariable String siteId,
+    protected void createConnection(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-            ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.create.connection");
             registerRequiredProject(ar, siteId, pageId);
@@ -283,7 +281,6 @@ public class RemoteLinkController extends BaseController {
             throw new NGException("nugen.operation.fail.project.create.connection",
                     new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/problemDiagnosePage.htm",method = RequestMethod.GET)
@@ -570,103 +567,7 @@ public class RemoteLinkController extends BaseController {
         }
     }
 
-    /*
-    @RequestMapping(value = "/{userKey}/connectionAction.form", method = RequestMethod.POST)
-    protected ModelAndView connectionAction(@PathVariable String userKey,
-            HttpServletRequest request,HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            UserManager.getUserProfileOrFail(userKey);
 
-            String action = ar.reqParam("action");
-            String go = ar.reqParam("go");
-
-            //first, handle cancel operation.
-            if ("Cancel".equalsIgnoreCase(action)) {
-                return redirectBrowser(ar,go);
-            }
-
-            UserPage uPage = ar.getUserPage();
-
-            if ("Update".equals(action)) {
-                String folderId = ar.reqParam("folderId");
-                ConnectionSettings cSet = uPage.getConnectionSettingsOrFail(folderId);
-                FolderAccessHelper.updateSettingsFromRequest(ar, uPage, cSet);
-            }
-            else if ("Create Connection".equals(action)) {
-                ConnectionSettings cSet = uPage.createConnectionSettings();
-                FolderAccessHelper.updateSettingsFromRequest(ar, uPage, cSet);
-            }
-            else {
-                throw new ProgramLogicError("folderAction does not understand action '"+action+"'");
-            }
-
-            return redirectBrowser(ar,go);
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.update.repository.folder", null , ex);
-        }
-    }
-*/
-
-    
-    /*
-    @RequestMapping(value = "/{userKey}/folderAction.form", method = RequestMethod.POST)
-    protected ModelAndView folderAction(@PathVariable String userKey,
-            HttpServletRequest request,HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "message.loginalert.see.page");
-            }
-            UserManager.getUserProfileOrFail(userKey);
-
-            String fid = ar.reqParam("fid");
-            //lets verify that everything is valid at this point.
-            ResourceEntity remoteFile = ar.getUserPage().getResourceFromSymbol(fid);
-
-            String action = ar.reqParam("action");
-            String folderName = null;
-            String go = ar.reqParam("go");
-
-            if ("CreateSub".equals(action)) {
-                folderName = ar.reqParam("subFolderName").trim();
-            }
-
-            //first, handle cancel operation.
-            if ("Cancel".equalsIgnoreCase(action)) {
-                return redirectBrowser(ar,go);
-            }
-
-            FolderAccessHelper fah = new FolderAccessHelper(ar);
-
-            if ("Delete".equals(action)) {
-                fah.deleteFolder(fid);
-
-            }
-            else if ("CreateSub".equals(action)) {
-                ResourceEntity child = remoteFile.getChild(folderName);
-                boolean isCreated = child.createFolder();
-                if(!isCreated) {
-                    throw new NGException("nugen.exception.unable.to.create.folder", new Object[]{folderName});
-                }
-            }
-            else {
-                throw new ProgramLogicError("folderAction does not understand action '"+action+"'");
-            }
-
-            return redirectBrowser(ar,go);
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.update.repository.folder", null , ex);
-        }
-    }
-    */
 
     @RequestMapping(value = "/{userKey}/addFileAction.form", method = RequestMethod.POST)
     protected void addFileAction(@PathVariable String userKey,
@@ -731,10 +632,9 @@ public class RemoteLinkController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/createConnectionToPushDoc.form", method = RequestMethod.POST)
-    protected ModelAndView createConnectionToPushDoc(@PathVariable String siteId,
+    protected void createConnectionToPushDoc(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-            ModelAndView modelAndView = null;
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.create.connection");
             ar.getCogInstance().getSiteByIdOrFail(siteId);
@@ -758,7 +658,6 @@ public class RemoteLinkController extends BaseController {
             throw new NGException("nugen.operation.fail.project.create.connection.to.push.document",
                     new Object[]{pageId,siteId} , ex);
         }
-        return modelAndView;
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/fileExists.htm", method = RequestMethod.GET)

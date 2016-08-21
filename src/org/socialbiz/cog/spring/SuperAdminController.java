@@ -210,7 +210,7 @@ public class SuperAdminController extends BaseController {
      }
 
      @RequestMapping(value = "/{userKey}/logUserComents.form", method = RequestMethod.POST)
-     public ModelAndView logUserComents(@RequestParam String errorNo,HttpServletRequest request,
+     public void logUserComents(@RequestParam String errorNo,HttpServletRequest request,
              HttpServletResponse response)
      throws Exception {
 
@@ -226,7 +226,7 @@ public class SuperAdminController extends BaseController {
 
              ErrorLog eLog = ErrorLog.getLogForDate(logFileDate, ar.getCogInstance());
              eLog.logUserComments(errorNo, logFileDate, userComments);
-             return redirectBrowser(ar,goURL);
+             redirectBrowser(ar,goURL);
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.error.log.user.comment", null , ex);
          }

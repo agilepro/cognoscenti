@@ -175,21 +175,19 @@ public class SiteController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/$/accountListProjects.htm", method = RequestMethod.GET)
-    public ModelAndView showSiteTaskTab(@PathVariable String siteId,
+    public void showSiteTaskTab(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPLoggedIn(ar, siteId, null, "accountListProjects");
-        return null;
     }
 
     @RequestMapping(value = "/{siteId}/$/accountCreateProject.htm", method = RequestMethod.GET)
-    public ModelAndView accountCreateProject(@PathVariable String siteId,
+    public void accountCreateProject(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, null, "accountCreateProject");
-        return null;
     }
     
     @RequestMapping(value = "/{siteId}/$/accountCloneProject.htm", method = RequestMethod.GET)
@@ -235,20 +233,20 @@ public class SiteController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/$/SiteUsers.htm", method = RequestMethod.GET)
-    public ModelAndView SiteUsers(@PathVariable String siteId,
+    public void SiteUsers(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if (checkLogin(ar)) {
-                return null;
+                return;
             }
             prepareSiteView(ar, siteId);
             if (executiveCheckViews(ar)) {
-                return null;
+                return;
             }
 
-            return new ModelAndView("SiteUsers");
+            streamJSP(ar, "SiteUsers");
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUsers.htm for site '"+siteId+"'", ex);
         }
@@ -324,18 +322,18 @@ public class SiteController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/$/public.htm", method = RequestMethod.GET)
-    public ModelAndView sitePublic(@PathVariable String siteId,@PathVariable String pageId,
+    public void sitePublic(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "accountListProjects.htm");
+        redirectBrowser(ar, "accountListProjects.htm");
     }
     @RequestMapping(value = "/{siteId}/$/member.htm", method = RequestMethod.GET)
-    public ModelAndView member(@PathVariable String siteId,@PathVariable String pageId,
+    public void member(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        return redirectBrowser(ar, "accountListProjects.htm");
+        redirectBrowser(ar, "accountListProjects.htm");
     }
 
 

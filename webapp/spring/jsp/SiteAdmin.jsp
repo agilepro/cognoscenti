@@ -80,8 +80,10 @@ app.controller('myCtrl', function($scope, $http) {
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
+              <li role="presentation"><a role="menuitem" 
                   href="roleRequest.htm">Role Requests</a></li>
+              <li role="presentation"><a role="menuitem" 
+                  href="SiteUsers.htm">User Migration</a></li>
             </ul>
           </span>
 

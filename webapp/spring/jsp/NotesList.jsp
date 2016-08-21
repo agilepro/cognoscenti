@@ -11,7 +11,6 @@
     NGBook ngb = ngw.getSite();
     boolean isMember = ar.isMember();
 
-
     UserProfile up = ar.getUserProfile();
     String currentUser = "NOBODY";
     String currentUserName = "NOBODY";
@@ -257,6 +256,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 			newTopic.html = createdTopic.html;
 			newTopic.subject = createdTopic.subject;
 			newTopic.discussionPhase = createdTopic.phase;
+            newTopic.public = !$scope.allowPrivate;
 			newTopic.modUser = {};
 			newTopic.modUser.uid = "<%ar.writeJS(currentUser);%>";
 			newTopic.modUser.name = "<%ar.writeJS(currentUserName);%>";

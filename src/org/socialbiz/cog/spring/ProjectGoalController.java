@@ -121,11 +121,10 @@ public class ProjectGoalController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/decisionList.htm", method = RequestMethod.GET)
-    public ModelAndView decisionList(@PathVariable String siteId, @PathVariable String pageId,
+    public void decisionList(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "DecisionList");
-        return null;
     }
 
 
@@ -134,7 +133,7 @@ public class ProjectGoalController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/CreateTask.form", method = RequestMethod.POST)
-    public ModelAndView createTask(@PathVariable String siteId, @PathVariable String pageId,
+    public void createTask(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
@@ -148,7 +147,7 @@ public class ProjectGoalController extends BaseController {
             String assignto= ar.defParam("assignto", "");
             NGWebUtils.updateUserContactAndSaveUserPage(ar, "Add",assignto);
 
-            return redirectBrowser(ar,PROCESS_HTML);
+            redirectBrowser(ar,PROCESS_HTML);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.create.task", new Object[]{pageId,siteId} , ex);
         }
@@ -417,7 +416,7 @@ public class ProjectGoalController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/reassignTaskSubmit.form", method = RequestMethod.POST)
-    public ModelAndView reassignTask(@PathVariable String siteId,
+    public void reassignTask(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         try{
@@ -461,7 +460,7 @@ public class ProjectGoalController extends BaseController {
 
             ngp.saveFile(ar, CREATE_TASK);
 
-            return redirectBrowser(ar,go);
+            redirectBrowser(ar,go);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.reassign.task",
                     new Object[]{pageId,siteId} , ex);
@@ -469,7 +468,7 @@ public class ProjectGoalController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/updateTask.form", method = RequestMethod.POST)
-    public ModelAndView updateTask(@PathVariable String siteId,
+    public void updateTask(@PathVariable String siteId,
             @PathVariable String pageId,
             @RequestParam String taskId,HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -481,7 +480,7 @@ public class ProjectGoalController extends BaseController {
 
             taskActionUpdate(ar, ngp, taskId);
 
-            return redirectBrowser(ar,go);
+            redirectBrowser(ar,go);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.update.task", new Object[]{pageId,siteId} , ex);
         }
@@ -490,7 +489,7 @@ public class ProjectGoalController extends BaseController {
 
     //TODO: is this still used?  Switch to JSON option?
     @RequestMapping(value = "/{siteId}/{pageId}/updateGoalSpecial.form", method = RequestMethod.POST)
-    public ModelAndView updateGoalSpecial(@PathVariable String siteId,
+    public void updateGoalSpecial(@PathVariable String siteId,
             @PathVariable String pageId,HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -533,7 +532,7 @@ public class ProjectGoalController extends BaseController {
             }
             else if ("Other".equals(cmd))  {
                 sendRedirectToLogin(ar);
-                return null;
+                return;
                 //do not save any changes
             }
             else {
@@ -546,7 +545,7 @@ public class ProjectGoalController extends BaseController {
                     HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar, accomp);
             ngp.save();
 
-            return redirectBrowser(ar,go);
+            redirectBrowser(ar,go);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.update.task", new Object[]{pageId,siteId} , ex);
         }

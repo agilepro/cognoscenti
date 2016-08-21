@@ -97,8 +97,7 @@ public class BaseController {
      * This is a set of checks that results in different views depending on the state
      * of the user.  Particularly: must be logged in, must have a name, must have an email
      * address, and must be a member of the page, so the page has to be set as well.
-     * @return a ModelAndView object that will tell the user what is wrong.
-     *         and return a NULL if logged in, member, and all config is OK
+     * @return a boolean: true means it produced a UI output, and false means it didnt
      */
     protected static boolean checkLogin(AuthRequest ar) throws Exception {
         if(!ar.isLoggedIn()){
@@ -116,8 +115,7 @@ public class BaseController {
      * This is a set of checks that results in different views depending on the state
      * of the user.  Particularly: must be logged in, must have a name, must have an email
      * address, and must be a member of the page, so the page has to be set as well.
-     * @return a ModelAndView object that will tell the user what is wrong.
-     *         and return a NULL if logged in, member, and all config is OK
+     * @return a boolean: true means it produced a UI output, and false means it didnt
      */
     protected static boolean checkLoginMember(AuthRequest ar) throws Exception {
         if (checkLogin(ar)) {
@@ -326,9 +324,9 @@ public class BaseController {
     * It will return a null ModelAndView object so that you can
     * say "return redirectToURL(myurl);"
     */
-    protected ModelAndView redirectBrowser(AuthRequest ar, String pageURL) throws Exception {
+    protected void redirectBrowser(AuthRequest ar, String pageURL) throws Exception {
         ar.resp.sendRedirect(pageURL);
-        return null;
+        //return null;
     }
 
     protected static boolean needsToSetName(AuthRequest ar) throws Exception {
@@ -345,7 +343,7 @@ public class BaseController {
      * This is a set of checks that results in different views depending on the state
      * of the user.  Particularly: must be logged in, must have a name, must have an email
      * address, and must be a member of the page.
-     * @return a ModelAndView object that will tell the user what is wrong.
+     * @return a boolean TRUE if UI output produced, FALSE if not.
      */
     protected boolean executiveCheckViews(AuthRequest ar) throws Exception {
         if(checkLogin(ar)){

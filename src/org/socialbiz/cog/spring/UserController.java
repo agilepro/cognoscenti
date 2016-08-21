@@ -1394,29 +1394,7 @@ public class UserController extends BaseController {
         }
     }
 
-    /*
-    @RequestMapping(value="/unsubscribemember.form", method = RequestMethod.POST)
-    public void saveUnsubScribeMember(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar =  AuthRequest.getOrCreate(request, response);//NGWebUtils.getAuthRequest(request, response, "Can not update notification settings.");
 
-            String pageId = ar.reqParam("pageId");
-            String emailId = ar.reqParam("emailId").trim();
-
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-            ar.setPageAccessLevels(ngp);
-
-            String[] stopRolePlayer= ar.req.getParameterValues("stoproleplayer");
-            removeFromRole(ngp, new AddressListEntry(emailId), stopRolePlayer);
-            ngp.saveFile(ar, "unsubscribe member");
-
-            redirectBrowser(ar,"unsubscribemember.htm?emailId="+URLEncoder.encode(emailId, "UTF-8"));
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.to.update.notification.settings", null, ex);
-        }
-    }
-    */
 
 
     @RequestMapping(value = "/{userKey}/userSettings.htm", method = RequestMethod.GET)
@@ -1551,14 +1529,7 @@ public class UserController extends BaseController {
         }
     }
 
-/*
-    @RequestMapping(value = "/accountRequestResult.htm", method = RequestMethod.GET)
-    public ModelAndView accountRequestResult(HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        ModelAndView modelAndView = new ModelAndView("accountRequestResult");
-        return modelAndView;
-    }
-*/
+
 
     @RequestMapping(value = "/{userKey}/searchNotes.json", method = RequestMethod.POST)
     public void searchPublicNotesJSON(@PathVariable String userKey,

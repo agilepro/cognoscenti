@@ -289,38 +289,6 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
-/*
-//This is the OLD way
-    @RequestMapping(value = "/{siteId}/{pageId}/uploadDocument.htm", method = RequestMethod.GET)
-    protected ModelAndView getUploadDocumentForm(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.upload.doc.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-            if(ngp.isFrozen()){
-                return showWarningView(ar, "nugen.generatInfo.Frozen");
-            }
-
-            ModelAndView modelAndView = createNamedView(siteId, pageId, ar, "uploadDocumentForm");
-            request.setAttribute("isNewUpload", "yes");
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("title", ngp.getFullName());
-            return modelAndView;
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.upload.document.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
-*/
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/SyncAttachment.htm", method = RequestMethod.GET)

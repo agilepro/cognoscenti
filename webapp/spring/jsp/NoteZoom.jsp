@@ -795,140 +795,138 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     </style>
 
-      <table>
+<table>
+    <tr ng-repeat="cmt in getComments()">
+        <td style="width:50px;max-width:50px;vertical-align:top;padding:5px;padding-top:15px">
+            <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg"
+            title="{{cmt.userName}} - {{cmt.user}}">
+        </td>
+        <td>
+            <div class="comment-outer" style="{{stateStyle(cmt)}}">
+                <div>
+                    <div class="dropdown" style="float:left">
+<% if (isLoggedIn) { %>
+       <button class="dropdown-toggle specCaretBtn" type="button"  id="menu1" 
+            data-toggle="dropdown"> <span class="caret"></span> </button>
+       <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation" 
+              ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.commentType!=6">
+              <a role="menuitem" ng-click="openCommentEditor(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
+          <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+              <a role="menuitem" ng-click="postComment(cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
+          <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+              <a role="menuitem" ng-click="deleteComment(cmt)">Delete Your {{commentTypeName(cmt)}}</a></li>
+          <li role="presentation" ng-show="cmt.state==12">
+              <a role="menuitem" ng-click="closeComment(cmt)">Close  {{commentTypeName(cmt)}}</a></li>
+          <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.state==13 && 
+              (cmt.commentType==2 || cmt.commentType==3)">
+              <a role="menuitem" ng-click="openOutcomeEditor(cmt)">Edit the Outcome</a></li>
+          <li role="presentation" ng-show="cmt.commentType>1 && cmt.state==12">
+              <a role="menuitem" ng-click="startResponse(cmt)">Create/Edit Response:</a></li>
+          <li role="presentation" ng-show="cmt.commentType==2">
+              <a role="menuitem" ng-click="createModifiedProposal(cmt)">Make Modified Proposal</a></li>
+          <li role="presentation" ng-show="cmt.commentType==1">
+              <a role="menuitem" ng-click="replyToComment(cmt)">Reply</a></li>
+          <li role="presentation" ng-show="cmt.commentType==2 && !cmt.decision">
+              <a role="menuitem" ng-click="openDecisionEditor(cmt)">Create New Decision</a></li>
+       </ul>
+<% } %>
+         </div>
+         <span ng-show="cmt.commentType==1"><i class="fa fa-comments-o" style="font-size:130%"></i></span>
+         <span ng-show="cmt.commentType==2"><i class="fa fa-star-o" style="font-size:130%"></i></span>
+         <span ng-show="cmt.commentType==3"><i class="fa fa-question-circle" style="font-size:130%"></i></span>
+         <span ng-show="cmt.commentType==5"><i class="fa fa-file-code-o" style="font-size:130%"></i></span>
+         &nbsp; {{cmt.time | date}} - 
+         <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
+             <span class="red">{{cmt.userName}}</span>
+         </a>
+         <span ng-show="cmt.emailPending">-email pending-</span>
+         <span ng-show="cmt.replyTo">
+             <span ng-hide="cmt.commentType>1">In reply to
+                 <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
+                 <i class="fa fa-comments-o"></i> {{findComment(cmt.replyTo).userName}}</a></span>
+             <span ng-show="cmt.commentType>1">Based on
+                 <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
+                 <i class="fa fa-star-o"></i> {{findComment(cmt.replyTo).userName}}</a></span>
+         </span>
+         <span ng-show="cmt.commentType==6" style="color:green">
+             <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase</span>
+         <span style="float:right;color:green;">{{calcDueDisplay(cmt)}}</span>
+         <div style="clear:both"></div>
+      </div>
+   <div ng-show="cmt.state==11">
+       Draft {{commentTypeName(cmt)}} needs posting to be seen by others
+   </div>
+   <div class="leafContent comment-inner" ng-hide="cmt.meet || cmt.commentType==6">
+       <div ng-bind-html="cmt.html"></div>
+   </div>
+   <div ng-show="cmt.meet" class="btn btn-sm btn-default"  style="margin:4px;"
+       ng-click="navigateToMeeting(cmt.meet)">
+        <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}} @ {{cmt.meet.startTime | date}}
+   </div>
 
-      <tr ng-repeat="cmt in getComments()">
-           <td style="width:50px;max-width:50px;vertical-align:top;padding:5px;padding-top:15px">
-               <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg"
-               title="{{cmt.userName}} - {{cmt.user}}">
+   <table style="min-width:500px;" ng-show="cmt.commentType==2 || cmt.commentType==3">
+       <col style="width:100px">
+       <col width="width:1*">
+       <tr ng-repeat="resp in cmt.responses">
+           <td style="padding:5px;max-width:150px;">
+               <div ng-show="cmt.commentType==2"><b>{{resp.choice}}</b></div>
+               <div>{{resp.userName}}</div>
            </td>
            <td>
-               <div class="comment-outer" style="{{stateStyle(cmt)}}">
-                     <div>
-
-                         <div class="dropdown" style="float:left">
-<% if (isLoggedIn) { %>
-                            <button class="dropdown-toggle specCaretBtn" type="button"  id="menu1" 
-                                data-toggle="dropdown"> <span class="caret"></span> </button>
-                           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation" 
-                                  ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.commentType!=6">
-                                  <a role="menuitem" ng-click="openCommentEditor(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                                  <a role="menuitem" ng-click="postComment(cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                                  <a role="menuitem" ng-click="deleteComment(cmt)">Delete Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.state==12">
-                                  <a role="menuitem" ng-click="closeComment(cmt)">Close  {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.state==13 && 
-                                  (cmt.commentType==2 || cmt.commentType==3)">
-                                  <a role="menuitem" ng-click="openOutcomeEditor(cmt)">Edit the Outcome</a></li>
-                              <li role="presentation" ng-show="cmt.commentType>1 && cmt.state==12">
-                                  <a role="menuitem" ng-click="startResponse(cmt)">Create/Edit Response:</a></li>
-                              <li role="presentation" ng-show="cmt.commentType==2">
-                                  <a role="menuitem" ng-click="createModifiedProposal(cmt)">Make Modified Proposal</a></li>
-                              <li role="presentation" ng-show="cmt.commentType==1">
-                                  <a role="menuitem" ng-click="replyToComment(cmt)">Reply</a></li>
-                              <li role="presentation" ng-show="cmt.commentType==2 && !cmt.decision">
-                                  <a role="menuitem" ng-click="openDecisionEditor(cmt)">Create New Decision</a></li>
-                           </ul>
-<% } %>
-                         </div>
-                         <span ng-show="cmt.commentType==1"><i class="fa fa-comments-o" style="font-size:130%"></i></span>
-                         <span ng-show="cmt.commentType==2"><i class="fa fa-star-o" style="font-size:130%"></i></span>
-                         <span ng-show="cmt.commentType==3"><i class="fa fa-question-circle" style="font-size:130%"></i></span>
-                         <span ng-show="cmt.commentType==5"><i class="fa fa-file-code-o" style="font-size:130%"></i></span>
-                         &nbsp; {{cmt.time | date}} - 
-                         <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
-                             <span class="red">{{cmt.userName}}</span>
-                         </a>
-                         <span ng-show="cmt.emailPending">-email pending-</span>
-                         <span ng-show="cmt.replyTo">
-                             <span ng-hide="cmt.commentType>1">In reply to
-                                 <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
-                                 <i class="fa fa-comments-o"></i> {{findComment(cmt.replyTo).userName}}</a></span>
-                             <span ng-show="cmt.commentType>1">Based on
-                                 <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
-                                 <i class="fa fa-star-o"></i> {{findComment(cmt.replyTo).userName}}</a></span>
-                         </span>
-                         <span ng-show="cmt.commentType==6" style="color:green">
-                             <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase</span>
-                         <span style="float:right;color:green;">{{calcDueDisplay(cmt)}}</span>
-                         <div style="clear:both"></div>
-                      </div>
-                   <div ng-show="cmt.state==11">
-                       Draft {{commentTypeName(cmt)}} needs posting to be seen by others
-                   </div>
-                   <div class="leafContent comment-inner" ng-hide="cmt.meet || cmt.commentType==6">
-                       <div ng-bind-html="cmt.html"></div>
-                   </div>
-                   <div ng-show="cmt.meet" class="btn btn-sm btn-default"  style="margin:4px;"
-                       ng-click="navigateToMeeting(cmt.meet)">
-                        <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}} @ {{cmt.meet.startTime | date}}
-                   </div>
-
-                   <table style="min-width:500px;" ng-show="cmt.commentType==2 || cmt.commentType==3">
-                       <col style="width:100px">
-                       <col width="width:1*">
-                       <tr ng-repeat="resp in cmt.responses">
-                           <td style="padding:5px;max-width:150px;">
-                               <div ng-show="cmt.commentType==2"><b>{{resp.choice}}</b></div>
-                               <div>{{resp.userName}}</div>
-                           </td>
-                           <td>
-                             <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>' && cmt.state==12"
-                                   ng-click="startResponse(cmt)"
-                                   style="cursor:pointer;">
-                               <a href="#cmt{{cmt.time}}" title="Edit your response to this proposal">
-                                   <i class="fa fa-edit" style="font-size:140%"></i>
-                               </a>
-                             </span>
-                           </td>
-                           <td >
-                               <div class="comment-inner leafContent">
-                                  <div ng-bind-html="resp.html"></div>
-                               </div>
-                           </td>
-                       </tr>
-                       <tr ng-show="needsUserResponse(cmt)">
-                           <td style="padding:5px;max-width:100px;">
-                               <div ng-show="cmt.commentType==2"><b>????</b></div>
-                               <div><% ar.writeHtml(currentUserName); %></div>
-                           </td>
-                           <td>
-                             <span ng-click="startResponse(cmt)" style="cursor:pointer;">
-                               <a href="#cmt{{cmt.time}}" title="Create a response to this proposal">
-                                 <i class="fa fa-edit" style="font-size:140%"></i>
-                               </a>
-                             </span>
-                           </td>
-                           <td >
-                              <div class="comment-inner leafContent">
-                                  <i>Click edit button to register a response.</i>
-                              </div>
-                           </td>
-                       </tr>
-                   </table>
-                   <div class="leafContent comment-inner" ng-show="cmt.state==13 && (cmt.commentType==2 || cmt.commentType==3)">
-                       <div ng-bind-html="cmt.outcome"></div>
-                   </div>
-                   <div ng-show="cmt.decision">
-                       See Linked Decision: <a href="decisionList.htm#DEC{{cmt.decision}}">#{{cmt.decision}}</a>
-                   </div>
-                   <div ng-show="cmt.replies.length>0 && cmt.commentType>1">
-                       See proposals:
-                       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
-                           <i class="fa fa-star-o"></i> {{findComment(reply).userName}}</a> </span>
-                   </div>
-                   <div ng-show="cmt.replies.length>0 && cmt.commentType==1">
-                       See replies:
-                       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
-                           <i class="fa fa-comments-o"></i> {{findComment(reply).userName}}</a> </span>
-                   </div>
-
-
+             <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>' && cmt.state==12"
+                   ng-click="startResponse(cmt)"
+                   style="cursor:pointer;">
+               <a href="#cmt{{cmt.time}}" title="Edit your response to this proposal">
+                   <i class="fa fa-edit" style="font-size:140%"></i>
+               </a>
+             </span>
+           </td>
+           <td >
+               <div class="comment-inner leafContent">
+                  <div ng-bind-html="resp.html"></div>
                </div>
            </td>
+       </tr>
+       <tr ng-show="needsUserResponse(cmt)">
+           <td style="padding:5px;max-width:100px;">
+               <div ng-show="cmt.commentType==2"><b>????</b></div>
+               <div><% ar.writeHtml(currentUserName); %></div>
+           </td>
+           <td>
+             <span ng-click="startResponse(cmt)" style="cursor:pointer;">
+               <a href="#cmt{{cmt.time}}" title="Create a response to this proposal">
+                 <i class="fa fa-edit" style="font-size:140%"></i>
+               </a>
+             </span>
+           </td>
+           <td >
+              <div class="comment-inner leafContent">
+                  <i>Click edit button to register a response.</i>
+              </div>
+           </td>
+       </tr>
+   </table>
+   <div class="leafContent comment-inner" ng-show="cmt.state==13 && (cmt.commentType==2 || cmt.commentType==3)">
+       <div ng-bind-html="cmt.outcome"></div>
+   </div>
+   <div ng-show="cmt.decision">
+       See Linked Decision: <a href="decisionList.htm#DEC{{cmt.decision}}">#{{cmt.decision}}</a>
+   </div>
+   <div ng-show="cmt.replies.length>0 && cmt.commentType>1">
+       See proposals:
+       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
+           <i class="fa fa-star-o"></i> {{findComment(reply).userName}}</a> </span>
+   </div>
+   <div ng-show="cmt.replies.length>0 && cmt.commentType==1">
+       See replies:
+       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
+           <i class="fa fa-comments-o"></i> {{findComment(reply).userName}}</a> </span>
+   </div>
+
+
+</div>
+</td>
        </tr>
 
 

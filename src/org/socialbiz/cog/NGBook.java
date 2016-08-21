@@ -895,17 +895,17 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
     // //////////////////// DEPRECATED METHODS//////////////////
 
-    @Override
+    @Override @Deprecated
     public String getAllowPublic() throws Exception {
         return siteInfoRec.getAllowPublic();
     }
 
-    @Override
+    @Override @Deprecated
     public void setAllowPublic(String allowPublic) throws Exception {
         siteInfoRec.setAllowPublic(allowPublic);
     }
 
-    @Override
+    @Override 
     public void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog) throws Exception {
         try {
             siteInfoRec.setModTime(modTime);
@@ -919,6 +919,7 @@ public class NGBook extends ContainerCommon implements NGContainer {
 
     }
 
+   
     public NGPage convertFolderToProj(AuthRequest ar, File expectedLoc) throws Exception {
         UserProfile up = ar.getUserProfile();
         return convertFolderToProj(up, expectedLoc, ar.nowTime, ar.getCogInstance());

@@ -126,7 +126,7 @@ public class MainTabsViewControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "FrontTop");
+        showJSPLoggedIn(ar, siteId, pageId, "FrontTop");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/frontPage.htm", method = RequestMethod.GET)
@@ -134,7 +134,7 @@ public class MainTabsViewControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "../jsp/FrontPage");
+        showJSPLoggedIn(ar, siteId, pageId, "../jsp/FrontPage");
     }
 
 
@@ -259,23 +259,17 @@ public class MainTabsViewControler extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/searchAllNotes.htm", method = RequestMethod.GET)
-    public ModelAndView searchAllNotes(@PathVariable String siteId,@PathVariable String pageId,
+    public void searchAllNotes(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
            throws Exception {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if (checkLogin(ar)) {
-                return null;
+                return;
             }
-            if ("$".equals(pageId)) {
-                prepareSiteView(ar, siteId);
-            }
-            else {
-                registerRequiredProject(ar, siteId, pageId);
-            }
+            registerSiteOrProject(ar, siteId, pageId);
             streamJSP(ar, "SearchAllNotes");
-            return null;
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.draft.notes.page", new Object[]{pageId,siteId} , ex);
@@ -291,7 +285,6 @@ public class MainTabsViewControler extends BaseController {
      @RequestMapping(value = "/index.htm", method = RequestMethod.GET)
      public ModelAndView showLandingPage(HttpServletRequest request, HttpServletResponse response)
                 throws Exception {
-         ModelAndView modelAndView = null;
          try{
              AuthRequest ar = AuthRequest.getOrCreate(request, response);
              ar.getCogInstance().assertInitialized();
@@ -302,7 +295,7 @@ public class MainTabsViewControler extends BaseController {
                  return null;
              }
 
-             modelAndView=new ModelAndView("landingPage");
+             ModelAndView modelAndView=new ModelAndView("landingPage");
              request.setAttribute("realRequestURL", ar.getRequestURL());
              List<NGBook> list=new ArrayList<NGBook>();
              for (NGBook ngb : NGBook.getAllSites()) {
@@ -312,43 +305,15 @@ public class MainTabsViewControler extends BaseController {
              request.setAttribute("headerType", "blank");
              //TODO: see if bookList is really needed
              modelAndView.addObject("bookList",list);
+             return modelAndView;
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.project.welcome.page", null , ex);
          }
-         return modelAndView;
      }
 
 
 
-     //TODO: I don't think editNote is being used any more.
-     
-     /*
-     @RequestMapping(value = "/{siteId}/{pageId}/editNote.htm", method = RequestMethod.GET)
-     public ModelAndView editNote(@PathVariable String pageId,
-            @PathVariable String siteId, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-         try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             if (checkLogin(ar)) {
-                 return null;
-             }
-             registerRequiredProject(ar, siteId, pageId);
-             if (checkLoginMember(ar)) {
-                 return null;
-             }
 
-             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
-             ar.setPageAccessLevels(ngp);
-             ar.assertMember("Need Member Access to Edit a Topic.");
-             ModelAndView modelAndView = new ModelAndView("EditNote");
-             modelAndView.addObject("pageTitle",ngp.getFullName());
-             request.setAttribute("title","Edit Topic: "+ ngp.getFullName());
-             return modelAndView;
-         }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.project.create.note.page", null , ex);
-         }
-     }
-*/
 
      @RequestMapping(value = "/{siteId}/{pageId}/noteHtmlUpdate.json", method = RequestMethod.POST)
      public void noteHtmlUpdate(@PathVariable String siteId,@PathVariable String pageId,
