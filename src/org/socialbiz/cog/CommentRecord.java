@@ -337,7 +337,7 @@ public class CommentRecord extends DOMFace {
         //too late to send.   This is important while adding this automatic email
         //sending because there are a lot of old records that have never been marked
         //as being sent.   Need to set them as being sent so they are not sent now.
-        if (getTime() < NoteRecord.ONE_WEEK_AGO) {
+        if (getTime() < TopicRecord.ONE_WEEK_AGO) {
             setEmailSent(true);
             return true;
         }

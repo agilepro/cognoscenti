@@ -167,8 +167,8 @@ public class WikiToPDF
     public static void handlePDFRequest(AuthRequest ar, NGPage ngp) throws Exception{
         ar.setPageAccessLevels(ngp);
 
-        Vector<NoteRecord> publicNotes = new Vector<NoteRecord>();
-        Vector<NoteRecord> memberNotes = new Vector<NoteRecord>();
+        Vector<TopicRecord> publicNotes = new Vector<TopicRecord>();
+        Vector<TopicRecord> memberNotes = new Vector<TopicRecord>();
 
         String[] publicNoteIDs = ar.req.getParameterValues("publicNotes");
         String[] memberNoteIDs = ar.req.getParameterValues("memberNotes");
@@ -180,7 +180,7 @@ public class WikiToPDF
         }
 
         for (String noteId : publicNoteIDs) {
-            NoteRecord lrt = ngp.getNote(noteId);
+            TopicRecord lrt = ngp.getNote(noteId);
             if (lrt!=null) {
                 if (lrt.getVisibility()==SectionDef.PUBLIC_ACCESS) {
                     publicNotes.add(lrt);
@@ -191,7 +191,7 @@ public class WikiToPDF
             }
         }
         for (String noteId : memberNoteIDs) {
-            NoteRecord lrt = ngp.getNote(noteId);
+            TopicRecord lrt = ngp.getNote(noteId);
             if (lrt!=null) {
                 if (lrt.getVisibility()==SectionDef.PUBLIC_ACCESS) {
                     publicNotes.add(lrt);
@@ -208,8 +208,8 @@ public class WikiToPDF
 
 
 
-    public void writeWikiAsPDF(NGPage ngp, Vector<NoteRecord> publicNoteList,
-            Vector<NoteRecord> memberNoteList)  throws Exception {
+    public void writeWikiAsPDF(NGPage ngp, Vector<TopicRecord> publicNoteList,
+            Vector<TopicRecord> memberNoteList)  throws Exception {
 
         if (publicNoteList == null) {
             throw new Exception("The publicNoteList parameter must not be null.  Send an empty collection instead");
@@ -227,14 +227,14 @@ public class WikiToPDF
 
         int noteCount = 0;
         if(publicNoteList.size() > 0){
-            for (NoteRecord lr : publicNoteList) {
+            for (TopicRecord lr : publicNoteList) {
                 noteCount++;
                 writeNoteToPDF(ngp, lr, noteCount);
             }
         }
 
         if(memberNoteList.size() > 0){
-            for (NoteRecord lr : memberNoteList) {
+            for (TopicRecord lr : memberNoteList) {
                 noteCount++;
                 writeNoteToPDF(ngp, lr, noteCount);
             }
@@ -252,8 +252,8 @@ public class WikiToPDF
     }
 
 
-    private void writeTOCPage(NGPage ngp, Vector<NoteRecord> publicNoteList,
-            Vector<NoteRecord> memberNoteList)  throws Exception {
+    private void writeTOCPage(NGPage ngp, Vector<TopicRecord> publicNoteList,
+            Vector<TopicRecord> memberNoteList)  throws Exception {
         headerText = "Topic report generated from Cognoscenti";
         footerText = "Generated: 2012-06-23  --  Page 1";
 
@@ -275,7 +275,7 @@ public class WikiToPDF
             newLine();
             newLine();
             writeWrappedLine("Public Topics in this report: ");
-            for (NoteRecord note : publicNoteList) {
+            for (TopicRecord note : publicNoteList) {
                 noteCount++;
                 setH2Font();
                 newLine();
@@ -288,7 +288,7 @@ public class WikiToPDF
             newLine();
             newLine();
             writeWrappedLine("Member Topics: ");
-            for (NoteRecord note : memberNoteList) {
+            for (TopicRecord note : memberNoteList) {
                 noteCount++;
                 setH2Font();
                 newLine();
@@ -305,7 +305,7 @@ public class WikiToPDF
     * it to HTML, outputting that to the AuthRequest that was
     * passed in when the object was constructed.
     */
-    public void writeNoteToPDF(NGPage ngp, NoteRecord note, int noteNum) throws Exception
+    public void writeNoteToPDF(NGPage ngp, TopicRecord note, int noteNum) throws Exception
     {
         NGBook book = ngp.getSite();
 

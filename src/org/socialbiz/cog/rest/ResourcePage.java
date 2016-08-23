@@ -32,7 +32,7 @@ import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGSection;
-import org.socialbiz.cog.NoteRecord;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.UtilityMethods;
@@ -338,7 +338,7 @@ public class ResourcePage implements NGResource
     {
         NGPage ngc = ngs.parent;
         Element element_comments = DOMUtils.createChildElement(loutdoc, element_sec, "comments");
-        for (NoteRecord note : ngc.getAllNotes()) {
+        for (TopicRecord note : ngc.getAllNotes()) {
 
             if (note.isDraftNote()) {
                 //never communicate drafts

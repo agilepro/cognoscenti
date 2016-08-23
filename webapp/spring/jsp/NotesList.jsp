@@ -23,10 +23,10 @@
         currentUserKey = up.getKey();
     }
 
-    List<NoteRecord> aList = ngw.getAllNotes();
+    List<TopicRecord> aList = ngw.getAllNotes();
 
     JSONArray notes = new JSONArray();
-    for (NoteRecord aNote : aList) {
+    for (TopicRecord aNote : aList) {
         
         String discussionPhase = aNote.getDiscussionPhase();
 

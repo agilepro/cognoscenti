@@ -36,7 +36,7 @@ import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.LicenseForUser;
 import org.socialbiz.cog.NGPage;
-import org.socialbiz.cog.NoteRecord;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.SectionDef;
 import org.socialbiz.cog.UtilityMethods;
 import org.workcast.json.JSONArray;
@@ -157,8 +157,8 @@ public class ProjectSync {
 
         ArrayList<String> noteIds = new ArrayList<String>();
 
-        List<NoteRecord> allNotes = local.getAllNotes();
-        for (NoteRecord note : allNotes) {
+        List<TopicRecord> allNotes = local.getAllNotes();
+        for (TopicRecord note : allNotes) {
             if (note.getVisibility()>SectionDef.MEMBER_ACCESS) {
                 continue;
             }
@@ -182,11 +182,11 @@ public class ProjectSync {
         }
     }
 
-    private SyncStatus findNoteStatus(String noteId, List<NoteRecord> noteList,
+    private SyncStatus findNoteStatus(String noteId, List<TopicRecord> noteList,
             JSONArray notes2) throws Exception {
         SyncStatus retval = new SyncStatus(this, SyncStatus.TYPE_NOTE, noteId);
 
-        for (NoteRecord note : noteList) {
+        for (TopicRecord note : noteList) {
 
             //this avoids deleted notes!
             if (note.getVisibility()>SectionDef.MEMBER_ACCESS) {
@@ -465,7 +465,7 @@ public class ProjectSync {
 
         for (SyncStatus noteStat : notesNeedingDown) {
 
-            NoteRecord note;
+            TopicRecord note;
             int historyEvent = 0;
             if (noteStat.isLocal) {
                 note = local.getNote(noteStat.idLocal);
@@ -599,7 +599,7 @@ public class ProjectSync {
         }
         List<SyncStatus> notesNeedingUp  = getToUpload(SyncStatus.TYPE_NOTE);
         for (SyncStatus docStat : notesNeedingUp) {
-            NoteRecord note = local.getNoteOrFail(docStat.idLocal);
+            TopicRecord note = local.getNoteOrFail(docStat.idLocal);
             JSONObject request = new JSONObject();
             if (docStat.isRemote) {
                 request.put("operation", "updateNote");

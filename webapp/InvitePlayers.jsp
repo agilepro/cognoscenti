@@ -5,7 +5,7 @@
 %><%@page import="org.socialbiz.cog.NGPage"
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="org.socialbiz.cog.NGPageIndex"
-%><%@page import="org.socialbiz.cog.NoteRecord"
+%><%@page import="org.socialbiz.cog.TopicRecord"
 %><%@page import="org.socialbiz.cog.SectionForNotes"
 %><%@page import="org.socialbiz.cog.SectionUtil"
 %><%@page import="org.socialbiz.cog.UserProfile"

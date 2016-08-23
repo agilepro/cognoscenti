@@ -17,7 +17,7 @@
 
     String minutesId = oneRef.getMinutesId();
     if (minutesId!=null) {
-        NoteRecord  nr = ngw.getNoteByUidOrNull(minutesId);
+        TopicRecord  nr = ngw.getNoteByUidOrNull(minutesId);
         if (nr==null) {
             //schema migration to move to universal id
             nr = ngw.getNote(minutesId);

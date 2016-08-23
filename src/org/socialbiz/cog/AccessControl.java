@@ -85,7 +85,7 @@ public class AccessControl {
 
         //now check to see if you have any special access to a Discussion Topic that has attached
         //this document.  In that case you are allowed access as well!
-        for (NoteRecord note : attachRec.getLinkedTopics(ngc)) {
+        for (TopicRecord note : attachRec.getLinkedTopics(ngc)) {
             if (canAccessNote(ar, ngc, note)) {
                 //have to remember that you have access to this attachment to allow download
                 ar.setSpecialSessionAccess(resourceId);
@@ -193,7 +193,7 @@ public class AccessControl {
         return "mntask=" + encodedValue;
     }
 
-    public static boolean canAccessNote(AuthRequest ar, NGContainer ngc, NoteRecord noteRec)
+    public static boolean canAccessNote(AuthRequest ar, NGContainer ngc, TopicRecord noteRec)
     throws Exception {
         //first, anyone can access a public topic
         if (noteRec.getVisibility() == SectionDef.PUBLIC_ACCESS) {
@@ -227,7 +227,7 @@ public class AccessControl {
         return false;
     }
 
-    public static String getAccessNoteParams(NGContainer ngc, NoteRecord noteRec) throws Exception{
+    public static String getAccessNoteParams(NGContainer ngc, TopicRecord noteRec) throws Exception{
         String resourceId = "goal:"+noteRec.getId()+":"+ngc.getKey();
         String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
         return "mnnote=" + encodedValue;

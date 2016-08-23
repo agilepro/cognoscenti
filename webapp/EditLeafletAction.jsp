@@ -6,7 +6,7 @@
 %><%@page import="org.socialbiz.cog.NGPageIndex"
 %><%@page import="org.socialbiz.cog.NGSection"
 %><%@page import="org.socialbiz.cog.SectionForNotes"
-%><%@page import="org.socialbiz.cog.NoteRecord"
+%><%@page import="org.socialbiz.cog.TopicRecord"
 %><%AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
     ar.assertLoggedIn("Unable to modify comments.");
 
@@ -38,7 +38,7 @@
 
     if ("Save and Continue Editing".equals(action))
     {
-        NoteRecord cr = null;
+        TopicRecord cr = null;
         if ("Create".equals(oid))
         {
             cr = ngp.createNote();

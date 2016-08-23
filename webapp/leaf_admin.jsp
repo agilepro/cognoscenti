@@ -319,7 +319,7 @@
         %><li><a href="<%=apiPath%>doc<%=att.getId()%>/<%=att.getNiceName()%>">attachment <%=att.getNiceName()%></a></li><%
     }
 
-    for (NoteRecord note : ngp.getAllNotes()) {
+    for (TopicRecord note : ngp.getAllNotes()) {
         String saniName = SectionUtil.sanitize(note.getSubject());
         if (saniName.length()<2) {
             saniName="note";

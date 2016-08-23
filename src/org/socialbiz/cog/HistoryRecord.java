@@ -409,7 +409,7 @@ public class HistoryRecord extends DOMFace
      * Creates a history record appropriate for a change to a topic.
      */
     public static HistoryRecord createNoteHistoryRecord(NGContainer ngc,
-            NoteRecord note, int eventType, AuthRequest ar, String comments) throws Exception
+            TopicRecord note, int eventType, AuthRequest ar, String comments) throws Exception
     {
         return createHistoryRecord(ngc, note.getId(),  HistoryRecord.CONTEXT_TYPE_LEAFLET,
                 0, eventType, ar, comments);
@@ -866,7 +866,7 @@ history.task.subtask.add    113
             }
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
-            NoteRecord nr = ngp.getNote(objectKey);
+            TopicRecord nr = ngp.getNote(objectKey);
             if (nr!=null) {
                 return nr.getSubject();
             }

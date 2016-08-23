@@ -58,9 +58,9 @@ public interface SectionFormat
     /**
     * In an attempt to convert all the older display section formats to
     * a common Topic format, this method will be a format specific way to
-    * convert the contents to a NoteRecord and place it with the other topics.
+    * convert the contents to a TopicRecord and place it with the other discussion topics.
     */
-    public NoteRecord convertToLeaflet(NGSection leafletSection,
+    public TopicRecord convertToLeaflet(NGSection leafletSection,
                    NGSection wikiSection) throws Exception;
 
 }

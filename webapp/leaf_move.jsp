@@ -120,7 +120,7 @@ else
         <input type="submit" value="Move Selected Resources">
         <h3><br/>Topics<br/></h3>
         <table><%
-            for (NoteRecord lr : hookPage.getAllNotes()) {
+            for (TopicRecord lr : hookPage.getAllNotes()) {
 
                 boolean viz = lr.isPublic();
                 ar.write("\n<tr><td align=\"right\" width=\"70\">");

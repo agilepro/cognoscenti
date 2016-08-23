@@ -3,7 +3,7 @@
 %><%@page import="org.socialbiz.cog.AttachmentRecord"
 %><%@page import="org.socialbiz.cog.AuthRequest"
 %><%@page import="org.socialbiz.cog.HistoryRecord"
-%><%@page import="org.socialbiz.cog.NoteRecord"
+%><%@page import="org.socialbiz.cog.TopicRecord"
 %><%@page import="org.socialbiz.cog.LeafletResponseRecord"
 %><%@page import="org.socialbiz.cog.License"
 %><%@page import="org.socialbiz.cog.LicensedURL"
@@ -153,10 +153,10 @@
         if (showPublic) {
             accessLevel = 1;
         }
-        List<NoteRecord> vizComments = ngp.getVisibleNotes(ar, accessLevel);
+        List<TopicRecord> vizComments = ngp.getVisibleNotes(ar, accessLevel);
 
         int i = -1;
-        for (NoteRecord cr : vizComments) {
+        for (TopicRecord cr : vizComments) {
             i++;
             displayOldLeaflet(ar, ngp, cr, i);
         }
@@ -176,7 +176,7 @@
      * the index to disable this, and leave it only open and without controls
      * for opening or zooming.
      */
-    public void displayOldLeaflet(AuthRequest ar, NGPage ngp, NoteRecord cr, int i) throws Exception {
+    public void displayOldLeaflet(AuthRequest ar, NGPage ngp, TopicRecord cr, int i) throws Exception {
         UserProfile uProf = ar.getUserProfile();
         boolean canEdit = false;
         UserRef lastModifiedBy = cr.getModUser();

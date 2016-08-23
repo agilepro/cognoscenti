@@ -110,9 +110,9 @@ app.controller('myCtrl', function($scope, $http) {
                 <td colspan="2">&nbsp;</td>
             </tr>
             <%
-                List<NoteRecord> publicComments = ngp.getVisibleNotes(ar, SectionDef.PUBLIC_ACCESS);
+                List<TopicRecord> publicComments = ngp.getVisibleNotes(ar, SectionDef.PUBLIC_ACCESS);
                 for(int i=0;i<publicComments.size();i++){
-                    NoteRecord noteRec = publicComments.get(i);
+                    TopicRecord noteRec = publicComments.get(i);
             %>
             <tr>
                 <td>
@@ -134,7 +134,7 @@ if (ar.isMember()) {
         <br>
         <table border="0px solid gray" class="gridTable" width="800">
             <%
-                List<NoteRecord> memberComments = ngp.getVisibleNotes(ar, SectionDef.MEMBER_ACCESS);
+                List<TopicRecord> memberComments = ngp.getVisibleNotes(ar, SectionDef.MEMBER_ACCESS);
                 if(memberComments.size() == 0) {
                     %> No member topics found. <%
                 }
@@ -151,7 +151,7 @@ if (ar.isMember()) {
             </tr>
          <%
                     for(int i=0;i<memberComments.size();i++) {
-                        NoteRecord noteRec = memberComments.get(i);
+                        TopicRecord noteRec = memberComments.get(i);
          %>
             <tr>
                 <td>

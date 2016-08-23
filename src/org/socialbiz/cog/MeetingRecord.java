@@ -298,7 +298,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         meetingInfo.put("agenda", aiArray);
         String mid = getMinutesId();
         if (mid!=null && mid.length()>0) {
-            NoteRecord  nr = ngw.getNoteByUidOrNull(mid);
+            TopicRecord  nr = ngw.getNoteByUidOrNull(mid);
             if (nr!=null) {
                 meetingInfo.put("minutesId",      mid);
                 meetingInfo.put("minutesLocalId", nr.getId());
@@ -674,7 +674,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 sb.append(ainotes);
             }
 
-            NoteRecord linkedTopic = ngp.getNoteByUidOrNull(ai.getTopicLink());
+            TopicRecord linkedTopic = ngp.getNoteByUidOrNull(ai.getTopicLink());
             if (linkedTopic==null) {
                 for (String actionItemId : ai.getActionItems()) {
                     GoalRecord gr = ngp.getGoalOrNull(actionItemId);

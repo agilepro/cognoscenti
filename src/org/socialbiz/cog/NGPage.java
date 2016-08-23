@@ -571,7 +571,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     }
 
     public void findTags(List<String> v) throws Exception {
-        for (NoteRecord note : getAllNotes()) {
+        for (TopicRecord note : getAllNotes()) {
             note.findTags(v);
         }
     }
@@ -918,7 +918,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
 
         //these added to be sure.  There is no harm in
         //being redundant.
-        for (NoteRecord note : getAllNotes()) {
+        for (TopicRecord note : getAllNotes()) {
             existingIds.add(note.getId());
         }
         for (AttachmentRecord att : getAllAttachments()) {
@@ -1037,16 +1037,16 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
 
     ///////////////// NOTES //////////////////////
 
-    public List<NoteRecord> getAllNotes() throws Exception {
-        return noteParent.getChildren("note", NoteRecord.class);
+    public List<TopicRecord> getAllNotes() throws Exception {
+        return noteParent.getChildren("note", TopicRecord.class);
     }
 
-    public List<NoteRecord> getVisibleNotes(AuthRequest ar, int displayLevel)
+    public List<TopicRecord> getVisibleNotes(AuthRequest ar, int displayLevel)
             throws Exception {
-        List<NoteRecord> list=new ArrayList<NoteRecord>();
-        List<NoteRecord> fullList = getAllNotes();
+        List<TopicRecord> list=new ArrayList<TopicRecord>();
+        List<TopicRecord> fullList = getAllNotes();
 
-        for (NoteRecord note : fullList) {
+        for (TopicRecord note : fullList) {
             if (note.isVisible(ar, displayLevel) && !note.isDeleted() && !note.isDraftNote()) {
                 list.add(note);
             }
@@ -1054,13 +1054,13 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         return list;
     }
 
-    public List<NoteRecord> getDraftNotes(AuthRequest ar)
+    public List<TopicRecord> getDraftNotes(AuthRequest ar)
     throws Exception {
-        List<NoteRecord> list=new ArrayList<NoteRecord>();
+        List<TopicRecord> list=new ArrayList<TopicRecord>();
         if (ar.isLoggedIn()) {
-            List<NoteRecord> fullList = getAllNotes();
+            List<TopicRecord> fullList = getAllNotes();
             UserProfile thisUserId = ar.getUserProfile();
-            for (NoteRecord note : fullList) {
+            for (TopicRecord note : fullList) {
                 if (!note.isDeleted() && note.isDraftNote() && note.getModUser().equals(thisUserId)) {
                     list.add(note);
                 }
@@ -1070,8 +1070,8 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     }
 
 
-    public NoteRecord getNote(String cmtId) throws Exception {
-        for (NoteRecord lr : getAllNotes()) {
+    public TopicRecord getNote(String cmtId) throws Exception {
+        for (TopicRecord lr : getAllNotes()) {
             if (cmtId.equals(lr.getId())) {
                 return lr;
             }
@@ -1080,19 +1080,19 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     }
 
 
-    public NoteRecord getNoteOrFail(String noteId) throws Exception {
-        NoteRecord ret =  getNote(noteId);
+    public TopicRecord getNoteOrFail(String noteId) throws Exception {
+        TopicRecord ret =  getNote(noteId);
         if (ret==null) {
             throw new NGException("nugen.exception.unable.to.locate.note.with.id", new Object[]{noteId, getFullName()});
         }
         return ret;
     }
 
-    public NoteRecord getNoteByUidOrNull(String universalId) throws Exception {
+    public TopicRecord getNoteByUidOrNull(String universalId) throws Exception {
         if (universalId==null) {
             return null;
         }
-        for (NoteRecord lr : getAllNotes()) {
+        for (TopicRecord lr : getAllNotes()) {
             if (universalId.equals(lr.getUniversalId())) {
                 return lr;
             }
@@ -1103,24 +1103,24 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
 
     /** mark deleted, don't actually deleting the Topic. */
     public void deleteNote(String id,AuthRequest ar) throws Exception {
-        NoteRecord ei = getNote( id );
+        TopicRecord ei = getNote( id );
 
         ei.setTrashPhase( ar );
     }
 
     public void unDeleteNote(String id,AuthRequest ar) throws Exception {
-        NoteRecord ei = getNote( id );
+        TopicRecord ei = getNote( id );
         ei.clearTrashPhase(ar);
     }
 
 
 
-    public List<NoteRecord> getDeletedNotes(AuthRequest ar)
+    public List<TopicRecord> getDeletedNotes(AuthRequest ar)
     throws Exception {
-        List<NoteRecord> list=new ArrayList<NoteRecord>();
-        List<NoteRecord> fullList = getAllNotes();
+        List<TopicRecord> list=new ArrayList<TopicRecord>();
+        List<TopicRecord> fullList = getAllNotes();
 
-        for (NoteRecord note : fullList) {
+        for (TopicRecord note : fullList) {
             if (note.isDeleted()) {
                 list.add(note);
             }
@@ -1129,8 +1129,8 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     }
 
 
-    public NoteRecord createNote() throws Exception {
-        NoteRecord note = noteParent.createChild("note", NoteRecord.class);
+    public TopicRecord createNote() throws Exception {
+        TopicRecord note = noteParent.createChild("note", TopicRecord.class);
         String localId = getUniqueOnPage();
         note.setId( localId );
         note.setUniversalId(getContainerUniversalId() + "@" + localId);
@@ -1278,7 +1278,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
 
     @Override
     public void writeNoteLink(AuthRequest ar,String noteId, int len) throws Exception{
-        NoteRecord note = getNote( noteId );
+        TopicRecord note = getNote( noteId );
         if(note==null){
             if ("x".equals(noteId))
             {

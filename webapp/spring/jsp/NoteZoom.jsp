@@ -8,7 +8,7 @@
 Required parameter:
 
     1. pageId : This is the id of a Workspace and used to retrieve NGPage.
-    2. lid    : This is id of note (NoteRecord).
+    2. lid    : This is id of note (TopicRecord).
 
 */
     //comment or uncomment depending on whether you are in development testing mode
@@ -40,7 +40,7 @@ Required parameter:
     }
 
     String lid = ar.reqParam("lid");
-    NoteRecord note = ngw.getNoteOrFail(lid);
+    TopicRecord note = ngw.getNoteOrFail(lid);
 
     boolean canAccessNote  = AccessControl.canAccessNote(ar, ngw, note);
     if (!canAccessNote) {

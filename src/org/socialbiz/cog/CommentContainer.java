@@ -29,11 +29,11 @@ import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 /**
-* A NoteRecord represents a Topic in a Workspace.
-* Topic exist on projects as quick ways for people to
-* write and exchange information about the project.
-* Leaflet is the old term for this, we prefer the term Topic now everywhere.
-* (Used to be called LeafletRecord, but name changed March 2013)
+* There are a couple of kinds of comment containers....
+* Discussion topics:   TopicRecord
+* Meeting Agenda Items:  AgendaItem
+* This abstract bas class offers some functionality to both 
+* to support holding and manipulating comments, rounds, proposals, and meeting minutes
 */
 public class CommentContainer extends DOMFace {
 

@@ -42,15 +42,15 @@ public class SectionForNotes extends SectionWiki {
         return "Note";
     }
 
-    private static List<NoteRecord> getAllNotesInSection(NGSection section)
+    private static List<TopicRecord> getAllNotesInSection(NGSection section)
             throws Exception {
-        return section.getChildren(LEAFLET_NODE_NAME, NoteRecord.class);
+        return section.getChildren(LEAFLET_NODE_NAME, TopicRecord.class);
     }
 
-    public static List<NoteRecord> getVisibleComments(NGSection section, int desiredViz,
+    public static List<TopicRecord> getVisibleComments(NGSection section, int desiredViz,
             UserProfile up) throws Exception {
-        List<NoteRecord> nl = new ArrayList<NoteRecord>();
-        for (NoteRecord cr : getAllNotesInSection(section)) {
+        List<TopicRecord> nl = new ArrayList<TopicRecord>();
+        for (TopicRecord cr : getAllNotesInSection(section)) {
             int visibility = cr.getVisibility();
             if (visibility != desiredViz || cr.isDeleted()) {
                 continue;
@@ -63,13 +63,13 @@ public class SectionForNotes extends SectionWiki {
             }
             nl.add(cr);
         }
-        NoteRecord.sortNotesInPinOrder(nl);
+        TopicRecord.sortNotesInPinOrder(nl);
         return nl;
     }
 
-    public static NoteRecord getLeaflet(String cmtId, NGSection section)
+    public static TopicRecord getLeaflet(String cmtId, NGSection section)
             throws Exception {
-        for (NoteRecord lr : getAllNotesInSection(section)) {
+        for (TopicRecord lr : getAllNotesInSection(section)) {
             String id = lr.getId();
             if (cmtId.equals(id)) {
                 return lr;
@@ -84,7 +84,7 @@ public class SectionForNotes extends SectionWiki {
 
     public void findLinks(List<String> v, NGSection section) throws Exception {
 
-        for (NoteRecord cr : getAllNotesInSection(section)) {
+        for (TopicRecord cr : getAllNotesInSection(section)) {
             String tv = cr.getWiki();
             LineIterator li = new LineIterator(tv);
             while (li.moreLines()) {
@@ -100,7 +100,7 @@ public class SectionForNotes extends SectionWiki {
      * called just before deleting the section. Returns NULL if the section is
      * empty.
      */
-    public NoteRecord convertToLeaflet(NGSection noteSection,
+    public TopicRecord convertToLeaflet(NGSection noteSection,
             NGSection wikiSection) throws Exception {
         SectionDef def = wikiSection.def;
         SectionFormat sf = def.format;
@@ -108,10 +108,10 @@ public class SectionForNotes extends SectionWiki {
             throw new ProgramLogicError(
                     "Method convertToLeaflet must be called on the format object for the section being converted");
         }
-        for (NoteRecord cr : getAllNotesInSection(wikiSection)) {
-            NoteRecord newNote = noteSection
+        for (TopicRecord cr : getAllNotesInSection(wikiSection)) {
+            TopicRecord newNote = noteSection
                     .createChildWithID(SectionForNotes.LEAFLET_NODE_NAME,
-                            NoteRecord.class, "id", IdGenerator.generateKey());
+                            TopicRecord.class, "id", IdGenerator.generateKey());
             newNote.setOwner(cr.getOwner());
             newNote.setLastEdited(cr.getLastEdited());
             newNote.setModUser(new AddressListEntry(cr.getOwner()));

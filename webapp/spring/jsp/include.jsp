@@ -40,7 +40,7 @@
 %><%@page import="org.socialbiz.cog.NGWorkspace"
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="org.socialbiz.cog.NGSession"
-%><%@page import="org.socialbiz.cog.NoteRecord"
+%><%@page import="org.socialbiz.cog.TopicRecord"
 %><%@page import="org.socialbiz.cog.ProcessRecord"
 %><%@page import="org.socialbiz.cog.ProfileRef"
 %><%@page import="org.socialbiz.cog.RUElement"

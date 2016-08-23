@@ -27,7 +27,7 @@ public class WorkspaceStats {
 
     public void gatherFromWorkspace(NGPage ngp) throws Exception {
 
-        for (NoteRecord topic : ngp.getAllNotes()) {
+        for (TopicRecord topic : ngp.getAllNotes()) {
             numTopics++;
             topicsPerUser.increment(topic.getOwner());
             countComments(topic.getComments());

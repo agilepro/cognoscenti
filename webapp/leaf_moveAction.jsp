@@ -53,11 +53,11 @@
         }
 
         for (String aNote : notes) {
-            NoteRecord leaf = hookProj.getNoteOrFail(aNote);
+            TopicRecord leaf = hookProj.getNoteOrFail(aNote);
             if (leaf==null) {
                 throw new Exception("Not able to find the topic with id ("+aNote+") so aborting the entire transfer.");
             }
-            NoteRecord newLeaf = ngp.createNote();
+            TopicRecord newLeaf = ngp.createNote();
             newLeaf.copyFrom(leaf);
             newLeaf.setOwner(uProf.getUniversalId());
 

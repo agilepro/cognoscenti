@@ -46,7 +46,7 @@ import org.socialbiz.cog.LineIterator;
 import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
-import org.socialbiz.cog.NoteRecord;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.SectionWiki;
 import org.socialbiz.cog.UserProfile;
@@ -141,8 +141,8 @@ public class PDFUtil {
         NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
         ar.setPageAccessLevels(ngp);
 
-        List<NoteRecord> publicNotes = new ArrayList<NoteRecord>();
-        List<NoteRecord> memberNotes = new ArrayList<NoteRecord>();
+        List<TopicRecord> publicNotes = new ArrayList<TopicRecord>();
+        List<TopicRecord> memberNotes = new ArrayList<TopicRecord>();
 
         List<String> publicNoteList = null;
         if(ar.req.getParameterValues("publicNotes")!= null){
@@ -201,9 +201,9 @@ public class PDFUtil {
         out.flush();
     }
 
-    private void writeInPDF(AuthRequest ar, List<NoteRecord> notes) throws Exception, IOException {
+    private void writeInPDF(AuthRequest ar, List<TopicRecord> notes) throws Exception, IOException {
 
-        for (NoteRecord lr : notes) {
+        for (TopicRecord lr : notes) {
             String data = lr.getWiki();
 
             String subject = lr.getSubject();

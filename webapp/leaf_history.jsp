@@ -196,7 +196,7 @@ else
                 else if (history.getContextType() == HistoryRecord.CONTEXT_TYPE_LEAFLET)
                 {
                     String lid = history.getContext();
-                    NoteRecord leaflet = ngp.getNote(lid);
+                    TopicRecord leaflet = ngp.getNote(lid);
                     ar.write("Topic \"");
                     if (leaflet==null)
                     {

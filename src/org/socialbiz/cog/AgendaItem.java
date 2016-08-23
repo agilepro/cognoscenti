@@ -193,7 +193,7 @@ public class AgendaItem extends CommentContainer {
      * full JSON representation including all comments, etc.
      */
     public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw, MeetingRecord meet) throws Exception {
-        NoteRecord linkedTopic = ngw.getNoteByUidOrNull(getTopicLink());
+        TopicRecord linkedTopic = ngw.getNoteByUidOrNull(getTopicLink());
         
         JSONObject aiInfo = new JSONObject();
         aiInfo.put("id",        getId());
@@ -233,7 +233,7 @@ public class AgendaItem extends CommentContainer {
 
 
     public void updateFromJSON(AuthRequest ar, JSONObject input, NGWorkspace ngw) throws Exception {
-        NoteRecord linkedTopic = ngw.getNoteByUidOrNull(getTopicLink());
+        TopicRecord linkedTopic = ngw.getNoteByUidOrNull(getTopicLink());
         
         if (input.has("subject")) {
             setSubject(input.getString("subject"));

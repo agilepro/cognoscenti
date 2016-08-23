@@ -58,7 +58,7 @@
     long pinOrder = 0;
     if("Edit".equals(action) && !"Create".equals(oid))
     {
-        NoteRecord cr = ngp.getNoteOrFail(oid);
+        TopicRecord cr = ngp.getNoteOrFail(oid);
         sectionValue = cr.getWiki();
         subject = cr.getSubject();
         isPublic = cr.isPublic();

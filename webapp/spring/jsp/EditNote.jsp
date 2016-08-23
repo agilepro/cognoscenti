@@ -20,7 +20,7 @@ if (false) {
     JSONObject noteInfo = null;
     boolean isCreate = (nid==null);
     if (!isCreate) {
-        NoteRecord note = ngw.getNote(nid);
+        TopicRecord note = ngw.getNote(nid);
         noteInfo = note.getJSONWithComments(ar, ngw);
     }
     else {

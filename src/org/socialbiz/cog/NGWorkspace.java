@@ -112,7 +112,7 @@ public class NGWorkspace extends NGPage {
             this.getAllGoals();
             this.getAllHistory();
             this.getAllLabels();
-            for (NoteRecord note : this.getAllNotes()) {
+            for (TopicRecord note : this.getAllNotes()) {
                 for (CommentRecord comm : note.getComments()) {
                     //schema migration from before 101
                     comm.schemaMigration(fromLevel, toLevel);
@@ -129,7 +129,7 @@ public class NGWorkspace extends NGPage {
             }
         }
         if (fromLevel<102) {
-            for (@SuppressWarnings("unused") NoteRecord nr : this.getAllNotes()) {
+            for (@SuppressWarnings("unused") TopicRecord nr : this.getAllNotes()) {
                 //just run the constructor
             }
         }
@@ -363,7 +363,7 @@ public class NGWorkspace extends NGPage {
         for (MeetingRecord meeting : getMeetings()) {
             meeting.gatherUnsentScheduledNotification(this, resList);
         }
-        for (NoteRecord note : this.getAllNotes()) {
+        for (TopicRecord note : this.getAllNotes()) {
             note.gatherUnsentScheduledNotification(this, resList);
         }
         for (EmailGenerator eg : getAllEmailGenerators()) {
@@ -441,13 +441,13 @@ public class NGWorkspace extends NGPage {
     /**
     * schema migration ...
     * make sure that all topics and documents have universal ids.
-    * do this here because the NoteRecord & AttachmentRecord constructor
+    * do this here because the TopicRecord & AttachmentRecord constructor
     * does not easily know what the container is.
     */
     private void cleanUpNoteAndDocUniversalId() throws Exception {
         //schema migration ...
         //make sure that all topics have universal ids.
-        for (NoteRecord lr : getAllNotes()) {
+        for (TopicRecord lr : getAllNotes()) {
             String uid = lr.getUniversalId();
             if (uid==null || uid.length()==0) {
                 uid = getContainerUniversalId() + "@" + lr.getId();

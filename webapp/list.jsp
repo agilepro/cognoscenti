@@ -53,7 +53,6 @@
     for (NGBook ngb : allAccounts)
     {
         List<NGPageIndex> allProjects = ar.getCogInstance().getAllProjectsInSite(ngb.key);
-        //List<NoteRecord> allNotes = new List<NoteRecord>(); //ngb.getAllNotes();
         NGRole owner = ngb.getSecondaryRole();
 %>
             <tr valign="top">

@@ -37,13 +37,13 @@ import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
 
 /**
-* A NoteRecord represents a Topic in a Workspace.
+* A TopicRecord represents a Topic in a Workspace.
 * Topic exist on projects as quick ways for people to
 * write and exchange information about the project.
 * Leaflet is the old term for this, we prefer the term Topic now everywhere.
 * (Used to be called LeafletRecord, but name changed March 2013)
 */
-public class NoteRecord extends CommentContainer implements EmailContext {
+public class TopicRecord extends CommentContainer implements EmailContext {
 
     public static final String DISCUSSION_PHASE_DRAFT               = "Draft";
     public static final String DISCUSSION_PHASE_FREEFORM            = "Freeform";
@@ -60,7 +60,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     //not be updated -- it remains the time a week before starting the server.
     public static final long ONE_WEEK_AGO = System.currentTimeMillis() - 7*24*60*60*1000;
 
-    public NoteRecord(Document definingDoc, Element definingElement, DOMFace new_ngs) {
+    public TopicRecord(Document definingDoc, Element definingElement, DOMFace new_ngs) {
         super(definingDoc, definingElement, new_ngs);
 
         //assure that visibility is set, default to the visibility to member
@@ -423,7 +423,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
 
 
 
-    public static void sortNotesInPinOrder(List<NoteRecord> v) {
+    public static void sortNotesInPinOrder(List<TopicRecord> v) {
         Collections.sort(v, new NotesInPinOrder());
     }
 
@@ -437,11 +437,11 @@ public class NoteRecord extends CommentContainer implements EmailContext {
     * compared by effective date order, which is usually the date
     * that the comment was first created.
     */
-    private static class NotesInPinOrder implements Comparator<NoteRecord> {
+    private static class NotesInPinOrder implements Comparator<TopicRecord> {
         NotesInPinOrder() {
         }
 
-        public int compare(NoteRecord o1, NoteRecord o2) {
+        public int compare(TopicRecord o1, TopicRecord o2) {
             long p1 = o1.getPinOrder();
             long p2 = o2.getPinOrder();
             if (p1 != p2) {
@@ -741,7 +741,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
           //sending becaue there are a lot of old records that have never been marked
           //as being sent.   Need to set them as being sent so they are not sent now.
           if (getLastEdited() < ONE_WEEK_AGO) {
-              System.out.println("NoteRecord Migration: will never send email due "+new Date(getLastEdited())+" for "+this.getSubject());
+              System.out.println("TopicRecord Migration: will never send email due "+new Date(getLastEdited())+" for "+this.getSubject());
               setEmailSent(true);
               return true;
           }
@@ -786,7 +786,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
       }
 
 
-      public void topicEmailRecord(AuthRequest ar, NGWorkspace ngp, NoteRecord note, MailFile mailFile) throws Exception {
+      public void topicEmailRecord(AuthRequest ar, NGWorkspace ngp, TopicRecord note, MailFile mailFile) throws Exception {
           List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
           String targetRole = note.getTargetRole();
           if (targetRole==null || targetRole.length()==0) {
@@ -812,7 +812,7 @@ public class NoteRecord extends CommentContainer implements EmailContext {
           note.setLastEdited(ar.nowTime);
       }
 
-      private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, NoteRecord note, OptOutAddr ooa,
+      private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, TopicRecord note, OptOutAddr ooa,
               UserProfile commenterProfile, MailFile mailFile) throws Exception  {
           Cognoscenti cog = ar.getCogInstance();
           if (!ooa.hasEmailAddress()) {
@@ -1019,9 +1019,9 @@ public class NoteRecord extends CommentContainer implements EmailContext {
 
      private class NScheduledNotification implements ScheduledNotification {
          private NGWorkspace ngw;
-         private NoteRecord note;
+         private TopicRecord note;
 
-         public NScheduledNotification( NGWorkspace _ngp, NoteRecord _note) {
+         public NScheduledNotification( NGWorkspace _ngp, TopicRecord _note) {
              ngw  = _ngp;
              note = _note;
          }

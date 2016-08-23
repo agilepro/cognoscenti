@@ -39,7 +39,7 @@ import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
-import org.socialbiz.cog.NoteRecord;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.SectionDef;
@@ -163,7 +163,7 @@ public class MainTabsViewControler extends BaseController {
            AuthRequest ar = AuthRequest.getOrCreate(request, response);
            request.setAttribute("lid", lid);
            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
-           NoteRecord note = ngp.getNoteOrFail(lid);
+           TopicRecord note = ngp.getNoteOrFail(lid);
            boolean canAccessNote  = AccessControl.canAccessNote(ar, ngp, note);
            if (canAccessNote) {
                showJSPAnonymous(ar, siteId, pageId, "NoteZoom");
@@ -328,7 +328,7 @@ public class MainTabsViewControler extends BaseController {
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
 
-             NoteRecord note = null;
+             TopicRecord note = null;
              int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
              if ("~new~".equals(nid)) {
                  note = ngw.createNote();
@@ -370,7 +370,7 @@ public class MainTabsViewControler extends BaseController {
              boolean isMember = ar.isMember();
 
              JSONArray allTopics = new JSONArray();
-             for (NoteRecord aNote : ngw.getAllNotes()) {
+             for (TopicRecord aNote : ngw.getAllNotes()) {
                  if (!isMember && !aNote.isPublic()) {
                      //skip non public if not member
                      continue;
@@ -403,7 +403,7 @@ public class MainTabsViewControler extends BaseController {
              ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
-             NoteRecord note = ngw.getNote(nid);
+             TopicRecord note = ngw.getNote(nid);
 
              if (noteInfo.has("comments")) {
                  JSONArray commentsToUpdate = noteInfo.getJSONArray("comments");
@@ -480,7 +480,7 @@ public class MainTabsViewControler extends BaseController {
              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
              ar.setPageAccessLevels(ngp);
              String nid = ar.reqParam("nid");
-             NoteRecord note = ngp.getNoteOrFail(nid);
+             TopicRecord note = ngp.getNoteOrFail(nid);
 
              JSONArray repo = new JSONArray();
              for (HistoryRecord hist : note.getNoteHistory(ngp)) {
@@ -670,7 +670,7 @@ public class MainTabsViewControler extends BaseController {
 
              String oid = ar.reqParam("oid");
              JSONObject paramMap = new JSONObject();
-             NoteRecord note = ngp.getNoteOrFail(oid);
+             TopicRecord note = ngp.getNoteOrFail(oid);
              if(note.isDeleted()){
                  paramMap.put("msgType", "yes");
              }else{
@@ -984,7 +984,7 @@ public class MainTabsViewControler extends BaseController {
               String id = ar.reqParam("id");
               MeetingRecord meeting = ngw.findMeeting(id);
 
-              NoteRecord nr = null;
+              TopicRecord nr = null;
               //
               //commented out:  ALWAYS create a new minutes, never overwrite an existing one.
               //
@@ -1001,7 +1001,7 @@ public class MainTabsViewControler extends BaseController {
               }
               nr.setWiki(meeting.generateMinutes(ar,  ngw));
               nr.setModUser(ar.getUserProfile());
-              nr.setDiscussionPhase(NoteRecord.DISCUSSION_PHASE_DRAFT, ar);
+              nr.setDiscussionPhase(TopicRecord.DISCUSSION_PHASE_DRAFT, ar);
 
               //now copy all the attachment references across
               for (AgendaItem ai : meeting.getAgendaItems()) {

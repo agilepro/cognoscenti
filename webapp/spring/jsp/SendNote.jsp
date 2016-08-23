@@ -53,7 +53,7 @@ Optional Parameters:
         String noteId = ar.defParam("noteId", null);
 
         if (noteId!=null) {
-            NoteRecord noteRec = ngw.getNoteOrFail(noteId);
+            TopicRecord noteRec = ngw.getNoteOrFail(noteId);
             if(mailSubject == null){
                 mailSubject = noteRec.getSubject();
             }

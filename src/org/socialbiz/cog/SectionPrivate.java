@@ -58,7 +58,7 @@ public class SectionPrivate extends SectionWiki
     * Even though this class is not used in new pages, we have to leave
     * this class around so we can convert old pages.
     */
-    public NoteRecord convertToLeaflet(NGSection noteSection,
+    public TopicRecord convertToLeaflet(NGSection noteSection,
                    NGSection wikiSection) throws Exception
     {
         SectionDef def = wikiSection.def;
@@ -79,8 +79,8 @@ public class SectionPrivate extends SectionWiki
                 //this section is empty, so don't create any leaflet, and return null
                 return null;
             }
-            NoteRecord newNote = noteSection.createChildWithID(
-                SectionForNotes.LEAFLET_NODE_NAME, NoteRecord.class, "id", IdGenerator.generateKey());
+            TopicRecord newNote = noteSection.createChildWithID(
+                SectionForNotes.LEAFLET_NODE_NAME, TopicRecord.class, "id", IdGenerator.generateKey());
             newNote.setOwner(owner);
             newNote.setModUser(new AddressListEntry(owner));
             newNote.setLastEdited(wikiSection.getLastModifyTime());

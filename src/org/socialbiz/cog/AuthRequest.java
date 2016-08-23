@@ -1392,7 +1392,7 @@ public class AuthRequest
         return  "t/" + URLEncoder.encode(ngpi.containerKey, "UTF-8")+"/$/accountListProjects.htm";
     }
 
-    public String getResourceURL(NGContainer ngp, NoteRecord note)
+    public String getResourceURL(NGContainer ngp, TopicRecord note)
         throws Exception
     {
         return getResourceURL(ngp, "noteZoom"+note.getId()+".htm");

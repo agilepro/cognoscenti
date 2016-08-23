@@ -37,7 +37,7 @@ import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGSection;
 import org.socialbiz.cog.NGWorkspace;
-import org.socialbiz.cog.NoteRecord;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.SectionAttachments;
 import org.socialbiz.cog.SectionForNotes;
@@ -423,7 +423,7 @@ public class ResourceSection  implements NGResource
         NGSection ngs = ngp.getSectionOrFail(lname);
         List<String> cmtList = UtilityMethods.splitString(lid,',');
         for(String oneCmt : cmtList) {
-            NoteRecord ei = SectionForNotes.getLeaflet(oneCmt, ngs);
+            TopicRecord ei = SectionForNotes.getLeaflet(oneCmt, ngs);
             if (ei != null) {
                 ngs.removeChild(ei);
             }
@@ -903,7 +903,7 @@ public class ResourceSection  implements NGResource
                 String subject = DOMUtils.textValueOfChild(element_cmt, "subject", true);
                 String data = DOMUtils.textValueOfChild(element_cmt, "content", true);
 
-                NoteRecord note = ngp.getNote(id);
+                TopicRecord note = ngp.getNote(id);
                 if(note == null)
                 {
                     addLeaflet(ar, ngs, subject, data);
@@ -919,11 +919,11 @@ public class ResourceSection  implements NGResource
     }
 
 
-    public static NoteRecord addLeaflet(AuthRequest ar, NGSection section,
+    public static TopicRecord addLeaflet(AuthRequest ar, NGSection section,
             String subject, String data) throws Exception {
         String id = IdGenerator.generateKey();
-        NoteRecord newNote = section.createChildWithID(
-                SectionForNotes.LEAFLET_NODE_NAME, NoteRecord.class, "id", id);
+        TopicRecord newNote = section.createChildWithID(
+                SectionForNotes.LEAFLET_NODE_NAME, TopicRecord.class, "id", id);
         newNote.setOwner(ar.getBestUserId());
         newNote.setModUser(new AddressListEntry(ar.getBestUserId()));
         newNote.setLastEdited(ar.nowTime);

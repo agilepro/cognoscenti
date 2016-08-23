@@ -52,7 +52,7 @@ public class SectionUnknown extends SectionWiki {
         // nothing to write
     }
 
-    public NoteRecord convertToLeaflet(NGSection noteSection,
+    public TopicRecord convertToLeaflet(NGSection noteSection,
                    NGSection wikiSection) throws Exception
     {
         throw new ProgramLogicError("Method convertToLeaflet not implemented for Unknown Format");

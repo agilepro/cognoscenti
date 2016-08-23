@@ -26,7 +26,7 @@ import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.License;
 import org.socialbiz.cog.NGPage;
-import org.socialbiz.cog.NoteRecord;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UtilityMethods;
 import org.w3c.dom.Document;
 
@@ -106,7 +106,7 @@ public class CaseExchange {
 
     private void generateNotes(DOMFace rootEle) throws Exception {
         DOMFace allNotes = rootEle.createChild("notes", DOMFace.class);
-        for (NoteRecord lr : ngp.getAllNotes()) {
+        for (TopicRecord lr : ngp.getAllNotes()) {
 
             if (lr.getVisibility() == 1) {
                 // public note, so everyone can get it

@@ -115,7 +115,7 @@ public class SectionLink extends SectionWiki
     * This might be called just before deleting the section.
     * Returns NULL if the section is empty.
     */
-    public NoteRecord convertToLeaflet(NGSection noteSection,
+    public TopicRecord convertToLeaflet(NGSection noteSection,
                    NGSection wikiSection) throws Exception
     {
         SectionDef def = wikiSection.def;
@@ -143,8 +143,8 @@ public class SectionLink extends SectionWiki
             }
         }
 
-        NoteRecord newNote = noteSection.createChildWithID(
-            SectionForNotes.LEAFLET_NODE_NAME, NoteRecord.class, "id", IdGenerator.generateKey());
+        TopicRecord newNote = noteSection.createChildWithID(
+            SectionForNotes.LEAFLET_NODE_NAME, TopicRecord.class, "id", IdGenerator.generateKey());
         newNote.setOwner(wikiSection.getLastModifyUser());
         newNote.setModUser(new AddressListEntry(wikiSection.getLastModifyUser()));
         newNote.setLastEdited(wikiSection.getLastModifyTime());

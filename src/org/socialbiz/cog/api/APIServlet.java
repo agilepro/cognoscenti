@@ -40,7 +40,7 @@ import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
-import org.socialbiz.cog.NoteRecord;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.SectionWiki;
 import org.socialbiz.cog.UtilityMethods;
 import org.socialbiz.cog.WikiConverter;
@@ -433,7 +433,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 throw new Exception("The license ("+resDec.licenseId
                         +") does not have full member access which is needed in order to create a new topic.");
             }
-            NoteRecord newNote = resDec.project.createNote();
+            TopicRecord newNote = resDec.project.createNote();
             newNote.setUniversalId(newNoteObj.getString("universalid"));
             newNote.updateNoteFromJSON(newNoteObj, ar);
             HistoryRecord.createNoteHistoryRecord(resDec.project, newNote, HistoryRecord.EVENT_TYPE_CREATED, ar,
@@ -444,7 +444,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         if ("updateNote".equals(op)) {
             JSONObject newNoteObj = objIn.getJSONObject("note");
             String noteUID = newNoteObj.getString("universalid");
-            NoteRecord note = resDec.project.getNoteByUidOrNull(noteUID);
+            TopicRecord note = resDec.project.getNoteByUidOrNull(noteUID);
             if (note==null) {
                 throw new Exception("Unable to find an existing topic with UID ("+noteUID+")");
             }
@@ -690,7 +690,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         root.put("docs", docs);
 
         JSONArray notes = new JSONArray();
-        for (NoteRecord note : resDec.project.getAllNotes()) {
+        for (TopicRecord note : resDec.project.getAllNotes()) {
             if (!resDec.canAccessNote(note)) {
                 continue;
             }
@@ -725,7 +725,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     }
 
     private void streamNote(AuthRequest ar, ResourceDecoder resDec) throws Exception {
-        NoteRecord note = resDec.project.getNoteOrFail(resDec.noteId);
+        TopicRecord note = resDec.project.getNoteOrFail(resDec.noteId);
         if (!resDec.canAccessNote(note)) {
             throw new Exception("Specified license ("+resDec.licenseId
                     +") is not able to access topic ("+resDec.noteId+")");

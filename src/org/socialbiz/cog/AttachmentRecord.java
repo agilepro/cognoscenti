@@ -880,10 +880,10 @@ public abstract class AttachmentRecord extends CommentContainer implements Email
     }
 
 
-    public List<NoteRecord> getLinkedTopics(NGPage ngc) throws Exception {
-        ArrayList<NoteRecord> allTopics = new ArrayList<NoteRecord>();
+    public List<TopicRecord> getLinkedTopics(NGPage ngc) throws Exception {
+        ArrayList<TopicRecord> allTopics = new ArrayList<TopicRecord>();
         String nid = this.getUniversalId();
-        for (NoteRecord topic : ngc.getAllNotes()) {
+        for (TopicRecord topic : ngc.getAllNotes()) {
             boolean found = false;
             for (String docId : topic.getDocList()) {
                 if (nid.equals(docId)) {

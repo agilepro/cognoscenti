@@ -27,7 +27,7 @@ import org.socialbiz.cog.LicenseForUser;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
-import org.socialbiz.cog.NoteRecord;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -239,7 +239,7 @@ public class ResourceDecoder {
         return false;
     }
 
-    public boolean canAccessNote(NoteRecord note) throws Exception {
+    public boolean canAccessNote(TopicRecord note) throws Exception {
         if (hasFullMemberAccess()) {
             return true;
         }

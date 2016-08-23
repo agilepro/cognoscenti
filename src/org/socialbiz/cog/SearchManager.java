@@ -96,7 +96,7 @@ public class SearchManager {
 
 
 
-                for (NoteRecord note : ngp.getAllNotes()) {
+                for (TopicRecord note : ngp.getAllNotes()) {
                     Document doc = new Document();
                     doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
                     doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
@@ -194,7 +194,7 @@ public class SearchManager {
                 noteSubject = "Workspace: "+ngp.getFullName();
             }
             if (noteId!=null && noteId.length()==4) {
-                NoteRecord note = ngp.getNoteOrFail(noteId);
+                TopicRecord note = ngp.getNoteOrFail(noteId);
 
                 if (note.getVisibility()==SectionDef.PUBLIC_ACCESS) {
                     //ok to access public topic

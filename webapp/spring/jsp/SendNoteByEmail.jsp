@@ -6,7 +6,7 @@ Required parameters:
 
     1. p    : This is the id of a Workspace and used to retrieve NGPage.
     2. oid  : This is Leaflet id which is used to retieve Leaflet information which is being send
-              by email (NoteRecord object).
+              by email (TopicRecord object).
 
 Optional Parameters:
 
@@ -52,7 +52,7 @@ Optional Parameters:
 
     if (!oid.equals("x"))
     {
-        NoteRecord noteRec = ngp.getNoteOrFail(oid);
+        TopicRecord noteRec = ngp.getNoteOrFail(oid);
         noteSubject = noteRec.getSubject();
         if (noteSubject.length()>20) {
             noteSubject = noteSubject.substring(0,19)+"...";

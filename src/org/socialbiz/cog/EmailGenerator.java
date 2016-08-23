@@ -254,7 +254,7 @@ public class EmailGenerator extends DOMFace {
                 memberRole.addPlayer(enteredAddress);
             }
         }
-        NoteRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
+        TopicRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
         if (noteRec!=null && getExcludeResponders()) {
             for (LeafletResponseRecord llr : noteRec.getResponses()) {
                 String responder = llr.getUser();
@@ -275,7 +275,7 @@ public class EmailGenerator extends DOMFace {
 
     public void constructEmailRecords(AuthRequest ar, NGWorkspace ngp, MailFile mailFile) throws Exception {
         List<OptOutAddr> sendTo = expandAddresses(ar, ngp);
-        NoteRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
+        TopicRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
 
         StringBuffer historyNameList = new StringBuffer();
         boolean needComma = false;
@@ -294,7 +294,7 @@ public class EmailGenerator extends DOMFace {
         setSendDate(ar.nowTime);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, NoteRecord noteRec, OptOutAddr ooa, MailFile mailFile)
+    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, TopicRecord noteRec, OptOutAddr ooa, MailFile mailFile)
             throws Exception  {
         String userAddress = ooa.getEmail();
         if (userAddress==null || userAddress.length()==0) {
@@ -363,7 +363,7 @@ public class EmailGenerator extends DOMFace {
     
 
     private static JSONObject getJSONForTemplate(AuthRequest ar,
-            NGWorkspace ngp, NoteRecord selectedNote,
+            NGWorkspace ngp, TopicRecord selectedNote,
             AddressListEntry ale, String intro, boolean includeBody,
             List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
         UserProfile ownerProfile = ar.getUserProfile();
@@ -417,7 +417,7 @@ public class EmailGenerator extends DOMFace {
     }
 
     private static void writeNoteAttachmentEmailBody2(AuthRequest ar,
-            NGWorkspace ngp, NoteRecord selectedNote,
+            NGWorkspace ngp, TopicRecord selectedNote,
             OptOutAddr ooa, String intro, boolean includeBody,
             List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
 
@@ -461,7 +461,7 @@ public class EmailGenerator extends DOMFace {
 
         String noteId = getNoteId();
         if (noteId!=null && noteId.length()>0) {
-            NoteRecord nr = ngw.getNoteByUidOrNull(noteId);
+            TopicRecord nr = ngw.getNoteByUidOrNull(noteId);
             if (nr!=null) {
                 obj.put("noteInfo", nr.getJSONWithWiki(ngw));
             }

@@ -2,7 +2,7 @@
 %><%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
 %><%@page import="org.socialbiz.cog.AuthRequest"
 %><%@page import="org.socialbiz.cog.BaseRecord"
-%><%@page import="org.socialbiz.cog.NoteRecord"
+%><%@page import="org.socialbiz.cog.TopicRecord"
 %><%@page import="org.socialbiz.cog.NGBook"
 %><%@page import="org.socialbiz.cog.NGPage"
 %><%@page import="org.socialbiz.cog.NGPageIndex"

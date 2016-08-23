@@ -1,7 +1,7 @@
 <%@page errorPage="error.jsp"
 %><%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
 %><%@page import="org.socialbiz.cog.AuthRequest"
-%><%@page import="org.socialbiz.cog.NoteRecord"
+%><%@page import="org.socialbiz.cog.TopicRecord"
 %><%@page import="org.socialbiz.cog.LeafletResponseRecord"
 %><%@page import="org.socialbiz.cog.HistoryRecord"
 %><%@page import="org.socialbiz.cog.NGBook"
@@ -35,7 +35,7 @@
     ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
 
-    NoteRecord leaflet = ngp.getNoteOrFail(lid);
+    TopicRecord leaflet = ngp.getNoteOrFail(lid);
 
     LeafletResponseRecord llr = leaflet.getOrCreateUserResponse(designatedUser);
 

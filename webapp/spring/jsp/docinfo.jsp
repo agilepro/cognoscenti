@@ -61,7 +61,7 @@ Required parameters:
         linkedMeetings.put(meet.getListableJSON(ar));
     }
     JSONArray linkedTopics = new JSONArray();
-    for (NoteRecord note : attachment.getLinkedTopics(ngp)) {
+    for (TopicRecord note : attachment.getLinkedTopics(ngp)) {
         linkedTopics.put(note.getJSON(ngp));
     }
 

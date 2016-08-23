@@ -467,7 +467,7 @@ public class SectionUtil
     }
 
 
-    public NoteRecord convertToLeaflet(NGSection noteSection,
+    public TopicRecord convertToLeaflet(NGSection noteSection,
                    NGSection wikiSection) throws Exception
     {
         throw new ProgramLogicError("convertToLeaflet is not implemented on this section format");

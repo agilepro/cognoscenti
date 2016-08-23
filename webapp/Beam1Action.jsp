@@ -69,7 +69,7 @@
                     break;
                 }
                 else if (stat.type == SyncStatus.TYPE_NOTE) {
-                    NoteRecord note;
+                    TopicRecord note;
                     if (stat.isLocal) {
                         note = ngp.getNote(stat.idLocal);
                     }
