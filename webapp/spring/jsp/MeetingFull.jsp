@@ -155,25 +155,34 @@
 %>
 
 <style>
-    .meeting-icon {
-       cursor:pointer;
-       color:LightSteelBlue;
-    }
+.meeting-icon {
+   cursor:pointer;
+   color:LightSteelBlue;
+}
 
-    .comment-outer {
-        border: 1px solid lightgrey;
-        border-radius:8px;
-        padding:5px;
-        margin-top:15px;
-        background-color:#EEE;
-        cursor: pointer;
-    }
-    .comment-inner {
-        border: 1px solid lightgrey;
-        border-radius:6px;
-        padding:5px;
-        background-color:white;
-    }
+.comment-outer {
+    border: 1px solid lightgrey;
+    border-radius:8px;
+    padding:5px;
+    margin-top:15px;
+    background-color:#EEE;
+    cursor: pointer;
+}
+.comment-inner {
+    border: 1px solid lightgrey;
+    border-radius:6px;
+    padding:5px;
+    background-color:white;
+}
+.comment-state-draft {
+    background-color:yellow;
+}
+.comment-state-active {
+    background-color:#DEF;
+}
+comment-state-complete {
+    background-color:#EEE;
+}
 </style>
 
 <script>
@@ -921,6 +930,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "background-color:#EEE;";
     }
+    $scope.stateClass = function(cmt) {
+        if (cmt.state==11) {
+            return "comment-state-draft";
+        }
+        if (cmt.state==12) {
+            return "comment-state-active";
+        }
+        return "comment-state-complete";
+    }
     $scope.commentTypeName = function(cmt) {
         if (cmt.commentType==2) {
             return "Proposal";
@@ -1170,18 +1188,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (cmt.state==13) {
             return "";
         }
-        var diff = Math.trunc((cmt.dueDate-$scope.currentTime) / 60000);
+        var diff = Math.floor((cmt.dueDate-$scope.currentTime) / 60000);
         if (diff<0) {
             return "overdue";
         }
         if (diff<120) {
             return "due in "+diff+" minutes";
         }
-        diff = Math.trunc(diff / 60);
+        diff = Math.floor(diff / 60);
         if (diff<48) {
             return "due in "+diff+" hours";
         }
-        diff = Math.trunc(diff / 24);
+        diff = Math.floor(diff / 24);
         if (diff<8) {
             return "due in "+diff+" days";
         }
@@ -2116,7 +2134,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                title="{{cmt.userName}} - {{cmt.user}}">
            </td>
            <td>
-               <div class="comment-outer"  style="{{stateStyle(cmt)}}">
+               <div class="comment-outer  {{stateClass(cmt)}}">
                    <div>
                        <div class="dropdown" style="float:left">
                            <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"

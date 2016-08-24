@@ -211,6 +211,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "background-color:#EEE;";
     }
+    $scope.stateClass = function(cmt) {
+        if (cmt.state==11) {
+            return "comment-state-draft";
+        }
+        if (cmt.state==12) {
+            return "comment-state-active";
+        }
+        return "comment-state-complete";
+    }
     $scope.postComment = function(cmt) {
         cmt.state = 12;
         if (cmt.commentType == 1 || cmt.commentType == 5) {
@@ -229,6 +238,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         var whatNot = $scope.getResponse(cmt);
         return (whatNot.length == 0);
+    }
+    $scope.getResponse = function(cmt) {
+        var selected = cmt.responses.filter( function(item) {
+            return item.user=="<%ar.writeJS(currentUser);%>";
+        });
+        return selected;
     }
 
 });
@@ -404,23 +419,31 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
     }
 %>
 </table>
-    <style>
-    .comment-outer {
-        border: 1px solid lightgrey;
-        border-radius:8px;
-        padding:5px;
-        margin-top:15px;
-        background-color:#EEE
-    }
-    .comment-inner {
-        border: 1px solid lightgrey;
-        border-radius:6px;
-        padding:5px;
-        background-color:white;
-        margin:2px
-    }
-
-    </style>
+<style>
+.comment-outer {
+    border: 1px solid lightgrey;
+    border-radius:8px;
+    padding:5px;
+    margin-top:15px;
+    background-color:#EEE
+}
+.comment-inner {
+    border: 1px solid lightgrey;
+    border-radius:6px;
+    padding:5px;
+    background-color:white;
+    margin:2px
+}
+.comment-state-draft {
+    background-color:yellow;
+}
+.comment-state-active {
+    background-color:#DEF;
+}
+comment-state-complete {
+    background-color:#EEE;
+}
+</style>
 
     <table >
        <tr ng-repeat="cmt in docInfo.comments">
@@ -430,7 +453,7 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
            </td>
            <td>
 
-            <div class="comment-outer" style="{{stateStyle(cmt)}}">
+            <div class="comment-outer {{stateClass(cmt)}}">
               <div>
                 <div class="dropdown" style="float:left">
                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 

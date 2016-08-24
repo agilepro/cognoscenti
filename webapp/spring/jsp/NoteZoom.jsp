@@ -358,6 +358,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "background-color:#EEE;";
     }
+    $scope.stateClass = function(cmt) {
+        if (cmt.state==11) {
+            return "comment-state-draft";
+        }
+        if (cmt.state==12) {
+            return "comment-state-active";
+        }
+        return "comment-state-complete";
+    }
     $scope.stateName = function(cmt) {
         if (cmt.state==11) {
             return "Draft";
@@ -803,6 +812,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     background-color:white;
     margin:2px
 }
+.comment-state-draft {
+    background-color:yellow;
+}
+.comment-state-active {
+    background-color:#DEF;
+}
+comment-state-complete {
+    background-color:#EEE;
+}
+
 </style>
 
 <table>
@@ -812,7 +831,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             title="{{cmt.userName}} - {{cmt.user}}">
     </td>
     <td>
-      <div class="comment-outer" style="{{stateStyle(cmt)}}">
+      <div class="comment-outer {{stateClass(cmt)}}">
         <div>
           <div class="dropdown" style="float:left">
 <% if (isLoggedIn) { %>
