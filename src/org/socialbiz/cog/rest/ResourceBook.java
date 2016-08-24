@@ -95,25 +95,6 @@ public class ResourceBook implements NGResource
             throw new NGException ("nugen.exception.book.name.cant.be.empty",null);
         }
         throw new Exception("I don't think this old code ResourceBook.create is used any more");
-        //should really come up with a better key than this,
-        //but I don't think this old code is used any more so just keep it working.
-        /*
-        String key = IdGenerator.generateKey();
-        NGBook ngb = NGBook.createNewSite(key, name);
-        updateBook(ngb);
-        ngb.saveSiteAs(ngb.getKey(), lar.getUserProfile(), "ResourceBook modification 2");
-
-        //Create Status
-        lrstatus.setResourceid(ngb.getKey());
-        String bookAddr = lserverURL + "b/" + ngb.getKey() + "/book.xml";
-        lrstatus.setResourceURL(bookAddr);
-        lrstatus.setSuccess(NGResource.OP_SUCCEEDED);
-        String cmsg = "A new book \"" + name + "\" is created";
-        lrstatus.setCommnets(cmsg);
-        ltype = lrstatus.getType();
-        loutdoc = lrstatus.getDocument();
-        */
-
     }
 
     public void update()throws Exception

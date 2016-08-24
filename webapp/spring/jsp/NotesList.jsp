@@ -97,10 +97,17 @@
 </style>
 
 <script type="text/javascript">
+function httpGet(theUrl)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+    xmlHttp.send( null );
+    return JSON.parse(xmlHttp.responseText);
+}
 
+    
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
-    $scope.notes = <%notes.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.filter = "";
     $scope.showVizPub = true;
@@ -119,6 +126,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         errorPanelHandler($scope, serverErr);
     };
 
+
+    $scope.notes = [];
+    $scope.fetchTopics = function(rec) {
+        var postURL = "getTopics.json"
+        var postdata = angular.toJson(rec);
+        $scope.showError=false;
+        $http.get(postURL, postdata)
+        .success( function(data) {
+            $scope.notes = data;
+            $scope.sortNotes();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    $scope.fetchTopics();
+    
+    
     $scope.allLabels.sort( function(a,b) {
         if (a.name < b.name) {
             return -1;

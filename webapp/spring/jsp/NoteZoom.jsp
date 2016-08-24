@@ -806,42 +806,42 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </style>
 
 <table>
-    <tr ng-repeat="cmt in getComments()">
-        <td style="width:50px;max-width:50px;vertical-align:top;padding:5px;padding-top:15px">
-            <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg"
+  <tr ng-repeat="cmt in getComments()">
+    <td style="width:50px;max-width:50px;vertical-align:top;padding:5px;padding-top:15px">
+      <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg"
             title="{{cmt.userName}} - {{cmt.user}}">
-        </td>
-        <td>
-            <div class="comment-outer" style="{{stateStyle(cmt)}}">
-                <div>
-                    <div class="dropdown" style="float:left">
+    </td>
+    <td>
+      <div class="comment-outer" style="{{stateStyle(cmt)}}">
+        <div>
+          <div class="dropdown" style="float:left">
 <% if (isLoggedIn) { %>
-       <button class="dropdown-toggle specCaretBtn" type="button"  id="menu1" 
-            data-toggle="dropdown"> <span class="caret"></span> </button>
-       <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation" 
-              ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.commentType!=6">
-              <a role="menuitem" ng-click="openCommentEditor(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
-          <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
-              <a role="menuitem" ng-click="postComment(cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
-          <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
-              <a role="menuitem" ng-click="deleteComment(cmt)">Delete Your {{commentTypeName(cmt)}}</a></li>
-          <li role="presentation" ng-show="cmt.state==12">
-              <a role="menuitem" ng-click="closeComment(cmt)">Close  {{commentTypeName(cmt)}}</a></li>
-          <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.state==13 && 
-              (cmt.commentType==2 || cmt.commentType==3)">
-              <a role="menuitem" ng-click="openOutcomeEditor(cmt)">Edit the Outcome</a></li>
-          <li role="presentation" ng-show="cmt.commentType>1 && cmt.state==12">
-              <a role="menuitem" ng-click="startResponse(cmt)">Create/Edit Response:</a></li>
-          <li role="presentation" ng-show="cmt.commentType==2">
-              <a role="menuitem" ng-click="createModifiedProposal(cmt)">Make Modified Proposal</a></li>
-          <li role="presentation" ng-show="cmt.commentType==1">
-              <a role="menuitem" ng-click="replyToComment(cmt)">Reply</a></li>
-          <li role="presentation" ng-show="cmt.commentType==2 && !cmt.decision">
-              <a role="menuitem" ng-click="openDecisionEditor(cmt)">Create New Decision</a></li>
-       </ul>
+            <button class="dropdown-toggle specCaretBtn" type="button"  id="menu1" 
+                    data-toggle="dropdown"> <span class="caret"></span> </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation" 
+                  ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.commentType!=6">
+                  <a role="menuitem" ng-click="openCommentEditor(cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
+              <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                  <a role="menuitem" ng-click="postComment(cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
+              <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+                  <a role="menuitem" ng-click="deleteComment(cmt)">Delete Your {{commentTypeName(cmt)}}</a></li>
+              <li role="presentation" ng-show="cmt.state==12">
+                  <a role="menuitem" ng-click="closeComment(cmt)">Close  {{commentTypeName(cmt)}}</a></li>
+              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>' && cmt.state==13 && 
+                  (cmt.commentType==2 || cmt.commentType==3)">
+                  <a role="menuitem" ng-click="openOutcomeEditor(cmt)">Edit the Outcome</a></li>
+              <li role="presentation" ng-show="cmt.commentType>1 && cmt.state==12">
+                  <a role="menuitem" ng-click="startResponse(cmt)">Create/Edit Response:</a></li>
+              <li role="presentation" ng-show="cmt.commentType==2">
+                  <a role="menuitem" ng-click="createModifiedProposal(cmt)">Make Modified Proposal</a></li>
+              <li role="presentation" ng-show="cmt.commentType==1">
+                  <a role="menuitem" ng-click="replyToComment(cmt)">Reply</a></li>
+              <li role="presentation" ng-show="cmt.commentType==2 && !cmt.decision">
+                  <a role="menuitem" ng-click="openDecisionEditor(cmt)">Create New Decision</a></li>
+            </ul>
 <% } %>
-         </div>
+          </div>
          <span ng-show="cmt.commentType==1" title="{{stateName(cmt)}} Comment">
              <i class="fa fa-comments-o" style="font-size:130%"></i></span>
          <span ng-show="cmt.commentType==2" title="{{stateName(cmt)}} Proposal">

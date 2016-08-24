@@ -39,10 +39,10 @@ import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
-import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.SectionDef;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
@@ -314,7 +314,51 @@ public class MainTabsViewControler extends BaseController {
 
 
 
+     @RequestMapping(value = "/{siteId}/{pageId}/getTopics.json", method = RequestMethod.GET)
+     public void getTopics(@PathVariable String siteId,@PathVariable String pageId,
+             HttpServletRequest request, HttpServletResponse response) {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         try{
+             NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+             ar.setPageAccessLevels(ngw);
+             boolean isMember = ar.isMember();
 
+             List<TopicRecord> aList = ngw.getAllNotes();
+
+             JSONArray notes = new JSONArray();
+             for (TopicRecord aNote : aList) {
+                 
+                 String discussionPhase = aNote.getDiscussionPhase();
+
+                 if (aNote.isPublic()) {
+                     notes.put( aNote.getJSONWithHtml(ar, ngw) );
+                 }
+                 else if (!ar.isLoggedIn()) {
+                     continue;
+                 }
+                 else if ("Draft".equals(discussionPhase)) {
+                     if (ar.getUserProfile().hasAnyId(aNote.getModUser().getUniversalId())) {
+                         notes.put( aNote.getJSONWithHtml(ar, ngw) );
+                     }
+                 }
+                 else if (isMember) {
+                     notes.put( aNote.getJSONWithHtml(ar, ngw) );
+                 }
+                 else {
+                     //run through all the roles here and see if any role
+                     //has access to the note
+                 }
+             }
+             
+             notes.write(ar.w, 2, 2);
+             ar.flush();
+         }catch(Exception ex){
+             Exception ee = new Exception("Unable to fetch the list of topics", ex);
+             streamException(ee, ar);
+         }
+     }
+
+     
      @RequestMapping(value = "/{siteId}/{pageId}/noteHtmlUpdate.json", method = RequestMethod.POST)
      public void noteHtmlUpdate(@PathVariable String siteId,@PathVariable String pageId,
              HttpServletRequest request, HttpServletResponse response) {
