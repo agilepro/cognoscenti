@@ -358,6 +358,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "background-color:#EEE;";
     }
+    $scope.stateName = function(cmt) {
+        if (cmt.state==11) {
+            return "Draft";
+        }
+        if (cmt.state==12) {
+            return "Active";
+        }
+        return "Completed";
+    }
     $scope.calcDueDisplay = function(cmt) {
         if (cmt.commentType==1 || cmt.commentType==4) {
             return "";
@@ -365,22 +374,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (cmt.state==13) {
             return "";
         }
-        var diff = Math.trunc((cmt.dueDate-$scope.currentTime) / 60000);
+        var diff = Math.floor((cmt.dueDate-$scope.currentTime) / 60000);
         if (diff<0) {
             return "overdue";
         }
         if (diff<120) {
             return "due in "+diff+" minutes";
         }
-        diff = Math.trunc(diff / 60);
+        diff = Math.floor(diff / 60);
         if (diff<48) {
             return "due in "+diff+" hours";
         }
-        diff = Math.trunc(diff / 24);
+        diff = Math.floor(diff / 24);
         if (diff<8) {
             return "due in "+diff+" days";
         }
-        diff = Math.trunc(diff / 7);
+        diff = Math.floor(diff / 7);
         return "due in "+diff+" weeks";
     }
 
@@ -431,6 +440,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.openCommentCreator = function(type, replyTo, defaultBody) {
         var newComment = {};
         newComment.time = new Date().getTime();
+        newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
         newComment.commentType = type;
         newComment.state = 11;
         newComment.isNew = true;
@@ -747,7 +757,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 
-    <div style="width:100%;margin-top:50px;">
+    <div style="width:100%;margin-top:50px;"></div>
     <div>
       <span style="width:150px">Attachments:</span>
       <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default"  style="margin:4px;"
@@ -777,23 +787,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div style="height:30px;"></div>
 
-    <style>
-    .comment-outer {
-        border: 1px solid lightgrey;
-        border-radius:8px;
-        padding:5px;
-        margin-top:15px;
-        background-color:#EEE
-    }
-    .comment-inner {
-        border: 1px solid lightgrey;
-        border-radius:6px;
-        padding:5px;
-        background-color:white;
-        margin:2px
-    }
-
-    </style>
+<style>
+.comment-outer {
+    border: 1px solid lightgrey;
+    border-radius:8px;
+    padding:5px;
+    margin-top:15px;
+    background-color:#EEE;
+    cursor: pointer;
+}
+.comment-inner {
+    border: 1px solid lightgrey;
+    border-radius:6px;
+    padding:5px;
+    background-color:white;
+    margin:2px
+}
+</style>
 
 <table>
     <tr ng-repeat="cmt in getComments()">
@@ -832,11 +842,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
        </ul>
 <% } %>
          </div>
-         <span ng-show="cmt.commentType==1"><i class="fa fa-comments-o" style="font-size:130%"></i></span>
-         <span ng-show="cmt.commentType==2"><i class="fa fa-star-o" style="font-size:130%"></i></span>
-         <span ng-show="cmt.commentType==3"><i class="fa fa-question-circle" style="font-size:130%"></i></span>
-         <span ng-show="cmt.commentType==5"><i class="fa fa-file-code-o" style="font-size:130%"></i></span>
-         &nbsp; {{cmt.time | date}} - 
+         <span ng-show="cmt.commentType==1" title="{{stateName(cmt)}} Comment">
+             <i class="fa fa-comments-o" style="font-size:130%"></i></span>
+         <span ng-show="cmt.commentType==2" title="{{stateName(cmt)}} Proposal">
+             <i class="fa fa-star-o" style="font-size:130%"></i></span>
+         <span ng-show="cmt.commentType==3" title="{{stateName(cmt)}} Round">
+             <i class="fa fa-question-circle" style="font-size:130%"></i></span>
+         <span ng-show="cmt.commentType==5" title="{{stateName(cmt)}} Minutes">
+             <i class="fa fa-file-code-o" style="font-size:130%"></i></span>
+         &nbsp; 
+         <span title="Created {{cmt.time|date:'medium'}}">{{cmt.time | date}}</span> - 
          <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
              <span class="red">{{cmt.userName}}</span>
          </a>
@@ -851,7 +866,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
          </span>
          <span ng-show="cmt.commentType==6" style="color:green">
              <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase</span>
-         <span style="float:right;color:green;">{{calcDueDisplay(cmt)}}</span>
+         <span style="float:right;color:green;" title="Due {{cmt.dueDate|date:'medium'}}">{{calcDueDisplay(cmt)}}</span>
          <div style="clear:both"></div>
       </div>
    <div ng-show="cmt.state==11">
@@ -877,7 +892,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
              <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>' && cmt.state==12"
                    ng-click="startResponse(cmt)"
                    style="cursor:pointer;">
-               <a href="#cmt{{cmt.time}}" title="Edit your response to this proposal">
+               <a href="#cmt{{cmt.time}}" title="Edit your response to this {{commentTypeName(cmt)}}">
                    <i class="fa fa-edit" style="font-size:140%"></i>
                </a>
              </span>
@@ -895,14 +910,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
            </td>
            <td>
              <span ng-click="startResponse(cmt)" style="cursor:pointer;">
-               <a href="#cmt{{cmt.time}}" title="Create a response to this proposal">
+               <a href="#cmt{{cmt.time}}" title="Create a response to this {{commentTypeName(cmt)}}">
                  <i class="fa fa-edit" style="font-size:140%"></i>
                </a>
              </span>
            </td>
            <td >
               <div class="comment-inner leafContent">
-                  <i>Click edit button to register a response.</i>
+                  <i>Click edit button to register a response to this {{commentTypeName(cmt)}}.</i>
               </div>
            </td>
        </tr>
@@ -953,30 +968,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 </table>
 
-<%!
-/*
-    <div class="generalHeading">History</div>
-    <table >
-        <tr><td style="height:10px"></td></tr>
-        <tr ng-repeat="rec in history">
-                <td class="projectStreamIcons"  style="padding:10px;">
-                    <img class="img-circle" src="<<ar.retPath>>users/{{rec.responsible.image}}" alt="" width="50" height="50" /></td>
-                <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
-                    {{rec.time|date}} -
-                    <a href="<<ar.retPath>>v/{{rec.responsible.key}}/userSettings.htm" title="access the profile of this user, if one exists">
-                        <span class="red">{{rec.responsible.name}}</span>
-                    </a>
-                    <br/>
-                    {{rec.ctxType}} -
-                    <a href="">{{rec.ctxName}}</a> was {{rec.event}} - {{rec.comment}}
-                    <br/>
 
-                </td>
-        </tr>
-    </table>
-    </div>
-*/
-%>
 
 </div>
 

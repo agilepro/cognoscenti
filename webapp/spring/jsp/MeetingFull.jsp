@@ -166,6 +166,7 @@
         padding:5px;
         margin-top:15px;
         background-color:#EEE;
+        cursor: pointer;
     }
     .comment-inner {
         border: 1px solid lightgrey;
@@ -2105,8 +2106,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </tr>
 
       </table>
-      </div>
-
+      </div>    
+      
                           <!--  AGENDA comments -->
       <table ng-show="showItemMap[item.id] && !item.isBlank" >
       <tr ng-repeat="cmt in item.comments">
@@ -2141,11 +2142,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                            </ul>
                        </div>
 
-                       <span ng-show="cmt.commentType==1"><i class="fa fa-comments-o" style="font-size:130%"></i></span>
-                       <span ng-show="cmt.commentType==2"><i class="fa fa-star-o" style="font-size:130%"></i></span>
-                       <span ng-show="cmt.commentType==3"><i class="fa fa-question-circle" style="font-size:130%"></i></span>
-                       <span ng-show="cmt.commentType==5"><i class="fa fa-file-code-o" style="font-size:130%"></i></span>
-                       &nbsp; {{cmt.time | date}} -
+         <span ng-show="cmt.commentType==1" title="{{stateName(cmt)}} Comment">
+             <i class="fa fa-comments-o" style="font-size:130%"></i></span>
+         <span ng-show="cmt.commentType==2" title="{{stateName(cmt)}} Proposal">
+             <i class="fa fa-star-o" style="font-size:130%"></i></span>
+         <span ng-show="cmt.commentType==3" title="{{stateName(cmt)}} Round">
+             <i class="fa fa-question-circle" style="font-size:130%"></i></span>
+         <span ng-show="cmt.commentType==5" title="{{stateName(cmt)}} Minutes">
+             <i class="fa fa-file-code-o" style="font-size:130%"></i></span>
+                       &nbsp; 
+         <span title="Created {{cmt.dueDate|date:'medium'}}">{{cmt.time | date}}</span> -
                        <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
                           <span class="red">{{cmt.userName}}</span>
                        </a>
@@ -2158,7 +2164,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                  <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
                                  <i class="fa fa-star-o"></i> {{findComment(item,cmt.replyTo).userName}}</a></span>
                        </span>
-                       <span style="float:right;color:green;">{{calcDueDisplay(cmt)}}</span>
+                       <span style="float:right;color:green;" title="Due {{cmt.dueDate|date:'medium'}}">{{calcDueDisplay(cmt)}}</span>
                        <div style="clear:both"></div>
 
                    </div>
@@ -2177,7 +2183,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        </td>
                        <td>
                          <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>'" ng-click="openResponseEditor(cmt)" style="cursor:pointer;">
-                           <a href="#cmt{{cmt.time}}" title="Edit your response to this proposal"><i class="fa fa-edit"></i></a>
+                           <a href="#cmt{{cmt.time}}" title="Edit your response to this {{commentTypeName(cmt)}}"><i class="fa fa-edit"></i></a>
                          </span>
                        </td>
                        <td style="padding:5px;">
@@ -2192,11 +2198,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                        </td>
                        <td>
                          <span ng-click="openResponseEditor(cmt)" style="cursor:pointer;">
-                           <a href="#" title="Create a response to this proposal"><i class="fa fa-edit"></i></a>
+                           <a href="#" title="Create a response to this {{commentTypeName(cmt)}}"><i class="fa fa-edit"></i></a>
                          </span>
                        </td>
                        <td style="padding:5px;">
-                          <div class="leafContent comment-inner"><i>Click edit button to register a response.</i></div>
+                          <div class="leafContent comment-inner"><i>Click edit button to register a response to this {{commentTypeName(cmt)}}.</i></div>
                        </td>
                    </tr>
                    </table>
