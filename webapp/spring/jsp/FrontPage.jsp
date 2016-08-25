@@ -433,7 +433,7 @@ app.controller('myCtrl', function($scope, $http) {
                    <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
                </g>
                <ellipse cx="175" cy="175" rx="80" ry="40" ng-click="ellipse(thisCircle)"
-                    style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer" ></ellipse>
+                    style="fill:white;stroke:saddlebrown;stroke-width:2;cursor:pointer" ></ellipse>
                 <foreignObject  x="95" y="160" width="160" height="80">
                    <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;"
                            ng-click="ellipse(thisCircle)">{{thisCircle.name}}</div>

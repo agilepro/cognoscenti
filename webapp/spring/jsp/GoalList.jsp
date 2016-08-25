@@ -87,7 +87,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
@@ -99,7 +99,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.showFuture = false;
     $scope.showCompleted = false;
     $scope.isCreating = false;
-    $scope.newGoal = {assignOne:{name:""}};
+    $scope.newGoal = {assignList:[]};
     $scope.dummyDate1 = new Date();
 
     $scope.newPerson = "";
@@ -287,7 +287,7 @@ app.controller('myCtrl', function($scope, $http) {
         newRec.universalid = "~new~";
         newRec.assignTo = [];
         newRec.state = 2;
-        newRec.assignTo.push(newRec.assignOne);
+        newRec.assignTo = newRec.assignList;
         newRec.duedate = $scope.dummyDate1.getTime();
 
         var postURL = "updateGoal.json?gid=~new~";
@@ -356,6 +356,24 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.getLink = function(uid) {
         var person = $scope.getPeople(uid);
         return "<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(uid);
+    }
+    $scope.showUser = function(tag) {
+        //alert("gotcha:" + tag.name);
+    }
+    $scope.loadItems = function(query) {
+        var res = [];
+        var q = query.toLowerCase();
+        $scope.allPeople.forEach( function(person) {
+            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
+                return;
+            }
+            var nix = {};
+            nix.name = person.name; 
+            nix.uid  = person.uid; 
+            nix.key  = person.key; 
+            res.push(nix);
+        });
+        return res;
     }
 
 
@@ -438,8 +456,10 @@ function addvalue() {
                 <td class="gridTableColummHeader">Assignee:</td>
                 <td style="width:20px;"></td>
                 <td colspan="2">
-                    <input type="text" ng-model="newGoal.assignOne" class="form-control" placeholder="Who should do it"
-                       typeahead="person as person.name for person in getPeople($viewValue) | limitTo:12">
+                  <tags-input ng-model="newGoal.assignList" placeholder="Enter user name or id"
+                              display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+                      <auto-complete source="loadItems($query)"></auto-complete>
+                  </tags-input>
                 </td>
             </tr>
             <tr><td style="height:10px"></td></tr>

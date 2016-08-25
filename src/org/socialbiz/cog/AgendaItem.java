@@ -6,6 +6,7 @@ import java.util.List;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 public class AgendaItem extends CommentContainer {
@@ -210,6 +211,15 @@ public class AgendaItem extends CommentContainer {
         htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getNotes());
         aiInfo.put("notes",     htmlVal);
         aiInfo.put("presenters", constructJSONArray(getPresenters()));
+        
+        //duplicated the presenters into a list of full person definitions.
+        //ultimately get rid of the other.
+        JSONArray presenterList = new JSONArray();
+        for (String presenterId : getPresenters()) {
+            AddressListEntry ale = new AddressListEntry(presenterId);
+            presenterList.put(ale.getJSON());
+        }
+        aiInfo.put("presenterList", presenterList);
         
         if (linkedTopic!=null) {
             long includeCommentRangeStart = meet.getStartTime() - 7*24*60*60*1000;

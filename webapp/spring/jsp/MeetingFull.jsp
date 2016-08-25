@@ -187,7 +187,7 @@ comment-state-complete {
 
 <script>
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize','ngTagsInput']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.pageId = "<%ar.writeJS(pageId);%>";
     $scope.meetId = "<%ar.writeJS(meetId);%>";
@@ -253,7 +253,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     
     $scope.showAll = function() {
-        $scope.meeting.agenda.map( function(item) {
+        $scope.meeting.agenda.forEach( function(item) {
             $scope.showItemMap[item.id] = true;
         });
     }
@@ -261,7 +261,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     if (window.location.href.indexOf("#cmt")>0) {
         $scope.showAll();
     }
-
+    $scope.getAgendaItems = function() {
+        return $scope.meeting.agenda;
+    }
+    
+    
     $scope.datePickOptions = {
         formatYear: 'yyyy',
         startingDay: 1
@@ -511,6 +515,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.stopEditing();
     };
     $scope.saveAgendaItemParts = function(agendaItem, fieldList) {
+        agendaItem.presenters = [];
+        agendaItem.presenterList.forEach( function(user) {
+            agendaItem.presenters.push(user.uid);
+        });
         var itemCopy = {};
         itemCopy.id = agendaItem.id;
         if (!agendaItem.subject || agendaItem.subject.length<1) {
@@ -558,6 +566,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             number: "?",
             docList:[],
             presenters:[],
+            presenterList:[],
             actionItems:[]
         };
         $scope.meeting.agenda.push(newAgenda);
@@ -678,20 +687,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.refreshCount = 0;
     $scope.refresh();
 
-    $scope.getPresenters = function(item) {
-        var res = [];
-        $scope.allPeople.map( function(a) {
-            item.presenters.map( function(b) {
-                if (b == a.uid) {
-                    res.push(a);
-                }
-            });
-        });
-        return res;
-    }
-    $scope.addPresenter = function(item, person) {
+    $scope.addPresenterxxxxxx = function(item, person) {
         var notPresent = true;
-        item.presenters.map( function(b) {
+        item.presenters.forEach( function(b) {
             if (b == person.uid) {
                 notPresent = false;
             }
@@ -700,7 +698,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             item.presenters.push(person.uid);
         }
     }
-    $scope.removePresenter = function(item, person) {
+    $scope.removePresenterxxxxx = function(item, person) {
         var newSet = [];
         item.presenters.map( function(b) {
             if (b != person.uid) {
@@ -1296,6 +1294,31 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.updateComment = function(cmt) {
         $scope.saveComment($scope.commentItemBeingEdited, cmt);
     }
+    $scope.loadItems = function(query) {
+        var res = [];
+        var q = query.toLowerCase();
+        $scope.allPeople.forEach( function(person) {
+            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
+                return;
+            }
+            var nix = {};
+            nix.name = person.name; 
+            nix.uid  = person.uid; 
+            nix.key  = person.key; 
+            res.push(nix);
+        });
+        return res;
+    }
+    $scope.toggleSelectedPerson = function(tag) {
+        $scope.selectedPersonShow = !$scope.selectedPersonShow;
+        $scope.selectedPerson = tag;
+        if (!$scope.selectedPerson.uid) {
+            $scope.selectedPerson.uid = $scope.selectedPerson.name;
+        }
+    }
+    $scope.navigateToUser = function(player) {
+        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.uid);
+    }
     
     $scope.openCommentCreator = function(item, type, replyTo, defaultBody) {
         var newComment = {};
@@ -1758,7 +1781,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
     <div class="comment-outer" style="margin:40px" ng-show="showSelfRegister()">
-      <div><h2 style="margin:5px"><% ar.writeHtml(currentUserName); %>, will you attend?</h2></div>
+      <div><h3 style="margin:5px"><% ar.writeHtml(currentUserName); %>, will you attend?</h3></div>
       <div ng-repeat="sitch in mySitch" class="comment-inner">
         <div class="form-inline form-group" style="margin:20px">
             <select ng-model="sitch.attend" class="form-control">
@@ -1862,7 +1885,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <script>
 </script>
 
-<div ng-repeat="item in meeting.agenda">
+<div ng-repeat="item in getAgendaItems()">
     <div class="agendaItemBlank" ng-show="item.isBlank">
       <div style="padding:5px;">
         <div style="width:100%">
@@ -1950,7 +1973,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <% } %>
             </div>
             <div>
-                <i>{{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)</i><span ng-repeat="pres in getPresenters(item)">, {{pres.name}}</span>
+                <i ng-click="editItemDetailsMap[item.id]=true;showItemMap[item.id]=true">
+                {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
             </div>
           </div>
 
@@ -1969,27 +1993,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                            placeholder="Enter Agenda Item Name"/>
             </div>
             <div class="form-inline form-group">
-              Presenters:
-                  <span class="dropdown" ng-repeat="person in getPresenters(item)">
-                    <button class="btn btn-sm dropdown-toggle" type="button" id="menu1"
-                       data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;">
-                       {{person.name}}</button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                       <li role="presentation"><a role="menuitem" title="{{person.name}} {{person.uid}}"
-                          ng-click="removePresenter(item, person)">Remove Presenter:<br/>{{person.name}}<br/>{{person.uid}}</a></li>
-                    </ul>
-                  </span>
-                  <span >
-                    <button class="btn btn-sm btn-primary" ng-click="showAddPresenter=!showAddPresenter"
-                        style="margin:2px;padding: 2px 5px;font-size: 11px;">+</button>
-                  </span>
+                <tags-input ng-model="item.presenterList" 
+                          placeholder="Enter user name or id"
+                          display-property="name" key-property="uid" 
+                          on-tag-clicked="toggleSelectedPerson($tag)">
+                    <auto-complete source="loadItems($query)"></auto-complete>
+                </tags-input>
             </div>
-            <div class="form-inline form-group" ng-show="showAddPresenter">
-                <button ng-click="addPresenter(item,newPerson);showAddPresenter=false" class="form-control btn btn-primary">
-                    Add This Presenter</button>
-                <input type="text" ng-model="newPerson"  class="form-control"
-                    placeholder="Enter Email Address" style="width:350px;"
-                    typeahead="person as person.name for person in getPeople($viewValue) | limitTo:12">
+            <div class="form-inline form-group" ng-show="selectedPersonShow">
+                   for <b>{{selectedPerson.name}}</b>:
+                   <button ng-click="navigateToUser(selectedPerson)" class="btn btn-info">
+                       Visit Profile</button>
+                   <button ng-click="selectedPersonShow=false" class="btn">
+                       Hide</button>
             </div>
             <div class="form-inline form-group">
               Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>

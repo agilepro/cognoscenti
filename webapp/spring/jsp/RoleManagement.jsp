@@ -37,7 +37,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.roleInfo = {};
@@ -60,6 +60,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
 
     $scope.fetchRole = function(selectedName) {
+        $scope.selectedPersonShow = false;
         var postURL = "roleUpdate.json?op=Update";
         var rec = {};
         rec.name = selectedName;
@@ -118,6 +119,32 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.reportError(data);
         });
     };
+    $scope.saveCreatedRole = function() {
+        var key = $scope.roleInfo.name;
+        var newOne = {name: key,color: $scope.roleInfo.color};
+        var postdata = angular.toJson(newOne);
+        $scope.allRoles.push(newOne);
+        postURL = "roleUpdate.json?op=Create";
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            $scope.roleInfo = data;
+            var newRoles = [];
+            $scope.allRoles.forEach( function (item) {
+                if (item.name==key) {
+                    newRoles.push(data);
+                }
+                else {
+                    newRoles.push(item);
+                }
+            });
+            $scope.allRoles = newRoles;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });        
+        $scope.isNew = false;
+        $scope.showInput = false;
+    }
     $scope.closePanel = function() {
         $scope.roleInfo = {};
         $scope.showInput = false;
@@ -148,7 +175,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 found = true;
             }
         });
-        $scope.showAddPlayer=false;
         $scope.newPlayer = "";
         if (found) {
             alert("That user is already a player of this role.");
@@ -235,6 +261,32 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     }
 
+    $scope.loadItems = function(query) {
+        var res = [];
+        var q = query.toLowerCase();
+        $scope.allPeople.forEach( function(person) {
+            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
+                return;
+            }
+            var nix = {};
+            nix.name = person.name; 
+            nix.uid  = person.uid; 
+            nix.key  = person.key; 
+            res.push(nix);
+        });
+        return res;
+    }
+    $scope.toggleSelectedPerson = function(tag) {
+        $scope.selectedPersonShow = !$scope.selectedPersonShow;
+        $scope.selectedPerson = tag;
+        if (!$scope.selectedPerson.uid) {
+            $scope.selectedPerson.uid = $scope.selectedPerson.name;
+        }
+    }
+    $scope.navigateToUser = function(player) {
+        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.uid);
+    }
+    
     $scope.openInviteSender = function (player) {
 
         var modalInstance = $modal.open({
@@ -289,7 +341,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
     </div>
 
-    <table width="100%"><tr>
+    <style>
+    .spacey tr td{
+        padding: 8px;
+    }
+    .spacey {
+        width: 100%;
+    }
+    </style>
+    
+    <table class="spacey"><tr>
         <td style="width:400px;height:600px;vertical-align:top;" >
             <table>
                 <tr ng-repeat="role in allRoles" style="background-color:{{(role.name==roleInfo.name)?'#EEE':'white'}};" class="generalContent">
@@ -310,12 +371,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <td  ng-hide="showInput" style="vertical-align:top;text-align:center;" >
             <i>select a role to edit, be sure to save to preserve changes</i>
         </td>
-        <td  class="well" ng-show="showInput" style="vertical-align:top;" >
+        <td  class="well" ng-show="showInput && !isNew" style="vertical-align:top;" >
             <table width="100%">
                 <tr><td style="height:10px" colspan="3"></td></tr>
                 <tr>
                     <td class="gridTableColummHeader">Name:</td>
-                    <td style="width:20px;"></td>
                     <td>
                        <input ng-show="isNew" class="form-control" ng-model="roleInfo.name">
                        <button ng-hide="isNew" class="btn btn-sm" style="background-color:{{roleInfo.color}};">{{roleInfo.name}}</button>
@@ -335,64 +395,42 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     </td>
                     <td style="width:30px;"></td>
                 </tr>
-                <tr><td style="height:10px" colspan="3"></td></tr>
                 <tr>
                     <td class="gridTableColummHeader">Players:</td>
-                    <td style="width:20px;"></td>
                     <td colspan="2">
-                      <span class="dropdown" ng-repeat="player in roleInfo.players">
-                        <button class="btn btn-sm dropdown-toggle" type="button" id="menu1"
-                           data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;">
-                           {{bestPart(player)}}</button>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                           <li role="presentation"><a role="menuitem" title="{{player}}"
-                              ng-click="removePlayer(player);updateRole()">Remove Player:<br/>{{player.name}}<br/>{{player.uid}}</a></li>
-                           <li role="presentation"><a role="menuitem" title="Visit {{player.name}}" target="_blank"
-                              href="<%=ar.retPath%>v/FindPerson.htm?uid={{player.uid}}">Visit Player Page</a></li>
-                           <li role="presentation"><a role="menuitem" title="Send invite to {{player.name}}"
-                              ng-click="openInviteSender(player)">Send Invite</a></li>
-                        </ul>
-                      </span>
-                      <span >
-                        <button class="btn btn-sm btn-primary" ng-click="showAddPlayer=!showAddPlayer"
-                            style="margin:2px;padding: 2px 5px;font-size: 11px;">+</button>
-                      </span>
+                      <tags-input ng-model="roleInfo.players" placeholder="Enter user name or id"
+                                  display-property="name" key-property="uid" 
+                                  on-tag-clicked="toggleSelectedPerson($tag)">
+                          <auto-complete source="loadItems($query)"></auto-complete>
+                      </tags-input>
                     </td>
-                    <td style="width:30px;"></td>
                 </tr>
-                <tr><td style="height:8px" colspan="3"></td></tr>
-                <tr ng-show="showAddPlayer">
-                    <td ></td>
-                    <td style="width:20px;"></td>
-                    <td  colspan="2" class="form-inline form-group">
-                        <button ng-click="addPlayer(newPlayer)" class="form-control btn btn-primary">
-                            Add </button>
-                        <input type="text" ng-model="newPlayer"  class="form-control"
-                            placeholder="Enter Email Address" style="width:250px;"
-                            typeahead="person as person.name for person in getPeople($viewValue) | limitTo:8">
+                <tr ng-show="selectedPersonShow">
+                    <td></td>
+                    <td class="well" colspan="2"> 
+                       for <b>{{selectedPerson.name}}</b>:
+                       <button ng-click="navigateToUser(selectedPerson)" class="btn btn-info">
+                           Visit Profile</button>
+                       <button ng-click="openInviteSender(selectedPerson)" class="btn btn-info">
+                           Invite</button>
+                       <button ng-click="selectedPersonShow=false" class="btn">
+                           Hide</button>
                     </td>
-                    <td style="width:30px;"></td>
                 </tr>
-                <tr><td style="height:8px" colspan="3"></td></tr>
                 <tr>
                      <td class="gridTableColummHeader">Description:</td>
-                     <td style="width:20px;"></td>
                      <td colspan="2"><textarea ng-model="roleInfo.description" placeholder="Enter Description of Role"
                          class="form-control" style="height:150px;"></textarea></td>
                     <td style="width:30px;"></td>
                 </tr>
-                <tr><td style="height:8px" colspan="3"></td></tr>
                 <tr>
                      <td class="gridTableColummHeader">Eligibility:</td>
-                     <td style="width:20px;"></td>
                      <td colspan="2"><textarea ng-model="roleInfo.requirements" placeholder="Enter Eligibility Requirements"
                          style="height:150px;" class="form-control"></textarea></td>
                     <td style="width:30px;"></td>
                 </tr>
-                <tr><td style="height:24px" colspan="3"></td></tr>
                 <tr>
                      <td class="gridTableColummHeader"></td>
-                     <td style="width:20px;"></td>
                      <td colspan="2"><button ng-click="updateRole()" class="btn btn-primary">Save Changes</button>
                      <button ng-click="closePanel()" class="btn btn-primary">Cancel</button>
                          &nbsp; &nbsp; &nbsp;
@@ -402,7 +440,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </tr>
             </table>
         </td>
-    </tr></table>
+        <td  class="well" ng-show="showInput && isNew" style="vertical-align:top;" >
+            <table width="100%">
+                <tr><td style="height:10px" colspan="3"></td></tr>
+                <tr>
+                    <td class="gridTableColummHeader">Name:</td>
+                    <td>
+                       <input ng-show="isNew" class="form-control" ng-model="roleInfo.name">
+                    </td>
+                </tr>
+                <tr>
+                     <td class="gridTableColummHeader"></td>
+                     <td colspan="2"><button ng-click="saveCreatedRole()" class="btn btn-primary">Create Role</button>
+                     </td>
+                </tr>
+            </table>
+        </td>    </tr></table>
 
 
 </div>

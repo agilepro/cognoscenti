@@ -3,14 +3,9 @@
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="java.text.SimpleDateFormat"
 %><%@page import="org.socialbiz.cog.TemplateRecord"
-%><%@page import="org.socialbiz.cog.MicroProfileMgr"
 %><%@page import="org.socialbiz.cog.LicenseForUser"
 %><%@page import="org.socialbiz.cog.AgendaItem"
 %><%@ include file="/spring/jsp/include.jsp"
-%><%!
-
-    SimpleDateFormat formatter  = new SimpleDateFormat ("MM/dd/yyyy");
-
 %><%
 /*
 Required parameters:
@@ -151,7 +146,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
 
     $scope.newPerson = "";
+    $scope.selectedPersonShow = false;
+    $scope.selectedPerson = "";
 
+    $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
+                    +" participate in an action item of the project '<%ar.writeHtml(ngp.getFullName());%>'."
+                    +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
+                    +" participate directly with the others through the site.";    
+    
     $scope.tagEntry = [];
     $scope.updateTagEntry = function() {
         var newList = [];
@@ -207,8 +209,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         return res;
     }
-    $scope.showUser = function(tag) {
-        //alert("gotcha:" + tag.name);
+    $scope.toggleSelectedPerson = function(tag) {
+        $scope.selectedPersonShow = !$scope.selectedPersonShow;
+        $scope.selectedPerson = tag;
     }
     
     $scope.editGoalInfo = false;
@@ -409,10 +412,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return res;
     }
     $scope.navigateToTopic = function(oneTopic) {
-        window.location="noteZoom"+oneTopic.id+".htm";
+        window.location="noteZoom"+encodeURIComponent(oneTopic.id)+".htm";
     }
     $scope.navigateToMeeting = function(meet) {
-        window.location="meetingFull.htm?id="+meet.id;
+        window.location="meetingFull.htm?id="+encodeURIComponent(meet.id);
+    }
+    $scope.navigateToUser = function(player) {
+        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.uid);
     }
 
     $scope.itemHasDoc = function(doc) {
@@ -463,6 +469,35 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
+    $scope.openInviteSender = function (player) {
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/InviteModal.html?t=<%=System.currentTimeMillis()%>',
+            controller: 'InviteModalCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                email: function () {
+                    return player.uid;
+                },
+                msg: function() {
+                    return $scope.inviteMsg;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (message) {
+            $scope.inviteMsg = message.msg;
+            message.userId = player.uid;
+            message.name = player.name;
+            message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "frontPage.htm")%>";
+            $scope.sendEmailLoginRequest(message);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+    
 });
 
 function addvalue() {
@@ -520,7 +555,7 @@ function addvalue() {
             <td class="gridTableColummHeader">Assigned To:</td>
             <td style="width:20px;"></td>
             <td>
-              <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+              <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
                   <auto-complete source="loadItems($query)"></auto-complete>
               </tags-input>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
@@ -529,16 +564,18 @@ function addvalue() {
                 </ul>
             </td>
         </tr>
-        <tr ng-show="showAddEmail"><td height="10px"></td></tr>
-        <tr ng-show="showAddEmail">
-            <td ></td>
+        <tr><td height="10px"></td></tr>
+        <tr ng-show="selectedPersonShow">
+            <td class="gridTableColummHeader"></td>
             <td style="width:20px;"></td>
-            <td class="form-inline form-group">
-                <button ng-click="addPerson();showAddEmail=false" class="form-control btn btn-primary">
-                    Add This Email</button>
-                <input type="text" ng-model="newPerson"  class="form-control"
-                    placeholder="Enter Email Address" style="width:350px;"
-                    typeahead="person as person.name for person in getPeople($viewValue) | limitTo:12">
+            <td class="well"> 
+               for <b>{{selectedPerson.name}}</b>:
+               <button ng-click="navigateToUser(selectedPerson)" class="btn btn-info">
+                   Visit Profile</button>
+               <button ng-click="openInviteSender(selectedPerson)" class="btn btn-info">
+                   Invite</button>
+               <button ng-click="selectedPersonShow=false" class="btn btn-info">
+                   Hide</button>
             </td>
         </tr>
         <tr><td height="20px"></td></tr>
@@ -1136,5 +1173,6 @@ function updateVal(){
 </div>
 
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/InviteModal.js"></script>
 
 
