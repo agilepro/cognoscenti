@@ -5,6 +5,7 @@
 %><%@page import="org.socialbiz.cog.HistoryRecord"
 %><%@page import="org.socialbiz.cog.NGBook"
 %><%@page import="org.socialbiz.cog.NGPage"
+%><%@page import="org.socialbiz.cog.NGWorkspace"
 %><%@page import="org.socialbiz.cog.NGPageIndex"
 %><%@page import="org.socialbiz.cog.NGSection"
 %><%@page import="org.socialbiz.cog.NGSession"
@@ -58,7 +59,7 @@
                 throw new Exception("Not able to find the topic with id ("+aNote+") so aborting the entire transfer.");
             }
             TopicRecord newLeaf = ngp.createNote();
-            newLeaf.copyFrom(leaf);
+            newLeaf.copyFrom(ar, (NGWorkspace)hookProj, leaf);
             newLeaf.setOwner(uProf.getUniversalId());
 
             ngp.copyHistoryForResource(hookProj, HistoryRecord.CONTEXT_TYPE_LEAFLET, leaf.getId(), newLeaf.getId());
@@ -79,7 +80,6 @@
             File oldFile = oldVers.getLocalFile();
             FileInputStream fis = new FileInputStream(oldFile);
             newDoc.streamNewVersion(ar,ngp,fis);
-            oldVers.releaseLocalFile();
 
             ngp.copyHistoryForResource(hookProj, HistoryRecord.CONTEXT_TYPE_DOCUMENT, oldDoc.getId(), newDoc.getId());
             oldDoc.setDeleted(ar);
@@ -87,9 +87,18 @@
         }
         for (String aTask : tasks) {
             GoalRecord task = hookProj.getGoalOrFail(aTask);
-            GoalRecord newTask = ngp.createGoal();
+            String newOwner = task.getCreator();
+            if (newOwner==null || newOwner.length()==0) {
+                newOwner = ar.getBestUserId();
+                //fix this so the copy works
+                task.setCreator(newOwner);
+            }
+            if (newOwner==null || newOwner.length()==0) {
+                throw new Exception("Why is the best user ID: "+newOwner);
+            }
+            GoalRecord newTask = ngp.createGoal(newOwner);
             newTask.copyFrom(task);
-            newTask.setCreator(uProf.getUniversalId());
+            newTask.setCreator(ar.getBestUserId());
             ngp.copyHistoryForResource(hookProj, HistoryRecord.CONTEXT_TYPE_TASK, task.getId(), newTask.getId());
 
             //disable the old task

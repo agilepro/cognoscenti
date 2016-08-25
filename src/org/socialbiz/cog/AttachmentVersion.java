@@ -76,8 +76,8 @@ public interface AttachmentVersion
     * as a stream of bytes.
     */
     public InputStream getInputStream() throws Exception;
-    
-    
+
+
     /**
     * Retrieves the version (if necessary) and returns a File object that points to
     * the (temporary) file that contains the contents.
@@ -94,9 +94,8 @@ public interface AttachmentVersion
     //public void commitLocalFile();
 
     /**
-    * If you called "getLocalFile" then it is possible that a temporary file has been created
-    * or other resources help.  Calling release will either delete that file, or otherwise
-    * free up the resources help to access the old version.
+    * In some cases in the past a local file would be created to access a version, and this
+    * would free up the local file (delete it).  This is no longer needed.
     */
     //public void releaseLocalFile();
 
@@ -115,5 +114,5 @@ public interface AttachmentVersion
      * Actually delete any file or record associated with this version
      */
     public void purgeLocalFile() throws Exception;
-    
+
 }

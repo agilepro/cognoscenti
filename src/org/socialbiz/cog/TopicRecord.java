@@ -89,6 +89,17 @@ public class TopicRecord extends CommentContainer implements EmailContext {
         }
     }
 
+
+    public void copyFrom(AuthRequest ar, NGWorkspace otherWorkspace, TopicRecord other) throws Exception {
+        JSONObject full = other.getJSONWithComments(ar, otherWorkspace);
+        //fake this to avoid the consistency assurance constraints
+        full.put("id", getId());
+        full.put("universalid", getUniversalId());
+        updateNoteFromJSON(full, ar);
+    }
+
+
+
     public String getId() {
         return getAttribute("id");
     }
