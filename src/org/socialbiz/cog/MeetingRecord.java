@@ -435,7 +435,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
     public String getNameAndDate() throws Exception {
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("hh:mm 'on' dd-MMM-yyyy");
+        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
         return getName() + " @ " + DATE_FORMAT.format(new Date(getStartTime()));
     }
 
@@ -443,7 +443,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         StringBuilder sb = new StringBuilder();
         Calendar cal = Calendar.getInstance();
 
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("hh:mm 'on' dd-MMM-yyyy");
+        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
         String dateRep = DATE_FORMAT.format(new Date(getStartTime()));
 
         sb.append("!!!"+getName());
@@ -553,7 +553,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         ar.writeHtml(getName());
         ar.write("</h1>");
 
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("hh:mm 'on' dd-MMM-yyyy");
+        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
         String dateRep = DATE_FORMAT.format(new Date(getStartTime()));
         ar.write("\n<h2>");
         ar.writeHtml(dateRep);

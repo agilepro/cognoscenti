@@ -53,7 +53,7 @@ public class UtilityMethods {
      * Split a string into an array.
      * This method NEVER returns a null.
      * If passed a null, or a zero length string, it returns an empty array
-     * 
+     *
      * @deprecated use {@link #splitString(String, char)} instead
      */
     static public String[] splitOnDelimiter(String str, char delim) {
@@ -236,7 +236,7 @@ public class UtilityMethods {
         if (ms <= 0) {
             return "";
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         Date dt = new Date(ms);
         return sdf.format(dt);
     }
@@ -248,7 +248,7 @@ public class UtilityMethods {
         if (date.trim().equals("")) {
             return 0;
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         return sdf.parse(date).getTime();
     }
 
