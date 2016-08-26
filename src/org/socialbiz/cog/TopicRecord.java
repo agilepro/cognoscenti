@@ -96,6 +96,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
         full.put("id", getId());
         full.put("universalid", getUniversalId());
         updateNoteFromJSON(full, ar);
+        updateHtmlFromJSON(ar, full);
     }
 
 

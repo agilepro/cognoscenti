@@ -66,6 +66,7 @@ public class GoalRecord extends BaseRecord {
         setPercentComplete(other.getPercentComplete());
         setAssigneeCommaSeparatedList(other.getAssigneeCommaSeparatedList());
         setLastState(other.getLastState());
+        setProspects(other.getProspects());
     }
 
     /**
@@ -1179,8 +1180,8 @@ public class GoalRecord extends BaseRecord {
         Cognoscenti cog = ar.getCogInstance();
         //note that assignee means two different things in this next line
         boolean recipientIsAssignedTask = isAssignee(ooa.getAssignee());
-        
-        
+
+
 
         if (requesterProfile==null) {
             System.out.println("DATA PROBLEM: action item came from a person without a profile ("+getCreator()+") ignoring");
@@ -1216,7 +1217,7 @@ public class GoalRecord extends BaseRecord {
 
         File emailFolder = cog.getConfig().getFileFromRoot("email");
         File templateFile = new File(emailFolder, "ActionItem.chtml");
-        
+
         ChunkTemplate.streamIt(clone.w, templateFile, data);
         clone.flush();
 

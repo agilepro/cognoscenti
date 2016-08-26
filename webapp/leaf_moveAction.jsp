@@ -82,6 +82,8 @@
             newDoc.streamNewVersion(ar,ngp,fis);
 
             ngp.copyHistoryForResource(hookProj, HistoryRecord.CONTEXT_TYPE_DOCUMENT, oldDoc.getId(), newDoc.getId());
+            newDoc.setModifiedBy(oldDoc.getModifiedBy());
+            newDoc.setModifiedDate(oldDoc.getModifiedDate());
             oldDoc.setDeleted(ar);
             oldDoc.setMovedTo(ngp.getKey(), newDoc.getId());
         }
