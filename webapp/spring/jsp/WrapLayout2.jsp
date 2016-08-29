@@ -185,8 +185,11 @@
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <script src="<%=ar.baseURL%>jfunc.js"></script>
 
+	<!-- INCLUDE web fonts -->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
+	<link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+		  
     <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
