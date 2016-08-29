@@ -234,16 +234,16 @@
 
 <ol class="breadcrumb">
 <% if(isUserHeader) { %>
-  <li>Users</li>
+  <!--li>Users</li-->
   <li><a href="<%=userRelPath%>UserHome.htm"><% ar.writeHtml(userName); %></a></li>
   <li><% ar.writeHtml(jspName); %></li>
 <% } else if(isSiteHeader) { %>
-  <li>Site</li>
+  <!--li>Site</li-->
   <li><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/accountListProjects.htm">
       <%ar.writeHtml(title);%></a></li>
   <li><% ar.writeHtml(jspName); %></li>
 <% } else { %>
-  <li>Workspace</li>
+  <!--li>Workspace</li-->
   <li><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/accountListProjects.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
   <li><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/frontPage.htm">
       <%ar.writeHtml(ngp.getFullName());%></a></li>

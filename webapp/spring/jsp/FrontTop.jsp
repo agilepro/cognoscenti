@@ -230,7 +230,7 @@ app.controller('myCtrl', function($scope, $http) {
                    <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
                </g>
                <ellipse cx="175" cy="175" rx="21" ry="20"
-                    style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer" ></ellipse>
+                    style="fill:white;stroke:saddlebrown;stroke-width:2;cursor:pointer" ></ellipse>
                <g ng-repeat="child in children">
                    <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}"  ng-click="ellipse(child)"
                        rx="60" ry="30" style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer;" ></ellipse>

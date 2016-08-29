@@ -82,6 +82,10 @@ Required parameters:
                 objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
             }
         }
+        else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
+            url = ar.getResourceURL(ngp, "decisionList.htm?id="+objectKey);
+            MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
+        }
         JSONObject jObj = hist.getJSON(ngp,ar);
         jObj.put("contextUrl", url );
 
@@ -349,7 +353,13 @@ app.controller('myCtrl', function($scope, $http) {
       <div class="col-md-4 col-sm-12">
 
         <div class="panel panel-default">
-          <div class="panel-heading headingfont">Recent Updates</div>
+          <div class="panel-heading headingfont">
+              <div style="float:left">Recent Updates</div>
+              <div style="float:right">
+                  <a href="history.htm">
+                      <i class="fa fa-search"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
           <div class="panel-body">
             <div ng-repeat="hist in recentChanges">
               <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName|limitTo:28}}</a>
@@ -360,7 +370,13 @@ app.controller('myCtrl', function($scope, $http) {
 
 
         <div class="panel panel-default">
-          <div class="panel-heading headingfont">Upcoming Meetings</div>
+          <div class="panel-heading headingfont">
+              <div style="float:left">Upcoming Meetings</div>
+              <div style="float:right">
+                  <a href="meetingList.htm">
+                      <i class="fa fa-search"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
           <div class="panel-body">
             <div ng-repeat="meet in myMeetings">
               <a href="meetingFull.htm?id={{meet.id}}">{{meet.name}} @ {{meet.startTime|date}}</a>
@@ -372,7 +388,13 @@ app.controller('myCtrl', function($scope, $http) {
 
 
         <div class="panel panel-default">
-          <div class="panel-heading headingfont">Your Action Items</div>
+          <div class="panel-heading headingfont">
+              <div style="float:left">Your Action Items</div>
+              <div style="float:right">
+                  <a href="goalList.htm">
+                      <i class="fa fa-search"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
           <div class="panel-body">
             <div ng-repeat="act in myActions">
               <a href="task{{act.id}}.htm">{{act.synopsis}}</a>
@@ -383,7 +405,13 @@ app.controller('myCtrl', function($scope, $http) {
 
 
         <div class="panel panel-default">
-          <div class="panel-heading headingfont">Recent History</div>
+          <div class="panel-heading headingfont">
+              <div style="float:left">Recent History</div>
+              <div style="float:right">
+                  <a href="history.htm">
+                      <i class="fa fa-search"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
           <div class="panel-body">
             <div ng-repeat="hist in topHistory">
               {{hist.time|date}} -
@@ -454,7 +482,13 @@ app.controller('myCtrl', function($scope, $http) {
       <div class="col-md-4 col-sm-12">
 
         <div class="panel panel-default">
-          <div class="panel-heading headingfont">Your Roles</div>
+          <div class="panel-heading headingfont">
+              <div style="float:left">Your Roles</div>
+              <div style="float:right">
+                  <a href="goalList.htm">
+                      <i class="fa fa-search"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
           <div class="panel-body">
             <div ng-repeat="role in yourRoles">
               <a href="roleManagement.htm">{{role}}</a>
