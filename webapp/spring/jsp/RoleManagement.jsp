@@ -87,6 +87,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.updateRole = function() {
         var key = $scope.roleInfo.name;
         var postURL = "roleUpdate.json?op=Update";
+        $scope.roleInfo.players.forEach( function(item) {
+            if (!item.uid) {
+                item.uid = item.name;
+            }
+        });
+        console.log("SAVING: ", $scope.roleInfo);
         var postdata = angular.toJson($scope.roleInfo);
         if ($scope.isNew) {
             $scope.allRoles.push({name: key,color: $scope.roleInfo.color});
