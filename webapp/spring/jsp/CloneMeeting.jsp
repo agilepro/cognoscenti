@@ -92,6 +92,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.meeting.id = "~new~";
         $scope.meeting.agenda.forEach( function(agendaitem) {
             agendaitem.readyToGo = false;
+            agendaitem.comments = [];
         });
         var postdata = angular.toJson($scope.meeting);
         $scope.showError=false;

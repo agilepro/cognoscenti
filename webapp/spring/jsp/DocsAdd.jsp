@@ -70,9 +70,9 @@ app.controller('myCtrl', function($scope, $http) {
                 onClick="location.href='linkGoogleDoc.htm<%=folderPart%>'">Attach Google Doc</button>
         </td>
         <td style="padding:15px">
-            <p>Cognoscenti can access documents from Google Drive, also known as
+            <p>Weaver can access documents from Google Drive, also known as
             Google Docs.  In the current implementation you create or locate the document on
-            Google Drive, open it for editing, and save the URL for that into your Cognoscenti workspace.
+            Google Drive, open it for editing, and save the URL for that into your Weaver workspace.
             </p>
         </td>
     </tr>

@@ -105,7 +105,7 @@
     </definition>
 
     <definition name="landingPage" extends="slimLayout">
-        <put-attribute name="title" value="Welcome to Cognoscenti" />
+        <put-attribute name="title" value="Welcome to Weaver" />
         <put-attribute name="body" value="/spring/jsp/index.jsp" />
     </definition>
 
