@@ -484,6 +484,12 @@ public class CommentRecord extends DOMFace {
                 return "proposal";
             case CommentRecord.COMMENT_TYPE_REQUEST:
                 return "round";
+            case CommentRecord.COMMENT_TYPE_MEETING:
+                return "meeting notice";
+            case CommentRecord.COMMENT_TYPE_MINUTES:
+                return "minutes";
+            case CommentRecord.COMMENT_TYPE_PHASE_CHANGE:
+                return "phase change";
         }
         throw new RuntimeException("Program Logic Error: This comment type is missing a name: "+this.getCommentType());
     }
