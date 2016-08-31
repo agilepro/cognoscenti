@@ -53,7 +53,7 @@ public class Cognoscenti {
     public List<String> projectsWithEmailToSend = new ArrayList<String>();
 
     private Cognoscenti(ServletContext sc) {
-        System.out.println("Cognoscenti Server Object == Constructing");
+        System.out.println("Weaver Server Object == Constructing");
         rootFolder = new File(sc.getRealPath(""));
     }
 
@@ -83,14 +83,16 @@ public class Cognoscenti {
      * @param resourceBundle the resource bundle from the wrapped servlet
      */
     public static void startTheServer(ServletConfig config) {
-System.out.println("   _________                                                        __  .__  ");
-System.out.println("   \\_   ___ \\  ____   ____   ____   ____  ______ ____  ____   _____/  |_|__| ");
-System.out.println("   /    \\  \\/ /  _ \\ / ___\\ /    \\ /  _ \\/  ___// ___\\/ __ \\ /    \\   __\\  | ");
-System.out.println("   \\     \\___(  <_> ) /_/  >   |  (  <_> )___ \\\\  \\__\\  ___/|   |  \\  | |  | ");
-System.out.println("    \\______  /\\____/\\___  /|___|  /\\____/____  >\\___  >___  >___|  /__| |__| ");
-System.out.println("           \\/      /_____/      \\/           \\/     \\/    \\/     \\/          ");
+System.out.println("   __    __    ___   ____  __ __    ___  ____       ");
+System.out.println("  |  |__|  |  /  _] /    ||  |  |  /  _]|    \\      ");
+System.out.println("  |  |  |  | /  [_ |  o  ||  |  | /  [_ |  D  )     ");
+System.out.println("  |  |  |  ||    _]|     ||  |  ||    _]|    /      ");
+System.out.println("  |  `  '  ||   [_ |  _  ||  :  ||   [_ |    \\      ");
+System.out.println("   \\      / |     ||  |  | \\   / |     ||  .  \\     ");
+System.out.println("    \\_/\\_/  |_____||__|__|  \\_/  |_____||__|\\_|     ");
 System.out.println("");
-System.out.println("Cognoscenti Server Object == Start the Server");
+
+System.out.println("Weaver Server Object == Start the Server");
 
         //first thing to do is to get the cognoscenti object associated with this app
         ServletContext sc = config.getServletContext();
@@ -150,7 +152,7 @@ System.out.println("Cognoscenti Server Object == Start the Server");
      * Useful before calling garbage collect and reinitialize.
      */
     public synchronized void clearAllStaticVariables() {
-        System.out.println("Cognoscenti Server Object == clear all static variables");
+        System.out.println("Weaver Server Object == clear all static variables");
         NGPageIndex.clearAllStaticVars();
         NGBook.clearAllStaticVars();
         NGPage.clearAllStaticVars();
@@ -178,7 +180,7 @@ System.out.println("Cognoscenti Server Object == Start the Server");
      * @exception will be thrown if anything in the configuration appears to be incorrect
      */
     public synchronized void initializeAll(Timer backgroundTimer) throws Exception {
-        System.out.println("Cognoscenti Server Object == Initialize All");
+        System.out.println("Weaver Server Object == Initialize All");
         try {
 
             //TODO: reexamine this logic

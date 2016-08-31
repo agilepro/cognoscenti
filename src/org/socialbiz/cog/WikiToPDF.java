@@ -254,7 +254,7 @@ public class WikiToPDF
 
     private void writeTOCPage(NGPage ngp, Vector<TopicRecord> publicNoteList,
             Vector<TopicRecord> memberNoteList)  throws Exception {
-        headerText = "Topic report generated from Cognoscenti";
+        headerText = "Topic report generated from Weaver";
         footerText = "Generated: 2012-06-23  --  Page 1";
 
         startPage();

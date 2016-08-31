@@ -79,7 +79,7 @@ public class HistoricActions {
         clone.write("/requestedAccounts.htm\">Click here to review the requested sites list</a>");
         clone.write("</td></tr>");
         clone.write("</table>\n");
-        clone.write("<p>Being a <b>Super Admin</b> of the Cognoscenti console, you have rights to accept or deny this request.</p>");
+        clone.write("<p>Being a <b>Super Admin</b> of the Weaver console, you have rights to accept or deny this request.</p>");
         clone.write("</body></html>");
         clone.flush();
 
@@ -131,7 +131,7 @@ public class HistoricActions {
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.write("<html><body>\n");
-        clone.write("<p>This message was sent automatically from Cognoscenti to keep you up ");
+        clone.write("<p>This message was sent automatically from Weaver to keep you up ");
         clone.write("to date on the status of your Site.</p>");
         clone.write("\n<table>");
         clone.write("\n<tr><td>Purpose: &nbsp;</td><td>You requested a new account</td></tr>\n");

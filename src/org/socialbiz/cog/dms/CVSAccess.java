@@ -98,7 +98,7 @@ public class CVSAccess extends ConnectionTypeBase {
 
         String cmdString1 = getCVSRoot() + " add " + addQuote(fileName);
         String cmdString2 = getCVSRoot() + " "
-                + "commit -m \"Initial Revision by Cognoscenti User " + loggedInUserName
+                + "commit -m \"Initial Revision by Weaver User " + loggedInUserName
                 + " \" " + addQuote(fileName);
         runCommand(cmdString1, null, destFile.getParentFile());
         runCommand(cmdString2, null, destFile.getParentFile());
@@ -117,7 +117,7 @@ public class CVSAccess extends ConnectionTypeBase {
 
         String cmdString1 = getCVSRoot() + " delete " + addQuote(fn);
         String cmdString2 = getCVSRoot() + " "
-        + "commit -m \"File deleted by Cognoscenti User " + loggedInUserName
+        + "commit -m \"File deleted by Weaver User " + loggedInUserName
         + " \" " + addQuote(fn);
 
          runCommand(cmdString1, null, parent);
@@ -194,7 +194,7 @@ public class CVSAccess extends ConnectionTypeBase {
 
         File desFile = new File(path);
         String cmdString = getCVSRoot() + " "
-        + "commit -m \"Revised by Cognoscenti User " + loggedInUserName
+        + "commit -m \"Revised by Weaver User " + loggedInUserName
             + "\" " + addQuote(desFile.getName());
 
         runCommand(cmdString, null, desFile.getParentFile());

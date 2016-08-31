@@ -239,7 +239,7 @@ public class DailyDigest {
             up.writeLinkAlways(clone);
             clone.write(",</p>\n");
 
-            clone.write("<p>This is a daily digest from Cognoscenti for the time period starting <b>");
+            clone.write("<p>This is a daily digest from Weaver for the time period starting <b>");
             SectionUtil.nicePrintDateAndTime(clone.w,
                     historyStartTime);
             clone.write("</b> and ending <b>");

@@ -122,7 +122,7 @@ public class OptOutAddr {
         UserProfile up = UserManager.findUserByAnyId(emailId);
         if(up != null){
             clone.write("  To change the e-mail communication you receive from ");
-            clone.write("Cognoscenti in future, you can ");
+            clone.write("Weaver in future, you can ");
             clone.write("<a href=\"");
             clone.writeHtml(clone.baseURL);
             clone.write("v/unsubscribe.htm?accessCode=");
@@ -134,7 +134,7 @@ public class OptOutAddr {
             clone.write("\">alter your subscriptions</a>.</font></p>");
         }
         else {
-            clone.write("  You have not created a profile at Cognoscenti, or have not ");
+            clone.write("  You have not created a profile at Weaver, or have not ");
             clone.write("associated this address with your existing profile.</font></p>");
         }
     }
