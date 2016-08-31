@@ -169,6 +169,7 @@
     <meta http-equiv="Content-Language" content="en-us" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="imagetoolbar" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
 
     <!-- INCLUDE the ANGULAR JS library -->
     <script src="<%=ar.baseURL%>jscript/angular.js"></script>
