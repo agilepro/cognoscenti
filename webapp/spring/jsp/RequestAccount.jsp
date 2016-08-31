@@ -4,18 +4,9 @@
 %><%@page import="org.socialbiz.cog.SiteReqFile"
 %><%@page import="org.socialbiz.cog.SiteRequest"
 %><%
-/*
-Required parameter:
 
-    1. userKey : This is the key of user .
-
-*/
-
-    String userKey = ar.reqParam("userKey");
-
-%><%!String pageTitle="";%><%
     request.setCharacterEncoding("UTF-8");
-    UserProfile  uProf = UserManager.getUserProfileByKey(userKey);
+    UserProfile  uProf = ar.getUserProfile();
 %>
 <div class="pageHeading">Request a New Site Space</div>
 <div class="pageSubHeading">From here you can request to create a new site from where you can create & handle multiple projects.</div>
