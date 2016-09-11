@@ -11,6 +11,9 @@
       padding:2px;
       margin:2px;
   }
+  .spaceyTable tr td {
+      padding:5px;
+  }
 </style>
 
 <div class="modal-header">
@@ -77,7 +80,7 @@
    </div>
    <div ng-show="createMode">
         <div >
-            <table>
+            <table class="spaceyTable">
                <tr>
                     <td class="gridTableColummHeader">Synopsis:</td>
                     <td style="width:20px;"></td>
@@ -85,16 +88,16 @@
                         <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
                     </td>
                </tr>
-               <tr><td style="height:10px"></td></tr>
-               <tr>
+                <tr>
                     <td class="gridTableColummHeader">Assignee:</td>
                     <td style="width:20px;"></td>
                     <td colspan="2">
-                        <input type="text" ng-model="newGoal.assignee" class="form-control" placeholder="Who should do it"
-                           typeahead="person as person.name for person in getPeople($viewValue) | limitTo:12">
+                      <tags-input ng-model="newGoal.assignTo" placeholder="Enter user name or id"
+                                  display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+                          <auto-complete source="loadItems($query)"></auto-complete>
+                      </tags-input>
                     </td>
                 </tr>
-                <tr><td style="height:10px"></td></tr>
                 <tr>
                     <td class="gridTableColummHeader">Description:</td>
                     <td style="width:20px;"></td>
@@ -103,7 +106,6 @@
                             style="width:450px;height:100px" placeholder="Details"></textarea>
                     </td>
                 </tr>
-                <tr><td style="height:10px"></td></tr>
                 <tr>
                     <td class="gridTableColummHeader">Due Date:</td>
                     <td style="width:20px;"></td>

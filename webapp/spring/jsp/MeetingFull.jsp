@@ -476,8 +476,38 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return "background-color:lavender";
     }
 
+    $scope.startEditMeetingInfo = function() {
+        $scope.savePendingEdits();
+        $scope.editMeetingInfo=true;
+    }
+    $scope.startEditDescription = function() {
+        $scope.savePendingEdits();
+        $scope.editMeetingDesc=true
+    }
+    $scope.startItemDetailEdit = function(item) {
+        $scope.savePendingEdits();
+        $scope.editItemDetailsMap[item.id]=true;
+        $scope.showItemMap[item.id]=true;
+    }
+    $scope.savePendingEdits = function() {
+        if ($scope.editMeetingDesc) {
+            $scope.savePartialMeeting(['meetingInfo']);
+            $scope.editMeetingDesc = false;
+        }
+        if ($scope.editMeetingInfo) {
+            $scope.savePartialMeeting(['name','startTime','targetRole','duration','reminderTime','meetingType','reminderSent']);
+            $scope.editMeetingInfo = false;
+        }
+        $scope.meeting.agenda.forEach( function(item) {
+            if ($scope.editItemDetailsMap[item.id]) {
+                $scope.saveAgendaItemParts(item, ['subject','duration','presenters','topicLink']);
+                $scope.editItemDetailsMap[item.id] = false;
+            }
+        });
+    }
 
     $scope.changeMeetingState = function(newState) {
+        $scope.savePendingEdits();
         $scope.meeting.state = newState;
         $scope.savePartialMeeting(['state']);
     };
@@ -570,7 +600,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             actionItems:[]
         };
         $scope.meeting.agenda.push(newAgenda);
-        $scope.editItemDetailsMap[newAgenda.id]=true;
+        $scope.startItemDetailEdit(newAgenda);
     };
 
 
@@ -1211,6 +1241,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return selected;
     }
     $scope.noResponseYet = function(cmt) {
+        if (cmt.state!=12) { //not open
+            return false;
+        }
         var whatNot = $scope.getResponse(cmt);
         return (whatNot.length == 0);
     }
@@ -1636,11 +1669,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 {{meeting.name}} @ {{meeting.startTime|date: "HH:mm 'on' dd-MMM-yyyy"}}
             </span>
 <%if (isLoggedIn) { %>
-            <span ng-show="meeting.state<3">
-                (
-                <i class="fa fa-cogs meeting-icon" ng-click="editMeetingInfo=true"></i>
-                <i class="fa fa-pencil-square-o meeting-icon" ng-click="editMeetingDesc=true"></i>
-                )
+           <span class="dropdown">
+                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
+                    data-toggle="dropdown"> <span class="caret"></span> </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
+                  <li role="presentation">
+                      <a role="menuitem" ng-click="startEditMeetingInfo()">
+                      <i class="fa fa-cogs"></i>
+                      Meeting Settings</a></li>
+                  <li role="presentation">
+                      <a role="menuitem" ng-click="startEditDescription()">
+                      <i class="fa fa-pencil-square-o"></i>
+                      Edit Description</a></li>
+                  <li role="presentation">
+                      <a role="menuitem" href="meetingTime{{meeting.id}}.ics">
+                      <i class="fa fa-book"></i>
+                      Create Calendar Entry</a></li>
+                </ul>
             </span>
 <% } %>            
           </div>
@@ -1750,7 +1795,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <td class="gridTableColummHeader"></td>
                     <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
-                        <button ng-click="savePartialMeeting(['name','startTime','targetRole','duration','reminderTime','meetingType','reminderSent'])" class="btn btn-danger">Save</button>
+                        <button ng-click="savePendingEdits()" class="btn btn-danger">Save</button>
                         <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
                     </td>
                 </tr>
@@ -1770,7 +1815,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div class="well leafContent">
                 <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
                      class="leafContent" style="min-height:200px;" ></div>
-                <button ng-click="savePartialMeeting(['meetingInfo'])" class="btn btn-danger">Save</button>
+                <button ng-click="savePendingEdits()" class="btn btn-danger">Save</button>
                 <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
             </div>
         </td>
@@ -1896,8 +1941,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="editItemDetailsMap[item.id]=true;showItemMap[item.id]=true"><i class="fa fa-cogs"></i> Item Settings</a></li>
+                      <li role="presentation">                      
+                          <a role="menuitem" ng-click="startItemDetailEdit(item)"><i class="fa fa-cogs"></i> Item Settings</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i> Move Up</a></li>
                       <li role="presentation">
@@ -1929,7 +1974,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                       <li role="presentation">
-                          <a role="menuitem" ng-click="editItemDetailsMap[item.id]=true;showItemMap[item.id]=true"><i class="fa fa-cogs"></i> Item Settings</a></li>
+                          <a role="menuitem" ng-click="startItemDetailEdit(item)">
+                          <i class="fa fa-cogs"></i> 
+                          Item Settings</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i> 
                              Move Up</a></li>
@@ -1973,7 +2020,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <% } %>
             </div>
             <div>
-                <i ng-click="editItemDetailsMap[item.id]=true;showItemMap[item.id]=true">
+                <i ng-click="startItemDetailEdit(item)">
                 {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
             </div>
           </div>
@@ -2011,7 +2058,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>
             </div>
             <div class="form-inline form-group">
-              <button ng-click="saveAgendaItemParts(item, ['subject','duration','presenters'])" class="btn btn-danger">Save</button>
+              <button ng-click="savePendingEdits()" class="btn btn-danger">Save</button>
               <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
             </div>
           </div>
@@ -2141,124 +2188,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
       </table>
       </div>    
+     
+
       
                           <!--  AGENDA comments -->
       <table ng-show="showItemMap[item.id] && !item.isBlank" >
       <tr ng-repeat="cmt in item.comments">
-           <td style="width:50px;vertical-align:top;padding:15px;">
-               <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg"
-               title="{{cmt.userName}} - {{cmt.user}}">
-           </td>
-           <td>
-               <div class="comment-outer  {{stateClass(cmt)}}">
-                   <div>
-                       <div class="dropdown" style="float:left">
-                           <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
-                               data-toggle="dropdown"> <span class="caret"></span>
-                           </button>
-                           <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-                              <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
-                                  <a role="menuitem" ng-click="openCommentEditor(item,cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
-                                  <a role="menuitem" ng-click="openResponseEditor(cmt)">Create/Edit Response:</a></li>
-                              <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                                  <a role="menuitem" ng-click="postComment(item, cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
-                                  <a role="menuitem" ng-click="deleteComment(item, cmt)">Delete Your {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.state==12">
-                                  <a role="menuitem" ng-click="closeComment(item, cmt)">Close {{commentTypeName(cmt)}}</a></li>
-                              <li role="presentation" ng-show="cmt.commentType==1">
-                                  <a role="menuitem" ng-click="openCommentCreator(item,1,cmt.time)">Reply</a></li>
-                              <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
-                                  <a role="menuitem" ng-click="openCommentCreator(item,2,cmt.time,cmt.html)">Make Modified Proposal</a></li>
-                              <li role="presentation" >
-                                  <a role="menuitem" ng-click="openDecisionEditor(item, cmt)">Create New Decision</a></li>
-                           </ul>
-                       </div>
 
-         <span ng-show="cmt.commentType==1" title="{{stateName(cmt)}} Comment">
-             <i class="fa fa-comments-o" style="font-size:130%"></i></span>
-         <span ng-show="cmt.commentType==2" title="{{stateName(cmt)}} Proposal">
-             <i class="fa fa-star-o" style="font-size:130%"></i></span>
-         <span ng-show="cmt.commentType==3" title="{{stateName(cmt)}} Round">
-             <i class="fa fa-question-circle" style="font-size:130%"></i></span>
-         <span ng-show="cmt.commentType==5" title="{{stateName(cmt)}} Minutes">
-             <i class="fa fa-file-code-o" style="font-size:130%"></i></span>
-                       &nbsp; 
-         <span title="Created {{cmt.dueDate|date:'medium'}}">{{cmt.time | date}}</span> -
-                       <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
-                          <span class="red">{{cmt.userName}}</span>
-                       </a>
-                       <span ng-show="cmt.emailPending">-email pending-</span>
-                       <span ng-show="cmt.replyTo">
-                             <span ng-show="cmt.commentType==1">In reply to
-                                 <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
-                                 <i class="fa fa-comments-o"></i> {{findComment(item,cmt.replyTo).userName}}</a></span>
-                             <span ng-show="cmt.commentType>1">Based on
-                                 <a style="border-color:white;" href="#cmt{{cmt.replyTo}}">
-                                 <i class="fa fa-star-o"></i> {{findComment(item,cmt.replyTo).userName}}</a></span>
-                       </span>
-                       <span style="float:right;color:green;" title="Due {{cmt.dueDate|date:'medium'}}">{{calcDueDisplay(cmt)}}</span>
-                       <div style="clear:both"></div>
-
-                   </div>
-                   <div ng-show="cmt.state==11">
-                       Draft {{commentTypeName(cmt)}} needs posting to be seen by others
-                   </div>
-                   <div class="leafContent comment-inner">
-                       <div ng-bind-html="cmt.html"></div>
-                   </div>
-
-                   <table style="min-width:500px;" ng-show="cmt.commentType==2 || cmt.commentType==3">
-                   <tr ng-repeat="resp in cmt.responses">
-                       <td style="padding:5px;max-width:100px;">
-                           <div ng-show="cmt.commentType==2"><b>{{resp.choice}}</b></div>
-                           <div>{{resp.userName}}</div>
-                       </td>
-                       <td>
-                         <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>'" ng-click="openResponseEditor(cmt)" style="cursor:pointer;">
-                           <a href="#cmt{{cmt.time}}" title="Edit your response to this {{commentTypeName(cmt)}}"><i class="fa fa-edit"></i></a>
-                         </span>
-                       </td>
-                       <td style="padding:5px;">
-                          <div class="leafContent comment-inner" ng-bind-html="resp.html"></div>
-                       </td>
-                   </tr>
-                   <tr ng-show="noResponseYet(cmt) && cmt.state==12">
-                       <td style="padding:5px;max-width:100px;">
-                           <b>????</b>
-                           <br/>
-                           <% ar.writeHtml(currentUserName); %>
-                       </td>
-                       <td>
-                         <span ng-click="openResponseEditor(cmt)" style="cursor:pointer;">
-                           <a href="#" title="Create a response to this {{commentTypeName(cmt)}}"><i class="fa fa-edit"></i></a>
-                         </span>
-                       </td>
-                       <td style="padding:5px;">
-                          <div class="leafContent comment-inner"><i>Click edit button to register a response to this {{commentTypeName(cmt)}}.</i></div>
-                       </td>
-                   </tr>
-                   </table>
-                   <div class="leafContent comment-inner" ng-show="cmt.state==13 && (cmt.commentType==2 || cmt.commentType==3)">
-                       <div ng-bind-html="cmt.outcome"></div>
-                   </div>
-                   <div ng-show="cmt.replies.length>0 && cmt.commentType>1">
-                       See proposals:
-                       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
-                           <i class="fa fa-star-o"></i> {{findComment(item,reply).userName}}</a> </span>
-                   </div>
-                   <div ng-show="cmt.replies.length>0 && cmt.commentType==1">
-                       See replies:
-                       <span ng-repeat="reply in cmt.replies"><a href="#cmt{{reply}}" >
-                           <i class="fa fa-comments-o"></i> {{findComment(item,reply).userName}}</a> </span>
-                   </div>
-                   <div ng-show="cmt.decision">
-                       See Linked Decision: <a href="decisionList.htm#DEC{{cmt.decision}}">#{{cmt.decision}}</a>
-                   </div>
-
-               </div>
-           </td>
+          <%@ include file="/spring/jsp/CommentView.jsp"%>
+     
       </tr>
 <%if (isLoggedIn) { %>
       <tr>

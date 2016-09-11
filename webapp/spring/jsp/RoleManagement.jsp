@@ -25,6 +25,10 @@
             if (ale.getName().length()>0) {
                 playlist.put(ale.getJSON());
             }
+            UserProfile uP2 = ale.getUserProfile();
+            if (uP2!=null) {
+                uP2.assureImage(ar.getCogInstance());
+            }
         }
         rollo.put("players", playlist);
         allRoles.put(rollo);

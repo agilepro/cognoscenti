@@ -79,6 +79,9 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         setAttributeLong("startTime", newVal);
     }
 
+    /**
+     * Meeting duration in minutes
+     */
     public long getDuration()  throws Exception {
         return getAttributeLong("duration");
     }

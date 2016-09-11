@@ -8,10 +8,11 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
         $scope.selectedActions = [];
     }
     $scope.newGoal = {};
+    $scope.newGoal.assignTo = [];
     $scope.realFilter = "";
     $scope.createMode = false;
     $scope.allPeople = allPeople;
-    $scope.dummyDate1 = new Date();
+    $scope.dummyDate1 = new Date( new Date().getTime() +  (7*24*60*60*1000) );
     
     
 
@@ -80,6 +81,21 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
     $scope.datePickDisable = function(date, mode) {
         return false;
     };
+    $scope.loadItems = function(query) {
+        var res = [];
+        var q = query.toLowerCase();
+        $scope.allPeople.forEach( function(person) {
+            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
+                return;
+            }
+            var nix = {};
+            nix.name = person.name; 
+            nix.uid  = person.uid; 
+            nix.key  = person.key; 
+            res.push(nix);
+        });
+        return res;
+    }
     
     $scope.createActionItem = function(item) {
         var postURL = "createActionItem.json";
@@ -89,16 +105,11 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
             return;
         }
         $scope.newGoal.state=2;
-        $scope.newGoal.assignTo = [];
-        var player = $scope.newGoal.assignee;
-        if (typeof player == "string") {
-            var pos = player.lastIndexOf(" ");
-            var name = player.substring(0,pos).trim();
-            var uid = player.substring(pos).trim();
-            player = {name: name, uid: uid};
-        }
-
-        $scope.newGoal.assignTo.push(player);
+        $scope.newGoal.assignTo.forEach( function(player) {
+            if (!player.uid) {
+                player.uid = player.name;
+            }
+        });
         $scope.newGoal.duedate = $scope.dummyDate1.getTime();
 
         var postdata = angular.toJson($scope.newGoal);

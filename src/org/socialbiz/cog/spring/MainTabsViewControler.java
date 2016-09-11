@@ -20,8 +20,11 @@
 
 package org.socialbiz.cog.spring;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -209,6 +212,71 @@ public class MainTabsViewControler extends BaseController {
         }
     }
 
+
+    @RequestMapping(value = "/{siteId}/{pageId}/meetingTime{meetId}.ics", method = RequestMethod.GET)
+    public void meetingTime(@PathVariable String siteId,@PathVariable String pageId,
+            @PathVariable String meetId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            ar.assertLoggedIn("must be logged in to access calendar file");
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            MeetingRecord meet = ngw.findMeeting(meetId);
+            boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
+            if (!canAccess) {
+                throw new Exception("Unable to access that meeting with user "+ar.getBestUserId());
+            }
+
+            AddressListEntry ale = new AddressListEntry(meet.getOwner());
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("BEGIN:VCALENDAR\n");
+            sb.append("VERSION:2.0\n");
+            sb.append("PRODID:-//Fujitsu/Weaver//NONSGML v1.0//EN\n");
+            sb.append("BEGIN:VEVENT\n");
+            sb.append("UID:"+ngw.getSiteKey()+ngw.getKey()+meet.getId()+"\n");
+            sb.append("DTSTAMP:"+getSpecialDateFormat(System.currentTimeMillis())+"\n");
+            sb.append("ORGANIZER:CN="+ale.getName()+":MAILTO:"+ale.getEmail()+"\n");
+            sb.append("DTSTART:"+getSpecialDateFormat(meet.getStartTime())+"\n");
+            sb.append("DTEND:"+getSpecialDateFormat(meet.getStartTime()+(meet.getDuration()*60*1000))+"\n");
+            sb.append("SUMMARY:"+meet.getName()+"\n");
+            sb.append("DESCRIPTION:"+specialEncode(meet.getMeetingDescription())+"\n");
+            sb.append("END:VEVENT\n");
+            sb.append("END:VCALENDAR\n");
+
+            ar.resp.setContentType("text/calendar");
+            ar.write(sb.toString());
+            ar.flush();
+
+        }catch(Exception ex){
+            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+
+    private String getSpecialDateFormat(long date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return formatter.format(new Date(date));
+    }
+    private String specialEncode(String input) {
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i<input.length(); i++) {
+            char ch = input.charAt(i);
+            if (ch=='\n') {
+                sb.append("\\n");
+            }
+            else if (ch<' ') {
+                //do nothing
+            }
+            else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+
     @RequestMapping(value = "/{siteId}/{pageId}/cloneMeeting.htm", method = RequestMethod.GET)
     public void cloneMeeting(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -327,7 +395,7 @@ public class MainTabsViewControler extends BaseController {
 
              JSONArray notes = new JSONArray();
              for (TopicRecord aNote : aList) {
-                 
+
                  String discussionPhase = aNote.getDiscussionPhase();
 
                  if (aNote.isPublic()) {
@@ -349,7 +417,7 @@ public class MainTabsViewControler extends BaseController {
                      //has access to the note
                  }
              }
-             
+
              notes.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -358,7 +426,7 @@ public class MainTabsViewControler extends BaseController {
          }
      }
 
-     
+
      @RequestMapping(value = "/{siteId}/{pageId}/noteHtmlUpdate.json", method = RequestMethod.POST)
      public void noteHtmlUpdate(@PathVariable String siteId,@PathVariable String pageId,
              HttpServletRequest request, HttpServletResponse response) {

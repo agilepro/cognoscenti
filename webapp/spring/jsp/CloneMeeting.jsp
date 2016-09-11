@@ -238,6 +238,7 @@ function GetFirstHundredNoHtml(input) {
         </div>
     </div>
 
+
     <table class="gridTable2" width="100%">
         <tr class="gridTableHeader">
             <td width="30px"> Copy</td>
@@ -253,7 +254,10 @@ function GetFirstHundredNoHtml(input) {
                 <span ng-show="rec.selected"><img src="<%=ar.retPath%>assets/iconBlueCheck.gif"/></span>
                 </button>
             </td>
-            <td><b><a href="agendaItem.htm?id={{meeting.id}}&aid={{rec.id}}">{{rec.subject}}</a></b>
+            <td><b><a href="agendaItem.htm?id={{meeting.id}}&aid={{rec.id}}">{{rec.subject}}</a>
+                    <span ng-show="rec.topicLink">(Linked Topic)
+                    </span>
+                </b>
                 </td>
             <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>
             <td>{{rec.duration}}</td>
