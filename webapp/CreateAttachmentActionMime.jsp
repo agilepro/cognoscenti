@@ -66,7 +66,7 @@
     String reminderid = (String) params.get("reminderid");
 
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Unable to create attachments.");
 

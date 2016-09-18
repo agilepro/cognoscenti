@@ -14,7 +14,7 @@
     String op = ar.reqParam("op");  //operation: add or remove
     String go = ar.reqParam("go");  //where to go afterwards
 
-    NGContainer ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    NGContainer ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Unable to modify roles.");
 

@@ -11,7 +11,7 @@
 
     String pageId  = ar.reqParam("pageId");
     String go      = ar.defParam("go", "listAttachments.htm" );
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
 

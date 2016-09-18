@@ -18,7 +18,7 @@ Optional Parameter:
 
     GoalRecord task_assign = (GoalRecord)request.getAttribute("task");
 
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
 
     int max = DOMFace.safeConvertInt(maxStr);
     if (max > 4) {

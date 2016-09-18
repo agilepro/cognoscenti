@@ -19,11 +19,11 @@
     String template = ar.reqParam("template");
     String go = ar.reqParam("go");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertAdmin("Unable to copy from a template to this page.");
 
-    NGPage templatePage = ar.getCogInstance().getProjectByKeyOrFail(template);
+    NGPage templatePage = ar.getCogInstance().getWorkspaceByKeyOrFail(template);
     ngp.injectTemplate(ar,templatePage);
 
     response.sendRedirect(go);%>

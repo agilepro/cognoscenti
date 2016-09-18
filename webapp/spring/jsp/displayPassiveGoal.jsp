@@ -24,7 +24,7 @@
     String ukey = ar.defParam("ukey", "XXX");
     UserProfile uProf = UserManager.getUserProfileByKey(ukey);
 
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
 
     ar.setPageAccessLevels(ngp);
     pageTitle = ngp.getFullName();

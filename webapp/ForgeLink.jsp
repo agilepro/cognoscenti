@@ -18,7 +18,7 @@
 
     String p = ar.reqParam("p");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ProcessRecord process = ngp.getProcess();
 

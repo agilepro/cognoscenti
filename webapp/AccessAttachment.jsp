@@ -25,7 +25,7 @@
     String p        = ar.reqParam("p");
     String aid      = ar.reqParam("aid");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
 
     AttachmentRecord attachment = ngp.findAttachmentByID(aid);
 

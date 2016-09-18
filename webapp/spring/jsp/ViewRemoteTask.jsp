@@ -66,7 +66,7 @@ Required parameters:
         int projEnd   = accessUrl.indexOf("/", projBegin);
         String siteKey = accessUrl.substring(siteBegin, projBegin-1);
         String projKey = accessUrl.substring(projBegin, projEnd);
-        localProject = ar.getCogInstance().getProjectByKeyOrFail(projKey);
+        localProject = ar.getCogInstance().getWorkspaceByKeyOrFail(projKey);
     }
     else {
         localProject = ar.getCogInstance().getProjectByUpstreamLink(accessUrl);

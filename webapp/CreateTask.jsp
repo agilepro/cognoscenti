@@ -35,7 +35,7 @@
     boolean creatingSubTask = (ptid != null && ptid.length() > 0);
 
     // ngp the ar variables are defined in the Header.jsp.
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Can not create a new task.");
 

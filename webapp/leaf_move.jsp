@@ -19,7 +19,7 @@
     ar.retPath="../../";
 
     String p = ar.reqParam("p");
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     boolean isMember = ar.isMember();
     boolean isAdmin = ar.isAdmin();
@@ -283,7 +283,7 @@ public void protectComment(AuthRequest ar, String comment) throws Exception
 public void appendProjectInfo(AuthRequest ar, String mpkey, String mdid) throws Exception {
     if (mpkey!=null && mdid!=null && mpkey.length()>0  && mdid.length()>0) {
         ar.write(" -- Moved to ");
-        NGPage oProj = ar.getCogInstance().getProjectByKeyOrFail(mpkey);
+        NGPage oProj = ar.getCogInstance().getWorkspaceByKeyOrFail(mpkey);
         oProj.writeContainerLink(ar, 40);
     }
 }%>

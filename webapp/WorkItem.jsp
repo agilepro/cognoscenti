@@ -22,7 +22,7 @@
     String p = ar.reqParam("p");
     String id  = ar.reqParam("id");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ngb= ngp.getSite();
     uProf = ar.getUserProfile();
@@ -379,7 +379,7 @@ if (state==BaseRecord.STATE_DELETED)
 
     if (mpkey!=null && mtid!=null) {
 
-        NGPage oProj = ar.getCogInstance().getProjectByKeyOrFail(mpkey);
+        NGPage oProj = ar.getCogInstance().getWorkspaceByKeyOrFail(mpkey);
 
         %>
         <tr><td>Deleted & Moved:</td>

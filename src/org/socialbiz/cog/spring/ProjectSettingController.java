@@ -184,7 +184,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "Unknown";
         try{
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngp);
             ar.assertLoggedIn("Must be logged in to set personal settings.");
             JSONObject personalInfo = getPostedObject(ar);
@@ -482,7 +482,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String id = "";
         try{
-            NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to create an email generator.");
             JSONObject eGenInfo = getPostedObject(ar);
@@ -536,7 +536,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "";
         try{
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to modify labels.");
             op = ar.reqParam("op");

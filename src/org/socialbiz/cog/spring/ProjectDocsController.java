@@ -30,6 +30,7 @@ import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AttachmentVersion;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.DOMFace;
+import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
@@ -216,7 +217,7 @@ public class ProjectDocsController extends BaseController {
             AuthRequest ar  = AuthRequest.getOrCreate(request, response);
 
             ar.getCogInstance().getSiteByIdOrFail(siteId);
-            ar.getCogInstance().getProjectByKeyOrFail(pageId);
+            ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
 
             String symbol = ar.reqParam("fid");
 
@@ -313,29 +314,35 @@ public class ProjectDocsController extends BaseController {
         String did = "";
         try{
             did = ar.reqParam("did");
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to update a document information.");
-            ar.assertNotFrozen(ngp);
+            ar.assertNotFrozen(ngw);
             JSONObject docInfo = getPostedObject(ar);
+            int historyEventType = 0;
 
             AttachmentRecord aDoc = null;
             if ("~new~".equals(did)) {
-                aDoc = ngp.createAttachment();
+                aDoc = ngw.createAttachment();
                 docInfo.put("universalid", aDoc.getUniversalId());
                 aDoc.setModifiedDate(ar.nowTime);
                 aDoc.setModifiedBy(ar.getBestUserId());
                 aDoc.setType(docInfo.getString("attType"));
+                historyEventType = HistoryRecord.EVENT_DOC_ADDED;
             }
             else {
-                aDoc = ngp.findAttachmentByIDOrFail(did);
+                aDoc = ngw.findAttachmentByIDOrFail(did);
+                historyEventType = HistoryRecord.EVENT_DOC_UPDATED;
             }
 
             //everything else updated here
             aDoc.updateDocFromJSON(docInfo, ar);
 
-            ngp.saveFile(ar, "Updated Agenda Item");
-            JSONObject repo = aDoc.getJSON4Doc(ar, ngp);
+            HistoryRecord.createHistoryRecord(ngw, aDoc.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
+                    ar.nowTime, historyEventType, ar, "");
+
+            ngw.saveFile(ar, "Updated Agenda Item");
+            JSONObject repo = aDoc.getJSON4Doc(ar, ngw);
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
@@ -350,7 +357,7 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngw);
             boolean isMember = ar.isMember();
 

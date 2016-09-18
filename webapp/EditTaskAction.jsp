@@ -31,7 +31,7 @@
     assureNoParameter(ar, "s");
 
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Can not create a new action item.");
 

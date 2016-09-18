@@ -32,7 +32,7 @@
         UserManager.writeUserProfilesToFile();
     }
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
 
     TopicRecord leaflet = ngp.getNoteOrFail(lid);

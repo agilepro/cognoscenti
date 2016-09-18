@@ -19,7 +19,7 @@
     //note that lid could be anything passed in, including malicious scripting, so must URLEncode
     String lid = ar.reqParam("lid");
 
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
 

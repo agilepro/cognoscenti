@@ -36,7 +36,7 @@ Parameter used :
 
 //TODO: why test for pageTitle being null here?
     if(pageTitle == null && pageId != null){
-        ngp  = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+        ngp  = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     }
     if(isUserHeader && userKey!=null){
         userRecord = UserManager.getUserProfileByKey(userKey);

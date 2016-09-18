@@ -45,7 +45,7 @@ Parameter used :
     NGBook ngb=null;
     UserProfile userRecord = null;
     if(pageTitle == null && pageId != null){
-        ngp  = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+        ngp  = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     }
     if(userKey != null){
         userKey = URLEncoder.encode(userKey);

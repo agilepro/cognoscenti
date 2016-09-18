@@ -169,7 +169,7 @@ public class SearchManager {
             String linkAddr = null;
             String noteSubject = null;
 
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(key);
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(key);
 
             //if restricted to one site, check that site first and skip if not matching
             if (siteId!=null) {

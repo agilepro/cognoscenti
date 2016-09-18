@@ -56,7 +56,7 @@
     NGPage ngp = ngb.createProjectByKey(ar, pageKey);
 
     if (template!=null && template.length()>0) {
-        NGPage templatePage = ar.getCogInstance().getProjectByKeyOrFail(template);
+        NGPage templatePage = ar.getCogInstance().getWorkspaceByKeyOrFail(template);
         ngp.injectTemplate(ar, templatePage);
     }
 

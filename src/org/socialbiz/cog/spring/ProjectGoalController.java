@@ -616,7 +616,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String gid = "";
         try{
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to see a action item.");
             gid = ar.reqParam("gid");
@@ -638,7 +638,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String gid = "";
         try{
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to create a action item.");
             ar.assertNotFrozen(ngp);
@@ -711,7 +711,7 @@ public class ProjectGoalController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to create a action item.");
             ar.assertNotFrozen(ngp);
@@ -758,7 +758,7 @@ public class ProjectGoalController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to get action item history.");
             String gid = ar.reqParam("gid");
@@ -782,7 +782,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String did = "";
         try{
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to update a decision.");
             ar.assertNotFrozen(ngp);

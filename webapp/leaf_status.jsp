@@ -25,7 +25,7 @@
     long startTime = endTime - (((long)days) * 24 * 60 * 60 * 1000);
     int max = 4;
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     boolean isMember = ar.isMember();
     boolean isAdmin = ar.isAdmin();

@@ -34,7 +34,7 @@
     String comment = ar.defParam("comment","");
     String dname = ar.defParam("name","");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Unable to create attachments.");
 

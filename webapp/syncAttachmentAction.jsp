@@ -36,7 +36,7 @@
     String p   = reqParamSpecial(params, "p");
     String aid = reqParamSpecial(params, "aid");
 
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Unable to Synchronize attachments.");
 

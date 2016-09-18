@@ -354,7 +354,7 @@ System.out.println("Weaver Server Object == Start the Server");
      * Fails if the key is not matched with anything, or if the key
      * is for a site.
      */
-    public NGWorkspace getProjectByKeyOrFail(String key) throws Exception {
+    public NGWorkspace getWorkspaceByKeyOrFail(String key) throws Exception {
         NGPageIndex ngpi = getContainerIndexByKeyOrFail(key);
         NGContainer ngc = ngpi.getContainer();
         if (!(ngc instanceof NGWorkspace)) {

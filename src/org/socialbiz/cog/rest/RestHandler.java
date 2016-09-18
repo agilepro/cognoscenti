@@ -73,7 +73,7 @@ public class RestHandler {
             throw new ProgramLogicError("could not find a third slash in: " + path);
         }
         projectId = path.substring(slashPos+1, nextSlashPos);
-        ngp = ar.getCogInstance().getProjectByKeyOrFail(projectId);
+        ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(projectId);
 
         resource = path.substring(nextSlashPos+1);
         if (!"case.xml".equals(resource)) {

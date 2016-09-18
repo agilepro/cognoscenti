@@ -23,7 +23,7 @@
     String instructions = ar.defParam("instructions", "");
 
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
 
     //first, handle cancel operation.

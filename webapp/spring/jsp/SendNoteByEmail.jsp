@@ -41,7 +41,7 @@ Optional Parameters:
     if(selectedRoles!=null){
          selectedRoleList = Arrays.asList(selectedRoles.split(","));
     }
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Can not send email.");
     UserProfile uProf = ar.getUserProfile();

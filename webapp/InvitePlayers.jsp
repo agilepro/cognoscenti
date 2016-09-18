@@ -19,7 +19,7 @@
     String p = ar.reqParam("p");
     String note = ar.defParam("note", "Sending this note to let you know about a recent update to this web page has information that is relevant to you.  Follow the link to see the most recent version.");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Can not invite players to the project.");
     uProf = ar.getUserProfile();

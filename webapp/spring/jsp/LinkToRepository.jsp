@@ -16,7 +16,7 @@ Required parameter:
 %>
 <%
     UserProfile uProf = ar.getUserProfile();
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
 
     String lastPath = (String) session.getAttribute("lastPath");
     String connectionId = (String) session.getAttribute("connectionId");

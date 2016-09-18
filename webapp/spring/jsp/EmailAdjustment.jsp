@@ -27,7 +27,7 @@ Optional Parameters:
 
 %><%!String pageTitle="";%>
 <%
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     pageTitle  ="Adjust Email Subscriptions";
     UserProfile uProf = ar.getUserProfile();

@@ -35,7 +35,7 @@
 
 
     // ngp and the ar variables are defined in the Header.jsp.
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Can not edit a action item.");
     ngb = ngp.getSite();

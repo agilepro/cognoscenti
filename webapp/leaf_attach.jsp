@@ -21,7 +21,7 @@
     ar.retPath="../../";
 
     String p = ar.reqParam("p");
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     boolean isMember = ar.isMember();
     boolean isAdmin = ar.isAdmin();

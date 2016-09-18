@@ -20,7 +20,7 @@
     String action = ar.reqParam("action");
     boolean readOnly = "yes".equals(ar.defParam("readOnly", "no"));
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Unable to create a license for this page.");
 

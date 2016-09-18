@@ -324,7 +324,7 @@ public class CreateProjectController extends BaseController {
                 NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
                 newPage = createPage(owner, site, projectName, null, upstream, ar.nowTime, ar.getCogInstance());
                 if (templateKey!=null && templateKey.length()>0) {
-                    NGPage template_ngp = ar.getCogInstance().getProjectByKeyOrFail(templateKey);
+                    NGPage template_ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(templateKey);
                     newPage.injectTemplate(ar, template_ngp);
                 }
                 if (upstream!=null && upstream.length()>0) {
@@ -494,7 +494,7 @@ public class CreateProjectController extends BaseController {
 
             String templateName = ar.defParam("templateName", null);
             if (templateName!=null && templateName.length()>0) {
-                NGPage template_ngp = ar.getCogInstance().getProjectByKeyOrFail(templateName);
+                NGPage template_ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(templateName);
                 project.injectTemplate(ar, template_ngp);
             }
             return project;
@@ -528,7 +528,7 @@ public class CreateProjectController extends BaseController {
 
             // this is the subprocess address to link to
             String subProcessURL = thisUrl.getCombinedRepresentation();
-            NGPage parentProject = ar.getCogInstance().getProjectByKeyOrFail(projectKey);
+            NGPage parentProject = ar.getCogInstance().getWorkspaceByKeyOrFail(projectKey);
 
             GoalRecord goal = parentProject.getGoalOrFail(goalId);
             goal.setSub(subProcessURL);

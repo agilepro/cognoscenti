@@ -38,7 +38,7 @@
     String go = ar.reqParam("go");
     String action = ar.reqParam("action");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
 
     String comments = "";

@@ -25,7 +25,7 @@
     String p = ar.reqParam("p");
     String xxx = ar.defParam("xxx", null);
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertAdmin("old admin page is only for project administrators and you must be logged in to access it.");
     File cogFolder = ngp.getFilePath().getParentFile();

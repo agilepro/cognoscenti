@@ -45,7 +45,7 @@ public class AdminController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Must be an admin to change workspace info.");
             JSONObject newConfig = getPostedObject(ar);
@@ -131,7 +131,7 @@ public class AdminController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("User must be logged in to change the name of workspace.");
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(project);
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(project);
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Unable to change the name of this page.");
 
@@ -169,7 +169,7 @@ public class AdminController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("User must be logged in to delete previous name of workspace.");
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(project);
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(project);
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Unable to change the name of this page.");
 

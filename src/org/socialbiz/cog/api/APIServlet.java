@@ -163,7 +163,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 genSiteListing(ar, resDec);
             }
             else if (resDec.isListing){
-                genProjectListing(ar, resDec);
+                getWorkspaceListing(ar, resDec);
             }
             else if (resDec.isDoc) {
                 streamDocument(ar, resDec);
@@ -242,7 +242,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 responseObj = getSitePostResponse(ar, resDec, op, objIn);
             }
             else {
-                responseObj = getProjectPostResponse(ar, resDec, op, objIn);
+                responseObj = getWorkspacePostResponse(ar, resDec, op, objIn);
             }
             responseObj.write(ar.resp.getWriter(), 2, 0);
             ar.flush();
@@ -388,7 +388,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     }
 
 
-    private JSONObject getProjectPostResponse(AuthRequest ar, ResourceDecoder resDec,
+    private JSONObject getWorkspacePostResponse(AuthRequest ar, ResourceDecoder resDec,
             String op, JSONObject objIn) throws Exception {
         JSONObject responseOK = new JSONObject();
         responseOK.put("responseCode", 200);
@@ -399,7 +399,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             return objIn;
         }
 
-        NGPage ngp = resDec.project;
+        NGPage ngp = resDec.workspace;
         if (ngp == null) {
             throw new Exception("Unable to find a workspace with the id "+resDec.projId);
         }
@@ -433,18 +433,18 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 throw new Exception("The license ("+resDec.licenseId
                         +") does not have full member access which is needed in order to create a new topic.");
             }
-            TopicRecord newNote = resDec.project.createNote();
+            TopicRecord newNote = resDec.workspace.createNote();
             newNote.setUniversalId(newNoteObj.getString("universalid"));
             newNote.updateNoteFromJSON(newNoteObj, ar);
-            HistoryRecord.createNoteHistoryRecord(resDec.project, newNote, HistoryRecord.EVENT_TYPE_CREATED, ar,
+            HistoryRecord.createNoteHistoryRecord(resDec.workspace, newNote, HistoryRecord.EVENT_TYPE_CREATED, ar,
                     "From downstream workspace by synchronization license "+resDec.licenseId);
-            resDec.project.saveFile(ar, "New topic synchronized from downstream linked workspace.");
+            resDec.workspace.saveFile(ar, "New topic synchronized from downstream linked workspace.");
             return responseOK;
         }
         if ("updateNote".equals(op)) {
             JSONObject newNoteObj = objIn.getJSONObject("note");
             String noteUID = newNoteObj.getString("universalid");
-            TopicRecord note = resDec.project.getNoteByUidOrNull(noteUID);
+            TopicRecord note = resDec.workspace.getNoteByUidOrNull(noteUID);
             if (note==null) {
                 throw new Exception("Unable to find an existing topic with UID ("+noteUID+")");
             }
@@ -453,16 +453,16 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                         +") does not have right to access topic ("+noteUID+").");
             }
             note.updateNoteFromJSON(newNoteObj, ar);
-            HistoryRecord.createNoteHistoryRecord(resDec.project, note, HistoryRecord.EVENT_TYPE_MODIFIED, ar,
+            HistoryRecord.createNoteHistoryRecord(resDec.workspace, note, HistoryRecord.EVENT_TYPE_MODIFIED, ar,
                     "From downstream workspace by synchronization license "+resDec.licenseId);
-            resDec.project.saveFile(ar, "Topic synchronized from downstream linked workspace.");
+            resDec.workspace.saveFile(ar, "Topic synchronized from downstream linked workspace.");
             return responseOK;
         }
         if ("updateDoc".equals(op) || "newDoc".equals(op) || "uploadDoc".equals(op)) {
             JSONObject newDocObj = objIn.getJSONObject("doc");
             String tempFileName = objIn.getString("tempFileName");
 
-            File folder = resDec.project.getContainingFolder();
+            File folder = resDec.workspace.getContainingFolder();
             File tempFile = new File(folder, tempFileName);
             if (!tempFile.exists()) {
                 throw new Exception("Attemped operation failed because the temporary file "
@@ -475,7 +475,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             String updateReason = "";
             if ("updateDoc".equals(op)) {
                 historyEventType = HistoryRecord.EVENT_TYPE_MODIFIED;
-                att = resDec.project.findAttachmentByUidOrNull(newUid);
+                att = resDec.workspace.findAttachmentByUidOrNull(newUid);
                 if (!resDec.canAccessAttachment(att)) {
                     tempFile.delete();
                     throw new Exception("The license ("+resDec.licenseId
@@ -501,7 +501,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                     updateReason = "From downstream workspace by synchronization license "+resDec.licenseId;
                 }
                 if (att==null) {
-                    att = resDec.project.createAttachment();
+                    att = resDec.workspace.createAttachment();
                     if (newUid==null || newUid.length()==0) {
                         newUid = ngp.getContainerUniversalId() + "@" + att.getId();
 
@@ -529,18 +529,19 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             }
 
             FileInputStream fis = new FileInputStream(tempFile);
-            att.streamNewVersion(resDec.project, fis, userUpdate, timeUpdate);
+            att.streamNewVersion(resDec.workspace, fis, userUpdate, timeUpdate);
             fis.close();
             tempFile.delete();
 
             //send all the info back for a reasonable response
-            responseOK.put("doc",  att.getJSON4Doc(resDec.project, ar, urlRoot, resDec.lic));
+            responseOK.put("doc",  att.getJSON4Doc(resDec.workspace, ar, urlRoot, resDec.lic));
 
             //TODO: determine how to tell if the source was using the web UI or actually from
             //a downstream synchronization.  Commenting out for now since it is inaccurate.
-            HistoryRecord.createAttHistoryRecord(resDec.project, att, historyEventType, ar,
+            HistoryRecord.createAttHistoryRecord(resDec.workspace, att, historyEventType, ar,
                     updateReason);
-            resDec.project.saveFile(ar, "Document synchronized from downstream linked workspace.");
+            System.out.println("DOCUMENT: updated: "+att.getNiceName()+" and history created.");
+            resDec.workspace.saveFile(ar, "Document created or updated.");
             return responseOK;
         }
 
@@ -630,10 +631,10 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         ar.flush();
     }
 
-    private void genProjectListing(AuthRequest ar, ResourceDecoder resDec) throws Exception {
+    private void getWorkspaceListing(AuthRequest ar, ResourceDecoder resDec) throws Exception {
         JSONObject root = new JSONObject();
 
-        NGPage ngp = resDec.project;
+        NGPage ngp = resDec.workspace;
         if (ngp==null) {
             //this is probably unnecessary, having hit an exception earlier, but just begin sure
             throw new Exception("Something is wrong, can not find a site object.");
@@ -664,8 +665,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
         JSONArray goals = new JSONArray();
         if (resDec.hasFullMemberAccess()) {
-            for (GoalRecord goal : resDec.project.getAllGoals()) {
-                goals.put(goal.getJSON4Goal(resDec.project, ar.baseURL, resDec.lic));
+            for (GoalRecord goal : resDec.workspace.getAllGoals()) {
+                goals.put(goal.getJSON4Goal(resDec.workspace, ar.baseURL, resDec.lic));
             }
         }
         root.put("goals", goals);
@@ -684,17 +685,17 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             if (!resDec.canAccessAttachment(att)) {
                 continue;
             }
-            JSONObject thisDoc = att.getJSON4Doc(resDec.project, ar, urlRoot, resDec.lic);
+            JSONObject thisDoc = att.getJSON4Doc(resDec.workspace, ar, urlRoot, resDec.lic);
             docs.put(thisDoc);
         }
         root.put("docs", docs);
 
         JSONArray notes = new JSONArray();
-        for (TopicRecord note : resDec.project.getAllNotes()) {
+        for (TopicRecord note : resDec.workspace.getAllNotes()) {
             if (!resDec.canAccessNote(note)) {
                 continue;
             }
-            notes.put(note.getJSON4Note(urlRoot, false, resDec.lic, resDec.project));
+            notes.put(note.getJSON4Note(urlRoot, false, resDec.lic, resDec.workspace));
         }
         root.put("notes", notes);
 
@@ -704,28 +705,28 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     }
 
     private void streamDocument(AuthRequest ar, ResourceDecoder resDec) throws Exception {
-        AttachmentRecord att = resDec.project.findAttachmentByIDOrFail(resDec.docId);
+        AttachmentRecord att = resDec.workspace.findAttachmentByIDOrFail(resDec.docId);
         if (!resDec.canAccessAttachment(att)) {
             throw new Exception("Specified license ("+resDec.licenseId
                     +") is not able to access document ("+resDec.docId+")");
         }
 
         ar.resp.setContentType(MimeTypes.getMimeType(att.getNiceName()));
-        AttachmentVersion aVer = att.getLatestVersion(resDec.project);
+        AttachmentVersion aVer = att.getLatestVersion(resDec.workspace);
         File realPath = aVer.getLocalFile();
         UtilityMethods.streamFileContents(realPath, ar.resp.out);
     }
 
     private void genGoalInfo(AuthRequest ar, ResourceDecoder resDec) throws Exception {
-        GoalRecord goal = resDec.project.getGoalOrFail(resDec.goalId);
-        JSONObject goalObj = goal.getJSON4Goal(resDec.project, ar.baseURL, resDec.lic);
+        GoalRecord goal = resDec.workspace.getGoalOrFail(resDec.goalId);
+        JSONObject goalObj = goal.getJSON4Goal(resDec.workspace, ar.baseURL, resDec.lic);
         ar.resp.setContentType("application/json");
         goalObj.write(ar.resp.getWriter(), 2, 0);
         ar.flush();
     }
 
     private void streamNote(AuthRequest ar, ResourceDecoder resDec) throws Exception {
-        TopicRecord note = resDec.project.getNoteOrFail(resDec.noteId);
+        TopicRecord note = resDec.workspace.getNoteOrFail(resDec.noteId);
         if (!resDec.canAccessNote(note)) {
             throw new Exception("Specified license ("+resDec.licenseId
                     +") is not able to access topic ("+resDec.noteId+")");
@@ -746,7 +747,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     }
 
     private void receiveTemp(AuthRequest ar, ResourceDecoder resDec) throws Exception {
-        File folder = resDec.project.getContainingFolder();
+        File folder = resDec.workspace.getContainingFolder();
         File tempFile = new File(folder, resDec.tempName);
         InputStream is = ar.req.getInputStream();
         FileOutputStream fos = new FileOutputStream(tempFile);

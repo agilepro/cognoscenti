@@ -26,7 +26,7 @@ Optional Parameter:
 <%
     UserProfile uProf = ar.getUserProfile();
 
-    NGPage ngp =ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGPage ngp =ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
 
     NGBook ngb = ngp.getSite();

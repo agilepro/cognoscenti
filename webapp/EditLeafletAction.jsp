@@ -15,7 +15,7 @@
     String action = ar.reqParam("action");
     String choices = ar.defParam("choices", null);
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member of the project in order to create or modify topics.");
 

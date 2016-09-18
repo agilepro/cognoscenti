@@ -26,7 +26,7 @@ Required parameter:
     String errMsg      = "";
     Exception exp      = null;
 
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
 
     AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
 

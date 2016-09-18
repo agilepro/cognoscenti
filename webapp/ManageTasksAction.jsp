@@ -54,7 +54,7 @@
         }
         uPage.cleanUpTaskRanks();
 
-        NGPage ngpx = ar.getCogInstance().getProjectByKeyOrFail(projid);
+        NGPage ngpx = ar.getCogInstance().getWorkspaceByKeyOrFail(projid);
         GoalRecord tr = ngpx.getGoalOrFail(taskid);
 
         tr.setStatus(status);

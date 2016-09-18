@@ -31,7 +31,7 @@
     ar.assertLoggedIn("Unable to see status report.");
     String p = ar.reqParam("p");
     String cmd = ar.reqParam("cmd");
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("unable to synchronize this project");
 

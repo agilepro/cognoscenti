@@ -138,7 +138,7 @@ public class PDFUtil {
      * TODO: This appears to be a duplicate method, eliminate this or the other
      */
     public void serveUpFile(AuthRequest ar, String pageId) throws Exception{
-        NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+        NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
         ar.setPageAccessLevels(ngp);
 
         List<TopicRecord> publicNotes = new ArrayList<TopicRecord>();

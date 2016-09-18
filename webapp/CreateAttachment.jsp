@@ -18,7 +18,7 @@
 
     String p = ar.reqParam("p");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ngb = ngp.getSite();
     ar.setPageAccessLevels(ngp);
 

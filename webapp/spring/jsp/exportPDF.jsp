@@ -10,7 +10,7 @@ Required parameter:
     ar.assertLoggedIn("Must be logged in to generate a PDF");
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
 

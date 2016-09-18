@@ -20,7 +20,7 @@
     /* if the parameter is not found in the parameters list, then find it out in the attributes list */
     String p = ar.reqParam("p");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     boolean isMember = ar.isMember();
     boolean isAdmin = ar.isAdmin();

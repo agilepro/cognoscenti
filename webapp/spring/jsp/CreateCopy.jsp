@@ -14,7 +14,7 @@ Required parameter:
 <%
     UserProfile uProf = ar.getUserProfile();
 
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
 
     UserPage uPage = ar.getUserPage();
 

@@ -26,7 +26,7 @@
 
     assureNoParameter(ar, "s");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
 
     String go = ar.defParam("go", null);
     if (go==null)

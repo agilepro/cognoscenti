@@ -19,7 +19,7 @@
     String action = ar.reqParam("action");
     String id = ar.defParam("id", null);
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertAdmin("Unable to edit process on this page.");
 

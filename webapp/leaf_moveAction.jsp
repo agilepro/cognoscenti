@@ -46,8 +46,8 @@
         String[] docs = ar.multiParam("doc");
         String[] tasks = ar.multiParam("task");
 
-        ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
-        NGPage hookProj = ar.getCogInstance().getProjectByKeyOrFail(hook);
+        ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
+        NGPage hookProj = ar.getCogInstance().getWorkspaceByKeyOrFail(hook);
         ar.setPageAccessLevels(hookProj);
         if (!ar.isAdmin()) {
             throw new Exception("You must be administrator of the hooked project in order to move resources out of that project.!");

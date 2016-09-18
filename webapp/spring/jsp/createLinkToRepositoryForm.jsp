@@ -28,7 +28,7 @@ Optional parameters:
         String pageTitle="";
 %><%
 
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Can not attach a document to this workspace.");
 

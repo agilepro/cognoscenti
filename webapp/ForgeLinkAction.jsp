@@ -20,7 +20,7 @@
     ar.assertLoggedIn("Unable to edit parent process links.");
 
     String p = ar.reqParam("p");
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     String go = ar.defParam("go", ar.getResourceURL(ngp,""));
     NGSection ngs = ngp.getSectionOrFail("Tasks");

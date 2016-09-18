@@ -253,7 +253,7 @@ public class BaseController {
         //todo: eliminate this
         ar.req.setAttribute("book",       siteId);
         ar.getCogInstance().getSiteByIdOrFail(siteId);
-        NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+        NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
         if (!siteId.equals(ngw.getSiteKey())) {
             throw new NGException("nugen.operation.fail.account.match", new Object[]{pageId,siteId});
         }

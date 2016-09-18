@@ -25,7 +25,7 @@
     String section  = "Attachments";
     String rid      = ar.reqParam("rid");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Can not edit attachment reminder.");
 

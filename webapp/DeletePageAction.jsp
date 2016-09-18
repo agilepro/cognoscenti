@@ -15,7 +15,7 @@
 
     String p        = ar.reqParam("p");
     String action   = ar.reqParam("action");
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertAdmin("Unable to delete this page. ");
 

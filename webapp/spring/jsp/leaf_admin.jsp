@@ -14,7 +14,7 @@
 
     String pageId      = ar.reqParam("pageId");
     NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageId);
-    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngw);
     NGBook ngb = ngw.getSite();
     boolean showExperimental = ngb.getShowExperimental();

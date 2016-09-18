@@ -15,7 +15,7 @@ Required parameters:
     String templateCacheDefeater = "?t="+System.currentTimeMillis();
 
     String pageId      = ar.reqParam("pageId");
-    NGWorkspace ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGWorkspace ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
     UserProfile uProf = ar.getUserProfile();
@@ -462,31 +462,30 @@ comment-state-complete {
 
 <table >
   <tr ng-repeat="cmt in docInfo.comments">
-       
      <%@ include file="/spring/jsp/CommentView.jsp"%>
-           
   </tr>
 </table>
 
 
-    <div ng-show="canUpdate">
-        <div ng-hide="isCreatingComment" style="margin:20px;">
-            <button ng-click="openCommentCreator(null, 1)" class="btn btn-default">
-                Create New <i class="fa fa-comments-o"></i> Comment</button>
-        </div>
+  <div ng-show="canUpdate">
+    <div ng-hide="isCreatingComment" style="margin:20px;">
+      <button ng-click="openCommentCreator(null, 1)" class="btn btn-default">
+        Create New <i class="fa fa-comments-o"></i> Comment</button>
     </div>
-    <div ng-hide="canUpdate">
-        <i>You have to be logged in and a member of this workspace in order to create a comment</i>
-    </div>
+  </div>
+  <div ng-hide="canUpdate">
+    <i>You have to be logged in and a member of this workspace in order to create a comment</i>
+  </div>
 
-        <div>
-           <span class="tipText">This web page is a secure and
-            convenient way to send documents to others collaborating on projects.
-            The email message does not carry the document, but only a link to this
-            page, so that email is small. Then, from this page, you can get the
-            very latest version of the document. Documents can be protected by
-            access controls.</span>
-        </div>
+  <div>
+    <span class="tipText">This web page is a secure and
+      convenient way to send documents to others collaborating on projects.
+      The email message does not carry the document, but only a link to this
+      page, so that email is small. Then, from this page, you can get the
+      very latest version of the document. Documents can be protected by
+      access controls.
+    </span>
+  </div>
 
 </div>
 

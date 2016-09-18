@@ -44,7 +44,7 @@ Required parameter:
     throws Exception {
         try {
             UserPage uPage = ar.getUserPage();
-            NGPage page = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+            NGPage page = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
 
             ar.write("<div class=\"generalArea\">");
             ar.write("\n<div class=\"pageHeading\">");

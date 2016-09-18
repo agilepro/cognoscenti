@@ -17,7 +17,7 @@ Required parameter:
 
 
     String pageId      = ar.reqParam("pageId");
-    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngw);
 
     boolean isLoggedIn = ar.isLoggedIn();

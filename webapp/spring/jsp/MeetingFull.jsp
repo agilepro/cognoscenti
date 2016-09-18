@@ -7,7 +7,7 @@
 %><%
 
     String pageId      = ar.reqParam("pageId");
-    NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngw);
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngw.findMeeting(meetId);

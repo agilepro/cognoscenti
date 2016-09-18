@@ -387,7 +387,7 @@ public class MainTabsViewControler extends BaseController {
              HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+             NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
              ar.setPageAccessLevels(ngw);
              boolean isMember = ar.isMember();
 
@@ -433,7 +433,7 @@ public class MainTabsViewControler extends BaseController {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          String nid = "";
          try{
-             NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+             NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
              ar.setPageAccessLevels(ngw);
              ar.assertMember("Must be a member to update a topic contents.");
              ar.assertNotFrozen(ngw);
@@ -477,7 +477,7 @@ public class MainTabsViewControler extends BaseController {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          String nid = "";
          try{
-             NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+             NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
              ar.setPageAccessLevels(ngw);
              boolean isMember = ar.isMember();
 
@@ -508,7 +508,7 @@ public class MainTabsViewControler extends BaseController {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          String nid = "";
          try{
-             NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+             NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
              NGBook ngb = ngw.getSite();
              ar.setPageAccessLevels(ngw);
              ar.assertMember("Must be a member to update a topic contents.");
@@ -589,7 +589,7 @@ public class MainTabsViewControler extends BaseController {
              HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+             NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
              ar.setPageAccessLevels(ngp);
              String nid = ar.reqParam("nid");
              TopicRecord note = ngp.getNoteOrFail(nid);
@@ -636,7 +636,7 @@ public class MainTabsViewControler extends BaseController {
             String mn = ar.reqParam("mn");
             String go = ar.defParam("go", ar.baseURL);
 
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
             String expectedMn = ngp.emailDependentMagicNumber(email);
             if (!expectedMn.equals(mn)) {
                 throw new Exception("Something is wrong, improper request for email address "+email);
@@ -672,7 +672,7 @@ public class MainTabsViewControler extends BaseController {
         try{
             ar.assertLoggedIn("Must be logged in modify role settings");
             String p = ar.reqParam("p");
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
             String role = ar.reqParam("role");
             NGRole specRole = ngp.getRoleOrFail(role);
             specRole.removePlayer(ar.getUserProfile().getAddressListEntry());
@@ -777,7 +777,7 @@ public class MainTabsViewControler extends BaseController {
          try {
              ar.assertLoggedIn("Must be logged in to create a topic.");
              String p = ar.reqParam("p");
-             NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( p );
+             NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( p );
              ar.setPageAccessLevels(ngp);
 
              String oid = ar.reqParam("oid");
@@ -804,7 +804,7 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to create a meeting.");
               ar.assertNotFrozen(ngw);
@@ -874,7 +874,7 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to update a meeting.");
               ar.assertNotFrozen(ngw);
@@ -920,7 +920,7 @@ public class MainTabsViewControler extends BaseController {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           String meetingId = "";
           try{
-              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to delete a meeting.");
               ar.assertNotFrozen(ngp);
@@ -943,7 +943,7 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to add an agenda item.");
               ar.assertNotFrozen(ngw);
@@ -976,7 +976,7 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to delete a meeting.");
               ar.assertNotFrozen(ngp);
@@ -1002,7 +1002,7 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to move an agenda item.");
               ar.assertNotFrozen(ngw);
@@ -1039,7 +1039,7 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to update an agenda item.");
               ar.assertNotFrozen(ngw);
@@ -1089,7 +1089,7 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGWorkspace ngw = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to update an agenda item.");
               ar.assertNotFrozen(ngw);
@@ -1147,7 +1147,7 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail( pageId );
+              NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngp);
               ar.assertMember("Must be a member to create a action item.");
               ar.assertNotFrozen(ngp);

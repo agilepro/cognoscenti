@@ -7,7 +7,7 @@
 %><%
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
     NGBook ngb = ngp.getSite();

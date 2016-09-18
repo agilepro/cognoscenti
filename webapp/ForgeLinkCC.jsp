@@ -52,7 +52,7 @@
 
     String pageKey = wf.substring(beginOfPageKey, endOfPageKey);
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(pageKey);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageKey);
     ar.setPageAccessLevels(ngp);
     NGSection ngs = ngp.getSectionOrFail("Tasks");
     ar.assertMember("Unable to edit process on page "+pageKey);

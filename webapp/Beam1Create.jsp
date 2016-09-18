@@ -34,7 +34,7 @@
     String p = ar.reqParam("p");
     String go = ar.reqParam("go");
     String siteLink = ar.reqParam("siteLink");
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertAdmin("unable to create new upstream clone of this project");
 

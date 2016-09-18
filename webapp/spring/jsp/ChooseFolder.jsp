@@ -18,7 +18,7 @@ Required parameter:
     String fndDefLoctn    = ar.reqParam("fndDefLoctn");%>
     <div class="generalArea">
         <%
-            NGPage ngPage = ar.getCogInstance().getProjectByKeyOrFail(p);
+            NGPage ngPage = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
                 FolderAccessHelper fdh = new FolderAccessHelper(ar);
                 ResourceEntity ent = fdh.getRemoteResource(folderId, path, true);
 

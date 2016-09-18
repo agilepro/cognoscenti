@@ -3,7 +3,7 @@
 %><%
 
     String pageId = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
 
     List<CustomRole> roles = ngp.getAllRoles();

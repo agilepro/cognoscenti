@@ -37,7 +37,7 @@ public class ResourceDecoder {
     public String siteId;
     public NGBook site;
     public String projId;
-    public NGPage project;
+    public NGPage workspace;
 
     public boolean isSwagger;
     public boolean isSite;
@@ -108,9 +108,9 @@ public class ResourceDecoder {
             setUserFromLicense(ar);
             return;
         }
-        project = ar.getCogInstance().getProjectByKeyOrFail(projId);
-        ar.setPageAccessLevels(project);
-        lic = project.getLicense(licenseId);
+        workspace = ar.getCogInstance().getWorkspaceByKeyOrFail(projId);
+        ar.setPageAccessLevels(workspace);
+        lic = workspace.getLicense(licenseId);
         if (lic==null) {
             throw new Exception("Can not find the license '"+licenseId+"' on workspace '"+projId+"'");
         }
@@ -190,17 +190,17 @@ public class ResourceDecoder {
      * and the user is a member or an owner.
      */
     public boolean hasFullMemberAccess() throws Exception {
-        if (project==null || lic==null) {
+        if (workspace==null || lic==null) {
             return false;
         }
-        return lic.getRole().equalsIgnoreCase("Members") && ownerIsMemberOfProject();
+        return lic.getRole().equalsIgnoreCase("Members") && ownerIsMemberofWorkspace();
     }
 
-    public boolean ownerIsMemberOfProject() throws Exception {
-        if (project==null || lic==null || licenseOwner==null) {
+    public boolean ownerIsMemberofWorkspace() throws Exception {
+        if (workspace==null || lic==null || licenseOwner==null) {
             return false;
         }
-        return project.primaryOrSecondaryPermission(licenseOwner);
+        return workspace.primaryOrSecondaryPermission(licenseOwner);
     }
 
     public List<NGRole> getLicensedRoles() throws Exception {
@@ -208,15 +208,15 @@ public class ResourceDecoder {
         String restrictRole = lic.getRole();
         if (lic instanceof LicenseForUser) {
             //for user license, find all the roles they play
-            licensedRoles = project.findRolesOfPlayer(licenseOwner);
+            licensedRoles = workspace.findRolesOfPlayer(licenseOwner);
         }
         else {
             //for specified license, use only the role specified.
-            NGRole specifiedRole = project.getRole(restrictRole);
+            NGRole specifiedRole = workspace.getRole(restrictRole);
 
             //if the license owner is not a member, then the license owner must be
             //a member of the specified role.
-            if (!ownerIsMemberOfProject() && !specifiedRole.isExpandedPlayer(licenseOwner, project)) {
+            if (!ownerIsMemberofWorkspace() && !specifiedRole.isExpandedPlayer(licenseOwner, workspace)) {
                 throw new Exception("The license ("+licenseId
                         +") is invalid because the user who created license is no longer a "
                         +"member of the role ("+restrictRole+")");

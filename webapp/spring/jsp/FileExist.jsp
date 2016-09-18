@@ -25,7 +25,7 @@ Required parameter:
 %>
 <%
     UserProfile uProf = ar.getUserProfile();
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     AttachmentRecord attachment = ngp.findAttachmentByID(aid);
     String name     = attachment.getDisplayName();
 

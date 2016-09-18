@@ -22,7 +22,7 @@
     String aid = ar.reqParam("aid");
     String cmd = ar.reqParam("cmd");
 
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     if (ngp.isDeleted()) {
         throw new Exception("This project has been deleted, and can not be edited.  If you want to change this project contents, first 'un-delete' the project (Admin) and then you can edit the sections");
     }

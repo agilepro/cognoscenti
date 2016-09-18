@@ -22,7 +22,7 @@
 
     long longTimestamp = DOMFace.safeConvertLong(timestamp);
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     NGSection ngs = ngp.getSection(section);
 

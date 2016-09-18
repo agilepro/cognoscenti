@@ -11,7 +11,7 @@
     ar.assertLoggedIn("Must be logged in to synchronize attachments");
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
 
@@ -264,7 +264,7 @@ public int attachmentDisplay(AuthRequest ar, NGPage ngp) throws Exception
 
         String id = attachment.getId();
         String displayName = attachment.getNiceNameTruncated(48);
-        NGPage page = ar.getCogInstance().getProjectByKeyOrFail(ngp.getKey());
+        NGPage page = ar.getCogInstance().getWorkspaceByKeyOrFail(ngp.getKey());
         AttachmentRecord attch = page.findAttachmentByID(id);
 
         ar.write("\n<tr>");

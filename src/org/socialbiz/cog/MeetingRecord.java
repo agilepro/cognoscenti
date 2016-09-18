@@ -312,7 +312,12 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 setMinutesId(null);
             }
         }
-
+        JSONArray timeSlotArray = new JSONArray();
+        List<MeetingProposeTime> timeSlot = getChildren("timeSlots", MeetingProposeTime.class);
+        for (MeetingProposeTime oneSlot : timeSlot) {
+            timeSlotArray.put(oneSlot.getJSON());
+        }
+        meetingInfo.put("timeSlots", timeSlotArray);
         return meetingInfo;
     }
 
@@ -373,6 +378,15 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
         if (input.has("attended")) {
             this.setVector("attended", constructVector(input.getJSONArray("attended")));
+        }
+        if (input.has("timeSlots")) {
+            this.removeAllNamedChild("timeSlots");
+            JSONArray timeSlotArray = input.getJSONArray("timeSlots");
+            for(int i=0; i<timeSlotArray.length(); i++) {
+                JSONObject oneSlot = timeSlotArray.getJSONObject(i);
+                MeetingProposeTime mpt = createChild("timeSlots", MeetingProposeTime.class);
+                mpt.updateFromJSON(oneSlot);
+            }
         }
 
         //fix up the owner if needed .. schema migration

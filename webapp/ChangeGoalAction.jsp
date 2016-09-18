@@ -12,7 +12,7 @@
     String p = ar.reqParam("p");
     String action = ar.reqParam("action");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     ar.assertAdmin("Unable to change the goal, purpose, or beam link of this page.");
 

@@ -18,7 +18,7 @@ Optional Parameters:
     String aid = ar.defParam("aid", null);
 
 
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
 
     UserProfile uProf = ar.getUserProfile();
     AttachmentRecord attachment = ngp.findAttachmentByID(aid);

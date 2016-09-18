@@ -6,7 +6,7 @@
 %>
 <%
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageId);
+    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertLoggedIn("Must be logged in to see anything about a user");
     ar.assertMember("This VIEW only for members in use cases");

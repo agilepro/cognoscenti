@@ -47,7 +47,7 @@ Required parameter:
 <%@ include file="functions.jsp"%>
 <%!public String displayRepositoryFolderQ(AuthRequest ar,String folderId, String path, String p) throws Exception
     {
-        NGPage page = ar.getCogInstance().getProjectByKeyOrFail(p);
+        NGPage page = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
         String go = ar.getCompleteURL();
         FolderAccessHelper fdh = new FolderAccessHelper(ar);
         ResourceEntity ent = fdh.getRemoteResource(folderId, path, true);

@@ -17,7 +17,7 @@
     String p = ar.reqParam("p");
     String aid = ar.reqParam("aid");
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     if (ngp.isDeleted())
     {
         throw new Exception("This page has been deleted, and can not be edited.  If you want to change this page contents, first 'un-delete' the page (Admin) and then you can edit the sections");

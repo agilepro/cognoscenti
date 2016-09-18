@@ -30,7 +30,7 @@
     boolean assignees = (ar.defParam("assignees", null)!=null);
     boolean tempmem = (ar.defParam("tempmem", null)!=null);
 
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     List<AddressListEntry> sendTo = new ArrayList<AddressListEntry>();
     String thisPageAddress = ar.getResourceURL(ngp,"process.htm");

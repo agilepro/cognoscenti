@@ -297,7 +297,7 @@ public class EmailListener extends TimerTask{
         try{
             Address[] recipientAdrs= message.getAllRecipients();
             String pageKey =  getProjectKey(recipientAdrs[0].toString(), subject);
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(pageKey);
+            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageKey);
 
             TopicRecord note = ngp.createNote();
 

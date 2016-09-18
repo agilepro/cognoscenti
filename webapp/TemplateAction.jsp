@@ -17,7 +17,7 @@
     String p = ar.reqParam("p");
     String action = ar.reqParam("action");
     String go = ar.reqParam("go");
-    ngp = ar.getCogInstance().getProjectByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
     UserPage uPage = ar.getUserPage();
     String pageKey = ngp.getKey();
