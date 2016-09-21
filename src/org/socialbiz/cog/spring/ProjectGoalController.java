@@ -83,6 +83,15 @@ public class ProjectGoalController extends BaseController {
     }
 
 
+    @RequestMapping(value = "/{siteId}/{pageId}/statusList.htm", method = RequestMethod.GET)
+    public ModelAndView statusList(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "StatusList");
+        return null;
+    }
+
+
     @RequestMapping(value = "/{siteId}/{pageId}/task{taskId}.htm", method = RequestMethod.GET)
     public void displayTask(@PathVariable String siteId,
         @PathVariable String pageId,  @PathVariable String taskId,

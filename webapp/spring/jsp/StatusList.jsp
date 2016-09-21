@@ -13,6 +13,9 @@ Required parameters:
 
 */
 
+    //String templateCacheDefeater = "";
+    String templateCacheDefeater = "?t="+System.currentTimeMillis();
+
     String pageId      = ar.reqParam("pageId");
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
@@ -88,7 +91,7 @@ Required parameters:
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
@@ -210,7 +213,10 @@ app.controller('myCtrl', function($scope, $http) {
         var objForUpdate = {};
         objForUpdate.id = goal.id;
         objForUpdate.universalid = goal.universalid;
-        objForUpdate.rank = goal.rank;  //only thing that could have been changed
+        objForUpdate.rank = goal.rank;  
+        objForUpdate.prospects = goal.prospects;  
+        objForUpdate.duedate = goal.duedate;  
+        objForUpdate.status = goal.status;  
         var postdata = angular.toJson(objForUpdate);
         $scope.showError=false;
         $http.post(postURL, postdata)
@@ -376,7 +382,45 @@ app.controller('myCtrl', function($scope, $http) {
         return res;
     }
 
+    $scope.setProspects = function(goal, newVal) {
+        console.log("CALL to setProspects");
+        goal.prospects = newVal;
+        $scope.saveGoal(goal);
+    }
 
+    $scope.openModalActionItem = function (item, goal) {
+
+        var modalInstance = $modal.open({
+          animation: false,
+          templateUrl: '<%=ar.retPath%>templates/ModalActionItem.html<%=templateCacheDefeater%>',
+          controller: 'ModalActionItemCtrl',
+          size: 'lg',
+          backdrop: "static",
+          resolve: {
+            item: function () {
+              return item;
+            },
+            goal: function () {
+              return goal;
+            }
+          }
+        });
+
+        modalInstance.result.then(function (modifiedGoal) {
+            $scope.allGoals.map( function(item) {
+                if (item.id == modifiedGoal.id) {
+                    item.duedate = modifiedGoal.duedate;
+                    item.status = modifiedGoal.status;
+                }
+            });
+            $scope.saveGoal(modifiedGoal);
+        }, function () {
+          //cancel action
+        });
+    };
+
+    
+    
 });
 
 function addvalue() {
@@ -403,7 +447,7 @@ function addvalue() {
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   ng-click="isCreating=true">Create New Action Item</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="statusList.htm">Status List View</a></li>
+                  href="goalList.htm">Action Items View</a></li>
             </ul>
           </span>
 
@@ -506,13 +550,35 @@ function addvalue() {
 
     <div style="height:20px;"></div>
 
-
+<style>
+.statusTable {
+    width:100%;
+}
+.statusTable tr td{
+    padding:3px;
+    border-width:1px;
+    border-style:solid;
+    border-color:grey;
+}
+.statusTable tr th{
+    padding:3px;
+}
+</style>
 
     <div  id="searchresultdiv0">
     <div class="taskListArea">
-      <ul id="ActiveTask">
-         <div ng-repeat="rec in findGoals()" id="node1503" class="ui-state-default" style="background-color: #F8F8F8; margin-bottom: 5px;">
-            <div>
+      <table class="statusTable">
+         <tr>
+           <th></th>
+           <th>Synopsis</th>
+           <th>Assigned</th>
+           <th>Due Date</th>
+           <th>Started</th>
+           <th></th>
+           <th>Status</th>
+         </tr>
+         <tr ng-repeat="rec in findGoals()">
+            <td>
             <div style="float: left;margin:7px">
               <div class="dropdown">
                 <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
@@ -549,60 +615,57 @@ function addvalue() {
             <div style="float: left;margin:7px">
               <a href="task{{rec.id}}.htm"><img src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
             </div>
-            <div style="float: left;margin:3px;">
-              <div>
-                <span style="cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}}</span>
-                <span ng-repeat="label in getGoalLabels(rec)">
-                  <button class="btn btn-sm labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
-                  {{label.name}}
-                  </button>
-                </span>
+          </td>
+          <td>
+            <span style="cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}} ~ {{rec.description}}</span>
+            <span ng-repeat="label in getGoalLabels(rec)">
+              <button class="btn btn-sm labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
+              {{label.name}}
+              </button>
+            </span>
+          </td>
+          <td>
+            <div class="taskOverview">
+              <span class="red" ng-repeat="ass in rec.assignees"><a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a><br></span>
 
-                <div class="taskOverview">Assigned to:
-                   <span class="red" ng-repeat="ass in rec.assignees"><a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a>, </span>
-
-                </div>
-                <div ng-show="rec.show" id="{{rec.id}}_1" style="max-width:800px;">
-                    <div class="taskOverview">Requested by:
-                         <span class="red" ng-repeat="ass in rec.requesters"><a href="{{getLink(ass)}}">{{getName(ass)}}</a>, </span>
-                    </div>
-                    <div class="taskStatus">Description: {{rec.description}}</div>
-                    <div class="taskStatus">Priority:  <span style="color:red">{{rec.priority}}</span>
-                        <span ng-show="rec.needEmail"> - email scheduled - </span>
-                    </div>
-                    <div class="taskStatus">Status: {{rec.status}}  - (rank {{rec.rank}})</div>
-                    <div class="taskToolBar">
-                        Action:
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <span ng-show="rec.state<2">
-                            <a title="Start & Offer the Activity" ng-click="makeState(rec, 2)">
-                                <img src="<%=ar.retPath%>assets/goalstate/small2.gif" alt="accepted"  />
-                                <b>Start/Offer</b></a>
-                            </span>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <span ng-show="rec.state==2">
-                            <a title="Accept the activity" ng-click="makeState(rec, 3)">
-                                <img src="<%=ar.retPath%>assets/goalstate/small3.gif" alt="accepted"  />
-                                <b>Mark Accepted</b></a>
-                            </span>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <span ng-show="rec.state!=5">
-                            <a title="Complete this activity" ng-click="makeState(rec, 5)">
-                                <img src="<%=ar.retPath%>assets/goalstate/small5.gif" alt="completed"  />
-                                <b>Mark Completed</b></a>
-                            </span>
-                    </div>
-                </div>
-                </div>
-              </div>
-              <br style="clear: left;" />
             </div>
-        </div>
-      </ul>
+          </td>
+          <td>
+            <div class="taskStatus" ng-show="rec.duedate>100"  ng-click="openModalActionItem(null, rec)">{{rec.duedate | date}}
+            </div>
+          </td>
+          <td>
+            <div class="taskStatus" ng-show="rec.startdate>100">{{rec.startdate | date}}
+            </div>
+          </td>
+          <td>
+            <span>
+                <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="rec.prospects=='good'"
+                     title="Good shape" ng-click="setProspects(rec, 'good')">
+                <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="rec.prospects=='good'"
+                     title="Good shape">
+                <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="rec.prospects=='ok'"
+                     title="Warning" ng-click="setProspects(rec, 'ok')">
+                <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="rec.prospects=='ok'"
+                     title="Warning">
+                <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="rec.prospects=='bad'"
+                     title="In trouble" ng-click="setProspects(rec, 'bad')">
+                <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="rec.prospects=='bad'"
+                     title="In trouble">
+            </span>
+          </td>
+          <td>
+            <div class="taskStatus" ng-click="openModalActionItem(null, rec)">{{rec.status}} &nbsp;</div>
+          </td>
+        </tr>
+      </table>
     </div>
     </div>
 
 </div>
 
+<br/>
+<br/>
 
+<script src="<%=ar.retPath%>templates/ModalActionItemCtrl.js"></script>
 
