@@ -552,6 +552,80 @@ public class MainTabsViewControler extends BaseController {
          }
      }
 
+     @RequestMapping(value = "/{siteId}/{pageId}/topicSubscribe.json", method = RequestMethod.POST)
+     public void topicSubscribe(@PathVariable String siteId,@PathVariable String pageId,
+             HttpServletRequest request, HttpServletResponse response) {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         String nid = "";
+         try{
+             NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+             ar.setPageAccessLevels(ngw);
+             ar.assertMember("Must be a member to subscribe to a topic.");
+             ar.assertNotFrozen(ngw);
+             nid = ar.reqParam("nid");
+             TopicRecord note = ngw.getNote(nid);
+             UserProfile up = ar.getUserProfile();
+
+             boolean found = false;
+             List<AddressListEntry> subs = note.getSubscribers();
+             for (AddressListEntry ale : subs) {
+                 if (up.hasAnyId(ale.getUniversalId())) {
+                     found = true;
+                 }
+             }
+             if (!found) {
+                 subs.add( new AddressListEntry(up.getUniversalId()) );
+                 note.setSubscribers(subs);
+                 ngw.saveFile(ar, "Added subscriber");
+             }
+
+
+             JSONObject repo = note.getJSONWithComments(ar, ngw);
+             repo.write(ar.w, 2, 2);
+             ar.flush();
+         }catch(Exception ex){
+             Exception ee = new Exception("Unable to subscribe to topic "+nid+" contents", ex);
+             streamException(ee, ar);
+         }
+     }
+
+
+     @RequestMapping(value = "/{siteId}/{pageId}/topicUsubscribe.json", method = RequestMethod.POST)
+     public void topicUsubscribe(@PathVariable String siteId,@PathVariable String pageId,
+             HttpServletRequest request, HttpServletResponse response) {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         String nid = "";
+         try{
+             NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+             ar.setPageAccessLevels(ngw);
+             ar.assertNotFrozen(ngw);
+             nid = ar.reqParam("nid");
+             TopicRecord note = ngw.getNote(nid);
+             UserProfile up = ar.getUserProfile();
+
+             AddressListEntry found = null;
+             List<AddressListEntry> subs = note.getSubscribers();
+             for (AddressListEntry ale : subs) {
+                 if (up.hasAnyId(ale.getUniversalId())) {
+                     found = ale;
+                 }
+             }
+             if (found!=null) {
+                 subs.remove( found );
+                 note.setSubscribers(subs);
+                 ngw.saveFile(ar, "Removed subscriber");
+             }
+
+
+             JSONObject repo = note.getJSONWithComments(ar, ngw);
+             repo.write(ar.w, 2, 2);
+             ar.flush();
+         }catch(Exception ex){
+             Exception ee = new Exception("Unable to subscribe to topic "+nid+" contents", ex);
+             streamException(ee, ar);
+         }
+     }
+
 
      /*
       * Pull the first 100 character max from the string, but ignore anything

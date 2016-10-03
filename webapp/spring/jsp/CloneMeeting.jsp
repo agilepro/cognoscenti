@@ -33,7 +33,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
 
@@ -51,6 +51,8 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.meeting.endTime = runTime;
     };
     $scope.extractDateParts();
+    $scope.tinymceOptions = standardTinyMCEOptions();
+    $scope.tinymceOptions.height = 300;
 
     $scope.datePickOptions = {
         formatYear: 'yyyy',
@@ -138,6 +140,11 @@ function GetFirstHundredNoHtml(input) {
 
 </script>
 
+<style>
+.spaceyTable tr td {
+    padding:8px;
+}
+</style>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
@@ -150,10 +157,9 @@ function GetFirstHundredNoHtml(input) {
 
     <div id="NewMeeting">
         <div class="generalSettings">
-            <table>
+            <table class="spaceyTable">
                 <tr id="trspath">
                     <td class="gridTableColummHeader">Type:</td>
-                    <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
                         <input type="radio" ng-model="meeting.meetingType" value="1"
                             class="form-control" /> Circle Meeting   &nbsp
@@ -161,16 +167,19 @@ function GetFirstHundredNoHtml(input) {
                             class="form-control" /> Operational Meeting
                     </td>
                 </tr>
-                <tr><td style="height:30px"></td></tr>
                 <tr id="trspath">
                     <td class="gridTableColummHeader">Name:</td>
-                    <td style="width:20px;"></td>
                     <td colspan="2"><input type="text" ng-model="meeting.name" class="form-control"  size="69" /></td>
                 </tr>
-                <tr><td style="height:30px"></td></tr>
+                <tr id="trspath">
+                    <td class="gridTableColummHeader">Description:</td>
+                    <td colspan="2">
+                    <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
+                         class="leafContent" style="min-height:200px;" ></div>
+</td>
+                </tr>
                 <tr>
                     <td class="gridTableColummHeader">Date:</td>
-                    <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
 
                         <input type="text"
@@ -219,17 +228,17 @@ function GetFirstHundredNoHtml(input) {
                         </select>
                     </td>
                 </tr>
-
-                <tr><td style="height:30px"></td></tr>
                 <tr id="trspath">
                     <td class="gridTableColummHeader">Duration:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2"><input type="text" ng-model="meeting.duration" class="form-control blue" size="10" /></td>
+                    <td colspan="2"><input type="text" ng-model="meeting.duration" class="form-control" style="width:80px"/></td>
                 </tr>
-                <tr><td style="height:30px"></td></tr>
+                <tr id="trspath">
+                    <td class="gridTableColummHeader">Send Reminder:</td>
+                    <td colspan="2"><input type="text" ng-model="meeting.reminderTime" class="form-control" style="width:80px;float:left;"/>
+                    <div style="padding:10px;">&nbsp; minutes before the meeting</div></td>
+                </tr>
                 <tr>
                     <td class="gridTableColummHeader"></td>
-                    <td style="width:20px;"></td>
                     <td colspan="2">
                         <input type="submit" class="btn btn-primary" value="Create Meeting" ng-click="createMeeting()">
                     </td>

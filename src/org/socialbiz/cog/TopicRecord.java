@@ -797,6 +797,35 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           return allMeetings;
       }
 
+      /**
+       * get the subscribers on a discussion topic
+       */
+      public List<AddressListEntry> getSubscribers() throws Exception {
+          List<AddressListEntry> res = new ArrayList<AddressListEntry>();
+          for (String name : getVector("subscriber")) {
+              AddressListEntry aLabel = new AddressListEntry(name);
+              res.add(aLabel);
+          }
+          return res;
+      }
+
+      /**
+       * set the list of subscribers on a discussion topic
+       */
+      public void setSubscribers(List<AddressListEntry> values) throws Exception {
+          List<String> labelNames = new ArrayList<String>();
+          for (AddressListEntry aLable : values) {
+              labelNames.add(aLable.getUniversalId());
+          }
+          setSubscribersStr(labelNames);
+      }
+      public void setSubscribersStr(List<String> values) throws Exception {
+          //Since this is a 'set' type vector, always sort them so that they are
+          //stored in a consistent way ... so files are more easily compared
+          Collections.sort(values);
+          setVector("labels", values);
+      }
+      
 
       public void topicEmailRecord(AuthRequest ar, NGWorkspace ngp, TopicRecord note, MailFile mailFile) throws Exception {
           List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
@@ -876,6 +905,11 @@ public class TopicRecord extends CommentContainer implements EmailContext {
               labelMap.put(lRec.getName(), true);
           }
           thisNote.put("labelMap",      labelMap);
+          JSONArray subs = new JSONArray();
+          for (AddressListEntry ale : getSubscribers() ) {
+              subs.put(ale.getJSON());
+          }
+          thisNote.put("subscribers", subs);
           return thisNote;
      }
      public JSONObject getJSONWithHtml(AuthRequest ar, NGWorkspace ngw) throws Exception {

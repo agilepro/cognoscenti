@@ -24,12 +24,6 @@ public class AgendaItem extends CommentContainer {
         if (lockTime>0 && lockTime < System.currentTimeMillis()-30*60000) {
             clearLock();
         }
-        
-        //transitional
-        String name = getSubject();
-        if ("BREAK".equals(name) || "LUNCH".equals(name) || "DINNER".equals(name)) {
-            setSpacer(true);
-        }
     }
 
 

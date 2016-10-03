@@ -296,12 +296,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             var item = $scope.meeting.agenda[i];
             item.position = i+1;
             item.schedule = runTime;
-            item.isBlank = false;
-            if (item.subject=="BREAK" || item.subject=="LUNCH" || item.subject=="DINNER") {
-                item.isBlank = true;
-            }
             runDur = runDur + item.duration;
             runTime = new Date( runTime.getTime() + (item.duration*60000) );
+            item.scheduleEnd = runTime;
         }
         $scope.meeting.endTime = runTime;
         $scope.meeting.totalDuration = runDur;
@@ -500,7 +497,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         $scope.meeting.agenda.forEach( function(item) {
             if ($scope.editItemDetailsMap[item.id]) {
-                $scope.saveAgendaItemParts(item, ['subject','duration','presenters','topicLink']);
+                $scope.saveAgendaItemParts(item, ['subject','duration','presenters','topicLink','isSpacer']);
                 $scope.editItemDetailsMap[item.id] = false;
             }
         });
@@ -552,8 +549,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         var itemCopy = {};
         itemCopy.id = agendaItem.id;
         if (!agendaItem.subject || agendaItem.subject.length<1) {
-            alert("Please enter agenda item name");
-            return;
+            alert("Please enter agenda item name and subject before saving");
+            agendaItem.subject = "Agenda Item "+(new Date()).getTime();
         }
         fieldList.map( function(ele) {
             itemCopy[ele] = agendaItem[ele];
@@ -1776,9 +1773,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
                         <input ng-model="meeting.reminderTime" style="width:60px;"  class="form-control" >
-                        <span ng-show="meeting.reminderSent==0">Minutes before the meeting</span>
-                        <span ng-hide="meeting.reminderSent==0">Was sent {{meeting.reminderSent|date:'M/d/yy H:mm'}}
-                            <button ng-click="meeting.reminderSent=0" class="btn btn-default">Send Again</button>
+                        <span ng-show="meeting.reminderSent==0"> Minutes before the meeting</span>
+                        <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'M/d/yy H:mm'}}
                         </span>
                     </td>
                 </tr>
@@ -1825,9 +1821,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <!-- THIS IS THE ROLL CALL SECTION -->
 
 
-    <div class="comment-outer" style="margin:40px" ng-show="showSelfRegister()">
+    <div ng-repeat="sitch in mySitch" class="comment-outer" style="margin:40px" ng-show="showSelfRegister()">
       <div><h3 style="margin:5px"><% ar.writeHtml(currentUserName); %>, will you attend?</h3></div>
-      <div ng-repeat="sitch in mySitch" class="comment-inner">
+      <div class="comment-inner">
         <div class="form-inline form-group" style="margin:20px">
             <select ng-model="sitch.attend" class="form-control">
                 <option>Unknown</option>
@@ -1931,7 +1927,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </script>
 
 <div ng-repeat="item in getAgendaItems()">
-    <div class="agendaItemBlank" ng-show="item.isBlank">
+    <div class="agendaItemBlank" ng-show="item.isSpacer">
       <div style="padding:5px;">
         <div style="width:100%">
                 <span class="blankTitle" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
@@ -1951,12 +1947,29 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </span>
 <% } %>
                 <span>
-                    <i>{{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)</i>
+                    <i>({{item.duration}} minutes) {{item.schedule | date: 'HH:mm'}} 
+                      - {{item.scheduleEnd | date: 'HH:mm'}} </i>
                 </span>
         </div>
+          <div ng-show="editItemDetailsMap[item.id]" class="well" style="margin:20px">
+            <div class="form-inline form-group" ng-hide="item.topicLink">
+              Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"  
+                           placeholder="Enter Agenda Item Name"/>
+                    <input type="checkbox"  ng-model="item.isSpacer"  
+                             class="form-control" style="width:50px;"/>
+                    Break Time
+            </div>
+            <div class="form-inline form-group">
+              Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>
+            </div>
+            <div class="form-inline form-group">
+              <button ng-click="savePendingEdits()" class="btn btn-danger">Save</button>
+              <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
+            </div>
+          </div>
       </div>
     </div>
-    <div class="agendaItemFull"  ng-hide="item.isBlank">
+    <div class="agendaItemFull"  ng-hide="item.isSpacer">
     <table style="width:100%">
 
                           <!--  AGENDA HEADER -->
@@ -2038,6 +2051,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div class="form-inline form-group" ng-hide="item.topicLink">
               Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"  
                            placeholder="Enter Agenda Item Name"/>
+                    <input type="checkbox"  ng-model="item.isSpacer"  
+                             class="form-control" style="width:50px;"/>
+                    Break Time
             </div>
             <div class="form-inline form-group">
                 <tags-input ng-model="item.presenterList" 
@@ -2192,7 +2208,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
       
                           <!--  AGENDA comments -->
-      <table ng-show="showItemMap[item.id] && !item.isBlank" >
+      <table ng-show="showItemMap[item.id] && !item.isSpacer" >
       <tr ng-repeat="cmt in item.comments">
 
           <%@ include file="/spring/jsp/CommentView.jsp"%>
@@ -2226,7 +2242,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
     Refreshed {{refreshCount}} times.   {{refreshStatus}}<br/>
-    reminder sent {{meeting.reminderSent | date:'M/d/yy H:mm'}}
 
 <% } %>
 
