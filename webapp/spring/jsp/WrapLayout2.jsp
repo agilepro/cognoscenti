@@ -1,5 +1,5 @@
 <%
-    
+
     //this is the most important setting .. it is the name of the JSP file
     //that is being wrapped with a standard header and a footer.
     String wrappedJSP = ar.reqParam("wrappedJSP");
@@ -75,22 +75,22 @@
     else if ("leaf_accountRoleRequest".equals(jspName)) {
         jspName = "Site Role Request";
     }
-    
-    
-    
 
-    
-    
-    String title = ar.defParam("title", wrappedJSP); 
-    
+
+
+
+
+
+    String title = ar.defParam("title", wrappedJSP);
+
     slashPos = title.lastIndexOf("/");
     if (slashPos>=0) {
         title = title.substring(slashPos+1);
     }
     String themePath = ar.getThemePath();
     Cognoscenti cog = ar.getCogInstance();
-    
-    
+
+
 //pageTitle is a very strange variable.  It mostly is used to hold the value displayed
 //just above the menu.  Usually "Workspace: My Workspace"   or "Site: my Site" or "User: Joe User"
 //Essentially this depends upon the header type (workspace, site, or user).
@@ -159,7 +159,7 @@
     }
     //JSONObject menuWrapper = JSONObject.readFromFile(menuFile);
     //JSONArray mainList = menuWrapper.getJSONArray("mainList");
-        
+
 
 %>
 <!-- BEGIN Wrapper.jsp Layout-->
@@ -181,27 +181,45 @@
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
- 
+
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <script src="<%=ar.baseURL%>jfunc.js"></script>
 
+    <!-- Bootstrap Material Design -->
+    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
+    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
+    <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
+
 	<!-- INCLUDE web fonts -->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-	<link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
-		  
+	   <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+
     <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
-    <link href="<%=ar.retPath%>bits/weaverstyle.css" rel="styleSheet" type="text/css" media="screen" />
-    <link href="<%=ar.retPath%>bits/weavertheme.css" rel="styleSheet" type="text/css" media="screen" />
-    
+    <!--link href="<%=ar.retPath%>bits/weaverstyle.css" rel="styleSheet" type="text/css" media="screen" />
+    <link href="<%=ar.retPath%>bits/weavertheme.css" rel="styleSheet" type="text/css" media="screen" /-->
+    <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
+    <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
+
     <title><% ar.writeHtml(title); %></title>
-    
-    
-    
+
 <script>
+/* NEW UI TEMPPORARY SCRIPTS */
+// TODO Remove this after removing the options dropdown
+$(document).ready(function() {
+    $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
+    $('.rightDivContent .dropdown-menu').addClass('pull-right');
+  }
+)
+
+/* INIT Bootstrap Material Design */
+$.material.init();
+
+/* INIT tinyMCE */
 tinyMCE.PluginManager.add('stylebuttons', function(editor, url) {
   ['p', 'h1', 'h2', 'h3'].forEach(function(name){
    editor.addButton("style-" + name, {
@@ -223,7 +241,7 @@ tinyMCE.PluginManager.add('stylebuttons', function(editor, url) {
 function standardTinyMCEOptions() {
     return {
 		handle_event_callback: function (e) {
-		// put logic here for keypress 
+		// put logic here for keypress
 		},
         plugins: "link,stylebuttons",
         inline: false,
@@ -242,21 +260,113 @@ function standardTinyMCEOptions() {
 <body>
   <div class="bodyWrapper">
 
-<!-- Begin Top Navigation Area -->
-<div class="topNav">
-<%@ include file="WrapHeader2.jsp" %>
-</div>
-<!-- End Top Navigation Area -->
+<!-- Begin AppBar -->
+<%@ include file="AppBar.jsp" %>
+<!-- End AppBar -->
 
-<!-- Begin mainContent -->
-<div id="mainContent">
-<jsp:include page="<%=templateName%>" />
+
+<div class="container-fluid">
+  <div class="row">
+
+    <!-- Begin SideBar  -->
+    <div class="col-sm-3 col-lg-2">
+      <%@ include file="SideBar.jsp" %>
+    </div>
+    <!-- End SideBar -->
+
+    <!-- Begin mainContent -->
+    <div class="col-sm-9 col-lg-10 main-content">
+
+      <!-- BEGIN Title and Breadcrump -->
+      <ol class="title">
+      <% if(isUserHeader) { %>
+        <li class="page-name"><h1><a href="<%=userRelPath%>UserHome.htm"><% ar.writeHtml(userName); %></a></h1></li>
+      <% } else if(isSiteHeader) { %>
+      <li class="page-name"><h1><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/accountListProjects.htm">
+            <%ar.writeHtml(title);%></a></h1></li>
+      <% } else { %>
+        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/accountListProjects.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
+        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/frontPage.htm">
+            <%ar.writeHtml(ngp.getFullName());%></a></li>
+      <% } %>
+        <li class="page-name"><h1><% ar.writeHtml(jspName); %></h1></li>
+      </ol>
+      <!-- BEGIN Title and Breadcrump -->
+
+      <!-- Welcome Message -->
+      <div id="welcomeMessage"></div>
+      <script>
+      function validateDelimEmails(field) {
+          var count = 1;
+          var result = "";
+          var spiltedEmails;
+          var value = trimme(field.value);
+          if(value != ""){
+              if(value.indexOf(";") != -1){
+                  spiltedEmails = value.split(";");
+              }else if(value.indexOf(",") != -1){
+                  spiltedEmails = value.split(",");
+              }else if(value.indexOf("\n") != -1){
+                  spiltedEmails = value.split("\n");
+              }else{
+                  value = value+";";
+                  spiltedEmails = value.split(";");
+              }
+              for(var i = 0;i < spiltedEmails.length;i++){
+                  var email_id = trimme(spiltedEmails[i]);
+                  if(email_id != ""){
+                      if(!validateEmail(email_id)){
+                          result += "  "+count+".    "+email_id+" \n";
+                          count++;
+                      }
+                  }
+              }
+          }
+          if(result != ""){
+              alert("Below is the list of id(s) which does not look like an email. Please enter an email id(s).\n\n"+result);
+              field.focus();
+              return false;
+          }
+
+          return true;
+      }
+
+
+      function displayWelcomeMessage(info) {
+          var y = document.getElementById("welcomeMessage");
+          if (info.haveNotCheckedYet) {
+              y.innerHTML = 'Checking identity, please <a href="'
+                  +loginConfig.providerUrl
+                  +'&go='+window.location+'"><span class="btn btn-primary">Login</span></a>';
+          }
+          else if (!info.userName) {
+              y.innerHTML = 'Not logged in, please <a href="'
+                  +loginConfig.providerUrl
+                  +'?openid.mode=quick&go='+window.location+'"><span class="btn btn-primary">Login</span></a>';
+          }
+          else if (!info.verified) {
+              y.innerHTML = 'Hello <b>'+info.userName+'</b>.  Attempting Automatic Login.';
+          }
+          else {
+              y.innerHTML = 'Welcome <b>'+info.userName+'</b>.  <a target="_blank" href="'
+                  +loginConfig.providerUrl
+                  +'?openid.mode=logout&go='+window.location+'">Logout</a>.';
+          }
+      }
+
+      initLogin(<% loginConfig.write(out, 2, 2); %>, <% loginInfo.write(out, 2, 2); %>, displayWelcomeMessage);
+      </script>
+
+      <!-- Begin Template Content -->
+      <jsp:include page="<%=templateName%>" />
+      <!-- End Template Content -->
+    </div>
+  </div>
 </div>
 <!-- End mainContent -->
 
-
-
-</div><!-- End body wrapper -->
+</div>
+<!-- End body wrapper -->
 </body>
 </html>
 <!-- END WrapLayout2.jsp -->
