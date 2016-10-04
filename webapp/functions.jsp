@@ -98,23 +98,6 @@
     }
 
 
-    static public String formateDate(long timestamp, String format) throws Exception
-    {
-        if (timestamp==0){
-            return "";
-        }
-        Date date = new Date(timestamp);
-        SimpleDateFormat  sFormat = new SimpleDateFormat(format);
-        return sFormat.format(date);
-
-    }
-
-    public static String getUserFullNameList()
-    {
-        return UserManager.getUserFullNameList();
-    }
-
-
     public static String pasreFullname(String fullNames) throws Exception {
         String assigness = "";
         String[] fullnames = UtilityMethods.splitOnDelimiter(fullNames, ',');
@@ -225,9 +208,7 @@
                     + SectionUtil.encodeURLData(ar.getRequestURL());
             ar.write("\n<a href=\"");
             ar.writeHtml(editUrl);
-            ar.write("\" title=\"Edit this topic\"  target=\"_blank\"><img src=\"");
-            ar.write(ar.retPath);
-            ar.write("edittexticon.gif\"/></a>");
+            ar.write("\" title=\"Edit this topic\"  target=\"_blank\">EDIT</a>");
         }
 
         ar.write("</h1>");

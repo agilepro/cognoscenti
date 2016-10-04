@@ -160,14 +160,16 @@
     %>
     </ul>
     <h3>Last Notification Sent on: </h3><%SectionUtil.nicePrintDate(out,lastSentTime); %>(<%SectionUtil.nicePrintTime(ar,lastSentTime,ar.nowTime); %>)
+
+    <h3>Files in User Folder</h3>
     <ul>
 
     <%
         for (File child : userFolder.listFiles())
         {
-            ar.write("\n<li><a href=\"unknownpage\">");
+            ar.write("\n<li>");
             ar.writeHtml(child.getName());
-            ar.write("</a> -- ");
+            ar.write(" -- ");
             ar.write(Long.toString(child.length()));
             ar.write("</li>");
         }
@@ -175,6 +177,7 @@
 
     </ul>
     <hr/>
+    <h3>Files in Log Folder</h3>
     <ul>
 
     <%
