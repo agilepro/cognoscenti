@@ -185,6 +185,8 @@
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <script src="<%=ar.baseURL%>jfunc.js"></script>
+    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
+    <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
     <!-- Bootstrap Material Design -->
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
@@ -197,11 +199,6 @@
           data-semver="4.3.0" data-require="font-awesome@*" />
 	   <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
-    <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
-
-    <!--link href="<%=ar.retPath%>bits/weaverstyle.css" rel="styleSheet" type="text/css" media="screen" />
-    <link href="<%=ar.retPath%>bits/weavertheme.css" rel="styleSheet" type="text/css" media="screen" /-->
     <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
     <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
 
