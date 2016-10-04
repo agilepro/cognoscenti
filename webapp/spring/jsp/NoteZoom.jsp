@@ -94,10 +94,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.history = <%history.write(out,2,4);%>;
     $scope.allGoals = <%allGoals.write(out,2,4);%>;
     $scope.allPeople = <%allPeople.write(out,2,4);%>;
-    
+
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 400;
- 
+
     $scope.currentTime = (new Date()).getTime();
     $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
 
@@ -409,7 +409,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.replyToComment = function(cmt) {
         $scope.openCommentCreator({},1,cmt.time);  //simple comment
     }
-    
+
     $scope.phaseNames = {
         "Draft": "Draft",
         "Freeform": "Freeform",
@@ -445,8 +445,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "";
     }
-    
-    
+
+
     $scope.openCommentCreator = function(itemNotUsed, type, replyTo, defaultBody) {
         var newComment = {};
         newComment.time = new Date().getTime();
@@ -689,16 +689,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div style="height:40px;margin-bottom:15px">
         <div class="leftDivContent">
-<%if (isLoggedIn) { %>
-          <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation" ng-repeat="phase in getPhases()"><a role="menuitem"
-                  ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
-            </ul>
-          </span>
-<% } %>
           <span style="margin-left:20px">Labels:</span>
           <span class="dropdown" ng-repeat="role in allLabels">
             <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
@@ -710,22 +700,28 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </ul>
           </span>
 <%if (isLoggedIn) { %>
-          <span>
-             <span class="dropdown">
-               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
-               style="padding: 2px 5px;font-size: 11px;"> + </button>
-               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                 <li role="presentation" ng-repeat="rolex in allLabels">
-                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
-                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
-                         {{rolex.name}}</button></li>
-               </ul>
-             </span>
-          </span>
+<span class="dropdown">
+  <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+  style="padding: 2px 5px;font-size: 11px;"> + </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+    <li role="presentation" ng-repeat="rolex in allLabels">
+        <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
+        ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
+            {{rolex.name}}</button></li>
+  </ul>
+</span>
 <% } %>
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
 <%if (isLoggedIn) { %>
+<span class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+  {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+    <li role="presentation" ng-repeat="phase in getPhases()"><a role="menuitem"
+        ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
+  </ul>
+</span>
           <span class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
@@ -763,7 +759,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <% } %>
 
     <div style="color:lightgrey;font-style:italic">Last modified: {{noteInfo.modTime|date}}</div>
-    
+
 
 
 
@@ -827,9 +823,9 @@ comment-state-complete {
 
 <table>
   <tr ng-repeat="cmt in getComments()">
-  
+
      <%@ include file="/spring/jsp/CommentView.jsp"%>
-  
+
   </tr>
 
 
