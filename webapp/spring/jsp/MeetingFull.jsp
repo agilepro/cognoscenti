@@ -11,11 +11,11 @@
     ar.setPageAccessLevels(ngw);
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngw.findMeeting(meetId);
-    
+
     //comment or uncomment depending on whether you are in development testing mode
     //String templateCacheDefeater = "";
     String templateCacheDefeater = "?t="+System.currentTimeMillis();
-    
+
 
     if (!AccessControl.canAccessMeeting(ar, ngw, mRec)) {
         throw new Exception("Please log in to see this meeting.");
@@ -45,7 +45,7 @@
         }
         attachmentList.put(doc.getJSON4Doc(ar, ngw));
     }
-    
+
     JSONArray allGoals     = ngw.getJSONGoals();
 
     JSONArray allRoles = new JSONArray();
@@ -69,7 +69,7 @@
         docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngw.getKey()
                     + "/summary.json?lic="+lfu.getId();
     }
-    
+
     MeetingRecord backlog = ngw.getAgendaItemBacklog();
 
 /* PROTOTYPE
@@ -199,7 +199,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.allTopics = [];
     $scope.backlogId = "<%=backlog.getId()%>";
-       
+
 
 
     $scope.newAssignee = "";
@@ -209,7 +209,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.myUserId = "<% ar.writeJS(ar.getBestUserId()); %>";
     $scope.actionItemFilter = "";
     $scope.realDocumentFilter = "";
-    
+
     $scope.isRegistered = function() {
         var registered = false;
         $scope.meeting.rollCall.forEach( function(item) {
@@ -219,10 +219,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         return registered;
     }
-    
+
     //initialize based on being registered, but allow user to toggle later
     $scope.showRollCall = $scope.isRegistered();
-    
+
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -243,7 +243,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.editMeetingDesc = false;
     $scope.editItemDetailsMap = {};
     $scope.editItemDescMap = {};
-    
+
     $scope.stopEditing =  function() {
         $scope.editMeetingInfo = false;
         $scope.editMeetingDesc = false;
@@ -251,21 +251,21 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.editItemDescMap = {};
     }
 
-    
+
     $scope.showAll = function() {
         $scope.meeting.agenda.forEach( function(item) {
             $scope.showItemMap[item.id] = true;
         });
     }
-    
+
     if (window.location.href.indexOf("#cmt")>0) {
         $scope.showAll();
     }
     $scope.getAgendaItems = function() {
         return $scope.meeting.agenda;
     }
-    
-    
+
+
     $scope.datePickOptions = {
         formatYear: 'yyyy',
         startingDay: 1
@@ -701,7 +701,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         if (nowEditing) {
             $scope.refreshStatus = "No refresh because currently editing";
-            return;   
+            return;
         }
         if (true) {
             $scope.refreshStatus = "No refresh because it doesn't work with TinyMCE editor";
@@ -829,8 +829,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     else {
         $scope.refreshAttachmentList();
     }
-    
-    
+
+
     $scope.findTopicRecord = function(topicId) {
         var ret = null;
         $scope.allTopics.forEach( function(oneTopic) {
@@ -864,10 +864,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     else {
         $scope.refreshTopicList();
     }
-    
-    
-    
-    
+
+
+
+
     $scope.getMinutesStyle = function() {
         if ($scope.meeting.minutesId) {
             if (!$scope.minutesDraft) {
@@ -888,8 +888,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     $scope.minutesDraft = $scope.getMinutesIsDraft();
 
-    
-    
+
+
     $scope.startEditLockDescription = function(item) {
         var rec = {};
         rec.id = item.id;
@@ -919,8 +919,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.putGetMeetingInfo(saveRecord);
         $scope.editItemDescMap[item.id]=false;
     }
-    
-    
+
+
     $scope.startNewComment = function(item, theType, cmt) {
         item.newComment = {};
         item.newComment.choices = ["Consent", "Objection"];
@@ -944,7 +944,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         itemCopy.comments.push(cmt);
         $scope.saveAgendaItem(itemCopy);
     }
-    
+
 
     $scope.stateStyle = function(cmt) {
         if (cmt.state==11) {
@@ -1157,8 +1157,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.reportError(data);
         });
     };
-    
-    
+
+
     $scope.openModalActionItem = function (item, goal) {
 
         var modalInstance = $modal.open({
@@ -1332,9 +1332,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 return;
             }
             var nix = {};
-            nix.name = person.name; 
-            nix.uid  = person.uid; 
-            nix.key  = person.key; 
+            nix.name = person.name;
+            nix.uid  = person.uid;
+            nix.key  = person.key;
             res.push(nix);
         });
         return res;
@@ -1349,7 +1349,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.uid);
     }
-    
+
     $scope.openCommentCreator = function(item, type, replyTo, defaultBody) {
         var newComment = {};
         newComment.time = new Date().getTime();
@@ -1382,8 +1382,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
                 },
-                parentScope: function() { 
-                    return $scope; 
+                parentScope: function() {
+                    return $scope;
                 }
             }
         });
@@ -1608,23 +1608,20 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-<%if (isLoggedIn) { %>    
-        <div  style="float:left">
-            <span class="dropdown">
-                <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
-                State: {{stateName()}} <span class="caret"></span></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="changeMeetingState(1)">Plan Meeting</a></li>
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="changeMeetingState(2)">Run Meeting</a></li>
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="changeMeetingState(3)">Complete Meeting</a></li>
-                </ul>
-            </span>
-        </div>
+<%if (isLoggedIn) { %>
         <div class="rightDivContent" style="margin-right:100px;">
+          <span class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
+              State: {{stateName()}} <span class="caret"></span></button>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                <li role="presentation"><a role="menuitem"
+                    ng-click="changeMeetingState(1)">Plan Meeting</a></li>
+                <li role="presentation"><a role="menuitem"
+                    ng-click="changeMeetingState(2)">Run Meeting</a></li>
+                <li role="presentation"><a role="menuitem"
+                    ng-click="changeMeetingState(3)">Complete Meeting</a></li>
+              </ul>
+          </span>
           <span class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
@@ -1653,9 +1650,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           </span>
 
         </div>
-<% } %>        
-    </div>
-
+<% } %>
 
     <table>
       <tr>
@@ -1684,7 +1679,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       Create Calendar Entry</a></li>
                 </ul>
             </span>
-<% } %>            
+<% } %>
           </div>
            <div class="well leafContent" ng-show="editMeetingInfo">
              <table>
@@ -1838,7 +1833,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
       </div>
     </div>
-    
+
 
     <div class="comment-outer" style="margin:40px" ng-show="editAttendees()">
       <div><h2 style="margin:5px">Attendance List</h2></div>
@@ -1865,18 +1860,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div class="leafContent" ng-show="isCompleted() && meeting.minutesId">
         <div ng-show="minutesDraft">
            Draft Minutes:
-           <span class="btn btn-sm btn-default"  style="margin:4px;background-color:yellow;" 
+           <span class="btn btn-sm btn-default"  style="margin:4px;background-color:yellow;"
                  ng-click="navigateToTopic(meeting.minutesLocalId)">
                  View Minutes
            </span>
-           <span class="btn btn-sm btn-default"  style="margin:4px;" 
+           <span class="btn btn-sm btn-default"  style="margin:4px;"
                  ng-click="postMinutes(meeting.minutesLocalId)">
                  Post Minutes as they are
            </span>
         </div>
         <div ng-hide="minutesDraft">
            Posted Minutes:
-           <span class="btn btn-sm btn-default"  style="margin:4px;" 
+           <span class="btn btn-sm btn-default"  style="margin:4px;"
                  ng-click="navigateToTopic(meeting.minutesLocalId)">
                  View Minutes
            </span>
@@ -1937,7 +1932,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-                      <li role="presentation">                      
+                      <li role="presentation">
                           <a role="menuitem" ng-click="startItemDetailEdit(item)"><i class="fa fa-cogs"></i> Item Settings</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i> Move Up</a></li>
@@ -1988,32 +1983,32 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                       <li role="presentation">
                           <a role="menuitem" ng-click="startItemDetailEdit(item)">
-                          <i class="fa fa-cogs"></i> 
+                          <i class="fa fa-cogs"></i>
                           Item Settings</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i> 
+                          <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i>
                              Move Up</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i> 
+                          <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i>
                              Move Down</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="startEditLockDescription(item)"><i class="fa fa-pencil-square-o"></i>   Edit Description</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i> 
+                          <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i>
                              Docs Add/Remove</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i> 
+                          <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i>
                              Action Items Add/Remove</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i> 
+                          <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i>
                              Toggle Ready Flag</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i> 
+                          <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i>
                               <span ng-hide="item.topicLink">Set</span>
-                              <span ng-show="item.topicLink">Change</span> 
+                              <span ng-show="item.topicLink">Change</span>
                               Discussion Topic</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="moveItemToBacklog(item)"><i class="fa fa-trash"></i> 
+                          <a role="menuitem" ng-click="moveItemToBacklog(item)"><i class="fa fa-trash"></i>
                               Remove Item</a></li>
 
                    </ul>
@@ -2040,7 +2035,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
           <div ng-show="editItemDetailsMap[item.id]" class="well" style="margin:20px">
             <div class="form-inline form-group">
-                Linked Topic: <button ng-repeat="topic in itemTopics(item)" ng-click="visitTopic(item)" 
+                Linked Topic: <button ng-repeat="topic in itemTopics(item)" ng-click="visitTopic(item)"
                     class="btn btn-sm btn-default" placeholder="Enter Agenda Item Name">
                     {{topic.subject}}</button>
                 <button ng-click="openAttachTopics(item)" class="btn btn-primary">
@@ -2049,16 +2044,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </button>
             </div>
             <div class="form-inline form-group" ng-hide="item.topicLink">
-              Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"  
+              Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"
                            placeholder="Enter Agenda Item Name"/>
                     <input type="checkbox"  ng-model="item.isSpacer"  
                              class="form-control" style="width:50px;"/>
                     Break Time
             </div>
             <div class="form-inline form-group">
-                <tags-input ng-model="item.presenterList" 
+                <tags-input ng-model="item.presenterList"
                           placeholder="Enter user name or id"
-                          display-property="name" key-property="uid" 
+                          display-property="name" key-property="uid"
                           on-tag-clicked="toggleSelectedPerson($tag)">
                     <auto-complete source="loadItems($query)"></auto-complete>
                 </tags-input>
@@ -2203,16 +2198,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </tr>
 
       </table>
-      </div>    
-     
+      </div>
 
-      
+
+
                           <!--  AGENDA comments -->
       <table ng-show="showItemMap[item.id] && !item.isSpacer" >
       <tr ng-repeat="cmt in item.comments">
 
           <%@ include file="/spring/jsp/CommentView.jsp"%>
-     
+
       </tr>
 <%if (isLoggedIn) { %>
       <tr>
@@ -2256,6 +2251,3 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachTopicCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
-
-
-
