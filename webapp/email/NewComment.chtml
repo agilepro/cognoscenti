@@ -3,9 +3,10 @@
 <meta charset="UTF-8">
 </head>
 
-<body>
+<body><!--TEMPLATE NewComment.chtml-->
+
 <div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
-<!--TEMPLATE NewComment.chtml-->
+
 <p>From: <a href="{$userURL}">{$userName|onempty(No Name)|html}</a> 
 Workspace: <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a>
 <br/>
@@ -22,12 +23,31 @@ Workspace: <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a>
 {$comment.html}
 </div>
 
-{% if($isClosed) %}
+
+{% if($isClosed!=true) %}
+{% if ($cmtType=="proposal") %}
 <hr/>
-{$outcomeHtml}
+<div style="color:grey;font-weight: bold;">
+  Please click to <a href="{$commentURL}">Enter Your Response To This</a>
+</div>
+
+{% endif %}
 {% endif %}
 </div>
 
+{% if($isClosed==true) %}
+<br/>
+<div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
+<div style="color:grey;font-weight: bold;">
+  The final outcome is:
+</div>
+{$outcomeHtml}
+</div>
+{% endif %}
+
 {% include OptOut %}
 
+<script>
+{$debugDump}
+</script>
 </body></html>

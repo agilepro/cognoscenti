@@ -10,7 +10,7 @@ import com.x5.template.filters.BasicFilter;
 import com.x5.template.filters.ChunkFilter;
 import com.x5.template.filters.FilterArgs;
 
-/** 
+/**
 G   Era designator  Text    AD
 y   Year    Year    1996; 96
 Y   Week year   Year    2009; 09
@@ -33,12 +33,25 @@ S   Millisecond     Number  978
 z   Time zone   General time zone   Pacific Standard Time; PST; GMT-08:00
 Z   Time zone   RFC 822 time zone   -0800
 X   Time zone   ISO 8601 time zone  -08; -0800; -08:00
+
+USE THIS in a TEMPLATE:
+
+     {$myDate|date(YYYY-MM-dd)}
+
+
  */
 public class ChunkFilterDate  extends BasicFilter implements ChunkFilter {
-    
+
         @Override
         public String transformText(Chunk chunk, String valueIn, FilterArgs args) {
             long dateVal = Mel.safeConvertLong(valueIn);
+
+            //if this is zero, or close enough to zero, then suppress output
+            //we give about 1 day of slop in case someone distorted things with
+            //a timezone offset.
+            if (dateVal < 100000000L) {
+                return "";
+            }
             String[] argStrings = args.getFilterArgs();
             String format = "MMM dd, yyyy  HH:mm z";
             if (argStrings.length>0 && argStrings[0].length()>0) {
