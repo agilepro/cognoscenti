@@ -445,8 +445,8 @@ public class SiteController extends BaseController {
             String destUser = incoming.getString("destUser");
             List<NGPageIndex> listOfSpaces = null;
             {
-                NGBook ngb = ar.getCogInstance().getSiteById(siteId);
-                ar.setPageAccessLevels(ngb);
+                NGBook site = ar.getCogInstance().getSiteById(siteId);
+                ar.setPageAccessLevels(site);
                 ar.assertAdmin("Must be owner of a site to replace users.");
                 listOfSpaces = ar.getCogInstance().getAllProjectsInSite(siteId);
                 NGPageIndex.clearLocksHeldByThisThread();

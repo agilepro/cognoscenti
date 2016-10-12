@@ -337,17 +337,17 @@ public class NGBook extends ContainerCommon implements NGContainer {
         }
 
         Document newDoc = readOrCreateFile(theFile, "book");
-        NGBook newBook = new NGBook(theFile, newDoc);
+        NGBook newSite = new NGBook(theFile, newDoc);
 
         // set default values
         List<String> nameSet = new ArrayList<String>();
         nameSet.add(name);
-        newBook.setContainerNames(nameSet);
-        newBook.setStyleSheet("PageViewer.css");
-        newBook.setLogo("logo.gif");
+        newSite.setContainerNames(nameSet);
+        newSite.setStyleSheet("PageViewer.css");
+        newSite.setLogo("logo.gif");
 
-        registerSite(newBook);
-        return newBook;
+        registerSite(newSite);
+        return newSite;
     }
 
     /**

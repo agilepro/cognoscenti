@@ -363,7 +363,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <table class="spacey"><tr>
         <td style="width:400px;height:600px;vertical-align:top;" >
             <table>
-                <tr ng-repeat="role in allRoles" style="background-color:{{(role.name==roleInfo.name)?'#EEE':'white'}};" class="generalContent">
+                <tr ng-repeat="role in allRoles" ng-click="fetchRole(role.name)"
+                    style="background-color:{{(role.name==roleInfo.name)?'#EEE':'white'}};" 
+                    class="generalContent">
                     <td style="padding:10px">
                         <button class="btn btn-sm" style="color:black;background-color:{{role.color}}"
                              ng-click="fetchRole(role.name)">{{role.name}}</button>

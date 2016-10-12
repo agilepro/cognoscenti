@@ -716,8 +716,11 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                     }
                 }
                 for (CommentRecord cr : ai.getComments()) {
-                    if (cr.getCommentType() == CommentRecord.COMMENT_TYPE_MINUTES) {
-                        sb.append("\n\n''Minutes:''\n\n");
+                    int cType = cr.getCommentType();
+                    if (cType == CommentRecord.COMMENT_TYPE_MINUTES || 
+                            cType == CommentRecord.COMMENT_TYPE_PROPOSAL|| 
+                            cType == CommentRecord.COMMENT_TYPE_REQUEST) {
+                        sb.append("\n\n''"+cr.getTypeName()+":''\n\n");
                         sb.append(cr.getContent());
                     }
                 }

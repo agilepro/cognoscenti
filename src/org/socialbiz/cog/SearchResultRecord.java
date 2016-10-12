@@ -24,10 +24,10 @@ import org.workcast.json.JSONObject;
 
 public class SearchResultRecord
 {
-    private String bookName = "";
-    private String pageName = "";
-    private String pageKey = "";
-    private String pageLink = "";
+    private String siteName = "";
+    private String workspaceName = "";
+    private String workspaceKey = "";
+    private String workspaceLink = "";
     private long lastModifiedTime = System.currentTimeMillis();
     private String lastModifiedBy = "";
     private static final String NO_DATA = "";
@@ -54,44 +54,44 @@ public class SearchResultRecord
         this.noteSubject = noteSubject;
     }
     public String getBookName() {
-        return bookName;
+        return siteName;
     }
     public void setBookName(String value) {
         if (value == null || value.length() == 0) {
             value = "No Site Name";
         }
-        bookName = value;
+        siteName = value;
     }
 
     public String getPageKey() {
-        return pageKey;
+        return workspaceKey;
     }
     public void setPageKey(String value) {
         if (value == null || value.length() == 0) {
             value = "";
         }
-        pageKey = value;
+        workspaceKey = value;
     }
 
 
     public String getPageName() {
-        return pageName;
+        return workspaceName;
     }
     public void setPageName(String value) {
         if (value == null || value.length() == 0) {
             value = "No Workspace Name";
         }
-        pageName = value;
+        workspaceName = value;
     }
 
     public String getPageLink() {
-        return pageLink;
+        return workspaceLink;
     }
     public void setPageLink(String value) {
         if (value == null || value.length() == 0) {
             value = NO_DATA;
         }
-        pageLink = value;
+        workspaceLink = value;
     }
 
     public long getLastModifiedTime() {
@@ -124,10 +124,10 @@ public class SearchResultRecord
 
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
-        jObj.put("projectName", pageName);
-        jObj.put("projectKey", pageKey);
-        jObj.put("projectLink", pageLink);
-        jObj.put("siteName", bookName);
+        jObj.put("projectName", workspaceName);
+        jObj.put("projectKey", workspaceKey);
+        jObj.put("projectLink", workspaceLink);
+        jObj.put("siteName", siteName);
         jObj.put("noteSubject", noteSubject);
         jObj.put("noteLink", noteLink);
         jObj.put("modTime", lastModifiedTime);

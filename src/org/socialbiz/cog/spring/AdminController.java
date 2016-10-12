@@ -71,15 +71,15 @@ public class AdminController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGBook ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
-            ar.setPageAccessLevels(ngb);
+            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
+            ar.setPageAccessLevels(site);
             ar.assertAdmin("Must be an admin to change site info.");
             JSONObject newConfig = getPostedObject(ar);
 
-            ngb.updateConfigJSON(newConfig);
+            site.updateConfigJSON(newConfig);
 
-            ngb.saveContent(ar, "Updating workspace settings");
-            JSONObject repo = ngb.getConfigJSON();
+            site.saveContent(ar, "Updating workspace settings");
+            JSONObject repo = site.getConfigJSON();
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
@@ -89,36 +89,6 @@ public class AdminController extends BaseController {
     }
 
 
-//TODO: is this still used?
-    /*
-    @RequestMapping(value = "/{siteId}/{project}/changeGoal.form", method = RequestMethod.POST)
-    public void changeGoalHandler(@PathVariable String siteId,@PathVariable String project,
-            HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                showWarningView(ar, "message.loginalert.see.page");
-                return;
-            }
-            NGPage ngp = ar.getCogInstance().getProjectByKeyOrFail(project);
-            ar.setPageAccessLevels(ngp);
-            ar.assertAdmin("Unable to change the name of this page.");
-            ar.assertNotFrozen(ngp);
-
-            ProcessRecord process = ngp.getProcess();
-            process.setSynopsis(ar.reqParam("goal"));
-            process.setDescription(ar.reqParam("purpose"));
-
-            ngp.saveFile(ar, "Changed Goal and/or Purpose of Workspace");
-            ar.resp.sendRedirect("admin.htm");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.admin.change.goal", new Object[]{project,siteId} , ex);
-        }
-
-    }
-    */
 
 
     //TODO: change this to a JSON post from the admin page
@@ -190,109 +160,6 @@ public class AdminController extends BaseController {
         }
     }
 
-    //TODO: just update the list of names instead of separate operations to add and delete
-    //TODO: is this still being used?
-    /*
-    @RequestMapping(value = "/{siteId}/$/changeAccountName.form", method = RequestMethod.POST)
-    public void changeAccountNameHandler(@PathVariable String siteId,
-            HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("User must be logged in to delete previous name of site.");
-            NGBook ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
-            ar.setPageAccessLevels(ngb);
-            ar.assertAdmin("Unable to change the name of this page.");
-
-            String newName = ar.reqParam("newName");
-            List<String> nameSet = ngb.getContainerNames();
-            //first, see if the new name is one of the old names, and if so
-            //just rearrange the list
-            int oldPos = findString(nameSet, newName);
-            if (oldPos<0) {
-                //we did not find the value, so just insert it
-                nameSet.add(0, newName);
-            }
-            else {
-                insertRemove(nameSet, newName, oldPos);
-            }
-            ngb.setContainerNames(nameSet);
-
-            ngb.saveFile(ar, "Change Name Action");
-
-            ar.resp.sendRedirect("admin.htm");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.admin.change.account.name", new Object[]{siteId} , ex);
-        }
-    }
-    */
-
-    //TODO: probably not needed any more
-    /*
-    @RequestMapping(value = "/{siteId}/$/changeAccountDescription.form", method = RequestMethod.POST)
-    public void changeAccountDescriptionHandler(@PathVariable String siteId,
-            HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("User must be logged in to change description of site.");
-            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
-            ar.setPageAccessLevels(site);
-            String action = ar.reqParam("action");
-            ar.assertAdmin("Unable to change site settings.");
-            if(action.equals("Change Description")){
-                String newDesc = ar.reqParam("desc");
-                site.setDescription( newDesc );
-            }
-            else if(action.equals("Change Theme")){
-                String theme = ar.reqParam("theme");
-                site.setThemeName(theme);
-            }
-
-            site.saveFile(ar, "Change Site Settings");
-
-            ar.resp.sendRedirect("admin.htm");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.admin.change.account.description", new Object[]{siteId} , ex);
-        }
-
-    }
-    */
-
-    //TODO: is this still needed?
-    /*
-    @RequestMapping(value = "/{siteId}/$/deletePreviousAccountName.htm", method = RequestMethod.GET)
-    public void deletePreviousProjectNameHandler(@PathVariable String siteId,
-            HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("User must be logged in to delete previous name of site.");
-            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
-            ar.setPageAccessLevels(site);
-            ar.assertAdmin("Unable to change the name of this page.");
-
-            String oldName = ar.reqParam("oldName");
-
-            List<String> nameSet = site.getContainerNames();
-            int oldPos = findString(nameSet, oldName);
-
-            if (oldPos>=0) {
-                nameSet.remove(oldPos);
-                site.setContainerNames(nameSet);
-            }
-
-            site.saveFile(ar, "Change Name Action");
-
-            ar.resp.sendRedirect("admin.htm");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.admin.delete.previous.account.name", new Object[]{siteId} , ex);
-        }
-    }
-    */
 
     // compare the sanitized versions of the names in the array, and if
     // the val equals one, return the index of that string, otherwise

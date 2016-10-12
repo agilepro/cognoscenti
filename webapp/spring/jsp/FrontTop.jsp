@@ -27,14 +27,14 @@ Required parameters:
         if (!ngpi.isProject()) {
             continue;
         }
-        if (!siteKey.equals(ngpi.pageBookKey)) {
+        if (!siteKey.equals(ngpi.wsSiteKey)) {
             continue;
         }
         if (ngpi.parentKey==null || ngpi.parentKey.length()==0) {
             JSONObject jo = new JSONObject();
             jo.put("name", ngpi.containerName);
             jo.put("key",  ngpi.containerKey);
-            jo.put("site", ngpi.pageBookKey);
+            jo.put("site", ngpi.wsSiteKey);
             children.put(jo);
         }
     }

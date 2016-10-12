@@ -14,7 +14,7 @@
             mainWorkspaceId = wl.get(0).getPageKey();
             NGPageIndex ngpi = cog.getContainerIndexByKey(mainWorkspaceId);
             if (ngpi!=null) {
-                mainSiteId = ngpi.pageBookKey;
+                mainSiteId = ngpi.wsSiteKey;
                 NGBook site = ar.getCogInstance().getSiteByIdOrFail(mainSiteId);
                 mainSiteName = site.getFullName();
             }

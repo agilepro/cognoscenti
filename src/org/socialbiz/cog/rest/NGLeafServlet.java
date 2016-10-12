@@ -300,7 +300,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
                 //fixes the path.  Can remove after Sept 2016
                 //there is no likelihood that email is sitting around after that.
                 System.out.println("HACK: fixxing bad link in email message, redirecting to note zoom in new UI: "+resource);
-                String relPath = "../../t/"+ngpi.pageBookKey+"/"+ngpi.containerKey+"/"+resource;
+                String relPath = "../../t/"+ngpi.wsSiteKey+"/"+ngpi.containerKey+"/"+resource;
                 ar.resp.sendRedirect(relPath);
                 return;
             } else {

@@ -103,7 +103,7 @@ public class CreateProjectController extends BaseController {
                 }
                 sb.append(page.containerName);
                 sb.append(":");
-                sb.append(page.pageBookKey);
+                sb.append(page.wsSiteKey);
                 sb.append("/");
                 sb.append(page.containerKey);
                 addComma = true;
@@ -430,7 +430,7 @@ public class CreateProjectController extends BaseController {
  * The loc parameter is a path to a place where the folder already exists, and
  * we want to convert an existing folder to a project.
  */
-    private static NGPage createPage(UserProfile uProf, NGBook site, String projectName,
+    private static NGPage createPage(UserProfile uProf, NGBook site, String workspaceName,
             String loc, String upstream, long nowTime, Cognoscenti cog) throws Exception {
         if (!site.primaryOrSecondaryPermission(uProf)) {
             throw new NGException("nugen.exception.not.member.of.account",
@@ -440,13 +440,13 @@ public class CreateProjectController extends BaseController {
         NGPage ngPage = null;
         if (loc==null){
             //normal, create a brand new empty project
-            String pageKey = makeGoodSearchableName(projectName);
+            String pageKey = makeGoodSearchableName(workspaceName);
             if (pageKey.length()>30) {
                 pageKey = pageKey.substring(0,30);
             }
             ngPage = site.createProjectByKey(uProf, pageKey, nowTime, cog);
             List<String> nameSet = new ArrayList<String>();
-            nameSet.add(projectName);
+            nameSet.add(workspaceName);
             ngPage.setPageNames(nameSet);
         }
         else {

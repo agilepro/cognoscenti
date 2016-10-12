@@ -1353,7 +1353,7 @@ public class AuthRequest
         if(!ngpi.isProject()){
             return "t/" + ngpi.containerKey+"/$/"+resource;
         }
-        return "t/" + URLEncoder.encode(ngpi.pageBookKey, "UTF-8")+"/"
+        return "t/" + URLEncoder.encode(ngpi.wsSiteKey, "UTF-8")+"/"
                +ngpi.containerKey+"/"+resource;
     }
 
@@ -1385,7 +1385,7 @@ public class AuthRequest
 
     public String getDefaultURL(NGPageIndex ngpi) throws Exception {
         if (ngpi.isProject()) {
-            return "t/" + URLEncoder.encode(ngpi.pageBookKey, "UTF-8")+"/"
+            return "t/" + URLEncoder.encode(ngpi.wsSiteKey, "UTF-8")+"/"
                         + ngpi.containerKey + "/frontPage.htm";
         }
         // for site go to the project list

@@ -437,7 +437,7 @@ System.out.println("Weaver Server Object == Start the Server");
                 // only consider book/project style containers
                 continue;
             }
-            if (!accountKey.equals(ngpi.pageBookKey)) {
+            if (!accountKey.equals(ngpi.wsSiteKey)) {
                 // only consider if the project is in the site we look for
                 continue;
             }

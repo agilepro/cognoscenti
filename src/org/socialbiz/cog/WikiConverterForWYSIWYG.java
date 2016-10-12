@@ -84,6 +84,12 @@ public class WikiConverterForWYSIWYG extends WikiConverter
             //We have both a link text, and a link address, so use them.
             linkText = linkURL.substring(0,barPos).trim();
             linkAddr = linkURL.substring(barPos+1).trim();
+            
+            //if this has been shortened, it must be converted back to full length.
+            //not really sure how this got shortened in the first place
+            if (!linkAddr.startsWith("http") && ar.ngp!=null) {
+                linkAddr = ar.baseURL + ar.getResourceURL(ar.ngp, linkAddr);
+            }
         }
         else {
             //This is the case that we have no bar char, and thus no link address.

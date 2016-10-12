@@ -111,8 +111,8 @@ public class NGPageIndex {
     public File containerPath;
     public String containerName; // The nicest name to use for this container
     public String containerKey;
-    public String pageBookName;
-    public String pageBookKey;
+    public String wsSiteName;
+    public String wsSiteKey;
     public String parentKey;     // Key for the 'circle' hierarchy parent project
 
 
@@ -639,8 +639,8 @@ public class NGPageIndex {
             NGWorkspace ngw = (NGWorkspace) container;
             NGBook ngb = ngw.getSite();
             if (ngb != null) {
-                pageBookName = ngb.getFullName();
-                pageBookKey = ngb.getKey();
+                wsSiteName = ngb.getFullName();
+                wsSiteKey = ngb.getKey();
             }
             parentKey = ngw.getParentKey();
         }
@@ -798,7 +798,7 @@ public class NGPageIndex {
         wObj.put("changed", lastChange);
         wObj.put("name", containerName);
         wObj.put("pageKey", containerKey);
-        wObj.put("siteKey", pageBookKey);
+        wObj.put("siteKey", wsSiteKey);
         return wObj;
     }
 

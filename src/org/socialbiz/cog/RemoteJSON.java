@@ -20,11 +20,12 @@
 
 package org.socialbiz.cog;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.json.JSONTokener;
@@ -36,7 +37,7 @@ public class RemoteJSON {
 
 
     /**
-     * Retrieves a remove JSONObject.
+     * Retrieves a remote JSONObject.
      * If an error is returned, it expects the error messages to be in an array
      * called "msgs" and is expecting an error code in a member called "responseCode"
      * The presence of a response code other than 200 causes an exception

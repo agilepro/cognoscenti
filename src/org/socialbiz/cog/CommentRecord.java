@@ -129,6 +129,23 @@ public class CommentRecord extends DOMFace {
     public void setCommentType(int newVal) {
         setAttributeInt("commentType", newVal);
     }
+    public String getTypeName() {
+        switch (getCommentType()) {
+        case COMMENT_TYPE_SIMPLE:
+            return "simple";
+        case COMMENT_TYPE_PROPOSAL:
+            return "proposal";
+        case COMMENT_TYPE_REQUEST:
+            return "round";
+        case COMMENT_TYPE_MEETING:
+            return "meeting";
+        case COMMENT_TYPE_MINUTES:
+            return "minutes";
+        case COMMENT_TYPE_PHASE_CHANGE:
+            return "phase";
+        }
+        return "unknown";
+    }
 
     public long getTime() {
         return getAttributeLong("time");

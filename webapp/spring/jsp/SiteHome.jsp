@@ -115,7 +115,7 @@ Required parameters:
     else {
         parent.put("name", parentIndex.containerName);
         parent.put("key",  parentIndex.containerKey);
-        parent.put("site", parentIndex.pageBookKey);
+        parent.put("site", parentIndex.wsSiteKey);
     }
 
     JSONArray children = new JSONArray();
@@ -127,7 +127,7 @@ Required parameters:
             JSONObject jo = new JSONObject();
             jo.put("name", ngpi.containerName);
             jo.put("key",  ngpi.containerKey);
-            jo.put("site", ngpi.pageBookKey);
+            jo.put("site", ngpi.wsSiteKey);
             children.put(jo);
         }
     }

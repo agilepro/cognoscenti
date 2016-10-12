@@ -560,7 +560,7 @@ public class DailyDigest {
             GoalRecord gr, UserProfile up) throws Exception {
         ar.write(ar.baseURL);
         ar.write("t/");
-        ar.writeURLData(ngpi.pageBookKey);
+        ar.writeURLData(ngpi.wsSiteKey);
         ar.write("/");
         ar.writeURLData(ngpi.containerKey);
         ar.write("/task");
@@ -573,21 +573,11 @@ public class DailyDigest {
         ar.writeURLData(up.getKey());
     }
 
-    /*
-    private static String getActionItemURL(AuthRequest ar, NGPageIndex ngpi,
-            GoalRecord gr, UserProfile up) throws Exception {
-        NGPage ngp = (NGPage) ngpi.getContainer();
-        return ar.baseURL + "t/" + ngpi.pageBookKey + "/" + ngpi.containerKey + "/task"
-            + gr.getId() + ".htm?" + AccessControl.getAccessGoalParams(ngp, gr)
-            + "&ukey=" + up.getKey();
-    }
-    */
-
     private static void writeProcessLinkUrl(AuthRequest ar, NGPageIndex ngpi)
             throws Exception {
         ar.write(ar.baseURL);
         ar.write("t/");
-        ar.writeURLData(ngpi.pageBookKey);
+        ar.writeURLData(ngpi.wsSiteKey);
         ar.write("/");
         ar.writeURLData(ngpi.containerKey);
         ar.write("/goalList.htm");
@@ -686,7 +676,7 @@ public class DailyDigest {
                 ar.write("<a href='");
                 ar.write(ar.baseURL);
                 ar.write("t/");
-                ar.writeURLData(ngpi.pageBookKey);
+                ar.writeURLData(ngpi.wsSiteKey);
                 ar.write("/");
                 ar.writeURLData(ngpi.containerKey);
                 ar.write("/reminders.htm' >");
