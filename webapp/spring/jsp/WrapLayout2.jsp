@@ -184,13 +184,13 @@
 
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
-    <script src="<%=ar.baseURL%>jfunc.js"></script>
+    <!--script src="<%=ar.baseURL%>jfunc.js"></script-->
     <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
     <!-- Bootstrap Material Design -->
-    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/material.min.js"></script>
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
 
@@ -210,11 +210,9 @@
 $(document).ready(function() {
     $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
     $('.rightDivContent .dropdown-menu').addClass('pull-right');
-  }
-)
-
-/* INIT Bootstrap Material Design */
-$.material.init();
+    /* INIT Bootstrap Material Design */
+    $.material.init();
+});
 
 /* INIT tinyMCE */
 tinyMCE.PluginManager.add('stylebuttons', function(editor, url) {
