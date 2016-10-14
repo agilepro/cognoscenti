@@ -327,7 +327,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem"
@@ -341,23 +341,14 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
     </div>
 
-    <style>
-      .headingfont {
-          font-family: Arial, Helvetica, Verdana, sans-serif;
-          font-size:20px;
-          font-weight:normal;
-      }
-    </style>
-
 <!-- COLUMN 1 -->
       <div class="col-md-4 col-sm-12">
-
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Recent Updates</div>
               <div style="float:right">
                   <a href="history.htm">
-                      <i class="fa fa-search"></i></a></div>
+                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
@@ -374,7 +365,7 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="float:left">Upcoming Meetings</div>
               <div style="float:right">
                   <a href="meetingList.htm">
-                      <i class="fa fa-search"></i></a></div>
+                      <i class="fa "></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
@@ -392,7 +383,7 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="float:left">Your Action Items</div>
               <div style="float:right">
                   <a href="goalList.htm">
-                      <i class="fa fa-search"></i></a></div>
+                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
@@ -409,7 +400,7 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="float:left">Recent History</div>
               <div style="float:right">
                   <a href="history.htm">
-                      <i class="fa fa-search"></i></a></div>
+                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
@@ -486,7 +477,7 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="float:left">Your Roles</div>
               <div style="float:right">
                   <a href="goalList.htm">
-                      <i class="fa fa-search"></i></a></div>
+                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
@@ -504,7 +495,7 @@ app.controller('myCtrl', function($scope, $http) {
             </div>
           </div>
         </div>
-        
+
 
         <div class="panel panel-default">
           <div class="panel-heading headingfont">Parent Circle</div>
@@ -514,7 +505,7 @@ app.controller('myCtrl', function($scope, $http) {
             </div>
           </div>
         </div>
-        
+
         <div class="panel panel-default">
           <div class="panel-heading headingfont">Children Circles</div>
           <div class="panel-body">
@@ -523,7 +514,7 @@ app.controller('myCtrl', function($scope, $http) {
             </div>
           </div>
         </div>
-        
+
       </div>
 
 </div>
