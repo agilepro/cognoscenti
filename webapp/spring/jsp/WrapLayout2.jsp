@@ -275,7 +275,7 @@ function standardTinyMCEOptions() {
       <!-- BEGIN Title and Breadcrump -->
       <ol class="title">
       <% if(isUserHeader) { %>
-        <li class="page-name"><h1><a href="<%=userRelPath%>UserHome.htm"><% ar.writeHtml(userName); %></a></h1></li>
+        <li class="page-name"><h1><a href="<%=ar.retPath%>v/<%=userRecord.getKey()%>/userSettings.htm"><% ar.writeHtml(userRecord.getName()); %></a></h1></li>
       <% } else if(isSiteHeader) { %>
       <li class="page-name"><h1><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/accountListProjects.htm">
             <%ar.writeHtml(title);%></a></h1></li>
