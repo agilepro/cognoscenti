@@ -1,110 +1,4 @@
 <!-- BEGIN AppBar.jsp -->
-<%
-
-//We always POST to an address that consumes the data, and then redirects to a display page,
-//so the display page (like this one) should never experience a POST request
-    if (!"DisplayException".equals(wrappedJSP)) {
-        ar.assertNotPost();
-    }
-
-    String mainWorkspaceId = "";
-    String mainSiteId = "";
-    String mainSiteName = "";
-    if (ar.isLoggedIn()) {
-        List<WatchRecord> wl = loggedUser.getWatchList();
-        if (wl.size()>0) {
-            mainWorkspaceId = wl.get(0).getPageKey();
-            NGPageIndex ngpi = cog.getContainerIndexByKey(mainWorkspaceId);
-            if (ngpi!=null) {
-                mainSiteId = ngpi.wsSiteKey;
-                NGBook site = ar.getCogInstance().getSiteByIdOrFail(mainSiteId);
-                mainSiteName = site.getFullName();
-            }
-        }
-    }
-    String accountKey = ar.defParam("accountId", null);
-    NGBook site = null;
-    if (accountKey!=null) {
-        site = cog.getSiteByIdOrFail(accountKey);
-        mainSiteName = site.getFullName();
-    }
-
-
-//TODO: determine what this does.
-    String deletedWarning = "";
-
-    NGContainer ngp =null;
-    NGBook ngb=null;
-    UserProfile userRecord = null;
-
-//TODO: why test for pageTitle being null here?
-    if(pageTitle == null && pageId != null && !"$".equals(pageId)){
-        ngp  = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
-    }
-    if(isUserHeader && userKey!=null){
-        userRecord = UserManager.getUserProfileByKey(userKey);
-    }
-
-
-    if (ngp!=null) {
-        ar.setPageAccessLevels(ngp);
-        pageTitle = ngp.getFullName();
-        if(ngp instanceof NGPage) {
-            ngb = ((NGPage)ngp).getSite();
-            showExperimental = ngb.getShowExperimental();
-        }
-        else if(ngp instanceof NGBook) {
-            ngb = ((NGBook)ngp);
-            showExperimental = ngb.getShowExperimental();
-        }
-        if (ngp.isDeleted()) {
-            deletedWarning = "<img src=\""+ar.retPath+"deletedLink.gif\"> (DELETED)";
-        }
-        else if (ngp.isFrozen()) {
-            deletedWarning = " &#10052; (Frozen)";
-        }
-    }
-    UserProfile uProf = ar.getUserProfile();
-    //this is the base path for the all of the menu options.
-    //should not actually see any menu options if not logged in, however
-    //need to give a value for this.
-    String userRelPath = ar.retPath + "v/$/";
-    String userName = "GUEST";
-    if (uProf!=null) {
-        userRelPath = ar.retPath + "v/"+uProf.getKey()+"/";
-        userName = uProf.getName();
-    }
-    int exposeLevel = 1;
-    if (ar.isSuperAdmin()) {
-        exposeLevel = 2;
-    }
-    JSONObject loginInfo = new JSONObject();
-    if (ar.isLoggedIn()) {
-        loginInfo.put("userId", ar.getBestUserId());
-        loginInfo.put("userName", uProf.getName());
-        loginInfo.put("verified", true);
-        loginInfo.put("msg", "Previously logged into server");
-    }
-    else {
-        //use this to indicate the very first display, before the page knows anything
-        loginInfo.put("haveNotCheckedYet", true);
-    }
-    JSONObject loginConfig = new JSONObject();
-    loginConfig.put("providerUrl", ar.getSystemProperty("identityProvider"));
-    loginConfig.put("serverUrl",   ar.baseURL);
-
-
-    String currentPageURL = ar.getCompleteURL();
-    String encodedLoginMsg = URLEncoder.encode("Can't open form","UTF-8");
-    String trncatePageTitle = pageTitle;
-    if (pageTitle!=null && pageTitle.length()>60){
-        trncatePageTitle=pageTitle.substring(0,60)+"...";
-    }
-
-
-
-    %>
-
 
 <script>
 
@@ -116,7 +10,7 @@
     var headerType = '<%=headerTypeStr%>';
     var book='';
     var pageId = '<%=pageId%>';
-    var userKey = "<%=userKey%>";
+    var userKey = "<%=pageUserKey%>";
     var isSuperAdmin = "<%=ar.isSuperAdmin()%>";
 </script>
 
@@ -254,7 +148,7 @@
             </span>
           </a>
           <ul class="dropdown-menu pull-right">
-<% if (uProf==null) { %>
+<% if (loggedUser==null) { %>
             <li><a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
                 Log In</a></li>
 <% } else { %>
