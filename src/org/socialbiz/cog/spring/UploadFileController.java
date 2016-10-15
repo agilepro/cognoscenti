@@ -314,39 +314,7 @@ public class UploadFileController extends BaseController {
         }
     }
 
-    /*
-    @RequestMapping(value = "/{siteId}/{pageId}/linkRepository.htm", method = RequestMethod.GET)
-    protected ModelAndView linkRepository(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-            ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.link.doc.to.project.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-            if(ngp.isFrozen()){
-                return showWarningView(ar, "nugen.generatInfo.Frozen");
-            }
-
-            String symbol = ar.reqParam("symbol");
-            ResourceEntity remoteFile = ar.getUserPage().getResourceFromSymbol(symbol);
-            modelAndView = createNamedView(siteId, pageId, ar, "linkfromrepository_form");
-            request.setAttribute("isNewUpload", "yes");
-            request.setAttribute("symbol", remoteFile.getSymbol());
-            request.setAttribute("title", ngp.getFullName());
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.link.to.repository.page", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-    }
-*/
+ 
 
     @RequestMapping(value = "/{siteId}/{pageId}/remoteAttachmentAction.form", method = RequestMethod.POST)
     protected void remoteAttachmentAction(@PathVariable String siteId,
@@ -405,79 +373,7 @@ public class UploadFileController extends BaseController {
         }
     }
 
-    /*
-    @RequestMapping(value = "/{siteId}/{pageId}/editDocumentForm.htm", method = RequestMethod.GET)
-    protected ModelAndView getEditDocumentForm(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        String aid = ar.reqParam("aid");
-        return editDetails(siteId, pageId, aid, request, response);
-    }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/editDetails{aid}.htm", method = RequestMethod.GET)
-    protected ModelAndView editDetails(@PathVariable String siteId,
-            @PathVariable String pageId, @PathVariable String aid, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.edit.doc.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-            if(ngp.isFrozen()){
-                return showWarningView(ar, "nugen.generatInfo.Frozen");
-            }
-            ngp.findAttachmentByIDOrFail(aid);
-
-            modelAndView = createNamedView(siteId, pageId, ar, "editDetails");
-            request.setAttribute("aid",aid);
-            request.setAttribute("title", ngp.getFullName());
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.edit.document.page", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-    }
-
-
-    @RequestMapping(value = "/{siteId}/{pageId}/fileVersions.htm", method = RequestMethod.GET)
-    protected ModelAndView getFileVersion(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        ModelAndView modelAndView = null;
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-
-            if(!ar.isLoggedIn()){
-                return showWarningView(ar, "nugen.project.file.version.login.msg");
-            }
-            if(!ar.isMember()){
-                request.setAttribute("roleName", "Members");
-                return new ModelAndView("WarningNotMember");
-            }
-            String aid = ar.reqParam("aid");
-            ngp.findAttachmentByIDOrFail(aid);
-
-            modelAndView = createNamedView(siteId, pageId, ar, "fileVersions");
-            request.setAttribute("aid",aid);
-            request.setAttribute("title",ngp.getFullName());
-
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.file.version.page", new Object[]{pageId,siteId} , ex);
-        }
-        return modelAndView;
-    }
-*/
 
     @RequestMapping(value = "/unDeleteAttachment.ajax", method = RequestMethod.POST)
     protected void unDeleteAttachment( HttpServletRequest request,

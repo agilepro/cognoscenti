@@ -48,11 +48,6 @@
 
 
 
-    <definition name="NotesList" extends="slimLayout">
-        <put-attribute name="title" value="Topics List" />
-        <put-attribute name="body" value="/spring/jsp/NotesList.jsp" />
-    </definition>
-
     <definition name="public" extends="slimLayout">
         <put-attribute name="title" value="Public" />
         <put-attribute name="body" value="/spring/jsp/leaf_public.jsp" />
@@ -336,11 +331,6 @@
         <put-attribute name="body" value="/spring/jsp/docinfo.jsp" />
     </definition>
 
-    <definition name="showSearchResult" extends="slimLayout">
-        <put-attribute name="title" value="Search Results" />
-        <put-attribute name="body" value="/spring/jsp/showSearchResult.jsp" />
-    </definition>
-
     <definition name="reminders" extends="slimLayout">
         <put-attribute name="title" value="Reminders" />
         <put-attribute name="body" value="/spring/jsp/reminders.jsp" />
@@ -449,11 +439,6 @@
     <definition name="openIdLogin" extends="baseLayoutSimple">
         <put-attribute name="title" value="OpenId Login"/>
         <put-attribute name="body" value="/spring/jsp/openIdLogin.jsp"/>
-    </definition>
-
-    <definition name="FileExist" extends="projectBaseLayout">
-        <put-attribute name="title" value="File Already Exist in Repository" />
-        <put-attribute name="body" value="/spring/jsp/FileExist.jsp" />
     </definition>
 
     <definition name="ListEmail" extends="slimLayout">

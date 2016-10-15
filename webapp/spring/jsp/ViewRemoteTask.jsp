@@ -45,14 +45,12 @@ Required parameters:
     UserProfile  operatingUser =ar.getUserProfile();
     boolean viewingSelf = uProf.getKey().equals(operatingUser.getKey());
 
-    List<NGBook> bookList =  new ArrayList<NGBook>();
     List<NGPageIndex> templates = new ArrayList<NGPageIndex>();
     for(TemplateRecord tr : uProf.getTemplateList()){
         String pageKey = tr.getPageKey();
         NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
         if (ngpi!=null){
             templates.add(ngpi);
-            bookList.add(ngpi.getPage().getSite());
         }
     }
     NGPageIndex.sortInverseChronological(templates);

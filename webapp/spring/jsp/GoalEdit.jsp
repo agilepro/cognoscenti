@@ -11,8 +11,6 @@
 Required parameters:
 
     1. pageId   : This is the id of an Workspace and here it is used to retrieve NGPage.
-    2. bookList : This is the list of sites which is set in request attribute, used here to show
-                  dropdown list of sites.
     3. taskId   : This parameter is id of a task and here it is used to get current task detail (GoalRecord)
                   and to pass current task id value when submitted.
 
@@ -31,8 +29,6 @@ Required parameters:
 
     UserProfile uProf = ar.getUserProfile();
 
-    //needed to prompt for the site to build a new workspace in
-    List<NGBook> bookList = (List<NGBook>)request.getAttribute("bookList");
     List<HistoryRecord> histRecs = currentTaskRecord.getTaskHistory(ngp);
     JSONArray allHist = new JSONArray();
     for (HistoryRecord history : histRecs) {
@@ -873,6 +869,7 @@ function updateVal(){
                     <div class="well">
                         <div class="generalContent">
                     <%
+                        List<NGBook> bookList = NGBook.getAllSites();
                         if(bookList!=null && bookList.size()<1){
                     %>
                             <div id="loginArea">
@@ -927,7 +924,7 @@ function updateVal(){
                                           <td style="width:20px;"></td>
                                           <td><select class="selectGeneral" name="accountId" id="accountId">
                                             <%
-                                                for (NGBook nGBook : bookList) {
+                                                for (NGBook nGBook : NGBook.getAllSites()) {
                                                     String id =nGBook.getKey();
                                                     String bookName= nGBook.getFullName();
                                                     if((siteId!=null && id.equalsIgnoreCase(siteId))) {

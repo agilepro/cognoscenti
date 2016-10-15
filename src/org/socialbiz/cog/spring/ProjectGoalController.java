@@ -75,20 +75,18 @@ public class ProjectGoalController extends BaseController {
     ///////////////////////// MAIN VIEWS ////////////////////////////////////
 
     @RequestMapping(value = "/{siteId}/{pageId}/goalList.htm", method = RequestMethod.GET)
-    public ModelAndView goalList(@PathVariable String siteId, @PathVariable String pageId,
+    public void goalList(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "GoalList");
-        return null;
     }
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/statusList.htm", method = RequestMethod.GET)
-    public ModelAndView statusList(@PathVariable String siteId, @PathVariable String pageId,
+    public void statusList(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "StatusList");
-        return null;
     }
 
 
@@ -120,7 +118,6 @@ public class ProjectGoalController extends BaseController {
                 streamJSP(ar, "displayPassiveGoal");
             }
             else{
-                request.setAttribute("bookList",ar.getUserProfile().findAllMemberSites());
                 streamJSP(ar, "GoalEdit");
             }
 

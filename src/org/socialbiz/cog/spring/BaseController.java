@@ -40,7 +40,6 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ServletExit;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.ModelAndView;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.json.JSONTokener;
@@ -49,17 +48,16 @@ import org.workcast.json.JSONTokener;
 public class BaseController {
 
     @ExceptionHandler(Exception.class)
-    public ModelAndView handleException(Exception ex, HttpServletRequest request,
+    public void handleException(Exception ex, HttpServletRequest request,
             HttpServletResponse response) {
 
         //if a ServletExit has been thrown, then the browser has already been redirected,
         //so just return null and get out of here.
         if (ex instanceof ServletExit) {
-            return null;
+            return;
         }
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         displayException(ar, ex);
-        return null;
     }
 
     /**
@@ -286,16 +284,6 @@ public class BaseController {
         return ar;
     }
 
-    //TODO: eliminate this and work through all the changes
-    public ModelAndView createNamedView(String siteId, String pageId,
-            AuthRequest ar,  String viewName)
-            throws Exception {
-        ar.req.setAttribute("book", siteId);
-        ar.req.setAttribute("pageId", pageId);
-        //ar.req.setAttribute("realRequestURL", ar.getRequestURL());
-        return new ModelAndView(viewName);
-    }
-
 
     public static void sendRedirectToLogin(AuthRequest ar) throws Exception {
         String go = ar.getCompleteURL();
@@ -321,12 +309,11 @@ public class BaseController {
     /*
     * Pass in the relative URL and
     * this will redirect the browser to that address.
-    * It will return a null ModelAndView object so that you can
+    * It will return nothing so that you can
     * say "return redirectToURL(myurl);"
     */
     protected void redirectBrowser(AuthRequest ar, String pageURL) throws Exception {
         ar.resp.sendRedirect(pageURL);
-        //return null;
     }
 
     protected static boolean needsToSetName(AuthRequest ar) throws Exception {

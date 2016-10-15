@@ -62,17 +62,6 @@
                             <table cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td colspan="2" class="homePageSearchArea">
-                                        <b>Search this Site for Content</b><br />
-                                        <form id="searchForm" name="searchForm" action="<%=ar.retPath%>t/searchPublicNotes.htm">
-                                            <table cellpadding="0" cellspacing="0">
-                                                <tr>
-                                                    <td class="searchInput">
-                                                        <input type="text" class="inputButton" id="searchText" name="searchText" />
-                                                    </td>
-                                                    <td class="searchButton" onclick="document.getElementById('searchForm').submit();">&nbsp;</td>
-                                                </tr>
-                                            </table>
-                                        </form>
                                     </td>
                                 </tr>
                                 <tr>

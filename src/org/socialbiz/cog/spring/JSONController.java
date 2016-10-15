@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 /**
  * this class contains all the JSON style REST web service requests
@@ -58,16 +57,15 @@ public class JSONController extends BaseController {
 
 
     @ExceptionHandler(Exception.class)
-    public ModelAndView handleException(Exception ex, HttpServletRequest request, HttpServletResponse response) {
+    public void handleException(Exception ex, HttpServletRequest request, HttpServletResponse response) {
 
         //if a ServletExit has been thrown, then the browser has already been redirected,
         //so just return null and get out of here.
         if (ex instanceof ServletExit) {
-            return null;
+            return;
         }
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         sendErrorResponse(ar, "Unable to handle that JSON request", ex);
-        return null;
     }
 
     public static void sendJSONResponse(AuthRequest ar, String responseMessage)

@@ -363,17 +363,15 @@ public class MainTabsViewControler extends BaseController {
                  return null;
              }
 
+             //streamJSP(ar, "index");
+             //return null;
+             
              ModelAndView modelAndView=new ModelAndView("landingPage");
              request.setAttribute("realRequestURL", ar.getRequestURL());
-             List<NGBook> list=new ArrayList<NGBook>();
-             for (NGBook ngb : NGBook.getAllSites()) {
-                 list.add(ngb);
-             }
 
              request.setAttribute("headerType", "blank");
-             //TODO: see if bookList is really needed
-             modelAndView.addObject("bookList",list);
              return modelAndView;
+             
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.project.welcome.page", null , ex);
          }
@@ -765,37 +763,6 @@ public class MainTabsViewControler extends BaseController {
 
 
 
-
-    /**
-     * This is search page that you get when NOT LOGGED IN from the
-     * landing page.  However, you can also see this when logged in.
-     */
-    @RequestMapping(value = "/searchPublicNotes.htm")
-    public ModelAndView searchPublicNotes(
-              HttpServletRequest request, HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            String searchText   = ar.defParam("searchText", "");
-            String b = ar.defParam("b", null);
-            if ("All Books".equals(b)) {
-                b = null;
-            }
-            String pf = ar.defParam("pf", "all");
-
-            SearchManager.initializeIndex(ar.getCogInstance());
-            List<SearchResultRecord> searchResults = null;
-            if (searchText.length()>0) {
-                searchResults = SearchManager.performSearch(ar, searchText, pf, b);
-            }
-            else {
-                searchResults = new ArrayList<SearchResultRecord>();
-            }
-            request.setAttribute("searchResults",searchResults);
-            return  new ModelAndView("showSearchResult");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.search.public.note.page", null , ex);
-        }
-    }
 
 
     /**

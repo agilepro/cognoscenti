@@ -289,10 +289,6 @@ Parameter used :
 
     </script>
 
-    <!--[if IE 7]>
-        <link href="<%=ar.retPath%>css/ie7styles.css" rel="styleSheet" type="text/css" media="screen" />
-    <![endif]-->
-
 <% if (!headerType.equals("site")) { %>
     <script>
         headerType = "<%=headerType%>";
