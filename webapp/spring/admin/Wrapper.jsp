@@ -20,7 +20,6 @@
     }
     Cognoscenti cog = ar.getCogInstance();
     
-    String pageTitle = "REMOVE THIS";
     
 %>
 <!-- BEGIN Wrapper.jsp Layout-->

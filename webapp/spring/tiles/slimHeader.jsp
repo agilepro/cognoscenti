@@ -86,7 +86,6 @@ Parameter used :
 
 
     String currentPageURL = ar.getCompleteURL();
-    String encodedLoginMsg = URLEncoder.encode("Can't open form","UTF-8");
     String trncatePageTitle = pageTitle;
     if (pageTitle!=null && pageTitle.length()>60){
         trncatePageTitle=pageTitle.substring(0,60)+"...";

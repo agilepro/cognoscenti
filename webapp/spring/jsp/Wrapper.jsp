@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
-%><%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"
 %><%
     long renderStart = System.currentTimeMillis();
     UserProfile loggedUser = ar.getUserProfile();
@@ -17,75 +16,75 @@
     String wrappedJSP = ar.reqParam("wrappedJSP");
     String templateName = wrappedJSP+".jsp";
     int slashPos = wrappedJSP.lastIndexOf("/");
-    String jspName = wrappedJSP;
+    String pageNiceTitle = wrappedJSP;
     if (slashPos>=0) {
-        jspName = wrappedJSP.substring(slashPos+1);
+        pageNiceTitle = wrappedJSP.substring(slashPos+1);
     }
-    if ("FrontPage".equals(jspName)) {
-        jspName = "Front Page";
+    if ("FrontPage".equals(pageNiceTitle)) {
+        pageNiceTitle = "Front Page";
     }
-    else if ("MeetingList".equals(jspName)) {
-        jspName = "Meetings";
+    else if ("MeetingList".equals(pageNiceTitle)) {
+        pageNiceTitle = "Meetings";
     }
-    else if ("NotesList".equals(jspName)) {
-        jspName = "Topics";
+    else if ("NotesList".equals(pageNiceTitle)) {
+        pageNiceTitle = "Topics";
     }
-    else if ("ListAttachments".equals(jspName)) {
-        jspName = "Documents";
+    else if ("ListAttachments".equals(pageNiceTitle)) {
+        pageNiceTitle = "Documents";
     }
-    else if ("GoalList".equals(jspName)) {
-        jspName = "Action Items";
+    else if ("GoalList".equals(pageNiceTitle)) {
+        pageNiceTitle = "Action Items";
     }
-    else if ("DecisionList".equals(jspName)) {
-        jspName = "Decisions";
+    else if ("DecisionList".equals(pageNiceTitle)) {
+        pageNiceTitle = "Decisions";
     }
-    else if ("LabelList".equals(jspName)) {
-        jspName = "Labels";
+    else if ("LabelList".equals(pageNiceTitle)) {
+        pageNiceTitle = "Labels";
     }
-    else if ("RoleManagement".equals(jspName)) {
-        jspName = "Roles";
+    else if ("RoleManagement".equals(pageNiceTitle)) {
+        pageNiceTitle = "Roles";
     }
-    else if ("leaf_admin".equals(jspName)) {
-        jspName = "Workspace Admin";
+    else if ("leaf_admin".equals(pageNiceTitle)) {
+        pageNiceTitle = "Workspace Admin";
     }
-    else if ("leaf_personal".equals(jspName)) {
-        jspName = "Personal";
+    else if ("leaf_personal".equals(pageNiceTitle)) {
+        pageNiceTitle = "Personal";
     }
-    else if ("GoalEdit".equals(jspName)) {
-        jspName = "Edit Action Item";
+    else if ("GoalEdit".equals(pageNiceTitle)) {
+        pageNiceTitle = "Edit Action Item";
     }
-    else if ("leaf_history".equals(jspName)) {
-        jspName = "Activity Stream";
+    else if ("leaf_history".equals(pageNiceTitle)) {
+        pageNiceTitle = "Activity Stream";
     }
-    else if ("MeetingFull".equals(jspName)) {
-        jspName = "Meeting Details";
+    else if ("MeetingFull".equals(pageNiceTitle)) {
+        pageNiceTitle = "Meeting Details";
     }
-    else if ("accountListProjects".equals(jspName)) {
-        jspName = "Workspaces in Site";
+    else if ("accountListProjects".equals(pageNiceTitle)) {
+        pageNiceTitle = "Workspaces in Site";
     }
-    else if ("SiteAdmin".equals(jspName)) {
-        jspName = "Site Admin";
+    else if ("SiteAdmin".equals(pageNiceTitle)) {
+        pageNiceTitle = "Site Admin";
     }
-    else if ("NoteZoom".equals(jspName)) {
-        jspName = "Discussion Topic";
+    else if ("NoteZoom".equals(pageNiceTitle)) {
+        pageNiceTitle = "Discussion Topic";
     }
-    else if ("docinfo".equals(jspName)) {
-        jspName = "Access Document";
+    else if ("docinfo".equals(pageNiceTitle)) {
+        pageNiceTitle = "Access Document";
     }
-    else if ("DocsRevise".equals(jspName)) {
-        jspName = "Upload New Version";
+    else if ("DocsRevise".equals(pageNiceTitle)) {
+        pageNiceTitle = "Upload New Version";
     }
-    else if ("editDetails".equals(jspName)) {
-        jspName = "Edit Doc Details";
+    else if ("editDetails".equals(pageNiceTitle)) {
+        pageNiceTitle = "Edit Doc Details";
     }
-    else if ("fileVersions".equals(jspName)) {
-        jspName = "List Doc Versions";
+    else if ("fileVersions".equals(pageNiceTitle)) {
+        pageNiceTitle = "List Doc Versions";
     }
-    else if ("UserAccounts".equals(jspName)) {
-        jspName = "Sites You Manage";
+    else if ("UserAccounts".equals(pageNiceTitle)) {
+        pageNiceTitle = "Sites You Manage";
     }
-    else if ("leaf_accountRoleRequest".equals(jspName)) {
-        jspName = "Site Role Request";
+    else if ("leaf_accountRoleRequest".equals(pageNiceTitle)) {
+        pageNiceTitle = "Site Role Request";
     }
 
     String title = ar.defParam("title", wrappedJSP);
@@ -256,15 +255,7 @@
     loginConfig.put("providerUrl", ar.getSystemProperty("identityProvider"));
     loginConfig.put("serverUrl",   ar.baseURL);
 
-
     String currentPageURL = ar.getCompleteURL();
-    String encodedLoginMsg = URLEncoder.encode("Can't open form","UTF-8");
-    String trncatePageTitle = pageTitle;
-    if (pageTitle!=null && pageTitle.length()>60){
-        trncatePageTitle=pageTitle.substring(0,60)+"...";
-    }
-
-
 
     %>
     
@@ -390,7 +381,7 @@ function standardTinyMCEOptions() {
         <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/frontPage.htm">
             <%ar.writeHtml(ngp.getFullName());%></a></li>
       <% } %>
-        <li class="page-name"><h1><% ar.writeHtml(jspName); %></h1></li>
+        <li class="page-name"><h1><% ar.writeHtml(pageNiceTitle); %></h1></li>
       </ol>
       <!-- BEGIN Title and Breadcrump -->
 
@@ -458,9 +449,9 @@ function standardTinyMCEOptions() {
       initLogin(<% loginConfig.write(out, 2, 2); %>, <% loginInfo.write(out, 2, 2); %>, displayWelcomeMessage);
       </script>
 
-      <!-- Begin Template Content -->
+      <!-- Begin Template Content (compiled separately) -->
       <jsp:include page="<%=templateName%>" />
-      <!-- End Template Content -->
+      <!-- End Template Content (compiled separately) -->
     </div>
   </div>
 </div>

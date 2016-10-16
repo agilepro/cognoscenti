@@ -85,7 +85,6 @@ Parameter used :
     }
 
     String currentPageURL = ar.getCompleteURL();
-    String encodedLoginMsg = URLEncoder.encode("Can't open form","UTF-8");
 
 %>
 <!-- header.jsp ** Standard Header Tile BEGIN --->

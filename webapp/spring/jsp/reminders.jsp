@@ -6,8 +6,6 @@
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
 
-    //String encodedLoginMsg = URLEncoder.encode("Can't open form","UTF-8");
-
     ReminderMgr rMgr = ngp.getReminderMgr();
     JSONArray allReminders = new JSONArray();
     for (ReminderRecord rRec : rMgr.getAllReminders()) {
