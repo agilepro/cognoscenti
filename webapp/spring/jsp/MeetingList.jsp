@@ -143,7 +143,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -254,17 +254,33 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
 
-    <table class="gridTable2" width="100%">
+    <table class="table table-striped table-hover" width="100%">
         <tr class="gridTableHeader">
-            <td width="50px"></td>
-            <td width="300px">Meeting</td>
-            <td width="80px">State</td>
-            <td width="80px">Duration</td>
+            <th width="100px"></th>
+            <th width="200px">Meeting</th>
+            <th width="200px">Date</th>
+            <th width="80px">State</th>
+            <th width="80px">Duration</th>
         </tr>
         <tr ng-repeat="rec in meetings">
-            <td>
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+            <td class="actions">
+              <a role="menuitem" tabindex="-1" title="Edit Meeting" href="meeting.htm?id={{rec.id}}">
+                <button type="button" name="edit" class='btn btn-primary'>
+                    <span class="fa fa-edit"></span>
+                </button>
+              </a>
+              <a role="menuitem" tabindex="-1" title="Clone Meeting" href="cloneMeeting.htm?id={{rec.id}}">
+                <button type="button" name="clone" class='btn btn-default'>
+                    <span class="fa fa-clone"></span>
+                </button>
+              </a>
+              <a role="menuitem" tabindex="-1" title="Delete Meeting" href="#" ng-click="deleteRow(rec)">
+                <button type="button" name="delete" class='btn btn-warning'>
+                    <span class="fa fa-trash"></span>
+                </button>
+              </a>
+              <!--div class="dropdown">
+                <button class="btn dropdown-toggle" type="button"  d="menu"
                     data-toggle="dropdown"> <span class="caret"></span> </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -277,9 +293,10 @@ app.controller('myCtrl', function($scope, $http) {
                   <li role="presentation"><a role="menuitem" tabindex="-1"
                       href="#" ng-click="deleteRow(rec)">Delete Meeting</a></li>
                 </ul>
-              </div>
+              </div-->
             </td>
-            <td><b><a href="meetingFull.htm?id={{rec.id}}">{{rec.name}}</a></b> @ {{rec.startTime|date: "HH:mma 'on' dd-MMM-yyyy"}}</td>
+            <td><b><a title="View Meeting" href="meetingFull.htm?id={{rec.id}}">{{rec.name}}</a></b></td>
+            <td>{{rec.startTime|date: "HH:mma 'on' dd-MMM-yyyy"}}</td>
             <td style="{{meetingStateStyle(rec.state)}}">{{meetingStateName(rec.state)}}</td>
             <td>{{rec.duration}}</td>
         </tr>
