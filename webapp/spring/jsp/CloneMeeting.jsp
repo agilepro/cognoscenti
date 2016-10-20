@@ -148,130 +148,146 @@ function GetFirstHundredNoHtml(input) {
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
-<%@include file="ErrorPanel.jsp"%>
-
-    <div class="generalHeading">Clone Meeting
-    </div>
-    <br />
-
-
-    <div id="NewMeeting">
-        <div class="generalSettings">
-            <table class="spaceyTable">
-                <tr id="trspath">
-                    <td class="gridTableColummHeader">Type:</td>
-                    <td colspan="2" class="form-inline form-group">
-                        <input type="radio" ng-model="meeting.meetingType" value="1"
-                            class="form-control" /> Circle Meeting   &nbsp
-                        <input type="radio" ng-model="meeting.meetingType" value="2"
-                            class="form-control" /> Operational Meeting
-                    </td>
-                </tr>
-                <tr id="trspath">
-                    <td class="gridTableColummHeader">Name:</td>
-                    <td colspan="2"><input type="text" ng-model="meeting.name" class="form-control"  size="69" /></td>
-                </tr>
-                <tr id="trspath">
-                    <td class="gridTableColummHeader">Description:</td>
-                    <td colspan="2">
-                    <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
-                         class="leafContent" style="min-height:200px;" ></div>
-</td>
-                </tr>
-                <tr>
-                    <td class="gridTableColummHeader">Date:</td>
-                    <td colspan="2" class="form-inline form-group">
-
-                        <input type="text"
-                        style="width:150;"
-                        class="form-control"
-                        datepicker-popup="dd-MMMM-yyyy"
-                        ng-model="meetingTime"
-                        is-open="datePickOpen"
-                        datepicker-options="datePickOptions"
-                        date-disabled="datePickDisable(date, mode)"
-                        ng-required="true"
-                        ng-click="openDatePicker($event)"
-                        close-text="Close"/>
-                        at
-                        <select style="width:50;" ng-model="meetingHour" class="form-control" >
-                            <option value="0">00</option>
-                            <option value="1">01</option>
-                            <option value="2">02</option>
-                            <option value="3">03</option>
-                            <option value="4">04</option>
-                            <option value="5">05</option>
-                            <option value="6">06</option>
-                            <option value="7">07</option>
-                            <option value="8">08</option>
-                            <option value="9">09</option>
-                            <option>10</option>
-                            <option>11</option>
-                            <option>12</option>
-                            <option>13</option>
-                            <option>14</option>
-                            <option>15</option>
-                            <option>16</option>
-                            <option>17</option>
-                            <option>18</option>
-                            <option>19</option>
-                            <option>20</option>
-                            <option>21</option>
-                            <option>22</option>
-                            <option>23</option>
-                        </select> :
-                        <select  style="width:50;" ng-model="meetingMinutes" class="form-control" >
-                            <option value="0">00</option>
-                            <option>15</option>
-                            <option>30</option>
-                            <option>45</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr id="trspath">
-                    <td class="gridTableColummHeader">Duration:</td>
-                    <td colspan="2"><input type="text" ng-model="meeting.duration" class="form-control" style="width:80px"/></td>
-                </tr>
-                <tr id="trspath">
-                    <td class="gridTableColummHeader">Send Reminder:</td>
-                    <td colspan="2"><input type="text" ng-model="meeting.reminderTime" class="form-control" style="width:80px;float:left;"/>
-                    <div style="padding:10px;">&nbsp; minutes before the meeting</div></td>
-                </tr>
-                <tr>
-                    <td class="gridTableColummHeader"></td>
-                    <td colspan="2">
-                        <input type="submit" class="btn btn-primary" value="Create Meeting" ng-click="createMeeting()">
-                    </td>
-                </tr>
-            </table>
+  <%@include file="ErrorPanel.jsp"%>
+  <div class="container">
+    <div class="col-md-11">
+      <div class="well">
+        <form class="horizontal-form">
+          <fieldset>
+            <!-- Form Control NAME Begin -->
+            <div class="form-group">
+              <label class="col-md-2 control-label">Name</label>
+              <div class="col-md-10">
+                <input type="text" class="form-control" ng-model="meeting.name"/>
+              </div>
+            </div>
+            <!-- Form Control DATE Begin -->
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                  Date
+                </label>
+                <div class="col-md-10 container">
+                  <div class="col-md-4">
+                    <input type="text"
+                    style="width:150;"
+                    class="form-control"
+                    datepicker-popup="dd-MMMM-yyyy"
+                    ng-model="meetingTime"
+                    is-open="datePickOpen"
+                    datepicker-options="datePickOptions"
+                    date-disabled="datePickDisable(date, mode)"
+                    ng-required="true"
+                    ng-click="openDatePicker($event)"
+                    close-text="Close"/>
+                  </div>
+                  <div class="col-md-1"><button type="button" class="form-control" disabled="1">at</button></div>
+                  <div class="col-md-3">
+                    <select style="width:50;" ng-model="meetingHour" class="form-control" >
+                        <option value="0">00</option>
+                        <option value="1">01</option>
+                        <option value="2">02</option>
+                        <option value="3">03</option>
+                        <option value="4">04</option>
+                        <option value="5">05</option>
+                        <option value="6">06</option>
+                        <option value="7">07</option>
+                        <option value="8">08</option>
+                        <option value="9">09</option>
+                        <option>10</option>
+                        <option>11</option>
+                        <option>12</option>
+                        <option>13</option>
+                        <option>14</option>
+                        <option>15</option>
+                        <option>16</option>
+                        <option>17</option>
+                        <option>18</option>
+                        <option>19</option>
+                        <option>20</option>
+                        <option>21</option>
+                        <option>22</option>
+                        <option>23</option>
+                    </select>
+                  </div>
+                  <div class="col-md-1"><button type="button" class="form-control" disabled="1">:</button></div>
+                  <div class="col-md-3">
+                    <select  style="width:50;" ng-model="meetingMinutes" class="form-control" >
+                        <option value="0">00</option>
+                        <option>15</option>
+                        <option>30</option>
+                        <option>45</option>
+                    </select>
+                  </div>
+                </div>
+            </div>
+            <!-- Form Control TYPE Begin -->
+            <div class="form-group">
+              <label class="col-md-2 control-label">Type</label>
+              <div class="col-md-10">
+                <div class="radio radio-primary">
+                  <label>
+                    <input type="radio" ng-model="meeting.meetingType" value="1"
+                        class="form-control">
+                        <span class="circle"></span>
+                        <span class="check"></span>
+                        Circle Meeting
+                  </label>
+                  <label>
+                    <input type="radio" ng-model="meeting.meetingType" value="2"
+                        class="form-control">
+                        <span class="circle"></span>
+                        <span class="check"></span>
+                        Operational Meeting
+                  </label>
+                </div>
+              </div>
+            </div>
+            <!-- Form Control DESCRIPTION Begin -->
+            <div class="form-group">
+                <label class="col-md-2 control-label">
+                  Description
+                </label>
+                <div class="col-md-10">
+                  <textarea ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
+                       class="leafContent form-control" style="min-height:200px;"></textarea>
+                </div>
+            </div>
+          </fieldset>
+          <!-- Table MEETING AGENDA ITEMS Begin -->
+          <h3>Cloning Agenda Items</h3>
+          <div class="form-group">
+          <table class="table table-striped table-hover" width="100%">
+              <tr>
+                  <th width="30px">Clone</th>
+                  <th width="200px">Agenda Item</th>
+                  <th width="200px">Description</th>
+                  <th width="50px">Duration</th>
+              </tr>
+              <tr ng-repeat="rec in sortItems()">
+                  <td class="actions">
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" ng-model="rec.selected"><span class="checkbox-material"></span>
+                      </label>
+                    </div>
+                  </td>
+                  <td><b><a href="agendaItem.htm?id={{meeting.id}}&aid={{rec.id}}">{{rec.subject}}</a>
+                          <span ng-show="rec.topicLink">(Linked Topic)
+                          </span>
+                      </b>
+                      </td>
+                  <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>
+                  <td>{{rec.duration}}</td>
+              </tr>
+          </table>
         </div>
+          <!-- Form Control BUTTONS Begin -->
+          <div class="form-group text-right">
+            <button type="button" class="btn btn-default btn-raised" onclick="history.back();">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-raised"  ng-click="createMeeting()">Clone Meeting</button>
+          </div>
+        </form>
+      </div>
     </div>
-
-
-    <table class="gridTable2" width="100%">
-        <tr class="gridTableHeader">
-            <td width="30px"> Copy</td>
-            <td width="200px">Agenda Item</td>
-            <td width="200px">Description</td>
-            <td width="50px">Duration</td>
-        </tr>
-        <tr ng-repeat="rec in sortItems()">
-            <td >
-                <button ng-click="rec.selected=!rec.selected" class="btn btn-default"
-                  title="Check the agenda items to carry to the new meeting,  an X means it is not being copied.">
-                <span ng-hide="rec.selected"><img src="<%=ar.retPath%>assets/iconClose.gif"/></span>
-                <span ng-show="rec.selected"><img src="<%=ar.retPath%>assets/iconBlueCheck.gif"/></span>
-                </button>
-            </td>
-            <td><b><a href="agendaItem.htm?id={{meeting.id}}&aid={{rec.id}}">{{rec.subject}}</a>
-                    <span ng-show="rec.topicLink">(Linked Topic)
-                    </span>
-                </b>
-                </td>
-            <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>
-            <td>{{rec.duration}}</td>
-        </tr>
-    </table>
-
-
+  </div>
 </div>
