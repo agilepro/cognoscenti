@@ -181,7 +181,7 @@ Optional Parameters:
                         <td class="gridTableColummHeader"></td>
                         <td style="width:20px;"></td>
                         <td>
-                            <input type="submit" class="btn btn-primary"
+                            <input type="submit" class="btn btn-primary btn-raised"
                                 value="<fmt:message key="nugen.button.repository.createnewconnection" />">
                         </td>
                     </tr>

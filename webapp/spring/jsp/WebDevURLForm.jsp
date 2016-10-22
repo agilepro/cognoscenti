@@ -92,7 +92,7 @@ Required parameter:
                         <td ></td>
                         <td style="width:20px;"></td>
                         <td>
-                            <input type="button" class="btn btn-primary"
+                            <input type="button" class="btn btn-primary btn-raised"
                                 value="<fmt:message key="nugen.button.repository.useexistingconnection" />"
                                 onclick="submitWebDevURLForm('UseExistingConnection')">
                         </td>
@@ -104,7 +104,7 @@ Required parameter:
                         <td width="148" class="bigNumber">2.</td>
                         <td style="width:20px;"></td>
                         <td>
-                            <input type="button" class="btn btn-primary"
+                            <input type="button" class="btn btn-primary btn-raised"
                                 value="<fmt:message key="nugen.button.repository.createnewconnection" />"
                                 onclick="submitWebDevURLForm('CreateNewConnection')">
                         </td>
@@ -116,7 +116,7 @@ Required parameter:
                         <td width="148" class="bigNumber">3.</td>
                         <td style="width:20px;"></td>
                         <td>
-                            <input type="button" class="btn btn-primary"
+                            <input type="button" class="btn btn-primary btn-raised"
                                 value="<fmt:message key="nugen.button.repository.accesspublicdocument" />"
                                 onclick="submitWebDevURLForm('AccessPublicDocument')">
                         </td>

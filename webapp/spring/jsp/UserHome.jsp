@@ -112,7 +112,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem"
@@ -159,7 +159,7 @@ app.controller('myCtrl', function($scope, $http) {
                  {{fixLength(item.synopsis)}}</a>
             </div>
             <div ng-show="openActionItems.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm" class="btn btn-sm btn-default">See all action items...</a>
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm" class="btn btn-sm btn-default btn-raised">See all action items...</a>
             </div>
           </div>
         </div>
@@ -203,7 +203,7 @@ app.controller('myCtrl', function($scope, $http) {
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixLength(item.content)}}</a>
                </div>
                <div ng-show="proposals.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userMissingResponses.htm" class="btn btn-sm btn-default">See all ...</a>
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userMissingResponses.htm" class="btn btn-sm btn-default btn-raised">See all ...</a>
                </div>
           </div>
         </div>
@@ -223,7 +223,7 @@ app.controller('myCtrl', function($scope, $http) {
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixLength(item.content)}}</a>
                </div>
                <div ng-show="openRounds.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm" class="btn btn-sm btn-default">See all...</a>
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm" class="btn btn-sm btn-default btn-raised">See all...</a>
                </div>
           </div>
        </div>
@@ -248,7 +248,7 @@ app.controller('myCtrl', function($scope, $http) {
                    </a>
                </div>
                <div ng-show="wList.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm" class="btn btn-sm btn-default">See all...</a>
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm" class="btn btn-sm btn-default btn-raised">See all...</a>
                </div>
           </div>
         </div>
@@ -270,7 +270,7 @@ app.controller('myCtrl', function($scope, $http) {
                    </a>
                </div>
                <div ng-show="siteList.length>10">
-                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userAccounts.htm" class="btn btn-sm btn-default">See all...</a>
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userAccounts.htm" class="btn btn-sm btn-default btn-raised">See all...</a>
                </div>
                </ul>
            </div>

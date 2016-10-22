@@ -117,7 +117,7 @@
                <input type="hidden" name="path" value="<% ar.writeHtml(parentPath); %>">
                <tr><td style="height:10px"></td></tr>
                <tr>
-                    <td class="gridTableColummHeader_2"><input class="btn btn-primary" type="submit" value="Go Up"></td>
+                    <td class="gridTableColummHeader_2"><input class="btn btn-primary btn-raised" type="submit" value="Go Up"></td>
                     <td style="width:20px;"></td>
                     <td ><% ar.writeHtml(parentVisual); %></td>
                </tr>
@@ -130,7 +130,7 @@
            <tr><td style="height:10px"></td></tr>
            <form action="convertFolderProject.htm" method="get">
            <tr>
-               <td class="gridTableColummHeader_2"><input class="btn btn-primary" type="submit" value="Drill Down"></td>
+               <td class="gridTableColummHeader_2"><input class="btn btn-primary btn-raised" type="submit" value="Drill Down"></td>
                <td style="width:20px;"></td>
                <td >
                <select name="path" class="form-control">

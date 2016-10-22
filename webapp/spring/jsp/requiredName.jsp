@@ -31,7 +31,7 @@
          <td><input type="text" name="dName" class="form-control" size="50"> </td>
     </tr>
     <tr class="reRow">
-         <td><input type="submit" value="Set Display Name" class="btn btn-primary"></td>
+         <td><input type="submit" value="Set Display Name" class="btn btn-primary btn-raised"></td>
     </tr>
 
     </form>

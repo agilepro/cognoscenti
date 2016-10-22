@@ -209,7 +209,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <td align="right">
                        <div class="dropdown" style="float: right;">
                             <b>Color:</b>
-                            <button class="btn btn-default dropdown-toggle" type="button" id="menu2"
+                            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2"
                                 data-toggle="dropdown" style="background-color:{{roleInfo.color}};">
                             {{roleInfo.color}} <span class="caret"></span></button>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
@@ -236,7 +236,7 @@ app.controller('myCtrl', function($scope, $http) {
                         </ul>
                       </span>
                       <span >
-                        <button class="btn btn-sm btn-primary" ng-click="showAddPlayer=!showAddPlayer"
+                        <button class="btn btn-sm btn-primary btn-raised" ng-click="showAddPlayer=!showAddPlayer"
                             style="margin:2px;padding: 2px 5px;font-size: 11px;">+</button>
                       </span>
                     </td>
@@ -275,9 +275,9 @@ app.controller('myCtrl', function($scope, $http) {
                 <tr>
                      <td class="gridTableColummHeader"></td>
                      <td style="width:20px;"></td>
-                     <td colspan="2"><button ng-click="updateRole()" class="btn btn-primary">Save Changes</button>
+                     <td colspan="2"><button ng-click="updateRole()" class="btn btn-primary btn-raised">Save Changes</button>
                          &nbsp; &nbsp; &nbsp;
-                         <button ng-click="deleteRole()" class="btn btn-primary">Delete Role</button>
+                         <button ng-click="deleteRole()" class="btn btn-primary btn-raised">Delete Role</button>
                      </td>
                     <td style="width:30px;"></td>
                 </tr>

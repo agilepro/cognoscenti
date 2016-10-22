@@ -58,7 +58,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -183,7 +183,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <tr>
                       <td class="gridTableColummHeader_2"></td>
                         <td style="width: 20px;"></td>
-                        <td><input type="button" class="btn btn-primary"  onclick="addRoleMember('Add Member',rolemember,'addMemberForm');" value="<fmt:message key='nugen.projectsettings.button.AddMember'/>"></td>
+                        <td><input type="button" class="btn btn-primary btn-raised"  onclick="addRoleMember('Add Member',rolemember,'addMemberForm');" value="<fmt:message key='nugen.projectsettings.button.AddMember'/>"></td>
                     </tr>
                     <tr><td style="height: 5px"></td></tr>
                 </table>
@@ -220,7 +220,7 @@ app.controller('myCtrl', function($scope, $http) {
                              <tr>
                                 <td class="gridTableColummHeader_2"></td>
                                 <td style="width:20px;"></td>
-                                <td style="width:20px;"><input type="button" class="btn btn-primary" value="<fmt:message key="nugen.button.projectsetting.addrole"/>" onclick="submitRole();"></td>
+                                <td style="width:20px;"><input type="button" class="btn btn-primary btn-raised" value="<fmt:message key="nugen.button.projectsetting.addrole"/>" onclick="submitRole();"></td>
                              </tr>
                         </table>
                       </form>
@@ -256,7 +256,7 @@ app.controller('myCtrl', function($scope, $http) {
                         <td class="gridTableColummHeader_2"></td>
                         <td style="width:20px;"></td>
                         <td>
-                            <input type="button" class="btn btn-primary"  onclick="updateRole('Add Role',newRoleName.value,'updateRoleForm');" value="<fmt:message key='nugen.projectsettings.button.AddRole'/>">
+                            <input type="button" class="btn btn-primary btn-raised"  onclick="updateRole('Add Role',newRoleName.value,'updateRoleForm');" value="<fmt:message key='nugen.projectsettings.button.AddRole'/>">
 
                         </td>
                     </tr>
@@ -398,8 +398,8 @@ app.controller('myCtrl', function($scope, $http) {
                                 '<tr><td colspan = "2">&nbsp;</td></tr>'+
                                 '<tr>'+
                                     '<td colspan="2" align="center">'+
-                                        '<input type="button" class="btn btn-primary"  value="Approve / Reject" onclick="'+onClickFunction+'">&nbsp;'+
-                                        '<input type="button" class="btn btn-primary"  value="Cancel" onclick="cancel()" >'+
+                                        '<input type="button" class="btn btn-primary btn-raised"  value="Approve / Reject" onclick="'+onClickFunction+'">&nbsp;'+
+                                        '<input type="button" class="btn btn-primary btn-raised"  value="Cancel" onclick="cancel()" >'+
                                     '</td>'+
                                 '</tr>'+
 

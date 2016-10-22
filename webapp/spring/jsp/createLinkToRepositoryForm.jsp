@@ -162,7 +162,7 @@ Optional parameters:
                         <td width="148" class="gridTableColummHeader"></td>
                         <td style="width:20px;"></td>
                         <td>
-                            <input type="submit" class="btn btn-primary"
+                            <input type="submit" class="btn btn-primary btn-raised"
                                 value="<%ar.writeHtmlMessage("nugen.button.repository.linkdoctoproject",null); %>">
                         </td>
                     </tr>

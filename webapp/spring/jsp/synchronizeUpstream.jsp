@@ -49,7 +49,7 @@
         </div>
         <!--div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -71,7 +71,7 @@
                       <input type="hidden" name="go" value="<%ar.writeHtml(thisPage);%>">
                       <input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>">
                       <input type="text" name="siteLink" value="" size="50" class="inputGeneral">
-                      <input type="submit" name="op" value="Create Remote Upstream Workspace"  class="btn btn-primary">
+                      <input type="submit" name="op" value="Create Remote Upstream Workspace"  class="btn btn-primary btn-raised">
                   </form>
 
                     <%
@@ -86,7 +86,7 @@
                       <p>Upstream URL: <a href="<%ar.writeHtml(upstreamLink);%>">
                          <%ar.writeHtml(upstreamLink);%></a></p>
                       <p>The upstream link can be changed from this workspace's
-                         <button class="btn btn-primary" onclick="window.location='admin.htm'"
+                         <button class="btn btn-primary btn-raised" onclick="window.location='admin.htm'"
                          type="button">Admin</button> page.</p>
                     <%
                 }
@@ -169,11 +169,11 @@
                     <tr>
                         <td class="gridTableColummHeader_2"></td>
                         <td style="width:20px;"></td>
-                        <td> <input type="submit" value="Upload All" name="op" class="btn btn-primary"> </td>
+                        <td> <input type="submit" value="Upload All" name="op" class="btn btn-primary btn-raised"> </td>
                         <td style="width:20px;"></td>
-                        <td> <input type="submit" value="Download All" name="op" class="btn btn-primary"> </td>
+                        <td> <input type="submit" value="Download All" name="op" class="btn btn-primary btn-raised"> </td>
                         <td style="width:20px;"></td>
-                        <td> <input type="submit" value="Ping" name="op" class="btn btn-primary"> </td>
+                        <td> <input type="submit" value="Ping" name="op" class="btn btn-primary btn-raised"> </td>
                     </tr>
                   </form>
                 </table>

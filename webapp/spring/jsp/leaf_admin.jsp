@@ -168,7 +168,7 @@ app.filter('escape', function() {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" href="listEmail.htm">
@@ -227,7 +227,7 @@ app.filter('escape', function() {
                             <td class="gridTableColummHeader_2"></td>
                             <td>
                                 <input type="submit" value='<fmt:message key="nugen.generatInfo.Button.Caption.Admin.ChangePage"/>'
-                                       name="action" class="btn btn-primary"/>
+                                       name="action" class="btn btn-primary btn-raised"/>
                             </td>
                         </tr>
                     </form>
@@ -309,7 +309,7 @@ app.filter('escape', function() {
                     <tr>
                         <td class="gridTableColummHeader_2"></td>
                         <td>
-                            <button ng-click="saveProjectConfig();" class="btn btn-primary" >Update</button>
+                            <button ng-click="saveProjectConfig();" class="btn btn-primary btn-raised" >Update</button>
                         </td>
                     </tr>
                 </table>
@@ -341,7 +341,7 @@ app.filter('escape', function() {
                     <tr>
                         <td class="gridTableColummHeader_2"></td>
                         <td style="width:20px;"></td>
-                        <td> <input type="submit" value="Copy From Template" class="btn btn-primary"> </td>
+                        <td> <input type="submit" value="Copy From Template" class="btn btn-primary btn-raised"> </td>
                     </tr>
                   </form>
                 </table>

@@ -61,7 +61,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1" href="editUserProfile.htm?u={{userInfo.key}}" >
@@ -113,7 +113,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td>
             </td>
             <td>
-               <button ng-click="saveMicro()" class="btn btn-primary">Save Name</button>
+               <button ng-click="saveMicro()" class="btn btn-primary btn-raised">Save Name</button>
             </td>
           </tr>
         </table>

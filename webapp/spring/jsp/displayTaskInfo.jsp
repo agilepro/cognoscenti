@@ -170,7 +170,7 @@ table.datatable {
                         <table>
 <% if (isAssignee) { %>
                             <tr><td class="buttoncolumn">
-                                <input type="submit" name="cmd" value="Remove Me" class="btn btn-primary"/>
+                                <input type="submit" name="cmd" value="Remove Me" class="btn btn-primary btn-raised"/>
                             </td><td class="buttoncolumn">
                                 Unassign <%ar.writeHtml(uProf.getUniversalId());%> from this goal.
                                 Use this if for any reason you do not plan to complete the goal,
@@ -180,7 +180,7 @@ table.datatable {
 <% } %>
 <% if (canComplete) { %>
                             <tr><td class="buttoncolumn">
-                                <input type="submit" name="cmd" value="Complete" class="btn btn-primary"/>
+                                <input type="submit" name="cmd" value="Complete" class="btn btn-primary btn-raised"/>
                             </td><td class="buttoncolumn">
                                 Mark this goal as completed so that everyone knows that the
                                 goal has been accomplished.
@@ -188,7 +188,7 @@ table.datatable {
                             </td></tr>
 <% } %>
                             <tr><td class="buttoncolumn">
-                                <input type="submit" name="cmd" value="Other" class="btn btn-primary"/>
+                                <input type="submit" name="cmd" value="Other" class="btn btn-primary btn-raised"/>
                             </td><td class="buttoncolumn">
                                 Log in in order to perform all other modification or updates
                                 to this goal.

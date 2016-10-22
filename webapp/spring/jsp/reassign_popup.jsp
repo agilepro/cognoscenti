@@ -139,7 +139,7 @@ Optional Parameter:
                                  autocomplete="off" onkeyup="autoComplete(event,this);"
                                  onfocus="clearFieldAssignee('assignto');initsmartInputWindowVlaue('smartInputFloater','smartInputFloaterContent');"
                                  onblur="defaultAssigneeValue('assignto');"/>
-                            &nbsp;<input type="submit" value="Reassign" class="btn btn-primary" tabindex=3 /></td>
+                            &nbsp;<input type="submit" value="Reassign" class="btn btn-primary btn-raised" tabindex=3 /></td>
                         </tr>
                         <tr>
                             <td></td>

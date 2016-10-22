@@ -75,7 +75,7 @@ Required parameter:
                     </tr>
                     <tr><td style="height:20px"></td></tr>
                     <tr>
-                        <td><input type="submit" class="btn btn-default" name="op" value="Create Clone"/>
+                        <td><input type="submit" class="btn btn-default btn-raised" name="op" value="Create Clone"/>
                         </td>
                     </tr>
                 </table>

@@ -35,7 +35,7 @@
 
     <div id="ErrorPanel" style="border:2px solid red;display=none;background:LightYellow;margin:10px;"
          ng-show="showError" ng-cloak>
-        <div class="rightDivContent" style="margin:10px;">
+        <div style="margin:10px; float:right;">
             <a href="#" ng-click="showError=false"><img src="<%= ar.retPath%>assets/iconBlackDelete.gif"/></a>
         </div>
         <div>

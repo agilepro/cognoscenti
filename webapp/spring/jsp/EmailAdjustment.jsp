@@ -84,7 +84,7 @@ Optional Parameters:
                     <tr>
                         <td class="gridTableColummHeader" valign="top">Opt Out:</td>
                         <td style="width:20px;"></td>
-                        <td><input type="submit" name="cmd" id="cmd" value="Remove Me"    class="btn btn-primary" />
+                        <td><input type="submit" name="cmd" id="cmd" value="Remove Me"    class="btn btn-primary btn-raised" />
                         Removes you from the role, and you will no longer get email messages sent to
                             '<%ar.writeHtml(specRole.getName());%>' in a workspace '<%ar.writeHtml(ngp.getFullName());%>'.</td>
                     </tr>
@@ -101,8 +101,8 @@ Optional Parameters:
                     <tr>
                         <td class="gridTableColummHeader" valign="top"></td>
                         <td style="width:20px;"></td>
-                        <td><ul><li><a href="<%=ar.retPath%><%=ar.getResourceURL(ngp, "permission.htm")%>" class="btn btn-default">Add/Remove others from this role</a></li>
-                            <li><a href="<%=ar.retPath%>v/<%=ar.getUserProfile().getKey()%>/notificationSettings.htm" class="btn btn-default">Visit your subscriptions page.</a></li></ul></td>
+                        <td><ul><li><a href="<%=ar.retPath%><%=ar.getResourceURL(ngp, "permission.htm")%>" class="btn btn-default btn-raised">Add/Remove others from this role</a></li>
+                            <li><a href="<%=ar.retPath%>v/<%=ar.getUserProfile().getKey()%>/notificationSettings.htm" class="btn btn-default btn-raised">Visit your subscriptions page.</a></li></ul></td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
     <% } %>

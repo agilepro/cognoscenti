@@ -441,7 +441,7 @@ function addvalue() {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -474,7 +474,7 @@ function addvalue() {
         </span>
         <span>
              <span class="dropdown">
-               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu2" data-toggle="dropdown"
+               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown"
                        title="Add Filter by Label"><i class="fa fa-filter"></i></button>
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                  <li role="presentation" ng-repeat="rolex in allLabels">
@@ -541,8 +541,8 @@ function addvalue() {
                 <td class="gridTableColummHeader"></td>
                 <td style="width:20px;"></td>
                 <td colspan="2">
-                    <button class="btn btn-primary" ng-click="createNewGoal()">Create New Action Item</button>
-                    <button class="btn btn-primary" ng-click="isCreating=false">Cancel</button>
+                    <button class="btn btn-primary btn-raised" ng-click="createNewGoal()">Create New Action Item</button>
+                    <button class="btn btn-primary btn-raised" ng-click="isCreating=false">Cancel</button>
                 </td>
             </tr>
         </table>

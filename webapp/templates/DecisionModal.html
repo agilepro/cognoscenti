@@ -25,7 +25,7 @@
       </span>
       <span>
          <span class="dropdown">
-           <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+           <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
            style="padding: 2px 5px;font-size: 11px;"> + </button>
            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
              <li role="presentation" ng-repeat="rolex in allLabels">
@@ -38,11 +38,11 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button ng-show="decision.num=='~new~'" class="btn btn-primary"
+    <button ng-show="decision.num=='~new~'" class="btn btn-primary btn-raised"
         type="button" ng-click="ok()">Create</button>
-    <button ng-hide="decision.num=='~new~'" class="btn btn-primary"
+    <button ng-hide="decision.num=='~new~'" class="btn btn-primary btn-raised"
         type="button" ng-click="ok()">Save</button>
-    <button class="btn btn-warning" type="button" ng-click="cancel()">
+    <button class="btn btn-warning btn-raised" type="button" ng-click="cancel()">
         Cancel</button>
 </div>
 

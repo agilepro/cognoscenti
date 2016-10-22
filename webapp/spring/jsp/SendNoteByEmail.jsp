@@ -106,8 +106,8 @@ Optional Parameters:
                 <input type="hidden" name="toRole"/>
                 <!--<input type="hidden" name="anyErrors"     value=""/>-->
                 <div style="float:right">
-                     <input type="submit" name="action" id="action" class="btn btn-primary" value="Send Mail"  />
-                     <input type="submit" name="action" id="action" class="btn btn-primary" value="Preview Mail" />
+                     <input type="submit" name="action" id="action" class="btn btn-primary btn-raised" value="Send Mail"  />
+                     <input type="submit" name="action" id="action" class="btn btn-primary btn-raised" value="Preview Mail" />
                 </div>
                 <table cellpadding="0" cellspacing="0" width="600">
                     <tr><td style="height:20px"></td></tr>

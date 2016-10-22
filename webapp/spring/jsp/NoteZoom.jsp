@@ -701,7 +701,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           </span>
 <%if (isLoggedIn) { %>
 <span class="dropdown">
-  <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+  <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
   style="padding: 2px 5px;font-size: 11px;"> + </button>
   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
     <li role="presentation" ng-repeat="rolex in allLabels">
@@ -715,7 +715,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <div class="rightDivContent" style="margin-right:100px;">
 <%if (isLoggedIn) { %>
 <span class="dropdown">
-  <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+  <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
   {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
     <li role="presentation" ng-repeat="phase in getPhases()"><a role="menuitem"
@@ -723,7 +723,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
   </ul>
 </span>
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -753,8 +753,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <div style="height:15px"></div>
     	<div ui-tinymce="tinymceOptions" ng-model="noteInfo.html"></div>
         <div style="height:15px"></div>
-        <button class="btn btn-primary" ng-click="saveEdit()">Save</button>
-        <button class="btn btn-primary" ng-click="cancelEdit()">Cancel</button>
+        <button class="btn btn-primary btn-raised" ng-click="saveEdit()">Save</button>
+        <button class="btn btn-primary btn-raised" ng-click="cancelEdit()">Cancel</button>
     </div>
 <% } %>
 
@@ -766,12 +766,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div style="width:100%;margin-top:50px;"></div>
     <div>
       <span style="width:150px">Attachments:</span>
-      <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default"  style="margin:4px;"
+      <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
            ng-click="navigateToDoc(doc)">
               <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
       </span>
 <%if (isLoggedIn) { %>
-      <button class="btn btn-sm btn-primary" ng-click="openAttachDocument()"
+      <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
           title="Attach a document">
           Add/Remove <i class="fa fa-book"></i> Documents </button>
 <% } %>
@@ -779,12 +779,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div>
       <span style="width:150px">Action Items:</span>
-      <span ng-repeat="act in getActions()" class="btn btn-sm btn-default"  style="margin:4px;"
+      <span ng-repeat="act in getActions()" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
            ng-click="navigateToAction(act)">
              <img src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif"> {{act.synopsis}}
       </span>
 <%if (isLoggedIn) { %>
-      <button class="btn btn-sm btn-primary" ng-click="openAttachAction()"
+      <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachAction()"
           title="Attach an Action Item">
           Add/Remove <i class="fa fa-flag"></i> Action Items </button>
 <% } %>
@@ -836,11 +836,11 @@ comment-state-complete {
     <td>
     <div ng-show="canUpdate">
         <div style="margin:20px;">
-            <button ng-click="openCommentCreator({},1)" class="btn btn-default">
+            <button ng-click="openCommentCreator({},1)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="openCommentCreator({},2)" class="btn btn-default">
+            <button ng-click="openCommentCreator({},2)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
-            <button ng-click="openCommentCreator({},3)" class="btn btn-default">
+            <button ng-click="openCommentCreator({},3)" class="btn btn-default btn-raised">
                 Create New <i class="fa  fa-question-circle"></i> Round</button>
         </div>
     </div>

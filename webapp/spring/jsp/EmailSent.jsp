@@ -73,7 +73,7 @@ app.controller('myCtrl', function($scope, $http) {
         return res;
     }
     $scope.namePart = function(val) {
-        var pos = val.indexOf('«');
+        var pos = val.indexOf('ï¿½');
         if (pos<0) {
             pos = val.indexOf('<');
         }
@@ -106,7 +106,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <!--div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"

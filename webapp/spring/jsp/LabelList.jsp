@@ -159,7 +159,7 @@ app.controller('myCtrl', function($scope, $http) {
                             href="#"  ng-click="newLabel.color=color">{{color}}</a></li>
                     </ul>
                 </div></td>
-                <td style="padding:10px"><button class="btn btn-primary" ng-click="createFromNew(newLabel)">Create New</button></td>
+                <td style="padding:10px"><button class="btn btn-primary btn-raised" ng-click="createFromNew(newLabel)">Create New</button></td>
             </tr></table>
         </div>
 
@@ -180,7 +180,7 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
                 <td>
                     <div class="dropdown" ng-show="label.isEdit || label.isNew">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" style="background-color:{{label.color}};">
+                        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" style="background-color:{{label.color}};">
                         {{label.color}} <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                             <li role="presentation" ng-repeat="color in colors">

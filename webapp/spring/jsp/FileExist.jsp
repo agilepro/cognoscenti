@@ -110,8 +110,8 @@ Required parameter:
                         <td width="148" class="gridTableColummHeader"></td>
                         <td style="width:20px;"></td>
                         <td>
-                            <input type="submit" value="Ok" title="Ok" class="btn btn-primary"/>
-                            <input type="button" value="Cancel" title="Cancel" class="btn btn-primary" onclick="submitFormFileExistPage()"/>
+                            <input type="submit" value="Ok" title="Ok" class="btn btn-primary btn-raised"/>
+                            <input type="button" value="Cancel" title="Cancel" class="btn btn-primary btn-raised" onclick="submitFormFileExistPage()"/>
                         </td>
                     </tr>
                     <tr><td style="height:40px"></td></tr>

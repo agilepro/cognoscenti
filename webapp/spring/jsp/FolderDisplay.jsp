@@ -79,10 +79,10 @@ Optional Parameters:
                         <td class="gridTableColummHeader"></td>
                         <td style="width:20px;"></td>
                         <td colspan="2">
-                            <input type="submit" class="btn btn-primary"
+                            <input type="submit" class="btn btn-primary btn-raised"
                                 value="<fmt:message key="nugen.button.repository.addfile" />" >
                             <input type="hidden" name="action" value="Create New">
-                            <input type="button" class="btn btn-primary"
+                            <input type="button" class="btn btn-primary btn-raised"
                                 value="<fmt:message key="nugen.button.general.cancel" />"
                                 onclick="return cancelPanel();">
                         </td>
@@ -115,10 +115,10 @@ Optional Parameters:
                         <td class="gridTableColummHeader"></td>
                         <td style="width:20px;"></td>
                         <td colspan="2">
-                           <input type="submit" class="btn btn-primary"
+                           <input type="submit" class="btn btn-primary btn-raised"
                                 value="<fmt:message key="nugen.button.repository.addfolder" />" >
                             <input type="hidden" name="action" value="CreateSub">
-                           <input type="button" class="btn btn-primary"
+                           <input type="button" class="btn btn-primary btn-raised"
                                 value="<fmt:message key="nugen.button.general.cancel" />"
                                 onclick="return cancelPanel();">
                         </td>

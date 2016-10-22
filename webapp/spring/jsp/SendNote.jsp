@@ -134,7 +134,7 @@ Optional Parameters:
       "attachFiles": false,
       "docList": [],
       "excludeResponders": false,
-      "from": "Keith Swenson «kswenson@us.fujitsu.com»",
+      "from": "Keith Swenson ï¿½kswenson@us.fujitsu.comï¿½",
       "id": "~new~",
       "includeBody": false,
       "includeSelf": false,
@@ -279,7 +279,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.namePart = function(email) {
-        var pos = email.indexOf("«");
+        var pos = email.indexOf("ï¿½");
         if (pos<0) {
             pos = email.indexOf("<");
         }
@@ -289,8 +289,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return email.substring(0,pos);
     }
     $scope.emailPart = function(email) {
-        var pos = email.indexOf("«");
-        var pos2 = email.indexOf("»");
+        var pos = email.indexOf("ï¿½");
+        var pos2 = email.indexOf("ï¿½");
         if (pos<0 || pos2<pos) {
             pos = email.indexOf("<");
             pos2 = email.indexOf(">");
@@ -415,7 +415,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -441,7 +441,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       <option value="<% ar.writeHtml(composeFromAddress(ngw)); %>"><% ar.writeHtml(composeFromAddress(ngw)); %></option>
                     </select>
                       <span class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                         Options <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                           <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -480,7 +480,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   </span>
                   <span>
                      <span class="dropdown">
-                       <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+                       <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
                        style="padding: 2px 5px;font-size: 11px;"> + </button>
                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                          <li role="presentation" ng-repeat="rolex in allRoles">
@@ -507,7 +507,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     </ul>
                   </span>
                   <span >
-                    <button class="btn btn-sm btn-primary" ng-click="showAddEmail=!showAddEmail"
+                    <button class="btn btn-sm btn-primary btn-raised" ng-click="showAddEmail=!showAddEmail"
                         style="margin:2px;padding: 2px 5px;font-size: 11px;">+</button>
                   </span>
                 </td>
@@ -561,11 +561,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <td style="width:20px;"></td>
                 <td>
                   <div>
-                      <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default"  style="margin:4px;"
+                      <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                            ng-click="navigateToDoc(doc)">
                               <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
                       </span>
-                      <button class="btn btn-sm btn-primary" ng-click="openAttachDocument()"
+                      <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
                           title="Attach a document">
                           ADD </button>
                   </div>
@@ -575,8 +575,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <td class="gridTableColummHeader"></td>
                 <td style="width:20px;"></td>
                 <td>
-                    <button ng-click="saveEmail()" class="btn btn-primary">Save Changes</button>
-                    <button ng-click="sendEmail()" class="btn btn-primary">Send Email Now</button>
+                    <button ng-click="saveEmail()" class="btn btn-primary btn-raised">Save Changes</button>
+                    <button ng-click="sendEmail()" class="btn btn-primary btn-raised">Send Email Now</button>
                 </td>
             </tr>
             <tr><td style="height:10px"></td></tr>
@@ -584,7 +584,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <td class="gridTableColummHeader"></td>
                 <td style="width:20px;"></td>
                 <td class="form-inline form-group">
-                    <button ng-click="scheduleEmail()" class="btn btn-primary">Schedule For Later</button>
+                    <button ng-click="scheduleEmail()" class="btn btn-primary btn-raised">Schedule For Later</button>
                     on
                     <input type="text"
                         style="width:150;"
@@ -699,9 +699,9 @@ if (overrideAddress!=null && overrideAddress.length()>0) {
         }
 
         //now add email address in angle brackets
-        sb.append(" «");
+        sb.append(" ï¿½");
         sb.append(EmailSender.getProperty("mail.smtp.from"));
-        sb.append("»");
+        sb.append("ï¿½");
         return sb.toString();
     }
 

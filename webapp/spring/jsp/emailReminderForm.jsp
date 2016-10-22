@@ -164,8 +164,8 @@
                     <td></td>
                     <td style="width:20px;"></td>
                     <td>
-                        <input type="submit" name="action" class="btn btn-primary" value="<fmt:message key='nugen.attachment.uploadattachment.button.CreateEmailReminder'/>">
-                        <input type="button"  class="btn btn-primary"  name="action" value="<fmt:message key='nugen.button.general.cancel'/>" onclick="cancel();"/>
+                        <input type="submit" name="action" class="btn btn-primary btn-raised" value="<fmt:message key='nugen.attachment.uploadattachment.button.CreateEmailReminder'/>">
+                        <input type="button"  class="btn btn-primary btn-raised"  name="action" value="<fmt:message key='nugen.button.general.cancel'/>" onclick="cancel();"/>
                     </td>
                 </tr>
             </table>

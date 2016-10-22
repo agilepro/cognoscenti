@@ -48,7 +48,7 @@ Required Parameters:
         </div>
         <!--div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -86,7 +86,7 @@ if(memberOfSites.size()>0) {
                     <%if (upstream!=null) {%><input type="hidden" value="<%ar.writeHtml(upstream);%>" name="upstream"><%}%>
                     <%if (desc!=null) {%><input type="hidden" value="<%ar.writeHtml(desc);%>" name="desc"><%}%>
                     <%if (pname!=null) {%><input type="hidden" value="<%ar.writeHtml(pname);%>" name="pname"><%}%>
-                    <input type="submit" value="<%ar.writeHtml(account.getFullName());%>" class="btn btn-primary">
+                    <input type="submit" value="<%ar.writeHtml(account.getFullName());%>" class="btn btn-primary btn-raised">
                     </form></td>
                     <td class="acctListElem">
                     </td>
@@ -110,7 +110,7 @@ if(memberOfSites.size()>0) {
             <br/>
             Create a Site in order to create a workspace<br/>.
             <form action="userAccounts.htm">
-            <input type="submit" value="View Your Sites" class="btn btn-primary">
+            <input type="submit" value="View Your Sites" class="btn btn-primary btn-raised">
             </form>
         </div>
 <%

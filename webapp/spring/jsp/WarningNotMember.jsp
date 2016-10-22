@@ -170,7 +170,7 @@ app.controller('myCtrl', function($scope, $http) {
             <textarea ng-model="enterRequest" class="form-control"></textarea>
         </div>
         <div class="generalContent warningBox">
-            <button class="btn btn-primary" ng-click="takeStep()">Request Membership</button>
+            <button class="btn btn-primary btn-raised" ng-click="takeStep()">Request Membership</button>
         </div>
       </td></tr></table>
       

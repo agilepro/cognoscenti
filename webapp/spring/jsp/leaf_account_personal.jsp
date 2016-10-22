@@ -39,7 +39,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <!--div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -121,16 +121,16 @@ app.controller('myCtrl', function($scope, $http) {
                     </td>
                     <td width="65%">
                         <div id="div_<%=roleName%>_on" style="<%=leaveRole %>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="button" name="action"  class="btn btn-primary" value="Leave the Role"  onclick="return joinOrLeaveRole(<%ar.writeQuote4JS(accountId);%>,'leave_role','<%=ar.retPath %>',<%ar.writeQuote4JS(roleName); %>,'');">
+                            <input type="button" name="action"  class="btn btn-primary btn-raised" value="Leave the Role"  onclick="return joinOrLeaveRole(<%ar.writeQuote4JS(accountId);%>,'leave_role','<%=ar.retPath %>',<%ar.writeQuote4JS(roleName); %>,'');">
                         </div>
                         <div id="div_<%=roleName%>_off" style="<%=joinRole %>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="button" name="action"  class="btn btn-primary" value="Join the Role   "  onclick="return openJoinOrLeaveRoleForm(<%ar.writeQuote4JS(accountId);%>,'join_role','<%=ar.retPath %>',<%ar.writeQuote4JS(roleName); %>,<%ar.writeQuote4JS(roleDescription);%>);">
+                            <input type="button" name="action"  class="btn btn-primary btn-raised" value="Join the Role   "  onclick="return openJoinOrLeaveRoleForm(<%ar.writeQuote4JS(accountId);%>,'join_role','<%=ar.retPath %>',<%ar.writeQuote4JS(roleName); %>,<%ar.writeQuote4JS(roleDescription);%>);">
                         </div>
                         <div id="div_<%=roleName%>_pending" style="<%=pending %>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            Request is pending...&nbsp;&nbsp;&nbsp;<input type="button" name="action"  class="btn btn-primary" value="Cancel Request"  onclick="return cancelRoleRequest(<%ar.writeQuote4JS(roleName); %>);">
+                            Request is pending...&nbsp;&nbsp;&nbsp;<input type="button" name="action"  class="btn btn-primary btn-raised" value="Cancel Request"  onclick="return cancelRoleRequest(<%ar.writeQuote4JS(roleName); %>);">
                         </div>
                         <div id="div_<%=roleName%>_reject" style="<%=rejected %>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            Request has been rejected.<a href="#" onclick="return showHideReasonDiv('div_<%=roleName%>_reason');">(See Reason)</a>&nbsp;&nbsp;&nbsp;<input type="button" name="action"  class="btn btn-primary" value="Make New Request"  onclick="return openJoinOrLeaveRoleForm(<%ar.writeQuote4JS(accountId);%>,'join_role','<%=ar.retPath %>',<%ar.writeQuote4JS(roleName); %>,'');"/>
+                            Request has been rejected.<a href="#" onclick="return showHideReasonDiv('div_<%=roleName%>_reason');">(See Reason)</a>&nbsp;&nbsp;&nbsp;<input type="button" name="action"  class="btn btn-primary btn-raised" value="Make New Request"  onclick="return openJoinOrLeaveRoleForm(<%ar.writeQuote4JS(accountId);%>,'join_role','<%=ar.retPath %>',<%ar.writeQuote4JS(roleName); %>,'');"/>
                             <font color="red">
                                 <div id="div_<%=roleName%>_reason" style="display: none;" >
                                     <B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reason : </B>

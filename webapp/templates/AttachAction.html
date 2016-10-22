@@ -18,10 +18,10 @@
 
 <div class="modal-header">
     <h3 class="modal-title" style="float:left">Attach Action Items</h3>
-      <button ng-click="createMode=true" class="btn btn-default" style="float:right;margin-right:15px;">
+      <button ng-click="createMode=true" class="btn btn-default btn-raised" style="float:right;margin-right:15px;">
           Create New Action Item
       </button>
-      <button ng-click="createMode=false" class="btn btn-default" style="float:right;margin-right:15px;">
+      <button ng-click="createMode=false" class="btn btn-default btn-raised" style="float:right;margin-right:15px;">
           Pick Existing Action Items
       </button>
     <div style="clear: both"></div>
@@ -130,10 +130,10 @@
    <div style="clear: both"></div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" ng-hide="createMode"
+    <button class="btn btn-primary btn-raised" ng-hide="createMode"
         type="button" ng-click="ok()">Save</button>
-    <button class="btn btn-primary" ng-show="createMode"
+    <button class="btn btn-primary btn-raised" ng-show="createMode"
         type="button" ng-click="createActionItem()">Create Action Item</button>
-    <button class="btn btn-warning" type="button" ng-click="cancel()">
+    <button class="btn btn-warning btn-raised" type="button" ng-click="cancel()">
         Cancel</button>
 </div>

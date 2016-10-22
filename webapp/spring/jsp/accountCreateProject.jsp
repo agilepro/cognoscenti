@@ -79,7 +79,7 @@ app.controller('myCtrl', function($scope, $http) {
             <tr>
                 <td></td>
                 <td>
-                    <button type="submit" class="btn btn-primary">Create Workspace</button>
+                    <button type="submit" class="btn btn-primary btn-raised">Create Workspace</button>
                 </td>
             </tr>
             <tr>

@@ -136,7 +136,7 @@ Optional Parameter:
                     <tr>
                         <td class="gridTableColummHeader_2"></td>
                         <td style="width:20px;"></td>
-                        <td colspan="2"><input type="button" class="btn btn-primary" value="Upload Photo"
+                        <td colspan="2"><input type="button" class="btn btn-primary btn-raised" value="Upload Photo"
                             onclick="javascript:uploadUserPhoto();"/></td>
                     </tr>
                 </table>
@@ -178,7 +178,7 @@ Optional Parameter:
                     <tr>
                         <td class="gridTableColummHeader_2"></td>
                         <td style="width:20px;"></td>
-                        <td colspan="2"><input type="button" class="btn btn-primary" onclick="updateProfile('Save')" value="Update Personal Details"/></td>
+                        <td colspan="2"><input type="button" class="btn btn-primary btn-raised" onclick="updateProfile('Save')" value="Update Personal Details"/></td>
                     </tr>
                     <tr><td style="height:60px"></td></tr>
 
@@ -186,7 +186,7 @@ Optional Parameter:
                         <td class="gridTableColummHeader_2"></td>
                         <td style="width:20px;"></td>
                         <td colspan="2">
-                            <input type="button" class="btn btn-primary" onclick="updateProfile('Cancel')" value="Go Back To My Settings"/>
+                            <input type="button" class="btn btn-primary btn-raised" onclick="updateProfile('Cancel')" value="Go Back To My Settings"/>
                         </td>
                     </tr>
                 </table>

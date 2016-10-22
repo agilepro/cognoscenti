@@ -119,9 +119,9 @@ Required parameter:
                             <td width="148" class="gridTableColummHeader"></td>
                             <td style="width:20px;"></td>
                             <td>
-                                <input type="button" class="btn btn-primary"  value="<%ar.writeHtmlMessage("nugen.button.general.grant",null); %>" onclick="acceptOrDeny('accept')">&nbsp;
-                                <input type="button" class="btn btn-primary"  value="<%ar.writeHtmlMessage("nugen.button.general.deny",null); %>" onclick="acceptOrDeny('deny')">&nbsp;
-                                <input type="button" class="btn btn-primary"  value="<%ar.writeHtmlMessage("nugen.button.general.cancel",null); %>" onclick="acceptOrDeny('cancel')" >
+                                <input type="button" class="btn btn-primary btn-raised"  value="<%ar.writeHtmlMessage("nugen.button.general.grant",null); %>" onclick="acceptOrDeny('accept')">&nbsp;
+                                <input type="button" class="btn btn-primary btn-raised"  value="<%ar.writeHtmlMessage("nugen.button.general.deny",null); %>" onclick="acceptOrDeny('deny')">&nbsp;
+                                <input type="button" class="btn btn-primary btn-raised"  value="<%ar.writeHtmlMessage("nugen.button.general.cancel",null); %>" onclick="acceptOrDeny('cancel')" >
                             </td>
                         </tr>
                         <% } %>
@@ -167,4 +167,3 @@ Required parameter:
         return true;
     }
 </script>
-

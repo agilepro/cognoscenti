@@ -83,9 +83,9 @@
                 <tr><td colspan="2">&nbsp;</td></tr>
                 <tr>
                     <td></td><td>
-                        <input type="submit" name="action" class="btn btn-primary" value="Upload Document">
+                        <input type="submit" name="action" class="btn btn-primary btn-raised" value="Upload Document">
                         &nbsp;&nbsp;
-                        <input type="button"  class="btn btn-primary"  name="action" value="All Done" onclick="cancel();"/>
+                        <input type="button"  class="btn btn-primary btn-raised"  name="action" value="All Done" onclick="cancel();"/>
                     </td>
                 </tr>
                 <tr>

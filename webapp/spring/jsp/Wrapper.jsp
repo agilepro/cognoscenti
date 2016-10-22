@@ -429,12 +429,12 @@ function standardTinyMCEOptions() {
           if (info.haveNotCheckedYet) {
               y.innerHTML = 'Checking identity, please <a href="'
                   +loginConfig.providerUrl
-                  +'&go='+window.location+'"><span class="btn btn-primary">Login</span></a>';
+                  +'&go='+window.location+'"><span class="btn btn-primary btn-raised">Login</span></a>';
           }
           else if (!info.userName) {
               y.innerHTML = 'Not logged in, please <a href="'
                   +loginConfig.providerUrl
-                  +'?openid.mode=quick&go='+window.location+'"><span class="btn btn-primary">Login</span></a>';
+                  +'?openid.mode=quick&go='+window.location+'"><span class="btn btn-primary btn-raised">Login</span></a>';
           }
           else if (!info.verified) {
               y.innerHTML = 'Hello <b>'+info.userName+'</b>.  Attempting Automatic Login.';

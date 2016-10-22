@@ -340,7 +340,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -395,7 +395,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <td align="right">
                        <div class="dropdown" style="float: right;">
                             <b>Color:</b>
-                            <button class="btn btn-default dropdown-toggle" type="button" id="menu2"
+                            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2"
                                 data-toggle="dropdown" style="background-color:{{roleInfo.color}};">
                             {{roleInfo.color}} <span class="caret"></span></button>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
@@ -443,10 +443,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </tr>
                 <tr>
                      <td class="gridTableColummHeader"></td>
-                     <td colspan="2"><button ng-click="updateRole()" class="btn btn-primary">Save Changes</button>
-                     <button ng-click="closePanel()" class="btn btn-primary">Cancel</button>
+                     <td colspan="2"><button ng-click="updateRole()" class="btn btn-primary btn-raised">Save Changes</button>
+                     <button ng-click="closePanel()" class="btn btn-primary btn-raised">Cancel</button>
                          &nbsp; &nbsp; &nbsp;
-                     <button ng-click="deleteRole()" class="btn btn-primary">Delete Role</button>
+                     <button ng-click="deleteRole()" class="btn btn-primary btn-raised">Delete Role</button>
                      </td>
                     <td style="width:30px;"></td>
                 </tr>
@@ -463,7 +463,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 </tr>
                 <tr>
                      <td class="gridTableColummHeader"></td>
-                     <td colspan="2"><button ng-click="saveCreatedRole()" class="btn btn-primary">Create Role</button>
+                     <td colspan="2"><button ng-click="saveCreatedRole()" class="btn btn-primary btn-raised">Create Role</button>
                      </td>
                 </tr>
             </table>

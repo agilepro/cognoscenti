@@ -41,8 +41,8 @@
                 <tr>
                     <td class="gridTableColummHeader_2"></td>
                     <td style="width:20px;"></td>
-                    <td><input type="submit" value="<fmt:message key='nugen.button.general.submit'/>" class="btn btn-primary"  onclick="javascript:requestAccount('Submit')"/>
-                    &nbsp;<input type="submit" value="<fmt:message key='nugen.button.general.cancel'/>" class="btn btn-primary"  onclick="javascript:requestAccount('Cancel')"/>
+                    <td><input type="submit" value="<fmt:message key='nugen.button.general.submit'/>" class="btn btn-primary btn-raised"  onclick="javascript:requestAccount('Submit')"/>
+                    &nbsp;<input type="submit" value="<fmt:message key='nugen.button.general.cancel'/>" class="btn btn-primary btn-raised"  onclick="javascript:requestAccount('Cancel')"/>
                     </td>
                 </tr>
             </table>

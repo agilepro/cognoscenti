@@ -84,7 +84,7 @@ Required parameter:
                         <td class="linkWizardContent"></td>
                         <td style="width:20px;"></td>
                         <td>
-                            <button class="btn btn-primary" value="Create Copy" onclick="submitCreateCopyForm('ChooseFolder')">
+                            <button class="btn btn-primary btn-raised" value="Create Copy" onclick="submitCreateCopyForm('ChooseFolder')">
                             <%ar.writeHtmlMessage("nugen.button.repository.choosefolder",null); %></button>
                         </td>
                     </tr>
@@ -97,7 +97,7 @@ Required parameter:
                     <tr>
                         <td class="linkWizardContent"></td>
                         <td style="width:20px;"></td>
-                        <td><button class="btn btn-primary" value="Create connection" onclick="submitCreateCopyForm('CreateNewConnection')">
+                        <td><button class="btn btn-primary btn-raised" value="Create connection" onclick="submitCreateCopyForm('CreateNewConnection')">
                             <%ar.writeHtmlMessage("nugen.button.repository.createnewconnection",null); %></button>
                         </td>
                     </tr>
@@ -112,7 +112,7 @@ Required parameter:
                     <tr>
                         <td class="linkWizardContent"></td>
                         <td style="width:20px;"></td>
-                        <td><input type="button" class="btn btn-primary" value="Ok" onclick="submitCreateCopyForm('ChooseDefLocation')"/>
+                        <td><input type="button" class="btn btn-primary btn-raised" value="Ok" onclick="submitCreateCopyForm('ChooseDefLocation')"/>
                         </td>
                     </tr>
                     <tr>

@@ -106,7 +106,7 @@ Required parameters:
                             <form action="<% ar.writeHtml(remoteGoal.getUserInterfaceURL());%>" method="get">
                             <td colspan="3" class="generalHeading">Remote Action Item Status
                                 &nbsp; &nbsp; &nbsp; &nbsp;
-                                <input type="submit" value="Visit Original Action Item" class="btn btn-primary" /></td>
+                                <input type="submit" value="Visit Original Action Item" class="btn btn-primary btn-raised" /></td>
                             </form>                        </tr>
                         <tr><td height="10px"></td></tr>
                         <tr>
@@ -219,7 +219,7 @@ Required parameters:
                     %>
                         <table WIDTH="600"><tr><td>
                             <form action="<%=ar.retPath%><%=ar.getResourceURL(localProject, "projectActiveTasks.htm")%>" method="get">
-                                <input type="submit" value="Access Local Clone" class="btn btn-primary" />
+                                <input type="submit" value="Access Local Clone" class="btn btn-primary btn-raised" />
                             </form>
                         </td>
                         <td style="width:20px;"></td>
@@ -253,7 +253,7 @@ Required parameters:
                                 <input type="hidden" name="upstream" value="<%ar.writeHtml(remoteGoal.getProjectAccessURL());%>"/>
                                 <input type="hidden" name="pname" value="<%ar.writeHtml(remoteGoal.getProjectName());%> (clone)"/>
                                 <input type="hidden" name="desc" value="This is a local clone of a workspace named '<%ar.writeHtml(remoteGoal.getProjectName());%>' on a remote site named '<%ar.writeHtml(remoteGoal.getSiteName());%>'"/>
-                                <input type="submit" value="Create Local Clone" class="btn btn-primary" />
+                                <input type="submit" value="Create Local Clone" class="btn btn-primary btn-raised" />
                             </form>
                         </td>
                         <td style="width:20px;"></td>

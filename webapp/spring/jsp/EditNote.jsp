@@ -228,7 +228,7 @@ app.controller('myCtrl', function($scope, $http) {
           </span>
           <span>
              <span class="dropdown">
-               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
                style="padding: 2px 5px;font-size: 11px;"> + </button>
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                  <li role="presentation" ng-repeat="rolex in allLabels">
@@ -265,7 +265,7 @@ app.controller('myCtrl', function($scope, $http) {
         <td></td>
         <td class="form-inline form-group" style="padding-top:10px;">
 
-            <button ng-click="addAttachment(newAttachment);showAdd=false" class="btn btn-primary">Add Document</button>
+            <button ng-click="addAttachment(newAttachment);showAdd=false" class="btn btn-primary btn-raised">Add Document</button>
             <input type="text" ng-model="newAttachment"  class="form-control" placeholder="Enter Document Name"
              style="width:350px;" typeahead="att as att.name for att in filterDocs($viewValue) | limitTo:12">
 

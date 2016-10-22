@@ -172,7 +172,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -211,7 +211,7 @@ app.controller('myCtrl', function($scope, $http) {
                         </span>
                         <span>
                              <span class="dropdown">
-                               <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+                               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
                                title="Add Filter by Label"><i class="fa fa-filter"></i></button>
                                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                                  <li role="presentation" ng-repeat="rolex in allLabels">
@@ -251,8 +251,8 @@ app.controller('myCtrl', function($scope, $http) {
                           </div>
 
                           <div ng-hide="fp.done">
-                              <button ng-click="startUpload(fp)" class="btn btn-primary">Upload</button>
-                              <button ng-click="cancelUpload(fp)" class="btn btn-primary">Cancel</button>
+                              <button ng-click="startUpload(fp)" class="btn btn-primary btn-raised">Upload</button>
+                              <button ng-click="cancelUpload(fp)" class="btn btn-primary btn-raised">Cancel</button>
                           </div>
                         </div>
                     </td>

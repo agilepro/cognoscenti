@@ -55,7 +55,7 @@ Required parameter:
                 <tr>
                     <td>&nbsp;</td>
                     <td>
-                        <input type="submit" name="action"  class="btn btn-primary"  value="Send Mail"/>
+                        <input type="submit" name="action"  class="btn btn-primary btn-raised"  value="Send Mail"/>
                       </td>
                 </tr>
                 <tr><td colspan="2">&nbsp;</td></tr>

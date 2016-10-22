@@ -58,7 +58,7 @@ app.controller('myCtrl', function($scope, $http) {
     </tr>
     <tr style="height:50px;padding:15px">
         <td style="padding:15px">
-            <button class="btn btn-primary" onClick="location.href='docsUpload.htm<%=folderPart%>'">Upload Files</button>
+            <button class="btn btn-primary btn-raised" onClick="location.href='docsUpload.htm<%=folderPart%>'">Upload Files</button>
         </td>
         <td style="padding:15px">
             <p>Take files from your local disk, and using your browser upload them to the workspace.</p>
@@ -66,7 +66,7 @@ app.controller('myCtrl', function($scope, $http) {
     </tr>
     <tr style="height:50px;padding:15px">
         <td style="padding:15px">
-            <button type="button" class="btn btn-primary"
+            <button type="button" class="btn btn-primary btn-raised"
                 onClick="location.href='linkGoogleDoc.htm<%=folderPart%>'">Attach Google Doc</button>
         </td>
         <td style="padding:15px">
@@ -78,7 +78,7 @@ app.controller('myCtrl', function($scope, $http) {
     </tr>
     <tr style="height:50px;padding:15px">
         <td style="padding:15px">
-            <button class="btn btn-primary" onClick="location.href='linkToRepository.htm<%=folderPart%>'">Attach from Repository</button>
+            <button class="btn btn-primary btn-raised" onClick="location.href='linkToRepository.htm<%=folderPart%>'">Attach from Repository</button>
         </td>
         <td style="padding:15px"><p>Cognoscenti can access a document repository, using WebDAV or other protocols,
            to retrieve a document directly from there.   The advantage of this is that later, if the document is
@@ -87,7 +87,7 @@ app.controller('myCtrl', function($scope, $http) {
     </tr>
     <tr style="height:50px;padding:15px">
         <td style="padding:15px">
-            <button type="button" class="btn btn-primary"
+            <button type="button" class="btn btn-primary btn-raised"
                 onClick="location.href='linkURLToProject.htm<%=folderPart%>'">Link URL</button>
         </td>
         <td style="padding:15px"><p>Link a web page to the workspace.   This will not download the web page as a attachment,

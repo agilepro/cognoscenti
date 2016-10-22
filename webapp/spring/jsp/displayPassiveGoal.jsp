@@ -123,7 +123,7 @@ table.datatable {
                 <tr><td height="15px"></td></tr>
                 <tr><td colspan="3">
                     <form action="<%=currentGoalRecord.getRemoteUpdateURL()%>" method="get">
-                        <input type="submit" class="btn btn-primary" name="op" value="Access Action Item on Remote Workspace">
+                        <input type="submit" class="btn btn-primary btn-raised" name="op" value="Access Action Item on Remote Workspace">
                     </form>
                     </td>
                 </tr>
@@ -186,7 +186,7 @@ table.datatable {
                         <table>
 <% if (isAssignee) { %>
                             <tr><td class="buttoncolumn">
-                                <input type="submit" name="cmd" value="Remove Me" class="btn btn-primary"/>
+                                <input type="submit" name="cmd" value="Remove Me" class="btn btn-primary btn-raised"/>
                             </td><td class="buttoncolumn">
                                 Unassign <%ar.writeHtml(uProf.getUniversalId());%> from this action item.
                                 Use this if for any reason you do not plan to complete the action item,
@@ -196,7 +196,7 @@ table.datatable {
 <% } %>
 <% if (canComplete) { %>
                             <tr><td class="buttoncolumn">
-                                <input type="submit" name="cmd" value="Complete" class="btn btn-primary"/>
+                                <input type="submit" name="cmd" value="Complete" class="btn btn-primary btn-raised"/>
                             </td><td class="buttoncolumn">
                                 Mark this action item as completed so that everyone knows that the
                                 action item has been accomplished.
@@ -204,7 +204,7 @@ table.datatable {
                             </td></tr>
 <% } %>
                             <tr><td class="buttoncolumn">
-                                <input type="submit" name="cmd" value="Other" class="btn btn-primary"/>
+                                <input type="submit" name="cmd" value="Other" class="btn btn-primary btn-raised"/>
                             </td><td class="buttoncolumn">
                                 Log in in order to perform all other modification or updates
                                 to this action item.

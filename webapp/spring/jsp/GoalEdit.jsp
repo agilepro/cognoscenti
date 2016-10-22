@@ -511,7 +511,7 @@ function addvalue() {
     <div class="generalHeading" style="height:40px">
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -594,15 +594,15 @@ function addvalue() {
         <tr><td height="20px"></td></tr>
         <tr><td></td><td></td>
             <td>
-                <button class="btn btn-default" ng-click="setState(2)" ng-show="goalInfo.state<2">
+                <button class="btn btn-default btn-raised" ng-click="setState(2)" ng-show="goalInfo.state<2">
                     Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered</button>
-                <button class="btn btn-default" ng-click="setState(3)" ng-show="goalInfo.state<3">
+                <button class="btn btn-default btn-raised" ng-click="setState(3)" ng-show="goalInfo.state<3">
                     Mark <img src="<%=ar.retPath%>assets/goalstate/small3.gif"> Accepted</button>
-                <button class="btn btn-default" ng-click="setState(5)" ng-show="goalInfo.state<5">
+                <button class="btn btn-default btn-raised" ng-click="setState(5)" ng-show="goalInfo.state<5">
                     Mark <img src="<%=ar.retPath%>assets/goalstate/small5.gif"> Completed</button>
 
                 <span class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                    <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                     Other <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                       <li role="presentation">
@@ -669,11 +669,11 @@ function addvalue() {
             <td class="gridTableColummHeader">Linked Documents:</td>
             <td style="width:20px;"></td>
             <td >
-                <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default"  style="margin:4px;"
+                <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                     ng-click="navigateToDoc(doc)">
                     <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
                 </span>
-                  <button class="btn btn-sm btn-primary" ng-click="openAttachDocument()"
+                  <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
                       title="Attach a document">
                       ADD </button>
             </td>
@@ -683,7 +683,7 @@ function addvalue() {
             <td class="gridTableColummHeader">Linked Topics:</td>
             <td style="width:20px;"></td>
             <td >
-                <span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default"  style="margin:4px;"
+                <span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                     ng-click="navigateToTopic(topic)">
                     <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
                 </span>
@@ -694,7 +694,7 @@ function addvalue() {
             <td class="gridTableColummHeader">Linked Meetings:</td>
             <td style="width:20px;"></td>
             <td >
-                <span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default"  style="margin:4px;"
+                <span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                     ng-click="navigateToMeeting(meet)">
                     <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
                 </span>
@@ -735,7 +735,7 @@ function addvalue() {
               </span>
               <span>
                  <span class="dropdown">
-                   <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+                   <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
                    style="padding: 2px 5px;font-size: 11px;"> + </button>
                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                      <li role="presentation" ng-repeat="rolex in allLabels">
@@ -812,8 +812,8 @@ function addvalue() {
         <tr><td height="10px"></td></tr>
         <tr><td></td><td></td>
             <td>
-                <button class="btn btn-primary" ng-click="saveGoal()">Save Edits</button>
-                <button class="btn btn-primary" ng-click="undoGoalChanges()">Cancel</button>
+                <button class="btn btn-primary btn-raised" ng-click="saveGoal()">Save Edits</button>
+                <button class="btn btn-primary btn-raised" ng-click="undoGoalChanges()">Cancel</button>
             </td>
         </tr>
         <tr><td height="10px"></td></tr>
@@ -833,8 +833,8 @@ function addvalue() {
         <tr><td height="10px"></td></tr>
         <tr><td></td><td></td>
             <td>
-                <button class="btn btn-primary" ng-click="saveAccomplishment()">Save Accomplishment</button>
-                <button class="btn btn-primary" ng-click="showAccomplishment=false">Cancel</button>
+                <button class="btn btn-primary btn-raised" ng-click="saveAccomplishment()">Save Accomplishment</button>
+                <button class="btn btn-primary btn-raised" ng-click="showAccomplishment=false">Cancel</button>
             </td>
         </tr>
         <tr><td height="20px"></td></tr>
@@ -950,7 +950,7 @@ function updateVal(){
                                          <td class="gridTableColummHeader"></td>
                                          <td style="width:20px;"></td>
                                          <td>
-                                             <input type="button" value="Create Sub Workspace" class="btn btn-primary" onclick="createProject();" />
+                                             <input type="button" value="Create Sub Workspace" class="btn btn-primary btn-raised" onclick="createProject();" />
                                              <input type="hidden" name="goUrl" value="<%ar.writeHtml(goToUrl);%>" />
                                              <input type="hidden" id="parentProcessUrl" name="parentProcessUrl"
                                                 value="<%ar.writeHtml(currentTaskRecord.getWfxmlLink(ar).getCombinedRepresentation());%>" />
@@ -1044,7 +1044,7 @@ function updateVal(){
                                                         <tr>
                                                             <td class="gridTableColummHeader"></td>
                                                             <td style="width:20px;"></td>
-                                                            <td><input type="button" value="Create Sub Action Item" class="btn btn-primary" tabindex=3 onclick="createSubTask();"/></td>
+                                                            <td><input type="button" value="Create Sub Action Item" class="btn btn-primary btn-raised" tabindex=3 onclick="createSubTask();"/></td>
                                                         </tr>
                                                     </table>
                                                 </div>

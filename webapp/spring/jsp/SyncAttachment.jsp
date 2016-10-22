@@ -119,7 +119,7 @@ function changeIcon(id1,id2,id3){
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation">
@@ -151,7 +151,7 @@ if (ps!=null) {
         <input type="hidden" name="go" value="<%ar.writeHtml(thisPage);%>">
         <input type="hidden" name="p" value="<%ar.writeHtml(ngp.getKey());%>">
         <input type="hidden" value="Upload All" name="op">
-        <button type="submit" name="docsUp" value="yes" class="btn btn-primary">Send Documents Upstream</button>
+        <button type="submit" name="docsUp" value="yes" class="btn btn-primary btn-raised">Send Documents Upstream</button>
         to workspace: <b><%ar.writeHtml(rp.getName());%></b>
     </form>
     <br/>
@@ -176,7 +176,7 @@ if (ps!=null) {
         <input type="hidden" name="go" value="<%ar.writeHtml(thisPage);%>">
         <input type="hidden" name="p" value="<%ar.writeHtml(ngp.getKey());%>">
         <input type="hidden" value="Download All" name="op">
-        <button type="submit" name="docsDown" value="yes" class="btn btn-primary">Fetch Documents from Upstream</button>
+        <button type="submit" name="docsDown" value="yes" class="btn btn-primary btn-raised">Fetch Documents from Upstream</button>
         to workspace: <b><%ar.writeHtml(rp.getName());%></b>
     </form>
     <br/>

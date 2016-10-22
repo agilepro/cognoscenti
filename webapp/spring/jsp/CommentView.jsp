@@ -72,7 +72,7 @@
       <div class="leafContent comment-inner" ng-hide="cmt.meet || cmt.commentType==6">
         <div ng-bind-html="cmt.html"></div>
       </div>
-      <div ng-show="cmt.meet" class="btn btn-sm btn-default"  style="margin:4px;"
+      <div ng-show="cmt.meet" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
            ng-click="navigateToMeeting(cmt.meet)">
         <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}} @ {{cmt.meet.startTime | date}}
       </div>

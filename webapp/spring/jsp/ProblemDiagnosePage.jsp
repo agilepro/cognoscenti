@@ -146,7 +146,7 @@ Required parameter:
                         <td width="148" class="gridTableColummHeader"></td>
                         <td style="width:20px;"></td>
                         <td>
-                            <input type="button" class="btn btn-primary"
+                            <input type="button" class="btn btn-primary btn-raised"
                                 value="<%ar.writeHtmlMessage("nugen.button.repository.set",null); %>"
                                 onclick="submitPageDiagnoseForm('ChangePassword')">
                         </td>
@@ -182,7 +182,7 @@ Required parameter:
                         <td width="148" class="gridTableColummHeader"></td>
                         <td style="width:20px;"></td>
                         <td>
-                            <input type="button" class="btn btn-primary"
+                            <input type="button" class="btn btn-primary btn-raised"
                                 value="<%ar.writeHtmlMessage("nugen.button.repository.set",null); %>"
                                 onclick="submitPageDiagnoseForm('UseExistingConnection')">
                         </td>
@@ -196,7 +196,7 @@ Required parameter:
                         <td width="148" class="gridTableColummHeader">2.</td>
                         <td style="width:20px;"></td>
                         <td>
-                            <input type="button" class="btn btn-primary"
+                            <input type="button" class="btn btn-primary btn-raised"
                                 value="<%ar.writeHtmlMessage("nugen.button.repository.createnewconnection",null); %>"
                                 onclick="submitPageDiagnoseForm('CreateNewConnection')">
                         </td>
@@ -217,7 +217,7 @@ Required parameter:
                         <td width="148" class="gridTableColummHeader"></td>
                         <td style="width:20px;"></td>
                         <td>
-                            <input type="button" class="btn btn-primary"
+                            <input type="button" class="btn btn-primary btn-raised"
                                 value="<%ar.writeHtmlMessage("nugen.button.repository.changeurl",null); %>"
                                 onclick="submitPageDiagnoseForm('ChangeURL')">
                         </td>
@@ -232,11 +232,11 @@ Required parameter:
                         <td style="width:20px;"></td>
                         <td>
                         <%if(!isDeleted){ %>
-                            <input type="button" class="btn btn-primary"
+                            <input type="button" class="btn btn-primary btn-raised"
                                 value="<%ar.writeHtmlMessage("nugen.button.repository.createcopy",null); %>"
                                 onclick="submitPageDiagnoseForm('CreateCopy')">
                         <%} %>
-                            <input type="button" class="btn btn-primary"
+                            <input type="button" class="btn btn-primary btn-raised"
                                 value="<%ar.writeHtmlMessage("nugen.button.repository.unlinkrepository",null); %>"
                                 onclick="submitPageDiagnoseForm('UnlinkFromRepository')">
                         </td>

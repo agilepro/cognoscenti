@@ -1611,7 +1611,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%if (isLoggedIn) { %>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
+              <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
               State: {{stateName()}} <span class="caret"></span></button>
               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                 <li role="presentation"><a role="menuitem"
@@ -1623,7 +1623,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               </ul>
           </span>
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -1828,7 +1828,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </select>
             Details:
             <input type="text" ng-model="sitch.situation" class="form-control" style="width:400px;">
-            <button class="btn btn-primary" ng-click="saveSituation()">Save</button>
+            <button class="btn btn-primary btn-raised" ng-click="saveSituation()">Save</button>
         </div>
 
       </div>
@@ -1844,8 +1844,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                    ng-click="removeAttendee(person)">{{person.name}}</button>
         </div>
         <div class="form-inline form-group" style="margin:20px">
-            <button class="btn btn-primary" ng-click="addYouself()">Add Yourself</button> &nbsp;
-            <button class="btn btn-primary" ng-click="addAttendee()">Add By Email Address: </button>
+            <button class="btn btn-primary btn-raised" ng-click="addYouself()">Add Yourself</button> &nbsp;
+            <button class="btn btn-primary btn-raised" ng-click="addAttendee()">Add By Email Address: </button>
             <input type="text" ng-model="newAttendee" class="form-control" placeholder="Enter email address"
                typeahead="person.uid as person.name for person in getPeople($viewValue) | limitTo:12">
         </div>
@@ -1860,18 +1860,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div class="leafContent" ng-show="isCompleted() && meeting.minutesId">
         <div ng-show="minutesDraft">
            Draft Minutes:
-           <span class="btn btn-sm btn-default"  style="margin:4px;background-color:yellow;"
+           <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;background-color:yellow;"
                  ng-click="navigateToTopic(meeting.minutesLocalId)">
                  View Minutes
            </span>
-           <span class="btn btn-sm btn-default"  style="margin:4px;"
+           <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                  ng-click="postMinutes(meeting.minutesLocalId)">
                  Post Minutes as they are
            </span>
         </div>
         <div ng-hide="minutesDraft">
            Posted Minutes:
-           <span class="btn btn-sm btn-default"  style="margin:4px;"
+           <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                  ng-click="navigateToTopic(meeting.minutesLocalId)">
                  View Minutes
            </span>
@@ -2036,9 +2036,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <div ng-show="editItemDetailsMap[item.id]" class="well" style="margin:20px">
             <div class="form-inline form-group">
                 Linked Topic: <button ng-repeat="topic in itemTopics(item)" ng-click="visitTopic(item)"
-                    class="btn btn-sm btn-default" placeholder="Enter Agenda Item Name">
+                    class="btn btn-sm btn-default btn-raised" placeholder="Enter Agenda Item Name">
                     {{topic.subject}}</button>
-                <button ng-click="openAttachTopics(item)" class="btn btn-primary">
+                <button ng-click="openAttachTopics(item)" class="btn btn-primary btn-raised">
                     <span ng-hide="item.topicLink">Set</span>
                     <span ng-show="item.topicLink">Change</span> Topic
                 </button>
@@ -2101,7 +2101,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <td>
            <div style="margin:10px;">
               <b>Discussion Topic: </b>
-              <span ng-repeat="topic in itemTopics(item)" class="btn btn-sm btn-default"  style="margin:4px;"
+              <span ng-repeat="topic in itemTopics(item)" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                    ng-click="navigateToTopic(item.topicLink)">
                     <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
               </span>
@@ -2112,12 +2112,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <td>
            <div style="margin:10px;">
               <b>Attachments: </b>
-              <span ng-repeat="doc in itemDocs(item)" class="btn btn-sm btn-default"  style="margin:4px;"
+              <span ng-repeat="doc in itemDocs(item)" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                    ng-click="navigateToDoc(doc)">
                       <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
               </span>
 <%if (isLoggedIn) { %>
-              <button class="btn btn-sm btn-primary" ng-click="openAttachDocument(item)"
+              <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument(item)"
                   title="Attach a document">
                   ADD </button>
 <% } %>
@@ -2214,13 +2214,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <td></td>
         <td>
         <div style="margin:20px;">
-            <button ng-click="openCommentCreator(item, 1)" class="btn btn-default">
+            <button ng-click="openCommentCreator(item, 1)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="openCommentCreator(item, 2)" class="btn btn-default">
+            <button ng-click="openCommentCreator(item, 2)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
-            <button ng-click="openCommentCreator(item, 3)" class="btn btn-default">
+            <button ng-click="openCommentCreator(item, 3)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-question-circle"></i> Round</button>
-            <button ng-click="openCommentCreator(item, 5)" class="btn btn-default">
+            <button ng-click="openCommentCreator(item, 5)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-file-code-o"></i> Minutes</button>
         </div>
         </td>

@@ -61,7 +61,7 @@ Required parameter:
                     </tr>
                     <tr><td style="height:20px"></td></tr>
                     <tr>
-                        <td class="linkWizardContent"><input type="submit" class="btn btn-primary"
+                        <td class="linkWizardContent"><input type="submit" class="btn btn-primary btn-raised"
                             value="<%ar.writeHtmlMessage("nugen.button.repository.pushdocument",null); %>"/></td>
                     </tr>
                     <tr><td style="height:40px"></td></tr>

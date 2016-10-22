@@ -146,7 +146,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem"
@@ -221,9 +221,9 @@ app.controller('myCtrl', function($scope, $http) {
             <td style="width:20px;"></td>
             <td>
                 <table><tr><td width="200">
-                <button type="submit" class="btn btn-primary" name="actionType" value="Remove">Remove</button>
+                <button type="submit" class="btn btn-primary btn-raised" name="actionType" value="Remove">Remove</button>
                 <br/>
-                <button type="submit" class="btn btn-primary" name="actionType" value="RefreshWorking">Refresh from History</button>
+                <button type="submit" class="btn btn-primary btn-raised" name="actionType" value="RefreshWorking">Refresh from History</button>
                 </td><td>
                 Document has disappeared from the directory.  Do you want to mark it as deleted in the
                 workspace, or refresh from the latest backed up copy?
@@ -236,7 +236,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td style="width:20px;"></td>
             <td>
                 <table><tr><td width="100">
-                <button type="submit" class="btn btn-primary" name="actionType" value="Add">Add</button>
+                <button type="submit" class="btn btn-primary btn-raised" name="actionType" value="Add">Add</button>
                 </td><td>
                 Document has appeared in the workspace folder. <br/>Do you want to add it as an attachment?
                 </td></tr></table>
@@ -248,7 +248,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td style="width:20px;"></td>
             <td>
                 <table><tr><td width="200">
-                <button type="submit" class="btn btn-primary" name="actionType" value="Commit">Commit Changes</button>
+                <button type="submit" class="btn btn-primary btn-raised" name="actionType" value="Commit">Commit Changes</button>
                 </td><td>
                 Document has been modified in the workspace.  Do you want to commit these
                 changes for safekeeping?
@@ -354,7 +354,7 @@ app.controller('myCtrl', function($scope, $http) {
               </span>
               <span>
                  <span class="dropdown">
-                   <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+                   <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
                    style="padding: 2px 5px;font-size: 11px;"> + </button>
                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                      <li role="presentation" ng-repeat="rolex in allLabels">
@@ -373,11 +373,11 @@ app.controller('myCtrl', function($scope, $http) {
             <td style="width:20px;"></td>
             <td>
                 <div ng-hide="docInfo.purgeDate" class="form-inline form-group">
-                    <button class="btn btn-default" ng-click="startPurge()"><i class="fa  fa-square-o"></i> Purge</button></div>
+                    <button class="btn btn-default btn-raised" ng-click="startPurge()"><i class="fa  fa-square-o"></i> Purge</button></div>
                 <div ng-show="docInfo.purgeDate" class="form-inline form-group">
-                    <button class="btn btn-default" ng-click="stopPurge()" style="margin-right:20px">
+                    <button class="btn btn-default btn-raised" ng-click="stopPurge()" style="margin-right:20px">
                         <i class="fa  fa-check-square-o"></i> Purge in {{convertDays(docInfo.purgeDate)}} days</button>
-                    <button ng-click="setDays()" class="btn btn-primary">Set</button>
+                    <button ng-click="setDays()" class="btn btn-primary btn-raised">Set</button>
                     <input ng-model="futureDays" type="text" class="form-control"/>
                 </div>
             </td>
@@ -387,7 +387,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td class="gridTableColummHeader"></td>
             <td style="width:20px;"></td>
             <td >
-                <button ng-click="saveDoc()" class="btn btn-primary">Save Changes</button>&nbsp;
+                <button ng-click="saveDoc()" class="btn btn-primary btn-raised">Save Changes</button>&nbsp;
             </td>
         </tr>
         <%

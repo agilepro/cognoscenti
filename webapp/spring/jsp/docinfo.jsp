@@ -275,7 +275,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem"
@@ -372,7 +372,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <tr>
                         <td class="gridTableColummHeader">Linked Action Items:</td>
                         <td style="width: 20px;"></td>
-                        <td><span ng-repeat="act in linkedGoals" class="btn btn-sm btn-default"  style="margin:4px;"
+                        <td><span ng-repeat="act in linkedGoals" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                                ng-click="navigateToActionItem(act)">
                                <img src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif">  {{act.synopsis}}
                             </span>
@@ -381,7 +381,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <tr>
                         <td class="gridTableColummHeader">Linked Topics:</td>
                         <td style="width: 20px;"></td>
-                        <td><span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default"  style="margin:4px;"
+                        <td><span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                                ng-click="navigateToTopic(topic)">
                                <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
                             </span>
@@ -390,7 +390,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <tr>
                         <td class="gridTableColummHeader">Linked Meetings:</td>
                         <td style="width: 20px;"></td>
-                        <td><span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default"  style="margin:4px;"
+                        <td><span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                                ng-click="navigateToMeeting(meet)">
                                <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
                             </span>
@@ -469,7 +469,7 @@ comment-state-complete {
 
   <div ng-show="canUpdate">
     <div ng-hide="isCreatingComment" style="margin:20px;">
-      <button ng-click="openCommentCreator(null, 1)" class="btn btn-default">
+      <button ng-click="openCommentCreator(null, 1)" class="btn btn-default btn-raised">
         Create New <i class="fa fa-comments-o"></i> Comment</button>
     </div>
   </div>

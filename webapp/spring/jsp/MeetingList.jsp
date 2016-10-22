@@ -245,8 +245,8 @@ app.controller('myCtrl', function($scope, $http) {
                     <td class="gridTableColummHeader"></td>
                     <td style="width:20px;"></td>
                     <td colspan="2">
-                        <input type="submit" class="btn btn-primary" value="Create Meeting" ng-click="createRow()">
-                        <input type="button" class="btn btn-primary" value="Cancel" ng-click="showInput=false">
+                        <input type="submit" class="btn btn-primary btn-raised" value="Create Meeting" ng-click="createRow()">
+                        <input type="button" class="btn btn-primary btn-raised" value="Cancel" ng-click="showInput=false">
                     </td>
                 </tr>
             </table>

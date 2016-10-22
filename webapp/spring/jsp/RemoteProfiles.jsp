@@ -106,7 +106,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -129,10 +129,10 @@ app.controller('myCtrl', function($scope, $http) {
                 <td ></td>
                 <td style="width:20px;"></td>
                 <td colspan="2">
-                    <input type="submit" class="btn btn-primary"
+                    <input type="submit" class="btn btn-primary btn-raised"
                         value="Add Remote Profile"
                         ng-click="createRow()">
-                    <input type="button" class="btn btn-primary"
+                    <input type="button" class="btn btn-primary btn-raised"
                         value="Cancel"
                         ng-click="showInput=false">
                 </td>
