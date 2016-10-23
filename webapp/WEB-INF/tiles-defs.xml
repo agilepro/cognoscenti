@@ -187,84 +187,21 @@
         <put-attribute name="title" value="List Attachments" />
         <put-attribute name="body" value="/spring/jsp/ListAttachments.jsp" />
     </definition>
-    <definition name="DocsFolder" extends="slimLayout">
-        <put-attribute name="title" value="Workspace Documents Folders" />
-        <put-attribute name="body" value="/spring/jsp/DocsFolder.jsp" />
-    </definition>
 
-
-    <definition name="DocsAdd" extends="slimLayout">
-        <put-attribute name="title" value="Add Document" />
-        <put-attribute name="body" value="/spring/jsp/DocsAdd.jsp" />
-    </definition>
-    <definition name="DocsDeleted" extends="slimLayout">
-        <put-attribute name="title" value="Docs Deleted" />
-        <put-attribute name="body" value="/spring/jsp/DocsDeleted.jsp" />
-    </definition>
-
-    <definition name="uploadDocumentForm" extends="baseLayout">
-        <put-attribute name="title" value="Upload Attachment Form" />
-        <put-attribute name="body" value="/spring/jsp/uploadDocumentForm.jsp" />
-    </definition>
      <definition name="DocsRevise" extends="slimLayout">
         <put-attribute name="title" value="Upload Attachment Form" />
         <put-attribute name="body" value="/spring/jsp/DocsRevise.jsp" />
     </definition>
 
 
-
-
-
-    <definition name="linkURLToProject" extends="slimLayout">
-        <put-attribute name="title" value="Link URL To Workspace Form" />
-        <put-attribute name="body" value="/spring/jsp/linkURLToProject.jsp" />
-    </definition>
-
-    <definition name="linkGoogleDoc" extends="slimLayout">
-        <put-attribute name="title" value="Link Google Doc" />
-        <put-attribute name="body" value="/spring/jsp/linkGoogleDoc.jsp" />
-    </definition>
-
-    <definition name="createLinkToRepositoryForm" extends="slimLayout">
-        <put-attribute name="title" value="Link To Repository Form" />
-        <put-attribute name="body" value="/spring/jsp/createLinkToRepositoryForm.jsp" />
-    </definition>
-
     <definition name="emailreminder_form" extends="slimLayout">
         <put-attribute name="title" value="Email Reminder Form" />
         <put-attribute name="body" value="/spring/jsp/emailReminderForm.jsp" />
     </definition>
 
-    <definition name="editDetails" extends="slimLayout">
-        <put-attribute name="title" value="Edit Document Form" />
-        <put-attribute name="body" value="/spring/jsp/editDetails.jsp" />
-    </definition>
-
-    <definition name="fileVersions" extends="slimLayout">
-        <put-attribute name="title" value="File version list" />
-        <put-attribute name="body" value="/spring/jsp/fileVersions.jsp" />
-    </definition>
-
     <definition name="commonError" extends="slimLayout">
         <put-attribute name="title" value="Error Details Page" />
         <put-attribute name="body" value="/spring/jsp/error.jsp" />
-    </definition>
-    <definition name="SendNote" extends="slimLayout">
-        <put-attribute name="title" value="Send Topic By Email" />
-        <put-attribute name="body" value="/spring/jsp/SendNote.jsp" />
-    </definition>
-    <definition name="NoteZoom" extends="slimLayout">
-        <put-attribute name="title" value="Topic" />
-        <put-attribute name="body" value="/spring/jsp/NoteZoom.jsp" />
-    </definition>
-
-    <definition name="editUserProfile" extends="slimLayout">
-        <put-attribute name="title" value="Update User Profile" />
-        <put-attribute name="body" value="/spring/jsp/edituserprofile.jsp" />
-    </definition>
-    <definition name="remind_attachment" extends="baseLayoutWithoutLeftPanel">
-        <put-attribute name="title" value="Upload Attachment" />
-        <put-attribute name="body" value="/spring/jsp/remindAttachment.jsp" />
     </definition>
 
     <definition name="personal" extends="slimLayout">
@@ -272,19 +209,6 @@
         <put-attribute name="body" value="/spring/jsp/leaf_personal.jsp" />
     </definition>
 
-    <definition name="LabelList" extends="slimLayout">
-        <put-attribute name="title" value="Personal" />
-        <put-attribute name="body" value="/spring/jsp/LabelList.jsp" />
-    </definition>
-
-    <definition name="StreamingLinks" extends="slimLayout">
-        <put-attribute name="title" value="Streaming Links" />
-        <put-attribute name="body" value="/spring/jsp/StreamingLinks.jsp" />
-    </definition>
-    <definition name="synchronizeUpstream" extends="slimLayout">
-        <put-attribute name="title" value="Synchronize Upstream" />
-        <put-attribute name="body" value="/spring/jsp/synchronizeUpstream.jsp" />
-    </definition>
     <definition name="account_personal" extends="slimLayout">
         <put-attribute name="title" value="Personal" />
         <put-attribute name="body" value="/spring/jsp/leaf_account_personal.jsp" />
@@ -593,26 +517,6 @@
     <definition name="FindPerson" extends="slimLayout">
         <put-attribute name="title" value="User Settings" />
         <put-attribute name="body" value="/spring/jsp/FindPerson.jsp" />
-    </definition>
-
-    <definition name="displayTaskInfo" extends="slimLayout">
-        <put-attribute name="title" value="Process" />
-        <put-attribute name="body" value="/spring/jsp/displayTaskInfo.jsp" />
-    </definition>
-
-    <definition name="displayPassiveGoal" extends="slimLayout">
-        <put-attribute name="title" value="Process" />
-        <put-attribute name="body" value="/spring/jsp/displayPassiveGoal.jsp" />
-    </definition>
-
-    <definition name="ViewRemoteTask" extends="baseLayoutWithoutLeftPanel">
-        <put-attribute name="title" value="Process" />
-        <put-attribute name="body" value="/spring/jsp/ViewRemoteTask.jsp" />
-    </definition>
-
-    <definition name="accountRequestResult" extends="baseLayout">
-        <put-attribute name="title" value="User Action Items" />
-        <put-attribute name="body" value="/spring/jsp/accountRequestResult.jsp" />
     </definition>
 
     <definition name="unsubscribemember" extends="baseLayout">

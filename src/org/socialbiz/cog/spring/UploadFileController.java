@@ -415,7 +415,7 @@ public class UploadFileController extends BaseController {
             ReminderMgr mgr = ngp.getReminderMgr();
             ReminderRecord reminderRecord = mgr.findReminderByIDOrFail(rid);
             if (AccessControl.canAccessReminder(ar, ngp, reminderRecord)) {
-                showJSPMembers(ar, siteId, pageId, "remind_attachment");
+                showJSPMembers(ar, siteId, pageId, "remindAttachment");
                 return;
             }
 

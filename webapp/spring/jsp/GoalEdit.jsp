@@ -65,7 +65,6 @@ Required parameters:
         subGoals.put(child.getJSON4Goal(ngp));
     }
 
-    JSONArray allPeople = UserManager.getUniqueUsersJSON();
     JSONArray linkedTopics = new JSONArray();
     String goalUniversalId = currentTaskRecord.getUniversalId();
     for (TopicRecord aNote : ngp.getAllNotes()) {
@@ -130,12 +129,11 @@ Required parameters:
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
-app.controller('myCtrl', function($scope, $http, $modal) {
+app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.goalInfo  = <%goalInfo.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
     $scope.subGoals  = <%subGoals.write(out,2,4);%>;
-    $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.allHist   = <%allHist.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
@@ -191,19 +189,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.copyTagsToRecord();
     });    
     $scope.loadItems = function(query) {
-        var res = [];
-        var q = query.toLowerCase();
-        $scope.allPeople.forEach( function(person) {
-            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
-                return;
-            }
-            var nix = {};
-            nix.name = person.name; 
-            nix.uid  = person.uid; 
-            nix.key  = person.key; 
-            res.push(nix);
-        });
-        return res;
+        return AllPeople.findMatchingPeople(query);
     }
     $scope.toggleSelectedPerson = function(tag) {
         $scope.selectedPersonShow = !$scope.selectedPersonShow;
@@ -300,18 +286,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return person.name;
         }
         return person.uid;
-    }
-    $scope.getPeople = function(filter) {
-        var lcfilter = filter.toLowerCase();
-        var res = [];
-        var last = $scope.allPeople.length;
-        for (var i=0; i<last; i++) {
-            var rec = $scope.allPeople[i];
-            if (rec.name.toLowerCase().indexOf(lcfilter)>=0) {
-                res.push(rec);
-            }
-        }
-        return res;
     }
     $scope.refreshHistory = function() {
         var postURL = "getGoalHistory.json?gid="+$scope.goalInfo.id;
@@ -503,6 +477,8 @@ function addvalue() {
 }
 
 </script>
+
+<script src="../../../jscript/AllPeople.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 

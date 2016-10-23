@@ -117,7 +117,7 @@ public class UserController extends BaseController {
         }
     }
 
-    private void displayUserModelAndView(HttpServletRequest request, HttpServletResponse response,
+    private void streamJSPUserLogged2(HttpServletRequest request, HttpServletResponse response,
             String userKey, String viewName) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         streamJSPUserLoggedIn(ar, userKey, viewName);
@@ -151,7 +151,7 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/{userKey}/UserHome.htm", method = RequestMethod.GET)
     public void userHome(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/UserHome");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/UserHome");
     }
 
 
@@ -159,7 +159,7 @@ public class UserController extends BaseController {
     public void watchedProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/WatchedProjects");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/WatchedProjects");
     }
 
     @RequestMapping(value = "/{userKey}/notifiedProjects.htm", method = RequestMethod.GET)
@@ -167,14 +167,14 @@ public class UserController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        displayUserModelAndView(request, response, userKey, "../jsp/NotifiedProjects");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/NotifiedProjects");
     }
 
     @RequestMapping(value = "/{userKey}/ownerProjects.htm", method = RequestMethod.GET)
     public void ownerProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/OwnerProjects");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/OwnerProjects");
     }
 
 
@@ -182,27 +182,27 @@ public class UserController extends BaseController {
     public void templates(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/Templates");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/Templates");
     }
 
     @RequestMapping(value = "/{userKey}/participantProjects.htm", method = RequestMethod.GET)
     public void participantProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/ParticipantProjects");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/ParticipantProjects");
     }
 
     @RequestMapping(value = "/{userKey}/allProjects.htm", method = RequestMethod.GET)
     public void allProjects(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/AllProjects");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/AllProjects");
     }
 
 
     @RequestMapping(value = "/{userKey}/userCreateProject.htm", method = RequestMethod.GET)
     public void userCreateProject(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)  throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/UserCreateProject");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/UserCreateProject");
     }
 
 
@@ -210,51 +210,51 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/{userKey}/userAlerts.htm", method = RequestMethod.GET)
     public void loadUserAlerts(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/UserAlerts");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/UserAlerts");
     }
 
 
     @RequestMapping(value = "/{userKey}/userActiveTasks.htm", method = RequestMethod.GET)
     public void userActiveTasks(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/UserActiveTasks");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/UserActiveTasks");
     }
 
     @RequestMapping(value = "/{userKey}/userMissingResponses.htm", method = RequestMethod.GET)
     public void userMissingResponses(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/UserMissingResponses");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/UserMissingResponses");
     }
 
     @RequestMapping(value = "/{userKey}/userOpenRounds.htm", method = RequestMethod.GET)
     public void userOpenRounds(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/UserOpenRounds");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/UserOpenRounds");
     }
 
 
     @RequestMapping(value = "/{userKey}/ShareRequests.htm", method = RequestMethod.GET)
     public void ShareRequests(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/ShareRequests");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/ShareRequests");
     }
 
     @RequestMapping(value = "/{userKey}/RemoteProfiles.htm", method = RequestMethod.GET)
     public void remoteProfiles(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/RemoteProfiles");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/RemoteProfiles");
     }
 
     @RequestMapping(value = "/{userKey}/Agents.htm", method = RequestMethod.GET)
     public void Agents(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/Agents");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/Agents");
     }
 
     @RequestMapping(value = "/{userKey}/userRemoteTasks.htm", method = RequestMethod.GET)
     public void consolidatedTasks(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/UserRemoteTasks");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/UserRemoteTasks");
     }
 
     @RequestMapping(value = "/{userKey}/EditAgent.htm", method = RequestMethod.GET)
@@ -272,7 +272,7 @@ public class UserController extends BaseController {
                     throw new Exception("Unable to find an agent with id="+agentId);
                 }
             }
-            displayUserModelAndView(request, response, userKey, "../jsp/EditAgent");
+            streamJSPUserLogged2(request, response, userKey, "../jsp/EditAgent");
         }
         catch(Exception ex){
             throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
@@ -282,14 +282,14 @@ public class UserController extends BaseController {
     @RequestMapping(value = "/{userKey}/userAccounts.htm", method = RequestMethod.GET)
     public void loadUserAccounts(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
-        displayUserModelAndView(request, response, userKey, "../jsp/UserAccounts");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/UserAccounts");
     }
 
     @RequestMapping(value = "/{userKey}/editUserProfile.htm")
     public void changeUserProfile(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.setAttribute("userKey", userKey);
-        displayUserModelAndView(request, response, userKey, "../jsp/edituserprofile");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/edituserprofile");
     }
 
     @RequestMapping(value = "/{userKey}/ViewRemoteTask.htm", method = RequestMethod.GET)
@@ -323,7 +323,7 @@ public class UserController extends BaseController {
     public void searchAllNotes(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.setAttribute("userKey", userKey);
-        displayUserModelAndView(request, response, userKey, "../jsp/SearchAllNotes");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/SearchAllNotes");
     }
 
 
@@ -374,6 +374,30 @@ public class UserController extends BaseController {
 
 
 
+    @RequestMapping(value = "/AllPeople.json", method = RequestMethod.GET)
+    public void AllPeople(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        AuthRequest ar = null;
+        try{
+            ar = AuthRequest.getOrCreate(request, response);
+            ar.assertLoggedIn("Must be logged in to get users");
+
+            JSONArray peopleList = new JSONArray();
+            List<AddressListEntry> userList = UserManager.getAllUsers();
+            for (AddressListEntry ale : userList) {
+                JSONObject person = ale.getJSON();
+                peopleList.put(person);
+            }
+            JSONObject result = new JSONObject();
+            result.put("people", peopleList);
+            result.write(ar.w, 2, 2);
+            ar.flush();
+        }
+        catch(Exception ex){
+            ar.logException("Caught by AllPeople.json", ex);
+        }
+    }
 
 
     @RequestMapping(value = "/{userKey}/RemoteProfileAction.form", method = RequestMethod.POST)
@@ -1004,7 +1028,7 @@ public class UserController extends BaseController {
             ar.assertLoggedIn("Need to log in to see remote folder page.");
             String path = "/";  //debug
             request.setAttribute("fid", folderId + path);
-            displayUserModelAndView(request, response, userKey, "../jsp/FolderDisplay");
+            streamJSPUserLogged2(request, response, userKey, "../jsp/FolderDisplay");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.page", new Object[]{userKey}, ex);
         }
@@ -1020,7 +1044,7 @@ public class UserController extends BaseController {
             ar.assertLoggedIn("Need to log in to see remote folder page.");
             String path = "/";  //debug
             request.setAttribute("fid", folderId + path);
-            displayUserModelAndView(request, response, userKey, "../jsp/FolderDisplay");
+            streamJSPUserLogged2(request, response, userKey, "../jsp/FolderDisplay");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.page", new Object[]{userKey}, ex);
         }
@@ -1204,7 +1228,7 @@ public class UserController extends BaseController {
         try{
             AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not open confirm page.");
             request.setAttribute("userKey", ar.getUserProfile().getKey());
-            displayUserModelAndView(request, response, userKey, "../jsp/confirmedAddIdView");
+            streamJSPUserLogged2(request, response, userKey, "../jsp/confirmedAddIdView");
         }
         catch(Exception ex){
             throw new NGException("nugen.operation.fail.open.confirm.added.id.view", new Object[]{userKey}, ex);
@@ -1259,7 +1283,7 @@ public class UserController extends BaseController {
             }
 
             //this will fail if not logged in
-            displayUserModelAndView(request, response, userKey, "../jsp/NotificationSettings");
+            streamJSPUserLogged2(request, response, userKey, "../jsp/NotificationSettings");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.open.notification.page", new Object[]{userKey} , ex);
         }
@@ -1436,7 +1460,7 @@ public class UserController extends BaseController {
                 request.setAttribute("flag","true");
                 request.setAttribute("retPath",ar.retPath);
             }
-            displayUserModelAndView(request, response, userKey, "../jsp/UserSettings");
+            streamJSPUserLogged2(request, response, userKey, "../jsp/UserSettings");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
         }
@@ -1482,7 +1506,7 @@ public class UserController extends BaseController {
                 request.setAttribute("flag","true");
                 request.setAttribute("retPath",ar.retPath);
             }
-            displayUserModelAndView(request, response, userKey, "../jsp/UserContacts");
+            streamJSPUserLogged2(request, response, userKey, "../jsp/UserContacts");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
         }
@@ -1522,7 +1546,7 @@ public class UserController extends BaseController {
                 request.setAttribute("flag","true");
                 request.setAttribute("retPath",ar.retPath);
             }
-            displayUserModelAndView(request, response, userKey, "../jsp/UserConnections");
+            streamJSPUserLogged2(request, response, userKey, "../jsp/UserConnections");
         }
         catch(Exception ex){
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
