@@ -1747,21 +1747,6 @@ public class AuthRequest
          resp.addCookie(openIdCookie);
      }
 
-/*
-     public boolean autoLoginRedirect() throws Exception{
-         String autoLoginCookie = findCookieValue("autoLoginCookie");
-
-         if((autoLoginCookie!=null) && ((autoLoginCookie.equals("true")))){
-            String loginId = findCookieValue("openIdCookie");
-            if(loginId != null){
-                String location = retPath+"t/openIdLogin.htm?err="+getCompleteURL()+"&go="+getCompleteURL()+"&openid="+loginId;
-                resp.sendRedirect(location);
-                return true;
-            }
-        }
-        return false;
-     }
-*/
 
      public Cognoscenti getCogInstance() {
          return cog;

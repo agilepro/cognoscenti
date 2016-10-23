@@ -1,4 +1,4 @@
-app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selectedActions, allActions, allPeople) {
+app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selectedActions, allActions, AllPeople) {
 
     $scope.allActions = allActions;
     if(selectedActions) {
@@ -11,7 +11,6 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
     $scope.newGoal.assignTo = [];
     $scope.realFilter = "";
     $scope.createMode = false;
-    $scope.allPeople = allPeople;
     $scope.dummyDate1 = new Date( new Date().getTime() +  (7*24*60*60*1000) );
     
     
@@ -53,19 +52,8 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
         });
     }
     
-    $scope.getPeople = function(viewValue) {
-        var viewValLC = viewValue.toLowerCase();
-        var newVal = [];
-        for( var i=0; i<$scope.allPeople.length; i++) {
-            var onePeople = $scope.allPeople[i];
-            if (onePeople.uid.toLowerCase().indexOf(viewValLC)>=0) {
-                newVal.push(onePeople);
-            }
-            else if (onePeople.name.toLowerCase().indexOf(viewValLC)>=0) {
-                newVal.push(onePeople);
-            }
-        }
-        return newVal;
+    $scope.getPeople = function(query) {
+        return AllPeople.findMatchingPeople(query);
     }
     
     $scope.datePickOptions = {
@@ -82,19 +70,7 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
         return false;
     };
     $scope.loadItems = function(query) {
-        var res = [];
-        var q = query.toLowerCase();
-        $scope.allPeople.forEach( function(person) {
-            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
-                return;
-            }
-            var nix = {};
-            nix.name = person.name; 
-            nix.uid  = person.uid; 
-            nix.key  = person.key; 
-            res.push(nix);
-        });
-        return res;
+        return AllPeople.findMatchingPeople(query);
     }
     
     $scope.createActionItem = function(item) {
