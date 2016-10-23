@@ -60,8 +60,6 @@
 
     JSONArray allLabels = ngw.getJSONLabels();
 
-    JSONArray allPeople = UserManager.getUniqueUsersJSON();
-
     String docSpaceURL = "";
 
     if (uProf!=null) {
@@ -188,13 +186,12 @@ comment-state-complete {
 <script>
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize','ngTagsInput']);
-app.controller('myCtrl', function($scope, $http, $modal) {
+app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.pageId = "<%ar.writeJS(pageId);%>";
     $scope.meetId = "<%ar.writeJS(meetId);%>";
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
     $scope.allGoals = <%allGoals.write(out,2,4);%>;
     $scope.attachmentList = [];
-    $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.allTopics = [];
@@ -601,18 +598,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
 
 
-    $scope.getPeople = function(viewValue) {
-        var newVal = [];
-        var viewValueLC = viewValue.toLowerCase();
-        $scope.allPeople.forEach( function(onePeople) {
-            if (onePeople.uid.toLowerCase().indexOf(viewValueLC)>=0) {
-                newVal.push(onePeople);
-            }
-            else if (onePeople.name.toLowerCase().indexOf(viewValueLC)>=0) {
-                newVal.push(onePeople);
-            }
-        });
-        return newVal;
+    $scope.getPeople = function(query) {
+        return AllPeople.findMatchingPeople(query);
     }
 
     $scope.createActionItem = function(item) {
@@ -743,25 +730,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         item.readyToGo=!item.readyToGo
         $scope.saveAgendaItemParts(item, ['readyToGo']);
-    }
-
-    $scope.findPersonName = function(email) {
-        var person = {name: email};
-        $scope.allPeople.map( function(item) {
-            if (item.uid == email) {
-                person = item;
-            }
-        });
-        return person.name;
-    }
-    $scope.findPerson = function(email) {
-        var retPerson = null;
-        $scope.allPeople.forEach( function(item) {
-            if (item.uid == email) {
-                retPerson = item;
-            }
-        });
-        return retPerson;
     }
 
     $scope.createMinutes = function() {
@@ -1134,8 +1102,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     }
     $scope.getAttended = function() {
-        return $scope.meeting.attended.map( function(item) {
-            return $scope.findPerson(item);
+        return $scope.meeting.attended.map( function(uid) {
+            return AllPeople.findPerson(uid);
         });
     }
 
@@ -1325,19 +1293,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.saveComment($scope.commentItemBeingEdited, cmt);
     }
     $scope.loadItems = function(query) {
-        var res = [];
-        var q = query.toLowerCase();
-        $scope.allPeople.forEach( function(person) {
-            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
-                return;
-            }
-            var nix = {};
-            nix.name = person.name;
-            nix.uid  = person.uid;
-            nix.key  = person.key;
-            res.push(nix);
-        });
-        return res;
+        return AllPeople.findMatchingPeople(query);
     }
     $scope.toggleSelectedPerson = function(tag) {
         $scope.selectedPersonShow = !$scope.selectedPersonShow;
@@ -1558,9 +1514,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 allActions: function() {
                     return $scope.allGoals;
                 },
-                allPeople: function() {
-                    return $scope.allPeople;
-                }
             }
         });
 
@@ -1578,6 +1531,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
 </script>
+<script src="../../../jscript/AllPeople.js"></script>
 
 <style>
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {

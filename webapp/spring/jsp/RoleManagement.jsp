@@ -34,19 +34,16 @@
         allRoles.put(rollo);
     }
 
-    JSONArray allPeople = UserManager.getUniqueUsersJSON();
-
 
 %>
 
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
-app.controller('myCtrl', function($scope, $http, $modal) {
+app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.roleInfo = {};
     $scope.showInput = false;
-    $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.colors = ["salmon","khaki","beige","lightgreen","orange","bisque","tomato","aqua","orchid","peachpuff","powderblue","lightskyblue"];
 
     $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
@@ -159,17 +156,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.roleInfo = {};
         $scope.showInput = false;
     };
-    $scope.getPeople = function(filter) {
-        var lcfilter = filter.toLowerCase();
-        var res = [];
-        var last = $scope.allPeople.length;
-        for (var i=0; i<last; i++) {
-            var rec = $scope.allPeople[i];
-            if (rec.name.toLowerCase().indexOf(lcfilter)>=0) {
-                res.push(rec);
-            }
-        }
-        return res;
+    $scope.getPeople = function(query) {
+        return AllPeople.findMatchingPeople(query);
     }
     $scope.addPlayer = function() {
         var found = false;
@@ -192,15 +180,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         $scope.roleInfo.players.push(player);
         $scope.updateRole();
-        var isNew = true;
-        $scope.allPeople.forEach( function(existingUser) {
-            if (existingUser.uid == player.uid) {
-                if (existingUser.key) {
-                    isNew = false;
-                }
-            }
-        });
-        if (isNew) {
+        var personRecord = AllPeople.findPerson(player.uid);
+        if (!personRecord || !personRecord.key) {
             //prompt to send an invite
             $scope.openInviteSender(player);
         }
@@ -272,19 +253,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.loadItems = function(query) {
-        var res = [];
-        var q = query.toLowerCase();
-        $scope.allPeople.forEach( function(person) {
-            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
-                return;
-            }
-            var nix = {};
-            nix.name = person.name; 
-            nix.uid  = person.uid; 
-            nix.key  = person.key; 
-            res.push(nix);
-        });
-        return res;
+        return AllPeople.findMatchingPeople(query);
     }
     $scope.toggleSelectedPerson = function(tag) {
         $scope.selectedPersonShow = !$scope.selectedPersonShow;
@@ -329,6 +298,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 });
 
 </script>
+<script src="../../../jscript/AllPeople.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 

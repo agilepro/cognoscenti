@@ -54,9 +54,6 @@ Required parameters:
     stateName.put("8", BaseRecord.stateName(8));
     stateName.put("9", BaseRecord.stateName(9));
 
-    JSONArray allPeople = UserManager.getUniqueUsersJSON();
-
-
 /*** PROTOTYPE
 
     $scope.allGoals  = {
@@ -91,11 +88,10 @@ Required parameters:
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
-app.controller('myCtrl', function($scope, $http, $modal) {
+app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
-    $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.filter = "";
     $scope.filterMap = {};
     $scope.showActive = true;
@@ -272,19 +268,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     }
 
-    $scope.getPeople = function(viewValue) {
-        var viewValLC = viewValue.toLowerCase();
-        var newVal = [];
-        for( var i=0; i<$scope.allPeople.length; i++) {
-            var onePeople = $scope.allPeople[i];
-            if (onePeople.uid.toLowerCase().indexOf(viewValLC)>=0) {
-                newVal.push(onePeople);
-            }
-            else if (onePeople.name.toLowerCase().indexOf(viewValLC)>=0) {
-                newVal.push(onePeople);
-            }
-        }
-        return newVal;
+    $scope.getPeople = function(query) {
+        return AllPeople.findMatchingPeople(query);
     }
 
     $scope.createNewGoal = function() {
@@ -367,19 +352,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         //alert("gotcha:" + tag.name);
     }
     $scope.loadItems = function(query) {
-        var res = [];
-        var q = query.toLowerCase();
-        $scope.allPeople.forEach( function(person) {
-            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
-                return;
-            }
-            var nix = {};
-            nix.name = person.name; 
-            nix.uid  = person.uid; 
-            nix.key  = person.key; 
-            res.push(nix);
-        });
-        return res;
+        return AllPeople.findMatchingPeople(query);
     }
 
     $scope.setProspects = function(goal, newVal) {
@@ -430,6 +403,7 @@ function addvalue() {
 }
 
 </script>
+<script src="../../../jscript/AllPeople.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 

@@ -50,9 +50,6 @@ Required parameters:
     stateName.put("8", BaseRecord.stateName(8));
     stateName.put("9", BaseRecord.stateName(9));
 
-    JSONArray allPeople = UserManager.getUniqueUsersJSON();
-
-
 /*** PROTOTYPE
 
     $scope.allDecisions = [
@@ -78,7 +75,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.allDecisions = <%allDecisions.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
-    $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.filter = "";
     $scope.filterMap = {};
     $scope.newDecision = {num:"~new~",universalid:"~new~"};
@@ -123,19 +119,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return src;
     };
 
-    $scope.getPeople = function(viewValue) {
-        var newVal = [];
-        for( var i=0; i<$scope.allPeople.length; i++) {
-            var onePeople = $scope.allPeople[i];
-            if (onePeople.uid.indexOf(viewValue)>=0) {
-                newVal.push(onePeople);
-            }
-            else if (onePeople.name.indexOf(viewValue)>=0) {
-                newVal.push(onePeople);
-            }
-        }
-        return newVal;
-    }
     $scope.startCreating = function() {
         $scope.newDecision = {num:"~new~",universalid:"~new~",labelMap:{}};
         $scope.openDecisionEditor($scope.newDecision);
@@ -210,26 +193,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             }
         });
         return res;
-    }
-    $scope.getName = function(uid) {
-        var person = $scope.getPeople(uid);
-        if (!person) {
-            return uid;
-        }
-        if (person.length==0) {
-            return uid;
-        }
-        if (person[0].name) {
-            return person[0].name;
-        }
-        return "Unknown "+uid;
-    }
-    $scope.getLink = function(uid) {
-        var person = $scope.getPeople(uid);
-        if (person.length==0) {
-            return uid;
-        }
-        return "<%=ar.retPath%>v/"+person[0].key+"/userSettings.htm";
     }
 
 

@@ -117,7 +117,6 @@ Optional Parameters:
         allRoles.put( role.getJSON() );
     }
     JSONArray attachmentList = ngw.getJSONAttachments(ar);
-    JSONArray allPeople = ngw.getAllPeopleInProject();
 
     String docSpaceURL = "";
 
@@ -181,12 +180,11 @@ Optional Parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http, $modal) {
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
+app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
-    $scope.allPeople = <%allPeople.write(out,2,4);%>;
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
@@ -367,6 +365,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.navigateToDoc = function(doc) {
         window.location="docinfo"+doc.id+".htm";
     }
+    $scope.loadItems = function(query) {
+        return AllPeople.findMatchingPeople(query);
+    }
 
 
     $scope.openAttachDocument = function () {
@@ -401,9 +402,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 });
 
 </script>
+<script src="../../../jscript/AllPeople.js"></script>
 
-
-<!--  here is where the content goes -->
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
@@ -497,36 +497,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <td class="gridTableColummHeader">Also To:</td>
                 <td style="width:20px;"></td>
                 <td>
-                  <span class="dropdown" ng-repeat="add in emailInfo.alsoTo">
-                    <button class="btn btn-sm dropdown-toggle" type="button" id="menu1"
-                       data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;">
-                       {{namePart(add)}}</button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                       <li role="presentation"><a role="menuitem" title="{{add}}"
-                          ng-click="removeAddress(add)">Remove Address:<br/>{{add}}</a></li>
-                    </ul>
-                  </span>
-                  <span >
-                    <button class="btn btn-sm btn-primary btn-raised" ng-click="showAddEmail=!showAddEmail"
-                        style="margin:2px;padding: 2px 5px;font-size: 11px;">+</button>
-                  </span>
+              <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
+                  <auto-complete source="loadItems($query)"></auto-complete>
+              </tags-input>
                 </td>
             </tr>
             <tr>
                 <td></td>
                 <td style="width:20px"></td>
                 <td></td>
-            </tr>
-            <tr ng-show="showAddEmail">
-                <td ></td>
-                <td style="width:20px;"></td>
-                <td class="form-inline form-group">
-                    <button ng-click="addAddress(newEmailAddress);showAddEmail=false" class="form-control btn btn-primary">
-                        Add This Email</button>
-                    <input type="text" ng-model="newEmailAddress"  class="form-control"
-                        placeholder="Enter Email Address" style="width:350px;"
-                        typeahead="name for name in allPeople | filter:$viewValue | limitTo:8">
-                </td>
             </tr>
             <tr><td style="height:30px"></td></tr>
             <tr>

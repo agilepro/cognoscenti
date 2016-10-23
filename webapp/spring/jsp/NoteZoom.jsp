@@ -58,7 +58,6 @@ Required parameter:
     }
 
     JSONArray allGoals     = ngw.getJSONGoals();
-    JSONArray allPeople = UserManager.getUniqueUsersJSON();
 
     String docSpaceURL = "";
     if (uProf!=null) {
@@ -93,7 +92,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.canUpdate = <%=canUpdate%>;
     $scope.history = <%history.write(out,2,4);%>;
     $scope.allGoals = <%allGoals.write(out,2,4);%>;
-    $scope.allPeople = <%allPeople.write(out,2,4);%>;
 
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 400;
@@ -664,9 +662,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 allActions: function() {
                     return $scope.allGoals;
                 },
-                allPeople: function() {
-                    return $scope.allPeople;
-                }
             }
         });
 
@@ -682,6 +677,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 });
 
 </script>
+<script src="../../../jscript/AllPeople.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 

@@ -64,11 +64,6 @@
         <put-attribute name="body" value="/spring/jsp/RoleManagement.jsp" />
     </definition>
 
-    <definition name="account_permission" extends="slimLayout">
-        <put-attribute name="title" value="Permission" />
-        <put-attribute name="body" value="/spring/jsp/leaf_account_permission.jsp" />
-    </definition>
-
 
     <definition name="leaf_admin" extends="slimLayout">
         <put-attribute name="title" value="Admin" />
@@ -245,11 +240,6 @@
         <put-attribute name="body" value="/spring/jsp/UserAccounts.jsp" />
     </definition>
 
-    <definition name="editRoleAccount" extends="slimLayout">
-        <put-attribute name="title" value="Process" />
-        <put-attribute name="body" value="/spring/jsp/EditRoleAccount.jsp" />
-    </definition>
-
     <definition name="docinfo" extends="slimLayout">
         <put-attribute name="title" value="Download Document" />
         <put-attribute name="body" value="/spring/jsp/docinfo.jsp" />
@@ -422,11 +412,6 @@
     <definition name="AgendaBacklog" extends="slimLayout">
         <put-attribute name="title" value="AgendaBacklog" />
         <put-attribute name="body" value="/spring/jsp/AgendaBacklog.jsp" />
-    </definition>
-
-    <definition name="AgendaItem" extends="slimLayout">
-        <put-attribute name="title" value="Agenda Item" />
-        <put-attribute name="body" value="/spring/jsp/AgendaItem.jsp" />
     </definition>
 
     <definition name="CloneMeeting" extends="slimLayout">

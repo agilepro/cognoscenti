@@ -28,6 +28,20 @@ app.service('AllPeople', function($http) {
         });
         return res;
     }
+    this.findPerson = function(query) {
+        var res = null;
+        var q = query.toLowerCase();
+        this.allPersonList.people.forEach( function(person) {
+            if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
+                return;
+            }
+            res = {};
+            res.name = person.name; 
+            res.uid  = person.uid; 
+            res.key  = person.key; 
+        });
+        return res;
+    }
     this.refreshCache = function() {
         this.allPersonList = {people:[]};
         this.fetchPeople();

@@ -1,7 +1,6 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.MeetingRecord"
-%><%@page import="org.socialbiz.cog.AgendaItem"
 %><%
 
 

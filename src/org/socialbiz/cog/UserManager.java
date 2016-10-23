@@ -31,7 +31,6 @@ import java.util.Vector;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
-import org.workcast.json.JSONArray;
 
 public class UserManager
 {
@@ -300,7 +299,31 @@ public class UserManager
         }
         return res;
     }
+    
+    /**
+    * returns users that have profiles, and also users who have microprofile
+    */
+    public static List<AddressListEntry> getAllPossibleUsers() throws Exception {
+        Vector<AddressListEntry> res = new Vector<AddressListEntry>();
+        Hashtable<String,String> repeatCheck = new Hashtable<String,String>();
+        for (UserProfile up : allUsers) {
+            String uid = up.getUniversalId();
+            if (!repeatCheck.containsKey(uid)) {
+                res.add(new AddressListEntry(up));
+                repeatCheck.put(uid,uid);
+            }
+        }
+        for (AddressListEntry one : MicroProfileMgr.getAllProfileIds()) {
+            String uid = one.getUniversalId();
+            if (!repeatCheck.containsKey(uid)) {
+                res.add( one );
+                repeatCheck.put(uid,uid);
+            }
+        }
+        return res;
+    }
 
+    
     public synchronized static void writeUserProfilesToFile() throws Exception {
         if (profileFile==null) {
             throw new NGException("nugen.exception.write.user.profile.info.fail",null);
@@ -455,26 +478,6 @@ public class UserManager
             throw new NGException("nugen.exceptionhandling.account.no.super.admin", null);
         }
         return sendTo;
-    }
-
-    public static JSONArray getUniqueUsersJSON() throws Exception {
-        JSONArray allPeople = new JSONArray();
-        Hashtable<String,String> repeatCheck = new Hashtable<String,String>();
-        for (AddressListEntry one : UserManager.getAllUsers()) {
-            String uid = one.getUniversalId();
-            if (!repeatCheck.containsKey(uid)) {
-                allPeople.put( one.getJSON() );
-                repeatCheck.put(uid,uid);
-            }
-        }
-        for (AddressListEntry one : MicroProfileMgr.getAllProfileIds()) {
-            String uid = one.getUniversalId();
-            if (!repeatCheck.containsKey(uid)) {
-                allPeople.put( one.getJSON() );
-                repeatCheck.put(uid,uid);
-            }
-        }
-        return allPeople;
     }
 
     public static UserPage findOrCreateUserPage(String userKey)

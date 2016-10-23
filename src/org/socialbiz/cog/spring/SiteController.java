@@ -38,7 +38,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.workcast.json.JSONObject;
@@ -338,31 +337,6 @@ public class SiteController extends BaseController {
 
 
 
-
-    @RequestMapping(value = "/{siteId}/$/permission.htm", method = RequestMethod.GET)
-    public ModelAndView showPermissionTab(@PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
-                return null;
-            }
-            NGBook site = prepareSiteView(ar, siteId);
-            if (executiveCheckViews(ar)) {
-                return null;
-            }
-            ModelAndView modelAndView = new ModelAndView("account_permission");
-            request.setAttribute("headerType", "site");
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("pageTitle", site.getFullName());
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.permission.page", new Object[]{siteId}, ex);
-        }
-    }
-
-
     @RequestMapping(value = "/{siteId}/$/personal.htm", method = RequestMethod.GET)
     public ModelAndView showPersonalTab(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
@@ -409,12 +383,16 @@ public class SiteController extends BaseController {
         }
     }
 
+    /*
     @RequestMapping(value = "/{siteId}/$/EditRoleBook.htm", method = RequestMethod.GET)
     public ModelAndView editRoleBook(@PathVariable String siteId,
             @RequestParam String roleName, @RequestParam String projectName,
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception {
+        if (true) {
+            throw new Exception("pretty sure EditRoleBook.htm not being used any more");
+        }
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if (checkLogin(ar)) {
@@ -434,6 +412,7 @@ public class SiteController extends BaseController {
             throw new NGException("nugen.operation.fail.account.editrolebook",new Object[]{siteId});
         }
     }
+    */
 
     @RequestMapping(value = "/{siteId}/$/replaceUsers.json", method = RequestMethod.POST)
     public void getGoalHistory(@PathVariable String siteId,
