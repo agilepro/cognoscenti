@@ -59,131 +59,10 @@
         <put-attribute name="title" value="Permission" />
         <put-attribute name="body" value="/spring/jsp/leaf_permission.jsp" />
     </definition>
-    <definition name="RoleManagement" extends="slimLayout">
-        <put-attribute name="title" value="Permission" />
-        <put-attribute name="body" value="/spring/jsp/RoleManagement.jsp" />
-    </definition>
-
-
-    <definition name="leaf_admin" extends="slimLayout">
-        <put-attribute name="title" value="Admin" />
-        <put-attribute name="body" value="/spring/jsp/leaf_admin.jsp" />
-    </definition>
-
-    <definition name="FrontPage" extends="slimLayout">
-        <put-attribute name="title" value="FrontPage" />
-        <put-attribute name="body" value="/spring/jsp/FrontPage.jsp" />
-    </definition>
-    <definition name="FrontTop" extends="slimLayout">
-        <put-attribute name="title" value="FrontTop" />
-        <put-attribute name="body" value="/spring/jsp/FrontTop.jsp" />
-    </definition>
-    <definition name="history" extends="slimLayout">
-        <put-attribute name="title" value="History" />
-        <put-attribute name="body" value="/spring/jsp/leaf_history.jsp" />
-    </definition>
-
-
-    <definition name="upload_link_attachment" extends="baseLayout">
-        <put-attribute name="title" value="Upload Attachments" />
-        <put-attribute name="body" value="/spring/jsp/createLinkURL.jsp" />
-    </definition>
-
-    <definition name="ReminderEmail" extends="baseLayout">
-        <put-attribute name="title" value="Ask Someone to Attach File" />
-        <put-attribute name="body" value="/spring/jsp/ReminderEmail.jsp" />
-    </definition>
 
     <definition name="landingPage" extends="slimLayout">
         <put-attribute name="title" value="Welcome to Weaver" />
         <put-attribute name="body" value="/spring/jsp/index.jsp" />
-    </definition>
-
-    <definition name="WatchedProjects" extends="slimLayout">
-        <put-attribute name="title" value="Watched Workspaces" />
-        <put-attribute name="body" value="/spring/jsp/WatchedProjects.jsp" />
-    </definition>
-
-    <definition name="NotifiedProjects" extends="slimLayout">
-        <put-attribute name="title" value="Notified Workspaces" />
-        <put-attribute name="body" value="/spring/jsp/NotifiedProjects.jsp" />
-    </definition>
-
-    <definition name="OwnerProjects" extends="slimLayout">
-        <put-attribute name="title" value="Administered Workspaces" />
-        <put-attribute name="body" value="/spring/jsp/OwnerProjects.jsp" />
-    </definition>
-
-    <definition name="ParticipantProjects" extends="slimLayout">
-        <put-attribute name="title" value="Participant Workspaces" />
-        <put-attribute name="body" value="/spring/jsp/ParticipantProjects.jsp" />
-    </definition>
-
-    <definition name="AllProjects" extends="slimLayout">
-        <put-attribute name="title" value="All Workspaces" />
-        <put-attribute name="body" value="/spring/jsp/AllProjects.jsp" />
-    </definition>
-
-    <definition name="Templates" extends="slimLayout">
-        <put-attribute name="title" value="Templates" />
-        <put-attribute name="body" value="/spring/jsp/Templates.jsp" />
-    </definition>
-
-    <definition name="FolderDisplay" extends="baseLayout">
-        <put-attribute name="title" value="Display Folder" />
-        <put-attribute name="body" value="/spring/jsp/FolderDisplay.jsp" />
-    </definition>
-
-    <definition name="ListConnections" extends="slimLayout">
-        <put-attribute name="title" value="List Connections" />
-        <put-attribute name="body" value="/spring/jsp/ListConnections.jsp" />
-    </definition>
-
-    <definition name="BrowseConnection" extends="baseLayout">
-        <put-attribute name="title" value="Browse Connections" />
-        <put-attribute name="body" value="/spring/jsp/BrowseConnection.jsp" />
-    </definition>
-
-    <definition name="UserAlerts" extends="slimLayout">
-        <put-attribute name="title" value="User Updates" />
-        <put-attribute name="body" value="/spring/jsp/UserAlerts.jsp" />
-    </definition>
-
-    <definition name="GoalEdit" extends="slimLayout">
-        <put-attribute name="title" value="GoalEdit" />
-        <put-attribute name="body" value="/spring/jsp/GoalEdit.jsp" />
-    </definition>
-
-    <definition name="GoalList" extends="slimLayout">
-        <put-attribute name="title" value="GoalList" />
-        <put-attribute name="body" value="/spring/jsp/GoalList.jsp" />
-    </definition>
-
-    <definition name="DecisionList" extends="slimLayout">
-        <put-attribute name="title" value="DecisionList" />
-        <put-attribute name="body" value="/spring/jsp/DecisionList.jsp" />
-    </definition>
-
-    <definition name="EditRole" extends="slimLayout">
-        <put-attribute name="title" value="Edit Role" />
-        <put-attribute name="body" value="/spring/jsp/EditRole.jsp" />
-    </definition>
-
-
-    <definition name="ListAttachments" extends="slimLayout">
-        <put-attribute name="title" value="List Attachments" />
-        <put-attribute name="body" value="/spring/jsp/ListAttachments.jsp" />
-    </definition>
-
-     <definition name="DocsRevise" extends="slimLayout">
-        <put-attribute name="title" value="Upload Attachment Form" />
-        <put-attribute name="body" value="/spring/jsp/DocsRevise.jsp" />
-    </definition>
-
-
-    <definition name="emailreminder_form" extends="slimLayout">
-        <put-attribute name="title" value="Email Reminder Form" />
-        <put-attribute name="body" value="/spring/jsp/emailReminderForm.jsp" />
     </definition>
 
     <definition name="commonError" extends="slimLayout">
@@ -199,18 +78,6 @@
     <definition name="account_personal" extends="slimLayout">
         <put-attribute name="title" value="Personal" />
         <put-attribute name="body" value="/spring/jsp/leaf_account_personal.jsp" />
-    </definition>
-    <definition name="accountListProjects" extends="slimLayout">
-        <put-attribute name="title" value="List of Site Workspaces" />
-        <put-attribute name="body" value="/spring/jsp/accountListProjects.jsp" />
-    </definition>
-    <definition name="accountCreateProject" extends="slimLayout">
-        <put-attribute name="title" value="Create Workspace" />
-        <put-attribute name="body" value="/spring/jsp/accountCreateProject.jsp" />
-    </definition>
-    <definition name="accountCloneProject" extends="slimLayout">
-        <put-attribute name="title" value="Clone Remote Workspace" />
-        <put-attribute name="body" value="/spring/jsp/accountCloneProject.jsp" />
     </definition>
     <definition name="convertFolderProject" extends="slimLayout">
         <put-attribute name="title" value="Convert Folder" />
@@ -261,31 +128,11 @@
         <put-attribute name="title" value="Warning" />
         <put-attribute name="body" value="/spring/jsp/Warning.jsp" />
     </definition>
-    <definition name="WarningNotMember" extends="slimLayout">
-        <put-attribute name="title" value="WarningNotMember" />
-        <put-attribute name="body" value="/spring/jsp/WarningNotMember.jsp" />
-    </definition>
-
-    <definition name="requiredName" extends="baseLayoutWithoutLeftPanel">
-        <put-attribute name="title" value="Warning" />
-        <put-attribute name="body" value="/spring/jsp/requiredName.jsp" />
-    </definition>
 
     <definition name="DisplayException" extends="slimLayout">
         <put-attribute name="title" value="Display Exception" />
         <put-attribute name="body" value="/spring/jsp/DisplayException.jsp" />
     </definition>
-
-    <definition name="confirmedAddIdView" extends="baseLayout">
-        <put-attribute name="title" value="User Settings" />
-        <put-attribute name="body" value="/spring/jsp/confirmedAddIdView.jsp" />
-    </definition>
-
-    <definition name="NotificationSettings" extends="slimLayout">
-        <put-attribute name="title" value="Notification Settings" />
-        <put-attribute name="body" value="/spring/jsp/NotificationSettings.jsp" />
-    </definition>
-
 
     <definition name="MeetingList" extends="slimLayout">
         <put-attribute name="title" value="Meeting List" />
@@ -295,62 +142,6 @@
     <definition name="Meeting" extends="slimLayout">
         <put-attribute name="title" value="Meeting" />
         <put-attribute name="body" value="/spring/jsp/Meeting.jsp" />
-    </definition>
-
-    <definition name="AgendaBacklog" extends="slimLayout">
-        <put-attribute name="title" value="AgendaBacklog" />
-        <put-attribute name="body" value="/spring/jsp/AgendaBacklog.jsp" />
-    </definition>
-
-    <definition name="CloneMeeting" extends="slimLayout">
-        <put-attribute name="title" value="Clone Meeting" />
-        <put-attribute name="body" value="/spring/jsp/CloneMeeting.jsp" />
-    </definition>
-
-    <definition name="MeetingFull" extends="slimLayout">
-        <put-attribute name="title" value="Meeting Full" />
-        <put-attribute name="body" value="/spring/jsp/MeetingFull.jsp" />
-    </definition>
-
-
-
-
-    <definition name="emailListnerSettings" extends="slimLayout">
-        <put-attribute name="title" value="Email Listener Settings"/>
-        <put-attribute name="body" value="/spring/jsp/emailListnerSettings.jsp"/>
-    </definition>
-
-    <definition name="lastNotificationSend" extends="slimLayout">
-        <put-attribute name="title" value="Last Notification Send"/>
-        <put-attribute name="body" value="/spring/jsp/lastNotificationSend.jsp"/>
-    </definition>
-
-    <definition name="newUsers" extends="slimLayout">
-        <put-attribute name="title" value="New Users"/>
-        <put-attribute name="body" value="/spring/jsp/newUsers.jsp"/>
-    </definition>
-
-    <definition name="requestedAccounts" extends="slimLayout">
-        <put-attribute name="title" value="Requested Sites"/>
-        <put-attribute name="body" value="/spring/jsp/requestedAccounts.jsp"/>
-    </definition>
-
-    <definition name="UserActiveTasks" extends="slimLayout">
-        <put-attribute name="title" value="User Action Items" />
-        <put-attribute name="body" value="/spring/jsp/UserActiveTasks.jsp" />
-    </definition>
-    <definition name="UserMissingResponses" extends="slimLayout">
-        <put-attribute name="title" value="User Missing Responses" />
-        <put-attribute name="body" value="/spring/jsp/UserMissingResponses.jsp" />
-    </definition>
-    <definition name="UserOpenRounds" extends="slimLayout">
-        <put-attribute name="title" value="User Open Rounds" />
-        <put-attribute name="body" value="/spring/jsp/UserOpenRounds.jsp" />
-    </definition>
-
-    <definition name="ShareRequests" extends="baseLayout">
-        <put-attribute name="title" value="User Action Items" />
-        <put-attribute name="body" value="/spring/jsp/ShareRequests.jsp" />
     </definition>
 
     <definition name="RemoteProfiles" extends="slimLayout">
@@ -366,30 +157,6 @@
     <definition name="Agents" extends="slimLayout">
         <put-attribute name="title" value="User Action Items" />
         <put-attribute name="body" value="/spring/jsp/Agents.jsp" />
-    </definition>
-
-    <definition name="EditAgent" extends="slimLayout">
-        <put-attribute name="title" value="User Action Items" />
-        <put-attribute name="body" value="/spring/jsp/EditAgent.jsp" />
-    </definition>
-
-    <definition name="UserConnections" extends="slimLayout">
-        <put-attribute name="title" value="User Connections" />
-        <put-attribute name="body" value="/spring/jsp/UserConnections.jsp" />
-    </definition>
-
-    <definition name="UserContacts" extends="slimLayout">
-        <put-attribute name="title" value="User Contacts" />
-        <put-attribute name="body" value="/spring/jsp/UserContacts.jsp" />
-    </definition>
-
-    <definition name="UserSettings" extends="slimLayout">
-        <put-attribute name="title" value="User Settings" />
-        <put-attribute name="body" value="/spring/jsp/UserSettings.jsp" />
-    </definition>
-    <definition name="FindPerson" extends="slimLayout">
-        <put-attribute name="title" value="User Settings" />
-        <put-attribute name="body" value="/spring/jsp/FindPerson.jsp" />
     </definition>
 
     <definition name="unsubscribemember" extends="baseLayout">
