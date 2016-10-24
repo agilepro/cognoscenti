@@ -1313,9 +1313,6 @@ public class UserController extends BaseController {
                     ar.resp.sendRedirect(ar.baseURL+"v/"+userKey+"/notificationSettings.htm");
                     return;
                 }
-            }else if(emailId != null){
-                redirectBrowser(ar,"unsubscribemember.htm?emailId="+URLEncoder.encode(emailId, "UTF-8"));
-                return;
             }
             sendRedirectToLogin(ar);
         }catch(Exception ex){
@@ -1398,26 +1395,6 @@ public class UserController extends BaseController {
             throw new NGException("nugen.operation.fail.to.update.notification.settings", null, ex);
         }
     }
-
-
-    @RequestMapping(value = "/unsubscribemember.htm", method = RequestMethod.GET)
-    public ModelAndView unSubscribeMember(
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-
-            String emailId = ar.reqParam("emailId").trim();
-            ModelAndView modelAndView = new ModelAndView("unsubscribemember");
-            modelAndView.addObject( "emailId", emailId );
-
-            return modelAndView;
-        }catch(Exception ex){
-            throw new Exception("Unable to unsubscribe member", ex);
-        }
-    }
-
 
 
 

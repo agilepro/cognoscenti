@@ -209,28 +209,6 @@ public class SiteController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/$/convertFolderProject.htm", method = RequestMethod.GET)
-    public ModelAndView convertFolderProject(@PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
-                return null;
-            }
-            prepareSiteView(ar, siteId);
-            if (executiveCheckViews(ar)) {
-                return null;
-            }
-
-            return new ModelAndView("convertFolderProject");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.process.page",
-                    new Object[]{siteId} , ex);
-        }
-    }
-
-
     @RequestMapping(value = "/{siteId}/$/SiteUsers.htm", method = RequestMethod.GET)
     public void SiteUsers(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
@@ -333,31 +311,6 @@ public class SiteController extends BaseController {
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         redirectBrowser(ar, "accountListProjects.htm");
-    }
-
-
-
-    @RequestMapping(value = "/{siteId}/$/personal.htm", method = RequestMethod.GET)
-    public ModelAndView showPersonalTab(@PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
-                return null;
-            }
-            NGBook site = prepareSiteView(ar, siteId);
-            //personal view is available to everyone, regardless of whether they
-            //have a role or access to that project.  This is the page that
-            //one can request access.
-
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("visibility_value", "4");
-            request.setAttribute("pageTitle", site.getFullName());
-            return new ModelAndView("account_personal");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.personal.page", new Object[]{siteId}, ex);
-        }
     }
 
     

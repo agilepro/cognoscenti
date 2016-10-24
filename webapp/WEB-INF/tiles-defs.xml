@@ -22,86 +22,10 @@
         <put-attribute name="footer" value="/spring/tiles/footer.jsp" />
     </definition>
 
-     <definition name="projectBaseLayout" template="/spring/tiles/baseLayout.jsp">
-        <put-attribute name="title" value="Template" />
-        <put-attribute name="header" value="/spring/tiles/header.jsp" />
-        <put-attribute name="menu" value="/spring/jsp/leftMenu.jsp" />
-        <put-attribute name="body" value="/spring/tiles/body.jsp" />
-        <put-attribute name="footer" value="/spring/tiles/footer.jsp?autoupdate=true" />
-    </definition>
-
-    <definition name="baseLayoutWithoutLeftPanel" template="/spring/tiles/baseLayoutWithoutLeftPanel.jsp">
-        <put-attribute name="title" value="Template" />
-        <put-attribute name="header" value="/spring/tiles/header.jsp" />
-        <put-attribute name="body" value="/spring/tiles/body.jsp" />
-        <put-attribute name="footer" value="/spring/tiles/footer.jsp" />
-    </definition>
-
-    <definition name="baseLayoutSimple" template="/spring/tiles/baseLayoutSimple.jsp">
-        <put-attribute name="title" value="Template" />
-        <put-attribute name="body" value="/spring/tiles/body.jsp" />
-    </definition>
-
-
-
-
-
-
-
-    <definition name="public" extends="slimLayout">
-        <put-attribute name="title" value="Public" />
-        <put-attribute name="body" value="/spring/jsp/leaf_public.jsp" />
-    </definition>
-
-
-
-    <definition name="permission" extends="slimLayout">
-        <put-attribute name="title" value="Permission" />
-        <put-attribute name="body" value="/spring/jsp/leaf_permission.jsp" />
-    </definition>
 
     <definition name="landingPage" extends="slimLayout">
         <put-attribute name="title" value="Welcome to Weaver" />
         <put-attribute name="body" value="/spring/jsp/index.jsp" />
-    </definition>
-
-    <definition name="commonError" extends="slimLayout">
-        <put-attribute name="title" value="Error Details Page" />
-        <put-attribute name="body" value="/spring/jsp/error.jsp" />
-    </definition>
-
-    <definition name="personal" extends="slimLayout">
-        <put-attribute name="title" value="Personal" />
-        <put-attribute name="body" value="/spring/jsp/leaf_personal.jsp" />
-    </definition>
-
-    <definition name="account_personal" extends="slimLayout">
-        <put-attribute name="title" value="Personal" />
-        <put-attribute name="body" value="/spring/jsp/leaf_account_personal.jsp" />
-    </definition>
-    <definition name="convertFolderProject" extends="slimLayout">
-        <put-attribute name="title" value="Convert Folder" />
-        <put-attribute name="body" value="/spring/jsp/convertFolderProject.jsp" />
-    </definition>
-    <definition name="SiteAdmin" extends="slimLayout">
-        <put-attribute name="title" value="Site Admin" />
-        <put-attribute name="headerType" value="site" />
-        <put-attribute name="body" value="/spring/jsp/SiteAdmin.jsp" />
-    </definition>
-    <definition name="SiteUsers" extends="slimLayout">
-        <put-attribute name="title" value="Site Users" />
-        <put-attribute name="headerType" value="site" />
-        <put-attribute name="body" value="/spring/jsp/SiteUsers.jsp" />
-    </definition>
-
-    <definition name="UserAccounts" extends="slimLayout">
-        <put-attribute name="title" value="User Sites" />
-        <put-attribute name="body" value="/spring/jsp/UserAccounts.jsp" />
-    </definition>
-
-    <definition name="approveAccountThroughMail" extends="slimLayout">
-        <put-attribute name="title" value="Site Approval Form" />
-        <put-attribute name="body" value="/spring/jsp/AccountApproval.jsp" />
     </definition>
 
     <definition name="errorLog" extends="slimLayout">
@@ -114,53 +38,4 @@
         <put-attribute name="body" value="/spring/jsp/detailsErrorLog.jsp"/>
     </definition>
 
-    <definition name="CreateCopy" extends="baseLayout">
-        <put-attribute name="title" value="Create Copy in Repository"/>
-        <put-attribute name="body" value="/spring/jsp/CreateCopy.jsp"/>
-    </definition>
-
-    <definition name="closeWindow" extends="baseLayout">
-        <put-attribute name="title" value="Close Window"/>
-        <put-attribute name="body" value="/spring/jsp/closeWindow.jsp"/>
-    </definition>
-
-    <definition name="Warning" extends="slimLayout">
-        <put-attribute name="title" value="Warning" />
-        <put-attribute name="body" value="/spring/jsp/Warning.jsp" />
-    </definition>
-
-    <definition name="DisplayException" extends="slimLayout">
-        <put-attribute name="title" value="Display Exception" />
-        <put-attribute name="body" value="/spring/jsp/DisplayException.jsp" />
-    </definition>
-
-    <definition name="MeetingList" extends="slimLayout">
-        <put-attribute name="title" value="Meeting List" />
-        <put-attribute name="body" value="/spring/jsp/MeetingList.jsp" />
-    </definition>
-
-    <definition name="Meeting" extends="slimLayout">
-        <put-attribute name="title" value="Meeting" />
-        <put-attribute name="body" value="/spring/jsp/Meeting.jsp" />
-    </definition>
-
-    <definition name="RemoteProfiles" extends="slimLayout">
-        <put-attribute name="title" value="User Action Items" />
-        <put-attribute name="body" value="/spring/jsp/RemoteProfiles.jsp" />
-    </definition>
-
-    <definition name="UserRemoteTasks" extends="slimLayout">
-        <put-attribute name="title" value="Extended Action Items" />
-        <put-attribute name="body" value="/spring/jsp/UserRemoteTasks.jsp" />
-    </definition>
-
-    <definition name="Agents" extends="slimLayout">
-        <put-attribute name="title" value="User Action Items" />
-        <put-attribute name="body" value="/spring/jsp/Agents.jsp" />
-    </definition>
-
-    <definition name="unsubscribemember" extends="baseLayout">
-        <put-attribute name="title" value="Notification Settings" />
-        <put-attribute name="body" value="/spring/jsp/unsubscribemember.jsp" />
-    </definition>
 </tiles-definitions>

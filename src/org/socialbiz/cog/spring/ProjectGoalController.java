@@ -557,14 +557,6 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
-    /*
-    @RequestMapping(value = "/errorPage.htm", method = RequestMethod.GET)
-     public ModelAndView errorPage(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        return new ModelAndView("commonError");
-    }
-    */
-
     @RequestMapping(value = "/subProcess.ajax", method = RequestMethod.POST)
     public void searchSubProcess(HttpServletRequest request,
             HttpServletResponse response) throws Exception {

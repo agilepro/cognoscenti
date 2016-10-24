@@ -573,7 +573,6 @@ function createSubLinks(){
         var accountSubMenu2 = [new Tab(retPath+"t/"+accountId+"/$/accountListProjects.htm","List Workspaces"),
             new Tab(retPath+"t/"+accountId+"/$/accountCreateProject.htm","Create New Workspace"),
             new Tab(retPath+"t/"+accountId+"/$/accountCloneProject.htm","Clone Remote Workspace"),
-            new Tab(retPath+"t/"+accountId+"/$/convertFolderProject.htm","Convert Folder to Workspace"),
             new Tab(retPath+"t/"+accountId+"/$/searchAllNotes.htm", "Search Topics")
         ];
         var accountSubMenu4 = [new Tab(retPath+"t/"+accountId+"/$/personal.htm","Personal"),
