@@ -61,9 +61,9 @@
         <script type="text/javascript" src="<%=ar.baseURL%>yui/build/cookie/cookie-min.js"></script>
         <!-- for calender -->
         <link rel="stylesheet" type="text/css" media="all" href="<%=ar.baseURL%>jscalendar/calendar-win2k-cold-1.css" title="win2k-cold-1" />
-        <script type="text/javascript" src="<%=ar.baseURL%>jscalendar/calendar.js"></script>
+        <!--script type="text/javascript" src="<%=ar.baseURL%>jscalendar/calendar.js"></script>
         <script type="text/javascript" src="<%=ar.baseURL%>jscalendar/lang/calendar-en.js"></script>
-        <script type="text/javascript" src="<%=ar.baseURL%>jscalendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%=ar.baseURL%>jscalendar/calendar-setup.js"></script-->
         <!-- for calender -->
         <link href="<%=ar.retPath%>css/reset.css" rel="styleSheet" type="text/css" media="screen" />
         <link href="<%=ar.retPath%>css/ddlevelsmenu-base.css" rel="styleSheet" type="text/css" media="screen" />

@@ -31,7 +31,7 @@
     <meta http-equiv="imagetoolbar" content="no" />
 
     <!-- INCLUDE the ANGULAR JS library -->
-    <script src="<%=ar.baseURL%>jscript/angular.js"></script>
+    <script src="<%=ar.baseURL%>jscript/angular.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
