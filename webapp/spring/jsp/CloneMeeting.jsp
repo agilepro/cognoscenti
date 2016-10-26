@@ -87,7 +87,19 @@ app.controller('myCtrl', function($scope, $http) {
         var postURL = "meetingCreate.json";
         $scope.meetingTime.setHours($scope.meetingHour, $scope.meetingMinutes,0,0);
         $scope.meeting.startTime = $scope.meetingTime.getTime();
-        $scope.meeting.state = 1;
+        var minutesFromNow = Math.floor(($scope.meeting.startTime - (new Date()).getTime()) / 60000);
+        if (minutesFromNow<0) {
+            if (!confirm("Warning: this meeting is being scheduled for time in the past.  An email message will be sent immediately informing people of the meeting before you get a chance to change the date.   If you mean to schedule a meeting for the future, press 'Cancel' and correct the date.   Do you still want to create a meeting for the past?")) {
+                return;
+            }
+        }
+        else if ($scope.meeting.reminderTime>0 && 
+                minutesFromNow < $scope.meeting.reminderTime) {
+            if (!confirm("Warning: this meeting is scheduled for "+minutesFromNow+" minutes from now.  An email reminder scheduled to be sent "+$scope.meeting.reminderTime+" minutes before the meeting will be sent immediately.   You should make sure that the information here is ready for that email to be sent.   Is everything ready to create the meeting and send the email?")) {
+                return;
+            }
+        }
+       $scope.meeting.state = 1;
         $scope.meeting.attended = [];
         $scope.meeting.rollCall = [];
         $scope.meeting.reminderSent = -1;

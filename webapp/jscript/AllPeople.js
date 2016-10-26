@@ -20,11 +20,7 @@ app.service('AllPeople', function($http) {
             if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
                 return;
             }
-            var nix = {};
-            nix.name = person.name; 
-            nix.uid  = person.uid; 
-            nix.key  = person.key; 
-            res.push(nix);
+            res.push(person);
         });
         return res;
     }
@@ -35,10 +31,7 @@ app.service('AllPeople', function($http) {
             if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
                 return;
             }
-            res = {};
-            res.name = person.name; 
-            res.uid  = person.uid; 
-            res.key  = person.key; 
+            res = person;
         });
         return res;
     }

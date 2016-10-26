@@ -136,8 +136,11 @@ Required parameters:
     UserProfile uProf = ar.getUserProfile();
 
     JSONArray yourRoles = new JSONArray();
-    for (NGRole ngr : ngp.findRolesOfPlayer(uProf)) {
-        yourRoles.put(ngr.getName());
+    for (NGRole ngr : ngp.getAllRoles()) {
+        JSONObject jo = new JSONObject();
+        jo.put("name", ngr.getName());
+        jo.put("player", ngr.isPlayer(uProf));
+        yourRoles.put(jo);
     }
 
     JSONArray otherMembers = new JSONArray();
@@ -476,13 +479,17 @@ app.controller('myCtrl', function($scope, $http) {
           <div class="panel-heading headingfont">
               <div style="float:left">Your Roles</div>
               <div style="float:right">
-                  <a href="goalList.htm">
-                      <i class="fa fa-list"></i></a></div>
+                  <a href="roleManagement.htm">
+                      <i class="fa fa-users"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
             <div ng-repeat="role in yourRoles">
-              <a href="roleManagement.htm">{{role}}</a>
+              <a href="roleManagement.htm">
+                  <span ng-show="role.player"><i class="fa fa-check-circle-o"></i></span>
+                  <span ng-hide="role.player"><i class="fa fa-circle-o"></i></span>
+                  {{role.name}} 
+                  </a>
             </div>
           </div>
         </div>
