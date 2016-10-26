@@ -1740,8 +1740,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <td class="gridTableColummHeader"></td>
                     <td style="width:20px;"></td>
                     <td colspan="2" class="form-inline form-group">
-                        <button ng-click="savePendingEdits()" class="btn btn-danger">Save</button>
-                        <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
+                        <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
+                        <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
                     </td>
                 </tr>
 
@@ -1760,8 +1760,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <div class="well leafContent">
                 <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
                      class="leafContent" style="min-height:200px;" ></div>
-                <button ng-click="savePendingEdits()" class="btn btn-danger">Save</button>
-                <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
+                <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
+                <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
             </div>
         </td>
       </tr>
@@ -1896,15 +1896,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </span>
 <% } %>
                 <span>
-                    <i>({{item.duration}} minutes) {{item.schedule | date: 'HH:mm'}} 
+                    <i>({{item.duration}} minutes) {{item.schedule | date: 'HH:mm'}}
                       - {{item.scheduleEnd | date: 'HH:mm'}} </i>
                 </span>
         </div>
           <div ng-show="editItemDetailsMap[item.id]" class="well" style="margin:20px">
             <div class="form-inline form-group" ng-hide="item.topicLink">
-              Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"  
+              Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"
                            placeholder="Enter Agenda Item Name"/>
-                    <input type="checkbox"  ng-model="item.isSpacer"  
+                    <input type="checkbox"  ng-model="item.isSpacer"
                              class="form-control" style="width:50px;"/>
                     Break Time
             </div>
@@ -1912,8 +1912,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>
             </div>
             <div class="form-inline form-group">
-              <button ng-click="savePendingEdits()" class="btn btn-danger">Save</button>
-              <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
+              <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
+              <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
             </div>
           </div>
       </div>
@@ -2000,7 +2000,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <div class="form-inline form-group" ng-hide="item.topicLink">
               Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"
                            placeholder="Enter Agenda Item Name"/>
-                    <input type="checkbox"  ng-model="item.isSpacer"  
+                    <input type="checkbox"  ng-model="item.isSpacer"
                              class="form-control" style="width:50px;"/>
                     Break Time
             </div>
@@ -2023,8 +2023,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>
             </div>
             <div class="form-inline form-group">
-              <button ng-click="savePendingEdits()" class="btn btn-danger">Save</button>
-              <button ng-click="revertAllEdits()" class="btn btn-danger">Cancel</button>
+              <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
+              <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
             </div>
           </div>
         </td>
@@ -2044,8 +2044,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
            <div class="well leafContent">
              <div ng-model="item.desc" ui-tinymce="tinymceOptions"></div>
 
-             <button ng-click="saveEditUnlockDesciption(item)" class="btn btn-danger">Save</button>
-             <button ng-click="cancelEditUnlockDesciption(item)" class="btn btn-danger">Cancel</button>
+             <button ng-click="saveEditUnlockDesciption(item)" class="btn btn-primary btn-raised">Save</button>
+             <button ng-click="cancelEditUnlockDesciption(item)" class="btn btn-warning btn-raised">Cancel</button>
            </div>
         </td>
       </tr>
@@ -2186,7 +2186,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 <%if (isLoggedIn) { %>
     <hr/>
     <div style="margin:20px;" ng-show="meeting.state<3">
-        <button ng-click="createAgendaItem()" class="btn">Create New Agenda Item</button>
+        <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">Create New Agenda Item</button>
     </div>
 
 
