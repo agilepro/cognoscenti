@@ -59,7 +59,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
-    
+
     $scope.hideNote = false;
 
     $scope.stopRole = function(prjrole) {
@@ -97,11 +97,11 @@ app.controller('myCtrl', function($scope, $http) {
 
 
 <div class="alert alert-warning" ng-hide="hideNote" ng-click="hideNote=true">
-Please note: when you withdraw from a <b>'Members'</b> role of a workspace, 
-you will stop receiving email when meetings are called, when topics 
-are create, and when comments are made.  
-ALSO, you will no longer have any access to the workspace.  
-Withdrawing from a Members role means you are effectively leaving 
+Please note: when you withdraw from a <b>'Members'</b> role of a workspace,
+you will stop receiving email when meetings are called, when topics
+are create, and when comments are made.
+ALSO, you will no longer have any access to the workspace.
+Withdrawing from a Members role means you are effectively leaving
 the group that runs the workspace.
 </div>
 
@@ -116,7 +116,7 @@ the group that runs the workspace.
             Updated: {{prjrole.updated|date}}
         </div>
         <div class="col-xs-12 col-sm-6 col-md-3 padded">
-            <button ng-click="stopRole(prjrole)" class="btn btn-danger">Withdraw from {{prjrole.role}}</button>
+            <button ng-click="stopRole(prjrole)" class="btn btn-danger btn-raised">Withdraw from {{prjrole.role}}</button>
         </div>
         <div class="col-xs-12 col-md-6 padded">
             {{prjrole.desc}}
@@ -124,8 +124,3 @@ the group that runs the workspace.
      <div class="col-xs-12 col-sm-12 col-md-12 bottomline">
      </div>
   </div>
-
-
-
-
-
