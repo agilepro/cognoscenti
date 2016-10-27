@@ -158,13 +158,13 @@ public class MailFile extends JSONWrapper {
             emailRec.setFrom(from);
             emailRec.setCreateDate(System.currentTimeMillis());
             emailRec.setAddressee(addressee);
-            
+
             //for some reason email is not able to handle the upper ascii
-            //even though it seems to correctly encoded, the decoding seems to 
+            //even though it seems to correctly encoded, the decoding seems to
             //be confused on the other end.   Just escape for HTML and all
             //should be OK.
             //This is a horrible horrible hack ... but it works reliably.
-            //The problem seems to be the order of decoding the stream and the 
+            //The problem seems to be the order of decoding the stream and the
             //quoted printable encoding.
             StringBuilder sb = new StringBuilder();
             for (int i=0; i<emailBody.length(); i++) {
@@ -174,7 +174,7 @@ public class MailFile extends JSONWrapper {
                 }
                 else {
                     sb.append("&#");
-                    sb.append(Integer.toString((int)ch));
+                    sb.append(Integer.toString(ch));
                     sb.append(';');
                 }
             }
@@ -205,9 +205,8 @@ public class MailFile extends JSONWrapper {
      * 9 months old -- removed entirely
      */
     public void pruneOldRecords() throws Exception {
-        /*
-        long THREE_MONTHS_AGO = System.currentTimeMillis() - 90*24*60*60*1000;
-        long NINE_MONTHS_AGO = System.currentTimeMillis() - 270*24*60*60*1000;
+        long THREE_MONTHS_AGO = System.currentTimeMillis() - 90L*24L*60L*60L*1000L;
+        long NINE_MONTHS_AGO = System.currentTimeMillis() - 270L*24L*60L*60L*1000L;
 
         JSONArray oldList = kernel.getJSONArray("msgs");
         JSONArray newEmailList = new JSONArray();
@@ -217,7 +216,7 @@ public class MailFile extends JSONWrapper {
             MailInst mailInst = new MailInst(mailObject);
             long created = mailInst.getCreateDate();
             if (created<NINE_MONTHS_AGO) {
-                System.out.println("Dropping old message: "+mailInst.getSubject());
+                System.out.println("Dropping old email message: "+mailInst.getSubject());
                 continue;
             }
             if (created<THREE_MONTHS_AGO) {
@@ -227,7 +226,6 @@ public class MailFile extends JSONWrapper {
             newEmailList.put(mailObject);
         }
         kernel.put("msgs", newEmailList);
-        */
     }
 
 }

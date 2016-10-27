@@ -153,7 +153,8 @@ public class EmailSender extends TimerTask {
     // frequency.
     public void run() {
         AuthRequest ar = AuthDummy.serverBackgroundRequest();
-        ar.nowTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
+        ar.nowTime = startTime;
         ar.setNewUI(true);
 
         // make sure that this method doesn't throw any exception
@@ -164,17 +165,19 @@ public class EmailSender extends TimerTask {
             handleAllOverdueScheduledEvents(ar);
         } catch (Exception e) {
             Exception failure = new Exception(
-                    "Failure in the EmailSender thread run method.  Thread died.",
+                    "EmailSender-TimerTask failed in run method.",
                     e);
-            System.out.println("BACKGROUND EVENTS: FATAL FAILURE - " + e);
+            System.out.println("EmailSender-TimerTask: FATAL FAILURE - " + e);
             failure.printStackTrace(System.out);
             threadLastCheckException = failure;
-            System.out.println("BACKGROUND EVENTS: ---------------------------- ");
+            System.out.println("EmailSender-TimerTask: ---------------------------- ");
         }
         finally {
             //only call this when you are sure you are not holding on to any containers
             NGPageIndex.clearLocksHeldByThisThread();
         }
+        long duration = System.currentTimeMillis() - startTime;
+        System.out.println("EmailSender-TimerTask: completed scan in "+duration+"ms");
     }
 
     Object globalEmailFileLock = new Integer(999);
