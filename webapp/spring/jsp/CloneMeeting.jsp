@@ -93,7 +93,7 @@ app.controller('myCtrl', function($scope, $http) {
                 return;
             }
         }
-        else if ($scope.meeting.reminderTime>0 && 
+        else if ($scope.meeting.reminderTime>0 &&
                 minutesFromNow < $scope.meeting.reminderTime) {
             if (!confirm("Warning: this meeting is scheduled for "+minutesFromNow+" minutes from now.  An email reminder scheduled to be sent "+$scope.meeting.reminderTime+" minutes before the meeting will be sent immediately.   You should make sure that the information here is ready for that email to be sent.   Is everything ready to create the meeting and send the email?")) {
                 return;
@@ -295,7 +295,7 @@ function GetFirstHundredNoHtml(input) {
         </div>
           <!-- Form Control BUTTONS Begin -->
           <div class="form-group text-right">
-            <button type="button" class="btn btn-default btn-raised" onclick="history.back();">Cancel</button>
+            <button type="button" class="btn btn-warning btn-raised" onclick="history.back();">Cancel</button>
             <button type="submit" class="btn btn-primary btn-raised"  ng-click="createMeeting()">Clone Meeting</button>
           </div>
         </form>
