@@ -137,32 +137,120 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Meeting List
-        </div>
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="newMeeting.meetingType=1;showInput=true">New Meeting</a></li>
-              <li role="presentation" class="divider"></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="agendaBacklog.htm">Agenda Item Backlog</a></li>
-            </ul>
-          </span>
-
-        </div>
-    </div>
-
+<div class="dropdown text-right">
+  <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+  Options: <span class="caret"></span></button>
+  <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="menu1">
+    <li role="presentation"><a role="menuitem" tabindex="-1"
+        href="#" ng-click="newMeeting.meetingType=1;showInput=true">New Meeting</a></li>
+    <li role="presentation" class="divider"></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1"
+        href="agendaBacklog.htm">Agenda Item Backlog</a></li>
+  </ul>
+</div>
 
     <div id="NewMeeting" class="well" ng-show="showInput" ng-cloak>
-        <div class="rightDivContent">
+        <!--div class="rightDivContent">
             <a href="#" ng-click="showInput=false"><img src="<%= ar.retPath%>assets/iconBlackDelete.gif"/></a>
-        </div>
-        <div class="generalSettings">
+        </div-->
+              <form class="horizontal-form">
+                <fieldset>
+                  <!-- Form Control NAME Begin -->
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Name</label>
+                    <div class="col-md-10">
+                      <input type="text" class="form-control" ng-model="newMeeting.name"/>
+                    </div>
+                  </div>
+                  <!-- Form Control DATE Begin -->
+                  <div class="form-group">
+                      <label class="col-md-2 control-label">
+                        Date
+                      </label>
+                      <div class="col-md-10 container">
+                        <div class="col-md-4">
+                          <input type="text"
+                          style="width:150;"
+                          class="form-control"
+                          datepicker-popup="dd-MMMM-yyyy"
+                          ng-model="newMeetingTime"
+                          is-open="datePickOpen"
+                          datepicker-options="datePickOptions"
+                          date-disabled="datePickDisable(date, mode)"
+                          ng-required="true"
+                          ng-click="openDatePicker($event)"
+                          close-text="Close"/>
+                        </div>
+                        <div class="col-md-1"><button type="button" class="form-control" disabled="1">at</button></div>
+                        <div class="col-md-3">
+                          <select style="width:50;" ng-model="newMeetingHour" class="form-control" >
+                              <option value="0">00</option>
+                              <option value="1">01</option>
+                              <option value="2">02</option>
+                              <option value="3">03</option>
+                              <option value="4">04</option>
+                              <option value="5">05</option>
+                              <option value="6">06</option>
+                              <option value="7">07</option>
+                              <option value="8">08</option>
+                              <option value="9">09</option>
+                              <option>10</option>
+                              <option>11</option>
+                              <option>12</option>
+                              <option>13</option>
+                              <option>14</option>
+                              <option>15</option>
+                              <option>16</option>
+                              <option>17</option>
+                              <option>18</option>
+                              <option>19</option>
+                              <option>20</option>
+                              <option>21</option>
+                              <option>22</option>
+                              <option>23</option>
+                          </select>
+                        </div>
+                        <div class="col-md-1"><button type="button" class="form-control" disabled="1">:</button></div>
+                        <div class="col-md-3">
+                          <select  style="width:50;" ng-model="newMeetingMinutes" class="form-control" >
+                              <option value="0">00</option>
+                              <option>15</option>
+                              <option>30</option>
+                              <option>45</option>
+                          </select>
+                        </div>
+                      </div>
+                  </div>
+                  <!-- Form Control TYPE Begin -->
+                  <div class="form-group">
+                    <label class="col-md-2 control-label">Type</label>
+                    <div class="col-md-10">
+                      <div class="radio radio-primary">
+                        <label>
+                          <input type="radio" ng-model="newMeeting.meetingType" value="1"
+                              class="form-control">
+                              <span class="circle"></span>
+                              <span class="check"></span>
+                              Circle Meeting
+                        </label>
+                        <label>
+                          <input type="radio" ng-model="newMeeting.meetingType" value="2"
+                              class="form-control">
+                              <span class="circle"></span>
+                              <span class="check"></span>
+                              Operational Meeting
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+                <!-- Form Control BUTTONS Begin -->
+                <div class="form-group text-right">
+                  <button type="button" class="btn btn-warning btn-raised" onclick="history.back();">Cancel</button>
+                  <button type="submit" class="btn btn-primary btn-raised"  ng-click="createRow()">Create Meeting</button>
+                </div>
+              </form>
+        <!--div class="generalSettings">
             <table>
                 <tr id="trspath">
                     <td class="gridTableColummHeader">Type:</td>
@@ -250,7 +338,7 @@ app.controller('myCtrl', function($scope, $http) {
                     </td>
                 </tr>
             </table>
-        </div>
+        </div-->
     </div>
 
 
