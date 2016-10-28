@@ -14,9 +14,9 @@ Required parameters:
     UserProfile loggedUser = ar.getUserProfile();
     NGPageIndex.clearLocksHeldByThisThread();
     Cognoscenti cog = ar.getCogInstance();
-    
+
     UserCache userCache = cog.getUserCacheMgr().getCache(loggedUser.getKey());
-    
+
     String refresh = ar.defParam("ref", null);
     if (refresh!=null) {
         userCache.refreshCache(cog);
@@ -37,7 +37,7 @@ Required parameters:
 
     List<WatchRecord> watchList = loggedUser.getWatchList();
 //    WatchRecord.sortByChangeDate(watchList, cog);
-    
+
     JSONArray wList = new JSONArray();
     for (WatchRecord wr : watchList) {
         String pageKey = wr.getPageKey();
@@ -49,7 +49,7 @@ Required parameters:
         wObj.put("visited", wr.getLastSeen());
         wList.put(wObj);
     }
-    
+
     JSONArray siteList = new JSONArray();
     for (NGBook site : loggedUser.findAllMemberSites()) {
         JSONObject jObj = site.getConfigJSON();
@@ -73,11 +73,11 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.openActionItems = <%openActionItems.write(out,2,4);%>;
     $scope.openRounds  = <%openRounds.write(out,2,4);%>;
     $scope.proposals   = <%proposals.write(out,2,4);%>;
-    
+
     $scope.wList       = <%wList.write(out,2,4);%>;
     $scope.siteList    = <%siteList.write(out,2,4);%>;
     $scope.loggedUser  = <% loggedUser.getJSON().write(out,2,4);%>;
-    
+
     $scope.openActionItems.sort( function(a,b) {
         return a.duedate-b.duedate;
     });
@@ -149,7 +149,7 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="float:left">Top Action Items</div>
               <div style="float:right">
                   <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm">
-                      <i class="fa fa-search"></i></a></div>
+                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
@@ -163,18 +163,18 @@ app.controller('myCtrl', function($scope, $http) {
             </div>
           </div>
         </div>
-        
+
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Upcoming Meetings</div>
               <div style="float:right">
                   <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/UserHome.htm">
-                      <i class="fa fa-search"></i></a></div>
+                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
             <div  ng-repeat="item in futureMeetings | limitTo: 10">
-                
+
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">
                  {{fixLength(item.name)}} @ {{item.startTime|date}}</a>
             </div>
@@ -195,7 +195,7 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="float:left">Need to Respond</div>
               <div style="float:right">
                   <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userMissingResponses.htm">
-                      <i class="fa fa-search"></i></a></div>
+                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
@@ -207,15 +207,15 @@ app.controller('myCtrl', function($scope, $http) {
                </div>
           </div>
         </div>
-        
-        
-        
+
+
+
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Need to Complete</div>
               <div style="float:right">
                   <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm">
-                      <i class="fa fa-search"></i></a></div>
+                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
@@ -238,7 +238,7 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="float:left">Workspaces you Watch</div>
               <div style="float:right">
                   <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm">
-                      <i class="fa fa-search"></i></a></div>
+                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
@@ -252,15 +252,15 @@ app.controller('myCtrl', function($scope, $http) {
                </div>
           </div>
         </div>
-        
-        
-        
+
+
+
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Sites you Manage</div>
               <div style="float:right">
                   <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userAccounts.htm">
-                      <i class="fa fa-search"></i></a></div>
+                      <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
