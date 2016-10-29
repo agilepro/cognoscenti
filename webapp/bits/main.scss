@@ -169,7 +169,7 @@ img {
         background-color: $clr-background-light;
       }
       li>a {
-        color: $clr-font-dark;
+        color: $clr-font-dark !important;
         font-size: $fs-appbar;
       }
     }
