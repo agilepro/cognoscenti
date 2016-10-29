@@ -22,7 +22,6 @@ package org.socialbiz.cog.spring;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,7 +77,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
-import org.springframework.web.servlet.ModelAndView;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
@@ -532,7 +530,7 @@ public class UserController extends BaseController {
 
 
 
-
+/*
     @RequestMapping(value = "/handlePersonalSubscriptions.ajax", method = RequestMethod.POST)
     public void handlePersonalSubscriptions(HttpServletRequest request, HttpServletResponse response)
     throws Exception {
@@ -597,9 +595,9 @@ public class UserController extends BaseController {
 
         NGWebUtils.sendResponse(ar, responseMessage);
     }
+*/
 
-
-
+/*
     @RequestMapping(value = "/getUsers.ajax", method = RequestMethod.GET)
     public void getUsers(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -630,7 +628,7 @@ public class UserController extends BaseController {
             ar.logException("Caught by getUsers.ajax", ex);
         }
     }
-
+*/
 
     @RequestMapping(value = "/markAsTemplate.ajax", method = RequestMethod.POST)
     public void markAsTemplate(HttpServletRequest request, HttpServletResponse response)

@@ -146,15 +146,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         var postdata = angular.toJson(rec);
         $scope.showError=false;
         $http.post(postURL ,postdata)
-        .success( function(data) {
-            $scope.noteInfo = data;
-            console.log("GOT NOTE SAVED", data);
-            $scope.refreshHistory();
-        })
+        .success( $scope.receiveTopicRecord )
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
     };
+    
+    $scope.receiveTopicRecord = function(data) {
+        $scope.noteInfo = data;
+        console.log("GOT NOTE UPDATED", data);
+        var check = false;
+        data.subscribers.forEach( function(item) {
+            if (item.uid == "<%=ar.getBestUserId()%>") {
+                check = true;
+            }
+        });
+        $scope.fixUpChoices();
+        $scope.isSubscriber = check;
+        $scope.refreshHistory();
+    }
 
     $scope.postComment = function(itemNotUsed, cmt) {
         cmt.state = 12;
@@ -207,10 +217,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
-            $scope.noteInfo = data;
-            $scope.fixUpChoices();
             $scope.myComment = "";
-            $scope.refreshHistory();
+            $scope.receiveTopicRecord(data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -443,6 +451,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         }
         return "";
     }
+    
+    $scope.changeSubscription = function(onOff) {
+        var url = "topicSubscribe.json?nid="+$scope.noteInfo.id;
+        if (!onOff) {
+            url = "topicUnsubscribe.json?nid="+$scope.noteInfo.id;
+        }
+        console.log("STARTING: ", url);
+        $http.get(url)
+        .success( $scope.receiveTopicRecord )
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
 
 
     $scope.openCommentCreator = function(itemNotUsed, type, replyTo, defaultBody) {
@@ -673,6 +694,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             //cancel action - nothing really to do
         });
     };
+    
+    $scope.receiveTopicRecord($scope.noteInfo);
 
 });
 
@@ -730,6 +753,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">Generate PDF</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   href="sendNote.htm?noteId={{noteInfo.id}}">Send Topic By Email</a></li>
+              <li role="presentation" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
+                  ng-click="changeSubscription(true)">Subscribe to this Topic</a></li>
+              <li role="presentation" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
+                  ng-click="changeSubscription(false)">Unsubscribing from this Topic</a></li>
             </ul>
           </span>
 <% } %>
@@ -785,7 +812,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           Add/Remove <i class="fa fa-flag"></i> Action Items </button>
 <% } %>
     </div>
-
 
     <div style="height:30px;"></div>
 
@@ -849,6 +875,15 @@ comment-state-complete {
 </table>
 
 
+    <div style="margin:50px;">
+      <span style="width:150px">Current subscribers:</span>
+      <span ng-repeat="user in noteInfo.subscribers" class="btn btn-sm btn-default btn-raised"  style="margin:4px;">
+              {{user.name}}
+      </span>
+      <span>{{subscriber}}</span>
+    </div>
+
+    
 
 </div>
 

@@ -802,7 +802,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
        */
       public List<AddressListEntry> getSubscribers() throws Exception {
           List<AddressListEntry> res = new ArrayList<AddressListEntry>();
-          for (String name : getVector("subscriber")) {
+          for (String name : getVector("subscribers")) {
               AddressListEntry aLabel = new AddressListEntry(name);
               res.add(aLabel);
           }
@@ -823,7 +823,45 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           //Since this is a 'set' type vector, always sort them so that they are
           //stored in a consistent way ... so files are more easily compared
           Collections.sort(values);
-          setVector("labels", values);
+          setVector("subscribers", values);
+      }
+      /**
+       * Checks to see if a particular person exists in the set of subscribers,
+       * and adds them if they are not there.
+       * Returns true if someone added (the topic changed) and false if no change.
+       */
+      public boolean addSubscriber(String newVal) throws Exception {
+          List<AddressListEntry> current = getSubscribers();
+          for (AddressListEntry existingVal : current) {
+              if (existingVal.hasAnyId(newVal)) {
+                  //this person already exists in the list, so don't add them again.
+                  return false;
+              }
+          }
+          
+          //they are not in the list, so really add them
+          AddressListEntry newLabel = new AddressListEntry(newVal);
+          addVectorValue("subscribers", newLabel.getUniversalId());
+          return true;
+      }
+      public boolean removeSubscriber(String oldVal) throws Exception {
+          List<AddressListEntry> current = getSubscribers();
+          List<AddressListEntry> future = new ArrayList<AddressListEntry>();
+          boolean found = false;
+          for (AddressListEntry existingVal : current) {
+              if (existingVal.hasAnyId(oldVal)) {
+                  //this person exists in the list, so don't keep them
+                  found = true;
+              }
+              else {
+                  future.add(existingVal);
+              }
+          }
+          
+          if (found) {
+              setSubscribers(future);
+          }
+          return found;
       }
       
 
@@ -1022,6 +1060,9 @@ public class TopicRecord extends CommentContainer implements EmailContext {
              setDiscussionPhase(noteObj.getString("discussionPhase"), ar);
          }
 
+         //simplistic for now ... if you update anything, yo uget added to the subscribers
+         addSubscriber(ar.getBestUserId());
+         
      }
      public void updateHtmlFromJSON(AuthRequest ar, JSONObject noteObj) throws Exception {
          if (noteObj.has("html")) {

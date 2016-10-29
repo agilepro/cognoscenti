@@ -318,6 +318,7 @@ public class SiteController extends BaseController {
 //auto complete when entering user names.
 //However this really does not site well with the angular approach
 //TODO: this should be eliminated once we know it is not being used.
+/*
     @RequestMapping(value = "/{siteId}/$/getUsers.ajax", method = RequestMethod.GET)
     public void getUsers(HttpServletRequest request, HttpServletResponse response,
             @PathVariable String siteId) throws Exception {
@@ -335,6 +336,8 @@ public class SiteController extends BaseController {
             throw new NGException("nugen.operation.fail.get.users", null, ex);
         }
     }
+*/
+
 
     /*
     @RequestMapping(value = "/{siteId}/$/EditRoleBook.htm", method = RequestMethod.GET)

@@ -550,7 +550,7 @@ public class MainTabsViewControler extends BaseController {
          }
      }
 
-     @RequestMapping(value = "/{siteId}/{pageId}/topicSubscribe.json", method = RequestMethod.POST)
+     @RequestMapping(value = "/{siteId}/{pageId}/topicSubscribe.json", method = RequestMethod.GET)
      public void topicSubscribe(@PathVariable String siteId,@PathVariable String pageId,
              HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -564,16 +564,7 @@ public class MainTabsViewControler extends BaseController {
              TopicRecord note = ngw.getNote(nid);
              UserProfile up = ar.getUserProfile();
 
-             boolean found = false;
-             List<AddressListEntry> subs = note.getSubscribers();
-             for (AddressListEntry ale : subs) {
-                 if (up.hasAnyId(ale.getUniversalId())) {
-                     found = true;
-                 }
-             }
-             if (!found) {
-                 subs.add( new AddressListEntry(up.getUniversalId()) );
-                 note.setSubscribers(subs);
+             if (note.addSubscriber(up.getUniversalId())) {
                  ngw.saveFile(ar, "Added subscriber");
              }
 
@@ -588,7 +579,7 @@ public class MainTabsViewControler extends BaseController {
      }
 
 
-     @RequestMapping(value = "/{siteId}/{pageId}/topicUsubscribe.json", method = RequestMethod.POST)
+     @RequestMapping(value = "/{siteId}/{pageId}/topicUnsubscribe.json", method = RequestMethod.GET)
      public void topicUsubscribe(@PathVariable String siteId,@PathVariable String pageId,
              HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -601,19 +592,9 @@ public class MainTabsViewControler extends BaseController {
              TopicRecord note = ngw.getNote(nid);
              UserProfile up = ar.getUserProfile();
 
-             AddressListEntry found = null;
-             List<AddressListEntry> subs = note.getSubscribers();
-             for (AddressListEntry ale : subs) {
-                 if (up.hasAnyId(ale.getUniversalId())) {
-                     found = ale;
-                 }
-             }
-             if (found!=null) {
-                 subs.remove( found );
-                 note.setSubscribers(subs);
+             if (note.removeSubscriber(up.getUniversalId())) {
                  ngw.saveFile(ar, "Removed subscriber");
              }
-
 
              JSONObject repo = note.getJSONWithComments(ar, ngw);
              repo.write(ar.w, 2, 2);
