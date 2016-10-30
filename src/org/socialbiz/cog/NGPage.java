@@ -205,18 +205,6 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     }
 
     /**
-    * This must be called and initialized BEFORE attempting to access
-    * any page.
-    */
-    /*
-    public static void initDataPath(String path)
-    {
-        pageCache.emptyCache();
-    }
-    */
-
-
-    /**
      * To an existing project, add all the (1) Action Items (2) Roles of an
      * existing project.
      * @param ar is needed to get the current logged in user and the current time
@@ -958,6 +946,11 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         return getRequiredRole("Administrators");
     }
 
+    public NGRole getMuteRole() throws Exception {
+        return pageInfo.requireChild("muteRole", CustomRole.class);
+    }
+
+    
     /**
     * implemented special functionality for projects ... there are site
     * executives, and there are task assignees to consider.
@@ -1203,7 +1196,6 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         }
         return pageInfo;
     }
-
 
     @Override
     public void writeContainerLink(AuthRequest ar, int len) throws Exception

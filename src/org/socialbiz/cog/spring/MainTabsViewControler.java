@@ -561,15 +561,14 @@ public class MainTabsViewControler extends BaseController {
              ar.assertMember("Must be a member to subscribe to a topic.");
              ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
-             TopicRecord note = ngw.getNote(nid);
+             TopicRecord topic = ngw.getNote(nid);
              UserProfile up = ar.getUserProfile();
+             
+             topic.getSubscriberRole().addPlayer(up.getAddressListEntry());
+             ngw.save(); //just save flag, don't mark page as changed
 
-             if (note.addSubscriber(up.getUniversalId())) {
-                 ngw.saveFile(ar, "Added subscriber");
-             }
 
-
-             JSONObject repo = note.getJSONWithComments(ar, ngw);
+             JSONObject repo = topic.getJSONWithComments(ar, ngw);
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -589,14 +588,13 @@ public class MainTabsViewControler extends BaseController {
              ar.setPageAccessLevels(ngw);
              ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
-             TopicRecord note = ngw.getNote(nid);
+             TopicRecord topic = ngw.getNote(nid);
              UserProfile up = ar.getUserProfile();
 
-             if (note.removeSubscriber(up.getUniversalId())) {
-                 ngw.saveFile(ar, "Removed subscriber");
-             }
+             topic.getSubscriberRole().removePlayerCompletely(up);
+             ngw.save(); //just save flag, don't mark page as changed
 
-             JSONObject repo = note.getJSONWithComments(ar, ngw);
+             JSONObject repo = topic.getJSONWithComments(ar, ngw);
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){

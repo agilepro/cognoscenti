@@ -405,13 +405,9 @@ public class CommentRecord extends DOMFace {
 
 
 
-    public void commentEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
+    public void commentEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
-        String targetRole = noteOrMeet.getTargetRole();
-        if (targetRole==null || targetRole.length()==0) {
-            targetRole = "Members";
-        }
-        OptOutAddr.appendUsersFromRole(ngp, targetRole, sendTo);
+        noteOrMeet.appendTargetEmails(sendTo, ngw);
 
         //add the commenter in case missing from the target role
         AddressListEntry commenter = getUser();
@@ -431,7 +427,7 @@ public class CommentRecord extends DOMFace {
                     ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
                 }
             }
-            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile, mailFile, null);
+            constructEmailRecordOneUser(ar, ngw, noteOrMeet, ooa, commenterProfile, mailFile, null);
         }
 
         if (getState()==CommentRecord.COMMENT_STATE_CLOSED) {
@@ -448,13 +444,9 @@ public class CommentRecord extends DOMFace {
 
 
 
-    public void commentResendRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
+    public void commentResendRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
         List<OptOutAddr> originalList = new ArrayList<OptOutAddr>();
-        String targetRole = noteOrMeet.getTargetRole();
-        if (targetRole==null || targetRole.length()==0) {
-            targetRole = "Members";
-        }
-        OptOutAddr.appendUsersFromRole(ngp, targetRole, originalList);
+        noteOrMeet.appendTargetEmails(originalList, ngw);
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
         for (OptOutAddr oneMem : originalList) {
             //is there a response from this person, if not add to sendTo list.
@@ -487,7 +479,7 @@ public class CommentRecord extends DOMFace {
                     ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
                 }
             }
-            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, commenterProfile, mailFile, resendMsg);
+            constructEmailRecordOneUser(ar, ngw, noteOrMeet, ooa, commenterProfile, mailFile, resendMsg);
         }
 
         this.setResendMessage(null);
@@ -681,9 +673,9 @@ public class CommentRecord extends DOMFace {
     }
 
 
-    public void gatherUnsentScheduledNotification(NGPage ngp, EmailContext noteOrMeet,
+    public void gatherUnsentScheduledNotification(NGWorkspace ngw, EmailContext noteOrMeet,
             ArrayList<ScheduledNotification> resList) throws Exception {
-        ScheduledNotification sn = new CRScheduledNotification(ngp, noteOrMeet, this);
+        ScheduledNotification sn = new CRScheduledNotification(ngw, noteOrMeet, this);
         if (sn.needsSending()) {
             resList.add(sn);
         }
@@ -693,7 +685,7 @@ public class CommentRecord extends DOMFace {
             //
             //there can be responses only if this is a "poll" type comment (a proposal)
             for (ResponseRecord rr : getResponses()) {
-                ScheduledNotification snr = rr.getScheduledNotification(ngp, noteOrMeet, this);
+                ScheduledNotification snr = rr.getScheduledNotification(ngw, noteOrMeet, this);
                 if (snr.needsSending()) {
                     resList.add(snr);
                 }
@@ -701,7 +693,7 @@ public class CommentRecord extends DOMFace {
 
             String resend = getResendMessage();
             if (resend!=null && resend.length()>0) {
-                CRResendNotification crrn = new CRResendNotification(ngp, noteOrMeet, this);
+                CRResendNotification crrn = new CRResendNotification(ngw, noteOrMeet, this);
                 if (crrn.needsSending()) {
                     resList.add(crrn);
                 }
@@ -711,12 +703,12 @@ public class CommentRecord extends DOMFace {
 
 
     private class CRScheduledNotification implements ScheduledNotification {
-        NGPage ngp;
+        NGWorkspace ngw;
         EmailContext noteOrMeet;
         CommentRecord cr;
 
-        public CRScheduledNotification( NGPage _ngp, EmailContext _noteOrMeet, CommentRecord _cr) {
-            ngp  = _ngp;
+        public CRScheduledNotification(NGWorkspace _ngp, EmailContext _noteOrMeet, CommentRecord _cr) {
+            ngw  = _ngp;
             noteOrMeet = _noteOrMeet;
             cr   = _cr;
         }
@@ -746,7 +738,7 @@ public class CommentRecord extends DOMFace {
         }
 
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
-            cr.commentEmailRecord(ar,ngp,noteOrMeet,mailFile);
+            cr.commentEmailRecord(ar,ngw,noteOrMeet,mailFile);
         }
 
         public String selfDescription() throws Exception {
@@ -756,12 +748,12 @@ public class CommentRecord extends DOMFace {
     }
 
     private class CRResendNotification implements ScheduledNotification {
-        NGPage ngp;
+        NGWorkspace ngw;
         EmailContext noteOrMeet;
         CommentRecord cr;
 
-        public CRResendNotification( NGPage _ngp, EmailContext _noteOrMeet, CommentRecord _cr) {
-            ngp  = _ngp;
+        public CRResendNotification( NGWorkspace _ngp, EmailContext _noteOrMeet, CommentRecord _cr) {
+            ngw  = _ngp;
             noteOrMeet = _noteOrMeet;
             cr   = _cr;
         }
@@ -775,7 +767,7 @@ public class CommentRecord extends DOMFace {
         }
 
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
-            cr.commentResendRecord(ar,ngp,noteOrMeet,mailFile);
+            cr.commentResendRecord(ar,ngw,noteOrMeet,mailFile);
         }
 
         public String selfDescription() throws Exception {

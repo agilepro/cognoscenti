@@ -98,13 +98,9 @@ public class ResponseRecord extends DOMFace
     }
 
 
-    public void responseEmailRecord(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, CommentRecord cr, MailFile mailFile) throws Exception {
+    public void responseEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, CommentRecord cr, MailFile mailFile) throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
-        String targetRole = noteOrMeet.getTargetRole();
-        if (targetRole==null || targetRole.length()==0) {
-            targetRole = "Members";
-        }
-        OptOutAddr.appendUsersFromRole(ngp, targetRole, sendTo);
+        noteOrMeet.appendTargetEmails(sendTo, ngw);
 
         //add the commenter in case missing from the target role
         AddressListEntry commenter1 = cr.getUser();
@@ -120,7 +116,7 @@ public class ResponseRecord extends DOMFace
         }
 
         for (OptOutAddr ooa : sendTo) {
-            constructEmailRecordOneUser(ar, ngp, noteOrMeet, ooa, cr, commenterProfile, mailFile);
+            constructEmailRecordOneUser(ar, ngw, noteOrMeet, ooa, cr, commenterProfile, mailFile);
         }
         setEmailSent(true);
     }
@@ -218,18 +214,18 @@ public class ResponseRecord extends DOMFace
         }
     }
 
-    public ScheduledNotification getScheduledNotification(NGPage ngp, EmailContext noteOrMeet, CommentRecord cr) {
-        return new RRScheduledNotification(ngp, noteOrMeet, cr, this);
+    public ScheduledNotification getScheduledNotification(NGWorkspace ngw, EmailContext noteOrMeet, CommentRecord cr) {
+        return new RRScheduledNotification(ngw, noteOrMeet, cr, this);
     }
 
     private class RRScheduledNotification implements ScheduledNotification {
-        NGPage ngp;
+        NGWorkspace ngw;
         EmailContext noteOrMeet;
         CommentRecord cr;
         ResponseRecord rr;
 
-        public RRScheduledNotification( NGPage _ngp, EmailContext _noteOrMeet, CommentRecord _cr, ResponseRecord _rr) {
-            ngp  = _ngp;
+        public RRScheduledNotification( NGWorkspace _ngp, EmailContext _noteOrMeet, CommentRecord _cr, ResponseRecord _rr) {
+            ngw  = _ngp;
             noteOrMeet = _noteOrMeet;
             cr   = _cr;
             rr   = _rr;
@@ -243,7 +239,7 @@ public class ResponseRecord extends DOMFace
         }
 
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
-            rr.responseEmailRecord(ar,ngp,noteOrMeet,cr,mailFile);
+            rr.responseEmailRecord(ar,ngw,noteOrMeet,cr,mailFile);
         }
 
         public String selfDescription() throws Exception {

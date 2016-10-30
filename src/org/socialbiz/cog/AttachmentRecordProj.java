@@ -188,9 +188,8 @@ public class AttachmentRecordProj extends AttachmentRecord
         return "Attachment: "+getDisplayName();
     }
 
-    @Override
-    public String getTargetRole() throws Exception {
-        return "Members";
+    public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
+        OptOutAddr.appendUsersFromRole(ngw, "Members", sendTo);
     }
 
     @Override

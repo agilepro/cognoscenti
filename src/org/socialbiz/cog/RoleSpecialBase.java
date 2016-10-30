@@ -29,7 +29,7 @@ import org.socialbiz.cog.exception.ProgramLogicError;
  * Each page can have a role that represents the members of the page, and this
  * object represents that as a NGRole object.
  */
-public class RoleSpecialBase {
+public abstract class RoleSpecialBase implements NGRole {
 
     RoleSpecialBase() {
     }
@@ -74,6 +74,10 @@ public class RoleSpecialBase {
     }
 
     public void removePlayer(AddressListEntry oldMember) throws Exception {
+        throw new RuntimeException(
+                "SpecialRoleBase does not implement removePlayer");
+    }
+    public void removePlayerCompletely(UserRef oldMember) throws Exception {
         throw new RuntimeException(
                 "SpecialRoleBase does not implement removePlayer");
     }

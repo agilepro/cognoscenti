@@ -237,5 +237,4 @@ public class PageInfoRecord extends DOMFace
     public void setProjectMailId(String id) {
         setAttribute("projectMailId", id);
     }
-
 }

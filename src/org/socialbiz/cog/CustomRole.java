@@ -76,8 +76,7 @@ public class CustomRole extends DOMFace implements NGRole
     {
         List<AddressListEntry> list=new ArrayList<AddressListEntry>();
         List<String> members = getVector("member");
-        for (String memberID : members)
-        {
+        for (String memberID : members) {
             list.add(AddressListEntry.newEntryFromStorage(memberID));
         }
         return list;
@@ -95,6 +94,17 @@ public class CustomRole extends DOMFace implements NGRole
         }
         removeVectorValue("member", whichId);
     }
+    public void removePlayerCompletely(UserRef user) throws Exception {
+        List<String> oldPlayers = getVector("member");
+        List<String> newPlayers = new ArrayList<String>();
+        for (String memberID : oldPlayers) {
+            if (!user.hasAnyId(memberID)) {
+                newPlayers.add(memberID);
+            }
+        }
+        this.setVector("member", newPlayers);
+    }
+
     public void clear()
     {
         clearVector("member");

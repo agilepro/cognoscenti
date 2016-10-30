@@ -127,6 +127,19 @@ public class TopicRecord extends CommentContainer implements EmailContext {
     public void setTargetRole(String newVal) throws Exception {
         setAttribute("targetRole", newVal);
     }
+    public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
+        NGRole subsRole = getSubscriberRole();
+        List<AddressListEntry> subscribers = subsRole.getDirectPlayers();
+        if (subscribers.size()>0) {
+            for (AddressListEntry ale : subscribers) {
+                OptOutAddr ooa = new OptOutTopicSubscriber(ale, ngw.getKey(), this);
+                sendTo.add(ooa);
+            }
+        }
+        else {
+            OptOutAddr.appendUnmutedUsersFromRole(ngw, getTargetRole(), sendTo);
+        }
+    }
 
 
     public long getLastEdited()
@@ -797,81 +810,16 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           return allMeetings;
       }
 
-      /**
-       * get the subscribers on a discussion topic
-       */
-      public List<AddressListEntry> getSubscribers() throws Exception {
-          List<AddressListEntry> res = new ArrayList<AddressListEntry>();
-          for (String name : getVector("subscribers")) {
-              AddressListEntry aLabel = new AddressListEntry(name);
-              res.add(aLabel);
-          }
-          return res;
-      }
-
-      /**
-       * set the list of subscribers on a discussion topic
-       */
-      public void setSubscribers(List<AddressListEntry> values) throws Exception {
-          List<String> labelNames = new ArrayList<String>();
-          for (AddressListEntry aLable : values) {
-              labelNames.add(aLable.getUniversalId());
-          }
-          setSubscribersStr(labelNames);
-      }
-      public void setSubscribersStr(List<String> values) throws Exception {
-          //Since this is a 'set' type vector, always sort them so that they are
-          //stored in a consistent way ... so files are more easily compared
-          Collections.sort(values);
-          setVector("subscribers", values);
-      }
-      /**
-       * Checks to see if a particular person exists in the set of subscribers,
-       * and adds them if they are not there.
-       * Returns true if someone added (the topic changed) and false if no change.
-       */
-      public boolean addSubscriber(String newVal) throws Exception {
-          List<AddressListEntry> current = getSubscribers();
-          for (AddressListEntry existingVal : current) {
-              if (existingVal.hasAnyId(newVal)) {
-                  //this person already exists in the list, so don't add them again.
-                  return false;
-              }
-          }
-          
-          //they are not in the list, so really add them
-          AddressListEntry newLabel = new AddressListEntry(newVal);
-          addVectorValue("subscribers", newLabel.getUniversalId());
-          return true;
-      }
-      public boolean removeSubscriber(String oldVal) throws Exception {
-          List<AddressListEntry> current = getSubscribers();
-          List<AddressListEntry> future = new ArrayList<AddressListEntry>();
-          boolean found = false;
-          for (AddressListEntry existingVal : current) {
-              if (existingVal.hasAnyId(oldVal)) {
-                  //this person exists in the list, so don't keep them
-                  found = true;
-              }
-              else {
-                  future.add(existingVal);
-              }
-          }
-          
-          if (found) {
-              setSubscribers(future);
-          }
-          return found;
+      public NGRole getSubscriberRole() throws Exception {
+          return requireChild("subscriberRole", CustomRole.class);
       }
       
 
-      public void topicEmailRecord(AuthRequest ar, NGWorkspace ngp, TopicRecord note, MailFile mailFile) throws Exception {
+      public void topicEmailRecord(AuthRequest ar, NGWorkspace ngw, TopicRecord topic, MailFile mailFile) throws Exception {
           List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
-          String targetRole = note.getTargetRole();
-          if (targetRole==null || targetRole.length()==0) {
-              targetRole = "Members";
-          }
-          OptOutAddr.appendUsersFromRole(ngp, targetRole, sendTo);
+          //Note, the email about the TOPIC goes to everyone in target role.
+          //The subscribers control the recipients of comment emails
+          OptOutAddr.appendUnmutedUsersFromRole(ngw, getTargetRole(), sendTo);
 
           UserRef creator = getModUser();
           UserProfile creatorProfile = UserManager.findUserByAnyId(creator.getUniversalId());
@@ -882,13 +830,13 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           }
 
           for (OptOutAddr ooa : sendTo) {
-              constructEmailRecordOneUser(ar, ngp, note, ooa, creatorProfile, mailFile);
+              constructEmailRecordOneUser(ar, ngw, topic, ooa, creatorProfile, mailFile);
           }
           setEmailSent(true);
 
           //when the email is sent, update the time
           //of the entire note so that it appears at the top of list.
-          note.setLastEdited(ar.nowTime);
+          topic.setLastEdited(ar.nowTime);
       }
 
       private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, TopicRecord note, OptOutAddr ooa,
@@ -944,7 +892,8 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           }
           thisNote.put("labelMap",      labelMap);
           JSONArray subs = new JSONArray();
-          for (AddressListEntry ale : getSubscribers() ) {
+          NGRole subRole = getSubscriberRole();
+          for (AddressListEntry ale : subRole.getDirectPlayers()) {
               subs.put(ale.getJSON());
           }
           thisNote.put("subscribers", subs);
@@ -1060,8 +1009,8 @@ public class TopicRecord extends CommentContainer implements EmailContext {
              setDiscussionPhase(noteObj.getString("discussionPhase"), ar);
          }
 
-         //simplistic for now ... if you update anything, yo uget added to the subscribers
-         addSubscriber(ar.getBestUserId());
+         //simplistic for now ... if you update anything, you get added to the subscribers
+         getSubscriberRole().addPlayerIfNotPresent(ar.getUserProfile().getAddressListEntry());
          
      }
      public void updateHtmlFromJSON(AuthRequest ar, JSONObject noteObj) throws Exception {

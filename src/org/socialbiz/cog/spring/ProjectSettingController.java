@@ -184,36 +184,50 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "Unknown";
         try{
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            ar.setPageAccessLevels(ngw);
             ar.assertLoggedIn("Must be logged in to set personal settings.");
             JSONObject personalInfo = getPostedObject(ar);
             UserProfile up = ar.getUserProfile();
 
+            
             op = personalInfo.getString("op");
             if ("SetWatch".equals(op)) {
                 up.setWatch(pageId, ar.nowTime);
+                UserManager.writeUserProfilesToFile();
             }
             else if ("ClearWatch".equals(op)) {
                 up.clearWatch(pageId);
+                UserManager.writeUserProfilesToFile();
             }
             else if ("SetTemplate".equals(op)) {
                 up.setProjectAsTemplate(pageId);
+                UserManager.writeUserProfilesToFile();
             }
             else if ("ClearTemplate".equals(op)) {
                 up.removeTemplateRecord(pageId);
+                UserManager.writeUserProfilesToFile();
             }
             else if ("SetNotify".equals(op)) {
                 up.setNotification(pageId, ar.nowTime);
+                UserManager.writeUserProfilesToFile();
             }
             else if ("ClearNotify".equals(op)) {
                 up.clearNotification(pageId);
+                UserManager.writeUserProfilesToFile();
+            }
+            else if ("SetEmailMute".equals(op)) {
+                ngw.getMuteRole().addPlayerIfNotPresent(up.getAddressListEntry());
+                ngw.save(); //just save flag, don't mark workspace as changed
+            }
+            else if ("ClearEmailMute".equals(op)) {
+                ngw.getMuteRole().removePlayerCompletely(up);
+                ngw.save(); //just save flag, don't mark workspace as changed
             }
             else {
                 throw new Exception("Unable to understand the operation "+op);
             }
 
-            UserManager.writeUserProfilesToFile();
             JSONObject repo = new JSONObject();
             repo.put("op",  op);
             repo.put("success",  true);

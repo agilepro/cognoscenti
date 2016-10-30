@@ -314,9 +314,9 @@ public class AgendaItem extends CommentContainer {
 
     }
 
-    public void gatherUnsentScheduledNotification(NGPage ngp, EmailContext meet, ArrayList<ScheduledNotification> resList) throws Exception {
+    public void gatherUnsentScheduledNotification(NGWorkspace ngw, EmailContext meet, ArrayList<ScheduledNotification> resList) throws Exception {
         for (CommentRecord ac : this.getComments()) {
-            ac.gatherUnsentScheduledNotification(ngp, meet, resList);
+            ac.gatherUnsentScheduledNotification(ngw, meet, resList);
         }
     }
 

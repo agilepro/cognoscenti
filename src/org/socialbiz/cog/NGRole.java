@@ -98,6 +98,11 @@ public interface NGRole extends NGLabel {
     * to find out the exact ID of a user, and then use that exact ID for the remove.
     */
     public void removePlayer(AddressListEntry oldMember) throws Exception;
+    
+    /**
+    * Searches the role and removes all ids which belong to a particular user
+    */
+    public void removePlayerCompletely(UserRef user) throws Exception;
 
     /**
     * Remove all direct members of this role.

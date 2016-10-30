@@ -103,6 +103,13 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     public void setTargetRole(String newVal) throws Exception {
         setAttribute("targetRole", newVal);
     }
+    public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
+        String targetRole = getTargetRole();
+        if (targetRole==null || targetRole.length()==0) {
+            targetRole = "Members";
+        }
+        OptOutAddr.appendUnmutedUsersFromRole(ngw, targetRole, sendTo);
+    }
 
     public List<AgendaItem> getAgendaItems() throws Exception {
         return getChildren("agenda", AgendaItem.class);

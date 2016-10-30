@@ -30,7 +30,7 @@ import org.workcast.json.JSONObject;
  * This is a role that extacts the assignees of a task, and returns that using
  * an interface of a role.
  *
- * This class is an interface class -- it does not hold any information but it
+ * This class is an interface wrapper class -- it does not hold any information but it
  * simply reads and write information to/from the GoalRecord itself without
  * caching anything.
  */
@@ -83,12 +83,15 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
     }
 
     public void removePlayer(AddressListEntry oldMember) throws Exception {
+        removePlayerCompletely(oldMember);
+    }
+    public void removePlayerCompletely(UserRef user) throws Exception {
         List<AddressListEntry> current = getDirectPlayers();
         StringBuffer newVal = new StringBuffer();
         boolean needComma = false;
         boolean changed = false;
         for (AddressListEntry one : current) {
-            if (oldMember.equals(one)) {
+            if (user.hasAnyId(one.getUniversalId())) {
                 // person was in the list, this will remove him from it
                 changed = true;
             } else {

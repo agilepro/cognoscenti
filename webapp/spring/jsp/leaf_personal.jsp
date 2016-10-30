@@ -35,6 +35,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.watchTime  = <%=uProf.watchTime(pageId)%>;
     $scope.isTemplate = <%=uProf.findTemplate(pageId)%>;
     $scope.isNotify   = <%=uProf.isNotifiedForProject(pageId)%>;
+    $scope.isMute     = <%=ngp.getMuteRole().isPlayer(uProf)%>;
     $scope.roleList   = <%roleList.write(out,2,4);%>;
 
     $scope.showError = false;
@@ -70,6 +71,12 @@ app.controller('myCtrl', function($scope, $http) {
             }
             else if ("ClearNotify" == op) {
                 $scope.isNotify = false;
+            }
+            else if ("SetEmailMute" == op) {
+                $scope.isMute = true;
+            }
+            else if ("ClearEmailMute" == op) {
+                $scope.isMute = false;
             }
         })
         .error( function(data, status, headers, config) {
@@ -187,21 +194,46 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
             </tr>
             <tr>
-                <td><b>Notification:</b></td>
+                <td><b>Digest:</b></td>
                 <td>
-                    <button ng-show="isNotify" class="btn" ng-click="userOp('ClearNotify')"><i class="fa  fa-check-square-o"></i> Receive Notifications</button>
-                    <button ng-hide="isNotify" class="btn" ng-click="userOp('SetNotify')"><i class="fa  fa-square-o"></i> Receive Notifications</button>
+                    <button ng-show="isNotify" class="btn" ng-click="userOp('ClearNotify')"><i class="fa  fa-check-square-o"></i>
+                    Receive Digest</button>
+                    <button ng-hide="isNotify" class="btn" ng-click="userOp('SetNotify')"><i class="fa  fa-square-o"></i> 
+                    Receive Digest</button>
                 </td>
                 <td ng-hide="openNotify">
                     <button class="btn" ng-click="openNotify=!openNotify">?</button>
                 </td>
                 <td ng-show="openNotify" ng-click="openNotify=!openNotify">
-                    <span ng-hide="isNotify"><b>You are not receiving notifications for this workspace</b></span>
-                    <span ng-show="isNotify"><b>You are receiving notifications for this workspace</b></span>
+                    <span ng-hide="isNotify"><b>You are not receiving the digest for this workspace</b></span>
+                    <span ng-show="isNotify"><b>You are receiving the digest for this workspace</b></span>
                     <br/>
                     <br/>
-                    If you request to receive notifications, then a summary of the changes to this workspace will
-                    be included in the daily digest email that you receive.
+                    If you request to receive the digest of changes, then a summary of the changes to this workspace will
+                    be included in the period email (daily, weekly, or monthly) that you receive.
+                    <br/>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Mute Emails:</b></td>
+                <td>
+                    <button ng-show="isMute" class="btn" ng-click="userOp('ClearEmailMute')"><i class="fa  fa-check-square-o"></i>
+                    Mute Email Notifications</button>
+                    <button ng-hide="isMute" class="btn" ng-click="userOp('SetEmailMute')"><i class="fa  fa-square-o"></i> 
+                    Mute Email Notifications</button>
+                </td>
+                <td ng-hide="openMute">
+                    <button class="btn" ng-click="openMute=!openMute">?</button>
+                </td>
+                <td ng-show="openMute" ng-click="openMute=!openMute">
+                    <span ng-hide="isMute"><b>You will receive email notification when new Topics are created</b></span>
+                    <span ng-show="isMute"><b>You will not receive email notification when new Topics are created</b></span>
+                    <br/>
+                    <br/>
+                    Normally all members will receive an email when a new topic is created.  
+                    This option allows you to disable that so that you will not receive any email
+                    when a new discussion topic is created.
                     <br/>
                     <br/>
                 </td>

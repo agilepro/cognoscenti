@@ -14,6 +14,10 @@ This message was sent to {$optout.emailId|html}.
     You have received this message because you are a player of the 
     <b>{$optout.roleName|html}</b> role in the 
     <a href="{$optout.wsURL}">{$optout.wsName|onempty(Unnamed)|html}</a> workspace.
+{% elseif ($optout.topicName) %}
+    You have received this message because you are subscribed to the topic 
+    <b><a href="{$optout.topicURL}">{$optout.topicName|onempty(Unnamed)|html}</a></b> in the 
+    <a href="{$optout.wsURL}">{$optout.wsName|onempty(Unnamed)|html}</a> workspace.
 {% endif %}
 {% if ($optout.leaveRole) %}
 You can <a href="{$optout.leaveRole}">withdraw from that role</a> if you no 
@@ -21,7 +25,7 @@ longer want to be involved and receive email for the role.
 {% endif %}
 {% if ($optout.unsubscribe) %}
 To change the types of e-mail communication you receive in future, you can 
-<a href="{$optout.unsubscribe}">alter your subscriptions</a>. 
+<a href="{$optout.unsubscribe}">alter your notification settings</a>. 
 {% else %}
 You have not created a profile or have not associated 
 <a href="{$baseURL}/v/FindPerson.htm?uid={$optout.emailId|url}">{$optout.emailId|html}</a> 

@@ -178,6 +178,26 @@ public class OptOutAddr {
 			throw new Exception("Unable to append users from the role ("+roleName+") in workspace ("+ngc.getFullName()+")",e);
 		}
     }
+    public static void appendUnmutedUsersFromRole(NGWorkspace ngw, String roleName,
+            List<OptOutAddr> collector) throws Exception {
+        try {
+            NGRole muteRole = ngw.getMuteRole();
+            List<AddressListEntry> players = ngw.getRoleOrFail(roleName)
+                    .getExpandedPlayers(ngw);
+            for (AddressListEntry ale : players) {
+                if (!muteRole.isPlayer(ale)) {
+                    String email = ale.getEmail();
+                    if (email!=null && email.length()>0) {
+                        OptOutAddr.appendOneUser(new OptOutRolePlayer(ale, ngw.getKey(), roleName),
+                                collector);
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to append users from the role ("+roleName+") in workspace ("+ngw.getFullName()+")",e);
+        }
+    }
 
 
     /**
