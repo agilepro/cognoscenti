@@ -185,7 +185,7 @@ comment-state-complete {
 
 <script>
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize','ngTagsInput']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize','ngTagsInput', 'ui.bootstrap.datetimepicker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.pageId = "<%ar.writeJS(pageId);%>";
     $scope.meetId = "<%ar.writeJS(meetId);%>";
@@ -197,7 +197,29 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.allTopics = [];
     $scope.backlogId = "<%=backlog.getId()%>";
 
+    var n = new Date().getTimezoneOffset();
+    var tzNeg = n<0;
+    if (tzNeg) {
+        n = -n;
+    }
+    var tzHours = Math.floor(n/60);
+    var tzMinutes = n - (tzHours*60);
+    var tzFiddle = (100 + tzHours)*100 + tzMinutes;
+    var txFmt = tzFiddle.toString().substring(1);
+    if (tzNeg) {
+        txFmt = "+".concat(txFmt);
+    }
+    else {
+        txFmt = "-".concat(txFmt);
+    }
+    $scope.tzIndicator = txFmt;
 
+    $scope.onTimeSet = function (newDate) {
+        $scope.meeting.startTime = newDate.getTime();
+        console.log("NEW TIME:", newDate);
+    }    
+    
+    
 
     $scope.newAssignee = "";
     $scope.newAttendee = "";
@@ -263,31 +285,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
 
-    $scope.datePickOptions = {
-        formatYear: 'yyyy',
-        startingDay: 1
-    };
-    $scope.datePickDisable = function(date, mode) {
-        return false;
-    };
-    $scope.dummyDate1 = new Date();
-    $scope.datePickOpen = false;
-    $scope.openDatePicker = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        $scope.datePickOpen = true;
-    };
-    $scope.datePickOpen1 = false;
-    $scope.openDatePicker1 = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        $scope.datePickOpen1 = true;
-    };
     $scope.sortItemsB = function() {
         $scope.meeting.agenda.sort( function(a, b){
             return a.position - b.position;
         } );
-        var runTime = $scope.meetingTime;
+        var runTime = new Date($scope.meeting.startTime);
         var runDur = 0;
         for (var i=0; i<$scope.meeting.agenda.length; i++) {
             var item = $scope.meeting.agenda[i];
@@ -302,9 +304,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return $scope.meeting.agenda;
     };
     $scope.extractDateParts = function() {
-        $scope.meetingTime = new Date($scope.meeting.startTime);
-        $scope.meetingHour = $scope.meetingTime.getHours();
-        $scope.meetingMinutes = $scope.meetingTime.getMinutes();
         $scope.sortItemsB();
     };
     $scope.extractDateParts();
@@ -510,20 +509,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.saveGoal(goal);
     };
     $scope.saveMeeting = function() {
-        $scope.meetingTime.setHours($scope.meetingHour);
-        $scope.meetingTime.setMinutes($scope.meetingMinutes);
-        $scope.meetingTime.setSeconds(0);
-        $scope.meeting.startTime = $scope.meetingTime.getTime();
-
         $scope.sortItemsB();
         $scope.putGetMeetingInfo($scope.meeting);
     };
     $scope.savePartialMeeting = function(fieldList) {
-        $scope.meetingTime.setHours($scope.meetingHour);
-        $scope.meetingTime.setMinutes($scope.meetingMinutes);
-        $scope.meetingTime.setSeconds(0);
-        $scope.meeting.startTime = $scope.meetingTime.getTime();
-
         var saveRecord = {};
         for (var j=0; j<fieldList.length; j++) {
             saveRecord[fieldList[j]] = $scope.meeting[fieldList[j]];
@@ -629,7 +618,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
 
         $scope.newGoal.assignTo.push(player);
-        $scope.newGoal.duedate = $scope.dummyDate1.getTime();
+        //$scope.newGoal.duedate = $scope.dummyDate1.getTime();
 
         var postdata = angular.toJson($scope.newGoal);
         $scope.showError=false;
@@ -1656,56 +1645,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </tr>
                 <tr><td style="height:10px"></td></tr>
                 <tr>
-                    <td class="gridTableColummHeader">Date:</td>
+                    <td class="gridTableColummHeader">Date & Time:</td>
                     <td style="width:20px;"></td>
-                    <td colspan="2" class="form-inline form-group">
-
-                        <input type="text"
-                        style="width:150;"
-                        class="form-control"
-                        datepicker-popup="dd-MMMM-yyyy"
-                        ng-model="meetingTime"
-                        is-open="datePickOpen"
-                        min-date="minDate"
-                        datepicker-options="datePickOptions"
-                        date-disabled="datePickDisable(date, mode)"
-                        ng-required="true"
-                        ng-click="openDatePicker($event)"
-                        close-text="Close"/>
-                        at
-                        <select style="width:50;" ng-model="meetingHour" class="form-control" >
-                            <option value="0">00</option>
-                            <option value="1">01</option>
-                            <option value="2">02</option>
-                            <option value="3">03</option>
-                            <option value="4">04</option>
-                            <option value="5">05</option>
-                            <option value="6">06</option>
-                            <option value="7">07</option>
-                            <option value="8">08</option>
-                            <option value="9">09</option>
-                            <option>10</option>
-                            <option>11</option>
-                            <option>12</option>
-                            <option>13</option>
-                            <option>14</option>
-                            <option>15</option>
-                            <option>16</option>
-                            <option>17</option>
-                            <option>18</option>
-                            <option>19</option>
-                            <option>20</option>
-                            <option>21</option>
-                            <option>22</option>
-                            <option>23</option>
-                        </select> :
-                        <select  style="width:50;" ng-model="meetingMinutes" class="form-control" >
-                            <option value="0">00</option>
-                            <option>15</option>
-                            <option>30</option>
-                            <option>45</option>
-                        </select>
-                    </td>
+                    <td class="dropdown">
+                      <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
+                        {{ meeting.startTime | date:'dd-MMM-yyyy' }} &nbsp;at&nbsp; {{ meeting.startTime | date:'HH:mm' }} &nbsp; &nbsp; {{tzIndicator}}
+                      </a>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <datetimepicker 
+                             data-ng-model="meeting.startTime" 
+                             data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
+                             data-on-set-time="onTimeSet(newDate)" />
+                      </ul>
+                    </td> 
                 </tr>
                 <tr><td style="height:10px"></td></tr>
                 <tr>

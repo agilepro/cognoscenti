@@ -281,7 +281,6 @@
 
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
-    <!--script src="<%=ar.baseURL%>jfunc.js"></script-->
     <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
@@ -299,6 +298,15 @@
     <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
     <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
 
+	<!-- Date and Time Picker -->
+    <link rel="stylesheet" href="<%=ar.baseURL%>dtpicker/css/datetimepicker.css"/>
+    <script src="<%=ar.baseURL%>dtpicker/js/moment.js"></script>
+    <script src="<%=ar.baseURL%>dtpicker/js/datetimepicker.js"></script>
+    <script src="<%=ar.baseURL%>dtpicker/js/datetimepicker.templates.js"></script>
+    
+    
+    
+    
     <title><% ar.writeHtml(title); %></title>
 
 <script>
