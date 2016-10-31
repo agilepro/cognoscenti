@@ -324,26 +324,6 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Front Page
-        </div>
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem"
-                  href="history.htm">Activity Stream</a></li>
-              <li role="presentation"><a role="menuitem" href="searchAllNotes.htm">
-			      Search All Topics </a>
-              </li>
-            </ul>
-          </span>
-
-        </div>
-    </div>
-
 <!-- COLUMN 1 -->
       <div class="col-md-4 col-sm-12">
         <div class="panel panel-default">
@@ -488,7 +468,7 @@ app.controller('myCtrl', function($scope, $http) {
               <a href="roleManagement.htm">
                   <span ng-show="role.player"><i class="fa fa-check-circle-o"></i></span>
                   <span ng-hide="role.player"><i class="fa fa-circle-o"></i></span>
-                  {{role.name}} 
+                  {{role.name}}
                   </a>
             </div>
           </div>
