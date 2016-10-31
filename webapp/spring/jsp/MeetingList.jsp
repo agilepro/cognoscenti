@@ -137,22 +137,22 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="dropdown text-right">
+<div class="btn-toolbar primary-toolbar">
+  <a class="btn btn-default btn-raised" href="agendaBacklog.htm">
+    <i class="fa fa-list-alt material-icons"></i> Agenda Backlog</a>
+</div>
+<!--div class="dropdown text-right">
   <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
   Options: <span class="caret"></span></button>
   <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="menu1">
-    <li role="presentation"><a role="menuitem" tabindex="-1"
-        href="#" ng-click="newMeeting.meetingType=1;showInput=true">New Meeting</a></li>
+
     <li role="presentation" class="divider"></li>
     <li role="presentation"><a role="menuitem" tabindex="-1"
         href="agendaBacklog.htm">Agenda Item Backlog</a></li>
   </ul>
-</div>
+</div-->
 
     <div id="NewMeeting" class="well" ng-show="showInput" ng-cloak>
-        <!--div class="rightDivContent">
-            <a href="#" ng-click="showInput=false"><img src="<%= ar.retPath%>assets/iconBlackDelete.gif"/></a>
-        </div-->
               <form class="horizontal-form">
                 <fieldset>
                   <!-- Form Control NAME Begin -->
@@ -246,99 +246,10 @@ app.controller('myCtrl', function($scope, $http) {
                 </fieldset>
                 <!-- Form Control BUTTONS Begin -->
                 <div class="form-group text-right">
-                  <button type="button" class="btn btn-warning btn-raised" onclick="history.back();">Cancel</button>
+                  <button type="button" class="btn btn-warning btn-raised" ng-click="showInput=false">Cancel</button>
                   <button type="submit" class="btn btn-primary btn-raised"  ng-click="createRow()">Create Meeting</button>
                 </div>
               </form>
-        <!--div class="generalSettings">
-            <table>
-                <tr id="trspath">
-                    <td class="gridTableColummHeader">Type:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2" class="form-inline form-group">
-                        <input type="radio" ng-model="newMeeting.meetingType" value="1"
-                            class="form-control" /> Circle Meeting   &nbsp;
-                        <input type="radio" ng-model="newMeeting.meetingType" value="2"
-                            class="form-control" /> Operational Meeting
-                    </td>
-                </tr>
-                <tr><td style="height:30px"></td></tr>
-                <tr id="trspath">
-                    <td class="gridTableColummHeader">Name:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2"><input type="text" ng-model="newMeeting.name" class="form-control"  size="69" /></td>
-                </tr>
-                <tr><td style="height:30px"></td></tr>
-                <tr id="trspath">
-                    <td class="gridTableColummHeader">Date:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2" class="form-inline form-group">
-
-                        <input type="text"
-                        style="width:150;"
-                        class="form-control"
-                        datepicker-popup="dd-MMMM-yyyy"
-                        ng-model="newMeetingTime"
-                        is-open="datePickOpen"
-                        min-date="minDate"
-                        datepicker-options="datePickOptions"
-                        date-disabled="datePickDisable(date, mode)"
-                        ng-required="true"
-                        ng-click="openDatePicker($event)"
-                        close-text="Close"/>
-                        at
-                        <select style="width:50;" ng-model="newMeetingHour" class="form-control" >
-                            <option value="0">00</option>
-                            <option value="1">01</option>
-                            <option value="2">02</option>
-                            <option value="3">03</option>
-                            <option value="4">04</option>
-                            <option value="5">05</option>
-                            <option value="6">06</option>
-                            <option value="7">07</option>
-                            <option value="8">08</option>
-                            <option value="9">09</option>
-                            <option>10</option>
-                            <option>11</option>
-                            <option>12</option>
-                            <option>13</option>
-                            <option>14</option>
-                            <option>15</option>
-                            <option>16</option>
-                            <option>17</option>
-                            <option>18</option>
-                            <option>19</option>
-                            <option>20</option>
-                            <option>21</option>
-                            <option>22</option>
-                            <option>23</option>
-                        </select> :
-                        <select  style="width:50;" ng-model="newMeetingMinutes" class="form-control" >
-                            <option value="0">00</option>
-                            <option>15</option>
-                            <option>30</option>
-                            <option>45</option>
-                        </select>
-                    </td>
-                </tr>
-
-                <tr><td style="height:30px"></td></tr>
-                <tr id="trspath">
-                    <td class="gridTableColummHeader">Duration:</td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2"><input type="text" ng-model="newMeeting.duration" class="form-control blue" size="40" /></td>
-                </tr>
-                <tr><td style="height:30px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader"></td>
-                    <td style="width:20px;"></td>
-                    <td colspan="2">
-                        <input type="submit" class="btn btn-primary btn-raised" value="Create Meeting" ng-click="createRow()">
-                        <input type="button" class="btn btn-primary btn-raised" value="Cancel" ng-click="showInput=false">
-                    </td>
-                </tr>
-            </table>
-        </div-->
     </div>
 
 
@@ -367,21 +278,6 @@ app.controller('myCtrl', function($scope, $http) {
                     <span class="fa fa-trash"></span>
                 </button>
               </a>
-              <!--div class="dropdown">
-                <button class="btn dropdown-toggle" type="button"  d="menu"
-                    data-toggle="dropdown"> <span class="caret"></span> </button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation"><a role="menuitem" tabindex="-1"
-                      href="meetingFull.htm?id={{rec.id}}">View Meeting</a></li>
-                  <li role="presentation"><a role="menuitem" tabindex="-1"
-                      href="meeting.htm?id={{rec.id}}">Edit Meeting</a></li>
-                  <li role="presentation"><a role="menuitem" tabindex="-1"
-                      href="cloneMeeting.htm?id={{rec.id}}">Clone Meeting</a></li>
-                  <li role="presentation" class="divider"></li>
-                  <li role="presentation"><a role="menuitem" tabindex="-1"
-                      href="#" ng-click="deleteRow(rec)">Delete Meeting</a></li>
-                </ul>
-              </div-->
             </td>
             <td><b><a title="View Meeting" href="meetingFull.htm?id={{rec.id}}">{{rec.name}}</a></b></td>
             <td>{{rec.startTime|date: "HH:mma 'on' dd-MMM-yyyy"}}</td>
@@ -390,4 +286,7 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
     </table>
 
+<a class="btn btn-primary btn-fab primary-fab" title="Create new Meeting" href="#" ng-click="newMeeting.meetingType=1;showInput=true">
+  <i class="fa fa-plus material-icons"></i>
+</a>
 </div>
