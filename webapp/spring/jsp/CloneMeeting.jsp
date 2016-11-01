@@ -15,7 +15,7 @@
     String meetId          = ar.reqParam("id");
     MeetingRecord oneRef   = ngw.findMeeting(meetId);
     JSONObject meetingInfo = oneRef.getFullJSON(ar, ngw);
-    
+
     //make it for 7 days later
     meetingInfo.put("startTime",  meetingInfo.getLong("startTime") + 7L*24L*3600000 );
 
@@ -33,13 +33,12 @@
   }
 </style>
 
-
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ui.bootstrap.datetimepicker']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
-    
+
     var n = new Date().getTimezoneOffset();
     var tzNeg = n<0;
     if (tzNeg) {
@@ -56,12 +55,12 @@ app.controller('myCtrl', function($scope, $http) {
         txFmt = "-".concat(txFmt);
     }
     $scope.tzIndicator = txFmt;
-    
+
     $scope.onTimeSet = function (newDate, secondparam) {
         $scope.meeting.startTime = newDate.getTime();
         console.log("NEW TIME:", newDate);
-    }    
-    
+    }
+
     $scope.extractDateParts = function() {
         var last = $scope.meeting.agenda.length;
         var runTime = new Date($scope.meeting.startTime);
@@ -181,20 +180,20 @@ function GetFirstHundredNoHtml(input) {
             <!-- Form Control DATE Begin -->
             <div class="form-group">
                 <label class="col-md-2 control-label">
-                  Date & Time
+                  Date &amp; Time
                 </label>
-                <div class="dropdown col-md-10">
-                  <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
+                <div class="col-md-10">
+                  <a class="dropdown-toggle form-control" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
                     {{ meeting.startTime | date:'dd-MMM-yyyy' }} &nbsp;at&nbsp; {{ meeting.startTime | date:'HH:mm' }} &nbsp; &nbsp; {{tzIndicator}}
                   </a>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <datetimepicker 
-                         data-ng-model="meeting.startTime" 
+                    <datetimepicker
+                         data-ng-model="meeting.startTime"
                          data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
                          data-on-set-time="onTimeSet(newDate)"/>
                   </ul>
-                </div> 
-                <br/><!-- stupid extra line to get next DIV to start at the beginning of a line, why do i have to do this? -->                
+                </div>
+                <br/><!-- stupid extra line to get next DIV to start at the beginning of a line, why do i have to do this? -->
             </div>
             <!-- Form Control TYPE Begin -->
             <div class="form-group">
