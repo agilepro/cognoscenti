@@ -224,6 +224,9 @@ public class ResourcePage implements NGResource
 
     public void delete() throws Exception
     {
+        if (true) {
+            throw new Exception("Deleting through this rest API no longer supported");
+        }
         NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(lid);
         if (ngpi==null)
         {
@@ -240,7 +243,7 @@ public class ResourcePage implements NGResource
         }
         ar.setPageAccessLevels(ngp);
 
-        ngp.markDeleted(ar);
+       // ngp.markDeleted(ar);
          //Create Status
         lrstatus.setResourceid(ngp.getKey());
         lrstatus.setSuccess(NGResource.OP_SUCCEEDED);

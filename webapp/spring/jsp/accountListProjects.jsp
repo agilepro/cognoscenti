@@ -16,10 +16,19 @@
         if (!ngpi.isProject()) {
             continue;
         }
-        JSONObject jo = ngpi.getJSON4List();
-        jo.put("parentKey", ngpi.parentKey);
-        projList.put(jo);
+        projList.put(ngpi.getJSON4List());
     }
+    for (NGPageIndex ngpi : cog.getDeletedContainers()) {
+        if (!ngpi.isProject()) {
+            continue;
+        }
+        if (!accountKey.equals(ngpi.wsSiteKey)) {
+            // only consider if the project is in the site we look for
+            continue;
+        }
+        projList.put(ngpi.getJSON4List());
+    }
+    
 
 /** RECORD PROTOTYPE
       {
@@ -137,6 +146,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <td class="repositoryName">
                     <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">
                        {{rec.name}}
+                       <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
                     </a>
                 </td>
                 <td>{{rec.changed|date}}</span></td>

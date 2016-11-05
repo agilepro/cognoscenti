@@ -360,7 +360,7 @@ public class EmailGenerator extends DOMFace {
         }
         return res;
     }
-    
+
 
     private static JSONObject getJSONForTemplate(AuthRequest ar,
             NGWorkspace ngp, TopicRecord selectedNote,
@@ -409,7 +409,7 @@ public class EmailGenerator extends DOMFace {
             meetingObj.put("meetingUrl", ar.retPath + ar.getResourceURL(ngp, "meetingFull.htm?id="+meeting.getId()
                     +"&"+AccessControl.getAccessMeetParams(ngp, meeting)));
             data.put("meeting", meetingObj);
-            
+
             //TODO: this is temporary until templates can handle dates
             data.put("meetingTime", SectionUtil.getNicePrintDate(meeting.getStartTime()));
         }
@@ -441,7 +441,13 @@ public class EmailGenerator extends DOMFace {
         obj.put("state", getState());
         obj.put("sendDate", getSendDate());
         obj.put("roleNames", constructJSONArray(getRoleNames()));
-        obj.put("alsoTo", constructJSONArray(getAlsoTo()));
+
+        JSONArray toList = new JSONArray();
+        for (String uid : getAlsoTo()) {
+            AddressListEntry ale = new AddressListEntry(uid);
+            toList.put(ale.getJSON());
+        }
+        obj.put("alsoTo", toList);
         obj.put("intro", getIntro());
         obj.put("excludeResponders", getExcludeResponders());
         obj.put("includeSelf", getIncludeSelf());
@@ -501,7 +507,13 @@ public class EmailGenerator extends DOMFace {
             setRoleNames(constructVector(obj.getJSONArray("roleNames")));
         }
         if (obj.has("alsoTo")) {
-            setAlsoTo(constructVector(obj.getJSONArray("alsoTo")));
+            JSONArray toList = obj.getJSONArray("alsoTo");
+            List<String> justIdList = new ArrayList<String>();
+            for (int i=0; i<toList.length(); i++) {
+                JSONObject item = toList.getJSONObject(i);
+                justIdList.add(item.getString("uid"));
+            }
+            setAlsoTo(justIdList);
         }
         if (obj.has("docList")) {
             setAttachments(constructVector(obj.getJSONArray("docList")));

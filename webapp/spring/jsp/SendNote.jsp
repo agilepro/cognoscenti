@@ -129,7 +129,7 @@ Optional Parameters:
 /* PROTOTYPE
 
     $scope.emailInfo = {
-      "alsoTo": [],
+      "alsoTo": [{"uid":"foo@example.com","name":"Mr. Foo"}],
       "attachFiles": false,
       "docList": [],
       "excludeResponders": false,
@@ -196,6 +196,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.newEmailAddress = "";
     $scope.newAttachment = "";
 
+    /*
     $scope.addAddress = function(val) {
         if (!val) {
             return;
@@ -219,6 +220,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.emailInfo.alsoTo = newVal;
         $scope.newEmailAddress = val;
     }
+    */
 
     $scope.saveEmail = function() {
         var postURL = "emailGeneratorUpdate.json?id="+$scope.emailInfo.id;
@@ -497,7 +499,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <td class="gridTableColummHeader">Also To:</td>
                 <td style="width:20px;"></td>
                 <td>
-              <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
+              <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
                   <auto-complete source="loadItems($query)"></auto-complete>
               </tags-input>
                 </td>

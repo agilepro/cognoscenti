@@ -44,8 +44,15 @@ import org.workcast.json.JSONObject;
 * The current term for the user interaction is "Workspace"
 * This should all be moved into NGWorkspace to simplify.
 */
-public abstract class NGPage extends ContainerCommon implements NGContainer
-{
+public abstract class NGPage extends ContainerCommon implements NGContainer {
+
+    public static final int ACCESS_STATE_LIVE = 1;
+    public static final int ACCESS_STATE_FROZEN = 2;
+    public static final int ACCESS_STATE_DELETED = 3;
+
+    public static final String ACCESS_STATE_LIVE_STR = "Live";
+    public static final String ACCESS_STATE_FROZEN_STR = "Frozen";
+    public static final String ACCESS_STATE_DELETED_STR = "Deleted";
 
     private PageInfoRecord pageInfo;
     private ReminderMgr reminderMgr;
@@ -319,35 +326,111 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
     }
 
 
+    public int getAccessState() {
+        if (pageInfo.isDeleted()) {
+            return ACCESS_STATE_DELETED;
+        }
+        else if (pageInfo.isFrozen()) {
+            return ACCESS_STATE_FROZEN;
+        }
+        else {
+            return ACCESS_STATE_LIVE;
+        }
+    }
+    public String getAccessStateStr() {
+        if (pageInfo.isDeleted()) {
+            return ACCESS_STATE_DELETED_STR;
+        }
+        else if (pageInfo.isFrozen()) {
+            return ACCESS_STATE_FROZEN_STR;
+        }
+        else {
+            return ACCESS_STATE_LIVE_STR;
+        }
+    }
+
+    public void setAccessState(AuthRequest ar, int newState) {
+        int oldState = getAccessState();
+        if (newState == oldState) {
+            //don't do anything if there is no change
+            return;
+        }
+        if (newState == ACCESS_STATE_DELETED) {
+            if (oldState == ACCESS_STATE_LIVE) {
+                freezeProject(ar);
+            }
+            markDeleted(ar);
+        }
+        else if (newState == ACCESS_STATE_FROZEN) {
+            if (oldState == ACCESS_STATE_DELETED) {
+                markUnDeleted(ar);
+            }
+            else {
+                freezeProject(ar);
+            }
+        }
+        else if (newState == ACCESS_STATE_LIVE) {
+            if (oldState == ACCESS_STATE_DELETED) {
+                markUnDeleted(ar);
+            }
+            unfreezeProject();
+        }
+    }
+
+    @Override
+    public boolean isFrozen() throws Exception
+    {
+        return pageInfo.isFrozen();
+    }
+    private void freezeProject(AuthRequest ar) {
+        pageInfo.freezeProject(ar);
+    }
+
+    /**
+     * Will set the workspace into unfrozen mode, but only
+     */
+    private void unfreezeProject() {
+        if (!isDeleted()) {
+            pageInfo.unfreezeProject();
+        }
+    }
+    private long getFrozenDate() {
+        return pageInfo.getAttributeLong("freezeDate");
+    }
+    private String getFrozenUser() {
+        return pageInfo.getAttribute("freezeUser");
+    }
+
+
+
 
     /**
     * This will mark the page as deleted at the time of the request
     * and by the person in the request.
     */
-    public void markDeleted(AuthRequest ar)
-    {
+    private void markDeleted(AuthRequest ar) {
+        if (!pageInfo.isFrozen()) {
+            freezeProject(ar);
+        }
         pageInfo.setDeleted(ar);
     }
     /**
     * This will unmark the page from being deleted, clearing any earlier
     * setting that the page was deleted
     */
-    public void markUnDeleted(AuthRequest ar)
+    private void markUnDeleted(AuthRequest ar)
     {
         pageInfo.clearDeleted();
     }
 
     @Override
-    public boolean isDeleted()
-    {
+    public boolean isDeleted() {
         return pageInfo.isDeleted();
     }
-    public long getDeleteDate()
-    {
+    private long getDeleteDate() {
         return pageInfo.getDeleteDate();
     }
-    public String getDeleteUser()
-    {
+    private String getDeleteUser() {
         return pageInfo.getDeleteUser();
     }
 
@@ -950,7 +1033,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         return pageInfo.requireChild("muteRole", CustomRole.class);
     }
 
-    
+
     /**
     * implemented special functionality for projects ... there are site
     * executives, and there are task assignees to consider.
@@ -1333,30 +1416,6 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         return value;
     }
 
-    @Override
-    public boolean isFrozen() throws Exception
-    {
-        return pageInfo.isFrozen();
-    }
-    public void freezeProject(AuthRequest ar)
-    {
-        pageInfo.freezeProject(ar);
-    }
-
-    public void unfreezeProject()
-    {
-        pageInfo.unfreezeProject();
-    }
-    public long getFrozenDate()
-    {
-        return pageInfo.getAttributeLong("freezeDate");
-    }
-    public String getFrozenUser()
-    {
-        return pageInfo.getAttribute("freezeUser");
-    }
-
-
 
     public String getProjectMailId()
     {
@@ -1691,6 +1750,8 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
         projectInfo.put("allowPublic", "yes".equals(getAllowPublic()));
         projectInfo.put("frozen", isFrozen());
         projectInfo.put("deleted", isDeleted());
+        projectInfo.put("accessState", getAccessStateStr());
+
         projectInfo.put("upstream", getUpstreamLink());
         projectInfo.put("projectMail", getProjectMailId());
 
@@ -1720,26 +1781,17 @@ public abstract class NGPage extends ContainerCommon implements NGContainer
                 setAllowPublic("no");
             }
         }
-        if (newConfig.has("deleted")) {
-            boolean newDelete = newConfig.getBoolean("deleted");
-            if (newDelete != isDeleted()) {
-                if (newDelete) {
-                    markDeleted(ar);
-                }
-                else {
-                    markUnDeleted(ar);
-                }
+        if (newConfig.has("deleted") || newConfig.has("frozen")) {
+            boolean newDelete = newConfig.optBoolean("deleted", false);
+            boolean newFrozen = newConfig.optBoolean("frozen", false);
+            if (newDelete) {
+                setAccessState(ar, ACCESS_STATE_DELETED);
             }
-        }
-        if (newConfig.has("frozen")) {
-            boolean newFrozen = newConfig.getBoolean("frozen");
-            if (newFrozen != isFrozen()) {
-                if (newFrozen) {
-                    freezeProject(ar);
-                }
-                else {
-                    unfreezeProject();
-                }
+            else if (newFrozen) {
+                setAccessState(ar, ACCESS_STATE_FROZEN);
+            }
+            else {
+                setAccessState(ar, ACCESS_STATE_LIVE);
             }
         }
         if (newConfig.has("upstream")) {

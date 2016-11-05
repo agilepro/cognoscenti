@@ -54,7 +54,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.eGenList.map( function(oneEmail) {
             var foundIt = oneEmail.subject.toLowerCase().indexOf(searchVal)>=0;
             oneEmail.alsoTo.map( function( oneTo ) {
-                if (oneTo.toLowerCase().indexOf(searchVal)>=0) {
+                if (oneTo.uid.toLowerCase().indexOf(searchVal)>=0) {
                     foundIt = true;
                 }
             });

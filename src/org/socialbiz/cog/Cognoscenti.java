@@ -296,7 +296,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
     public List<NGPageIndex> getDeletedContainers() {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
-        for (NGPageIndex ngpi : getAllContainers()) {
+        for (NGPageIndex ngpi : allContainers) {
             if (ngpi.isDeleted) {
                 ret.add(ngpi);
             }
@@ -441,10 +441,12 @@ System.out.println("Weaver Server Object == Start the Server");
                 // only consider if the project is in the site we look for
                 continue;
             }
+            /*
             if (ngpi.isDeleted) {
                 // ignore deleted projects
                 continue;
             }
+            */
             ret.add(ngpi);
         }
         return ret;

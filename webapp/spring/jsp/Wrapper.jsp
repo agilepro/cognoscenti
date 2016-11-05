@@ -387,7 +387,12 @@ function standardTinyMCEOptions() {
       <% } else { %>
         <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/accountListProjects.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
         <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/frontPage.htm">
-            <%ar.writeHtml(ngp.getFullName());%></a></li>
+            <%ar.writeHtml(ngp.getFullName());%></a>
+                <span style="color:gray">
+                <%if (ngp.isDeleted()) {ar.write(" (DELETED) ");}
+                  else if (ngp.isFrozen()) {ar.write(" (FROZEN) ");}%>
+                </span>
+            </li>
       <% } %>
         <li class="page-name"><h1><% ar.writeHtml(pageNiceTitle); %></h1></li>
       </ol>

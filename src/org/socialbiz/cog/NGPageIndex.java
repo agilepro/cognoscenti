@@ -609,7 +609,7 @@ public class NGPageIndex {
                 containerType = CONTAINER_TYPE_PROJECT;
             }
             else {
-                containerType = CONTAINER_TYPE_PAGE;
+                throw new Exception("CRITICAL ERROR SHOULD ONLY BE NGWorkspace now."+ containerPath);
             }
         }
         else if (container instanceof NGBook) {
@@ -799,6 +799,8 @@ public class NGPageIndex {
         wObj.put("name", containerName);
         wObj.put("pageKey", containerKey);
         wObj.put("siteKey", wsSiteKey);
+        wObj.put("parentKey", parentKey);
+        wObj.put("isDeleted", isDeleted);
         return wObj;
     }
 
