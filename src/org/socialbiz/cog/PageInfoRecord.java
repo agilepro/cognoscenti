@@ -198,12 +198,12 @@ public class PageInfoRecord extends DOMFace
     * Set the date to zero in order to clear the deleted flag
     * and make the project to be not-deleted
     */
-    public void freezeProject(AuthRequest ar)
+    public void freezeWorkspace(AuthRequest ar)
     {
         setAttribute("freezeDate", Long.toString(ar.nowTime));
         setAttribute("freezeUser", ar.getBestUserId());
     }
-    public void unfreezeProject()
+    public void unfreezeWorkspace()
     {
         if (isDeleted())
         {
@@ -230,11 +230,11 @@ public class PageInfoRecord extends DOMFace
         return getAttribute("allowPublic");
     }
 
-    public String getProjectMailId() {
+    public String getWorkspaceMailId() {
         return getAttribute("projectMailId");
     }
 
-    public void setProjectMailId(String id) {
+    public void setWorkspaceMailId(String id) {
         setAttribute("projectMailId", id);
     }
 }

@@ -36,6 +36,32 @@ Required parameter:
     String desc = ar.defParam("desc", "");
     String pname = ar.defParam("pname", "");
 
+    
+    /*
+    Data to the server is the workspace command structure
+    {
+        newName:"",
+        template:""
+    }
+    Data from the server is the workspace config structure
+    {
+      "accessState": "Live",
+      "allNames": ["Darwin2"],
+      "allowPrivate": true,
+      "allowPublic": true,
+      "deleted": false,
+      "frozen": false,
+      "goal": "",
+      "key": "darwin2",
+      "parentKey": "",
+      "parentName": "",
+      "projectMail": "",
+      "purpose": "",
+      "showExperimental": false,
+      "site": "goofoof",
+      "upstream": ""
+    }
+    */
 %>
 
 <script>
@@ -49,7 +75,38 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.desc = "<%ar.writeJS(desc);%>";
     $scope.templateList = <% templateList.write(ar.w,2,4); %>;
     $scope.selectedTemplate = "";
+    $scope.newWorkspace = {newName:"",template:""};
 
+    $scope.showError = false;
+    $scope.errorMsg = "";
+    $scope.errorTrace = "";
+    $scope.showTrace = false;
+    $scope.reportError = function(serverErr) {
+        console.log("Error: "+serverErr);
+        errorPanelHandler($scope, serverErr);
+    };
+    
+    $scope.createNewWorkspace = function() {
+        if (!$scope.newWorkspace.newName) {
+            alert("Please enter a name for this new workspace.");
+            return;
+        }
+        var postURL = "createWorkspace.json";
+        var postdata = angular.toJson($scope.newWorkspace);
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            alert("You new workspace has been created!   Now set the description so that people"
+                  + " know what it is for, and so that people can find it by searching on key words.");
+            var newws = "../"+data.key+"/admin.htm";
+            console.log("CREATED WORKSPACE: ", data);
+            window.location = newws;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    
 });
 </script>
     
@@ -67,24 +124,22 @@ app.controller('myCtrl', function($scope, $http) {
 }
 </style>
 <div class="generalContent">
-   <form name="projectform" action="createprojectFromTemplate.form" method="post" autocomplete="off">
         <table class="spacey">
            <tr>
                 <td class="gridTableColummHeader_2">New Workspace Name:</td>
                 <td>
-                    <input type="text" class="form-control" name="projectname"
-                                   ng-model="pname"/>
+                    <input type="text" class="form-control" ng-model="newWorkspace.newName"/>
                 </td>
             </tr>
             <tr>
                 <td></td>
                 <td>
-                    <button type="submit" class="btn btn-primary btn-raised">Create Workspace</button>
+                    <button class="btn btn-primary btn-raised" ng-click="createNewWorkspace()">Create Workspace</button>
                 </td>
             </tr>
             <tr>
                 <td class="gridTableColummHeader_2">Select Template:</td>
-                <td><select class="form-control" ng-model="selectedTemplate"
+                <td><select class="form-control" ng-model="newWorkspace.template"
                     ng-options="tmp.name for tmp in templateList">
                     <option value="">-- choose template --</option>
                 </select>
@@ -92,11 +147,9 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr ng-show="siteInfo.showExperimental">
                 <td class="gridTableColummHeader">Upstream Link:</td>
-                <td><input type="text" class="form-control" style="width:368px" size="50" name="upstream"
-                    ng-model="upstream"/>
+                <td><input class="form-control" style="width:368px" ng-model="newWorkspace.upstream"/>
                 </td>
             </tr>
        </table>
-   </form>
    
 

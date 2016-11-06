@@ -86,6 +86,9 @@
     else if ("leaf_accountRoleRequest".equals(pageNiceTitle)) {
         pageNiceTitle = "Site Role Request";
     }
+    else if ("accountCreateProject".equals(pageNiceTitle)) {
+        pageNiceTitle = "Create a Workspace";
+    }
 
     String title = ar.defParam("title", wrappedJSP);
 

@@ -94,7 +94,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
 
         if (site==null) {
             //site==null only when read an existing workspace, not creating
-            //in this case, the project should have a site setting.
+            //in this case, the workspace should have a site setting.
             String siteKey = pageInfo.getSiteKey();
 
             if (siteKey==null || siteKey.length()==0 || "main".equals(siteKey)) {
@@ -212,10 +212,10 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
     }
 
     /**
-     * To an existing project, add all the (1) Action Items (2) Roles of an
-     * existing project.
+     * To an existing workspace, add all the (1) Action Items (2) Roles of an
+     * existing workspace.
      * @param ar is needed to get the current logged in user and the current time
-     * @param template is the project to get the ActionItems/Roles from
+     * @param template is the workspace to get the ActionItems/Roles from
      */
     public void injectTemplate(AuthRequest ar, NGPage template)
         throws Exception
@@ -357,7 +357,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
         }
         if (newState == ACCESS_STATE_DELETED) {
             if (oldState == ACCESS_STATE_LIVE) {
-                freezeProject(ar);
+                freezeWorkspace(ar);
             }
             markDeleted(ar);
         }
@@ -366,14 +366,14 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
                 markUnDeleted(ar);
             }
             else {
-                freezeProject(ar);
+                freezeWorkspace(ar);
             }
         }
         else if (newState == ACCESS_STATE_LIVE) {
             if (oldState == ACCESS_STATE_DELETED) {
                 markUnDeleted(ar);
             }
-            unfreezeProject();
+            unfreezeWorkspace();
         }
     }
 
@@ -382,26 +382,18 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
     {
         return pageInfo.isFrozen();
     }
-    private void freezeProject(AuthRequest ar) {
-        pageInfo.freezeProject(ar);
+    private void freezeWorkspace(AuthRequest ar) {
+        pageInfo.freezeWorkspace(ar);
     }
 
     /**
      * Will set the workspace into unfrozen mode, but only
      */
-    private void unfreezeProject() {
+    private void unfreezeWorkspace() {
         if (!isDeleted()) {
-            pageInfo.unfreezeProject();
+            pageInfo.unfreezeWorkspace();
         }
     }
-    private long getFrozenDate() {
-        return pageInfo.getAttributeLong("freezeDate");
-    }
-    private String getFrozenUser() {
-        return pageInfo.getAttribute("freezeUser");
-    }
-
-
 
 
     /**
@@ -410,7 +402,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
     */
     private void markDeleted(AuthRequest ar) {
         if (!pageInfo.isFrozen()) {
-            freezeProject(ar);
+            freezeWorkspace(ar);
         }
         pageInfo.setDeleted(ar);
     }
@@ -587,7 +579,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
 
 
     /**
-    * This is the unique ID of the entire project
+    * This is the unique ID of the entire workspace
     * across all sites.  It is up to the system to
     * make sure this is created and maintained unique
     * and it must never be changed (or links will be
@@ -798,8 +790,8 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
             AddressListEntry ale = new AddressListEntry(lr.getCreator());
             for (GoalRecord goal : this.getAllGoals()) {
                 if (!goal.isPassive() && goal.isAssignee(ale)) {
-                    //passive action items from other project should only effect those other projects,
-                    //and should not allow anyone into a linked sub project.
+                    //passive action items from other workspace should only effect those other workspaces,
+                    //and should not allow anyone into a linked sub workspace.
                     //Active action items should allow anyone assigned to be treated as a member.
                     return true;
                 }
@@ -874,7 +866,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
 
 
     /**
-    * Returns all the action items for a project.
+    * Returns all the action items for a workspace.
     */
     public List<GoalRecord> getAllGoals() throws Exception {
         NGSection sec = getRequiredSection("Tasks");
@@ -904,7 +896,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
     }
 
     /**
-    * Creates an action item in a project without any history about creating it
+    * Creates an action item in a workspace without any history about creating it
     */
     public GoalRecord createGoal(String requesterId)
         throws Exception
@@ -1070,7 +1062,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
 
 
     /**
-    * implemented special functionality for projects ... there are site
+    * implemented special functionality for workspaces ... there are site
     * executives, and there are task assignees to consider.
     */
     @Override
@@ -1093,7 +1085,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
         for (GoalRecord gr : getAllGoals())
         {
             if (gr.isPassive()) {
-                //ignore any passive action items that are from other projects.  Only consider local goals
+                //ignore any passive action items that are from other workspaces.  Only consider local goals
                 continue;
             }
             int state = gr.getState();
@@ -1452,17 +1444,15 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
     }
 
 
-    public String getProjectMailId()
-    {
-        return pageInfo.getProjectMailId();
+    public String getWorkspaceMailId() {
+        return pageInfo.getWorkspaceMailId();
     }
-    public void setProjectMailId(String id)
-    {
-        pageInfo.setProjectMailId(id);
+    public void setWorkspaceMailId(String id) {
+        pageInfo.setWorkspaceMailId(id);
     }
 
     /**
-    * Different projects can have different style sheets (themes)
+    * Different workspaces can have different style sheets (themes)
     */
     @Override
     public String getThemePath()
@@ -1475,7 +1465,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
 
     public void scanForNewFiles() throws Exception {
         // nothing in this class, this is overridden in the subclass NGProj
-        // to look for new file that appeared in the project folder
+        // to look for new file that appeared in the workspace folder
     }
 
     public void removeExtrasByName(String name) throws Exception {
@@ -1601,7 +1591,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
 
 
     /**
-    * Returns all the email generators for a project.
+    * Returns all the email generators for a workspace.
     */
     public List<EmailGenerator> getAllEmailGenerators() throws Exception {
         DOMFace generators =  requireChild("generators", DOMFace.class);
@@ -1637,10 +1627,10 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
 
     /**
      * Walk through all the references and make a list of all the people that are
-     * mentioned at any point in the project, and returns the AddressListEntry
+     * mentioned at any point in the workspace, and returns the AddressListEntry
      * for each
      */
-    public List<AddressListEntry> getAllAddressesInProject() throws Exception {
+    private List<AddressListEntry> getAllAddressInWorkspace() throws Exception {
         HashSet<String> nameSet = new HashSet<String>();
         List<AddressListEntry> result = new ArrayList<AddressListEntry>();
         for (NGRole role : getAllRoles()) {
@@ -1658,24 +1648,25 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
 
     /**
      * Walk through all the references and make a list of all the people that are
-     * mentioned at any point in the project, and returns the combined address
+     * mentioned at any point in the workspace, and returns the combined address
      * that has a name and an email address like this:
      *
      *      John Smith <jsmith@example.com>
      *
-     */
+     *
     public JSONArray getAllPeopleInProject() throws Exception {
-        List<AddressListEntry> nameSet = getAllAddressesInProject();
+        List<AddressListEntry> nameSet = getAllAddressInWorkspace();
         JSONArray list = new JSONArray();
         for (AddressListEntry ale : nameSet) {
             list.put(ale.generateCombinedAddress());
         }
         return list;
     }
+    */
 
 
     /**
-    * Returns all the labels for a project, including all the
+    * Returns all the labels for a workspace, including all the
     * roles as well as the non-role labels
     */
     public List<NGLabel> getAllLabels() throws Exception {
@@ -1739,7 +1730,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
     }
 
 
-    ///////////////////// PARENT PROJECT /////////////////////
+    ///////////////////// PARENT WORKSPACE /////////////////////
 
 
     public String getParentKey() throws Exception {
@@ -1778,27 +1769,29 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
 
     public JSONObject getConfigJSON() throws Exception {
         ProcessRecord process = getProcess();
-        JSONObject projectInfo = new JSONObject();
-        projectInfo.put("goal", process.getSynopsis());
-        projectInfo.put("purpose", process.getDescription());
-        projectInfo.put("parentKey", getParentKey());
-        projectInfo.put("allowPublic", "yes".equals(getAllowPublic()));
-        projectInfo.put("frozen", isFrozen());
-        projectInfo.put("deleted", isDeleted());
-        projectInfo.put("accessState", getAccessStateStr());
+        JSONObject workspaceConfigInfo = new JSONObject();
+        workspaceConfigInfo.put("key", getKey());
+        workspaceConfigInfo.put("site", getSiteKey());
+        workspaceConfigInfo.put("goal", process.getSynopsis());
+        workspaceConfigInfo.put("purpose", process.getDescription());
+        workspaceConfigInfo.put("parentKey", getParentKey());
+        workspaceConfigInfo.put("allowPublic", "yes".equals(getAllowPublic()));
+        workspaceConfigInfo.put("frozen", isFrozen());
+        workspaceConfigInfo.put("deleted", isDeleted());
+        workspaceConfigInfo.put("accessState", getAccessStateStr());
 
-        projectInfo.put("upstream", getUpstreamLink());
-        projectInfo.put("projectMail", getProjectMailId());
+        workspaceConfigInfo.put("upstream", getUpstreamLink());
+        workspaceConfigInfo.put("projectMail", getWorkspaceMailId());
 
         //read only information from the site
-        projectInfo.put("showExperimental", this.getSite().getShowExperimental());
-        projectInfo.put("allowPrivate", this.getSite().getAllowPrivate());
+        workspaceConfigInfo.put("showExperimental", this.getSite().getShowExperimental());
+        workspaceConfigInfo.put("allowPrivate", this.getSite().getAllowPrivate());
         
         //returns all the names for this page
         List<String> nameSet = getPageNames();
-        projectInfo.put("allNames", constructJSONArray(nameSet));
+        workspaceConfigInfo.put("allNames", constructJSONArray(nameSet));
 
-        return projectInfo;
+        return workspaceConfigInfo;
     }
 
     public void updateConfigJSON(AuthRequest ar, JSONObject newConfig) throws Exception {
@@ -1837,7 +1830,7 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
             setUpstreamLink(newConfig.getString("upstream"));
         }
         if (newConfig.has("projectMail")) {
-            setProjectMailId(newConfig.getString("projectMail"));
+            setWorkspaceMailId(newConfig.getString("projectMail"));
         }
     }
 

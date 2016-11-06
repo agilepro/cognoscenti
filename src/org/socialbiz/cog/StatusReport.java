@@ -74,7 +74,7 @@ public class StatusReport extends DOMFace
     }
 
 
-    public List<ProjectLink> getProjects() throws Exception {
+    private List<ProjectLink> getProjects() throws Exception {
         return getChildren("projLink", ProjectLink.class);
     }
 

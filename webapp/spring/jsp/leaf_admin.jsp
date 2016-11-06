@@ -47,8 +47,8 @@
         parentName = parentIndex.containerName;
     }
 
-    JSONObject projectInfo = ngw.getConfigJSON();
-    projectInfo.put("parentName", parentName);
+    JSONObject workspaceConfig = ngw.getConfigJSON();
+    workspaceConfig.put("parentName", parentName);
 
     JSONArray allProjects = new JSONArray();
     for (NGPageIndex ngpis : cog.getAllProjectsInSite(ngb.getKey())) {
@@ -74,6 +74,27 @@
         recentWorkspaces.put(rujo);      
     }  
 
+    /*
+    Data from the server is the workspace config structure
+    {
+      "accessState": "Live",
+      "allNames": ["Darwin2"],
+      "allowPrivate": true,
+      "allowPublic": true,
+      "deleted": false,
+      "frozen": false,
+      "goal": "",
+      "key": "darwin2",
+      "parentKey": "",
+      "parentName": "",
+      "projectMail": "",
+      "purpose": "",
+      "showExperimental": false,
+      "site": "goofoof",
+      "upstream": ""
+    }
+    */
+    
 %>
 
 <fmt:setBundle basename="messages"/>
@@ -81,23 +102,24 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
-    $scope.projectInfo = <%projectInfo.write(out,2,4);%>;
-    $scope.newName = $scope.projectInfo.allNames[0];
+    $scope.workspaceConfig = <%workspaceConfig.write(out,2,4);%>;
+    $scope.newName = $scope.workspaceConfig.allNames[0];
     
     $scope.allProjects = <%allProjects.write(out,2,4);%>;
     $scope.recentWorkspaces = <%recentWorkspaces.write(out,2,4);%>;
     
-    if (!$scope.projectInfo.parentName) {
-        $scope.projectInfo.parentName = "(unknown parent workspace)";
+    if (!$scope.workspaceConfig.parentName) {
+        $scope.workspaceConfig.parentName = "(unknown parent workspace)";
     }
-    $scope.originalParentKey = $scope.projectInfo.parentKey;
-    $scope.originalParentName = $scope.projectInfo.parentName;
+    $scope.originalParentKey = $scope.workspaceConfig.parentKey;
+    $scope.originalParentName = $scope.workspaceConfig.parentName;
 
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
     $scope.showTrace = false;
     $scope.reportError = function(serverErr) {
+        console.log("Error: ",serverErr);
         errorPanelHandler($scope, serverErr);
     };
 
@@ -110,21 +132,21 @@ app.controller('myCtrl', function($scope, $http) {
         return "(unknown)";
     }
     $scope.projectMode = function() {
-        if ($scope.projectInfo.deleted) {
+        if ($scope.workspaceConfig.deleted) {
             return "deletedMode";
         }
-        if ($scope.projectInfo.frozen) {
+        if ($scope.workspaceConfig.frozen) {
             return "freezedMode";
         }
         return "normalMode";
     }
     $scope.saveProjectConfig = function() {
         var postURL = "updateProjectInfo.json";
-        var postdata = angular.toJson($scope.projectInfo);
+        var postdata = angular.toJson($scope.workspaceConfig);
         $scope.showError=false;
         $http.post(postURL, postdata)
         .success( function(data) {
-            $scope.projectInfo = data;
+            $scope.workspaceConfig = data;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -138,14 +160,14 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.showError=false;
         $http.post(postURL, postdata)
         .success( function(data) {
-            $scope.projectInfo = data;
+            $scope.workspaceConfig = data;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
     };
     $scope.deleteWorkspaceName = function(name) {
-        if ($scope.projectInfo.allNames.length<2) {
+        if ($scope.workspaceConfig.allNames.length<2) {
             alert("Can not delete the only name from a workspace.");
             return;
         }
@@ -159,7 +181,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.showError=false;
         $http.post(postURL, postdata)
         .success( function(data) {
-            $scope.projectInfo = data;
+            $scope.workspaceConfig = data;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -212,110 +234,100 @@ app.filter('escape', function() {
 
 <% if (!ar.isAdmin()) { %>
 
-            <div class="generalContent">
-                <fmt:message key="nugen.generatInfo.Admin.administration">
-                    <fmt:param value='<%=ar.getBestUserId()%>'/>
-                </fmt:message><br/>
-            </div>
-            <div class="generalSubHeading"><fmt:message key="nugen.generatInfo.PageNameCaption"/> </div>
-            <div class="generalContent">
-                <ul class="bulletLinks">
-                <li ng-repeat="name in projectInfo.allNames">{{name}}</li>
-                </ul>
-            </div>
+        <div class="generalContent">
+            <fmt:message key="nugen.generatInfo.Admin.administration">
+                <fmt:param value='<%=ar.getBestUserId()%>'/>
+            </fmt:message><br/>
+        </div>
+        <div class="generalSubHeading"><fmt:message key="nugen.generatInfo.PageNameCaption"/> </div>
+        <div class="generalContent">
+            <ul class="bulletLinks">
+            <li ng-repeat="name in workspaceConfig.allNames">{{name}}</li>
+            </ul>
+        </div>
 
 <% }else { %>
 
-            <div>
-                <table class="spaceyTable">
-                    <tr>
-                        <td class="gridTableColummHeader_2">New Name for Workspace:</td>
-                        <td><input type="text" class="form-control" style="width:300px" ng-model="newName"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2"></td>
-                        <td>
-                            <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)"/>Add Name</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2">All Names</td>
-                        <td></td>
-                    </tr>
-
-                <tr ng-repeat="name in projectInfo.allNames">
-                    <td></td>
-                    <td>
-                        <a ng-click="deleteWorkspaceName(name)"
-                           title="delete this name from workspace">
-                           {{name}}
-                           <img src="<%=ar.retPath%>/assets/iconDelete.gif">
-                        </a>
+        <div>
+            <table class="spaceyTable">
+                <tr>
+                    <td class="gridTableColummHeader_2">Change Name:</td>
+                    <td class="form-inline form-group">
+                        <input type="text" class="form-control" style="width:300px;background-color:white" ng-model="newName"/>
+                        <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)"/>Update Name</button>
                     </td>
                 </tr>
-                </table>
-            </div>
-            <div class="generalContent">
-                <div class="generalSubHeading paddingTop">Workspace Settings</div>
-                <table width="720px"  class="spaceyTable">
-                    <tr>
-                        <td class="gridTableColummHeader_2">Public Purpose:</td>
-                        <td><textarea name="purpose" class="form-control" ng-model="projectInfo.purpose"
-                              rows="4" placeholder="Enter a public description of the work that will be done in this workspace"></textarea></td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2" valign="top">Workspace Mode:</td>
-                        <td  valign="top">
+                <tr >
+                    <td class="gridTableColummHeader_2">All Names</td>
+                    <td>
+                        <div ng-repeat="name in workspaceConfig.allNames">
+                            <a ng-click="deleteWorkspaceName(name)"
+                               title="delete this name from workspace">
+                               {{name}}
+                               <img src="<%=ar.retPath%>/assets/iconDelete.gif">
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="gridTableColummHeader_2">Public Purpose:</td>
+                    <td><textarea name="purpose" class="form-control" 
+                              ng-model="workspaceConfig.purpose" rows="4" 
+                              placeholder="Enter a public description of the work that will be done in this workspace" 
+                              style="background-color:white;"></textarea></td>
+                </tr>
+                <tr>
+                    <td class="gridTableColummHeader_2" valign="top">Workspace Mode:</td>
+                    <td  valign="top">
 
-                            <input type="checkbox" name="allowPublic" value="yes"
-                                ng-model="projectInfo.frozen"/> Frozen  &nbsp;&nbsp;
-                            <input type="checkbox" name="allowPublic" value="yes"
-                                ng-model="projectInfo.deleted"/> Deleted
+                        <input type="checkbox" name="allowPublic" value="yes"
+                            ng-model="workspaceConfig.frozen"/> Frozen  &nbsp;&nbsp;
+                        <input type="checkbox" name="allowPublic" value="yes"
+                            ng-model="workspaceConfig.deleted"/> Deleted
 
-                            <input type="hidden" name="projectMode" value="{{projectMode()}}"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2">Parent Circle:</td>
-                        <td>
-                            <select ng-model="projectInfo.parentKey" class="form-control" style="width:400px">
-                                <option value="{{originalParentKey}}">{{originalParentName}}</option>
-                                <option ng-repeat="ws in recentWorkspaces" value="{{ws.key}}">{{ws.displayName}}</option>
-                                </select>
-                        </td>
-                    </tr>
+                        <input type="hidden" name="projectMode" value="{{projectMode()}}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="gridTableColummHeader_2">Parent Circle:</td>
+                    <td>
+                        <select ng-model="workspaceConfig.parentKey" class="form-control" style="width:400px">
+                            <option value="{{originalParentKey}}">{{originalParentName}}</option>
+                            <option ng-repeat="ws in recentWorkspaces" value="{{ws.key}}">{{ws.displayName}}</option>
+                            </select>
+                    </td>
+                </tr>
 <% if (showExperimental) { %>
-                    <tr>
-                        <td class="gridTableColummHeader_2">Allow Public:</td>
-                        <td>
-                            <input type="checkbox" name="allowPublic" value="yes"
-                                ng-model="projectInfo.allowPublic"/> {{projectInfo.allowPublic}}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2">Workspace Email id:</td>
-                        <td>
-                            <input type="text" class="form-control"
-                                   name="projectMailId" ng-model="projectInfo.projectMail" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2">Upstream Clone:</td>
-                        <td>
-                            <input type="text" class="form-control" style="width:450px" id="upstream"
-                                   name="upstream" ng-model="projectInfo.upstream" />
-                        </td>
-                    </tr>
+                <tr>
+                    <td class="gridTableColummHeader_2">Allow Public:</td>
+                    <td>
+                        <input type="checkbox" name="allowPublic" value="yes"
+                            ng-model="workspaceConfig.allowPublic"/> {{workspaceConfig.allowPublic}}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="gridTableColummHeader_2">Workspace Email id:</td>
+                    <td>
+                        <input type="text" class="form-control"
+                               name="projectMailId" ng-model="workspaceConfig.projectMail" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="gridTableColummHeader_2">Upstream Clone:</td>
+                    <td>
+                        <input type="text" class="form-control" style="width:450px" id="upstream"
+                               name="upstream" ng-model="workspaceConfig.upstream" />
+                    </td>
+                </tr>
 <% } %>
-                    <tr>
-                        <td class="gridTableColummHeader_2"></td>
-                        <td>
-                            <button ng-click="saveProjectConfig();" class="btn btn-primary btn-raised" >Update</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+                <tr>
+                    <td class="gridTableColummHeader_2"></td>
+                    <td>
+                        <button ng-click="saveProjectConfig();" class="btn btn-primary btn-raised" >Update</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
 
     <% if (showExperimental) { %>

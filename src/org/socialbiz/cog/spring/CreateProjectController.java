@@ -35,7 +35,6 @@ import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.LicensedURL;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
-import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.RemoteGoal;
 import org.socialbiz.cog.UserManager;
@@ -44,13 +43,12 @@ import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.api.ProjectSync;
 import org.socialbiz.cog.api.RemoteProject;
 import org.socialbiz.cog.exception.NGException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.workcast.json.JSONObject;
 
 /**
  * This class will handle all requests that are coming to create a new Workspace.
@@ -61,128 +59,54 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class CreateProjectController extends BaseController {
 
-
-    private ApplicationContext context;
-    @Autowired
-    public void setContext(ApplicationContext context) {
-        this.context = context;
-    }
-
-    @RequestMapping(value = "/getProjectNames.ajax", method = RequestMethod.POST)
-    public void getProjectNames(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        String message="";
-        AuthRequest ar = null;
+    @RequestMapping(value = "/{siteId}/$/createWorkspace.json", method = RequestMethod.POST)
+    public void createWorkspace(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            ar = NGWebUtils.getAuthRequest(request, response, "Could not find workspace name.");
-
-            String matchKey = ar.defParam("matchkey", "").trim();
-            String projects = getAllProjectFullNameList(matchKey, ar.getCogInstance());
-
-            if(projects.length() >0){
-                message = NGWebUtils.getJSONMessage("success" , projects , "");
-            }else{
-                message = NGWebUtils.getJSONMessage("failure" , context.getMessage("nugen.no.project.found",null, ar.getLocale()) , "");
+            NGBook site = ar.getCogInstance().getSiteById(siteId);
+            ar.setPageAccessLevels(site);
+            if (!site.primaryOrSecondaryPermission(ar.getUserProfile())) {
+                throw new NGException("nugen.exception.not.a.member.of.account",
+                        new Object[] { site.getFullName() });
             }
-        }
-        catch(Exception ex){
-            message = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
-            ar.logException(message, ex);
-        }
-        NGWebUtils.sendResponse(ar, message);
-    }
 
-    private String getAllProjectFullNameList(String matchKey, Cognoscenti cog) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        boolean addComma = false;
+            JSONObject newConfig = getPostedObject(ar);
+            UserProfile uProf  = ar.getUserProfile();
+            long nowTime       = ar.nowTime;
+            String projectName = newConfig.getString("newName");
+            String upstream    = newConfig.optString("upstream", null);
 
-        for (NGPageIndex page : cog.getAllContainers()) {
-            if (page.containerName.toLowerCase().startsWith(matchKey.toLowerCase())) {
-                if (addComma) {
-                    sb.append(",");
-                }
-                sb.append(page.containerName);
-                sb.append(":");
-                sb.append(page.wsSiteKey);
-                sb.append("/");
-                sb.append(page.containerKey);
-                addComma = true;
-            }
-        }
-        return sb.toString();
-    }
+            //first, if given a template, check to make sure it exists
+            String template    = newConfig.optString("template", null);
+            NGPage template_ngp = null;
+            if (template!=null && template.length()>0) {
+                template_ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(template);
+            }            
+            
+            //since this is a new project in a new folder, we don't have a folder in 
+            //mind to put in, and we don't care where it is placed.
+            String unspecifiedFolderLocation = null;
 
+            //now actually create it
+            NGPage newWorkspace = createPage(uProf, site, projectName, unspecifiedFolderLocation, upstream, nowTime, ar.getCogInstance());
 
-    @RequestMapping(value = "/getProjects.ajax", method = RequestMethod.GET)
-    public void getProjects(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        AuthRequest ar = null;
-        try{
-            ar = NGWebUtils.getAuthRequest(request, response, "can not get projects");
-            String matchKey = ar.defParam("matchkey", "").trim();
-            String bookKey = ar.defParam("book", "").trim();
+            //now apply template if found
+            if (template_ngp!=null) {
+                newWorkspace.injectTemplate(ar, template_ngp);
+            }            
 
-            String projects = getProjectFullNameList(matchKey,bookKey,
-                    ar.getCogInstance());
-            NGWebUtils.sendResponse(ar, projects);
-        }
-        catch(Exception ex){
-            String message = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
-            ar.logException(message, ex);
-        }
-    }
-
-
-    public String getProjectFullNameList(String matchKey, String bookKey,
-            Cognoscenti cog) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        boolean addComma = false;
-
-        for (NGPageIndex page : cog.getAllProjectsInSite(bookKey)) {
-            if (page.containerName.toLowerCase().startsWith(matchKey.toLowerCase())) {
-                if (addComma) {
-                    sb.append(",");
-                }
-                sb.append(page.containerName);
-                addComma = true;
-            }
-        }
-        String str = sb.toString();
-        return str;
-    }
-
-
-    //the unknown part of the path may be either a user id or an account id
-    //because this is used in two different places.  Should reconsider this.
-    @RequestMapping(value = "/{siteId}/$/createprojectFromTemplate.form", method = RequestMethod.POST)
-    public void createprojectFromTemplate(@PathVariable String siteId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception
-    {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar);
-                return;
-            }
-            NGPage project= createTemplateProject(ar,siteId);
-            project.saveFile(ar, "Created new workspace");
-
-            String upstream = project.getUpstreamLink();
-            if (upstream!=null && upstream.length()>0) {
-                //instead of synchronizing in a single action, redirecting allows us to free up the
-                //locks on the site object before trying to synchronize.  Otherwise we get a
-                //deadlock when pulling from the same site.  It also gives better feedback to the
-                //user about progress, and educates first time users about synchronizing.
-                response.sendRedirect(ar.retPath+"t/"+siteId+"/"+project.getKey()+"/SyncAttachment.htm");
-            }
-            else {
-                response.sendRedirect(ar.retPath+ar.getDefaultURL(project));
-            }
+            JSONObject repo = newWorkspace.getConfigJSON();
+            repo.write(ar.w, 2, 2);
+            ar.flush();
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.create.project.from.template", new Object[]{siteId} , ex);
+            Exception ee = new Exception("Unable to create meeting.", ex);
+            streamException(ee, ar);
         }
     }
 
+    
+    
 
     @RequestMapping(value = "/{siteId}/$/createClone.form", method = RequestMethod.POST)
     public void createClone(@PathVariable String siteId, HttpServletRequest request,
