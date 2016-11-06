@@ -615,15 +615,50 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
         return displayNames.get(0);
     }
 
-    public List<String> getPageNames()
-    {
+    public List<String> getPageNames() {
         return displayNames;
     }
 
-    public void setPageNames(List<String> newNames)
-    {
+    public void setPageNames(List<String> newNames) {
         pageInfo.setPageNames(newNames);
         displayNames = pageInfo.getPageNames();
+    }
+    
+    public void setNewName(String newName) {
+        List<String> nameSet = getPageNames();
+
+        //first, see if the new name is one of the old names, and if so
+        //just rearrange the list
+        int oldPos = -1;
+        String sanVal = SectionWiki.sanitize(newName);
+        for (int i=0; i<nameSet.size(); i++) {
+            String san2 = SectionWiki.sanitize(nameSet.get(i));
+            if (sanVal.equals(san2)) {
+                oldPos = i;
+            }
+        }
+        if (oldPos>=0) {
+            nameSet.remove(oldPos);
+        }
+        nameSet.add(0, newName);
+        setPageNames(nameSet);
+    }
+    public void deleteOldName(String oldName) {
+        List<String> nameSet = getPageNames();
+        //first, see if the new name is one of the old names, and if so
+        //just rearrange the list
+        int oldPos = -1;
+        String sanVal = SectionWiki.sanitize(oldName);
+        for (int i=0; i<nameSet.size(); i++) {
+            String san2 = SectionWiki.sanitize(nameSet.get(i));
+            if (sanVal.equals(san2)) {
+                oldPos = i;
+            }
+        }
+        if (oldPos>=0) {
+            nameSet.remove(oldPos);
+        }
+        setPageNames(nameSet);
     }
 
 
@@ -1758,6 +1793,10 @@ public abstract class NGPage extends ContainerCommon implements NGContainer {
         //read only information from the site
         projectInfo.put("showExperimental", this.getSite().getShowExperimental());
         projectInfo.put("allowPrivate", this.getSite().getAllowPrivate());
+        
+        //returns all the names for this page
+        List<String> nameSet = getPageNames();
+        projectInfo.put("allNames", constructJSONArray(nameSet));
 
         return projectInfo;
     }

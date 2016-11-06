@@ -23,15 +23,33 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp', ['ui.bootstrap','ui.bootstrap.datetimepicker']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.meetings = <%meetings.write(out,2,4);%>;
     $scope.newMeeting = {name:"",duration:60,startTime:0,id:"",meetingType:1};
 
+    var n = new Date().getTimezoneOffset();
+    var tzNeg = n<0;
+    if (tzNeg) {
+        n = -n;
+    }
+    var tzHours = Math.floor(n/60);
+    var tzMinutes = n - (tzHours*60);
+    var tzFiddle = (100 + tzHours)*100 + tzMinutes;
+    var txFmt = tzFiddle.toString().substring(1);
+    if (tzNeg) {
+        txFmt = "+".concat(txFmt);
+    }
+    else {
+        txFmt = "-".concat(txFmt);
+    }
+    $scope.tzIndicator = txFmt;
 
-    $scope.newMeetingTime = new Date();
-    $scope.newMeetingHour = 12;
-    $scope.newMeetingMinutes = 30;
+    $scope.onTimeSet = function (newDate) {
+        $scope.newMeeting.startTime = newDate.getTime();
+        console.log("NEW TIME:", newDate);
+    }    
+    
 
     $scope.datePickOptions = {
         formatYear: 'yyyy',
@@ -79,8 +97,6 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.createRow = function() {
         var postURL = "meetingCreate.json";
-        $scope.newMeetingTime.setHours($scope.newMeetingHour, $scope.newMeetingMinutes,0,0);
-        $scope.newMeeting.startTime = $scope.newMeetingTime.getTime();
         var postdata = angular.toJson($scope.newMeeting);
         $scope.showError=false;
         $http.post(postURL ,postdata)
@@ -168,57 +184,15 @@ app.controller('myCtrl', function($scope, $http) {
                         Date
                       </label>
                       <div class="col-md-10 container">
-                        <div class="col-md-4">
-                          <input type="text"
-                          style="width:150;"
-                          class="form-control"
-                          datepicker-popup="dd-MMMM-yyyy"
-                          ng-model="newMeetingTime"
-                          is-open="datePickOpen"
-                          datepicker-options="datePickOptions"
-                          date-disabled="datePickDisable(date, mode)"
-                          ng-required="true"
-                          ng-click="openDatePicker($event)"
-                          close-text="Close"/>
-                        </div>
-                        <div class="col-md-1"><button type="button" class="form-control" disabled="1">at</button></div>
-                        <div class="col-md-3">
-                          <select style="width:50;" ng-model="newMeetingHour" class="form-control" >
-                              <option value="0">00</option>
-                              <option value="1">01</option>
-                              <option value="2">02</option>
-                              <option value="3">03</option>
-                              <option value="4">04</option>
-                              <option value="5">05</option>
-                              <option value="6">06</option>
-                              <option value="7">07</option>
-                              <option value="8">08</option>
-                              <option value="9">09</option>
-                              <option>10</option>
-                              <option>11</option>
-                              <option>12</option>
-                              <option>13</option>
-                              <option>14</option>
-                              <option>15</option>
-                              <option>16</option>
-                              <option>17</option>
-                              <option>18</option>
-                              <option>19</option>
-                              <option>20</option>
-                              <option>21</option>
-                              <option>22</option>
-                              <option>23</option>
-                          </select>
-                        </div>
-                        <div class="col-md-1"><button type="button" class="form-control" disabled="1">:</button></div>
-                        <div class="col-md-3">
-                          <select  style="width:50;" ng-model="newMeetingMinutes" class="form-control" >
-                              <option value="0">00</option>
-                              <option>15</option>
-                              <option>30</option>
-                              <option>45</option>
-                          </select>
-                        </div>
+                          <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
+                            {{ newMeeting.startTime | date:'dd-MMM-yyyy' }} &nbsp;at&nbsp; {{ newMeeting.startTime | date:'HH:mm' }} &nbsp; &nbsp; {{tzIndicator}}
+                          </a>
+                          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <datetimepicker 
+                                 data-ng-model="newMeeting.startTime" 
+                                 data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
+                                 data-on-set-time="onTimeSet(newDate)" />
+                          </ul>
                       </div>
                   </div>
                   <!-- Form Control TYPE Begin -->

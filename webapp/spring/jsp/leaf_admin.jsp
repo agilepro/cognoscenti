@@ -50,14 +50,6 @@
     JSONObject projectInfo = ngw.getConfigJSON();
     projectInfo.put("parentName", parentName);
 
-
-
-    JSONArray oldNameArray = new JSONArray();
-    for (int i = 1; i < names.size(); i++) {
-        //skip the first name since that is the current name
-        oldNameArray.put(names.get(i));
-    }
-
     JSONArray allProjects = new JSONArray();
     for (NGPageIndex ngpis : cog.getAllProjectsInSite(ngb.getKey())) {
         if (ngpis.isDeleted) {
@@ -89,8 +81,9 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
-    $scope.oldNameArray = <%oldNameArray.write(out,2,4);%>;
     $scope.projectInfo = <%projectInfo.write(out,2,4);%>;
+    $scope.newName = $scope.projectInfo.allNames[0];
+    
     $scope.allProjects = <%allProjects.write(out,2,4);%>;
     $scope.recentWorkspaces = <%recentWorkspaces.write(out,2,4);%>;
     
@@ -137,6 +130,41 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     };
+    $scope.addWorkspaceName = function(name) {
+        var obj = {};
+        obj.newName = name;
+        var postURL = "updateWorkspaceName.json";
+        var postdata = angular.toJson(obj);
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            $scope.projectInfo = data;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    $scope.deleteWorkspaceName = function(name) {
+        if ($scope.projectInfo.allNames.length<2) {
+            alert("Can not delete the only name from a workspace.");
+            return;
+        }
+        if (!confirm("Are you sure you want to permanently delete the name "+name+"?")) {
+            return;
+        }
+        var obj = {};
+        obj.oldName = name;
+        var postURL = "deleteWorkspaceName.json";
+        var postdata = angular.toJson(obj);
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            $scope.projectInfo = data;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
 
 
 });
@@ -156,11 +184,6 @@ app.filter('escape', function() {
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
-
-    <div class="generalSubHeading" style="height:40px">
-        Admin Settings
-    </div>
-
 
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
@@ -197,15 +220,7 @@ app.filter('escape', function() {
             <div class="generalSubHeading"><fmt:message key="nugen.generatInfo.PageNameCaption"/> </div>
             <div class="generalContent">
                 <ul class="bulletLinks">
-                <li >{{projectInfo.name}}</li>
-                <li ng-repeat="name in oldNameArray">{{name}}</li>
-                <%
-                    for (String oneName : names) {
-                            ar.write("<li>");
-                            ar.writeHtml(oneName);
-                            ar.write("</li>\n");
-                        }
-                %>
+                <li ng-repeat="name in projectInfo.allNames">{{name}}</li>
                 </ul>
             </div>
 
@@ -213,39 +228,26 @@ app.filter('escape', function() {
 
             <div>
                 <table class="spaceyTable">
-                    <form action="changeProjectName.form" method="post" >
-                        <tr>
-                            <td class="gridTableColummHeader_2"><fmt:message key="nugen.generatInfo.PageNameCaption"/>:</td>
-                            <td><input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>"/>
-                                <input type="hidden" name="encodingGuard" value="%E6%9D%B1%E4%BA%AC"/>
-                                <input type="hidden" name="go" value="<%ar.writeHtml(ar.getCompleteURL());%>"/>
-                                <input type="text" class="form-control" style="width:300px" name="newName" value="<%ar.writeHtml(ngw.getFullName());%>"/>
-                            </td>
-                        </tr>
-                        <tr>
-
-                            <td class="gridTableColummHeader_2"></td>
-                            <td>
-                                <input type="submit" value='<fmt:message key="nugen.generatInfo.Button.Caption.Admin.ChangePage"/>'
-                                       name="action" class="btn btn-primary btn-raised"/>
-                            </td>
-                        </tr>
-                    </form>
                     <tr>
-                        <td class="gridTableColummHeader_2"><fmt:message key="nugen.generatInfo.Admin.Page.PreviousDelete"/></td>
+                        <td class="gridTableColummHeader_2">New Name for Workspace:</td>
+                        <td><input type="text" class="form-control" style="width:300px" ng-model="newName"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2"></td>
+                        <td>
+                            <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)"/>Add Name</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="gridTableColummHeader_2">All Names</td>
                         <td></td>
                     </tr>
-                    <input type="hidden" name="p"
-                            value="<%ar.writeHtml(ngw.getFullName());%>">
-                    <input type="hidden" name="go"
-                            value="<%ar.writeHtml(thisPage);%>">
-                    <input type="hidden" name="encodingGuard"
-                            value="%E6%9D%B1%E4%BA%AC" />
 
-                <tr ng-repeat="name in oldNameArray">
+                <tr ng-repeat="name in projectInfo.allNames">
                     <td></td>
                     <td>
-                        <a href="deletePreviousProjectName.htm?action=delName&p=<%=URLEncoder.encode(pageId, "UTF-8")%>&oldName={{name|escape}}"
+                        <a ng-click="deleteWorkspaceName(name)"
                            title="delete this name from workspace">
                            {{name}}
                            <img src="<%=ar.retPath%>/assets/iconDelete.gif">
@@ -316,6 +318,7 @@ app.filter('escape', function() {
             </div>
 
 
+    <% if (showExperimental) { %>
 
             <div class="generalContent">
                 <div class="generalSubHeading paddingTop">Copy From Template</div>
@@ -346,7 +349,7 @@ app.filter('escape', function() {
                   </form>
                 </table>
             </div>
-
+    <% } %>
 <% } %>
 
             <div class="generalContent">

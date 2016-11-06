@@ -733,7 +733,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
 <%if (isLoggedIn) { %>
-<span class="dropdown">
+<span class="dropdown" ng-show="noteInfo.draft" ng-click="noteInfo.sendEmail = !noteInfo.sendEmail">
+  <button class="btn btn-default btn-raised" type="button" 
+          title="Choose whether to send email when this topic is posted">
+  <input type="checkbox" ng-model="noteInfo.sendEmail">
+  Send Email </button>
+</span>
+<span class="dropdown" ng-show="noteInfo.draft">
+  <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="setPhase('Freeform')"
+          title="Post this topic to allow others to see it">
+  Post Topic </button>
+</span>
+<span class="dropdown" ng-hide="noteInfo.draft">
   <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
   {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
