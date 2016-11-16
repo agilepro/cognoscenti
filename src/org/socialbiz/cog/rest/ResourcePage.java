@@ -227,6 +227,7 @@ public class ResourcePage implements NGResource
         if (true) {
             throw new Exception("Deleting through this rest API no longer supported");
         }
+        /*
         NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(lid);
         if (ngpi==null)
         {
@@ -258,6 +259,7 @@ public class ResourcePage implements NGResource
         lrstatus.setCommnets(cmsg);
         ltype = lrstatus.getType();
         loutdoc = lrstatus.getDocument();
+        */
     }
 
     public void loadContent() throws Exception

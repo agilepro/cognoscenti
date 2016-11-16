@@ -139,7 +139,7 @@ app.controller('myCtrl', function($scope, $http) {
         <tr><td style="height:20px"></td></tr>
         <tr>
             <td class="gridTableColummHeader">
-                Decription:
+                Description:
             </td>
             <td  style="width:20px;"></td>
             <td>

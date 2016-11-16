@@ -235,7 +235,7 @@ public class EmailSender extends TimerTask {
             //that reads the email archive.
             MailFile emailArchive = MailFile.readOrCreate(emailArchiveFile);
 
-            {
+            try {
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
                 NGContainer ngw = ngpi.getContainer();
@@ -247,6 +247,9 @@ public class EmailSender extends TimerTask {
                 ngw.saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime, "Moved email to email file", ar.getCogInstance());
                 NGPageIndex.clearLocksHeldByThisThread();
                 emailArchive.save();
+            }
+            catch (Exception e) {
+                throw new Exception("Problem with email file: "+emailArchiveFile, e);
             }
 
             if (ngpi.isProject()){

@@ -88,7 +88,6 @@ public class WikiConverterForWYSIWYG extends WikiConverter
             linkText = linkURL.substring(0,barPos).trim();
             linkAddr = linkURL.substring(barPos+1).trim();
             
-            System.out.println("FORMATTING LINK: text="+linkText+"|#|addr="+linkAddr);
             //if this has been shortened, it must be converted back to full length.
             //not really sure how this got shortened in the first place
             if (!linkAddr.startsWith("http") && ar.ngp!=null) {
@@ -135,7 +134,6 @@ public class WikiConverterForWYSIWYG extends WikiConverter
             target = "_blank";
             titleValue = "This link leads to an external page";
         }
-        System.out.println("FORMATTING FINAL: text="+linkText+"|#|addr="+linkAddr);
         
         
         ar.write("<a href=\"");

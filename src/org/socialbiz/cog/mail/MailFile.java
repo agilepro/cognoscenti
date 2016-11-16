@@ -208,6 +208,11 @@ public class MailFile extends JSONWrapper {
         long THREE_MONTHS_AGO = System.currentTimeMillis() - 90L*24L*60L*60L*1000L;
         long NINE_MONTHS_AGO = System.currentTimeMillis() - 270L*24L*60L*60L*1000L;
 
+        //the mail file might be empty (no message yet) so check first
+        if (!kernel.has("msgs")) {
+            //nothing to clean up.
+            return;
+        }
         JSONArray oldList = kernel.getJSONArray("msgs");
         JSONArray newEmailList = new JSONArray();
         int last = oldList.length();
