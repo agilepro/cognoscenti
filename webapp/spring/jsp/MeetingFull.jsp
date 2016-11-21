@@ -588,7 +588,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 
     $scope.getPeople = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        var res = AllPeople.findMatchingPeople(query);
+        return res;
     }
 
     $scope.createActionItem = function(item) {
@@ -1281,9 +1282,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.updateComment = function(cmt) {
         $scope.saveComment($scope.commentItemBeingEdited, cmt);
     }
-    $scope.loadItems = function(query) {
-        return AllPeople.findMatchingPeople(query);
-    }
     $scope.toggleSelectedPerson = function(tag) {
         $scope.selectedPersonShow = !$scope.selectedPersonShow;
         $scope.selectedPerson = tag;
@@ -1961,7 +1959,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                           placeholder="Enter user name or id"
                           display-property="name" key-property="uid"
                           on-tag-clicked="toggleSelectedPerson($tag)">
-                    <auto-complete source="loadItems($query)"></auto-complete>
+                    <auto-complete source="getPeople($query)"></auto-complete>
                 </tags-input>
             </div>
             <div class="form-inline form-group" ng-show="selectedPersonShow">

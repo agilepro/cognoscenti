@@ -1,22 +1,28 @@
 var app = angular.module('myApp');
 app.service('AllPeople', function($http) {
     
-    this.findFullName = function (key) {
-        if (!this.allPersonList) {
-            this.getPeopleOutOfStorage();
+    //get around the JavaScript problems with 'this'
+    var AllPeople = this;
+    
+    AllPeople.findFullName = function (key) {
+        if (!AllPeople.allPersonList) {
+            AllPeople.getPeopleOutOfStorage();
         }
         var fullName = key;
-        this.allPersonList.people.forEach(  function(item) {
+        AllPeople.allPersonList.people.forEach(  function(item) {
             if (item.uid == key) {
                 fullName = item.name;
             }
         });
         return fullName;
     }
-    this.findMatchingPeople = function(query) {
+    AllPeople.findMatchingPeople = function(query) {
+        if (!AllPeople.allPersonList) {
+            AllPeople.getPeopleOutOfStorage();
+        }
         var res = [];
         var q = query.toLowerCase();
-        this.allPersonList.people.forEach( function(person) {
+        AllPeople.allPersonList.people.forEach( function(person) {
             if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
                 return;
             }
@@ -24,10 +30,10 @@ app.service('AllPeople', function($http) {
         });
         return res;
     }
-    this.findPerson = function(query) {
+    AllPeople.findPerson = function(query) {
         var res = null;
         var q = query.toLowerCase();
-        this.allPersonList.people.forEach( function(person) {
+        AllPeople.allPersonList.people.forEach( function(person) {
             if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
                 return;
             }
@@ -35,37 +41,37 @@ app.service('AllPeople', function($http) {
         });
         return res;
     }
-    this.refreshCache = function() {
-        this.allPersonList = {people:[]};
-        this.fetchPeople();
+    AllPeople.refreshCache = function() {
+        AllPeople.allPersonList = {people:[]};
+        AllPeople.fetchPeople();
     }
     
     
-    this.fetchPeople = function () {
+    AllPeople.fetchPeople = function () {
         $http.get("../../AllPeople.json")
         .success( function(data) {
-            this.allPersonList = data;
-            sessionStorage.setItem('allPersonList', JSON.stringify(this.allPersonList));
-            console.log("AllPeople retrieved, count = "+data.people.length);
+            AllPeople.allPersonList = data;
+            sessionStorage.setItem('allPersonList', JSON.stringify(AllPeople.allPersonList));
+            console.log("AllPeople retrieved, count = "+AllPeople.allPersonList.people.length);
         })
         .error( function(data) {
             console.log("AllPeople FAILURE: ", data);
         });
     }
-    this.getPeopleOutOfStorage = function () {
+    AllPeople.getPeopleOutOfStorage = function () {
         var allPersonStr = sessionStorage.getItem('allPersonList');
         if (allPersonStr) {
-            this.allPersonList = JSON.parse(allPersonStr);
+            AllPeople.allPersonList = JSON.parse(allPersonStr);
         }
         else {
-            this.allPersonList = {people:[]};
-            sessionStorage.setItem('allPersonList', JSON.stringify(this.allPersonList));
+            AllPeople.allPersonList = {people:[]};
+            sessionStorage.setItem('allPersonList', JSON.stringify(AllPeople.allPersonList));
         }
     }
-    this.getPeopleOutOfStorage();
-    if (this.allPersonList.people.length==0) {
-        this.fetchPeople();
+    AllPeople.getPeopleOutOfStorage();
+    if (AllPeople.allPersonList.people.length==0) {
+        AllPeople.fetchPeople();
     }
-    console.log("AllPeople service is running, cache = "+this.allPersonList.people.length);
+    console.log("AllPeople service is running, cache = "+AllPeople.allPersonList.people.length);
     
 });
