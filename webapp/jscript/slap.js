@@ -34,15 +34,15 @@ function initLogin(config, info, statusCallback) {
     loginConfig = config;
     displayLoginStatus = statusCallback;
     if (!loginInfo.verified) {
-        queryTheProvider();
+        queryTheServer();
     }
 }
 
 function getJSON(url, passedFunction) {
-    console.log("calling GET");
     var xhr = new XMLHttpRequest();
     globalForXhr = xhr;
     xhr.open("GET", url, true);
+    xhr.overrideMimeType("application/json");  //stop Mozilla bug
     xhr.withCredentials = true;
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
@@ -59,12 +59,12 @@ function getJSON(url, passedFunction) {
 
 
 function postJSON(url, data, passedFunction) {
-    console.log("calling POST");
     var xhr = new XMLHttpRequest();
     globalForXhr = xhr;
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type","text/plain");
+    xhr.overrideMimeType("application/json");  //stop Mozilla bug
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             try {
@@ -76,6 +76,17 @@ function postJSON(url, data, passedFunction) {
         }
     }
     xhr.send(JSON.stringify(data));
+}
+
+function queryTheServer() {
+    var pUrl = loginConfig.serverUrl + "auth/";
+    getJSON(pUrl, function(data) {
+        loginInfo = data;
+        displayLoginStatus(loginInfo);
+        if (!loginInfo.verified) {
+            queryTheProvider();
+        }
+    });
 }
 
 function queryTheProvider() {

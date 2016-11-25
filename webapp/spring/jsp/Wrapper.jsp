@@ -203,7 +203,9 @@
     String pageUserName = "";
     if(isUserHeader && pageUserKey!=null){
         userPageUser = UserManager.getUserProfileByKey(pageUserKey);
-        pageUserName = userPageUser.getName();
+        if (userPageUser!=null) {
+            pageUserName = userPageUser.getName();
+        }
     }
 
 //TODO: why test for pageTitle being null here?
@@ -475,6 +477,20 @@ function standardTinyMCEOptions() {
 
 </div>
 <!-- End body wrapper -->
+
+<script>
+//every 25 minutes, query the server to keep session alive
+window.setInterval(function() {
+    if (!loginInfo.verified) {
+        console.log("Not logged in, no session.");
+    }
+    else {
+        console.log("Keeping the session alive for: "+loginInfo.userName+" ("+loginInfo.userId+").");
+        queryTheServer();
+    }
+    return 0;
+}, 1500000);
+</script>
 </body>
 </html>
 

@@ -73,7 +73,7 @@ import org.workcast.streams.HTMLWriter;
 *     so you can see what another person might see.  It simulates this
 *     access level, but not permanently: user can return regular level.
 *
-* Output Stream and Writer: handles this approrpiately, including a
+* Output Stream and Writer: handles this appropriately, including a
 *     copy constructor that allows you to substitute a different writer.
 *
 * HTTPRequest & HTTPResponse: still lets you have access to these when needed.

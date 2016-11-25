@@ -104,6 +104,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
                 jo.put("msg",  "User logged in as "+aStat.getName());
                 jo.put("userId",  aStat.getId());
                 jo.put("userName",  aStat.getName());
+                jo.put("verified",  true);
             }
             else {
                 jo.put("msg",  "User not logged in");

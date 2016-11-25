@@ -444,7 +444,7 @@ public class EmailGenerator extends DOMFace {
 
         JSONArray toList = new JSONArray();
         for (String uid : getAlsoTo()) {
-            AddressListEntry ale = new AddressListEntry(uid);
+            AddressListEntry ale = AddressListEntry.parseCombinedAddress(uid);
             toList.put(ale.getJSON());
         }
         obj.put("alsoTo", toList);
