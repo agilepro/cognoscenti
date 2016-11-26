@@ -141,7 +141,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         rec.universalid = $scope.noteInfo.universalid;
         fields.forEach( function(fieldName) {
             rec[fieldName] = $scope.noteInfo[fieldName];
-            console.log("SAVING: "+fieldName);
         });
         var postdata = angular.toJson(rec);
         $scope.showError=false;
@@ -154,7 +153,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.receiveTopicRecord = function(data) {
         $scope.noteInfo = data;
-        console.log("GOT NOTE UPDATED", data);
         var check = false;
         data.subscribers.forEach( function(item) {
             if (item.uid == "<%=ar.getBestUserId()%>") {
@@ -193,7 +191,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         saveRecord.universalid = $scope.noteInfo.universalid;
         saveRecord.comments = [];
         saveRecord.comments.push(cmt);
-        console.log("SAVING comment: ", cmt);
         $scope.savePartial(saveRecord);
     }
     $scope.saveDocs = function() {
@@ -214,7 +211,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.savePartial = function(recordToSave) {
         var postURL = "updateNote.json?nid="+$scope.noteInfo.id;
         var postdata = angular.toJson(recordToSave);
-        console.log(postdata);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
@@ -458,7 +454,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         if (!onOff) {
             url = "topicUnsubscribe.json?nid="+$scope.noteInfo.id;
         }
-        console.log("STARTING: ", url);
         $http.get(url)
         .success( $scope.receiveTopicRecord )
         .error( function(data, status, headers, config) {
@@ -488,8 +483,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 
     $scope.openCommentEditor = function (itemNotUsed, cmt) {
-
-        console.log("STARTING COMMENT");
         var modalInstance = $modal.open({
             animation: false,
             templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',

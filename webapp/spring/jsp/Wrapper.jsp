@@ -348,6 +348,7 @@ function standardTinyMCEOptions() {
 		handle_event_callback: function (e) {
 		// put logic here for keypress
 		},
+        browser_spellcheck: true,
         plugins: "link,stylebuttons",
         inline: false,
         menubar: false,

@@ -42,7 +42,7 @@
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
-    $scope.roleInfo = {};
+    $scope.roleInfo = {players:[]};
     $scope.showInput = false;
     $scope.colors = ["salmon","khaki","beige","lightgreen","orange","bisque","tomato","aqua","orchid","peachpuff","powderblue","lightskyblue"];
 
@@ -70,6 +70,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         .success( function(data) {
             $scope.isNew = false;
             $scope.showInput = true;
+            $scope.cleanDuplicates(data);
             $scope.roleInfo = data;
         })
         .error( function(data, status, headers, config) {
@@ -81,9 +82,30 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.createRole = function() {
         $scope.isNew = true;
         $scope.showInput = true;
-        $scope.roleInfo = {};
+        $scope.roleInfo = {players:[]};
     }
 
+    $scope.cleanDuplicates = function(role) {
+        var cleanList = [];
+        role.players.forEach( function(item) {
+            var newOne = true;
+            var uidlc = item.uid.toLowerCase();
+            cleanList.forEach( function(inner) {
+                if (uidlc == inner.uid.toLowerCase()) {
+                    newOne = false;
+                }
+            });
+            if (newOne) {
+                cleanList.push(item);
+            }
+        });
+        console.log("CLEANED",role.players,cleanList);
+        console.log("roleInfo",$scope.roleInfo);
+        role.players = cleanList;
+    }
+    $scope.allRoles.forEach( function(item) {
+        $scope.cleanDuplicates(item);
+    });
 
     $scope.updateRole = function() {
         var key = $scope.roleInfo.name;
@@ -111,6 +133,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.roleInfo = data;
+            $scope.cleanDuplicates($scope.roleInfo);
             var newRoles = [];
             $scope.allRoles.forEach( function (item) {
                 if (item.name==key) {
@@ -135,6 +158,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.roleInfo = data;
+            $scope.cleanDuplicates($scope.roleInfo);
             var newRoles = [];
             $scope.allRoles.forEach( function (item) {
                 if (item.name==key) {
@@ -153,7 +177,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.showInput = false;
     }
     $scope.closePanel = function() {
-        $scope.roleInfo = {};
+        $scope.roleInfo = {players:[]};
         $scope.showInput = false;
     };
     $scope.getPeople = function(query) {
@@ -169,7 +193,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             player = {name: name, uid: uid};
         }
         $scope.roleInfo.players.forEach( function(one) {
-            if (player.uid == one.uid) {
+            if (player.uid.toLowerCase() == one.uid.toLowerCase()) {
                 found = true;
             }
         });
