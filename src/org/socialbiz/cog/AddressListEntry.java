@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 /**
@@ -536,6 +537,32 @@ public class AddressListEntry implements UserRef
 
         return res;
     }
+    
+    
+    /**
+     * Convert a list of string values into a list of address list entry objects
+     */
+    public static List<AddressListEntry> toAddressList( List<String> uidList ) {
+        List<AddressListEntry> res = new ArrayList<AddressListEntry>();
+        for (String uid : uidList) {
+            res.add(new AddressListEntry(uid));
+        }
+        return res;
+    }
+    public static List<String> fromAddressList( List<AddressListEntry> addressList ) {
+        List<String> res = new ArrayList<String> ();
+        for (AddressListEntry ale : addressList) {
+            res.add(ale.getUniversalId());
+        }
+        return res;
+    }
+    public static List<String> uidListfromJSONArray( JSONArray jsonList ) throws Exception {
+        List<String> uids = new ArrayList<String>();
+        for (int i=0; i<jsonList.length(); i++) {
+            uids.add(jsonList.getJSONObject(i).getString("uid"));
+        }
+        return uids;
+    }
 
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
@@ -558,6 +585,14 @@ public class AddressListEntry implements UserRef
             return new AddressListEntry(uid);
         }
         return new AddressListEntry(uid, name);
+    }
+    
+    public static JSONArray getJSONArray(List<AddressListEntry> addressList) throws Exception {
+        JSONArray res = new JSONArray();
+        for (AddressListEntry ale : addressList) {
+            res.put(ale.getJSON());
+        }
+        return res;     
     }
     
 }

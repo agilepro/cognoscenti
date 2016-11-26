@@ -273,6 +273,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <div  style="float:left;margin-top:8px;">
             Access Document
         </div>
+<% if (ar.isLoggedIn()) { %>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -290,8 +291,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   href="sendNote.htm?att={{docInfo.id}}">Send Document by Email</a></li>
             </ul>
           </span>
-
         </div>
+<% } %>        
     </div>
 
 

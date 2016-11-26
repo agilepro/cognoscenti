@@ -7,6 +7,7 @@
 
     String pageId      = ar.reqParam("pageId");
     String aid         = ar.reqParam("aid");
+    
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to upload documents");

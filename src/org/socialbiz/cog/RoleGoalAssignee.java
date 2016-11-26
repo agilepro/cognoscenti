@@ -67,6 +67,7 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         return list;
     }
 
+    @Override
     public void addPlayer(AddressListEntry newMember) throws Exception {
         List<AddressListEntry> current = getDirectPlayers();
         StringBuffer newVal = new StringBuffer();
@@ -81,6 +82,14 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         newVal.append(newMember.getUniversalId());
         setList(newVal.toString());
     }
+    
+    @Override
+    public void addPlayersIfNotPresent(List<AddressListEntry> addressList) throws Exception {
+        for (AddressListEntry ale : addressList) {
+            addPlayer(ale);
+        }
+    }
+
 
     public void removePlayer(AddressListEntry oldMember) throws Exception {
         removePlayerCompletely(oldMember);

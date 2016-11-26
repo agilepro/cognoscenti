@@ -1,5 +1,5 @@
 
-app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, cmt, parentScope) {
+app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, cmt, parentScope, AllPeople) {
 
     // initial comment object
     $scope.cmt = cmt;
@@ -130,6 +130,10 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
     }
 	if ($scope.autosaveEnabled) {
 		$scope.promiseAutosave = $interval($scope.autosave, 15000);
+    }
+    
+    $scope.loadItems = function(query) {
+        return AllPeople.findMatchingPeople(query);
     }
 
 });

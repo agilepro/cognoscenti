@@ -232,6 +232,14 @@ public class CustomRole extends DOMFace implements NGRole
         addPlayer(newMember);
     }
 
+    public void addPlayersIfNotPresent(List<AddressListEntry> addressList) throws Exception {
+        for (AddressListEntry ale : addressList) {
+            addPlayerIfNotPresent(ale);
+        }
+    }
+
+    
+    
     public List<AddressListEntry> getMatchedFragment(String frag)throws Exception {
         List<AddressListEntry> result = new ArrayList<AddressListEntry>();
         for (AddressListEntry ale : getDirectPlayers()) {

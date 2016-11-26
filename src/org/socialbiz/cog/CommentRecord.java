@@ -106,6 +106,14 @@ public class CommentRecord extends DOMFace {
     public void setUser(UserRef newVal) {
         setAttribute("user", newVal.getUniversalId());
     }
+    
+    /**
+     * A comment can have a list of users to be notified, and in effect added to the list of 
+     * people who are notified about a topic or meeting agenda item.
+     */
+    public NGRole getNotifyRole() throws Exception {
+        return requireChild("subscriberRole", CustomRole.class);
+    }
 
     public int getCommentType() {
         int ct =  getAttributeInt("commentType");
@@ -407,11 +415,15 @@ public class CommentRecord extends DOMFace {
 
     public void commentEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
+        
+        List<AddressListEntry> notifyList = getNotifyRole().getDirectPlayers();
+        noteOrMeet.extendNotifyList(notifyList);  //so it can remember it
         noteOrMeet.appendTargetEmails(sendTo, ngw);
 
         //add the commenter in case missing from the target role
         AddressListEntry commenter = getUser();
         OptOutAddr.appendOneDirectUser(commenter, sendTo);
+        OptOutAddr.appendUsers(notifyList, sendTo); //in case the container does not remember it
 
         UserProfile commenterProfile = commenter.getUserProfile();
         if (commenterProfile==null) {
@@ -597,6 +609,7 @@ public class CommentRecord extends DOMFace {
         }
         commInfo.put("responses", responses);
         commInfo.put("choices", constructJSONArray(getChoices()));
+        commInfo.put("notify", AddressListEntry.getJSONArray(getNotifyRole().getDirectPlayers()));
         return commInfo;
     }
 
@@ -658,6 +671,15 @@ public class CommentRecord extends DOMFace {
         if (input.has("resendMessage")) {
             setResendMessage(input.getString("resendMessage"));
         }
+        if (input.has("notify")) {
+            NGRole alsoNotify = this.getNotifyRole();
+            alsoNotify.clear();
+            alsoNotify.addPlayersIfNotPresent(
+                    AddressListEntry.toAddressList(
+                            AddressListEntry.uidListfromJSONArray(
+                                    input.getJSONArray("notify"))));
+        }
+
 
         //A simple comment should never be "open", only draft or closed, so assure that here
         if (getCommentType()==COMMENT_TYPE_SIMPLE  &&
@@ -670,6 +692,7 @@ public class CommentRecord extends DOMFace {
             //the related reply back-pointer and the timeout is set
             //int openDuration =
         }
+        
     }
 
 

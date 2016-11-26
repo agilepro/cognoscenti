@@ -10,9 +10,16 @@
     <h3>{{getVerbHeader()}} {{commentTypeName()}}</h3>
 </div>
 <div class="modal-body">
+    <div class="form-inline  form-group">
+        <p for="text" style="float:left;padding:5px;">Also Notify:</p>
+        <tags-input ng-model="cmt.notify" placeholder="Enter user name or id"
+                      display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+              <auto-complete source="loadItems($query)"></auto-complete>
+          </tags-input>
+    </div>
     <div>
     	<div ui-tinymce="tinymceOptions" ng-model="cmt.html" 
-             class="leafContent" style="min-height:200px;"></div>
+             class="leafContent" style="min-height:160px;"></div>
     </div>
     <div style="height:15px;"></div>
     <div class="form-inline form-group">

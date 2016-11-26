@@ -132,6 +132,7 @@ public interface NGRole extends NGLabel {
     public void setRequirements(String reqs);
 
     public void addPlayerIfNotPresent(AddressListEntry member)throws Exception;
+    public void addPlayersIfNotPresent(List<AddressListEntry> addressList)throws Exception;
 
     public List<AddressListEntry> getMatchedFragment(String frag)throws Exception;
 

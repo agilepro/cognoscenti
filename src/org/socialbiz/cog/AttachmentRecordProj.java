@@ -207,4 +207,9 @@ public class AttachmentRecordProj extends AttachmentRecord
         // does not care about timestamp
     }
 
+    @Override
+    public void extendNotifyList(List<AddressListEntry> addressList) throws Exception {
+        //there is no subscribers for document attachments
+    }
+
 }

@@ -1036,6 +1036,10 @@ public class TopicRecord extends CommentContainer implements EmailContext {
      public void markTimestamp(long newTime) throws Exception {
          this.setLastEdited(newTime);
      }
+     public void extendNotifyList(List<AddressListEntry> addressList) throws Exception {
+         getSubscriberRole().addPlayersIfNotPresent(addressList);
+
+     }
 
      public void gatherUnsentScheduledNotification(NGWorkspace ngw,
              ArrayList<ScheduledNotification> resList) throws Exception {

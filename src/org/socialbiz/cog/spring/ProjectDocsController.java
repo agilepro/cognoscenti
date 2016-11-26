@@ -21,6 +21,7 @@
 package org.socialbiz.cog.spring;
 
 import java.io.InputStream;
+import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -108,7 +109,16 @@ public class ProjectDocsController extends BaseController {
              @PathVariable String pageId, @PathVariable String aid,
              HttpServletRequest request,  HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        //ngp.findAttachmentByIDOrFail(aid);
+
+        //special behavior.  On the Edit Details page, if someone hits this when NOT LOGGED IN
+        //then redirect to the document information page, which is allowed when not logged in,
+        //and from there they can decide whether to log in or not, and then to edit the details.
+        //Seems better than just saying you are not logged in.
+        if (!ar.isLoggedIn()) {
+            ar.resp.sendRedirect("docinfo"+URLEncoder.encode(aid, "UTF-8")+".htm");
+            return;
+        }
+
         request.setAttribute("aid", aid);
         BaseController.showJSPAnonymous(ar, siteId, pageId, "editDetails");
     }
@@ -118,7 +128,16 @@ public class ProjectDocsController extends BaseController {
              @PathVariable String pageId,
              HttpServletRequest request,  HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        //ngp.findAttachmentByIDOrFail(aid);
+
+        //special behavior.  On the list versions page, if someone hits this when NOT LOGGED IN
+        //then redirect to the document information page, which is allowed when not logged in,
+        //and from there they can decide whether to log in or not, and then to list the versions.
+        //Seems better than just saying you are not logged in.
+        if (!ar.isLoggedIn()) {
+            ar.resp.sendRedirect("docinfo"+URLEncoder.encode(ar.reqParam("aid"), "UTF-8")+".htm");
+            return;
+        }
+
         request.setAttribute("aid", ar.reqParam("aid"));
         BaseController.showJSPAnonymous(ar, siteId, pageId, "fileVersions");
     }
@@ -128,19 +147,21 @@ public class ProjectDocsController extends BaseController {
              @PathVariable String pageId,
              HttpServletRequest request,  HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        
+        //special behavior.  On the Upload New Version page, if someone hits this when NOT LOGGED IN
+        //then redirect to the document information page, which is allowed when not logged in,
+        //and from there they can decide whether to log in or not, and then to add a new version.
+        //Seems better than just saying you are not logged in.
+        if (!ar.isLoggedIn()) {
+            ar.resp.sendRedirect("docinfo"+URLEncoder.encode(ar.reqParam("aid"), "UTF-8")+".htm");
+            return;
+        }
+
         //ngp.findAttachmentByIDOrFail(aid);
         request.setAttribute("aid", ar.reqParam("aid"));
         BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsRevise");
     }
 
-
-    //////////////////////// REDIRECTS //////////////////////////////
-
-    @RequestMapping(value = "/{siteId}/{pageId}/attachment.htm", method = RequestMethod.GET)
-    public void showProjectHomeTab(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("listAttachments.htm");
-    }
 
 
     @RequestMapping(value="/{siteId}/{pageId}/a/{docName}.{ext}", method = RequestMethod.GET)

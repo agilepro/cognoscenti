@@ -193,6 +193,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         saveRecord.universalid = $scope.noteInfo.universalid;
         saveRecord.comments = [];
         saveRecord.comments.push(cmt);
+        console.log("SAVING comment: ", cmt);
         $scope.savePartial(saveRecord);
     }
     $scope.saveDocs = function() {
@@ -488,6 +489,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.openCommentEditor = function (itemNotUsed, cmt) {
 
+        console.log("STARTING COMMENT");
         var modalInstance = $modal.open({
             animation: false,
             templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
@@ -503,14 +505,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
 
         modalInstance.result.then(function (returnedCmt) {
-            var cleanCmt = {};
-            cleanCmt.time = cmt.time;
-            cleanCmt.html = returnedCmt.html;
-            cleanCmt.state = returnedCmt.state;
-            cleanCmt.replyTo = returnedCmt.replyTo;
-            cleanCmt.commentType = returnedCmt.commentType;
-            cleanCmt.dueDate = returnedCmt.dueDate;
-            $scope.updateComment(cleanCmt);
+            //this is never called
         }, function () {
             //cancel action - nothing really to do
         });
@@ -886,12 +881,15 @@ comment-state-complete {
 </table>
 
 
-    <div style="margin:50px;">
+    <div style="margin:40px;">
       <span style="width:150px">Current subscribers:</span>
       <span ng-repeat="user in noteInfo.subscribers" class="btn btn-sm btn-default btn-raised"  style="margin:4px;">
               {{user.name}}
       </span>
-      <span>{{subscriber}}</span>
+      <span ng-hide="isSubscriber" ng-click="changeSubscription(true)" class="btn btn-sm btn-primary btn-raised">
+          + Subscribe</span>
+      <span ng-show="isSubscriber" ng-click="changeSubscription(false)" class="btn btn-sm btn-primary btn-raised">
+          - Unsubscribe</span>
     </div>
 
     

@@ -928,7 +928,7 @@ public class MainTabsViewControler extends BaseController {
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to create meeting.", ex);
+              Exception ee = new Exception("Unable to update meeting information.", ex);
               streamException(ee, ar);
           }
       }
@@ -986,7 +986,7 @@ public class MainTabsViewControler extends BaseController {
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to create agenda item.", ex);
+              Exception ee = new Exception("Unable to create agenda item on meeting", ex);
               streamException(ee, ar);
           }
       }
@@ -1011,7 +1011,7 @@ public class MainTabsViewControler extends BaseController {
               ar.write("deleted agenda item "+agendaId);
               ar.flush();
           } catch(Exception ex){
-              Exception ee = new Exception("Unable to delete agenda item.", ex);
+              Exception ee = new Exception("Unable to delete agenda item from meeting.", ex);
               streamException(ee, ar);
           }
       }
@@ -1098,7 +1098,7 @@ public class MainTabsViewControler extends BaseController {
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to create agenda item.", ex);
+              Exception ee = new Exception("Unable to update agenda item.", ex);
               streamException(ee, ar);
           }
       }

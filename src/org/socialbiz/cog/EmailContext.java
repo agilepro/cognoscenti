@@ -21,4 +21,10 @@ public interface EmailContext {
      */
     public void markTimestamp(long newTime) throws Exception;
 
+    /**
+     * The comment can have new people to notify, and this informs the container of the these
+     * new recipients.
+     */
+    public void extendNotifyList(List<AddressListEntry> addressList) throws Exception;
+    
 }

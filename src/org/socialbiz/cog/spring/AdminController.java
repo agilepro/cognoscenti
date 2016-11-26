@@ -60,7 +60,7 @@ public class AdminController extends BaseController {
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to create meeting.", ex);
+            Exception ee = new Exception("Unable to update project information.", ex);
             streamException(ee, ar);
         }
     }
@@ -135,7 +135,7 @@ public class AdminController extends BaseController {
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to create meeting.", ex);
+            Exception ee = new Exception("Unable to update site information.", ex);
             streamException(ee, ar);
         }
     }
