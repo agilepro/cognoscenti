@@ -278,7 +278,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <button class="btn btn-sm" style="color:black;background-color:{{role.color}}">
                     {{role.name}}</button>
             </td>
-            <td >
+            <td style="width:200px">
                 <span ng-repeat="player in role.players">
                   <span class="dropdown">
                     <span id="menu1" data-toggle="dropdown">

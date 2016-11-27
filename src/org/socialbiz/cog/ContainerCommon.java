@@ -37,7 +37,7 @@ import org.w3c.dom.Document;
 * are some methods that they can easily share.  This class is an abstract base class
 * so that these classes can easily share a few methods.
 */
-public abstract class ContainerCommon extends DOMFile implements NGContainer
+public abstract class ContainerCommon extends NGContainer
 {
     DOMFace attachParent;
     DOMFace noteParent;

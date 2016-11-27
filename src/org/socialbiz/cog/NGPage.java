@@ -44,7 +44,7 @@ import org.workcast.json.JSONObject;
 * The current term for the user interaction is "Workspace"
 * This should all be moved into NGWorkspace to simplify.
 */
-public abstract class NGPage extends ContainerCommon implements NGContainer {
+public abstract class NGPage extends ContainerCommon {
 
     public static final int ACCESS_STATE_LIVE = 1;
     public static final int ACCESS_STATE_FROZEN = 2;

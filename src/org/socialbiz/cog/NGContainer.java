@@ -24,23 +24,19 @@ import java.io.File;
 import java.util.List;
 
 import org.socialbiz.cog.dms.ResourceEntity;
+import org.w3c.dom.Document;
 
 /**
 * NGCommonFile is a set of methods that are are needed
 * on the three main file types: NGPage, NGBook, and UserPage
 */
-public interface NGContainer
+public abstract class NGContainer extends DOMFile
 {
 
-    /**
-    * @deprecated DO NOT USE THESE
-    * These are the old way of calculating whether someone had access to a page
-    * but no longer useful.
-    * Please remove these as soon as possible.
-    */
-    public static final int ROLE_MEMBER           = 2;
-    public static final int ROLE_AUTHOR           = 4;
-
+    public NGContainer(File path, Document doc) throws Exception {
+        super(path,doc);
+    }
+    
     /**
     * Every container has a key that uniquely identifies it from all other containers.
     * In many cases the key is used as the name of the file that stores it, or as a key
@@ -50,17 +46,17 @@ public interface NGContainer
     * across different container types.  It should be treated as an obaque values.
     * The only thing that matters is that it uniquely identifies one container.
     */
-    public  String getKey();
+    public abstract  String getKey();
 
 
     /*
      * output links to display in history logs
      */
-    public void writeContainerLink(AuthRequest ar, int len) throws Exception;
-    public void writeNoteLink(    AuthRequest ar, String noteId,     int len) throws Exception;
-    public void writeTaskLink(    AuthRequest ar, String taskId,     int len) throws Exception;
-    public void writeReminderLink(AuthRequest ar, String reminderId, int len) throws Exception;
-    public void writeDocumentLink(AuthRequest ar, String documentId, int len) throws Exception;
+    public abstract void writeContainerLink(AuthRequest ar, int len) throws Exception;
+    public abstract void writeNoteLink(    AuthRequest ar, String noteId,     int len) throws Exception;
+    public abstract void writeTaskLink(    AuthRequest ar, String taskId,     int len) throws Exception;
+    public abstract void writeReminderLink(AuthRequest ar, String reminderId, int len) throws Exception;
+    public abstract void writeDocumentLink(AuthRequest ar, String documentId, int len) throws Exception;
 
 
 
@@ -69,7 +65,7 @@ public interface NGContainer
      * have been marked as deleted will actually, finally, be deleted with
      * this operation.
      */
-    public void purgeDeletedAttachments() throws Exception;
+    public abstract void purgeDeletedAttachments() throws Exception;
 
     /**
     * Returns the ResourceEntity that represents the remote folder that files
@@ -85,12 +81,12 @@ public interface NGContainer
     * When browsing for a place to store a document, the browsing should start at
     * this location.
     */
-    public ResourceEntity getDefRemoteFolder() throws Exception;
+    public abstract ResourceEntity getDefRemoteFolder() throws Exception;
     /**
     * Construct a valid ResourceEntity that points to a folder to set this.
     * Pass a null to clear the setting
     */
-    public void setDefRemoteFolder(ResourceEntity loc) throws Exception;
+    public abstract void setDefRemoteFolder(ResourceEntity loc) throws Exception;
 
 
     /**
@@ -101,43 +97,35 @@ public interface NGContainer
     *
     * Every role must have a unique name within the container.
     */
-    public List<CustomRole> getAllRoles() throws Exception;
+    public abstract List<CustomRole> getAllRoles() throws Exception;
 
     /**
     * Finds and returns the role with the specified name, or null if
     * that role can not be found.
     */
-    public CustomRole getRole(String name) throws Exception;
+    public abstract CustomRole getRole(String name) throws Exception;
 
     /**
     * Finds and returns the role with the specified name.
     * This is 'Failure' version should be used when you know that the role should exist
     * if not found, this will throw a standard message announcing that.
     */
-    public CustomRole getRoleOrFail(String name) throws Exception;
-
-
-    public CustomRole createRole(String roleName, String description) throws Exception;
-
-    public void deleteRole(String name) throws Exception;
-
-
-    public abstract RoleRequestRecord getRoleRequestRecord(String roleName, String requestedBy) throws Exception;
-
-    public abstract List<RoleRequestRecord> getAllRoleRequestByState(String state, boolean completedReq) throws Exception;
-
-    public abstract RoleRequestRecord getRoleRequestRecordById(String requestId)throws Exception;
-
-    public abstract List<RoleRequestRecord> getAllRoleRequest() throws Exception;
-
-    public abstract RoleRequestRecord createRoleRequest(String roleName, String requestedBy,long modifiedDate, String modifiedBy, String requestDescription) throws Exception;
+    public abstract CustomRole getRoleOrFail(String name) throws Exception;
+    public abstract CustomRole createRole(String roleName, String description) throws Exception;
+    public abstract void deleteRole(String name) throws Exception;
     public abstract void addPlayerToRole(String roleName,String newMember)throws Exception;
     public abstract List<NGRole> findRolesOfPlayer(UserRef user) throws Exception;
 
+    
+    public abstract RoleRequestRecord getRoleRequestRecord(String roleName, String requestedBy) throws Exception;
+    public abstract List<RoleRequestRecord> getAllRoleRequestByState(String state, boolean completedReq) throws Exception;
+    public abstract RoleRequestRecord getRoleRequestRecordById(String requestId)throws Exception;
+    public abstract List<RoleRequestRecord> getAllRoleRequest() throws Exception;
+    public abstract RoleRequestRecord createRoleRequest(String roleName, String requestedBy,long modifiedDate, String modifiedBy, String requestDescription) throws Exception;
 
 
-    public List<HistoryRecord> getAllHistory() throws Exception;
-    public List<HistoryRecord> getHistoryRange(long startTime, long endTime) throws Exception;
+    public abstract List<HistoryRecord> getAllHistory() throws Exception;
+    public abstract List<HistoryRecord> getHistoryRange(long startTime, long endTime) throws Exception;
 
     /**
     * Pass a context type (Topic, Action Item, Document, etc) and a old context id, and all the
@@ -145,54 +133,48 @@ public interface NGContainer
     * The history records are left in the old container.
     * The history records in the new page will have the new ID.
     */
-    public void copyHistoryForResource(NGContainer ngc, int contextType, String oldID, String newID) throws Exception;
+    public abstract void copyHistoryForResource(NGContainer ngc, int contextType, String oldID, String newID) throws Exception;
 
-    public HistoryRecord createNewHistory() throws Exception;
+    public abstract HistoryRecord createNewHistory() throws Exception;
 
 
     ////////////// Other container bookkeeping methods ////////////////////
 
-    public void saveContent(AuthRequest ar, String comment)  throws Exception;
+    public abstract void saveContent(AuthRequest ar, String comment)  throws Exception;
 
-    public  License getLicense(String id) throws Exception;
+    public abstract  License getLicense(String id) throws Exception;
 
-    public  String getFullName();
+    public abstract  String getFullName();
 
-    public  String getUniqueOnPage() throws Exception;
+    public abstract  String getUniqueOnPage() throws Exception;
 
-    public boolean isDeleted();
+    public abstract boolean isDeleted();
 
-    public long getLastModifyTime()throws Exception;
+    public abstract long getLastModifyTime()throws Exception;
 
-    /**
-     * This is the actual local file that the container is stored in.
-     * This is defined identically to DOMFile method.
-     */
-    public File getFilePath();
+    public abstract List<String> getContainerNames();
+    public abstract void setContainerNames(List<String> nameSet);
 
-    public List<String> getContainerNames();
-    public void setContainerNames(List<String> nameSet);
-
-    public ReminderMgr getReminderMgr() throws Exception;
+    public abstract ReminderMgr getReminderMgr() throws Exception;
 
     /**
     * Primary level permissions are for "participants" of the container.
     */
-    public boolean primaryPermission(UserRef user) throws Exception;
-    public NGRole getPrimaryRole() throws Exception;
+    public abstract boolean primaryPermission(UserRef user) throws Exception;
+    public abstract NGRole getPrimaryRole() throws Exception;
 
     /*
     * If you are in the secondary role, you automatically get included in the primary
     * permissions.  This method checks both roles easily.
     */
-    public boolean primaryOrSecondaryPermission(UserRef user) throws Exception;
+    public abstract boolean primaryOrSecondaryPermission(UserRef user) throws Exception;
 
     /**
     * Secondary level permissions are "owner" permissions for people who own
     * or are majorly responsible for the container.
     */
-    public boolean secondaryPermission(UserRef user) throws Exception;
-    public NGRole getSecondaryRole() throws Exception;
+    public abstract boolean secondaryPermission(UserRef user) throws Exception;
+    public abstract NGRole getSecondaryRole() throws Exception;
 
 
     /**
@@ -227,52 +209,52 @@ public interface NGContainer
     * would soon receive new links with the new numbers in them.
     * There is no real requirement that the number last *forever*.
     */
-    public String emailDependentMagicNumber(String emailId) throws Exception;
+    public abstract String emailDependentMagicNumber(String emailId) throws Exception;
 
-    public String getAllowPublic() throws Exception;
-    public void setAllowPublic(String allowPublic) throws Exception;
+    public abstract String getAllowPublic() throws Exception;
+    public abstract void setAllowPublic(String allowPublic) throws Exception;
 
-    public boolean isFrozen() throws Exception;
+    public abstract boolean isFrozen() throws Exception;
 
-    public boolean isAlreadyRequested(String roleName, String requestedBy) throws Exception;
+    public abstract boolean isAlreadyRequested(String roleName, String requestedBy) throws Exception;
 
     /**
     * each container can have a different "theme" color set, etc.
     * default is "theme/blue/"
     */
-    public String getThemePath();
+    public abstract String getThemePath();
 
-    public void saveFile(AuthRequest ar, String comment) throws Exception;
-    public void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog)throws Exception;
+    public abstract void saveFile(AuthRequest ar, String comment) throws Exception;
+    public abstract void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog)throws Exception;
 
     /**
     * Returns a globally unique for the container (project/book/userpage) by combining
     * the server's universal id with the project key.  Note: the server id is not
     * guaranteed to remain constant unless specified by the server administrator.
     */
-    public String getContainerUniversalId();
+    public abstract String getContainerUniversalId();
 
 
     /**
      * returns all the email records in this container
      */
-    public List<EmailRecord> getAllEmail() throws Exception;
+    public abstract List<EmailRecord> getAllEmail() throws Exception;
 
     /**
      * creates an email record and sets the ID to a unique value for this project
      */
-    public EmailRecord createEmail() throws Exception;
-    public void clearAllEmail() throws Exception;
+    public abstract EmailRecord createEmail() throws Exception;
+    public abstract void clearAllEmail() throws Exception;
 
     /**
      * Scan through the email on this project, and return the number of
      * email messages on the page that have not been sent yet.
      */
-    public int countEmailToSend() throws Exception;
+    public abstract int countEmailToSend() throws Exception;
 
     /**
      * figure out when the next background event is scheduled
      */
-    public long nextActionDue() throws Exception;
+    public abstract long nextActionDue() throws Exception;
 
  }

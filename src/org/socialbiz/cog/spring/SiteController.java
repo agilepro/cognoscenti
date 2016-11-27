@@ -54,6 +54,12 @@ public class SiteController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar,siteId,null,"SiteAdmin");
     }
+    @RequestMapping(value = "/{siteId}/$/SiteStats.htm", method = RequestMethod.GET)
+    public void SiteStats(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response)throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar,siteId,null,"SiteStats");
+    }
     
     @RequestMapping(value = "/{userKey}/requestAccount.htm", method = RequestMethod.GET)
     public void requestSite(@PathVariable String userKey,

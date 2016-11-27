@@ -8,7 +8,37 @@
     String accountId = ar.reqParam("accountId");
     NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(accountId);
     String pageAddress = ar.getResourceURL(ngb,"personal.htm");
-    JSONObject siteInfo = new JSONObject();
+
+    JSONObject userMap = new JSONObject();
+    List<NGPageIndex> allWorkspaces = ar.getCogInstance().getAllProjectsInSite(accountId);
+    for (NGPageIndex ngpi : allWorkspaces) {
+        NGWorkspace ngw = ngpi.getPage();
+        for (CustomRole ngr : ngw.getAllRoles()) {
+            for (AddressListEntry ale : ngr.getDirectPlayers()) {
+                String uid = ale.getUniversalId();
+
+                JSONObject userInfo = null;
+                JSONObject wsMap = null;
+                if (userMap.has(uid)) {
+                    userInfo = userMap.getJSONObject(uid);
+                    wsMap = userInfo.getJSONObject("wsMap");
+                    userInfo.put("count", userInfo.getInt("count")+1);
+                }
+                else {
+                    userInfo = new JSONObject();
+                    userMap.put(uid, userInfo);
+                    wsMap = new JSONObject();
+                    userInfo.put("wsMap", wsMap);
+                    userInfo.put("count", 1);
+                }
+                String wsKey = ngw.getKey();
+                if (!wsMap.has(wsKey)) {
+                    wsMap.put(wsKey, ngw.getFullName());
+                }
+            }
+        }
+    }
+
 
 %>
 
@@ -16,7 +46,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
-    $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
+    $scope.userMap = <%userMap.write(out,2,4);%>;
     $scope.sourceUser = "";
     $scope.destUser = "";
     $scope.replaceConfirm = false;
@@ -48,8 +78,11 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     }
-});
 
+});
+app.filter('encode', function() {
+  return window.encodeURIComponent;
+});
 </script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -66,8 +99,14 @@ app.controller('myCtrl', function($scope, $http) {
             <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="">No Options at this Time</a></li>
+              <li role="presentation"><a role="menuitem"
+                  href="SiteAdmin.htm">Site Admin</a></li>
+              <li role="presentation"><a role="menuitem"
+                  href="roleRequest.htm">Role Requests</a></li>
+              <li role="presentation"><a role="menuitem"
+                  href="SiteUsers.htm">User Migration</a></li>
+              <li role="presentation"><a role="menuitem"
+                  href="SiteStats.htm">Site Statistics</a></li>
             </ul>
           </span>
 
@@ -80,7 +119,7 @@ app.controller('myCtrl', function($scope, $http) {
 }
 </style>
 
-    <div>
+    <div class="well">
         <h1>User Migration</h1>
 
         <table >
@@ -100,6 +139,21 @@ app.controller('myCtrl', function($scope, $http) {
             </td>
           </tr>
         </table>
+    </div>
+
+
+
+<hr/>
+    <div>
+    <h1>List of users in workspaces</h1>
+    <table class="table">
+      <tr ng-repeat="(key, value) in userMap">
+         <td><a href="../../FindPerson.htm?uid={{key|encode}}">{{key}}</a></td>
+         <td>{{value.count}}</td>
+         <td><span ng-repeat="(wsKey,wsName) in value.wsMap">
+             <a href="../{{wsKey}}/frontPage.htm">{{wsName}}</a>, </span></td>
+      </tr>
+    </table>
     </div>
 </div>
 

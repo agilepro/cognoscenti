@@ -35,7 +35,7 @@ import org.workcast.json.JSONObject;
  * a single set of members, and a particular look and feel. For archaic reasons
  * called NGBook, should be NGSite
  */
-public class NGBook extends ContainerCommon implements NGContainer {
+public class NGBook extends ContainerCommon {
     public String key;
     public ReminderMgr reminderMgr;
     // The following are the indices which are used by book finding and

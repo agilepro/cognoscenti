@@ -81,9 +81,13 @@ app.controller('myCtrl', function($scope, $http) {
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" 
+                  href="SiteAdmin.htm">Site Admin</a></li>
+              <li role="presentation"><a role="menuitem" 
                   href="roleRequest.htm">Role Requests</a></li>
               <li role="presentation"><a role="menuitem" 
                   href="SiteUsers.htm">User Migration</a></li>
+              <li role="presentation"><a role="menuitem" 
+                  href="SiteStats.htm">Site Statistics</a></li>
             </ul>
           </span>
 
@@ -174,85 +178,3 @@ app.controller('myCtrl', function($scope, $http) {
         </table>
     </div>
 
-
-    <div class="generalContent">
-        <div class="generalHeading paddingTop">Statistics</div>
-        <table class="table">
-        <tr>
-           <td>Number of Topics:</td>
-           <td><%=wStats.numTopics%></td>
-        </tr>
-        <tr>
-           <td>Number of Meetings:</td>
-           <td><%=wStats.numMeetings%></td>
-        </tr>
-        <tr>
-           <td>Number of Decisions:</td>
-           <td><%=wStats.numDecisions%></td>
-        </tr>
-        <tr>
-           <td>Number of Comments:</td>
-           <td><%=wStats.numComments%></td>
-        </tr>
-        <tr>
-           <td>Number of Proposals:</td>
-           <td><%=wStats.numProposals%></td>
-        </tr>
-        <tr>
-           <td>Number of Documents:</td>
-           <td><%=wStats.numDocs%></td>
-        </tr>
-        <tr>
-           <td>Size of Documents:</td>
-           <td>{{<%=wStats.sizeDocuments%>|number}}</td>
-        </tr>
-        <tr>
-           <td>Number of Old Versions:</td>
-           <td>{{<%=wStats.sizeArchives%>|number}}</td>
-        </tr>
-        <tr>
-           <td>Topics:</td>
-           <td><% outputStatTable(ar, wStats.topicsPerUser, "Topics"); %></td>
-        </tr>
-        <tr>
-           <td>Documents:</td>
-           <td><% outputStatTable(ar, wStats.docsPerUser, "Documents"); %></td>
-        </tr>
-        <tr>
-           <td>Comments:</td>
-           <td><% outputStatTable(ar, wStats.commentsPerUser, "Comments"); %></td>
-        </tr>
-        <tr>
-           <td>Meetings:</td>
-           <td><% outputStatTable(ar, wStats.meetingsPerUser, "Meetings"); %></td>
-        </tr>
-        <tr>
-           <td>Proposals:</td>
-           <td><% outputStatTable(ar, wStats.proposalsPerUser, "Proposals"); %></td>
-        </tr>
-        <tr>
-           <td>Responses:</td>
-           <td><% outputStatTable(ar, wStats.responsesPerUser, "Responses"); %></td>
-        </tr>
-        <tr>
-           <td>Unresponded:</td>
-           <td><% outputStatTable(ar, wStats.unrespondedPerUser, "Unresponded"); %></td>
-        </tr>
-        </table>
-    </div>
-</div>
-
-<%!
-    private void outputStatTable(AuthRequest ar, NameCounter counter, String group) throws Exception  {
-        ar.write("\n<table>");
-        List<String> keys = counter.getSortedKeys();
-        for (String key : keys) {
-            ar.write("\n  <tr><td style=\"text-align:right;\">");
-            ar.writeHtml(key);
-            ar.write(" </td><td>: ");
-            ar.write(counter.get(key).toString());
-            ar.write("</td></tr>");
-        }
-        ar.write("\n</table>");
-    }
-%>

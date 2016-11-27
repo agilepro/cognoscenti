@@ -204,8 +204,17 @@ public class ResourceDecoder {
     }
 
     public List<NGRole> getLicensedRoles() throws Exception {
-        List<NGRole> licensedRoles = null;
+        List<NGRole> licensedRoles = new ArrayList<NGRole>();
         String restrictRole = lic.getRole();
+        
+        if (site==null) {
+            throw new Exception("Program Logic Error: getLicensedRoles called before site is known");
+        }
+        if (workspace==null) {
+            //this is the case that you are being called on a site
+            NGRole specifiedRole = site.getRole(restrictRole);
+            licensedRoles.add(specifiedRole);
+        }
         if (lic instanceof LicenseForUser) {
             //for user license, find all the roles they play
             licensedRoles = workspace.findRolesOfPlayer(licenseOwner);
@@ -221,7 +230,6 @@ public class ResourceDecoder {
                         +") is invalid because the user who created license is no longer a "
                         +"member of the role ("+restrictRole+")");
             }
-            licensedRoles = new ArrayList<NGRole>();
             licensedRoles.add(specifiedRole);
         }
         return licensedRoles;
