@@ -132,7 +132,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
 		$scope.promiseAutosave = $interval($scope.autosave, 15000);
     }
     
-    $scope.loadItems = function(query) {
+    $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
 

@@ -188,7 +188,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }, function() {
         $scope.copyTagsToRecord();
     });    
-    $scope.loadItems = function(query) {
+    $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
     $scope.toggleSelectedPerson = function(tag) {
@@ -528,7 +528,7 @@ function addvalue() {
             <td style="width:20px;"></td>
             <td>
               <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
-                  <auto-complete source="loadItems($query)"></auto-complete>
+                  <auto-complete source="loadPersonList($query)"></auto-complete>
               </tags-input>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                    <li role="presentation"><a role="menuitem" title="{{add}}"

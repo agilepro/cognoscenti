@@ -14,7 +14,7 @@
         <p for="text" style="float:left;padding:5px;">Also Notify:</p>
         <tags-input ng-model="cmt.notify" placeholder="Enter user name or id"
                       display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
-              <auto-complete source="loadItems($query)"></auto-complete>
+              <auto-complete source="loadPersonList($query)"></auto-complete>
           </tags-input>
     </div>
     <div>

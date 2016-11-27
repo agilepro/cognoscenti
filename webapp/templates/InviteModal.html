@@ -5,12 +5,16 @@
         height: 200px;
         min-height: 200px;
     }
+    .visibleBox {
+        border: 1px solid darkgray;
+        box-shadow: 1px 1px 1px 0 lightgray inset;
+    }
 </style>
 <div class="modal-header">
     <h3>Invite User: {{email}}</h3>
 </div>
 <div class="modal-body">
-    <textarea ng-model="message" class="form-control" style="width:600px;height:200px"></textarea>
+    <textarea ng-model="message" class="form-control visibleBox" style="height:200px"></textarea>
 </div>
 <div class="modal-footer">
       <button ng-click="ok()" class="btn btn-primary btn-raised">Send Invitation</button>

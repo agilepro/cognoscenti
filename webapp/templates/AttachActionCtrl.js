@@ -69,7 +69,7 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
     $scope.datePickDisable = function(date, mode) {
         return false;
     };
-    $scope.loadItems = function(query) {
+    $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
     

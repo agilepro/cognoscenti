@@ -367,7 +367,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.navigateToDoc = function(doc) {
         window.location="docinfo"+doc.id+".htm";
     }
-    $scope.loadItems = function(query) {
+    $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
 
@@ -500,7 +500,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <td style="width:20px;"></td>
                 <td>
               <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
-                  <auto-complete source="loadItems($query)"></auto-complete>
+                  <auto-complete source="loadPersonList($query)"></auto-complete>
               </tags-input>
                 </td>
             </tr>

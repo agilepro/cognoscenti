@@ -345,7 +345,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     $scope.showUser = function(tag) {
         //alert("gotcha:" + tag.name);
     }
-    $scope.loadItems = function(query) {
+    $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
 
@@ -434,7 +434,7 @@ function addvalue() {
                 <td colspan="2">
                   <tags-input ng-model="newGoal.assignList" placeholder="Enter user name or id"
                               display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
-                      <auto-complete source="loadItems($query)"></auto-complete>
+                      <auto-complete source="loadPersonList($query)"></auto-complete>
                   </tags-input>
                 </td>
             </tr>
