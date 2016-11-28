@@ -180,7 +180,7 @@ Optional Parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.bootstrap.datetimepicker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
@@ -195,32 +195,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.newEmailAddress = "";
     $scope.newAttachment = "";
-
-    /*
-    $scope.addAddress = function(val) {
-        if (!val) {
-            return;
-        }
-        $scope.newEmailAddress = "";
-        for (var i=0; i<$scope.emailInfo.alsoTo.length; i++) {
-            if (val == $scope.emailInfo.alsoTo[i]) {
-                return;
-            }
-        }
-        $scope.emailInfo.alsoTo.push(val);
-    }
-    $scope.removeAddress = function(val) {
-        var newVal = [];
-        for( var i=0; i<$scope.emailInfo.alsoTo.length; i++) {
-            var sample = $scope.emailInfo.alsoTo[i];
-            if (sample!=val) {
-                newVal.push(sample);
-            }
-        }
-        $scope.emailInfo.alsoTo = newVal;
-        $scope.newEmailAddress = val;
-    }
-    */
 
     $scope.saveEmail = function() {
         var postURL = "emailGeneratorUpdate.json?id="+$scope.emailInfo.id;
@@ -246,10 +220,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.scheduleEmail = function() {
         $scope.emailInfo.sendIt = false;
         $scope.emailInfo.scheduleIt = true;
-        $scope.meetingTime.setHours($scope.meetingHour);
-        $scope.meetingTime.setMinutes($scope.meetingMinutes);
-        $scope.meetingTime.setSeconds(0);
-        $scope.emailInfo.scheduleTime = $scope.meetingTime.getTime();
         $scope.saveEmail();
     }
 
@@ -342,12 +312,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $event.stopPropagation();
         $scope.datePickOpen1 = true;
     };
-    $scope.extractDateParts = function() {
-        $scope.meetingTime = new Date($scope.emailInfo.scheduleTime);
-        $scope.meetingHour = $scope.meetingTime.getHours();
-        $scope.meetingMinutes = $scope.meetingTime.getMinutes();
-    };
-    $scope.extractDateParts();
 
 
     $scope.itemHasDoc = function(doc) {
@@ -370,6 +334,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
+    $scope.onTimeSet = function (newDate, secondparam) {
+        $scope.emailInfo.scheduleTime = newDate.getTime();
+    }
+
 
 
     $scope.openAttachDocument = function () {
@@ -432,41 +400,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 
         <table>
-            <tr><td style="height:20px"></td></tr>
-
             <tr>
                 <td class="gridTableColummHeader">From:</td>
                 <td style="width:20px;"></td>
-                <td class="form-inline form-group">
+                <td class="form-inline">
                     <select ng-model="emailInfo.from"  class="form-control" style="width: 380px">
                       <option value="<% ar.writeHtml(userFromAddress); %>"><% ar.writeHtml(userFromAddress); %></option>
                       <option value="<% ar.writeHtml(composeFromAddress(ngw)); %>"><% ar.writeHtml(composeFromAddress(ngw)); %></option>
                     </select>
-                      <span class="dropdown">
-                        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                        Options <span class="caret"></span></button>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                          <li role="presentation"><a role="menuitem" tabindex="-1"
-                              href="#"  ng-click="emailInfo.excludeResponders=!emailInfo.excludeResponders">
-                              <input type="checkbox" ng-model="emailInfo.excludeResponders" ng-click="emailInfo.excludeResponders=!emailInfo.excludeResponders">
-                                  Exclude Responders</a></li>
-                          <li role="presentation"><a role="menuitem" tabindex="-1"
-                              href="#"  ng-click="emailInfo.includeSelf=!emailInfo.includeSelf">
-                              <input type="checkbox" ng-model="emailInfo.includeSelf" ng-click="emailInfo.includeSelf=!emailInfo.includeSelf">
-                                  Include Yourself</a></li>
-                          <li role="presentation"><a role="menuitem" tabindex="-1"
-                              href="#"  ng-click="emailInfo.makeMembers=!emailInfo.makeMembers">
-                              <input type="checkbox" ng-model="emailInfo.makeMembers" ng-click="emailInfo.makeMembers=!emailInfo.makeMembers">
-                                  Make below people members</a></li>
-                          <li role="presentation"><a role="menuitem" tabindex="-1"
-                              href="#"  ng-click="emailInfo.includeBody=!emailInfo.includeBody">
-                              <input type="checkbox" ng-model="emailInfo.attachFiles" ng-click="emailInfo.includeBody=!emailInfo.includeBody">
-                                  Include Files as Attachments</a></li>
-                        </ul>
-                      </span>
                 </td>
             </tr>
-            <tr><td style="height:20px"></td></tr>
             <tr>
                 <td class="gridTableColummHeader">To Role:</td>
                 <td style="width:20px;"></td>
@@ -494,7 +437,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                   </span>
                 </td>
             </tr>
-            <tr><td style="height:20px"></td></tr>
+            <tr>
+                <td class="gridTableColummHeader">Options:</td>
+                <td style="width:20px;"></td>
+                <td>
+                    <input type="checkbox" ng-model="emailInfo.excludeResponders"/>  Exclude Responders &nbsp; 
+                    <input type="checkbox" ng-model="emailInfo.includeSelf"/>  Include Yourself &nbsp; 
+                    <input type="checkbox" ng-model="emailInfo.makeMembers"/>  Make below people members
+                </td>
+            </tr>
             <tr>
                 <td class="gridTableColummHeader">Also To:</td>
                 <td style="width:20px;"></td>
@@ -505,27 +456,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </td>
             </tr>
             <tr>
-                <td></td>
-                <td style="width:20px"></td>
-                <td></td>
-            </tr>
-            <tr><td style="height:30px"></td></tr>
-            <tr>
                 <td class="gridTableColummHeader">Subject:</td>
                 <td style="width:20px;"></td>
                 <td>
                     <input type="text" ng-model="emailInfo.subject"  class="form-control"/>
                 </td>
             </tr>
-            <tr><td style="height:10px"></td></tr>
             <tr>
-                <td class="gridTableColummHeader" valign="top">Introduction:</td>
+                <td class="gridTableColummHeader">Introduction:</td>
                 <td style="width:20px;"></td>
-                <td>
-                    <textarea ng-model="emailInfo.intro"  class="form-control"></textarea>
-                </td>
+                <td><textarea ng-model="emailInfo.intro"  class="form-control"></textarea></td>
             </tr>
-            <tr><td style="height:10px"></td></tr>
             <tr ng-show="emailInfo.noteInfo.id">
                 <td class="gridTableColummHeader">Topic:</td>
                 <td style="width:20px;"></td>
@@ -536,9 +477,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <td style="width:20px;"></td>
                 <td>Include meeting <i>'{{emailInfo.meetingInfo.name}}'</i> into email</td>
             </tr>
-            <tr><td style="height:30px"></td></tr>
             <tr>
-                <td class="gridTableColummHeader" valign="top">Attachments:</td>
+                <td class="gridTableColummHeader">Attachments:</td>
                 <td style="width:20px;"></td>
                 <td>
                   <div>
@@ -549,9 +489,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                       <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
                           title="Attach a document">
                           ADD </button>
+                      <input type="checkbox" ng-model="emailInfo.includeBody"/>  Include Files as Attachments
                   </div>
             </tr>
-            <tr><td style="height:30px"></td></tr>
             <tr>
                 <td class="gridTableColummHeader"></td>
                 <td style="width:20px;"></td>
@@ -560,90 +500,33 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <button ng-click="sendEmail()" class="btn btn-primary btn-raised">Send Email Now</button>
                 </td>
             </tr>
-            <tr><td style="height:10px"></td></tr>
             <tr>
                 <td class="gridTableColummHeader"></td>
                 <td style="width:20px;"></td>
                 <td class="form-inline form-group">
                     <button ng-click="scheduleEmail()" class="btn btn-primary btn-raised">Schedule For Later</button>
-                    on
-                    <input type="text"
-                        style="width:150;"
-                        class="form-control"
-                        datepicker-popup="dd-MMMM-yyyy"
-                        ng-model="meetingTime"
-                        is-open="datePickOpen"
-                        min-date="minDate"
-                        datepicker-options="datePickOptions"
-                        date-disabled="datePickDisable(date, mode)"
-                        ng-required="true"
-                        ng-click="openDatePicker($event)"
-                        close-text="Close"/>
-                        at
-                        <select style="width:50;" ng-model="meetingHour" class="form-control" >
-                            <option value="0">00</option>
-                            <option value="1">01</option>
-                            <option value="2">02</option>
-                            <option value="3">03</option>
-                            <option value="4">04</option>
-                            <option value="5">05</option>
-                            <option value="6">06</option>
-                            <option value="7">07</option>
-                            <option value="8">08</option>
-                            <option value="9">09</option>
-                            <option>10</option>
-                            <option>11</option>
-                            <option>12</option>
-                            <option>13</option>
-                            <option>14</option>
-                            <option>15</option>
-                            <option>16</option>
-                            <option>17</option>
-                            <option>18</option>
-                            <option>19</option>
-                            <option>20</option>
-                            <option>21</option>
-                            <option>22</option>
-                            <option>23</option>
-                        </select> :
-                        <select  style="width:50;" ng-model="meetingMinutes" class="form-control" >
-                            <option value="0">00</option>
-                            <option>15</option>
-                            <option>30</option>
-                            <option>45</option>
-                        </select>
+                    on <a class="dropdown-toggle form-control" id="dropdown2" role="button" 
+                                 data-toggle="dropdown" data-target="#" href="#">
+                        {{ emailInfo.scheduleTime | date:'dd-MMM-yyyy' }} 
+                        &nbsp;at&nbsp; {{ emailInfo.scheduleTime | date:'HH:mm' }}
+                        &nbsp; &nbsp; {{tzIndicator}}
+                    </a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        <datetimepicker
+                            data-ng-model="emailInfo.scheduleTime"
+                            data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
+                            data-on-set-time="onTimeSet(newDate)"/>
+                    </ul>
+
                 </td>
             </tr>
-
-            <tr><td style="height:20px"></td></tr>
             <tr>
                 <td class="gridTableColummHeader" valign="top">Status:</td>
                 <td style="width:20px;"></td>
                 <td>{{explainState()}}</td>
             </tr>
-<%
-String overrideAddress = EmailSender.getProperty("overrideAddress");
-if (overrideAddress!=null && overrideAddress.length()>0) {
-%>
-            <tr><td style="height:20px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader" valign="top">Override Address Active:</td>
-                <td style="width:20px;"></td>
-                <td>Note: this server is configured in email test mode.  Messages will be composed to
-                    users and participants having different email addresses, but the messages will
-                    not actually be sent there!  Instead, all email from this server will actually
-                    be sent to the override address (<b><% ar.writeHtml(overrideAddress); %></b>).
-                    This is configured in the WEB-INF/EmailNotification.properties file by
-                    giving a value to the 'overrideAddress' property.   Leave this property
-                    empty in order to take the server out of test mode, into production mode,
-                    where it actually sends email to the actual addresses.</td>
+            <tr style="height:30px">
             </tr>
-<%
-}
-%>
-
-
-            <tr><td style="height:30px"></td></tr>
             <tr>
                 <td class="gridTableColummHeader" valign="top">Unsubscribe:</td>
                 <td style="width:20px;"></td>
@@ -658,8 +541,16 @@ if (overrideAddress!=null && overrideAddress.length()>0) {
                 </td>
             </tr>
         </table>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
     </div>
-</div>
+
 
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 

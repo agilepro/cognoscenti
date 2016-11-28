@@ -168,8 +168,8 @@
       <!-- BEGIN Input Search -->
       <div class="search navbar-left collapse">
         <form class="navbar-form" role="search" action="searchAllNotes.htm">
-          <div class="form-group is-empty">
-            <input type="text" class="form-control" name="s" placeholder="Search">
+          <div class="form-group specialweaver is-empty">
+            <input type="text" class="form-control specialweaver" name="s" placeholder="Search">
           </div>
         </form>
       </div>

@@ -128,7 +128,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.bootstrap.datetimepicker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.goalInfo  = <%goalInfo.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
@@ -162,7 +162,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.updateTagEntry();
     $scope.copyTagsToRecord = function() {
-        console.log("CALL to copyTagsToRecord");
         var newList = [];
         $scope.tagEntry.forEach( function(item) {
             var nix = {};
@@ -207,19 +206,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         errorPanelHandler($scope, serverErr);
     };
     $scope.setState = function(newState) {
-        console.log("CALL to setState");
         $scope.goalInfo.state=newState;
         $scope.saveGoal();
     }
     $scope.startEdit = function() {
-        $scope.editGoalInfo=true;
-        $scope.showAccomplishment=false;
-        $scope.copyDatesToDummies();
+        $scope.openActItemMain();
     }
     $scope.saveGoal = function() {
-        $scope.goalInfo.duedate = $scope.dummyDate1.getTime();
-        $scope.goalInfo.startdate = $scope.dummyDate2.getTime();
-        $scope.goalInfo.enddate = $scope.dummyDate3.getTime();
         var postURL = "updateGoal.json?gid="+$scope.goalInfo.id;
         var postdata = angular.toJson($scope.goalInfo);
         $scope.showError=false;
@@ -227,9 +220,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.showAccomplishment=false;
         $http.post(postURL, postdata)
         .success( function(data) {
-            console.log("CALL to success from saveGoal");
             $scope.goalInfo = data;
-            $scope.copyDatesToDummies();
             $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
@@ -245,7 +236,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         .success( function(data) {
             console.log("CALL to success from undoGoalChanges");
             $scope.goalInfo = data;
-            $scope.copyDatesToDummies();
             $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
@@ -326,46 +316,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.refreshHistory();
     }
 
-    $scope.copyDatesToDummies = function() {
-        $scope.dummyDate1 = new Date($scope.goalInfo.duedate);
-        $scope.dummyDate2 = new Date($scope.goalInfo.startdate);
-        $scope.dummyDate3 = new Date($scope.goalInfo.enddate);
+    $scope.onTimeSet = function (newDate, param) {
+        $scope.goalInfo[param] = newDate.getTime();
     }
-    $scope.copyDatesToDummies();
-    $scope.datePickOptions = {
-        formatYear: 'yyyy',
-        startingDay: 1
-    };
-    $scope.datePickDisable = function(date, mode) {
-        return false;
-    };
-    $scope.datePickOpen1 = false;
-    $scope.datePickOpen2 = false;
-    $scope.datePickOpen3 = false;
-    $scope.openDatePicker1 = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        if ($scope.dummyDate1.getTime()<=0) {
-            $scope.dummyDate1 = new Date();
-        }
-        $scope.datePickOpen1 = true;
-    };
-    $scope.openDatePicker2 = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        if ($scope.dummyDate2.getTime()<=0) {
-            $scope.dummyDate2 = new Date();
-        }
-        $scope.datePickOpen2 = true;
-    };
-    $scope.openDatePicker3 = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        if ($scope.dummyDate3.getTime()<=0) {
-            $scope.dummyDate3 = new Date();
-        }
-        $scope.datePickOpen3 = true;
-    };
+
     $scope.hasLabel = function(searchName) {
         return $scope.goalInfo.labelMap[searchName];
     }
@@ -463,6 +417,34 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             message.name = player.name;
             message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "frontPage.htm")%>";
             $scope.sendEmailLoginRequest(message);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+    
+    
+    $scope.openActItemMain = function () {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/ActItemMain.html?t=<%=System.currentTimeMillis()%>',
+            controller: 'ActItemMainCtrl',
+            size: 'lg',
+            resolve: {
+                goal: function () {
+                    return JSON.parse(JSON.stringify($scope.goalInfo));
+                },
+                allLabels: function () {
+                    return $scope.allLabels;
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (goal) {
+            $scope.goalInfo = goal;
+            console.log("MODAL returned:", goal);
+            $scope.saveGoal(['synopsys','description','labelMap','duedate','strtdate','enddate']);
         }, function () {
             //cancel action - nothing really to do
         });
@@ -679,121 +661,6 @@ function addvalue() {
         <tr><td height="10px"></td></tr>
     </table>
 
-    <table width="100%"  ng-show="editGoalInfo" class="well">
-
-        <tr><td height="10px"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader">Synopsis:</td>
-            <td style="width:20px;"></td>
-            <td><input ng-model="goalInfo.synopsis" class="form-control"/></td>
-            <td style="width:40px;"></td>
-        </tr>
-        <tr><td height="10px"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader">Description:</td>
-            <td style="width:20px;"></td>
-            <td><textarea ng-model="goalInfo.description" class="form-control"></textarea></td>
-            <td style="width:40px;"></td>
-        </tr>
-        <tr><td height="10px"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader">Labels:</td>
-            <td style="width:20px;"></td>
-            <td>
-              <span class="dropdown" ng-repeat="role in allLabels">
-                <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
-                   data-toggle="dropdown" style="background-color:{{role.color}};"
-                   ng-show="hasLabel(role.name)">{{role.name}}</button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                   <li role="presentation"><a role="menuitem" title="{{add}}"
-                      ng-click="toggleLabel(role)">Remove Label:<br/>{{role.name}}</a></li>
-                </ul>
-              </span>
-              <span>
-                 <span class="dropdown">
-                   <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
-                   style="padding: 2px 5px;font-size: 11px;"> + </button>
-                   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                     <li role="presentation" ng-repeat="rolex in allLabels">
-                         <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
-                         ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
-                             {{rolex.name}}</button></li>
-                   </ul>
-                 </span>
-              </span>
-            </td>
-        </tr>
-        <tr><td height="20px"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader">Status:</td>
-            <td style="width:20px;"></td>
-            <td><textarea ng-model="goalInfo.status" class="form-control"></textarea></td>
-        </tr>
-        <tr>
-            <td class="gridTableColummHeader">Due Date:</td>
-            <td style="width:20px;"></td>
-            <td>
-                <input type="text"
-                    style="width:150;margin-top:10px;"
-                    class="form-control"
-                    datepicker-popup="dd-MMMM-yyyy"
-                    ng-model="dummyDate1"
-                    is-open="datePickOpen1"
-                    min-date="minDate"
-                    datepicker-options="datePickOptions"
-                    date-disabled="datePickDisable(date, mode)"
-                    ng-required="true"
-                    ng-click="openDatePicker1($event)"
-                    close-text="Close"/>
-            </td>
-        </tr>
-        <tr><td height="10px"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader">Start Date:</td>
-            <td style="width:20px;"></td>
-            <td>
-                <input type="text"
-                    style="width:150;margin-top:10px;"
-                    class="form-control"
-                    datepicker-popup="dd-MMMM-yyyy"
-                    ng-model="dummyDate2"
-                    is-open="datePickOpen2"
-                    min-date="minDate"
-                    datepicker-options="datePickOptions"
-                    date-disabled="datePickDisable(date, mode)"
-                    ng-required="true"
-                    ng-click="openDatePicker2($event)"
-                    close-text="Close"/>
-            </td>
-        </tr>
-        <tr><td height="10px"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader">End Date:</td>
-            <td style="width:20px;"></td>
-            <td>
-                <input type="text"
-                    style="width:150;margin-top:10px;"
-                    class="form-control"
-                    datepicker-popup="dd-MMMM-yyyy"
-                    ng-model="dummyDate3"
-                    is-open="datePickOpen3"
-                    min-date="minDate"
-                    datepicker-options="datePickOptions"
-                    date-disabled="datePickDisable(date, mode)"
-                    ng-required="true"
-                    ng-click="openDatePicker3($event)"
-                    close-text="Close"/>
-            </td>
-        </tr>
-        <tr><td height="10px"></td></tr>
-        <tr><td></td><td></td>
-            <td>
-                <button class="btn btn-primary btn-raised" ng-click="saveGoal()">Save Edits</button>
-                <button class="btn btn-primary btn-raised" ng-click="undoGoalChanges()">Cancel</button>
-            </td>
-        </tr>
-        <tr><td height="10px"></td></tr>
-    </table>
 
 
 
@@ -1145,6 +1012,7 @@ function updateVal(){
 
 </div>
 
+<script src="<%=ar.retPath%>templates/ActItemMainCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/InviteModal.js"></script>
 
