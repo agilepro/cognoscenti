@@ -9,32 +9,32 @@
 
 %>
 <style>
-    .reRow td {padding:10px}
+    .reRow {
+        padding:10px;
+        max-width:500px;
+    }
 </style>
 <div>
 
-    <table width="600">
-    <tr class="reRow">
-        <td class="h2">You Need A Name!</td>
-    </tr>
-    <tr class="reRow">
-        <td >Before going any further, please specify a display name
-             that will be used to identify you to others when you do or own things.
-             Please specify your <b>Full Name</b> (first and last and everything needed
-             to clearly identify you) because over time there may be
-             many people using this server.  You can change this later at any time.</td>
-    </tr>
+    <div class="reRow">
+        Before going any further, please specify a display name
+        that will be used to identify you to others when you do or own things.
+    </div>
+    <div class="reRow">
+        Please specify your <b>Full Name</b> (first and last and everything needed
+        to clearly identify you) because over time there may be
+        many people using this server.  You can change this name later at any time.</td>
+    </div>
+    
     <form action="<%= ar.retPath %>t/requiredName.form" method="post">
-    <input type="hidden" name="go" value="<%= ar.getCompleteURL() %>">
-
-    <tr class="reRow">
-         <td><input type="text" name="dName" class="form-control" size="50"> </td>
-    </tr>
-    <tr class="reRow">
-         <td><input type="submit" value="Set Display Name" class="btn btn-primary btn-raised"></td>
-    </tr>
-
+    <div class="reRow">
+         <input type="hidden" name="go" value="<%= ar.getCompleteURL() %>">
+         <input type="text" name="dName" class="form-control" size="50"> 
+    </div>
+    <div class="reRow">
+         <input type="submit" value="Set Full Name" class="btn btn-primary btn-raised">
+    </div>
     </form>
-    </table>
+    
 </div>
 

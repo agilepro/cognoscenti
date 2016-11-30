@@ -365,13 +365,13 @@ public class MainTabsViewControler extends BaseController {
 
              //streamJSP(ar, "index");
              //return null;
-             
+
              ModelAndView modelAndView=new ModelAndView("landingPage");
              request.setAttribute("realRequestURL", ar.getRequestURL());
 
              request.setAttribute("headerType", "blank");
              return modelAndView;
-             
+
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.project.welcome.page", null , ex);
          }
@@ -563,7 +563,7 @@ public class MainTabsViewControler extends BaseController {
              nid = ar.reqParam("nid");
              TopicRecord topic = ngw.getNote(nid);
              UserProfile up = ar.getUserProfile();
-             
+
              topic.getSubscriberRole().addPlayer(up.getAddressListEntry());
              ngw.save(); //just save flag, don't mark page as changed
 
@@ -1226,7 +1226,7 @@ public class MainTabsViewControler extends BaseController {
               }
               response.sendRedirect(go);
           }catch(Exception ex){
-              throw new NGException("nugen.operation.fail.project.sent.note.by.email.page", null , ex);
+              throw new Exception("Unable to set your required user full name", ex);
           }
       }
 

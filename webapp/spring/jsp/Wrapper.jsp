@@ -89,6 +89,12 @@
     else if ("accountCreateProject".equals(pageNiceTitle)) {
         pageNiceTitle = "Create a Workspace";
     }
+    else if ("edituserprofile".equals(pageNiceTitle)) {
+        pageNiceTitle = "Edit User Profile";
+    }
+    else if ("requiredName".equals(pageNiceTitle)) {
+        pageNiceTitle = "Please Set Your Name";
+    }
 
     String title = ar.defParam("title", wrappedJSP);
 

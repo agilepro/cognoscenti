@@ -57,7 +57,6 @@ public class ChunkFilterDate  extends BasicFilter implements ChunkFilter {
             if (argStrings.length>0 && argStrings[0].length()>0) {
                 format = argStrings[0];
             }
-            System.out.println("ChunkFilterDate: got called with: "+format);
             SimpleDateFormat sdf = new SimpleDateFormat(format);
             return sdf.format(new Date(dateVal));
         }

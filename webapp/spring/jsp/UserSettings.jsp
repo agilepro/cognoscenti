@@ -98,7 +98,7 @@ app.controller('myCtrl', function($scope, $http) {
             <div class="generalSettings">
                 <table border="0px solid red" class="popups">
                     <tr>
-                        <td width="148" class="gridTableColummHeader">Name:</td>
+                        <td width="148" class="gridTableColummHeader">Full Name:</td>
                         <td width="39" style="width:20px;"></td>
                         <td>{{userInfo.name}}</td>
                     </tr>

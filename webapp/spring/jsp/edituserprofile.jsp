@@ -121,8 +121,6 @@ Optional Parameter:
 
 
     <div class="generalArea">
-        <div class="pageHeading">Update Your Settings</div>
-        <div class="pageSubHeading">From here you can modify your profile settings.</div>
         <div class="generalSettings">
             <form id="upload_user" action="uploadImage.form" method="post" enctype="multipart/form-data">
                 <table>
@@ -141,6 +139,7 @@ Optional Parameter:
                     </tr>
                 </table>
             </form>
+            <hr/>
             <form id="updateUserProfile" name="updateUserProfile" action="EditUserProfileAction.form" method="post">
                 <input type="hidden" name="encodingGuard" value="<%ar.writeHtml("\u6771\u4eac");%>"/>
                 <input type="hidden" name="openid" value="<% ar.writeHtml(openid); %>"/>
@@ -151,18 +150,16 @@ Optional Parameter:
                 <input type="hidden" name="action" id="action" value='Save' />
                 <table border="0px solid red" width="100%">
                     <tr><td style="height:30px"></td></tr>
-                    <tr><td colspan="4" class="generalHeading">Personal Details</td></tr>
-                    <tr><td style="height:30px"></td></tr>
                     <tr>
-                        <td width="148" class="gridTableColummHeader_2"><fmt:message key="nugen.userprofile.Name"/>:</td>
+                        <td width="148" class="gridTableColummHeader_2">Full Name:</td>
                         <td width="39" style="width:20px;"></td>
-                        <td colspan="2"><input type="text" class="inputGeneral" name="name" size="69" value="<% ar.writeHtml(name);%>" /></td>
+                        <td colspan="2"><input type="text" class="form-control" name="name" size="69" value="<% ar.writeHtml(name);%>" /></td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
                     <tr>
                         <td class="gridTableColummHeader_2" style="vertical-align:top"><fmt:message key="nugen.userprofile.Description"/>:</td>
                         <td style="width:20px;"></td>
-                        <td colspan="2"><textarea rows="4" name="description" class="textAreaGeneral"><% ar.writeHtml(desc);%></textarea></td>
+                        <td colspan="2"><textarea rows="4" name="description" class="form-control"><% ar.writeHtml(desc);%></textarea></td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
                     <tr>
@@ -180,7 +177,7 @@ Optional Parameter:
                         <td style="width:20px;"></td>
                         <td colspan="2"><input type="button" class="btn btn-primary btn-raised" onclick="updateProfile('Save')" value="Update Personal Details"/></td>
                     </tr>
-                    <tr><td style="height:60px"></td></tr>
+                    <tr><td style="height:60px" colspan="3"><hr/></td></tr>
 
                     <tr>
                         <td class="gridTableColummHeader_2"></td>
