@@ -300,15 +300,15 @@ app.controller('myCtrl', function($scope, $http) {
                   <li role="presentation" ng-show="rec.public">
                       <a role="menuitem" tabindex="-1" ng-click="changePrivacy(rec)">Make <img src="<%=ar.retPath%>assets/images/iconMember.png"> Member Only</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" ng-click="deleteDoc(rec)">Delete <img src="<%=ar.retPath%>deletedLink.gif"> Document</a></li>
+                      <a role="menuitem" tabindex="-1" ng-click="deleteDoc(rec)">Delete <i class="fa fa-trash"></i> Document</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="sendNote.htm?att={{rec.id}}">Send Document By Email</a></li>
+                      <a role="menuitem" tabindex="-1" href="sendNote.htm?att={{rec.id}}">Send By <i class="fa fa-envelope"></i> Email</a></li>
                 </ul>
               </div>
             </td>
             <td>
                 <a href="editDetails{{rec.id}}.htm">
-                    <span ng-show="rec.deleted"><img src="<%=ar.retPath%>deletedLink.gif"></span>
+                    <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
                     <span ng-show="rec.public"><img src="<%=ar.retPath%>assets/images/iconPublic.png"></span>
                     <span ng-hide="rec.public"><img src="<%=ar.retPath%>assets/images/iconMember.png"></span>
                     <span ng-show="rec.upstream"><img src="<%=ar.retPath%>assets/images/iconUpstream.png"></span>

@@ -156,7 +156,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <td>{{rec.modifiedtime|date}}</td>
                 <td>
                     <a href="editDetails{{rec.id}}.htm">
-                        <span ng-show="rec.deleted"><img src="<%=ar.retPath%>deletedLink.gif"></span>
+                        <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
                         <span ng-show="rec.public"><img src="<%=ar.retPath%>assets/images/iconPublic.png"></span>
                         <span ng-hide="rec.public"><img src="<%=ar.retPath%>assets/images/iconMember.png"></span>
                         <span ng-show="rec.upstream"><img src="<%=ar.retPath%>assets/images/iconUpstream.png"></span>

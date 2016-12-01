@@ -362,7 +362,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <span style="vertical-align:middle;" ng-show="<%=isMember%>"><input type="checkbox" ng-model="showVizMem">
             <img src="<%=ar.retPath%>assets/images/iconMember.png"> Member-Only</span>
         <span style="vertical-align:middle;" ng-show="<%=isMember%>"><input type="checkbox" ng-model="showVizDel">
-            <img src="<%=ar.retPath%>deletedLink.gif"> Trash</span>
+            <i class="fa fa-trash"></i> Trash</span>
         <span class="dropdown" ng-repeat="role in allLabelFilters()">
             <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
                data-toggle="dropdown" style="background-color:{{role.color}};"
@@ -435,13 +435,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       <li role="presentation" ng-show="rec.public && allowPrivate">
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteViz(rec)">Make <img src="<%=ar.retPath%>assets/images/iconMember.png"> Member Only</a></li>
                       <li role="presentation" ng-hide="rec.deleted">
-                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Trash <img src="<%=ar.retPath%>deletedLink.gif"> Topic</a></li>
+                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
                       <li role="presentation" ng-show="rec.deleted">
-                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Untrash <img src="<%=ar.retPath%>deletedLink.gif"> Topic</a></li>
+                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Untrash <i class="fa fa-trash"></i> Topic</a></li>
                     </ul>
                   </span>
                   <span style="color:#220011;">
-                    <span ng-show="rec.deleted"><img src="<%=ar.retPath%>deletedLink.gif"></span>
+                    <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
                     <span ng-show="rec.public"><img src="<%=ar.retPath%>assets/images/iconPublic.png"></span>
                     <span ng-show="!rec.public && !rec.deleted"><img src="<%=ar.retPath%>assets/images/iconMember.png"></span>
                     <a href="noteZoom{{rec.id}}.htm" style="color:black;">

@@ -309,7 +309,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         <td style="width: 20px;"></td>
                         <td><b>{{docInfo.name}}</b>
                             <span ng-show="docInfo.deleted">
-                                <img src="<%=ar.retPath%>deletedLink.gif"> <font color="red">(DELETED)</font>
+                                <font color="red"><i class="fa fa-trash"></i> (DELETED)</font>
                             </span>
                         </td>
                     </tr>

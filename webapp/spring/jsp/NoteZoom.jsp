@@ -493,6 +493,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
                 },
+                attachmentList: function() {
+                    return $scope.attachmentList;
+                },
+                docSpaceURL: function() {
+                    return $scope.docSpaceURL;
+                },
                 parentScope: function() { return $scope; }
             }
         });
@@ -795,7 +801,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%if (isLoggedIn) { %>
       <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
           title="Attach a document">
-          Add/Remove <i class="fa fa-book"></i> Documents </button>
+          <i class="fa  fa-plus"></i>/<i class="fa  fa-minus"></i> &nbsp <i class="fa fa-book"></i> Documents </button>
 <% } %>
     </div>
 
@@ -808,7 +814,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%if (isLoggedIn) { %>
       <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachAction()"
           title="Attach an Action Item">
-          Add/Remove <i class="fa fa-flag"></i> Action Items </button>
+          <i class="fa  fa-plus"></i>/<i class="fa  fa-minus"></i> &nbsp; <i class="fa fa-flag"></i> Action Items </button>
 <% } %>
     </div>
 
@@ -879,10 +885,12 @@ comment-state-complete {
       <span ng-repeat="user in noteInfo.subscribers" class="btn btn-sm btn-default btn-raised"  style="margin:4px;">
               {{user.name}}
       </span>
-      <span ng-hide="isSubscriber" ng-click="changeSubscription(true)" class="btn btn-sm btn-primary btn-raised">
-          + Subscribe</span>
-      <span ng-show="isSubscriber" ng-click="changeSubscription(false)" class="btn btn-sm btn-primary btn-raised">
-          - Unsubscribe</span>
+      <span ng-hide="isSubscriber" ng-click="changeSubscription(true)" class="btn btn-sm btn-primary btn-raised"
+          title="subscribe yourself to this topic">
+          <i class="fa  fa-plus"></i> Subscribe</span>
+      <span ng-show="isSubscriber" ng-click="changeSubscription(false)" class="btn btn-sm btn-primary btn-raised" 
+          title="unsubscribe yourself from this topic">
+          <i class="fa  fa-minus"></i> Unsubscribe</span>
     </div>
 
     

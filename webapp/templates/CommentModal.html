@@ -23,6 +23,15 @@
     </div>
     <div style="height:15px;"></div>
     <div class="form-inline form-group">
+        Attachments: 
+      <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default btn-raised"  style="margin:4px;">
+              <img src="../../../assets/images/iconFile.png"> {{doc.name}}
+      </span>
+      <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
+          title="Attach a document">
+          <i class="fa  fa-plus"></i>/<i class="fa  fa-minus"></i> &nbsp <i class="fa fa-book"></i> Documents </button>
+    </div>
+    <div class="form-inline form-group">
        State: <select class="form-control" ng-model="cmt.state">
                   <option value="11">Draft</option>
                   <option value="12">Open</option>
@@ -69,3 +78,6 @@
 </div>
 </body>
 </html>
+
+
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>

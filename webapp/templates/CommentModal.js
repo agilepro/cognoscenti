@@ -1,14 +1,20 @@
 
-app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, cmt, parentScope, AllPeople) {
+app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $interval, cmt, parentScope, AllPeople, attachmentList, docSpaceURL) {
 
     // initial comment object
     $scope.cmt = cmt;
+    if (!cmt.docs) {
+        cmt.docs = [];
+    }
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
     // are there unsaved changes?
 	$scope.unsaved = 0;
 	// controls if comment can be saved
 	$scope.saveDisabled = false;
+    
+    $scope.docSpaceURL = docSpaceURL;
+    $scope.attachmentList = attachmentList;
 	
 	// return a readable status message
 	$scope.getStatusMassage = function() {
@@ -135,5 +141,47 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $interval, 
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
+    $scope.itemHasDoc = function(doc) {
+        var res = false;
+        var found = $scope.cmt.docs.forEach( function(docid) {
+            if (docid == doc.universalid) {
+                res = true;
+            }
+        });
+        return res;
+    }
+    $scope.getDocs = function() {
+        return $scope.attachmentList.filter( function(oneDoc) {
+            return $scope.itemHasDoc(oneDoc);
+        });
+    }
+    $scope.openAttachDocument = function () {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '../../../templates/AttachDocument.html?s=a',
+            controller: 'AttachDocumentCtrl',
+            size: 'lg',
+            resolve: {
+                docList: function () {
+                    return JSON.parse(JSON.stringify($scope.cmt.docs));
+                },
+                attachmentList: function() {
+                    return $scope.attachmentList;
+                },
+                docSpaceURL: function() {
+                    return $scope.docSpaceURL;
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (docList) {
+            $scope.cmt.docs = docList;
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
 
 });

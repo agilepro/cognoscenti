@@ -66,7 +66,7 @@ Parameter used :
         }
         if (ngp.isDeleted())
         {
-            deletedWarning = "<img src=\""+ar.retPath+"deletedLink.gif\"> (DELETED)";
+            deletedWarning = "<i class=\"fa fa-trash\"></i> (DELETED)";
         }
         else if (ngp.isFrozen())
         {
