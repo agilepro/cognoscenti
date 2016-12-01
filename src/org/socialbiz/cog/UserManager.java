@@ -53,9 +53,15 @@ public class UserManager
     * Set all static values back to their initial states, so that
     * garbage collection can be done, and subsequently, the
     * class will be reinitialized.
+    *
+    * Note -- All of the methods that read or write these
+    * variables should be synchronized because the XML DOM
+    * is not entirely thread-safe.  This user list tends to be
+    * accessed from many requests.  Also, this user list does
+    * not tend to talk to any other classes or do anything
+    * other than this list of users, so it is relatively safe.
     */
-    public synchronized static void clearAllStaticVars()
-    {
+    public static synchronized void clearAllStaticVars() {
         userHashByUID = new Hashtable<String, UserProfile>();
         userHashByKey = new Hashtable<String, UserProfile>();
         allUsers      = new Vector<UserProfile>();
@@ -64,9 +70,7 @@ public class UserManager
     }
 
 
-    public synchronized static void loadUpUserProfilesInMemory(Cognoscenti cog)
-        throws Exception
-    {
+    public static synchronized void loadUpUserProfilesInMemory(Cognoscenti cog) throws Exception {
         //check to see if this has already been loaded, if so, there is nothing to do
         if (initialized) {
             return;
@@ -130,14 +134,12 @@ public class UserManager
     }
 
 
-    public static void reloadUserProfiles(Cognoscenti cog) throws Exception
-    {
+    public static synchronized void reloadUserProfiles(Cognoscenti cog) throws Exception {
         clearAllStaticVars();
         loadUpUserProfilesInMemory(cog);
     }
 
-    public static void refreshHashtables()
-    {
+    public static synchronized void refreshHashtables() {
         userHashByUID = new Hashtable<String, UserProfile>();
         userHashByKey = new Hashtable<String, UserProfile>();
 
@@ -159,20 +161,15 @@ public class UserManager
     /**
     * The user "key" is the 9 character unique hash value given them by system
     */
-    public static UserProfile getUserProfileByKey(String key)
-    {
-        if (key == null)
-        {
+    public static synchronized UserProfile getUserProfileByKey(String key) {
+        if (key == null) {
             throw new RuntimeException("getUserProfileByKey requires a non-null key as a parameter");
         }
         return userHashByKey.get(key);
     }
-    public static UserProfile getUserProfileOrFail(String key)
-        throws Exception
-    {
+    public static synchronized UserProfile getUserProfileOrFail(String key) throws Exception {
         UserProfile up = getUserProfileByKey(key);
-        if (up == null)
-        {
+        if (up == null) {
             throw new NGException("nugen.exception.user.profile.not.exist", new Object[]{key});
         }
         return up;
@@ -185,7 +182,7 @@ public class UserManager
     *
     * Should ONLY fid by confirmed IDs, not by any proposed IDs.
     */
-    public static UserProfile findUserByAnyId(String anyId)
+    public static synchronized UserProfile findUserByAnyId(String anyId)
     {
         //return null if a bogus value passed.
         //fixed bug 12/20/2010 hat was finging people with nullstring names
@@ -223,18 +220,15 @@ public class UserManager
         return null;
     }
 
-    public static UserProfile findUserByAnyIdOrFail(String anyId){
+    public static synchronized UserProfile findUserByAnyIdOrFail(String anyId){
         UserProfile up = findUserByAnyId(anyId);
-        if (up == null)
-        {
+        if (up == null) {
             throw new RuntimeException("Can not find a user profile for the id: "+anyId);
         }
         return up;
     }
 
-    public static UserProfile createUserWithId(String guid, String newId)
-        throws Exception
-    {
+    public static synchronized UserProfile createUserWithId(String guid, String newId) throws Exception {
         //lets make sure that no other profile has that id first,
         //to avoid any complicated situations.
         if (guid!=null && UserManager.getUserProfileByKey(guid)!=null) {
@@ -249,7 +243,7 @@ public class UserManager
         return up;
     }
 
-    public static UserProfile createUserProfile(String guid) throws Exception {
+    public static synchronized UserProfile createUserProfile(String guid) throws Exception {
         if (profileFile==null) {
             throw new ProgramLogicError("profileFile is null when it should not be.  May not have been initialized correctly.");
         }
@@ -263,7 +257,7 @@ public class UserManager
     }
 
 
-    static public String getUserFullNameList() {
+    public static synchronized String getUserFullNameList() {
         if (userHashByUID == null) {
             return "";
         }
@@ -286,24 +280,23 @@ public class UserManager
         return str;
     }
 
-    public static UserProfile[] getAllUserProfiles() throws Exception
-    {
+    public static synchronized UserProfile[] getAllUserProfiles() throws Exception {
         UserProfile[] ups = new UserProfile[allUsers.size()];
         allUsers.copyInto(ups);
         return ups;
     }
-    public static List<AddressListEntry> getAllUsers() {
+    public static synchronized List<AddressListEntry> getAllUsers() {
         Vector<AddressListEntry> res = new Vector<AddressListEntry>();
         for (UserProfile up : allUsers) {
             res.add(new AddressListEntry(up));
         }
         return res;
     }
-    
+
     /**
     * returns users that have profiles, and also users who have microprofile
     */
-    public static List<AddressListEntry> getAllPossibleUsers() throws Exception {
+    public static synchronized List<AddressListEntry> getAllPossibleUsers() throws Exception {
         Vector<AddressListEntry> res = new Vector<AddressListEntry>();
         Hashtable<String,String> repeatCheck = new Hashtable<String,String>();
         for (UserProfile up : allUsers) {
@@ -323,8 +316,8 @@ public class UserManager
         return res;
     }
 
-    
-    public synchronized static void writeUserProfilesToFile() throws Exception {
+
+    public static synchronized void writeUserProfilesToFile() throws Exception {
         if (profileFile==null) {
             throw new NGException("nugen.exception.write.user.profile.info.fail",null);
         }
@@ -382,33 +375,25 @@ public class UserManager
     * Read through the user profile file, find all the users that are
     * disabled, and remove them from the user profile list.
     */
-    public static synchronized void removeDisabledUsers(Cognoscenti cog)
-        throws Exception
-    {
+    public static synchronized void removeDisabledUsers(Cognoscenti cog) throws Exception {
         Vector<UserProfile> toBeRemoved = new Vector<UserProfile>();
-        for (UserProfile up : allUsers)
-        {
-            if (up.getDisabled())
-            {
+        for (UserProfile up : allUsers) {
+            if (up.getDisabled()) {
                 toBeRemoved.add(up);
             }
         }
-        for (UserProfile up : toBeRemoved)
-        {
+        for (UserProfile up : toBeRemoved) {
             profileFile.removeChild(up);
             allUsers.remove(up);
         }
         writeUserProfilesToFile();
     }
 
-    static public String getUserFullNameList(String matchKey) throws Exception
-    {
+    public static synchronized String getUserFullNameList(String matchKey) throws Exception {
         StringBuffer sb = new StringBuffer();
         boolean addComma = false;
-        for (UserProfile up : allUsers)
-        {
-             if (addComma)
-             {
+        for (UserProfile up : allUsers) {
+             if (addComma) {
                  sb.append(",");
              }
              if(up.getName().toLowerCase().contains(matchKey.toLowerCase())){
@@ -417,7 +402,8 @@ public class UserManager
                 sb.append(up.getUniversalId());
                 sb.append(">");
                 addComma = true;
-            }else{
+            }
+            else{
                 addComma = false;
             }
         }
@@ -440,19 +426,17 @@ public class UserManager
 
 
     public static List<UserProfile> getAllSuperAdmins(AuthRequest ar) throws Exception{
-
-     UserProfile[] allProfiles=  getAllUserProfiles();
-     List<UserProfile> allAdmins = new ArrayList<UserProfile>();
-     for(int i=0; i<allProfiles.length; i++){
-         if(ar.isSuperAdmin( allProfiles[i].getKey() )){
-             allAdmins.add( allProfiles[i] );
-         }
-     }
-     return allAdmins;
-
+        UserProfile[] allProfiles=  getAllUserProfiles();
+        List<UserProfile> allAdmins = new ArrayList<UserProfile>();
+        for(int i=0; i<allProfiles.length; i++){
+            if(ar.isSuperAdmin( allProfiles[i].getKey() )){
+                allAdmins.add( allProfiles[i] );
+            }
+        }
+        return allAdmins;
     }
 
-    public static  UserProfile getSuperAdmin(AuthRequest ar) throws Exception{
+    public static UserProfile getSuperAdmin(AuthRequest ar) throws Exception {
         UserProfile superAdmin = null;
         String superAdminKey = ar.getSystemProperty("superAdmin");
         if (superAdminKey == null)
@@ -468,8 +452,7 @@ public class UserManager
     /**
      * get a list of email assignees for all server super admin users.
      */
-    public static Vector<OptOutAddr> getSuperAdminMailList(AuthRequest ar)
-            throws Exception {
+    public static Vector<OptOutAddr> getSuperAdminMailList(AuthRequest ar) throws Exception {
         Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
         for (UserProfile superAdmin : getAllSuperAdmins(ar)) {
             sendTo.add(new OptOutSuperAdmin(new AddressListEntry(superAdmin.getPreferredEmail())));
@@ -480,26 +463,23 @@ public class UserManager
         return sendTo;
     }
 
-    public static UserPage findOrCreateUserPage(String userKey)
-            throws Exception
-        {
-            if (userKey==null || userKey.length()==0)
-            {
-                throw new NGException("nugen.exception.cant.create.user.page",null);
-            }
-            File userFolder = cog.getConfig().getUserFolderOrFail();
-            File newPlace = new File(userFolder, userKey+".user");
-
-            //check to see if the file is there
-            if (!newPlace.exists())  {
-                //it might be in the old position.
-                File oldPlace = cog.getConfig().getFile(userKey+".user");
-                if (oldPlace.exists()) {
-                    UserPage.moveFile(oldPlace, newPlace);
-                }
-            }
-            Document newDoc = UserPage.readOrCreateFile(newPlace, "user");
-            return new UserPage(newPlace, newDoc, userKey);
+    public static synchronized UserPage findOrCreateUserPage(String userKey)  throws Exception {
+        if (userKey==null || userKey.length()==0) {
+            throw new NGException("nugen.exception.cant.create.user.page",null);
         }
+        File userFolder = cog.getConfig().getUserFolderOrFail();
+        File newPlace = new File(userFolder, userKey+".user");
+
+        //check to see if the file is there
+        if (!newPlace.exists())  {
+            //it might be in the old position.
+            File oldPlace = cog.getConfig().getFile(userKey+".user");
+            if (oldPlace.exists()) {
+                UserPage.moveFile(oldPlace, newPlace);
+            }
+        }
+        Document newDoc = UserPage.readOrCreateFile(newPlace, "user");
+        return new UserPage(newPlace, newDoc, userKey);
+    }
 
 }
