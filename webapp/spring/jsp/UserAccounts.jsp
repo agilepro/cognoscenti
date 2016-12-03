@@ -99,7 +99,7 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
         <div class="generalContent">
-            <table class="gridTable2" width="100%">
+            <table class="table" width="100%">
                 <tr class="gridTableHeader">
                     <td>Site Name</td>
                     <td>Site Description</td>
@@ -136,11 +136,11 @@ app.controller('myCtrl', function($scope, $http) {
 
         </div>
 
-        <div class="generalSubHeading" ng-show="requestList.length>0"><br/>Status of Site Requests</div>
+        <div class="h1" ng-show="requestList.length>0"><br/>Status of Site Requests</div>
         <div class="generalContent" ng-show="requestList.length>0">
             <div id="accountRequestPaging"></div>
             <div id="accountRequestDiv">
-                <table class="gridTable2" width="100%">
+                <table class="table" width="100%">
                     <tr class="gridTableHeader">
                         <td>Proposed Name</td>
                         <td>Description</td>

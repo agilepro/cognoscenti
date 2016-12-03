@@ -95,6 +95,9 @@
     else if ("requiredName".equals(pageNiceTitle)) {
         pageNiceTitle = "Please Set Your Name";
     }
+    else if ("RequestAccount".equals(pageNiceTitle)) {
+        pageNiceTitle = "Request a New Site";
+    }
 
     String title = ar.defParam("title", wrappedJSP);
 
@@ -315,6 +318,8 @@
     <script src="<%=ar.baseURL%>dtpicker/js/datetimepicker.js"></script>
     <script src="<%=ar.baseURL%>dtpicker/js/datetimepicker.templates.js"></script>
     
+    <!-- Weaver specific tweaks -->
+    <link rel="stylesheet" href="<%=ar.baseURL%>bits/weavermain.css"/>
     
     
     

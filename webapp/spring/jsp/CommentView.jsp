@@ -114,6 +114,11 @@
           </td>
         </tr>
       </table>
+      <div ng-show="cmt.docList">
+          <span class="btn btn-sm btn-default btn-raised" ng-repeat="docId in cmt.docList" ng-click="navigateToDoc(docId)">
+              <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{getFullDoc(docId).name}} 
+          </span>
+      </div>
       <div class="leafContent comment-inner" ng-show="cmt.state==13 && (cmt.commentType==2 || cmt.commentType==3)">
         <div ng-bind-html="cmt.outcome"></div>
       </div>

@@ -691,26 +691,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.refreshCount = 0;
     $scope.refresh();
 
-    $scope.addPresenterxxxxxx = function(item, person) {
-        var notPresent = true;
-        item.presenters.forEach( function(b) {
-            if (b == person.uid) {
-                notPresent = false;
-            }
-        });
-        if (notPresent) {
-            item.presenters.push(person.uid);
-        }
-    }
-    $scope.removePresenterxxxxx = function(item, person) {
-        var newSet = [];
-        item.presenters.map( function(b) {
-            if (b != person.uid) {
-                newSet.push(b);
-            }
-        });
-        item.presenters = newSet;
-    }
     $scope.toggleReady = function(item) {
         if (!item.readyToGo) {
             var x = window.confirm( "Have you attached all presentations, \n and is the rest of the information \n about the agenda item up to date?  \nClick 'OK' when everything is ready.");
@@ -976,9 +956,21 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return selected;
     }
 
-    $scope.navigateToDoc = function(doc) {
+    $scope.navigateToDoc = function(docId) {
+        console.log("Navigate to doc: ", doc);
+        var doc = $scope.getFullDoc(docId);
         window.location="docinfo"+doc.id+".htm";
     }
+    $scope.getFullDoc = function(docId) {
+        var doc = {};
+        $scope.attachmentList.filter( function(item) {
+            if (item.universalid == docId) {
+                doc = item;
+            }
+        });
+        return doc;
+    }
+    
     $scope.navigateToTopic = function(topicId) {
         var topicRecord = $scope.findTopicRecord(topicId);
         if (topicRecord) {
@@ -1280,6 +1272,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.commentItemBeingEdited = 0;
     $scope.updateComment = function(cmt) {
+        console.log("Saving it", cmt);
         $scope.saveComment($scope.commentItemBeingEdited, cmt);
     }
     $scope.toggleSelectedPerson = function(tag) {
@@ -1294,6 +1287,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.openCommentCreator = function(item, type, replyTo, defaultBody) {
+        if (item.topicLink) {
+            var timeDiff = (new Date()).getTime() - $scope.meeting.startTime;
+            var sevenDays = 7*24*60*60*1000;
+            if (timeDiff > sevenDays) {
+                alert("This meeting happened to long ago to comment on it today.  In a meeting we only show 7 days of comments after the meeting, and it has been more than 7 days, so any comment you make now will not show here.  If you wish to comment on the topic, navigate to the discussion topic itself, and comment there.");
+                return;
+            }
+            if (timeDiff < 0-sevenDays) {
+                alert("This meeting is too far in the future to comment on it today.  In a meeting we only show 7 days of comments before the meeting, and it is scheduled more than 7 days from now, so any comment you make now will not show here.  If you wish to comment on the topic, navigate to the discussion topic itself, and comment there.");
+                return;
+            }
+        }
+        
         var newComment = {};
         newComment.time = new Date().getTime();
         newComment.commentType = type;
@@ -1316,7 +1322,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.commentItemBeingEdited = item;
 
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
             controller: 'CommentModalCtrl',
             size: 'lg',
@@ -1325,21 +1331,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
                 },
-                parentScope: function() {
-                    return $scope;
-                }
+                attachmentList: function() {
+                    return $scope.attachmentList;
+                },
+                docSpaceURL: function() {
+                    return $scope.docSpaceURL;
+                },
+                parentScope: function() { return $scope; }
             }
         });
 
         modalInstance.result.then(function (returnedCmt) {
-            var cleanCmt = {};
-            cleanCmt.time = cmt.time;
-            cleanCmt.html = returnedCmt.html;
-            cleanCmt.state = returnedCmt.state;
-            cleanCmt.replyTo = returnedCmt.replyTo;
-            cleanCmt.commentType = returnedCmt.commentType;
-            cleanCmt.dueDate = returnedCmt.dueDate;
-            $scope.saveComment(item, cleanCmt);
+            $scope.saveComment(item, returnedCmt);
         }, function () {
             //cancel action - nothing really to do
         });
@@ -2016,9 +2019,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <td>
            <div style="margin:10px;">
               <b>Attachments: </b>
-              <span ng-repeat="doc in itemDocs(item)" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+              <span ng-repeat="doc in item.docList" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                    ng-click="navigateToDoc(doc)">
-                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
+                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{getFullDoc(doc).name}}
               </span>
 <%if (isLoggedIn) { %>
               <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument(item)"

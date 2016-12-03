@@ -222,20 +222,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
-    $scope.itemHasDoc = function(doc) {
-        var res = false;
-        var found = $scope.noteInfo.docList.forEach( function(docid) {
-            if (docid == doc.universalid) {
-                res = true;
+    $scope.getFullDoc = function(docId) {
+        var doc = {};
+        $scope.attachmentList.filter( function(item) {
+            if (item.universalid == docId) {
+                doc = item;
             }
         });
-        return res;
+        return doc;
     }
-    $scope.getDocs = function() {
-        return $scope.attachmentList.filter( function(oneDoc) {
-            return $scope.itemHasDoc(oneDoc);
-        });
-    }
+    
     $scope.itemHasAction = function(oneAct) {
         var res = false;
         var found = $scope.noteInfo.actionList.forEach( function(actionId) {
@@ -250,7 +246,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return $scope.itemHasAction(oneAct);
         });
     }
-    $scope.navigateToDoc = function(doc) {
+    $scope.navigateToDoc = function(docId) {
+        console.log("Navigate to doc: ", doc);
+        var doc = $scope.getFullDoc(docId);
         window.location="docinfo"+doc.id+".htm";
     }
     $scope.navigateToMeeting = function(meet) {
@@ -484,7 +482,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.openCommentEditor = function (itemNotUsed, cmt) {
         var modalInstance = $modal.open({
-            animation: false,
+            animation: true,
             templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
             controller: 'CommentModalCtrl',
             size: 'lg',
@@ -767,7 +765,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <% } %>
         </div>
     </div>
-    <div  class="generalSubHeading" style="{{getPhaseStyle()}}">
+    <div  class="h1" style="{{getPhaseStyle()}}">
         <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
         {{noteInfo.subject}}
     </div>
@@ -794,7 +792,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div style="width:100%;margin-top:50px;"></div>
     <div>
       <span style="width:150px">Attachments:</span>
-      <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+      <span ng-repeat="doc in getObjDocs(noteInfo)" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
            ng-click="navigateToDoc(doc)">
               <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
       </span>

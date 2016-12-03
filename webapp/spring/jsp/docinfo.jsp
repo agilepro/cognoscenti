@@ -2,6 +2,7 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="java.net.URLDecoder"
 %><%@page import="org.socialbiz.cog.AttachmentVersion"
+%><%@page import="org.socialbiz.cog.LicenseForUser"
 %><%@page import="org.socialbiz.cog.AccessControl"
 %><%/*
 Required parameters:
@@ -81,6 +82,14 @@ Required parameters:
         }
     }
 
+    JSONArray attachmentList = ngp.getJSONAttachments(ar);
+    String docSpaceURL = "";
+    if (uProf!=null) {
+        LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
+        docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngp.getKey()
+                    + "/summary.json?lic="+lfu.getId();
+    }
+    
 %>
 
 <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
@@ -94,6 +103,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
     $scope.linkedGoals = <%linkedGoals.write(out,2,4);%>;
+    $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
 
     $scope.myComment = "";
     $scope.canUpdate = <%=canAccessDoc%>;
@@ -105,6 +115,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
 
     $scope.updateComment = function(cmt) {
         var saveRecord = {};
@@ -182,9 +193,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 cmt: function () {
                     return JSON.parse(JSON.stringify(cmt));
                 },
-                parentScope: function () {
-                    return $scope;
-                }
+                attachmentList: function() {
+                    return $scope.attachmentList;
+                },
+                docSpaceURL: function() {
+                    return $scope.docSpaceURL;
+                },
+                parentScope: function() { return $scope; }
             }
         });
 
@@ -260,9 +275,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         return selected;
     }
+    $scope.getFullDoc = function(docId) {
+        var doc = {};
+        $scope.attachmentList.filter( function(item) {
+            if (item.universalid == docId) {
+                doc = item;
+            }
+        });
+        return doc;
+    }
+    $scope.navigateToDoc = function(docId) {
+        console.log("Navigate to doc: ", doc);
+        var doc = $scope.getFullDoc(docId);
+        window.location="docinfo"+doc.id+".htm";
+    }
+
 
 });
 </script>
+<script src="../../../jscript/AllPeople.js"></script>
 
 
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -494,3 +525,5 @@ comment-state-complete {
 <script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
 <script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
+

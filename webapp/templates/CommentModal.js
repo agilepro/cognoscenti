@@ -3,8 +3,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 
     // initial comment object
     $scope.cmt = cmt;
-    if (!cmt.docs) {
-        cmt.docs = [];
+    if (!cmt.docList) {
+        cmt.docList = [];
     }
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
@@ -143,7 +143,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     }
     $scope.itemHasDoc = function(doc) {
         var res = false;
-        var found = $scope.cmt.docs.forEach( function(docid) {
+        var found = $scope.cmt.docList.forEach( function(docid) {
             if (docid == doc.universalid) {
                 res = true;
             }
@@ -164,7 +164,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
             size: 'lg',
             resolve: {
                 docList: function () {
-                    return JSON.parse(JSON.stringify($scope.cmt.docs));
+                    return JSON.parse(JSON.stringify($scope.cmt.docList));
                 },
                 attachmentList: function() {
                     return $scope.attachmentList;
@@ -177,7 +177,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 
         attachModalInstance.result
         .then(function (docList) {
-            $scope.cmt.docs = docList;
+            $scope.cmt.docList = docList;
         }, function () {
             //cancel action - nothing really to do
         });

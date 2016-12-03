@@ -411,6 +411,12 @@ public class CommentRecord extends DOMFace {
         setScalar("resendMessage", newVal);
     }
 
+    public List<String> getDocList()  throws Exception {
+        return getVector("docList");
+    }
+    public void setDocList(List<String> newVal) throws Exception {
+        setVector("docList", newVal);
+    }
 
 
     public void commentEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
@@ -610,6 +616,7 @@ public class CommentRecord extends DOMFace {
         commInfo.put("responses", responses);
         commInfo.put("choices", constructJSONArray(getChoices()));
         commInfo.put("notify", AddressListEntry.getJSONArray(getNotifyRole().getDirectPlayers()));
+        commInfo.put("docList", constructJSONArray(getDocList()));
         return commInfo;
     }
 
@@ -678,6 +685,9 @@ public class CommentRecord extends DOMFace {
                     AddressListEntry.toAddressList(
                             AddressListEntry.uidListfromJSONArray(
                                     input.getJSONArray("notify"))));
+        }
+        if (input.has("docList")) {
+            setDocList(constructVector(input.getJSONArray("docList")));
         }
 
 
