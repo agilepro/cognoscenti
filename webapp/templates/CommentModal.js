@@ -62,6 +62,13 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
    };
 
     $scope.save = function() {
+		//assure that the uid is set for raw email addresses entered
+		$scope.cmt.notify.forEach( function(item) {
+			if (!item.uid) {
+				item.uid = item.name;
+			}
+		});
+		console.log("SAVING COMMENT: ", $scope.cmt);
 		$scope.saveDisabled = true;
         $scope.cmt.dueDate = $scope.dummyDate1.getTime();
 		$scope.$$hashKey = 250;

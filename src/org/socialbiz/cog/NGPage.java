@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.socialbiz.cog.exception.NGException;
@@ -1629,7 +1628,7 @@ public abstract class NGPage extends ContainerCommon {
      * Walk through all the references and make a list of all the people that are
      * mentioned at any point in the workspace, and returns the AddressListEntry
      * for each
-     */
+     *
     private List<AddressListEntry> getAllAddressInWorkspace() throws Exception {
         HashSet<String> nameSet = new HashSet<String>();
         List<AddressListEntry> result = new ArrayList<AddressListEntry>();
@@ -1644,7 +1643,7 @@ public abstract class NGPage extends ContainerCommon {
         }
         return result;
     }
-
+    */
 
     /**
      * Walk through all the references and make a list of all the people that are
@@ -1778,6 +1777,10 @@ public abstract class NGPage extends ContainerCommon {
         workspaceConfigInfo.put("allowPublic", "yes".equals(getAllowPublic()));
         workspaceConfigInfo.put("frozen", isFrozen());
         workspaceConfigInfo.put("deleted", isDeleted());
+        if (isDeleted()) {
+        	workspaceConfigInfo.put("deleteDate", getDeleteDate());
+        	workspaceConfigInfo.put("deleteUser", getDeleteUser());
+        }
         workspaceConfigInfo.put("accessState", getAccessStateStr());
 
         workspaceConfigInfo.put("upstream", getUpstreamLink());

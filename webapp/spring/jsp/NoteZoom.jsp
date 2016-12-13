@@ -246,9 +246,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return $scope.itemHasAction(oneAct);
         });
     }
-    $scope.navigateToDoc = function(docId) {
-        console.log("Navigate to doc: ", doc);
-        var doc = $scope.getFullDoc(docId);
+    $scope.navigateToDoc = function(doc) {
         window.location="docinfo"+doc.id+".htm";
     }
     $scope.navigateToMeeting = function(meet) {
@@ -632,6 +630,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
 
+	$scope.getObjDocs = function(noteInfo) {
+		var res = [];
+		$scope.attachmentList.forEach( function(docObj) {
+			$scope.noteInfo.docList.forEach( function(docId) {
+				if (docId == docObj.universalid) {
+					res.push(docObj);
+				}
+			})
+		})
+		return res;
+	}
+	
     $scope.openAttachDocument = function () {
 
         var attachModalInstance = $modal.open({
@@ -689,6 +699,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.receiveTopicRecord($scope.noteInfo);
 
+	
 });
 
 </script>
