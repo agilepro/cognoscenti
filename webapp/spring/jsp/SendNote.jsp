@@ -314,23 +314,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
 
 
-    $scope.itemHasDoc = function(doc) {
-        var res = false;
-        var found = $scope.emailInfo.docList.forEach( function(docid) {
-            if (docid == doc.universalid) {
-                res = true;
-            }
-        });
-        return res;
-    }
-    $scope.getDocs = function() {
-        return $scope.attachmentList.filter( function(oneDoc) {
-            return $scope.itemHasDoc(oneDoc);
-        });
-    }
-    $scope.navigateToDoc = function(doc) {
-        window.location="docinfo"+doc.id+".htm";
-    }
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
@@ -340,6 +323,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 
 
+    $scope.getFullDoc = function(docId) {
+        var doc = {};
+        $scope.attachmentList.filter( function(item) {
+            if (item.universalid == docId) {
+                doc = item;
+            }
+        });
+        return doc;
+    }
+    $scope.navigateToDoc = function(docId) {
+        var doc = $scope.getFullDoc(docId);
+        window.location="docinfo"+doc.id+".htm";
+    }
     $scope.openAttachDocument = function () {
 
         var attachModalInstance = $modal.open({
@@ -482,9 +478,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <td style="width:20px;"></td>
                 <td>
                   <div>
-                      <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                           ng-click="navigateToDoc(doc)">
-                              <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
+                      <span ng-repeat="docid in emailInfo.docList" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                           ng-click="navigateToDoc(docid)">
+                              <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{getFullDoc(docid).name}}
                       </span>
                       <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
                           title="Attach a document">

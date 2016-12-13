@@ -956,20 +956,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return selected;
     }
 
-    $scope.navigateToDoc = function(docId) {
-        console.log("Navigate to doc: ", doc);
-        var doc = $scope.getFullDoc(docId);
-        window.location="docinfo"+doc.id+".htm";
-    }
-    $scope.getFullDoc = function(docId) {
-        var doc = {};
-        $scope.attachmentList.filter( function(item) {
-            if (item.universalid == docId) {
-                doc = item;
-            }
-        });
-        return doc;
-    }
     
     $scope.navigateToTopic = function(topicId) {
         var topicRecord = $scope.findTopicRecord(topicId);
@@ -1429,6 +1415,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
 
 
+    $scope.getFullDoc = function(docId) {
+        var doc = {};
+        $scope.attachmentList.filter( function(item) {
+            if (item.universalid == docId) {
+                doc = item;
+            }
+        });
+        return doc;
+    }
+    $scope.navigateToDoc = function(docId) {
+        var doc = $scope.getFullDoc(docId);
+        window.location="docinfo"+doc.id+".htm";
+    }
     $scope.openAttachDocument = function (item) {
 
         var attachModalInstance = $modal.open({
@@ -2019,9 +2018,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <td>
            <div style="margin:10px;">
               <b>Attachments: </b>
-              <span ng-repeat="doc in item.docList" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                   ng-click="navigateToDoc(doc)">
-                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{getFullDoc(doc).name}}
+              <span ng-repeat="docid in item.docList" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                   ng-click="navigateToDoc(docid)">
+                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{getFullDoc(docid).name}}
               </span>
 <%if (isLoggedIn) { %>
               <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument(item)"

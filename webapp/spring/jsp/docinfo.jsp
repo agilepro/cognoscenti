@@ -285,7 +285,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return doc;
     }
     $scope.navigateToDoc = function(docId) {
-        console.log("Navigate to doc: ", doc);
         var doc = $scope.getFullDoc(docId);
         window.location="docinfo"+doc.id+".htm";
     }

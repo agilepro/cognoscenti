@@ -6,6 +6,9 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     if (!cmt.docList) {
         cmt.docList = [];
     }
+	if (!cmt.notify) {
+		cmt.notify = [];
+	}
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
     // are there unsaved changes?
@@ -161,6 +164,19 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         return $scope.attachmentList.filter( function(oneDoc) {
             return $scope.itemHasDoc(oneDoc);
         });
+    }
+    $scope.getFullDoc = function(docId) {
+        var doc = {};
+        $scope.attachmentList.filter( function(item) {
+            if (item.universalid == docId) {
+                doc = item;
+            }
+        });
+        return doc;
+    }
+    $scope.navigateToDoc = function(docId) {
+        var doc = $scope.getFullDoc(docId);
+        window.location="docinfo"+doc.id+".htm";
     }
     $scope.openAttachDocument = function () {
 

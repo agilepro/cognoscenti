@@ -360,7 +360,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     }
 
-    $scope.navigateToDoc = function(doc) {
+    $scope.getFullDoc = function(docId) {
+        var doc = {};
+        $scope.attachmentList.filter( function(item) {
+            if (item.universalid == docId) {
+                doc = item;
+            }
+        });
+        return doc;
+    }
+    $scope.navigateToDoc = function(docId) {
+        var doc = $scope.getFullDoc(docId);
         window.location="docinfo"+doc.id+".htm";
     }
     $scope.openAttachDocument = function () {
