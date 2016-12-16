@@ -19,7 +19,7 @@
               <a role="menuitem" ng-click="openResponseEditor(cmt)">Create/Edit Response:</a></li>
             <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
               <a role="menuitem" ng-click="postComment(item, cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
-            <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
+            <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
               <a role="menuitem" ng-click="deleteComment(item, cmt)">
               Delete Your {{commentTypeName(cmt)}}</a></li>
             <li role="presentation" ng-show="cmt.state==12">

@@ -64,7 +64,7 @@ public class MailFile extends JSONWrapper {
                 return new MailFile(path, newKernel);
             }
             catch (Exception e) {
-                throw new Exception("Unable to read global email file: "+path);
+                throw new Exception("Unable to read global email file: "+path, e);
             }
         }
     }
