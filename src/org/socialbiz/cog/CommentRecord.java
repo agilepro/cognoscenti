@@ -420,44 +420,49 @@ public class CommentRecord extends DOMFace {
 
 
     public void commentEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
-        List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
-        
-        List<AddressListEntry> notifyList = getNotifyRole().getDirectPlayers();
-        noteOrMeet.extendNotifyList(notifyList);  //so it can remember it
-        noteOrMeet.appendTargetEmails(sendTo, ngw);
-
-        //add the commenter in case missing from the target role
-        AddressListEntry commenter = getUser();
-        OptOutAddr.appendOneDirectUser(commenter, sendTo);
-        OptOutAddr.appendUsers(notifyList, sendTo); //in case the container does not remember it
-
-        UserProfile commenterProfile = commenter.getUserProfile();
-        if (commenterProfile==null) {
-            System.out.println("DATA PROBLEM: comment came from a person without a profile ("+getUser().getEmail()+") ignoring");
-            setEmailSent(true);
-            return;
-        }
-
-        for (OptOutAddr ooa : sendTo) {
-            if (this.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
-                UserProfile toProfile = UserManager.findUserByAnyId(ooa.getEmail());
-                if (toProfile!=null) {
-                    ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
-                }
-            }
-            constructEmailRecordOneUser(ar, ngw, noteOrMeet, ooa, commenterProfile, mailFile, null);
-        }
-
-        if (getState()==CommentRecord.COMMENT_STATE_CLOSED) {
-            //if sending the close email, also mark the other email as sent
-            setCloseEmailSent(true);
-            setEmailSent(true);
-        }
-        else {
-            setEmailSent(true);
-        }
-        setPostTime(ar.nowTime);
-        noteOrMeet.markTimestamp(ar.nowTime);
+    	try {
+	        List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
+	        
+	        List<AddressListEntry> notifyList = getNotifyRole().getDirectPlayers();
+	        noteOrMeet.extendNotifyList(notifyList);  //so it can remember it
+	        noteOrMeet.appendTargetEmails(sendTo, ngw);
+	
+	        //add the commenter in case missing from the target role
+	        AddressListEntry commenter = getUser();
+	        OptOutAddr.appendOneDirectUser(commenter, sendTo);
+	        OptOutAddr.appendUsers(notifyList, sendTo); //in case the container does not remember it
+	
+	        UserProfile commenterProfile = commenter.getUserProfile();
+	        if (commenterProfile==null) {
+	            System.out.println("DATA PROBLEM: comment came from a person without a profile ("+getUser().getEmail()+") ignoring");
+	            setEmailSent(true);
+	            return;
+	        }
+	
+	        for (OptOutAddr ooa : sendTo) {
+	            if (this.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
+	                UserProfile toProfile = UserManager.findUserByAnyId(ooa.getEmail());
+	                if (toProfile!=null) {
+	                    ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
+	                }
+	            }
+	            constructEmailRecordOneUser(ar, ngw, noteOrMeet, ooa, commenterProfile, mailFile, null);
+	        }
+	
+	        if (getState()==CommentRecord.COMMENT_STATE_CLOSED) {
+	            //if sending the close email, also mark the other email as sent
+	            setCloseEmailSent(true);
+	            setEmailSent(true);
+	        }
+	        else {
+	            setEmailSent(true);
+	        }
+	        setPostTime(ar.nowTime);
+	        noteOrMeet.markTimestamp(ar.nowTime);
+    	}
+    	catch (Exception e) {
+    		throw new Exception("Unable to compose email for comment #"+this.getTime(), e);
+    	}
     }
 
 

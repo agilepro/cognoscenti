@@ -34,7 +34,7 @@ public class OptOutTopicSubscriber extends OptOutAddr {
     public OptOutTopicSubscriber(AddressListEntry _assignee, String containerKey, TopicRecord tr) {
         super(_assignee);
         if (assignee.getEmail()==null || assignee.getEmail().length()==0) {
-            throw new RuntimeException("Somehow got an opt out addressee with a missing email address.  Should not happen");
+            throw new RuntimeException("Somehow got an opt out addressee with a missing email address: "+assignee.getName()+" / "+assignee.getUniversalId() );
         }
         containerID = containerKey;
         topic = tr;
