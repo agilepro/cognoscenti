@@ -132,8 +132,10 @@ public class TopicRecord extends CommentContainer implements EmailContext {
         List<AddressListEntry> subscribers = subsRole.getDirectPlayers();
         if (subscribers.size()>0) {
             for (AddressListEntry ale : subscribers) {
-                OptOutAddr ooa = new OptOutTopicSubscriber(ale, ngw.getKey(), this);
-                sendTo.add(ooa);
+            	if (ale.isWellFormed()) {
+            		OptOutAddr ooa = new OptOutTopicSubscriber(ale, ngw.getKey(), this);
+                    sendTo.add(ooa);
+            	}
             }
         }
         else {

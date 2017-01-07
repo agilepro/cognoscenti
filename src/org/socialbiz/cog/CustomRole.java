@@ -77,7 +77,11 @@ public class CustomRole extends DOMFace implements NGRole
         List<AddressListEntry> list=new ArrayList<AddressListEntry>();
         List<String> members = getVector("member");
         for (String memberID : members) {
-            list.add(AddressListEntry.newEntryFromStorage(memberID));
+        	AddressListEntry ale = AddressListEntry.newEntryFromStorage(memberID);
+        	if (ale.isWellFormed()) {
+        		//don't add the reference if it is not a suitable user
+        		list.add(ale);
+        	}
         }
         return list;
     }

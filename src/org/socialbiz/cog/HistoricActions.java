@@ -126,6 +126,13 @@ public class HistoricActions {
     }
 
     private void siteResolutionEmail(UserProfile owner, SiteRequest siteRequest) throws Exception {
+        AddressListEntry ale = new AddressListEntry(owner);
+        if (!ale.isWellFormed()) {
+        	//no email is sent if there is no email address of the owner, or any other 
+        	//problem with the owner user profile.
+        	return;
+        }
+
         MemFile body = new MemFile();
         AuthRequest clone = new AuthDummy(ar.getUserProfile(), body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
@@ -163,7 +170,7 @@ public class HistoricActions {
         clone.write("</td></tr>\n</table>\n</body></html>");
 
         List<OptOutAddr> v = new ArrayList<OptOutAddr>();
-        v.add(new OptOutIndividualRequest(new AddressListEntry(owner)));
+        v.add(new OptOutIndividualRequest(ale));
         clone.flush();
 
         EmailSender.generalMailToList(v, ar.getBestUserId(), "Site Request Resolution for " + owner.getName(),

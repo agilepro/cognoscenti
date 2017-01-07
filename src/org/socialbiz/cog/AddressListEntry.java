@@ -165,6 +165,20 @@ public class AddressListEntry implements UserRef
         //if it does not look like an email address, return a null string.
         return "";
     }
+    
+    /**
+     * An ALE is constructed on a string value.  That value might or might not
+     * be appropriate to designate a user.  Use this function to see if the 
+     * ALE looks like it is a valid representation of a user.
+     * 
+     * Every user HAS to have an email address at this point, so this method
+     * will check to make sure that they have an email.  In the future if there
+     * are any other consistency constraints we can set that here.  
+     */
+    public boolean isWellFormed() {
+    	String email = getEmail();
+    	return (email!=null && email.length()>0);
+    }
 
 
     private boolean startsWithIgnoreCase(String dataVal, String testVal) {

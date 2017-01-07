@@ -249,9 +249,11 @@ public class EmailGenerator extends DOMFace {
         NGRole memberRole = ngp.getRoleOrFail("Members");
         for (String address : getAlsoTo()) {
             AddressListEntry enteredAddress = AddressListEntry.parseCombinedAddress(address);
-            OptOutAddr.appendOneUser(new OptOutDirectAddress(enteredAddress), sendTo);
-            if(makeMember && !ngp.primaryOrSecondaryPermission(enteredAddress)) {
-                memberRole.addPlayer(enteredAddress);
+            if (enteredAddress.isWellFormed()) {
+	            OptOutAddr.appendOneUser(new OptOutDirectAddress(enteredAddress), sendTo);
+	            if(makeMember && !ngp.primaryOrSecondaryPermission(enteredAddress)) {
+	                memberRole.addPlayer(enteredAddress);
+	            }
             }
         }
         TopicRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());

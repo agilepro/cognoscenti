@@ -461,7 +461,9 @@ public class CommentRecord extends DOMFace {
 	        noteOrMeet.markTimestamp(ar.nowTime);
     	}
     	catch (Exception e) {
-    		throw new Exception("Unable to compose email for comment #"+this.getTime(), e);
+    		throw new Exception("Unable to compose email for comment #"+this.getTime()
+    				+" in "+noteOrMeet.selfDescription()
+    				+" in workspace "+ngw.getFullName(), e);
     	}
     }
 
