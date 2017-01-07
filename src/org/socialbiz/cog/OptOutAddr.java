@@ -47,7 +47,7 @@ public class OptOutAddr {
     String messageForAssignee = "";
 
     public OptOutAddr(AddressListEntry _assignee) {
-    	if (_assignee.isWellFormed()) {
+    	if (!_assignee.isWellFormed()) {
     		throw new RuntimeException("Can't create an OptOutAddr object for a user without an email address: "+_assignee.getUniversalId());
     	}
         assignee = _assignee;
