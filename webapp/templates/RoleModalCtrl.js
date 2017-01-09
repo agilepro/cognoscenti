@@ -14,8 +14,8 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
-    $scope.saveAndClose = function () {
-        $scope.parentScope.updateRole($scope.roleInfo);
+    $scope.createAndClose = function () {
+        $scope.parentScope.saveCreatedRole($scope.roleInfo);
         $modalInstance.dismiss('cancel');
     };
     $scope.saveAndClose = function () {

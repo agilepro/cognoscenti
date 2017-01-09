@@ -208,6 +208,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     </td>
                 </tr>
                 </table>
+                <div ng-show="role.responsibilities.length==0" class="guideVocal">
+                There are no responsibilities listed for this role.
+                </div>
             </div>
             <div>
                 <button ng-click="openResponsibilityModal()" class="btn btn-default btn-raised">
@@ -266,6 +269,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     </td>
                 </tr>
                 </table>
+                <div ng-show="role.terms.length==0" class="guideVocal">
+                There are no designated terms for this role.
+                </div>
             </div>
             <div>
                 <button ng-click="openTermModal()" class="btn btn-default btn-raised">Create Term</button>

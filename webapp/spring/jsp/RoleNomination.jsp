@@ -167,6 +167,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                         data-on-set-time="onTimeSet(newDate, 'termStart')"/>
                 </ul>                
             </div>
+        </div>
+        
+        <div class="col-md-6 col-sm-12">
             <div class="form-group">
                 <label for="status">Term End:</label>
                 <span class="dropdown-toggle form-control" id="dropdown3" role="button" 
@@ -180,22 +183,26 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                         data-on-set-time="onTimeSet(newDate, 'termEnd')"/>
                 </ul>                
             </div>
+        </div>
+    </div>
+    <div>
+        <div class="col-12">
             <div class="form-group">
                 <label for="status">Duration:</label>
                 <span >
                     {{ getDays(term) }} Days
                 </span>
             </div>
-        </div>
-        
-        <div class="col-md-6 col-sm-12">
-col 2
-        </div>
-        <div class="col-12">
         
             <div class="form-group">
                 <label for="synopsis">Nominations:</label>
                 <table class="table">
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td><label>Nominee</label></td>
+                    <td><label>Reason</label></td>
+                </tr>
                 <tr ng-repeat="nom in term.nominations" >
                     <td class="actions">
                         <button type="button" name="edit" class="btn btn-primary" 
@@ -208,6 +215,9 @@ col 2
                     <td ng-click="openNominationModal(nom)">{{nom.comment}}</td>
                 </tr>
                 </table>
+                <div ng-show="term.nominations.length==0" class="guideVocal">
+                There are no nominations for this term at this time.
+                </div>
             </div>
             <div>
                 <button ng-click="openNominationModal()" class="btn btn-default btn-raised">
