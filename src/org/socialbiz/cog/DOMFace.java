@@ -783,30 +783,35 @@ public class DOMFace
      */
     public <T extends DOMFace> void updateCollection(JSONObject parent, String memberName,
             Class<T> childClass, String idAttribute) throws Exception {
-        if (parent.has(memberName)) {
-            JSONArray respArray = parent.getJSONArray(memberName);
-            int last = respArray.length();
-            for (int i=0; i<last; i++) {
-                JSONObject instanceObj = respArray.getJSONObject(i);
-                String key = null;
-                if (instanceObj.has(idAttribute)) {
-                    //use the key of the object passed in.
-                    key = instanceObj.getString(idAttribute);
-                }
-                else {
-                    //if no key is specified, then generate a key here and use that.
-                    //Can only be a CREATE case.
-                    key = IdGenerator.generateKey();
-                }
-                boolean isDelete = instanceObj.has("_DELETE_ME_");
-                if (isDelete) {
-                    removeChildWithID(memberName, childClass,  idAttribute, key);
-                } 
-                else {
-                    T oneResp = findOrCreateChildWithID(memberName, childClass, idAttribute, key);
-                    oneResp.updateFromJSON(instanceObj);
+        try {
+            if (parent.has(memberName)) {
+                JSONArray respArray = parent.getJSONArray(memberName);
+                int last = respArray.length();
+                for (int i=0; i<last; i++) {
+                    JSONObject instanceObj = respArray.getJSONObject(i);
+                    String key = null;
+                    if (instanceObj.has(idAttribute)) {
+                        //use the key of the object passed in.
+                        key = instanceObj.getString(idAttribute);
+                    }
+                    else {
+                        //if no key is specified, then generate a key here and use that.
+                        //Can only be a CREATE case.
+                        key = IdGenerator.generateKey();
+                    }
+                    boolean isDelete = instanceObj.has("_DELETE_ME_");
+                    if (isDelete) {
+                        removeChildWithID(memberName, childClass,  idAttribute, key);
+                    } 
+                    else {
+                        T oneResp = findOrCreateChildWithID(memberName, childClass, idAttribute, key);
+                        oneResp.updateFromJSON(instanceObj);
+                    }
                 }
             }
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to update collection named "+memberName, e);
         }
     }
 

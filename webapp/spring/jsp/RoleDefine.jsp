@@ -35,6 +35,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    $scope.goNominate = function(aterm) {
+        window.location = "roleNomination.htm?role="+$scope.role.name+"&term="+aterm.key;
+    }
     $scope.deleteResponsibility = function(resp) {
         if (confirm("Are you sure you want to delete this responsibility?")) {
             resp["_DELETE_ME_"] = true;
@@ -196,13 +199,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                             <span class="fa fa-edit"></span>
                         </button>
                     </td>
+                    <td ng-click="openResponsibilityModal(aresp)">{{aresp.text}}</td>
                     <td class="actions">
                         <button type="button" name="delete" class='btn btn-warning' 
                                 ng-click="deleteResponsibility(aresp)">
                             <span class="fa fa-trash"></span>
                         </button>
                     </td>
-                    <td ng-click="openResponsibilityModal(aresp)">{{aresp.text}}</td>
                 </tr>
                 </table>
             </div>
@@ -248,13 +251,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                         </button>
                     </td>
                     <td class="actions">
+                        <button type="button" name="edit" class="btn btn-primary" 
+                                ng-click="goNominate(aterm)">
+                            <span class="fa fa-flag"></span>
+                        </button>
+                    </td>
+                    <td ng-click="openTermModal(aterm)">{{aterm.termStart |  date}}</td>
+                    <td ng-click="openTermModal(aterm)">{{getDays(aterm)}}</td>
+                    <td class="actions">
                         <button type="button" name="delete" class='btn btn-warning' 
                                 ng-click="deleteTerm(aterm)">
                             <span class="fa fa-trash"></span>
                         </button>
                     </td>
-                    <td ng-click="openTermModal(aterm)">{{aterm.termStart |  date}}</td>
-                    <td ng-click="openTermModal(aterm)">{{getDays(aterm)}}</td>
                 </tr>
                 </table>
             </div>

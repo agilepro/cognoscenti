@@ -82,6 +82,14 @@ public class ProjectSettingController extends BaseController {
         showJSPMembers(ar, siteId, pageId, "RoleDefine");
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/roleNomination.htm", method = RequestMethod.GET)
+    public void roleNomination(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "RoleNomination");
+    }
+
     @RequestMapping(value = "/{siteId}/{pageId}/roleRequest.htm", method = RequestMethod.GET)
     public void remindersTab(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
