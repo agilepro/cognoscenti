@@ -570,10 +570,10 @@ public class AddressListEntry implements UserRef
         }
         return res;
     }
-    public static List<String> uidListfromJSONArray( JSONArray jsonList ) throws Exception {
+    public static List<String> uidListfromJSONArray( JSONArray inputArray ) throws Exception {
         List<String> uids = new ArrayList<String>();
-        for (int i=0; i<jsonList.length(); i++) {
-            uids.add(jsonList.getJSONObject(i).getString("uid"));
+        for (int i=0; i<inputArray.length(); i++) {
+            uids.add(inputArray.getJSONObject(i).getString("uid"));
         }
         return uids;
     }
@@ -602,11 +602,11 @@ public class AddressListEntry implements UserRef
     }
     
     public static JSONArray getJSONArray(List<AddressListEntry> addressList) throws Exception {
-        JSONArray res = new JSONArray();
+        JSONArray array = new JSONArray();
         for (AddressListEntry ale : addressList) {
-            res.put(ale.getJSON());
+            array.put(ale.getJSON());
         }
-        return res;     
+        return array;     
     }
     
 }

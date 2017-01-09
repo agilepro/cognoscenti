@@ -5,6 +5,7 @@
 %><%
     String title=(String)request.getAttribute("title");
     String themePath = ar.getThemePath();
+    if (true) {throw new Exception("not used any more");}
 
 %>
 <!-- Begin baseLayout.jsp -->

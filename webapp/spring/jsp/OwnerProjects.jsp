@@ -103,7 +103,7 @@ app.controller('myCtrl', function($scope, $http) {
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Workspace</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/permission.htm">Abandon Workspace</a></li>
+                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/roleManagement.htm">Abandon Workspace</a></li>
                 </ul>
               </div>
             </td>

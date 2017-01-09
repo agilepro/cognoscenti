@@ -576,7 +576,7 @@ function createSubLinks(){
             new Tab(retPath+"t/"+accountId+"/$/searchAllNotes.htm", "Search Topics")
         ];
         var accountSubMenu4 = [new Tab(retPath+"t/"+accountId+"/$/personal.htm","Personal"),
-            new Tab(retPath+"t/"+accountId+"/$/permission.htm","Permissions"),
+            new Tab(retPath+"t/"+accountId+"/$/roleManagement.htm","Permissions"),
             new Tab(retPath+"t/"+accountId+"/$/roleRequest.htm","Role Requests"),
             new Tab(retPath+"t/"+accountId+"/$/admin.htm","Admin")
         ];
@@ -653,7 +653,7 @@ function createSubLinks(){
         ];
         var arrayOfTabs4 = [
             new Tab(retPath+"t/"+book+"/"+pageId+"/personal.htm",      "Personal"),
-            new Tab(retPath+"t/"+book+"/"+pageId+"/permission.htm",    "Permissions"),
+            new Tab(retPath+"t/"+book+"/"+pageId+"/roleManagement.htm","Permissions"),
             new Tab(retPath+"t/"+book+"/"+pageId+"/roleRequest.htm",   "Role Requests") ,
             new Tab(retPath+"t/"+book+"/"+pageId+"/admin.htm",         "Admin" ),
             new Tab(retPath+"t/"+book+"/"+pageId+"/labelList.htm",     "Labels" ),

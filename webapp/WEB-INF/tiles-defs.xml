@@ -14,15 +14,6 @@
         <put-attribute name="footer" value="/spring/tiles/slimFooter.jsp" />
     </definition>
 
-    <definition name="baseLayout" template="/spring/tiles/baseLayout.jsp">
-        <put-attribute name="title" value="Template" />
-        <put-attribute name="header" value="/spring/tiles/header.jsp" />
-        <put-attribute name="menu" value="/spring/jsp/leftMenu.jsp" />
-        <put-attribute name="body" value="/spring/tiles/body.jsp" />
-        <put-attribute name="footer" value="/spring/tiles/footer.jsp" />
-    </definition>
-
-
     <definition name="landingPage" extends="slimLayout">
         <put-attribute name="title" value="Welcome to Weaver" />
         <put-attribute name="body" value="/spring/jsp/index.jsp" />

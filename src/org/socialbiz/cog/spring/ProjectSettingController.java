@@ -74,6 +74,14 @@ public class ProjectSettingController extends BaseController {
         showJSPMembers(ar, siteId, pageId, "RoleManagement");
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/roleDefine.htm", method = RequestMethod.GET)
+    public void roleDefine(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "RoleDefine");
+    }
+
     @RequestMapping(value = "/{siteId}/{pageId}/roleRequest.htm", method = RequestMethod.GET)
     public void remindersTab(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -441,19 +449,19 @@ public class ProjectSettingController extends BaseController {
             if ("Update".equals(op)) {
                 CustomRole role = ngc.getRoleOrFail(roleName);
                 role.updateFromJSON(roleInfo);
-                repo = role.getJSON();
+                repo = role.getJSONDetail();
             }
             else if ("Create".equals(op)) {
                 CustomRole role = ngc.createRole(roleName, "");
                 role.updateFromJSON(roleInfo);
-                repo = role.getJSON();
+                repo = role.getJSONDetail();
             }
             else if ("Delete".equals(op)) {
                 ngc.deleteRole(roleName);
                 repo.put("success",  true);
             }
 
-            ngc.saveFile(ar, "Updated Agenda Item");
+            ngc.saveFile(ar, "Updated Role");
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){

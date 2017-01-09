@@ -926,7 +926,7 @@ history.task.subtask.add    113
             return ar.getResourceURL(ngp, "noteZoom"+objectKey+".htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-            return ar.getResourceURL(ngp, "permission.htm");
+            return ar.getResourceURL(ngp, "roleManagement.htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
             return ar.getResourceURL(ngp, "meetingFull.htm?id=")+objectKey;

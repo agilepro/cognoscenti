@@ -18,9 +18,13 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         $scope.parentScope.updateRole($scope.roleInfo);
         $modalInstance.dismiss('cancel');
     };
-    $scope.createAndClose = function () {
-        $scope.parentScope.saveCreatedRole($scope.roleInfo);
+    $scope.saveAndClose = function () {
+        $scope.parentScope.updateRole($scope.roleInfo);
         $modalInstance.dismiss('cancel');
+    };
+    $scope.defineRole = function () {
+        $scope.parentScope.saveCreatedRole($scope.roleInfo);
+        window.location = "roleDefine.htm?role="+$scope.roleInfo.name;
     };
     $scope.deleteAndClose = function () {
         $scope.parentScope.deleteRole($scope.roleInfo);
@@ -45,5 +49,6 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     if (!isNew) {
         $scope.refreshRole();
     }
+    
         
 });

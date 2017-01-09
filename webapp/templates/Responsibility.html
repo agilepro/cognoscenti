@@ -1,0 +1,30 @@
+
+<div class="modal-header">
+    <h3 class="modal-title">Edit Responsibility</h3>
+</div>
+<div class="modal-body">
+    <div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="status">Key:</label>
+            {{resp.key}}
+        </div>
+        <div class="form-group">
+            <label for="status">Description:</label>
+            <textarea ng-model="resp.text" class="form-control" placeholder="Enter description"></textarea>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6">
+         Search for role responsibilities
+      </div>
+    </div>
+</div>
+<div >
+            
+</div>
+<div class="modal-footer">
+    <div class="col-md-12">
+        <button ng-click="saveAndClose()" class="btn btn-default btn-raised">Save</button>
+        <button ng-click="cancel()" class="btn btn-default btn-raised">Cancel</button>
+    </div>
+</div>

@@ -33,6 +33,11 @@ import org.workcast.json.JSONObject;
 /**
 * A custom role is defined by the users on a project, but
 * defining a name, and associated users with it.
+* 
+* TODO: This class was designed around the idea that a role might contain
+* other roles symbolically.  This has never really worked out ...
+* it is too complicated for people to handle.  Should remove
+* this capability to make this code simpler to use.
 */
 public class CustomRole extends DOMFace implements NGRole
 {
@@ -127,6 +132,14 @@ public class CustomRole extends DOMFace implements NGRole
         return whichIDForUserOfAddressList(user, getDirectPlayers());
     }
 
+    
+    
+    public List<RoleNomination> getNominations() throws Exception {
+        List<RoleNomination> list = getChildren("nomination", RoleNomination.class);
+        return list;
+    }
+
+    
 
     public String getRequirements()
     {
@@ -283,45 +296,77 @@ public class CustomRole extends DOMFace implements NGRole
         setVector("member", newPlayers);
         return true;
     }
+    
+    public List<RoleTerm> getAllTerms() throws Exception {
+        List<RoleTerm> list= this.getChildren("terms", RoleTerm.class);
+        return list;
+    }
 
+
+    /**
+     * getJSON is for normal lists of roles, the current players, and such.
+     * Does not include all the historical detail.
+     */
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
         jObj.put("name", getName());
-        jObj.put("color", getColor());
-        jObj.put("description", getDescription());
+        extractAttributeString(jObj, "color");
+        extractScalarString(jObj, "description");
         jObj.put("requirements", getRequirements());
-        JSONArray shortList = new JSONArray();
+        JSONArray playerArray = new JSONArray();
         for (AddressListEntry player : getDirectPlayers()) {
             if (player.getUniversalId().length()>0) {
-                shortList.put( player.getJSON() );
+                playerArray.put( player.getJSON() );
             }
         }
-        jObj.put("players", shortList);
-        //shortList = new JSONArray();
-        //for (AddressListEntry player : getExpandedPlayers(ngp)) {
-        //    shortList.put( player.getJSON() );
-        //}
-        //jObj.put("expandedPlayers", shortList);
+        jObj.put("players", playerArray);
+
+        return jObj;
+    }
+    /**
+     * Includes all the current info, and 
+     * also the terms (historical) and data around
+     * what has happened with the role in the past and future.
+     */
+    public JSONObject getJSONDetail() throws Exception {
+        JSONObject jObj = getJSON();
+        jObj.put("perpetual", this.getAttributeBool("perpetual"));
+        extractAttributeInt(jObj, "termLength");
+        
+        List<RoleTerm> allTerms = getAllTerms();
+        JSONArray termArray = new JSONArray();
+        for (RoleTerm rt : allTerms) {
+            termArray.put(rt.getJSON());
+        }
+        jObj.put("terms", termArray);
+        
+        List<Responsibility> resplist= this.getChildren("responsibilities", Responsibility.class);
+        JSONArray respArray = new JSONArray();
+        for (Responsibility res : resplist) {
+            respArray.put(res.getJSON());
+        }
+        jObj.put("responsibilities", respArray);
+        
         return jObj;
     }
     public void updateFromJSON(JSONObject roleInfo) throws Exception {
-        if (roleInfo.has("color")) {
-            setColor(roleInfo.getString("color"));
-        }
-        if (roleInfo.has("description")) {
-            setDescription(roleInfo.getString("description"));
-        }
+        updateAttributeString("color", roleInfo);
+        updateScalarString("description", roleInfo);
+        updateAttributeInt("termLength", roleInfo);
         if (roleInfo.has("requirements")) {
+            //internal key is not same as external
             setRequirements(roleInfo.getString("requirements"));
         }
         if (roleInfo.has("players")) {
             clear();
-            JSONArray players = roleInfo.getJSONArray("players");
-            int last = players.length();
+            JSONArray playerArray = roleInfo.getJSONArray("players");
+            int last = playerArray.length();
             for (int i=0; i<last; i++) {
-                JSONObject addr = players.getJSONObject(i);
+                JSONObject addr = playerArray.getJSONObject(i);
                 this.addPlayer(AddressListEntry.fromJSON(addr));
             }
         }
+        updateCollection(roleInfo, "responsibilities", Responsibility.class,  "key");
+        updateCollection(roleInfo, "terms",            RoleTerm.class,  "key");
     }
 }

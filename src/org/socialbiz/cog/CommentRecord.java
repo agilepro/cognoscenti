@@ -255,7 +255,7 @@ public class CommentRecord extends DOMFace {
         return getScalarLong("replyTo");
     }
     public void setReplyTo(long replyVal) {
-        setScalar("replyTo", replyVal);
+        setScalarLong("replyTo", replyVal);
     }
 
     /**
@@ -601,11 +601,11 @@ public class CommentRecord extends DOMFace {
         commInfo.put("emailPending",needCreateEmailSent()||needCloseEmailSent());  //display only
         commInfo.put("replyTo",  getReplyTo());
         commInfo.put("newPhase",  getNewPhase());
-        JSONArray replyList = new JSONArray();
+        JSONArray replyArray = new JSONArray();
         for (Long val : getReplies()) {
-            replyList.put(val.longValue());
+            replyArray.put(val.longValue());
         }
-        commInfo.put("replies",  replyList);
+        commInfo.put("replies",  replyArray);
         commInfo.put("decision", getDecision());
 
         //this is temporary
@@ -616,11 +616,11 @@ public class CommentRecord extends DOMFace {
         JSONObject commInfo = getJSON();
         commInfo.put("html", getContentHtml(ar));
         commInfo.put("outcome", getOutcomeHtml(ar));
-        JSONArray responses = new JSONArray();
+        JSONArray responseArray = new JSONArray();
         for (ResponseRecord rr : getResponses()) {
-            responses.put(rr.getJSON(ar));
+            responseArray.put(rr.getJSON(ar));
         }
-        commInfo.put("responses", responses);
+        commInfo.put("responses", responseArray);
         commInfo.put("choices", constructJSONArray(getChoices()));
         commInfo.put("notify", AddressListEntry.getJSONArray(getNotifyRole().getDirectPlayers()));
         commInfo.put("docList", constructJSONArray(getDocList()));
@@ -632,28 +632,25 @@ public class CommentRecord extends DOMFace {
         UserProfile user = ar.getUserProfile();
         boolean wasDraft = getState()==COMMENT_STATE_DRAFT;
 
-        //only update the comment if that user is the one logged in
-        //if (user.equals(owner)) {
-            if (input.has("html")) {
-                String html = input.getString("html");
-                setContentHtml(ar, html);
-            }
-            if (input.has("outcome")) {
-                String html = input.getString("outcome");
-                setOutcomeHtml(ar, html);
-            }
-            if (input.has("commentType")) {
-                setCommentType(input.getInt("commentType"));
-            }
-            if (input.has("choices")) {
-                setChoices(constructVector(input.getJSONArray("choices")));
-            }
-        //}
+        if (input.has("html")) {
+            String html = input.getString("html");
+            setContentHtml(ar, html);
+        }
+        if (input.has("outcome")) {
+            String html = input.getString("outcome");
+            setOutcomeHtml(ar, html);
+        }
+        if (input.has("commentType")) {
+            setCommentType(input.getInt("commentType"));
+        }
+        if (input.has("choices")) {
+            setChoices(constructVector(input.getJSONArray("choices")));
+        }
         if (input.has("responses")) {
-            JSONArray responses = input.getJSONArray("responses");
-            System.out.println("Submitted to server comment responses: "+responses.toString());
-            for (int i=0; i<responses.length(); i++) {
-                JSONObject oneResp = responses.getJSONObject(i);
+            JSONArray responseArray = input.getJSONArray("responses");
+            System.out.println("Submitted to server comment responses: "+responseArray.toString());
+            for (int i=0; i<responseArray.length(); i++) {
+                JSONObject oneResp = responseArray.getJSONObject(i);
                 String responseUser = oneResp.getString("user");
 
                 //only update the response from a user if that user is the one logged in

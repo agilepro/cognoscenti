@@ -160,9 +160,6 @@ public class DOMFace
         }
         DOMUtils.setChildValue(fDoc, fEle, memberName, value);
     }
-    public void setScalar(String memberName, long value) {
-        setScalar(memberName, Long.toString(value));
-    }
     public String getScalar(String memberName) {
         if (memberName == null) {
             throw new RuntimeException("Program logic error: a null member name"
@@ -172,6 +169,9 @@ public class DOMFace
     }
     public long getScalarLong(String memberName) {
         return safeConvertLong(getScalar(memberName));
+    }
+    public void setScalarLong(String memberName, long value) {
+        setScalar(memberName, Long.toString(value));
     }
 
     /**
@@ -518,16 +518,62 @@ public class DOMFace
     * specific class or objects you want constructed, along with the
     * name of an attribute, and a value to set it to.  Class must have
     * a constructor with three parameters (like DOMFace).
+    * 
+    * @param elementName   the tag name in the XML 
+    * @param childClass    the Java class of the child
+    * @param idAttribute   the name of the attribute of the XML that holds the id
+    * @param idValue       the value of the id that you are looking for
     */
     public <T extends DOMFace> T createChildWithID(String elementName, Class<T> childClass,
-                String idAttribute, String idValue)
-        throws Exception
-    {
+                String idAttribute, String idValue) throws Exception {
         Element ne = createChildElement(elementName);
         ne.setAttribute(idAttribute, idValue);
         return construct(fDoc, ne, this, childClass);
     }
 
+
+    /**
+     * This will look for and find a child of a particular tag and class, with
+     * and id of a specified value if it exists.  If it does not exist, it will
+     * create one.
+     * 
+     * @param elementName   the tag name in the XML 
+     * @param childClass    the Java class of the child
+     * @param idAttribute   the name of the attribute of the XML that holds the id
+     * @param idValue       the value of the id that you are looking for
+     */
+    public <T extends DOMFace> T findOrCreateChildWithID(String elementName, Class<T> childClass,
+            String idAttribute, String idValue) throws Exception {
+        List<T> list = getChildren(elementName, childClass);
+        for (T inst : list) {
+            if (idValue.equals(inst.getAttribute(idAttribute))) {
+                return inst;
+            }
+        }
+        return createChildWithID(elementName, childClass, idAttribute, idValue);
+    }
+
+    /**
+     * This will look for and remove a child of a particular tag and class, with
+     * and id of a specified value if it exists.  If not found the call does nothing.
+     * 
+     * @param elementName   the tag name in the XML 
+     * @param childClass    the Java class of the child
+     * @param idAttribute   the name of the attribute of the XML that holds the id
+     * @param idValue       the value of the id that you are looking for
+     */
+    public <T extends DOMFace> void removeChildWithID(String elementName, Class<T> childClass,
+            String idAttribute, String idValue) throws Exception {
+        List<T> list = getChildren(elementName, childClass);
+        for (T inst : list) {
+            if (idValue.equals(inst.getAttribute(idAttribute))) {
+                this.removeChild(inst);
+            }
+        }
+    }
+    
+    
+    
     /**
     * Require child is used in places where you expect a single tag
     * and if it is no there, go ahead and create it.
@@ -573,25 +619,25 @@ public class DOMFace
 
 
     public static JSONArray constructJSONArray(List<String> input) {
-        JSONArray val = new JSONArray();
+        JSONArray array = new JSONArray();
         for (String item : input) {
-            val.put(item);
+            array.put(item);
         }
-        return val;
+        return array;
     }
     public static JSONArray constructJSONArrayLong(List<Long> input) {
-        JSONArray val = new JSONArray();
+        JSONArray array = new JSONArray();
         for (Long item : input) {
-            val.put(item.longValue());
+            array.put(item.longValue());
         }
-        return val;
+        return array;
     }
 
-    public static List<String> constructVector(JSONArray input) throws Exception {
+    public static List<String> constructVector(JSONArray inputArray) throws Exception {
         ArrayList<String> list = new ArrayList<String>();
-        int top = input.length();
+        int top = inputArray.length();
         for (int i = 0; i<top; i++) {
-            String val = input.getString(i);
+            String val = inputArray.getString(i);
             //assure uniqueness of the values in the list, don't allow duplicates
             if (!list.contains(val)) {
                 list.add(val);
@@ -599,11 +645,11 @@ public class DOMFace
         }
         return list;
     }
-    public static List<Long> constructVectorLong(JSONArray input) throws Exception {
+    public static List<Long> constructVectorLong(JSONArray inputArray) throws Exception {
         ArrayList<Long> list = new ArrayList<Long>();
-        int top = input.length();
+        int top = inputArray.length();
         for (int i = 0; i<top; i++) {
-            long longVal = input.getLong(i);
+            long longVal = inputArray.getLong(i);
             //assure uniqueness of the values in the list, don't allow duplicates
             Long objVal = new Long(longVal);
             if (!list.contains(objVal)) {
@@ -613,17 +659,155 @@ public class DOMFace
         return list;
     }
 
-    public void reflectScalarString(JSONObject dest, String fieldName) throws Exception {
+    /**
+     * Every DOMFace object can implement an update from JSON in order to receive JSON update
+     * from external.  There is no default behavior and instead it must be implemented on 
+     * each of the subclasses if need.  This is used by some of the base routines.  
+     * If one of those routines are used, but this is not implemented on that class, 
+     * then an exception will be thrown.
+     */
+    public void updateFromJSON(JSONObject foo) throws Exception {
+        throw new Exception("UpdateFromJSON method needs to be implemented on the class "
+           +this.getClass().toString());
+    }
+    public JSONObject getJSON() throws Exception {
+        throw new Exception("getJSON method needs to be implemented on the class "
+                +this.getClass().toString());
+    }
+    
+    // --------------------------------------------------------------------------
+    // All of these convert between JSON representation and XML representation
+    // but they keep the name of the item the same.
+    // EXTRACT copies a value from the CML to the JSON.
+    // UPDATE copies from the JSON to the XML if it exists.
+    // --------------------------------------------------------------------------
+    
+    public void extractScalarString(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, getScalar(fieldName));
     }
     public void updateScalarString(String fieldName, JSONObject srce) throws Exception {
-        setScalar(fieldName, srce.getString(fieldName));
+        if (srce.has(fieldName)) {
+            setScalar(fieldName, srce.getString(fieldName));
+        }
     }
-    public void reflectAttributeString(JSONObject dest, String fieldName) throws Exception {
+    public void extractAttributeString(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, getAttribute(fieldName));
     }
     public void updateAttributeString(String fieldName, JSONObject srce) throws Exception {
-        setAttribute(fieldName, srce.getString(fieldName));
+        if (srce.has(fieldName)) {
+            setAttribute(fieldName, srce.getString(fieldName));
+        }
+    }
+    public void extractScalarLong(JSONObject dest, String fieldName) throws Exception {
+        dest.put(fieldName, getScalarLong(fieldName));
+    }
+    public void updateScalarLong(String fieldName, JSONObject srce) throws Exception {
+        if (srce.has(fieldName)) {
+            setScalarLong(fieldName, srce.getLong(fieldName));
+        }
+    }
+    public void extractScalarInt(JSONObject dest, String fieldName) throws Exception {
+        dest.put(fieldName, (int) getScalarLong(fieldName));
+    }
+    public void updateScalarInt(String fieldName, JSONObject srce) throws Exception {
+        if (srce.has(fieldName)) {
+            setScalarLong(fieldName, (long) srce.getInt(fieldName));
+        }
+    }
+    public void extractAttributeLong(JSONObject dest, String fieldName) throws Exception {
+        dest.put(fieldName, getAttributeLong(fieldName));
+    }
+    public void updateAttributeLong(String fieldName, JSONObject srce) throws Exception {
+        if (srce.has(fieldName)) {
+            setAttributeLong(fieldName, srce.getLong(fieldName));
+        }
+    }
+    public void extractAttributeInt(JSONObject dest, String fieldName) throws Exception {
+        dest.put(fieldName, (int) getAttributeLong(fieldName));
+    }
+    public void updateAttributeInt(String fieldName, JSONObject srce) throws Exception {
+        if (srce.has(fieldName)) {
+            setAttributeLong(fieldName, (long) srce.getInt(fieldName));
+        }
+    }
+    
+    
+    /**
+     * Given a set of children with a specific tag name that all have associated
+     * Java classes that have getJSON implemented to generate the right representation
+     * in JSON, this method will create a JSONArray of those children.
+     * @param dest       the object that will get the array of the specified name
+     * @param fieldName  the name of the array
+     * @param childClass the Java class for the children
+     */
+    public <T extends DOMFace> void extractCollection(JSONObject dest, String fieldName, 
+            Class<T> childClass) throws Exception {
+        JSONArray array = new JSONArray();
+        for (T inst : getChildren(fieldName, childClass)) {
+            array.put(inst.getJSON());
+        }
+        dest.put(fieldName, array);
+    }
+    
+    
+    /**
+     * This will take an object which has a member that is a JSONArray of objects
+     * and it will update all of the corresponding children.  The assumption is that 
+     * the member name on the JSONObject is the same as the tag name of the children.
+     * Each child has an id attribute, and the attribute name is the same in the JSON
+     * and in the XML.
+     * 
+     * This gives PATCH style semantics to collections.  You can update with a single
+     * instance object in it, and it will either delete that child, create that child
+     * or update the child according to a key field value specified.  It is done in 
+     * a type-safe class-safe way such that the Java can still ensure the consistency
+     * of the child XML DOM objects.
+     * 
+     * This will look at each JSONObject in the JSONArray specified by name, and look
+     * for a corresponding child DOM element with the same tag name, and with an id
+     * that matches.  It will then create, update or delete that child.
+     * 
+     * If the object in the array has a member "_DELETE_ME_" then the child will be 
+     * deleted instead of being updated.  If no matching child is found the delete
+     * command is ignored.
+     * 
+     * If not a delete case, then it looks for the child.  If no child is found, 
+     * one will be created.  Whether found or created the child will be updated
+     * using JSONUpdate.
+     * 
+     * @param parent the JSONObject that has a member which is a JSONArray
+     * @param memberName the name of the member which is the JSONArray
+     * @param childClass the Java class of the child objects
+     * @param idAttribute the name of the attribute that holds the id both 
+     *                    in the JSON and in the child XML attribute.
+     */
+    public <T extends DOMFace> void updateCollection(JSONObject parent, String memberName,
+            Class<T> childClass, String idAttribute) throws Exception {
+        if (parent.has(memberName)) {
+            JSONArray respArray = parent.getJSONArray(memberName);
+            int last = respArray.length();
+            for (int i=0; i<last; i++) {
+                JSONObject instanceObj = respArray.getJSONObject(i);
+                String key = null;
+                if (instanceObj.has(idAttribute)) {
+                    //use the key of the object passed in.
+                    key = instanceObj.getString(idAttribute);
+                }
+                else {
+                    //if no key is specified, then generate a key here and use that.
+                    //Can only be a CREATE case.
+                    key = IdGenerator.generateKey();
+                }
+                boolean isDelete = instanceObj.has("_DELETE_ME_");
+                if (isDelete) {
+                    removeChildWithID(memberName, childClass,  idAttribute, key);
+                } 
+                else {
+                    T oneResp = findOrCreateChildWithID(memberName, childClass, idAttribute, key);
+                    oneResp.updateFromJSON(instanceObj);
+                }
+            }
+        }
     }
 
 }
