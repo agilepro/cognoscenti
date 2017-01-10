@@ -3,6 +3,9 @@ app.controller('TermModal', function ($scope, $modalInstance, $interval, term, i
 
     // initial comment object
     $scope.term = term;
+    
+    $scope.isCurrent = (parentScope.role.currentTerm == term.key);
+    
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
     
@@ -21,6 +24,9 @@ app.controller('TermModal', function ($scope, $modalInstance, $interval, term, i
     }
 
     $scope.saveAndClose = function () {
+        if ($scope.isCurrent) {
+            $scope.parentScope.selectCurrentTerm($scope.term);
+        }
         $scope.parentScope.updateTerm($scope.term);
         $modalInstance.dismiss('cancel');
     };

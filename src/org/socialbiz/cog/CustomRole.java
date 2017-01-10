@@ -311,6 +311,7 @@ public class CustomRole extends DOMFace implements NGRole
         JSONObject jObj = new JSONObject();
         jObj.put("name", getName());
         extractAttributeString(jObj, "color");
+        extractAttributeString(jObj, "currentTerm");
         extractScalarString(jObj, "description");
         jObj.put("requirements", getRequirements());
         JSONArray playerArray = new JSONArray();
@@ -351,6 +352,7 @@ public class CustomRole extends DOMFace implements NGRole
     }
     public void updateFromJSON(JSONObject roleInfo) throws Exception {
         updateAttributeString("color", roleInfo);
+        updateAttributeString("currentTerm", roleInfo);
         updateScalarString("description", roleInfo);
         updateAttributeInt("termLength", roleInfo);
         if (roleInfo.has("requirements")) {

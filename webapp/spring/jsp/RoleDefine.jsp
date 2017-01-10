@@ -60,6 +60,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.updateTerm = function(term) {
         var roleObj = {};
         roleObj.name = $scope.role.name;
+        roleObj.currentTerm = $scope.role.currentTerm;
         roleObj.terms = [];
         roleObj.terms.push(term);
         $scope.updateRole(roleObj);
@@ -77,6 +78,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.reportError(data);
         });
     };
+    $scope.selectCurrentTerm = function(term) {
+        $scope.role.currentTerm = term.key;
+    }
+    
     $scope.getDays = function(term) {
         if (term.termStart<100000) {
             return 0;
@@ -86,6 +91,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         var diff = Math.floor((term.termEnd - term.termStart)/(1000*60*60*24));
         return diff;
+    }
+    
+    $scope.termColor = function(aterm) {
+        if ($scope.role.currentTerm == aterm.key) {
+            return {"background-color": "lightyellow"};
+        }
+        else {
+            return {"background-color": "white"};
+        }
     }
 
     $scope.openResponsibilityModal = function (resp) {
@@ -221,23 +235,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
-                <label for="synopsis">Perpetual:</label>
-                <input type="checkbox" ng-model="role.termLength" class="form-control" 
-                       placeholder="Enter requirements"/>
-            </div>
-            <div class="form-group">
-                <label for="synopsis">Nominal Term Length (in months):</label>
-                <input ng-model="role.termLength" class="form-control"/>
-            </div>
-            <div class="form-group">
-                <label for="synopsis">Current Term Start:</label>
-                <input ng-model="role.startDate" class="form-control" placeholder="Date term started"/>
-            </div>
-            <div class="form-group">
-                <label for="synopsis">Current Term End:</label>
-                <input ng-model="role.endDate" class="form-control" placeholder="Date term started"/>
-            </div>
-            <div class="form-group">
                 <label for="synopsis">Terms on Record:</label>
                 <table class="table">
                 <tr>
@@ -259,7 +256,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                             <span class="fa fa-flag"></span>
                         </button>
                     </td>
-                    <td ng-click="openTermModal(aterm)">{{aterm.termStart |  date}}</td>
+                    <td ng-click="openTermModal(aterm)" ng-style="termColor(aterm)">{{aterm.termStart |  date}}</td>
                     <td ng-click="openTermModal(aterm)">{{getDays(aterm)}}</td>
                     <td class="actions">
                         <button type="button" name="delete" class='btn btn-warning' 
