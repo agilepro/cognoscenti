@@ -38,6 +38,22 @@ import org.workcast.json.JSONObject;
 * 
 * Terms have a complete cycle around selecting people
 * to play a particular term of a particular role.
+* 
+* JSON Members:
+* 
+* key: this is an arbitrary (unique) key
+* 
+* state: Nominating, Proposing, Completed
+* 
+* termStart: TimeStamp for the beginning of the term
+* 
+* termEnd: TimeStamp for the end of the term
+* 
+* players: a list of people assigned to this term
+* 
+* nominations: a list of RoleNomination objects, key=owner
+* 
+* responses: a list of RoleNomResponse objects, key=owner
 */
 public class RoleTerm extends DOMFace {
 
@@ -60,11 +76,12 @@ public class RoleTerm extends DOMFace {
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
         extractAttributeString(jObj, "key");
+        extractAttributeString(jObj, "state");
         extractAttributeLong(jObj, "termStart");
         extractAttributeLong(jObj, "termEnd");
         
         JSONArray playerArray = new JSONArray();
-        List<String> players = getVector("member");
+        List<String> players = getVector("players");
         for (String player : players) {
             AddressListEntry ale = new AddressListEntry(player);
             if (ale.isWellFormed()) {
@@ -74,9 +91,11 @@ public class RoleTerm extends DOMFace {
         jObj.put("players", playerArray);
         
         extractCollection(jObj, "nominations", RoleNomination.class);
+        extractCollection(jObj, "responses", RoleNomResponse.class);
         return jObj;
     }
     public void updateFromJSON(JSONObject termInfo) throws Exception {
+        updateAttributeString("state", termInfo);
         updateAttributeLong("termStart", termInfo);
         updateAttributeLong("termEnd", termInfo);
         
@@ -87,5 +106,6 @@ public class RoleTerm extends DOMFace {
         }
         
         updateCollection(termInfo, "nominations", RoleNomination.class, "owner");
+        updateCollection(termInfo, "responses", RoleNomResponse.class, "owner");
     }
 }
