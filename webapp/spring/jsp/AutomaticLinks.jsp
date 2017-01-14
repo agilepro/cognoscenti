@@ -60,6 +60,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Automatic Links");
     $scope.recentList    = <% recentList.write(out,2,4);%>;
     $scope.allTags       = <% allTags.write(out,2,4);%>;
     $scope.outboundLinks = <% outboundLinks.write(out,2,4);%>;

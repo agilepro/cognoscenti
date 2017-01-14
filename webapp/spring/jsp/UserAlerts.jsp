@@ -74,6 +74,7 @@ Required Parameters:
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Alerts for <%ar.writeJS(uProf.getName());%>");
     $scope.allAlerts = <%allAlerts.write(out,2,4);%>;
 
 

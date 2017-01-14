@@ -180,6 +180,7 @@ Required parameters:
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Workspace Front Page");
     $scope.topHistory = <%topHistory.write(out,2,4);%>;
     $scope.recentChanges = <%recentChanges.write(out,2,4);%>;
     $scope.parent     = <%parent.write(out,2,4);%>;
@@ -318,6 +319,14 @@ app.controller('myCtrl', function($scope, $http) {
 
 });
 </script>
+<style>
+.clipping {
+    overflow: hidden;
+    text-overflow: clip; 
+    border-bottom:1px solid #EEEEEE;
+    white-space: nowrap
+}
+</style>
 
 <!-- MAIN CONTENT SECTION START -->
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -335,8 +344,8 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
-            <div ng-repeat="hist in recentChanges">
-              <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName|limitTo:28}}</a>
+            <div ng-repeat="hist in recentChanges" class="clipping">
+              <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>
             </div>
           </div>
         </div>
@@ -352,7 +361,7 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
-            <div ng-repeat="meet in myMeetings">
+            <div ng-repeat="meet in myMeetings"  class="clipping">
               <a href="meetingFull.htm?id={{meet.id}}">{{meet.name}} @ {{meet.startTime|date}}</a>
             </div>
           </div>
@@ -370,7 +379,7 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
-            <div ng-repeat="act in myActions">
+            <div ng-repeat="act in myActions"  class="clipping">
               <a href="task{{act.id}}.htm">{{act.synopsis}}</a>
             </div>
           </div>
@@ -386,12 +395,12 @@ app.controller('myCtrl', function($scope, $http) {
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
-          <div class="panel-body">
-            <div ng-repeat="hist in topHistory">
+          <div class="panel-body clipping">
+            <div ng-repeat="hist in topHistory"  class="clipping">
               {{hist.time|date}} -
              <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
 
-             {{hist.ctxType}} <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName|limitTo:28}}</a>
+             {{hist.ctxType}} <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>
              was {{hist.event}}.
              <br/>
              <i>{{hist.comments}}</i>

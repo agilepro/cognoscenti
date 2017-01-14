@@ -86,6 +86,7 @@ document.title="<% ar.writeJS(note.getSubject());%>";
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize', 'ngTagsInput']);
 app.controller('myCtrl', function($scope, $http, $modal) {
+    window.setMainPageTitle("Discussion Topic");
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;

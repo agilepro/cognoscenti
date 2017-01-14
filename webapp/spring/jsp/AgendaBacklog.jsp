@@ -20,6 +20,7 @@
 
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Agenda Backlog");
     $scope.meeting = <%backlogInfo.write(out,2,4);%>;
     $scope.newAgendaItem = {subject:"",duration:5,desc:"",id:""};
     $scope.showInput = false;

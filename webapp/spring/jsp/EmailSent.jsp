@@ -40,6 +40,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Email Sent");
     $scope.emailList = <%emailList.write(out,2,4);%>;
     $scope.filter = "";
     $scope.showError = false;

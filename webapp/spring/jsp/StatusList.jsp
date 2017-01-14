@@ -89,6 +89,7 @@ Required parameters:
 
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+    window.setMainPageTitle("Action Item Status");
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
@@ -537,6 +538,17 @@ function addvalue() {
 .statusTable tr th{
     padding:3px;
 }
+.taskStatus {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow:clip;
+    max-width:100px;
+}
+.stoplight {
+    height: 20px;
+    width: 20px; 
+    margin:0px;    
+}
 </style>
 
     <div  id="searchresultdiv0">
@@ -552,8 +564,8 @@ function addvalue() {
            <th>Status</th>
          </tr>
          <tr ng-repeat="rec in findGoals()">
-            <td>
-            <div style="float: left;margin:7px">
+            <td  style="min-width:70px">
+            <div style="float:left;margin:3px">
               <div class="dropdown">
                 <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
                     data-toggle="dropdown"> <span class="caret"></span> </button>
@@ -586,11 +598,11 @@ function addvalue() {
                 </ul>
               </div>
             </div>
-            <div style="float: left;margin:7px">
+            <div style="float:left;margin:2px">
               <a href="task{{rec.id}}.htm"><img src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
             </div>
           </td>
-          <td>
+          <td  style="max-width:300px">
             <span style="cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}} ~ {{rec.description}}</span>
             <span ng-repeat="label in getGoalLabels(rec)">
               <button class="btn btn-sm labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
@@ -598,38 +610,39 @@ function addvalue() {
               </button>
             </span>
           </td>
-          <td>
+          <td  class="taskStatus">
             <div class="taskOverview">
-              <span class="red" ng-repeat="ass in rec.assignees"><a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a><br></span>
+              <div ng-repeat="ass in rec.assignees">
+                  <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a></div>
 
             </div>
           </td>
-          <td>
-            <div class="taskStatus" ng-show="rec.duedate>100"  ng-click="openModalActionItem(null, rec)">{{rec.duedate | date}}
+          <td class="taskStatus">
+            <div class="taskStatus" ng-show="rec.duedate>100"  ng-click="openModalActionItem(null, rec)" >{{rec.duedate | date}}
             </div>
           </td>
-          <td>
+          <td class="taskStatus">
             <div class="taskStatus" ng-show="rec.startdate>100">{{rec.startdate | date}}
             </div>
           </td>
-          <td>
+          <td style="width:72px;padding:0px;">
             <span>
                 <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="rec.prospects=='good'"
-                     title="Good shape" ng-click="setProspects(rec, 'good')">
+                     title="Good shape" ng-click="setProspects(rec, 'good')" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="rec.prospects=='good'"
-                     title="Good shape">
+                     title="Good shape" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="rec.prospects=='ok'"
-                     title="Warning" ng-click="setProspects(rec, 'ok')">
+                     title="Warning" ng-click="setProspects(rec, 'ok')" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="rec.prospects=='ok'"
-                     title="Warning">
+                     title="Warning" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="rec.prospects=='bad'"
-                     title="In trouble" ng-click="setProspects(rec, 'bad')">
+                     title="In trouble" ng-click="setProspects(rec, 'bad')" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="rec.prospects=='bad'"
-                     title="In trouble">
+                     title="In trouble" class="stoplight">
             </span>
           </td>
-          <td>
-            <div class="taskStatus" ng-click="openModalActionItem(null, rec)">{{rec.status}} &nbsp;</div>
+          <td  style="max-width:300px">
+            <div ng-click="openModalActionItem(null, rec)">{{rec.status}} &nbsp;</div>
           </td>
         </tr>
       </table>

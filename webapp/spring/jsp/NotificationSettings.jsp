@@ -50,6 +50,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Notification Settings");
     $scope.partProjects = <%partProjects.write(out,2,4);%>;
 
     $scope.showError = false;

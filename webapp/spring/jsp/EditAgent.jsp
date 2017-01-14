@@ -34,6 +34,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Edit Agent");
     $scope.agent = <%theAgent.getJSON().write(out,2,4);%>;
 
 

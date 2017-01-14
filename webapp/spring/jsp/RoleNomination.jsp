@@ -25,11 +25,15 @@
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.bootstrap.datetimepicker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.role = <%role.write(out,2,4);%>;
+    window.setMainPageTitle("Nominate Role: "+$scope.role.name);
     $scope.termKey = "<%ar.writeJS(termKey);%>";
     $scope.thisUser = "<%ar.writeJS(ar.getBestUserId());%>";
     $scope.comment = "";
     $scope.setComment = function(newComm) {
         $scope.comment = newComm;
+    }
+    if (!$scope.role.state) {
+        $scope.role.state = "Nominating";
     }
     
     $scope.showInput = false;
@@ -57,6 +61,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         if ($scope.term.state=="Nominating") {
             return {"background-color": "lightgreen"};
         }
+        if ($scope.term.state=="Changing") {
+            return {"background-color": "skyblue"};
+        }
         if ($scope.term.state=="Proposing") {
             return {"background-color": "yellow"};
         }
@@ -66,6 +73,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.isNominating = function() {
         return ($scope.term.state=="Nominating");
+    }
+    $scope.showNominations = function() {
+        return ($scope.term.state!="Completed");
+    }
+    $scope.isProposingCompleting = function() {
+        return ($scope.term.state=="Proposing" || $scope.term.state=="Completed");
+    }
+    $scope.isProposing = function() {
+        return ($scope.term.state=="Proposing");
     }
     $scope.isCompleted = function() {
         return ($scope.term.state=="Completed");
@@ -170,7 +186,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     
     $scope.openNominationModal = function (nom) {
-        if ($scope.isCompleted()) {
+        if (!$scope.showNominations()) {
             return;  //avoid nominiations when completed
         }
         var isNew = false;
@@ -212,34 +228,25 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     <div class="col-12">
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
-            <div class="btn btn-default btn-raised" ng-style="stateStyle()">
-                {{term.state}}
-            </div>
             <button class="btn btn-default btn-raised dropdown-toggle" 
-                    type="button" id="menu1" data-toggle="dropdown">
-                Options: <span class="caret"></span></button>
+                    type="button" id="menu1" data-toggle="dropdown" ng-style="stateStyle()">
+                {{term.state}}: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   ng-click="updateState('Nominating')">State &#10132; Nominating</a></li>
+              <li role="presentation"><a role="menuitem" tabindex="-1"
+                  ng-click="updateState('Changing')">State &#10132; Changing</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   ng-click="updateState('Proposing')">State &#10132; Proposing</a></li>
               <li role="presentation"><a role="menuitem" tabindex="-1"
                   ng-click="updateState('Completed')">State &#10132; Completed</a></li>
             </ul>
           </span>
-
         </div>
+        <div style="clear:both"></div>
     </div>
 
 
-    
-    <div class="row">
-        <div class="col-md-6 col-sm-12">
-            <div class="h1">
-                Nominations for: {{role.name}}
-            </div>
-        </div>
-    </div>
     <div class="row">
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
@@ -282,7 +289,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </span>
             </div>
         
-            <div class="form-group" ng-hide="isCompleted()">
+            <div class="form-group" ng-show="showNominations()">
                 <label for="synopsis">Nominations:</label>
                 <table class="table">
                 <tr>
@@ -324,10 +331,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <hr/>
         </div>
     </div>
-    <div class="row" ng-hide="isNominating()">
+    <div class="row" ng-show="isProposingCompleting()">
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
-                <label for="status">Players (Proposed)</label>
+                <label for="status">Players <span ng-hide="isCompleted()">(Proposed)</span></label>
                 <tags-input ng-model="term.players" placeholder="Enter user name or id" 
                             display-property="name" key-property="uid" 
                             on-tag-added="updatePlayers(term.players)" 
@@ -356,11 +363,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             </div>
         </div>
         <div class="col-md-6 col-sm-12">
-            <div class="form-group" ng-hide="isCompleted()">
+            <div class="form-group" ng-show="isProposing()">
                 <label for="status">Your Response:</label>
                 <textarea ng-model="comment" class="form-control"></textarea>
             </div>
-            <div class="form-group" ng-hide="isCompleted()">
+            <div class="form-group" ng-show="isProposing()"">
                 <button ng-click="consent()" class="btn btn-primary btn-raised">Consent</button>
                 <button ng-click="object()" class="btn btn-primary btn-raised">Object</button>
             </div>

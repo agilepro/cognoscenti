@@ -35,6 +35,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Arrange Meeting Agenda");
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
     $scope.backlog = <%backlogInfo.write(out,2,4);%>;
     $scope.goalList = <%goalList.write(out,2,4);%>;

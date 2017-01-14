@@ -23,6 +23,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Find Person");
     $scope.userId = "<%ar.writeJS(uid);%>";
     $scope.microProfile = <%microProfile.write(ar.w,2,2);%>;
     $scope.userName = $scope.microProfile.name;

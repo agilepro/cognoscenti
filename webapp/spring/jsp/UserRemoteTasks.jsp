@@ -36,6 +36,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Remote Action Items");
     $scope.workList = <%workList.write(out,2,4);%>;
     $scope.noneFound = <%=noneFound%>;
     $scope.filterVal = "";

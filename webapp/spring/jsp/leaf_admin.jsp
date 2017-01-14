@@ -102,6 +102,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Workspace Administration");
     $scope.workspaceConfig = <%workspaceConfig.write(out,2,4);%>;
     $scope.newName = $scope.workspaceConfig.allNames[0];
     

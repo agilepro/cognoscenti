@@ -182,6 +182,7 @@ Optional Parameters:
 
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.bootstrap.datetimepicker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+    window.setMainPageTitle("Compose Email");
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;

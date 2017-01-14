@@ -56,6 +56,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Sites You Participate In");
     $scope.siteList = <%siteList.write(out,2,4);%>;
     $scope.requestList = <%requestList.write(out,2,4);%>;
     $scope.superList = <%superList.write(out,2,4);%>;

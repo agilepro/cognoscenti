@@ -12,6 +12,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Search Workspaces");
     $scope.results = [];
     $scope.query = {
         searchFilter: "<% ar.writeJS(searchText); %>",

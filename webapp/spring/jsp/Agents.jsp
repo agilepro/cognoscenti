@@ -32,6 +32,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("All Agents");
     $scope.allAgents = <%allAgents.write(out,2,4);%>;
 
     $scope.editAgent=false;

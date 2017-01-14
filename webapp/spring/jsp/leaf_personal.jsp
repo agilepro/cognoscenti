@@ -31,6 +31,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Workspace Personal Settings");
     $scope.isWatching = <%=uProf.isWatch(pageId)%>;
     $scope.watchTime  = <%=uProf.watchTime(pageId)%>;
     $scope.isTemplate = <%=uProf.findTemplate(pageId)%>;

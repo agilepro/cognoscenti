@@ -51,6 +51,7 @@ div[dropzone] {
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Upload Documents");
     window.MY_SCOPE = $scope;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.docInfo = {description: ""};

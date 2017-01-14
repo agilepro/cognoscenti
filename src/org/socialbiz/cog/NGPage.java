@@ -181,8 +181,13 @@ public abstract class NGPage extends ContainerCommon {
             pageInfo.removeChildElement(userList.getElement());
         }
 
-        //assure that the notify role exists
+        //assure that other roles exist
         getRequiredRole("Notify");
+        getRequiredRole("Facilitator");
+        getRequiredRole("Circle Administrator");
+        getRequiredRole("Operations Leader");
+        getRequiredRole("Representative");
+        getRequiredRole("External Expert");
 
     }
 

@@ -43,27 +43,33 @@
             <td class="gridTableColummHeader">Players:</td>
             <td colspan="2">
               <tags-input ng-model="roleInfo.players" placeholder="Enter user name or id"
-                          display-property="name" key-property="uid">
+                          display-property="name" key-property="uid" 
+                          on-tag-added="updatePlayers()" 
+                          on-tag-removed="updatePlayers()">
                   <auto-complete source="loadPersonList($query)"></auto-complete>
               </tags-input>
             </td>
         </tr>
         <tr>
              <td class="gridTableColummHeader">Description:</td>
-             <td colspan="2"><textarea ng-model="roleInfo.description" placeholder="Enter Description of Role"
-                 class="form-control visibleBox" style="height:150px;"></textarea></td>
+             <td colspan="2">{{roleInfo.description}}</td>
         </tr>
         <tr>
-             <td class="gridTableColummHeader">Eligibility:</td>
-             <td colspan="2"><textarea ng-model="roleInfo.requirements" placeholder="Enter Eligibility Requirements"
-                 class="form-control visibleBox" style="height:150px;"></textarea></td>
+             <td class="gridTableColummHeader">Term:</td>
+             <td colspan="2">
+                 <span ng-show="currentTerm">
+                      {{currentTerm.termStart | date}} to {{currentTerm.termEnd | date}}.
+                      Nomination status is {{currentTerm.state}}</span>
+                 <span ng-hide="currentTerm">
+                     <i>No current term has been set for this role.  Role players are perpetual.</i></span>
+             </td>
         </tr>
         <tr>
              <td class="gridTableColummHeader"></td>
              <td colspan="2">
                 <button ng-click="deleteAndClose()" class="btn btn-primary btn-raised">Delete Role</button> &nbsp; &nbsp; 
-                <button ng-click="cancel()" class="btn btn-default btn-raised">Cancel</button> &nbsp; &nbsp; 
-                <button ng-click="saveAndClose()" class="btn btn-primary btn-raised">Save Changes</button> &nbsp; &nbsp;  
+                <button ng-click="cancel()" class="btn btn-default btn-raised">Close</button> &nbsp; &nbsp; 
+                &nbsp;  
                 &nbsp; &nbsp; 
                 <button ng-click="defineRole()" class="btn btn-info btn-raised">Define Role</button>
              </td>

@@ -44,6 +44,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Synchronize Documents");
 //    $scope.attachInfo = <% /*attachInfo.write(out,2,4); */%>;
 
     $scope.showError = false;

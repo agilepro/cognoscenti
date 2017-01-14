@@ -43,6 +43,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Not Member");
     $scope.atts = "ss";
     $scope.enterMode = false;
     $scope.enterRequest = "<% ar.writeJS(requestMsg); %>";

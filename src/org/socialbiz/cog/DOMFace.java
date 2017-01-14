@@ -535,6 +535,27 @@ public class DOMFace
     /**
      * This will look for and find a child of a particular tag and class, with
      * and id of a specified value if it exists.  If it does not exist, it will
+     * return null.
+     * 
+     * @param elementName   the tag name in the XML 
+     * @param childClass    the Java class of the child
+     * @param idAttribute   the name of the attribute of the XML that holds the id
+     * @param idValue       the value of the id that you are looking for
+     */
+    public <T extends DOMFace> T findChildWithID(String elementName, Class<T> childClass,
+            String idAttribute, String idValue) throws Exception {
+        List<T> list = getChildren(elementName, childClass);
+        for (T inst : list) {
+            if (idValue.equals(inst.getAttribute(idAttribute))) {
+                return inst;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * This will look for and find a child of a particular tag and class, with
+     * and id of a specified value if it exists.  If it does not exist, it will
      * create one.
      * 
      * @param elementName   the tag name in the XML 
@@ -544,13 +565,11 @@ public class DOMFace
      */
     public <T extends DOMFace> T findOrCreateChildWithID(String elementName, Class<T> childClass,
             String idAttribute, String idValue) throws Exception {
-        List<T> list = getChildren(elementName, childClass);
-        for (T inst : list) {
-            if (idValue.equals(inst.getAttribute(idAttribute))) {
-                return inst;
-            }
+        T child = findChildWithID(elementName, childClass, idAttribute, idValue);
+        if (child==null) {
+            child = createChildWithID(elementName, childClass, idAttribute, idValue);
         }
-        return createChildWithID(elementName, childClass, idAttribute, idValue);
+        return child;
     }
 
     /**

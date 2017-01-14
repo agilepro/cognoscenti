@@ -47,6 +47,7 @@ Required parameters:
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Top Level Workspaces");
     $scope.children   = <%children.write(out,2,4);%>;
     $scope.filter = "";
 

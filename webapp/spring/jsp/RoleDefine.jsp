@@ -27,6 +27,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.role = <%role.write(out,2,4);%>;
     $scope.showInput = false;
 
+    window.setMainPageTitle("Define Role: "+$scope.role.name);
     $scope.showInput = false;
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -35,6 +36,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    
     $scope.goNominate = function(aterm) {
         window.location = "roleNomination.htm?role="+$scope.role.name+"&term="+aterm.key;
     }
@@ -156,6 +158,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }, function () {
             //cancel action - nothing really to do
         });
+        
     };
 });
 
@@ -185,26 +188,34 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     <div class="row">
         <div class="col-md-6 col-sm-12">
-            <div class="h1">
-                Role: {{role.name}}
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6 col-sm-12">
             <div class="form-group">
                 <label for="synopsis">Description:</label>
+                <span class="fa fa-question-circle helpIcon" ng-click="descHelp=!descHelp"></span>
                 <textarea ng-model="role.description" class="form-control" placeholder="Enter description"></textarea>
+            </div>
+            <div class="guideVocal" ng-show="descHelp" ng-click="descHelp=false">
+                The description is something for everyone to see to give a basic understanding of 
+                what the role are expected to do.  The first place that people will go
+                when they want to know more about a role is the description.  You should try to be
+                succinct and explain in 3 sentences or less.
             </div>
             <div class="form-group">
                 <label for="synopsis">Eligibility:</label>
+                <span class="fa fa-question-circle helpIcon" ng-click="eligHelp=!eligHelp"></span>
                 <textarea ng-model="role.requirements" class="form-control" placeholder="Enter requirements"></textarea>
+            </div>
+            <div class="guideVocal" ng-show="eligHelp" ng-click="eligHelp=false">
+                The eligibility is a little more detail about what qualities one would expected
+                of a role player.  Perhaps there are some skills required.  In some cases there
+                are eligibility requirements, like having participated in the group for a period
+                of time before they can be considered for the roles.
             </div>
             <div style="margin-bottom:40px">
                 <button ng-click="updateRole(role)" class="btn btn-default btn-raised">Save</button>
             </div>
             <div class="form-group">
                 <label for="synopsis">Responsibilities:</label>
+                <span class="fa fa-question-circle helpIcon" ng-click="respHelp=!respHelp"></span>
                 <table class="table">
                 <tr ng-repeat="aresp in role.responsibilities" >
                     <td class="actions">
@@ -230,12 +241,21 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <button ng-click="openResponsibilityModal()" class="btn btn-default btn-raised">
                     Create Responsibility
                 </button>
+                <span class="fa fa-question-circle helpIcon" ng-click="respHelp=!respHelp"></span>
+            </div>
+            <div class="guideVocal" ng-show="respHelp" ng-click="respHelp=false">
+                You can list a set of responsibilities that the player of this role
+                normally takes care of.  These should be descriptive of the role.
+                List as many as possible as long as the list is helpful in guiding
+                people while they play the role, or in helping people to decide who
+                might be the best person for the role.
             </div>
         </div>
         
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
                 <label for="synopsis">Terms on Record:</label>
+                <span class="fa fa-question-circle helpIcon" ng-click="termHelp=!termHelp"></span>
                 <table class="table">
                 <tr>
                     <td></td>
@@ -267,11 +287,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </tr>
                 </table>
                 <div ng-show="role.terms.length==0" class="guideVocal">
-                There are no designated terms for this role.
+                    There are no designated terms for this role.
                 </div>
             </div>
             <div>
                 <button ng-click="openTermModal()" class="btn btn-default btn-raised">Create Term</button>
+                <span class="fa fa-question-circle helpIcon" ng-click="termHelp=!termHelp"></span>
+            </div>
+            <div class="guideVocal" ng-show="termHelp" ng-click="termHelp=false">
+                You can create 'terms' for this role, those are particular time periods for which 
+                people will hold the role.  Terms can be set up in advance so that you are prepared
+                to pass the role from one player to another.  Terms also serve as a record of who
+                played the role in the past, and when they did so.  When a new term is proposed,
+                it supports the nomination and selection process for that new time period for the role.
             </div>
         </div>
 

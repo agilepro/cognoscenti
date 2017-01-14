@@ -16,7 +16,8 @@
     String wrappedJSP = ar.reqParam("wrappedJSP");
     String templateName = wrappedJSP+".jsp";
     int slashPos = wrappedJSP.lastIndexOf("/");
-    String pageNiceTitle = wrappedJSP;
+    String pageNiceTitle = "@%@%@%@%";
+    /*
     if (slashPos>=0) {
         pageNiceTitle = wrappedJSP.substring(slashPos+1);
     }
@@ -98,6 +99,7 @@
     else if ("RequestAccount".equals(pageNiceTitle)) {
         pageNiceTitle = "Request a New Site";
     }
+    */
 
     String title = ar.defParam("title", wrappedJSP);
 
@@ -397,10 +399,11 @@ function standardTinyMCEOptions() {
       <!-- BEGIN Title and Breadcrump -->
       <ol class="title">
       <% if(isUserHeader) { %>
-        <li class="page-name"><h1><a href="<%=ar.retPath%>v/<%=pageUserKey%>/userSettings.htm"><% ar.writeHtml(pageUserName); %></a></h1></li>
+        <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/userSettings.htm">
+            User: <% ar.writeHtml(pageUserName); %></a></div></li>
       <% } else if(isSiteHeader) { %>
-      <li class="page-name"><h1><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/accountListProjects.htm">
-            <%ar.writeHtml(title);%></a></h1></li>
+      <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/accountListProjects.htm">
+            Site: '<%ar.writeHtml(title);%>'</a></div></li>
       <% } else { %>
         <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/accountListProjects.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
         <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/frontPage.htm">
@@ -411,8 +414,13 @@ function standardTinyMCEOptions() {
                 </span>
             </li>
       <% } %>
-        <li class="page-name"><h1><% ar.writeHtml(pageNiceTitle); %></h1></li>
+        <li class="page-name"><h1 id="mainPageTitle"><% ar.writeHtml(pageNiceTitle); %></h1></li>
       </ol>
+      <script>
+      function setMainPageTitle(str) {
+          document.getElementById("mainPageTitle").innerHTML = str;
+      }
+      </script>
       <!-- BEGIN Title and Breadcrump -->
 
       <!-- Welcome Message -->

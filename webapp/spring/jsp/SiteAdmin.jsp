@@ -24,6 +24,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Site Administration");
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.allThemes = <%allThemes.write(out,2,4);%>;
     $scope.newName = $scope.siteInfo.names[0];

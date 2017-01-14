@@ -20,6 +20,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Email Prepared");
     $scope.eGenList = <%eGenList.write(out,2,4);%>;
     $scope.filter = "";
     $scope.showError = false;

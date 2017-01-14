@@ -24,6 +24,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Labels");
     $scope.labelList = <%labelList.write(out,2,4);%>;
     $scope.colors = ["Gold","Yellow","CornSilk","PaleGreen","Orange","Bisque","Coral","LightSteelBlue","Aqua","Thistle","Pink"];
     $scope.newLabel = {name: "", color: $scope.colors[0]};

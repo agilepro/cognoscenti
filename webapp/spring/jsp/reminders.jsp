@@ -28,6 +28,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Reminders");
     $scope.allReminders = <%allReminders.write(out,2,4);%>;
 
     $scope.showError = false;

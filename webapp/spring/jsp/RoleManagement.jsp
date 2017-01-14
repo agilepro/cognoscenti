@@ -21,7 +21,7 @@
                 uP2.assureImage(ar.getCogInstance());
             }
         }
-        allRoles.put(aRole.getJSON());
+        allRoles.put(aRole.getJSONDetail());
     }
 
 
@@ -31,6 +31,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+    window.setMainPageTitle("Roles");
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.showInput = false;
 

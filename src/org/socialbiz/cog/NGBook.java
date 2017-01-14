@@ -1005,9 +1005,14 @@ public class NGBook extends ContainerCommon {
         NGPage newPage = new NGWorkspace(newFilePath, newDoc, this);
         newPage.setKey(newKey);
 
-        // make the current user the author, and member, of the new page
+        // make the current user to ALL key roles of the new page
         newPage.addPlayerToRole("Administrators", up.getUniversalId());
         newPage.addPlayerToRole("Members", up.getUniversalId());
+        newPage.addPlayerToRole("Facilitator", up.getUniversalId());
+        newPage.addPlayerToRole("Circle Administrator", up.getUniversalId());
+        newPage.addPlayerToRole("Operations Leader", up.getUniversalId());
+        newPage.addPlayerToRole("Representative", up.getUniversalId());
+        newPage.addPlayerToRole("External Expert", up.getUniversalId());
 
         // register this into the page index
         cog.makeIndex(newPage);

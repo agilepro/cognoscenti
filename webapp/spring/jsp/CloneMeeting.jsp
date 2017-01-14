@@ -37,6 +37,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ui.bootstrap.datetimepicker']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Clone Meeting");
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
 
     var n = new Date().getTimezoneOffset();

@@ -66,6 +66,7 @@ Required parameters:
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Home for <%ar.writeJS(loggedUser.getName());%>");
     $scope.futureMeetings  = <%futureMeetings.write(out,2,4);%>;
     $scope.futureMeetings.sort( function(a,b) {
         return a.startTime - b.startTime;
@@ -87,11 +88,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.wList.sort( function(a,b) {
         return b.changed-a.changed;
     });
-    $scope.fixLength = function(str) {
+    $scope.fixNull = function(str) {
         str = str.trim();
-        if (str.length>28) {
-            return str.substring(0,28);
-        }
         if (str.length==0) {
             return "-No Name-";
         }
@@ -100,6 +98,15 @@ app.controller('myCtrl', function($scope, $http) {
 
 });
 </script>
+
+<style>
+.clipping {
+    overflow: hidden;
+    text-overflow: clip; 
+    border-bottom:1px solid #EEEEEE;
+    white-space: nowrap
+}
+</style>
 
 <!-- MAIN CONTENT SECTION START -->
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -144,10 +151,10 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
-            <div  ng-repeat="item in openActionItems | limitTo: 10">
+            <div  ng-repeat="item in openActionItems | limitTo: 10" class="clipping">
                 <img src="<%=ar.retPath%>/assets/goalstate/small{{item.state}}.gif">
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.projectKey}}/task{{item.id}}.htm">
-                 {{fixLength(item.synopsis)}}</a>
+                 {{item.synopsis}}</a>
             </div>
             <div ng-show="openActionItems.length>10">
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm" class="btn btn-sm btn-default btn-raised">See all action items...</a>
@@ -164,10 +171,10 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
-            <div  ng-repeat="item in futureMeetings | limitTo: 10">
+            <div  ng-repeat="item in futureMeetings | limitTo: 10"  class="clipping">
 
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">
-                 {{fixLength(item.name)}} @ {{item.startTime|date}}</a>
+                 {{item.name}} @ {{item.startTime|date}}</a>
             </div>
             <!-- should have a button here to get to all meetings -->
           </div>
@@ -190,8 +197,8 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
-              <div ng-repeat="item in proposals | limitTo: 10">
-                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixLength(item.content)}}</a>
+              <div ng-repeat="item in proposals | limitTo: 10" class="clipping">
+                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{item.content}}</a>
                </div>
                <div ng-show="proposals.length>10">
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userMissingResponses.htm" class="btn btn-sm btn-default btn-raised">See all ...</a>
@@ -210,8 +217,8 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
-               <div ng-repeat="item in openRounds | limitTo: 10">
-                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixLength(item.content)}}</a>
+               <div ng-repeat="item in openRounds | limitTo: 10" class="clipping">
+                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">{{fixNull(item.content)}}</a>
                </div>
                <div ng-show="openRounds.length>10">
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm" class="btn btn-sm btn-default btn-raised">See all...</a>
@@ -233,9 +240,9 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
-               <div ng-repeat="item in wList | limitTo: 10">
+               <div ng-repeat="item in wList | limitTo: 10" class="clipping">
                    <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.pageKey}}/frontPage.htm">
-                   {{fixLength(item.name)}}
+                   {{item.name}}
                    </a>
                </div>
                <div ng-show="wList.length>10">
@@ -255,9 +262,9 @@ app.controller('myCtrl', function($scope, $http) {
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
-               <div ng-repeat="item in siteList | limitTo: 10">
+               <div ng-repeat="item in siteList | limitTo: 10" class="clipping">
                    <a href="<%=ar.retPath%>t/{{item.key}}/$/accountListProjects.htm">
-                   {{fixLength(item.names[0])}}
+                   {{item.names[0]}}
                    </a>
                </div>
                <div ng-show="siteList.length>10">

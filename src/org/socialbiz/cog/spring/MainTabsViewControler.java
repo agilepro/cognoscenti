@@ -141,15 +141,6 @@ public class MainTabsViewControler extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/SiteHome.htm", method = RequestMethod.GET)
-    public void siteHome(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "../jsp/SiteHome");
-    }
-
-
     @RequestMapping(value = "/{siteId}/{pageId}/history.htm", method = RequestMethod.GET)
     public void showHistoryTab(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)

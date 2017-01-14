@@ -12,6 +12,9 @@
         searchDate = sdf.format(new Date());
     }
     long errorDate = sdf.parse(searchDate, new ParsePosition(0)).getTime();
+    String errorDateStr = sdf.format(new Date(errorDate));
+    String previousDate = sdf.format(new Date(errorDate-86000000L));
+    String nextDate = sdf.format(new Date(errorDate+87000000L));
 
     Cognoscenti cog = Cognoscenti.getInstance(request);
     ErrorLog eLog = ErrorLog.getLogForDate(errorDate, cog);
@@ -56,7 +59,12 @@ app.controller('myCtrl', function($scope, $http) {
 <div ng-app="myApp" ng-controller="myCtrl">
 
 
-    <div class="h1">Error Log for <%=searchDate%></div>
+    <div class="h1">Error Log for <%=searchDate%>  
+    <a href="errorLog.htm?searchDate=<%=previousDate%>" title="View <%=previousDate%>">
+        <i class="fa  fa-arrow-circle-left"></i></a>
+    <a href="errorLog.htm?searchDate=<%=nextDate%>" title="View <%=nextDate%>">
+        <i class="fa  fa-arrow-circle-right"></i></a>
+    </div>
         
 
     Search date: <input ng-model="newDate"> <button ng-click="newSearch()">search</button>
@@ -65,7 +73,7 @@ app.controller('myCtrl', function($scope, $http) {
       <tr ng-repeat="row in allDetails">
          <td><a href="errorDetails{{row.errNo}}.htm?searchByDate=<%=errorDate%>">{{row.errNo}}</a></td>
          <td>{{row.errorMessage}}</td>
-         <td>{{row.modTime | date}}</td>
+         <td style="width:100px">{{row.modTime | date}}</td>
       </tr>
    </table>
 

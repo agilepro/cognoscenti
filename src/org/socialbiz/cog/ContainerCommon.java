@@ -548,6 +548,7 @@ public abstract class ContainerCommon extends NGContainer
         if (role==null)
         {
             String desc = roleName+" of the workspace "+getFullName();
+            String elegibility = "";
             if ("Executives".equals(roleName))
             {
                 desc = "The role 'Executives' contains a list of people who are assigned to the site "
@@ -569,13 +570,54 @@ public abstract class ContainerCommon extends NGContainer
             {
                 desc = "People who are not members, but who receive email notifications anyway.";
             }
+            else if ("Facilitator".equals(roleName))
+            {
+                desc = "Selected by the circle members to lead circle meetings. Moves agenda forward, "
+                        +"keeps everyone focused on the aim. Helps prepare the meeting agenda.";
+                elegibility = "Good judgement. Integrity. Listens and empathizes effectively. Can hold "
+                        +"the big picture of an issue. Articulate. Both a sense of humor and able to be firm.";
+            }
+            else if ("Circle Administrator".equals(roleName))
+            {
+                desc = "Personally handles or oversees: circle meeting venue, creating agendas, taking "
+                        +"minutes in collaboration with facilitator, and keeping the records organized.";
+                elegibility = "Familiar with electronic media. Organized. Articulate. Reliable. Takes initiative.";
+            }
+            else if ("Operations Leader".equals(roleName))
+            {
+                desc = "Outside of circle meetings, guides the day-to-day operations by directing, "
+                        +"coordinating, and conveying news, ideas, suggestions, needs, requests. "
+                        +"Selected to role by higher (more abstract) circle. ";
+                elegibility = "Inspires respect. Good judgement. Effective interpersonal skills. "
+                        +"Takes initiative. Can both hold the big picture and pay attention to details. "
+                        +"Both a sense of humor and able to be firm";
+            }
+            else if ("Representative".equals(roleName))
+            {
+                desc = "Outside of circle meetings, guides the day-to-day operations by directing, "
+                        +"coordinating, and conveying news, ideas, suggestions, needs, requests. "
+                        +"Selected to role by higher (more abstract) circle.";
+                elegibility = "Inspires respect. Good judgement. Effective interpersonal skills. "
+                        +"Takes initiative. Can both hold the big picture and pay attention to details. "
+                        +"Both a sense of humor and able to be firm.";
+            }
+            else if ("External Expert".equals(roleName))
+            {
+                desc = "Person from outside the company who has expertise about the company’s environment, "
+                        +"eg, regulatory, economic, social, technical, or ecology. Able to provide information "
+                        +"and feedback not available inside the company and to inform or influence key "
+                        +"external institutions. ";
+                elegibility = "Expertise in and well-connected to a field important to the company. "
+                        +"Experienced. Able to think rationally at the most abstract level of the company’s work. "
+                        +"Well-prepared. Forward thinking.";
+            }
             else
             {
                 //I don't know of any other required roles, if so, we should have a
                 //better description than this.
-                desc = roleName+" of the workspace "+getFullName();
             }
             role = createRole(roleName, desc);
+            role.setRequirements(elegibility);
         }
         return role;
     }

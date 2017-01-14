@@ -54,6 +54,7 @@ div[dropzone] {
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Upload Revised Document");
     window.MY_SCOPE = $scope;
     $scope.docInfo = <% docInfo.write(ar.w, 2,4); %>;
     $scope.fileProgress = [];

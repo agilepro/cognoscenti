@@ -67,7 +67,9 @@ table.datatable {
 }
 </style>
 <body>
-
+<script>
+window.setMainPageTitle("Remote Action Item");
+</script>
     <!-- Content Area Starts Here -->
     <div class="generalArea">
         <div class="pageHeading">

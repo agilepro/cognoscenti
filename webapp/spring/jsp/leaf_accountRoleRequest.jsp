@@ -36,6 +36,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Account Role Request");
     $scope.allRequests = <%allRequests.write(out,2,4);%>;
 
     $scope.showError = false;

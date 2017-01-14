@@ -46,6 +46,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Site Users");
     $scope.userMap = <%userMap.write(out,2,4);%>;
     $scope.sourceUser = "";
     $scope.destUser = "";
@@ -141,8 +142,19 @@ app.filter('encode', function() {
         </table>
     </div>
 
-
-
+<style>
+.workspaceButton {
+    border: 2px solid white;
+    border-radius: 6px;
+    background-color: lightgray;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.workspaceButton:hover {
+    background-color: lightskyblue;
+}
+</style>
 <hr/>
     <div>
     <h1>List of users in workspaces</h1>
@@ -151,7 +163,7 @@ app.filter('encode', function() {
          <td><a href="../../FindPerson.htm?uid={{key|encode}}">{{key}}</a></td>
          <td>{{value.count}}</td>
          <td><span ng-repeat="(wsKey,wsName) in value.wsMap">
-             <a href="../{{wsKey}}/frontPage.htm">{{wsName}}</a>, </span></td>
+             <a href="../{{wsKey}}/frontPage.htm" class="workspaceButton">{{wsName}}</a>, </span></td>
       </tr>
     </table>
     </div>

@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -72,6 +73,42 @@ public class RoleTerm extends DOMFace {
         setAttribute("key", newKey);
     }
 
+    public List<AddressListEntry> getDirectPlayers() throws Exception {
+        ArrayList<AddressListEntry> playerList = new ArrayList<AddressListEntry>();
+        List<String> players = getVector("players");
+        for (String player : players) {
+            AddressListEntry ale = new AddressListEntry(player);
+            if (ale.isWellFormed()) {
+                playerList.add(ale);
+            }
+        }
+        return playerList;
+    }
+    public void addPlayer(AddressListEntry newMember) throws Exception {
+        addVectorValue("players", newMember.getStorageRepresentation());
+    }
+    public void removePlayer(AddressListEntry oldMember) throws Exception {
+        String whichId = oldMember.getStorageRepresentation();
+        UserProfile up = oldMember.getUserProfile();
+        if (up!=null) {
+            whichId = CustomRole.whichIDForUserOfAddressList(up, getDirectPlayers());
+        }
+        removeVectorValue("players", whichId);
+    }
+    public void removePlayerCompletely(UserRef user) throws Exception {
+        List<String> oldPlayers = getVector("players");
+        List<String> newPlayers = new ArrayList<String>();
+        for (String memberID : oldPlayers) {
+            if (!user.hasAnyId(memberID)) {
+                newPlayers.add(memberID);
+            }
+        }
+        this.setVector("players", newPlayers);
+    }
+    public void clear() {
+        clearVector("players");
+    }
+    
     
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();

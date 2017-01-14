@@ -99,6 +99,7 @@ Required parameters:
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Activity Stream");
     $scope.allHistory = <%allHistory.write(out,2,4);%>;
     $scope.filter = "";
 

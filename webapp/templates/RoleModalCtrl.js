@@ -5,6 +5,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     $scope.roleInfo = roleInfo;
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
+
     
     $scope.isNew=isNew;
 
@@ -14,6 +15,34 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
+    $scope.getCurrentTerm = function() {
+        $scope.currentTerm = null;
+        if (!$scope.roleInfo.currentTerm) {
+            return null;
+        }
+        if (!$scope.roleInfo.terms) {
+            return null;
+        }
+        var curTerm = null;
+        $scope.roleInfo.terms.forEach( function(item) {
+            console.log("Considering", $scope.roleInfo.currentTerm, item);
+            if (item.key == $scope.roleInfo.currentTerm) {
+                $scope.currentTerm = item;
+            }
+        });
+    }
+    $scope.getCurrentTerm();
+
+
+    $scope.updatePlayers = function() {
+        var role = {};
+        role.name = $scope.roleInfo.name;
+        role.players = $scope.roleInfo.players;
+        console.log("UPDATING ROLE: ",role);
+        $scope.parentScope.updateRole(role);
+        $scope.getCurrentTerm();
+    }
+    
     $scope.createAndClose = function () {
         $scope.parentScope.saveCreatedRole($scope.roleInfo);
         $modalInstance.dismiss('cancel');
@@ -41,6 +70,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         .success( function(data) {
             $scope.parentScope.cleanDuplicates(data);
             $scope.roleInfo = data;
+            $scope.getCurrentTerm();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);

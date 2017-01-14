@@ -187,6 +187,7 @@ comment-state-complete {
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize','ngTagsInput', 'ui.bootstrap.datetimepicker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+    window.setMainPageTitle("Meeting");
     $scope.pageId = "<%ar.writeJS(pageId);%>";
     $scope.meetId = "<%ar.writeJS(meetId);%>";
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;

@@ -33,6 +33,7 @@ app.controller('myCtrl', function($scope, $http) {
 </script>
 
 <script>
+    window.setMainPageTitle("Print Workspace to PDF");
 
     function unSelect(type){
         var obj = document.getElementById(type);

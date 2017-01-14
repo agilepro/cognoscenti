@@ -77,46 +77,86 @@ public class CustomRole extends DOMFace implements NGRole
         return result;
     }
 
-    public List<AddressListEntry> getDirectPlayers() throws Exception
-    {
+    public List<AddressListEntry> getDirectPlayers() throws Exception {
+        String termId = getCurrentTermId();
+        if (termId==null || termId.length()==0) {
+            return getNonTermList();
+        }
+        RoleTerm term = findChildWithID("terms", RoleTerm.class,  "key", termId);
+        if (term==null) {
+            return getNonTermList();
+        }
+        return term.getDirectPlayers();
+    }
+    private List<AddressListEntry> getNonTermList() throws Exception {
         List<AddressListEntry> list=new ArrayList<AddressListEntry>();
         List<String> members = getVector("member");
         for (String memberID : members) {
-        	AddressListEntry ale = AddressListEntry.newEntryFromStorage(memberID);
-        	if (ale.isWellFormed()) {
-        		//don't add the reference if it is not a suitable user
-        		list.add(ale);
-        	}
+            AddressListEntry ale = AddressListEntry.newEntryFromStorage(memberID);
+            if (ale.isWellFormed()) {
+                //don't add the reference if it is not a suitable user
+                list.add(ale);
+            }
         }
         return list;
     }
-    public void addPlayer(AddressListEntry newMember) throws Exception
-    {
-        addVectorValue("member", newMember.getStorageRepresentation());
-    }
-    public void removePlayer(AddressListEntry oldMember) throws Exception
-    {
-        String whichId = oldMember.getStorageRepresentation();
-        UserProfile up = oldMember.getUserProfile();
-        if (up!=null) {
-            whichId = whichIDForUser(up);
+    
+    public void addPlayer(AddressListEntry newMember) throws Exception {
+        RoleTerm term = getCurrentTerm();
+        if (term==null) {
+            addVectorValue("member", newMember.getStorageRepresentation());
         }
-        removeVectorValue("member", whichId);
+        else {
+            term.addPlayer(newMember);
+        }
+    }
+    public void removePlayer(AddressListEntry oldMember) throws Exception {
+        RoleTerm term = getCurrentTerm();
+        if (term==null) {
+            String whichId = oldMember.getStorageRepresentation();
+            UserProfile up = oldMember.getUserProfile();
+            if (up!=null) {
+                whichId = whichIDForUser(up);
+            }
+            removeVectorValue("member", whichId);
+        }
+        else {
+            term.removePlayer(oldMember);
+        }
     }
     public void removePlayerCompletely(UserRef user) throws Exception {
-        List<String> oldPlayers = getVector("member");
-        List<String> newPlayers = new ArrayList<String>();
-        for (String memberID : oldPlayers) {
-            if (!user.hasAnyId(memberID)) {
-                newPlayers.add(memberID);
-            }
+        RoleTerm term = getCurrentTerm();
+        if (term!=null) {
+            term.removePlayerCompletely(user);
         }
-        this.setVector("member", newPlayers);
+        else {
+            List<String> oldPlayers = getVector("member");
+            List<String> newPlayers = new ArrayList<String>();
+            for (String memberID : oldPlayers) {
+                if (!user.hasAnyId(memberID)) {
+                    newPlayers.add(memberID);
+                }
+            }
+            this.setVector("member", newPlayers);
+        }
     }
 
-    public void clear()
-    {
-        clearVector("member");
+    public void clear() {
+        try {
+            RoleTerm term = getCurrentTerm();
+            if (term!=null) {
+                term.clear();
+            }
+            //the vector should be cleared out in any case, even
+            //if there is a valid term object.
+            clearVector("member");
+        }
+        catch (Exception e) {
+            //i hate this, but clear was previously a method unlikely to 
+            //throw exception.  Still unlikely, so I don't want to change
+            //the signature for this.  So throw an undeclared exception.
+            throw new RuntimeException("Unable to clear the role", e);
+        }
     }
 
     public boolean isExpandedPlayer(UserRef user, NGContainer ngp) throws Exception
@@ -131,15 +171,7 @@ public class CustomRole extends DOMFace implements NGRole
     {
         return whichIDForUserOfAddressList(user, getDirectPlayers());
     }
-
-    
-    
-    public List<RoleNomination> getNominations() throws Exception {
-        List<RoleNomination> list = getChildren("nomination", RoleNomination.class);
-        return list;
-    }
-
-    
+   
 
     public String getRequirements()
     {
@@ -155,6 +187,9 @@ public class CustomRole extends DOMFace implements NGRole
     }
     public void setColor(String color) {
         setAttribute("color", color);
+    }
+    public String getCurrentTermId() {
+        return getAttribute("currentTerm");
     }
 
 
@@ -235,10 +270,8 @@ public class CustomRole extends DOMFace implements NGRole
     }
 
     public void addPlayerIfNotPresent(AddressListEntry newMember) throws Exception {
-        for (AddressListEntry one : getDirectPlayers())
-        {
-            if (one.equals(newMember))
-            {
+        for (AddressListEntry one : getDirectPlayers()) {
+            if (one.equals(newMember)) {
                 return;
             }
         }
@@ -300,6 +333,13 @@ public class CustomRole extends DOMFace implements NGRole
     public List<RoleTerm> getAllTerms() throws Exception {
         List<RoleTerm> list= this.getChildren("terms", RoleTerm.class);
         return list;
+    }
+    private RoleTerm getCurrentTerm() throws Exception {
+        String termId = this.getCurrentTermId();
+        if (termId==null || termId.length()==0) {
+            return null;
+        }
+        return this.findChildWithID("terms", RoleTerm.class, "key", termId);
     }
 
 
@@ -365,7 +405,8 @@ public class CustomRole extends DOMFace implements NGRole
             int last = playerArray.length();
             for (int i=0; i<last; i++) {
                 JSONObject addr = playerArray.getJSONObject(i);
-                this.addPlayer(AddressListEntry.fromJSON(addr));
+                AddressListEntry newMember = AddressListEntry.fromJSON(addr);
+                this.addPlayer(newMember);
             }
         }
         updateCollection(roleInfo, "responsibilities", Responsibility.class,  "key");

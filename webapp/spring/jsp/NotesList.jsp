@@ -108,6 +108,7 @@ function httpGet(theUrl)
     
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
+    window.setMainPageTitle("Discussion Topics");
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.filter = "";
     $scope.showVizPub = true;

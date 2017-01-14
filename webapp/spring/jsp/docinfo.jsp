@@ -99,6 +99,7 @@ document.title="<% ar.writeJS(attachment.getDisplayName());%>";
 
 var app = angular.module('myApp', ['ui.bootstrap','ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
+    window.setMainPageTitle("Access Document");
     $scope.docInfo = <%docInfo.write(out,2,4);%>;
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;

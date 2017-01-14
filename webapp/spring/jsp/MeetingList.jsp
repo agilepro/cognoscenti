@@ -25,6 +25,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap','ui.bootstrap.datetimepicker']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Meetings");
     $scope.meetings = <%meetings.write(out,2,4);%>;
     $scope.newMeeting = {name:"",duration:60,startTime:0,id:"",meetingType:1};
 
