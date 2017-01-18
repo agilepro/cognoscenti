@@ -15,6 +15,9 @@ Required parameters:
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
     Cognoscenti cog = ar.getCogInstance();
+    
+    //String cacheDefeater = "?t="+System.currentTimeMillis();
+    String cacheDefeater = "";
 
 
     List<HistoryRecord> histRecs = ngp.getAllHistory();
@@ -178,8 +181,8 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http) {
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
+app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Workspace Front Page");
     $scope.topHistory = <%topHistory.write(out,2,4);%>;
     $scope.recentChanges = <%recentChanges.write(out,2,4);%>;
@@ -316,6 +319,54 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.topLevel = function(workspace) {
         window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/frontTop.htm";
     }
+    $scope.imageName = function(player) {
+        if (player.key) {
+            return player.key+".jpg";
+        }
+        else {
+            var lc = player.uid.toLowerCase();
+            var ch = lc.charAt(0);
+            var i =1;
+            while(i<lc.length && (ch<'a'||ch>'z')) {
+                ch = lc.charAt(i); i++;
+            }
+            return "fake-"+ch+".jpg";
+        }
+    }
+    $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
+                    +" participate in the workspace for '<%ar.writeHtml(ngp.getFullName());%>'."
+                    +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
+                    +" participate directly with the others through the site.";
+    
+    $scope.openInviteSender = function (player) {
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/InviteModal.html<%=cacheDefeater%>',
+            controller: 'InviteModalCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                email: function () {
+                    return player.uid;
+                },
+                msg: function() {
+                    return $scope.inviteMsg;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (message) {
+            $scope.inviteMsg = message.msg;
+            message.userId = player.uid;
+            message.name = player.name;
+            message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngp, "frontPage.htm")%>";
+            $scope.sendEmailLoginRequest(message);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
 
 });
 </script>
@@ -482,13 +533,38 @@ app.controller('myCtrl', function($scope, $http) {
             </div>
           </div>
         </div>
-
+<style>
+.spacytable tr td {
+    padding:2px;
+}
+</style>
         <div class="panel panel-default">
           <div class="panel-heading headingfont">Other Members</div>
           <div class="panel-body">
-            <div ng-repeat="person in otherMembers">
-              {{person.name}}
-            </div>
+            <table class="spacytable">
+            <tr ng-repeat="person in otherMembers">
+              <td>
+                  <span class="dropdown">
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(person)}}" 
+                         style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" ng-click="">
+                          <span class="fa fa-user"></span> {{person.name}} - {{person.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(person)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="openInviteSender(person)">
+                          <span class="fa fa-envelope-o"></span> Send Invitation</a></li>
+                    </ul>
+                  </span>
+              </td>
+              <td> {{person.name}} </td>
+            </tr>
+            </table>
           </div>
         </div>
 
@@ -514,3 +590,4 @@ app.controller('myCtrl', function($scope, $http) {
       </div>
 
 </div>
+<script src="<%=ar.retPath%>templates/InviteModal.js"></script>

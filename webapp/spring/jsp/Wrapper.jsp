@@ -16,90 +16,7 @@
     String wrappedJSP = ar.reqParam("wrappedJSP");
     String templateName = wrappedJSP+".jsp";
     int slashPos = wrappedJSP.lastIndexOf("/");
-    String pageNiceTitle = "@%@%@%@%";
-    /*
-    if (slashPos>=0) {
-        pageNiceTitle = wrappedJSP.substring(slashPos+1);
-    }
-    if ("FrontPage".equals(pageNiceTitle)) {
-        pageNiceTitle = "Front Page";
-    }
-    else if ("MeetingList".equals(pageNiceTitle)) {
-        pageNiceTitle = "Meetings";
-    }
-    else if ("NotesList".equals(pageNiceTitle)) {
-        pageNiceTitle = "Topics";
-    }
-    else if ("ListAttachments".equals(pageNiceTitle)) {
-        pageNiceTitle = "Documents";
-    }
-    else if ("GoalList".equals(pageNiceTitle)) {
-        pageNiceTitle = "Action Items";
-    }
-    else if ("DecisionList".equals(pageNiceTitle)) {
-        pageNiceTitle = "Decisions";
-    }
-    else if ("LabelList".equals(pageNiceTitle)) {
-        pageNiceTitle = "Labels";
-    }
-    else if ("RoleManagement".equals(pageNiceTitle)) {
-        pageNiceTitle = "Roles";
-    }
-    else if ("leaf_admin".equals(pageNiceTitle)) {
-        pageNiceTitle = "Workspace Admin";
-    }
-    else if ("leaf_personal".equals(pageNiceTitle)) {
-        pageNiceTitle = "Personal";
-    }
-    else if ("GoalEdit".equals(pageNiceTitle)) {
-        pageNiceTitle = "Edit Action Item";
-    }
-    else if ("leaf_history".equals(pageNiceTitle)) {
-        pageNiceTitle = "Activity Stream";
-    }
-    else if ("MeetingFull".equals(pageNiceTitle)) {
-        pageNiceTitle = "Meeting Details";
-    }
-    else if ("accountListProjects".equals(pageNiceTitle)) {
-        pageNiceTitle = "Workspaces in Site";
-    }
-    else if ("SiteAdmin".equals(pageNiceTitle)) {
-        pageNiceTitle = "Site Admin";
-    }
-    else if ("NoteZoom".equals(pageNiceTitle)) {
-        pageNiceTitle = "Discussion Topic";
-    }
-    else if ("docinfo".equals(pageNiceTitle)) {
-        pageNiceTitle = "Access Document";
-    }
-    else if ("DocsRevise".equals(pageNiceTitle)) {
-        pageNiceTitle = "Upload New Version";
-    }
-    else if ("editDetails".equals(pageNiceTitle)) {
-        pageNiceTitle = "Edit Doc Details";
-    }
-    else if ("fileVersions".equals(pageNiceTitle)) {
-        pageNiceTitle = "List Doc Versions";
-    }
-    else if ("UserAccounts".equals(pageNiceTitle)) {
-        pageNiceTitle = "Sites You Manage";
-    }
-    else if ("leaf_accountRoleRequest".equals(pageNiceTitle)) {
-        pageNiceTitle = "Site Role Request";
-    }
-    else if ("accountCreateProject".equals(pageNiceTitle)) {
-        pageNiceTitle = "Create a Workspace";
-    }
-    else if ("edituserprofile".equals(pageNiceTitle)) {
-        pageNiceTitle = "Edit User Profile";
-    }
-    else if ("requiredName".equals(pageNiceTitle)) {
-        pageNiceTitle = "Please Set Your Name";
-    }
-    else if ("RequestAccount".equals(pageNiceTitle)) {
-        pageNiceTitle = "Request a New Site";
-    }
-    */
+
 
     String title = ar.defParam("title", wrappedJSP);
 
@@ -414,7 +331,7 @@ function standardTinyMCEOptions() {
                 </span>
             </li>
       <% } %>
-        <li class="page-name"><h1 id="mainPageTitle"><% ar.writeHtml(pageNiceTitle); %></h1></li>
+        <li class="page-name"><h1 id="mainPageTitle">Untitled Page</h1></li>
       </ol>
       <script>
       function setMainPageTitle(str) {
