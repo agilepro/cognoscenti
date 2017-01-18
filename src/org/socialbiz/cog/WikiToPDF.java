@@ -64,6 +64,8 @@ public class WikiToPDF
     private PDDocument pddoc;
     private PDPage pdpage;
     private PDPageContentStream contentStream;
+    private String printTime;
+    
     float xPos = 200f;
     float yPos = 800f;
     float lineRemainder = 0f;
@@ -76,7 +78,6 @@ public class WikiToPDF
     final static int RIGHT_MARGIN = 550;  //Absolute right of text
 
     protected String headerText = "Header here  --------------------- ";
-    protected String footerText = "Footer here  --------------------- ";
     protected int    pageNum = 1;
 
     boolean isNewPage;
@@ -220,10 +221,14 @@ public class WikiToPDF
 
         int totalNotes = publicNoteList.size() + memberNoteList.size();
         pddoc = new PDDocument();
+        
+        //set up the print time for use in the footer
+        printTime = convertDate(ar.nowTime);
+        
 
-        if (totalNotes>1) {
+        //if (totalNotes>1) {
             writeTOCPage(ngp, publicNoteList, memberNoteList);
-        }
+        //}
 
         int noteCount = 0;
         if(publicNoteList.size() > 0){
@@ -239,7 +244,10 @@ public class WikiToPDF
                 writeNoteToPDF(ngp, lr, noteCount);
             }
         }
-
+        
+        writeDecisionsToPDF(ngp);
+        writeAttachmentListToPDF(ngp);
+        
         endPage();
 
         String fileName = ngp.getKey() + ".pdf";
@@ -255,7 +263,6 @@ public class WikiToPDF
     private void writeTOCPage(NGPage ngp, Vector<TopicRecord> publicNoteList,
             Vector<TopicRecord> memberNoteList)  throws Exception {
         headerText = "Topic report generated from Weaver";
-        footerText = "Generated: 2012-06-23  --  Page 1";
 
         startPage();
 
@@ -296,6 +303,16 @@ public class WikiToPDF
             }
         }
 
+        newLine();
+        newLine();
+        setH2Font();
+        newLine();
+        writeWrappedLine("Decisions");        
+        newLine();
+        setH2Font();
+        newLine();
+        writeWrappedLine("Attached Documents");        
+        
         endPage();
     }
 
@@ -311,16 +328,9 @@ public class WikiToPDF
 
         String subject = stripBadCharacters(note.getSubject());
         UserRef lastEditor = note.getModUser();
-        StringWriter out = new StringWriter(20);
-        SectionUtil.nicePrintDateAndTime(out, note.getLastEdited());
-        String editTime = out.toString();
-
-        out = new StringWriter(20);
-        SectionUtil.nicePrintDate(out, ar.nowTime);
-        String printTime = out.toString();
+        String editTime = convertDateAndTime(note.getLastEdited());
 
         headerText = "Topic "+noteNum+": "+subject;
-        footerText = "Generated: "+printTime+"  --  Page "+pageNum;
         if(!isNewPage){
             endPage();
             startPage();
@@ -352,7 +362,93 @@ public class WikiToPDF
         terminate();
     }
 
+    /**
+    * Takes all the decisions and makes a page(s) with them listed.
+    */
+    public void writeDecisionsToPDF(NGPage ngp) throws Exception {
+        NGBook book = ngp.getSite();
+        List<DecisionRecord> decs = ngp.getDecisions();
 
+        headerText = "Decisions";
+        if(!isNewPage){
+            endPage();
+            startPage();
+        }
+        indent=0;
+
+        setH1Font();
+        newLine();
+        writeWrappedLine("Decision List");
+
+        setH1Font();
+        currentLineSize = 8;  //but really small
+        newLine();
+        writeWrappedLine("Workspace: "+ngp.getFullName()+", Site: "+book.getFullName());
+
+        box(LEFT_MARGIN-2, TOP_MARGIN+2, RIGHT_MARGIN+2, (int) yPos-3);
+        
+
+        for (DecisionRecord dr : decs) {
+            currentLineSize = 30;
+            newLine();
+            currentLineSize = 12;
+            setH1Font();
+            writeWrappedLine("Decision #"+dr.getNumber()+" - "+convertDate(dr.getTimestamp()));
+            newLine();
+            String data = dr.getDecision();
+            LineIterator li = new LineIterator(data);
+            while (li.moreLines()) {
+                String thisLine = li.nextLine();
+                formatText(thisLine);
+            }
+            terminate();
+        }
+    }    
+
+    /**
+    * Takes all the decisions and makes a page(s) with them listed.
+    */
+    public void writeAttachmentListToPDF(NGPage ngp) throws Exception {
+        NGBook book = ngp.getSite();
+        List<AttachmentRecord> attachs = ngp.getAllAttachments();
+
+        headerText = "Attachment Documents";
+        if(!isNewPage){
+            endPage();
+            startPage();
+        }
+        indent=0;
+
+        setH1Font();
+        newLine();
+        writeWrappedLine("Attachment Documents");
+
+        setH1Font();
+        currentLineSize = 8;  //but really small
+        newLine();
+        writeWrappedLine("Workspace: "+ngp.getFullName()+", Site: "+book.getFullName());
+
+        box(LEFT_MARGIN-2, TOP_MARGIN+2, RIGHT_MARGIN+2, (int) yPos-3);
+        
+        int count = 0;
+        
+        for (AttachmentRecord att : attachs) {
+            count++;
+            currentLineSize = 16;
+            newLine();
+            setH3Font();
+            writeWrappedLine(""+count+". "+att.getDisplayName());
+            currentLineSize = 12;
+            String data = att.getDescription();
+            LineIterator li = new LineIterator(data);
+            while (li.moreLines()) {
+                String thisLine = li.nextLine();
+                formatText(thisLine);
+            }
+            terminate();
+        }
+    }        
+    
     private void setH1Font()
     {
         isBold = false;
@@ -584,7 +680,7 @@ public class WikiToPDF
         contentStream.moveTextPositionByAmount( xPos, yPos + 20 );
         contentStream.drawString(headerText);
         contentStream.moveTextPositionByAmount( 0, BOTTOM_MARGIN - TOP_MARGIN - 40 );
-        contentStream.drawString(footerText);
+        contentStream.drawString("Generated: "+printTime+"  --  Page "+pageNum);
         contentStream.moveTextPositionByAmount( 0, TOP_MARGIN + 20 - BOTTOM_MARGIN );
 
         currentFont = currentFamily.getFont(isBold,isItalic);
@@ -1010,6 +1106,18 @@ public class WikiToPDF
         @SuppressWarnings("unchecked")
         List<PDAnnotationLink> annotations = pdpage.getAnnotations();
         annotations.add(txtLink);
+    }
+    
+
+    private String convertDateAndTime(long dateVal) throws Exception  {
+        StringWriter out = new StringWriter(20);
+        SectionUtil.nicePrintDateAndTime(out, dateVal);
+        return out.toString();        
+    }
+    private String convertDate(long dateVal) throws Exception  {
+        StringWriter out = new StringWriter(20);
+        SectionUtil.nicePrintDate(out, dateVal);
+        return out.toString();        
     }
 
 }

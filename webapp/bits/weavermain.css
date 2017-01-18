@@ -23,3 +23,10 @@
   margin: 25px;
   padding: 15px;
 }
+
+
+.helpIcon {
+  padding: 12px;
+  color: lightgray;
+  cursor: pointer;
+}
