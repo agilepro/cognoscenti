@@ -333,11 +333,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return "fake-"+ch+".jpg";
         }
     }
+    $scope.navigateToUser = function(player) {
+        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.uid);
+    }
     $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
                     +" participate in the workspace for '<%ar.writeHtml(ngp.getFullName());%>'."
                     +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
                     +" participate directly with the others through the site.";
-    
     $scope.openInviteSender = function (player) {
 
         var modalInstance = $modal.open({

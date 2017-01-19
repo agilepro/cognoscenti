@@ -80,6 +80,12 @@ public class WikiToPDF
     protected String headerText = "Header here  --------------------- ";
     protected int    pageNum = 1;
 
+    private boolean includeDecisions;
+    private boolean includeAttachments;
+    private boolean includeComments;
+    private boolean includeRoles;
+    private boolean includeActionItems;
+    
     boolean isNewPage;
 
 
@@ -168,11 +174,22 @@ public class WikiToPDF
     public static void handlePDFRequest(AuthRequest ar, NGPage ngp) throws Exception{
         ar.setPageAccessLevels(ngp);
 
+
+
+        WikiToPDF wc = new WikiToPDF(ar);
+        wc.writeWikiAsPDF(ngp, ar);
+    }
+
+
+
+    public void writeWikiAsPDF(NGPage ngp, AuthRequest ar)  throws Exception {
+
         Vector<TopicRecord> publicNotes = new Vector<TopicRecord>();
         Vector<TopicRecord> memberNotes = new Vector<TopicRecord>();
 
         String[] publicNoteIDs = ar.req.getParameterValues("publicNotes");
         String[] memberNoteIDs = ar.req.getParameterValues("memberNotes");
+        
         if (publicNoteIDs==null) {
             publicNoteIDs = new String[0];
         }
@@ -202,52 +219,51 @@ public class WikiToPDF
                 }
             }
         }
+        
+        includeDecisions = (ar.req.getParameter("decisions")!=null);
+        includeAttachments = (ar.req.getParameter("attachments")!=null);
+        includeComments = (ar.req.getParameter("comments")!=null);
+        includeRoles = (ar.req.getParameter("roles")!=null);
+        includeActionItems = (ar.req.getParameter("actionItems")!=null);
 
-        WikiToPDF wc = new WikiToPDF(ar);
-        wc.writeWikiAsPDF(ngp, publicNotes, memberNotes);
-    }
-
-
-
-    public void writeWikiAsPDF(NGPage ngp, Vector<TopicRecord> publicNoteList,
-            Vector<TopicRecord> memberNoteList)  throws Exception {
-
-        if (publicNoteList == null) {
-            throw new Exception("The publicNoteList parameter must not be null.  Send an empty collection instead");
-        }
-        if (memberNoteList == null) {
-            throw new Exception("The memberNoteList parameter must not be null.  Send an empty collection instead");
-        }
-
-        int totalNotes = publicNoteList.size() + memberNoteList.size();
+        int totalNotes = publicNotes.size() + memberNotes.size();
         pddoc = new PDDocument();
         
         //set up the print time for use in the footer
         printTime = convertDate(ar.nowTime);
         
 
-        //if (totalNotes>1) {
-            writeTOCPage(ngp, publicNoteList, memberNoteList);
-        //}
+        if (totalNotes>1 || includeDecisions || includeAttachments) {
+            writeTOCPage(ngp, publicNotes, memberNotes);
+        }
 
         int noteCount = 0;
-        if(publicNoteList.size() > 0){
-            for (TopicRecord lr : publicNoteList) {
+        if(publicNotes.size() > 0){
+            for (TopicRecord lr : publicNotes) {
                 noteCount++;
                 writeNoteToPDF(ngp, lr, noteCount);
             }
         }
 
-        if(memberNoteList.size() > 0){
-            for (TopicRecord lr : memberNoteList) {
+        if(memberNotes.size() > 0){
+            for (TopicRecord lr : memberNotes) {
                 noteCount++;
                 writeNoteToPDF(ngp, lr, noteCount);
             }
         }
         
-        writeDecisionsToPDF(ngp);
-        writeAttachmentListToPDF(ngp);
-        
+        if (includeDecisions) {
+            writeDecisionsToPDF(ngp);
+        }
+        if (includeAttachments) {
+            writeAttachmentListToPDF(ngp);
+        }
+        if (includeActionItems) {
+            writeActionItemsToPDF(ngp);
+        }
+        if (includeRoles) {
+            writeRolesToPDF(ngp);
+        }
         endPage();
 
         String fileName = ngp.getKey() + ".pdf";
@@ -304,15 +320,30 @@ public class WikiToPDF
         }
 
         newLine();
-        newLine();
-        setH2Font();
-        newLine();
-        writeWrappedLine("Decisions");        
-        newLine();
-        setH2Font();
-        newLine();
-        writeWrappedLine("Attached Documents");        
-        
+        if (includeDecisions) {
+            newLine();
+            setH2Font();
+            newLine();
+            writeWrappedLine("Decisions"); 
+        }
+        if (includeAttachments) {
+            newLine();
+            setH2Font();
+            newLine();
+            writeWrappedLine("Attached Documents");        
+        }
+        if (includeActionItems) {
+            newLine();
+            setH2Font();
+            newLine();
+            writeWrappedLine("Action Items");        
+        }
+        if (includeRoles) {
+            newLine();
+            setH2Font();
+            newLine();
+            writeWrappedLine("Roles");        
+        }
         endPage();
     }
 
@@ -352,24 +383,42 @@ public class WikiToPDF
         currentLineSize = 12;
         newLine();
 
-        String data = note.getWiki();
-        LineIterator li = new LineIterator(data);
+        writeWikiData(note.getWiki());
+        if (includeComments) {
+            for (CommentRecord cr : note.getComments()) {
+                if (cr.getState() == CommentRecord.COMMENT_STATE_DRAFT) {
+                    continue;
+                }
+                long date = cr.getPostTime();
+                if (date<100) {
+                    date = cr.getTime();
+                }
+                String dateStr = convertDateAndTime(date);
+                makeHorizontalRule();
+                setH3Font();
+                newLine();
+                writeWrappedLine(dateStr+" from "+cr.getUser().getName());
+                setPFont();
+                newLine();
+                writeWikiData(cr.getContent());
+            }
+        }
+    }
+    
+    private void writeWikiData(String wiki) throws Exception {
+        LineIterator li = new LineIterator(wiki);
         while (li.moreLines())
         {
             String thisLine = li.nextLine();
             formatText(thisLine);
-        }
+        }        
         terminate();
     }
 
-    /**
-    * Takes all the decisions and makes a page(s) with them listed.
-    */
-    public void writeDecisionsToPDF(NGPage ngp) throws Exception {
+    
+    private void pageTop(NGPage ngp, String title) throws Exception {
         NGBook book = ngp.getSite();
-        List<DecisionRecord> decs = ngp.getDecisions();
-
-        headerText = "Decisions";
+        headerText = title;
         if(!isNewPage){
             endPage();
             startPage();
@@ -378,7 +427,7 @@ public class WikiToPDF
 
         setH1Font();
         newLine();
-        writeWrappedLine("Decision List");
+        writeWrappedLine(title);
 
         setH1Font();
         currentLineSize = 8;  //but really small
@@ -386,69 +435,103 @@ public class WikiToPDF
         writeWrappedLine("Workspace: "+ngp.getFullName()+", Site: "+book.getFullName());
 
         box(LEFT_MARGIN-2, TOP_MARGIN+2, RIGHT_MARGIN+2, (int) yPos-3);
+    }
+    
+    /**
+    * Takes all the decisions and makes a page(s) with them listed.
+    */
+    public void writeDecisionsToPDF(NGPage ngp) throws Exception {
+        pageTop(ngp, "Decision List");
         
-
-        for (DecisionRecord dr : decs) {
+        for (DecisionRecord dr : ngp.getDecisions()) {
             currentLineSize = 30;
             newLine();
             currentLineSize = 12;
             setH1Font();
             writeWrappedLine("Decision #"+dr.getNumber()+" - "+convertDate(dr.getTimestamp()));
             newLine();
-            String data = dr.getDecision();
-            LineIterator li = new LineIterator(data);
-            while (li.moreLines()) {
-                String thisLine = li.nextLine();
-                formatText(thisLine);
-            }
-            terminate();
+            writeWikiData(dr.getDecision());
         }
     }    
 
-    /**
-    * Takes all the decisions and makes a page(s) with them listed.
-    */
     public void writeAttachmentListToPDF(NGPage ngp) throws Exception {
-        NGBook book = ngp.getSite();
-        List<AttachmentRecord> attachs = ngp.getAllAttachments();
-
-        headerText = "Attachment Documents";
-        if(!isNewPage){
-            endPage();
-            startPage();
-        }
-        indent=0;
-
-        setH1Font();
-        newLine();
-        writeWrappedLine("Attachment Documents");
-
-        setH1Font();
-        currentLineSize = 8;  //but really small
-        newLine();
-        writeWrappedLine("Workspace: "+ngp.getFullName()+", Site: "+book.getFullName());
-
-        box(LEFT_MARGIN-2, TOP_MARGIN+2, RIGHT_MARGIN+2, (int) yPos-3);
+        pageTop(ngp, "Attachment Documents");
         
         int count = 0;
-        
-        for (AttachmentRecord att : attachs) {
+        for (AttachmentRecord att : ngp.getAllAttachments()) {
             count++;
             currentLineSize = 16;
             newLine();
             setH3Font();
             writeWrappedLine(""+count+". "+att.getDisplayName());
             currentLineSize = 12;
-            String data = att.getDescription();
-            LineIterator li = new LineIterator(data);
-            while (li.moreLines()) {
-                String thisLine = li.nextLine();
-                formatText(thisLine);
-            }
-            terminate();
+            writeWikiData(att.getDescription());
         }
     }        
-    
+
+    public void writeActionItemsToPDF(NGPage ngp) throws Exception {
+        pageTop(ngp, "Action Items");
+        
+        int count = 0;
+        for (GoalRecord actionItem : ngp.getAllGoals()) {
+            count++;
+            currentLineSize = 16;
+            newLine();
+            setH3Font();
+            writeWrappedLine(""+count+". "+actionItem.getSynopsis()
+                    +" ("+GoalRecord.stateName(actionItem.getState())+")");
+            currentLineSize = 12;
+            StringBuffer sb = new StringBuffer();
+            sb.append(actionItem.getDescription());
+            sb.append("\n\n");
+            for (AddressListEntry ale : actionItem.getAssigneeRole().getDirectPlayers()) {
+                sb.append("* "+ale.getName()+"\n \n");
+            }
+            
+            long date = actionItem.getDueDate();
+            if (date>100) {
+                sb.append("Due: "+convertDate(date)+", ");
+            }
+            date = actionItem.getStartDate();
+            if (date>100) {
+                sb.append("Started: "+convertDate(date)+", ");
+            }
+            date = actionItem.getEndDate();
+            if (date>100) {
+                sb.append("Completed: "+convertDate(date)+", ");
+            }
+            sb.append("\n\n");
+            
+            writeWikiData(sb.toString());
+            makeHorizontalRule();
+        }
+    }            
+
+    public void writeRolesToPDF(NGPage ngp) throws Exception {
+        pageTop(ngp, "Roles");
+        
+        int count = 0;
+        for (CustomRole role : ngp.getAllRoles()) {
+            count++;
+            currentLineSize = 16;
+            newLine();
+            setH3Font();
+            writeWrappedLine(""+count+". "+role.getName());
+            currentLineSize = 12;
+            StringBuffer sb = new StringBuffer();
+            sb.append(role.getDescription());
+            sb.append("\n\n");
+            sb.append(role.getRequirements());
+            sb.append("\n\n");
+            for (AddressListEntry ale : role.getDirectPlayers()) {
+                sb.append("* "+ale.getName()+"\n \n");
+            }
+            
+            writeWikiData(sb.toString());
+            makeHorizontalRule();
+        }
+    }        
+
     private void setH1Font()
     {
         isBold = false;
@@ -786,6 +869,7 @@ public class WikiToPDF
         majorLevel = 0;
         isBold = false;
         isItalic = false;
+        indent = 0;
     }
 
     protected void startParagraph() throws Exception
@@ -809,17 +893,16 @@ public class WikiToPDF
         indent = 0;
     }
 
-    protected void makeLineBreak()
-        throws Exception
-    {
+    protected void makeLineBreak() throws Exception {
         newLine();
     }
 
-    protected void makeHorizontalRule()
-        throws Exception
-    {
+    protected void makeHorizontalRule() throws Exception {
+        int saveLine = currentLineSize;
+        currentLineSize = 3;
         newLine();
-        writeText("---------------------------------------------------------------");
+        currentLineSize = saveLine;
+        contentStream.drawLine(LEFT_MARGIN-2, (int) yPos, RIGHT_MARGIN+2, (int) yPos);
     }
 
     private int skipSpaces(String line, int startPos) {
@@ -830,13 +913,12 @@ public class WikiToPDF
     }
 
 
-    protected void startBullet(String line, int level)
-            throws Exception
-    {
+    protected void startBullet(String line, int level) throws Exception {
         if (majorState != BULLET) {
             terminate();
             majorState = BULLET;
-        } else {
+        } 
+        else {
             //nothing needed at end of bullet line
         }
         setPFont();

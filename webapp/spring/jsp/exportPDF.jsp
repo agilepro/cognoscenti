@@ -90,26 +90,29 @@ app.controller('myCtrl', function($scope, $http) {
 
     <form name="exportPdfFrom" id="exportPdfFrom"  action="pdf/page.pdf"  method="get">
         <input type="hidden" name="encodingGuard" value="<%ar.writeHtml("\u6771\u4eac");%>"/>
-        <br/>
-        <table width="800">
-            <tr>
-                <td colspan="2" align="right">
-                    <input type="submit" class="btn btn-primary btn-raised" value="Export PDF" >
-                </td>
-            </tr>
+        <input type="submit" class="btn btn-primary btn-raised" value="Export PDF" />
+
+        <table class="table">
+        <tr><td>Decisions : </td>
+            <td><input type="checkbox" checked="checked" name="decisions"  value="decisions"/></td></tr>
+        <tr><td>Attachments : </td>
+            <td><input type="checkbox" checked="checked" name="attachments"  value="attachments"/></td></tr>
+        <tr><td>ActionItems : </td>
+            <td><input type="checkbox" checked="checked" name="actionItems"  value="actionItems"/></td></tr>
+        <tr><td>Roles : </td>
+            <td><input type="checkbox" checked="checked" name="roles"  value="roles"/></td></tr>
+        <tr><td>Include Comments : </td>
+            <td><input type="checkbox" checked="checked" name="comments"  value="comments"/></td></tr>
         </table>
+
         <div class="generalHeading">Public Topics :</div>
-        <br>
-        <table border="0px solid gray" class="gridTable" width="800">
+        <table border="0px solid gray" class="table">
             <thead>
             <tr>
                <th width="75%">&nbsp;&nbsp;&nbsp;<b>Subject</b></th>
                 <th><b><input type="checkbox" name="publicNotesAll" id="publicNotesAll" onclick="return selectAll('public')" checked="checked" /> &nbsp; Select All </b></th>
             </tr>
             </thead>
-            <tr>
-                <td colspan="2">&nbsp;</td>
-            </tr>
             <%
                 List<TopicRecord> publicComments = ngp.getVisibleNotes(ar, SectionDef.PUBLIC_ACCESS);
                 for(int i=0;i<publicComments.size();i++){
@@ -127,13 +130,12 @@ app.controller('myCtrl', function($scope, $http) {
             }
           %>
         </table>
-        <br><br>
+
 <%
 if (ar.isMember()) {
 %>
         <div class="generalHeading">Member Topics :</div>
-        <br>
-        <table border="0px solid gray" class="gridTable" width="800">
+        <table border="0px solid gray" class="table">
             <%
                 List<TopicRecord> memberComments = ngp.getVisibleNotes(ar, SectionDef.MEMBER_ACCESS);
                 if(memberComments.size() == 0) {
@@ -147,9 +149,6 @@ if (ar.isMember()) {
                     <th><b><input type="checkbox" name="memberNotesAll" id="memberNotesAll" onclick="return selectAll('member')" /> &nbsp; Select All</b></th>
                 </tr>
             </thead>
-            <tr>
-                <td colspan="2">&nbsp;</td>
-            </tr>
          <%
                     for(int i=0;i<memberComments.size();i++) {
                         TopicRecord noteRec = memberComments.get(i);
@@ -168,7 +167,6 @@ if (ar.isMember()) {
 
         </table>
 <% } %>
-
     </form>
 
 </div>
