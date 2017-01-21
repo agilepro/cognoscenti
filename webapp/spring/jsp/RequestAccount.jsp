@@ -16,6 +16,9 @@
     padding:10px;
 }
 </style>
+<script>
+    window.setMainPageTitle("Request Account");
+</script>
 
 <div>From here you can request to create a new site from where you can create & handle multiple projects.</div>
 <div class="generalSettings">

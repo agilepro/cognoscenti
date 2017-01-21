@@ -305,13 +305,13 @@ function standardTinyMCEOptions() {
   <div class="row">
 
     <!-- Begin SideBar  -->
-    <div class="col-sm-3 col-lg-2">
+    <div class="col-sm-2 col-lg-1">
       <%@ include file="SideBar.jsp" %>
     </div>
     <!-- End SideBar -->
 
     <!-- Begin mainContent -->
-    <div class="col-sm-9 col-lg-10 main-content">
+    <div class="col-sm-10 col-lg-11 main-content">
 
       <!-- BEGIN Title and Breadcrump -->
       <ol class="title">
