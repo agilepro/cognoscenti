@@ -39,7 +39,7 @@
 
 <script>
 /******************** GLOBAL VARIABLES ********************/
-var SCOPES = ['https://www.googleapis.com/auth/drive','profile'];
+var SCOPES = ['https://www.googleapis.com/auth/drive'];
 var CLIENT_ID = '866856018924-boo9af1565ijlrsd0760b10lqdqlorkg.apps.googleusercontent.com';
 var FOLDER_NAME = "";
 var FOLDER_ID = "root";
@@ -62,21 +62,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.parentStack = [];
 
     $scope.startGetFiles = function() {
-        if (!gapi) {
-            console.log("gapi does not exist");
-            return;
-        }
-        console.log("gapi exists", gapi);
-        if (!gapi.auth) {
-            console.log("gapi.auth does not exist");
-            return;
-        }
-        console.log("gapi.auth exists", gapi.auth);
-        gapi.auth.authorize({
+        var authparam = {
             'client_id': CLIENT_ID,
-            'scope': SCOPES.join(' '),
-            'immediate': true
-        }, $scope.handleAuthResult);
+            'scope': 'https://www.googleapis.com/auth/drive',
+            'immediate': false
+        };
+        console.log("Now Requesting: ", authparam);
+        gapi.auth.authorize(authparam, $scope.handleAuthResult);
     }
     //check the return authentication of the login is successful, we display the drive box and hide the login box.
     $scope.handleAuthResult = function(authResult) {
@@ -119,10 +111,29 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return ("application/vnd.google-apps.folder" == gfile.mimeType);
     }
     $scope.isAttachable = function(gfile) {
-        return ("application/vnd.google-apps.folder" != gfile.mimeType);
+        if ($scope.isFolder(gfile)) {
+            return false;
+        }
+        var found = false;
+        
+        $scope.attachmentList.forEach( function(item) {
+            if (item.url == gfile.embedLink) {
+                found = true;
+            }
+        });
+        return !found;
     }
     $scope.isAttached = function(gfile) {
-        return ("application/vnd.google-apps.folder" != gfile.mimeType);
+        if ($scope.isFolder(gfile)) {
+            return false;
+        }
+        var found = false;
+        $scope.attachmentList.forEach( function(item) {
+            if (item.url == gfile.embedLink) {
+                found = true;
+            }
+        });
+        return found;
     }
 
 
@@ -195,7 +206,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
     
-});
+});    
+
 
 var googleUser = null;
 var googleUserProfile = null;
@@ -249,6 +261,10 @@ function onSuccessFunc(user) {
     <td style="width:50px;">
         <button ng-show="isAttachable(gfile)" class="" 
             ng-click="openAttachDocument(gfile)"><i class="fa fa-paperclip"></i></button>
+        <span ng-show="isAttached(gfile)" 
+              style="color:tomato;padding:10px;" 
+              title="already attached to this workspace">
+            <i class="fa fa-paperclip"></i></span>
     </td>
     <td style="width:50px;">
         <button ng-hide="isFolder(gfile)" class="" 
