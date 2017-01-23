@@ -200,6 +200,7 @@
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="imagetoolbar" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta name="google-signin-client_id" content="866856018924-boo9af1565ijlrsd0760b10lqdqlorkg.apps.googleusercontent.com">
 
     <!-- INCLUDE the ANGULAR JS library -->
     <script src="<%=ar.baseURL%>jscript/angular.min.js"></script>

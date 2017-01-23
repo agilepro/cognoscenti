@@ -13,8 +13,8 @@
     MeetingRecord mRec     = ngw.findMeeting(meetId);
 
     //comment or uncomment depending on whether you are in development testing mode
-    //String templateCacheDefeater = "";
-    String templateCacheDefeater = "?t="+System.currentTimeMillis();
+    String templateCacheDefeater = "";
+    //String templateCacheDefeater = "?t="+System.currentTimeMillis();
 
 
     if (!AccessControl.canAccessMeeting(ar, ngw, mRec)) {

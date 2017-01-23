@@ -3,21 +3,27 @@
 %><%
 
     ar.assertLoggedIn("You need to Login to Upload a file.");
+
+    //comment or uncomment depending on whether you are in development testing mode
+    //String templateCacheDefeater = "";
+    String templateCacheDefeater = "?t="+System.currentTimeMillis();    
+
     String pageId = ar.reqParam("pageId");
     String folderVal = ar.defParam("folder", null);
     List<String> folders = UtilityMethods.splitString(folderVal, '|');
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     if (ngp.isFrozen()) {
-        throw new Exception("Program Logic Error: addDocument.jsp should never be invoked when the workspace is frozen.  "
+        throw new Exception("Program Logic Error: addDocument.jsp "
+           +"should never be invoked when the workspace is frozen.  "
            +"Please check the logic of the controller.");
     }
     String folderPart = "";
     if (folderVal!=null) {
         folderPart = "?folder="+URLEncoder.encode(folderVal, "UTF-8");
     }
-    JSONObject folderMap = new JSONObject();
-    for (String folder: folders) {
-        folderMap.put( folder, true);
+    JSONArray attachArray = new JSONArray();
+    for (AttachmentRecord doc : ngp.getAllAttachments()) {
+        attachArray.put( doc.getJSON4Doc(ar, ngp) );
     }
 
     JSONArray allLabels = ngp.getJSONLabels();
@@ -27,13 +33,108 @@
 
 %>
 
-<script>
-var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Link Google Docs");
-    $scope.allLabels = <%allLabels.write(out,2,4);%>;
-    $scope.folderMap = <%folderMap.write(out,2,4);%>;
+<script src="https://apis.google.com/js/api.js"></script>
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+<script src="https://apis.google.com/js/client.js"></script>
 
+<script>
+/******************** GLOBAL VARIABLES ********************/
+var SCOPES = ['https://www.googleapis.com/auth/drive','profile'];
+var CLIENT_ID = '866856018924-boo9af1565ijlrsd0760b10lqdqlorkg.apps.googleusercontent.com';
+var FOLDER_NAME = "";
+var FOLDER_ID = "root";
+var FOLDER_PERMISSION = true;
+var FOLDER_LEVEL = 0;
+var NO_OF_FILES = 1000;
+var DRIVE_FILES = [];
+var FILE_COUNTER = 0;
+var FOLDER_ARRAY = [];
+var SIGNED_IN=false;
+
+var app = angular.module('myApp', ['ui.bootstrap']);
+app.controller('myCtrl', function($scope, $http, $modal) {
+    window.setMainPageTitle("Link Google Docs");
+    window.MY_SCOPE = $scope;
+    $scope.attachmentList = <% attachArray.write(out, 2,2); %>;
+    $scope.allLabels      = <% allLabels.write(out, 2,2); %>;
+    
+    $scope.driveFiles = [];
+    $scope.parentStack = [];
+
+    $scope.startGetFiles = function() {
+        if (!gapi) {
+            console.log("gapi does not exist");
+            return;
+        }
+        console.log("gapi exists", gapi);
+        if (!gapi.auth) {
+            console.log("gapi.auth does not exist");
+            return;
+        }
+        console.log("gapi.auth exists", gapi.auth);
+        gapi.auth.authorize({
+            'client_id': CLIENT_ID,
+            'scope': SCOPES.join(' '),
+            'immediate': true
+        }, $scope.handleAuthResult);
+    }
+    //check the return authentication of the login is successful, we display the drive box and hide the login box.
+    $scope.handleAuthResult = function(authResult) {
+        if (!authResult || authResult.error) {
+            console.log("NOT AUTHORIZED: ", authResult);
+            return;
+        }
+        $scope.getDriveFiles();
+    }
+
+
+    $scope.getDriveFiles = function(){
+        console.log("Loading Google Drive files...");
+        gapi.client.load('drive', 'v2', $scope.getFiles);
+    }
+    $scope.getFiles = function(){
+        console.log("Getting folder: ", FOLDER_ID);
+        var query = {
+            'maxResults': NO_OF_FILES,
+            'q': "trashed=false and '" + FOLDER_ID + "' in parents"
+        }
+        
+        var request = gapi.client.drive.files.list(query);
+        request.execute(function (resp) {
+            if (resp.error) {
+                console.log("Error: " + resp.error.message);
+                return;
+            }
+            $scope.driveFiles = resp.items;
+            $scope.driveFiles.sort( function(a,b) {
+                if (a.title.toLowerCase()<b.title.toLowerCase()) {return -1}
+                return 1;
+            });
+            $scope.$apply();
+            console.log("Got Files: ", $scope.driveFiles);
+        });
+    }
+
+    $scope.isFolder = function(gfile) {
+        return ("application/vnd.google-apps.folder" == gfile.mimeType);
+    }
+    $scope.isAttachable = function(gfile) {
+        return ("application/vnd.google-apps.folder" != gfile.mimeType);
+    }
+    $scope.isAttached = function(gfile) {
+        return ("application/vnd.google-apps.folder" != gfile.mimeType);
+    }
+
+
+    $scope.checkUser = function() {
+        console.log("checkUser getBasicProfile", googleUser.getBasicProfile());
+    }
+    $scope.showFiles = function() {
+        var params = {'maxResults': 5 };
+        var resultList = gapi.client.drive.files.list(params);
+        console.log("showFiles", resultList);
+    }    
+    
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
@@ -42,140 +143,133 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
 
-    $scope.findLabels = function() {
-        var res = [];
-        $scope.allLabels.map( function(item) {
-            if ($scope.folderMap[item.name]) {
-                res.push(item);
+    $scope.loggedIn = false;
+    $scope.setLogin = function(boolVal) {
+        $scope.loggedIn = boolVal;
+    }
+    $scope.drillDown = function(gfile) {
+        if ($scope.isFolder(gfile)) {
+            $scope.parentStack.push(FOLDER_ID);
+            FOLDER_ID = gfile.id;
+            $scope.driveFiles = [];
+            $scope.getFiles();
+        }
+    }
+    $scope.popUp = function(gfile) {
+        if ($scope.parentStack.length>0) {
+            FOLDER_ID = $scope.parentStack.pop();
+            $scope.driveFiles = [];
+            $scope.getFiles();
+        }
+    }
+    $scope.preview = function(gfile) {
+        window.open(gfile.embedLink,'_blank');
+    }
+    
+    $scope.openAttachDocument = function (item) {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/GoogleDoc.html<%=templateCacheDefeater%>',
+            controller: 'GoogleDocCtrl',
+            size: 'lg',
+            resolve: {
+                gfile: function () {
+                    return JSON.parse(JSON.stringify(item));
+                },
+                attachmentList: function() {
+                    return $scope.attachmentList;
+                },
+                allLabels: function() {
+                    return $scope.allLabels;
+                }
             }
         });
-        return res;
-    }
 
-    $scope.newLink = {
-        id: "~new~",
-        labelMap:$scope.folderMap,
-        attType:"URL"
-    };
-    $scope.createLink = function() {
-        var postURL = "docsUpdate.json?did="+$scope.newLink.id;
-        var postdata = angular.toJson($scope.newLink);
-        $scope.showError=false;
-        $http.post(postURL, postdata)
-        .success( function(data) {
-            $scope.newLink = data;
-            window.location = "listAttachments.htm";
-
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
+        attachModalInstance.result
+        .then(function (docList) {
+            item.docList = docList;
+            $scope.saveAgendaItem(item);
+        }, function () {
+            //cancel action - nothing really to do
         });
     };
-
+    
 });
+
+var googleUser = null;
+var googleUserProfile = null;
+
+function onSuccessFunc(user) {
+    googleUser = user;
+    window.MY_SCOPE.setLogin(true);
+    window.MY_SCOPE.$apply();
+    console.log("onSuccessFunc", user);
+}
+
 </script>
+
 
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Link Google Doc to Workspace
-        </div>
-        <!--div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="" ng-click="" >Do Nothing</a></li>
-            </ul>
-          </span>
+<table><tr>
+<td>
+</td>
+<td> 
+    <button ng-click="startGetFiles()" class="btn btn-primary btn-raised" 
+            ng-hide="driveFiles.length>0">List Files from Google Drive</button>
+</td>
+<td> 
+        <button class="" 
+            ng-hide="parentStack.length==0" ng-click="popUp()">
+                <i class="fa  fa-arrow-circle-up"></i></button>
+</td>
+</tr></table>
 
-        </div-->
-    </div>
-
-
-    <table class="popups" width="100%">
-        <tr>
-            <td class="gridTableColummHeader" >Type:</td>
-            <td style="width:20px;"></td>
-            <td>
-                <img src="<%=ar.retPath%>assets/images/iconUrl.png"> URL</span>
-            </td>
-        </tr>
-        <tr><td style="height:10px"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader"></td>
-            <td  style="width:20px;"></td>
-            <td>
-                Go to googled drive, and find the document you want to attach.<br/>
-                Edit the document.<br/>
-                Take the URL from the address bar (or from the 'share link' command) and put that here.
-            </td>
-        </tr>
-        <tr>
-            <td class="gridTableColummHeader">
-                URL:
-            </td>
-            <td  style="width:20px;"></td>
-            <td>
-                <input type="text" ng-model="newLink.url" class="form-control"
-                    placeholder="Paste URL from editing the document"/>
-            </td>
-        </tr>
-        <tr><td style="height:20px"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader">
-                Name:
-            </td>
-            <td  style="width:20px;"></td>
-            <td>
-                <input type="text" ng-model="newLink.name" class="form-control"
-                    placeholder="Enter the name to refer to"/>
-            </td>
-        </tr>
-        <tr><td style="height:20px"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader">
-                Description:
-            </td>
-            <td  style="width:20px;"></td>
-            <td>
-                <textarea ng-model="newLink.description"  rows="4" class="form-control"
-                    placeholder="Explain how this document relates to this workspace"/></textarea>
-            </td>
-        </tr>
-        <tr><td style="height:10px"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader_2">Accessibility: </td>
-            <td  style="width:20px;"></td>
-            <td>
-                <input type="checkbox" ng-model="newLink.public"> Public &nbsp; &nbsp;
-                <input type="checkbox" checked="checked" disabled="disabled"> Member
-            </td>
-        </tr>
-        <tr><td style="height:10px"></td></tr>
-        <tr>
-            <td class="gridTableColummHeader_2">Labels: </td>
-            <td  style="width:20px;"></td>
-            <td>
-                <span ng-repeat="label in findLabels()"><button class="btn labelButton"
-                    style="background-color:{{label.color}};">{{label.name}}
-                    </button>
-                </span>
-            </td>
-        </tr>
-        <tr><td style="height:10px"></td></tr>
-        <tr>
-            <td></td>
-            <td  style="width:20px;"></td>
-            <td>
-                <button class="btn btn-primary btn-raised" ng-click="createLink()">Attach Google Doc</button>
-            </td>
-        </tr>
+    
+    <table class="table">
+    <tr ng-show="parentStack.length>0">
+        
+    <td></td>
+    <td> . . </td>
+    <td><button class="" ng-click="popUp()">
+                <i class="fa  fa-arrow-circle-up"></i></button>
+    </td>
+    </tr>
+    <tr ng-repeat="gfile in driveFiles">
+    <td style="width:50px;"><img src="{{gfile.iconLink}}"></td>
+    <td>{{gfile.title}}</td>
+    <td style="width:50px;">
+        <button ng-show="isFolder(gfile)" class="" 
+            ng-click="drillDown(gfile)"><i class="fa fa-folder-open-o"></i></button>
+    </td>
+    <td style="width:50px;">
+        <button ng-show="isAttachable(gfile)" class="" 
+            ng-click="openAttachDocument(gfile)"><i class="fa fa-paperclip"></i></button>
+    </td>
+    <td style="width:50px;">
+        <button ng-hide="isFolder(gfile)" class="" 
+            ng-click="preview(gfile)"><i class="fa fa-eye"></i></button>
+    </td>
+    <td style="width:100px;">{{gfile.modifiedDate | date}}</td>
+    </tr>
     </table>
 
+    <div class="guideVocal" ng-hide="loggedIn">
+        You will need to be logged into Google with the account that owns the Google Drive
+        folder from which you want to retrieve the documents.   
+        <br/> <br/>
+        <div class="g-signin2" data-onsuccess="onSuccessFunc" data-theme="dark"></div>
+        <br/>
+        You also will need to give 
+        permissions to this application to be able to access that folder.
+        
+        Clicking this button may help you log in and give permissions.
+    </div>
 </div>
+
+
+<script src="<%=ar.retPath%>templates/GoogleDocCtrl.js"></script>

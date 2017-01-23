@@ -227,11 +227,19 @@ public abstract class AttachmentRecord extends CommentContainer implements Email
     }
 
     /**
-     * There are three types of attachment: FILE: this is a local path into the
-     * attachments repository URL: this is a URL to an external web addressible
-     * content store EXTRA: this file appeared in the project folder (all by
-     * itself) but not yet tracked GONE: this file is missing from the folder,
-     * might have been deleted by user DEFER: deprecated, not supported any more
+     * There are three types of attachment: 
+     * 
+     * FILE: this is a local path into the
+     *    attachments repository 
+     * URL: this is a URL to an external web addressable
+     *    content store 
+     * EXTERN: this is also a URL which is launched in a 
+     *    separate window, but it migh also have a local copy. 
+     * EXTRA: this file appeared in the project folder (all by
+     *    itself) but not yet tracked 
+     * GONE: this file is missing from the folder,
+     *    might have been deleted by user 
+     * DEFER: deprecated, not supported any more
      * except legacy
      */
     public String getType() {
