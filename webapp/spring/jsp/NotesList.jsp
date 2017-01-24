@@ -27,7 +27,7 @@
 
     JSONArray notes = new JSONArray();
     for (TopicRecord aNote : aList) {
-        
+
         String discussionPhase = aNote.getDiscussionPhase();
 
         if (aNote.isPublic()) {
@@ -105,7 +105,7 @@ function httpGet(theUrl)
     return JSON.parse(xmlHttp.responseText);
 }
 
-    
+
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Discussion Topics");
@@ -143,8 +143,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
     };
     $scope.fetchTopics();
-    
-    
+
+
     $scope.allLabels.sort( function(a,b) {
         if (a.name < b.name) {
             return -1;
@@ -265,7 +265,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.openTopicCreator = function() {
-		
+
         var modalInstance = $modal.open({
             animation: false,
             templateUrl: '<%=ar.retPath%>templates/CreateTopicModal.html?t=<%=System.currentTimeMillis()%>',
@@ -287,7 +287,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 			newTopic.modUser.uid = "<%ar.writeJS(currentUser);%>";
 			newTopic.modUser.name = "<%ar.writeJS(currentUserName);%>";
 			newTopic.modUser.key = "<%ar.writeJS(currentUserKey);%>";
-			
+
 			var postURL = "noteHtmlUpdate.json?nid=~new~";
 			var postdata = angular.toJson(newTopic);
 			$scope.showError=false;
@@ -314,7 +314,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return "regularTopic";
         }
     }
-	
+
 });
 
 </script>
@@ -332,21 +332,21 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                     Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" ng-click="showFilter=true"> 
+              <!--li role="presentation"><a role="menuitem" ng-click="showFilter=true">
 			      Show Filter</a>
-              </li>
-              <li role="presentation"><a role="menuitem" ng-click="openTopicCreator()"> 
+              </li-->
+              <li role="presentation"><a role="menuitem" ng-click="openTopicCreator()">
 			      Create New Topic</a>
               </li>
-			  
+
               <li role="presentation"><a role="menuitem" href="sendNote.htm">
-                  <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> 
+                  <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" />
 				  Send Email</a>
               </li>
-              <li role="presentation"><a role="menuitem" href="exportPDF.htm"> 
+              <li role="presentation"><a role="menuitem" href="exportPDF.htm">
 			      Create PDF</a>
               </li>
-              <li role="presentation"><a role="menuitem" href="searchAllNotes.htm"> 
+              <li role="presentation"><a role="menuitem" href="searchAllNotes.htm">
 			      Search All Topics </a>
               </li>
             </ul>
@@ -354,40 +354,44 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
     </div>
 
-
-    <div class="well" ng-show="showFilter">
-        <div style="float:right;cursor:pointer;" href="#" ng-click="showFilter=false">x</div>
-        Filter <input ng-model="filter"> &nbsp;
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showVizPub">
-            <img src="<%=ar.retPath%>assets/images/iconPublic.png"> Public</span>
-        <span style="vertical-align:middle;" ng-show="<%=isMember%>"><input type="checkbox" ng-model="showVizMem">
-            <img src="<%=ar.retPath%>assets/images/iconMember.png"> Member-Only</span>
-        <span style="vertical-align:middle;" ng-show="<%=isMember%>"><input type="checkbox" ng-model="showVizDel">
-            <i class="fa fa-trash"></i> Trash</span>
-        <span class="dropdown" ng-repeat="role in allLabelFilters()">
-            <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
-               data-toggle="dropdown" style="background-color:{{role.color}};"
-               ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-               <li role="presentation"><a role="menuitem" title="{{add}}"
-                  ng-click="toggleLabel(role)">Remove Filter:<br/>{{role.name}}</a></li>
+    <div class="well fluid-container" ng-show="showFilter">
+        <!--div style="float:right;cursor:pointer;" href="#" ng-click="showFilter=false">x</div-->
+      <div class="row">
+        <div class="col-md-3">
+          Filter
+          <input ng-model="filter">
+        </div>
+        <div class="togglebutton col-md-2">
+          <label>
+            <input type="checkbox" ng-model="showVizPub"> Public
+          </label>
+        </div>
+        <div class="togglebutton col-md-2">
+          <label>
+            <input type="checkbox" ng-model="showVizMem"> Members-Only
+          </label>
+        </div>
+        <div class="togglebutton col-md-3">
+          <label>
+            <input type="checkbox" ng-model="showVizDel"> Include deleted
+          </label>
+        </div>
+        <div class="col-md-2">
+          <span class="dropdown">
+            <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" data-toggle="dropdown"
+            title="Add Filter by Label">Filter by Label</button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation" ng-repeat="rolex in allLabels">
+                  <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
+                  ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
+                      {{rolex.name}}</button>
+              </li>
             </ul>
-        </span>
-        <span>
-             <span class="dropdown">
-               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
-               title="Add Filter by Label"><i class="fa fa-filter"></i></button>
-               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                 <li role="presentation" ng-repeat="rolex in allLabels">
-                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
-                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
-                         {{rolex.name}}</button>
-                 </li>
-               </ul>
-             </span>
-        </span>
+          </span>
+        </div>
+      </div>
     </div>
-    
+
     <style>
     .regularTopic {
         border: 1px solid lightgrey;
@@ -410,13 +414,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         padding:5px;
         background-color:pink;
     }
-    
+
     </style>
 
     <div style="height:20px;"></div>
 
         <div>
-            <button class="btn btn-default btn-raised" ng-click="openTopicCreator()"> 
+            <button class="btn btn-default btn-raised" ng-click="openTopicCreator()">
 			    Create New Topic
             </button>
         </div>
@@ -424,7 +428,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <div class="{{getTopicStyle(rec)}}">
                 <div id="headline" >
                   <span class="dropdown">
-                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                       <li role="presentation">
@@ -471,6 +475,3 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </div>
 
 <script src="<%=ar.retPath%>templates/CreateTopicModal.js"></script>
-
-
-

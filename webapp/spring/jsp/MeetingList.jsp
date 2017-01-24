@@ -49,8 +49,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.onTimeSet = function (newDate) {
         $scope.newMeeting.startTime = newDate.getTime();
         console.log("NEW TIME:", newDate);
-    }    
-    
+    }
+
 
     $scope.datePickOptions = {
         formatYear: 'yyyy',
@@ -185,15 +185,16 @@ app.controller('myCtrl', function($scope, $http) {
                         Date
                       </label>
                       <div class="col-md-10 container">
+                        <span class="form-control">
                           <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
                             {{ newMeeting.startTime | date:'dd-MMM-yyyy' }} &nbsp;at&nbsp; {{ newMeeting.startTime | date:'HH:mm' }} &nbsp; &nbsp; {{tzIndicator}}
                           </a>
                           <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <datetimepicker 
-                                 data-ng-model="newMeeting.startTime" 
+                            <datetimepicker data-ng-model="newMeeting.startTime"
                                  data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
-                                 data-on-set-time="onTimeSet(newDate)" />
+                                 data-on-set-time="onTimeSet(newDate)"></datetimepicker>
                           </ul>
+                        </span>
                       </div>
                   </div>
                   <!-- Form Control TYPE Begin -->
@@ -216,6 +217,13 @@ app.controller('myCtrl', function($scope, $http) {
                               Operational Meeting
                         </label>
                       </div>
+                    </div>
+                  </div>
+                  <!-- Form Control BUTTONS Begin -->
+                  <div class="form-group">
+                    <label class="col-md-2 control-label" for="schedule"></label>
+                    <div class="col-md-10">
+                      <input id="schedule" type="radio" ng-model="schedule" class="form-control"/>
                     </div>
                   </div>
                 </fieldset>

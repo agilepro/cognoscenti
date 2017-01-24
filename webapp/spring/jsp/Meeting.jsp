@@ -340,37 +340,36 @@ app.controller('myCtrl', function($scope, $http) {
 
 
     <div id="NewAgenda" class="well" ng-show="showInput" ng-cloak>
-        <div class="rightDivContent">
-            <a href="#" ng-click="showInput=false"><img src="<%= ar.retPath%>assets/iconBlackDelete.gif"/></a>
+      <form class="horizontal-form">
+        <fieldset>
+          <!-- Form Control NAME -->
+          <div class="form-group">
+            <label class="col-md-2 control-label">Subject</label>
+            <div class="col-md-10">
+              <input type="text" class="form-control" ng-model="newAgendaItem.subject"/>
+            </div>
+          </div>
+          <!-- Form Control DESCRIPTION -->
+          <div class="form-group">
+            <label class="col-md-2 control-label">Description</label>
+            <div class="col-md-10">
+              <textarea type="text" class="form-control" ng-model="newAgendaItem.desc"></textarea>
+            </div>
+          </div>
+          <!-- Form Control DURATION -->
+          <div class="form-group">
+            <label class="col-md-2 control-label">Duration</label>
+            <div class="col-md-10">
+              <input type="text" class="form-control" ng-model="newAgendaItem.duration"/>
+            </div>
+          </div>
+        </fieldset>
+        <!-- Form Control BUTTONS Begin -->
+        <div class="form-group text-right">
+          <button type="button" class="btn btn-warning btn-raised" ng-click="showInput=false">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-raised"  ng-click="createRow()">Create Agenda Item</button>
         </div>
-        <table>
-            <tr id="trspath">
-                <td class="gridTableColummHeader">Subject:</td>
-                <td style="width:20px;"></td>
-                <td colspan="2"><input type="text" ng-model="newAgendaItem.subject" class="form-control" size="69" /></td>
-            </tr>
-            <tr><td style="height:10px"></td></tr>
-            <tr id="trspath">
-                <td class="gridTableColummHeader">Description:</td>
-                <td style="width:20px;"></td>
-                <td colspan="2"><textarea  class="form-control" ng-model="newAgendaItem.desc" rows="5" cols="69"/></textarea></td>
-            </tr>
-            <tr><td style="height:10px"></td></tr>
-            <tr id="trspath">
-                <td class="gridTableColummHeader">Duration:</td>
-                <td style="width:20px;"></td>
-                <td colspan="2"><input type="text" ng-model="newAgendaItem.duration" class="form-control" /></td>
-            </tr>
-            <tr><td style="height:10px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader"></td>
-                <td style="width:20px;"></td>
-                <td colspan="2">
-                    <input type="submit" class="btn btn-primary btn-raised" value="Create Agenda Item" ng-click="createRow()">
-                    <input type="button" class="btn btn-primary btn-raised" value="Cancel" ng-click="showInput=false">
-                </td>
-            </tr>
-        </table>
+      </form>
     </div>
 
     <div class="well"  ng-show="showBacklog" ng-cloak>

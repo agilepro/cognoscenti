@@ -4,12 +4,12 @@
 %><%
     long renderStart = System.currentTimeMillis();
     UserProfile loggedUser = ar.getUserProfile();
-    
+
     String loggedKey = "";
     if (ar.isLoggedIn()) {
         loggedKey = loggedUser.getKey();
     }
-    
+
 
     //this is the most important setting .. it is the name of the JSP file
     //that is being wrapped with a standard header and a footer.
@@ -191,7 +191,7 @@
     String currentPageURL = ar.getCompleteURL();
 
     %>
-    
+
 <!-- BEGIN Wrapper.jsp Layout-->
 <html>
 <head>
@@ -227,9 +227,8 @@
 	<!-- INCLUDE web fonts -->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-	   <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+	  <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
-    <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
     <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
 
 	<!-- Date and Time Picker -->
@@ -237,12 +236,12 @@
     <script src="<%=ar.baseURL%>dtpicker/js/moment.js"></script>
     <script src="<%=ar.baseURL%>dtpicker/js/datetimepicker.js"></script>
     <script src="<%=ar.baseURL%>dtpicker/js/datetimepicker.templates.js"></script>
-    
+
     <!-- Weaver specific tweaks -->
-    <link rel="stylesheet" href="<%=ar.baseURL%>bits/weavermain.css"/>
-    
-    
-    
+    <!--link rel="stylesheet" href="<%=ar.baseURL%>bits/weavermain.css"/-->
+    <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
+
+
     <title><% ar.writeHtml(title); %></title>
 
 <script>

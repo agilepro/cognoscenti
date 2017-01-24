@@ -5,9 +5,11 @@ $clr-logo-dark:         #672178;
 $clr-logo-light:        #ab37c8;
 $clr-background-light:  #d9d0de;
 $clr-background-dark:   #6290c3;
+$clr-border-light:      #d9d0de;
 $clr-font-dark:         #291720;
 $clr-font-light:        #2f243a;
 $clr-font-appbar-light: #fff;
+$clr-form-ctrl-background: #fafafa;
 
 // Font Family
 $ff-main:               'PT_Sans', Helvetica, sans-serif;
@@ -289,4 +291,96 @@ img {
   position: fixed !important;
   right: 15px;
   bottom: 15px;
+}
+
+.role-label {
+  font-size: $fs-default;
+  color: $clr-font-dark;
+  font-weight: 500 !important;
+
+  .label {
+    font-size: $fs-default;
+    color: $clr-font-dark;
+    font-weight: 500 !important;
+  }
+
+  a {
+    background-color: $clr-background-light;
+    color: $clr-font-dark;
+    padding: 0.3em 0.6em;
+    margin-left: -0.3em;
+  }
+}
+
+.form-hide.ng-show-add, .form-hide.ng-show-remove {
+  transition: all 0.5s linear;
+}
+
+.guideVocal{
+  clear:both;
+  width:auto;
+  border-radius: 8px;
+  background-color: $clr-main-background;
+  background-image: url(./../assets/showTaskDetailDivBase.gif);
+  background-position:bottom left;
+  background-repeat:repeat-x;
+  border: 1px solid $clr-border-light;
+  margin-top: 30px;
+  font-family:Arial, Helvetica, Verdana, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #545454;
+  margin: 25px;
+  padding: 15px;
+}
+
+// Bootstrap Material Design Overrides
+
+.main-content {
+  form {
+    .form-group {
+      .form-control {
+        background-color: $clr-form-ctrl-background !important;
+        padding: 5px !important;
+      }
+    }
+  }
+}
+
+.modal-body {
+  .form-control {
+    background-color: $clr-form-ctrl-background !important;
+    padding: 5px !important;
+  }
+}
+
+.control-label {
+  font-size: $fs-default !important;
+  margin: 4px 0 0 0 !important;
+}
+
+.form-group {
+  margin: 6px 0 0 0;
+}
+// Tweaks
+
+.form-control {
+
+  .focused {
+    box-shadow: none !important;
+    -moz-box-shadow: none !important;
+  }
+
+  .tags {
+    border: 0;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    height: 30px;
+    background: none;
+    margin-top: -8px;
+    input {
+      background: none;
+    }
+
+  }
 }

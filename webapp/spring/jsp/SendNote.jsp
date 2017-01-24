@@ -125,7 +125,7 @@ Optional Parameters:
         docSpaceURL = ar.baseURL +  "api/" + ngw.getSiteKey() + "/" + ngw.getKey()
                     + "/summary.json?lic="+lfu.getId();
     }
-    
+
 /* PROTOTYPE
 
     $scope.emailInfo = {
@@ -395,158 +395,163 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         </div>
     </div>
 
-
-        <table>
-            <tr>
-                <td class="gridTableColummHeader">From:</td>
-                <td style="width:20px;"></td>
-                <td class="form-inline">
-                    <select ng-model="emailInfo.from"  class="form-control" style="width: 380px">
-                      <option value="<% ar.writeHtml(userFromAddress); %>"><% ar.writeHtml(userFromAddress); %></option>
-                      <option value="<% ar.writeHtml(composeFromAddress(ngw)); %>"><% ar.writeHtml(composeFromAddress(ngw)); %></option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader">To Role:</td>
-                <td style="width:20px;"></td>
-                <td>
-                  <span class="dropdown" ng-repeat="role in allRoles">
-                    <button class="btn btn-sm dropdown-toggle" type="button" id="menu2"
-                       data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;background-color:{{role.color}};"
-                       ng-show="hasRole(role.name)">{{role.name}}</button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                       <li role="presentation"><a role="menuitem" title="{{add}}"
-                          ng-click="toggleRole(role.name)">Remove Role:<br/>{{role.name}}</a></li>
-                    </ul>
-                  </span>
-                  <span>
-                     <span class="dropdown">
-                       <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
-                       style="padding: 2px 5px;font-size: 11px;"> + </button>
-                       <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                         <li role="presentation" ng-repeat="rolex in allRoles">
-                             <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleRole(rolex.name)" class="btn btn-sm"
-                             ng-hide="hasRole(rolex.name)" style="margin:2px;background-color:{{rolex.color}};">
-                                 {{rolex.name}}</button></li>
-                       </ul>
-                     </span>
-                  </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader">Options:</td>
-                <td style="width:20px;"></td>
-                <td>
-                    <input type="checkbox" ng-model="emailInfo.excludeResponders"/>  Exclude Responders &nbsp; 
-                    <input type="checkbox" ng-model="emailInfo.includeSelf"/>  Include Yourself &nbsp; 
-                    <input type="checkbox" ng-model="emailInfo.makeMembers"/>  Make below people members
-                </td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader">Also To:</td>
-                <td style="width:20px;"></td>
-                <td>
-              <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
+    <div class="well">
+      <form class="form-horizontal">
+        <fieldset>
+          <div class="form-group">
+            <label class="col-md-2 control-label" for="from">From</label>
+            <div class="col-md-10">
+              <select ng-model="emailInfo.from"  class="form-control" style="width: 380px">
+                <option value="<% ar.writeHtml(userFromAddress); %>"><% ar.writeHtml(userFromAddress); %></option>
+                <option value="<% ar.writeHtml(composeFromAddress(ngw)); %>"><% ar.writeHtml(composeFromAddress(ngw)); %></option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-2 control-label" for="from">To Role</label>
+            <div class="col-md-10">
+              <span ng-repeat="role in allRoles">
+                <span class="role-label" ng-show="hasRole(role.name)">
+                   <span class="label" style="background-color: {{role.color}} !important">{{role.name}}</span>
+                   <a title="Remove Role {{role.name}}" ng-click="toggleRole(role.name)"><i class="fa fa-minus"></i></a>
+                </span>
+              </span>
+              <span>
+                 <span class="dropdown">
+                   <button class="btn btn-primary btn-sm btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                     <i class="fa fa-plus"></i> Add Role
+                   </button>
+                   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                     <li role="presentation" ng-repeat="rolex in allRoles">
+                         <div role="menuitem" tabindex="-1" href="#"  ng-click="toggleRole(rolex.name)" class="label role-label"
+                         ng-hide="hasRole(rolex.name)" style="margin: 0.3em; background-color:{{rolex.color}};">
+                             {{rolex.name}}</div></li>
+                   </ul>
+                 </span>
+              </span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-2 control-label" for="alsoalsoTo">Also to</label>
+            <div class="col-md-10">
+              <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)" class="form-control">
                   <auto-complete source="loadPersonList($query)"></auto-complete>
               </tags-input>
-                </td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader">Subject:</td>
-                <td style="width:20px;"></td>
-                <td>
-                    <input type="text" ng-model="emailInfo.subject"  class="form-control"/>
-                </td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader">Introduction:</td>
-                <td style="width:20px;"></td>
-                <td><textarea ng-model="emailInfo.intro"  class="form-control"></textarea></td>
-            </tr>
-            <tr ng-show="emailInfo.noteInfo.id">
-                <td class="gridTableColummHeader">Topic:</td>
-                <td style="width:20px;"></td>
-                <td><input type="checkbox" ng-model="emailInfo.includeBody"> Include topic <i>'{{emailInfo.noteInfo.subject}}'</i> into email</td>
-            </tr>
-            <tr ng-show="emailInfo.meetingInfo.name">
-                <td class="gridTableColummHeader">Meeting:</td>
-                <td style="width:20px;"></td>
-                <td>Include meeting <i>'{{emailInfo.meetingInfo.name}}'</i> into email</td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader">Attachments:</td>
-                <td style="width:20px;"></td>
-                <td>
-                  <div>
-                      <span ng-repeat="docid in emailInfo.docList" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                           ng-click="navigateToDoc(docid)">
-                              <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{getFullDoc(docid).name}}
-                      </span>
-                      <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
-                          title="Attach a document">
-                          ADD </button>
-                      <input type="checkbox" ng-model="emailInfo.includeBody"/>  Include Files as Attachments
-                  </div>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader"></td>
-                <td style="width:20px;"></td>
-                <td>
-                    <button ng-click="saveEmail()" class="btn btn-primary btn-raised">Save Changes</button>
-                    <button ng-click="sendEmail()" class="btn btn-primary btn-raised">Send Email Now</button>
-                </td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader"></td>
-                <td style="width:20px;"></td>
-                <td class="form-inline form-group">
-                    <button ng-click="scheduleEmail()" class="btn btn-primary btn-raised">Schedule For Later</button>
-                    on <a class="dropdown-toggle form-control" id="dropdown2" role="button" 
-                                 data-toggle="dropdown" data-target="#" href="#">
-                        {{ emailInfo.scheduleTime | date:'dd-MMM-yyyy' }} 
-                        &nbsp;at&nbsp; {{ emailInfo.scheduleTime | date:'HH:mm' }}
-                        &nbsp; &nbsp; {{tzIndicator}}
-                    </a>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        <datetimepicker
-                            data-ng-model="emailInfo.scheduleTime"
-                            data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
-                            data-on-set-time="onTimeSet(newDate)"/>
-                    </ul>
-
-                </td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader" valign="top">Status:</td>
-                <td style="width:20px;"></td>
-                <td>{{explainState()}}</td>
-            </tr>
-            <tr style="height:30px">
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader" valign="top">Unsubscribe:</td>
-                <td style="width:20px;"></td>
-                <td>
-                    People who receive email messages because they are a member of a role,
-                    will have the option to remove themselves from the role.
-                    These links take you to a sample message for a fictional user
-                    email address "sample@example.com" that such a person would see
-                    <span ng-repeat="role in allRoles">
-                        <a href="<%=ar.retPath%>t/EmailAdjustment.htm?p=<%=URLEncoder.encode(pageId,"UTF-8")%>&st=role&role={{role.name}}&email=sample@example.com&mn=<%=URLEncoder.encode(ngw.emailDependentMagicNumber("sample@example.com"),"UTF-8")%>">{{role.name}}</a>,
-                    </span>
-                </td>
-            </tr>
-        </table>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-2 control-label" for="subject">Subject</label>
+            <div class="col-md-10">
+              <input id="subject" ng-model="emailInfo.subject" class="form-control"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-2 control-label" for="intro">Introduction</label>
+            <div class="col-md-10">
+              <textarea id="intro" ng-model="emailInfo.intro" class="form-control"></textarea>
+            </div>
+          </div>
+          <div class="form-group" ng-show="emailInfo.noteInfo.id">
+            <label class="col-md-2 control-label" for="includeBody">Topic</label>
+            <div class="col-md-10">
+              <input id="includeBody" ng-model="emailInfo.includeBody" class="form-control"/>
+            </div>
+          </div>
+          <div class="form-group" ng-show="emailInfo.meetingInfo.name">
+            <label class="col-md-2 control-label">Meeting</label>
+            <div class="col-md-10">
+              Include meeting <i>'{{emailInfo.meetingInfo.name}}'</i> into email
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-2 control-label">Attachments</label>
+            <div class="col-md-10">
+              <span ng-repeat="docid in emailInfo.docList" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                   ng-click="navigateToDoc(docid)">
+                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{getFullDoc(docid).name}}
+              </span>
+              <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
+                  title="Attach a document">
+                  ADD </button>
+              <input type="checkbox" ng-model="emailInfo.includeBody"/>  Include Files as Attachments
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-2 control-label">Options</label>
+            <div class="col-md-10">
+              <div class="inline-form">
+                <div class="togglebutton col-md-4">
+                  <label>
+                    <input type="checkbox" ng-model="emailInfo.excludeResponders">  Exclude Responders
+                  </label>
+                </div>
+                <div class="togglebutton col-md-4">
+                  <label>
+                    <input type="checkbox" ng-model="emailInfo.includeSelf">  Include Yourself
+                  </label>
+                </div>
+                <div class="togglebutton col-md-4">
+                  <label>
+                    <input type="checkbox" ng-model="emailInfo.makeMembers">  Make below people members
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-10">
+                <div class="togglebutton">
+                  <label>
+                    <input type="checkbox" ng-model="emailInfo.scheduleIt"> Send later?
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Form Control Schedule Time Begin -->
+          <div class="form-group ng-hide form-hide" ng-show="emailInfo.scheduleIt">
+            <label class="col-md-2 control-label" for="scheduledTime">When?</label>
+            <div class="col-md-10">
+              <span class="form-control">
+                <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
+                  {{ emailInfo.scheduleTime | date:'dd-MMM-yyyy' }} &nbsp;at&nbsp; {{ emailInfo.scheduleTime | date:'HH:mm' }} &nbsp; &nbsp; {{tzIndicator}}
+                </a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                  <datetimepicker data-ng-model="emailInfo.scheduleTime"
+                       data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
+                       data-on-set-time="onTimeSet(newDate)"></datetimepicker>
+                </ul>
+              </span>
+            </div>
+          </div>
+          <!-- Form Control BUTTONS Begin -->
+          <div class="form-group">
+            <label class="col-md-2 control-label" for="unsubscribe">Unsubscribe</label>
+            <div class="col-md-10">
+              People who receive email messages because they are a member of a role,
+              will have the option to remove themselves from the role.
+              These links take you to a sample message for a fictional user
+              email address "sample@example.com" that such a person would see
+              <span ng-repeat="role in allRoles">
+                  <a href="<%=ar.retPath%>t/EmailAdjustment.htm?p=<%=URLEncoder.encode(pageId,"UTF-8")%>&st=role&role={{role.name}}&email=sample@example.com&mn=<%=URLEncoder.encode(ngw.emailDependentMagicNumber("sample@example.com"),"UTF-8")%>">{{role.name}}</a>,
+              </span>
+            </div>
+          </div>
+          <!-- Form Control BUTTONS Begin -->
+          <div class="form-group">
+            <label class="col-md-2 control-label" for="status"></label>
+            <div class="col-md-10">
+              <span class="text-info">Status: {{explainState()}}</span>
+            </div>
+          </div>
+        <!-- Form Control BUTTONS -->
+        <div class="row">
+          <div class="col-md-12 form-group text-right">
+            <button ng-click="saveEmail()" class="btn btn-primary btn-raised">Save Changes</button>
+            <button ng-click="sendEmail()" class="btn btn-primary btn-raised">Send Now</button>
+          </div>
+        </div>
+      </fieldset>
+      </form>
     </div>
+  </div>
 
 
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
