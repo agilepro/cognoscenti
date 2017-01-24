@@ -347,6 +347,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return "background-color:#EEE;";
     }
     $scope.stateClass = function(cmt) {
+        if (cmt.commentType==6) {
+            return "comment-phase-change";
+        }
         if (cmt.state==11) {
             return "comment-state-draft";
         }
@@ -852,10 +855,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 .comment-state-active {
     background-color:#DEF;
 }
-comment-state-complete {
+.comment-state-complete {
     background-color:#EEE;
 }
-
+.comment-phase-change {
+    border: 1px solid #DFD;
+    background-color:#EFE;
+}
 </style>
 
 <table>

@@ -7,7 +7,7 @@
   <td>
     <div class="comment-outer  {{stateClass(cmt)}}">
       <div>
-        <div class="dropdown" style="float:left">
+        <div class="dropdown" style="float:left" ng-show="cmt.commentType!=6">
           <button class="dropdown-toggle specCaretBtn" type="button"  id="menu"
                   data-toggle="dropdown"> 
             <span class="caret"></span>
