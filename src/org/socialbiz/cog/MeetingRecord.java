@@ -61,7 +61,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     public String getMeetingDescription()  throws Exception {
         return getScalar("meetingInfo");
     }
-    public void setMeetingInfo(String newVal) throws Exception {
+    private void setMeetingInfo(String newVal) throws Exception {
         setScalar("meetingInfo", newVal);
     }
 
@@ -75,7 +75,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     public long getStartTime()  throws Exception {
         return getAttributeLong("startTime");
     }
-    public void setStartTime(long newVal) throws Exception {
+    private void setStartTime(long newVal) throws Exception {
         setAttributeLong("startTime", newVal);
     }
 
@@ -89,10 +89,10 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         setAttributeLong("duration", newVal);
     }
 
-    public long getMeetingType() {
+    private long getMeetingType() {
         return getAttributeInt("meetingType");
     }
-    public void setMeetingType(int newVal) {
+    private void setMeetingType(int newVal) {
         setAttributeInt("meetingType", newVal);
     }
 
@@ -158,17 +158,17 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     public int getReminderAdvance()  throws Exception {
         return getAttributeInt("reminderTime");
     }
-    public void setReminderAdvance(int newVal) throws Exception {
+    private void setReminderAdvance(int newVal) throws Exception {
         setAttributeInt("reminderTime", newVal);
     }
 
     /**
      * This is the actual time that the reminder was actually sent.
      */
-    public long getReminderSent()  throws Exception {
+    private long getReminderSent()  throws Exception {
         return getAttributeLong("reminderSent");
     }
-    public void setReminderSent(long newVal) throws Exception {
+    private void setReminderSent(long newVal) throws Exception {
         setAttributeLong("reminderSent", newVal);
     }
 
@@ -253,16 +253,18 @@ public class MeetingRecord extends DOMFace implements EmailContext {
      */
     public JSONObject getMinimalJSON() throws Exception {
         JSONObject meetingInfo = new JSONObject();
-        meetingInfo.put("id",          getId());
-        meetingInfo.put("name",        getName());
-        meetingInfo.put("targetRole",  getTargetRole());
-        meetingInfo.put("state",       getState());
-        meetingInfo.put("startTime",   getStartTime());
-        meetingInfo.put("duration",    getDuration());
-        meetingInfo.put("meetingType", getMeetingType());
-        meetingInfo.put("reminderTime",getReminderAdvance());
-        meetingInfo.put("reminderSent",getReminderSent());
-        meetingInfo.put("owner",       getOwner());
+        extractAttributeString(meetingInfo, "id");
+        extractAttributeString(meetingInfo, "name");
+        extractAttributeString(meetingInfo, "targetRole");
+        extractAttributeInt   (meetingInfo, "state");
+        extractAttributeLong  (meetingInfo, "startTime");
+        extractAttributeLong  (meetingInfo, "duration");
+        extractAttributeString(meetingInfo, "meetingType");
+        extractAttributeInt   (meetingInfo, "reminderTime");
+        extractAttributeLong  (meetingInfo, "reminderSent");
+        extractScalarString   (meetingInfo, "owner");
+        extractScalarString   (meetingInfo, "previousMeeting");
+        extractAttributeString(meetingInfo, "minutesId");
         return meetingInfo;
     }
 
@@ -365,6 +367,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             setMeetingInfo(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
             hasSetMeetingInfo = true;
         }
+        updateScalarString("previousMeeting", input);
         if (input.has("owner")) {
             setOwner(input.getString("owner"));
         }

@@ -704,50 +704,62 @@ public class DOMFace
     public void extractScalarString(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, getScalar(fieldName));
     }
-    public void updateScalarString(String fieldName, JSONObject srce) throws Exception {
+    public boolean updateScalarString(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             setScalar(fieldName, srce.getString(fieldName));
+            return true;
         }
+        return false;
     }
     public void extractAttributeString(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, getAttribute(fieldName));
     }
-    public void updateAttributeString(String fieldName, JSONObject srce) throws Exception {
+    public boolean updateAttributeString(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             setAttribute(fieldName, srce.getString(fieldName));
+            return true;
         }
+        return false;
     }
     public void extractScalarLong(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, getScalarLong(fieldName));
     }
-    public void updateScalarLong(String fieldName, JSONObject srce) throws Exception {
+    public boolean updateScalarLong(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             setScalarLong(fieldName, srce.getLong(fieldName));
+            return true;
         }
+        return false;
     }
     public void extractScalarInt(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, (int) getScalarLong(fieldName));
     }
-    public void updateScalarInt(String fieldName, JSONObject srce) throws Exception {
+    public boolean updateScalarInt(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             setScalarLong(fieldName, (long) srce.getInt(fieldName));
+            return true;
         }
+        return false;
     }
     public void extractAttributeLong(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, getAttributeLong(fieldName));
     }
-    public void updateAttributeLong(String fieldName, JSONObject srce) throws Exception {
+    public boolean updateAttributeLong(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             setAttributeLong(fieldName, srce.getLong(fieldName));
+            return true;
         }
+        return false;
     }
     public void extractAttributeInt(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, (int) getAttributeLong(fieldName));
     }
-    public void updateAttributeInt(String fieldName, JSONObject srce) throws Exception {
+    public boolean updateAttributeInt(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
             setAttributeLong(fieldName, (long) srce.getInt(fieldName));
+            return true;
         }
+        return false;
     }
     
     
