@@ -363,6 +363,17 @@ System.out.println("Weaver Server Object == Start the Server");
         return (NGWorkspace) ngc;
     }
 
+    
+    public List<NGPageIndex> getAllSites() {
+        ArrayList<NGPageIndex> res = new ArrayList<NGPageIndex>();
+        for (NGPageIndex ngpi : allContainers) {
+            if (!ngpi.isProject()) {
+                res.add(ngpi);
+            }
+        }
+        return res;
+    }
+    
     /**
      * This is a convenience function that looks a particular site
      * up in the index, finds the index entry, and then IF it is a

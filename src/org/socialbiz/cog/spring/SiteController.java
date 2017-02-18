@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AuthRequest;
+import org.socialbiz.cog.Cognoscenti;
+import org.socialbiz.cog.CustomRole;
 import org.socialbiz.cog.HistoricActions;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPageIndex;
@@ -33,6 +35,7 @@ import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
 import org.socialbiz.cog.UserManager;
+import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,7 +61,7 @@ public class SiteController extends BaseController {
     public void SiteStats(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar,siteId,null,"SiteStats");
+        showJSPLoggedIn(ar,siteId,null,"SiteStats");
     }
     
     @RequestMapping(value = "/{userKey}/requestAccount.htm", method = RequestMethod.GET)
@@ -111,6 +114,45 @@ public class SiteController extends BaseController {
             redirectBrowser(ar, "userAccounts.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.new.account.request", null , ex);
+        }
+    }
+
+    @RequestMapping(value = "/{userKey}/takeOwnershipSite.json", method = RequestMethod.POST)
+    public void takeOwnershipSite(@PathVariable
+            String userKey, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        AuthRequest ar = AuthRequest.getOrCreate(request, response); 
+        try{
+            
+            ar.assertLoggedIn("Must be logged in to take ownership of a site.");
+            if(!ar.isSuperAdmin()){
+                throw new Exception("Must be super admin in to take ownership of a site.");
+            }
+            UserProfile uProf = ar.getUserProfile();
+            JSONObject incoming = getPostedObject(ar);
+            if (!incoming.has("key")) {
+                throw new Exception("Must specify 'key' of the site you want to take ownership of");
+            }
+            String siteKey = incoming.getString("key");
+            Cognoscenti cog = ar.getCogInstance();
+            NGBook site = cog.getSiteById(siteKey);
+            if (site==null) {
+                throw new Exception("Unable to find a site with the key: "+siteKey);
+            }
+            CustomRole owners = (CustomRole) site.getSecondaryRole();
+            owners.addPlayerIfNotPresent(uProf.getAddressListEntry());
+            if (!owners.isPlayer(uProf)) {
+                throw new Exception("Failure to add to owners role this user: "+uProf.getUniversalId());
+            }
+            site.saveFile(ar, "adding super admin to site owners");
+            
+            JSONObject jo = site.getConfigJSON();
+            jo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to take ownership of the site.", ex);
+            streamException(ee, ar);
         }
     }
 

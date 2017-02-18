@@ -15,6 +15,7 @@
     String meetId          = ar.reqParam("id");
     MeetingRecord oneRef   = ngw.findMeeting(meetId);
     JSONObject meetingInfo = oneRef.getFullJSON(ar, ngw);
+    
 
     //make it for 7 days later
     meetingInfo.put("startTime",  meetingInfo.getLong("startTime") + 7L*24L*3600000 );
@@ -104,16 +105,29 @@ app.controller('myCtrl', function($scope, $http) {
                 return;
             }
         }
-       $scope.meeting.state = 1;
-        $scope.meeting.attended = [];
-        $scope.meeting.rollCall = [];
-        $scope.meeting.reminderSent = -1;
-        $scope.meeting.id = "~new~";
-        $scope.meeting.agenda.forEach( function(agendaitem) {
-            agendaitem.readyToGo = false;
-            agendaitem.comments = [];
+        var newMeeting = {};
+        newMeeting.state = 1;
+        newMeeting.attended = [];
+        newMeeting.rollCall = [];
+        newMeeting.reminderSent = -1;
+        newMeeting.id = "~new~";
+        newMeeting.duration = $scope.meeting.duration;
+        newMeeting.previousMeeting = $scope.meeting.id;
+        newMeeting.meetingInfo = $scope.meeting.meetingInfo;
+        newMeeting.name = $scope.meeting.name;
+        newMeeting.reminderTime = $scope.meeting.reminderTime;
+        newMeeting.startTime = $scope.meeting.startTime;
+        newMeeting.targetRole = $scope.meeting.targetRole;
+        newMeeting.agenda = [];
+        $scope.meeting.agenda.forEach( function(agendaItem) {
+            if (agendaItem.selected) {
+                var newAgenda = JSON.parse(JSON.stringify(agendaItem));
+                newAgenda.readyToGo = false;
+                newAgenda.comments = [];
+                newMeeting.agenda.push(newAgenda);
+            }
         });
-        var postdata = angular.toJson($scope.meeting);
+        var postdata = angular.toJson(newMeeting);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {

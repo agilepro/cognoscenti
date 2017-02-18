@@ -38,6 +38,18 @@
         mRec.setTargetRole(ngw.getPrimaryRole().getName());
     }
     JSONObject meetingInfo = mRec.getFullJSON(ar, ngw);
+    
+    JSONObject previousMeeting = new JSONObject();
+    if (meetingInfo.has("previousMeeting")) {
+        String previousId = meetingInfo.getString("previousMeeting");
+        if (previousId.length()>0) {
+            MeetingRecord previous = ngw.findMeetingOrNull(previousId);
+            if (previous!=null) {
+                previousMeeting = previous.getMinimalJSON();
+            }
+        }
+    }
+    
     JSONArray attachmentList = new JSONArray();
     for (AttachmentRecord doc : ngw.getAllAttachments()) {
         if (doc.isDeleted()) {
@@ -195,6 +207,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.pageId = "<%ar.writeJS(pageId);%>";
     $scope.meetId = "<%ar.writeJS(meetId);%>";
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
+    $scope.previousMeeting = <%previousMeeting.write(out,2,4);%>;
     $scope.allGoals = <%allGoals.write(out,2,4);%>;
     $scope.attachmentList = [];
     $scope.allRoles = <%allRoles.write(out,2,4);%>;

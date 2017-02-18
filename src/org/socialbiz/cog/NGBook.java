@@ -28,6 +28,7 @@ import java.util.List;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
+import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 /**
@@ -1146,6 +1147,21 @@ public class NGBook extends ContainerCommon {
         jo.put("theme", getThemeName());
         jo.put("showExperimental", getShowExperimental());
         jo.put("allowPrivate", getAllowPrivate());
+        jo.put("changed", getLastModifyTime());
+        jo.put("isDeleted", isDeleted());
+        
+        NGRole owners = getSecondaryRole();
+        JSONArray ja = new JSONArray();
+        for (AddressListEntry ale : owners.getDirectPlayers()) {
+            ja.put( ale.getJSON() );
+        }
+        jo.put("owners", ja);
+        NGRole execs = getPrimaryRole();
+        ja = new JSONArray();
+        for (AddressListEntry ale : execs.getDirectPlayers()) {
+            ja.put( ale.getJSON() );
+        }
+        jo.put("executives", ja);
 
         return jo;
     }
