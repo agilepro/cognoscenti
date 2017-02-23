@@ -1026,17 +1026,15 @@ public class UserProfile extends DOMFace implements UserRef
         }
         File imageFile = new File(imageFolder, getKey()+".jpg");
         if (imageFile.exists()) {
-            System.out.println("The image file EXISTS for user: "+imageFile);
             return;
         }
-        System.out.println("Did not find an image file for user "+getKey());
         char uidLetter = this.getUniversalId().charAt(0);
         File defaultFile =  new File(imageFolder, "fake-"+uidLetter+".jpg");
         if (!defaultFile.exists()) {
             throw new Exception("The default user image file is missing!: "+defaultFile);
         }
         UtilityMethods.copyFileContents(defaultFile, imageFile);
-        System.out.println("Copied an image file for user "+getKey()+" from: "+defaultFile);
+        System.out.println("Created a default image file for user "+getKey()+" from: "+defaultFile);
     }
 
     public List<SiteRequest> getUsersSiteRequests() throws Exception {

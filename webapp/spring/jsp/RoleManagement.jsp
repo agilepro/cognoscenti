@@ -274,6 +274,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     </style>
     
+    <p><i>Add people to the project by clicking on any row below and entering their email address at in the pop up prompt.</i></p>
     <table class="spacey table">
         <tr ng-repeat="role in allRoles" 
             class="generalContent">
@@ -297,7 +298,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                           <span class="fa fa-user"></span> Visit Profile</a></li>
                       <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                           ng-click="openInviteSender(player)">
-                          <span class="fa fa-envelope-o"></span> Send Invitation</a></li>
+                          <span class="fa fa-envelope-o"></span> Compose &amp; Send Invitation</a></li>
                     </ul>
                   </span>
                 </span>

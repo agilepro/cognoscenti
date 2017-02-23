@@ -177,7 +177,7 @@ public class EmailSender extends TimerTask {
             NGPageIndex.clearLocksHeldByThisThread();
         }
         long duration = System.currentTimeMillis() - startTime;
-        System.out.println("EmailSender-TimerTask: completed scan in "+duration+"ms");
+        System.out.println("EmailSender-TimerTask: completed scan in "+duration+"ms at "+new Date());
     }
 
     Object globalEmailFileLock = new Integer(999);

@@ -259,7 +259,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         extractAttributeInt   (meetingInfo, "state");
         extractAttributeLong  (meetingInfo, "startTime");
         extractAttributeLong  (meetingInfo, "duration");
-        extractAttributeString(meetingInfo, "meetingType");
+        extractAttributeInt   (meetingInfo, "meetingType");
         extractAttributeInt   (meetingInfo, "reminderTime");
         extractAttributeLong  (meetingInfo, "reminderSent");
         extractScalarString   (meetingInfo, "owner");
