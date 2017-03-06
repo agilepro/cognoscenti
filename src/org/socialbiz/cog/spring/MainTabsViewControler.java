@@ -350,19 +350,12 @@ public class MainTabsViewControler extends BaseController {
              //if the user is logged in, redirect to their own home page instead
              if (ar.isLoggedIn())
              {
-                 response.sendRedirect(ar.retPath+"v/"+ar.getUserProfile().getKey()+"/watchedProjects.htm");
+                 response.sendRedirect(ar.retPath+"v/"+ar.getUserProfile().getKey()+"/UserHome.htm");
                  return null;
              }
 
-             //streamJSP(ar, "index");
-             //return null;
-
-             ModelAndView modelAndView=new ModelAndView("landingPage");
-             request.setAttribute("realRequestURL", ar.getRequestURL());
-
-             request.setAttribute("headerType", "blank");
-             return modelAndView;
-
+             streamJSP(ar, "index");
+             return null;
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.project.welcome.page", null , ex);
          }

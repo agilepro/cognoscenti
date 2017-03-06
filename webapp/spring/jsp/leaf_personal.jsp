@@ -136,6 +136,17 @@ app.controller('myCtrl', function($scope, $http) {
 
 </script>
 
+<style>
+.spacey {
+}
+.spacey tr td {
+    padding:10px;
+}
+.btn {
+    margin:0px;
+}
+</style>
+
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
@@ -145,8 +156,8 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
         <table class="table" style="width:100%;">
-            <col width="200px">
-            <col width="300px">
+            <col width="150px">
+            <col width="250px">
             <col width="400px">
             <tr>
                 <td><b>Watch workspace:</b></td>
@@ -246,7 +257,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr ng-repeat="role in rolePlayer()">
                 <td>
-                    <button class="btn btn-sm" style="background-color:{{role.color}};">{{role.name}}</button>
+                    <button class="labelButton" style="background-color:{{role.color}};">{{role.name}}</button>
                 </td>
                 <td>
                     <button class="btn" ng-click="roleChange(role, 'Leave')"><i class="fa  fa-check-square-o"></i> in Role</button>
@@ -270,7 +281,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr ng-repeat="role in rolePending()">
                 <td>
-                    <button class="btn btn-sm" style="background-color:{{role.color}};">{{role.name}}</button>
+                    <button class="labelButton" sstyle="background-color:{{role.color}};">{{role.name}}</button>
                 </td>
                 <td>
                     <button class="btn" ng-click="roleChange(role, 'Leave')"><i class="fa fa-clock-o"></i> pending Role</button>
@@ -294,7 +305,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr ng-repeat="role in roleNonPlayer()">
                 <td>
-                    <button class="btn btn-sm" style="background-color:{{role.color}};">{{role.name}}</button>
+                    <button class="labelButton" sstyle="background-color:{{role.color}};">{{role.name}}</button>
                 </td>
                 <td>
                     <button class="btn" ng-click="roleChange(role, 'Join')"><i class="fa  fa-square-o"></i> in Role</button>

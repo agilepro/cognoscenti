@@ -134,7 +134,21 @@ app.controller('myCtrl', function($scope, $http) {
 
 
 <style>
-    .attentionBox {border:1px solid #f30000;padding:20px;margin:20px;background-color:#fef9d8;}
+.attentionBox {
+    border:1px solid #f30000;
+    padding:20px;
+    margin:20px;
+    background-color:#fef9d8;
+}
+.spacey {
+    width:100%;
+}
+.spacey tr td {
+    padding:3px;
+}
+.firstcol {
+    width:130px;
+}
 </style>
 
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -169,48 +183,36 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
 
-    <table width="100%" border="0">
-        <tr><td style="height:20px"></td></tr>
+    <table class="spacey">
         <tr>
-            <td class="gridTableColummHeader" >Type:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">Type:</td>
             <td>
                 <input type="hidden" name="ftype" value="{{docInfo.attType}}">
                 <span ng-show="{{docInfo.attType=='FILE'}}"><img src="<%=ar.retPath%>assets/images/iconFile.png"> File</span>
                 <span ng-show="{{docInfo.attType=='URL'}}"><img src="<%=ar.retPath%>assets/images/iconUrl.png"> URL</span>
             </td>
         </tr>
-        <tr><td style="height:10px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">
-                <label id="nameLbl">Access Name:</label>
-            </td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">Access Name:</td>
             <td><input type="text" ng-model="docInfo.name" class="form-control"/>
             </td>
         </tr>
-        <tr><td style="height:15px"></td></tr>
         <tr ng-show="'URL'==docInfo.attType">
-            <td class="gridTableColummHeader">URL:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">URL:</td>
             <td><input type="text" class="form-control" ng-model="docInfo.url"/></td>
         </tr>
-        <tr><td style="height:20px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">Description:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">Description:</td>
             <td>
                 <textarea ng-model="docInfo.description"  class="form-control"></textarea>
             </td>
         </tr>
-        <tr><td style="height:10px"></td></tr>
 
 
         <% if (isURL) {}
            else if (isGhost) { %>
         <tr class="attentionBox">
-            <td class="gridTableColummHeader" >ATTENTION:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">ATTENTION:</td>
             <td>
                 Document has disappeared without a trace.
                 The next time you synchronize it will be removed from the list of attachments.
@@ -218,8 +220,7 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
         <% } else if (isGone) { %>
         <tr class="attentionBox">
-            <td class="gridTableColummHeader" >ATTENTION:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">ATTENTION:</td>
             <td>
                 <table><tr><td width="200">
                 <button type="submit" class="btn btn-primary btn-raised" name="actionType" value="Remove">Remove</button>
@@ -233,8 +234,7 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
         <% } else if (isExtra) { %>
         <tr class="attentionBox">
-            <td class="gridTableColummHeader" >ATTENTION:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">ATTENTION:</td>
             <td>
                 <table><tr><td width="100">
                 <button type="submit" class="btn btn-primary btn-raised" name="actionType" value="Add">Add</button>
@@ -245,8 +245,7 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
         <% } else if (isModified) { %>
         <tr class="attentionBox">
-            <td class="gridTableColummHeader" >ATTENTION:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">ATTENTION:</td>
             <td>
                 <table><tr><td width="200">
                 <button type="submit" class="btn btn-primary btn-raised" name="actionType" value="Commit">Commit Changes</button>
@@ -258,19 +257,15 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
         <% } %>
 
-        <tr><td style="height:10px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader" >Last Modified:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">Last Modified:</td>
             <td> {{docInfo.modifiedtime|date}} &nbsp;&nbsp; by &nbsp;&nbsp; {{docInfo.modifieduser}} </td>
         </tr>
-        <tr><td style="height:15px"></td></tr>
         <%if(isFile)
         {
         %>
         <tr>
-            <td class="gridTableColummHeader" valign="top">Linked to:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">Linked to:</td>
             <td  valign="top">
                <%
                if(attachment.hasRemoteLink()) {
@@ -308,10 +303,8 @@ app.controller('myCtrl', function($scope, $http) {
         <%
         }
         %>
-        <tr><td style="height:20px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader"  valign="top">Permission:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">Permission:</td>
             <td  valign="top">
             <% if (!attachment.isPublic()) {
                    String publicNotAllowedMsg = "";
@@ -339,39 +332,45 @@ app.controller('myCtrl', function($scope, $http) {
             </td>
         </tr>
 
-        <tr><td style="height:20px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader"  valign="top">Labels:</td>
-            <td style="width:20px;"></td>
-            <td  valign="top">
+            <td class="firstColumn">Labels:</td>
+            <td>
               <span class="dropdown" ng-repeat="role in allLabels">
-                <button class="btn btn-sm dropdown-toggle" type="button" id="menu2"
-                   data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;background-color:{{role.color}};"
-                   ng-show="hasLabel(role.name)">{{role.name}}</button>
+                <button class="labelButton" 
+                    type="button" id="menu2"
+                    data-toggle="dropdown" 
+                    style="background-color:{{role.color}};"
+                    ng-show="hasLabel(role.name)">
+                    {{role.name}} <i class="fa fa-close"></i></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                    <li role="presentation"><a role="menuitem" title="{{add}}"
-                      ng-click="toggleLabel(role)">Remove Role:<br/>{{role.name}}</a></li>
+                      ng-click="toggleLabel(role)" style="border:2px {{role.color}} solid;">
+                      Remove Label:<br/>{{role.name}}</a></li>
                 </ul>
               </span>
               <span>
                  <span class="dropdown">
-                   <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
-                   style="padding: 2px 5px;font-size: 11px;"> + </button>
-                   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                     <li role="presentation" ng-repeat="rolex in allLabels">
-                         <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm"
-                         ng-hide="hasLabel(rolex.name)" style="margin:2px;background-color:{{rolex.color}};">
-                             {{rolex.name}}</button></li>
-                   </ul>
+                    <button class="btn btn-sm btn-primary btn-raised labelButton" 
+                       type="button" 
+                       id="menu1" 
+                       data-toggle="dropdown"
+                       title="Add Label"
+                       style="padding:5px 10px">
+                       <i class="fa fa-plus"></i></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+                        style="width:320px;left:-130px">
+                         <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                                 {{rolex.name}}</button>
+                         </li>
+                    </ul>
                  </span>
               </span>
             </td>
         </tr>
-
-        <tr><td style="height:10px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">Storage Term:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">Storage Term:</td>
             <td>
                 <div ng-hide="docInfo.purgeDate" class="form-inline form-group">
                     <button class="btn btn-default btn-raised" ng-click="startPurge()"><i class="fa  fa-square-o"></i> Purge</button></div>
@@ -383,10 +382,8 @@ app.controller('myCtrl', function($scope, $http) {
                 </div>
             </td>
         </tr>
-        <tr><td style="height:10px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader"></td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn"></td>
             <td >
                 <button ng-click="saveDoc()" class="btn btn-primary btn-raised">Save Changes</button>&nbsp;
             </td>
@@ -396,10 +393,8 @@ app.controller('myCtrl', function($scope, $http) {
         {
         %>
 
-        <tr><td style="height:20px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">Accessible Link:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">Accessible Link:</td>
             <td>
             <%
                 String docLink=ar.retPath+ar.getResourceURL(ngp, "docinfo" + attachment.getId()
@@ -408,26 +403,20 @@ app.controller('myCtrl', function($scope, $http) {
             Copy this link ( <a href="<%=docLink%>">{{docInfo.name}}</a> ) for unauthenticated access to attachment
             </td>
         </tr>
-        <tr><td style="height:5px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">Storage Name:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">Storage Name:</td>
             <td>
             <% ar.writeHtml(attachment.getStorageFileName()); %>
             </td>
         </tr>
-        <tr><td style="height:5px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">Size:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">Size:</td>
             <td>
             <% ar.writeHtml(fileSize); %> bytes
             </td>
         </tr>
-        <tr><td style="height:5px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">Mime Type:</td>
-            <td style="width:20px;"></td>
+            <td class="firstColumn">Mime Type:</td>
             <td>
             <%
                 ar.writeHtml(mimeType);

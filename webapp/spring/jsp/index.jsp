@@ -10,128 +10,67 @@
 
 %>
 <!-- index.jsp -->
-<style type="text/css">
-    html {
-        background-color:#C1BFC0;
-        background-image:url('../assets/homePageBg.jpg');
-        background-repeat:no-repeat;
-        background-position:center top;
-    }
-    body {
-        font-family:Arial,Helvetica,Verdana,sans-serif;
-        font-size:100.1%;
-        color:#000000;
-        background-color:transparent;
-    }
-    #bodyWrapper {
-        margin:0px auto 45px auto;
-        width:935px;
-        position:relative;
-    }
-</style>
-<body class="yui-skin-sam">
-    <table cellpadding="0" cellspacing="0" width="100%">
-        <tr>
-            <td width="900px" style="text-align:center;">
-                <table cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td colspan="2" class="homePageBanner">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td align="left">
-                            <table cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td class="avatarAPlatform">&nbsp;</td>
-                                </tr>
-                                <tr>
-                                    <td class="homePageContent">
-                                        Stop wasting your time chasing emails,
-                                        and start organizing and planning to accomplish things.
-                                        <br /><br />
-                                        With a few keystrokes you make a place for a workspace which can be accessed from anywhere,
-                                        but only the people you designate.
-                                        Action items can be assigned to anyone with an email address,<br/>
-                                        and automatic email notification keeps everyone informed.<br/>
-                                        It is quick and easy to sign up for a free site.
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-
-                        <td>
-                            <table cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td colspan="2" class="homePageSearchArea">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="registerButton" onclick="jumpToLoginPage();">&nbsp;</td>
-                                    <td class="loginLink">
-                                        Already a member<br />
-                                        <a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(ar.getCompleteURL(), "UTF-8")%>">Login</a> here.
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr><td colspan="2" class="greenSeperator"></td></tr>
-                    <tr>
-                        <td colspan="2" class="homePageFeatureArea">
-                            <table cellpadding="0" cellspacing="0">
-                                <tr>
-                                    <td class="featureOverview">&nbsp;</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <table cellpadding="0" cellspacing="0" width="100%">
-                                            <tr>
-                                                <td>
-                                                    Creating a workspace
-                                                    <div class="createProject">
-                                                        <a href="../assets/createProjectBig.gif" class="lWOn" title="Creating a Workspace">
-                                                        <img src="../assets/createProjectSmall.gif" width="195" height="157" border="0"></a>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    Managing Action Items
-                                                    <div class="createTask">
-                                                        <a href="../assets/createTaskBig.gif" class="lWOn" title="Managing Action Items">
-                                                        <img src="../assets/createTaskSmall.gif" width="195" height="157" border="0"></a>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    Sharing Topics
-                                                    <div class="sharingNotes">
-                                                        <a href="../assets/sharingNotesBig.gif" class="lWOn" title="Sharing Topics">
-                                                        <img src="../assets/sharingNotesSmall.gif" width="195" height="157" border="0"></a>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    Attaching Documents
-                                                    <div class="attachingDocument">
-                                                        <a href="../assets/attachingDocumentBig.gif" class="lWOn" title="Attaching Documents">
-                                                        <img src="../assets/attachingDocumentSmall.gif" width="195" height="157" border="0"></a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-
 <script>
-
-function jumpToLoginPage() {
-    window.location = "<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(ar.getCompleteURL(), "UTF-8")%>";
-}
-
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
+app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Welcome to Weaver");
+    console.log("Wlecome");
+});
 </script>
 
-<%@ include file="functions.jsp"%>
-</body>
+<style>
+.mainQuote {
+    margin: auto;
+    max-width:440px;
+    padding:0px;
+    font-size:28px;
+    font-style: italic;
+    font-family:"PT_Sans"
+}
+</style>
+
+
+<div ng-app="myApp" ng-controller="myCtrl">
+  
+    <hr/>
+    <div class="mainQuote">
+        <p>
+            Let us bring you to agreement!&#8482;
+        </p>
+    </div>
+    <hr/>
+    
+    <h1>What is Weaver?</h1>
+    <p>
+        Weaver is a platform to help organizations large and small to reach their goals.  
+        It helps you organize people to produce results.
+        It helps you prepare for meetings, distribute information, collect input, run meetings,
+        write minutes, and to clearly share decisions that are made.
+    </p>
+    <p>
+        Weaver is based on a proven methodology for helping people come together and reach agreement 
+        known as Dynamic Governance or Sociocracy.  This approach is an <i>inclusive</i> approach that 
+        helps to assure that everyone's voice is heard, and everyone is involved in making the decisions.
+        By keeping people involved in the decisions, you keep them involved in the follow through as well.
+        Whether you are running a community organization, a non-profit, a school group, a government agency, 
+        a small business or a large busines, Weaver you will give a greater ability to produce high 
+        quality results with a team.
+    </p>
+    <h1>How can you get Weaver?</h1>
+    <p>
+        Weaver is free at the basic level, which includes meeting planning, document sharing, 
+        discussion lists, action / task lists, role based access, decision list, email notifications
+        and much more.        
+    </p>
+    <p>
+        With a few keystrokes you make a workspace which can be accessed from anywhere,
+        but only the people you designate.
+        Action items can be assigned to anyone with an email address,
+        and automatic email notification keeps everyone informed.
+        It is quick and easy to sign up for a free site.
+    </p>
+
+</div>
+
+
+</div>

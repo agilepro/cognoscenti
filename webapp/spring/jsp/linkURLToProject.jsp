@@ -21,9 +21,9 @@
     }
 
     JSONArray allLabels = ngp.getJSONLabels();
-    for (CustomRole role : ngp.getAllRoles()) {
-        allLabels.put( role.getJSON() );
-    }
+    //for (CustomRole role : ngp.getAllRoles()) {
+    //    allLabels.put( role.getJSON() );
+    //}
 
 %>
 
@@ -33,6 +33,11 @@ app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Link URL");
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.folderMap = <%folderMap.write(out,2,4);%>;
+    $scope.newLink = {
+        id: "~new~",
+        labelMap:{},
+        attType:"URL"
+    };
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -42,21 +47,22 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
 
-    $scope.findLabels = function() {
+    $scope.assignedLabels = function() {
         var res = [];
-        $scope.allLabels.map( function(item) {
-            if ($scope.folderMap[item.name]) {
+        $scope.allLabels.forEach( function(item) {
+            if ($scope.newLink.labelMap[item.name]) {
                 res.push(item);
             }
         });
         return res;
     }
+    $scope.hasLabel = function(searchName) {
+        return $scope.newLink.labelMap[searchName];
+    }
+    $scope.toggleLabel = function(label) {
+        $scope.newLink.labelMap[label.name] = !$scope.newLink.labelMap[label.name];
+    }
 
-    $scope.newLink = {
-        id: "~new~",
-        labelMap:$scope.folderMap,
-        attType:"URL"
-    };
     $scope.createLink = function() {
         var postURL = "docsUpdate.json?did="+$scope.newLink.id;
         var postdata = angular.toJson($scope.newLink);
@@ -94,86 +100,92 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Link URL to Workspace
-        </div>
-        <!--div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="" ng-click="" >Do Nothing</a></li>
-            </ul>
-          </span>
 
-        </div-->
-    </div>
-
-
-    <table class="popups" width="100%">
+<style>
+.spacey {
+    width:100%;
+}
+.spacey tr td {
+    padding:3px;
+}
+.firstcol {
+    width:130px;
+}
+</style>
+    
+    <table class="spacey" >
         <tr>
-            <td class="gridTableColummHeader" >Type:</td>
-            <td style="width:20px;"></td>
+            <td class="firstcol" >Type:</td>
             <td>
                 <img src="<%=ar.retPath%>assets/images/iconUrl.png"> URL</span>
             </td>
         </tr>
-        <tr><td style="height:10px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">
+            <td class="firstcol">
                 URL:
             </td>
-            <td  style="width:20px;"></td>
             <td>
                 <input type="text" ng-model="newLink.url" ng-blur="suggestName()" class="form-control" />
             </td>
         </tr>
-        <tr><td style="height:20px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">
+            <td class="firstcol">
                 Name:
             </td>
-            <td  style="width:20px;"></td>
             <td>
                 <input type="text" ng-model="newLink.name" class="form-control" />
             </td>
         </tr>
-        <tr><td style="height:20px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">
+            <td class="firstcol">
                 Description:
             </td>
-            <td  style="width:20px;"></td>
             <td>
                 <textarea ng-model="newLink.description"  rows="4" class="form-control"></textarea>
             </td>
         </tr>
-        <tr><td style="height:10px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader_2">Accessibility: </td>
-            <td  style="width:20px;"></td>
+            <td class="firstcol">Accessibility: </td>
             <td>
                 <input type="checkbox" ng-model="newLink.public"> Public &nbsp; &nbsp;
                 <input type="checkbox" checked="checked" disabled="disabled"> Member
             </td>
         </tr>
-        <tr><td style="height:10px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader_2">Labels: </td>
-            <td  style="width:20px;"></td>
+            <td class="firstcol">Labels: </td>
             <td>
-                <span ng-repeat="label in findLabels()"><button class="btn labelButton"
-                    style="background-color:{{label.color}};">{{label.name}}
-                    </button>
+                <span class="dropdown" ng-repeat="label in assignedLabels()" style="float:left">
+                    <button class="labelButton" type="button" id="menu2"
+                       data-toggle="dropdown" style="background-color:{{label.color}};"
+                       ng-show="hasLabel(label.name)">{{label.name}} <i class="fa fa-close"></i></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                       <li role="presentation"><a role="menuitem" title="{{add}}"
+                          ng-click="toggleLabel(label)" style="border:2px {{label.color}} solid;">Remove Label:<br/>{{label.name}}</a></li>
+                    </ul>
+                </span>
+                <span>
+                     <span class="dropdown" style="float:left">
+                       <button class="btn btn-sm btn-primary btn-raised labelButton" 
+                           type="button" 
+                           id="menu1" 
+                           data-toggle="dropdown"
+                           title="Add Label"
+                           style="padding:5px 10px">
+                           <i class="fa fa-plus"></i></button>
+                       <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+                           style="width:320px;left:-130px">
+                         <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                                 {{rolex.name}}</button>
+                         </li>
+                       </ul>
+                     </span>
                 </span>
             </td>
         </tr>
-        <tr><td style="height:10px"></td></tr>
         <tr>
             <td></td>
-            <td  style="width:20px;"></td>
             <td>
                 <button class="btn btn-primary btn-raised" ng-click="createLink()">Attach Web URL</button>
             </td>

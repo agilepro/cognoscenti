@@ -2,13 +2,8 @@
 %><%@page isErrorPage="true"
 %><%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
 %><%@include file="/spring/jsp/include.jsp"
-%><%@page import="org.socialbiz.cog.exception.NGException"
-%><%@page import="org.socialbiz.cog.AuthRequest"
-%><%@page import="org.workcast.streams.HTMLWriter"
 %><%@page import="org.socialbiz.cog.ErrorLog"
 %><%@page import="org.socialbiz.cog.ErrorLogDetails"
-%><%@page import="java.io.PrintWriter"
-%><%@page import="java.util.Locale"
 %><%String pageTitle = (String) request.getAttribute("pageTitle");
     String userName = "User not logged in";
     if (ar.isLoggedIn()) {
@@ -46,23 +41,42 @@
         //This attempts to close all the containing structures if possible.
         ar.write("</li></ul></div></td></tr></table></li></ul></div></td></tr></table></div></td></tr></table></li></ul></div></td></tr></table>");
     }%>
-<link href="<%=ar.baseURL%>css/body.css" rel="styleSheet" type="text/css" media="screen" />
-<script type="text/javascript" src="<%=ar.baseURL%>jscript/nugen_utils.js"></script>
-<script type="text/javascript" src="<%=ar.baseURL%>jscript/yahoo-dom-event.js"></script>
 
-<link href="<%=ar.retPath%>css/tabs.css" rel="styleSheet" type="text/css" media="screen" />
-<link href="<%=ar.retPath%>css/reset.css" rel="styleSheet" type="text/css" media="screen" />
-<link href="<%=ar.retPath%>css/global.css" rel="styleSheet" type="text/css" media="screen" />
+<script>
+window.setMainPageTitle("Oops ... problem handling that request");
+</script>
+
+<style>
+.spacey {
+}
+.spacey tr td {
+    padding:10px;
+}
+.firstcol {
+    width:130px;
+}
+</style>
 
 
-
-    <div class="generalArea">
-        <div class="generalHeading"><fmt:message key="nugen.common.errorHeader" /></div>
-        <ul>
-
-        <li><fmt:message key="nugen.common.error" /></li>
-
-        </ul>
+<div>
+    <table class="spacey">
+    <tr>
+        <td><b>Reference No:</b></td>
+        <td><% ar.writeHtml(exceptionNO);%></td>
+    </tr>
+    <tr>
+        <td><b>User:</b></td>
+        <td><% ar.writeHtml(userName);%></td>
+    </tr>
+    <tr>
+        <td><b>Date & Time: </b></td>
+        <td><% ar.writeHtml(ar.nowTimeString);%></td>
+    </tr>
+    </table>
+    
+    <div class="guideVocal"><fmt:message key="nugen.common.error"/></div>
+    
+    <ul>
         <%
             Throwable runner = exception;
             int counter=0;
@@ -82,21 +96,14 @@
                 runner = runner.getCause();
             }
         %>
-
-        <br/>
-        <li><b>Reference No:</b> <% ar.writeHtml(exceptionNO);%></li>
-        <br/>
-        <li><b>User:</b> <% ar.writeHtml(userName);%></li>
-        <br/>
-        <li><b>Date & Time: </b><% ar.writeHtml(ar.nowTimeString);%></li>
-        </ul>
-        <br/>
-        <br/>
-        <img src="<%= ar.retPath %>but_process_view.gif" title="Show Error details" onclick="showHideCommnets('stackTrace')">
-        <div id="stackTrace" class="errorStyle" style="display:none">
-            <span style="overflow:auto;width:900px;"><%ar.writeHtmlWithLines(eDetails.getErrorDetails()); %></span>
-        </div>
+    </ul>
+    
+    
+    <button title="Show Error details" onclick="showHideCommnets('stackTrace')">Show Details</button>
+    <div id="stackTrace" class="errorStyle" style="display:none">
+        <pre style="overflow:auto;width:900px;"><%ar.writeHtml(eDetails.getErrorDetails()); %></pre>
     </div>
+</div>
 
 <script>
 
@@ -114,3 +121,10 @@
     }
 
 </script>
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>

@@ -42,7 +42,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 import org.w3c.dom.Document;
 import org.workcast.json.JSONObject;
 
@@ -54,84 +53,79 @@ public class SuperAdminController extends BaseController {
          //NGWebUtils.srvContext = context;
      }
 
-     @RequestMapping(value = "/{userKey}/errorLog.htm", method = RequestMethod.GET)
-     public void errorLogPage(@PathVariable String userKey,HttpServletRequest request,
+     @RequestMapping(value = "/su/errorLog.htm", method = RequestMethod.GET)
+     public void errorLogPage(HttpServletRequest request,
              HttpServletResponse response)
      throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             adminModelSetUp(ar, userKey, "errorLog");
+             adminModelSetUp(ar, "errorLog");
 
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
+             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
      }
 
-     @RequestMapping(value = "/{userKey}/emailListnerSettings.htm", method = RequestMethod.GET)
-     public void emailListnerSettings(@PathVariable String userKey,
-             HttpServletRequest request, HttpServletResponse response)
+     @RequestMapping(value = "/su/emailListnerSettings.htm", method = RequestMethod.GET)
+     public void emailListnerSettings(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
 
 
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             adminModelSetUp(ar, userKey, "emailListnerSettings");
+             adminModelSetUp(ar, "emailListnerSettings");
 
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
+             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
      }
 
-     @RequestMapping(value = "/{userKey}/lastNotificationSend.htm", method = RequestMethod.GET)
-     public void lastNotificationSend(@PathVariable String userKey,
-             HttpServletRequest request, HttpServletResponse response)
+     @RequestMapping(value = "/su/lastNotificationSend.htm", method = RequestMethod.GET)
+     public void lastNotificationSend(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             adminModelSetUp(ar, userKey, "lastNotificationSend");
+             adminModelSetUp(ar, "lastNotificationSend");
 
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
+             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
      }
 
-     @RequestMapping(value = "/{userKey}/newUsers.htm", method = RequestMethod.GET)
-     public void newUsers(@PathVariable String userKey,
-             HttpServletRequest request, HttpServletResponse response)
+     @RequestMapping(value = "/su/newUsers.htm", method = RequestMethod.GET)
+     public void newUsers(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             adminModelSetUp(ar, userKey, "newUsers");
+             adminModelSetUp(ar, "newUsers");
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
+             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
      }
 
-     @RequestMapping(value = "/{userKey}/requestedAccounts.htm", method = RequestMethod.GET)
-     public void requestedAccounts(@PathVariable String userKey,
-             HttpServletRequest request, HttpServletResponse response)
+     @RequestMapping(value = "/su/requestedAccounts.htm", method = RequestMethod.GET)
+     public void requestedAccounts(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             adminModelSetUp(ar, userKey, "requestedAccounts");
+             adminModelSetUp(ar, "requestedAccounts");
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
+             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
      }
 
-     @RequestMapping(value = "/{userKey}/allSites.htm", method = RequestMethod.GET)
-     public void allSites(@PathVariable String userKey,
-             HttpServletRequest request, HttpServletResponse response)
+     @RequestMapping(value = "/su/allSites.htm", method = RequestMethod.GET)
+     public void allSites(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-             adminModelSetUp(ar, userKey, "allSites");
+             adminModelSetUp(ar, "allSites");
          }catch(Exception ex){
-             throw new NGException("nugen.operation.fail.administration.page", new Object[]{userKey} , ex);
+             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
          }
      }
 
-     @RequestMapping(value = "/{userKey}/acceptOrDenySite.json", method = RequestMethod.POST)
+     @RequestMapping(value = "/su/acceptOrDenySite.json", method = RequestMethod.POST)
      public void acceptOrDenySite(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          String requestId = "";
@@ -171,13 +165,13 @@ public class SuperAdminController extends BaseController {
      }
 
 
-     @RequestMapping(value = "/{userKey}/getErrorLogXML.ajax", method = RequestMethod.GET)
-     public void errorLogXMLData(@PathVariable String userKey,@RequestParam String searchByDate,HttpServletRequest request,
+     @RequestMapping(value = "/su/getErrorLogXML.ajax", method = RequestMethod.GET)
+     public void errorLogXMLData(@RequestParam String searchByDate,HttpServletRequest request,
              HttpServletResponse response)
      throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try {
-             AuthRequest ar = NGWebUtils.getAuthRequest(request, response,
-                     "User must be logged in as a Super admin to see the error Log.");
+             ar.isSuperAdmin("User must be logged in as a Super admin to see the error Log.");
              Date date = new SimpleDateFormat("MM/dd/yyyy").parse(searchByDate);
              File xmlFile=ErrorLog.getErrorFileFullPath(date, ar.getCogInstance());
 
@@ -193,35 +187,30 @@ public class SuperAdminController extends BaseController {
              }
          }
          catch (Exception e) {
-             //need something better here to return the error as XML
-             throw e;
+             Exception ee = new Exception("Unable to get error information ("+searchByDate+")", e);
+             streamException(ee, ar);
          }
      }
 
      /**
       * TODO: this is ridiculous having the user ID in the path... not needed, not used
       */
-     @RequestMapping(value = "/{userKey}/errorDetails{errorId}.htm", method = RequestMethod.GET)
-     public ModelAndView errorDetailsPage(@PathVariable String errorId,
+     @RequestMapping(value = "/su/errorDetails{errorId}.htm", method = RequestMethod.GET)
+     public void errorDetailsPage(@PathVariable String errorId,
              @RequestParam String searchByDate,HttpServletRequest request,
-             HttpServletResponse response)
-     throws Exception {
-
-         ModelAndView modelAndView = null;
+             HttpServletResponse response) throws Exception {
          try{
-             AuthRequest ar=NGWebUtils.getAuthRequest(request, response,
-                     "User must be logged in as a Super admin to see the error Log.");
-             modelAndView = new ModelAndView("detailsErrorLog");
-             modelAndView.addObject("errorId", errorId);
-             modelAndView.addObject("errorDate", searchByDate);
-             modelAndView.addObject("goURL", ar.getCompleteURL());
+             AuthRequest ar = AuthRequest.getOrCreate(request, response);
+             ar.setParam("errorId", errorId);
+             ar.setParam("errorDate", searchByDate);
+             ar.setParam("goURL", ar.getCompleteURL());
+             adminModelSetUp(ar, "detailsErrorLog");
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.error.detail.page", null , ex);
          }
-         return modelAndView;
      }
 
-     @RequestMapping(value = "/{userKey}/logUserComents.form", method = RequestMethod.POST)
+     @RequestMapping(value = "/su/logUserComents.form", method = RequestMethod.POST)
      public void logUserComents(@RequestParam String errorNo,HttpServletRequest request,
              HttpServletResponse response)
      throws Exception {
@@ -254,7 +243,7 @@ public class SuperAdminController extends BaseController {
      }
 
      private static void adminModelSetUp(AuthRequest ar,
-              String userKey, String jspName) throws Exception {
+              String jspName) throws Exception {
 
          if(!ar.isLoggedIn()){
              throw new NGException("nugen.project.login.msg",null);

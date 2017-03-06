@@ -62,6 +62,9 @@
           <i class="fa fa-search" aria-hidden="true"></i>
         </a>
       </li>
+      
+      
+<% if (loggedUser!=null) { %>      
       <li class="dropdown">
             <a class="dropdown-toggle"
             data-target="#"
@@ -100,6 +103,7 @@
           </ul>
         </li>
 
+
         <!-- Drop Down Sites -->
         <li>
           <a class="dropdown-toggle"
@@ -135,6 +139,9 @@
             <li><a href="<%=userRelPath%>userAccounts.htm">List Sites</a></li>
           </ul>
         </li>
+<% } %>         
+        
+        
         <!-- Drop Down User -->
         <li>
           <a class="dropdown-toggle"
@@ -153,13 +160,14 @@
                 Log In</a></li>
 <% } else { %>
             <li><a onclick='logOutProvider();'>Log Out</a></li>
-<% } %>
+
             <li><a href="<%=userRelPath%>userSettings.htm">Profile</a></li>
             <li><a href="<%=userRelPath%>userAlerts.htm">Updates</a></li>
             <li><a href="<%=userRelPath%>notificationSettings.htm">Notifications</a></li>
 <%if(ar.isSuperAdmin()){ %>
-            <li><a href="<%=userRelPath%>emailListnerSettings.htm">Administration</a></li>
+            <li><a href="<%=userRelPath%>../su/emailListnerSettings.htm">Administration</a></li>
 <%} %>
+<% } %> 
           </ul>
         </li>
         </ul>

@@ -89,6 +89,8 @@ Required parameters:
         docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngp.getKey()
                     + "/summary.json?lic="+lfu.getId();
     }
+
+    JSONArray allLabels = ngp.getJSONLabels();
     
 %>
 
@@ -105,6 +107,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
     $scope.linkedGoals = <%linkedGoals.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
+    $scope.allLabels = <%allLabels.write(out,2,4);%>;
 
     $scope.myComment = "";
     $scope.canUpdate = <%=canAccessDoc%>;
@@ -290,10 +293,31 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location="docinfo"+doc.id+".htm";
     }
 
+    $scope.assignedLabels = function() {
+        var res = [];
+        $scope.allLabels.forEach( function(item) {
+            if ($scope.docInfo.labelMap[item.name]) {
+                res.push(item);
+            }
+        });
+        return res;
+    }
 
 });
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
+
+<style>
+.spacey {
+    width:100%;
+}
+.spacey tr td {
+    padding:5px;
+}
+.firstcol {
+    width:180px;
+}
+</style>
 
 
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -301,9 +325,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Access Document
-        </div>
 <% if (ar.isLoggedIn()) { %>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
@@ -325,118 +346,94 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
 <% } %>        
     </div>
+<hr/>
+    <div style="clear:both"></div>
 
 
-
-    <table border="0px solid red" width="800">
+    <table  class="spacey">
         <tr>
-            <td colspan="3">
-                <table>
-                    <tr>
-                        <td class="gridTableColummHeader">
-                            <span ng-show="'FILE'==docInfo.attType">Document Name:</span>
-                            <span ng-show="'URL'==docInfo.attType">Link Name:</span>
-                        </td>
-                        <td style="width: 20px;"></td>
-                        <td><b>{{docInfo.name}}</b>
-                            <span ng-show="docInfo.deleted">
-                                <font color="red"><i class="fa fa-trash"></i> (DELETED)</font>
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="height: 5px"></td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Description:</td>
-                        <td style="width: 20px;"></td>
-                        <td>
-                        <%ar.writeHtml(attachment.getDescription());%>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="height: 5px"></td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader">
-                        <%if("FILE".equals(attachment.getType())){ %> Uploaded by: <%}else if("URL".equals(attachment.getType())){ %>
-                        Attached by <%} %>
-                        </td>
-                        <td style="width: 20px;"></td>
-                        <td>
-                        <% ale.writeLink(ar); %> on <% SectionUtil.nicePrintTime(ar, attachment.getModifiedDate(), ar.nowTime); %>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="height: 5px"></td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Accessibility:</td>
-                        <td style="width: 20px;"></td>
-                        <%if(!attachment.getReadOnlyType().equals("on")){ %>
-                        <td>
-                        <% ar.writeHtml(access);%>
-                        </td>
-                        <%}else{ %>
-                        <td>
-                        <% ar.writeHtml(access);%> and Read only Type</td>
-                        <%} %>
-                    </tr>
-<%if("FILE".equals(attachment.getType())){ %>
-                    <tr>
-                        <td style="height: 5px"></td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Version:</td>
-                        <td style="width: 20px;"></td>
-                        <td><%=attachment.getVersion()%>
-                         - Size: <%=fileSize%> bytes</td>
-                    </tr>
-                    <tr>
-                        <td style="height: 5px"></td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Maintained by:</td>
-                        <td style="width: 20px;"></td>
-                        <td><% ar.writeHtml(editUser); %></td>
-                    </tr>
-<%}%>
-                    <tr>
-                        <td class="gridTableColummHeader">Linked Action Items:</td>
-                        <td style="width: 20px;"></td>
-                        <td><span ng-repeat="act in linkedGoals" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                               ng-click="navigateToActionItem(act)">
-                               <img src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif">  {{act.synopsis}}
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Linked Topics:</td>
-                        <td style="width: 20px;"></td>
-                        <td><span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                               ng-click="navigateToTopic(topic)">
-                               <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Linked Meetings:</td>
-                        <td style="width: 20px;"></td>
-                        <td><span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                               ng-click="navigateToMeeting(meet)">
-                               <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
-                            </span>
-                        </td>
-                    </tr>
-                </table>
+            <td class="firstcol">
+                <span ng-show="'FILE'==docInfo.attType">Document Name:</span>
+                <span ng-show="'URL'==docInfo.attType">Link Name:</span>
+            </td>
+            <td><b>{{docInfo.name}}</b>
+                <span ng-show="docInfo.deleted" style="color:red">
+                    <i class="fa fa-trash"></i> (DELETED)
+                </span>
             </td>
         </tr>
         <tr>
-            <td style="height: 10px"></td>
+            <td class="firstcol">Description:</td>
+            <td>
+            <%ar.writeHtml(attachment.getDescription());%>
+            <span ng-repeat="role in assignedLabels()">
+                <button class="labelButton" 
+                    type="button" id="menu2"
+                    style="background-color:{{role.color}};">
+                    {{role.name}}</button>
+                </ul>
+            </span>
+            </td>
         </tr>
         <tr>
-            <td class="gridTableColummHeader"></td>
-            <td style="width: 20px;"></td>
+            <td class="firstcol">
+            <%if("FILE".equals(attachment.getType())){ %> Uploaded by: <%}else if("URL".equals(attachment.getType())){ %>
+            Attached by <%} %>
+            </td>
+            <td>
+            <% ale.writeLink(ar); %> on <% SectionUtil.nicePrintTime(ar, attachment.getModifiedDate(), ar.nowTime); %>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol">Accessibility:</td>
+            <%if(!attachment.getReadOnlyType().equals("on")){ %>
+            <td>
+            <% ar.writeHtml(access);%>
+            </td>
+            <%}else{ %>
+            <td>
+            <% ar.writeHtml(access);%> and Read only Type</td>
+            <%} %>
+        </tr>
+<%if("FILE".equals(attachment.getType())){ %>
+        <tr>
+            <td class="firstcol">Version:</td>
+            <td><%=attachment.getVersion()%>
+             - Size: <%=fileSize%> bytes</td>
+        </tr>
+        <tr>
+            <td class="firstcol">Maintained by:</td>
+            <td><% ar.writeHtml(editUser); %></td>
+        </tr>
+<%}%>
+        <tr>
+            <td class="firstcol">Linked Action Items:</td>
+            <td><span ng-repeat="act in linkedGoals" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                   ng-click="navigateToActionItem(act)">
+                   <img src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif">  {{act.synopsis}}
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol">Linked Topics:</td>
+            <td><span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                   ng-click="navigateToTopic(topic)">
+                   <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol">Linked Meetings:</td>
+            <td><span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                   ng-click="navigateToMeeting(meet)">
+                   <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
+                </span>
+            </td>
+        </tr>
+    </table>
+    <table class="spacey">
+        <tr>
+            <td class="firstcol"></td>
 <%
 if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
 %>
@@ -455,8 +452,7 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
     else{
 %>
         <tr>
-            <td class="gridTableColummHeader"></td>
-            <td style="width: 20px;"></td>
+            <td class="firstcol"></td>
             <td><a href="#"><img
                 src="<%=ar.retPath%>downloadInactive.gif" border="0"></a><br />
             <span class="red">* You need to log in to access this

@@ -43,6 +43,15 @@ div[dropzone] {
     color: #bbb;
     margin-bottom: 20px;
 }
+.spacey {
+    width:100%;
+}
+.spacey tr td {
+    padding:3px;
+}
+.firstcol {
+    width:130px;
+}
 </style>
 
 
@@ -168,9 +177,6 @@ app.controller('myCtrl', function($scope, $http) {
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Upload Document
-        </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -186,82 +192,80 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
     </div>
 
-    <div id="TheNewDocument">
-        <div>
-            <table>
-                <tr>
-                    <td class="gridTableColummHeader">Drop Here:</td>
-                    <td style="width:20px;"></td>
-                    <td>
-                        <div id="holder" class="nicenice">Drop Files Here</div>
-                    </td>
-                </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader">Labels:</td>
-                    <td style="width:20px;"></td>
-                    <td>
-                        <span class="dropdown" ng-repeat="role in allLabelFilters()">
-                            <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
-                               data-toggle="dropdown" style="background-color:{{role.color}};"
-                               ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                               <li role="presentation"><a role="menuitem" title="{{add}}"
-                                  ng-click="toggleLabel(role)">Remove Filter:<br/>{{role.name}}</a></li>
-                            </ul>
-                        </span>
-                        <span>
-                             <span class="dropdown">
-                               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
-                               title="Add Filter by Label"><i class="fa fa-filter"></i></button>
-                               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                                 <li role="presentation" ng-repeat="rolex in allLabels">
-                                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
-                                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
-                                         {{rolex.name}}</button>
-                                 </li>
-                               </ul>
-                             </span>
-                        </span>
-                    </td>
-                </tr>
-                <tr><td style="height:10px"></td></tr>
-                <tr>
-                    <td class="gridTableColummHeader"></td>
-                    <td style="width:20px;"></td>
-                    <td>
-                        <div ng-repeat="fp in fileProgress" class="well">
-                          <div >
-                              <div style="float:left;"><b>{{fp.file.name}}</b></div>
+    <table class="spacey">
+        <tr>
+            <td class="firstColumn">Drop Here:</td>
+            <td>
+                <div id="holder" class="nicenice">Drop Files Here</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstColumn">Labels:</td>
+            <td>
+                <span class="dropdown" ng-repeat="role in allLabelFilters()">
+                    <button class="labelButton" 
+                       type="button" id="menu2"
+                       data-toggle="dropdown" 
+                       style="background-color:{{role.color}};"
+                       ng-show="hasLabel(role.name)">
+                       {{role.name}} <i class="fa fa-close"></i></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                       <li role="presentation"><a role="menuitem" title="{{add}}"
+                          ng-click="toggleLabel(role)" style="border:2px {{role.color}} solid;">
+                          Remove Label:<br/>{{role.name}}</a></li>
+                    </ul>
+                </span>
+                <span class="dropdown">
+                    <button class="btn btn-sm btn-primary btn-raised labelButton" 
+                       type="button" 
+                       id="menu1" 
+                       data-toggle="dropdown"
+                       title="Add Label"
+                       style="padding:5px 10px">
+                       <i class="fa fa-plus"></i></button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+                        style="width:320px;left:-130px">
+                         <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                             <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                             ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                                 {{rolex.name}}</button>
+                         </li>
+                    </ul>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="gridTableColummHeader"></td>
+            <td>
+                <div ng-repeat="fp in fileProgress" class="well">
+                  <div >
+                      <div style="float:left;"><b>{{fp.file.name}}</b></div>
 
-                              <div style="float:right;">{{fp.status}}</div>
-                              <div style="clear:both;"></div>
+                      <div style="float:right;">{{fp.status}}</div>
+                      <div style="clear:both;"></div>
+                  </div>
+                  <div ng-hide="fp.done">
+                     Description:<br/>
+                     <textarea ng-model="fp.description" class="form-control"></textarea>
+                  </div>
+                  <div style="padding:5px;">
+                      <div style="text-align:center">{{fp.status}}:  {{fp.loaded|number}} of {{fp.file.size|number}} bytes</div>
+                      <div class="progress">
+                          <div class="progress-bar progress-bar-success" role="progressbar"
+                               aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
+                               style="width:{{fp.percent}}%">
                           </div>
-                          <div ng-hide="fp.done">
-                             Description:<br/>
-                             <textarea ng-model="fp.description" class="form-control"></textarea>
-                          </div>
-                          <div style="padding:5px;">
-                              <div style="text-align:center">{{fp.status}}:  {{fp.loaded|number}} of {{fp.file.size|number}} bytes</div>
-                              <div class="progress">
-                                  <div class="progress-bar progress-bar-success" role="progressbar"
-                                       aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
-                                       style="width:{{fp.percent}}%">
-                                  </div>
-                              </div>
-                          </div>
+                      </div>
+                  </div>
 
-                          <div ng-hide="fp.done">
-                              <button ng-click="startUpload(fp)" class="btn btn-primary btn-raised">Upload</button>
-                              <button ng-click="cancelUpload(fp)" class="btn btn-primary btn-raised">Cancel</button>
-                          </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
+                  <div ng-hide="fp.done">
+                      <button ng-click="startUpload(fp)" class="btn btn-primary btn-raised">Upload</button>
+                      <button ng-click="cancelUpload(fp)" class="btn btn-primary btn-raised">Cancel</button>
+                  </div>
+                </div>
+            </td>
+        </tr>
+    </table>
 
 
 </div>

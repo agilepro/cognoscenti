@@ -21,6 +21,7 @@ Required parameters:
     JSONArray allDecisions = new JSONArray();
     for (DecisionRecord dr : ngp.getDecisions()) {
         allDecisions.put(dr.getJSON4Decision(ngp, ar));
+        throw new Exception("Foo Bar");
     }
 
     UserProfile uProf = ar.getUserProfile();
@@ -231,9 +232,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Decisions
-        </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -251,7 +249,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div class="well">
         Filter <input ng-model="filter"> &nbsp;
         <span class="dropdown" ng-repeat="role in allLabelFilters()">
-            <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
+            <button class="dropdown-toggle labelButton" type="button" id="menu2"
                data-toggle="dropdown" style="background-color:{{role.color}};"
                ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
@@ -261,12 +259,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </span>
         <span>
              <span class="dropdown">
-               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown"
+               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" 
+                       type="button" id="menu2" data-toggle="dropdown"
                        title="Add Filter by Label"><i class="fa fa-filter"></i></button>
-               <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                 <li role="presentation" ng-repeat="rolex in allLabels">
-                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
-                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
+               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+                   style="width:320px;left:-130px">
+                 <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                     <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                          {{rolex.name}}</button>
                  </li>
                </ul>
@@ -299,7 +299,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         <div class="taskOverview">
                             <i>{{rec.timestamp|date}}</i>
                             <span ng-repeat="label in getGoalLabels(rec)">
-                              <button class="btn btn-sm labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
+                              <button class="labelButton" style="background-color:{{label.color}};color:black;" 
+                                     ng-click="toggleLabel(label)">
                                   {{label.name}}
                               </button>
                             </span>

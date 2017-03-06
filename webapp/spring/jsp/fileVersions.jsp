@@ -74,16 +74,19 @@ app.controller('myCtrl', function($scope, $http) {
 });
 </script>
 
-
+<style>
+.spacey {
+}
+.spacey tr td {
+    padding:10px;
+}
+</style>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Attachment Versions
-        </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -105,9 +108,9 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
     </div>
 
-    <table class="gridTable2" width="100%">
+    <table class="spacey">
         <thead>
-            <tr class="gridTableHeader">
+            <tr>
                 <td>Version</td>
                 <td>Modified Date</td>
                 <td>File Size</td>

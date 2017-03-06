@@ -509,7 +509,7 @@ function addvalue() {
                 <b>{{goalInfo.synopsis}}</b>
                 ~ {{goalInfo.description}}
                 <span ng-repeat="label in getGoalLabels(goalInfo)">
-                  <button class="btn btn-sm labelButton" style="background-color:{{label.color}};">
+                  <button class="labelButton" style="background-color:{{label.color}};">
                     {{label.name}}
                   </button>
                 </span>

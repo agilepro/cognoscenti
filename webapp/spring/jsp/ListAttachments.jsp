@@ -232,15 +232,30 @@ app.controller('myCtrl', function($scope, $http) {
           </span>
         </div>
     </div>
+    
+<style>
+.checkButton {
+    vertical-align:middle;
+    border: none;
+    border-radius:2px;
+    box-shadow: 2px 2px 5px #CCCCCC;
+    padding:5px 10px;
+    cursor:pointer;
+}
+</style>
 
 
     <div class="well">Filter <input ng-model="filter"> &nbsp;
-        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showVizPub">
+        <span class="checkButton" ng-click="showVizPub = !showVizPub">
+            <i class="fa fa-check-square-o" ng-show="showVizPub"></i>
+            <i class="fa fa-square-o" ng-hide="showVizPub"></i>
             <img src="<%=ar.retPath%>assets/images/iconPublic.png"> Public</span>
-        <span style="vertical-align:middle;" ng-show="<%=isMember%>"><input type="checkbox" ng-model="showVizMem">
+        <span class="checkButton" ng-show="<%=isMember%>" ng-click="showVizMem = !showVizMem">
+            <i class="fa fa-check-square-o" ng-show="showVizMem"></i>
+            <i class="fa fa-square-o" ng-hide="showVizMem"></i>
             <img src="<%=ar.retPath%>assets/images/iconMember.png"> Member-Only</span>
         <span class="dropdown" ng-repeat="role in allLabelFilters()">
-            <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
+            <button class="labelButton" type="button" id="menu2"
                data-toggle="dropdown" style="background-color:{{role.color}};"
                ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
@@ -248,18 +263,20 @@ app.controller('myCtrl', function($scope, $http) {
                   ng-click="toggleLabel(role)">Remove Filter:<br/>{{role.name}}</a></li>
             </ul>
         </span>
-        <span>
-             <span class="dropdown">
-               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
-               style="padding: 2px 5px;font-size: 11px;" title="Add Filter by Label"><i class="fa fa-filter"></i></button>
-               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                 <li role="presentation" ng-repeat="rolex in allLabels">
-                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
-                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
-                         {{rolex.name}}</button>
-                 </li>
-               </ul>
-             </span>
+        <span class="dropdown">
+           <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" 
+                   type="button" id="menu1" data-toggle="dropdown"
+                   style="padding: 2px 5px;font-size: 11px;" 
+                   title="Add Filter by Label">
+                <i class="fa fa-filter"></i></button>
+           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+           style="width:320px;left:-130px">
+             <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                 <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                 ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                     {{rolex.name}}</button>
+             </li>
+           </ul>
         </span>
     </div>
 
@@ -320,8 +337,10 @@ app.controller('myCtrl', function($scope, $http) {
             <td>
                 <b><a href="docinfo{{rec.id}}.htm" title="{{rec.name}}">{{rec.name}}</a></b>
                 ~ {{rec.description}}
-                <span ng-repeat="label in getAllLabels(rec)"><button class="btn btn-sm labelButton" ng-click="toggleLabel(label)"
-                    style="background-color:{{label.color}};">{{label.name}}
+                <span ng-repeat="label in getAllLabels(rec)">
+                    <button class="labelButton" 
+                        ng-click="toggleLabel(label)"
+                        style="background-color:{{label.color}};">{{label.name}}
                     </button>
                 </span>
             </td>

@@ -315,7 +315,9 @@ function standardTinyMCEOptions() {
 
       <!-- BEGIN Title and Breadcrump -->
       <ol class="title">
-      <% if(isUserHeader) { %>
+      <% if(!ar.isLoggedIn()) { %>
+          <!-- user is not logged in, don't display any breadcrumbs -->
+      <% } else if(isUserHeader) { %>
         <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/userSettings.htm">
             User: <% ar.writeHtml(pageUserName); %></a></div></li>
       <% } else if(isSiteHeader) { %>

@@ -6,27 +6,5 @@
 
 <tiles-definitions>
 
-    <definition name="slimLayout" template="/spring/tiles/slimLayout.jsp">
-        <put-attribute name="title" value="Template" />
-        <put-attribute name="header" value="/spring/tiles/slimHeader.jsp" />
-        <put-attribute name="menu" value="/spring/jsp/leftMenu.jsp" />
-        <put-attribute name="body" value="/spring/tiles/body.jsp" />
-        <put-attribute name="footer" value="/spring/tiles/slimFooter.jsp" />
-    </definition>
-
-    <definition name="landingPage" extends="slimLayout">
-        <put-attribute name="title" value="Welcome to Weaver" />
-        <put-attribute name="body" value="/spring/jsp/index.jsp" />
-    </definition>
-
-    <definition name="errorLog" extends="slimLayout">
-        <put-attribute name="title" value="Error Log Console"/>
-        <put-attribute name="body" value="/spring/jsp/errorLog.jsp"/>
-    </definition>
-
-      <definition name="detailsErrorLog" extends="slimLayout">
-        <put-attribute name="title" value="Details Error Log"/>
-        <put-attribute name="body" value="/spring/jsp/detailsErrorLog.jsp"/>
-    </definition>
 
 </tiles-definitions>

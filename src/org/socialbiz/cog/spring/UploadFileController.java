@@ -420,9 +420,9 @@ public class UploadFileController extends BaseController {
             }
 
             if(!ar.isLoggedIn()){
-                request.setAttribute("property_msg_key", "nugen.project.remind.doc.login.msg");
+                request.setAttribute("property_msg_key", "You must be logged in to access this page.");
             }else if(!ar.isMember()){
-                request.setAttribute("property_msg_key", "nugen.attachment.remind.doc.memberlogin");
+                request.setAttribute("property_msg_key", "User "+ar.getUserProfile().getName()+" must be a Member of this workspace to open an document reminder of the Workspace");
                 showJSPMembers(ar, siteId, pageId, "WarningNotMember");
             }else {
                 //basically, the reminder should have been display, and we have no idea now why not

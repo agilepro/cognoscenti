@@ -456,7 +456,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     </a>
 
                     <span ng-repeat="label in getNoteLabels(rec)">
-                      <button class="btn btn-sm labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
+                      <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
                       {{label.name}}
                       </button>
                     </span>

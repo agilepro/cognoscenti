@@ -15,23 +15,30 @@
     <div>
        Labels:
       <span class="dropdown" ng-repeat="role in allLabels">
-        <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
+        <button class="dropdown-toggle labelButton" type="button" id="menu2"
            data-toggle="dropdown" style="background-color:{{role.color}};"
            ng-show="hasLabel(role.name)">{{role.name}}</button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
            <li role="presentation"><a role="menuitem" title="{{add}}"
-              ng-click="toggleLabel(role)">Remove Role:<br/>{{role.name}}</a></li>
+              ng-click="toggleLabel(role)" style="border:2px {{role.color}} solid;">Remove Label:<br/>{{role.name}}</a></li>
         </ul>
       </span>
       <span>
          <span class="dropdown">
-           <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
-           style="padding: 2px 5px;font-size: 11px;"> + </button>
-           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-             <li role="presentation" ng-repeat="rolex in allLabels">
-                 <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
-                 ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
-                     {{rolex.name}}</button></li>
+           <button class="btn btn-sm btn-primary btn-raised labelButton" 
+               type="button" 
+               id="menu1" 
+               data-toggle="dropdown"
+               title="Add Filter"
+               style="padding:5px 10px">
+               <i class="fa fa-plus"></i></button>         
+           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+               style="width:320px;left:-130px">
+             <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                 <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                 ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                     {{rolex.name}}</button>
+             </li>
            </ul>
          </span>
       </span>

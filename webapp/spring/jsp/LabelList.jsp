@@ -137,6 +137,18 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
+<style>
+.btn-sm {
+    margin:0;
+}
+.spacey {
+}
+.spacey tr td {
+    padding:8px;
+}
+</style>
+
+
     <div class="generalHeading" style="height:40px">
         <div  style="float:left;margin-top:8px;">
             Labels
@@ -162,7 +174,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr></table>
         </div>
 
-        <table class="gridTable2" width="600px;">
+        <table class="spacey">
             <tr class="gridTableHeader">
                 <td style="width:200px;">Label</td>
                 <td style="width:80px;">Color</td>
@@ -174,12 +186,12 @@ app.controller('myCtrl', function($scope, $http) {
                         placeholder="Enter Label Name" class="form-control">
                 </td>
                 <td ng-hide="label.isEdit || label.isNew">
-                    <button style="background-color:{{label.color}};" class="btn btn-sm"
+                    <button style="background-color:{{label.color}};" class="labelButton"
                         placeholder="Enter Label Name">{{label.name}}</button>
                 </td>
                 <td>
                     <div class="dropdown" ng-show="label.isEdit || label.isNew">
-                        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" style="background-color:{{label.color}};">
+                        <button class="form-control dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" style="background-color:{{label.color}};">
                         {{label.color}} <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                             <li role="presentation" ng-repeat="color in colors">
@@ -192,14 +204,17 @@ app.controller('myCtrl', function($scope, $http) {
                     </div>
                 </td>
                 <td  style="padding:5px;" ng-hide="label.isEdit || label.isNew">
-                    <button class="btn" ng-click="label.isEdit=true;label.editedName=label.name">Edit</button>
+                    <button class="btn btn-sm btn-primary btn-raised" 
+                        ng-click="label.isEdit=true;label.editedName=label.name">Edit</button>
                 </td>
                 <td  style="padding:5px;" ng-show="label.isEdit">
-                    <button class="btn" ng-click="updateLabel(label)">Save</button>
-                    <button class="btn" ng-click="deleteLabel(label)">Delete</button>
+                    <button class="btn btn-sm btn-primary btn-raised" ng-click="updateLabel(label)">Save</button>
+                </td>
+                <td  style="padding:5px;" ng-show="label.isEdit">
+                    <button class="btn btn-sm btn-primary btn-raised" ng-click="deleteLabel(label)">Delete</button>
                 </td>
                 <td  style="padding:5px;" ng-show="label.isNew">
-                    <button class="btn" ng-click="updateLabel(label)">Create</button>
+                    <button class="btn btn-sm btn-primary btn-raised" ng-click="updateLabel(label)">Create</button>
                 </td>
             </tr>
         </table>
