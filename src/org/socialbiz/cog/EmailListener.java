@@ -96,8 +96,21 @@ public class EmailListener extends TimerTask{
          timer.scheduleAtFixedRate(singletonListener, 60000, EVERY_MINUTE);
      }
 
-     public void run()
-     {
+     static long lastRunTime = 0;
+     
+     public void run() {
+         // When you computer goes to sleep for a while and wakes up, the Java
+         // system will send you all the events to make up for all the events it
+         // missed while asleep.   We don't really need that.  Every time we get an
+         // event we pick up all the email.  We expect a tick every minute, so
+         // ignore any timer ticks if it has not been at least 45 seconds.
+         long nowTime = System.currentTimeMillis();
+         if (nowTime - lastRunTime < 45000) {
+             //less than 45 seconds since last run, just exit quickly
+             return;
+         }
+         lastRunTime = nowTime;
+         
          // make sure that this method doesn't throw any exception
          try
          {
@@ -121,7 +134,7 @@ public class EmailListener extends TimerTask{
 
              //the same AuthRequest object is used over and over.  Need to
              //refresh the time setting for this use so trace shows a good time.
-             ar.nowTime = System.currentTimeMillis();
+             ar.nowTime = nowTime;
 
              //now really attempt to read the email.  Errors after this point recorded in file
              handlePOP3Folder();
