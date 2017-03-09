@@ -597,6 +597,9 @@ public class ResourceSection  implements NGResource
         for(int i=0; i<size; i++)
         {
             Element ei = (Element)nl.item(i);
+            if (ei == null) {
+                continue; // there are strange cases where it can be null
+            }
             String owner = DOMUtils.getChildText(ei,"owner").trim();
             if(UserProfile.equalsOpenId(au.getBestUserId(), owner)) {
                 noteElem = ei;
@@ -636,6 +639,9 @@ public class ResourceSection  implements NGResource
             for (int i=0; i<nl.getLength(); i++) {
                 Element element_vote = DOMUtils.createChildElement(loutdoc, element_poll, "vote");
                 Element voteElement  = (Element)nl.item(i);
+                if (voteElement == null) {
+                    continue; // there are strange cases where it can be null
+                }
                 String who = DOMUtils.getChildText(voteElement, "who").trim();
                 DOMUtils.createChildElement(loutdoc, element_vote, "who", who);
                 String choice = DOMUtils.getChildText(voteElement, "choice").trim();

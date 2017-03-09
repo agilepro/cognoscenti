@@ -157,6 +157,9 @@ public class DOMFile extends DOMFace {
         List<Element> elementSet = new ArrayList<Element>();
         for (int i = 0; i < childNdList.getLength(); i++) {
             Node n = childNdList.item(i);
+            if (n == null) {
+                continue; // there are strange cases where it can be null
+            }
             if (n.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
                 elementSet.add((Element) n);
             }

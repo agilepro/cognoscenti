@@ -456,6 +456,9 @@ public class DOMFace
         NodeList childNdList = fEle.getChildNodes();
         for (int i = 0; i < childNdList.getLength(); i++) {
             org.w3c.dom.Node n = childNdList.item(i);
+            if (n == null) {
+                continue; // there are strange cases where it can be null
+            }
             if (n.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
                 continue;
             }
@@ -484,6 +487,9 @@ public class DOMFace
         NodeList childNdList = fEle.getChildNodes();
         for (int i = 0 ; i < childNdList.getLength(); i++) {
             org.w3c.dom.Node n = childNdList.item(i) ;
+            if (n == null) {
+                continue; // there are strange cases where it can be null
+            }
             if (n.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
                 continue ;
             }
@@ -625,6 +631,9 @@ public class DOMFace
         NodeList childNdList = fEle.getChildNodes();
         for (int i = 0; i < childNdList.getLength(); i++) {
             org.w3c.dom.Node n = childNdList.item(i);
+            if (n == null) {
+                continue; // there are strange cases where it can be null
+            }
             if (n.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
                 continue;
             }

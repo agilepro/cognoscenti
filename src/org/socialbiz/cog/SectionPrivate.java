@@ -21,8 +21,11 @@
 package org.socialbiz.cog;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
+
 import java.io.Writer;
+
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class SectionPrivate extends SectionWiki
@@ -72,6 +75,9 @@ public class SectionPrivate extends SectionWiki
         for(int i=0; i<size; i++)
         {
             Element ei = (Element)nl.item(i);
+            if (ei == null) {
+                continue; // there are strange cases where it can be null
+            }
             String owner = DOMUtils.getChildText(ei,OWNER_NODE_NAME);
             String data = DOMUtils.getChildText(ei, DATA_NODE_NAME).trim();
             if (data==null || data.length()==0)

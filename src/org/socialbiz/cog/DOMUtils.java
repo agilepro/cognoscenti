@@ -160,7 +160,11 @@ public class DOMUtils {
         int last = nodes.getLength();
         String[] retval = new String[last];
         for (int i=0; i<last; i++) {
-            retval[i] = textValueOf(nodes.item(i), trim);
+            Node n = nodes.item(i);
+            if (n == null) {
+                continue; // there are strange cases where it can be null
+            }
+            retval[i] = textValueOf(n, trim);
         }
         return retval;
     }
@@ -304,6 +308,9 @@ public class DOMUtils {
         NodeList childNdList = contextNode.getChildNodes();
         for (int i = 0 ; i < childNdList.getLength(); i++) {
             org.w3c.dom.Node n = childNdList.item(i);
+            if (n == null) {
+                continue; // there are strange cases where it can be null
+            }
             if (n.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
                 continue;
             }
@@ -322,6 +329,9 @@ public class DOMUtils {
         NodeList childNdList = from.getChildNodes();
         for (int i = 0 ; i < childNdList.getLength(); i++) {
             org.w3c.dom.Node n = childNdList.item(i) ;
+            if (n == null) {
+                continue; // there are strange cases where it can be null
+            }
             if (n.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
                 continue ;
             }
@@ -398,7 +408,11 @@ public class DOMUtils {
         NodeList elmts = doc.getElementsByTagNameNS("*", elementName) ; ;
         for (int i = 0 ; i < elmts.getLength(); i++)
         {
-            NamedNodeMap attrs = elmts.item(i).getAttributes() ;
+            Node n = elmts.item(i);
+            if (n == null) {
+                continue; // there are strange cases where it can be null
+            }
+            NamedNodeMap attrs = n.getAttributes();
             if (attrs != null && attrs.getLength() > 0)
             {
                 Node attrNode = attrs.getNamedItem(attrName) ;
@@ -470,6 +484,9 @@ public class DOMUtils {
     // If name is null, then the node is removed if the type matches.
     public static void removeAll(Node node, short nodeType, String name)
     {
+        if (node==null) {
+            return; //ignore if passed a null
+        }
         if (node.getNodeType() == nodeType &&
                 (name == null || node.getNodeName().equals(name))) {
             node.getParentNode().removeChild(node);
@@ -771,7 +788,11 @@ public class DOMUtils {
         public void add(NodeList appendList)
         {
             for (int i = 0 ; i < appendList.getLength(); i++) {
-                nodeVector.add(appendList.item(i)) ;
+                Node n = appendList.item(i);
+                if (n == null) {
+                    continue; // there are strange cases where it can be null
+                }
+                nodeVector.add(n) ;
             }
         }
 

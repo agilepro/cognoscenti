@@ -124,6 +124,9 @@ public class SectionWiki extends SectionUtil implements SectionFormat {
 
         for (int i = 0; i < nl.getLength(); i++) {
             Element ei = (Element) nl.item(i);
+            if (ei == null) {
+                continue; // there are strange cases where it can be null
+            }
             String owner = DOMUtils.getChildText(ei,
                     SectionForNotes.OWNER_NODE_NAME);
             SectionUtil.writeTextWithLB(owner, out);
