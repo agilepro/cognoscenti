@@ -359,10 +359,10 @@ app.controller('myCtrl', function($scope, $http) {
             </span>
         </div>
         <div class="well" ng-show="getAvailableFolders().length>0">
-            Choose Folder: <span class="folderLine" style="margin-left:{{folderPath.length*15+15}}px;cursor:pointer" ng-repeat="folder in getAvailableFolders()">
+            Choose Folder: <span class="folderLine" style="cursor:pointer" ng-repeat="folder in getAvailableFolders()">
                 <span ng-click="addFolderPath(folder)">
-                    <button class="btn labelButton"
-                        style="margin:2px;font-size:11px;background-color:{{folder.color}};">{{folder.name}}
+                    <button class="labelButton"
+                        style="background-color:{{folder.color}};">{{folder.name}}
                     </button>
                 </span>
             </span>

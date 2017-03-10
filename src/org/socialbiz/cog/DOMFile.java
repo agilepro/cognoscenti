@@ -76,19 +76,16 @@ public class DOMFile extends DOMFace {
         try {
             reformatXML();
             DOMUtils.writeDomToFile(fDoc, associatedFile);
+        }
+        catch (Exception e) {
+            throw new NGException("nugen.exception.unable.to.write.file",
+                    new Object[] { associatedFile.toString() }, e);
+        }
+    }
 
-            //also save a JSON file as a test of the XML to JSON conversion
-            //ability ... but there is no real need for this file...
-            /*
-            JSONObject copy = Dom2JSON.convertDomToJSON(fDoc);
-            File folder = associatedFile.getParentFile();
-            File jsonproject = new File(folder, "project.json");
-            FileOutputStream fos = new FileOutputStream(jsonproject);
-            OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-            copy.write(osw, 2, 0);
-            osw.flush();
-            osw.close();
-            */
+    public void saveNoFormatting() throws Exception {
+        try {
+            DOMUtils.writeDomToFile(fDoc, associatedFile);
         }
         catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.write.file",

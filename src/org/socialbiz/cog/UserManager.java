@@ -341,7 +341,7 @@ public class UserManager
         userFile.put("lastUpdate", System.currentTimeMillis());
         userFile.writeToFile(jsonFileName);
         
-        profileFile.save();
+        profileFile.saveNoFormatting();
         saveCount++;
     }
 
