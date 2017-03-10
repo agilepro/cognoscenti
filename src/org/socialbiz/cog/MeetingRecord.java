@@ -327,6 +327,17 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             timeSlotArray.put(oneSlot.getJSON());
         }
         meetingInfo.put("timeSlots", timeSlotArray);
+        
+        //we need to know the id of the minutes of the previous meeting
+        //if they exist.  Look it up every time.
+        String previousMeetingId = getScalar("previousMeeting");
+        if (previousMeetingId!=null && previousMeetingId.length()>0) {
+            MeetingRecord prevMeet = ngw.findMeeting(previousMeetingId);
+            String minutesID = prevMeet.getMinutesId();
+            if (minutesID!=null && minutesID.length()>0) {
+                meetingInfo.put("previousMinutes", minutesID);
+            }
+        }
         return meetingInfo;
     }
 

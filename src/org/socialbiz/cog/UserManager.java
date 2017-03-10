@@ -31,9 +31,15 @@ import java.util.Vector;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
+import org.workcast.json.JSONArray;
+import org.workcast.json.JSONObject;
 
 public class UserManager
 {
+    public static int loadCount = 0;
+    public static int modCount = 0;
+    public static int saveCount = 0;
+    
     private static Hashtable<String, UserProfile> userHashByUID = new Hashtable<String, UserProfile>();
     private static Hashtable<String, UserProfile> userHashByKey = new Hashtable<String, UserProfile>();
     private static Vector<UserProfile> allUsers = new Vector<UserProfile>();
@@ -41,6 +47,7 @@ public class UserManager
     private static boolean initialized = false;
 
     private static DOMFile  profileFile;
+    private static File     jsonFileName;
 
     //TODO: get rid of this static
     private static Cognoscenti cog;
@@ -78,7 +85,8 @@ public class UserManager
 
         File userFolder = cog.getConfig().getUserFolderOrFail();
         File newPlace = new File(userFolder, "UserProfiles.xml");
-
+        jsonFileName = new File(userFolder, "UserProfiles.json");
+        
         //check to see if the file is there
         if (!newPlace.exists())  {
             //it might be in the old position.
@@ -105,6 +113,7 @@ public class UserManager
             userDoc = DOMUtils.convertInputStreamToDocument(is, false, false);
         }
         profileFile = new DOMFile(newPlace, userDoc);
+        loadCount++;
 
         //there was some kind of but that allowed multiple entries to be created
         //with the same unique key, and that causes all sorts of problems.
@@ -248,6 +257,7 @@ public class UserManager
             throw new ProgramLogicError("profileFile is null when it should not be.  May not have been initialized correctly.");
         }
         UserProfile nu = profileFile.createChild("userprofile", UserProfile.class);
+        modCount++;
         if (guid!=null) {
             nu.setKey(guid);
         }
@@ -319,9 +329,20 @@ public class UserManager
 
     public static synchronized void writeUserProfilesToFile() throws Exception {
         if (profileFile==null) {
-            throw new NGException("nugen.exception.write.user.profile.info.fail",null);
+            throw new Exception("Program Logic Error: call to save profiles made when no profiles cached in memory");
         }
+        
+        JSONObject userFile = new JSONObject();
+        JSONArray  userArray = new JSONArray();
+        for (UserProfile uprof : allUsers) {
+            userArray.put(uprof.getFullJSON());
+        }
+        userFile.put("users", userArray);
+        userFile.put("lastUpdate", System.currentTimeMillis());
+        userFile.writeToFile(jsonFileName);
+        
         profileFile.save();
+        saveCount++;
     }
 
 

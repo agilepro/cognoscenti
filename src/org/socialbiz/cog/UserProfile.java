@@ -31,6 +31,7 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 public class UserProfile extends DOMFace implements UserRef
@@ -331,6 +332,8 @@ public class UserProfile extends DOMFace implements UserRef
         return this.lastUpdated;
     }
 
+    /**
+    //NOT USED
     public void setFavorites(ValueElement[] newFavorites)
     {
         if (favorites==null)
@@ -402,6 +405,7 @@ public class UserProfile extends DOMFace implements UserRef
 
         return favorites;
     }
+    */
 
     public void setHomePage(String newHomePage) {
         setScalar("homepage", newHomePage);
@@ -1112,5 +1116,49 @@ public class UserProfile extends DOMFace implements UserRef
         return jObj;
     }
 
+    public JSONObject getFullJSON() throws Exception {
+        JSONObject jObj = getJSON();
+        jObj.put("lastLogin",   lastLogin);
+        jObj.put("lastLoginId", getLastLoginId());
+        jObj.put("lastUpdated", lastUpdated);
+        jObj.put("description", getDescription());
+        jObj.put("disabled",    getDisabled());
+        jObj.put("accessCode",  getAccessCode());
+        jObj.put("accessCodeModTime",  safeConvertLong(getScalar("accessCodeModTime")));
+        jObj.put("image",       this.getImage());
+        
+        {
+            JSONArray idArray = new JSONArray();
+            for (IDRecord id : ids) {
+                idArray.put(id.getLoginId());
+            }
+            jObj.put("ids", idArray);
+        }
+        {
+            JSONArray watchArray = new JSONArray();
+            for (WatchRecord watch : getWatchList()) {
+                JSONObject watchRec = new JSONObject();
+                watchRec.put("key",watch.getPageKey());
+                watchRec.put("lastSeen",watch.getLastSeen());
+                watchArray.put(watchRec);
+            }
+            jObj.put("watchList", watchArray);
+        }
+        {
+            JSONArray notifyArray = new JSONArray();
+            for (NotificationRecord note : getNotificationList()) {
+                notifyArray.put(note.getPageKey());
+            }
+            jObj.put("notifyList", notifyArray);
+        }
+        {
+            JSONArray tempArray = new JSONArray();
+            for (TemplateRecord temp : getTemplateList()) {
+                tempArray.put(temp.getPageKey());
+            }
+            jObj.put("templateList", tempArray);
+        }
+        return jObj;
+    }
 
 }

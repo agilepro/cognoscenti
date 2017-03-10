@@ -771,6 +771,17 @@ public class DOMFace
         return false;
     }
     
+    public void extractAttributeBool(JSONObject dest, String fieldName) throws Exception {
+        dest.put(fieldName, getAttributeBool(fieldName));
+    }
+    public boolean updateAttributeBool(String fieldName, JSONObject srce) throws Exception {
+        if (srce.has(fieldName)) {
+            setAttributeBool(fieldName, srce.getBoolean(fieldName));
+            return true;
+        }
+        return false;
+    }
+    
     
     /**
      * Given a set of children with a specific tag name that all have associated

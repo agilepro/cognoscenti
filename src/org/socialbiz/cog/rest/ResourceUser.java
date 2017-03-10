@@ -175,6 +175,9 @@ public class ResourceUser implements NGResource
             String updatedate = UtilityMethods.getXMLDateFormat(uprofile.getLastUpdated());
             DOMUtils.createChildElement(loutdoc, element_uprofile, "lastupdated",updatedate);
             DOMUtils.createChildElement(loutdoc, element_uprofile, "homepage", uprofile.getHomePage());
+            
+            /**
+            //pretty sure favorites is not being used ANYWHERE
             Element element_favlist = DOMUtils.createChildElement(loutdoc, element_uprofile, "favorites");
             ValueElement[] fList = uprofile.getFavorites();
             for(int k=0; k<fList.length; k++){
@@ -183,6 +186,7 @@ public class ResourceUser implements NGResource
                 element_fav.setAttribute("address", fList[k].value);
 
             }
+            */
 
         }
 
@@ -275,9 +279,13 @@ public class ResourceUser implements NGResource
             favVect.add(fav);
         }
 
+        /**
+        //pretty sure favorites are not being used ANYWHERE
+        
         ValueElement[] favorites = favVect.toArray(new ValueElement[0]);
         profile.setFavorites(favorites);
-
+        */
+        
         profile.setLastUpdated(lar.nowTime);
         UserManager.writeUserProfilesToFile();
     }

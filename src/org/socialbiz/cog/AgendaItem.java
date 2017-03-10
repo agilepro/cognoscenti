@@ -232,6 +232,7 @@ public class AgendaItem extends CommentContainer {
         if (locker!=null) {
             aiInfo.put("lockUser",  locker.getJSON());
         }
+        extractAttributeBool(aiInfo, "showMinutes");
         return aiInfo;
     }
 
@@ -308,10 +309,8 @@ public class AgendaItem extends CommentContainer {
                 clearLock();
             }
         }
-        if (input.has("isSpacer")) {
-            setSpacer(input.getBoolean("isSpacer"));
-        }
-
+        updateAttributeBool("isSpacer", input);
+        updateAttributeBool("showMinutes", input);
     }
 
     public void gatherUnsentScheduledNotification(NGWorkspace ngw, EmailContext meet, ArrayList<ScheduledNotification> resList) throws Exception {
