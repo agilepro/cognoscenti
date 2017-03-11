@@ -26,7 +26,7 @@ import java.net.URL;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.socialbiz.cog.IdGenerator;
+import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.workcast.json.JSONArray;
@@ -189,10 +189,11 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
 
                     //This could be the first time a user accesses, so create profile
                     if (up==null) {
-                        String virginKey = IdGenerator.generateKey();
-                        up = UserManager.createUserWithId(virginKey, userId);
+                        Cognoscenti cog = Cognoscenti.getInstance(req);
+                        UserManager userManager = cog.getUserManager();
+                        up = userManager.createUserWithId(userId);
                         up.setName(response.getString("userName"));
-                        UserManager.writeUserProfilesToFile();
+                        userManager.saveUserProfiles();
                     }
 
                     up.setLastLogin(System.currentTimeMillis(), userId);

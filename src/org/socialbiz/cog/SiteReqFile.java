@@ -105,6 +105,18 @@ public class SiteReqFile extends DOMFile {
         }
         return allRequests;
     }
+    /**
+     * Get requests for one user
+     */
+    public static List<SiteRequest> getUsersSiteRequests(UserProfile up) throws Exception {
+        List<SiteRequest> usersReqs = new ArrayList<SiteRequest>();
+        for (SiteRequest oneReq : getAllSiteReqs()) {
+            if(up.hasAnyId(oneReq.getUniversalId())) {
+                usersReqs.add( oneReq );
+            }
+        }
+        return usersReqs;
+    }
 
     /**
      * Get requests more than 48 hours old

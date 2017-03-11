@@ -20,7 +20,6 @@
 %><%@page import="org.socialbiz.cog.SectionDef"
 %><%@page import="org.socialbiz.cog.SectionTask"
 %><%@page import="org.socialbiz.cog.SectionUtil"
-%><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%@page import="org.socialbiz.cog.UserManager"
 %><%@page import="org.socialbiz.cog.UserPage"
 %><%@page import="org.socialbiz.cog.UserProfile"

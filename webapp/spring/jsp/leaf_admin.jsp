@@ -1,6 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="include.jsp"
-%><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%@page import="org.socialbiz.cog.EmailGenerator"
 %><%@page import="org.socialbiz.cog.CommentRecord"
 %><%@page import="org.socialbiz.cog.mail.ScheduledNotification"
@@ -23,15 +22,7 @@
     UserProfile up = ar.getUserProfile();
     String userKey = up.getKey();
 
-    List<NGPageIndex> templates = new ArrayList<NGPageIndex>();
-    for(TemplateRecord tr : up.getTemplateList()){
-        NGPageIndex ngpirr = ar.getCogInstance().getContainerIndexByKey(tr.getPageKey());
-        if (ngpirr!=null) {
-            //silently ignore templates that no longer exist
-            templates.add(ngpirr);
-        }
-    }
-    NGPageIndex.sortInverseChronological(templates);
+    List<NGPageIndex> templates = up.getValidTemplates(ar.getCogInstance());
 
     String thisPage = ar.getResourceURL(ngw,"admin.htm");
     String allTasksPage = ar.getResourceURL(ngw,"projectAllTasks.htm");

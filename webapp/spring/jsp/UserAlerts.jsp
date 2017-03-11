@@ -1,4 +1,3 @@
-<%@page import="org.socialbiz.cog.NotificationRecord"%>
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@include file="/spring/jsp/include.jsp"
 %><%@page import="java.io.Writer"
@@ -15,7 +14,6 @@
 %><%@page import="org.socialbiz.cog.SuperAdminLogFile"
 %><%@page import="org.socialbiz.cog.UserProfile"
 %><%@page import="org.socialbiz.cog.UtilityMethods"
-%><%@page import="org.socialbiz.cog.WatchRecord"
 %><%@page import="org.socialbiz.cog.rest.TaskHelper"
 %><%@page import="org.springframework.context.ApplicationContext"
 %><%@page import="org.w3c.dom.Element"
@@ -29,12 +27,9 @@ Required Parameters:
 
 */
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-    //List<NGPageIndex> ownedProjs = ar.getCogInstance().getAllContainers();
-    //boolean noneFound = ownedProjs.size()==0;
 
     ApplicationContext context = (ApplicationContext)request.getAttribute("messages");
 
-    List<NotificationRecord> notifications = uProf.getNotificationList();
     JSONArray allAlerts = new JSONArray();
 
     //NEED TO FILL THE ARRAY HERE
@@ -52,11 +47,11 @@ Required Parameters:
 
 
 
+    List<String> notifications = uProf.getNotificationList();
     if(notifications.size()>0) {
         int count = 0;
         String rowStyleClass = "";
-        for (NotificationRecord tr : notifications) {
-            String pageId = tr.getPageKey();
+        for (String pageId : notifications) {
             NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageId);
             if (ngpi==null) {
                 continue;

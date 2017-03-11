@@ -2,7 +2,6 @@
 %><%@page import="java.util.Date"
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="java.text.SimpleDateFormat"
-%><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%@page import="org.socialbiz.cog.LicenseForUser"
 %><%@page import="org.socialbiz.cog.AgendaItem"
 %><%@ include file="/spring/jsp/include.jsp"
@@ -35,15 +34,7 @@ Required parameters:
         allHist.put(history.getJSON(ngp, ar));
     }
 
-    List<NGPageIndex> templates = new ArrayList<NGPageIndex>();
-    for(TemplateRecord tr : uProf.getTemplateList()){
-        String pageKey = tr.getPageKey();
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
-        if (ngpi!=null){
-            templates.add(ngpi);
-        }
-    }
-    NGPageIndex.sortInverseChronological(templates);
+    List<NGPageIndex> templates = uProf.getValidTemplates(ar.getCogInstance());
 
     JSONObject goalInfo = currentTaskRecord.getJSON4Goal(ngp);
     JSONArray allLabels = ngp.getJSONLabels();

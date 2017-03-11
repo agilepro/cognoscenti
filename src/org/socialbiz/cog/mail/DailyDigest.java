@@ -15,7 +15,6 @@ import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
-import org.socialbiz.cog.NotificationRecord;
 import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.ReminderMgr;
 import org.socialbiz.cog.ReminderRecord;
@@ -103,7 +102,7 @@ public class DailyDigest {
                     debugStuff.toString());
 
             //save all the times that we set on the user profiles
-            UserManager.writeUserProfilesToFile();
+            cog.getUserManager().saveUserProfiles();
 
         } catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.send.daily.digest", null, e);
@@ -196,8 +195,8 @@ public class DailyDigest {
             data.put("timeEnd",processingStartTime);
 
             JSONArray notifyList = new JSONArray();
-            for (NotificationRecord record : up.getNotificationList()) {
-                NGPageIndex ngpi = cog.getContainerIndexByKey(record.getPageKey());
+            for (String noteKey : up.getNotificationList()) {
+                NGPageIndex ngpi = cog.getContainerIndexByKey(noteKey);
                 if (ngpi == null) {
                     continue;
                 }
@@ -217,17 +216,6 @@ public class DailyDigest {
                 notifyList.put(oneWorkspace);
             }
             data.put("notifyList", notifyList);
-
-            /*
-            System.out.println("*********** DEBUG DUMP FOR EMAIL **************");
-            File userFolder = cog.getConfig().getUserFolderOrFail();
-            File debugDump = new File(userFolder, "debugDump"+up.getKey()+".json");
-            if (debugDump.exists()) {
-                debugDump.delete();
-            }
-            data.writeToFile(debugDump);
-            */
-
 
             OptOutAddr ooa = new OptOutAddr(
                 AddressListEntry.parseCombinedAddress(realAddress));
@@ -251,8 +239,8 @@ public class DailyDigest {
 
             {
                 List<NGPageIndex> containers = new ArrayList<NGPageIndex>();
-                for (NotificationRecord record : up.getNotificationList()) {
-                    NGPageIndex ngci = clone.getCogInstance().getContainerIndexByKey(record.getPageKey());
+                for (String noteKey : up.getNotificationList()) {
+                    NGPageIndex ngci = clone.getCogInstance().getContainerIndexByKey(noteKey);
 
                     // users might have items on the notification list that don't exist, because
                     // they signed up for notification, and then the project was deleted.

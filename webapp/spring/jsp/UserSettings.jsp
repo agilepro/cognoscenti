@@ -134,13 +134,11 @@ if (ar.isLoggedIn()) { %>
                         <td valign="top">
                             <table>
                                 <%
-                                for (IDRecord anid : uProf.getIdList())
-                                {
-                                    if ((anid.isEmail()) && (!anid.getLoginId().equals(prefEmail)))
-                                    {
+                                for (String anid : uProf.getAllIds()) {
+                                    if (!anid.equals(prefEmail)) {
                                     %>
                                         <tr><td><%
-                                        ar.writeHtml(anid.getLoginId());
+                                        ar.writeHtml(anid);
                                         %></td></tr>
                                     <%
                                     }

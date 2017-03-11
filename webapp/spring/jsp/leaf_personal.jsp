@@ -34,7 +34,7 @@ app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Workspace Personal Settings");
     $scope.isWatching = <%=uProf.isWatch(pageId)%>;
     $scope.watchTime  = <%=uProf.watchTime(pageId)%>;
-    $scope.isTemplate = <%=uProf.findTemplate(pageId)%>;
+    $scope.isTemplate = <%=uProf.isTemplate(pageId)%>;
     $scope.isNotify   = <%=uProf.isNotifiedForProject(pageId)%>;
     $scope.isMute     = <%=ngp.getMuteRole().isPlayer(uProf)%>;
     $scope.roleList   = <%roleList.write(out,2,4);%>;

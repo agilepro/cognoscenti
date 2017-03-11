@@ -46,7 +46,6 @@ import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.SectionDef;
 import org.socialbiz.cog.TopicRecord;
-import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
 import org.springframework.stereotype.Controller;
@@ -1206,7 +1205,7 @@ public class MainTabsViewControler extends BaseController {
                   String dName = ar.reqParam("dName");
                   up.setName(dName);
                   up.setLastUpdated(ar.nowTime);
-                  UserManager.writeUserProfilesToFile();
+                  ar.getCogInstance().getUserManager().saveUserProfiles();
               }
               response.sendRedirect(go);
           }catch(Exception ex){

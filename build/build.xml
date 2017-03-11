@@ -38,9 +38,9 @@
     <echo message="Autodeploy #${autodeploy}"/>
 
 
-  <exec dir="${basedir}" executable="cmd">
+  <!--exec dir="${basedir}" executable="cmd">
       <arg line="/c setJavaHome.bat"/>
-  </exec>
+  </exec-->
 
      <target name="clean">
         <mkdir dir="${target.dir}/cog"/>

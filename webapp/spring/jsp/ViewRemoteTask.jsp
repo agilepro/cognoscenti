@@ -1,7 +1,6 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="java.util.Date"
 %><%@page import="java.text.SimpleDateFormat"
-%><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@ include file="/spring/jsp/functions.jsp"
 %><%!
@@ -44,16 +43,6 @@ Required parameters:
 
     UserProfile  operatingUser =ar.getUserProfile();
     boolean viewingSelf = uProf.getKey().equals(operatingUser.getKey());
-
-    List<NGPageIndex> templates = new ArrayList<NGPageIndex>();
-    for(TemplateRecord tr : uProf.getTemplateList()){
-        String pageKey = tr.getPageKey();
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
-        if (ngpi!=null){
-            templates.add(ngpi);
-        }
-    }
-    NGPageIndex.sortInverseChronological(templates);
 
     String accessUrl = remoteGoal.getProjectAccessURL();
     boolean isLocal = accessUrl.startsWith(ar.baseURL);

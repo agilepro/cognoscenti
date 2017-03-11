@@ -1023,7 +1023,7 @@ public class NGBook extends ContainerCommon {
         // Only do this if creating directly, and not through API
         if (up != null) {
             up.setWatch(newPage.getKey(), nowTime);
-            UserManager.writeUserProfilesToFile();
+            cog.getUserManager().saveUserProfiles();
         }
 
         return newPage;

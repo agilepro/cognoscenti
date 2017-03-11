@@ -41,6 +41,7 @@ public class Cognoscenti {
     private ConfigFile theConfig;
     private File rootFolder;
     private UserCacheMgr userCacheMgr;
+    private UserManager userManager;
 
     //managing the known containers
     //TODO: get rid of this static variable
@@ -138,6 +139,10 @@ System.out.println("Weaver Server Object == Start the Server");
     public UserCacheMgr getUserCacheMgr() {
         return userCacheMgr;
     }
+    public UserManager getUserManager() {
+        return userManager;
+    }
+
 
     //TODO: get rid of this static
     public static String getServerGlobalId() {
@@ -204,8 +209,9 @@ System.out.println("Weaver Server Object == Start the Server");
             projectsWithEmailToSend = new ArrayList<String>();
 
             AuthDummy.initializeDummyRequest(this);
-            UserManager.loadUpUserProfilesInMemory(this);
             userCacheMgr = new UserCacheMgr(this);
+            userManager = new UserManager(this);
+            userManager.loadUpUserProfilesInMemory(this);
 
             NGPageIndex.initAllStaticVars();
             initIndexOfContainers();
@@ -694,5 +700,5 @@ System.out.println("Weaver Server Object == Start the Server");
     public void removePageFromEmailToSend(String key) {
         projectsWithEmailToSend.remove(key);
     }
-
+    
 }

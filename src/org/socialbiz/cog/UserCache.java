@@ -1,9 +1,6 @@
 package org.socialbiz.cog;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
@@ -26,19 +23,7 @@ public class UserCache {
     }
 
     public void save() throws Exception {
-        File folder = userCacheFile.getParentFile();
-        File tempFile = new File(folder, "~"+userCacheFile.getName()+"~tmp~");
-        if (tempFile.exists()) {
-            tempFile.delete();
-        }
-        FileOutputStream fos = new FileOutputStream(tempFile);
-        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-        cacheObj.write(osw,2,0);
-        osw.close();
-        if (userCacheFile.exists()) {
-            userCacheFile.delete();
-        }
-        tempFile.renameTo(userCacheFile);
+        cacheObj.writeToFile(userCacheFile);
     }
 
     // operation get task list.

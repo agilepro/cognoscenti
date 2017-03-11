@@ -480,43 +480,6 @@
 
 
 
-    /**
-    * Strange function.  If you have an openid, this will return an email address for
-    * that user if one is known.  If you have an email, it will return the openid
-    * for that user if one is known.  In all other cases a zero length string is returned.
-    */
-    public String getPossibleOtherId(String possibleId)
-    {
-        if (possibleId==null)
-        {
-            return "";
-        }
-        UserProfile up = UserManager.findUserByAnyId(possibleId);
-        if (up==null)
-        {
-            return "";
-        }
-
-        boolean isEmail = (possibleId.indexOf('@')>0);
-        if (isEmail)
-        {
-            String testOpenId = up.getOpenId();
-            if (testOpenId!=null)
-            {
-                return testOpenId;
-            }
-        }
-        else
-        {
-            String testEmail = up.getPreferredEmail();
-            if (testEmail!=null)
-            {
-                return testEmail;
-            }
-        }
-        return "";
-    }
-
     private String getShortName(String name, int maxsize) {
         if (name.endsWith("/")) {
             name = name.substring(0, name.length() - 1);

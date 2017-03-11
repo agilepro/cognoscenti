@@ -1,14 +1,12 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@include file="/spring/jsp/include.jsp"
-%><%@page import="org.socialbiz.cog.NotificationRecord"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-    List<NotificationRecord> notifications = uProf.getNotificationList();
+    List<String> notifications = uProf.getNotificationList();
     boolean noneFound = notifications.size()==0;
 
     JSONArray projList = new JSONArray();
-    for (NotificationRecord nr : notifications) {
-        String pageKey = nr.getPageKey();
+    for (String pageKey : notifications) {
         NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
         if (ngpi==null) {
             continue;

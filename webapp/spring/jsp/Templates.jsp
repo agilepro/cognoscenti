@@ -1,20 +1,17 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@include file="/spring/jsp/include.jsp"
-%><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-    List<TemplateRecord> tmpList = uProf.getTemplateList();
+    List<String> tmpList = uProf.getTemplateList();
     boolean noneFound = tmpList.size()==0;
 
     JSONArray projList = new JSONArray();
-    for (TemplateRecord tr : tmpList) {
-        String pageKey = tr.getPageKey();
+    for (String pageKey : tmpList) {
         NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
         if (ngpi==null) {
             continue;
         }
         JSONObject wObj = ngpi.getJSON4List();
-        wObj.put("visited", tr.getLastSeen());
         projList.put(wObj);
     }
 
@@ -23,8 +20,7 @@
         "changed": 1433079860881,
         "name": "Secular Coalition for America",
         "pageKey": "secular-coalition-for-america",
-        "siteKey": "serious",
-        "visited": 1408859504142
+        "siteKey": "serious"
       },
 */
 
@@ -76,22 +72,6 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Templates
-        </div>
-        <!--div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="">Do Nothing</a></li>
-            </ul>
-          </span>
-
-        </div-->
-    </div>
 
     <div>Filter <input ng-model="filter"></div>
     <div style="height:30px;"></div>
@@ -101,7 +81,6 @@ app.controller('myCtrl', function($scope, $http) {
             <td width="50px"></td>
             <td width="200px">Workspace</td>
             <td width="100px">Changed</td>
-            <td width="100px">Seen</td>
         </tr>
         <tr ng-repeat="rec in getRows()">
             <td>
@@ -124,7 +103,6 @@ app.controller('myCtrl', function($scope, $http) {
                 </a>
             </td>
             <td>{{rec.changed|date}}</span></td>
-            <td>{{rec.visited|date}}</span></td>
         </tr>
     </table>
 

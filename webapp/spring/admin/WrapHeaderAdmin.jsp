@@ -11,7 +11,7 @@
     if (ar.isLoggedIn()) {
         List<WatchRecord> wl = loggedUser.getWatchList();
         if (wl.size()>0) {
-            mainWorkspaceId = wl.get(0).getPageKey();
+            mainWorkspaceId = wl.get(0).pageKey;
             NGPageIndex ngpi = cog.getContainerIndexByKey(mainWorkspaceId);
             if (ngpi!=null) {
                 mainSiteId = ngpi.wsSiteKey;

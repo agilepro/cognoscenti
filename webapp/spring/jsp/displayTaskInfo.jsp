@@ -1,7 +1,6 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="java.util.Date"
 %><%@page import="java.text.SimpleDateFormat"
-%><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@ include file="/spring/jsp/functions.jsp"
 %><%!

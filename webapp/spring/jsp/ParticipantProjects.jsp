@@ -1,6 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@include file="/spring/jsp/include.jsp"
-%><%@page import="org.socialbiz.cog.NotificationRecord"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
     List<NGPageIndex> ownedProjs = ar.getCogInstance().getProjectsUserIsPartOf(uProf);

@@ -64,14 +64,6 @@ public class LicenseForUser implements License
 
     public String getId() throws Exception {
         String token = uProf.getLicenseToken();
-        if (token==null || token.length()==0) {
-            uProf.genNewLicenseToken();
-            token = uProf.getLicenseToken();
-
-            //TODO: this is dangerous if two threads do this at the same time.
-            //Should figure out a threadsafe way to do this.
-            UserManager.writeUserProfilesToFile();
-        }
         return uProf.getKey()+"!"+token;
     }
 

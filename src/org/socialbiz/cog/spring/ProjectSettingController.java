@@ -208,29 +208,30 @@ public class ProjectSettingController extends BaseController {
 
             
             op = personalInfo.getString("op");
+            UserManager userManager = ar.getCogInstance().getUserManager();
             if ("SetWatch".equals(op)) {
                 up.setWatch(pageId, ar.nowTime);
-                UserManager.writeUserProfilesToFile();
+                userManager.saveUserProfiles();
             }
             else if ("ClearWatch".equals(op)) {
                 up.clearWatch(pageId);
-                UserManager.writeUserProfilesToFile();
+                userManager.saveUserProfiles();
             }
             else if ("SetTemplate".equals(op)) {
                 up.setProjectAsTemplate(pageId);
-                UserManager.writeUserProfilesToFile();
+                userManager.saveUserProfiles();
             }
             else if ("ClearTemplate".equals(op)) {
                 up.removeTemplateRecord(pageId);
-                UserManager.writeUserProfilesToFile();
+                userManager.saveUserProfiles();
             }
             else if ("SetNotify".equals(op)) {
-                up.setNotification(pageId, ar.nowTime);
-                UserManager.writeUserProfilesToFile();
+                up.setNotification(pageId);
+                userManager.saveUserProfiles();
             }
             else if ("ClearNotify".equals(op)) {
                 up.clearNotification(pageId);
-                UserManager.writeUserProfilesToFile();
+                userManager.saveUserProfiles();
             }
             else if ("SetEmailMute".equals(op)) {
                 ngw.getMuteRole().addPlayerIfNotPresent(up.getAddressListEntry());

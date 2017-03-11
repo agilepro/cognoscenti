@@ -116,56 +116,6 @@ public class UserPage extends ContainerCommon
     }
 
 
-
-    /**
-    * Returns a Vector of key values (Strings) for pages.
-    * No guarantee that that page still exists.
-    */
-    public List<String> getProjectTemplates() throws Exception {
-        List<String> nl = getVector("template");
-        return nl;
-    }
-    public void addProjectTemplate(String pageKey)
-        throws Exception
-    {
-        addVectorValue("template", pageKey);
-    }
-    public void removeProjectTemplate(String pageKey)
-        throws Exception
-    {
-        removeVectorValue("template", pageKey);
-    }
-
-    public boolean inProjectTemplates(String pageKey) throws Exception {
-        for (String val : getProjectTemplates()) {
-            if (pageKey.equals(val)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public List<TaskTemplate> getTaskTemplates() throws Exception {
-        List<TaskTemplate> nl = getChildren("task", TaskTemplate.class);
-        return nl;
-    }
-
-    public TaskTemplate createTaskTemplate() throws Exception {
-        TaskTemplate tt = createChildWithID("task",
-                TaskTemplate.class, "id", getUniqueOnPage());
-        return tt;
-    }
-
-    public void removeTaskTemplate(String id) throws Exception {
-        List<TaskTemplate> nl = getChildren("task", TaskTemplate.class);
-        for (TaskTemplate tEle : nl) {
-            if (id.equals(tEle.getAttribute("id"))) {
-                removeChild(tEle);
-            }
-        }
-    }
-
-
     /**
     * Get a four digit numeric id which is unique on the page.
     */
@@ -179,9 +129,6 @@ public class UserPage extends ContainerCommon
             }
             for (ConnectionSettings cs : getAllConnectionSettings()) {
                 existingIds.add(cs.getId());
-            }
-            for (TaskTemplate tt : getTaskTemplates()) {
-                existingIds.add(tt.getId());
             }
             for (AgentRule ar : getAgentRules()) {
                 existingIds.add(ar.getId());

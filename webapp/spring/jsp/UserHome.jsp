@@ -36,17 +36,16 @@ Required parameters:
     JSONArray futureMeetings = userCache.getFutureMeetings();
 
     List<WatchRecord> watchList = loggedUser.getWatchList();
-//    WatchRecord.sortByChangeDate(watchList, cog);
 
     JSONArray wList = new JSONArray();
     for (WatchRecord wr : watchList) {
-        String pageKey = wr.getPageKey();
+        String pageKey = wr.pageKey;
         NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
         if (ngpi==null) {
             continue;
         }
         JSONObject wObj = ngpi.getJSON4List();
-        wObj.put("visited", wr.getLastSeen());
+        wObj.put("visited", wr.lastSeen);
         wList.put(wObj);
     }
 

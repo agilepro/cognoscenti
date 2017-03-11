@@ -23,120 +23,117 @@ package org.socialbiz.cog;
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
-public class UserProfile extends DOMFace implements UserRef
+public class UserProfile implements UserRef
 {
     private String key = "";
     private String name = "";
-    private long lastLogin;
-    private long lastUpdated;
-    private ValueElement[] favorites = null;
-    private List<IDRecord> ids = null;
+    private String description;
+    private String image;
+    private String licenseToken;
+    private long   lastLogin;
+    private String lastLoginId;
+    private long   lastUpdated;
+    private long   notificationTime;
+    private String accessCode;
+    private long   accessCodeModTime;
+    private int    notificationPeriod;
+    private boolean disabled;
+    private List<String> ids = null;
     private List<WatchRecord> watchList = null;
-    private List<NotificationRecord> notificationList = null;
-    private List<TemplateRecord> templateList = null;
+    private List<String> notificationList = null;
+    private List<String> templateList = null;
 
-    public UserProfile(Document doc, Element upEle, DOMFace p)
-        throws Exception
-    {
-        super(doc,upEle,p);
-        key = upEle.getAttribute("id");
+    public UserProfile(String guid) throws Exception {
+        key = IdGenerator.generateKey();
+        ids = new ArrayList<String>();
+        ids.add(guid);
+        watchList = new ArrayList<WatchRecord>();
+        notificationList = new ArrayList<String>();
+        templateList = new ArrayList<String>();
+        
+        //make sure that this profile has a license token
+        getLicenseToken();
+    }
+    
+    
+    public UserProfile(UserProfileXML upXML) throws Exception {
+        key = upXML.getKey();
 
         //consistency check here
-        if (key == null || key.length() == 0)
-        {
+        if (key == null || key.length() == 0)  {
             key = IdGenerator.generateKey();
-            upEle.setAttribute("id", key);
         }
-        ids = new ArrayList<IDRecord>();
+        
+        name = upXML.getName();
+        description = upXML.getDescription();
+        image = upXML.getImage();
+        licenseToken = upXML.getLicenseToken();
+        
+        lastLogin   = upXML.getLastLogin();
+        lastLoginId = upXML.getLastLoginId();
+        lastUpdated = upXML.getLastUpdated();
+        notificationTime = upXML.getNotificationTime();
+        
+        accessCode = upXML.getAccessCode();
+        accessCodeModTime = upXML.getAccessCodeModTime();
+        notificationPeriod = upXML.getNotificationPeriod();
+        disabled   = upXML.getDisabled();
+        ids        = upXML.getIdList();
 
-        IDRecord.findIDRecords(this, ids);
-
-        // upgrade to using an IDRecord for holding openid, in case
-        // there are any old files around with "userid"
-        String uopenid = getScalar("userid");
-        if (uopenid!=null && uopenid.length()>0)
-        {
-            //need to convert this user
-            //first remove the old tag
-            removeAllNamedChild("userid");
-            IDRecord newId = IDRecord.createIDRecord(this, uopenid);
-            ids.add(newId);
-        }
-        String email = getScalar("email");
-        if (email!=null && email.length()>0)
-        {
-            //need to convert this user
-            //first remove the old tag
-            removeAllNamedChild("email");
-            IDRecord newId = IDRecord.createIDRecord(this, email);
-            ids.add(newId);
-        }
-
-        IDRecord.sortByType(ids);
-
-        name = getScalar("name");
-        lastLogin   = safeConvertLong(getScalar("lastlogin"));
-        lastUpdated = safeConvertLong(getScalar("lastupdated"));
-
+        watchList = upXML.getWatchList();
+        notificationList = upXML.getNotificationList();
+        templateList = upXML.getTemplateList();
+        
         //make sure that this profile has a license token
-        String token = getLicenseToken();
-        if (token==null || token.length()==0) {
-            genNewLicenseToken();
+        getLicenseToken();
+    }
+    
+    public void transferAllValues(UserProfileXML upXML) throws Exception {
+        upXML.setKey(key);
+        upXML.setName(name);
+        upXML.setDescription(description);
+        upXML.setImage(image);
+        upXML.setLicenseToken(licenseToken);
+        
+        upXML.setLastLogin(lastLogin, lastLoginId);
+        upXML.setLastUpdated(lastUpdated);
+        upXML.setNotificationTime(notificationTime);
+        
+        upXML.setAccessCode(accessCode);
+        upXML.setAccessCodeModTime(accessCodeModTime);
+        upXML.setNotificationPeriod(notificationPeriod);
+        upXML.setDisabled(disabled);
+        for (String oneId : ids) {
+            upXML.addId(oneId);
+        }
+
+        for (WatchRecord wr : watchList) {
+            upXML.addWatch(wr.pageKey, wr.lastSeen);
+        }
+        for (String note : notificationList) {
+            upXML.addNotification(note);
+        }
+        for (String temper : templateList) {
+            upXML.addTemplate(temper);
         }
     }
 
-    public List<IDRecord> getIdList()
-    {
-        List<IDRecord> retVal = new ArrayList<IDRecord> ();
-        for (IDRecord anId : ids)
-        {
+    
+    public List<String> getAllIds() {
+        List<String> retVal = new ArrayList<String> ();
+        for (String anId : ids) {
             retVal.add(anId);
         }
         return retVal;
     }
-    public List<String> getEmailList()
-    {
-        List<String> retVal = new ArrayList<String> ();
-        for (IDRecord anId : ids)
-        {
-            if (anId.isEmail())
-            {
-                retVal.add(anId.getLoginId());
-            }
-        }
-        return retVal;
-    }
-
-
-    /**
-    * gets the first open id in the list.
-    * This is rather arbitrary, and should not be used.
-    * use getUniversalId instead.
-    */
-    public String getOpenId()
-    {
-        for (IDRecord possible : ids)
-        {
-            String idval = possible.getLoginId();
-            if (idval.indexOf("@")<0)
-            {
-                return idval;
-            }
-        }
-        return null;
-    }
-
 
 
 
@@ -144,10 +141,8 @@ public class UserProfile extends DOMFace implements UserRef
     * This should be unique and internal, so .... not
     * sure why it would ever need to be set.
     */
-    public void setKey(String nkey)
-    {
+    public void setKey(String nkey) {
         key = nkey;
-        setAttribute("id", key);
     }
 
     /**
@@ -157,38 +152,23 @@ public class UserProfile extends DOMFace implements UserRef
     * that can be transferred across servers, but the KEY is a key only on this
     * server.
     */
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
-    public void setName(String newName)
-    {
-        if (newName == null)
-        {
-            newName = "";
-        }
-        if (!newName.equals(name))
-        {
-            name = newName;
-            setScalar("name", newName);
-        }
+    public void setName(String newName) {
+        name = newName;
     }
-
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
 
-    public void setDescription(String newDesc)
-    {
-        setScalar("description", newDesc);
+    public void setDescription(String newDesc) {
+        description = newDesc;
     }
-
-    public String getDescription()
-    {
-        return getScalar("description");
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -205,13 +185,8 @@ public class UserProfile extends DOMFace implements UserRef
         }
 
         //check if this user already has the ID, and do nothing if true
-        String simplifiedId = IDRecord.simplifyOpenId(newId);
-        for (IDRecord possible : ids)
-        {
-            String idval = possible.getLoginId();
-            if (newId.equalsIgnoreCase(idval) ||
-                simplifiedId.equalsIgnoreCase(IDRecord.simplifyOpenId(idval)))
-            {
+        for (String idval : ids) {
+            if (newId.equalsIgnoreCase(idval)) {
                 //nothing to do, there is already an ID in there
                 return;
             }
@@ -221,12 +196,12 @@ public class UserProfile extends DOMFace implements UserRef
         while (otherUser!=null) {
             //user could be found because this is an email, openid, key or name of that user
             //if it is email or openid we can remove it.
-            List<IDRecord> listid = otherUser.getIdList();
-            IDRecord foundId = null;
-            for (IDRecord oid : listid) {
+            List<String> listid = otherUser.getAllIds();
+            String foundId = null;
+            for (String oid : listid) {
                 //loop through all IDS and clear them out.
                 //remember, there may be more than one match
-                if (oid.equalsId(newId)) {
+                if (oid.equalsIgnoreCase(newId)) {
                     foundId = oid;
                     break;
                 }
@@ -240,15 +215,12 @@ public class UserProfile extends DOMFace implements UserRef
             }
 
             //found at least one on this user, remove it.
-            otherUser.removeId(foundId.getLoginId());
+            otherUser.removeId(foundId);
 
             //are there any more users with this ID?
             otherUser = UserManager.findUserByAnyId(newId);
         }
-
-        IDRecord newIdRec = IDRecord.createIDRecord(this, newId);
-        ids.add(newIdRec);
-        IDRecord.sortByType(ids);
+        ids.add(newId);
     }
 
     /**
@@ -257,45 +229,23 @@ public class UserProfile extends DOMFace implements UserRef
     * If duplicates exist, removes all of them.
     * If newId equals preferred Email then it clears that.
     */
-    public void removeId(String newId)
-        throws Exception
-    {
-        if (newId.equals(getPreferredEmail()))
-        {
-            setScalar("prefEmail", null);
-        }
-
-        //first iterate and find all the ID records that match
-        Vector<IDRecord> found = new Vector<IDRecord>();
-        for (IDRecord possible : ids)
-        {
-            if (possible.equalsId(newId))
-            {
-                found.add(possible);
+    public void removeId(String newId) throws Exception {
+        Vector<String> cache = new Vector<String>();
+        for (String possible : ids) {
+            if (!possible.equalsIgnoreCase(newId)) {
+                cache.add(possible);
             }
         }
-
-        //then actually remove them from the collections
-        for (IDRecord example : found) {
-            ids.remove(example);
-            example.removeIDRecord(this);
-        }
-
+        ids = cache;
     }
 
-    public void setLastLogin(long newLastLogin, String loginId)
-    {
-        if (lastLogin != newLastLogin)
-        {
-            lastLogin = newLastLogin;
-            setScalar("lastlogin", Long.toString(newLastLogin));
-            setScalar("lastloginid", loginId);
-        }
+    public void setLastLogin(long newLastLogin, String loginId) {
+        lastLogin = newLastLogin;
+        lastLoginId = loginId;
     }
 
-    public long getLastLogin()
-    {
-        return this.lastLogin;
+    public long getLastLogin() {
+        return lastLogin;
     }
 
     /**
@@ -303,116 +253,18 @@ public class UserProfile extends DOMFace implements UserRef
     * id that was used for the last actual login, so that this can be
     * used as a prompt for logging in (stored in cookies).
     */
-    public String getLastLoginId()
-    {
-        String retval = getScalar("lastloginid");
-
-        //migration code ... Remove after Feb 2010
-        //if the user has not logged in since adding this method
-        //then there will be no last id set, and return instead the best id, which is
-        //what was being used before...
-        if (retval == null)
-        {
-            retval = getUniversalId();
-        }
-        return retval;
+    public String getLastLoginId() {
+        return lastLoginId;
     }
 
-    public void setLastUpdated(long newLastUpdated)
-    {
-        if (lastUpdated != newLastUpdated)
-        {
-            lastUpdated = newLastUpdated;
-            setScalar("lastupdated", Long.toString(newLastUpdated));
-        }
+    public void setLastUpdated(long newLastUpdated) {
+        lastUpdated = newLastUpdated;
     }
 
-    public long getLastUpdated()
-    {
-        return this.lastUpdated;
+    public long getLastUpdated() {
+        return lastUpdated;
     }
 
-    /**
-    //NOT USED
-    public void setFavorites(ValueElement[] newFavorites)
-    {
-        if (favorites==null)
-        {
-            getFavorites();
-        }
-
-        //try to detect if they are the same to avoid thrashing memory
-        boolean isSame = (newFavorites.length==favorites.length);
-        if (isSame)
-        {
-            for (int i=0; i<favorites.length; i++)
-            {
-                ValueElement oldone = favorites[i];
-                ValueElement newone = newFavorites[i];
-                if (!oldone.name.equals(newone.name))
-                {
-                    isSame = false;
-                }
-                if (!oldone.value.equals(newone.value))
-                {
-                    isSame = false;
-                }
-            }
-        }
-        if (isSame)
-        {
-            return; //nothing to do, no change
-        }
-
-        favorites = newFavorites;
-
-        Element favsEle = DOMUtils.getChildElement(fEle, "favorites");
-        fEle.removeChild(favsEle);
-        favsEle = DOMUtils.createChildElement(fDoc, fEle, "favorites");
-        DOMUtils.removeAllChildren(favsEle);
-
-        for (int i=0; i<favorites.length; i++)
-        {
-            Element favEle = DOMUtils.createChildElement(fDoc, favsEle, "favorite");
-            favEle.setAttribute("name", favorites[i].name);
-            favEle.setAttribute("address", favorites[i].value);
-        }
-
-        //DEBUG: double check that it got it right
-        favorites = null;  //remove the cache, get favorites will parse again
-        ValueElement[] testSet = getFavorites();
-
-        if (newFavorites.length != testSet.length)
-        {
-            throw new RuntimeException("Tried to set '"+newFavorites.length+"' value, but ended up with '"+testSet.length+"' values.");
-        }
-    }
-
-    public ValueElement[] getFavorites()
-    {
-        if (favorites==null)
-        {
-            //parse now, because we have not parsed yet
-            Element favsEle = DOMUtils.getOrCreateChild(fDoc, fEle, "favorites");
-            Vector<ValueElement> favsVect = new Vector<ValueElement>();
-            for (Element favEle : DOMUtils.getChildElementsList(favsEle)) {
-                ValueElement ve = new ValueElement(favEle.getAttribute("name"), favEle.getAttribute("address"));
-                favsVect.add(ve);
-            }
-            favorites = new ValueElement[favsVect.size()];
-            favsVect.copyInto(favorites);
-        }
-
-        return favorites;
-    }
-    */
-
-    public void setHomePage(String newHomePage) {
-        setScalar("homepage", newHomePage);
-    }
-    public String getHomePage() {
-        return getScalar("homepage");
-    }
 
     /*
      * A user can choose how many days between reminder emails.
@@ -425,43 +277,24 @@ public class UserProfile extends DOMFace implements UserRef
      * notification if it has been a long time.
      */
     public void setNotificationPeriod(int period) {
-        if (period<=0) {
-            period=1;
-        }
-        setAttributeInt("notificationPeriod", period);
+        notificationPeriod = period;
     }
     public int getNotificationPeriod() {
-        int period = getAttributeInt("notificationPeriod");
-        if (period<=0) {
-            period=1;
+        if (notificationPeriod<=0) {
+            notificationPeriod=1;
         }
-        return period;
+        return notificationPeriod;
     }
 
 
-    public void setNotificationTime(long period) {
-        setAttributeLong("notificationTime", period);
+
+    public void setNotificationTime(long time) {
+        notificationTime = time;
     }
     public long getNotificationTime() {
-        return getAttributeLong("notificationTime");
+        return notificationTime;
     }
 
-
-    /**
-    * The magic number is set when the user makes a request for a password.
-    * The magic number is sent to the user in the hyper link.
-    * Then, a request to register a new password MUST have that same magic
-    * number in it, in order to prove that we really sent the email message.
-    * Magic number should be used ONLY ONCE, and cleared after use.
-    */
-    public void setMagicNumber(String magicnumber)
-    {
-        setScalar("magicnumber", magicnumber);
-    }
-    public String getMagicNumber()
-    {
-        return getScalar("magicnumber");
-    }
 
     /**
     * The license token is a randomly generated value that controls API
@@ -473,19 +306,13 @@ public class UserProfile extends DOMFace implements UserRef
     * If you generate a new token, don't forget to save user profiles
     */
     public void genNewLicenseToken() {
-        setScalar("licensetoken", IdGenerator.generateKey());
+        licenseToken = IdGenerator.generateKey();
     }
     public String getLicenseToken() {
-        return getScalar("licensetoken");
-    }
-
-    public String toString()
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append("\nName : ");
-        sb.append(name);
-        // add rest of the fields.
-        return sb.toString();
+        if (licenseToken==null || licenseToken.length()==0) {
+            licenseToken = IdGenerator.generateKey();
+        }
+        return licenseToken;
     }
 
 
@@ -499,14 +326,9 @@ public class UserProfile extends DOMFace implements UserRef
     *
     * Required by interface UserRef
     */
-    public boolean hasAnyId(String testId)
-    {
-        String simplifiedId = IDRecord.simplifyOpenId(testId);
-        for (IDRecord possible : ids)
-        {
-            String idval = possible.getLoginId();
-            if (testId.equalsIgnoreCase(idval) || simplifiedId.equalsIgnoreCase(IDRecord.simplifyOpenId(idval)))
-            {
+    public boolean hasAnyId(String testId) {
+        for (String idval : ids) {
+            if (testId.equalsIgnoreCase(idval)) {
                 return true;
             }
         }
@@ -520,8 +342,7 @@ public class UserProfile extends DOMFace implements UserRef
         //exactly like someone else's email address.  If someone purposefully tries
         //to name themselves as someone else's email address, they will be chosen only
         //if there is nobody else with that email address.
-        if (testId.equalsIgnoreCase(name))
-        {
+        if (testId.equalsIgnoreCase(name)) {
             return true;
         }
 
@@ -529,8 +350,7 @@ public class UserProfile extends DOMFace implements UserRef
         //exactly like someone else's email address.  If someone purposefully tries
         //to name themselves as someone else key, they will be chosen only
         //if there is nobody else with that email address.
-        if (testId.equalsIgnoreCase(key))
-        {
+        if (testId.equalsIgnoreCase(key)) {
             return true;
         }
 
@@ -575,7 +395,7 @@ public class UserProfile extends DOMFace implements UserRef
     {
         if (anyId==null || anyId.length()==0)
         {
-            //TODO: this chould be translateable
+            //TODO: this should be translateable
             ar.write("Unknown User");
             return;
         }
@@ -592,16 +412,11 @@ public class UserProfile extends DOMFace implements UserRef
     public String getUniversalId()
     {
         String usable = getPreferredEmail();
-        if (usable==null || usable.length()==0)
-        {
-            usable = getOpenId();
-            if (usable==null || usable.length()==0)
-            {
-                // not sure what to do here.  Profile is not valid without any ids
-                // but key should work in most places it is needed.  Not universal
-                // but it is unique on this site at least
-                return getKey();
-            }
+        if (usable==null || usable.length()==0) {
+            // not sure what to do here.  Profile is not valid without any ids
+            // but key should work in most places it is needed.  Not universal
+            // but it is unique on this site at least
+            return getKey();
         }
         return usable;
     }
@@ -665,7 +480,7 @@ public class UserProfile extends DOMFace implements UserRef
 
     public boolean isWatch(String pageKey)  throws Exception  {
         for (WatchRecord sr : getWatchList())  {
-            if (pageKey.equals(sr.getPageKey())) {
+            if (pageKey.equals(sr.pageKey)) {
                 return true;
             }
         }
@@ -679,12 +494,9 @@ public class UserProfile extends DOMFace implements UserRef
     * zero if the user does not have a subscription.
     */
     public long watchTime(String pageKey) throws Exception {
-        if (watchList == null) {
-            getWatchList();
-        }
-        for (WatchRecord sr : watchList) {
-            if (pageKey.equals(sr.getPageKey())) {
-                return sr.getLastSeen();
+        for (WatchRecord wr : watchList) {
+            if (pageKey.equals(wr.pageKey)) {
+                return wr.lastSeen;
             }
         }
         return 0;
@@ -695,10 +507,6 @@ public class UserProfile extends DOMFace implements UserRef
     * Do not modify this vector externally, just read only.
     */
     public List<WatchRecord> getWatchList()  throws Exception {
-        if (watchList == null) {
-            watchList = new Vector<WatchRecord>();
-            WatchRecord.findWatchRecord(this, watchList);
-        }
         return watchList;
     }
 
@@ -711,19 +519,13 @@ public class UserProfile extends DOMFace implements UserRef
     * used to determine if the page has changed since that time.
     */
     public void setWatch(String pageKey, long now) throws Exception {
-        if (watchList == null) {
-            getWatchList();
-        }
         for (WatchRecord sr : watchList) {
-            if (pageKey.equals(sr.getPageKey())) {
-                sr.setLastSeen(now);
+            if (pageKey.equals(sr.pageKey)) {
+                sr.lastSeen = now;
                 return;
             }
         }
-
-        //if none are found, then create one
-        WatchRecord sr = WatchRecord.createWatchRecord(this, pageKey, now);
-        watchList.add(sr);
+        watchList.add(new WatchRecord(pageKey, now));
     }
 
     /**
@@ -731,31 +533,16 @@ public class UserProfile extends DOMFace implements UserRef
     * if none exists at this time.
     */
     public void assureWatch(String pageKey) throws Exception {
-        if (watchList == null) {
-            getWatchList();
+        if (!isWatch(pageKey)) {
+            setWatch( pageKey, System.currentTimeMillis());
         }
-        for (WatchRecord sr : watchList) {
-            if (pageKey.equals(sr.getPageKey())) {
-                return;
-            }
-        }
-
-        //if none are found, then create one
-        WatchRecord sr = WatchRecord.createWatchRecord(this, pageKey, System.currentTimeMillis());
-        watchList.add(sr);
     }
 
     /**
     * Get rid of any watch of the specified page -- if there is any.
     */
     public void clearWatch(String pageKey)  throws Exception {
-        for (WatchRecord sr : getWatchList()) {
-            if (pageKey.equals(sr.getPageKey())) {
-                sr.removeWatchRecord(this);
-                watchList.remove(sr);
-                break;
-            }
-        }
+        watchList.clear();
     }
 
 
@@ -763,23 +550,14 @@ public class UserProfile extends DOMFace implements UserRef
      * Get rid of any notification of the specified page.
      */
     public void clearAllNotifications() throws Exception {
-        if (notificationList == null) {
-            getNotificationList();
-        }
-        for (NotificationRecord sr : notificationList) {
-            removeChild(sr);
-        }
         notificationList.clear();
     }
 
     /**
-     * Returns a vector of NotificationRecord objects.
+     * Returns a vector of keys of pages in the notify list.
      * Do not modify this vector externally, just read only.
      */
-     public List<NotificationRecord> getNotificationList() throws Exception {
-         if (notificationList == null) {
-             notificationList = getChildren("notification", NotificationRecord.class);
-         }
+     public List<String> getNotificationList() throws Exception {
          return notificationList;
      }
 
@@ -790,147 +568,76 @@ public class UserProfile extends DOMFace implements UserRef
      * The long value is the time of "last seen" which will be
      * used to determine if the page has changed since that time.
      */
-    public void setNotification(String pageKey, long now)
+    public void setNotification(String pageKey)
         throws Exception
     {
-        if (notificationList == null)
-        {
-            getNotificationList();
-        }
-        for (NotificationRecord sr : notificationList)
-        {
-            if (pageKey.equals(sr.getPageKey()))
-            {
+        for (String sr : notificationList) {
+            if (pageKey.equals(sr)) {
                 //already have a record for this page
                 return;
             }
         }
-        NotificationRecord sr = NotificationRecord.createNotificationRecord(this, pageKey);
-        notificationList.add(sr);
+        notificationList.add(pageKey);
     }
 
      /**
       * Get rid of any notification of the specified page.
       */
-    public void clearNotification(String pageKey)
-        throws Exception
-    {
-        if (notificationList == null)
-        {
-            getNotificationList();
-        }
-
-        for (Iterator<NotificationRecord> iterator = notificationList.iterator(); iterator.hasNext();) {
-            NotificationRecord sr = iterator.next();
-            if (pageKey.equals(sr.getPageKey()))
-            {
-                removeChild(sr);
-                iterator.remove();
+    public void clearNotification(String pageKey) throws Exception {
+        ArrayList<String> cache = new ArrayList<String>();
+        for (String noteItem : notificationList) {
+            if (!pageKey.equals(noteItem)) {
+                cache.add(noteItem);
             }
         }
+        notificationList = cache;
     }
 
 
-    public boolean isNotifiedForProject(String pageKey)
-        throws Exception
-    {
-        if (notificationList == null)
-        {
-            getNotificationList();
-        }
-        for (NotificationRecord sr : notificationList)
-        {
-            if (pageKey.equals(sr.getPageKey()))
-            {
+    public boolean isNotifiedForProject(String pageKey) throws Exception {
+        for (String sr : notificationList) {
+            if (pageKey.equals(sr)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void setDisabled(boolean val)
-    {
-        if (val)
-        {
-            setAttribute("disable", "yes");
-        }
-        else
-        {
-            setAttribute("disable", null);
-        }
+    public void setDisabled(boolean val) {
+        disabled = val;
     }
 
-    public boolean getDisabled()
-    {
-        String disable = getAttribute("disable");
-        return ((disable!=null) && ("yes".equals(disable)));
+    public boolean getDisabled() {
+        return disabled;
     }
 
 
-
-    /**
-     * Whether or not to display WEAVER style menus
-     * @param val
-     */
-    public void setWeaverMenu(boolean val) {
-        setAttributeBool("weaverMenu", val);
-    }
-    public boolean getWeaverMenu() {
-        return getAttributeBool("weaverMenu");
-    }
-
-
-
-    public List<TemplateRecord> getTemplateList()
-    throws Exception
-    {
-        templateList = TemplateRecord.getAllTemplateRecords(this);
+    public List<String> getTemplateList() throws Exception {
         return templateList;
     }
 
-    public void setProjectAsTemplate(String pageKey)
-    throws Exception
-    {
-        TemplateRecord tr = TemplateRecord.createTemplateRecord(this, pageKey);
-        templateList.add(tr);
+    public void setProjectAsTemplate(String pageKey) throws Exception {
+        templateList.add(pageKey);
     }
 
-    public boolean findTemplate(String pageKey)
-    throws Exception
-    {
-        List<TemplateRecord> templateList =  getTemplateList();
-
-        for (Iterator<TemplateRecord> itr = templateList.iterator(); itr.hasNext();) {
-            TemplateRecord template =  itr.next();
-            String templatePageKey = template.getPageKey();
-            if (pageKey.equals(templatePageKey))
-            {
+    public boolean isTemplate(String pageKey) throws Exception {
+        for (String templatePageKey : templateList) {
+            if (pageKey.equals(templatePageKey)) {
                 return true;
             }
         }
-
         return false;
     }
-    public void removeTemplateRecord(String pageKey)
-    throws Exception
-    {
-        templateList = getTemplateList();
-
-        TemplateRecord templateToBeRemoved = null;
-        for (Iterator<TemplateRecord> itr = templateList.iterator(); itr.hasNext();) {
-            TemplateRecord template =  itr.next();
-            String templatePageKey = template.getPageKey();
-            if (pageKey.equals(templatePageKey))
-            {
-                templateToBeRemoved = template;
-                break;
+    
+    
+    public void removeTemplateRecord(String pageKey) throws Exception {
+        ArrayList<String> cache = new ArrayList<String>();
+        for (String templatePageKey : templateList) {
+            if (!pageKey.equalsIgnoreCase(templatePageKey)) {
+                cache.add(templatePageKey);
             }
         }
-        if(templateToBeRemoved != null){
-            templateToBeRemoved.removeTemplateRecord(this);
-            templateList.remove(templateToBeRemoved);
-        }
-
+        templateList = cache;
     }
 
     /**
@@ -940,8 +647,7 @@ public class UserProfile extends DOMFace implements UserRef
      */
     public Vector<NGPageIndex> getValidTemplates(Cognoscenti cog) throws Exception {
         Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
-        for(TemplateRecord tr : getTemplateList()) {
-            String pageKey = tr.getPageKey();
+        for(String pageKey : templateList) {
             NGPageIndex ngpi = cog.getContainerIndexByKey(pageKey);
             if (ngpi!=null) {
                 //silently ignore templates that no longer exist
@@ -958,29 +664,17 @@ public class UserProfile extends DOMFace implements UserRef
     * to belong to the user.  (Don't let the user just type in any email
     * address here!)
     */
-    public String getPreferredEmail()
-    {
-        String val = getScalar("prefEmail");
-        if (val != null && val.length()>0)
-        {
-            return val;
-        }
-        //if not set use the default of the first email address ... if there is one
-        for (IDRecord possible : ids)
-        {
-            String idval = possible.getLoginId();
+    public String getPreferredEmail() {
+        //return the first email address ... if there is one
+        for (String idval : ids) {
             //an at sign in there, and no slashes, could be an email address
-            if (idval.indexOf("@")>=0 && idval.indexOf("/")<0)
-            {
+            if (idval.indexOf("@")>=0 && idval.indexOf("/")<0) {
                 return idval;
             }
         }
         return null;
     }
-    public void setPreferredEmail(String newValue)
-    {
-        setScalar("prefEmail", newValue);
-    }
+
     /**
     * returns a properly formatted SMTP user name with email
     * address together as one string.
@@ -1007,16 +701,10 @@ public class UserProfile extends DOMFace implements UserRef
 
 
     public String getImage() {
-        return getScalar("image");
+        return image;
     }
-
     public void setImage(String newImage) {
-        if (newImage == null) {
-            newImage = "";
-        }
-        if (!newImage.equals(name)) {
-            setScalar("image", newImage);
-        }
+        image = newImage;
     }
 
     /**
@@ -1041,15 +729,6 @@ public class UserProfile extends DOMFace implements UserRef
         System.out.println("Created a default image file for user "+getKey()+" from: "+defaultFile);
     }
 
-    public List<SiteRequest> getUsersSiteRequests() throws Exception {
-        List<SiteRequest> usersReqs = new ArrayList<SiteRequest>();
-        for (SiteRequest oneReq : SiteReqFile.getAllSiteReqs()) {
-            if(hasAnyId(oneReq.getUniversalId())) {
-                usersReqs.add( oneReq );
-            }
-        }
-        return usersReqs;
-    }
 
     /*
     * The purpose of this function is to be able to find all the users with
@@ -1062,8 +741,7 @@ public class UserProfile extends DOMFace implements UserRef
         if (name.toLowerCase().contains(frag)) {
             return true;
         }
-        for (IDRecord anId : ids) {
-            String idval = anId.getLoginId();
+        for (String idval : ids) {
             if(idval.toLowerCase().contains(frag)){
                 return true;
             }
@@ -1071,26 +749,18 @@ public class UserProfile extends DOMFace implements UserRef
         return false;
     }
 
-    public void setAccessCode(String accessCode)throws Exception
-    {
-        setScalar("accesscode", accessCode);
-        setScalar("accessCodeModTime", String.valueOf(System.currentTimeMillis()));
-        UserManager.writeUserProfilesToFile();
+    public void setAccessCode(String newAccessCode) throws Exception {
+        accessCode = newAccessCode;
+        accessCodeModTime = System.currentTimeMillis();
     }
+    
     public String getAccessCode()throws Exception
     {
         long max_days = 1;
-        long days_diff = 0;
-        String accessCodeModTime = getScalar("accessCodeModTime");
-        if(accessCodeModTime != null && accessCodeModTime.length() > 0){
-            days_diff = UtilityMethods.getDurationInDays(System.currentTimeMillis(),Long.parseLong(accessCodeModTime));
-        }
-        String accessCode = getScalar("accesscode");
+        long days_diff = UtilityMethods.getDurationInDays(System.currentTimeMillis(),accessCodeModTime);
         if( (accessCode == null || accessCode.length() == 0) || days_diff > max_days){
-            accessCode = IdGenerator.generateKey();
-            setAccessCode(accessCode);
+            setAccessCode(IdGenerator.generateKey());
         }
-
         return accessCode;
     }
 
@@ -1124,13 +794,13 @@ public class UserProfile extends DOMFace implements UserRef
         jObj.put("description", getDescription());
         jObj.put("disabled",    getDisabled());
         jObj.put("accessCode",  getAccessCode());
-        jObj.put("accessCodeModTime",  safeConvertLong(getScalar("accessCodeModTime")));
+        jObj.put("accessCodeModTime",  accessCodeModTime);
         jObj.put("image",       this.getImage());
         
         {
             JSONArray idArray = new JSONArray();
-            for (IDRecord id : ids) {
-                idArray.put(id.getLoginId());
+            for (String id : ids) {
+                idArray.put(id);
             }
             jObj.put("ids", idArray);
         }
@@ -1138,23 +808,23 @@ public class UserProfile extends DOMFace implements UserRef
             JSONArray watchArray = new JSONArray();
             for (WatchRecord watch : getWatchList()) {
                 JSONObject watchRec = new JSONObject();
-                watchRec.put("key",watch.getPageKey());
-                watchRec.put("lastSeen",watch.getLastSeen());
+                watchRec.put("key",watch.pageKey);
+                watchRec.put("lastSeen",watch.lastSeen);
                 watchArray.put(watchRec);
             }
             jObj.put("watchList", watchArray);
         }
         {
             JSONArray notifyArray = new JSONArray();
-            for (NotificationRecord note : getNotificationList()) {
-                notifyArray.put(note.getPageKey());
+            for (String note : notificationList) {
+                notifyArray.put(note);
             }
             jObj.put("notifyList", notifyArray);
         }
         {
             JSONArray tempArray = new JSONArray();
-            for (TemplateRecord temp : getTemplateList()) {
-                tempArray.put(temp.getPageKey());
+            for (String temp : getTemplateList()) {
+                tempArray.put(temp);
             }
             jObj.put("templateList", tempArray);
         }

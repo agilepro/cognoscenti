@@ -691,18 +691,10 @@ public class UserController extends BaseController {
             String u = ar.reqParam("u");
             UserProfile profile = UserManager.getUserProfileOrFail(u);
 
-            if(action.equals("UpdatePreferredEmail")){
-                String preferredEmail = ar.defParam("preferredEmail", "");
-                if(preferredEmail != "") {
-                    profile.setPreferredEmail(preferredEmail);
-                }
-            }
-
             if(action.equals("Save")) {
                 profile.setName(ar.defParam("name", ""));
                 profile.setDescription(ar.defParam("description", ""));
                 profile.setNotificationPeriod(DOMFace.safeConvertInt(ar.defParam("notificationPeriod", "1")));
-                profile.setWeaverMenu(ar.defParam("weaverMenu", null) != null);
             }
 
             String email= ar.defParam("email", null);
@@ -711,7 +703,7 @@ public class UserController extends BaseController {
             }
 
             profile.setLastUpdated(ar.nowTime);
-            UserManager.writeUserProfilesToFile();
+            ar.getCogInstance().getUserManager().saveUserProfiles();
             redirectBrowser(ar,"editUserProfile.htm?u="+userKey);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.edit.userprofile", new Object[]{userKey} , ex);
@@ -879,7 +871,7 @@ public class UserController extends BaseController {
             //set the new name into the profile and save it
             profile.setImage(newImageName);
             profile.setLastUpdated(ar.nowTime);
-            UserManager.writeUserProfilesToFile();
+            ar.getCogInstance().getUserManager().saveUserProfiles();
 
             redirectBrowser(ar,"editUserProfile.htm?u="+userKey);
         }catch(Exception ex){
@@ -903,7 +895,7 @@ public class UserController extends BaseController {
             String u = ar.reqParam("u");
             String modid = ar.reqParam("modid");
 
-            UserProfile profile = UserManager.getUserProfileOrFail(u);
+            UserProfile profile = ar.getCogInstance().getUserManager().getUserProfileOrFail(u);
 
             if (action.equals("removeId"))
             {
@@ -913,7 +905,7 @@ public class UserController extends BaseController {
                 }
                 profile.removeId(modid);
                 profile.setLastUpdated(ar.nowTime);
-                UserManager.writeUserProfilesToFile();
+                ar.getCogInstance().getUserManager().saveUserProfiles();
 
                 JSONObject paramMap = new JSONObject();
                 paramMap.put("msgType" , "success");
@@ -1094,7 +1086,7 @@ public class UserController extends BaseController {
             UserProfile up = ar.getUserProfile();
             up.addId(emailId);
             up.setLastUpdated(ar.nowTime);
-            UserManager.writeUserProfilesToFile();
+            ar.getCogInstance().getUserManager().saveUserProfiles();
 
             //remove micro profile if exists.
             MicroProfileMgr.removeMicroProfileRecord(emailId);
@@ -1301,7 +1293,6 @@ public class UserController extends BaseController {
             }
 
             String userKey = ar.defParam("userKey", null);
-            String emailId = ar.defParam("emailId", null);
 
             if(userKey != null){
                 UserProfile userProfile = getUserToDisplay(ar, userKey);
@@ -1339,7 +1330,7 @@ public class UserController extends BaseController {
             if(sendDigest != null && "never".equals(sendDigest)){
 
                 up.clearNotification( ngp.getKey());
-                UserManager.writeUserProfilesToFile();
+                ar.getCogInstance().getUserManager().saveUserProfiles();
             }
 
             int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;

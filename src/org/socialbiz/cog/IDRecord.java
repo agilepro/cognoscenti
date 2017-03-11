@@ -51,7 +51,7 @@ public class IDRecord extends DOMFace
     * create a new element in the DOM tree, and return the wrapper class
     * Must pass the user that this is an ID of.
     */
-    public static IDRecord createIDRecord(UserProfile user, String newId)
+    public static IDRecord createIDRecord(UserProfileXML user, String newId)
         throws Exception
     {
         if (newId==null)
@@ -66,23 +66,12 @@ public class IDRecord extends DOMFace
     /**
     * remove the id from the user profile
     */
-    public void removeIDRecord(UserProfile user)
+    public void removeIDRecord(UserProfileXML user)
         throws Exception
     {
         user.removeChild(this);
     }
 
-    /**
-    * add all of the id records for a particular user into
-    * the provided vector.
-    */
-    public static void findIDRecords(UserProfile user, List<IDRecord> results)
-            throws Exception {
-        List<IDRecord> chilluns = user.getChildren("idrec", IDRecord.class);
-        for (IDRecord ele : chilluns) {
-            results.add(ele);
-        }
-    }
 
     public String getLoginId()
     {

@@ -1,6 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@include file="/spring/jsp/include.jsp"
-%><%@page import="org.socialbiz.cog.NotificationRecord"
 %><%
     UserProfile uProf = ar.getUserProfile();
     Cognoscenti cog = ar.getCogInstance();

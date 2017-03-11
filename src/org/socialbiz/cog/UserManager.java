@@ -46,8 +46,8 @@ public class UserManager
 
     private static boolean initialized = false;
 
-    private static DOMFile  profileFile;
     private static File     jsonFileName;
+    private static File     xmlFileName;
 
     //TODO: get rid of this static
     private static Cognoscenti cog;
@@ -73,46 +73,43 @@ public class UserManager
         userHashByKey = new Hashtable<String, UserProfile>();
         allUsers      = new Vector<UserProfile>();
         initialized   = false;
-        profileFile   = null;
     }
 
 
-    public static synchronized void loadUpUserProfilesInMemory(Cognoscenti cog) throws Exception {
+    /**
+     * Converting this from a pure static class to a singleton class
+     * that is constructed and managed by the Cognoscenti class.
+     * The members will be static for a while, but the goal is to 
+     * eliminate all static variables.
+     */
+    public UserManager(Cognoscenti _cog) {
+        cog = _cog;
+    }
+    
+    public synchronized void loadUpUserProfilesInMemory(Cognoscenti cog) throws Exception {
         //check to see if this has already been loaded, if so, there is nothing to do
         if (initialized) {
             return;
         }
 
         File userFolder = cog.getConfig().getUserFolderOrFail();
-        File newPlace = new File(userFolder, "UserProfiles.xml");
+        xmlFileName = new File(userFolder, "UserProfiles.xml");
         jsonFileName = new File(userFolder, "UserProfiles.json");
         
-        //check to see if the file is there
-        if (!newPlace.exists())  {
-            //it might be in the old position.
-            File oldPlace = cog.getConfig().getFile("UserProfiles.xml");
-            if (oldPlace.exists()) {
-                DOMFile.moveFile(oldPlace, newPlace);
-            }
-        }
-
         //clear out any left over evidence of an earlier initialization
         allUsers = new Vector<UserProfile>();
 
-        Document userDoc = null;
-        if(!newPlace.exists())
-        {
-            // create the user profile file.
-            userDoc = DOMUtils.createDocument("userprofiles");
-            profileFile = new DOMFile(newPlace, userDoc);
-            writeUserProfilesToFile();
+        if(!xmlFileName.exists()) {
+            saveUserProfiles();
         }
-        else
-        {
-            InputStream is = new FileInputStream(newPlace);
-            userDoc = DOMUtils.convertInputStreamToDocument(is, false, false);
+        
+        if(!xmlFileName.exists()) {
+            throw new Exception("Not able to create the user profile file: "+xmlFileName);
         }
-        profileFile = new DOMFile(newPlace, userDoc);
+        
+        InputStream is = new FileInputStream(xmlFileName);
+        Document userDoc = DOMUtils.convertInputStreamToDocument(is, false, false);
+        DOMFile profileFile = new DOMFile(xmlFileName, userDoc);
         loadCount++;
 
         //there was some kind of but that allowed multiple entries to be created
@@ -123,8 +120,10 @@ public class UserManager
         //because the openid is ID that is stored in pages.  It does change the
         //URL for that user, but we have no choice ... some other user has that URL.
         Hashtable<String, String> guaranteeUnique = new Hashtable<String, String>();
-        List<UserProfile> profiles = profileFile.getChildren("userprofile", UserProfile.class);
-        for (UserProfile up : profiles) {
+        List<UserProfileXML> profiles = profileFile.getChildren("userprofile", UserProfileXML.class);
+        for (UserProfileXML upXML : profiles) {
+            
+            UserProfile up = new UserProfile(upXML);
             String upKey = up.getKey();
             if (guaranteeUnique.containsKey(upKey)) {
                 upKey = IdGenerator.generateKey();
@@ -135,32 +134,49 @@ public class UserManager
             allUsers.add(up);
         }
         refreshHashtables();
-        if (profileFile == null) {
-            throw new ProgramLogicError("ended up with profileFile null.!?!?!");
-        }
 
         initialized = true;
     }
 
 
-    public static synchronized void reloadUserProfiles(Cognoscenti cog) throws Exception {
+    public static synchronized void writeUserProfilesToFile() throws Exception {
+        cog.getUserManager().saveUserProfiles();
+    }
+        
+    public synchronized void saveUserProfiles() throws Exception {
+            
+        JSONObject userFile = new JSONObject();
+        JSONArray  userArray = new JSONArray();
+        for (UserProfile uprof : allUsers) {
+            userArray.put(uprof.getFullJSON());
+        }
+        userFile.put("users", userArray);
+        userFile.put("lastUpdate", System.currentTimeMillis());
+        userFile.writeToFile(jsonFileName);
+        
+        Document userDoc = DOMUtils.createDocument("userprofiles");
+        DOMFile profileFile = new DOMFile(xmlFileName, userDoc);
+        for (UserProfile uprof : allUsers) {
+            UserProfileXML upXML = profileFile.createChild("userprofile", UserProfileXML.class);  
+            uprof.transferAllValues(upXML);
+        }
+        profileFile.save();
+        saveCount++;
+    }
+
+    
+    public synchronized void reloadUserProfiles(Cognoscenti cog) throws Exception {
         clearAllStaticVars();
         loadUpUserProfilesInMemory(cog);
     }
 
-    public static synchronized void refreshHashtables() {
+    private synchronized void refreshHashtables() {
         userHashByUID = new Hashtable<String, UserProfile>();
         userHashByKey = new Hashtable<String, UserProfile>();
 
-        for (UserProfile up : allUsers)
-        {
-            for (IDRecord idrec : up.getIdList())
-            {
-                String idval = idrec.getLoginId();
-                if (idval!=null)
-                {
-                    userHashByUID.put(idval, up);
-                }
+        for (UserProfile up : allUsers) {
+            for (String idval : up.getAllIds()) {
+                userHashByUID.put(idval, up);
             }
             userHashByKey.put(up.getKey(), up);
         }
@@ -192,6 +208,14 @@ public class UserManager
     * Should ONLY fid by confirmed IDs, not by any proposed IDs.
     */
     public static synchronized UserProfile findUserByAnyId(String anyId)
+    {
+        //here is how we find the singleton....
+        UserManager userManager = cog.getUserManager();
+        return userManager.lookupUserByAnyId(anyId);
+    }
+        
+        
+    public synchronized UserProfile lookupUserByAnyId(String anyId)
     {
         //return null if a bogus value passed.
         //fixed bug 12/20/2010 hat was finging people with nullstring names
@@ -237,33 +261,15 @@ public class UserManager
         return up;
     }
 
-    public static synchronized UserProfile createUserWithId(String guid, String newId) throws Exception {
-        //lets make sure that no other profile has that id first,
-        //to avoid any complicated situations.
-        if (guid!=null && UserManager.getUserProfileByKey(guid)!=null) {
-            throw new ProgramLogicError("Can not create a new user profile using a key/guid that some other profile already has: "+guid);
-        }
+    public synchronized UserProfile createUserWithId(String newId) throws Exception {
         if (UserManager.findUserByAnyId(newId)!=null) {
             throw new ProgramLogicError("Can not create a new user profile using an address that some other profile already has: "+newId);
         }
 
-        UserProfile up = createUserProfile(guid);
-        up.addId(newId);
-        return up;
-    }
-
-    public static synchronized UserProfile createUserProfile(String guid) throws Exception {
-        if (profileFile==null) {
-            throw new ProgramLogicError("profileFile is null when it should not be.  May not have been initialized correctly.");
-        }
-        UserProfile nu = profileFile.createChild("userprofile", UserProfile.class);
-        modCount++;
-        if (guid!=null) {
-            nu.setKey(guid);
-        }
-        allUsers.add(nu);
+        UserProfile up = new UserProfile(newId);
+        allUsers.add(up);
         refreshHashtables();
-        return nu;
+        return up;
     }
 
 
@@ -327,25 +333,6 @@ public class UserManager
     }
 
 
-    public static synchronized void writeUserProfilesToFile() throws Exception {
-        if (profileFile==null) {
-            throw new Exception("Program Logic Error: call to save profiles made when no profiles cached in memory");
-        }
-        
-        JSONObject userFile = new JSONObject();
-        JSONArray  userArray = new JSONArray();
-        for (UserProfile uprof : allUsers) {
-            userArray.put(uprof.getFullJSON());
-        }
-        userFile.put("users", userArray);
-        userFile.put("lastUpdate", System.currentTimeMillis());
-        userFile.writeToFile(jsonFileName);
-        
-        profileFile.saveNoFormatting();
-        saveCount++;
-    }
-
-
     public static String getShortNameByUserId(String userId) {
         if(userHashByUID != null) {
             UserProfile up = findUserByAnyId(userId);
@@ -396,18 +383,15 @@ public class UserManager
     * Read through the user profile file, find all the users that are
     * disabled, and remove them from the user profile list.
     */
-    public static synchronized void removeDisabledUsers(Cognoscenti cog) throws Exception {
-        Vector<UserProfile> toBeRemoved = new Vector<UserProfile>();
+    public synchronized void removeDisabledUsers(Cognoscenti cog) throws Exception {
+        Vector<UserProfile> cache = new Vector<UserProfile>();
         for (UserProfile up : allUsers) {
-            if (up.getDisabled()) {
-                toBeRemoved.add(up);
+            if (!up.getDisabled()) {
+                cache.add(up);
             }
         }
-        for (UserProfile up : toBeRemoved) {
-            profileFile.removeChild(up);
-            allUsers.remove(up);
-        }
-        writeUserProfilesToFile();
+        allUsers = cache;
+        saveUserProfiles();
     }
 
     public static synchronized String getUserFullNameList(String matchKey) throws Exception {

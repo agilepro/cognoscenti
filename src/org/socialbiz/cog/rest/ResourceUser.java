@@ -174,19 +174,6 @@ public class ResourceUser implements NGResource
             DOMUtils.createChildElement(loutdoc, element_uprofile, "lastlogin", logindate);
             String updatedate = UtilityMethods.getXMLDateFormat(uprofile.getLastUpdated());
             DOMUtils.createChildElement(loutdoc, element_uprofile, "lastupdated",updatedate);
-            DOMUtils.createChildElement(loutdoc, element_uprofile, "homepage", uprofile.getHomePage());
-            
-            /**
-            //pretty sure favorites is not being used ANYWHERE
-            Element element_favlist = DOMUtils.createChildElement(loutdoc, element_uprofile, "favorites");
-            ValueElement[] fList = uprofile.getFavorites();
-            for(int k=0; k<fList.length; k++){
-                Element element_fav = DOMUtils.createChildElement(loutdoc, element_favlist, "favorite");
-                element_fav.setAttribute("name", fList[k].name);
-                element_fav.setAttribute("address", fList[k].value);
-
-            }
-            */
 
         }
 
@@ -203,7 +190,8 @@ public class ResourceUser implements NGResource
             throw new ProgramLogicError("Profile already exists for user '" + lar.getBestUserId()
               + "' Use PUT to update the profile");
         }
-        UserProfile profile = UserManager.createUserWithId(null, lar.getBestUserId());
+        UserManager userManager = lar.getCogInstance().getUserManager();
+        UserProfile profile = userManager.createUserWithId(lar.getBestUserId());
         lclupdate(profile);
 
         lrstatus.setResourceid(profile.getKey());
@@ -266,10 +254,6 @@ public class ResourceUser implements NGResource
         if(email != null && email.length() > 0){
             profile.addId(email);
         }
-        String homePage = DOMUtils.textValueOfChild(element_uprofile, "homePage", true);
-        if(homePage != null && homePage.length() > 0){
-            profile.setHomePage(homePage);
-        }
         Element element_favorites  = DOMUtils.getChildElement(element_uprofile, "favorites");
         List<ValueElement> favVect = new ArrayList<ValueElement>();
         for (Element element_fav : DOMUtils.getChildElementsList(element_favorites)) {
@@ -287,7 +271,7 @@ public class ResourceUser implements NGResource
         */
         
         profile.setLastUpdated(lar.nowTime);
-        UserManager.writeUserProfilesToFile();
+        lar.getCogInstance().getUserManager().saveUserProfiles();
     }
 
     private void loadTaskList(String filter)throws Exception

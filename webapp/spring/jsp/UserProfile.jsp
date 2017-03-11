@@ -10,10 +10,8 @@
 %><%@page import="org.socialbiz.cog.IDRecord"
 %><%@page import="org.socialbiz.cog.MicroProfileMgr"
 %><%@page import="org.socialbiz.cog.NGRole"
-%><%@page import="org.socialbiz.cog.TemplateRecord"
 %><%@page import="org.socialbiz.cog.UtilityMethods"
 %><%@page import="org.socialbiz.cog.ValueElement"
-%><%@page import="org.socialbiz.cog.WatchRecord"
 %><%@page import="org.socialbiz.cog.dms.CVSConfig"
 %><%@page import="org.socialbiz.cog.dms.LocalFolderConfig"
 %>
