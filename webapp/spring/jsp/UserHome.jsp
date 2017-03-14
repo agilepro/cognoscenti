@@ -20,6 +20,7 @@ Required parameters:
     String refresh = ar.defParam("ref", null);
     if (refresh!=null) {
         userCache.refreshCache(cog);
+        userCache.save();
     }
 
     JSONArray actionItems = userCache.getActionItems();

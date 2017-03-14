@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Timer;
@@ -97,6 +98,11 @@ public class EmailListener extends TimerTask{
      }
 
      static long lastRunTime = 0;
+     static Exception lastException = null;
+     
+     //this is the minimum pause since last time.   This pause is bigger when it gets
+     //an error.   45 seconds if no error,   5 min if error is coming.
+     static long minPause = 45000;
      
      public void run() {
          // When you computer goes to sleep for a while and wakes up, the Java
@@ -105,7 +111,7 @@ public class EmailListener extends TimerTask{
          // event we pick up all the email.  We expect a tick every minute, so
          // ignore any timer ticks if it has not been at least 45 seconds.
          long nowTime = System.currentTimeMillis();
-         if (nowTime - lastRunTime < 45000) {
+         if (nowTime - lastRunTime < minPause) {
              //less than 45 seconds since last run, just exit quickly
              return;
          }
@@ -138,10 +144,21 @@ public class EmailListener extends TimerTask{
 
              //now really attempt to read the email.  Errors after this point recorded in file
              handlePOP3Folder();
+             
+             //if you make it here, then no exception thrown, so clear out any cache that is there
+             //and make the delay to be 45 seconds.
+             lastException = null;
+             minPause = 45000;
          }
-         catch(Exception e)
-         {
-             Exception failure = new Exception("Failure in the EmailListener thread run method. Thread died.", e);
+         catch(Exception e) {
+             if (exceptionsAreEqual(lastException, e)) {
+                 System.out.println("EMAIL LISTENER PROBLEM: same failure. "+new Date());
+                 //make the delay 5 minutes before trying again
+                 minPause = 300000;
+                 return;
+             }
+             lastException = e;
+             Exception failure = new Exception("Failure in the EmailListener TimerTask run method.", e);
              ar.logException("EMAIL LISTENER PROBLEM: ", failure);
              threadLastCheckException = failure;
              try {
@@ -153,6 +170,25 @@ public class EmailListener extends TimerTask{
              }
          }
      }
+     
+     
+    public boolean exceptionsAreEqual(Exception e1, Exception e2) {
+        Throwable t1 = e1;
+        Throwable t2 = e2;
+        while (t1!=null && t2!=null) {
+            String m1 = t1.getMessage();
+            String m2 = t2.getMessage();
+            if (!m1.equals(m2)) {
+                return false;
+            }
+            t1 = t1.getCause();
+            t2 = t2.getCause();
+        }
+        if (t1 != null || t2!=null) {
+            return false;
+        }
+        return true;
+    }
 
     public Session getSession()throws Exception {
         try {
