@@ -44,6 +44,22 @@
     <span class="icon-bar"></span>
   </button>
 
+<style>
+.tighten li a {
+    padding: 0px 5px !important;
+    background-color: white;
+}
+.tighten li {
+    background-color: white;
+}
+.tighten {
+    padding: 5px !important;
+    border: 5px #F0D7F7 solid !important;
+    max-width:300px;
+    background-color: white !important;
+}
+</style>
+<!-- #F0D7F7;  #F2EBF4 -->
 
   <!-- Logo Brand -->
   <a class="navbar-brand" href="<%=userRelPath%>UserHome.htm" title="Weaver Home Page">
@@ -63,6 +79,7 @@
         </a>
       </li>
       
+
       
 <% if (loggedUser!=null) { %>      
       <li class="dropdown">
@@ -77,7 +94,7 @@
               </span>
               <div class="ripple-container"></div>
             </a>
-            <ul class="dropdown-menu pull-right">
+            <ul class="dropdown-menu pull-right tighten">
 <%
 
    List<RUElement> recent = ar.getSession().recentlyVisited;
@@ -104,6 +121,9 @@
         </li>
 
 
+<% if (false) { %>   
+<!-  REMOVED the Sites menu as it is not so useful it needs to always be on the screen
+     Adding a small menu item to the personal list should be enough -->     
         <!-- Drop Down Sites -->
         <li>
           <a class="dropdown-toggle"
@@ -116,7 +136,7 @@
               Sites
             </span>
           </a>
-          <ul class="dropdown-menu pull-right">
+          <ul class="dropdown-menu pull-right tighten">
 <%
 
    Properties seenSite = new Properties();
@@ -141,6 +161,7 @@
         </li>
 <% } %>         
         
+<% } %>  
         
         <!-- Drop Down User -->
         <li>
@@ -154,7 +175,7 @@
               <% ar.writeHtml(userName); %>
             </span>
           </a>
-          <ul class="dropdown-menu pull-right">
+          <ul class="dropdown-menu pull-right tighten">
 <% if (loggedUser==null) { %>
             <li><a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
                 Log In</a></li>

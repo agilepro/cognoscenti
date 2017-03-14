@@ -399,6 +399,7 @@ function addvalue() {
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
+
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
@@ -430,7 +431,7 @@ function addvalue() {
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showCompleted">
             Completed</span>
         <span class="dropdown" ng-repeat="role in allLabelFilters()">
-            <button class="btn btn-sm dropdown-toggle labelButton" type="button" id="menu2"
+            <button class="labelButton" type="button" id="menu2"
                data-toggle="dropdown" style="background-color:{{role.color}};"
                ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
@@ -444,7 +445,7 @@ function addvalue() {
                        title="Add Filter by Label"><i class="fa fa-filter"></i></button>
                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                  <li role="presentation" ng-repeat="rolex in allLabels">
-                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
+                     <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="labelButton"
                      ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
                          {{rolex.name}}</button>
                  </li>
@@ -555,7 +556,7 @@ function addvalue() {
            <th>Status</th>
          </tr>
          <tr ng-repeat="rec in findGoals()">
-            <td  style="min-width:70px">
+            <td  style="width:70px">
             <div style="float:left;margin:3px">
               <div class="dropdown">
                 <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
@@ -596,23 +597,23 @@ function addvalue() {
           <td  style="max-width:300px">
             <span style="cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}} ~ {{rec.description}}</span>
             <span ng-repeat="label in getGoalLabels(rec)">
-              <button class="btn btn-sm labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
+              <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
               {{label.name}}
               </button>
             </span>
           </td>
-          <td  class="taskStatus">
+          <td  class="taskStatus" >
             <div class="taskOverview">
               <div ng-repeat="ass in rec.assignees">
                   <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a></div>
 
             </div>
           </td>
-          <td class="taskStatus">
+          <td class="taskStatus" style="width:120px">
             <div class="taskStatus" ng-show="rec.duedate>100"  ng-click="openModalActionItem(null, rec)" >{{rec.duedate | date}}
             </div>
           </td>
-          <td class="taskStatus">
+          <td class="taskStatus" style="width:120px">
             <div class="taskStatus" ng-show="rec.startdate>100">{{rec.startdate | date}}
             </div>
           </td>
