@@ -9,50 +9,27 @@
 %><%@ include file="functions.jsp"
 %><%
 
-/*
-
-Optional Parameter:
-
-    addthroughEmail : Its used to check whether request has come from mail if yes then it will show
-                      confirmation popup.
-*/
-
-    String throughEmail = ar.defParam("addthroughEmail","");
-    String openIdMsg = ar.defParam("openIdMsg","");
-
-%><%!
-    String pageTitle = "";
-%><%
-
     ar.assertLoggedIn("Can't edit a user's profile.");
     UserProfile uProf = findSpecifiedUserOrDefault(ar);
+    UserProfile runningUser = ar.getUserProfile();
+    boolean isSuperAdmin = ar.isSuperAdmin();
 
     //the following should be impossible since above log-in is checked.
-    if (uProf == null)
-    {
-        throw new NGException("nugen.exception.cant.find.user",null);
+    if (uProf == null) {
+        throw new Exception("Must be logged in to edit a user's profile.");
     }
-    boolean selfEdit = uProf.getKey().equals(ar.getUserProfile().getKey());
-    if (!selfEdit)
-    {
+    boolean selfEdit = uProf.getKey().equals(runningUser.getKey());
+    if (!selfEdit) {
         //there is one super user who is allowed to edit other user profiles
         //that user is specified in the system properties -- by KEY
-        String superUser = ar.getSystemProperty("su");
-        if (superUser==null || !superUser.equals(ar.getUserProfile().getKey()))
-        {
-            throw new NGException("nugen.exception.other.user", new Object[]{uProf.getName()});
+        if (!isSuperAdmin) {
+            throw new Exception("User "+runningUser.getName()
+                +" is not allowed to edit the profile of user "+uProf.getName());
         }
     }
+    
+    JSONObject userObj = uProf.getFullJSON();
 
-    String go  = "editUserProfile.htm?u="+uProf.getKey();
-
-    String openid = uProf.getUniversalId();
-
-    String desc = uProf.getDescription();
-    String name = uProf.getName();
-    int notePeriod = uProf.getNotificationPeriod();
-    String preferredEmail = uProf.getPreferredEmail();
-    pageTitle = "User: "+uProf.getName();
     String photoSource = ar.retPath+"assets/photoThumbnail.gif";
     if(uProf.getImage().length() > 0){
         photoSource = ar.retPath+"users/"+uProf.getImage();
@@ -60,6 +37,52 @@ Optional Parameter:
     Object errMsg = session.getAttribute("error-msg");
 
 %>
+
+<script type="text/javascript">
+
+var app = angular.module('myApp', ['ui.bootstrap']);
+app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Edit Your Profile");
+    $scope.profile = <%userObj.write(out,2,4);%>;
+    
+    $scope.updatePersonal = function() {
+        var newProfile = {};
+        newProfile.name = $scope.profile.name;
+        newProfile.description = $scope.profile.description;
+        newProfile.notifyPeriod = $scope.profile.notifyPeriod;
+        $scope.updateServer(newProfile);
+    }
+    $scope.updateServer = function(newProfile) {
+        console.log("UPDATE PROFILE WITH", newProfile);
+        var postURL = "updateProfile.json";
+        $http.post(postURL, JSON.stringify(newProfile))
+        .success( function(data) {
+            $scope.profile = data;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    
+    $scope.makePreferred = function(email) {
+        var newProfile = {};
+        newProfile.preferred = email;
+        $scope.updateServer(newProfile);
+    }
+    $scope.deleteEmail = function(email) {
+        var newProfile = {};
+        newProfile.removeId = email;
+        $scope.updateServer(newProfile);
+    }
+    $scope.addEmail = function() {
+        var newProfile = {};
+        newProfile.preferred = $scope.newEmail;
+        $scope.updateServer(newProfile);
+    }
+});
+
+</script>
+
 <fmt:setBundle basename="messages"/>
 <script>
 
@@ -120,108 +143,110 @@ Optional Parameter:
 </script>
 
 
-    <div class="generalArea">
-        <div class="generalSettings">
-            <form id="upload_user" action="uploadImage.form" method="post" enctype="multipart/form-data">
-                <table>
-                    <tr>
-                        <td width="148" class="gridTableColummHeader_2">Profile Photo:</td>
-                        <td style="width:20px;"><input type="hidden" name="action" id="actionUploadPhoto" value='' /></td>
-                        <td style="width:50px;"><img src="<%ar.writeHtml(photoSource);%>" width="47" height="47" alt="" /></td>
-                        <td valign="bottom"><input type="file" name="fname" id="fname" /></td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2"></td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2"><input type="button" class="btn btn-primary btn-raised" value="Upload Photo"
-                            onclick="javascript:uploadUserPhoto();"/></td>
-                    </tr>
-                </table>
-            </form>
-            <hr/>
-            <form id="updateUserProfile" name="updateUserProfile" action="EditUserProfileAction.form" method="post">
-                <input type="hidden" name="encodingGuard" value="<%ar.writeHtml("\u6771\u4eac");%>"/>
-                <input type="hidden" name="openid" value="<% ar.writeHtml(openid); %>"/>
-                <input type="hidden" id="modid" name="modid" value="<% ar.writeHtml(uProf.getLastLoginId()); %>"/>
-                <input type="hidden" name="u" value="<% ar.writeHtml(uProf.getKey());%>" />
-                <input type="hidden" name="go" id="goUpdate" value="<% ar.writeHtml(go);%>" />
-                <input type="hidden" name="delconf" id="delconf" value='' />
-                <input type="hidden" name="action" id="action" value='Save' />
-                <table border="0px solid red" width="100%">
-                    <tr><td style="height:30px"></td></tr>
-                    <tr>
-                        <td width="148" class="gridTableColummHeader_2">Full Name:</td>
-                        <td width="39" style="width:20px;"></td>
-                        <td colspan="2"><input type="text" class="form-control" name="name" size="69" value="<% ar.writeHtml(name);%>" /></td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2" style="vertical-align:top"><fmt:message key="nugen.userprofile.Description"/>:</td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2"><textarea rows="4" name="description" class="form-control"><% ar.writeHtml(desc);%></textarea></td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2" style="vertical-align:top">Notification Period:</td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2">
-                            <input type="radio" name="notificationPeriod" value="1"  <% if(notePeriod<=3) {ar.write("checked=\"checked\" ");} %>> Daily
-                            <input type="radio" name="notificationPeriod" value="7"  <% if(notePeriod<=20 && notePeriod>3) {ar.write("checked=\"checked\" ");} %>> Weekly
-                            <input type="radio" name="notificationPeriod" value="30" <% if(notePeriod>20) {ar.write("checked=\"checked\" ");} %>> Monthly
-                        </td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader_2"></td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2"><input type="button" class="btn btn-primary btn-raised" onclick="updateProfile('Save')" value="Update Personal Details"/></td>
-                    </tr>
-                    <tr><td style="height:60px" colspan="3"><hr/></td></tr>
-
-                    <tr>
-                        <td class="gridTableColummHeader_2"></td>
-                        <td style="width:20px;"></td>
-                        <td colspan="2">
-                            <input type="button" class="btn btn-primary btn-raised" onclick="updateProfile('Cancel')" value="Go Back To My Settings"/>
-                        </td>
-                    </tr>
-                </table>
-            </form>
-        </div>
-    </div>
+<style>
+.spacey {
+    width:100%;
+}
+.spacey tr td {
+    padding:3px;
+}
+.firstcol {
+    width:130px;
+}
+</style>
 
 
+<div ng-app="myApp" ng-controller="myCtrl" id="myDomElement">
+
+    <form id="upload_user" action="uploadImage.form" method="post" enctype="multipart/form-data" >
+        <input type="hidden" name="action" id="actionUploadPhoto" value='' />
+        <table class="spacey">
+            <tr>
+                <td width="148" class="firstcol">Profile Photo:</td>
+                <td style="width:50px;"><img src="<%ar.writeHtml(photoSource);%>" width="47" height="47" alt="" /></td>
+                <td valign="bottom"><input type="file" name="fname" id="fname" /></td>
+            </tr>
+            <tr>
+                <td class="firstcol"></td>
+                <td colspan="2"><input type="button" class="btn btn-primary btn-raised" value="Upload Photo"
+                    onclick="javascript:uploadUserPhoto();"/></td>
+            </tr>
+        </table>
+    </form>
+    <hr/>
+
+    <table class="spacey">
+        <tr>
+            <td class="firstcol">Full Name:</td>
+            <td><input type="text" class="form-control" ng-model="profile.name" /></td>
+        </tr>
+        <tr>
+            <td class="firstcol">Description:</td>
+            <td><textarea rows="4" class="form-control" ng-model="profile.description"></textarea></td>
+        </tr>
+        <tr>
+            <td class="firstcol">Notify Period:</td>
+            <td>
+                <input type="radio" value="1"  ng-model="profile.notifyPeriod" /> Daily
+                <input type="radio" value="7"  ng-model="profile.notifyPeriod" /> Weekly
+                <input type="radio" value="30"  ng-model="profile.notifyPeriod" /> Monthly
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol"></td>
+            <td colspan="2"><button class="btn btn-primary btn-raised" ng-click="updatePersonal()">Update Personal Details</button></td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr ng-repeat="email in profile.ids">
+            <td class="firstcol">Email Id:</td>
+            <td>{{email}}
+                <span class="labelButton" style="background-color:yellow" ng-show="email==profile.preferred"
+                    title="This is where all email notifications from Weaver will be sent">Preferred</span>
+                <span class="btn btn-sm btn-primary btn-raised" ng-hide="email==profile.preferred"
+                    ng-click="makePreferred(email)">Make Preferred</span>
+                <span class="btn btn-sm btn-primary btn-raised" ng-hide="email==profile.preferred"
+                    ng-click="deleteEmail(email)">Delete</span>
+            </td>
+        </tr>
+    </table>
+    <hr/>
+
+    <table class="spacey">
+        <tr>
+            <td class="firstcol"></td>
+            <td>
+                <button class="btn btn-raised" onclick="window.location='userSettings.htm'">Done</button>
+            </td>
+        </tr>
+    </table>
+
+    <hr/>
+
+    <% if (isSuperAdmin) { %>
+    <h1>Admin Only Functions</h1>
+    <table class="spacey">
+        <tr>
+            <td class="firstcol">New Email:</td>
+            <td><input type="text" class="form-control" ng-model="newEmail" /></td>
+        </tr>
+        <tr>
+            <td class="firstcol"></td>
+            <td>
+                <button class="btn btn-primary btn-raised" ng-click="addEmail()">Add Email</button>
+            </td>
+        </tr>
+    </table>
+    <% } %>
+</div>
 
 <%!
 
-    public UserProfile findSpecifiedUserOrDefault(AuthRequest ar)
-        throws Exception
-    {
-        String u = ar.defParam("u", null);
-        UserProfile up = null;
-        if (u!=null)
-        {
-            up = UserManager.getUserProfileByKey(u);
-            if (up==null)
-            {
-                Thread.sleep(3000);
-                throw new NGException("nugen.exception.user.not.found.invalid.key",new Object[]{u});
-            }
-        }
-        else
-        {
-            if (!ar.isLoggedIn())
-            {
-                return null;
-            }
-            up = ar.getUserProfile();
-
-            //every logged in user should have a profile, so should never hit this
-            if (up == null)
-            {
-                throw new ProgramLogicError("every logged in user should have a profile, why is it missing in this case?");
-            }
+    public UserProfile findSpecifiedUserOrDefault(AuthRequest ar) throws Exception {
+        String userKey = ar.reqParam("userKey");
+        UserProfile up = UserManager.getUserProfileByKey(userKey);
+        if (up==null) {
+            Thread.sleep(3000);
+            throw new NGException("nugen.exception.user.not.found.invalid.key",new Object[]{userKey});
         }
         return up;
     }

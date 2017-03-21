@@ -1,5 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@ include file="UserProfile.jsp"
+%><%@ include file="/spring/jsp/include.jsp"
 %><%
 
     UserProfile uProf = (UserProfile)request.getAttribute("userProfile");
@@ -97,7 +97,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 
 
-<div class="alert alert-warning" ng-hide="hideNote" ng-click="hideNote=true">
+<div class="guideVocal" ng-hide="hideNote" ng-click="hideNote=true">
 Please note: when you withdraw from a <b>'Members'</b> role of a workspace,
 you will stop receiving email when meetings are called, when topics
 are create, and when comments are made.
@@ -117,7 +117,8 @@ the group that runs the workspace.
             Updated: {{prjrole.updated|date}}
         </div>
         <div class="col-xs-12 col-sm-6 col-md-3 padded">
-            <button ng-click="stopRole(prjrole)" class="btn btn-danger btn-raised">Withdraw from {{prjrole.role}}</button>
+            Withdraw from <br/>
+            <button ng-click="stopRole(prjrole)" class="btn btn-danger btn-raised">{{prjrole.role}}</button>
         </div>
         <div class="col-xs-12 col-md-6 padded">
             {{prjrole.desc}}

@@ -19,5 +19,6 @@ body{background-color:#fafafa;color:#291720;font-family:"PT_Sans",Helvetica,sans
     border-radius:2px;
     box-shadow: 2px 2px 5px #CCCCCC;
     font-size: 10pt;
+    cursor: pointer;
 }
 

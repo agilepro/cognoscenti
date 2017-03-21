@@ -51,10 +51,6 @@ public class UserManager
 
     //TODO: get rid of this static
     private static Cognoscenti cog;
-    //TODO: get rid of need to initialized this static
-    public static void init(Cognoscenti _cog) {
-        cog = _cog;
-    }
 
     /**
     * Set all static values back to their initial states, so that
@@ -165,10 +161,12 @@ public class UserManager
     }
 
     
+    /*
     public synchronized void reloadUserProfiles(Cognoscenti cog) throws Exception {
         clearAllStaticVars();
         loadUpUserProfilesInMemory(cog);
     }
+    */
 
     private synchronized void refreshHashtables() {
         userHashByUID = new Hashtable<String, UserProfile>();
@@ -207,7 +205,7 @@ public class UserManager
     *
     * Should ONLY fid by confirmed IDs, not by any proposed IDs.
     */
-    public static synchronized UserProfile findUserByAnyId(String anyId)
+    public static UserProfile findUserByAnyId(String anyId)
     {
         //here is how we find the singleton....
         UserManager userManager = cog.getUserManager();
@@ -215,10 +213,9 @@ public class UserManager
     }
         
         
-    public synchronized UserProfile lookupUserByAnyId(String anyId)
-    {
+    public synchronized UserProfile lookupUserByAnyId(String anyId) {
         //return null if a bogus value passed.
-        //fixed bug 12/20/2010 hat was finging people with nullstring names
+        //fixed bug 12/20/2010 that was finding people with nullstring names
         if (anyId==null || anyId.length()==0)
         {
             return null;
@@ -253,7 +250,7 @@ public class UserManager
         return null;
     }
 
-    public static synchronized UserProfile findUserByAnyIdOrFail(String anyId){
+    public synchronized UserProfile findUserByAnyIdOrFail(String anyId){
         UserProfile up = findUserByAnyId(anyId);
         if (up == null) {
             throw new RuntimeException("Can not find a user profile for the id: "+anyId);
@@ -439,19 +436,6 @@ public class UserManager
             }
         }
         return allAdmins;
-    }
-
-    public static UserProfile getSuperAdmin(AuthRequest ar) throws Exception {
-        UserProfile superAdmin = null;
-        String superAdminKey = ar.getSystemProperty("superAdmin");
-        if (superAdminKey == null)
-        {
-            //if the superAdmin not defined, then NOBODY is super admin
-            return null;
-        }
-        superAdmin = findUserByAnyId(superAdminKey);
-
-        return superAdmin;
     }
 
     /**

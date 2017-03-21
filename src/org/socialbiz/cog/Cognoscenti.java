@@ -226,7 +226,6 @@ System.out.println("Weaver Server Object == Start the Server");
             FolderAccessHelper.initLocalConnections(this);
             FolderAccessHelper.initCVSConnections(this);
             serverId = theConfig.getServerGlobalId();
-            UserManager.init(this);
             LightweightAuthServlet.init(theConfig.getProperty("identityProvider"));
 
             isInitialized = true;

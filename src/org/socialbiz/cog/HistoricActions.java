@@ -1,9 +1,11 @@
 package org.socialbiz.cog;
 
 import java.io.File;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.socialbiz.cog.mail.ChunkTemplate;
 import org.socialbiz.cog.mail.EmailSender;
 import org.workcast.json.JSONObject;
 import org.workcast.streams.MemFile;
@@ -11,6 +13,7 @@ import org.workcast.streams.MemFile;
 public class HistoricActions {
 
     private AuthRequest ar;
+    private Cognoscenti cog;
 
     /**
      * Actions that create history and/or send
@@ -19,6 +22,7 @@ public class HistoricActions {
     public HistoricActions(AuthRequest _ar) throws Exception {
         ar = _ar;
         ar.assertLoggedIn("Action on this resource allowed only when you are logged in.");
+        cog = ar.getCogInstance();
     }
 
     /**
@@ -36,7 +40,7 @@ public class HistoricActions {
         SiteRequest accountDetails = SiteReqFile.createNewSiteRequest(siteId,
             siteName, siteDescription, ar);
 
-        sendSiteRequestEmail( ar,  accountDetails);
+        sendSiteRequestEmail(accountDetails);
         return accountDetails;
     }
 
@@ -53,39 +57,23 @@ public class HistoricActions {
                 "Granted immediately without administrator involvement");
     }
 
-    private static void sendSiteRequestEmail(AuthRequest ar,
-            SiteRequest accountDetails) throws Exception {
-        MemFile body = new MemFile();
-        UserProfile up = UserManager.getSuperAdmin(ar);
-        AuthRequest clone = new AuthDummy(ar.getUserProfile(), body.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
-        clone.retPath = ar.baseURL;
-        clone.write("<html><body>\n");
-        clone.write("<table>\n<tr><td>Purpose: &nbsp;</td><td>New Site Request</td></tr>");
-        clone.write("\n<tr><td>Site Name: &nbsp;</td><td>");
-        clone.writeHtml(accountDetails.getName());
-        clone.write("</td></tr>");
-        clone.write("\n<tr><td>Description: &nbsp;</td><td>");
-        clone.writeHtml(accountDetails.getDescription());
-        clone.write("</td></tr>");
-        clone.write("\n<tr><td>Requested By: &nbsp;</td><td>");
-        ar.getUserProfile().writeLink(clone);
-        clone.write("</td></tr>");
-        clone.write("\n<tr><td>Action: &nbsp;</td><td>");
-        clone.write("<a href=\"");
-        clone.write(ar.baseURL);
-        clone.write("v/");
-        clone.write(up.getKey());
-        clone.write("/requestedAccounts.htm\">Click here to review the requested sites list</a>");
-        clone.write("</td></tr>");
-        clone.write("</table>\n");
-        clone.write("<p>Being a <b>Super Admin</b> of the Weaver console, you have rights to accept or deny this request.</p>");
-        clone.write("</body></html>");
-        clone.flush();
+    private void sendSiteRequestEmail(SiteRequest siteRequest) throws Exception {
+        for (UserProfile up : UserManager.getAllSuperAdmins(ar)) {
+            JSONObject jo = new JSONObject();
+            jo.put("req", siteRequest.getJSON());
+            jo.put("baseURL", ar.baseURL);
+            jo.put("admin", up.getJSON());
+            
+            File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequest.chtml");
+            MemFile body = new MemFile();
+            Writer w = body.getWriter();
+            ChunkTemplate.streamIt(w, templateFile, jo);
+            w.flush();
 
-        EmailSender.generalMailToList(UserManager.getSuperAdminMailList(ar), ar.getBestUserId(),
-                "Site Approval for " + ar.getBestUserId(),
-                body.toString(), ar.getCogInstance());
+            EmailSender.generalMailToList(UserManager.getSuperAdminMailList(ar), ar.getBestUserId(),
+                    "Site Approval for " + ar.getBestUserId(),
+                    body.toString(), cog);
+        }
     }
 
     /**
@@ -103,13 +91,13 @@ public class HistoricActions {
         NGBook ngb = null;
         if (granted) {
             //Create new Site
-            ngb = NGBook.createNewSite(siteRequest.getSiteId(), siteRequest.getName(), ar.getCogInstance());
+            ngb = NGBook.createNewSite(siteRequest.getSiteId(), siteRequest.getName(), cog);
             ngb.setKey(siteRequest.getSiteId());
             ngb.setDescription(siteRequest.getDescription());
             ngb.getPrimaryRole().addPlayer(ale);
             ngb.getSecondaryRole().addPlayer(ale);
             ngb.saveFile(ar, "New Site created");
-            ar.getCogInstance().makeIndex(ngb);
+            cog.makeIndex(ngb);
 
             siteRequest.setStatus("Granted");
             ar.getSuperAdminLogFile().createAdminEvent(ngb.getKey(), ar.nowTime,
@@ -132,49 +120,23 @@ public class HistoricActions {
         	//problem with the owner user profile.
         	return;
         }
-
+        JSONObject jo = new JSONObject();
+        jo.put("req", siteRequest.getJSON());
+        jo.put("owner", owner.getJSON());
+        jo.put("admin", ar.getUserProfile().getJSON());
+        jo.put("baseURL", ar.baseURL);
+        
+        File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequestStatus.chtml");
         MemFile body = new MemFile();
-        AuthRequest clone = new AuthDummy(ar.getUserProfile(), body.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
-        clone.retPath = ar.baseURL;
-        clone.write("<html><body>\n");
-        clone.write("<p>This message was sent automatically from Weaver to keep you up ");
-        clone.write("to date on the status of your Site.</p>");
-        clone.write("\n<table>");
-        clone.write("\n<tr><td>Purpose: &nbsp;</td><td>You requested a new account</td></tr>\n");
-
-        if (ar.getUserProfile() != null) {
-            clone.write("<tr><td>Updated by: &nbsp;</td><td>");
-            clone.getUserProfile().writeLink(clone);
-        }
-
-        clone.write("</td></tr>");
-        clone.write("\n<tr><td>Result: &nbsp;</td><td>");
-        clone.writeHtml(siteRequest.getStatus());
-        clone.write("</td></tr>");
-        clone.write("\n<tr><td>Comment: &nbsp;</td><td>");
-        clone.writeHtml(siteRequest.getAdminComment());
-        clone.write("</td></tr>");
-        clone.write("\n<tr><td>Site Name: &nbsp;</td><td><a href=\"");
-        clone.write(ar.baseURL);
-        clone.write("v/approveAccountThroughMail.htm?requestId=");
-        clone.write(siteRequest.getRequestId());
-        clone.write("\">");
-        clone.writeHtml(siteRequest.getName());
-        clone.write("</a></td></tr>");
-        clone.write("\n<tr><td>Description: &nbsp;</td><td>");
-        clone.writeHtml(siteRequest.getDescription());
-        clone.write("</td></tr>");
-        clone.write("\n<tr><td>Requested by: &nbsp; </td><td>");
-        owner.writeLink(clone);
-        clone.write("</td></tr>\n</table>\n</body></html>");
+        Writer w = body.getWriter();
+        ChunkTemplate.streamIt(w, templateFile, jo);
+        w.flush();
 
         List<OptOutAddr> v = new ArrayList<OptOutAddr>();
         v.add(new OptOutIndividualRequest(ale));
-        clone.flush();
 
         EmailSender.generalMailToList(v, ar.getBestUserId(), "Site Request Resolution for " + owner.getName(),
-                body.toString(), ar.getCogInstance());
+                body.toString(), cog);
     }
 
     /**
@@ -208,7 +170,7 @@ public class HistoricActions {
     private void sendInviteEmail(NGContainer container, String emailId, String role) throws Exception {
         MemFile body = new MemFile();
         UserProfile receivingUser = UserManager.findUserByAnyId(emailId);
-        AuthRequest clone = new AuthDummy(receivingUser, body.getWriter(), ar.getCogInstance());
+        AuthRequest clone = new AuthDummy(receivingUser, body.getWriter(), cog);
         UserProfile requestingUser = ar.getUserProfile();
 
         String dest = emailId;
@@ -240,7 +202,6 @@ public class HistoricActions {
 
         clone.flush();
         
-        Cognoscenti cog = clone.getCogInstance();
         File templateFile = cog.getConfig().getFileFromRoot("email/Invite.chtml");
         
         JSONObject data = new JSONObject();

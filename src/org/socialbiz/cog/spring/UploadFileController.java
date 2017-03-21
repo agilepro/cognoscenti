@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.socialbiz.cog.AccessControl;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AuthRequest;
+import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGWorkspace;
@@ -69,6 +70,8 @@ public class UploadFileController extends BaseController {
                 @RequestParam("fname") MultipartFile file) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            Cognoscenti cog = ar.getCogInstance();
+            UserManager userManager = cog.getUserManager();
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             //Handling special case for Multipart request
             ar.req = request;
@@ -91,7 +94,7 @@ public class UploadFileController extends BaseController {
                 //of record for this request to be that user.   Allows the rest of the request
                 //to act as if the request is logged in under the name of the record creator.
                 if (!ar.isLoggedIn()) {
-                    ar.setUserForOneRequest(UserManager.findUserByAnyIdOrFail(reminderRecord.getModifiedBy()));
+                    ar.setUserForOneRequest(userManager.findUserByAnyIdOrFail(reminderRecord.getModifiedBy()));
                 }
             }
             if(!requestFromReminder ||  !canAccessToReminder){

@@ -228,6 +228,7 @@ public class UserProfile implements UserRef
     * If no ID like that exists, then it does nothing, no error.
     * If duplicates exist, removes all of them.
     * If newId equals preferred Email then it clears that.
+    * NOTE: this can leave the profile without any id.
     */
     public void removeId(String newId) throws Exception {
         Vector<String> cache = new Vector<String>();
@@ -674,6 +675,16 @@ public class UserProfile implements UserRef
         }
         return null;
     }
+    public void setPreferredEmail(String newAddress) {
+        ArrayList<String> newList = new ArrayList<String>();
+        newList.add(newAddress);
+        for (String idval : ids) {
+            if (!idval.equalsIgnoreCase(newAddress)) {
+                newList.add(idval);
+            }
+        }
+        ids = newList;
+    }
 
     /**
     * returns a properly formatted SMTP user name with email
@@ -793,8 +804,9 @@ public class UserProfile implements UserRef
         jObj.put("lastUpdated", lastUpdated);
         jObj.put("description", getDescription());
         jObj.put("disabled",    getDisabled());
-        jObj.put("accessCode",  getAccessCode());
-        jObj.put("accessCodeModTime",  accessCodeModTime);
+        jObj.put("notifyPeriod",getNotificationPeriod());
+        jObj.put("preferred",   getPreferredEmail());
+        
         jObj.put("image",       this.getImage());
         
         {
@@ -831,4 +843,30 @@ public class UserProfile implements UserRef
         return jObj;
     }
 
+    public void updateFromJSON(JSONObject input) throws Exception {
+        if (input.has("removeId")) {
+            if (ids.size()<=1) {
+                throw new Exception("Can not remove an id from user who only has less than two ids!");
+            }
+            this.removeId(input.getString("removeId"));
+        }
+        if (input.has("description")) {
+            this.setDescription(input.getString("description"));
+        }
+        if (input.has("name")) {
+            this.setName(input.getString("name"));
+        }
+        if (input.has("notifyPeriod")) {
+            this.setNotificationPeriod(input.getInt("notifyPeriod"));
+        }
+        if (input.has("preferred")) {
+            String newPref = input.getString("preferred");
+            //have to properly add it in case it is not already there
+            //does nothing if already there
+            this.addId(newPref);
+            //this makes sure it is first
+            this.setPreferredEmail(newPref);
+        }
+    }
+    
 }

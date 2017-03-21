@@ -213,6 +213,8 @@ public class CreateProjectController extends BaseController {
     }
 
     private NGPage createProjectFromAgentRules(AuthRequest ar) throws Exception {
+        Cognoscenti cog = ar.getCogInstance();
+        UserManager userManager = cog.getUserManager();
         UserProfile uProf = ar.getUserProfile();
         UserPage uPage = uProf.getUserPage();
 
@@ -244,7 +246,7 @@ public class CreateProjectController extends BaseController {
                 String siteId = rule.getSiteKey();
                 String templateKey = rule.getTemplate();
                 String projectName = rg.getProjectName() + " (clone)";
-                UserProfile owner = UserManager.findUserByAnyIdOrFail(rule.getOwner());
+                UserProfile owner = userManager.findUserByAnyIdOrFail(rule.getOwner());
                 NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
                 newPage = createPage(owner, site, projectName, null, upstream, ar.nowTime, ar.getCogInstance());
                 if (templateKey!=null && templateKey.length()>0) {

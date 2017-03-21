@@ -6,40 +6,23 @@
 
     ar.assertLoggedIn("Must be logged in to see anything about a user");
 
-    UserProfile uProf = (UserProfile)request.getAttribute("userProfile");
+    String userKey = ar.reqParam("userKey");
+    UserProfile uProf = UserManager.getUserProfileByKey(userKey);
+    UserProfile runningUser = ar.getUserProfile();
     if (uProf == null) {
         throw new NGException("nugen.exception.cant.find.user",null);
     }
 
-    UserProfile  operatingUser =ar.getUserProfile();
-    if (operatingUser==null) {
-        //this should never happen, and if it does it is not the users fault
-        throw new ProgramLogicError("user profile setting is null.  No one appears to be logged in.");
-    }
+    boolean viewingSelf = uProf.getKey().equals(runningUser.getKey());
+    boolean cantEdit = !(viewingSelf || ar.isSuperAdmin());
 
-    boolean viewingSelf = uProf.getKey().equals(operatingUser.getKey());
-
-    JSONObject userInfo = uProf.getJSON();
-    userInfo.put("key", uProf.getKey());
-    userInfo.put("notificationPeriod", uProf.getNotificationPeriod());
-
-    String key = uProf.getKey();
-    String name = uProf.getName();
-    String desc = uProf.getDescription();
+    JSONObject userInfo = uProf.getFullJSON();
 
     String photoSrc = ar.retPath+"assets/photoThumbnail.gif";
     if(uProf.getImage().length() > 0){
         photoSrc = ar.retPath+"users/"+uProf.getImage();
     }
 
-    String autoLoginCookie = ar.findCookieValue("autoLoginCookie");
-    String openIdCookie = ar.findCookieValue("openIdCookie");
-
-    String thisPage = ar.getCompleteURL();
-    String prefEmail = uProf.getPreferredEmail();
-    if (prefEmail==null) {
-        prefEmail = "-none-";
-    }
     String remoteProfileURL = ar.baseURL+"apu/"+uProf.getKey()+"/user.json?lic="+uProf.getLicenseToken();
 
 %>
@@ -61,23 +44,40 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    $scope.goToEdit = function() {
+        if (<%=cantEdit%>) {
+            alert("User <% ar.writeHtml(runningUser.getName()); %> is not allowed to edit the profile for <% ar.writeHtml(uProf.getName()); %>");
+            return;
+        }
+        window.location = "editUserProfile.htm";
+    }
 });
 </script>
+
+<style>
+.spacey {
+    width:100%;
+}
+.spacey tr td {
+    padding:3px;
+}
+.firstcol {
+    width:130px;
+}
+</style>
+
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Personal Settings for {{userInfo.name}}
-        </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
             Options: <span class="caret"></span></button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="editUserProfile.htm?u={{userInfo.key}}" >
+              <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="goToEdit()" >
                         <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
                         Update Settings</a></li>
               <li role="presentation" class="divider"></li>
@@ -93,96 +93,57 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
     </div>
 
-    <div style="height:10px;"></div>
+    <table class="spacey">
+        <tr>
+            <td class="firstcol">Full Name:</td>
+            <td>{{userInfo.name}}</td>
+        </tr>
+        <tr>
+            <td class="firstcol">Icon:</td>
+            <td> 
+                <img src="<%ar.writeHtml(photoSrc);%>" width="50" height="50"/>
+            </td>
+        </tr>
 
-        <div class="generalArea">
-            <div class="generalSettings">
-                <table border="0px solid red" class="popups">
-                    <tr>
-                        <td width="148" class="gridTableColummHeader">Full Name:</td>
-                        <td width="39" style="width:20px;"></td>
-                        <td>{{userInfo.name}}</td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-
-                    <tr>
-                        <td width="148" class="gridTableColummHeader">Icon:</td>
-                        <td width="39" style="width:20px;"></td>
-                        <td><img src="<%ar.writeHtml(photoSrc);%>" width="50" height="50"/></td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-
-                    <tr>
-                        <td class="gridTableColummHeader">Description:</td>
-                        <td style="width:20px;"></td>
-                        <td><% ar.writeHtml(desc);%></td>
-                    </tr>
+        <tr>
+            <td class="firstcol">Description:</td>
+            <td>{{userInfo.description}}</td>
+        </tr>
 <% //above this is public, below this only for people logged in
 if (ar.isLoggedIn()) { %>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Preferred Email:</td>
-                        <td style="width:20px;"></td>
-                        <td><%
-                            ar.writeHtml(prefEmail);
-                            %></td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader" valign="top">Alternate Email:</td>
-                        <td style="width:20px;"></td>
-                        <td valign="top">
-                            <table>
-                                <%
-                                for (String anid : uProf.getAllIds()) {
-                                    if (!anid.equals(prefEmail)) {
-                                    %>
-                                        <tr><td><%
-                                        ar.writeHtml(anid);
-                                        %></td></tr>
-                                    <%
-                                    }
-                                }
-                                %>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr><td style="height:15px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Last Login:</td>
-                        <td style="width:20px;"></td>
-                        <td><%SectionUtil.nicePrintTime(ar.w, uProf.getLastLogin(), ar.nowTime); %> as <% ar.writeHtml(uProf.getLastLoginId()); %> </td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Notification Period:</td>
-                        <td style="width:20px;"></td>
-                        <td>{{userInfo.notificationPeriod}} days</td>
-                    </tr>
-            <%if (viewingSelf){ %>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader">Remote URL:</td>
-                        <td style="width:20px;"></td>
-                        <td><a href="<%=remoteProfileURL%>"><%=remoteProfileURL%></a></td>
-                    </tr>
-           <% } %>
-                    <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td class="gridTableColummHeader">User Key:</td>
-                        <td style="width:20px;"></td>
-                        <td><% ar.writeHtml(key);%></td>
-                    </tr>
-            <%if (viewingSelf){ %>
-                    <tr>
-                        <td class="gridTableColummHeader">API Token:</td>
-                        <td style="width:20px;"></td>
-                        <td><% ar.writeHtml(uProf.getLicenseToken());%></td>
-                    </tr>
-            <% } %>
-    <%} %>
-                </table>
-            </div>
-        </div>
+        <tr><td style="height:10px"></td></tr>
+        <tr>
+            <td class="firstcol">Email Id:</td>
+            <td>
+                <div ng-repeat="email in userInfo.ids">{{email}}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol">Last Login:</td>
+            <td><%SectionUtil.nicePrintTime(ar.w, uProf.getLastLogin(), ar.nowTime); %> as <% ar.writeHtml(uProf.getLastLoginId()); %> </td>
+        </tr>
+        <tr>
+            <td class="firstcol">Notify Period:</td>
+            <td>{{userInfo.notifyPeriod}} days</td>
+        </tr>
+        <tr>
+            <td class="firstcol">User Key:</td>
+            <td>{{userInfo.key}}</td>
+        </tr>
+    </table>
+<%if (viewingSelf){ %>
+    <hr/>
+    <table class="spacey">
+        <tr>
+            <td class="firstcol">Remote URL:</td>
+            <td><a href="<%=remoteProfileURL%>"><%=remoteProfileURL%></a></td>
+        </tr>
+        <tr>
+            <td class="firstcol">API Token:</td>
+            <td><% ar.writeHtml(uProf.getLicenseToken());%></td>
+        </tr>
+<% } %>
+<%} %>
+    </table>
 
 </div>

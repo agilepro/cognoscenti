@@ -114,6 +114,7 @@ public class SiteRequest extends DOMFace {
         jo.put("status", getStatus());
         jo.put("desc", getDescription());
         jo.put("modTime", getModTime());
+        jo.put("adminComment", getAdminComment());
         jo.put("requester", userProfile.getJSON());
         return jo;
     }

@@ -527,109 +527,6 @@ public class UserController extends BaseController {
 
 
 
-
-
-
-/*
-    @RequestMapping(value = "/handlePersonalSubscriptions.ajax", method = RequestMethod.POST)
-    public void handlePersonalSubscriptions(HttpServletRequest request, HttpServletResponse response)
-    throws Exception {
-
-        AuthRequest ar = null;
-        String responseMessage = "";
-        try{
-            ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Unable to set to watch this page.");
-            NGPage ngp = null;
-            String action = ar.reqParam("action");
-            if(!"Stop All Notifications".equals(action)){
-                String p = ar.reqParam("pageId");
-                ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
-                ar.setPageAccessLevels(ngp);
-            }
-            UserProfile uProf = ar.getUserProfile();
-            JSONObject paramMap = new JSONObject();
-
-
-            if ("Start Watching".equals(action))
-            {
-                uProf.setWatch(ngp.getKey(), ar.nowTime);
-                paramMap.put("watchTime", String.valueOf(uProf.watchTime(ngp.getKey())));
-            }
-            else if ("Reset Watch Time".equals(action))
-            {
-                uProf.setWatch(ngp.getKey(), ar.nowTime);
-                paramMap.put("watchTime", String.valueOf(uProf.watchTime(ngp.getKey())));
-            }
-            else if ("Stop Watching".equals(action))
-            {
-                uProf.clearWatch(ngp.getKey());
-                paramMap.put("watchTime", String.valueOf(uProf.watchTime(ngp.getKey())));
-            }
-            else if ("Start Notifications".equals(action))
-            {
-                uProf.setNotification(ngp.getKey(), ar.nowTime);
-                paramMap.put("notifications" , "start");
-            }
-            else if ("Stop Notifications".equals(action))
-            {
-                uProf.clearNotification( ngp.getKey());
-                paramMap.put("notifications" , "stop");
-            }
-            else if("Stop All Notifications".equals(action)){
-                uProf.clearAllNotifications();
-            }
-            else
-            {
-                throw new NGException("nugen.exceptionhandling.system.not.understand.action",new Object[]{action});
-            }
-            UserManager.writeUserProfilesToFile();
-
-            paramMap.put("msgType" , "success");
-            responseMessage = paramMap.toString();
-        }
-        catch(Exception ex){
-            responseMessage = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
-            ar.logException("Caught by handlePersonalSubscriptions.ajax", ex);
-        }
-
-        NGWebUtils.sendResponse(ar, responseMessage);
-    }
-*/
-
-/*
-    @RequestMapping(value = "/getUsers.ajax", method = RequestMethod.GET)
-    public void getUsers(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
-        AuthRequest ar = null;
-        try{
-            ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Must be logged in to get users");
-
-            String matchKey = ar.reqParam("matchkey");
-            StringBuffer users = new StringBuffer();
-            List<AddressListEntry> userList = ar.getMatchedFragment(matchKey.toLowerCase());
-            for (AddressListEntry ale : userList) {
-                if(ale.getName().length() == 0){
-                    users.append(ale.getUniversalId());
-                }else{
-                    users.append(" ");
-                    users.append(ale.getName());
-                    users.append("<");
-                    users.append(ale.getUniversalId());
-                    users.append(">");
-                }
-                users.append(",");
-            }
-            NGWebUtils.sendResponse(ar, users.toString());
-        }
-        catch(Exception ex){
-            ar.logException("Caught by getUsers.ajax", ex);
-        }
-    }
-*/
-
     @RequestMapping(value = "/markAsTemplate.ajax", method = RequestMethod.POST)
     public void markAsTemplate(HttpServletRequest request, HttpServletResponse response)
     throws Exception {
@@ -710,7 +607,37 @@ public class UserController extends BaseController {
         }
     }
 
-
+    @RequestMapping(value = "/{userKey}/updateProfile.json", method = RequestMethod.POST)
+    public void updateProfile(HttpServletRequest request, HttpServletResponse response,
+                              @PathVariable String userKey) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            ar.assertLoggedIn("Must be logged in in order to edit a user profile.");
+            Cognoscenti cog = ar.getCogInstance();
+            UserManager userManager = cog.getUserManager();
+            UserProfile userBeingEdited = userManager.findUserByAnyIdOrFail(userKey);
+            UserProfile userEditing = ar.getUserProfile();
+            
+            if (userEditing.getKey().equals(userBeingEdited.getKey())) {
+                if (!ar.isSuperAdmin()) {
+                    throw new Exception("User "+userEditing.getName()+" is not allowed to edit the profile of user "+userBeingEdited.getName());
+                }
+            }
+            
+            JSONObject newUserSettings = this.getPostedObject(ar);
+            userBeingEdited.updateFromJSON(newUserSettings);
+            
+            JSONObject userObj = userBeingEdited.getFullJSON();
+            userObj.write(ar.w, 2, 2);
+            ar.flush();
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to update user "+userKey, ex);
+            streamException(ee, ar);
+        }
+    }
+    
+    
     @RequestMapping(value = "/approveOrRejectRoleRequest.ajax", method = RequestMethod.POST)
     public void approveOrRejectRoleRequest(HttpServletRequest request, HttpServletResponse response)
     throws Exception {
