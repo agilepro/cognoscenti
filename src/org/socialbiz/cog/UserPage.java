@@ -354,7 +354,7 @@ public class UserPage extends ContainerCommon
         }
         String userKey = comboLink.substring(0,atPos);
         String symbol = comboLink.substring(atPos+1);
-        UserPage uPage = UserManager.findOrCreateUserPage(userKey);
+        UserPage uPage = UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
         return uPage.getResourceFromSymbol(symbol);
     }
 
@@ -587,8 +587,7 @@ public class UserPage extends ContainerCommon
         //TODO: this looks very suspicious.  It gets your contacts, and then it looks through
         // all of the user profiles, and gets the address list entry of the contct.
         // I can't tell if this does anything important or not.
-        UserProfile[] profiles = UserManager.getAllUserProfiles();
-        for (UserProfile userProfile : profiles) {
+        for (UserProfile userProfile : UserManager.getStaticUserManager().getAllUserProfiles()) {
             if(!CustomRole.isPlayerOfAddressList(userProfile, existingContacts)){
                 resultList.add(new AddressListEntry(userProfile));
             }

@@ -290,7 +290,7 @@ public abstract class ContainerCommon extends NGContainer
             fullPath==null || fullPath.length()==0 ) {
             return null;
         }
-        UserPage uPage = UserManager.findOrCreateUserPage(userKey);
+        UserPage uPage = UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
         ConnectionSettings defCSet = uPage.getConnectionSettingsOrNull(connId);
         if (defCSet==null) {
             //if ID is invalid, treat it like it does not exist

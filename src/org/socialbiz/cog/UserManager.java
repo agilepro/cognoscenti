@@ -82,7 +82,11 @@ public class UserManager
         cog = _cog;
     }
     
-    public synchronized void loadUpUserProfilesInMemory(Cognoscenti cog) throws Exception {
+    public static UserManager getStaticUserManager() {
+        return cog.getUserManager();
+    }
+    
+    public synchronized void loadUpUserProfilesInMemory() throws Exception {
         //check to see if this has already been loaded, if so, there is nothing to do
         if (initialized) {
             return;
@@ -269,7 +273,7 @@ public class UserManager
         return up;
     }
 
-
+/*
     public static synchronized String getUserFullNameList() {
         if (userHashByUID == null) {
             return "";
@@ -292,13 +296,15 @@ public class UserManager
         String str = sb.toString();
         return str;
     }
-
-    public static synchronized UserProfile[] getAllUserProfiles() throws Exception {
-        UserProfile[] ups = new UserProfile[allUsers.size()];
-        allUsers.copyInto(ups);
-        return ups;
+*/
+    public synchronized List<UserProfile> getAllUserProfiles() {
+        Vector<UserProfile> res = new Vector<UserProfile>();
+        for (UserProfile up : allUsers) {
+            res.add(up);
+        }
+        return res;
     }
-    public static synchronized List<AddressListEntry> getAllUsers() {
+    public synchronized List<AddressListEntry> getAllUsers() {
         Vector<AddressListEntry> res = new Vector<AddressListEntry>();
         for (UserProfile up : allUsers) {
             res.add(new AddressListEntry(up));
@@ -309,7 +315,7 @@ public class UserManager
     /**
     * returns users that have profiles, and also users who have microprofile
     */
-    public static synchronized List<AddressListEntry> getAllPossibleUsers() throws Exception {
+    public synchronized List<AddressListEntry> getAllPossibleUsers() throws Exception {
         Vector<AddressListEntry> res = new Vector<AddressListEntry>();
         Hashtable<String,String> repeatCheck = new Hashtable<String,String>();
         for (UserProfile up : allUsers) {
@@ -330,17 +336,111 @@ public class UserManager
     }
 
 
-    public static String getShortNameByUserId(String userId) {
-        if(userHashByUID != null) {
+
+
+    /**
+    * Read through the user profile file, find all the users that are
+    * disabled, and remove them from the user profile list.
+    */
+    public synchronized void removeDisabledUsers() throws Exception {
+        Vector<UserProfile> cache = new Vector<UserProfile>();
+        for (UserProfile up : allUsers) {
+            if (!up.getDisabled()) {
+                cache.add(up);
+            }
+        }
+        allUsers = cache;
+        saveUserProfiles();
+    }
+/*
+    public static synchronized String getUserFullNameList(String matchKey) throws Exception {
+        StringBuffer sb = new StringBuffer();
+        boolean addComma = false;
+        for (UserProfile up : allUsers) {
+             if (addComma) {
+                 sb.append(",");
+             }
+             if(up.getName().toLowerCase().contains(matchKey.toLowerCase())){
+                sb.append(up.getName());
+                sb.append("<");
+                sb.append(up.getUniversalId());
+                sb.append(">");
+                addComma = true;
+            }
+            else{
+                addComma = false;
+            }
+        }
+        return sb.toString();
+    }
+
+    
+    public static String getKeyByUserId(String userId)
+    {
+        if(userHashByUID != null)
+        {
             UserProfile up = findUserByAnyId(userId);
-            if(up != null) {
-                return up.getName();
+            if(up != null)
+            {
+                return up.getKey();
             }
         }
         return userId;
     }
+*/
 
 
+    public List<UserProfile> getAllSuperAdmins(AuthRequest ar) throws Exception{
+        List<UserProfile> allProfiles=  ar.getCogInstance().getUserManager().getAllUserProfiles();
+        List<UserProfile> allAdmins = new ArrayList<UserProfile>();
+        for(UserProfile up : allProfiles){
+            if(ar.isSuperAdmin( up.getKey() )){
+                allAdmins.add( up );
+            }
+        }
+        return allAdmins;
+    }
+
+    /**
+     * get a list of email assignees for all server super admin users.
+     */
+    public Vector<OptOutAddr> getSuperAdminMailList(AuthRequest ar) throws Exception {
+        Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
+        for (UserProfile superAdmin : getAllSuperAdmins(ar)) {
+        	AddressListEntry ale = new AddressListEntry(superAdmin.getPreferredEmail());
+        	if (ale.isWellFormed()) {
+        		sendTo.add(new OptOutSuperAdmin(ale));
+        	}
+        }
+        if (sendTo.size() == 0) {
+            throw new NGException("nugen.exceptionhandling.account.no.super.admin", null);
+        }
+        return sendTo;
+    }
+
+    public synchronized UserPage findOrCreateUserPage(String userKey)  throws Exception {
+        if (userKey==null || userKey.length()==0) {
+            throw new NGException("nugen.exception.cant.create.user.page",null);
+        }
+        File userFolder = cog.getConfig().getUserFolderOrFail();
+        File newPlace = new File(userFolder, userKey+".user");
+
+        //check to see if the file is there
+        if (!newPlace.exists())  {
+            //it might be in the old position.
+            File oldPlace = cog.getConfig().getFile(userKey+".user");
+            if (oldPlace.exists()) {
+                UserPage.moveFile(oldPlace, newPlace);
+            }
+        }
+        Document newDoc = UserPage.readOrCreateFile(newPlace, "user");
+        return new UserPage(newPlace, newDoc, userKey);
+    }
+
+    
+    
+    //////////////////////// Static Helpers ////////////////////////////
+    
     /**
      * Some parts of the program are given a list of email addresses or other id values.
      * This will take the list, parse it, and return a list of AddressListEntry objects.
@@ -375,103 +475,5 @@ public class UserManager
         }
         return sb.toString();
     }
-
-    /**
-    * Read through the user profile file, find all the users that are
-    * disabled, and remove them from the user profile list.
-    */
-    public synchronized void removeDisabledUsers(Cognoscenti cog) throws Exception {
-        Vector<UserProfile> cache = new Vector<UserProfile>();
-        for (UserProfile up : allUsers) {
-            if (!up.getDisabled()) {
-                cache.add(up);
-            }
-        }
-        allUsers = cache;
-        saveUserProfiles();
-    }
-
-    public static synchronized String getUserFullNameList(String matchKey) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        boolean addComma = false;
-        for (UserProfile up : allUsers) {
-             if (addComma) {
-                 sb.append(",");
-             }
-             if(up.getName().toLowerCase().contains(matchKey.toLowerCase())){
-                sb.append(up.getName());
-                sb.append("<");
-                sb.append(up.getUniversalId());
-                sb.append(">");
-                addComma = true;
-            }
-            else{
-                addComma = false;
-            }
-        }
-        return sb.toString();
-    }
-
-    public static String getKeyByUserId(String userId)
-    {
-        if(userHashByUID != null)
-        {
-            UserProfile up = findUserByAnyId(userId);
-            if(up != null)
-            {
-                return up.getKey();
-            }
-        }
-        return userId;
-    }
-
-
-
-    public static List<UserProfile> getAllSuperAdmins(AuthRequest ar) throws Exception{
-        UserProfile[] allProfiles=  getAllUserProfiles();
-        List<UserProfile> allAdmins = new ArrayList<UserProfile>();
-        for(int i=0; i<allProfiles.length; i++){
-            if(ar.isSuperAdmin( allProfiles[i].getKey() )){
-                allAdmins.add( allProfiles[i] );
-            }
-        }
-        return allAdmins;
-    }
-
-    /**
-     * get a list of email assignees for all server super admin users.
-     */
-    public static Vector<OptOutAddr> getSuperAdminMailList(AuthRequest ar) throws Exception {
-        Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
-        for (UserProfile superAdmin : getAllSuperAdmins(ar)) {
-        	AddressListEntry ale = new AddressListEntry(superAdmin.getPreferredEmail());
-        	if (ale.isWellFormed()) {
-        		sendTo.add(new OptOutSuperAdmin(ale));
-        	}
-        }
-        if (sendTo.size() == 0) {
-            throw new NGException("nugen.exceptionhandling.account.no.super.admin", null);
-        }
-        return sendTo;
-    }
-
-    public static synchronized UserPage findOrCreateUserPage(String userKey)  throws Exception {
-        if (userKey==null || userKey.length()==0) {
-            throw new NGException("nugen.exception.cant.create.user.page",null);
-        }
-        File userFolder = cog.getConfig().getUserFolderOrFail();
-        File newPlace = new File(userFolder, userKey+".user");
-
-        //check to see if the file is there
-        if (!newPlace.exists())  {
-            //it might be in the old position.
-            File oldPlace = cog.getConfig().getFile(userKey+".user");
-            if (oldPlace.exists()) {
-                UserPage.moveFile(oldPlace, newPlace);
-            }
-        }
-        Document newDoc = UserPage.readOrCreateFile(newPlace, "user");
-        return new UserPage(newPlace, newDoc, userKey);
-    }
-
+    
 }

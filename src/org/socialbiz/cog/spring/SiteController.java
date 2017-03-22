@@ -34,7 +34,6 @@ import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
-import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
 import org.springframework.stereotype.Controller;
@@ -76,7 +75,7 @@ public class SiteController extends BaseController {
             if (needsToSetName(ar)) {
                 streamJSP(ar, "requiredName");
             }
-            if (UserManager.getAllSuperAdmins(ar).size()==0) {
+            if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
                 showWarningView(ar, "nugen.missingSuperAdmin");
                 return;
             }
@@ -362,62 +361,6 @@ public class SiteController extends BaseController {
     }
 
     
-//This is a pretty horrible function.  It is used to support the old style of
-//auto complete when entering user names.
-//However this really does not site well with the angular approach
-//TODO: this should be eliminated once we know it is not being used.
-/*
-    @RequestMapping(value = "/{siteId}/$/getUsers.ajax", method = RequestMethod.GET)
-    public void getUsers(HttpServletRequest request, HttpServletResponse response,
-            @PathVariable String siteId) throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            String users="";
-            if(ar.isLoggedIn()){
-                ar.getCogInstance().getSiteByIdOrFail(siteId);
-                String matchKey = ar.defParam("matchkey", "");
-                users = UserManager.getUserFullNameList(matchKey);
-                users = users.replaceAll("\"", "");
-            }
-            NGWebUtils.sendResponse(ar, users);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.get.users", null, ex);
-        }
-    }
-*/
-
-
-    /*
-    @RequestMapping(value = "/{siteId}/$/EditRoleBook.htm", method = RequestMethod.GET)
-    public ModelAndView editRoleBook(@PathVariable String siteId,
-            @RequestParam String roleName, @RequestParam String projectName,
-            HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
-        if (true) {
-            throw new Exception("pretty sure EditRoleBook.htm not being used any more");
-        }
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
-                return null;
-            }
-            prepareSiteView(ar, siteId);
-            if (executiveCheckViews(ar)) {
-                return null;
-            }
-            ModelAndView modelAndView=new ModelAndView("editRoleAccount");
-            request.setAttribute("headerType", "site");
-            request.setAttribute("realRequestURL", ar.getRequestURL());
-            request.setAttribute("roleName", roleName);
-            request.setAttribute("projectName", projectName);
-            return modelAndView;
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.editrolebook",new Object[]{siteId});
-        }
-    }
-    */
-
     @RequestMapping(value = "/{siteId}/$/replaceUsers.json", method = RequestMethod.POST)
     public void getGoalHistory(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) {

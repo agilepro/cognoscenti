@@ -313,7 +313,7 @@ public class AccessControl {
         if(userPageMap.containsKey(userKey)){
             userPage = userPageMap.get(userKey);
         }else{
-            userPage = UserManager.findOrCreateUserPage(userKey);
+            userPage = UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
             userPageMap.put(userKey, userPage);
         }
         String resourceId = "accountrequest:"+userPage.getKey()+":"+accountDetails.getRequestId();

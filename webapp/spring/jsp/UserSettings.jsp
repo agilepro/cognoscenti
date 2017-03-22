@@ -94,6 +94,10 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
     <table class="spacey">
+        <tr ng-show="userInfo.disabled">
+            <td class="firstcol">Status:</td>
+            <td><span style="color:red">DISABLED</span></td>
+        </tr>
         <tr>
             <td class="firstcol">Full Name:</td>
             <td>{{userInfo.name}}</td>

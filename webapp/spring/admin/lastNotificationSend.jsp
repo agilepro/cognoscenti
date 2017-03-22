@@ -9,6 +9,14 @@
 
 
 %>
+
+<script>
+
+var app = angular.module('myApp', ['ui.bootstrap']);
+app.controller('myCtrl', function($scope, $http) {
+});
+</script>
+
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>

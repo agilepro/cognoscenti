@@ -20,9 +20,9 @@
 
 package org.socialbiz.cog.dms;
 
-import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserPage;
+import org.socialbiz.cog.exception.ProgramLogicError;
 
 /**
 * This class parses and composes a special "combo" string value that used to be
@@ -73,7 +73,7 @@ public class RemoteLinkCombo
     public static RemoteLinkCombo fromFullPath(String _userKey, String _folderId, String fullPath)
         throws Exception
     {
-        UserPage uPage = UserManager.findOrCreateUserPage(_userKey);
+        UserPage uPage = UserManager.getStaticUserManager().findOrCreateUserPage(_userKey);
         ConnectionType cType = uPage.getConnectionOrFail(_folderId);
         String internalPath = cType.getInternalPathOrFail(fullPath);
         return new RemoteLinkCombo(_userKey, _folderId, internalPath);
@@ -124,13 +124,13 @@ public class RemoteLinkCombo
     */
     public ResourceEntity getResource() throws Exception
     {
-        UserPage uPage = UserManager.findOrCreateUserPage(userKey);
+        UserPage uPage = UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
         return uPage.getResource(folderId, rpath);
     }
 
     public ResourceEntity getResourceOrNull() throws Exception
     {
-        UserPage uPage = UserManager.findOrCreateUserPage(userKey);
+        UserPage uPage = UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
         ResourceEntity re = uPage.getResourceOrNull(folderId, rpath);
         if(re!=null){
             return re;
@@ -141,7 +141,7 @@ public class RemoteLinkCombo
 
     public UserPage getUserPage() throws Exception
     {
-        return UserManager.findOrCreateUserPage(userKey);
+        return UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
     }
 }
 

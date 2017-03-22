@@ -577,20 +577,15 @@ public class AuthRequest
         return "";
     }
 
-    public UserPage getUserPage()
-        throws Exception
-    {
-        if (user==null)
-        {
+    public UserPage getUserPage() throws Exception {
+        if (user==null) {
             throw new NGException("nugen.exception.login.to.get.user",null);
         }
-        return UserManager.findOrCreateUserPage(user.getKey());
+        return cog.getUserManager().findOrCreateUserPage(user.getKey());
     }
 
-    public UserPage getAnonymousUserPage()
-        throws Exception
-    {
-        return UserManager.findOrCreateUserPage("ANONYMOUS_REQUESTS");
+    public UserPage getAnonymousUserPage() throws Exception {
+        return cog.getUserManager().findOrCreateUserPage("ANONYMOUS_REQUESTS");
     }
 
     /**

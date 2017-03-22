@@ -58,7 +58,7 @@ public class HistoricActions {
     }
 
     private void sendSiteRequestEmail(SiteRequest siteRequest) throws Exception {
-        for (UserProfile up : UserManager.getAllSuperAdmins(ar)) {
+        for (UserProfile up : cog.getUserManager().getAllSuperAdmins(ar)) {
             JSONObject jo = new JSONObject();
             jo.put("req", siteRequest.getJSON());
             jo.put("baseURL", ar.baseURL);
@@ -70,7 +70,7 @@ public class HistoricActions {
             ChunkTemplate.streamIt(w, templateFile, jo);
             w.flush();
 
-            EmailSender.generalMailToList(UserManager.getSuperAdminMailList(ar), ar.getBestUserId(),
+            EmailSender.generalMailToList(cog.getUserManager().getSuperAdminMailList(ar), ar.getBestUserId(),
                     "Site Approval for " + ar.getBestUserId(),
                     body.toString(), cog);
         }

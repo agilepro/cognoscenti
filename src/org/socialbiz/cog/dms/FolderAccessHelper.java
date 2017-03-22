@@ -35,7 +35,6 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.NGPage;
-import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -543,7 +542,7 @@ public class FolderAccessHelper {
     public boolean createCopyInRepository(String userkey, NGPage ngp, String aid,
             String path, String folderId, boolean isOverwrite) throws Exception {
 
-        UserPage up = UserManager.findOrCreateUserPage(userkey);
+        UserPage up = ar.getCogInstance().getUserManager().findOrCreateUserPage(userkey);
         ResourceEntity re = up.getResource(folderId, path);
 
         return copyAttachmentToRemote(ngp, aid, re, isOverwrite);

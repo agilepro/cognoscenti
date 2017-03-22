@@ -34,16 +34,21 @@ Required Parameters:
 function postMyComment(){
     document.forms["logUserComents"].submit();
 }
+var app = angular.module('myApp', ['ui.bootstrap']);
+app.controller('myCtrl', function($scope, $http) {
+    $scope.b = "b";
+});
+
 </script>
 
 <!-- Begin mainContent (Body area) -->
 <div ng-app="myApp" ng-controller="myCtrl">
 
+    <div  class="h1">
+        Details of Error: <%ar.writeHtml(errorId); %>
+    </div>
 
     <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Details of Error: <%ar.writeHtml(errorId); %>
-        </div>
         <div class="rightDivContent" style="margin-right:100px;">
           <span class="dropdown">
             <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -63,50 +68,30 @@ function postMyComment(){
               <input type="hidden" name="searchByDate" id="searchByDate" value="<%ar.writeHtml(searchByDate); %>"/>
               <input type="hidden" name="goURL" id="goURL" value="<%ar.writeHtml(goURL); %>"/>
 
-                <table width="100%" border="0px solid red">
-                    <tr>
-                      <td style="text-align:left">
-                        <b>Error Message:</b>  <%ar.writeHtmlWithLines(eDetails.getErrorMessage()); %>
-                        <br /><br />
-                        <b>Page:</b> <a href="<%ar.writeHtml(eDetails.getURI()); %>"><%ar.writeHtml( eDetails.getURI()); %></a>
-                        <br /><br />
-                        <b>Date & Time:</b> <%ar.writeHtml(formattedDate); %>
-                        <br /><br />
-                        <b>User Detail: </b> <%ar.writeHtml(eDetails.getModUser()); %>
-                        <br /><br />
-                        <b>Comments: </b>
-                        <br />
-                        <textarea rows="4" name="comments" id="comments" class="textAreaGeneral"><%ar.writeHtml(eDetails.getUserComment()); %></textarea>
-                        <br /><br />
-                        <input type="submit" class="btn btn-primary btn-raised" value="<fmt:message key="nugen.button.comments.update" />"
-                                                                onclick="postMyComment()">
-                    </td>
-                  </tr>
-                    <tr><td style="height:20px"></td></tr>
-                     <tr>
-                         <td class="errorDetailArea">
-                            <span id="showDiv" style="display:inline" onclick="setVisibility('errorDetails')">
-                                Show Error Details &nbsp;&nbsp;
-                                 <img src="<%=ar.retPath %>assets/expandBlackIcon.gif" title="Expand" alt="" />
-                             </span>
-                            <span id="hideDiv" style="display:none" onclick="setVisibility('errorDetails')">
-                                Hide Error Details &nbsp;&nbsp;
-                                <img src="<%=ar.retPath %>assets/collapseBlackIcon.gif" title="Collapse" alt="" />
-                             </span>
-                         </td>
-                     </tr>
-
-                      <tr><td style="height:20px"></td></tr>
-                      <tr>
-                          <td style="text-align:left">
-                            <div id="errorDetails" class="errorStyle" style="display:none;">
-                            <pre style="overflow:auto;width:900px;"><%ar.writeHtml(eDetails.getErrorDetails()); %></pre>
-                            </div>
-                          </td>
-                      </tr>
-                </table>
+            <b>Error Message:</b>  <%ar.writeHtmlWithLines(eDetails.getErrorMessage()); %>
+            <br /><br />
+            <b>Page:</b> <a href="<%ar.writeHtml(eDetails.getURI()); %>"><%ar.writeHtml( eDetails.getURI()); %></a>
+            <br /><br />
+            <b>Date & Time:</b> <%ar.writeHtml(formattedDate); %>
+            <br /><br />
+            <b>User Detail: </b> <%ar.writeHtml(eDetails.getModUser()); %>
+            <br /><br />
+            <b>Comments: </b>
+            <br />
+            <textarea name="comments" id="comments" class="form-control" style="width:600px;height:150px"><%ar.writeHtml(eDetails.getUserComment()); %></textarea>
+            <br /><br />
+            <input type="submit" class="btn btn-primary btn-raised" value="<fmt:message key="nugen.button.comments.update" />"
+                                                    onclick="postMyComment()">
              </form>
-
+             <hr/>
+             <div>
+                <button class="btn btn-default btn-raised" ng-hide="showTrace" ng-click="showTrace=!showTrace">
+                    Show Error Details 
+                 </button>
+             </div>
+            <div id="errorDetails" class="errorStyle" ng-show="showTrace">
+            <pre style="overflow:auto;width:900px;" ng-click="showTrace=!showTrace"><%ar.writeHtml(eDetails.getErrorDetails()); %></pre>
+            </div>
         </div>
  </div>
 

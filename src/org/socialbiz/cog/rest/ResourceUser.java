@@ -141,26 +141,25 @@ public class ResourceUser implements NGResource
     private void loadUesrProfile()throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        UserProfile[] profiles = new UserProfile[0];;
+        List<UserProfile> profiles = null;
         if("*".equals(lid)){
-            profiles = UserManager.getAllUserProfiles();
-        }else{
+            profiles = lar.getCogInstance().getUserManager().getAllUserProfiles();
+        }
+        else{
             UserProfile profile = UserManager.getUserProfileByKey(lid);
             if (profile == null) {
                 lrstatus.setStatusCode(404);
                 throw new NGException("nugen.exception.user.profile.not.found", new Object[]{lid});
             }
-            profiles = new UserProfile[1];
-            profiles[0] = profile;
+            profiles = new ArrayList<UserProfile>();
+            profiles.add(profile);
         }
         String schema = lserverURL + NGResource.SCHEMA_USERPROFILE;
         loutdoc = DOMUtils.createDocument("userprofiles");
         Element element_profiles = loutdoc.getDocumentElement();
         DOMUtils.setSchemAttribute(element_profiles, schema);
 
-        for(int i=0; i<profiles.length; i++)
-        {
-            UserProfile uprofile = profiles[i];
+        for(UserProfile uprofile : profiles) {
             Element element_uprofile = DOMUtils.createChildElement(loutdoc, element_profiles, "userprofile");
             element_uprofile.setAttribute("id", uprofile.getKey());
             DOMUtils.createChildElement(loutdoc, element_uprofile, "userid", uprofile.getUniversalId());

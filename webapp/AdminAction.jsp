@@ -46,7 +46,7 @@
         }
     }
     else if (action.equals("Remove Disabled Users")) {
-        cog.getUserManager().removeDisabledUsers(cog);
+        cog.getUserManager().removeDisabledUsers();
         cog.getUserManager().reloadUserProfiles(cog);
     }
     else if (action.equals("Pause Server")) {

@@ -34,7 +34,6 @@ import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGWorkspace;
-import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ServletExit;
@@ -127,7 +126,7 @@ public class BaseController {
             streamJSP(ar, "WarningNotMember");
             return true;
         }
-        if (UserManager.getAllSuperAdmins(ar).size()==0) {
+        if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
             showWarningView(ar, "nugen.missingSuperAdmin");
             return true;
         }
@@ -341,7 +340,7 @@ public class BaseController {
             showWarningView(ar, "nugen.project.executive.msg");
             return true;
         }
-        if (UserManager.getAllSuperAdmins(ar).size()==0) {
+        if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
             showWarningView(ar, "nugen.missingSuperAdmin");
             return true;
         }

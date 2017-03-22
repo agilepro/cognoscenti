@@ -23,7 +23,6 @@ import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
 import org.socialbiz.cog.SuperAdminLogFile;
 import org.socialbiz.cog.UserCache;
-import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
 import org.workcast.json.JSONArray;
@@ -51,6 +50,7 @@ public class DailyDigest {
         MemFile debugStuff = new MemFile();
         Writer debugWriter = debugStuff.getWriter();
         System.out.println("sendDailyDigest has been called.");
+        JSONArray entries = new JSONArray();
 
         try {
             NGPageIndex.assertNoLocksOnThread();
@@ -73,8 +73,7 @@ public class DailyDigest {
 
 
             // loop thru all the profiles to send out the email.
-            UserProfile[] ups = UserManager.getAllUserProfiles();
-            for (UserProfile up : ups) {
+            for (UserProfile up : arx.getCogInstance().getUserManager().getAllUserProfiles()) {
                 System.out.println("Considering user: "+up.getKey()+" which is "+up.getName());
                 if (up.getDisabled()) {
                     //skip all disabled users
@@ -103,6 +102,10 @@ public class DailyDigest {
 
             //save all the times that we set on the user profiles
             cog.getUserManager().saveUserProfiles();
+            
+            JSONObject logFile = new JSONObject();
+            logFile.put("events", entries);
+
 
         } catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.send.daily.digest", null, e);

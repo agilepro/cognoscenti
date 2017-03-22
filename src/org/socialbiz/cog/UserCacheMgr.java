@@ -15,7 +15,7 @@ public class UserCacheMgr {
 
         //now initialize all users as needing a recalc sisce we don't know who
         //needed update at the time the server was last shut down.
-        for (UserProfile up : UserManager.getAllUserProfiles()) {
+        for (UserProfile up : cog.getUserManager().getAllUserProfiles()) {
             needsRecalc.add(up.getKey());
         }
     }

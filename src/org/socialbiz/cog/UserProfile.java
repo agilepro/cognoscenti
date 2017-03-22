@@ -776,7 +776,7 @@ public class UserProfile implements UserRef
     }
 
     public UserPage getUserPage() throws Exception {
-        return UserManager.findOrCreateUserPage(key);
+        return UserManager.getStaticUserManager().findOrCreateUserPage(key);
     }
 
     public List<NGBook> findAllMemberSites() throws Exception {
@@ -858,6 +858,9 @@ public class UserProfile implements UserRef
         }
         if (input.has("notifyPeriod")) {
             this.setNotificationPeriod(input.getInt("notifyPeriod"));
+        }
+        if (input.has("disabled")) {
+            this.setDisabled(input.getBoolean("disabled"));
         }
         if (input.has("preferred")) {
             String newPref = input.getString("preferred");

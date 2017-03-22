@@ -124,7 +124,7 @@ public class SectionUtil
     */
     static private void appendCleanName(StringBuffer res, String uopenid)
     {
-        String shortName = UserManager.getShortNameByUserId(uopenid);
+        String shortName = getShortNameByUserId(uopenid);
         if (shortName!=null && shortName.indexOf('/')==-1)
         {
             res.append(shortName);
@@ -168,6 +168,14 @@ public class SectionUtil
         StringBuffer res = new StringBuffer();
         appendCleanName(res, uopenid);
         return res.toString();
+    }
+
+    public static String getShortNameByUserId(String userId) {
+        UserProfile up = UserManager.getStaticUserManager().findUserByAnyId(userId);
+        if(up != null) {
+            return up.getName();
+        }
+        return userId;
     }
 
 

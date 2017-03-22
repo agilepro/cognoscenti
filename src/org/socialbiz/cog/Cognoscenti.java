@@ -209,9 +209,9 @@ System.out.println("Weaver Server Object == Start the Server");
             projectsWithEmailToSend = new ArrayList<String>();
 
             AuthDummy.initializeDummyRequest(this);
-            userCacheMgr = new UserCacheMgr(this);
             userManager = new UserManager(this);
-            userManager.loadUpUserProfilesInMemory(this);
+            userManager.loadUpUserProfilesInMemory();
+            userCacheMgr = new UserCacheMgr(this);
 
             NGPageIndex.initAllStaticVars();
             initIndexOfContainers();

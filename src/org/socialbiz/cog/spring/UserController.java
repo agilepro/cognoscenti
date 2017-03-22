@@ -382,7 +382,7 @@ public class UserController extends BaseController {
             ar.assertLoggedIn("Must be logged in to get users");
 
             JSONArray peopleList = new JSONArray();
-            List<AddressListEntry> userList = UserManager.getAllPossibleUsers();
+            List<AddressListEntry> userList = ar.getCogInstance().getUserManager().getAllPossibleUsers();
             for (AddressListEntry ale : userList) {
                 JSONObject person = ale.getJSON();
                 peopleList.put(person);
