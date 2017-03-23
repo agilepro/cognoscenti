@@ -8,9 +8,9 @@
     if (!ar.isSuperAdmin()) {
         throw new Exception("New Users page should only be accessed by Super Admin");
     }
-    JSONArray allNewUsers = new JSONArray();
+    JSONArray allUsers = new JSONArray();
     for (UserProfile user : UserManager.getStaticUserManager().getAllUserProfiles()) {
-        allNewUsers.put(user.getFullJSON());
+        allUsers.put(user.getFullJSON());
     }
 
     File userFolder =  ar.getCogInstance().getConfig().getFileFromRoot("users");
@@ -41,7 +41,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
-    $scope.allNewUsers = <%allNewUsers.write(out,2,4);%>;
+    $scope.allUsers = <%allUsers.write(out,2,4);%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -50,6 +50,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    $scope.filter="";
     
     $scope.updateServer = function(newProfile) {
         console.log("UPDATE PROFILE WITH", newProfile);
@@ -57,7 +58,7 @@ app.controller('myCtrl', function($scope, $http) {
         $http.post(postURL, JSON.stringify(newProfile))
         .success( function(data) {
             var newList = [];
-            $scope.allNewUsers.forEach( function(item) {
+            $scope.allUsers.forEach( function(item) {
                 if (item.key == newProfile.key) {
                     newList.push(data);
                 }
@@ -65,7 +66,7 @@ app.controller('myCtrl', function($scope, $http) {
                     newList.push(item);
                 }
             });
-            $scope.allNewUsers = newList;
+            $scope.allUsers = newList;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -78,6 +79,43 @@ app.controller('myCtrl', function($scope, $http) {
         newProfile.disabled = !profile.disabled;
         $scope.updateServer(newProfile);
     }
+    
+    $scope.getUsers = function() {
+        if (!$scope.filter || $scope.filter.length==0) {
+            return $scope.allUsers;
+        }
+        var filterlc = $scope.filter.toLowerCase();
+        var ret=[];
+        $scope.allUsers.forEach( function(item) {
+            if (item.name.toLowerCase().includes(filterlc)) {
+                ret.push(item);
+            }
+            else if (item.uid.toLowerCase().includes(filterlc)) {
+                ret.push(item);
+            }
+            else if (item.key.toLowerCase().includes(filterlc)) {
+                ret.push(item);
+            }
+        });
+        return ret;
+    }
+    
+    $scope.sortUsersStr = function(fieldname) {
+        $scope.allUsers.sort( function(a,b) {
+            if (a[fieldname]) {
+                return a[fieldname].localeCompare(b[fieldname])
+            }
+            return -1;
+        });
+    }
+    $scope.sortUsersNum = function(fieldname) {
+        $scope.allUsers.sort( function(a,b) {
+            if (a[fieldname]>b[fieldname]) {
+                return 1;
+            }
+            return -1;
+        });
+    }
 
 });
 
@@ -86,23 +124,34 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="h1">
+<style>
+.sorter {
+    cursor:pointer;
+    color:blue;
+}
+</style>
+
+    <div class="h1" style="float:left;margin-top:0px">
             All Users
     </div>
+    <div style="float:left;margin-left:30px" class="form-inline">
+        <label>Filter</label> &nbsp; <input ng-model="filter" class="form-control"/>
+    </div>
+    <div style="clear:both"></div>
     
     <div>
         <table class="table">
             <thead>
                 <tr>
-                    <th>User Name</th>
-                    <th>Registration Date</th>
-                    <th>Email</th>
+                    <th>User Name <i class="fa fa-sort sorter" ng-click="sortUsersStr('name')"></i></th>
+                    <th>Last Login <i class="fa fa-sort sorter" ng-click="sortUsersNum('lastLogin')"></i></th>
+                    <th>Email <i class="fa fa-sort sorter" ng-click="sortUsersStr('uid')"></i></th>
                     <th>Disabled</th>
-                    <th>Key</th>
+                    <th>Key <i class="fa fa-sort sorter" ng-click="sortUsersStr('key')"></i></th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="rec in allNewUsers" ng-click="window.alert(rec)">
+                <tr ng-repeat="rec in getUsers() | limitTo: 1000">
                     <td><a href="../../v/FindPerson.htm?uid={{rec.uid}}">{{rec.name}}</a></td>
                     <td>{{rec.lastLogin | date}}</td>
                     <td>{{rec.uid}}</td>
@@ -110,7 +159,7 @@ app.controller('myCtrl', function($scope, $http) {
                         <button ng-hide="rec.disabled" style="background-color:lightgreen" ng-click="toggleDisabled(rec)">Disable</span>
                         <button ng-show="rec.disabled" style="background-color:pink" ng-click="toggleDisabled(rec)">Reenable</span>
                     </td>
-                    <td>{{rec.key}}</td>
+                    <td><a href="../../v/FindPerson.htm?uid={{rec.uid}}">{{rec.key}}</a></td>
                 </tr>
             </tbody>
         </table>

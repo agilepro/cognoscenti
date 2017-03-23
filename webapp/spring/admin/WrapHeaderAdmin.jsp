@@ -150,7 +150,7 @@
             <li><a href="errorLog.htm" >Error Log</a></li>
             <li><a href="emailListnerSettings.htm" >Listener Settings</a></li>
             <li><a href="lastNotificationSend.htm" >Notification Settings</a></li>
-            <li><a href="newUsers.htm" >New Users</a></li>
+            <li><a href="newUsers.htm" >Users</a></li>
             <li><a href="requestedAccounts.htm" >Requested Sites</a></li>
             <li><a href="allSites.htm" >All Sites</a></li>
           </ul>
