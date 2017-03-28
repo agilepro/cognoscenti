@@ -144,7 +144,7 @@ public class TextEncrypter {
             }
         }
         // now open the same file for writing and write the resultant
-        // StringBuffer to the file.
+        // StringBuilder to the file.
         if (lineList.size() > 0) {
             BufferedWriter fileBw = new BufferedWriter(new FileWriter(iniFile));
             for (int i = 0; i < lineList.size(); i++) {

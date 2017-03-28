@@ -216,7 +216,7 @@ public class DataFeedServlet extends HttpServlet {
                 imageName = GoalRecord.stateImg(rec.taskState);
             }
             DOMUtils.createChildElement(doc, resultEle, "StateImg", imageName);
-            StringBuffer sb = new StringBuffer(rec.taskSyn);
+            StringBuilder sb = new StringBuilder(rec.taskSyn);
             if (rec.taskDesc != null && rec.taskDesc.length() > 0) {
                 sb.append(" - ").append(rec.taskDesc);
             }

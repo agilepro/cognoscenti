@@ -85,7 +85,7 @@ public class AuthStatus {
 
         //now convert timestamp into cryptic alpha string
         //start with the server defined prefix based on mac address
-        StringBuffer res = new StringBuffer(8);
+        StringBuilder res = new StringBuilder(8);
         while (ctime>0) {
             res.append(thirtySix[(int)(ctime % 36)]);
             res.append(thirtySix[(int)(lastctime % 10)]);  //always a numeral

@@ -65,7 +65,7 @@ public class Crawler {
     List<PageTestStatus> pagesToCrawl = new ArrayList<PageTestStatus>();
     BrowserVersion myBrowser = BrowserVersion.FIREFOX_3; // this is the only one for now. later, we can add emulation of other browsers
     List<String> errors = new ArrayList<String>();
-    StringBuffer excludePages = new StringBuffer();
+    StringBuilder excludePages = new StringBuilder();
 
     public static void main(String[] args)
         throws Exception

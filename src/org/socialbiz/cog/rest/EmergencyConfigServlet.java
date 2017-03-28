@@ -224,7 +224,7 @@ public class EmergencyConfigServlet extends javax.servlet.http.HttpServlet {
 
 
         if (ex!=null) {
-            StringBuffer exMsg = new StringBuffer("\r");
+            StringBuilder exMsg = new StringBuilder("\r");
             Throwable t = ex;
             while (t!=null) {
                 exMsg.append(t.toString());

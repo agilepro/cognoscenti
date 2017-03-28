@@ -118,7 +118,7 @@ public class LicensedURL
         {
             throw new ProgramLogicError("getCombinedRepresentation does not know how to handle url: "+url);
         }
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         int pos = 0;
         if (url.startsWith("http://"))
         {
@@ -182,7 +182,7 @@ public class LicensedURL
     public static LicensedURL parseCombinedRepresentationOLD(String newVal)
         throws Exception
     {
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         int pos = 0;
         if (newVal.startsWith("http://"))
         {

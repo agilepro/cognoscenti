@@ -35,7 +35,7 @@ public final class ValueElement {
 
     public String toString()
     {
-        final java.lang.StringBuffer _ret = new java.lang.StringBuffer(
+        final java.lang.StringBuilder _ret = new java.lang.StringBuilder(
                 "org.socialbiz.cog.ValueElement {");
         _ret.append("String name=");
         _ret.append(name);

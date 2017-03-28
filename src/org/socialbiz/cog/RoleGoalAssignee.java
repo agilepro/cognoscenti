@@ -70,7 +70,7 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
     @Override
     public void addPlayer(AddressListEntry newMember) throws Exception {
         List<AddressListEntry> current = getDirectPlayers();
-        StringBuffer newVal = new StringBuffer();
+        StringBuilder newVal = new StringBuilder();
         for (AddressListEntry one : current) {
             if (one.equals(newMember)) {
                 // person is already in the list, so leave without updating
@@ -96,7 +96,7 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
     }
     public void removePlayerCompletely(UserRef user) throws Exception {
         List<AddressListEntry> current = getDirectPlayers();
-        StringBuffer newVal = new StringBuffer();
+        StringBuilder newVal = new StringBuilder();
         boolean needComma = false;
         boolean changed = false;
         for (AddressListEntry one : current) {
@@ -191,7 +191,7 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         }
 
         //since we found one, now reconstruct the assignee list
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         result.append(destId);
         for (String oneAss : assignees) {
             //be sure not to duplicate the destId ... one might have already been in there.

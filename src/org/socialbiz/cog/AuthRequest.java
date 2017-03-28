@@ -242,7 +242,7 @@ public class AuthRequest
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(nowTime);
 
-        StringBuffer nts = new StringBuffer(20);
+        StringBuilder nts = new StringBuilder(20);
 
         //this becomes a kind of signature for the request
         nts.append(Integer.toString(cal.get(Calendar.YEAR)));
@@ -263,14 +263,14 @@ public class AuthRequest
     }
 
     /** appends to the string buffer the last two digits of this number */
-    public static void append2Digits(StringBuffer sb, int value)
+    public static void append2Digits(StringBuilder sb, int value)
     {
         sb.append( (char) ('0'+  ((value/10) % 10)));
         sb.append( (char) ('0'+  (value % 10)));
     }
 
     /** appends to the string buffer the last three digits of this number */
-    public static void append3Digits(StringBuffer sb, int value)
+    public static void append3Digits(StringBuilder sb, int value)
     {
         sb.append( (char) ('0'+  ((value/100) % 10)));
         sb.append( (char) ('0'+  ((value/10) % 10)));
@@ -1026,7 +1026,7 @@ public class AuthRequest
     public String getCompleteURL()
             throws Exception
     {
-        StringBuffer qs = new StringBuffer(getRequestURL());
+        StringBuilder qs = new StringBuilder(getRequestURL());
         @SuppressWarnings("unchecked")
         Enumeration<String> en = req.getParameterNames();
         boolean firstTime = true;
@@ -1712,7 +1712,7 @@ public class AuthRequest
     //it removes whitespace from string and filters extended ASCII letters (above 127) too.
     public static String removeWhiteSpace(String str){
 
-        StringBuffer stringBuff = new StringBuffer();
+        StringBuilder stringBuff = new StringBuilder();
         char aChar;
         if(str == null){
             throw new ProgramLogicError("Can not remove whitespaces from a null string");

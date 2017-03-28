@@ -1,5 +1,6 @@
 package org.socialbiz.cog.mail;
 
+import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,10 @@ public class DailyDigest {
         MemFile debugStuff = new MemFile();
         Writer debugWriter = debugStuff.getWriter();
         System.out.println("sendDailyDigest has been called.");
-        JSONArray entries = new JSONArray();
+        JSONObject logFile = new JSONObject();
+        JSONArray logEntries = new JSONArray();
+        logFile.put("events", logEntries);
+        File dailyDigestFile = new File(cog.getConfig().getUserFolderOrFail(), "DailyDigestLog.json");
 
         try {
             NGPageIndex.assertNoLocksOnThread();
@@ -58,6 +62,7 @@ public class DailyDigest {
 
             debugWriter.write("\n<li>Previous send time: ");
             SectionUtil.nicePrintDateAndTime(debugWriter,lastNotificationSentTime);
+            logFile.put("PreviousSend", lastNotificationSentTime);
 
             // we pick up the time here, at the beginning, so that any new
             // events created AFTER this time, but before the end of this routine are
@@ -70,12 +75,21 @@ public class DailyDigest {
             debugWriter.write("</li>\n<li>Disabling users who have not accessed since: ");
             SectionUtil.nicePrintDateAndTime(debugWriter, threeYearsAgo);
             debugWriter.write("</li>");
+            logFile.put("CurrentSend", processingStartTime);
+            logFile.put("UserDisableLimit", threeYearsAgo);
 
 
             // loop thru all the profiles to send out the email.
             for (UserProfile up : arx.getCogInstance().getUserManager().getAllUserProfiles()) {
                 System.out.println("Considering user: "+up.getKey()+" which is "+up.getName());
+                JSONObject userObject = new JSONObject();
+                logEntries.put(userObject);
+                userObject.put("key",  up.getKey());
+                userObject.put("name",  up.getName());
+                userObject.put("email",  up.getUniversalId());
+                
                 if (up.getDisabled()) {
+                    userObject.put("conclusion", "Disabled");
                     //skip all disabled users
                     continue;
                 }
@@ -85,10 +99,11 @@ public class DailyDigest {
                     debugWriter.write("\n<li>User automatically disabled after three years no access: "+up.getUniversalId()+"</li>");
                     System.out.println("DAILYDIGEST: User automatically disabled after three years no access: "+up.getUniversalId());
                     up.setDisabled(true);
+                    userObject.put("conclusion", "Disabled Now");
                     continue;
                 }
 
-                handleOneUser(cog, arx, up, debugWriter, processingStartTime);
+                handleOneUser(cog, arx, up, debugWriter, processingStartTime, userObject);
 
                 //this clears locks if there was an error during sending
                 NGPageIndex.clearLocksHeldByThisThread();
@@ -103,19 +118,18 @@ public class DailyDigest {
             //save all the times that we set on the user profiles
             cog.getUserManager().saveUserProfiles();
             
-            JSONObject logFile = new JSONObject();
-            logFile.put("events", entries);
 
 
         } catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.send.daily.digest", null, e);
         } finally {
             NGPageIndex.clearLocksHeldByThisThread();
+            logFile.writeToFile(dailyDigestFile);
         }
     }
 
     private static void handleOneUser(Cognoscenti cog, AuthRequest arx, UserProfile up,
-            Writer debugEvidence, long processingStartTime) {
+            Writer debugEvidence, long processingStartTime, JSONObject userLog) {
         try {
             NGPageIndex.assertNoLocksOnThread();
 
@@ -124,6 +138,7 @@ public class DailyDigest {
                 debugEvidence.write("\n<li>User has no email address: ");
                 HTMLWriter.writeHtml(debugEvidence, up.getUniversalId());
                 debugEvidence.write("</li>");
+                userLog.put("conclusion", "No Email Address");
                 return;
             }
 
@@ -153,18 +168,9 @@ public class DailyDigest {
                 debugEvidence.write("\n<li>not yet time to send to user ");
                 HTMLWriter.writeHtml(debugEvidence, up.getPreferredEmail());
                 debugEvidence.write("with period "+up.getNotificationPeriod()+", only been "+daysSinceLastSend+" days.</li>");
+                userLog.put("conclusion", "Too Soon");
                 return;
             }
-
-/*  Override address is no longer needed or useful now that we have KMail server
-            // if this address is configured, then all email will go to that
-            // email address, instead of the address in the profile.
-            //String overrideAddress = EmailSender.getProperty("overrideAddress");
-            String toAddress = EmailSender.getProperty("overrideAddress");
-            if (toAddress == null || toAddress.length() == 0) {
-                toAddress = realAddress;
-            }
-*/
 
             MemFile body = new MemFile();
             AuthDummy clone = new AuthDummy(up, body.getWriter(), cog);
@@ -181,9 +187,9 @@ public class DailyDigest {
             System.out.println("User "+up.getKey()+" has "+userCache.getActionItems().length()+" action items.");
             System.out.println("User "+up.getKey()+" has "+userCache.getOpenRounds().length()+" open rounds.");
             System.out.println("User "+up.getKey()+" has "+userCache.getProposals().length()+" proposals.");
-            if (reportableThings==0) {
-                System.out.println("Nothing to report.  not sending daily digest.");
-            }
+            userLog.put("ActionItems", userCache.getActionItems().length());
+            userLog.put("OpenRounds",  userCache.getOpenRounds().length());
+            userLog.put("Proposals",   userCache.getProposals().length());
 
             JSONObject data = userCache.getAsJSON();
             MemFile mf = new MemFile();
@@ -251,6 +257,7 @@ public class DailyDigest {
                         containers.add(ngci);
                     }
                 }
+                userLog.put("notifyCount", containers.size());
 
                 if (containers.size() > 0) {
                     clone.write("<div style=\"margin-top:15px;margin-bottom:20px;\"><span style=\"font-size:24px;font-weight:bold;\">Workspace Updates</span>&nbsp;&nbsp;&nbsp;");
@@ -274,6 +281,7 @@ public class DailyDigest {
                 //formatTaskListForEmail is going to clear locks, so clear here before entering
                 NGPageIndex.clearLocksHeldByThisThread();
                 numTasks = formatTaskListForEmail(clone, up);
+                userLog.put("tasks", numTasks);
 
                 //writeReminders will walk through a bunch of pages and all locks must be
                 //cleared before entering it.  Clean up locks from containers processing.
@@ -281,6 +289,7 @@ public class DailyDigest {
             }
 
             int numReminders = writeReminders(clone, up);
+            userLog.put("reminders", numReminders);
 
             clone.write("</body></html>");
             clone.flush();
@@ -305,11 +314,13 @@ public class DailyDigest {
                 HTMLWriter.writeHtml(debugEvidence, up.getPreferredEmail());
                 debugEvidence.write("</li>");
                 up.setNotificationTime(processingStartTime);
+                userLog.put("conclusion", "Email Sent");
             } else {
                 debugEvidence.write("\n<li>nothing for ");
                 HTMLWriter.writeHtml(debugEvidence,
                         up.getPreferredEmail());
                 debugEvidence.write("</li>");
+                userLog.put("conclusion", "Nothing to Report");
             }
 
         } catch (Exception e) {
@@ -319,6 +330,8 @@ public class DailyDigest {
             // for some reason if there an error sending an email to a particular person,
             // then just ignore that request and proceed with the other requests.
             try {
+                userLog.put("conclusion", "Error");
+                userLog.put("error", e.toString());
                 debugEvidence
                         .write("\n\n<li>Unable to send the Email notification to the User : ");
                 HTMLWriter.writeHtml(debugEvidence, up.getName());

@@ -51,7 +51,7 @@ public class IdGenerator
         lastKey = ctime;
 
         //now convert timestamp into cryptic alpha string
-        StringBuffer res = new StringBuffer(10);
+        StringBuilder res = new StringBuilder(10);
         while (ctime>0)
         {
             res.append((char)('A' + (ctime % 26)));
@@ -98,7 +98,7 @@ public class IdGenerator
 
     public static String fourDigitConvert(int id)
     {
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         for (int i=0; i<4; i++)
         {
             res.append( (char) ((id%10)+'0') );

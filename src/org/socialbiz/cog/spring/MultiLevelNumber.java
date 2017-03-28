@@ -73,7 +73,7 @@ class MultiLevelNumber
         }
 
         //now generate the string value
-        StringBuffer seq = new StringBuffer();
+        StringBuilder seq = new StringBuilder();
         for (int i=0; i<=level; i++) {
             seq.append(Integer.toString(tracker[i]));
             seq.append(".");

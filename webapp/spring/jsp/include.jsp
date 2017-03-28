@@ -6,7 +6,6 @@
 %><%@page import="java.io.OutputStreamWriter"
 %><%@page import="java.io.PrintWriter"
 %><%@page import="java.io.Writer"
-%><%@page import="java.lang.StringBuffer"
 %><%@page import="java.net.URLDecoder"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.text.SimpleDateFormat"

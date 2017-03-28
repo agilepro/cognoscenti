@@ -199,7 +199,7 @@ public class TestBuildSite implements TestSet {
 
     private void testStringArray(String id, List<String> testVal, String expectedVal) throws Exception {
         assertNotNull(id, testVal);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (String val : testVal) {
             sb.append(val);
             sb.append("|");

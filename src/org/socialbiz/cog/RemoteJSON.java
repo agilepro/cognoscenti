@@ -49,7 +49,7 @@ public class RemoteJSON {
         JSONObject retrievedObj = new JSONObject(jt);
         String responseCode = retrievedObj.optString("responseCode");
         if (responseCode!=null && responseCode.length()>0 && !"200".equals(responseCode)) {
-            StringBuffer reason = new StringBuffer();
+            StringBuilder reason = new StringBuilder();
             JSONArray msgs = retrievedObj.optJSONArray("msgs");
             if (msgs!=null) {
                 for (int i=0; i<msgs.length(); i++) {

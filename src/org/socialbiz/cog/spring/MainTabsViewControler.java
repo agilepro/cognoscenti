@@ -595,7 +595,7 @@ public class MainTabsViewControler extends BaseController {
      private String GetFirstHundredNoHtml(String input) {
          int limit = 100;
          boolean inTag = false;
-         StringBuffer res = new StringBuffer();
+         StringBuilder res = new StringBuilder();
          for (int i=0; i<input.length() && limit>0; i++) {
              char ch = input.charAt(i);
              if (inTag) {

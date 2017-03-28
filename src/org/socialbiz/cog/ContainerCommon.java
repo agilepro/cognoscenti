@@ -660,7 +660,7 @@ public abstract class ContainerCommon extends NGContainer
         String encryptionPad = getScalar("encryptionPad");
         if (encryptionPad==null || encryptionPad.length()!=30)
         {
-            StringBuffer tmp = new StringBuffer();
+            StringBuilder tmp = new StringBuilder();
             Random r = new Random();
             for (int i=0; i<30; i++)
             {
@@ -686,7 +686,7 @@ public abstract class ContainerCommon extends NGContainer
             chksum = chksum + (partial*partial);
         }
 
-        StringBuffer gen = new StringBuffer();
+        StringBuilder gen = new StringBuilder();
 
         while (chksum>0)
         {

@@ -100,7 +100,7 @@ public class DOMUtils {
 
         // we have more than one, so make a string buffer to
         // concatenate them together.
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         if (trim) {
             text.append(child.getNodeValue().trim());
         }
@@ -815,7 +815,7 @@ public class DOMUtils {
      * @return escaped String.
      */
     public static String xmlEscape(String str) {
-        StringBuffer validStr = new StringBuffer(str.length());
+        StringBuilder validStr = new StringBuilder(str.length());
         for (int i = 0; i < str.length(); i++) {
             char currentChar = str.charAt(i);
             switch (currentChar) {

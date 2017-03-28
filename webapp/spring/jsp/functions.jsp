@@ -33,8 +33,6 @@
 %><%@page import="java.io.File"
 %><%@page import="java.io.Writer"
 %><%@page import="java.io.Writer"
-%><%@page import="java.lang.StringBuffer"
-%><%@page import="java.lang.StringBuffer"
 %><%@page import="java.net.URLDecoder"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.text.SimpleDateFormat"

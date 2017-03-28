@@ -560,7 +560,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     private static String composeFromAddress(NGContainer ngc) throws Exception
     {
-        StringBuffer sb = new StringBuffer("^");
+        StringBuilder sb = new StringBuilder("^");
         String baseName = ngc.getFullName();
         int last = baseName.length();
         for (int i=0; i<last; i++)

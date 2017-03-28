@@ -267,44 +267,6 @@ public class CreateProjectController extends BaseController {
 
     ////////////////// HELPER FUNCTIONS /////////////////////////////////
 
-/*
-    private static String sanitizeHyphenate(String p) throws Exception {
-        String plc = p.toLowerCase();
-        StringBuffer result = new StringBuffer();
-        boolean wasPunctuation = false;
-        for (int i = 0; i < plc.length(); i++) {
-            char ch = plc.charAt(i);
-            boolean isAlphaNum = ((ch >= 'a') && (ch <= 'z'))
-                    || ((ch >= '0') && (ch <= '9'));
-            if (isAlphaNum) {
-                if (wasPunctuation) {
-                    result.append('-');
-                    wasPunctuation = false;
-                }
-                result.append(ch);
-            } else {
-                wasPunctuation = true;
-            }
-        }
-        return result.toString();
-    }
-
-    private static String findGoodFileName(String pt) throws Exception {
-        String p = sanitizeHyphenate(pt);
-        if (p.length() == 0) {
-            p = IdGenerator.generateKey();
-        }
-        String extp = p;
-        int incrementedExtension = 0;
-        while (true) {
-            File theFile = NGPage.getPathInDataFolder(extp + ".sp");
-            if (!theFile.exists()) {
-                return extp;
-            }
-            extp = p + "-" + (++incrementedExtension);
-        }
-    }
-*/
 
     private static NGPage createPage(AuthRequest ar, NGBook site)
             throws Exception {

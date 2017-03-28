@@ -72,7 +72,7 @@ public class PasswordEncrypter {
     * generates a hex code value using letters A=0 thru P=15
     */
     public static String hexEncode(byte[] byteArray) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i=0; i<byteArray.length; i++) {
             int getRidOfByteSign = byteArray[i] + 256;
             sb.append( (char) (((getRidOfByteSign>>4) & 0x0F)+'A'));

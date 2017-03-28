@@ -44,7 +44,7 @@ public class SectionUtil
 
     public static String sanitize(String source)
     {
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         int last = source.length();
         for (int i=0; i<last; i++) {
             char ch = source.charAt(i);
@@ -99,7 +99,7 @@ public class SectionUtil
 
         //might be faster to just write the URL conversion in the first place
         int startPos = 0;
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         while (plusPos>=startPos)
         {
             if (plusPos>startPos)
@@ -122,7 +122,7 @@ public class SectionUtil
     * This clean them up a bit for display, but removing the
     * http and the closing slash.
     */
-    static private void appendCleanName(StringBuffer res, String uopenid)
+    static private void appendCleanName(StringBuilder res, String uopenid)
     {
         String shortName = getShortNameByUserId(uopenid);
         if (shortName!=null && shortName.indexOf('/')==-1)
@@ -165,7 +165,7 @@ public class SectionUtil
 
     static public String cleanName(String uopenid)
     {
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         appendCleanName(res, uopenid);
         return res.toString();
     }

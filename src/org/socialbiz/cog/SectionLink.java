@@ -130,7 +130,7 @@ public class SectionLink extends SectionWiki
             //this section is empty, so don't create any topic, and return null
             return null;
         }
-        StringBuffer modifiedSource = new StringBuffer();
+        StringBuilder modifiedSource = new StringBuilder();
         LineIterator li = new LineIterator(data);
         while (li.moreLines())
         {

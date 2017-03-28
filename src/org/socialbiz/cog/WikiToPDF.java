@@ -481,7 +481,7 @@ public class WikiToPDF
             writeWrappedLine(""+count+". "+actionItem.getSynopsis()
                     +" ("+GoalRecord.stateName(actionItem.getState())+")");
             currentLineSize = 12;
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append(actionItem.getDescription());
             sb.append("\n\n");
             for (AddressListEntry ale : actionItem.getAssigneeRole().getDirectPlayers()) {
@@ -518,7 +518,7 @@ public class WikiToPDF
             setH3Font();
             writeWrappedLine(""+count+". "+role.getName());
             currentLineSize = 12;
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append(role.getDescription());
             sb.append("\n\n");
             sb.append(role.getRequirements());
@@ -630,7 +630,7 @@ public class WikiToPDF
     */
     private String stripBadCharacters(String text)  throws Exception
     {
-        StringBuffer cleanedText = new StringBuffer();
+        StringBuilder cleanedText = new StringBuilder();
         boolean alreadyWhite = false;
         for (int i=0; i<text.length(); i++) {
             char ch = text.charAt(i);
@@ -967,14 +967,14 @@ public class WikiToPDF
     {
         int pos = scanStart;
         int last = line.length();
-        StringBuffer toWrite = new StringBuffer();
+        StringBuilder toWrite = new StringBuilder();
         while (pos < last) {
             char ch = line.charAt(pos);
             switch (ch) {
             case '[':
 
                 writeWrappedLine(toWrite.toString());
-                toWrite = new StringBuffer();
+                toWrite = new StringBuilder();
                 int pos2 = line.indexOf(']', pos);
                 if (pos2 > pos + 1) {
                     String linkURL = line.substring(pos + 1, pos2);
@@ -988,7 +988,7 @@ public class WikiToPDF
                 continue;
             case '#':
                 writeWrappedLine(toWrite.toString());
-                toWrite = new StringBuffer();
+                toWrite = new StringBuilder();
                 int tagEnd = findIdentifierEnd(line, pos+1);
                 String tagName = line.substring(pos+1,tagEnd);
                 outputTagLink(tagName);
@@ -998,7 +998,7 @@ public class WikiToPDF
                 if (line.length() > pos + 1 && line.charAt(pos + 1) == '_') {
                     pos += 2;
                     writeWrappedLine(toWrite.toString());
-                    toWrite = new StringBuffer();
+                    toWrite = new StringBuilder();
                     isBold = !isBold;
                     currentFont = currentFamily.getFont(isBold, isItalic);
                     continue;
@@ -1008,7 +1008,7 @@ public class WikiToPDF
                 if (line.length() > pos + 1 && line.charAt(pos + 1) == '\'') {
                     pos += 2;
                     writeWrappedLine(toWrite.toString());
-                    toWrite = new StringBuffer();
+                    toWrite = new StringBuilder();
                     isItalic = !isItalic;
                     currentFont = currentFamily.getFont(isBold, isItalic);
                     continue;

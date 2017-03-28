@@ -65,7 +65,7 @@ public class NGException extends ExceptionBase {
     */
     public static String getFullMessage(Throwable e, Locale locale)
     {
-        StringBuffer retMsg = new StringBuffer();
+        StringBuilder retMsg = new StringBuilder();
         while (e != null)
         {
             if (e instanceof ExceptionBase)

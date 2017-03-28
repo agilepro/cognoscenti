@@ -277,7 +277,7 @@ public class Upload
         int i = 0;
         int start = 0;
         int end = 0;
-        token = String.valueOf((new StringBuffer(String.valueOf(fieldName))).append("=").append('"'));
+        token = String.valueOf((new StringBuilder(String.valueOf(fieldName))).append("=").append('"'));
         pos = dataHeader.indexOf(token);
         if(pos > 0)
         {
@@ -503,7 +503,7 @@ public class Upload
                     path = path + fileName;
                 }
                 else {
-                    path = String.valueOf((new StringBuffer(String.valueOf(path))).append(fileSeparator).append(fileName));
+                    path = String.valueOf((new StringBuilder(String.valueOf(path))).append(fileSeparator).append(fileName));
                 }
                 return path;
             }
@@ -529,7 +529,7 @@ public class Upload
                     path = path + fileName;
                 }
                 else {
-                    path = String.valueOf((new StringBuffer(String.valueOf(path))).append(fileSeparator).append(fileName));
+                    path = String.valueOf((new StringBuilder(String.valueOf(path))).append(fileSeparator).append(fileName));
                 }
                 return path;
             }

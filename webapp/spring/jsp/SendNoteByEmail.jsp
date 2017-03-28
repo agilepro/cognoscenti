@@ -260,7 +260,7 @@ Optional Parameters:
         <%@ include file="/spring/jsp/functions.jsp"%>
 <%!private static String composeFromAddress(NGContainer ngc) throws Exception
     {
-        StringBuffer sb = new StringBuffer("^");
+        StringBuilder sb = new StringBuilder("^");
         String baseName = ngc.getFullName();
         int last = baseName.length();
         for (int i=0; i<last; i++)

@@ -140,7 +140,7 @@ public class HtmlToWikiConverter {
 class HTMLParser extends HTMLEditorKit.ParserCallback {
 
     private String href = "";
-    private StringBuffer linkText = null;
+    private StringBuilder linkText = null;
     private boolean isHREF = false;
 
     private int BULLETS_INDENTATION_LEVEL = 0;
@@ -156,7 +156,7 @@ class HTMLParser extends HTMLEditorKit.ParserCallback {
     private boolean prepareLineFeed = false;
 
     //TODO: convert this to use a stream instead if a string buffer
-    StringBuffer wikiText = new StringBuffer();
+    StringBuilder wikiText = new StringBuilder();
 
     public void handleText(char[] data, int pos)
     {
@@ -200,7 +200,7 @@ class HTMLParser extends HTMLEditorKit.ParserCallback {
             //this text is NOT in a link.  We need to escape dangerous
             //characters, and also to look for unlinked URLS for automatic
             //conversion to a link.
-            StringBuffer smallerBuffer = new StringBuffer();
+            StringBuilder smallerBuffer = new StringBuilder();
 
             //copy over -- don't escape here, do it lower down
             for (char ch : data) {
@@ -239,7 +239,7 @@ class HTMLParser extends HTMLEditorKit.ParserCallback {
         }
     }
 
-    private void copyWhileEscaping(StringBuffer dest, String input) {
+    private void copyWhileEscaping(StringBuilder dest, String input) {
         //walk through and escape special characters that would
         //otherwise cause possible styling errors
         for (int i=0; i<input.length(); i++) {
@@ -345,7 +345,7 @@ class HTMLParser extends HTMLEditorKit.ParserCallback {
             }
 
             isHREF = true;
-            linkText = new StringBuffer();
+            linkText = new StringBuilder();
         }
         else if (t == HTML.Tag.B || t == HTML.Tag.STRONG)
         {

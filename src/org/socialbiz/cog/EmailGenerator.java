@@ -279,7 +279,7 @@ public class EmailGenerator extends DOMFace {
         List<OptOutAddr> sendTo = expandAddresses(ar, ngp);
         TopicRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
 
-        StringBuffer historyNameList = new StringBuffer();
+        StringBuilder historyNameList = new StringBuilder();
         boolean needComma = false;
         for (OptOutAddr ooa : sendTo) {
             String addr = ooa.getEmail();

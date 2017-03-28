@@ -273,30 +273,7 @@ public class UserManager
         return up;
     }
 
-/*
-    public static synchronized String getUserFullNameList() {
-        if (userHashByUID == null) {
-            return "";
-        }
-        StringBuffer sb = new StringBuffer();
-        boolean addComma = false;
-        for (String oid : userHashByUID.keySet()) {
-            UserProfile up = userHashByUID.get(oid);
-            if (addComma) {
-                sb.append(",");
-            }
-            sb.append("\"");
-            sb.append(up.getName());
-            sb.append("<");
-            sb.append(oid);
-            sb.append(">");
-            sb.append("\"");
-            addComma = true;
-        }
-        String str = sb.toString();
-        return str;
-    }
-*/
+
     public synchronized List<UserProfile> getAllUserProfiles() {
         Vector<UserProfile> res = new Vector<UserProfile>();
         for (UserProfile up : allUsers) {
@@ -352,42 +329,7 @@ public class UserManager
         allUsers = cache;
         saveUserProfiles();
     }
-/*
-    public static synchronized String getUserFullNameList(String matchKey) throws Exception {
-        StringBuffer sb = new StringBuffer();
-        boolean addComma = false;
-        for (UserProfile up : allUsers) {
-             if (addComma) {
-                 sb.append(",");
-             }
-             if(up.getName().toLowerCase().contains(matchKey.toLowerCase())){
-                sb.append(up.getName());
-                sb.append("<");
-                sb.append(up.getUniversalId());
-                sb.append(">");
-                addComma = true;
-            }
-            else{
-                addComma = false;
-            }
-        }
-        return sb.toString();
-    }
 
-    
-    public static String getKeyByUserId(String userId)
-    {
-        if(userHashByUID != null)
-        {
-            UserProfile up = findUserByAnyId(userId);
-            if(up != null)
-            {
-                return up.getKey();
-            }
-        }
-        return userId;
-    }
-*/
 
 
     public List<UserProfile> getAllSuperAdmins(AuthRequest ar) throws Exception{
@@ -464,7 +406,7 @@ public class UserManager
      * of the names of those users.
      */
     public static String getUserNamesAsList(List<AddressListEntry> userProfiles) throws Exception {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         boolean needsComma = false;
         for (AddressListEntry listItem : userProfiles)  {
             if (needsComma) {

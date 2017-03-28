@@ -481,7 +481,7 @@ public class ProjectSync {
             URL url = new URL(noteStat.urlRemote);
             InputStream is = url.openStream();
             InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             char[] buf = new char[800];
             int amt = isr.read(buf);
             while (amt>0) {

@@ -212,7 +212,7 @@ public class ExceptionBase extends Exception {
      *         associated with this exception.
      */
     private String fillTemplate(String template, Locale locale) {
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         boolean used[] = null;
         if (params != null) {
             used = new boolean[params.length];

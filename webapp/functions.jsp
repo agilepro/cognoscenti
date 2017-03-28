@@ -37,7 +37,6 @@
 %><%@page import="java.io.File"
 %><%@page import="java.io.Writer"
 %><%@page import="java.io.Writer"
-%><%@page import="java.lang.StringBuffer"
 %><%@page import="java.net.URLEncoder"
 %><%@page import="java.text.SimpleDateFormat"
 %><%@page import="java.util.ArrayList"
@@ -257,7 +256,6 @@
      * @return The String after removing all non-alphanumeric characters.
      */
     public static String getSanitizedString(String s) {
-        StringBuffer sOut = null;
         if (s == null) {
             return null;
         }
@@ -266,7 +264,7 @@
         }
 
         int ilen = s.length();
-        sOut = new StringBuffer(ilen);
+        StringBuilder sOut = new StringBuilder(ilen);
         char c;
         for (int i = 0; i<ilen; i++)
         {
@@ -700,7 +698,7 @@
 
     private String composeFromAddress(NGPage ngp) throws Exception
     {
-        StringBuffer sb = new StringBuffer("^");
+        StringBuilder sb = new StringBuilder("^");
         String baseName = ngp.getFullName();
         int last = baseName.length();
         for (int i=0; i<last; i++)

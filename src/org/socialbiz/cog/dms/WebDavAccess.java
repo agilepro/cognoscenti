@@ -403,7 +403,7 @@ public class WebDavAccess extends ConnectionTypeBase  {
     {
         try {
             byte[] buf = displayName.getBytes("UTF-8");
-            StringBuffer res = new StringBuffer();
+            StringBuilder res = new StringBuilder();
             for (byte thisByte : buf) {
                 if (thisByte>=128) {
                     res.append('%');

@@ -265,7 +265,7 @@ public class CVSAccess extends ConnectionTypeBase {
         BufferedReader br = null;
         try{
             br = new BufferedReader(new InputStreamReader(is));
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String str = "";
             while( (str = br.readLine())!= null){
                 sb.append(str);

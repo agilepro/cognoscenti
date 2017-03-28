@@ -662,7 +662,7 @@ public class ProjectGoalController extends BaseController {
             gr.updateGoalFromJSON(goalInfo, ngp, ar);
 
             //now make the history description of what just happened
-            StringBuffer inventedComment = new StringBuffer(goalInfo.optString("newAccomplishment"));
+            StringBuilder inventedComment = new StringBuilder(goalInfo.optString("newAccomplishment"));
             boolean hasChanged = false;
             if (previousState != gr.getState()) {
                 inventedComment.append(" State:");

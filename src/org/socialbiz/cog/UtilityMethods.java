@@ -115,7 +115,7 @@ public class UtilityMethods {
      * this is done on sets of strings that do not have commas in them!
      */
     static public String joinStrings(Vector<String> strSet) {
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         boolean needsComma = false;
         for (String val : strSet) {
             if (needsComma) {
@@ -278,14 +278,14 @@ public class UtilityMethods {
      * </p>
      *
      * @param res
-     *            The <code>StringBuffer</code> object to which the encoded
+     *            The <code>StringBuilder</code> object to which the encoded
      *            String value is added.
      * @param val
      *            The <code>String</code> value to encode.
      * @return The JavaScript literal expression encoded from the supplied
      *         value.
      */
-    public static void quote4JS(StringBuffer res, String val) {
+    public static void quote4JS(StringBuilder res, String val) {
         // passing a null in results a no output, no quotes, nothing
         if ((val == null) || (res == null)) {
             return;
@@ -386,7 +386,7 @@ public class UtilityMethods {
      * </table>
      *
      * @param res
-     *            The <code>StringBuffer</code> object to which the converted
+     *            The <code>StringBuilder</code> object to which the converted
      *            literalString is added.
      * @param literalString
      *            The JavaScript literal to be converted.
@@ -397,7 +397,7 @@ public class UtilityMethods {
      *                quotes. Furthermore this exception is thrown if the
      *                supplied <em>res</em> value is null.
      */
-    public static void unquote4JS(StringBuffer res, String literalString) throws Exception {
+    public static void unquote4JS(StringBuilder res, String literalString) throws Exception {
         if ((res == null) || (literalString == null)) {
             throw new ProgramLogicError("null parameter passed to unquote4JS");
         }
@@ -484,7 +484,7 @@ public class UtilityMethods {
      *         value.
      */
     public static String quote4JS(String val) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         quote4JS(sb, val);
         return sb.toString();
     }
@@ -531,7 +531,7 @@ public class UtilityMethods {
      *                quotes or if the value is <code>null</code>.
      */
     public static String unquote4JS(String val) throws Exception {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         unquote4JS(sb, val);
         return sb.toString();
     }

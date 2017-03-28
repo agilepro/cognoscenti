@@ -78,7 +78,7 @@ public class SearchManager {
                     doc.add(new Field("NOTEID", "$", TextField.TYPE_STORED));
                     doc.add(new Field("LASTMODIFIEDTIME", Long.toString(ngp.getLastModifyTime()), TextField.TYPE_STORED));
                     doc.add(new Field("LASTMODIFIEDUSER", ngp.getLastModifyUser(), TextField.TYPE_STORED));
-                    StringBuffer bodyStuff = new StringBuffer();
+                    StringBuilder bodyStuff = new StringBuilder();
                     bodyStuff.append(ngp.getFullName());
                     bodyStuff.append("\n");
                     for (GoalRecord goal : ngp.getAllGoals()) {

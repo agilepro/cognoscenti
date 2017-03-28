@@ -691,7 +691,7 @@ public class UserProfile implements UserRef
     * address together as one string.
     */
     public String getEmailWithName() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         String baseName = getName();
         int last = baseName.length();
