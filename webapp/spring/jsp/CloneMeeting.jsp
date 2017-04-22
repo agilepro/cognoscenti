@@ -106,7 +106,7 @@ app.controller('myCtrl', function($scope, $http) {
             }
         }
         var newMeeting = {};
-        newMeeting.state = 1;
+        newMeeting.state = 0;
         newMeeting.attended = [];
         newMeeting.rollCall = [];
         newMeeting.reminderSent = -1;
@@ -169,6 +169,8 @@ function GetFirstHundredNoHtml(input) {
      return res;
  }
 
+ 
+
 </script>
 
 <style>
@@ -187,19 +189,21 @@ function GetFirstHundredNoHtml(input) {
           <fieldset>
             <!-- Form Control NAME Begin -->
             <div class="form-group">
-              <label class="col-md-2 control-label">Name</label>
+              <label class="col-md-2 control-label" title="Choose a name for the meeting that will be suitable for the entire series of meetings.">Name</label>
               <div class="col-md-10">
-                <input type="text" class="form-control" ng-model="meeting.name"/>
+                <input type="text" class="form-control" ng-model="meeting.name"
+                       title="Choose a name for the meeting that will be suitable for the entire series of meetings."/>
               </div>
             </div>
             <!-- Form Control DATE Begin -->
             <div class="form-group">
-                <label class="col-md-2 control-label">
+                <label class="col-md-2 control-label" title="Date and time for the beginning of the meeting in YOUR time zone">
                   Date &amp; Time
                 </label>
-                <div class="col-md-10">
+                <div class="col-md-10" 
+                         title="Date and time for the beginning of the meeting in YOUR time zone">
                   <a class="dropdown-toggle form-control" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
-                    {{ meeting.startTime | date:'dd-MMM-yyyy' }} &nbsp;at&nbsp; {{ meeting.startTime | date:'HH:mm' }} &nbsp; &nbsp; {{tzIndicator}}
+                    {{ meeting.startTime | date:"dd-MMM-yyyy '&nbsp; at &nbsp;' HH:mm  '&nbsp; GMT'Z" }}
                   </a>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                     <datetimepicker
@@ -212,17 +216,21 @@ function GetFirstHundredNoHtml(input) {
             </div>
             <!-- Form Control TYPE Begin -->
             <div class="form-group">
-              <label class="col-md-2 control-label">Type</label>
+              <label class="col-md-2 control-label" 
+                     title="Meetings have two types: Circle and Operational">
+                     Type</label>
               <div class="col-md-10">
                 <div class="radio radio-primary">
-                  <label>
+                  <label title="Circle meetings are for strategic decision making">
                     <input type="radio" ng-model="meeting.meetingType" value="1"
                         class="form-control">
                         <span class="circle"></span>
                         <span class="check"></span>
                         Circle Meeting
                   </label>
-                  <label>
+                  <label title="Operational meetings are for 
+                  checking and communicating completion 
+                  status on work assignments">
                     <input type="radio" ng-model="meeting.meetingType" value="2"
                         class="form-control">
                         <span class="circle"></span>
@@ -248,15 +256,15 @@ function GetFirstHundredNoHtml(input) {
           <div class="form-group">
           <table class="table table-striped table-hover" width="100%">
               <tr>
-                  <th width="30px">Clone</th>
+                  <th width="30px" title="Check this to include a copy of this agenda item in the new meeting">Clone</th>
                   <th width="200px">Agenda Item</th>
                   <th width="200px">Description</th>
-                  <th width="50px">Duration</th>
+                  <th width="50px" title="Expected duration of the agenda item in minutes">Duration</th>
               </tr>
               <tr ng-repeat="rec in sortItems()">
                   <td class="actions">
                     <div class="checkbox">
-                      <label>
+                      <label title="Check this to include a copy of this agenda item in the new meeting">
                         <input type="checkbox" ng-model="rec.selected"><span class="checkbox-material"></span>
                       </label>
                     </div>
@@ -267,7 +275,7 @@ function GetFirstHundredNoHtml(input) {
                       </b>
                       </td>
                   <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>
-                  <td>{{rec.duration}}</td>
+                  <td title="Expected duration of the agenda item in minutes">{{rec.duration}}</td>
               </tr>
           </table>
         </div>

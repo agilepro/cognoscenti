@@ -302,39 +302,32 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Meeting: <a href="meetingFull.htm?id={{meeting.id}}">{{meeting.name}}</a>
-            @ {{meeting.startTime|date: "HH:mm 'on' dd-MMM-yyyy"}}
-        </div>
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#"  ng-click="showInput=!showInput">Create New Agenda Item</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#"  ng-click="showBacklog=!showBacklog">Get Agenda Item from Backlog</a></li>
-              <li role="presentation" class="divider"></li>
-              <li role="presentation"><a role="menuitem"
-                  href="meetingFull.htm?id={{meeting.id}}">View Full Meeting</a></li>
-              <li role="presentation"><a role="menuitem"
-                  href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
-              <li role="presentation"><a role="menuitem"
-                  href="cloneMeeting.htm?id={{meeting.id}}">Clone This Meeting</a></li>
-              <li role="presentation" class="divider"></li>
-              <li role="presentation"><a role="menuitem"
-                  href="#" ng-click="createMinutes()">Generate Minutes</a></li>
-              <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"
-                  href="noteZoom{{meeting.minutesLocalId}}.htm">View Minutes</a></li>
-              <li role="presentation" class="divider"></li>
-              <li role="presentation"><a role="menuitem"
-                  href="meetingList.htm">List All Meetings</a></li>
-            </ul>
-          </span>
-
-        </div>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="#"  ng-click="showInput=!showInput">Create New Agenda Item</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="#"  ng-click="showBacklog=!showBacklog">Get Agenda Item from Backlog</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem"
+              href="meetingFull.htm?id={{meeting.id}}">View Full Meeting</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="cloneMeeting.htm?id={{meeting.id}}">Clone This Meeting</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem"
+              href="#" ng-click="createMinutes()">Generate Minutes</a></li>
+          <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"
+              href="noteZoom{{meeting.minutesLocalId}}.htm">View Minutes</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem"
+              href="meetingList.htm">List All Meetings</a></li>
+        </ul>
+      </span>
     </div>
 
 

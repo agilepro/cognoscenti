@@ -821,7 +821,6 @@ public class MainTabsViewControler extends BaseController {
               removeCompletedActionItems(ngw, meetingInfo);
               newMeeting.updateFromJSON(meetingInfo, ar);
               newMeeting.createAgendaFromJSON(meetingInfo, ar, ngw);
-              newMeeting.setState(1);
               HistoryRecord.createHistoryRecord(ngw, newMeeting.getId(),
                       HistoryRecord.CONTEXT_TYPE_MEETING,
                       HistoryRecord.EVENT_TYPE_CREATED, ar, "");

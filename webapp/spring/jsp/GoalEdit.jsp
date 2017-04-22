@@ -468,31 +468,34 @@ function addvalue() {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="startEdit()">Edit Details</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="showAccomplishment=!showAccomplishment;editGoalInfo=false;">Record Accomplishment</a></li>
-              <!--li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="showCreateSubGoal=!showCreateSubGoal">Create Sub Action</a></li>
-              <li role="presentation"><a role="menuitem"
-                  href="#" ng-click="showCreateSubProject=!showCreateSubProject">Convert to Workspace</a></li-->
-            </ul>
-          </span>
-
-        </div>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="#" ng-click="startEdit()">Edit Details</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="#" ng-click="showAccomplishment=!showAccomplishment;editGoalInfo=false;">Record Accomplishment</a></li>
+          <!--li role="presentation"><a role="menuitem" tabindex="-1"
+              href="#" ng-click="showCreateSubGoal=!showCreateSubGoal">Create Sub Action</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="#" ng-click="showCreateSubProject=!showCreateSubProject">Convert to Workspace</a></li-->
+        </ul>
+      </span>
     </div>
-    <div  class="generalSubHeading">
-        <img src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif" />
-        {{stateName[goalInfo.state]}} Action Item
-    </div>
+    
+    
 
     <table width="100%" ng-hide="editGoalInfo">
+        <tr>
+            <td class="gridTableColummHeader"></td>
+            <td style="width:20px;"></td>
+            <td>
+                <img src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif" />
+                {{stateName[goalInfo.state]}} Action Item
+            </td>
+        </tr>
         <tr>
             <td class="gridTableColummHeader">Summary:</td>
             <td style="width:20px;"></td>

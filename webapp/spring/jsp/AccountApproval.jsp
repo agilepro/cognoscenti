@@ -65,19 +65,19 @@ Required parameter:
                             <td>
                             <%
                                 if (isGranted)
-                                                {
-                                                    ar.write("<a href=\"");
-                                                    ar.write(ar.retPath);
-                                                    ar.write("v/");
-                                                    ar.write(accountDetails.getSiteId());
-                                                    ar.write("/$/accountListProjects.htm\">");
-                                                    ar.writeHtml(accountDetails.getName());
-                                                    ar.write(" (click here to visit site)</a>");
-                                                }
-                                                else
-                                                {
-                                                    ar.writeHtml(accountDetails.getName());
-                                                }
+                                {
+                                    ar.write("<a href=\"");
+                                    ar.write(ar.retPath);
+                                    ar.write("v/");
+                                    ar.write(accountDetails.getSiteId());
+                                    ar.write("/$/accountListProjects.htm\">");
+                                    ar.writeHtml(accountDetails.getName());
+                                    ar.write(" (click here to visit site)</a>");
+                                }
+                                else
+                                {
+                                    ar.writeHtml(accountDetails.getName());
+                                }
                             %>
                             </td>
                         </tr>

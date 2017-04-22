@@ -81,17 +81,6 @@
         throw new Exception("don't understand header type: "+headerTypeStr);
     }
 
-    File themeRoot = cog.getConfig().getFileFromRoot(ar.getThemePath());
-    File themeDefault = cog.getConfig().getFileFromRoot("theme/blue/");
-    String menuName = "menu4"+headerTypeStr+".json";
-    File menuFile = new File(themeRoot, menuName);
-    if (!menuFile.exists()) {
-        menuFile = new File(themeDefault, menuName);
-    }
-    if (!menuFile.exists()) {
-        throw new Exception("Can not find a menu file for: "+menuFile.toString());
-    }
-
 
 //We always POST to an address that consumes the data, and then redirects to a display page,
 //so the display page (like this one) should never experience a POST request
@@ -238,7 +227,6 @@
     <script src="<%=ar.baseURL%>dtpicker/js/datetimepicker.templates.js"></script>
 
     <!-- Weaver specific tweaks -->
-    <!--link rel="stylesheet" href="<%=ar.baseURL%>bits/weavermain.css"/-->
     <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
 
 

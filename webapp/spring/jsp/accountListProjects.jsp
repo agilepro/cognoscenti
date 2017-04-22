@@ -102,23 +102,17 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Workspaces that belong to site '{{site.names[0]}}'
-        </div>
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem"
-                  href="accountCreateProject.htm" >Create New Workspace</a></li>
-              <li role="presentation" ng-show="showExperimental"><a role="menuitem"
-                  href="accountCloneProject.htm" >Clone Remote Workspace</a></li>
-            </ul>
-          </span>
-
-        </div>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem"
+              href="accountCreateProject.htm" >Create New Workspace</a></li>
+          <li role="presentation" ng-show="showExperimental"><a role="menuitem"
+              href="accountCloneProject.htm" >Clone Remote Workspace</a></li>
+        </ul>
+      </span>
     </div>
 
 

@@ -323,36 +323,31 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Topic List
-        </div>
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                    Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <!--li role="presentation"><a role="menuitem" ng-click="showFilter=true">
-			      Show Filter</a>
-              </li-->
-              <li role="presentation"><a role="menuitem" ng-click="openTopicCreator()">
-			      Create New Topic</a>
-              </li>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <!--li role="presentation"><a role="menuitem" ng-click="showFilter=true">
+              Show Filter</a>
+          </li-->
+          <li role="presentation"><a role="menuitem" ng-click="openTopicCreator()">
+              Create New Topic</a>
+          </li>
 
-              <li role="presentation"><a role="menuitem" href="sendNote.htm">
-                  <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" />
-				  Send Email</a>
-              </li>
-              <li role="presentation"><a role="menuitem" href="exportPDF.htm">
-			      Create PDF</a>
-              </li>
-              <li role="presentation"><a role="menuitem" href="searchAllNotes.htm">
-			      Search All Topics </a>
-              </li>
-            </ul>
-          </span>
-        </div>
-    </div>
+          <li role="presentation"><a role="menuitem" href="sendNote.htm">
+              <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" />
+              Send Email</a>
+          </li>
+          <li role="presentation"><a role="menuitem" href="exportPDF.htm">
+              Create PDF</a>
+          </li>
+          <li role="presentation"><a role="menuitem" href="searchAllNotes.htm">
+              Search All Topics </a>
+          </li>
+        </ul>
+      </span>
+     </div>
 
     <div class="well fluid-container" ng-show="showFilter">
         <!--div style="float:right;cursor:pointer;" href="#" ng-click="showFilter=false">x</div-->

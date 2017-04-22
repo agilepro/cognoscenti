@@ -56,23 +56,6 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Unknown User
-        </div>
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1" href="editUserProfile.htm?u={{userInfo.key}}" >
-                        <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
-                        Update Settings</a></li>
-          </span>
-
-        </div>
-    </div>
-
     <div>
        <p>The user with email address <b>{{userId}}</b> has never logged into the system, so we don't have a profile on record for them.</p>
 
@@ -114,7 +97,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td>
             </td>
             <td>
-               <button ng-click="saveMicro()" class="btn btn-primary btn-raised">Save Name</button>
+               <button ng-click="saveMicro()" class="btn btn-primary btn-raised">Update Name</button>
             </td>
           </tr>
         </table>

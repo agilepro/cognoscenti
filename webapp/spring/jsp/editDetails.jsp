@@ -155,31 +155,25 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Edit Document Details
-        </div>
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem"
-                  href="#" ng-click="saveDoc()">Save Changes</a></li>
-              <li role="presentation"><a role="menuitem"
-                  href="docinfo{{docInfo.id}}.htm">Access Document</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="docsRevise.htm?aid={{docInfo.id}}" >Upload New Version</a></li>
-              <li role="presentation"><a role="menuitem"
-                  href="editDetails{{docInfo.id}}.htm">Edit Details</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="fileVersions.htm?aid={{docInfo.id}}">List Versions</a></li>
-              <li role="presentation"><a role="menuitem"
-                  href="sendNote.htm?att={{docInfo.id}}">Send Document by Email</a></li>
-            </ul>
-          </span>
-
-        </div>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem"
+              href="#" ng-click="saveDoc()">Save Changes</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="docinfo{{docInfo.id}}.htm">Access Document</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="docsRevise.htm?aid={{docInfo.id}}" >Upload New Version</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="editDetails{{docInfo.id}}.htm">Edit Details</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="fileVersions.htm?aid={{docInfo.id}}">List Versions</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="sendNote.htm?att={{docInfo.id}}">Send Document by Email</a></li>
+        </ul>
+      </span>
     </div>
 
 

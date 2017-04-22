@@ -713,6 +713,47 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
 <%@include file="ErrorPanel.jsp"%>
 
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown" ng-show="noteInfo.draft" ng-click="noteInfo.sendEmail = !noteInfo.sendEmail">
+          <button class="btn btn-default btn-raised" type="button" 
+                  title="Choose whether to send email when this topic is posted">
+          <input type="checkbox" ng-model="noteInfo.sendEmail">
+          Send Email </button>
+      </span>
+      <span class="dropdown" ng-show="noteInfo.draft">
+          <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="setPhase('Freeform')"
+                  title="Post this topic to allow others to see it">
+          Post Topic </button>
+      </span>
+      <span class="dropdown" ng-hide="noteInfo.draft">
+          <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+          {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+            <li role="presentation" ng-repeat="phase in getPhases()"><a role="menuitem"
+                ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
+          </ul>
+      </span>      
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="notesList.htm">List Topics</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              ng-click="isEditing = !isEditing" target="_blank">Edit This Topic</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">Generate PDF</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="sendNote.htm?noteId={{noteInfo.id}}">Send Topic By Email</a></li>
+          <li role="presentation" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
+              ng-click="changeSubscription(true)">Subscribe to this Topic</a></li>
+          <li role="presentation" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
+              ng-click="changeSubscription(false)">Unsubscribing from this Topic</a></li>
+        </ul>
+      </span>
+    </div>
+    
+    
     <div style="height:40px;margin-bottom:15px">
         <div class="leftDivContent">
           <span style="margin-left:20px">Labels:</span>
@@ -749,43 +790,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
         <div class="rightDivContent" style="margin-right:100px;">
 <%if (isLoggedIn) { %>
-<span class="dropdown" ng-show="noteInfo.draft" ng-click="noteInfo.sendEmail = !noteInfo.sendEmail">
-  <button class="btn btn-default btn-raised" type="button" 
-          title="Choose whether to send email when this topic is posted">
-  <input type="checkbox" ng-model="noteInfo.sendEmail">
-  Send Email </button>
-</span>
-<span class="dropdown" ng-show="noteInfo.draft">
-  <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="setPhase('Freeform')"
-          title="Post this topic to allow others to see it">
-  Post Topic </button>
-</span>
-<span class="dropdown" ng-hide="noteInfo.draft">
-  <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-  {{showDiscussionPhase(noteInfo.discussionPhase)}} <span class="caret"></span></button>
-  <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-    <li role="presentation" ng-repeat="phase in getPhases()"><a role="menuitem"
-        ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
-  </ul>
-</span>
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="notesList.htm">List Topics</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  ng-click="isEditing = !isEditing" target="_blank">Edit This Topic</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">Generate PDF</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="sendNote.htm?noteId={{noteInfo.id}}">Send Topic By Email</a></li>
-              <li role="presentation" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
-                  ng-click="changeSubscription(true)">Subscribe to this Topic</a></li>
-              <li role="presentation" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
-                  ng-click="changeSubscription(false)">Unsubscribing from this Topic</a></li>
-            </ul>
-          </span>
+
 <% } %>
         </div>
     </div>

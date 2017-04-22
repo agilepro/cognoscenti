@@ -231,7 +231,12 @@ public class ResponseRecord extends DOMFace
             rr   = _rr;
         }
         public boolean needsSending() throws Exception {
-            return !rr.getEmailSent();
+            //return !rr.getEmailSent();
+            //
+            //April 2017 changed to never send email to reduce flood.
+            //however if we get a nicer notification system, it might be nice to 
+            //at least notify the users.
+            return false;
         }
 
         public long timeToSend() throws Exception {

@@ -44,55 +44,48 @@ app.controller('myCtrl', function($scope, $http) {
 <!-- Begin mainContent (Body area) -->
 <div ng-app="myApp" ng-controller="myCtrl">
 
+
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <a class="btn btn-default btn-raised" href="errorLog.htm?searchDate=<%=searchDate%>">
+        Return to Error List </a>
+      </span>
+    </div>
     <div  class="h1">
         Details of Error: <%ar.writeHtml(errorId); %>
     </div>
+    <div>
+         <form name="logUserComents" action="logUserComents.form" method="post">
 
-    <div class="generalHeading" style="height:40px">
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="errorLog.htm?searchDate=<%=searchDate%>">Return to Error List</a></li>
-            </ul>
-          </span>
+          <input type="hidden" name="errorNo" id="errorNo" value="<%ar.writeHtml(errorId); %>"/>
+          <input type="hidden" name="searchByDate" id="searchByDate" value="<%ar.writeHtml(searchByDate); %>"/>
+          <input type="hidden" name="goURL" id="goURL" value="<%ar.writeHtml(goURL); %>"/>
 
+        <b>Error Message:</b>  <%ar.writeHtmlWithLines(eDetails.getErrorMessage()); %>
+        <br /><br />
+        <b>Page:</b> <a href="<%ar.writeHtml(eDetails.getURI()); %>"><%ar.writeHtml( eDetails.getURI()); %></a>
+        <br /><br />
+        <b>Date & Time:</b> <%ar.writeHtml(formattedDate); %>
+        <br /><br />
+        <b>User Detail: </b> <%ar.writeHtml(eDetails.getModUser()); %>
+        <br /><br />
+        <b>Comments: </b>
+        <br />
+        <textarea name="comments" id="comments" class="form-control" style="width:600px;height:150px"><%ar.writeHtml(eDetails.getUserComment()); %></textarea>
+        <br /><br />
+        <input type="submit" class="btn btn-primary btn-raised" value="<fmt:message key="nugen.button.comments.update" />"
+                                                onclick="postMyComment()">
+         </form>
+         <hr/>
+         <div>
+            <button class="btn btn-default btn-raised" ng-hide="showTrace" ng-click="showTrace=!showTrace">
+                Show Error Details 
+             </button>
+         </div>
+        <div id="errorDetails" class="errorStyle" ng-show="showTrace">
+        <pre style="overflow:auto;width:900px;" ng-click="showTrace=!showTrace"><%ar.writeHtml(eDetails.getErrorDetails()); %></pre>
         </div>
     </div>
-        <div class="generalSettings">
-             <form name="logUserComents" action="logUserComents.form" method="post">
-
-              <input type="hidden" name="errorNo" id="errorNo" value="<%ar.writeHtml(errorId); %>"/>
-              <input type="hidden" name="searchByDate" id="searchByDate" value="<%ar.writeHtml(searchByDate); %>"/>
-              <input type="hidden" name="goURL" id="goURL" value="<%ar.writeHtml(goURL); %>"/>
-
-            <b>Error Message:</b>  <%ar.writeHtmlWithLines(eDetails.getErrorMessage()); %>
-            <br /><br />
-            <b>Page:</b> <a href="<%ar.writeHtml(eDetails.getURI()); %>"><%ar.writeHtml( eDetails.getURI()); %></a>
-            <br /><br />
-            <b>Date & Time:</b> <%ar.writeHtml(formattedDate); %>
-            <br /><br />
-            <b>User Detail: </b> <%ar.writeHtml(eDetails.getModUser()); %>
-            <br /><br />
-            <b>Comments: </b>
-            <br />
-            <textarea name="comments" id="comments" class="form-control" style="width:600px;height:150px"><%ar.writeHtml(eDetails.getUserComment()); %></textarea>
-            <br /><br />
-            <input type="submit" class="btn btn-primary btn-raised" value="<fmt:message key="nugen.button.comments.update" />"
-                                                    onclick="postMyComment()">
-             </form>
-             <hr/>
-             <div>
-                <button class="btn btn-default btn-raised" ng-hide="showTrace" ng-click="showTrace=!showTrace">
-                    Show Error Details 
-                 </button>
-             </div>
-            <div id="errorDetails" class="errorStyle" ng-show="showTrace">
-            <pre style="overflow:auto;width:900px;" ng-click="showTrace=!showTrace"><%ar.writeHtml(eDetails.getErrorDetails()); %></pre>
-            </div>
-        </div>
  </div>
 
 

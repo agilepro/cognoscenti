@@ -112,17 +112,19 @@ app.controller('myCtrl', function($scope, $http) {
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
-<div class="dropdown text-right">
-  <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-  Options: <span class="caret"></span></button>
-  <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="menu1">
-    <li role="presentation"><a role="menuitem"
-        href="userAlerts.htm">User Alerts</a></li>
-    <li role="presentation"><a role="menuitem" href="UserHome.htm?ref=<%=ar.nowTime%>">
-  Recalculate Page</a>
-    </li>
-  </ul>
-</div>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+          <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+          Options: <span class="caret"></span></button>
+          <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="menu1">
+            <li role="presentation"><a role="menuitem"
+                href="userAlerts.htm">User Alerts</a></li>
+            <li role="presentation"><a role="menuitem" href="UserHome.htm?ref=<%=ar.nowTime%>">
+          Recalculate Page</a>
+            </li>
+          </ul>
+      </span>
+    </div>
 
     <style>
       .tripleColumn {

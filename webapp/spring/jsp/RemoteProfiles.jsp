@@ -67,6 +67,7 @@ app.controller('myCtrl', function($scope, $http) {
                 }
             }
             $scope.profiles = newSet;
+            $scope.noneFound = (newSet.length==0);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -86,6 +87,7 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.profiles.push(rec);
             $scope.showInput=false;
             $scope.newURL="";
+            $scope.noneFound = ($scope.profiles.length==0);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -101,21 +103,15 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Remote Profiles (for accessing Action Items)
-        </div>
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="showInput=!showInput">Add New Remote Profile</a></li>
-            </ul>
-          </span>
-
-        </div>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="#" ng-click="showInput=!showInput">Add New Remote Profile</a></li>
+        </ul>
+      </span>
     </div>
 
     <div id="NewConnection" class="well" ng-show="showInput" ng-cloak>

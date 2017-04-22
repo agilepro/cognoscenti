@@ -423,6 +423,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.stateName = function() {
+        if ($scope.meeting.state<=0) {
+            return "Draft";
+        }
         if ($scope.meeting.state<=1) {
             return "Planning";
         }
@@ -451,6 +454,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
 
     $scope.meetingStateStyle = function(val) {
+        if (val<=0) {
+            return "background-color:yellow";
+        }
         if (val<=1) {
             return "background-color:white";
         }
@@ -1042,10 +1048,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.extractPeopleSituation();
 
     $scope.showSelfRegister = function() {
-        return ($scope.meeting.state <= 1 && !$scope.showRollCall);
+        return ($scope.meeting.state == 1 && !$scope.showRollCall);
     }
     $scope.showRollBox = function() {
-        return $scope.showRollCall && $scope.meeting.state == 1
+        return $scope.showRollCall && $scope.meeting.state >= 1 && $scope.meeting.state <= 2
     }
     $scope.editAttendees = function() {
         return ($scope.meeting.state == 2);
@@ -1565,6 +1571,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     border-color:lightblue;
     cursor:pointer;
 }
+.spaceyTable tr td {
+    padding:5px;
+}
 
 </style>
 
@@ -1572,48 +1581,51 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<%if (isLoggedIn) { %>
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-              <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
-              State: {{stateName()}} <span class="caret"></span></button>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                <li role="presentation"><a role="menuitem"
-                    ng-click="changeMeetingState(1)">Plan Meeting</a></li>
-                <li role="presentation"><a role="menuitem"
-                    ng-click="changeMeetingState(2)">Run Meeting</a></li>
-                <li role="presentation"><a role="menuitem"
-                    ng-click="changeMeetingState(3)">Complete Meeting</a></li>
-              </ul>
-          </span>
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="showAll()" >Show All Items</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="toggleRollCall()" >Show Roll Call</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="#" ng-click="createAgendaItem()" >Create Agenda Item</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="meeting.htm?id={{meeting.id}}" >Arrange Agenda</a></li>
-              <li role="presentation"><a role="menuitem"
-                  href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
-              <li role="presentation" class="divider"></li>
-              <li role="presentation"><a role="menuitem"
-                  ng-click="createMinutes()">Generate Minutes</a></li>
-              <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"
-                  href="noteZoom{{meeting.minutesLocalId}}.htm">View Minutes</a></li>
-              <li role="presentation" class="divider"></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  href="cloneMeeting.htm?id={{meeting.id}}">Clone Meeting</a></li>
-              <li role="presentation"><a role="menuitem"
-                  href="meetingList.htm">List All Meetings</a></li>
-            </ul>
-          </span>
 
-        </div>
+<%if (isLoggedIn) { %>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+          <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
+          State: {{stateName()}} <span class="caret"></span></button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+            <li role="presentation"><a role="menuitem"
+                ng-click="changeMeetingState(0)">Draft Meeting</a></li>
+            <li role="presentation"><a role="menuitem"
+                ng-click="changeMeetingState(1)">Plan Meeting</a></li>
+            <li role="presentation"><a role="menuitem"
+                ng-click="changeMeetingState(2)">Run Meeting</a></li>
+            <li role="presentation"><a role="menuitem"
+                ng-click="changeMeetingState(3)">Complete Meeting</a></li>
+          </ul>
+      </span>
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="#" ng-click="showAll()" >Show All Items</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="#" ng-click="toggleRollCall()" >Show Roll Call</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="#" ng-click="createAgendaItem()" >Create Agenda Item</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="meeting.htm?id={{meeting.id}}" >Arrange Agenda</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem"
+              ng-click="createMinutes()">Generate Minutes</a></li>
+          <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"
+              href="noteZoom{{meeting.minutesLocalId}}.htm">View Minutes</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="cloneMeeting.htm?id={{meeting.id}}">Clone Meeting</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="meetingList.htm">List All Meetings</a></li>
+        </ul>
+      </span>
+
+    </div>
 <% } %>
 
     <table>
@@ -1645,12 +1657,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             </span>
 <% } %>
           </div>
-           <div class="well leafContent" ng-show="editMeetingInfo">
-             <table>
-                <tr><td style="height:10px"></td></tr>
+           <div class="well" ng-show="editMeetingInfo">
+             <table class="spaceyTable">
                 <tr id="trspath">
-                    <td class="gridTableColummHeader">Type:</td>
-                    <td style="width:20px;"></td>
+                    <td>Type:</td>
                     <td colspan="2" class="form-inline form-group">
                         <input type="radio" ng-model="meeting.meetingType" value="1"
                             class="form-control" /> Circle Meeting   &nbsp;
@@ -1658,16 +1668,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                             class="form-control" /> Operational Meeting
                     </td>
                 </tr>
-                <tr><td style="height:10px"></td></tr>
                 <tr>
-                    <td class="gridTableColummHeader">Name:</td>
-                    <td style="width:20px;"></td>
+                    <td>Name:</td>
                     <td colspan="2"><input ng-model="meeting.name"  class="form-control"></td>
                 </tr>
-                <tr><td style="height:10px"></td></tr>
                 <tr>
-                    <td class="gridTableColummHeader">Date & Time:</td>
-                    <td style="width:20px;"></td>
+                    <td>Date & Time:</td>
                     <td class="dropdown">
                       <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
                         {{ meeting.startTime | date:'dd-MMM-yyyy' }} &nbsp;at&nbsp; {{ meeting.startTime | date:'HH:mm' }} &nbsp; &nbsp; {{tzIndicator}}
@@ -1680,38 +1686,42 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                       </ul>
                     </td> 
                 </tr>
-                <tr><td style="height:10px"></td></tr>
                 <tr>
-                    <td class="gridTableColummHeader">Duration:</td>
-                    <td style="width:20px;"></td>
+                    <td>Duration:</td>
                     <td colspan="2" class="form-inline form-group">
                         <input ng-model="meeting.duration" style="width:60px;"  class="form-control" >
                         Minutes ({{meeting.totalDuration}} currently allocated)
                     </td>
                 </tr>
-                <tr><td style="height:10px"></td></tr>
                 <tr>
-                    <td class="gridTableColummHeader">Send Reminder:</td>
-                    <td style="width:20px;"></td>
+                    <td>Send Reminder:</td>
                     <td colspan="2" class="form-inline form-group">
                         <input ng-model="meeting.reminderTime" style="width:60px;"  class="form-control" >
-                        <span ng-show="meeting.reminderSent==0"> Minutes before the meeting</span>
-                        <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'M/d/yy H:mm'}}
+                        Minutes before the meeting
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="2" class="form-inline form-group">
+                        {{meeting.startTime-(meeting.reminderTime*60000)|date:'dd-MMM-yyyy H:mm'}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Reminder:</td>
+                    <td colspan="2" class="form-inline form-group">
+                        <span ng-show="meeting.reminderSent==0"> <i>Not yet sent.</i></span>
+                        <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}
                         </span>
                     </td>
                 </tr>
-                <tr><td style="height:10px"></td></tr>
                 <tr>
-                    <td class="gridTableColummHeader">Target Role:</td>
-                    <td style="width:20px;"></td>
+                    <td>Target Role:</td>
                     <td colspan="2" class="form-inline form-group">
                         <select class="form-control" ng-model="meeting.targetRole" ng-options="value for value in allRoles"></select>
                     </td>
                 </tr>
-                <tr><td style="height:10px"></td></tr>
                 <tr>
-                    <td class="gridTableColummHeader"></td>
-                    <td style="width:20px;"></td>
+                    <td></td>
                     <td colspan="2" class="form-inline form-group">
                         <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
                         <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>

@@ -51,7 +51,6 @@
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
     <link href="<%=ar.retPath%>bits/weaverstyle.css" rel="styleSheet" type="text/css" media="screen" />
-    <link href="<%=ar.retPath%>bits/weavertheme.css" rel="styleSheet" type="text/css" media="screen" />
     
     <title>Administration Page</title>
     

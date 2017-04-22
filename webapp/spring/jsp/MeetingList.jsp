@@ -27,7 +27,15 @@ var app = angular.module('myApp', ['ui.bootstrap','ui.bootstrap.datetimepicker']
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Meetings");
     $scope.meetings = <%meetings.write(out,2,4);%>;
-    $scope.newMeeting = {name:"",duration:60,startTime:0,id:"",meetingType:1};
+    $scope.newMeeting = {
+        name:"",
+        duration:60,
+        startTime:(new Date()).getTime(),
+        id:"",
+        meetingType:1,
+        state:0,
+        reminderTime:60
+    };
 
     var n = new Date().getTimezoneOffset();
     var tzNeg = n<0;
@@ -76,6 +84,11 @@ app.controller('myCtrl', function($scope, $http) {
     };
 
     $scope.deleteRow = function(row) {
+        if (row.state > 0) {
+            if (!confirm("Are you sure you want to delete meeting?\n"+row.name+"\n"+new Date(row.startTime))) {
+                return;
+            }
+        }
         var delId = row.id;
         var postURL = "meetingDelete.json";
         var postdata = angular.toJson(row);
@@ -97,6 +110,11 @@ app.controller('myCtrl', function($scope, $http) {
     };
 
     $scope.createRow = function() {
+        if ($scope.newMeeting.startTime < new Date().getTime()) {
+            if (!confirm("Is that the right start time?\nAre you sure you want to create a meeting in the past?")) {
+                return;
+            }
+        }
         var postURL = "meetingCreate.json";
         var postdata = angular.toJson($scope.newMeeting);
         $scope.showError=false;
@@ -121,7 +139,10 @@ app.controller('myCtrl', function($scope, $http) {
 
 
     $scope.meetingStateName = function(val) {
-        if (val<=1) {
+        if (val<=0) {
+            return "Draft";
+        }
+        if (val==1) {
             return "Planning";
         }
         if (val==2) {
@@ -134,6 +155,9 @@ app.controller('myCtrl', function($scope, $http) {
     }
 
     $scope.meetingStateStyle = function(val) {
+        if (val<=0) {
+            return "background-color:yellow";
+        }
         if (val<=1) {
             return "background-color:white";
         }
@@ -149,6 +173,8 @@ app.controller('myCtrl', function($scope, $http) {
 });
 </script>
 
+
+
 <!-- MAIN CONTENT SECTION START -->
 <div ng-app="myApp" ng-controller="myCtrl">
 
@@ -158,81 +184,79 @@ app.controller('myCtrl', function($scope, $http) {
   <a class="btn btn-default btn-raised" href="agendaBacklog.htm">
     <i class="fa fa-list-alt material-icons"></i> Agenda Backlog</a>
 </div>
-<!--div class="dropdown text-right">
-  <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-  Options: <span class="caret"></span></button>
-  <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="menu1">
 
-    <li role="presentation" class="divider"></li>
-    <li role="presentation"><a role="menuitem" tabindex="-1"
-        href="agendaBacklog.htm">Agenda Item Backlog</a></li>
-  </ul>
-</div-->
 
     <div id="NewMeeting" class="well" ng-show="showInput" ng-cloak>
-              <form class="horizontal-form">
-                <fieldset>
-                  <!-- Form Control NAME Begin -->
-                  <div class="form-group">
-                    <label class="col-md-2 control-label">Name</label>
-                    <div class="col-md-10">
-                      <input type="text" class="form-control" ng-model="newMeeting.name"/>
-                    </div>
-                  </div>
-                  <!-- Form Control DATE Begin -->
-                  <div class="form-group">
-                      <label class="col-md-2 control-label">
-                        Date
-                      </label>
-                      <div class="col-md-10 container">
-                        <span class="form-control">
-                          <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
-                            {{ newMeeting.startTime | date:'dd-MMM-yyyy' }} &nbsp;at&nbsp; {{ newMeeting.startTime | date:'HH:mm' }} &nbsp; &nbsp; {{tzIndicator}}
-                          </a>
-                          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <datetimepicker data-ng-model="newMeeting.startTime"
-                                 data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
-                                 data-on-set-time="onTimeSet(newDate)"></datetimepicker>
-                          </ul>
-                        </span>
-                      </div>
-                  </div>
-                  <!-- Form Control TYPE Begin -->
-                  <div class="form-group">
-                    <label class="col-md-2 control-label">Type</label>
-                    <div class="col-md-10">
-                      <div class="radio radio-primary">
-                        <label>
-                          <input type="radio" ng-model="newMeeting.meetingType" value="1"
-                              class="form-control">
-                              <span class="circle"></span>
-                              <span class="check"></span>
-                              Circle Meeting
-                        </label>
-                        <label>
-                          <input type="radio" ng-model="newMeeting.meetingType" value="2"
-                              class="form-control">
-                              <span class="circle"></span>
-                              <span class="check"></span>
-                              Operational Meeting
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Form Control BUTTONS Begin -->
-                  <div class="form-group">
-                    <label class="col-md-2 control-label" for="schedule"></label>
-                    <div class="col-md-10">
-                      <input id="schedule" type="radio" ng-model="schedule" class="form-control"/>
-                    </div>
-                  </div>
-                </fieldset>
-                <!-- Form Control BUTTONS Begin -->
-                <div class="form-group text-right">
-                  <button type="button" class="btn btn-warning btn-raised" ng-click="showInput=false">Cancel</button>
-                  <button type="submit" class="btn btn-primary btn-raised"  ng-click="createRow()">Create Meeting</button>
-                </div>
-              </form>
+      <form class="horizontal-form">
+        <fieldset>
+          <!-- Form Control NAME Begin -->
+          <div class="form-group">
+            <label class="col-md-2 control-label">Name</label>
+            <div class="col-md-10">
+              <input type="text" class="form-control" ng-model="newMeeting.name"/>
+            </div>
+          </div>
+          <!-- Form Control DATE Begin -->
+          <div class="form-group">
+              <label class="col-md-2 control-label">
+                Date
+              </label>
+              <div class="col-md-10 container">
+                <span class="form-control">
+                  <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
+                    {{ newMeeting.startTime | date:"dd-MMM-yyyy '&nbsp;at&nbsp;' HH:mm 'GMT'Z" }}
+                  </a>
+                  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <datetimepicker data-ng-model="newMeeting.startTime"
+                         data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
+                         data-on-set-time="onTimeSet(newDate)"></datetimepicker>
+                  </ul>
+                </span>
+              </div>
+          </div>
+          <!-- Form Control DATE Begin -->
+          <div class="form-group">
+              <label class="col-md-2 control-label">
+                Reminder
+              </label>
+              <div class="col-md-10 form-inline">
+                <input type="text" class="form-control" ng-model="newMeeting.reminderTime"  style="width:75px"/>
+                Minutes before meeting =  
+                {{ newMeeting.startTime-(newMeeting.reminderTime*60000) | date:"dd-MMM-yyyy '&nbsp;at&nbsp;' HH:mm" }}
+              </div>
+          </div>
+          <!-- Form Control TYPE Begin -->
+          <div class="form-group">
+            <label class="col-md-2 control-label">Type</label>
+            <div class="col-md-10">
+              <div class="radio radio-primary">
+                <label>
+                  <input type="radio" ng-model="newMeeting.meetingType" value="1"
+                      class="form-control">
+                      <span class="circle"></span>
+                      <span class="check"></span>
+                      Circle Meeting
+                </label>
+                <label>
+                  <input type="radio" ng-model="newMeeting.meetingType" value="2"
+                      class="form-control">
+                      <span class="circle"></span>
+                      <span class="check"></span>
+                      Operational Meeting
+                </label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+        <!-- Form Control BUTTONS Begin -->
+        <div class="form-group text-right">
+          <button type="button" class="btn btn-warning btn-raised" ng-click="showInput=false">
+              Cancel</button>
+          <button type="submit" class="btn btn-primary btn-raised"  ng-click="createRow()" 
+              ng-show="newMeeting.name">
+              Create Meeting</button>
+        </div>
+      </form>
     </div>
 
 
@@ -240,7 +264,7 @@ app.controller('myCtrl', function($scope, $http) {
         <tr class="gridTableHeader">
             <th width="100px"></th>
             <th width="200px">Meeting</th>
-            <th width="200px">Date</th>
+            <th width="200px">Date ({{0|date: "'GMT'Z"}})</th>
             <th width="80px">State</th>
             <th width="80px">Duration</th>
         </tr>
@@ -263,7 +287,7 @@ app.controller('myCtrl', function($scope, $http) {
               </a>
             </td>
             <td><b><a title="View Meeting" href="meetingFull.htm?id={{rec.id}}">{{rec.name}}</a></b></td>
-            <td>{{rec.startTime|date: "HH:mma 'on' dd-MMM-yyyy"}}</td>
+            <td>{{rec.startTime|date: "dd-MMM-yyyy 'at' HH:mm"}}</td>
             <td style="{{meetingStateStyle(rec.state)}}">{{meetingStateName(rec.state)}}</td>
             <td>{{rec.duration}}</td>
         </tr>

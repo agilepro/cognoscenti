@@ -73,25 +73,19 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div  style="float:left;margin-top:8px;">
-            Personal Assistants
-        </div>
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  ng-click="editAgent=true" ><img src="<%= ar.retPath%>assets/iconBluePlus.gif" width="13" height="15"/>
-                        Create Assistant</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="manualRun()" >
-                        <img src="<%= ar.retPath%>assets/iconSync.gif" width="13" height="15"/>
-                        Manually Run Now</a></li>
-            </ul>
-          </span>
-
-        </div>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              ng-click="editAgent=true" ><img src="<%= ar.retPath%>assets/iconBluePlus.gif" width="13" height="15"/>
+                    Create Assistant</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="manualRun()" >
+                    <img src="<%= ar.retPath%>assets/iconSync.gif" width="13" height="15"/>
+                    Manually Run Now</a></li>
+        </ul>
+      </span>
     </div>
 
     <div style="height:10px;"></div>

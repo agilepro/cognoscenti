@@ -351,9 +351,22 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         if (input.has("state")) {
             setState(input.getInt("state"));
         }
+        if (input.has("reminderSent")) {
+            //the only reason the UI might want to clear this to cause the 
+            //reminder to be sent again
+            setReminderSent(input.getLong("reminderSent"));
+        }
         if (input.has("startTime")) {
-            setStartTime(input.getLong("startTime"));
-            hasSetMeetingInfo = true;
+            long newTime = input.getLong("startTime");
+            long oldTime = this.getStartTime();
+            if (newTime!=oldTime) {
+                setStartTime(newTime);
+                hasSetMeetingInfo = true;
+                
+                //if the meeting time changes, then clear out the reminder sent
+                //time to cause it to be sent again (if already sent).
+                setReminderSent(0);
+            }
         }
         if (input.has("targetRole")) {
             setTargetRole(input.getString("targetRole"));
@@ -369,9 +382,6 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         if (input.has("reminderTime")) {
             setReminderAdvance(input.getInt("reminderTime"));
             hasSetMeetingInfo = true;
-        }
-        if (input.has("reminderSent")) {
-            setReminderSent(input.getLong("reminderSent"));
         }
         if (input.has("meetingInfo")) {
             String html = input.getString("meetingInfo");
@@ -905,7 +915,42 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         }
     }
 
-
+/**
+ * This is a pain getting this right.  The meeting might be scheduled in the future
+ * or in the past.  (the latter is not likely but possible). 
+ *  
+ * You can set different settings for how much before the meeting to send the 
+ * announcement.  Even if the meeting is in the future, the announcement time
+ * can be in the future or in the past.
+ * 
+ * Regardless of the announcement time, the announcement email might have already
+ * been sent.
+ * 
+ * The meeting time might have been changed, and in that case a new announcement
+ * should be sent, regardless of whether sent previously or not.
+ * 
+ * Meeting might be in draft mode, and so don't send any announcement until
+ * it changes to Plan mode.
+ * ONLY send if it Plan more.  Don't send in running or completed.
+ * 
+ * Here are the facts we have to work with:  meeting time, reminder minutes, state,
+ * and actual send time.
+ * 
+ * The meeting time and reminder minutes combine to form reminderPlanTime.
+ * There is a reminderSent which is the actual time sent.
+ * 
+ * When the meeting time changes, you should send the notification again, regardless
+ * of whether sent or not, regardless of whether this is in the future or the past.
+ * When the meeting time changes, clear the sent flag, and clear the sent time.
+ * 
+ * Then, every polling cycle, check whether it is time to send or not, depending
+ * on expected send time and state.  If planning and expected time is in past, and 
+ * have not already been sent, then send it.
+ * 
+ * When email sent, set the reminderSent time, so that it is sent only once.
+ * The only thing that clears reminder sent is changing the meeting time.
+ *
+ */
     private class MScheduledNotification implements ScheduledNotification {
         NGWorkspace ngw;
         MeetingRecord meet;
@@ -915,6 +960,11 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             meet = _meet;
         }
         public boolean needsSending() throws Exception {
+            //only send email while in planning state
+            if (meet.getState() != MeetingRecord.MEETING_STATE_PLANNING) {
+                return false;
+            }
+            
             long reminderTime = timeToSend();
             long reminderSent = meet.getReminderSent();
             //the reminder has not been sent AFTER the time to send,
@@ -923,16 +973,21 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         }
 
         public long timeToSend() throws Exception {
-            long meetStart = meet.getStartTime();
+            if (meet.getState() != MeetingRecord.MEETING_STATE_PLANNING) {
+                return -1;
+            }
             int delta = meet.getReminderAdvance();
             if (delta<=0) {
                 return -1;
             }
+            long meetStart = meet.getStartTime();
             return meetStart - (delta * 60000);
         }
 
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
-            System.out.println("SENDING MEETING NOTICE: "+new Date()+" with SENDTIME: "+new Date(timeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
+            if (meet.getState() != MeetingRecord.MEETING_STATE_PLANNING) {
+                throw new Exception("Attempting to send email reminder when not in planning state.  State="+meet.getState());
+            }
 
             if (timeToSend() > ar.nowTime) {
                 System.out.println("MEETING NOTIFICATION BUG:  Request to send when TimeToSend ("
@@ -940,6 +995,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 return;
             }
 
+            System.out.println("SENDING MEETING NOTICE: "+new Date()+" with SENDTIME: "+new Date(timeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
             meet.sendReminderEmail(ar, ngw, mailFile);
              //test to see that all the logic is right
             if (needsSending()) {

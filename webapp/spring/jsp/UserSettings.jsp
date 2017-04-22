@@ -71,26 +71,23 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalHeading" style="height:40px">
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-            Options: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="goToEdit()" >
-                        <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
-                        Update Settings</a></li>
-              <li role="presentation" class="divider"></li>
-              <li role="presentation"><a role="menuitem" href="RemoteProfiles.htm" >
-                        Remote Profiles</a></li>
-              <li role="presentation"><a role="menuitem" href="userRemoteTasks.htm" >
-                        Remote Action Items</a></li>
-              <li role="presentation"><a role="menuitem" href="Agents.htm" >
-                        Personal Assistant</a></li>
-            </ul>
-          </span>
-
-        </div>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="goToEdit()" >
+                    <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
+                    Update Settings</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem" href="RemoteProfiles.htm" >
+                    Remote Profiles</a></li>
+          <li role="presentation"><a role="menuitem" href="userRemoteTasks.htm" >
+                    Remote Action Items</a></li>
+          <li role="presentation"><a role="menuitem" href="Agents.htm" >
+                    Personal Assistant</a></li>
+        </ul>
+      </span>
     </div>
 
     <table class="spacey">
