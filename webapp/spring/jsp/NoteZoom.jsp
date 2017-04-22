@@ -788,11 +788,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </span>
 <% } %>
         </div>
-        <div class="rightDivContent" style="margin-right:100px;">
-<%if (isLoggedIn) { %>
-
-<% } %>
-        </div>
     </div>
     <div  class="h1" style="{{getPhaseStyle()}}">
         <i class="fa fa-lightbulb-o" style="font-size:130%"></i>

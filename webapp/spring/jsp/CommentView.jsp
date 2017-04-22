@@ -30,7 +30,7 @@
             <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
               <a role="menuitem" ng-click="openCommentCreator(item,2,cmt.time,cmt.html)">
               Make Modified Proposal</a></li>
-            <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
+            <li role="presentation">
               <a role="menuitem" ng-click="openDecisionEditor(item, cmt)">
               Create New Decision</a></li>
             </ul>
@@ -49,7 +49,7 @@
         <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
           <span class="red">{{cmt.userName}}</span>
         </a>
-        <span ng-show="cmt.emailPending">-email pending-</span>
+        <span ng-show="cmt.emailPending && !cmt.suppressEmail">-email pending-</span>
         <span ng-show="cmt.replyTo">
           <span ng-show="cmt.commentType==1">
             In reply to                 

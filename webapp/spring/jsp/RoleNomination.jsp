@@ -225,25 +225,22 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="col-12">
-        <div class="rightDivContent" style="margin-right:100px;">
-          <span class="dropdown">
-            <button class="btn btn-default btn-raised dropdown-toggle" 
-                    type="button" id="menu1" data-toggle="dropdown" ng-style="stateStyle()">
-                {{term.state}}: <span class="caret"></span></button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  ng-click="updateState('Nominating')">State &#10132; Nominating</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  ng-click="updateState('Changing')">State &#10132; Changing</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  ng-click="updateState('Proposing')">State &#10132; Proposing</a></li>
-              <li role="presentation"><a role="menuitem" tabindex="-1"
-                  ng-click="updateState('Completed')">State &#10132; Completed</a></li>
-            </ul>
-          </span>
-        </div>
-        <div style="clear:both"></div>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" 
+                type="button" id="menu1" data-toggle="dropdown" ng-style="stateStyle()">
+            {{term.state}}: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              ng-click="updateState('Nominating')">State &#10132; Nominating</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              ng-click="updateState('Changing')">State &#10132; Changing</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              ng-click="updateState('Proposing')">State &#10132; Proposing</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              ng-click="updateState('Completed')">State &#10132; Completed</a></li>
+        </ul>
+      </span>
     </div>
 
 
@@ -282,7 +279,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     </div>
     <div>
         <div class="col-12">
-            <div class="form-group">
+            <div class="form-group" title="The duration is the number of days between the start and end dates.">
                 <label for="status">Duration:</label>
                 <span >
                     {{ getDays(term) }} Days

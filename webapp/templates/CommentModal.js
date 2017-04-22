@@ -3,12 +3,14 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 
     // initial comment object
     $scope.cmt = cmt;
+    $scope.flattenedCmt = JSON.stringify(cmt);
     if (!cmt.docList) {
         cmt.docList = [];
     }
 	if (!cmt.notify) {
 		cmt.notify = [];
 	}
+	cmt.sendEmail = (cmt.sendEmail==true);
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
     // are there unsaved changes?
@@ -18,6 +20,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     
     $scope.docSpaceURL = docSpaceURL;
     $scope.attachmentList = attachmentList;
+    $scope.showEmail = false;
 	
 	// return a readable status message
 	$scope.getStatusMassage = function() {
@@ -46,9 +49,9 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     }
 
     function tinymceChangeTrigger(e, editor) {
-        if (tinyMCE.activeEditor.getContent() != $scope.initialContent)
+        if (tinyMCE.activeEditor.getContent() != $scope.initialContent) {
             $scope.unsaved = 1;
-        else $scope.unsaved = 0;
+        }
     }
 
     $scope.postIt = function () {
@@ -78,6 +81,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         $scope.parentScope.updateComment($scope.cmt);
         $scope.unsaved = 0;
         $scope.cmt.isNew = false;
+        $scope.flattenedCmt = JSON.stringify($scope.cmt);       
     }
 
     $scope.saveAndClose = function () {
@@ -139,7 +143,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     }
 	
     $scope.autosave = function() {
-        if ($scope.unsaved == 1) {
+        var newFlat = JSON.stringify($scope.cmt);
+        if (newFlat != $scope.flattenedCmt ) {
             $scope.save();
             $scope.unsaved = -1;
         }
@@ -205,6 +210,21 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
             //cancel action - nothing really to do
         });
     };
-
+    $scope.getStyle = function(which) {
+        var sss = {
+            "border":"2px solid white",
+            "border-bottom":"2px solid gray",
+            "margin":"0px",
+            "padding":"8px 15px",
+            "font-size":"16px",
+            "font-weight":"bold"
+        };
+        if ( (which==1 && !$scope.showEmail)
+           || (which==2 && $scope.showEmail) ) {
+            sss.border="2px solid gray";
+            sss["border-bottom"]="2px solid white";
+        };
+        return sss;
+    };
 
 });

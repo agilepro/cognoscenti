@@ -248,23 +248,28 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <td>Days</td>
                 </tr>
                 <tr ng-repeat="aterm in role.terms" >
-                    <td class="actions">
+                    <td class="actions" title="Edit this term to sent time span and to make it the current term.">
                         <button type="button" name="edit" class="btn btn-primary" 
                                 ng-click="openTermModal(aterm)">
                             <span class="fa fa-edit"></span>
                         </button>
                     </td>
-                    <td class="actions">
+                    <td class="actions" title="Nominations and elections of members to the term of the role.">
                         <button type="button" name="edit" class="btn btn-primary" 
                                 ng-click="goNominate(aterm)">
                             <span class="fa fa-flag"></span>
                         </button>
                     </td>
-                    <td ng-click="openTermModal(aterm)" ng-style="termColor(aterm)">{{aterm.termStart |  date}}</td>
-                    <td ng-click="openTermModal(aterm)">{{getDays(aterm)}}</td>
+                    <td ng-click="openTermModal(aterm)" ng-style="termColor(aterm)" 
+                        title="Date that the term is proposed to start - click to edit">
+                        {{aterm.termStart |  date}}</td>
+                    <td ng-click="openTermModal(aterm)"
+                        title="The term in days is set by setting the end date - click to edit">
+                        {{getDays(aterm)}}</td>
                     <td class="actions">
                         <button type="button" name="delete" class='btn btn-warning' 
-                                ng-click="deleteTerm(aterm)">
+                                ng-click="deleteTerm(aterm)"
+                                title="Click here to delete this term">
                             <span class="fa fa-trash"></span>
                         </button>
                     </td>

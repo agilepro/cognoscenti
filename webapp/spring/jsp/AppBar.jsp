@@ -180,14 +180,16 @@
             <li><a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
                 Log In</a></li>
 <% } else { %>
-            <li><a onclick='logOutProvider();'>Log Out</a></li>
-
+            <li><a href="<%=userRelPath%>UserHome.htm">Home</a></li>
             <li><a href="<%=userRelPath%>userSettings.htm">Profile</a></li>
             <li><a href="<%=userRelPath%>userAlerts.htm">Updates</a></li>
             <li><a href="<%=userRelPath%>notificationSettings.htm">Notifications</a></li>
 <%if(ar.isSuperAdmin()){ %>
+            <li class="divider"></li>
             <li><a href="<%=userRelPath%>../su/emailListnerSettings.htm">Administration</a></li>
 <%} %>
+            <li class="divider"></li>
+            <li><a onclick='logOutProvider();'>Log Out</a></li>
 <% } %> 
           </ul>
         </li>

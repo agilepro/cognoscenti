@@ -277,6 +277,14 @@ public class CommentRecord extends DOMFace {
         setScalar("decision", replies);
     }
 
+    public boolean getSuppressEmail() {
+        return getAttributeBool("suppressEmail");
+    }
+    public void setSuppressEmail(boolean replyVal) {
+        setAttributeBool("suppressEmail", replyVal);
+    }
+
+    
     /**
      * NewPhase is applicable only when the comment is indicating
      * a phase change in a conversation.  It represents the phase
@@ -607,6 +615,7 @@ public class CommentRecord extends DOMFace {
         }
         commInfo.put("replies",  replyArray);
         commInfo.put("decision", getDecision());
+        commInfo.put("suppressEmail",  getSuppressEmail());
 
         //this is temporary
         commInfo.put("poll",     getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE);
@@ -693,7 +702,10 @@ public class CommentRecord extends DOMFace {
         if (input.has("docList")) {
             setDocList(constructVector(input.getJSONArray("docList")));
         }
-
+        if (input.has("suppressEmail")) {
+            setSuppressEmail(input.getBoolean("suppressEmail"));
+        }
+        
 
         //A simple comment should never be "open", only draft or closed, so assure that here
         if (getCommentType()==COMMENT_TYPE_SIMPLE  &&
@@ -758,6 +770,9 @@ public class CommentRecord extends DOMFace {
                 //minutes don't have email sent not ever so mark sent
                 return false;
             }
+            if (cr.getSuppressEmail()) {
+                return false;
+            }
             if (cr.getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE) {
                 //simple comments are created but not closed
                 return cr.needCreateEmailSent();
@@ -771,6 +786,9 @@ public class CommentRecord extends DOMFace {
         }
 
         public long timeToSend() throws Exception {
+            if (cr.getSuppressEmail()) {
+                return -1;
+            }
             return cr.getTime()+1000;
         }
 
@@ -795,11 +813,17 @@ public class CommentRecord extends DOMFace {
             cr   = _cr;
         }
         public boolean needsSending() throws Exception {
+            if (cr.getSuppressEmail()) {
+                return false;
+            }
             String resend = getResendMessage();
             return (resend!=null && resend.length()>0);
         }
 
         public long timeToSend() throws Exception {
+            if (cr.getSuppressEmail()) {
+                return -1;
+            }
             return cr.getTime();
         }
 
