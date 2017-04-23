@@ -3,6 +3,7 @@ package org.socialbiz.cog.mail;
 import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.socialbiz.cog.AccessControl;
@@ -50,7 +51,7 @@ public class DailyDigest {
     public static void sendDailyDigest(AuthRequest arx, Cognoscenti cog) throws Exception {
         MemFile debugStuff = new MemFile();
         Writer debugWriter = debugStuff.getWriter();
-        System.out.println("sendDailyDigest has been called.");
+        System.out.println("DAILYDIGEST: called at "+new Date());
         JSONObject logFile = new JSONObject();
         JSONArray logEntries = new JSONArray();
         logFile.put("events", logEntries);
@@ -81,7 +82,6 @@ public class DailyDigest {
 
             // loop thru all the profiles to send out the email.
             for (UserProfile up : arx.getCogInstance().getUserManager().getAllUserProfiles()) {
-                System.out.println("Considering user: "+up.getKey()+" which is "+up.getName());
                 JSONObject userObject = new JSONObject();
                 logEntries.put(userObject);
                 userObject.put("key",  up.getKey());
@@ -184,9 +184,6 @@ public class DailyDigest {
             reportableThings += userCache.getOpenRounds().length();
             reportableThings += userCache.getProposals().length();
 
-            System.out.println("User "+up.getKey()+" has "+userCache.getActionItems().length()+" action items.");
-            System.out.println("User "+up.getKey()+" has "+userCache.getOpenRounds().length()+" open rounds.");
-            System.out.println("User "+up.getKey()+" has "+userCache.getProposals().length()+" proposals.");
             userLog.put("ActionItems", userCache.getActionItems().length());
             userLog.put("OpenRounds",  userCache.getOpenRounds().length());
             userLog.put("Proposals",   userCache.getProposals().length());

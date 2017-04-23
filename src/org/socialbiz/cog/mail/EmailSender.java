@@ -212,21 +212,11 @@ public class EmailSender extends TimerTask {
             delayTime = DOMFace.safeConvertInt(delayStr)*1000*60;
         }
 
-        //System.out.println("BACKGROUND: ----------- begining scan at "
-        //        +new Date()+"-------------");
-
         long nowTime = ar.nowTime;
         List<NGPageIndex> allOverdue = listOverdueContainers(nowTime-delayTime);
         int iCount = 0;
         for (NGPageIndex ngpi : allOverdue) {
             iCount++;
-            System.out.println("BACKGROUND: workspace ("+ngpi.containerName+") due since "
-                    +new Date(ngpi.nextScheduledAction));
-            //if (!ngpi.isProject()) {
-            //    System.out.println("BACKGROUND: strange non-Page object has scheduled events --- ignoring it");
-            //    ngpi.nextScheduledAction = 0;
-            //    continue;
-            //}
 
             File workspaceCogFolder = ngpi.containerPath.getParentFile();
             File emailArchiveFile = new File(workspaceCogFolder, "mailArchive.json");
@@ -264,7 +254,6 @@ public class EmailSender extends TimerTask {
                 int count = 0;
                 for (ScheduledNotification sn : resList) {
                     count++;
-                    System.out.println("BACKGROUND: Notification "+count+" of "+total+": "+sn.selfDescription());
                     if (sn.timeToSend()<nowTime) {
                         sn.sendIt(ar, emailArchive);
                     }
@@ -335,7 +324,6 @@ public class EmailSender extends TimerTask {
         long nextScheduledTime = getNextTime(lastNotificationSentTime + 10000000);
         threadLastCheckTime = System.currentTimeMillis();
         if (threadLastCheckTime > nextScheduledTime) {
-            System.out.println("EmailSender: Checked, it is time to send the daily digest");
             DailyDigest.sendDailyDigest(ar, cog);
         }
     }
@@ -415,7 +403,6 @@ public class EmailSender extends TimerTask {
         createEmailRecordInternal(ngc, from,
                 ooa, subject, bodyWriter.toString(),
                 attachIds, cog);
-        System.out.println("containerEmail created for "+ooa.getEmail()+" from template "+templateFile.getName());
     }
 
 

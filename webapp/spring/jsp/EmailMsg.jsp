@@ -7,7 +7,10 @@
 %><%
 
     String pageId      = ar.reqParam("pageId");
+    String msgSentDate = ar.reqParam("msg");
+    long msgId = DOMFace.safeConvertLong(msgSentDate);
     String filter      = ar.defParam("f", "");
+    
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
@@ -16,8 +19,19 @@
     File folder = ngp.getFilePath().getParentFile();
     File emailFilePath = new File(folder, "mailArchive.json");
 
-    MailFile mailArchive = MailFile.readOrCreate(emailFilePath);
-    JSONArray emailList = mailArchive.getAllJSON();
+    MailFile archive = MailFile.readOrCreate(emailFilePath);
+
+
+    JSONObject emailMsg = null;
+    String specialBody = "";
+    boolean bodyIsDeleted = false;
+    for (MailInst mi : archive.getAllMessages() ) {
+        if (msgId == mi.getCreateDate()) {
+            emailMsg = mi.getJSON();
+            specialBody = mi.getBodyText();
+            bodyIsDeleted = specialBody.startsWith("*deleted");
+        }
+    }
 
 /* PROTOTYPE EMAIL RECORD
       {
@@ -34,11 +48,12 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Email Sent");
-    $scope.emailList = <%emailList.write(out,2,4);%>;
+    $scope.emailMsg = <%emailMsg.write(out,2,4);%>;
     $scope.filter = "<%ar.writeJS(filter);%>";
+    $scope.bodyIsDeleted = <%=bodyIsDeleted%>;
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
@@ -46,29 +61,6 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
-    $scope.sortInverseChron = function() {
-        $scope.emailList.sort( function(a, b){
-            return b.sendDate - a.sendDate;
-        });
-    };
-    $scope.sortInverseChron();
-    $scope.getFiltered = function() {
-        var searchVal = $scope.filter.toLowerCase();
-        var res = [];
-        if ($scope.filter==null || $scope.filter.length==0) {
-            res = $scope.emailList;
-        }
-        else {
-            res = $scope.emailList.filter( function(oneEmail) {
-                return (oneEmail.Subject.toLowerCase().indexOf(searchVal)>=0)
-                    || (oneEmail.Addressee.toLowerCase().indexOf(searchVal)>=0);
-            });
-        }
-        res = res.sort( function(a,b) {
-            return $scope.bestDate(b)-$scope.bestDate(a);
-        });
-        return res;
-    }
     $scope.namePart = function(val) {
         var pos = val.indexOf('�');
         if (pos<0) {
@@ -97,28 +89,49 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-        <div>
-            Filter: <input ng-model="filter">
-        </div>
-        <div style="height:20px;"></div>
-        <table class="gridTable2" width="100%">
-            <tr class="gridTableHeader">
-                <td width="100px">From</td>
-                <td width="300px">Subject</td>
-                <td width="100px">Recipient</td>
-                <td width="50px">Status</td>
-                <td width="100px">Send Date</td>
-            </tr>
-            <tr ng-repeat="rec in getFiltered()|limitTo: 50">
-                <td>{{namePart(rec.From)}}</td>
-                <td><a href="emailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
-                <td>{{rec.Addressee}}</td>
-                <td>{{rec.Status}}</td>
-                <td>{{bestDate(rec) |date:'M/d/yy H:mm'}}</td>
-            </tr>
-        </table>
-
+<div class="btn-toolbar primary-toolbar">
+  <a class="btn btn-default btn-raised" href="emailSent.htm?f=<%ar.writeURLData(filter);%>">
+    <i class="fa fa-list-alt material-icons"></i> Return to List</a>
 </div>
 
+<table class="table" style="max-width:800px">
+  <tr>
+    <td>From</td>
+    <td>{{emailMsg.From}}</td>
+  </tr>
+  <tr>
+    <td>Subject</td>
+    <td>{{emailMsg.Subject}}</td>
+  </tr>
+  <tr>
+    <td>Addressee</td>
+    <td>{{emailMsg.Addressee}}</td>
+  </tr>
+  <tr>
+    <td>Status</td>
+    <td>{{emailMsg.Status}}</td>
+  </tr>
+  <tr>
+    <td>Created</td>
+    <td>{{emailMsg.CreateDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
+  </tr>
+  <tr>
+    <td>Sent</td>
+    <td>{{emailMsg.LastSentDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
+  </tr>
+  <tr ng-hide="bodyIsDeleted">
+    <td colspan="2"><%= specialBody %></td>
+  </tr>
+  <tr ng-show="bodyIsDeleted">
+    <td colspan="2">
+      <div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;text-align:center;font-style:italic">
+      <p>Email bodies are deleted 3 months after sending</p>
+      <p>This email body was deleted around {{emailMsg.LastSentDate+(91*24*60*60*1000) |date:"dd-MMM-yyyy"}}</p>
+      </div>   
+    </td>
+  </tr>
+</table>
+
+</div>
 
 

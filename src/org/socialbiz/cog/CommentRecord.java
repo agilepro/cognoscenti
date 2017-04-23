@@ -84,6 +84,9 @@ public class CommentRecord extends DOMFace {
         setScalar("content", newVal);
     }
     public String getContentHtml(AuthRequest ar)  throws Exception {
+        if (ar.ngp==null) {
+            throw new Exception("getContentHtml requires the AuthRequest to have a ngp object");
+        }
         return WikiConverterForWYSIWYG.makeHtmlString(ar, getContent());
     }
     public void setContentHtml(AuthRequest ar, String newHtml) throws Exception {
@@ -549,6 +552,12 @@ public class CommentRecord extends DOMFace {
         AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
+        
+        //this is needed for the HTML conversion.
+        if (ngp==null) {
+            throw new Exception("constructEmailRecordOneUser requires NGP non null");
+        }
+        clone.ngp = ngp;
 
         String opType = "New ";
         if (isClosed) {
@@ -563,7 +572,7 @@ public class CommentRecord extends DOMFace {
         data.put("parentURL", ar.baseURL + noteOrMeet.getResourceURL(clone, ngp));
         data.put("parentName", noteOrMeet.emailSubject());
         data.put("commentURL", ar.baseURL + noteOrMeet.getResourceURL(clone, ngp)+ "#cmt" + getTime());
-        data.put("comment", this.getHtmlJSON(ar));
+        data.put("comment", this.getHtmlJSON(clone));
         data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngp));
         data.put("wsName", ngp.getFullName());
         if (ownerProfile!=null) {
@@ -622,6 +631,9 @@ public class CommentRecord extends DOMFace {
         return commInfo;
     }
     public JSONObject getHtmlJSON(AuthRequest ar) throws Exception {
+        if (ar.ngp==null) {
+            throw new Exception("getHtmlJSON requires an AuthRequest object with a NGP member set");
+        }
         JSONObject commInfo = getJSON();
         commInfo.put("html", getContentHtml(ar));
         commInfo.put("outcome", getOutcomeHtml(ar));
@@ -657,7 +669,6 @@ public class CommentRecord extends DOMFace {
         }
         if (input.has("responses")) {
             JSONArray responseArray = input.getJSONArray("responses");
-            System.out.println("Submitted to server comment responses: "+responseArray.toString());
             for (int i=0; i<responseArray.length(); i++) {
                 JSONObject oneResp = responseArray.getJSONObject(i);
                 String responseUser = oneResp.getString("user");

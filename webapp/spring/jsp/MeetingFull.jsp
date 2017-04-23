@@ -21,6 +21,10 @@
         throw new Exception("Please log in to see this meeting.");
     }
 
+    if (ar.ngp==null) {
+        throw new Exception("NGP should not be null!!!!!!");
+    }
+    
     NGBook ngb = ngw.getSite();
     UserProfile uProf = ar.getUserProfile();
     boolean isLoggedIn = (uProf!=null);

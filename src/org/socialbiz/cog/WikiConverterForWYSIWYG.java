@@ -37,8 +37,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter
     /**
     * Don't construct.  Just use writeWikiAsHtml instead.
     */
-    private WikiConverterForWYSIWYG(AuthRequest destination)
-    {
+    private WikiConverterForWYSIWYG(AuthRequest destination) {
         super( destination );
     }
 
@@ -48,10 +47,14 @@ public class WikiConverterForWYSIWYG extends WikiConverter
     * converter directly.   Convenience for the case where you are
     * going to use a converter only once, and only for HTML output.
     */
-    public static String makeHtmlString(AuthRequest destination, String tv) throws Exception
-    {
+    public static String makeHtmlString(AuthRequest destination, String tv) throws Exception {
+        if (destination.ngp==null) {
+            throw new Exception("makeHtmlString requires the AuthRequest to have a ngp object");
+        }
         MemFile htmlChunk = new MemFile();
         AuthDummy dummy = new AuthDummy(destination.getUserProfile(), htmlChunk.getWriter(), destination.getCogInstance());
+        dummy.ngp     = destination.ngp;
+        dummy.retPath = destination.retPath;
         WikiConverterForWYSIWYG wc = new WikiConverterForWYSIWYG(dummy);
         wc.writeWikiAsHtml(tv);
         dummy.flush();
@@ -72,25 +75,32 @@ public class WikiConverterForWYSIWYG extends WikiConverter
     }
 
 
-    public void outputProperLink(String linkURL)
+    public void outputProperLink(String linkContentText)
         throws Exception
     {
-        int barPos = linkURL.indexOf("|");
-        String linkText = linkURL.trim();
+        if (ar.ngp==null) {
+            throw new RuntimeException("outputProperLink requires the AuthRequest to have a ngp object");
+        }
+        linkContentText = linkContentText.trim();
+        int barPos = linkContentText.indexOf("|");
+        String linkText = linkContentText;
         String linkAddr = null;
-        String titleValue = linkURL;
+        String titleValue = linkContentText;
         
         
 
         if (barPos >= 0) {
             
             //We have both a link text, and a link address, so use them.
-            linkText = linkURL.substring(0,barPos).trim();
-            linkAddr = linkURL.substring(barPos+1).trim();
+            linkText = linkContentText.substring(0,barPos).trim();
+            linkAddr = linkContentText.substring(barPos+1).trim();
             
             //if this has been shortened, it must be converted back to full length.
             //not really sure how this got shortened in the first place
-            if (!linkAddr.startsWith("http") && ar.ngp!=null) {
+            if (linkAddr.startsWith("http")) {
+                //ok the address is a full URL
+            }
+            else if (ar.ngp!=null) {
                 linkAddr = ar.baseURL + ar.getResourceURL(ar.ngp, linkAddr);
             }
         }
@@ -124,6 +134,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter
                     //didn't find a project with that name, so just link to hash which
                     //works out to be the current page
                     linkAddr="#";
+                    System.out.println("DEBUG HTML:  Wiki text has link to page that does not exist: "+linkText);
                 }
             }
         }
@@ -132,9 +143,8 @@ public class WikiConverterForWYSIWYG extends WikiConverter
         String target = null;
         if (isExternal) {
             target = "_blank";
-            titleValue = "This link leads to an external page";
+            titleValue = "external link: "+titleValue;
         }
-        
         
         ar.write("<a href=\"");
         ar.write(linkAddr);

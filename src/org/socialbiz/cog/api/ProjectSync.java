@@ -36,8 +36,8 @@ import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.LicenseForUser;
 import org.socialbiz.cog.NGPage;
-import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.SectionDef;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UtilityMethods;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
@@ -562,7 +562,6 @@ public class ProjectSync {
             AttachmentVersion aVer = newAtt.getLatestVersion(local);
             File docFile = aVer.getLocalFile();
             URL remoteURL = new URL(tempFileURL);
-            System.out.println("Ready to PUT to: "+tempFileURL);
             HttpURLConnection httpCon = (HttpURLConnection) remoteURL.openConnection();
             httpCon.setDoOutput(true);
             httpCon.setRequestProperty( "Content-Type", "application/octet-stream" );

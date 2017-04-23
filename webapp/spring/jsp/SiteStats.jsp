@@ -91,7 +91,6 @@ app.controller('myCtrl', function($scope, $http) {
 
 
     <div class="generalContent">
-        <div class="generalHeading paddingTop">Statistics</div>
         <table class="table">
         <tr>
            <td>Number of Topics:</td>

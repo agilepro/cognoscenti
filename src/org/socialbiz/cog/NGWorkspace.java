@@ -400,7 +400,6 @@ public class NGWorkspace extends NGPage {
 
         if (earliest!=null) {
             earliest.sendIt(ar, mailFile);
-            System.out.println("BACKGROUND: Just sent: "+earliest.selfDescription());
             return;   //only one thing at a time
         }
     }

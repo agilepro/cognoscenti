@@ -10,7 +10,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 	if (!cmt.notify) {
 		cmt.notify = [];
 	}
-	cmt.sendEmail = (cmt.sendEmail==true);
+	cmt.suppressEmail = (cmt.suppressEmail==true);
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
     // are there unsaved changes?

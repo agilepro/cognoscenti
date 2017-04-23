@@ -23,6 +23,7 @@ package org.socialbiz.cog.mail;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.socialbiz.cog.EmailRecord;
@@ -69,7 +70,22 @@ public class MailFile extends JSONWrapper {
         }
     }
 
+    /**
+     * This returns the current time EXCEPT it guarantees
+     * that it never returns the same time twice, incrementing
+     * the time if necessary by a few milliseconds to achieve this.
+     */
+    public static synchronized long getUniqueTime() {
+        long newTime = System.currentTimeMillis();
+        if (newTime<=lastTimeValue) {
+            newTime = lastTimeValue+1;
+        }
+        lastTimeValue = newTime;
+        return newTime;
+    }
+    private static long lastTimeValue = 0;
 
+    
     private MailFile(File path, JSONObject _kernel) throws Exception {
         super(_kernel);
         myPath = path;
@@ -156,7 +172,7 @@ public class MailFile extends JSONWrapper {
             MailInst emailRec = this.createMessage();
             emailRec.setStatus(EmailRecord.READY_TO_GO);
             emailRec.setFrom(from);
-            emailRec.setCreateDate(System.currentTimeMillis());
+            emailRec.setCreateDate(getUniqueTime());
             emailRec.setAddressee(addressee);
 
             //for some reason email is not able to handle the upper ascii
@@ -233,4 +249,32 @@ public class MailFile extends JSONWrapper {
         kernel.put("msgs", newEmailList);
     }
 
+    
+    /**
+     * @return a JSONArray with all the messages represented as JSON objects
+     *         while also assuring that each message has a unique create date
+     *         since some existing files might not have unique create date 
+     * @throws Exception
+     */
+    public JSONArray getAllJSON() throws Exception {
+        //this is a test to make sure that sent data and from is unique
+        Hashtable<Long,MailInst>checker = new Hashtable<Long,MailInst>();
+        
+        JSONArray emailList = new JSONArray();
+        for (MailInst mi : getAllMessages() ) {
+            long testVal = new Long(mi.getCreateDate());
+            Long testObj = new Long(testVal);
+            if (checker.contains(testObj)) {
+                while (checker.contains(testObj)) {
+                    testObj = new Long(++testVal);
+                }
+                mi.setCreateDate(testVal);
+            }
+            checker.put(testObj, mi);
+            
+            emailList.put(mi.getJSON());
+        }
+        return emailList;
+    }
+    
 }

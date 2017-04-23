@@ -1167,7 +1167,6 @@ public class MainTabsViewControler extends BaseController {
               goalInfo.put("universalid", gr.getUniversalId());
               gr.updateGoalFromJSON(goalInfo, ngp, ar);
               gr.setCreator(ar.getBestUserId());
-              System.out.println("SETTING creator toL "+ar.getBestUserId());
               if (gr.getCreator()==null || gr.getCreator().length()==0) {
                   throw new Exception("can not set the creator");
               }

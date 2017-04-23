@@ -131,6 +131,14 @@ public class ProjectSettingController extends BaseController {
     }
 
 
+    @RequestMapping(value = "/{siteId}/{pageId}/emailMsg.htm", method = RequestMethod.GET)
+    public void emailMsg( @PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "EmailMsg");
+    }
+
+
     @RequestMapping(value = "/{siteId}/{pageId}/streamingLinks.htm", method = RequestMethod.GET)
     public void streamingLinks(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {

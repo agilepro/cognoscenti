@@ -663,6 +663,8 @@ public class TopicRecord extends CommentContainer implements EmailContext {
       public String getNoteHtml(AuthRequest ar) throws Exception {
           MemFile htmlChunk = new MemFile();
           AuthDummy dummy = new AuthDummy(ar.getUserProfile(), htmlChunk.getWriter(), ar.getCogInstance());
+          dummy.ngp     = ar.ngp;
+          dummy.retPath = ar.retPath;
           WikiConverterForWYSIWYG.writeWikiAsHtml(dummy, getWiki());
           dummy.flush();
           return htmlChunk.toString();

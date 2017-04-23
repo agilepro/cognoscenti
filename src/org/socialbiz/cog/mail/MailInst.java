@@ -44,6 +44,8 @@ public class MailInst extends JSONWrapper {
     public static final String SENT = "Sent";
     public static final String FAILED = "Failed";
     public static final String SKIPPED = "Skipped";
+    
+    
 
 
     public MailInst(JSONObject _kernel) {
@@ -147,7 +149,7 @@ public class MailInst extends JSONWrapper {
      */
     public boolean sendPreparedMessageImmediately(Mailer mailer) {
 
-        long sendTime = System.currentTimeMillis();
+        long sendTime = MailFile.getUniqueTime();
         Transport transport = null;
         String addressee = "UNSPECIFIED";
 

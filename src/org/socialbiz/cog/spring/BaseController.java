@@ -194,7 +194,6 @@ public class BaseController {
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
-            System.out.println("Unable to prepare JSP view of "+jspName+": "+ex.toString());
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
         }
     }
@@ -208,7 +207,6 @@ public class BaseController {
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
-            System.out.println("Unable to prepare JSP view of "+jspName+": "+ex.toString());
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
         }
     }
@@ -223,7 +221,6 @@ public class BaseController {
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
-            System.out.println("Unable to prepare JSP view of "+jspName+": "+ex.toString());
             throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
         }
     }

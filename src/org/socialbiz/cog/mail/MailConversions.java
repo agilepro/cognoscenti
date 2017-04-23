@@ -52,7 +52,6 @@ public class MailConversions {
                     }
                 }
                 inst.setAttachmentFiles(attachments);
-                System.out.println("MAILConverter: moved email from workspace to archive:  "+inst.getSubject());
             }
         }
 

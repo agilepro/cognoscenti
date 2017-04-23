@@ -153,18 +153,7 @@ public class ChunkTemplate {
         }
         c.set("debugDump", data.toString(2));
 
-//        MemFile mf = new MemFile();
-//        Writer ww = mf.getWriter();
         c.render(w);
-//        ww.flush();
-//        File tempOutFile = new File(templateFile.getParentFile(), templateFile.getName()+".out.txt");
-//        FileOutputStream fos = new FileOutputStream(tempOutFile);
-//        Writer fosw = new OutputStreamWriter(fos, "UTF-8");
-//        mf.outToWriter(fosw);
-//        fosw.flush();
-//        fosw.close();
-//        System.out.println("CHUNK: file dumped to "+tempOutFile);
-//        mf.outToWriter(w);
         w.flush();
     }
 

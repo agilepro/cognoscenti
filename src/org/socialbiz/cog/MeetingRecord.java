@@ -990,9 +990,8 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             }
 
             if (timeToSend() > ar.nowTime) {
-                System.out.println("MEETING NOTIFICATION BUG:  Request to send when TimeToSend ("
+                throw new Exception("MEETING NOTIFICATION BUG:  Request to send when TimeToSend ("
                      +new Date(timeToSend())+") is still in the future!");
-                return;
             }
 
             System.out.println("SENDING MEETING NOTICE: "+new Date()+" with SENDTIME: "+new Date(timeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
