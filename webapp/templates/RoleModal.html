@@ -33,7 +33,7 @@
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                         <li role="presentation" ng-repeat="color in colors">
                             <a role="menuitem" style="background-color:{{color}};"
-                            ng-click="roleInfo.color=color">{{color}}</a></li>
+                            ng-click="roleInfo.color=color;updatePlayers()">{{color}}</a></li>
                     </ul>
                 </div>
             </td>
@@ -62,6 +62,15 @@
                       Nomination status is {{currentTerm.state}}</span>
                  <span ng-hide="currentTerm">
                      <i>No current term has been set for this role.  Role players are perpetual.</i></span>
+             </td>
+        </tr>
+        <tr>
+             <td class="gridTableColummHeader">Responsibities:</td>
+             <td colspan="2">
+                 <span ng-repeat="resp in roleInfo.responsibilities">
+                      {{resp.text}}, </span>
+                 <span ng-show="roleInfo.responsibilities.length==0">
+                     <i>No responsibilities have been set for this role.</i></span>
              </td>
         </tr>
         <tr>

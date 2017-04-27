@@ -373,7 +373,9 @@ app.controller('myCtrl', function($scope, $http) {
                         <i class="fa  fa-check-square-o"></i> Purge in {{convertDays(docInfo.purgeDate)}} days</button>
                     <button ng-click="setDays()" class="btn btn-primary btn-raised">Set</button>
                     <input ng-model="futureDays" type="text" class="form-control"/>
+                    
                 </div>
+                {{docInfo.purgeDate|date}}
             </td>
         </tr>
         <tr>

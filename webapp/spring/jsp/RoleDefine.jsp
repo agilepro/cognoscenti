@@ -199,7 +199,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             </div>
             <div class="form-group">
                 <label for="synopsis">Responsibilities:</label>
-                <span class="fa fa-question-circle helpIcon" ng-click="respHelp=!respHelp"></span>
                 <table class="table">
                 <tr ng-repeat="aresp in role.responsibilities" >
                     <td class="actions">
@@ -239,7 +238,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
                 <label for="synopsis">Terms on Record:</label>
-                <span class="fa fa-question-circle helpIcon" ng-click="termHelp=!termHelp"></span>
                 <table class="table">
                 <tr>
                     <td></td>

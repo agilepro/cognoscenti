@@ -553,8 +553,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                       <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" ng-click="">
-                          <span class="fa fa-user"></span> {{person.name}} - {{person.uid}}</a></li>
+                          tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                          {{person.name}}<br/>{{person.uid}}</a></li>
                       <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                           ng-click="navigateToUser(person)">
                           <span class="fa fa-user"></span> Visit Profile</a></li>

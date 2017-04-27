@@ -136,6 +136,10 @@ public class MainTabsViewControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        if ("$".equals(pageId)) {
+            //if this is a site instead of a workspace, display something else
+            response.sendRedirect("accountListProjects.htm");
+        }
         showJSPLoggedIn(ar, siteId, pageId, "../jsp/FrontPage");
     }
 

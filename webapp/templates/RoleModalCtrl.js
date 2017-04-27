@@ -37,6 +37,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     $scope.updatePlayers = function() {
         var role = {};
         role.name = $scope.roleInfo.name;
+        role.color = $scope.roleInfo.color;
         role.players = $scope.roleInfo.players;
         console.log("UPDATING ROLE: ",role);
         $scope.parentScope.updateRole(role);

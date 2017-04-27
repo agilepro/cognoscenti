@@ -11,6 +11,11 @@
     NGContainer ngc = ar.getCogInstance().getWorkspaceOrSiteOrFail(siteId, pageId);
     ar.setPageAccessLevels(ngc);
     UserProfile uProf = ar.getUserProfile();
+    
+    String frontPageResource = "frontPage.htm";
+    if ("$".equals(pageId)) {
+        frontPageResource = "accountListProjects.htm";
+    }
 
     JSONArray allRoles = new JSONArray();
 
@@ -24,8 +29,8 @@
         allRoles.put(aRole.getJSONDetail());
     }
 
-    //String cacheDefeater = "?t="+System.currentTimeMillis();
-    String cacheDefeater = "";
+    String cacheDefeater = "?t="+System.currentTimeMillis();
+    //String cacheDefeater = "";
 
 %>
 
@@ -121,6 +126,23 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.reportError(data);
         });        
     }
+    $scope.removePlayer = function(role, player) {
+        var newPlayers = [];
+        var found = false;
+        role.players.forEach( function(item) {
+            if (item.uid == player.uid) {
+                found = true;
+            }
+            else {
+                newPlayers.push(item);
+            }
+        });
+        
+        if (found) {
+            role.players = newPlayers;
+            $scope.updateRole(role);
+        }
+    }
 
     $scope.visitPlayer = function(player) {
         window.location = "<%=ar.retPath%>v/FindPerson.htm?uid="+player.uid;
@@ -200,7 +222,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.inviteMsg = message.msg;
             message.userId = player.uid;
             message.name = player.name;
-            message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngc, "frontPage.htm")%>";
+            message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngc, frontPageResource)%>";
             $scope.sendEmailLoginRequest(message);
         }, function () {
             //cancel action - nothing really to do
@@ -285,14 +307,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                       <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" ng-click="">
-                          <span class="fa fa-user"></span> {{player.name}} - {{player.uid}}</a></li>
+                          tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                          {{player.name}}<br/>{{player.uid}}</a></li>
                       <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                           ng-click="navigateToUser(player)">
                           <span class="fa fa-user"></span> Visit Profile</a></li>
                       <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                           ng-click="openInviteSender(player)">
                           <span class="fa fa-envelope-o"></span> Compose &amp; Send Invitation</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="removePlayer(role, player)">
+                          <span class="fa fa-times"></span> Remove from Role </a></li>
                     </ul>
                   </span>
                 </span>
