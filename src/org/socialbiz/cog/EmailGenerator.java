@@ -380,6 +380,7 @@ public class EmailGenerator extends DOMFace {
         data.put("workspaceName", ngp.getFullName());
         data.put("workspaceUrl", ar.baseURL + ar.getDefaultURL(ngp) );
 
+		ar.ngp = ngp;
         data.put("introHtml", WikiConverterForWYSIWYG.makeHtmlString(ar, intro));
         JSONArray attachArray = new JSONArray();
         for (AttachmentRecord att : selAtt) {
