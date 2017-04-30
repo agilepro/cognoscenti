@@ -30,8 +30,9 @@ body{background-color:#fafafa;color:#291720;font-family:"PT_Sans",Helvetica,sans
 
 
 a, a:focus, a:hover {
-    color: #23527c;
-    text-decoration: underline;
+    *color: #23527c;
+    color: #AB37C8;
+    *text-decoration: underline;
 }
 
 .guideVocal{

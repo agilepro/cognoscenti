@@ -51,11 +51,6 @@ identityProvider - this is the way to log into Cognoscenti, see distussion above
 
 identityProvider=https://interstagebpm.com/eid/
 
-emailOpenIDProvider - use the same value as identity provider.
-
-emailOpenIDProvider=https://interstagebpm.com/eid/
-
-
 
 ==== Configuring Email ====
 

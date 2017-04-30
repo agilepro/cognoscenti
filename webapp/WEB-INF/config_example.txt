@@ -7,14 +7,14 @@
 # Each project is in its own folder.
 # Attachments are stored in the same folder with the project file
 # User can edit the attachment files directly, and re-synch later with project.
-libFolder=c:/CognoscentiData/sites/
+libFolder=c:/opt/weaver_sites/
 
 
 # User folder
 # This is the location where the global user files will be stored.
 # Can be any local path, include the complete path to the folder.
 # Make sure that this folder exists before you start.
-userFolder=c:/CognoscentiData/user/
+userFolder=c:/opt/weaver_user/
 
 
 # baseURL
@@ -38,18 +38,6 @@ identityProvider=https://interstagebpm.com/eid/
 #Note that you have to run the server and create a user account first
 #and then reconfigure setting the ID of that user here.
 #superAdmin=AAABBBCCC
-
-
-#emailOpenIDProvider
-#This is the optional URL of an openID provider that follows these rules:
-# 1. the user log in using their email address
-# 2. the resulting OpenID starts with the string specified
-# 3. anything following the string is the email address of the user
-#The global InterstageBPM identity provider belongs to this category, and if you are
-#using that, then simply specify the same address here.  If you are using an identity
-#provider that does not work this way, then simply don't set this value.
-emailOpenIDProvider=https://interstagebpm.com/eid/
-
 
 
 

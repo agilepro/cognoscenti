@@ -379,6 +379,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     border-bottom:1px solid #EEEEEE;
     white-space: nowrap
 }
+a {
+	color:black;
+}
 </style>
 
 <!-- MAIN CONTENT SECTION START -->
