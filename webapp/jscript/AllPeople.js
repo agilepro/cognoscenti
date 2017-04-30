@@ -16,6 +16,18 @@ app.service('AllPeople', function($http) {
         });
         return fullName;
     }
+    AllPeople.findUserKey = function (key) {
+        if (!AllPeople.allPersonList) {
+            AllPeople.getPeopleOutOfStorage();
+        }
+        var thisKey = key;
+        AllPeople.allPersonList.people.forEach(  function(item) {
+            if (item.uid == key) {
+                thisKey = item.key;
+            }
+        });
+        return thisKey;
+    }
     AllPeople.findMatchingPeople = function(query) {
         if (!AllPeople.allPersonList) {
             AllPeople.getPeopleOutOfStorage();
