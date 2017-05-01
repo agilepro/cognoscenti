@@ -142,7 +142,7 @@
         <description>
         Deny direct access to JSPs by associating them with denied role
         </description>
-        <url-pattern>/spring/*</url-pattern>
+        <url-pattern>/springbogus/*</url-pattern>
         <http-method>GET</http-method>
         <http-method>POST</http-method>
     </web-resource-collection>
