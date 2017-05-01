@@ -132,12 +132,15 @@ app.controller('myCtrl', function($scope, $http) {
           border-radius:5px;
           padding:5px;
           background-color:#FFFFFF;
-          margin:6px
+          margin:6px;
       }
       .headingfont {
           font-family: Arial, Helvetica, Verdana, sans-serif;
           font-size:20px;
           font-weight:normal;
+      }
+      a {
+          color: black;
       }
     </style>
 
