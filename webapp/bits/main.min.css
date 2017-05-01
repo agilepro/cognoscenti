@@ -52,3 +52,7 @@ a, a:focus, a:hover {
   margin: 25px;
   padding: 15px;
 }
+
+.page-name {
+    color: lightgray;
+}

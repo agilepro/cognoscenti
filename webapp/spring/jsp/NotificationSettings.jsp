@@ -111,14 +111,26 @@ the group that runs the workspace.
 .bottomline { border-bottom: 1px solid lightgray; background-color: yellow }
 </style>
 
+
+    <div class="col-xs-12 col-sm-6 col-md-3 padded">
+        <b>Workspace</b>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-3 padded">
+        <b>Role</b>
+    </div>
+    <div class="col-xs-12 col-md-6 padded">
+        <b>Description</b>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 bottomline"></div>
+
   <div ng-repeat="prjrole in partProjects">
         <div class="col-xs-12 col-sm-6 col-md-3 padded">
             <b>{{prjrole.fullName}}</b><br/>
             Updated: {{prjrole.updated|date}}
         </div>
         <div class="col-xs-12 col-sm-6 col-md-3 padded">
-            Withdraw from <br/>
-            <button ng-click="stopRole(prjrole)" class="btn btn-danger btn-raised">{{prjrole.role}}</button>
+            <b>{{prjrole.role}}</b> <br/>
+            <button ng-click="stopRole(prjrole)" class="btn btn-danger btn-raised">Withdraw</button>
         </div>
         <div class="col-xs-12 col-md-6 padded">
             {{prjrole.desc}}
