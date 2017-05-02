@@ -47,6 +47,14 @@ Optional Parameter:
     for (RoleRequestRecord rrr : ngc.getAllRoleRequest()) {
         JSONObject nrrr = new JSONObject();
         UserProfile uPro = UserManager.findUserByAnyId(rrr.getRequestedBy());
+        if (uPro==null) {
+            //this should never happen in normal circumstances, that a role request comes from 
+            //a user that does not have a profile.  But it can happen if
+            //a workspace is moved from server to server, such that the request exists
+            //but the user had never been there.   
+            //Ignore requests that have no user.
+            continue;
+        }
         nrrr.put("id", rrr.getRequestId());
         nrrr.put("state", rrr.getState());
         nrrr.put("requestKey", uPro.getKey());

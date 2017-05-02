@@ -116,7 +116,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.showVizDel = false;
     $scope.filterMap = {};
     $scope.openMap = {};
-    $scope.showFilter = true;
+    $scope.showFilter = <%=ar.isLoggedIn()%>;
     $scope.allowPrivate = <%=ngb.getAllowPrivate()%>;
 
     $scope.showError = false;
@@ -414,11 +414,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <div style="height:20px;"></div>
 
+    <% if (isMember) { %>
         <div>
             <button class="btn btn-default btn-raised" ng-click="openTopicCreator()">
 			    Create New Topic
             </button>
         </div>
+    <% } %>
+    
         <div ng-repeat="rec in getRows()">
             <div class="{{getTopicStyle(rec)}}">
                 <div id="headline" >
