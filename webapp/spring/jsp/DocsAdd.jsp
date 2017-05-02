@@ -68,16 +68,25 @@ app.controller('myCtrl', function($scope, $http) {
     <tr style="height:50px;padding:15px">
         <td style="padding:15px">
             <button type="button" class="btn btn-primary btn-raised"
+                onClick="location.href='linkURLToProject.htm<%=folderPart%>'">Link URL</button>
+        </td>
+        <td style="padding:15px"><p>Link a web page to the workspace.   This will not download the web page as a attachment,
+               but instead will provide an easy way for other users to access the web page in their browser.</p></td>
+    </tr>
+    <tr style="height:50px;padding:15px">
+        <td style="padding:15px">
+            <button type="button" class="btn btn-primary btn-raised"
                 onClick="location.href='linkGoogleDoc.htm<%=folderPart%>'">Attach Google Doc</button>
         </td>
         <td style="padding:15px">
             <p>Weaver can access documents from Google Drive, also known as
-            Google Docs.  In the current implementation you create or locate the document on
-            Google Drive, open it for editing, and save the URL for that into your Weaver workspace.
+            Google Docs.  You have to log in to Google Drive, and then this will
+            help you locate the document, and save the link for that into your Weaver workspace.
+            Note: others may not be able to access it!
             </p>
         </td>
     </tr>
-    <tr style="height:50px;padding:15px">
+    <!--tr style="height:50px;padding:15px">
         <td style="padding:15px">
             <button class="btn btn-primary btn-raised" onClick="location.href='linkToRepository.htm<%=folderPart%>'">Attach from Repository</button>
         </td>
@@ -85,15 +94,7 @@ app.controller('myCtrl', function($scope, $http) {
            to retrieve a document directly from there.   The advantage of this is that later, if the document is
            changed, the updated document can be synchronized with that document repository.  Either specify the
            address of that document, or browse the repository using your pre-configured connections.</p></td>
-    </tr>
-    <tr style="height:50px;padding:15px">
-        <td style="padding:15px">
-            <button type="button" class="btn btn-primary btn-raised"
-                onClick="location.href='linkURLToProject.htm<%=folderPart%>'">Link URL</button>
-        </td>
-        <td style="padding:15px"><p>Link a web page to the workspace.   This will not download the web page as a attachment,
-               but instead will provide an easy way for other users to access the web page in their browser.</p></td>
-    </tr>
+    </tr-->
     </table>
 </div>
 <!-- end addDocument.jsp -->

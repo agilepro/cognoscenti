@@ -237,6 +237,11 @@ app.controller('myCtrl', function($scope, $http) {
     padding:5px 10px;
     cursor:pointer;
 }
+.gridTable2 tr td {
+    border-bottom: 1px solid lightgray;
+    padding-bottom: 3px;
+    padding-top: 3px;
+}
 </style>
 
 
