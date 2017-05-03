@@ -770,7 +770,6 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           //sending becaue there are a lot of old records that have never been marked
           //as being sent.   Need to set them as being sent so they are not sent now.
           if (getLastEdited() < ONE_WEEK_AGO) {
-              System.out.println("TopicRecord Migration: will never send email due "+new Date(getLastEdited())+" for "+this.getSubject());
               setEmailSent(true);
               return true;
           }

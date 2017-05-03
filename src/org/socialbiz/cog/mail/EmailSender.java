@@ -146,6 +146,9 @@ public class EmailSender extends TimerTask {
         //timer.scheduleAtFixedRate(singletonSender, 10000, 5000);
 
     }
+    
+    static long runCount = 0;
+    static long totalTime = 0;
 
     // This method must be called regularly and frequently, and email is only
     // sent when it it was scheduled
@@ -177,7 +180,17 @@ public class EmailSender extends TimerTask {
             NGPageIndex.clearLocksHeldByThisThread();
         }
         long duration = System.currentTimeMillis() - startTime;
-        System.out.println("EmailSender-TimerTask: completed scan in "+duration+"ms at "+new Date());
+        
+        //suppress the number of trace statements to one per hour.
+        runCount++;
+        totalTime += duration;
+        if (runCount>119) {
+        	//this should be about 1 per hour
+        	long avg = totalTime / runCount;
+        	System.out.println("EmailSender: completed 120 scans.  Average processing time "+avg+"ms at "+new Date());
+        	runCount = 0;
+        	totalTime = 0;
+        }
     }
 
     Object globalEmailFileLock = new Integer(999);
