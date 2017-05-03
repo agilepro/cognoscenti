@@ -242,6 +242,7 @@ public class EmailSender extends TimerTask {
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
                 NGContainer ngw = ngpi.getContainer();
+                ar.ngp = ngw;
 
                 //first, move all the email messages that have been stored in the project from foreground events.
                 MailConversions.moveEmails(ngw, emailArchive, cog);
@@ -259,6 +260,7 @@ public class EmailSender extends TimerTask {
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
                 NGWorkspace ngw = ngpi.getPage();
+                ar.ngp = ngw;
 
                 ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
                 ngw.gatherUnsentScheduledNotification(resList);
