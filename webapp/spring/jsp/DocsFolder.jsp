@@ -348,7 +348,7 @@ app.controller('myCtrl', function($scope, $http) {
             <span ng-click="trimFolderPath($index+1)">
                 <img src="<%=ar.retPath%>assets/iconFolder.gif">
                 <img src="<%=ar.retPath%>assets/images/collapseIcon.gif">
-                <button class="btn labelButton"
+                <button class="labelButton"
                     style="background-color:{{folder.color}};">{{folder.name}}
                 </button>
             </span>
@@ -424,7 +424,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td>
                 <b><a href="docinfo{{rec.id}}.htm" title="{{rec.name}}">{{rec.name}}</a></b>
                 ~ {{rec.description}}
-                <span ng-repeat="label in getAllLabels(rec)"><button class="btn btn-sm labelButton"
+                <span ng-repeat="label in getAllLabels(rec)"><button class="labelButton"
                     style="background-color:{{label.color}};">{{label.name}}
                     </button>
                 </span>
