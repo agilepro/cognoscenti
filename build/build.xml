@@ -28,7 +28,6 @@
     <property name="src.spring.home.dir"            value="${source.dir}/thirdparty/spring-framework-3.0.2.RELEASE"/>
     <property name="src.servletcontainer.home.dir"  value="${source.dir}/thirdparty/servlet-container"/>
 
-    <property name="target.dir.backup"              value="${target.dir}/backup"/>
     <property name="war.file.name"                  value="cog"/>
 
     <condition property="autodeploy"                value="${env.AUTO_DEPLOY}">
@@ -37,10 +36,6 @@
     <property name="autodeploy" value="false" />
     <echo message="Autodeploy #${autodeploy}"/>
 
-
-  <!--exec dir="${basedir}" executable="cmd">
-      <arg line="/c setJavaHome.bat"/>
-  </exec-->
 
      <target name="clean">
         <mkdir dir="${target.dir}/cog"/>
@@ -142,48 +137,19 @@
             <classpath refid="build.classpath" />
         </javac>
 
-        <!-- Backup important files -->
-        <antcall target="backup"/>
-
+        <tstamp>
+            <format property="time" pattern="yyyy-MMdd-HHmm"
+              timezone="UTC" unit="hour"/>
+        </tstamp>
+        <echo>BuildNumber=${time}</echo>
+        <echo file="${target.dir}/cog/WEB-INF/BuildInfo.properties" append="false">BuildNumber=${time}
+        </echo>
+        
     </target>
 
   <target name="package" depends="clean, init, compile">
     <war destfile="${target.dir}/cog.war" needxmlfile="false" basedir="${target.dir}/cog"/>
-    <antcall target="deploy"/>
   </target>
-
-  <target name="check-cond">
-    <condition property="cond-is-true">
-        <equals arg1="${autodeploy}" arg2="true" />
-    </condition>
-  </target>
-
-
-  <target name="deploy" depends="check-cond" if="cond-is-true">
-    <echo message="Deleting ${env.CATALINA_HOME}/webapps/${war.file.name}.war"/>
-    <delete file="${env.CATALINA_HOME}/webapps/${war.file.name}.war" quiet="true" failonerror="false"/>
-
-    <echo message="Deleting ${env.CATALINA_HOME}/webapps/cog"/>
-    <delete dir="${env.CATALINA_HOME}/webapps/cog" quiet="false" failonerror="false"/>
-
-    <copy file="${env.TARGET_DIR}/${war.file.name}.war" todir="${env.CATALINA_HOME}/webapps"/>
-
-    <!-- Restore important files -->
-    <antcall target="restore"/>
-  </target>
-
-
-  <target name="tomcat-start">
-  </target>
-
-<target name="tomcat-stop">
-</target>
-
-<target name="backup">
-</target>
-
-<target name="restore">
-</target>
 
     <target name="javaDoc" depends="init">
 
