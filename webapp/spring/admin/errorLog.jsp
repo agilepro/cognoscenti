@@ -12,9 +12,10 @@
         searchDate = sdf.format(new Date());
     }
     long errorDate = sdf.parse(searchDate, new ParsePosition(0)).getTime();
+    long oneDay = 24L*60*60*1000;
     String errorDateStr = sdf.format(new Date(errorDate));
-    String previousDate = sdf.format(new Date(errorDate-86000000L));
-    String nextDate = sdf.format(new Date(errorDate+87000000L));
+    String previousDate = sdf.format(new Date(errorDate-oneDay));
+    String nextDate = sdf.format(new Date(errorDate+oneDay));
 
     Cognoscenti cog = Cognoscenti.getInstance(request);
     ErrorLog eLog = ErrorLog.getLogForDate(errorDate, cog);
@@ -22,8 +23,9 @@
     for (ErrorLogDetails eld  : eLog.getAllDetails()) {
         JSONObject jo = new JSONObject();
         jo.put("errNo", eld.getErrorNo());
-        jo.put("errorMessage", eld.getErrorMessage());
-        jo.put("errorDetails", eld.getErrorDetails());
+        jo.put("message", eld.getErrorMessage());
+        jo.put("stackTrace", eld.getErrorDetails());
+        jo.put("comment", eld.getUserComment());
         jo.put("modTime", eld.getModTime());
         allDetails.put(jo);
     }
@@ -72,7 +74,7 @@ app.controller('myCtrl', function($scope, $http) {
    <table class="table">
       <tr ng-repeat="row in allDetails">
          <td><a href="errorDetails{{row.errNo}}.htm?searchByDate=<%=errorDate%>">{{row.errNo}}</a></td>
-         <td>{{row.errorMessage}}</td>
+         <td>{{row.message}}</td>
          <td style="width:100px">{{row.modTime | date}}</td>
       </tr>
    </table>

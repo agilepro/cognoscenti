@@ -36,6 +36,7 @@ import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.workcast.json.JSONArray;
+import org.workcast.json.JSONObject;
 import org.workcast.streams.HTMLWriter;
 
 /**
@@ -56,34 +57,67 @@ public class NGWorkspace extends NGPage {
     */
     public File containingFolder;
 
+    private File        jsonFilePath;
+    private JSONObject  workspaceJSON;
+    
 
     public NGWorkspace(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc, site);
 
-        String name = theFile.getName();
-        File cogFolder = theFile.getParentFile();
-        if (name.endsWith(".sp")) {
-            //this is a non-migrated case ... remove this code
-            containingFolder = theFile.getParentFile();
-        }
-        else if (name.equalsIgnoreCase("ProjInfo.xml")) {
-            if (!cogFolder.getName().equalsIgnoreCase(".cog")) {
-                throw new Exception("Something is wrong with the data folder structure.  "
-                        +"Tried to open a NGWorkspace file named "+name
-                        +" except it should be in a folder named .cog, however "
-                        +"it was in a folder named "+cogFolder.getName());
-            }
-            containingFolder = cogFolder.getParentFile();
+        jsonFilePath = new File(theFile.getParent(), "WorkspaceInfo.json");
+        if (jsonFilePath.exists()) {
+            workspaceJSON = JSONObject.readFromFile(jsonFilePath);
         }
         else {
+            workspaceJSON = new JSONObject();
+        }
+        
+        
+        String name = theFile.getName();
+        if (!name.equals("ProjInfo.xml")) {
+            if (name.endsWith(".sp")) {
+                //this is a non-migrated case ... remove this code
+                throw new Exception("Seems to have found a server with an unmigrated data folder "
+                        +"from long long ago.  The '.sp' files all in one folder no longer supported.  "
+                        +"Manual migration will be needed! :: "+theFile);
+            }
+            else {
+                throw new Exception("Something is wrong with the data folder structure.  "
+                        +"Tried to open a NGWorkspace file named "+name
+                        +" and don't know what to do with that.");
+            }
+        }
+        
+        File cogFolder = theFile.getParentFile();
+        if (!cogFolder.getName().equalsIgnoreCase(".cog")) {
             throw new Exception("Something is wrong with the data folder structure.  "
                     +"Tried to open a NGWorkspace file named "+name
-                    +" and don't know what to do with that.");
+                    +" except it should be in a folder named .cog, however "
+                    +"it was in a folder named "+cogFolder.getName());
         }
+        containingFolder = cogFolder.getParentFile();
 
         //upgrade all the note, document, and task records
         cleanUpTaskUniversalId();
     }
+    
+    
+    /**
+     * Need to inject the saving of the JSON file at this point
+     * to assure that both XML and JSON geet saved.
+     */
+    @Override
+    public void save() throws Exception {
+        super.save();
+        workspaceJSON.writeToFile(jsonFilePath);
+    }
+
+    public void saveFile(AuthRequest ar, String comment) throws Exception {
+        super.saveFile(ar, comment);
+        assureLaunchingPad(ar);
+    }
+
+    
 
     @Override
     protected void migrateKeyValue(File theFile) throws Exception {
@@ -274,11 +308,6 @@ public class NGWorkspace extends NGPage {
     }
 
 
-    public void saveFile(AuthRequest ar, String comment) throws Exception {
-        super.saveFile(ar, comment);
-        assureLaunchingPad(ar);
-    }
-
     public void assureLaunchingPad(AuthRequest ar) throws Exception {
         File launchFile = new File(containingFolder, ".cogProjectView.htm");
         if (!launchFile.exists()) {
@@ -463,5 +492,47 @@ public class NGWorkspace extends NGPage {
             }
         }
     }
+    
+    
+    public List<SharePortRecord> getSharePorts() throws Exception {
+        if (!workspaceJSON.has("sharePorts")) {
+            workspaceJSON.put("sharePorts", new JSONArray());
+        }
+        JSONArray ports = workspaceJSON.getJSONArray("sharePorts");
+        ArrayList<SharePortRecord> res = new ArrayList<SharePortRecord>();
+        for (int i=0; i<ports.length(); i++) {
+            JSONObject onePort = ports.getJSONObject(i);
+            SharePortRecord spr = new SharePortRecord(onePort);
+            res.add(spr);
+        }
+        return res;
+    }
+    public SharePortRecord createSharePort() throws Exception {
+        if (!workspaceJSON.has("sharePorts")) {
+            workspaceJSON.put("sharePorts", new JSONArray("sharePorts"));
+        }
+        JSONArray ports = workspaceJSON.getJSONArray("sharePorts");
+        JSONObject jo = new JSONObject();
+        jo.put("id", IdGenerator.generateDoubleKey());
+        ports.put(jo);
+        SharePortRecord spr = new SharePortRecord(jo);
+        return spr;
+    }
+    public SharePortRecord findSharePortOrNull(String id) throws Exception {
+        for (SharePortRecord m : getSharePorts()) {
+            if (id.equals(m.getPermId())) {
+                return m;
+            }
+        }
+        return null;
+    }
+    public SharePortRecord findSharePortOrFail(String id) throws Exception {
+        SharePortRecord spr = findSharePortOrNull(id);
+        if (spr!=null) {
+            return spr;
+        }
+        throw new Exception("Could not find a share port with the id="+id);
+    }
 
+    
 }

@@ -22,6 +22,7 @@ package org.socialbiz.cog;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.workcast.json.JSONObject;
 
 
 /**
@@ -85,5 +86,26 @@ public class ErrorLogDetails extends DOMFace {
 
     public String getUserComment() {
         return getScalar("userComments");
+    }
+    
+    public JSONObject getJSON() throws Exception {
+        JSONObject jo = new JSONObject();
+        jo.put("errNo",        this.getErrorNo());
+        jo.put("message",      this.getErrorMessage());
+        jo.put("stackTrace",   this.getErrorDetails());
+        jo.put("comment",      this.getUserComment());
+        jo.put("modTime",      this.getModTime());
+        return jo;
+    }
+    public void setFromJSON(JSONObject input) throws Exception {
+        if (input.has("errorMessage")) {
+            setErrorMessage(input.getString("errorMessage"));
+        }
+        if (input.has("errorDetails")) {
+            setErrorDetails(input.getString("errorDetails"));
+        }
+        if (input.has("modTime")) {
+            setErrorMessage(input.getString("modTime"));
+        }
     }
 }

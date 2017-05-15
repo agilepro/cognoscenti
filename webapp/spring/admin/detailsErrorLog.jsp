@@ -27,6 +27,16 @@ Required Parameters:
     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
     String searchDate = sdf.format(new Date(errorDate));
     String formattedDate = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS").format(eDetails.getModTime());
+    
+    
+    JSONObject errDetails = new JSONObject();
+    errDetails.put("errNo", eDetails.getErrorNo());
+    errDetails.put("message", eDetails.getErrorMessage());
+    errDetails.put("stackTrace", eDetails.getErrorDetails());
+    errDetails.put("comment", eDetails.getUserComment());
+    errDetails.put("modTime", eDetails.getModTime());
+    errDetails.put("modUser", eDetails.getModUser());
+    errDetails.put("uri", eDetails.getURI());
 
 %>
 <script type="text/javascript">
@@ -36,7 +46,8 @@ function postMyComment(){
 }
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
-    $scope.b = "b";
+    $scope.errDetails = <%errDetails.write(out,2,4);%>;
+    $scope.searchDateStr = "<%ar.writeJS(searchDate);%>"
 });
 
 </script>
@@ -47,32 +58,34 @@ app.controller('myCtrl', function($scope, $http) {
 
     <div class="upRightOptions rightDivContent">
       <span class="dropdown">
-        <a class="btn btn-default btn-raised" href="errorLog.htm?searchDate=<%=searchDate%>">
+        <a class="btn btn-default btn-raised" href="errorLog.htm?searchDate={{searchDateStr}}">
         Return to Error List </a>
       </span>
     </div>
     <div  class="h1">
-        Details of Error: <%ar.writeHtml(errorId); %>
+        Details of Error: {{errDetails.errNo}}
     </div>
     <div>
          <form name="logUserComents" action="logUserComents.form" method="post">
 
-          <input type="hidden" name="errorNo" id="errorNo" value="<%ar.writeHtml(errorId); %>"/>
+          <input type="hidden" name="errorNo" id="errorNo" value="{{errDetails.errNo}}"/>
           <input type="hidden" name="searchByDate" id="searchByDate" value="<%ar.writeHtml(searchByDate); %>"/>
           <input type="hidden" name="goURL" id="goURL" value="<%ar.writeHtml(goURL); %>"/>
 
-        <b>Error Message:</b>  <%ar.writeHtmlWithLines(eDetails.getErrorMessage()); %>
+        <b>Error Message:</b> <span style="white-space:pre-wrap;"> {{errDetails.message}} </span>
         <br /><br />
-        <b>Page:</b> <a href="<%ar.writeHtml(eDetails.getURI()); %>"><%ar.writeHtml( eDetails.getURI()); %></a>
+        <b>Page:</b> <a href="{{errDetails.uri}}">{{errDetails.uri}}</a>
         <br /><br />
-        <b>Date & Time:</b> <%ar.writeHtml(formattedDate); %>
+        <b>Date & Time:</b> {{errDetails.modTime|date: "yyyy-MM-dd HH:mm:ss"}}
         <br /><br />
-        <b>User Detail: </b> <%ar.writeHtml(eDetails.getModUser()); %>
+        <b>User Detail: </b> {{errDetails.modUser}}
         <br /><br />
         <b>Comments: </b>
         <br />
-        <textarea name="comments" id="comments" class="form-control" style="width:600px;height:150px"><%ar.writeHtml(eDetails.getUserComment()); %></textarea>
-        <br /><br />
+        <textarea class="form-control" style="width:600px;height:150px" 
+                  ng-model="errDetails.comment"></textarea>
+        <br />
+        <br />
         <input type="submit" class="btn btn-primary btn-raised" value="<fmt:message key="nugen.button.comments.update" />"
                                                 onclick="postMyComment()">
          </form>
@@ -82,8 +95,8 @@ app.controller('myCtrl', function($scope, $http) {
                 Show Error Details 
              </button>
          </div>
-        <div id="errorDetails" class="errorStyle" ng-show="showTrace">
-        <pre style="overflow:auto;width:900px;" ng-click="showTrace=!showTrace"><%ar.writeHtml(eDetails.getErrorDetails()); %></pre>
+        <div class="errorStyle" ng-show="showTrace">
+        <pre style="overflow:auto;width:900px;" ng-click="showTrace=!showTrace">{{errDetails.stackTrace}}</pre>
         </div>
     </div>
  </div>

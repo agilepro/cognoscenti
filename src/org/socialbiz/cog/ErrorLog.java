@@ -84,6 +84,10 @@ public class ErrorLog extends DOMFile {
     }
 
 
+    public ErrorLogDetails createNewError() throws Exception {
+        return createChild("error", ErrorLogDetails.class);
+    }
+    
     private long logsError(UserProfile up,String msg,Throwable ex, String errorURL,
             long nowTime, Cognoscenti cog) throws Exception {
 
@@ -94,7 +98,7 @@ public class ErrorLog extends DOMFile {
         }
         StackTraceElement[] element =ex.getStackTrace()  ;
 
-        ErrorLogDetails errorLogDetails = createChild("error", ErrorLogDetails.class);
+        ErrorLogDetails errorLogDetails = createNewError();
 
         long exceptionNO = SuperAdminLogFile.getInstance(cog).getNextExceptionNo();
         SuperAdminLogFile.getInstance(cog).setLastExceptionNo(exceptionNO);

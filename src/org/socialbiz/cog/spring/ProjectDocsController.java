@@ -37,6 +37,7 @@ import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionAttachments;
+import org.socialbiz.cog.SharePortRecord;
 import org.socialbiz.cog.WikiToPDF;
 import org.socialbiz.cog.dms.FolderAccessHelper;
 import org.socialbiz.cog.exception.NGException;
@@ -401,4 +402,79 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/sharePorts.htm", method = RequestMethod.GET)
+    public void sharePorts(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        BaseController.showJSPMembers(ar, siteId, pageId, "SharePorts");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/sharePorts.json", method = RequestMethod.GET)
+    public void sharePortsJSON(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            JSONObject repo = new JSONObject();
+            JSONArray shareList = new JSONArray();
+            for (SharePortRecord spr : ngw.getSharePorts()) {
+                shareList.put(spr.getMinJSON());
+            }
+            repo.put("shares", shareList);
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get the list of share ports ", ex);
+            streamException(ee, ar);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/share/{id}.htm", method = RequestMethod.GET)
+    public void onePortHTML(@PathVariable String siteId, 
+            @PathVariable String pageId,
+            @PathVariable String id,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        ar.setParam("id", id);
+        ar.setParam("pageId", pageId);
+        ar.invokeJSP("/spring/jsp/Share.jsp");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/share/{id}.json")
+    public void onePortJSON(@PathVariable String siteId, 
+            @PathVariable String pageId,
+            @PathVariable String id,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            SharePortRecord spr = null;
+            boolean needSave = false;
+            if ("~new~".equals(id)) {
+                spr = ngw.createSharePort();
+                id = spr.getPermId();
+                needSave = true;
+            }
+            else {
+                spr = ngw.findSharePortOrFail(id);
+            }
+            if ("POST".equalsIgnoreCase(request.getMethod())) {
+                JSONObject postBody = this.getPostedObject(ar);
+                spr.updateFromJSON(postBody);
+                needSave = true;
+            }
+            if (needSave) {
+                ngw.saveContent(ar, "updating the share ports");
+            }
+            JSONObject repo = spr.getFullJSON(ngw);
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get the list of share ports ", ex);
+            streamException(ee, ar);
+        }
+    }
+    
+    
 }

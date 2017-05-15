@@ -2,8 +2,6 @@ console.log("loaded the ModalInstanceCtrl-0");
 
 app.controller('DecisionModalCtrl', function ($scope, $modalInstance, decision, allLabels) {
 
-    console.log("loaded the DecisionModalCtrl");
-
     $scope.decision = decision;
     $scope.allLabels = allLabels;
     $scope.dummyDate = "";

@@ -55,7 +55,7 @@ public abstract class NGPage extends ContainerCommon {
 
     private PageInfoRecord pageInfo;
     private ReminderMgr reminderMgr;
-
+    
     protected List<String> displayNames;
     protected List<NGSection> sectionElements = null;
     protected NGBook prjSite;
@@ -67,10 +67,13 @@ public abstract class NGPage extends ContainerCommon {
     protected static LRUCache pageCache = new LRUCache(10);
 
 
-    public NGPage(File theFile, Document newDoc, NGBook site) throws Exception
-    {
+    protected NGPage(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc);
-
+        
+        if (!"ProjInfo.xml".equals(theFile.getName())) {
+            throw new Exception("Programmer Logic Error: the only file that holds a page should be called ProjInfo.xml");
+        }
+        
         //migration code from a time when the key was ONLY the file name.
         //need to store the key in the file itself, and get that from the
         //filename properly
@@ -80,12 +83,14 @@ public abstract class NGPage extends ContainerCommon {
         }
 
         //initially page names consist entirely of address
+        /*
         String smallName = theFile.getName();
         if (smallName.endsWith(".sp")) {
             smallName = smallName.substring(0, smallName.length()-3);
         }
         displayNames = new ArrayList<String>();
         displayNames.add(smallName);
+        */
 
         pageInfo = requireChild("pageInfo", PageInfoRecord.class);
 
@@ -309,7 +314,7 @@ public abstract class NGPage extends ContainerCommon {
                     new Object[]{getFilePath().toString()}, e);
         }
     }
-
+    
     /**
      * This should be called everytime the page contents are changed in a way
      * that might effect the links on the page.
@@ -1593,7 +1598,7 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-
+    
     /**
     * Returns all the email generators for a workspace.
     */

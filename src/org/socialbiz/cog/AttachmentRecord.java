@@ -937,31 +937,35 @@ public abstract class AttachmentRecord extends CommentContainer implements Email
 
 
 
-
-    public JSONObject getJSON4Doc(AuthRequest ar, NGPage ngp) throws Exception {
+    public JSONObject getMinJSON(NGPage ngp) throws Exception {
         JSONObject thisDoc = new JSONObject();
         String univ = getUniversalId();
         thisDoc.put("universalid",  univ);
         thisDoc.put("id",           getId());
         thisDoc.put("name",         getNiceName());
-        if ("URL".equals(getType())) {
-            thisDoc.put("url",          getStorageFileName());
-        }
         thisDoc.put("description",  getDescription());
+        thisDoc.put("attType",      getType());
         thisDoc.put("size",         getFileSize(ngp));
+        thisDoc.put("deleted",      isDeleted());
         thisDoc.put("modifiedtime", getModifiedDate());
         thisDoc.put("modifieduser", getModifiedBy());
-        thisDoc.put("public",       isPublic());
-        thisDoc.put("upstream",     isUpstream());
-        thisDoc.put("deleted",      isDeleted());
-        thisDoc.put("attType",      getType());
-        thisDoc.put("purgeDate",    getPurgeDate());
-
         JSONObject labelMap = new JSONObject();
         for (NGLabel lRec : getLabels() ) {
             labelMap.put(lRec.getName(), true);
         }
         thisDoc.put("labelMap",      labelMap);
+        if ("URL".equals(getType())) {
+            thisDoc.put("url",          getStorageFileName());
+        }
+        thisDoc.put("public",       isPublic());
+        thisDoc.put("upstream",     isUpstream());
+        thisDoc.put("purgeDate",    getPurgeDate());
+        return thisDoc;
+    }
+
+    public JSONObject getJSON4Doc(AuthRequest ar, NGPage ngp) throws Exception {
+        JSONObject thisDoc = getMinJSON(ngp);
+
         JSONArray allCommentss = new JSONArray();
         for (CommentRecord cr : getComments()) {
             allCommentss.put(cr.getHtmlJSON(ar));

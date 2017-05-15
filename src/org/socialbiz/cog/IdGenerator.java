@@ -33,7 +33,7 @@ import java.util.List;
 */
 public class IdGenerator
 {
-    static long lastKey = 0;
+    static long lastKey = System.currentTimeMillis();
     /**
     * Generates a value based on the current time, but checking
     * that it has not given out this value before.  If a key has
@@ -107,4 +107,40 @@ public class IdGenerator
         return res.toString();
     }
 
+    
+    /**
+     * A double key is a combination of two timestamps, one now
+     * and one at the last time a unique key was asked for
+     * To guess this key, you need to know two timestamp values
+     * to the millisecond.  While the current value might be guessed
+     * to be a timestamp around the time that the request was made,
+     * The other is an indeterminate amount of time ago...
+     */
+    public synchronized static String generateDoubleKey()
+    {
+        long previousTime = ++lastKey;
+        long ctime = System.currentTimeMillis();
+        if (ctime <= lastKey) {
+            ctime = lastKey+1;
+        }
+        lastKey = ctime;
+
+        //now convert timestamp into cryptic alpha string
+        StringBuilder res = new StringBuilder(24);
+        while (ctime>0 || previousTime>0) {
+            if (ctime>0) {
+                res.append((char)('A' + (ctime % 26)));
+                ctime = ctime / 26;
+            } 
+            if (previousTime>0) {
+                //adding 5 rotates the character selection by 5 letters
+                //so they are not mostly the same
+                long elval = (previousTime+5) % 26;
+                res.append((char)('A' + (elval)));
+                previousTime = previousTime / 26;
+            }
+        }
+        return res.toString();
+    }
+    
 }

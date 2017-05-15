@@ -223,6 +223,9 @@ app.controller('myCtrl', function($scope, $http) {
           <li role="presentation"><a role="menuitem" href="docsDeleted.htm">
               List Deleted Docs</a>
           </li>
+          <li role="presentation"><a role="menuitem" href="sharePorts.htm">
+              Share Ports</a>
+          </li>
           
         </ul>
       </span>

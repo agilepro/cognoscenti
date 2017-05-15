@@ -189,7 +189,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/DecisionModal.html?t='+(new Date()).getTime(),
+            templateUrl: "<%=ar.retPath%>templates/DecisionModal.html",
             controller: 'DecisionModalCtrl',
             size: 'lg',
             backdrop: "static",
