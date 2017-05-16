@@ -364,6 +364,8 @@ function addvalue() {
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
               ng-click="isCreating=true">Create New Action Item</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a style="color:lightgrey">Action Items View</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="statusList.htm">Status List View</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"

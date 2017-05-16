@@ -101,6 +101,12 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
               ng-click="openTaskAreaEditor({id:'~new~'})">Create New Task Area</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="goalList.htm">Action Items View</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="statusList.htm">Status List View</a></li>
+          <li role="presentation"><a style="color:lightgrey">Manage Task Areas</a></li>
         </ul>
       </span>
     </div>

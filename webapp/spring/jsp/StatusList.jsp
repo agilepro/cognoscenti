@@ -496,8 +496,12 @@ function addvalue() {
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
               ng-click="isCreating=true">Create New Action Item</a></li>
+          <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="goalList.htm">Action Items View</a></li>
+          <li role="presentation"><a style="color:lightgrey">Status List View</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="taskAreas.htm">Manage Task Areas</a></li>
         </ul>
       </span>
     </div>
@@ -601,20 +605,14 @@ function addvalue() {
 <style>
 .statusTable {
     width:100%;
+    border-collapse: separate;
 }
-.outlined td{
+.headerRow td {
     padding:3px;
-    border-width:1px;
-    border-style:solid;
-    border-color:grey;
+    padding-top:20px;
+    background-color:#EEE;
 }
-.statusTable tbody{
-    padding:3px;
-    border-width:1px;
-    border-style:solid;
-    border-color:grey;
-}
-.statusTable tbody tr td{
+.outlined td {
     padding:3px;
     border-width:1px;
     border-style:solid;
@@ -623,26 +621,15 @@ function addvalue() {
 .statusTable tr th{
     padding:3px;
 }
-.taskStatus {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow:clip;
-    max-width:100px;
-}
 .stoplight {
     height: 20px;
     width: 20px; 
     margin:0px;    
 }
-.headerRow td {
-    padding:3px;
-    padding-top:20px;
-    background-color:#EEE;
-}
 </style>
 
     <div  id="searchresultdiv0">
-    <div class="taskListArea">
+    <div>
       <table>
         <tr>
            <th></th>
@@ -722,20 +709,20 @@ function addvalue() {
                 </button>
               </span>
             </td>
-            <td  class="taskStatus" >
-              <div class="taskOverview">
+            <td>
+              <div>
                 <div ng-repeat="ass in rec.assignees">
                   <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a>
                 </div>
               </div>
             </td>
-            <td class="taskStatus" style="width:120px">
-              <div class="taskStatus" ng-show="rec.duedate>100"  ng-click="openModalActionItem(null, rec)" >
+            <td style="width:120px">
+              <div ng-show="rec.duedate>100"  ng-click="openModalActionItem(null, rec)" >
                 {{rec.duedate | date}}
               </div>
             </td>
-            <td class="taskStatus" style="width:120px">
-              <div class="taskStatus" ng-show="rec.startdate>100">{{rec.startdate | date}}
+            <td style="width:120px">
+              <div ng-show="rec.startdate>100">{{rec.startdate | date}}
               </div>
             </td>
             <td style="width:72px;padding:0px;">
