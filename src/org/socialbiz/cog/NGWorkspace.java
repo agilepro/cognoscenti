@@ -492,7 +492,9 @@ public class NGWorkspace extends NGPage {
             }
         }
     }
-    
+
+
+    ///////////////////////// SharePortRecord //////////////////
     
     public List<SharePortRecord> getSharePorts() throws Exception {
         if (!workspaceJSON.has("sharePorts")) {
@@ -509,7 +511,7 @@ public class NGWorkspace extends NGPage {
     }
     public SharePortRecord createSharePort() throws Exception {
         if (!workspaceJSON.has("sharePorts")) {
-            workspaceJSON.put("sharePorts", new JSONArray("sharePorts"));
+            workspaceJSON.put("sharePorts", new JSONArray());
         }
         JSONArray ports = workspaceJSON.getJSONArray("sharePorts");
         JSONObject jo = new JSONObject();
@@ -534,5 +536,49 @@ public class NGWorkspace extends NGPage {
         throw new Exception("Could not find a share port with the id="+id);
     }
 
+
+
+
+    ///////////////////////// TaskArea //////////////////
     
+    public List<TaskArea> getTaskAreas() throws Exception {
+        if (!workspaceJSON.has("taskAreas")) {
+            workspaceJSON.put("taskAreas", new JSONArray());
+        }
+        JSONArray ports = workspaceJSON.getJSONArray("taskAreas");
+        ArrayList<TaskArea> res = new ArrayList<TaskArea>();
+        for (int i=0; i<ports.length(); i++) {
+            JSONObject onePort = ports.getJSONObject(i);
+            TaskArea spr = new TaskArea(onePort);
+            res.add(spr);
+        }
+        return res;
+    }
+    public TaskArea createTaskArea() throws Exception {
+        if (!workspaceJSON.has("taskAreas")) {
+            workspaceJSON.put("taskAreas", new JSONArray());
+        }
+        JSONArray ports = workspaceJSON.getJSONArray("taskAreas");
+        JSONObject jo = new JSONObject();
+        jo.put("id", IdGenerator.generateKey());
+        ports.put(jo);
+        TaskArea ta = new TaskArea(jo);
+        return ta;
+    }
+    public TaskArea findTaskAreaOrNull(String id) throws Exception {
+        for (TaskArea m : getTaskAreas()) {
+            if (id.equals(m.getId())) {
+                return m;
+            }
+        }
+        return null;
+    }
+    public TaskArea findTaskAreaOrFail(String id) throws Exception {
+    	TaskArea ta = findTaskAreaOrNull(id);
+        if (ta!=null) {
+            return ta;
+        }
+        throw new Exception("Could not find a task area with the id="+id);
+    }
+
 }

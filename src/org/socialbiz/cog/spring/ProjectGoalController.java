@@ -37,8 +37,11 @@ import org.socialbiz.cog.LicensedURL;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGRole;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.SectionUtil;
+import org.socialbiz.cog.SharePortRecord;
+import org.socialbiz.cog.TaskArea;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.UtilityMethods;
@@ -80,6 +83,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "GoalList");
     }
+
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/statusList.htm", method = RequestMethod.GET)
@@ -820,26 +824,78 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
-    /*
-    @RequestMapping(value = "/{siteId}/{pageId}/{filename}.html", method = RequestMethod.GET)
-    public void modalHandler(@PathVariable String siteId,
-            @PathVariable String pageId, @PathVariable String filename,
+    
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/taskAreas.htm", method = RequestMethod.GET)
+    public void taskArea(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "TaskAreas");
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/taskAreas.json", method = RequestMethod.GET)
+    public void sharePortsJSON(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try {
-            File springFolder = ar.getCogInstance().getConfig().getFileFromRoot("spring");
-            File htmlFolder = new File(springFolder, "html");
-            File decisionModelFile = new File(htmlFolder, filename+".html");
-            if (!decisionModelFile.exists()) {
-                throw new Exception("Unable to find the file "+decisionModelFile.getCanonicalPath());
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            JSONObject repo = new JSONObject();
+            JSONArray shareList = new JSONArray();
+            for (TaskArea ta : ngw.getTaskAreas()) {
+                shareList.put(ta.getMinJSON());
             }
-
-            StreamHelper.copyFileToWriter(decisionModelFile, ar.w, "ISO-8859-1");
-        }
-        catch (Exception e) {
-            Exception ee = new Exception("Unable to stream the .html file requested", e);
+            repo.put("taskAreas", shareList);
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get the list of task areas ", ex);
             streamException(ee, ar);
         }
     }
-*/
+
+    @RequestMapping(value = "/{siteId}/{pageId}/taskArea{id}.htm", method = RequestMethod.GET)
+    public void onePortHTML(@PathVariable String siteId, 
+            @PathVariable String pageId,
+            @PathVariable String id,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        ar.setParam("id", id);
+        ar.setParam("pageId", pageId);
+        ar.invokeJSP("/spring/jsp/TaskArea.jsp");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/taskArea{id}.json")
+    public void onePortJSON(@PathVariable String siteId, 
+            @PathVariable String pageId,
+            @PathVariable String id,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            TaskArea ta = null;
+            boolean needSave = false;
+            if ("~new~".equals(id)) {
+                ta = ngw.createTaskArea();
+                id = ta.getId();
+                needSave = true;
+            }
+            else {
+                ta = ngw.findTaskAreaOrFail(id);
+            }
+            if ("POST".equalsIgnoreCase(request.getMethod())) {
+                JSONObject postBody = this.getPostedObject(ar);
+                ta.updateFromJSON(postBody);
+                needSave = true;
+            }
+            if (needSave) {
+                ngw.saveContent(ar, "updating the TaskArea");
+            }
+            JSONObject repo = ta.getMinJSON();
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get the list of task areas ", ex);
+            streamException(ee, ar);
+        }
+    }
+    
 }

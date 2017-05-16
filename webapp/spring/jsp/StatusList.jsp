@@ -3,6 +3,7 @@
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="java.text.SimpleDateFormat"
 %><%@page import="org.socialbiz.cog.MicroProfileMgr"
+%><%@page import="org.socialbiz.cog.TaskArea"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
 /*
@@ -16,7 +17,7 @@ Required parameters:
     String templateCacheDefeater = "?t="+System.currentTimeMillis();
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    NGWorkspace ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
 
@@ -44,6 +45,12 @@ Required parameters:
     stateName.put("7", BaseRecord.stateName(7));
     stateName.put("8", BaseRecord.stateName(8));
     stateName.put("9", BaseRecord.stateName(9));
+    
+    JSONArray taskAreaList = new JSONArray();
+    taskAreaList.put(new JSONObject());
+    for (TaskArea ta : ngp.getTaskAreas()) {
+        taskAreaList.put(ta.getMinJSON());
+    }
 
 /*** PROTOTYPE
 
@@ -84,6 +91,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
+    $scope.taskAreaList = <%taskAreaList.write(out,2,4);%>;
     $scope.filter = "";
     $scope.filterMap = {};
     $scope.showActive = true;
@@ -106,6 +114,71 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         errorPanelHandler($scope, serverErr);
     };
 
+    $scope.findGoalsInArea = function(areaId) {
+        var lcFilterList = $scope.filter.toLowerCase().split(" ");
+        $scope.allGoals.sort( function(a,b) {
+            return a.rank-b.rank;
+        });
+        var src = [];
+        $scope.allGoals.forEach( function(item) {
+            if (areaId!=null && areaId.length>0) {
+                if (areaId==item.taskArea) {
+                    src.push(item);
+                }
+            }
+            else if (item.taskArea==null || item.taskArea.length==0) {
+                src.push(item);
+            }
+        });
+        for (var j=0; j<lcFilterList.length; j++) {
+            var lcfilter = lcFilterList[j];
+            var res = [];
+            src.forEach( function(rec) {
+                if (!$scope.showActive && rec.state>=2 && rec.state<=4) {
+                    return;
+                }
+                if (!$scope.showFuture && rec.state==1) {
+                    return;
+                }
+                if (!$scope.showCompleted && rec.state>=5) {
+                    return;
+                }
+                if ($scope.filter.length==0) {
+                    res.push(rec);
+                    return;
+                }
+                if (rec.synopsis.toLowerCase().indexOf(lcfilter)>=0) {
+                    res.push(rec);
+                    return;
+                }
+                if (rec.description.toLowerCase().indexOf(lcfilter)>=0) {
+                    res.push(rec);
+                    return;
+                }
+                for (var i=rec.assignees.length-1; i>=0; i--) {
+                    if (rec.assignees[i].toLowerCase().indexOf(lcfilter)>=0) {
+                        res.push(rec);
+                        return;
+                    }
+                }
+            });
+            src = res;
+        }
+        var allReqLabels = $scope.allLabelFilters();
+        allReqLabels.forEach( function(label) {
+            var requiredLabel = label.name;
+            var res = [];
+            src.forEach( function(rec) {
+                if (rec.labelMap[requiredLabel]) {
+                    res.push(rec);
+                }
+            });
+            src = res;
+        });
+        console.log("records for "+areaId,src);
+        return src;
+    };
+
     $scope.findGoals = function() {
         var lcFilterList = $scope.filter.toLowerCase().split(" ");
         $scope.allGoals.sort( function(a,b) {
@@ -115,7 +188,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         for (var j=0; j<lcFilterList.length; j++) {
             var lcfilter = lcFilterList[j];
             var res = [];
-            src.map( function(rec) {
+            src.forEach( function(rec) {
                 if (!$scope.showActive && rec.state>=2 && rec.state<=4) {
                     return;
                 }
@@ -158,8 +231,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             src = res;
         });
         return src;
-    };
-
+    };    
     $scope.swapItems = function(item, amt) {
         var list = $scope.findGoals();
 
@@ -210,6 +282,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $http.post(postURL, postdata)
         .success( function(data) {
             $scope.replaceGoal(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    $scope.saveArea = function(area) {
+        var postURL = "taskArea"+area.id+".json";
+        var postdata = angular.toJson(area);
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            //do nothing for now
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -348,9 +432,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.setProspects = function(goal, newVal) {
-        console.log("CALL to setProspects");
         goal.prospects = newVal;
         $scope.saveGoal(goal);
+    }
+    $scope.setProspectArea = function(area, newVal) {
+        area.prospects = newVal;
+        $scope.saveArea(area);
     }
 
     $scope.openModalActionItem = function (item, goal) {
@@ -515,7 +602,19 @@ function addvalue() {
 .statusTable {
     width:100%;
 }
-.statusTable tr td{
+.outlined td{
+    padding:3px;
+    border-width:1px;
+    border-style:solid;
+    border-color:grey;
+}
+.statusTable tbody{
+    padding:3px;
+    border-width:1px;
+    border-style:solid;
+    border-color:grey;
+}
+.statusTable tbody tr td{
     padding:3px;
     border-width:1px;
     border-style:solid;
@@ -535,12 +634,17 @@ function addvalue() {
     width: 20px; 
     margin:0px;    
 }
+.headerRow td {
+    padding:3px;
+    padding-top:20px;
+    background-color:#EEE;
+}
 </style>
 
     <div  id="searchresultdiv0">
     <div class="taskListArea">
-      <table class="statusTable">
-         <tr>
+      <table>
+        <tr>
            <th></th>
            <th>Synopsis</th>
            <th>Assigned</th>
@@ -548,8 +652,30 @@ function addvalue() {
            <th>Started</th>
            <th></th>
            <th>Status</th>
-         </tr>
-         <tr ng-repeat="rec in findGoals()">
+        </tr>
+        <tbody ng-repeat="area in taskAreaList">
+          <tr class="headerRow">
+            <td colspan="2">{{area.name}}&nbsp;</td>
+            <td colspan="3">{{area.assignees}}</td>
+            <td style="width:72px;padding:0px;">
+              <span>
+                <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="area.prospects=='good'"
+                     title="Good shape" ng-click="setProspectsArea(area, 'good')" class="stoplight">
+                <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="area.prospects=='good'"
+                     title="Good shape" class="stoplight">
+                <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="area.prospects=='ok'"
+                     title="Warning" ng-click="setProspectsArea(area, 'ok')" class="stoplight">
+                <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="area.prospects=='ok'"
+                     title="Warning" class="stoplight">
+                <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="area.prospects=='bad'"
+                     title="In trouble" ng-click="setProspectsArea(area, 'bad')" class="stoplight">
+                <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="area.prospects=='bad'"
+                     title="In trouble" class="stoplight">
+              </span>
+            </td>
+            <td >{{area.status}}</td>
+          </tr>
+          <tr ng-repeat="rec in findGoalsInArea(area.id)" class="outlined">
             <td  style="width:70px">
             <div style="float:left;margin:3px">
               <div class="dropdown">
@@ -587,32 +713,33 @@ function addvalue() {
             <div style="float:left;margin:2px">
               <a href="task{{rec.id}}.htm"><img src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
             </div>
-          </td>
-          <td  style="max-width:300px">
-            <span style="cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}} ~ {{rec.description}}</span>
-            <span ng-repeat="label in getGoalLabels(rec)">
-              <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
-              {{label.name}}
-              </button>
-            </span>
-          </td>
-          <td  class="taskStatus" >
-            <div class="taskOverview">
-              <div ng-repeat="ass in rec.assignees">
-                  <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a></div>
-
-            </div>
-          </td>
-          <td class="taskStatus" style="width:120px">
-            <div class="taskStatus" ng-show="rec.duedate>100"  ng-click="openModalActionItem(null, rec)" >{{rec.duedate | date}}
-            </div>
-          </td>
-          <td class="taskStatus" style="width:120px">
-            <div class="taskStatus" ng-show="rec.startdate>100">{{rec.startdate | date}}
-            </div>
-          </td>
-          <td style="width:72px;padding:0px;">
-            <span>
+            </td>
+            <td  style="max-width:300px">
+              <span style="cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}} ~ {{rec.description}}</span>
+              <span ng-repeat="label in getGoalLabels(rec)">
+                <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
+                  {{label.name}}
+                </button>
+              </span>
+            </td>
+            <td  class="taskStatus" >
+              <div class="taskOverview">
+                <div ng-repeat="ass in rec.assignees">
+                  <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a>
+                </div>
+              </div>
+            </td>
+            <td class="taskStatus" style="width:120px">
+              <div class="taskStatus" ng-show="rec.duedate>100"  ng-click="openModalActionItem(null, rec)" >
+                {{rec.duedate | date}}
+              </div>
+            </td>
+            <td class="taskStatus" style="width:120px">
+              <div class="taskStatus" ng-show="rec.startdate>100">{{rec.startdate | date}}
+              </div>
+            </td>
+            <td style="width:72px;padding:0px;">
+              <span>
                 <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="rec.prospects=='good'"
                      title="Good shape" ng-click="setProspects(rec, 'good')" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="rec.prospects=='good'"
@@ -625,12 +752,13 @@ function addvalue() {
                      title="In trouble" ng-click="setProspects(rec, 'bad')" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="rec.prospects=='bad'"
                      title="In trouble" class="stoplight">
-            </span>
-          </td>
-          <td  style="max-width:300px">
-            <div ng-click="openModalActionItem(null, rec)">{{rec.status}} &nbsp;</div>
-          </td>
-        </tr>
+              </span>
+            </td>
+            <td  style="max-width:300px">
+              <div ng-click="openModalActionItem(null, rec)">{{rec.status}} &nbsp;</div>
+            </td>
+          </tr>
+        <tbody>
       </table>
     </div>
     </div>

@@ -109,16 +109,22 @@
                     data-on-set-time="onTimeSet(newDate, 'enddate')"/>
             </ul>                
         </div>
-        <div style="float:right">
-            <button class="btn btn-primary btn-raised" type="button" ng-click="ok()">Save</button>
-            <button class="btn btn-warning btn-raised" type="button" ng-click="cancel()">Cancel</button>
+        <div class="form-group">
+            <label for="status">Task Area:</label>
+            <select ng-model="goal.taskArea" class="form-control" 
+                ng-options="foo.id as foo.name for foo in allTaskAreas">
+            </select>
         </div>
       </div>
-      
     </div>
+    <div style="clear:both"></div>
 </div>
 <div >
             
 </div>
 <div class="modal-footer">
+         <div style="float:right">
+            <button class="btn btn-primary btn-raised" type="button" ng-click="ok()">Save</button>
+            <button class="btn btn-warning btn-raised" type="button" ng-click="cancel()">Cancel</button>
+        </div>
 </div>

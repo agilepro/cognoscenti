@@ -366,6 +366,8 @@ function addvalue() {
               ng-click="isCreating=true">Create New Action Item</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="statusList.htm">Status List View</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="taskAreas.htm">Manage Task Areas</a></li>
         </ul>
       </span>
     </div>

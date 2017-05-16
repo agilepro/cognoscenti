@@ -933,6 +933,7 @@ public class GoalRecord extends BaseRecord {
         thisGoal.put("rank",      getRank());
         thisGoal.put("prospects", getProspects());
         thisGoal.put("needEmail", needSendEmail());
+        extractScalarString(thisGoal, "taskArea");
 
         thisGoal.put("projectname", ngp.getFullName());
         thisGoal.put("projectKey", ngp.getKey());
@@ -1087,7 +1088,7 @@ public class GoalRecord extends BaseRecord {
         if (goalObj.has("docLinks")) {
             setDocLinks(constructVector(goalObj.getJSONArray("docLinks")));
         }
-
+        updateScalarString("taskArea", goalObj);
     }
 
     //This used to be a time scheduled to send the email, but it was only lbeing used
