@@ -745,7 +745,7 @@ function addvalue() {
               <div ng-click="openModalActionItem(null, rec)">{{rec.status}} &nbsp;</div>
             </td>
           </tr>
-        <tbody>
+        </tbody>
       </table>
     </div>
     </div>
