@@ -506,10 +506,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.refreshStatus = "No refresh because currently editing";
             return;
         }
-        if (true) {
-            $scope.refreshStatus = "No refresh because it doesn't work with TinyMCE editor";
-            return;
-        }
+        //if (true) {
+        //    $scope.refreshStatus = "No refresh because it doesn't work with TinyMCE editor";
+        //    return;
+        //}
         $scope.refreshStatus = "Refreshing";
         $scope.putGetMeetingInfo( {} );
         $scope.refreshCount++;

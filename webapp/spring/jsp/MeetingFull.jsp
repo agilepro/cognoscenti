@@ -262,17 +262,21 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
 
 <%if (isLoggedIn) { %>
     <div class="upRightOptions rightDivContent">
-      <span class="dropdown">
+      <span class="dropdown" title="Control the way people see this meeting.">
           <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
           State: {{stateName()}} <span class="caret"></span></button>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-            <li role="presentation"><a role="menuitem"
+          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
+            <li role="presentation"><a role="menuitem" 
+                title="Use DRAFT to set the meeting without any notifications going out"
                 ng-click="changeMeetingState(0)">Draft Meeting</a></li>
             <li role="presentation"><a role="menuitem"
+                title="Use PLAN to allow everyone to get prepared for the meeting"
                 ng-click="changeMeetingState(1)">Plan Meeting</a></li>
             <li role="presentation"><a role="menuitem"
+                title="Use RUN while the meeting is actually in session"
                 ng-click="changeMeetingState(2)">Run Meeting</a></li>
             <li role="presentation"><a role="menuitem"
+                title="Use COMPLETE after the meeting is over and to generate minutes"
                 ng-click="changeMeetingState(3)">Complete Meeting</a></li>
           </ul>
       </span>
@@ -281,24 +285,33 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Opens or closes all of the agenda items for the meeting"
               href="#" ng-click="showAll()" >Show All Items</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Show who has responded about whether they will attend or not"
               href="#" ng-click="toggleRollCall()" >Show Roll Call</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Create a new agenda item at the bottom of the meeting"
               href="#" ng-click="createAgendaItem()" >Create Agenda Item</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="A special view mode to sort and arrange the agenda items more easily"
               href="meeting.htm?id={{meeting.id}}" >Arrange Agenda</a></li>
           <li role="presentation"><a role="menuitem"
+              title="Compose an email messsage about this meeting and send it"
               href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem"
+              title="Generate the meeting minutes from the agenda items and put in a discussion topic"
               ng-click="createMinutes()">Generate Minutes</a></li>
           <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"
+              title="Navigate to the discussion topic that holds the minutes for this meeting"
               href="noteZoom{{meeting.minutesLocalId}}.htm">View Minutes</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Make a copy of this meeting for a new timeslot"
               href="cloneMeeting.htm?id={{meeting.id}}">Clone Meeting</a></li>
           <li role="presentation"><a role="menuitem"
+              title="Return back to the list of all meetings in the workspace"
               href="meetingList.htm">List All Meetings</a></li>
         </ul>
       </span>
@@ -362,10 +375,12 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                 <div ng-show="minutesDraft && meeting.minutesId">
                    Draft:
                    <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;background-color:yellow;"
+                         title="Navigate to the discussion topic with the minutes for this meeting"
                          ng-click="navigateToTopic(meeting.minutesLocalId)">
                          View Minutes
                    </span>
                    <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                         title="if you are happy with the draft minutes as they are, use this to publish them to everyone"
                          ng-click="postMinutes(meeting.minutesLocalId)">
                          Post Minutes as they are
                    </span>
@@ -379,6 +394,7 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                 </div>
                 <div ng-hide="meeting.minutesId">
                    <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                         title="Takes the minutes entires and comments and puts them into a single discussion topic document"
                          ng-click="createMinutes()">
                          Generate Minutes
                    </span>
@@ -398,7 +414,8 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
             <td>Previous Minutes:</td>
             <td>
                 <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                     ng-click="navigateToTopic(previousMeeting.minutesLocalId)">
+                     ng-click="navigateToTopic(previousMeeting.minutesLocalId)"
+                     title="Navigate to the discussion topic that holds the minutes for the previous meeting">
                      Previous Minutes
                 </span>
             </td>
@@ -494,7 +511,8 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
 
 <!-- THIS IS THE ROLL CALL SECTION -->
 
-    <div ng-repeat="sitch in mySitch" class="comment-outer" style="margin:40px" ng-show="showSelfRegister()">
+    <div ng-repeat="sitch in mySitch" class="comment-outer" style="margin:40px" ng-show="showSelfRegister()"
+         title="Use this to let others know whether you expect to attend the meeting or not">
       <div><h3 style="margin:5px"><% ar.writeHtml(currentUserName); %>, will you attend?</h3></div>
       <div class="comment-inner">
         <div class="form-inline form-group" style="margin:20px">
@@ -543,7 +561,8 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
 <% } %>
 
 
-    <div class="comment-outer" ng-show="showRollBox()">
+    <div class="comment-outer" ng-show="showRollBox()" 
+         title="Shows what people have said about being able to attend the meeting.">
       <div style="float:right" ng-click="toggleRollCall()"><i class="fa fa-close"></i></div>
       <div>Roll Call</div>
       <table class="table">

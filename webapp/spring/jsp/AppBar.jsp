@@ -62,7 +62,7 @@
 <!-- #F0D7F7;  #F2EBF4 -->
 
   <!-- Logo Brand -->
-  <a class="navbar-brand" href="<%=userRelPath%>UserHome.htm" title="Weaver Home Page">
+  <a class="navbar-brand" href="<%=userRelPath%>UserHome.htm" title="Access your overall personal Weaver Home Page">
     <img class="hidden-xs" alt="Weaver Icon" src="<%=ar.retPath%>bits/header-icon.png">
     <h1>Weaver</h1>
   </a>

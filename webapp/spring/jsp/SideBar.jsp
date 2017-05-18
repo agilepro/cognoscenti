@@ -28,9 +28,9 @@
         Action Items</a></li>
     <li><a href="decisionList.htm" title="Each workspace has a list of decisions that have been made over time.">
         Decisions</a></li>
-    <li><a href="labelList.htm" title="Labels can be defined to help categorize documents, discussions, and action items.">
+    <li><a href="labelList.htm" title="Create labels to help categorize documents, discussions, and action items.">
         Labels</a></li>
-    <li><a href="roleManagement.htm" title="Roles define who is able to what in this workspace">
+    <li><a href="roleManagement.htm" title="Manage the roles that define who is able to what in this workspace">
         Roles</a></li>
     <li><a href="admin.htm" title="See and adjust all the settings for this workspace if you are in the administrator role">
         Admin</a></li>
