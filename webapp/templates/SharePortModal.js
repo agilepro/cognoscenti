@@ -4,7 +4,7 @@ app.controller('SharePortCtrl', function ($scope, $modalInstance, $http, id, all
 
     console.log("loaded the Share Port Model");
 
-    $scope.sharePort = {"name":"Shared Documents", "id": id, labels: [], days:30 };
+    $scope.sharePort = {"name":"Shared Documents", "id": id, labels: [], days:365, isActive:true };
     $scope.allLabels = allLabels;
     
     $scope.getSharePort = function() {

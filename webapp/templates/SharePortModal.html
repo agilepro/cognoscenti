@@ -8,26 +8,31 @@
     <h3 class="modal-title">Edit Share Port</h3>
 </div>
 <div class="modal-body">
-  <div class="col-sm-12 col-md-6">
+  <div class="col-sm-12 col-md-6" 
+         title="This name will appear at the top of the sharing page.">
     <div class="form-group">
       <label for="labels">Name:</label>
       <input ng-model="sharePort.name" class="form-control" placeholder="Enter Displayed Name"/>
     </div>
-    <div class="form-group">
-      <label for="labels">Purpose:</label>
-      <input ng-model="sharePort.purpose" class="form-control" placeholder="Internal Purpose Note"/>
-    </div>
-    <div class="form-group">
+    <div class="form-group"
+         title="This message will appear on the sharing page below the title.">
       <label for="labels">Message:</label>
       <textarea ng-model="sharePort.message" class="form-control" placeholder="Tell user what this is for"></textarea>
     </div>
+    <div class="form-group"
+         title="These are just notes to you or others in the workspace about why this was being shared.">
+      <label for="labels">Purpose:</label>
+      <input ng-model="sharePort.purpose" class="form-control" placeholder="Internal notes on what this is about."/>
+    </div>
   </div>
   <div class="col-sm-12 col-md-6">
-    <div class="form-group">
+    <div class="form-group"
+         title="Only documents with this text in name or description will be shared.">
       <label for="labels">Filter Text:</label>
       <input ng-model="sharePort.filter" class="form-control" placeholder="Document name description filter"/>
     </div>
-    <div class="form-group">
+    <div class="form-group"
+         title="Only documents with all specified labels will be shared.">
       <label for="labels">Labels:</label>
       <span class="dropdown" ng-repeat="role in allLabels">
         <button class="dropdown-toggle labelButton" type="button" id="menu2"
@@ -59,12 +64,16 @@
       </span>
     </div>
     <div class="form-group">
-      <label for="labels">Active:</label>
-      <input type="checkbox" ng-model="sharePort.isActive" class="form-control" title="Share is visible when active, invisible when not."/>
+      <button ng-click="sharePort.isActive = !sharePort.isActive" class="btn btn-default btn-raised" 
+              title="Share port is visible when active, invisible when not.">
+          <span ng-show="sharePort.isActive" class="fa fa-check-square-o"></span>
+          <span ng-show="!sharePort.isActive" class="fa fa-square-o"></span>
+          Active
     </div>
-    <div class="form-group">
-      <label for="labels">Days:</label>
-      <input type="number" ng-model="sharePort.days" class="form-control" placeholder="How many days will this be valid for"/>
+    <div class="form-group" ng-show="sharePort.isActive" 
+         title="How many days will this be available.  Set to zero to be available forever">
+      <label for="labels">Days (from now):</label>
+      <input type="number" ng-model="sharePort.days" class="form-control"/>
     </div>
   </div>
   <div style="clear:both"></div>

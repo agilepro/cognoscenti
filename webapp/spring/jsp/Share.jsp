@@ -19,8 +19,13 @@ Required parameters:
     JSONObject sharePort = spr.getFullJSON(ngw);
     
     long startTime = sharePort.getLong("startTime");
-    int days = sharePort.getInt("days");
-    long endTime = startTime + (days * 24 * 60 * 60 * 1000);
+    long days = sharePort.getInt("days");
+    long endTime = startTime + (days * 24L * 60L * 60L * 1000L);
+    boolean isActive = true;
+    if (sharePort.has("isActive")) {
+        isActive = sharePort.getBoolean("isActive");
+    }
+    
 %>
 
 <html>
@@ -59,7 +64,7 @@ var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.sharePort = <%sharePort.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
-    $scope.endTime = <%=endTime%>;
+    $scope.nowTime = new Date().getTime();
     
     $scope.acessDocument = function (doc) {
         if (doc.attType=="URL") {
@@ -113,38 +118,60 @@ app.controller('myCtrl', function($scope, $http, $modal) {
   
     <div ng-app="myApp" ng-controller="myCtrl">
 
-    <div class="page-name"><h1 id="mainPageTitle">{{sharePort.name}}</h1></div>
+        <div class="page-name">
+            <h1 id="mainPageTitle">{{sharePort.name}}</h1>
+        </div>
 
-        <p>{{sharePort.message}}</p>
-        
-        <div style="margin:40px"> </div>
-        
-        <table class="table">
-        <col width="50">
-        <tr>
-           <th></th>
-           <th>Name</th>
-           <th style="text-align:right">Size</th>
-        </tr>
-        <tr ng-repeat="rec in sharePort.docs" ng-click="acessDocument(rec)" style="cursor:pointer">
-           <td ng-hide="rec.url" >
-             <span class="fa fa-download"></scan></td>
-           <td ng-show="rec.url" >
-             <span class="fa fa-external-link"></scan></td>
-           <td><b>{{rec.name}}</b> ~ {{rec.description}}</td>
-           <td ng-show="rec.size>=0" style="text-align:right">{{rec.size|number}}</td>
-           <td ng-hide="rec.size>=0" style="text-align:right;color:lightgray">Web Link</td>
-        </tr>
-        <tr><td></td><td></td><td></td></tr>
-        </table>
+        <div ng-show="sharePort.isActive && sharePort.endTime>nowTime">
+            <p>{{sharePort.message}}</p>
+            
+            <div style="margin:40px"> </div>
+            
+            <table class="table">
+            <col width="50">
+            <tr>
+               <th></th>
+               <th>Name</th>
+               <th>Updated</th>
+               <th style="text-align:right">Size</th>
+            </tr>
+            <tr ng-repeat="rec in sharePort.docs" ng-click="acessDocument(rec)" style="cursor:pointer">
+               <td ng-hide="rec.url" >
+                 <span class="fa fa-download"></scan></td>
+               <td ng-show="rec.url" >
+                 <span class="fa fa-external-link"></scan></td>
+               <td><b>{{rec.name}}</b> ~ {{rec.description}}</td>
+               <td>{{rec.modifiedtime|date}}</td>
+               <td ng-show="rec.size>=0" style="text-align:right">{{rec.size|number}}</td>
+               <td ng-hide="rec.size>=0" style="text-align:right;color:lightgray">Web Link</td>
+            </tr>
+            <tr><td></td><td></td><td></td></tr>
+            </table>
 
-        <div ng-show="sharePort.docs.length==0" class="guideVocal">
-           There are no documents that match the filter criteria.
+            <div ng-show="sharePort.docs.length==0" class="guideVocal">
+               There are no documents that match the filter criteria at this time.
+            </div>
+            
+            <p ng-show="sharePort.days>0">
+               This sharing page will be available until {{sharePort.endTime|date}}.
+            </p>
         </div>
         
-        <p ng-show="sharePort.days>0">
-           This sharing page will be available until {{endTime|date}}.
-        </p>
+       <div ng-show="sharePort.isActive && sharePort.endTime<=nowTime">
+       
+            <div ng-show="sharePort.docs.length==0" class="guideVocal">
+               This is no longer available since {{sharePort.endTime|date}}.
+            </div>
+       
+       </div>
+        
+       <div ng-show="!sharePort.isActive">
+       
+            <div ng-show="sharePort.docs.length==0" class="guideVocal">
+               This sharing page has been disabled by the user and is no longer available.
+            </div>
+       
+       </div>
         
     </div>
   </div>
