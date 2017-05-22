@@ -120,20 +120,38 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
 
 
     <table class="table">
-      <col width="50px">
       <tr>
         <th></th>
         <th>Name</th>
         <th>Assignee</th>
-        <th>Prospect</th>
+        <th>RAG</th>
         <th>Status</th>
       </tr>
       <tr ng-repeat="ta in allTaskAreas">
-        <td style="cursor:pointer" ng-click="openTaskAreaEditor(ta)"><span class="fa fa-edit"></span></td>
-        <td>{{ta.name}}</td>
-        <td>{{ta.assignees}}</td>
-        <td>{{ta.prospect}}</td>
-        <td>{{ta.status}}</td>
+        <td style="cursor:pointer" ng-click="openTaskAreaEditor(ta)" style="max-width:40px">
+          <span class="fa fa-edit"></span></td>
+        <td ng-click="openTaskAreaEditor(ta)" >{{ta.name}}</td>
+        <td >
+            <div ng-repeat="ass in ta.assignees">
+                <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass.uid}}">{{ass.name}}</div>
+        </td>
+        <td style="width:150px">
+          <span>
+            <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="ta.prospects=='bad'"
+                 title="In trouble" ng-click="setProspects(ta, 'bad')" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="ta.prospects=='bad'"
+                 title="In trouble" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="ta.prospects=='ok'"
+                 title="Warning" ng-click="setProspects(ta, 'ok')" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="ta.prospects=='ok'"
+                 title="Warning" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="ta.prospects=='good'"
+                 title="Good shape" ng-click="setProspects(ta, 'good')" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="ta.prospects=='good'"
+                 title="Good shape" class="stoplight">
+          </span>
+        </td>
+        <td ng-click="openTaskAreaEditor(ta)" >{{ta.status}}</td>
       </tr>
     </table>
     

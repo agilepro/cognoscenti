@@ -476,6 +476,43 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
 
+    $scope.getTaskAreas = function() {
+        console.log("getting TaskAreas")
+        var getURL = "taskAreas.json";
+        $http.get(getURL)
+        .success( function(data) {
+            console.log("received TaskAreas", data);
+            $scope.taskAreaList = data.taskAreas;
+            $scope.loaded = true;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    
+    $scope.getTaskAreas();
+    
+    $scope.openTaskAreaEditor = function (ta) {
+
+        var modalInstance = $modal.open({
+            animation: false,
+            templateUrl: '<%=ar.retPath%>templates/TaskAreaModal.html?t='+(new Date()).getTime(),
+            controller: 'TaskAreaCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                id: function () {
+                    return ta.id;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (modifiedTaskArea) {
+            $scope.getTaskAreas();
+        }, function () {
+            $scope.getTaskAreas();
+        });
+    };
     
     
 });
@@ -648,8 +685,12 @@ function addvalue() {
         </tr>
         <tbody ng-repeat="area in taskAreaList">
           <tr class="headerRow">
-            <td colspan="2">{{area.name}}&nbsp;</td>
-            <td colspan="3">{{area.assignees}}</td>
+            <td colspan="2" ng-click="openTaskAreaEditor(area)">{{area.name}}&nbsp;</td>
+            <td colspan="3">
+                <div ng-repeat="ass in area.assignees">
+                  <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass.uid}}">{{ass.name}}</a>
+                </div>
+            </td>
             <td style="width:72px;padding:0px;">
               <span>
                 <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="area.prospects=='bad'"
@@ -666,7 +707,7 @@ function addvalue() {
                      title="Good shape" class="stoplight">
               </span>
             </td>
-            <td >{{area.status}}</td>
+            <td ng-click="openTaskAreaEditor(area)">{{area.status}}</td>
           </tr>
           <tr ng-repeat="rec in findGoalsInArea(area.id)" class="outlined">
             <td  style="width:70px">
@@ -762,4 +803,5 @@ function addvalue() {
 <br/>
 
 <script src="<%=ar.retPath%>templates/ModalActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/TaskAreaModal.js"></script>
 

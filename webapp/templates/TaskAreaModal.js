@@ -1,6 +1,6 @@
 console.log("loaded the TaskAreaCtrl");
 
-app.controller('TaskAreaCtrl', function ($scope, $modalInstance, $http, id) {
+app.controller('TaskAreaCtrl', function ($scope, $modalInstance, $http, id, AllPeople) {
 
     console.log("loaded the TaskArea Model");
 
@@ -35,6 +35,7 @@ app.controller('TaskAreaCtrl', function ($scope, $modalInstance, $http, id) {
         .success( function(data) {
             console.log("received share port", data);
             $scope.taskArea = data;
+            $modalInstance.close();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -48,12 +49,14 @@ app.controller('TaskAreaCtrl', function ($scope, $modalInstance, $http, id) {
     
     $scope.ok = function () {
         $scope.saveTaskArea();
-        $modalInstance.close();
     };
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
 
+    $scope.loadPersonList = function(query) {
+        return AllPeople.findMatchingPeople(query);
+    }
 
 });
