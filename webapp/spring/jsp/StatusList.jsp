@@ -483,6 +483,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         .success( function(data) {
             console.log("received TaskAreas", data);
             $scope.taskAreaList = data.taskAreas;
+            $scope.taskAreaList.push( {name:"Unspecified"} );
             $scope.loaded = true;
         })
         .error( function(data, status, headers, config) {
