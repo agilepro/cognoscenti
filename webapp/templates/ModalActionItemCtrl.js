@@ -1,12 +1,13 @@
-app.controller('ModalActionItemCtrl', function ($scope, $modalInstance, item, goal) {
+app.controller('ModalActionItemCtrl', function ($scope, $modalInstance, goal, taskAreaList, allLabels, startMode, $http, AllPeople) {
 
-    $scope.item = item;
-    $scope.goal = goal;
-    $scope.goalDueDate = goal;
+    $scope.goalId = goal.id;
+    $scope.goal = {assignTo:[]};
+    $scope.taskAreaList = taskAreaList;
+    $scope.allLabels = allLabels;
+    $scope.editMode = startMode;
 
     $scope.ok = function () {
-        $scope.goal.duedate = $scope.goalDueDate.getTime();
-        $modalInstance.close($scope.goal);
+        $scope.saveAndClose();
     };
 
     $scope.cancel = function () {
@@ -17,48 +18,74 @@ app.controller('ModalActionItemCtrl', function ($scope, $modalInstance, item, go
         formatYear: 'yyyy',
         startingDay: 1
     };
-    $scope.datePickDisable = function(date, mode) {
-        return false;
+    $scope.changeRAG = function(goal, newRAG) {
+        goal.prospects = newRAG;
     };
-    $scope.dummyDate1 = new Date();
-    $scope.datePickOpen = false;
-    $scope.openDatePicker = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        $scope.datePickOpen = true;
-    };
-    $scope.extractDateParts = function() {
-        if ($scope.goal.duedate<=0) {
-            $scope.goalDueDate = new Date();
-        }
-        else {
-            $scope.goalDueDate = new Date($scope.goal.duedate);
-        }
-    };
-    $scope.extractDateParts();
-    $scope.goalStateStyle = function(goal) {
-        if (goal.prospects=="good") {
-            return "background-color:lightgreen";
-        }
-        if (goal.prospects=="ok") {
-            return "background-color:yellow";
-        }
-        if (goal.prospects=="bad") {
-            return "background-color:red";
-        }
-        return "background-color:lavender";
+    $scope.setState = function(newState) {
+        $scope.goal.state=newState;
     }
-    $scope.goalStateName = function(goal) {
-        if (goal.prospects=="good") {
-            return "Good";
+    
+    $scope.onTimeSet = function (newDate, param) {
+        $scope.goal[param] = newDate.getTime();
+    }
+    $scope.hasLabel = function(searchName) {
+        if ($scope.goal.labelMap) {
+            return $scope.goal.labelMap[searchName];
         }
-        if (goal.prospects=="ok") {
-            return "Warnings";
-        }
-        return "Trouble";
+        return false;
+    }
+    $scope.toggleLabel = function(label) {
+        $scope.goal.labelMap[label.name] = !$scope.goal.labelMap[label.name];
+    }
+    
+    $scope.getGoal = function(id) {
+        var postURL = "fetchGoal.json?gid="+id;
+        $scope.showError=false;
+        $http.get(postURL)
+        .success( function(data) {
+            $scope.goal = data;
+            $scope.goalId = data.id;
+        })
+        .error( function(data, status, headers, config) {
+            alert("problem handling get: "+JSON.stringify(data));
+        });
     };
-    $scope.changeGoalState = function(goal, newState) {
-        goal.prospects = newState;
-        $scope.saveGoal(goal);
+    if ($scope.goalId != "~new~") {
+        $scope.getGoal($scope.goalId);
+    }
+    $scope.cleanUpAssignees = function() {
+        var newList = [];
+        $scope.goal.assignTo.forEach( function(item) {
+            var nix = {};
+            if (item.uid) {
+                nix.name = item.name; 
+                nix.uid  = item.uid; 
+                nix.key  = item.key;
+            }
+            else {
+                nix.name = item.name; 
+                nix.uid  = item.name;
+            }    
+            newList.push(nix);
+        });
+        $scope.goal.assignTo = newList;
     };
+    $scope.saveAndClose = function() {
+        $scope.cleanUpAssignees();
+        var postURL = "updateGoal.json?gid="+$scope.goalId;
+        var postdata = angular.toJson($scope.goal);
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            $scope.goal = data;
+            $modalInstance.close($scope.goal);
+        })
+        .error( function(data, status, headers, config) {
+            alert("problem handling get: "+JSON.stringify(data));
+        });
+    };
+    $scope.loadPersonList = function(query) {
+        return AllPeople.findMatchingPeople(query);
+    }
+    
 });

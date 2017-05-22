@@ -16,6 +16,9 @@ Required parameters:
 
 */
 
+    //String templateCacheDefeater = "";
+    String templateCacheDefeater = "?t="+System.currentTimeMillis();
+
     String pageId      = ar.reqParam("pageId");
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
@@ -280,30 +283,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.reportError(data);
         });
     }
-    $scope.goalProspectsName = function() {
-        if ($scope.goalInfo.prospects=="good") {
-            return "Good";
-        }
-        if ($scope.goalInfo.prospects=="ok") {
-            return "Warning";
-        }
-        return "Trouble";
-    };
-    $scope.goalProspectsStyle = function() {
-        if ($scope.goalInfo.prospects=="good") {
-            return "background-color:lightgreen";
-        }
-        if ($scope.goalInfo.prospects=="ok") {
-            return "background-color:yellow";
-        }
-        if ($scope.goalInfo.prospects=="bad") {
-            return "background-color:red";
-        }
-        return "background-color:lavender";
-    }
-    $scope.setProspects = function(newVal) {
-        console.log("CALL to setProspects");
-        $scope.goalInfo.prospects = newVal;
+    $scope.changeRAG = function(newRAG) {
+        console.log("CALL to changeRAG");
+        $scope.goalInfo.prospects = newRAG;
         $scope.saveGoal();
         $scope.refreshHistory();
     }
@@ -369,7 +351,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html<%=templateCacheDefeater%>',
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
@@ -399,7 +381,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/InviteModal.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/InviteModal.html<%=templateCacheDefeater%>',
             controller: 'InviteModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -429,7 +411,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/ActItemMain.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/ActItemMain.html<%=templateCacheDefeater%>',
             controller: 'ActItemMainCtrl',
             size: 'lg',
             resolve: {
@@ -610,18 +592,18 @@ function addvalue() {
                       </li-->
                     </ul>
                 </span>
-                &nbsp; Prospect:
+                &nbsp; RAG:
                 <span>
                     <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goalInfo.prospects=='good'"
-                         title="Good shape" ng-click="setProspects('good')">
+                         title="Good shape" ng-click="changeRAG('good')">
                     <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goalInfo.prospects=='good'"
                          title="Good shape">
                     <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goalInfo.prospects=='ok'"
-                         title="Warning" ng-click="setProspects('ok')">
+                         title="Warning" ng-click="changeRAG('ok')">
                     <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goalInfo.prospects=='ok'"
                          title="Warning">
                     <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goalInfo.prospects=='bad'"
-                         title="In trouble" ng-click="setProspects('bad')">
+                         title="In trouble" ng-click="changeRAG('bad')">
                     <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goalInfo.prospects=='bad'"
                          title="In trouble">
                 </span>

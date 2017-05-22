@@ -9,11 +9,13 @@
 </div>
 <div class="modal-body">
   <div class="col-sm-12 col-md-6">
-    <div class="form-group">
+    <div class="form-group" 
+         title="Name appears in places where action items are grouped into areas.">
       <label for="labels">Name:</label>
       <input ng-model="taskArea.name" class="form-control" placeholder="Enter Displayed Name"/>
     </div>
-    <div class="form-group">
+    <div class="form-group" 
+         title="Simple Red-Amber-Green assessment of the situation.">
       <label for="labels">Prospects:</label>
       <div>
           <img src="../../../assets/goalstate/green_off.png" ng-hide="taskArea.prospects=='good'"
@@ -32,14 +34,16 @@
     </div>
   </div>
   <div class="col-sm-12 col-md-6">
-    <div class="form-group">
+    <div class="form-group" 
+         title="Assignee is the person who is tracking status on items assigned to this area">
       <label for="labels">Assignee:</label>
       <input ng-model="taskArea.assignees" class="form-control" placeholder="Document name description filter"/>
     </div>
     
-    <div class="form-group">
+    <div class="form-group" 
+         title="The status is text describing the current situation for all the actions in this area.">
       <label for="labels">Status:</label>
-      <textarea ng-model="taskArea.status" class="form-control" placeholder="Tell user what this is for"></textarea>
+      <textarea ng-model="taskArea.status" class="form-control" placeholder="Current status"></textarea>
     </div>
   </div>
   

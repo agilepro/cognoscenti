@@ -1,64 +1,238 @@
 
 <div class="modal-header">
-    <h3 class="modal-title">Edit Action Item</h3>
+    <button class="btn">Action Item</button>
+    <button class="btn btn-default btn-raised" ng-click="editMode='status'">Status</button>
+    <button class="btn btn-default btn-raised" ng-click="editMode='details'">Details</button>
+    <button class="btn btn-default btn-raised" ng-click="editMode='assignee'">Assignment</button>
 </div>
-<div class="modal-body">
-  <table id="displayTable">
-    <tr>
-      <td style="padding:10px;">
-        Summary:
-      </td>
-      <td style="padding:10px;">
-        {{goal.synopsis}} ~ {{goal.description}}
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:10px;">
-        Prospect:
-      </td>
-      <td style="padding:10px;">
-          <img src="../../../assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
-               title="Good shape" ng-click="changeGoalState(goal, 'good')">
-          <img src="../../../assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
-               title="Good shape">
-          <img src="../../../assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
-               title="Warning" ng-click="changeGoalState(goal, 'ok')">
-          <img src="../../../assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
-               title="Warning" >
-          <img src="../../../assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
-               title="In trouble" ng-click="changeGoalState(goal, 'bad')">
-          <img src="../../../assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
-               title="In trouble" >
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:10px;">
-        Due Date:
-      </td>
-      <td style="padding:10px;">
-        <input type="text"
-        style="width:200px;"
-        class="form-control"
-        datepicker-popup="dd-MMMM-yyyy"
-        ng-model="goalDueDate"
-        is-open="datePickOpen"
-        min-date="minDate"
-        datepicker-options="datePickOptions"
-        date-disabled="datePickDisable(date, mode)"
-        ng-required="true"
-        ng-click="openDatePicker($event)"
-        close-text="Close"/>
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:10px;">
-        Status:
-      </td>
-      <td style="padding:10px;">
-        <textarea ng-model="goal.status" class="form-control" style="width:400px"></textarea>
-      </td>
-    </tr>
-  </table>
+<div class="modal-body" style="min-height:300px">
+<style>
+.spacyTable tr td {
+    padding:10px;
+}
+</style>
+  <div ng-show="editMode=='status'">
+      <table id="displayTable" class="spacyTable">
+        <tr>
+          <td>
+            Summary:
+          </td>
+          <td>
+            {{goal.synopsis}} ~ {{goal.description}}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            RAG:
+          </td>
+          <td style="padding:10px;">
+              <img src="../../../assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
+                   title="In trouble" ng-click="changeRAG(goal, 'bad')">
+              <img src="../../../assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
+                   title="In trouble" >
+              <img src="../../../assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
+                   title="Warning" ng-click="changeRAG(goal, 'ok')">
+              <img src="../../../assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
+                   title="Warning" >
+              <img src="../../../assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
+                   title="Good shape" ng-click="changeRAG(goal, 'good')">
+              <img src="../../../assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
+                   title="Good shape">
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Due Date:
+          </td>
+          <td>
+                <span class="dropdown-toggle form-control" id="dropdown2" role="button" 
+                    data-toggle="dropdown" ng-show="goal.duedate>1000000" data-target="#">
+                    {{ goal.duedate | date:'dd-MMM-yyyy' }} 
+                    &nbsp;at&nbsp; {{ goal.duedate | date:'HH:mm' }}
+                    &nbsp; &nbsp; {{tzIndicator}}
+                </span>
+                <span class="dropdown-toggle form-control" id="dropdown2" role="button" 
+                    data-toggle="dropdown" ng-show="goal.duedate<=1000000" data-target="#">
+                    not set
+                </span>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <datetimepicker
+                        data-ng-model="goal.duedate"
+                        data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15,minView:'hour'}"
+                        data-on-set-time="onTimeSet(newDate, 'duedate')"/>
+                </ul>                
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Status:
+          </td>
+          <td>
+            <textarea ng-model="goal.status" class="form-control" style="width:400px"></textarea>
+          </td>
+        </tr>
+      </table>
+  </div>
+  <div ng-show="editMode=='details'">
+    <div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="synopsis">Synopsis:</label>
+            <input ng-model="goal.synopsis" class="form-control" placeholder="Enter synopsis"/>
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea ng-model="goal.description" class="form-control" placeholder="Enter description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="status">Task Area:</label>
+            <select ng-model="goal.taskArea" class="form-control" 
+                ng-options="foo.id as foo.name for foo in taskAreaList">
+            </select>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="labels">Labels:</label>
+            <span class="dropdown" ng-repeat="role in allLabels">
+                <button class="labelButton" type="button" id="menu2"
+                   data-toggle="dropdown" style="background-color:{{role.color}};"
+                   ng-show="hasLabel(role.name)">{{role.name}}</button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                   <li role="presentation"><a role="menuitem" title="{{add}}"
+                      ng-click="toggleLabel(role)">Remove Label:<br/>{{role.name}}</a></li>
+                </ul>
+            </span>
+            <span class="dropdown">
+               <button class="btn btn-sm btn-primary btn-raised labelButton" 
+                   type="button" 
+                   id="menu1" 
+                   data-toggle="dropdown"
+                   title="Add Label"
+                   style="padding:5px 10px">
+                   <i class="fa fa-plus"></i></button>
+               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+               style="width:320px;left:-130px">
+                 <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                     <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                         {{rolex.name}}</button>
+                 </li>
+               </ul>
+            </span>
+        </div>
+        <div class="form-group">
+            <label for="startdate">Start Date:</label>
+            <span class="dropdown-toggle form-control" id="dropdown3" role="button" 
+                data-toggle="dropdown" ng-show="goal.startdate>1000000">
+                {{ goal.startdate | date:'dd-MMM-yyyy' }} 
+                &nbsp;at&nbsp; {{ goal.startdate | date:'HH:mm' }}
+                &nbsp; &nbsp; {{tzIndicator}}
+            </span>
+            <span class="dropdown-toggle form-control" id="dropdown3" role="button" 
+                  data-toggle="dropdown" ng-show="goal.startdate<=1000000">
+                not set
+            </span>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <datetimepicker
+                    data-ng-model="goal.startdate"
+                    data-datetimepicker-config="{ dropdownSelector: '#dropdown3',minuteStep: 15,minView:'hour'}"
+                    data-on-set-time="onTimeSet(newDate, 'startdate')"/>
+            </ul>                
+        </div>
+        <div class="form-group">
+            <label for="enddate">End Date:</label>
+            <span class="dropdown-toggle form-control" id="dropdown4" role="button" 
+                data-toggle="dropdown" ng-show="goal.enddate>1000000 && goal.state==5">
+                {{ goal.enddate | date:'dd-MMM-yyyy' }} 
+                &nbsp;at&nbsp; {{ goal.enddate | date:'HH:mm' }}
+                &nbsp; &nbsp; {{tzIndicator}}
+            </span>
+            <span class="dropdown-toggle form-control" id="dropdown4" data-toggle="dropdown"  
+                  role="button" ng-show="goal.enddate<=1000000 && goal.state==5">
+                not set
+            </span>
+            <span class="dropdown-toggle form-control" 
+                  ng-show="goal.state!=5">
+                set end date after action item completed
+            </span>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <datetimepicker
+                    data-ng-model="goal.enddate"
+                    data-datetimepicker-config="{ dropdownSelector: '#dropdown4',minuteStep: 15,minView:'hour'}"
+                    data-on-set-time="onTimeSet(newDate, 'enddate')"/>
+            </ul>                
+        </div>
+      </div>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+  <div ng-show="editMode=='assignee'">
+    <div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="synopsis">Assigned To:</label>
+              <tags-input ng-model="goal.assignTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
+                  <auto-complete source="loadPersonList($query)"></auto-complete>
+              </tags-input>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="synopsis">State: </label>
+            <span style="padding:10px;"><img src="../../../assets/goalstate/large{{goal.state}}.gif"></span>
+            
+            <span class="dropdown">
+                <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                Change <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation">
+                      <a role="menuitem" tabindex="-1" href="#" ng-click="setState(1)">
+                          Mark <img src="../../../assets/goalstate/small1.gif"> Unstarted
+                      </a>
+                  </li>
+                  <li role="presentation">
+                      <a role="menuitem" tabindex="-1" href="#" ng-click="setState(2)">
+                          Mark <img src="../../../assets/goalstate/small2.gif"> Offered
+                      </a>
+                  </li>
+                  <li role="presentation">
+                      <a role="menuitem" tabindex="-1" href="#" ng-click="setState(3)">
+                          Mark <img src="../../../assets/goalstate/small3.gif"> Accepted
+                      </a>
+                  </li>
+                  <!--li role="presentation">
+                      <a role="menuitem" tabindex="-1" href="#" ng-click="setState(4)">
+                          Mark <img src="../../../assets/goalstate/small4.gif"> Waiting
+                      </a>
+                  </li-->
+                  <li role="presentation">
+                      <a role="menuitem" tabindex="-1" href="#" ng-click="setState(5)">
+                          Mark <img src="../../../assets/goalstate/small5.gif"> Completed
+                      </a>
+                  </li>
+                  <li role="presentation">
+                      <a role="menuitem" tabindex="-1" href="#" ng-click="setState(6)">
+                          Mark <img src="../../../assets/goalstate/small6.gif"> Skipped
+                      </a>
+                  </li>
+                  <!--li role="presentation">
+                      <a role="menuitem" tabindex="-1" href="#" ng-click="setState(7)">
+                          Mark <img src="../../../assets/goalstate/small7.gif"> Reviewing
+                      </a>
+                  </li-->
+                  <!--li role="presentation">
+                      <a role="menuitem" tabindex="-1" href="#" ng-click="setState(8)">
+                          Mark <img src="../../../assets/goalstate/small8.gif"> Paused
+                      </a>
+                  </li-->
+                </ul>
+            </span>
+        </div>
+      </div>
+    </div>
+    <div style="clear:both"></div>
+  </div>
 </div>
 <div class="modal-footer">
     <button class="btn btn-primary btn-raised" type="button" ng-click="ok()">Save</button>
