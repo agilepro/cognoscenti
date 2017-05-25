@@ -494,6 +494,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.getTaskAreas();
     
     $scope.openTaskAreaEditor = function (ta) {
+        
+        if (!ta.id) {
+            alert("This group ("+ta.name+") is not a real task area and you can not edit it...");
+            return;
+        }
 
         var modalInstance = $modal.open({
             animation: false,
