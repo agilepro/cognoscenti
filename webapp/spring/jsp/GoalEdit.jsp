@@ -20,7 +20,7 @@ Required parameters:
     String templateCacheDefeater = "?t="+System.currentTimeMillis();
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    NGWorkspace ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
 
@@ -86,6 +86,11 @@ Required parameters:
     String docSpaceURL = ar.baseURL +  "api/" + site.getKey() + "/" + ngp.getKey()
                     + "/summary.json?lic="+lfu.getId();
 
+    JSONArray taskAreaList = new JSONArray();
+    for (TaskArea ta : ngp.getTaskAreas()) {
+        taskAreaList.put(ta.getMinJSON());
+    }
+    taskAreaList.put(new JSONObject().put("name", "Unspecified"));
 
 /*** PROTOTYPE
 
@@ -133,6 +138,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
+    $scope.taskAreaList = <%taskAreaList.write(out,2,4);%>;
 
     $scope.newPerson = "";
     $scope.selectedPersonShow = false;
@@ -204,8 +210,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.goalInfo.state=newState;
         $scope.saveGoal();
     }
-    $scope.startEdit = function() {
-        $scope.openActItemMain();
+    $scope.startEdit = function(startMode) {
+        $scope.openModalActionItem(startMode);
     }
     $scope.saveGoal = function() {
         var postURL = "updateGoal.json?gid="+$scope.goalInfo.id;
@@ -343,8 +349,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         return doc;
     }
-    $scope.navigateToDoc = function(docId) {
-        var doc = $scope.getFullDoc(docId);
+    $scope.navigateToDoc = function(doc) {
+        if (!doc.id) {
+            console.log("DOCUMENT without id", doc);
+            alert("That document does not have an id");
+            return;
+        }
         window.location="docinfo"+doc.id+".htm";
     }
     $scope.openAttachDocument = function () {
@@ -407,30 +417,34 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
     
     
-    $scope.openActItemMain = function () {
+    $scope.openModalActionItem = function (startMode) {
 
-        var attachModalInstance = $modal.open({
-            animation: true,
-            templateUrl: '<%=ar.retPath%>templates/ActItemMain.html<%=templateCacheDefeater%>',
-            controller: 'ActItemMainCtrl',
-            size: 'lg',
-            resolve: {
-                goal: function () {
-                    return JSON.parse(JSON.stringify($scope.goalInfo));
-                },
-                allLabels: function () {
-                    return $scope.allLabels;
-                }
+        var modalInstance = $modal.open({
+          animation: false,
+          templateUrl: '<%=ar.retPath%>templates/ModalActionItem.html<%=templateCacheDefeater%>',
+          controller: 'ModalActionItemCtrl',
+          size: 'lg',
+          backdrop: "static",
+          resolve: {
+            goal: function () {
+              return $scope.goalInfo;
+            },
+            taskAreaList: function () {
+              return $scope.taskAreaList;
+            },
+            allLabels: function () {
+              return $scope.allLabels;
+            },
+            startMode: function () {
+              return startMode;
             }
+          }
         });
 
-        attachModalInstance.result
-        .then(function (goal) {
-            $scope.goalInfo = goal;
-            console.log("MODAL returned:", goal);
-            $scope.saveGoal(['synopsys','description','labelMap','duedate','strtdate','enddate']);
+        modalInstance.result.then(function (modifiedGoal) {
+            $scope.goalInfo = modifiedGoal;
         }, function () {
-            //cancel action - nothing really to do
+          //cancel action
         });
     };
     
@@ -456,7 +470,7 @@ function addvalue() {
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="#" ng-click="startEdit()">Edit Details</a></li>
+              href="#" ng-click="startEdit('details')">Edit Details</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="#" ng-click="showAccomplishment=!showAccomplishment;editGoalInfo=false;">Record Accomplishment</a></li>
           <!--li role="presentation"><a role="menuitem" tabindex="-1"
@@ -467,21 +481,30 @@ function addvalue() {
       </span>
     </div>
     
-    
+<style>
+.spaceyTable {
+    width:100%;
+}
+.spaceyTable tr td{
+    padding:10px;
+}
+.gridTableColummHeader {
+    max-width:150px;
+}
+</style>    
 
-    <table width="100%" ng-hide="editGoalInfo">
+    <table ng-hide="editGoalInfo" class="spaceyTable">
         <tr>
-            <td class="gridTableColummHeader"></td>
-            <td style="width:20px;"></td>
-            <td>
+            <td class="gridTableColummHeader">
                 <img src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif" />
+            </td>
+            <td ng-click="startEdit('assignee')">
                 {{stateName[goalInfo.state]}} Action Item
             </td>
         </tr>
         <tr>
             <td class="gridTableColummHeader">Summary:</td>
-            <td style="width:20px;"></td>
-            <td ng-click="startEdit()">
+            <td ng-click="startEdit('details')">
                 <b>{{goalInfo.synopsis}}</b>
                 ~ {{goalInfo.description}}
                 <span ng-repeat="label in getGoalLabels(goalInfo)">
@@ -491,10 +514,8 @@ function addvalue() {
                 </span>
             </td>
         </tr>
-        <tr><td height="10px"></td></tr>
         <tr>
             <td class="gridTableColummHeader">Assigned To:</td>
-            <td style="width:20px;"></td>
             <td>
               <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
                   <auto-complete source="loadPersonList($query)"></auto-complete>
@@ -505,10 +526,8 @@ function addvalue() {
                 </ul>
             </td>
         </tr>
-        <tr><td height="10px"></td></tr>
         <tr ng-show="selectedPersonShow">
             <td class="gridTableColummHeader"></td>
-            <td style="width:20px;"></td>
             <td class="well"> 
                for <b>{{selectedPerson.name}}</b>:
                <button ng-click="navigateToUser(selectedPerson)" class="btn btn-info">
@@ -519,25 +538,46 @@ function addvalue() {
                    Hide</button>
             </td>
         </tr>
-        <tr><td height="20px"></td></tr>
         <tr>
             <td class="gridTableColummHeader">Status:</td>
-            <td style="width:20px;"></td>
-            <td ng-click="startEdit()">
+            <td ng-click="startEdit('status')">
                 {{goalInfo.status}}
             </td>
         </tr>
         <tr>
-            <td ></td>
-            <td style="width:20px;"></td>
-            <td ng-click="startEdit()">
-                <span ng-show="goalInfo.duedate>0">   <b>Due:</b>   {{goalInfo.duedate|date}}   &nbsp; &nbsp; </span>
-                <span ng-show="goalInfo.startdate>0"> <b>Start:</b> {{goalInfo.startdate|date}} &nbsp; &nbsp; </span>
-                <span ng-show="goalInfo.enddate>0">   <b>End:</b>   {{goalInfo.enddate|date}}   &nbsp; &nbsp; </span>
+            <td class="gridTableColummHeader">RAG:</td>
+            <td>
+                <span>
+                    <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goalInfo.prospects=='bad'"
+                         title="In trouble" ng-click="changeRAG('bad')">
+                    <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goalInfo.prospects=='bad'"
+                         title="In trouble">
+                    <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goalInfo.prospects=='ok'"
+                         title="Warning" ng-click="changeRAG('ok')">
+                    <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goalInfo.prospects=='ok'"
+                         title="Warning">
+                    <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goalInfo.prospects=='good'"
+                         title="Good shape" ng-click="changeRAG('good')">
+                    <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goalInfo.prospects=='good'"
+                         title="Good shape">
+                </span>
             </td>
         </tr>
-        <tr><td height="20px"></td></tr>
-        <tr><td></td><td></td>
+        <tr>
+            <td ></td>
+            <td >
+                <span ng-show="goalInfo.duedate>0" ng-click="startEdit('status')">   
+                    <b>Due:</b>   
+                    {{goalInfo.duedate|date}}   &nbsp; &nbsp; </span>
+                <span ng-show="goalInfo.startdate>0" ng-click="startEdit('details')"> 
+                    <b>Start:</b> 
+                    {{goalInfo.startdate|date}} &nbsp; &nbsp; </span>
+                <span ng-show="goalInfo.enddate>0" ng-click="startEdit('details')">
+                    <b>End:</b>   
+                    {{goalInfo.enddate|date}}   &nbsp; &nbsp; </span>
+            </td>
+        </tr>
+        <tr><td></td>
             <td>
                 <button class="btn btn-default btn-raised" ng-click="setState(2)" ng-show="goalInfo.state<2">
                     Mark <img src="<%=ar.retPath%>assets/goalstate/small2.gif"> Offered</button>
@@ -592,27 +632,10 @@ function addvalue() {
                       </li-->
                     </ul>
                 </span>
-                &nbsp; RAG:
-                <span>
-                    <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goalInfo.prospects=='good'"
-                         title="Good shape" ng-click="changeRAG('good')">
-                    <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goalInfo.prospects=='good'"
-                         title="Good shape">
-                    <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goalInfo.prospects=='ok'"
-                         title="Warning" ng-click="changeRAG('ok')">
-                    <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goalInfo.prospects=='ok'"
-                         title="Warning">
-                    <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goalInfo.prospects=='bad'"
-                         title="In trouble" ng-click="changeRAG('bad')">
-                    <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goalInfo.prospects=='bad'"
-                         title="In trouble">
-                </span>
             </td>
         </tr>
-        <tr><td height="50px"></td></tr>
         <tr>
             <td class="gridTableColummHeader">Linked Documents:</td>
-            <td style="width:20px;"></td>
             <td >
                 <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                     ng-click="navigateToDoc(doc)">
@@ -623,10 +646,8 @@ function addvalue() {
                       ADD </button>
             </td>
         </tr>
-        <tr><td height="10px"></td></tr>
         <tr>
             <td class="gridTableColummHeader">Linked Topics:</td>
-            <td style="width:20px;"></td>
             <td >
                 <span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                     ng-click="navigateToTopic(topic)">
@@ -634,10 +655,8 @@ function addvalue() {
                 </span>
             </td>
         </tr>
-        <tr><td height="10px"></td></tr>
         <tr>
             <td class="gridTableColummHeader">Linked Meetings:</td>
-            <td style="width:20px;"></td>
             <td >
                 <span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                     ng-click="navigateToMeeting(meet)">
@@ -645,7 +664,6 @@ function addvalue() {
                 </span>
             </td>
         </tr>
-        <tr><td height="10px"></td></tr>
     </table>
 
 
@@ -999,7 +1017,7 @@ function updateVal(){
 
 </div>
 
-<script src="<%=ar.retPath%>templates/ActItemMainCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/ModalActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/InviteModal.js"></script>
 

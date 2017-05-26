@@ -51,6 +51,7 @@
 %><%@page import="org.socialbiz.cog.SectionFormat"
 %><%@page import="org.socialbiz.cog.SectionTask"
 %><%@page import="org.socialbiz.cog.SectionUtil"
+%><%@page import="org.socialbiz.cog.TaskArea"
 %><%@page import="org.socialbiz.cog.TopicRecord"
 %><%@page import="org.socialbiz.cog.UserCache"
 %><%@page import="org.socialbiz.cog.UserManager"

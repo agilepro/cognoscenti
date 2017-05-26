@@ -394,7 +394,7 @@ a {
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Recent Updates</div>
-              <div style="float:right">
+              <div style="float:right" title="Access the detailed history of events in this workspace">
                   <a href="history.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
@@ -411,9 +411,9 @@ a {
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Upcoming Meetings</div>
-              <div style="float:right">
+              <div style="float:right" title="Go to a list of all meetings in the workspace">
                   <a href="meetingList.htm">
-                      <i class="fa "></i></a></div>
+                      <i class="fa fa-gavel"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
@@ -429,7 +429,7 @@ a {
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Your Action Items</div>
-              <div style="float:right">
+              <div style="float:right" title="Access the list of all action items">
                   <a href="goalList.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
@@ -446,7 +446,7 @@ a {
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Recent History</div>
-              <div style="float:right">
+              <div style="float:right" title="Access the detailed history of events in this workspace">
                   <a href="history.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
@@ -523,7 +523,7 @@ a {
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Your Roles</div>
-              <div style="float:right">
+              <div style="float:right" title="View and manage the roles in this workspace">
                   <a href="roleManagement.htm">
                       <i class="fa fa-users"></i></a></div>
               <div style="clear:both"></div>
