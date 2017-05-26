@@ -215,14 +215,13 @@ public class MainTabsViewControler extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("must be logged in to access calendar file");
+            //NOTE: you do NOT need to be logged in to get the calendar file
+            //It is important to allow anyone to receive these links in an email
+            //and not be logged in, and still be able to get the calendar on 
+            //their calendar.  So allow this information to ANYONE who has a link.
+            
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             MeetingRecord meet = ngw.findMeeting(meetId);
-            boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
-            if (!canAccess) {
-                throw new Exception("Unable to access that meeting with user "+ar.getBestUserId());
-            }
-
             AddressListEntry ale = new AddressListEntry(meet.getOwner());
 
             StringBuilder sb = new StringBuilder();
