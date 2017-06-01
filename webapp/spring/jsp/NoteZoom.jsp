@@ -427,7 +427,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return;
         }
         $scope.noteInfo.discussionPhase = newPhase;
-        $scope.saveEdits(['discussionPhase']);
+        $scope.saveEdits(['discussionPhase','suppressEmail']);
     }
     $scope.getPhaseStyle = function() {
         if ($scope.noteInfo.draft) {
@@ -714,11 +714,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="upRightOptions rightDivContent">
-      <span class="dropdown" ng-show="noteInfo.draft" ng-click="noteInfo.sendEmail = !noteInfo.sendEmail">
+      <span class="dropdown" ng-show="noteInfo.draft" ng-click="noteInfo.suppressEmail = !noteInfo.suppressEmail">
           <button class="btn btn-default btn-raised" type="button" 
                   title="Choose whether to send email when this topic is posted">
-          <input type="checkbox" ng-model="noteInfo.sendEmail">
-          Send Email </button>
+          <input type="checkbox" ng-model="noteInfo.suppressEmail">
+          Suppress Email </button>
       </span>
       <span class="dropdown" ng-show="noteInfo.draft">
           <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="setPhase('Freeform')"

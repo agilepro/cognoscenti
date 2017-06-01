@@ -198,6 +198,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.newAttachment = "";
 
     $scope.saveEmail = function() {
+        $scope.emailInfo.alsoTo.forEach(function(item) {
+            if (!item.uid) {
+                item.uid = item.name;
+            }
+        });
         var postURL = "emailGeneratorUpdate.json?id="+$scope.emailInfo.id;
         var postdata = angular.toJson($scope.emailInfo);
         $scope.showError=false;

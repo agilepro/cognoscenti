@@ -356,7 +356,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.saveAgendaItemParts = function(agendaItem, fieldList) {
         agendaItem.presenters = [];
         agendaItem.presenterList.forEach( function(user) {
-            agendaItem.presenters.push(user.uid);
+            if (user.uid) {
+                agendaItem.presenters.push(user.uid);
+            }
+            else {
+                //if you enter an email address it puts that in the name spot
+                agendaItem.presenters.push(user.name);
+            }
         });
         var itemCopy = {};
         itemCopy.id = agendaItem.id;

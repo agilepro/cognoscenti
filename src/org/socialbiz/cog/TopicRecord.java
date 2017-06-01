@@ -24,7 +24,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import org.socialbiz.cog.mail.ChunkTemplate;
@@ -889,6 +888,8 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           thisNote.put("pin",       getPinOrder());
           thisNote.put("docList",   constructJSONArray(getDocList()));
           thisNote.put("actionList", constructJSONArray(getActionList()));
+          extractAttributeBool(thisNote, "suppressEmail");
+          
           JSONObject labelMap = new JSONObject();
           for (NGLabel lRec : getLabels(ngp) ) {
               labelMap.put(lRec.getName(), true);
@@ -1011,6 +1012,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
          if (noteObj.has("discussionPhase")) {
              setDiscussionPhase(noteObj.getString("discussionPhase"), ar);
          }
+         updateAttributeBool("suppressEmail", noteObj);
 
          //simplistic for now ... if you update anything, you get added to the subscribers
          getSubscriberRole().addPlayerIfNotPresent(ar.getUserProfile().getAddressListEntry());
@@ -1069,7 +1071,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
              note = _note;
          }
          public boolean needsSending() throws Exception {
-             return !note.getEmailSent() && !note.isDraftNote();
+             return !note.getEmailSent() && !note.isDraftNote() && !note.getAttributeBool("suppressEmail");
          }
 
          public long timeToSend() throws Exception {

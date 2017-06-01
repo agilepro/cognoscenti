@@ -589,67 +589,7 @@ function addvalue() {
     </div>
 
 
-    <div class="well generalSettings" ng-show="isCreating">
-        <table>
-           <tr>
-                <td class="gridTableColummHeader">New Synopsis:</td>
-                <td style="width:20px;"></td>
-                <td colspan="2">
-                    <input type="text" ng-model="newGoal.synopsis" class="form-control" placeholder="What should be done">
-                </td>
-           </tr>
-           <tr><td style="height:10px"></td></tr>
-           <tr>
-                <td class="gridTableColummHeader">Assignee:</td>
-                <td style="width:20px;"></td>
-                <td colspan="2">
-                  <tags-input ng-model="newGoal.assignList" placeholder="Enter user name or id"
-                              display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
-                      <auto-complete source="loadPersonList($query)"></auto-complete>
-                  </tags-input>
-                </td>
-            </tr>
-            <tr><td style="height:10px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader">Description:</td>
-                <td style="width:20px;"></td>
-                <td colspan="2">
-                    <textarea type="text" ng-model="newGoal.description" class="form-control"
-                        style="width:450px;height:100px" placeholder="Details"></textarea>
-                </td>
-            </tr>
-            <tr><td style="height:10px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader">Due Date:</td>
-                <td style="width:20px;"></td>
-                <td colspan="2">
-                    <input type="text"
-                        style="width:150;margin-top:10px;"
-                        class="form-control"
-                        datepicker-popup="dd-MMMM-yyyy"
-                        ng-model="dummyDate1"
-                        is-open="datePickOpen1"
-                        min-date="minDate"
-                        datepicker-options="datePickOptions"
-                        date-disabled="datePickDisable(date, mode)"
-                        ng-required="true"
-                        ng-click="openDatePicker1($event)"
-                        close-text="Close"/>
-                </td>
-            </tr>
-            <tr><td style="height:10px"></td></tr>
-            <tr>
-                <td class="gridTableColummHeader"></td>
-                <td style="width:20px;"></td>
-                <td colspan="2">
-                    <button class="btn btn-primary btn-raised" ng-click="createNewGoal()">Create New Action Item</button>
-                    <button class="btn btn-primary btn-raised" ng-click="isCreating=false">Cancel</button>
-                </td>
-            </tr>
-        </table>
-    </div>
 
-    <div style="height:20px;"></div>
 
 <style>
 .statusTable {
