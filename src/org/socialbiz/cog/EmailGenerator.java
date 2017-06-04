@@ -236,6 +236,22 @@ public class EmailGenerator extends DOMFace {
     }
 
 
+    /**
+     * Different people will be receiving email for different reasons ... they might be in
+     * a particular role, or they might be addressed directly.   This returns the right
+     * OptOutAddress object for the given user ID.
+     */
+    public OptOutAddr getOOAForUserID(AuthRequest ar, NGPage ngp, String userId) throws Exception {
+        for (OptOutAddr ooa : expandAddresses(ar, ngp)) {
+            if (ooa.matches(userId))  {
+                return ooa;
+            }
+        }
+        
+        //didn't find them, then act as if they were directly added
+        return new OptOutDirectAddress(new AddressListEntry(userId));
+    }
+    
 
     public List<OptOutAddr> expandAddresses(AuthRequest ar, NGPage ngp) throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
@@ -277,14 +293,13 @@ public class EmailGenerator extends DOMFace {
 
     public void constructEmailRecords(AuthRequest ar, NGWorkspace ngp, MailFile mailFile) throws Exception {
         List<OptOutAddr> sendTo = expandAddresses(ar, ngp);
-        TopicRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
 
         StringBuilder historyNameList = new StringBuilder();
         boolean needComma = false;
         for (OptOutAddr ooa : sendTo) {
             String addr = ooa.getEmail();
             if (addr!=null && addr.length()>0) {
-                constructEmailRecordOneUser(ar, ngp, noteRec, ooa, mailFile);
+                constructEmailRecordOneUser(ar, ngp, ooa, mailFile);
                 if (needComma) {
                     historyNameList.append(",");
                 }
@@ -296,21 +311,39 @@ public class EmailGenerator extends DOMFace {
         setSendDate(ar.nowTime);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, TopicRecord noteRec, OptOutAddr ooa, MailFile mailFile)
+    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa, MailFile mailFile)
             throws Exception  {
         String userAddress = ooa.getEmail();
         if (userAddress==null || userAddress.length()==0) {
             //don't send anything if the user does not have an email address
             return;
         }
-
-        MemFile bodyChunk = new MemFile();
         UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
         if (originalSender==null) {
             System.out.println("DATA PROBLEM: email generator came from a person without a profile ("+getOwner()+") ignoring");
             return;
         }
 
+        String entireBody = generateEmailBody(ar, ngp, ooa);
+
+        List<String> attachIds = new ArrayList<String>();
+        for (String attId : getAttachments()) {
+            AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(attId);
+            if (getAttachFiles()) {
+                attachIds.add(aRec.getId());
+            }
+        }
+        
+        mailFile.createEmailWithAttachments(ngp, getFrom(), ooa.getEmail(), getSubject(), entireBody, attachIds);
+    }
+
+    
+    public String generateEmailBody(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa) throws Exception {
+
+        TopicRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
+        MemFile bodyChunk = new MemFile();
+        UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
+        
         List<AttachmentRecord> attachList = getSelectedAttachments(ar, ngp);
         List<String> attachIds = new ArrayList<String>();
         for (String attId : getAttachments()) {
@@ -346,10 +379,8 @@ public class EmailGenerator extends DOMFace {
                 getIncludeBody(), attachList, meeting);
 
         clone.flush();
-
-        mailFile.createEmailWithAttachments(ngp, getFrom(), ooa.getEmail(), getSubject(), bodyChunk.toString(), attachIds);
+        return bodyChunk.toString();
     }
-
 
     private static List<AttachmentRecord> getSelectedAttachments(AuthRequest ar,
             NGWorkspace ngw) throws Exception {
@@ -364,7 +395,7 @@ public class EmailGenerator extends DOMFace {
     }
 
 
-    private static JSONObject getJSONForTemplate(AuthRequest ar,
+    private JSONObject getJSONForTemplate(AuthRequest ar,
             NGWorkspace ngp, TopicRecord selectedNote,
             AddressListEntry ale, String intro, boolean includeBody,
             List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
@@ -377,8 +408,9 @@ public class EmailGenerator extends DOMFace {
         data.put("baseURL", ar.baseURL);
         data.put("sender",  ownerProfile.getJSON());
 
+        String workspaceBaseUrl = ar.baseURL + "t/" + ngp.getSiteKey() + "/" + ngp.getKey() + "/";
         data.put("workspaceName", ngp.getFullName());
-        data.put("workspaceUrl", ar.baseURL + ar.getDefaultURL(ngp) );
+        data.put("workspaceUrl", workspaceBaseUrl);
 
 		ar.ngp = ngp;
         data.put("introHtml", WikiConverterForWYSIWYG.makeHtmlString(ar, intro));
@@ -416,10 +448,49 @@ public class EmailGenerator extends DOMFace {
             //TODO: this is temporary until templates can handle dates
             data.put("meetingTime", SectionUtil.getNicePrintDate(meeting.getStartTime()));
         }
+
+        //now handle the tasks
+        if (getAttributeBool("tasksInclude")) {
+            List<String> labels = getVector("tasksLabels");
+            String filter = getScalar("tasksFilter");
+            
+            JSONArray goalArray = new JSONArray();
+            for (GoalRecord aGoal : ngp.getAllGoals()) {
+                if (filter!=null && filter.length()>0) {
+                    String synlc = aGoal.getSynopsis().toLowerCase();
+                    String desclc = aGoal.getDescription().toLowerCase();
+                    if (!synlc.contains(filter) && !desclc.contains("filter")) {
+                        //skip this if the filter value not found
+                        continue;
+                    }
+                }
+                boolean missingLabel = false;
+                for (String aLabel : labels) {
+                    boolean hasThisOne = false;
+                    for (NGLabel whatGoalHas : aGoal.getLabels(ngp)) {
+                        if (whatGoalHas.getName().equals(aLabel)) {
+                            hasThisOne = true;
+                        }
+                    }
+                    if (!hasThisOne) {
+                        missingLabel = true;
+                    }
+                }
+                if (missingLabel) {
+                    continue;
+                }
+                
+                JSONObject goalJson = aGoal.getJSON4Goal(ngp);
+                goalJson.put("url", workspaceBaseUrl + "task" + aGoal.getId() + ".htm");
+                goalArray.put(goalJson);
+            }
+            data.put("goals", goalArray);
+        }
+    
         return data;
     }
 
-    private static void writeNoteAttachmentEmailBody2(AuthRequest ar,
+    private void writeNoteAttachmentEmailBody2(AuthRequest ar,
             NGWorkspace ngp, TopicRecord selectedNote,
             OptOutAddr ooa, String intro, boolean includeBody,
             List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
@@ -483,6 +554,9 @@ public class EmailGenerator extends DOMFace {
             }
         }
 
+        this.extractAttributeBool(obj, "tasksInclude");
+        this.extractScalarString(obj, "tasksFilter");
+        this.extractVectorString(obj, "tasksLabels");
         return obj;
     }
 
@@ -524,9 +598,7 @@ public class EmailGenerator extends DOMFace {
         if (obj.has("excludeResponders")) {
             setExcludeResponders(obj.getBoolean("excludeResponders"));
         }
-        if (obj.has("includeSelf")) {
-            setIncludeSelf(obj.getBoolean("includeSelf"));
-        }
+        this.updateAttributeBool("includeSelf", obj);
         if (obj.has("makeMembers")) {
             setMakeMembers(obj.getBoolean("makeMembers"));
         }
@@ -543,6 +615,9 @@ public class EmailGenerator extends DOMFace {
         if (obj.has("scheduleTime")) {
             setScheduleTime(obj.getLong("scheduleTime"));
         }
+        this.updateAttributeBool("tasksInclude", obj);
+        this.updateScalarString("tasksFilter", obj);
+        this.updateVectorString("tasksLabels", obj);
     }
 
     public void gatherUnsentScheduledNotification(NGWorkspace ngw, ArrayList<ScheduledNotification> resList) throws Exception {

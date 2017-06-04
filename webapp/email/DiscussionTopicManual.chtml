@@ -8,7 +8,7 @@
       title="access the profile of this user, if one exists">
       {$sender.name|onempty(Unnamed Sender)|html}</a>
 &nbsp; <b>Workspace:</b> 
-   <a href="{$workspaceUrl}">{$workspaceName|onempty(Unnamed Workspace)|html}</a></p>
+   <a href="{$workspaceUrl}frontPage.htm">{$workspaceName|onempty(Unnamed Workspace)|html}</a></p>
 <div >
 {$introHtml}
 </div>
@@ -59,9 +59,50 @@ Scheduled time: <b>{$meeting.startTime|date("MMM dd, YYYY  HH:mm 'GMT'XXX")}</b>
 </ol>
 {% endif %}
 
+
+{% if ($goals) %}
+<style>
+.linedTable tr td {
+    border:1px black solid;
+    padding: 5px;
+}
+</style>
+<h1><a href="{$workspaceUrl}/../statusList.htm">Action Items</a></h1>
+<table class="linedTable">
+    <tr>
+        <td>Action Item</td>
+        <td>Assignees</td>
+        <td>Due Date</td>
+        <td>Status</td>
+    </tr>
+    {% loop in $goals as $goal}
+    <tr>
+        <td><a href="{$goal.url}">{$goal.synopsis}</a> ~ {$goal.description}</td>
+        <td>{% loop in $goal.assignTo as $ass}
+            <span 
+            {% if ($ass.uid == $optout.emailId)} style="color:red;font-weight:bold" {% endif %}
+            >{$ass.name}</span><br/>
+            {% onEmpty %}
+            {% endloop %}</td>
+        <td>{$goal.duedate|date("MMM dd, YYYY)}</td>
+        <td>{$goal.status}</td>
+    </tr>
+    {% onEmpty %}
+    <tr>
+        <td colspan="3"><i>no action items to display matching criteria</i></td>
+    </tr>
+    {% endloop %}
+</table>
+{% endif %}
+
 </div>
 
 {% include OptOut %}
 
+{!--
+<pre>
+{$debugDump}
+</pre>
+--}
 
 </body></html>
