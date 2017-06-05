@@ -324,15 +324,17 @@ public class EmailGenerator extends DOMFace {
         String meetId = getMeetingId();
         MeetingRecord meeting = null;
         if (meetId!=null && meetId.length()>0) {
-            meeting = ngp.findMeeting(meetId);
-            for (AgendaItem ai : meeting.getAgendaItems()) {
-                for (String docId : ai.getDocList()) {
-                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(docId);
-                    attachList.add(aRec);
-                    if (getAttachFiles()) {
-                        attachIds.add(aRec.getId());
-                    }
-                }
+            meeting = ngp.findMeetingOrNull(meetId);
+            if (meeting!=null) {
+	            for (AgendaItem ai : meeting.getAgendaItems()) {
+	                for (String docId : ai.getDocList()) {
+	                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(docId);
+	                    attachList.add(aRec);
+	                    if (getAttachFiles()) {
+	                        attachIds.add(aRec.getId());
+	                    }
+	                }
+	            }
             }
         }
 
