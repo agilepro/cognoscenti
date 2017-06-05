@@ -510,11 +510,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
               <div class="inline-form">
                 <div class="togglebutton col-md-4">
                   <label>
-                    <input type="checkbox" ng-model="emailInfo.excludeResponders">  Exclude Responders
-                  </label>
-                </div>
-                <div class="togglebutton col-md-4">
-                  <label>
                     <input type="checkbox" ng-model="emailInfo.includeSelf">  Include Yourself
                   </label>
                 </div>
