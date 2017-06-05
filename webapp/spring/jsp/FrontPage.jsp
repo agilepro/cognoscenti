@@ -193,6 +193,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.otherMembers = <%otherMembers.write(out,2,4);%>;
     $scope.myMeetings = <%myMeetings.write(out,2,4);%>;
     $scope.myActions  = <%myActions.write(out,2,4);%>;
+    $scope.purpose = "<%ar.writeJS(ngp.getProcess().getDescription());%>";
     $scope.filter = "";
 
     $scope.showInput = false;
@@ -520,6 +521,17 @@ a {
 <!-- COLUMN 3 -->
       <div class="col-md-4 col-sm-12">
 
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">
+              <div style="float:left">Purpose of Workspace</div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body">
+              {{purpose}}
+          </div>
+        </div>
+        
+        
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Your Roles</div>

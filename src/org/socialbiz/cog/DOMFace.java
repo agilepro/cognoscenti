@@ -720,6 +720,25 @@ public class DOMFace
         }
         return false;
     }
+    public void extractVectorString(JSONObject dest, String fieldName) throws Exception {
+        JSONArray ja = new JSONArray();
+        for (String val : getVector(fieldName)) {
+            ja.put(val);
+        }
+        dest.put(fieldName, ja);
+    }
+    public boolean updateVectorString(String fieldName, JSONObject srce) throws Exception {
+        if (srce.has(fieldName)) {
+            JSONArray ja = srce.getJSONArray(fieldName);
+            List<String> vals = new ArrayList<String>();
+            for (int i=0; i<ja.length(); i++) {
+                vals.add(ja.getString(i));
+            }
+            setVector(fieldName, vals);
+            return true;
+        }
+        return false;
+    }
     public void extractAttributeString(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, getAttribute(fieldName));
     }

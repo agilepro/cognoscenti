@@ -180,8 +180,8 @@ Optional Parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.bootstrap.datetimepicker']);
-app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput', 'ngSanitize','ui.bootstrap.datetimepicker']);
+app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     window.setMainPageTitle("Compose Email");
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
@@ -193,6 +193,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    $scope.recipient = {};
+    $scope.recipientList = [{uid:"kswenson@us.fujitsu.com",name:"K Swenson"}];
+    $scope.renderedEmail = "<div>not specified yet</div>";
 
     $scope.newEmailAddress = "";
     $scope.newAttachment = "";
@@ -213,11 +216,37 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 return;
             }
             $scope.emailInfo = data;
+            console.log("Got Email Object", data);
+            $scope.getRenderedEmail();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
     }
+    $scope.getRenderedEmail = function() {
+        var postURL = "renderEmail.json";
+        console.log("recipient is NOW", $scope.recipient);
+        var postObj = {id: $scope.emailInfo.id, toUser: $scope.recipient.uid};
+        var postdata = angular.toJson(postObj);
+        $scope.showError=false;
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            $scope.renderedEmail = $sce.trustAsHtml(data.html);
+            console.log("got RENDER", data);
+            if (data.addressees) {
+                var newRecList = [];
+                data.addressees.forEach( function(item) {
+                    newRecList.push(item);
+                });
+                $scope.recipientList = newRecList;
+                console.log("Updated list to", $scope.recipientList);
+            }
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    $scope.getRenderedEmail();
     $scope.sendEmail = function() {
         $scope.emailInfo.sendIt = true;
         $scope.emailInfo.scheduleIt = false;
@@ -394,7 +423,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
       </span>
     </div>
 
-    <div class="well">
+    <div>
       <form class="form-horizontal">
         <fieldset>
           <div class="form-group">
@@ -481,11 +510,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               <div class="inline-form">
                 <div class="togglebutton col-md-4">
                   <label>
-                    <input type="checkbox" ng-model="emailInfo.excludeResponders">  Exclude Responders
-                  </label>
-                </div>
-                <div class="togglebutton col-md-4">
-                  <label>
                     <input type="checkbox" ng-model="emailInfo.includeSelf">  Include Yourself
                   </label>
                 </div>
@@ -499,6 +523,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <div class="togglebutton">
                   <label>
                     <input type="checkbox" ng-model="emailInfo.scheduleIt"> Send later?
+                  </label>
+                </div>
+                <div class="togglebutton">
+                  <label>
+                    <input type="checkbox" ng-model="emailInfo.tasksInclude"> Include Tasks?
                   </label>
                 </div>
               </div>
@@ -520,20 +549,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               </span>
             </div>
           </div>
-          <!-- Form Control BUTTONS Begin -->
-          <div class="form-group">
-            <label class="col-md-2 control-label" for="unsubscribe">Unsubscribe</label>
-            <div class="col-md-10">
-              People who receive email messages because they are a member of a role,
-              will have the option to remove themselves from the role.
-              These links take you to a sample message for a fictional user
-              email address "sample@example.com" that such a person would see
-              <span ng-repeat="role in allRoles">
-                  <a href="<%=ar.retPath%>t/EmailAdjustment.htm?p=<%=URLEncoder.encode(pageId,"UTF-8")%>&st=role&role={{role.name}}&email=sample@example.com&mn=<%=URLEncoder.encode(ngw.emailDependentMagicNumber("sample@example.com"),"UTF-8")%>">{{role.name}}</a>,
-              </span>
-            </div>
-          </div>
-          <!-- Form Control BUTTONS Begin -->
+          <!-- status -->
           <div class="form-group">
             <label class="col-md-2 control-label" for="status"></label>
             <div class="col-md-10">
@@ -550,9 +566,23 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
       </fieldset>
       </form>
     </div>
+
+
+
+  <div class="form-inline">
+     For Recipient <select class="form-control" ng-model="recipient" ng-options="rec as rec.name for rec in recipientList track by rec.uid"></select>
+     <button ng-click="getRenderedEmail()" class="btn btn-primary btn-raised">Display Email</button>
+  </div>
+  <div class="instruction">This is what the email will look like:<br/><br/></div>
+  
+  <div class="well" style="padding:50px">
+     <div ng-bind-html="renderedEmail"></div>
   </div>
 
 
+  <div style="height:200px"></div>
+</div>
+  
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 
 <%!

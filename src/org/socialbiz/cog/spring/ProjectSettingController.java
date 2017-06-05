@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
 @Controller
@@ -488,31 +489,6 @@ public class ProjectSettingController extends BaseController {
     }
 
 
-    /**
-     * This APPEARS to take a list of names and email addresses, and makes a list of
-     * email addresses.  Should make a list of AddressListEntry objects instead, or something
-     * better.  But we have routines elsewhere that do that.  This is probably redundant.
-     */
-    /*
-    private static String pasreFullname(String fullNames) throws Exception
-    {
-        String assigness = "";
-        List<String> fullnames = UtilityMethods.splitString(fullNames, ',');
-        for(String fname : fullnames){
-            int bindx = fname.indexOf('<');
-            int length = fname.length();
-            if(bindx > 0){
-                fname = fname.substring(bindx+1,length-1);
-            }
-            assigness = assigness + "," + fname;
-        }
-        if(assigness.startsWith(",")){
-            assigness = assigness.substring(1);
-        }
-        return assigness;
-    }
-    */
-
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/emailGeneratorUpdate.json", method = RequestMethod.POST)
@@ -568,6 +544,57 @@ public class ProjectSettingController extends BaseController {
         }
     }
 
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/renderEmail.json", method = RequestMethod.POST)
+    public void renderEmail(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String id = "";
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            ar.setPageAccessLevels(ngw);
+            ar.assertMember("Must be a member to render an email.");
+            JSONObject eGenInfo = getPostedObject(ar);
+
+            id = eGenInfo.getString("id");
+            String sampleUser = null;
+            if (eGenInfo.has("toUser")) {
+                sampleUser = eGenInfo.getString("toUser");
+            }
+            else {
+                sampleUser = ar.getBestUserId();
+            }
+            
+            JSONObject repo = new JSONObject();
+            
+            if ("~new~".equals(id)) {
+                
+                repo.put("html", "Click 'save' to see the email rendered");
+            }
+            else {
+                EmailGenerator eGen = ngw.getEmailGeneratorOrFail(id);
+                List<OptOutAddr> oList = eGen.expandAddresses(ar,ngw);
+                JSONArray addressees = new JSONArray();
+                for (OptOutAddr ooa : oList) {
+                    addressees.put(ooa.getAssignee().getJSON());
+                }
+                
+                //would be better if we could capture the actual relationship
+                OptOutAddr sampleAddressee = eGen.getOOAForUserID(ar,  ngw, sampleUser);
+                
+                repo.put("html", eGen.generateEmailBody(ar, ngw, sampleAddressee));
+                repo.put("addressees", addressees);
+            }
+            
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to update Email Generator "+id, ex);
+            streamException(ee, ar);
+        }
+    }
+    
 
     @RequestMapping(value = "/{siteId}/{pageId}/labelUpdate.json", method = RequestMethod.POST)
     public void labelUpdate(@PathVariable String siteId,@PathVariable String pageId,
