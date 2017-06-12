@@ -31,9 +31,9 @@ Required parameters:
         UserProfile responsible = ale.getUserProfile();
         String imagePath = "assets/photoThumbnail.gif";
         if(responsible!=null) {
-            String imgPath = responsible.getImage();
-            if (imgPath.length() > 0) {
-                imagePath = "users/"+imgPath;
+            String personImage = responsible.getImage();
+            if (personImage!=null && personImage.length() > 0) {
+                imagePath = "users/"+personImage;
             }
         }
         String objectKey = hist.getContext();
