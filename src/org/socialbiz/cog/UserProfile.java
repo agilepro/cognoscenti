@@ -41,15 +41,16 @@ public class UserProfile implements UserRef
     private long   lastLogin;
     private String lastLoginId;
     private long   lastUpdated;
-    private long   notificationTime;
+    private long   notifyTime;
     private String accessCode;
     private long   accessCodeModTime;
-    private int    notificationPeriod;
+    private int    notifyPeriod;
     private boolean disabled;
     private List<String> ids = null;
     private List<WatchRecord> watchList = null;
     private List<String> notificationList = null;
     private List<String> templateList = null;
+    private String timeZone = "America/Los_Angeles";
 
     public UserProfile(String guid) throws Exception {
         key = IdGenerator.generateKey();
@@ -80,11 +81,11 @@ public class UserProfile implements UserRef
         lastLogin   = upXML.getLastLogin();
         lastLoginId = upXML.getLastLoginId();
         lastUpdated = upXML.getLastUpdated();
-        notificationTime = upXML.getNotificationTime();
+        notifyTime = upXML.getNotificationTime();
         
         accessCode = upXML.getAccessCode();
         accessCodeModTime = upXML.getAccessCodeModTime();
-        notificationPeriod = upXML.getNotificationPeriod();
+        notifyPeriod = upXML.getNotificationPeriod();
         disabled   = upXML.getDisabled();
         ids        = upXML.getIdList();
 
@@ -96,6 +97,50 @@ public class UserProfile implements UserRef
         getLicenseToken();
     }
     
+    private static List<WatchRecord> convertWatchList(JSONArray ja)  throws Exception {
+        List<WatchRecord> watchList = new Vector<WatchRecord>();
+        for (int j=0; j<ja.length(); j++) {
+            watchList.add(new WatchRecord(ja.getJSONObject(j)));
+        }
+        return watchList;
+    }
+
+    
+    
+    public UserProfile(JSONObject fullJO) throws Exception {
+        
+        if (fullJO.has("key"))  {
+            key = fullJO.getString("key");
+        }
+        else {
+            key = IdGenerator.generateKey();
+        }
+        
+        ids       = DOMFace.constructVector(fullJO.getJSONArray("ids"));
+        
+        image         = fullJO.optString("image", null);
+        
+        licenseToken  = fullJO.getString("licenseToken");
+        
+        lastLogin     = fullJO.optLong("lastLogin",0);
+        lastLoginId   = fullJO.optString("lastLoginId",null);
+        lastUpdated   = fullJO.optLong("lastUpdated",0);
+        notifyTime    = fullJO.optLong("notifyTime",0);
+        accessCode    = fullJO.optString("accessCode",null);
+        accessCodeModTime = fullJO.optLong("accessCodeModTime",0);
+       
+        watchList = convertWatchList(fullJO.getJSONArray("watchList"));
+
+        notificationList = DOMFace.constructVector(fullJO.getJSONArray("notifyList"));
+        templateList = DOMFace.constructVector(fullJO.getJSONArray("templateList"));
+
+        updateFromJSON(fullJO);
+        
+        //make sure that this profile has a license token
+        getLicenseToken();
+    }
+    
+    
     public void transferAllValues(UserProfileXML upXML) throws Exception {
         upXML.setKey(key);
         upXML.setName(name);
@@ -105,11 +150,11 @@ public class UserProfile implements UserRef
         
         upXML.setLastLogin(lastLogin, lastLoginId);
         upXML.setLastUpdated(lastUpdated);
-        upXML.setNotificationTime(notificationTime);
+        upXML.setNotificationTime(notifyTime);
         
         upXML.setAccessCode(accessCode);
         upXML.setAccessCodeModTime(accessCodeModTime);
-        upXML.setNotificationPeriod(notificationPeriod);
+        upXML.setNotificationPeriod(notifyPeriod);
         upXML.setDisabled(disabled);
         for (String oneId : ids) {
             upXML.addId(oneId);
@@ -278,22 +323,22 @@ public class UserProfile implements UserRef
      * notification if it has been a long time.
      */
     public void setNotificationPeriod(int period) {
-        notificationPeriod = period;
+        notifyPeriod = period;
     }
     public int getNotificationPeriod() {
-        if (notificationPeriod<=0) {
-            notificationPeriod=1;
+        if (notifyPeriod<=0) {
+            notifyPeriod=1;
         }
-        return notificationPeriod;
+        return notifyPeriod;
     }
 
 
 
     public void setNotificationTime(long time) {
-        notificationTime = time;
+        notifyTime = time;
     }
     public long getNotificationTime() {
-        return notificationTime;
+        return notifyTime;
     }
 
 
@@ -788,6 +833,10 @@ public class UserProfile implements UserRef
         }
         return memberOfSites;
     }
+    
+    public String getTimeZone() {
+        return timeZone;
+    }
 
     public JSONObject getJSON() throws Exception {
         JSONObject jObj = new JSONObject();
@@ -806,6 +855,7 @@ public class UserProfile implements UserRef
         jObj.put("disabled",    getDisabled());
         jObj.put("notifyPeriod",getNotificationPeriod());
         jObj.put("preferred",   getPreferredEmail());
+        jObj.put("timeZone",    timeZone);
         
         jObj.put("image",       this.getImage());
         
@@ -819,10 +869,7 @@ public class UserProfile implements UserRef
         {
             JSONArray watchArray = new JSONArray();
             for (WatchRecord watch : getWatchList()) {
-                JSONObject watchRec = new JSONObject();
-                watchRec.put("key",watch.pageKey);
-                watchRec.put("lastSeen",watch.lastSeen);
-                watchArray.put(watchRec);
+                watchArray.put(watch.getJSON());
             }
             jObj.put("watchList", watchArray);
         }
@@ -842,6 +889,19 @@ public class UserProfile implements UserRef
         }
         return jObj;
     }
+    
+    /**
+     * This should be used only for saving to a local file, never sending to a client.
+     */
+    public JSONObject getSecretJSON() throws Exception {
+        JSONObject jObj = getFullJSON();
+        jObj.put("licenseToken",       getLicenseToken());
+        jObj.put("notifyTime",         notifyTime);
+        jObj.put("accessCode",         accessCode);
+        jObj.put("accessCodeModTime",  accessCodeModTime);
+        return jObj;
+    }
+    
 
     public void updateFromJSON(JSONObject input) throws Exception {
         if (input.has("removeId")) {
@@ -870,6 +930,10 @@ public class UserProfile implements UserRef
             //this makes sure it is first
             this.setPreferredEmail(newPref);
         }
+        if (input.has("timeZone")) {
+            timeZone = input.getString("timeZone");
+        }
+        
     }
     
 }

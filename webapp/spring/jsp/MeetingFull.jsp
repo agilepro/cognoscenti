@@ -299,6 +299,9 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
           <li role="presentation"><a role="menuitem"
               title="Compose an email messsage about this meeting and send it"
               href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
+          <li role="presentation"><a role="menuitem"
+              title="Display the meeting as a HTML page that can be copied into an editor"
+              href="meetingHtml.htm?id={{meeting.id}}">Show Flat Display</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem"
               title="Generate the meeting minutes from the agenda items and put in a discussion topic"

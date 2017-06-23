@@ -6,6 +6,7 @@
 %><%@page import="org.socialbiz.cog.UserManager"
 %><%@page import="org.socialbiz.cog.UserProfile"
 %><%@page import="org.socialbiz.cog.IDRecord"
+%><%@page import="java.util.TimeZone"
 %><%@ include file="functions.jsp"
 %><%
 
@@ -35,6 +36,11 @@
         photoSource = ar.retPath+"users/"+uProf.getImage();
     }
     Object errMsg = session.getAttribute("error-msg");
+    
+    JSONArray timeZoneList = new JSONArray();
+    for (String tz : TimeZone.getAvailableIDs()) {
+        timeZoneList.put(tz);
+    }
 
 %>
 
@@ -44,12 +50,14 @@ var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Edit Your Profile");
     $scope.profile = <%userObj.write(out,2,4);%>;
+    $scope.timeZoneList = <%timeZoneList.write(out,2,4);%>;
     
     $scope.updatePersonal = function() {
         var newProfile = {};
         newProfile.name = $scope.profile.name;
         newProfile.description = $scope.profile.description;
         newProfile.notifyPeriod = $scope.profile.notifyPeriod;
+        newProfile.timeZone = $scope.profile.timeZone;
         $scope.updateServer(newProfile);
     }
     $scope.updateServer = function(newProfile) {
@@ -190,6 +198,12 @@ app.controller('myCtrl', function($scope, $http) {
                 <input type="radio" value="1"  ng-model="profile.notifyPeriod" /> Daily
                 <input type="radio" value="7"  ng-model="profile.notifyPeriod" /> Weekly
                 <input type="radio" value="30"  ng-model="profile.notifyPeriod" /> Monthly
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol">Time Zone:</td>
+            <td>
+                <select ng-model="profile.timeZone" ng-options="item for item in timeZoneList"></select>
             </td>
         </tr>
         <tr>

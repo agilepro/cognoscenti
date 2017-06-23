@@ -452,12 +452,18 @@ public class EmailGenerator extends DOMFace {
         }
 
         //now handle the tasks
-        if (getAttributeBool("tasksInclude")) {
+        String tasksOption = getAttribute("tasksOption");
+        boolean onlyAssigned = "Assignee".equals(tasksOption);
+        if ("All".equals(tasksOption) || onlyAssigned) {
             List<String> labels = getVector("tasksLabels");
             String filter = getScalar("tasksFilter");
             
             JSONArray goalArray = new JSONArray();
             for (GoalRecord aGoal : ngp.getAllGoals()) {
+                if (!GoalRecord.isActive(aGoal.getState())) {
+                    //only include active goals, not future or completed
+                    continue;
+                }
                 if (filter!=null && filter.length()>0) {
                     String synlc = aGoal.getSynopsis().toLowerCase();
                     String desclc = aGoal.getDescription().toLowerCase();
@@ -480,6 +486,12 @@ public class EmailGenerator extends DOMFace {
                 }
                 if (missingLabel) {
                     continue;
+                }
+                
+                if (onlyAssigned) {
+                    if (!aGoal.isAssignee(ale)) {
+                        continue;
+                    }
                 }
                 
                 JSONObject goalJson = aGoal.getJSON4Goal(ngp);
@@ -556,9 +568,11 @@ public class EmailGenerator extends DOMFace {
             }
         }
 
-        this.extractAttributeBool(obj, "tasksInclude");
+        this.extractAttributeString(obj, "tasksOption");
         this.extractScalarString(obj, "tasksFilter");
         this.extractVectorString(obj, "tasksLabels");
+        this.extractAttributeBool(obj, "tasksFuture");
+        this.extractAttributeBool(obj, "tasksCompleted");
         return obj;
     }
 
@@ -617,9 +631,11 @@ public class EmailGenerator extends DOMFace {
         if (obj.has("scheduleTime")) {
             setScheduleTime(obj.getLong("scheduleTime"));
         }
-        this.updateAttributeBool("tasksInclude", obj);
+        this.updateAttributeString("tasksOption", obj);
         this.updateScalarString("tasksFilter", obj);
         this.updateVectorString("tasksLabels", obj);
+        this.updateAttributeBool("tasksFuture", obj);
+        this.updateAttributeBool("tasksCompleted", obj);
     }
 
     public void gatherUnsentScheduledNotification(NGWorkspace ngw, ArrayList<ScheduledNotification> resList) throws Exception {

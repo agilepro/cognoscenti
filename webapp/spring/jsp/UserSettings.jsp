@@ -120,6 +120,10 @@ if (ar.isLoggedIn()) { %>
             </td>
         </tr>
         <tr>
+            <td class="firstcol">Email Time Zone:</td>
+            <td>{{userInfo.timeZone}} </td>
+        </tr>
+        <tr>
             <td class="firstcol">Last Login:</td>
             <td><%SectionUtil.nicePrintTime(ar.w, uProf.getLastLogin(), ar.nowTime); %> as <% ar.writeHtml(uProf.getLastLoginId()); %> </td>
         </tr>

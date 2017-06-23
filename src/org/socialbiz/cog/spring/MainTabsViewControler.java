@@ -207,6 +207,30 @@ public class MainTabsViewControler extends BaseController {
     }
 
 
+    @RequestMapping(value = "/{siteId}/{pageId}/meetingHtml.htm", method = RequestMethod.GET)
+    public void meetingHtml(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+
+            String id = ar.reqParam("id");
+            MeetingRecord meet = ngw.findMeeting(id);
+            boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
+            if (!canAccess) {
+                showJSPMembers(ar, siteId, pageId, "MeetingHtml");
+                return;
+            }
+
+            streamJSP(ar, "MeetingHtml");
+        }catch(Exception ex){
+            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+
+
     @RequestMapping(value = "/{siteId}/{pageId}/meetingTime{meetId}.ics", method = RequestMethod.GET)
     public void meetingTime(@PathVariable String siteId,@PathVariable String pageId,
             @PathVariable String meetId,

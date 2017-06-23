@@ -1198,7 +1198,7 @@ public class WikiToPDF
     }
     private String convertDate(long dateVal) throws Exception  {
         StringWriter out = new StringWriter(20);
-        SectionUtil.nicePrintDate(out, dateVal);
+        SectionUtil.nicePrintDate(out, dateVal, null);
         return out.toString();        
     }
 

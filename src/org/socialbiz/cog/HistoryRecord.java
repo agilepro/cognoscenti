@@ -814,7 +814,7 @@ history.task.subtask.add    113
         AddressListEntry ale = new AddressListEntry(getResponsible());
         ale.writeLink(ar);
         ar.write(" on ");
-        SectionUtil.nicePrintDate(ar.w, getTimeStamp());
+        SectionUtil.nicePrintDate(ar.w, getTimeStamp(), null);
         String comment = this.getComments();
         if (comment!=null && comment.length()>0) {
             ar.write(" - ");

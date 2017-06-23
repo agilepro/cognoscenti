@@ -94,17 +94,57 @@ public class UserManager
 
         File userFolder = cog.getConfig().getUserFolderOrFail();
         xmlFileName = new File(userFolder, "UserProfiles.xml");
-        jsonFileName = new File(userFolder, "UserProfiles.json");
+        File oldjsonFile = new File(userFolder, "UserProfiles.json");
+        if (oldjsonFile.exists()) {
+            oldjsonFile.delete();
+        }
+        jsonFileName = new File(userFolder, "UserProfs.json");
         
         //clear out any left over evidence of an earlier initialization
         allUsers = new Vector<UserProfile>();
 
+        //readXMLFile();
+        //need to make sure all the same information is in the JSON file....
+        readJSONFile();
+        
+        refreshHashtables();
+        initialized = true;
+    }
+
+    private void readJSONFile() throws Exception  {
+         if(!jsonFileName.exists()) {
+            if (xmlFileName.exists()) {
+                readXMLFile();
+            }
+            saveUserProfiles();
+        }
+        
+        if(!jsonFileName.exists()) {
+            throw new Exception("Not able to create the user profile file: "+jsonFileName);
+        }
+        
+       
+        JSONObject userFile = JSONObject.readFromFile(jsonFileName);
+        loadCount++;
+        
+        JSONArray users = userFile.getJSONArray("users");
+
+        for (int i=0; i<users.length(); i++) {
+            UserProfile up = new UserProfile(users.getJSONObject(i));
+            allUsers.add(up);
+        }
+    }
+    
+    /**
+     * This will be retired some day...
+     */
+    private void readXMLFile() throws Exception  {
         if(!xmlFileName.exists()) {
             saveUserProfiles();
         }
         
         if(!xmlFileName.exists()) {
-            throw new Exception("Not able to create the user profile file: "+xmlFileName);
+            throw new Exception("Not able to create the user profile file: "+jsonFileName);
         }
         
         InputStream is = new FileInputStream(xmlFileName);
@@ -133,9 +173,6 @@ public class UserManager
             guaranteeUnique.put(upKey, upKey);
             allUsers.add(up);
         }
-        refreshHashtables();
-
-        initialized = true;
     }
 
 
@@ -148,7 +185,7 @@ public class UserManager
         JSONObject userFile = new JSONObject();
         JSONArray  userArray = new JSONArray();
         for (UserProfile uprof : allUsers) {
-            userArray.put(uprof.getFullJSON());
+            userArray.put(uprof.getSecretJSON());
         }
         userFile.put("users", userArray);
         userFile.put("lastUpdate", System.currentTimeMillis());
@@ -164,13 +201,7 @@ public class UserManager
         saveCount++;
     }
 
-    
-    /*
-    public synchronized void reloadUserProfiles(Cognoscenti cog) throws Exception {
-        clearAllStaticVars();
-        loadUpUserProfilesInMemory(cog);
-    }
-    */
+   
 
     private synchronized void refreshHashtables() {
         userHashByUID = new Hashtable<String, UserProfile>();

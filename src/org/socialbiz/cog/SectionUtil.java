@@ -25,6 +25,7 @@ import java.io.Writer;
 import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
 
@@ -201,7 +202,7 @@ public class SectionUtil
     {
         if (ar.isStaticSite())
         {
-            nicePrintDate(ar.w, timestamp);
+            nicePrintDate(ar.w, timestamp, null);
         }
         else
         {
@@ -257,7 +258,7 @@ public class SectionUtil
             return;
         }
         //old than that, just print the date out
-        nicePrintDate(out, timestamp);
+        nicePrintDate(out, timestamp, null);
     }
 
 
@@ -286,7 +287,7 @@ public class SectionUtil
     /**
     * format is MM/DD/YYYY
     */
-    public static void nicePrintDate(Writer out, long timestamp)
+    public static void nicePrintDate(Writer out, long timestamp, String timeZone)
         throws Exception
     {
         if (timestamp==0)
@@ -296,6 +297,10 @@ public class SectionUtil
             return;
         }
         Calendar cal = Calendar.getInstance();
+        if (timeZone!=null) {
+            TimeZone tz = TimeZone.getTimeZone(timeZone);
+            cal = Calendar.getInstance(tz);
+        }
         cal.setTimeInMillis(timestamp);
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH);
@@ -394,11 +399,14 @@ public class SectionUtil
     }
 
 
-    public static String getNicePrintDate(long timestamp)
-        throws Exception
-    {
+    public static String getNicePrintDate(long timestamp) throws Exception {
         StringWriter out = new StringWriter(20);
-        nicePrintDate(out, timestamp);
+        nicePrintDate(out, timestamp, null);
+        return out.toString();
+    }
+    public static String getNicePrintDate(long timestamp, String timeZone) throws Exception {
+        StringWriter out = new StringWriter(20);
+        nicePrintDate(out, timestamp, timeZone);
         return out.toString();
     }
 
