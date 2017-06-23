@@ -468,6 +468,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             </div>
           </div>
           <div class="form-group">
+            <label class="col-md-2 control-label" for="alsoalsoTo"></label>
+            <div class="col-md-10">
+                <div class="togglebutton col-md-4">
+                  <label>
+                    <input type="checkbox" ng-model="emailInfo.includeSelf">  Include Yourself
+                  </label>
+                </div>              
+            </div>
+          </div>
+          <div class="form-group">
             <label class="col-md-2 control-label" for="subject">Subject</label>
             <div class="col-md-10">
               <input id="subject" ng-model="emailInfo.subject" class="form-control"/>
@@ -482,13 +492,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
           <div class="form-group" ng-show="emailInfo.noteInfo.id">
             <label class="col-md-2 control-label" for="includeBody">Topic</label>
             <div class="col-md-10">
-              <input id="includeBody" ng-model="emailInfo.includeBody" class="form-control"/>
-            </div>
-          </div>
-          <div class="form-group" ng-show="emailInfo.meetingInfo.name">
-            <label class="col-md-2 control-label">Meeting</label>
-            <div class="col-md-10">
-              Include meeting <i>'{{emailInfo.meetingInfo.name}}'</i> into email
+            {{emailInfo.noteInfo.subject}}
             </div>
           </div>
           <div class="form-group">
@@ -504,41 +508,46 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
               <input type="checkbox" ng-model="emailInfo.includeBody"/>  Include Files as Attachments
             </div>
           </div>
-          <div class="form-group">
-            <label class="col-md-2 control-label">Options</label>
+          <div class="form-group" ng-show="emailInfo.meetingInfo.name">
+            <label class="col-md-2 control-label">Meeting</label>
             <div class="col-md-10">
-              <div class="inline-form">
-                <div class="togglebutton col-md-4">
-                  <label>
-                    <input type="checkbox" ng-model="emailInfo.includeSelf">  Include Yourself
-                  </label>
-                </div>
-                <div class="togglebutton col-md-4">
-                  <label>
-                    <input type="checkbox" ng-model="emailInfo.makeMembers">  Make below people members
-                  </label>
-                </div>
-              </div>
-              <div class="col-md-10">
+              <span class="btn btn-sm btn-default btn-raised">{{emailInfo.meetingInfo.name}}</span>
+              Included into email
+            </div>
+          </div>
+          <div class="form-group" ng-show="emailInfo.noteInfo.subject">
+            <label class="col-md-2 control-label">Discussion Topic</label>
+            <div class="col-md-10">
                 <div class="togglebutton">
+                  <span class="btn btn-sm btn-default btn-raised">{{emailInfo.noteInfo.subject}}</span>
+                  <label>
+                    <input type="checkbox" ng-model="emailInfo.includeBody"> Include text in email? &nbsp;
+                  </label>
+                </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-2 control-label">Tasks?</label>
+            <div class="col-md-10">
+               <select class="form-control" ng-model="emailInfo.tasksOption" style="width:300px"
+                       title="Select whether a task list should be included in the message">
+                  <option value="None">No Tasks</option>
+                  <option value="Assignee">Only to Assignees</option>
+                  <option value="All">All Tasks to Everyone</option>
+               </select>
+            </div>
+          </div>
+          <!-- Form Control Schedule Time Begin -->
+          <div class="form-group" >
+            <label class="col-md-2 control-label" for="scheduledTime">When?</label>
+            <div class="col-md-10">
+                <div class="togglebutton col-md-4">
                   <label>
                     <input type="checkbox" ng-model="emailInfo.scheduleIt"> Send later?
                   </label>
                 </div>
-                <div class="togglebutton">
-                  <label>
-                    <input type="checkbox" ng-model="emailInfo.tasksInclude"> Include Tasks?
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Form Control Schedule Time Begin -->
-          <div class="form-group ng-hide form-hide" ng-show="emailInfo.scheduleIt">
-            <label class="col-md-2 control-label" for="scheduledTime">When?</label>
-            <div class="col-md-10">
-              <span class="form-control">
-                <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
+              <span class="col-md-4" ng-show="emailInfo.scheduleIt">
+                At:  <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
                   {{ emailInfo.scheduleTime | date:'dd-MMM-yyyy' }} &nbsp;at&nbsp; {{ emailInfo.scheduleTime | date:'HH:mm' }} &nbsp; &nbsp; {{tzIndicator}}
                 </a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
@@ -551,9 +560,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
           </div>
           <!-- status -->
           <div class="form-group">
-            <label class="col-md-2 control-label" for="status"></label>
+            <label class="col-md-2 control-label">Status</label>
             <div class="col-md-10">
-              <span class="text-info">Status: {{explainState()}}</span>
+               {{explainState()}}
             </div>
           </div>
         <!-- Form Control BUTTONS -->
