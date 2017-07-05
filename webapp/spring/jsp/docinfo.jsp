@@ -407,7 +407,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <td class="firstcol">Linked Action Items:</td>
             <td><span ng-repeat="act in linkedGoals" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                    ng-click="navigateToActionItem(act)">
-                   <img src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif">  {{act.synopsis}}
+                   <img ng-src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif">  {{act.synopsis}}
                 </span>
             </td>
         </tr>

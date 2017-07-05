@@ -101,6 +101,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.showAll();
     }
     $scope.getAgendaItems = function() {
+        $scope.meeting.agenda.forEach( function(item) {
+            if (!item.desc) {
+                item.desc = "<p></p>";
+            }
+        });
         return $scope.meeting.agenda;
     }
 
@@ -385,11 +390,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         if (readyToSave.id=="~new~") {
             postURL = "agendaAdd.json?id="+$scope.meeting.id;
         }
+        console.log("Saving meeting: ", readyToSave);
         var postdata = angular.toJson(readyToSave);
         $scope.showError=false;
         var promise = $http.post(postURL ,postdata)
         promise.success( function(data) {
+            console.log("Received meeting: ", data);
+            if (!data.meetingInfo) {
+                data.meetingInfo = "";
+            }
             $scope.meeting = data;
+
             $scope.extractDateParts();
             $scope.editHead=false;
             $scope.editDesc=false;
@@ -870,27 +881,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return ($scope.meeting.state >= 3);
     }
     $scope.addYouself = function() {
-        $scope.newAttendee = loginInfo.userId;
-        $scope.addAttendee();
+        var fakeMeeting = {};
+        fakeMeeting.attended_add = loginInfo.userId;
+        $scope.putGetMeetingInfo(fakeMeeting);
     }
     $scope.addAttendee = function() {
-        var needAdd = true;
         if (!$scope.newAttendee) {
             return;
         }
-        var promise = $scope.refreshMeetingPromise();
-        promise.success( function() {
-            $scope.meeting.attended.forEach( function(item) {
-                if (item==$scope.newAttendee) {
-                    needAdd = false;
-                }
-            });
-            if (needAdd) {
-                $scope.meeting.attended.push($scope.newAttendee);
-            }
-            $scope.newAttendee = "";
-            $scope.savePartialMeeting(['attended']);
-        });
+        var fakeMeeting = {};
+        fakeMeeting.attended_add = $scope.newAttendee;
+        $scope.putGetMeetingInfo(fakeMeeting);
     }
     $scope.removeAttendee  = function(person) {
         var promise = $scope.refreshMeetingPromise();
@@ -904,9 +905,21 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     }
     $scope.getAttended = function() {
-        return $scope.meeting.attended.map( function(uid) {
-            return AllPeople.findPerson(uid);
-        });
+        var res = [];
+        if ($scope.meeting.attended) {
+            $scope.meeting.attended.forEach( function(trial) {
+                var found = false;
+                res.forEach( function(itemx) {
+                    if (itemx && itemx.uid == trial) {
+                        found = true;
+                    }
+                });
+                if (!found) {
+                    res.push(AllPeople.findPerson(trial));                
+                }
+            });
+        }
+        return res;
     }
 
     $scope.saveSituation = function() {

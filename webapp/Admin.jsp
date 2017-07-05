@@ -159,7 +159,7 @@
 
     %>
     </ul>
-    <h3>Last Notification Sent on: </h3><%SectionUtil.nicePrintDate(out,lastSentTime); %>(<%SectionUtil.nicePrintTime(ar,lastSentTime,ar.nowTime); %>)
+    <h3>Last Notification Sent on: </h3><%SectionUtil.nicePrintDate(out,lastSentTime,null);%>(<%SectionUtil.nicePrintTime(ar,lastSentTime,ar.nowTime); %>)
 
     <h3>Files in User Folder</h3>
     <ul>

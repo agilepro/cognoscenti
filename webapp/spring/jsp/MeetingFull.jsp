@@ -840,7 +840,7 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
               </td>
               <td style="width:20px;">
               <a href="task{{goal.id}}.htm" class="leafContent"   >
-                <img src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif">
+                <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif">
               </a>
               </td>
               <td style="max-width:300px;">

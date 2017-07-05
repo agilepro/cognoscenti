@@ -691,7 +691,8 @@ function addvalue() {
               </div>
             </div>
             <div style="float:left;margin:2px">
-              <a href="task{{rec.id}}.htm"><img src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
+              <a href="task{{rec.id}}.htm">
+                <img ng-src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
             </div>
             </td>
             <td  style="max-width:300px"  ng-click="openModalActionItem(rec, 'details')">

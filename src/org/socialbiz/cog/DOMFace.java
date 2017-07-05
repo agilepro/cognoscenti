@@ -323,6 +323,24 @@ public class DOMFace
             }
         }
     }
+    /**
+     * Add a value to a vector, but only if it is not already there.
+     */
+    public void addUniqueValue(String memberName, String value) {
+        if (memberName == null) {
+            throw new RuntimeException("Program logic error: a null member name"
+                +" was passed to addVectorValue.");
+        }
+        List<Element> children = getNamedChildrenVector(memberName);
+        for (Element child : children) {
+            String childVal = DOMUtils.textValueOf(child, false);
+            if (childVal.equals(value)) {
+                //value is already there, so ignore this add
+                return;
+            }
+        }
+        createChildElement(memberName, value);
+    }
 
     public Element getElement() {
         return fEle;

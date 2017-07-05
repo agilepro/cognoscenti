@@ -126,7 +126,9 @@ app.controller('myCtrl', function($scope, $http) {
                 <td width="100px">Workspace</td>
             </tr>
             <tr ng-repeat="rec in getRows()" ng-click="navigateRec(rec)" class="selectableRow">
-                <td width="16px"><img src="<%= ar.retPath %>/assets/goalstate/small{{rec.state}}.gif"> </td>
+                <td width="16px">
+                  <img ng-src="<%= ar.retPath %>/assets/goalstate/small{{rec.state}}.gif">
+                </td>
                 <td >
                     <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/task{{rec.id}}.htm">
                         {{rec.synopsis}}

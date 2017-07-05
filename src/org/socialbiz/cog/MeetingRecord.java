@@ -410,6 +410,12 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         if (input.has("attended")) {
             this.setVector("attended", constructVector(input.getJSONArray("attended")));
         }
+        if (input.has("attended_add")) {
+            this.addUniqueValue("attended", input.getString("attended_add"));
+        }
+        if (input.has("attended_remove")) {
+            this.removeVectorValue("attended", input.getString("attended_remove"));
+        }
         if (input.has("timeSlots")) {
             this.removeAllNamedChild("timeSlots");
             JSONArray timeSlotArray = input.getJSONArray("timeSlots");

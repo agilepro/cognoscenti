@@ -42,7 +42,7 @@
             </tr>
             <tr ng-repeat="act in filterActions()" ng-click="addActionToList(act)" 
                 title="click to add this action item to the list" style="cursor:pointer">
-                <td> <img src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}} </td>
+                <td> <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50}} </td>
                 <td>
                     <button ng-hide="itemHasAction(act)"
                         class="btn" >&nbsp; <i class="fa fa-arrow-right"></i></button>
@@ -62,7 +62,7 @@
           <table class="docTable">
             <tr ng-repeat="act in itemActions()" ng-click="removeActionFromList(act)" 
                 title="Click to remove this action item from the list"  style="cursor:pointer">
-                <td> <img src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50 }} </td>
+                <td> <img ng-src="../../../assets/goalstate/small{{act.state}}.gif"> {{act.synopsis | limitTo:50 }} </td>
                 <td>
                     <button 
                         class="btn"><i class="fa fa-close"></i> &nbsp;</button>

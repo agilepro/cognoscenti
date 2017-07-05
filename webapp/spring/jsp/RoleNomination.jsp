@@ -170,11 +170,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.updateRole = function(role) {
         console.log("UPDATING role: ", role);
         role.terms.forEach( function(term) {
-            term.players.forEach( function(item) {
-                if (!item.uid) {
-                    item.uid = item.name;
-                }
-            });
+            if (term.players) {
+                term.players.forEach( function(item) {
+                    if (!item.uid) {
+                        item.uid = item.name;
+                    }
+                });
+            }
         });
         var key = role.name;
         var postURL = "roleUpdate.json?op=Update";

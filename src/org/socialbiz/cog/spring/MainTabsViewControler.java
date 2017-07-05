@@ -44,7 +44,6 @@ import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
-import org.socialbiz.cog.SectionDef;
 import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
@@ -542,12 +541,14 @@ public class MainTabsViewControler extends BaseController {
              note.updateNoteFromJSON(noteInfo, ar);
 
              //enforce no private BEFORE saving the update
+             /*
              if (!ngb.getAllowPrivate()) {
                  if (note.getVisibility()!=SectionDef.PUBLIC_ACCESS) {
                      throw new Exception("This workspace belongs to a site that does not allow private topics.  "
                              +"See your site's license requirements to understand what restrictions exist there.");
                  }
              }
+             */
 
              ngw.saveFile(ar, "Updated Topic Contents");
 

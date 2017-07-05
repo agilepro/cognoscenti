@@ -514,7 +514,7 @@ function addvalue() {
               </div>
             </div>
             <div style="float: left;margin:7px">
-              <a href="task{{rec.id}}.htm"><img src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
+              <a href="task{{rec.id}}.htm"><img ng-src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
             </div>
             <div style="float: left;margin:3px;">
               <div>

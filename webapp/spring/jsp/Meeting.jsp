@@ -450,7 +450,7 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
         <tr ng-repeat="rec in allActionItems()">
             <td >
-                <img src="<%= ar.retPath %>assets/goalstate/small{{rec.state}}.gif">
+                <img ng-src="<%= ar.retPath %>assets/goalstate/small{{rec.state}}.gif">
                 <a href="task{{rec.id}}.htm">{{rec.synopsis}}</a>
                 ~
                 {{rec.description}}

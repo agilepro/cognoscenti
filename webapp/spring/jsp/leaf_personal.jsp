@@ -226,7 +226,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <br/>
                     <br/>
                     If you request to receive the digest of changes, then a summary of the changes to this workspace will
-                    be included in the period email (daily, weekly, or monthly) that you receive.
+                    be included in the period email (daily, weekly, or monthly) that you receive.  Set the notification period in your personal settings.
                     <br/>
                     <br/>
                 </td>

@@ -173,7 +173,7 @@ window.setMainPageTitle("Remote Action Item");
                 <tr>
                     <td class="labelcolumn">Due Date:</td>
                     <td style="width:20px;"></td>
-                    <td class="datacolumn" style="width:20px;"><%SectionUtil.nicePrintDate(ar.w, currentGoalRecord.getDueDate());%></td>
+                    <td class="datacolumn" style="width:20px;"><%SectionUtil.nicePrintDate(ar.w, currentGoalRecord.getDueDate(),null);%></td>
                 </tr>
 <% } %>
                 <tr><td height="20px"></td></tr>

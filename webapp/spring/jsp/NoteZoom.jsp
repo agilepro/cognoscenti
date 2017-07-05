@@ -831,7 +831,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       <span style="width:150px">Action Items:</span>
       <span ng-repeat="act in getActions()" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
            ng-click="navigateToAction(act)">
-             <img src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif"> {{act.synopsis}}
+             <img ng-src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif"> {{act.synopsis}}
       </span>
 <%if (isLoggedIn) { %>
       <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachAction()"

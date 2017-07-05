@@ -496,7 +496,7 @@ function addvalue() {
     <table ng-hide="editGoalInfo" class="spaceyTable">
         <tr>
             <td class="gridTableColummHeader">
-                <img src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif" />
+                <img ng-src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif" />
             </td>
             <td ng-click="startEdit('assignee')">
                 {{stateName[goalInfo.state]}} Action Item
@@ -696,7 +696,7 @@ function addvalue() {
             <td>
                 <div ng-repeat="sub in subGoals">
                     <a href="task{{sub.id}}.htm">
-                        <img src="<%=ar.retPath%>assets/goalstate/small{{sub.state}}.gif">
+                        <img ng-src="<%=ar.retPath%>assets/goalstate/small{{sub.state}}.gif">
                         {{sub.synopsis}} ~ {{sub.description}}
                     </a>
                 </div>

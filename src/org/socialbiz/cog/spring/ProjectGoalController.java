@@ -40,7 +40,6 @@ import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.SectionUtil;
-import org.socialbiz.cog.SharePortRecord;
 import org.socialbiz.cog.TaskArea;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
@@ -113,12 +112,10 @@ public class ProjectGoalController extends BaseController {
                 }
                 throw new Exception("Program Logic Error: logged in member should be able to see task.");
             }
+            
+            //only get here if you are logged in, and you have permission to access the task.
             request.setAttribute("taskId", taskId);
-
-            if(!ar.isLoggedIn()){
-                streamJSP(ar, "displayTaskInfo");
-            }
-            else if(goal.isPassive()) {
+            if(goal.isPassive()) {
                 streamJSP(ar, "displayPassiveGoal");
             }
             else{
