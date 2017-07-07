@@ -267,7 +267,7 @@ function standardTinyMCEOptions() {
 		// put logic here for keypress
 		},
         browser_spellcheck: true,
-        plugins: "link,stylebuttons",
+        plugins: "link stylebuttons lists",
         inline: false,
         menubar: false,
         body_class: 'leafContent',

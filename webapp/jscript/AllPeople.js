@@ -81,6 +81,10 @@ app.service('AllPeople', function($http) {
         }
     }
     AllPeople.getPeopleOutOfStorage();
+    if (!AllPeople.allPersonList.people) {
+        console.log("STRANGE: allPersonList object was corrupted somehow");
+        AllPeople.allPersonList.people = [];
+    }
     if (AllPeople.allPersonList.people.length==0) {
         AllPeople.fetchPeople();
     }
