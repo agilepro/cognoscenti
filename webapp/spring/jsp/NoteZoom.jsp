@@ -85,7 +85,7 @@ Required parameter:
 document.title="<% ar.writeJS(note.getSubject());%>";
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize', 'ngTagsInput']);
-app.controller('myCtrl', function($scope, $http, $modal) {
+app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     window.setMainPageTitle("Discussion Topic");
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
@@ -132,9 +132,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.saveEdits(['html','subject']);
         $scope.isEditing = false;
     }
-    $scope.cancelEdit = function() {
-        $scope.isEditing = false;
-    }
     $scope.saveEdits = function(fields) {
         var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
         var rec = {};
@@ -143,6 +140,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         fields.forEach( function(fieldName) {
             rec[fieldName] = $scope.noteInfo[fieldName];
         });
+        if ($scope.isEditing) {
+            rec.html = $scope.noteInfo.html;
+            rec.subject = $scope.noteInfo.subject;
+        }
         var postdata = angular.toJson(rec);
         $scope.showError=false;
         $http.post(postURL ,postdata)
@@ -210,7 +211,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.savePartial = function(recordToSave) {
-        var postURL = "updateNote.json?nid="+$scope.noteInfo.id;
+        if ($scope.isEditing) {
+            recordToSave.html = $scope.noteInfo.html;
+            recordToSave.subject = $scope.noteInfo.subject;
+        }
+        var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
         var postdata = angular.toJson(recordToSave);
         $scope.showError=false;
         $http.post(postURL ,postdata)
@@ -703,6 +708,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
     $scope.receiveTopicRecord($scope.noteInfo);
 
+    $scope.autosave = function() {
+        if ($scope.isEditing) {
+            console.log("AUTOSAVE");
+            saveRecord = {};
+            saveRecord.html = $scope.noteInfo.html;
+            saveRecord.subject = $scope.noteInfo.subject;
+            saveRecord.id = $scope.noteInfo.id;
+            saveRecord.universalid = $scope.noteInfo.universalid;
+            var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
+            var postdata = angular.toJson(saveRecord);
+            //for autosave ... don't complain about errors
+            $http.post(postURL ,postdata)
+            .error( function(data) {
+                console.log("AUTOSAVE FAILED", data);
+            });
+        }
+    }
+	$scope.promiseAutosave = $interval($scope.autosave, 15000);
+    
 	
 });
 
@@ -804,7 +828,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     	<div ui-tinymce="tinymceOptions" ng-model="noteInfo.html"></div>
         <div style="height:15px"></div>
         <button class="btn btn-primary btn-raised" ng-click="saveEdit()">Save</button>
-        <button class="btn btn-primary btn-raised" ng-click="cancelEdit()">Cancel</button>
     </div>
 <% } %>
 
@@ -886,7 +909,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <tr>
     <td></td>
     <td>
-    <div ng-show="canUpdate">
+    <div ng-show="canUpdate && !isEditing">
         <div style="margin:20px;">
             <button ng-click="openCommentCreator({},1)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
@@ -905,7 +928,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </table>
 
 
-    <div style="margin:40px;">
+    <div style="margin:40px;" ng-hide="isEditing">
       <span style="width:150px">Current subscribers:</span>
       <span ng-repeat="user in noteInfo.subscribers" class="btn btn-sm btn-default btn-raised"  style="margin:4px;">
               {{user.name}}
