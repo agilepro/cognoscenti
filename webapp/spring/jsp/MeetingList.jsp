@@ -180,11 +180,22 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="btn-toolbar primary-toolbar">
-  <a class="btn btn-default btn-raised" href="agendaBacklog.htm">
-    <i class="fa fa-list-alt material-icons"></i> Agenda Backlog</a>
-</div>
 
+<div class="btn-toolbar primary-toolbar">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Create a new meeting record"
+              href="#" ng-click="newMeeting.meetingType=1;showInput=true" ><i class="fa fa-plus"></i>New Meeting</a></li>
+          <li role="presentation"><a role="menuitem" 
+              title="Access agenda items removed from other meetings"
+              href="#agendaBacklog.htm" ><i class="fa fa-list-alt material-icons"></i> Agenda Backlog</a></li>
+          
+        </ul>
+      </span>
+</div>
 
     <div id="NewMeeting" class="well" ng-show="showInput" ng-cloak>
       <form class="horizontal-form">
@@ -293,7 +304,4 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
     </table>
 
-<a class="btn btn-primary btn-fab primary-fab" title="Create new Meeting" href="#" ng-click="newMeeting.meetingType=1;showInput=true">
-  <i class="fa fa-plus material-icons"></i>
-</a>
 </div>
