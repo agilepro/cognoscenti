@@ -19,7 +19,8 @@
     JSONObject userInfo = uProf.getFullJSON();
 
     String photoSrc = ar.retPath+"assets/photoThumbnail.gif";
-    if(uProf.getImage().length() > 0){
+    String profImage = uProf.getImage();
+    if(profImage!=null && profImage.length() > 0){
         photoSrc = ar.retPath+"users/"+uProf.getImage();
     }
 

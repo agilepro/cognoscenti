@@ -1,6 +1,7 @@
 <!-- BEGIN ErrorPanel -->
     <script type="text/javascript">
     function errorPanelHandler($scope, errorData) {
+        console.log("ERROR PANEL", errorData);
         if (errorData.exception) {
             var exception = errorData.exception;
             $scope.errorMsgs = exception.msgs;

@@ -618,7 +618,7 @@ public class UserController extends BaseController {
             UserProfile userBeingEdited = userManager.findUserByAnyIdOrFail(userKey);
             UserProfile userEditing = ar.getUserProfile();
             
-            if (userEditing.getKey().equals(userBeingEdited.getKey())) {
+            if (!userEditing.getKey().equals(userBeingEdited.getKey())) {
                 if (!ar.isSuperAdmin()) {
                     throw new Exception("User "+userEditing.getName()+" is not allowed to edit the profile of user "+userBeingEdited.getName());
                 }

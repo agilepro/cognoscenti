@@ -51,6 +51,15 @@ app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Edit Your Profile");
     $scope.profile = <%userObj.write(out,2,4);%>;
     $scope.timeZoneList = <%timeZoneList.write(out,2,4);%>;
+
+    $scope.showError = false;
+    $scope.errorMsg = "";
+    $scope.errorTrace = "";
+    $scope.showTrace = false;
+    $scope.reportError = function(serverErr) {
+        errorPanelHandler($scope, serverErr);
+    };
+
     
     $scope.updatePersonal = function() {
         var newProfile = {};
@@ -65,7 +74,8 @@ app.controller('myCtrl', function($scope, $http) {
         var postURL = "updateProfile.json";
         $http.post(postURL, JSON.stringify(newProfile))
         .success( function(data) {
-            $scope.profile = data;
+            //$scope.profile = data;
+            window.location='userSettings.htm';
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -165,6 +175,9 @@ app.controller('myCtrl', function($scope, $http) {
 
 
 <div ng-app="myApp" ng-controller="myCtrl" id="myDomElement">
+
+<%@include file="ErrorPanel.jsp"%>
+
 
     <form id="upload_user" action="uploadImage.form" method="post" enctype="multipart/form-data" >
         <input type="hidden" name="action" id="actionUploadPhoto" value='' />
