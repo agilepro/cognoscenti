@@ -458,6 +458,16 @@ function addvalue() {
 
 </script>
 
+<style>
+.clickable:hover {
+    cursor:pointer;
+    background-color:#DDEEFF;
+}
+.clickable {
+    cursor:pointer;
+}
+</style>
+
 <script src="../../../jscript/AllPeople.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -494,17 +504,19 @@ function addvalue() {
 </style>    
 
     <table ng-hide="editGoalInfo" class="spaceyTable">
-        <tr>
+        <tr class="clickable" ng-click="startEdit('assignee')" 
+            title="Click here to update the status of this action item">
             <td class="gridTableColummHeader">
                 <img ng-src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif" />
             </td>
-            <td ng-click="startEdit('assignee')">
+            <td>
                 {{stateName[goalInfo.state]}} Action Item
             </td>
         </tr>
-        <tr>
+        <tr class="clickable" ng-click="startEdit('details')" 
+            title="Click here to update the description of this action item">
             <td class="gridTableColummHeader">Summary:</td>
-            <td ng-click="startEdit('details')">
+            <td>
                 <b>{{goalInfo.synopsis}}</b>
                 ~ {{goalInfo.description}}
                 <span ng-repeat="label in getGoalLabels(goalInfo)">
@@ -538,10 +550,13 @@ function addvalue() {
                    Hide</button>
             </td>
         </tr>
-        <tr>
+        <tr class="clickable" ng-click="startEdit('status')" 
+            title="Click here to update the status of this action item">
             <td class="gridTableColummHeader">Status:</td>
-            <td ng-click="startEdit('status')">
+            <td>
                 {{goalInfo.status}}
+                <span ng-hide="goalInfo.status" class="instruction">
+                    Click to record status</span>
             </td>
         </tr>
         <tr>
