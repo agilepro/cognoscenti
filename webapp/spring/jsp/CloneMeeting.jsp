@@ -2,6 +2,7 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@ include file="functions.jsp"
 %><%@page import="org.socialbiz.cog.MeetingRecord"
+%><%@page import="java.util.Calendar"
 %><%
 
     String go = ar.getCompleteURL();
@@ -12,13 +13,31 @@
     ar.setPageAccessLevels(ngw);
     NGBook ngb = ngw.getSite();
 
-    String meetId          = ar.reqParam("id");
-    MeetingRecord oneRef   = ngw.findMeeting(meetId);
-    JSONObject meetingInfo = oneRef.getFullJSON(ar, ngw);
-    
+    JSONObject meetingInfo = null;
+    String meetId          = ar.defParam("id", null);
+    String pageTitle = "Clone Meeting";
+    long proposedStartTime = 0;
+    if (meetId == null) {
+        pageTitle = "Create Meeting";
+        meetingInfo = new JSONObject();
+        //make it for top of next hour
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.roll(Calendar.HOUR_OF_DAY, 1);
+        proposedStartTime = cal.getTime().getTime();
+        meetingInfo.put("agenda", new JSONArray());
+    }
+    else {
+        MeetingRecord oneRef   = ngw.findMeeting(meetId);
+        meetingInfo = oneRef.getFullJSON(ar, ngw);
+        //make it for 7 days later
+        proposedStartTime =  meetingInfo.getLong("startTime") + 7L*24L*3600000;
+    }
+    //meetingInfo.put("id","~new~");
 
-    //make it for 7 days later
-    meetingInfo.put("startTime",  meetingInfo.getLong("startTime") + 7L*24L*3600000 );
+    meetingInfo.put("startTime", proposedStartTime);
 
 %>
 <style>
@@ -38,7 +57,7 @@
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ui.bootstrap.datetimepicker']);
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Clone Meeting");
+    window.setMainPageTitle("<%=pageTitle%>");
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
 
     var n = new Date().getTimezoneOffset();
@@ -92,6 +111,15 @@ app.controller('myCtrl', function($scope, $http) {
     }
 
     $scope.createMeeting = function() {
+        if (!$scope.meeting.name) {
+            alert("Please enter a name for the meeting");
+            return;
+        }
+        if (!$scope.meeting.meetingInfo) {
+            alert("Please a short description for the meeting");
+            return;
+        }
+        
         var postURL = "meetingCreate.json";
         var minutesFromNow = Math.floor(($scope.meeting.startTime - (new Date()).getTime()) / 60000);
         if (minutesFromNow<0) {
@@ -251,38 +279,40 @@ function GetFirstHundredNoHtml(input) {
                 </div>
             </div>
           </fieldset>
-          <!-- Table MEETING AGENDA ITEMS Begin -->
-          <h3>Cloning Agenda Items</h3>
-          <div class="form-group">
-          <table class="table table-striped table-hover" width="100%">
-              <tr>
-                  <th width="30px" title="Check this to include a copy of this agenda item in the new meeting">Clone</th>
-                  <th width="200px">Agenda Item</th>
-                  <th width="200px">Description</th>
-                  <th width="50px" title="Expected duration of the agenda item in minutes">Duration</th>
-              </tr>
-              <tr ng-repeat="rec in sortItems()">
-                  <td class="actions">
-                    <div class="checkbox">
-                      <label title="Check this to include a copy of this agenda item in the new meeting">
-                        <input type="checkbox" ng-model="rec.selected"><span class="checkbox-material"></span>
-                      </label>
-                    </div>
-                  </td>
-                  <td><b><a href="agendaItem.htm?id={{meeting.id}}&aid={{rec.id}}">{{rec.subject}}</a>
-                          <span ng-show="rec.topicLink">(Linked Topic)
-                          </span>
-                      </b>
+          <div ng-show="meeting.agenda.length>0">
+              <!-- Table MEETING AGENDA ITEMS Begin -->
+              <h3>Cloning Agenda Items</h3>
+              <div class="form-group">
+              <table class="table table-striped table-hover" width="100%">
+                  <tr>
+                      <th width="30px" title="Check this to include a copy of this agenda item in the new meeting">Clone</th>
+                      <th width="200px">Agenda Item</th>
+                      <th width="200px">Description</th>
+                      <th width="50px" title="Expected duration of the agenda item in minutes">Duration</th>
+                  </tr>
+                  <tr ng-repeat="rec in sortItems()">
+                      <td class="actions">
+                        <div class="checkbox">
+                          <label title="Check this to include a copy of this agenda item in the new meeting">
+                            <input type="checkbox" ng-model="rec.selected"><span class="checkbox-material"></span>
+                          </label>
+                        </div>
                       </td>
-                  <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>
-                  <td title="Expected duration of the agenda item in minutes">{{rec.duration}}</td>
-              </tr>
-          </table>
+                      <td><b><a href="agendaItem.htm?id={{meeting.id}}&aid={{rec.id}}">{{rec.subject}}</a>
+                              <span ng-show="rec.topicLink">(Linked Topic)
+                              </span>
+                          </b>
+                          </td>
+                      <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>
+                      <td title="Expected duration of the agenda item in minutes">{{rec.duration}}</td>
+                  </tr>
+              </table>
+          </div>
         </div>
           <!-- Form Control BUTTONS Begin -->
           <div class="form-group text-right">
             <button type="button" class="btn btn-warning btn-raised" onclick="history.back();">Cancel</button>
-            <button type="submit" class="btn btn-primary btn-raised"  ng-click="createMeeting()">Clone Meeting</button>
+            <button type="submit" class="btn btn-primary btn-raised"  ng-click="createMeeting()"><%=pageTitle%></button>
           </div>
         </form>
       </div>

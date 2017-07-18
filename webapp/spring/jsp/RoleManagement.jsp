@@ -149,6 +149,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.deleteRole = function(role) {
         var key = role.name;
+        if (role.name == "Members" || role.name == "Administrators" ) {
+            alert("The role "+role.name+" is required and can not be deleted.");
+            return;
+        }
         var ok = confirm("Are you sure you want to delete: "+key);
         var postURL = "roleUpdate.json?op=Delete";
         var postdata = angular.toJson(role);
@@ -292,22 +296,39 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     <p><i>Add people to the project by clicking on any row below and entering their email address at in the pop up prompt.</i></p>
     <table class="spacey table">
-        <tr ng-repeat="role in allRoles" 
-            class="generalContent">
-            <td  ng-click="openRoleModal(role)">
-                <button class="btn btn-sm" style="color:black;background-color:{{role.color}}">
-                    {{role.name}}</button>
+        <tr ng-repeat="role in allRoles">
+            <td>
+              <div class="dropdown">
+                <button class="dropdown-toggle specCaretBtn"
+                        type="button" id="menu4" data-toggle="dropdown">
+                    <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu4">
+                  <li role="presentation"><a role="menuitem" 
+                      ng-click="openRoleModal(role)">Change Players</a></li>
+                  <li role="presentation"><a role="menuitem" 
+                      href="roleDefine.htm?role={{role.name}}">Define Role</a></li>
+                  <li role="presentation" class="divider"></li>
+                  <li role="presentation"><a role="menuitem" 
+                      ng-click="deleteRole(role)">Delete Role</a></li>
+                </ul>
+              </div>
+            </td>
+            <td ng-click="openRoleModal(role)">
+                <div style="color:black;background-color:{{role.color}};padding:5px">
+                    {{role.name}}</div>
             </td>
             <td style="width:200px">
                 <span ng-repeat="player in role.players">
-                  <span class="dropdown">
+                  <span class="dropdown" >
                     <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(player)}}" 
-                         style="width:32px;height:32px" title="{{player.name}} - {{player.uid}}">
+                    <img class="img-circle" 
+                         ng-src="<%=ar.retPath%>users/{{imageName(player)}}" 
+                         style="width:32px;height:32px" 
+                         title="{{player.name}} - {{player.uid}}">
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                       <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                          tabindex="-1" style="text-decoration: none;text-align:center">
                           {{player.name}}<br/>{{player.uid}}</a></li>
                       <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                           ng-click="navigateToUser(player)">
@@ -337,6 +358,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     <button class="btn btn-primary btn-raised" ng-click="openRoleModal(null)" style="float:right;">
         <span class="fa fa-plus"></span> Create Role</button>
+        
+    <div style="height:150px"></div>
 
 </div>
 <script src="<%=ar.retPath%>templates/RoleModalCtrl.js"></script>

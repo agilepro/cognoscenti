@@ -405,6 +405,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.editHead=false;
             $scope.editDesc=false;
             $scope.extractPeopleSituation();
+            $scope.determineIfAttending();
         });
         promise.error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -885,6 +886,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         fakeMeeting.attended_add = loginInfo.userId;
         $scope.putGetMeetingInfo(fakeMeeting);
     }
+    $scope.determineIfAttending = function() {
+        $scope.isInAttendees = false;
+        if ($scope.meeting.attended) {
+            $scope.meeting.attended.forEach( function(person) {
+                if (person == loginInfo.userId) {
+                    $scope.isInAttendees = true;
+                }
+            });
+        }
+    }    
     $scope.addAttendee = function() {
         if (!$scope.newAttendee) {
             return;

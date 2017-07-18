@@ -74,14 +74,12 @@
              </td>
         </tr>
         <tr>
-             <td class="gridTableColummHeader"></td>
-             <td colspan="2">
-                <button ng-click="deleteAndClose()" class="btn btn-primary btn-raised">Delete Role</button> &nbsp; &nbsp; 
-                <button ng-click="cancel()" class="btn btn-default btn-raised">Close</button> &nbsp; &nbsp; 
-                &nbsp;  
-                &nbsp; &nbsp; 
-                <button ng-click="defineRole()" class="btn btn-info btn-raised">Define Role</button>
-             </td>
+            <td class="gridTableColummHeader"></td>
+            <td colspan="2">
+                <div style="float: right;">
+                    <button ng-click="cancel()" class="btn btn-default btn-raised">Close</button>
+                </div>
+            </td>
         </tr>
     </table>
     <table class="spaceyTable" ng-show="isNew">

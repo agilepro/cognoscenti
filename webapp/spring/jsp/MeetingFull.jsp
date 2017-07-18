@@ -543,10 +543,15 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                    ng-click="removeAttendee(person)">{{person.name}}</button>
         </div>
         <div class="form-inline form-group" style="margin:20px">
-            <button class="btn btn-primary btn-raised" ng-click="addYouself()">Add Yourself</button> &nbsp;
-            <button class="btn btn-primary btn-raised" ng-click="addAttendee()">Add By Email Address: </button>
-            <input type="text" ng-model="newAttendee" class="form-control" placeholder="Enter email address"
+            <button class="btn btn-primary btn-raised" ng-click="addYouself()" 
+                    ng-hide="isInAttendees">Add Yourself</button> &nbsp;
+            Email Address: 
+            <input type="text" ng-model="newAttendee" class="form-control" 
+               placeholder="Enter email address" style="margin: 10px"
                typeahead="person.uid as person.name for person in getPeople($viewValue) | limitTo:12">
+            <button class="btn btn-primary btn-raised" ng-click="addAttendee()"
+                    ng-show="newAttendee">
+               Add It </button>
         </div>
       </div>
     </div>

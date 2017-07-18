@@ -6,11 +6,14 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
 
+    $scope.reportError = function(data) {
+        console.log("ERROR in RoleModel Dialog: ", data);
+    }
     
     $scope.isNew=isNew;
 
     $scope.colors = ["salmon","khaki","beige","lightgreen","orange","bisque","tomato","aqua","orchid",
-                     "peachpuff","powderblue","lightskyblue"];
+                     "peachpuff","powderblue","lightskyblue","white"];
     
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
@@ -67,6 +70,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     $scope.refreshRole = function() {
         var postURL = "roleUpdate.json?op=Update";
         var postdata = angular.toJson({name:roleInfo.name});
+        console.log("calling: ",postURL);
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.parentScope.cleanDuplicates(data);
@@ -78,6 +82,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         });
     }
     if (!isNew) {
+        console.log("refreshing role: ",roleInfo);
         $scope.refreshRole();
     }
     

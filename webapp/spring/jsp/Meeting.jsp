@@ -378,7 +378,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <td width="50px">Duration</td>
                 </tr>
                 <tr ng-repeat="bi in backlog.agenda">
-                    <td><button class="btn btn-sm btn-primary btn-raised" ng-click="acquire(bi)" title="Move this item to the meeting">Move</button></td>
+                    <td><button class="dropdown-toggle specCaretBtn" ng-click="acquire(bi)" title="Move this item to the meeting">Move</button></td>
                     <td>{{bi.subject}}</td>
                     <td>{{bi.desc|limitTo:50}}</td>
                     <td>{{bi.duration}}</td>
@@ -399,7 +399,7 @@ app.controller('myCtrl', function($scope, $http) {
         <tr ng-repeat="rec in sortItems()">
             <td>
               <div class="dropdown">
-                <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                <button class="dropdown-toggle specCaretBtn" type="button" id="menu1" data-toggle="dropdown">
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation"><a role="menuitem" tabindex="-1"
@@ -422,7 +422,7 @@ app.controller('myCtrl', function($scope, $http) {
         <tr>
             <td>
               <div class="dropdown">
-                <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                <button class="dropdown-toggle specCaretBtn" type="button" id="menu1" data-toggle="dropdown">
                 <span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation"><a role="menuitem" tabindex="-1"

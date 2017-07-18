@@ -36,6 +36,7 @@ app.controller('myCtrl', function($scope, $http) {
         state:0,
         reminderTime:60
     };
+    $scope.isInAttendance = false;
 
     var n = new Date().getTimezoneOffset();
     var tzNeg = n<0;
@@ -74,7 +75,6 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.datePickOpen = true;
     };
 
-    $scope.showInput = false;
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
@@ -109,33 +109,6 @@ app.controller('myCtrl', function($scope, $http) {
         });
     };
 
-    $scope.createRow = function() {
-        if ($scope.newMeeting.startTime < new Date().getTime()) {
-            if (!confirm("Is that the right start time?\nAre you sure you want to create a meeting in the past?")) {
-                return;
-            }
-        }
-        var postURL = "meetingCreate.json";
-        var postdata = angular.toJson($scope.newMeeting);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-
-            $scope.meetings.push(data);
-            $scope.newMeeting = {name:"",duration:60,startTime:0,id:""};
-            $scope.showInput=false;
-            $scope.sortItems();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
-
-    $scope.sortItems = function() {
-        $scope.meetings.sort( function(a, b){
-            return b.startTime - a.startTime;
-        } );
-    };
 
 
     $scope.meetingStateName = function(val) {
@@ -169,7 +142,7 @@ app.controller('myCtrl', function($scope, $http) {
         }
         return "Unknown";
     }
-
+    
 });
 </script>
 
@@ -188,88 +161,14 @@ app.controller('myCtrl', function($scope, $http) {
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Create a new meeting record"
-              href="#" ng-click="newMeeting.meetingType=1;showInput=true" ><i class="fa fa-plus"></i>New Meeting</a></li>
+              href="cloneMeeting.htm" ><i class="fa fa-plus"></i>New Meeting</a></li>
           <li role="presentation"><a role="menuitem" 
               title="Access agenda items removed from other meetings"
-              href="#agendaBacklog.htm" ><i class="fa fa-list-alt material-icons"></i> Agenda Backlog</a></li>
+              href="agendaBacklog.htm" ><i class="fa fa-list-alt material-icons"></i> Agenda Backlog</a></li>
           
         </ul>
       </span>
 </div>
-
-    <div id="NewMeeting" class="well" ng-show="showInput" ng-cloak>
-      <form class="horizontal-form">
-        <fieldset>
-          <!-- Form Control NAME Begin -->
-          <div class="form-group">
-            <label class="col-md-2 control-label">Name</label>
-            <div class="col-md-10">
-              <input type="text" class="form-control" ng-model="newMeeting.name"/>
-            </div>
-          </div>
-          <!-- Form Control DATE Begin -->
-          <div class="form-group">
-              <label class="col-md-2 control-label">
-                Date
-              </label>
-              <div class="col-md-10 container">
-                <span class="form-control">
-                  <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
-                    {{ newMeeting.startTime | date:"dd-MMM-yyyy '&nbsp;at&nbsp;' HH:mm 'GMT'Z" }}
-                  </a>
-                  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <datetimepicker data-ng-model="newMeeting.startTime"
-                         data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
-                         data-on-set-time="onTimeSet(newDate)"></datetimepicker>
-                  </ul>
-                </span>
-              </div>
-          </div>
-          <!-- Form Control DATE Begin -->
-          <div class="form-group">
-              <label class="col-md-2 control-label">
-                Reminder
-              </label>
-              <div class="col-md-10 form-inline">
-                <input type="text" class="form-control" ng-model="newMeeting.reminderTime"  style="width:75px"/>
-                Minutes before meeting =  
-                {{ newMeeting.startTime-(newMeeting.reminderTime*60000) | date:"dd-MMM-yyyy '&nbsp;at&nbsp;' HH:mm" }}
-              </div>
-          </div>
-          <!-- Form Control TYPE Begin -->
-          <div class="form-group">
-            <label class="col-md-2 control-label">Type</label>
-            <div class="col-md-10">
-              <div class="radio radio-primary">
-                <label>
-                  <input type="radio" ng-model="newMeeting.meetingType" value="1"
-                      class="form-control">
-                      <span class="circle"></span>
-                      <span class="check"></span>
-                      Circle Meeting
-                </label>
-                <label>
-                  <input type="radio" ng-model="newMeeting.meetingType" value="2"
-                      class="form-control">
-                      <span class="circle"></span>
-                      <span class="check"></span>
-                      Operational Meeting
-                </label>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-        <!-- Form Control BUTTONS Begin -->
-        <div class="form-group text-right">
-          <button type="button" class="btn btn-warning btn-raised" ng-click="showInput=false">
-              Cancel</button>
-          <button type="submit" class="btn btn-primary btn-raised"  ng-click="createRow()" 
-              ng-show="newMeeting.name">
-              Create Meeting</button>
-        </div>
-      </form>
-    </div>
-
 
     <table class="table table-striped table-hover" width="100%">
         <tr class="gridTableHeader">
@@ -281,7 +180,7 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
         <tr ng-repeat="rec in meetings">
             <td class="actions">
-              <a role="menuitem" tabindex="-1" title="Edit Meeting" href="meeting.htm?id={{rec.id}}">
+              <a role="menuitem" tabindex="-1" title="Edit Meeting" href="meetingFull.htm?id={{rec.id}}">
                 <button type="button" name="edit" class='btn btn-primary'>
                     <span class="fa fa-edit"></span>
                 </button>
