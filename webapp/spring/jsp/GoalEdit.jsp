@@ -559,7 +559,7 @@ function addvalue() {
                     Click to record status</span>
             </td>
         </tr>
-        <tr>
+        <tr title="Red-Amber-Green is a high-level status saying how things are going generally">
             <td class="gridTableColummHeader">RAG:</td>
             <td>
                 <span>
@@ -578,10 +578,12 @@ function addvalue() {
                 </span>
             </td>
         </tr>
-        <tr>
+        <tr class="clickable" ng-click="startEdit('status')" 
+            ng-show="goalInfo.duedate>0 || goalInfo.startdate>0 || goalInfo.enddate>0"
+            title="Click here to update the dates of this action item">
             <td ></td>
             <td >
-                <span ng-show="goalInfo.duedate>0" ng-click="startEdit('status')">   
+                <span ng-show="goalInfo.duedate>0">   
                     <b>Due:</b>   
                     {{goalInfo.duedate|date}}   &nbsp; &nbsp; </span>
                 <span ng-show="goalInfo.startdate>0" ng-click="startEdit('details')"> 
