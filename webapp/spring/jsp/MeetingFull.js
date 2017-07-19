@@ -14,8 +14,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.backlogId = embeddedData.backlogId;
     
     //set to timestamp if trouble getting new templates to load
-    var templateCacheDefeater = "";
-    //var templateCacheDefeater = "?t="+(new Date().getTime());
+    //var templateCacheDefeater = "";
+    var templateCacheDefeater = "?t="+(new Date().getTime());
 
     var n = new Date().getTimezoneOffset();
     var tzNeg = n<0;
@@ -80,13 +80,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.showItemMap = {};
     $scope.editMeetingInfo = false;
     $scope.editMeetingDesc = false;
-    $scope.editItemDetailsMap = {};
     $scope.editItemDescMap = {};
 
     $scope.stopEditing =  function() {
         $scope.editMeetingInfo = false;
         $scope.editMeetingDesc = false;
-        $scope.editItemDetailsMap = {};
         $scope.editItemDescMap = {};
     }
 
@@ -308,11 +306,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.savePendingEdits();
         $scope.editMeetingDesc=true
     }
-    $scope.startItemDetailEdit = function(item) {
-        $scope.savePendingEdits();
-        $scope.editItemDetailsMap[item.id]=true;
-        $scope.showItemMap[item.id]=true;
-    }
     $scope.savePendingEdits = function() {
         if ($scope.editMeetingDesc) {
             $scope.savePartialMeeting(['meetingInfo']);
@@ -322,12 +315,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.savePartialMeeting(['name','startTime','targetRole','duration','reminderTime','meetingType','reminderSent']);
             $scope.editMeetingInfo = false;
         }
-        $scope.meeting.agenda.forEach( function(item) {
-            if ($scope.editItemDetailsMap[item.id]) {
-                $scope.saveAgendaItemParts(item, ['subject','duration','presenters','topicLink','isSpacer']);
-                $scope.editItemDetailsMap[item.id] = false;
-            }
-        });
     }
 
     $scope.changeMeetingState = function(newState) {
@@ -427,7 +414,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             actionItems:[]
         };
         $scope.meeting.agenda.push(newAgenda);
-        $scope.startItemDetailEdit(newAgenda);
+        $scope.openAgenda(newAgenda);
     };
 
 
@@ -962,11 +949,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
           size: 'lg',
           backdrop: "static",
           resolve: {
-            item: function () {
-              return item;
-            },
             goal: function () {
               return goal;
+            },
+            taskAreaList: function () {
+              return [];
+            },
+            allLabels: function () {
+              return $scope.allLabels;
+            },
+            startMode: function () {
+              return 'status';
             }
           }
         });
@@ -1238,6 +1231,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             templateUrl: embeddedData.retPath+"templates/DecisionModal.html"+templateCacheDefeater,
             controller: 'DecisionModalCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
                 decision: function () {
                     return JSON.parse(JSON.stringify(newDecision));
@@ -1294,6 +1288,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             templateUrl: embeddedData.retPath+"templates/AttachDocument.html"+templateCacheDefeater,
             controller: 'AttachDocumentCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
                 docList: function () {
                     return JSON.parse(JSON.stringify(item.docList));
@@ -1324,6 +1319,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             templateUrl: embeddedData.retPath+"templates/AttachTopic.html"+templateCacheDefeater,
             controller: 'AttachTopicCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
                 selectedTopic: function () {
                     return item.topicLink;
@@ -1355,6 +1351,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             templateUrl: embeddedData.retPath+"templates/AttachAction.html"+templateCacheDefeater,
             controller: 'AttachActionCtrl',
             size: 'lg',
+            backdrop: "static",
             resolve: {
                 selectedActions: function () {
                     return JSON.parse(JSON.stringify(item.actionItems));
@@ -1374,5 +1371,30 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
 
+    $scope.openAgenda = function (agendaItem) {
+
+        var agendaModalInstance = $modal.open({
+            animation: true,
+            templateUrl: embeddedData.retPath+"templates/Agenda.html"+templateCacheDefeater,
+            controller: 'AgendaCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                agendaItem: function () {
+                    return JSON.parse(JSON.stringify(agendaItem));
+                }
+            }
+        });
+
+        agendaModalInstance.result
+        .then(function (changedAgendaItem) {
+            $scope.saveAgendaItemParts(changedAgendaItem, 
+                ["subject", "desc","duration","isSpacer","presenters"]);
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+    
+    
 });
 

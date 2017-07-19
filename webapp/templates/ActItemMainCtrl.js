@@ -3,7 +3,7 @@ app.controller('ActItemMainCtrl', function ($scope, $modalInstance, goal, allLab
     $scope.goal = goal;
     $scope.allLabels = allLabels;
     $scope.foofighters = ["fee","fie","foh", "fum"];
-    console.log("goal state is: ", goal.state);
+    console.log("GGoal state is: ", goal.state);
     $scope.getTaskAreas = function() {
         console.log("getting TaskAreas", $scope.goal)
         var getURL = "taskAreas.json";

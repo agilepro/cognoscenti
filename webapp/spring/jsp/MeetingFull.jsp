@@ -13,8 +13,8 @@
     MeetingRecord mRec     = ngw.findMeeting(meetId);
 
     //comment or uncomment depending on whether you are in development testing mode
-    String templateCacheDefeater = "";
-    //String templateCacheDefeater = "?t="+System.currentTimeMillis();
+    //String templateCacheDefeater = "";
+    String templateCacheDefeater = "?t="+System.currentTimeMillis();
 
 
     if (!AccessControl.canAccessMeeting(ar, ngw, mRec)) {
@@ -618,7 +618,9 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                       <li role="presentation">
-                          <a role="menuitem" ng-click="startItemDetailEdit(item)"><i class="fa fa-cogs"></i> Item Settings</a></li>
+                          <a role="menuitem" ng-click="openAgenda(item)">
+                          <i class="fa fa-cogs"></i>
+                          Edit Agenda Item</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i> Move Up</a></li>
                       <li role="presentation">
@@ -631,22 +633,6 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                       - {{item.scheduleEnd | date: 'HH:mm'}} </i>
                 </span>
         </div>
-          <div ng-show="editItemDetailsMap[item.id]" class="well" style="margin:20px">
-            <div class="form-inline form-group" ng-hide="item.topicLink">
-              Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"
-                           placeholder="Enter Agenda Item Name"/>
-                    <input type="checkbox"  ng-model="item.isSpacer"
-                             class="form-control" style="width:50px;"/>
-                    Break Time
-            </div>
-            <div class="form-inline form-group">
-              Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>
-            </div>
-            <div class="form-inline form-group">
-              <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
-              <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
-            </div>
-          </div>
       </div>
     </div>
     <div class="agendaItemFull"  ng-hide="item.isSpacer">
@@ -667,17 +653,15 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                       <li role="presentation">
-                          <a role="menuitem" ng-click="startItemDetailEdit(item)">
+                          <a role="menuitem" ng-click="openAgenda(item)">
                           <i class="fa fa-cogs"></i>
-                          Item Settings</a></li>
+                          Edit Agenda Item</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i>
                              Move Up</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i>
                              Move Down</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="startEditLockDescription(item)"><i class="fa fa-pencil-square-o"></i>   Edit Description</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i>
                              Docs Add/Remove</a></li>
@@ -715,47 +699,6 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
             <div>
                 <i ng-click="startItemDetailEdit(item)">
                 {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
-            </div>
-          </div>
-
-          <div ng-show="editItemDetailsMap[item.id]" class="well" style="margin:20px">
-            <div class="form-inline form-group">
-                Linked Topic: <button ng-repeat="topic in itemTopics(item)" ng-click="visitTopic(item)"
-                    class="btn btn-sm btn-default btn-raised" placeholder="Enter Agenda Item Name">
-                    {{topic.subject}}</button>
-                <button ng-click="openAttachTopics(item)" class="btn btn-primary btn-raised">
-                    <span ng-hide="item.topicLink">Set</span>
-                    <span ng-show="item.topicLink">Change</span> Topic
-                </button>
-            </div>
-            <div class="form-inline form-group" ng-hide="item.topicLink">
-              Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"
-                           placeholder="Enter Agenda Item Name"/>
-                    <input type="checkbox"  ng-model="item.isSpacer"
-                             class="form-control" style="width:50px;"/>
-                    Break Time
-            </div>
-            <div class="form-inline form-group">
-                <tags-input ng-model="item.presenterList"
-                          placeholder="Enter user name or id"
-                          display-property="name" key-property="uid"
-                          on-tag-clicked="toggleSelectedPerson($tag)">
-                    <auto-complete source="getPeople($query)"></auto-complete>
-                </tags-input>
-            </div>
-            <div class="form-inline form-group" ng-show="selectedPersonShow">
-                   for <b>{{selectedPerson.name}}</b>:
-                   <button ng-click="navigateToUser(selectedPerson)" class="btn btn-info">
-                       Visit Profile</button>
-                   <button ng-click="selectedPersonShow=false" class="btn">
-                       Hide</button>
-            </div>
-            <div class="form-inline form-group">
-              Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>
-            </div>
-            <div class="form-inline form-group">
-              <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
-              <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
             </div>
           </div>
         </td>
@@ -936,3 +879,4 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachTopicCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/AgendaCtrl.js"></script>
