@@ -941,7 +941,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
 
 
-    $scope.openModalActionItem = function (item, goal) {
+    $scope.openModalActionItem = function (item, goal, start) {
+        
+        if (!start) {
+            start = 'status';
+        }
 
         var modalInstance = $modal.open({
           animation: false,
@@ -960,7 +964,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               return $scope.allLabels;
             },
             startMode: function () {
-              return 'status';
+              return start;
             }
           }
         });

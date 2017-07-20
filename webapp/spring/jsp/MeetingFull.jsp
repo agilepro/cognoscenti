@@ -333,47 +333,48 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
       <div ng-hide="editMeetingInfo || editMeetingDesc">
         <table class="table">
           <col width="130px">
-          <col width="*">
           <col width="20px">
+          <col width="*">
           <tr>
             <td>Scheduled Time:</td>
+            <td>
+              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
+            </td>
             <td>
               {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
               &nbsp &nbsp
               <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
                   <i class="fa fa-calendar"></i></a>
             </td>
-            <td>
-              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
-            </td>
           </tr>
           <tr>
             <td>Called By:</td>
+            <td></td>
             <td>
               {{meeting.owner}}
             </td>
-            <td></td>
           </tr>
           <tr>
             <td>Target Role:</td>
             <td>
-              <a href="roleManagement.htm">{{meeting.targetRole}}</a>
+              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
             </td>
             <td>
-              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
+              <a href="roleManagement.htm">{{meeting.targetRole}}</a>
             </td>
           </tr>
           <tr>
             <td>Description:</td>
             <td>
-              <div ng-bind-html="meeting.meetingInfo"></div>
+              <i class="fa fa-edit" ng-click="editMeetingDesc=true"></i>
             </td>
             <td>
-              <i class="fa fa-edit" ng-click="editMeetingDesc=true"></i>
+              <div ng-bind-html="meeting.meetingInfo"></div>
             </td>
           </tr>
           <tr ng-show="isCompleted()">
             <td>Minutes:</td>
+            <td></td>
             <td>
                 <div ng-show="minutesDraft && meeting.minutesId">
                    Draft:
@@ -403,18 +404,18 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                    </span>
                 </div>
             </td>
-            <td></td>
           </tr>
           <tr ng-show="previousMeeting.id">
             <td>Previous Meeting:</td>
+            <td></td>
             <td>
               <a href="meetingFull.htm?id={{previousMeeting.id}}">
                 {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}</a>
             </td>
-            <td></td>
           </tr>
           <tr ng-show="previousMeeting.minutesId">
             <td>Previous Minutes:</td>
+            <td></td>
             <td>
                 <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                      ng-click="navigateToTopic(previousMeeting.minutesLocalId)"
@@ -422,7 +423,6 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                      Previous Minutes
                 </span>
             </td>
-            <td></td>
           </tr>
           <tr ng-show="isCompleted()">
             <td>Attendees:</td>
@@ -786,11 +786,9 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                       <li role="presentation"><a role="menuitem"
-                          ng-click="changeGoalState(goal, 'good')">Good</a></li>
+                          ng-click="openModalActionItem(item,goal)">Edit Quick</a></li>
                       <li role="presentation"><a role="menuitem"
-                          ng-click="changeGoalState(goal, 'ok')">Warning</a></li>
-                      <li role="presentation"><a role="menuitem"
-                          ng-click="changeGoalState(goal, 'bad')">Trouble</a></li>
+                          href="task{{goal.id}}.htm">Edit Task</a></li>
                       <li role="presentation" class="divider"></li>
                       <li role="presentation"><a role="menuitem"
                           ng-click="removeGoalFromItem(item, goal)">Remove Action Item</a></li>
@@ -802,13 +800,10 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                 <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif">
               </a>
               </td>
-              <td style="max-width:300px;">
-              <a href="task{{goal.id}}.htm" >
-                {{goal.synopsis}}
-              </a>
-               ~ {{goal.description}}
+              <td style="max-width:300px;" ng-click="openModalActionItem(item,goal,'details')">
+              <b>{{goal.synopsis}}</b> ~ {{goal.description}}
               </td>
-              <td>
+              <td ng-click="openModalActionItem(item,goal,'assignee')">
               <span ng-repeat="person in goal.assignTo"> {{person.name}}<br/></span>
               </td>
               <td ng-click="openModalActionItem(item,goal)" style="width:100px;">
