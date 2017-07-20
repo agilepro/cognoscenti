@@ -21,7 +21,7 @@
     String photoSrc = ar.retPath+"assets/photoThumbnail.gif";
     String profImage = uProf.getImage();
     if(profImage!=null && profImage.length() > 0){
-        photoSrc = ar.retPath+"users/"+uProf.getImage();
+        photoSrc = ar.retPath+"users/"+profImage;
     }
 
     String remoteProfileURL = ar.baseURL+"apu/"+uProf.getKey()+"/user.json?lic="+uProf.getLicenseToken();

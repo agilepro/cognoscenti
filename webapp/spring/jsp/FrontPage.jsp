@@ -475,10 +475,10 @@ a {
                <g ng-show="parent.key">
                    <ellipse cx="179" cy="69" rx="70" ry="35"
                         style="fill:gray;stroke:gray" ></ellipse>
-                   <line x1="177" y1="85" x2="177" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
-                   <line x1="173" y1="85" x2="173" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
+                   <line x1="177" y1="85" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
+                   <line x1="173" y1="85" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
                    <ellipse cx="175" cy="65" rx="70" ry="35"  ng-click="ellipse(parent)"
-                        style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer" ></ellipse>
+                        style="fill:white;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
                    <foreignObject  x="105" y="50" width="140" height="70">
                       <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;"
                            ng-click="ellipse(parent)">{{parent.name}}</div>
@@ -487,28 +487,28 @@ a {
                <g ng-hide="parent.key">
                    <ellipse cx="179" cy="69" rx="19" ry="18"
                         style="fill:gray;stroke:gray" ></ellipse>
-                   <line x1="177" y1="85" x2="177" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
-                   <line x1="173" y1="85" x2="173" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
+                   <line x1="177" y1="85" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
+                   <line x1="173" y1="85" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
                    <ellipse cx="175" cy="65" rx="19" ry="18"  ng-click="topLevel(thisCircle)"
-                        style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer" ></ellipse>
+                        style="fill:white;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
                </g>
                <ellipse cx="179" cy="179" rx="80" ry="40" ng-click="ellipse(thisCircle)"
                     style="fill:gray;stroke:gray" ></ellipse>
                <g ng-repeat="child in children">
                    <ellipse ng-attr-cx="{{child.x+4}}" ng-attr-cy="{{child.y+4}}"  ng-click="ellipse(child)"
                        rx="60" ry="30" style="fill:gray;stroke:gray" ></ellipse>
-                   <line ng-attr-x1="{{child.x+2}}" ng-attr-y1="{{child.y}}" x2="177" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
-                   <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
+                   <line ng-attr-x1="{{child.x+2}}" ng-attr-y1="{{child.y}}" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
+                   <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
                </g>
                <ellipse cx="175" cy="175" rx="80" ry="40" ng-click="ellipse(thisCircle)"
-                    style="fill:white;stroke:saddlebrown;stroke-width:2;cursor:pointer" ></ellipse>
+                    style="fill:#F0D7F7;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
                 <foreignObject  x="95" y="160" width="160" height="80">
                    <div xmlns="http://www.w3.org/1999/xhtml" style="height:80px;vertical-align:middle;text-align:center;cursor:pointer;"
                            ng-click="ellipse(thisCircle)">{{thisCircle.name}}</div>
                 </foreignObject>
                <g ng-repeat="child in children">
                    <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}"  ng-click="ellipse(child)"
-                       rx="60" ry="30" style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer;" ></ellipse>
+                       rx="60" ry="30" style="fill:white;stroke:purple;stroke-width:2;cursor:pointer;" ></ellipse>
                    <foreignObject ng-attr-x="{{child.x-55}}" ng-attr-y="{{child.y-15}}" width="110" height="60">
                        <div xmlns="http://www.w3.org/1999/xhtml" style="height:60px;vertical-align:middle;text-align:center;cursor:pointer;"
                            ng-click="ellipse(child)">{{child.name}}</div>
@@ -556,7 +556,13 @@ a {
 }
 </style>
         <div class="panel panel-default">
-          <div class="panel-heading headingfont">Other Members</div>
+          <div class="panel-heading headingfont">
+              <div style="float:left">Other Members</div>
+              <div style="float:right" title="View and manage the roles in this workspace">
+                  <a href="roleManagement.htm">
+                      <i class="fa fa-users"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
           <div class="panel-body">
             <table class="spacytable">
             <tr ng-repeat="person in otherMembers">

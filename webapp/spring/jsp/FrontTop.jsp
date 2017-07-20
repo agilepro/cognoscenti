@@ -207,14 +207,14 @@ app.controller('myCtrl', function($scope, $http) {
                <g ng-repeat="child in children">
                    <ellipse ng-attr-cx="{{child.x+4}}" ng-attr-cy="{{child.y+4}}"  ng-click="ellipse(child)"
                        rx="60" ry="30" style="fill:gray;stroke:gray" ></ellipse>
-                   <line ng-attr-x1="{{child.x+2}}" ng-attr-y1="{{child.y}}" x2="177" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
-                   <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:saddlebrown;stroke-width:2" ></line>
+                   <line ng-attr-x1="{{child.x+2}}" ng-attr-y1="{{child.y}}" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
+                   <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
                </g>
                <ellipse cx="175" cy="175" rx="21" ry="20"
-                    style="fill:white;stroke:saddlebrown;stroke-width:2;cursor:pointer" ></ellipse>
+                    style="fill:#F0D7F7;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
                <g ng-repeat="child in children">
                    <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}"  ng-click="ellipse(child)"
-                       rx="60" ry="30" style="fill:cornsilk;stroke:saddlebrown;stroke-width:2;cursor:pointer;" ></ellipse>
+                       rx="60" ry="30" style="fill:white;stroke:purple;stroke-width:2;cursor:pointer;" ></ellipse>
                    <foreignObject ng-attr-x="{{child.x-55}}" ng-attr-y="{{child.y-15}}" width="110" height="60">
                        <div xmlns="http://www.w3.org/1999/xhtml" style="height:60px;vertical-align:middle;text-align:center;cursor:pointer;"
                            ng-click="ellipse(child)">{{child.name}}</div>

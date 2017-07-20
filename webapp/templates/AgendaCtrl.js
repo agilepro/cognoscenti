@@ -3,7 +3,7 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
     $scope.agendaItem = agendaItem;
     $scope.descriptMode=false;
     $scope.tinymceOptions = standardTinyMCEOptions();
-    $scope.tinymceOptions.height = 300;
+    $scope.tinymceOptions.height = 250;
     
     console.log("AgendaItem is: ", agendaItem);
 

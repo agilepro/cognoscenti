@@ -23,7 +23,7 @@ Required parameters:
         String imagePath = "assets/photoThumbnail.gif";
         if(responsible!=null) {
             String imgPath = responsible.getImage();
-            if (imgPath.length() > 0) {
+            if (imgPath!=null && imgPath.length() > 0) {
                 imagePath = "users/"+imgPath;
             }
         }

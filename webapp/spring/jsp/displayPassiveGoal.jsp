@@ -238,8 +238,10 @@ window.setMainPageTitle("Remote Action Item");
                         AddressListEntry ale = new AddressListEntry(history.getResponsible());
                         UserProfile responsible = ale.getUserProfile();
                         String photoSrc = ar.retPath+"assets/photoThumbnail.gif";
-                        if(responsible!=null && responsible.getImage().length() > 0){
-                            photoSrc = ar.retPath+"users/"+responsible.getImage();
+                        if(responsible!=null) {
+                            String imgPath = responsible.getImage();
+                            if (imgPath!=null && imgPath.length() > 0){
+                            photoSrc = ar.retPath+"users/"+imgPath;
                         }
                 %>
                             <tr valign="top">

@@ -890,6 +890,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         var fakeMeeting = {};
         fakeMeeting.attended_add = $scope.newAttendee;
         $scope.putGetMeetingInfo(fakeMeeting);
+        $scope.newAttendee = "";
     }
     $scope.removeAttendee  = function(person) {
         var promise = $scope.refreshMeetingPromise();

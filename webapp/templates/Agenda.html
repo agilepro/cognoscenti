@@ -4,23 +4,23 @@
     <button class="btn btn-default btn-raised" ng-click="descriptMode=false">Settings</button>
     <button class="btn btn-default btn-raised" ng-click="descriptMode=true">Description</button>
 </div>
-<div class="modal-body" style="min-height:400px">
+<div class="modal-body" style="min-height:300px">
     <div ng-hide="descriptMode">
       <div class="col-sm-12 col-md-6">
         <div class="form-group">
-            <label for="labels">Name:</label>
+            <label for="labels">Name of Agenda Item:</label>
             <input ng-model="agendaItem.subject"  class="form-control" style="max-width:400px;"
                        placeholder="Enter Agenda Item Name"/>
         </div>
         <div class="form-group">
-            <label for="labels">Duration:</label>
+            <label for="labels">Duration: (minutes)</label>
             <input ng-model="agendaItem.duration"  class="form-control" style="width:100px;"
                        placeholder="Enter Agenda Item Name"/>
         </div>
         <div class="form-inline form-group" ng-hide="agendaItem.topicLink">
                 <input type="checkbox"  ng-model="agendaItem.isSpacer"
                          class="form-control" style="width:50px;"/>
-                Break Time
+                This is a break time
         </div>
       </div>
       <div class="col-sm-12 col-md-6">

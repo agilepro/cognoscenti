@@ -424,6 +424,12 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
             </td>
             <td></td>
           </tr>
+          <tr ng-show="isCompleted()">
+            <td>Attendees:</td>
+            <td>
+                <span ng-repeat="person in getAttended()">{{person.name}}, </span>
+            </td>
+          </tr>
           <tr><td></td><td></td><td></td>
           </tr>
         </table>
@@ -556,12 +562,6 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
       </div>
     </div>
 
-    <div class="leafContent" ng-show="isCompleted()">
-       Attendees:
-       <button class="btn btn-sm" ng-repeat="person in getAttended()"
-               style="margin:3px;">{{person.name}}</button>
-    </div>
-
 <%if (!isLoggedIn) { %>
     <div class="leafContent">
         Log in to see more details about this meeting.
@@ -653,15 +653,14 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                       <li role="presentation">
+                          <a role="menuitem" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
+                          <i class="fa fa-sort"></i>
+                          <span>Open / Close</span>
+                          </a></li>
+                      <li role="presentation">
                           <a role="menuitem" ng-click="openAgenda(item)">
-                          <i class="fa fa-cogs"></i>
+                          <i class="fa fa-edit"></i>
                           Edit Agenda Item</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i>
-                             Move Up</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i>
-                             Move Down</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i>
                              Docs Add/Remove</a></li>
@@ -669,13 +668,19 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                           <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i>
                              Action Items Add/Remove</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i>
-                             Toggle Ready Flag</a></li>
-                      <li role="presentation">
                           <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i>
                               <span ng-hide="item.topicLink">Set</span>
                               <span ng-show="item.topicLink">Change</span>
                               Discussion Topic</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i>
+                             Toggle Ready Flag</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i>
+                             Move Up</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i>
+                             Move Down</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="moveItemToBacklog(item)"><i class="fa fa-trash"></i>
                               Remove Item</a></li>
@@ -693,6 +698,12 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                          ng-click="toggleReady(item)"
                          title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
                          style="width:24px;height=24px">
+                </span>
+                <span style="float:right;margin-right:10px" ng-show="!isCompleted()"  ng-click="moveItem(item,-1)" title="Move agenda item up if possible">
+                    <i class="fa fa-arrow-up"></i>
+                </span>
+                <span style="float:right;margin-right:10px" ng-show="!isCompleted()"  ng-click="moveItem(item,1)" title="Move agenda item down if possible">
+                    <i class="fa fa-arrow-down"></i>
                 </span>
 <% } %>
             </div>
