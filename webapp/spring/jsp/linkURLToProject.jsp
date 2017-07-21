@@ -145,13 +145,6 @@ app.controller('myCtrl', function($scope, $http) {
             </td>
         </tr>
         <tr>
-            <td class="firstcol">Accessibility: </td>
-            <td>
-                <input type="checkbox" ng-model="newLink.public"> Public &nbsp; &nbsp;
-                <input type="checkbox" checked="checked" disabled="disabled"> Member
-            </td>
-        </tr>
-        <tr>
             <td class="firstcol">Labels: </td>
             <td>
                 <span class="dropdown" ng-repeat="label in assignedLabels()" style="float:left">

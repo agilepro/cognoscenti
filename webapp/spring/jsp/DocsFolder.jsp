@@ -35,7 +35,6 @@
         "modifiedtime": 1391185776500,
         "modifieduser": "cparker@us.fujitsu.com",
         "name": "Contract 13-C-0113-Fujitsu.pdf",
-        "public": false,
         "size": 409333,
         "universalid": "CSWSLRBRG@sec-inline-xbrl@0056",
         "upstream": true
@@ -126,16 +125,6 @@ app.controller('myCtrl', function($scope, $http) {
         var last = $scope.atts.length;
         for (var i=0; i<last; i++) {
             var rec = $scope.atts[i];
-            if (rec.public) {
-                if (!$scope.showVizPub) {
-                    continue;
-                }
-            }
-            else {
-                if (!$scope.showVizMem) {
-                    continue;
-                }
-            }
             var hasLabel = true;
             $scope.allLabelFilters().map( function(val) {
                 if (!rec.labelMap[val.name]) {
@@ -164,21 +153,6 @@ app.controller('myCtrl', function($scope, $http) {
         });
         $scope.atts = res;
     }
-    $scope.changePrivacy = function(rec) {
-        rec.public = !rec.public;
-        var postURL = "docsUpdate.json?did="+rec.id;
-        var postdata = angular.toJson(rec);
-        $scope.showError=false;
-        $http.post(postURL, postdata)
-        .success( function(data) {
-            $scope.removeEntry(rec.id);
-            $scope.atts.push(data);
-            $scope.sortDocs();
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
     $scope.deleteDoc = function(rec) {
         rec.deleted = true;
         var postURL = "docsUpdate.json?did="+rec.id;
@@ -400,10 +374,6 @@ app.controller('myCtrl', function($scope, $http) {
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="fileVersions.htm?aid={{rec.id}}">List Versions</a></li>
                   <li role="presentation" class="divider"></li>
-                  <li role="presentation" ng-hide="rec.public">
-                      <a role="menuitem" tabindex="-1" ng-click="changePrivacy(rec)">Make <img src="<%=ar.retPath%>assets/images/iconPublic.png"> Public</a></li>
-                  <li role="presentation" ng-show="rec.public">
-                      <a role="menuitem" tabindex="-1" ng-click="changePrivacy(rec)">Make <img src="<%=ar.retPath%>assets/images/iconMember.png"> Member Only</a></li>
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" ng-click="deleteDoc(rec)">Delete <i class="fa fa-trash"></i> Document</a></li>
                   <li role="presentation">
@@ -414,8 +384,6 @@ app.controller('myCtrl', function($scope, $http) {
             <td>
                 <a href="editDetails{{rec.id}}.htm">
                     <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
-                    <span ng-show="rec.public"><img src="<%=ar.retPath%>assets/images/iconPublic.png"></span>
-                    <span ng-hide="rec.public"><img src="<%=ar.retPath%>assets/images/iconMember.png"></span>
                     <span ng-show="rec.upstream"><img src="<%=ar.retPath%>assets/images/iconUpstream.png"></span>
                     <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
                     <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>

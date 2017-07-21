@@ -50,7 +50,6 @@
       "modifiedtime": 1433396730716,
       "modifieduser": "kswenson@us.fujitsu.com",
       "name": "Wines_of_Silicon_Valley.pdf",
-      "public": false,
       "size": 1149455,
       "universalid": "EZIGICMWG@facility-1-wellness-circle@8170",
       "upstream": false
@@ -71,9 +70,6 @@ app.controller('myCtrl', function($scope, $http) {
         return Math.floor(fract+.4);
     }
     $scope.allowPrivate = <%=allowPrivate%>;
-    if (!$scope.allowPrivate) {
-        $scope.docInfo.public = true;
-    }
 
     $scope.futureDays = 30;
     if ($scope.docInfo.purgeDate>0) {
@@ -298,28 +294,8 @@ app.controller('myCtrl', function($scope, $http) {
         }
         %>
         <tr>
-            <td class="firstColumn">Permission:</td>
+            <td class="firstColumn">Synchronizing:</td>
             <td  valign="top">
-            <% if (!attachment.isPublic()) {
-                   String publicNotAllowedMsg = "";
-                   if("yes".equals(ngp.getAllowPublic())){
-            %>
-                       <input type="checkbox" ng-model="docInfo.public" ng-disabled="!allowPrivate" >
-                       <img src="<%=ar.retPath %>assets/images/iconPublic.png"> Public Access
-            <%
-                   }else{
-                       publicNotAllowedMsg = ar.getMessageFromPropertyFile("public.attachments.not.allowed", null);
-                       ar.writeHtml(publicNotAllowedMsg);
-                   }
-               } else {
-            %>
-                   <input type="checkbox" ng-model="docInfo.public" ng-disabled="!allowPrivate" />
-                   <img src="<%=ar.retPath %>assets/images/iconPublic.png" name="PUB" alt="Public" title="Public"/> Public Access
-            <% } %>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="checkbox" name="visMember" value="MEM" checked="checked" disabled="disabled"/>
-            <img src="<%=ar.retPath %>assets/images/iconMember.png" name="MEM" alt="Member" title="Member" /> Member Access
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <input type="checkbox" name="visUpstream" value="UPS"
                    <%if(attachment.isUpstream()){%> checked="checked" <%}%>/>
             <img src="<%=ar.retPath %>assets/images/iconUpstream.png" /> Upstream Sync

@@ -379,8 +379,9 @@ public class UserController extends BaseController {
         AuthRequest ar = null;
         try{
             ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Must be logged in to get users");
-
+            if (!ar.isLoggedIn()) {
+                throw new Exception("Must be logged in to get users");
+            }
             JSONArray peopleList = new JSONArray();
             List<AddressListEntry> userList = ar.getCogInstance().getUserManager().getAllPossibleUsers();
             for (AddressListEntry ale : userList) {
@@ -393,7 +394,8 @@ public class UserController extends BaseController {
             ar.flush();
         }
         catch(Exception ex){
-            ar.logException("Caught by AllPeople.json", ex);
+            Exception ee = new Exception("Unable to generate people information.", ex);
+            streamException(ee, ar);
         }
     }
 
@@ -457,7 +459,8 @@ public class UserController extends BaseController {
             uPage.save();
             ar.flush();
         }catch(Exception ex){
-            streamException(ex, ar);
+            Exception ee = new Exception("Unable to get update from remote profile.", ex);
+            streamException(ee, ar);
         }
     }
 
@@ -1073,8 +1076,8 @@ public class UserController extends BaseController {
     @RequestMapping(value="/updateMicroProfile.json", method = RequestMethod.POST)
     public void updateMicroProfile(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+        AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not update user contacts.");
         try{
-            AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not update user contacts.");
 
             JSONObject received = this.getPostedObject(ar);
             String emailId = received.getString("uid");
@@ -1085,7 +1088,8 @@ public class UserController extends BaseController {
             received.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.edit.micro.profile", null, ex);
+            Exception ee = new Exception("Unable to update micro profile.", ex);
+            streamException(ee, ar);
         }
     }
 
