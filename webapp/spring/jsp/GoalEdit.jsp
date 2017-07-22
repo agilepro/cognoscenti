@@ -421,8 +421,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         var modalInstance = $modal.open({
           animation: false,
-          templateUrl: '<%=ar.retPath%>templates/ModalActionItem.html<%=templateCacheDefeater%>',
-          controller: 'ModalActionItemCtrl',
+          templateUrl: '<%=ar.retPath%>templates/ActionItem.html<%=templateCacheDefeater%>',
+          controller: 'ActionItemCtrl',
           size: 'lg',
           backdrop: "static",
           resolve: {
@@ -1034,7 +1034,7 @@ function updateVal(){
 
 </div>
 
-<script src="<%=ar.retPath%>templates/ModalActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/InviteModal.js"></script>
 

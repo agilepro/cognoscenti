@@ -949,8 +949,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         var modalInstance = $modal.open({
           animation: false,
-          templateUrl: embeddedData.retPath+"templates/ModalActionItem.html"+templateCacheDefeater,
-          controller: 'ModalActionItemCtrl',
+          templateUrl: embeddedData.retPath+"templates/ActionItem.html"+templateCacheDefeater,
+          controller: 'ActionItemCtrl',
           size: 'lg',
           backdrop: "static",
           resolve: {

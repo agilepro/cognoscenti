@@ -877,7 +877,7 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
 
 </div>
 
-<script src="<%=ar.retPath%>templates/ModalActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/CommentModal.js"></script>
 <script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
 <script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>

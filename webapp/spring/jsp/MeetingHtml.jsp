@@ -247,96 +247,43 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
       </div>
       <br/>
       <div>
-        <table class="table">
-          <col width="130px">
-          <col width="*">
-          <col width="20px">
-          <tr>
-            <td>Scheduled Time:</td>
-            <td>
-              {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-              &nbsp &nbsp
-              <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
-                  <i class="fa fa-calendar"></i></a>
-            </td>
-            <td>
-              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
-            </td>
-          </tr>
-          <tr>
-            <td>Called By:</td>
-            <td>
-              {{meeting.owner}}
-            </td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Target Role:</td>
-            <td>
-              <a href="roleManagement.htm">{{meeting.targetRole}}</a>
-            </td>
-            <td>
-              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
-            </td>
-          </tr>
-          <tr>
-            <td>Description:</td>
-            <td>
-              <div ng-bind-html="meeting.meetingInfo"></div>
-            </td>
-            <td>
-              <i class="fa fa-edit" ng-click="editMeetingDesc=true"></i>
-            </td>
-          </tr>
-          <tr ng-show="isCompleted()">
-            <td>Minutes:</td>
-            <td>
-                <div ng-show="minutesDraft && meeting.minutesId">
-                   Draft:
-                   <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;background-color:yellow;"
-                         title="Navigate to the discussion topic with the minutes for this meeting"
-                         ng-click="navigateToTopic(meeting.minutesLocalId)">
-                         View Minutes
-                   </span>
-                   <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                         title="if you are happy with the draft minutes as they are, use this to publish them to everyone"
-                         ng-click="postMinutes(meeting.minutesLocalId)">
-                         Post Minutes as they are
-                   </span>
-                </div>
-                <div ng-show="!minutesDraft && meeting.minutesId">
-                   Posted:
-                   <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                         ng-click="navigateToTopic(meeting.minutesLocalId)">
-                         View Minutes
-                   </span>
-                </div>
-            </td>
-            <td></td>
-          </tr>
-          <tr ng-show="previousMeeting.id">
-            <td>Previous Meeting:</td>
-            <td>
-              <a href="meetingFull.htm?id={{previousMeeting.id}}">
-                {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}</a>
-            </td>
-            <td></td>
-          </tr>
-          <tr ng-show="previousMeeting.minutesId">
-            <td>Previous Minutes:</td>
-            <td>
+        <div>
+            <b>Scheduled Time:</b> {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} &nbsp &nbsp
+            <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
+                <i class="fa fa-calendar"></i></a>
+        </div>
+        <div>
+            <b>Called By:</b> {{meeting.owner}}
+        </div>
+        <div>
+            <b>Target Role:</b> {{meeting.targetRole}}
+        </div>
+        <div>
+            <b>Description:</b>
+            <div ng-bind-html="meeting.meetingInfo"></div>
+        </div>
+        <div>
+            <b>Minutes:</b>
                 <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                         ng-click="navigateToTopic(meeting.minutesLocalId)">
+                         View Minutes
+                </span>
+        </div>
+        <div>
+            <b>Previous Meeting:</b> <a href="meetingFull.htm?id={{previousMeeting.id}}">
+                {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}</a>
+        </div>
+        <div>
+            <b>Previous Minutes:</b> 
+            <span 
                      ng-click="navigateToTopic(previousMeeting.minutesLocalId)"
                      title="Navigate to the discussion topic that holds the minutes for the previous meeting">
                      Previous Minutes
                 </span>
-            </td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Attendence Planning:</td>
-            <td>
-                <span ng-repeat="pers in peopleStatus">
+        </div>
+        <div>
+            <b>Attendence Planning:</b>
+            <span ng-repeat="pers in peopleStatus">
                   <span>
                     <a href="">{{pers.name}}</a>
                     (
@@ -348,20 +295,13 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                     )
                   </span>,
                 </span>
-            </td>
-          </tr>
-          <tr>
-            <td>Actual Attendees:</td>
-            <td>
-              <span ng-repeat="person in getAttended()">
+        </div>
+        <div>
+            <b>Actual Attendees:</b>
+            <span ng-repeat="person in getAttended()">
                 <a href="">{{person.name}}</a>, 
-              </span>
-            </td>
-          </tr>
-          <tr><td></td><td></td><td></td>
-          </tr>
-        </table>
-      </div>
+            </span>
+        </div>
     </div>
 
 
@@ -379,6 +319,8 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
 </style>
 <script>
 </script>
+
+<hr/>
 
 <div ng-repeat="item in getAgendaItems()">
     <div class="agendaItemBlank" ng-show="item.isSpacer">
@@ -421,19 +363,8 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                 <span class="agendaTitle">
                     {{item.number}}.
                     <i ng-show="item.topicLink" class="fa fa-lightbulb-o"></i>
-                    {{item.subject}} </span>  &nbsp;
-
-                <span style="float:right" ng-hide="item.readyToGo || isCompleted()" >
-                    <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
-                         title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
-                         style="width:24px;height=24px;float:right">
+                    {{item.subject}} 
                 </span>
-                <span style="float:right" ng-show="item.readyToGo && !isCompleted()"  >
-                    <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
-                         title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
-                         style="width:24px;height=24px">
-                </span>
-
             </div>
             <div>
                 <i>
@@ -479,7 +410,7 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
         <td>
            <div style="margin:10px;" ng-repeat="goal in itemGoals(item)">
               Action Item: 
-              <span ng-click="navigateToDoc(docid)">
+              <span>
                 <a href="">{{goal.synopsis}}</a>, 
                 <span ng-repeat="person in goal.assignTo">{{person.name}}, </span>
                 {{goal.status}}
@@ -491,17 +422,14 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
     </table>
     </div>
 
+                         <!--  AGENDA comments -->
+      <div ng-repeat="cmt in item.comments" style="padding:15px">
 
+          {{cmt.userName}} ({{cmt.user}}) on {{cmt.time | date}} said
+          <div ng-bind-html="cmt.html"></div>
 
-                          <!--  AGENDA comments -->
-      <table ng-show="!item.isSpacer" >
-      <tr ng-repeat="cmt in item.comments">
+      </div>
 
-          <%@ include file="/spring/jsp/CommentView.jsp"%>
-
-      </tr>
-
-    </table>
     </div>
 
     <br/>
@@ -512,7 +440,7 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
     
 </div>
 
-<script src="<%=ar.retPath%>templates/ModalActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/CommentModal.js"></script>
 <script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
 <script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>
