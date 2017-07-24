@@ -57,7 +57,8 @@ public final class RUElement
     * Use this method to maintain a Recently Used list.
     *
     * This will scan the vector to see if the given element is in it.
-    * If so, it updates the timestamp to the passed in current time.
+    * If so, it updates the timestamp to the passed in current time,
+    *    -- and the name to a possibly new name.
     * If not, it adds it to the vector.
     * If the total number of entries is greater than max, then it
     * finds the oldest entry, and kicks it out.
@@ -75,6 +76,7 @@ public final class RUElement
         for (RUElement rue : v) {
             if (rue.key.equals(newElement.key)) {
                 rue.timestamp = currentTime;
+                rue.displayName = newElement.displayName;
                 return;
             }
             //if they are all equal to the current time,

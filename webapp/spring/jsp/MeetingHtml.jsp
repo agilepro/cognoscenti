@@ -178,57 +178,14 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
 
 <%if (isLoggedIn) { %>
     <div class="upRightOptions rightDivContent">
-      <span class="dropdown" title="Control the way people see this meeting.">
-          <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
-          State: {{stateName()}} <span class="caret"></span></button>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
-            <li role="presentation"><a role="menuitem" 
-                title="Use DRAFT to set the meeting without any notifications going out"
-                ng-click="changeMeetingState(0)">Draft Meeting</a></li>
-            <li role="presentation"><a role="menuitem"
-                title="Use PLAN to allow everyone to get prepared for the meeting"
-                ng-click="changeMeetingState(1)">Plan Meeting</a></li>
-            <li role="presentation"><a role="menuitem"
-                title="Use RUN while the meeting is actually in session"
-                ng-click="changeMeetingState(2)">Run Meeting</a></li>
-            <li role="presentation"><a role="menuitem"
-                title="Use COMPLETE after the meeting is over and to generate minutes"
-                ng-click="changeMeetingState(3)">Complete Meeting</a></li>
-          </ul>
-      </span>
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Opens or closes all of the agenda items for the meeting"
-              href="#" ng-click="showAll()" >Show All Items</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Show who has responded about whether they will attend or not"
-              href="#" ng-click="toggleRollCall()" >Show Roll Call</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Create a new agenda item at the bottom of the meeting"
-              href="#" ng-click="createAgendaItem()" >Create Agenda Item</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="A special view mode to sort and arrange the agenda items more easily"
-              href="meeting.htm?id={{meeting.id}}" >Arrange Agenda</a></li>
-          <li role="presentation"><a role="menuitem"
-              title="Compose an email messsage about this meeting and send it"
-              href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
           <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
               href="meetingFull.htm?id={{meeting.id}}">Show Full Display</a></li>
           <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem"
-              title="Generate the meeting minutes from the agenda items and put in a discussion topic"
-              ng-click="createMinutes()">Generate Minutes</a></li>
-          <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"
-              title="Navigate to the discussion topic that holds the minutes for this meeting"
-              href="noteZoom{{meeting.minutesLocalId}}.htm">View Minutes</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Make a copy of this meeting for a new timeslot"
-              href="cloneMeeting.htm?id={{meeting.id}}">Clone Meeting</a></li>
           <li role="presentation"><a role="menuitem"
               title="Return back to the list of all meetings in the workspace"
               href="meetingList.htm">List All Meetings</a></li>
@@ -251,6 +208,9 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
             <b>Scheduled Time:</b> {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} &nbsp &nbsp
             <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
                 <i class="fa fa-calendar"></i></a>
+        </div>
+        <div>
+            <b>State:</b> <span style="{{meetingStateStyle(meeting.state)}};padding:5px;">{{stateName()}}</span>
         </div>
         <div>
             <b>Called By:</b> {{meeting.owner}}
