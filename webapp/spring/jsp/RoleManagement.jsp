@@ -304,12 +304,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     <span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu4">
                   <li role="presentation"><a role="menuitem" 
-                      ng-click="openRoleModal(role)">Change Players</a></li>
+                      ng-click="openRoleModal(role)">
+                      <span class="fa fa-edit"></span> Edit All Players </a></li>
                   <li role="presentation"><a role="menuitem" 
-                      href="roleDefine.htm?role={{role.name}}">Define Role</a></li>
+                      href="roleDefine.htm?role={{role.name}}">
+                      <span class="fa fa-street-view"></span> Define Role </a></li>
                   <li role="presentation" class="divider"></li>
                   <li role="presentation"><a role="menuitem" 
-                      ng-click="deleteRole(role)">Delete Role</a></li>
+                      ng-click="deleteRole(role)">
+                      <span class="fa fa-times"></span> Delete Role</a></li>
                 </ul>
               </div>
             </td>
@@ -336,6 +339,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                       <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                           ng-click="openInviteSender(player)">
                           <span class="fa fa-envelope-o"></span> Compose &amp; Send Invitation</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="openRoleModal(role)">
+                          <span class="fa fa-edit"></span> Edit All Players </a></li>
                       <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                           ng-click="removePlayer(role, player)">
                           <span class="fa fa-times"></span> Remove from Role </a></li>

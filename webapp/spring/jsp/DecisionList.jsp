@@ -308,6 +308,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
   </div>
 
 
+      <div class="guideVocal" ng-show="allDecisions.length==0">
+    You have no decisions in this workspace yet.
+    You can create them using a option from the pull-down in the upper right of this page.
+    They can also be created from a proposal or a comment anywhere.
+    </div>
+
 
 </div>
 

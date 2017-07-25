@@ -15,17 +15,17 @@
 </style>
   <div ng-show="editMode=='status'">
       <table id="displayTable" class="spacyTable">
-        <tr>
+        <tr title="This is the overall synopsis and description of the action item">
           <td>
-            Summary:
+            <label>Summary:</label>
           </td>
           <td>
             {{goal.synopsis}} ~ {{goal.description}}
           </td>
         </tr>
-        <tr>
+        <tr title="Give a Red-Amber-Green estimate on the status">
           <td>
-            RAG:
+            <label>RAG:</label>
           </td>
           <td style="padding:10px;">
               <img src="../../../assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
@@ -42,15 +42,16 @@
                    title="Good shape">
           </td>
         </tr>
-        <tr>
+        <tr title="Provide a due date if there is one">
           <td>
-            Due Date:
+            <label>Due Date:</label>
           </td>
           <td>
+            <div>
                 <span class="dropdown-toggle form-control" id="dropdown2" role="button" 
                     data-toggle="dropdown" ng-show="goal.duedate>1000000" data-target="#">
                     {{ goal.duedate | date:'dd-MMM-yyyy' }} 
-                    &nbsp;at&nbsp; {{ goal.duedate | date:'HH:mm' }}
+                    &nbsp;at&nbsp; {{ goal.duedate | date:'HH:mm &nbsp; &nbsp;  Z' }}
                     &nbsp; &nbsp; {{tzIndicator}}
                 </span>
                 <span class="dropdown-toggle form-control" id="dropdown2" role="button" 
@@ -62,12 +63,13 @@
                         data-ng-model="goal.duedate"
                         data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15,minView:'hour'}"
                         data-on-set-time="onTimeSet(newDate, 'duedate')"/>
-                </ul>                
+                </ul>
+            </div>                
           </td>
         </tr>
-        <tr>
+        <tr  title="status is a freeform text statement about your current progress on action item">
           <td>
-            Status:
+            <label>Status:</label>
           </td>
           <td>
             <textarea ng-model="goal.status" class="form-control" style="width:400px"></textarea>

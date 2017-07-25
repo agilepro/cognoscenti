@@ -68,6 +68,7 @@ Required parameter:
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    window.setMainPageTitle("Create New Workspace");
     $scope.siteInfo = <% site.getConfigJSON().write(ar.w,2,4); %>;
     $scope.accountKey = "<%ar.writeJS(accountKey);%>";
     $scope.upstream = "<%ar.writeJS(upstream);%>";
@@ -114,42 +115,35 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-    <div class="generalSubHeading" style="height:40px">
-            Create Workspace in Site '{{siteInfo.names[0]}}'
-    </div>
 
 <style>
 .spacey td {
     padding:5px;
 }
 </style>
-<div class="generalContent">
-        <table class="spacey">
-           <tr>
-                <td class="gridTableColummHeader_2">New Workspace Name:</td>
-                <td>
-                    <input type="text" class="form-control" ng-model="newWorkspace.newName"/>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>
-                    <button class="btn btn-primary btn-raised" ng-click="createNewWorkspace()">Create Workspace</button>
-                </td>
-            </tr>
-            <tr>
-                <td class="gridTableColummHeader_2">Select Template:</td>
-                <td><select class="form-control" ng-model="newWorkspace.template"
-                    ng-options="tmp.name for tmp in templateList">
-                    <option value="">-- choose template --</option>
-                </select>
-                </td>
-            </tr>
-            <tr ng-show="siteInfo.showExperimental">
-                <td class="gridTableColummHeader">Upstream Link:</td>
-                <td><input class="form-control" style="width:368px" ng-model="newWorkspace.upstream"/>
-                </td>
-            </tr>
-       </table>
-   
+<div style="max-width:500px">
 
+    <div class="form-group">
+        <label >New Workspace Name</label>
+        <input type="text" class="form-control" ng-model="newWorkspace.newName"/>
+    </div>
+    
+    <div class="form-group">
+        <button class="btn btn-primary btn-raised" ng-click="createNewWorkspace()">
+            Create Workspace</button>
+    </div>
+    <div class="form-group" ng-show="templateList && templateList.length>0">
+        <label >Select Template (optional)</label>
+        <select class="form-control" ng-model="newWorkspace.template"
+                ng-options="tmp.name for tmp in templateList">
+                <option value="">-- no template --</option>
+        </select>
+    </div>
+    <div class="form-group" ng-show="siteInfo.showExperimental">
+        <label >Upstream Link</label>
+        <input class="form-control" style="width:368px" ng-model="newWorkspace.upstream"/>
+    </div>
+       
+</div>
+
+</div>

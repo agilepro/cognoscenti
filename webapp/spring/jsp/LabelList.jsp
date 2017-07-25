@@ -219,4 +219,11 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
         </table>
     </div>
+    
+    
+    <div class="guideVocal" ng-show="labelList.length==0">
+    You have no labels in this workspace yet.
+    Go ahead and create one or two.  It is easy!
+    </div>
+    
 </div>

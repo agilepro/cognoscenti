@@ -569,6 +569,13 @@ function addvalue() {
     </div>
     </div>
 
+    <div class="guideVocal" ng-show="allGoals.length==0">
+    You have no action items in this workspace yet.
+    You can create them using a option from the pull-down in the upper right of this page.
+    They can be assigned to people, given due dates, and tracked to completion.
+    </div>
+
+    
 </div>
 
 
