@@ -3,6 +3,7 @@ app.service('AllPeople', function($http) {
     
     //get around the JavaScript problems with 'this'
     var AllPeople = this;
+    var nextFetchTime = 0;
     
     AllPeople.findFullName = function (key) {
         if (!AllPeople.allPersonList) {

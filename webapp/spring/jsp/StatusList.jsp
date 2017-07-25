@@ -619,7 +619,7 @@ function addvalue() {
 
     <div  id="searchresultdiv0">
     <div>
-      <table>
+      <table style="width:100%">
         <tr>
            <th></th>
            <th>Synopsis</th>

@@ -315,7 +315,7 @@ app.controller('myCtrl', function($scope, $http) {
     </table>
     
     
-    <div class="guideVocal" ng-show="atts.length==0">
+    <div class="guideVocal" ng-show="atts.length==0" style="margin-top:80px">
     You have no attached documents in this workspace yet.
     You can add them using a option from the pull-down in the upper right of this page.
     They can be uploaded from your workstation, or linked from the web.

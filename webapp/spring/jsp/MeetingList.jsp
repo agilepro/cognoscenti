@@ -203,10 +203,12 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
     </table>
 
-    <div class="guideVocal" ng-show="meetings.length==0">
-    You have no meetings in this workspace yet.
-    Meeting records hold the agenda of an upcoming meeting, and help in
-    keeping notes and generating the minutes of the meetng.
+    <div class="guideVocal" ng-show="meetings.length==0" style="margin-top:80px">
+    You have no meetings in this workspace yet.<br/>
+    <br/>
+    Create a meeting records to hold the agenda of an upcoming meeting.<br/>
+    Later use the meeting record to check everyone in, help
+    keep notes, and generate the minutes of the meetng.
     </div>
     
     

@@ -470,6 +470,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
         </div>
 
+        
+    <div class="guideVocal" ng-show="notes.length==0" style="margin-top:80px">
+    You have no discussion topics in this workspace yet.
+    You can add them using a option from the pull-down in the upper right of this page.
+    </div>
+        
 </div>
 
 <script src="<%=ar.retPath%>templates/CreateTopicModal.js"></script>
