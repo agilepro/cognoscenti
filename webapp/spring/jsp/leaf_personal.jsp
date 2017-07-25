@@ -256,7 +256,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr class="gridTableHeader">
                 <td colspan="4">
-                    <div class="generalSubHeading" style="margin-top:50px;">Roles You Play</div>
+                    <div class="generalSubHeading" style="margin-top:50px;">Roles You Play in this Workspace</div>
                 </td>
             </tr>
             <tr ng-repeat="role in rolePlayer()">
