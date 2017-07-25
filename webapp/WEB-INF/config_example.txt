@@ -39,6 +39,13 @@ identityProvider=https://interstagebpm.com/eid/
 #and then reconfigure setting the ID of that user here.
 #superAdmin=AAABBBCCC
 
+#Force templates to be refreshed.  This works around a bug in the browsers
+#that certain templates loaded with JAvaScript are never refreshed.
+#This is needed only on development servers where you might be 
+#editing the templates directly, and want to see the change
+#for a production server, leave this off so it runs FASTER.
+#Set forceTemplateRefresh=true to enable the slow, always refresh mode.
+
 
 
 #Local Connections designate named paths on the server machine

@@ -12,11 +12,6 @@
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngw.findMeeting(meetId);
 
-    //comment or uncomment depending on whether you are in development testing mode
-    String templateCacheDefeater = "";
-    //String templateCacheDefeater = "?t="+System.currentTimeMillis();
-
-
     if (!AccessControl.canAccessMeeting(ar, ngw, mRec)) {
         throw new Exception("Please log in to see this meeting.");
     }

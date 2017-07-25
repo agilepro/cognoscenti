@@ -14,6 +14,12 @@
     ar.setPageAccessLevels(ngc);
     UserProfile uProf = ar.getUserProfile();
 
+    //set 'forceTemplateRefresh' in config file to 'true' to get this
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }    
+    
     CustomRole theRole = ngc.getRole(roleName);
     JSONObject role = theRole.getJSONDetail();
 
@@ -205,7 +211,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/NominationModal.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/NominationModal.html?<%=templateCacheDefeater%>',
             controller: 'NominationModal',
             size: 'lg',
             backdrop: "static",

@@ -29,8 +29,11 @@
         allRoles.put(aRole.getJSONDetail());
     }
 
-    String cacheDefeater = "?t="+System.currentTimeMillis();
-    //String cacheDefeater = "";
+    //set 'forceTemplateRefresh' in config file to 'true' to get this
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
 
 %>
 
@@ -208,7 +211,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/InviteModal.html<%=cacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>templates/InviteModal.html<%=templateCacheDefeater%>',
             controller: 'InviteModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -242,7 +245,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/RoleModal.html<%=cacheDefeater%>',
+            templateUrl: '<%=ar.retPath%>templates/RoleModal.html<%=templateCacheDefeater%>',
             controller: 'RoleModalCtrl',
             size: 'lg',
             backdrop: "static",

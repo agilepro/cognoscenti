@@ -4,6 +4,12 @@
 
     ar.assertLoggedIn("Must be logged in to edit roles");
 
+    //set 'forceTemplateRefresh' in config file to 'true' to get this
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
+    
     String pageId      = ar.reqParam("pageId");
     String siteId      = ar.reqParam("siteId");
     String roleName    = ar.reqParam("role");
@@ -112,7 +118,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/Responsibility.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/Responsibility.html<%=templateCacheDefeater%>',
             controller: 'Responsibility',
             size: 'lg',
             backdrop: "static",
@@ -140,7 +146,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/TermModal.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/TermModal.html<%=templateCacheDefeater%>',
             controller: 'TermModal',
             size: 'lg',
             backdrop: "static",

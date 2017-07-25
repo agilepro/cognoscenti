@@ -12,6 +12,11 @@ Required parameters:
     1. pageId   : This is the id of a workspace and here it is used to retrieve NGPage.
 
 */
+    //set 'forceTemplateRefresh' in config file to 'true' to get this
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
 
     String pageId      = ar.reqParam("pageId");
     NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
@@ -65,7 +70,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/TaskAreaModal.html?t='+(new Date()).getTime(),
+            templateUrl: '<%=ar.retPath%>templates/TaskAreaModal.html<%=templateCacheDefeater%>',
             controller: 'TaskAreaCtrl',
             size: 'lg',
             backdrop: "static",

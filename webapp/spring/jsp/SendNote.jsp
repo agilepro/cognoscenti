@@ -26,6 +26,11 @@ Optional Parameters:
     7. tempmem      : Used to provide temprary membership.
     9. attach{docid}: This optional parameter is used to get list of earlier selected document.
 */
+    //set 'forceTemplateRefresh' in config file to 'true' to get this
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
 
     String pageId      = ar.reqParam("pageId");
     NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
@@ -375,7 +380,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 
         var attachModalInstance = $modal.open({
             animation: true,
-            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/AttachDocument.html<%=templateCacheDefeater%>',
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {

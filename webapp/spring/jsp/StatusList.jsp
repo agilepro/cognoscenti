@@ -13,8 +13,11 @@ Required parameters:
 
 */
 
-    //String templateCacheDefeater = "";
-    String templateCacheDefeater = "?t="+System.currentTimeMillis();
+    //set 'forceTemplateRefresh' in config file to 'true' to get this
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
 
     String pageId      = ar.reqParam("pageId");
     NGWorkspace ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
@@ -502,7 +505,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/TaskAreaModal.html?t='+(new Date()).getTime(),
+            templateUrl: '<%=ar.retPath%>templates/TaskAreaModal.html<%=templateCacheDefeater%>',
             controller: 'TaskAreaCtrl',
             size: 'lg',
             backdrop: "static",

@@ -4,9 +4,11 @@
 
     ar.assertLoggedIn("You need to Login to Upload a file.");
 
-    //comment or uncomment depending on whether you are in development testing mode
-    //String templateCacheDefeater = "";
-    String templateCacheDefeater = "?t="+System.currentTimeMillis();    
+    //set 'forceTemplateRefresh' in config file to 'true' to get this
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
 
     String pageId = ar.reqParam("pageId");
     String folderVal = ar.defParam("folder", null);

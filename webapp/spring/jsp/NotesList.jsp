@@ -11,6 +11,12 @@
     NGBook ngb = ngw.getSite();
     boolean isMember = ar.isMember();
 
+    //set 'forceTemplateRefresh' in config file to 'true' to get this
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
+    
     UserProfile up = ar.getUserProfile();
     String currentUser = "NOBODY";
     String currentUserName = "NOBODY";
@@ -268,7 +274,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: '<%=ar.retPath%>templates/CreateTopicModal.html?t=<%=System.currentTimeMillis()%>',
+            templateUrl: '<%=ar.retPath%>templates/CreateTopicModal.html<%=templateCacheDefeater%>',
             controller: 'CreateTopicModalCtrl',
             size: 'lg',
             backdrop: "static",

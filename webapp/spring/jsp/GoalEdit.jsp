@@ -16,8 +16,11 @@ Required parameters:
 
 */
 
-    //String templateCacheDefeater = ""; 
-    String templateCacheDefeater = "?t="+System.currentTimeMillis();
+    //set 'forceTemplateRefresh' in config file to 'true' to get this
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
 
     String pageId      = ar.reqParam("pageId");
     NGWorkspace ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
