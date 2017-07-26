@@ -57,7 +57,7 @@ public class ProjectDocsController extends BaseController {
     public void listAttachments(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPAnonymous(ar, siteId, pageId, "ListAttachments");
+        BaseController.showJSPMembers(ar, siteId, pageId, "ListAttachments");
     }
 
 
@@ -65,7 +65,7 @@ public class ProjectDocsController extends BaseController {
     public void docsFolder(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsFolder");
+        BaseController.showJSPMembers(ar, siteId, pageId, "DocsFolder");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/docsDeleted.htm", method = RequestMethod.GET)

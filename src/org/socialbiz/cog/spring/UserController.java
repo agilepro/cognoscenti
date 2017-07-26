@@ -864,7 +864,13 @@ public class UserController extends BaseController {
             boolean canAccessPage = AccessControl.canAccessRoleRequest(ar, ngc, roleRequestRecord);
 
             if(!canAccessPage){
-                 showWarningView(ar, "nugen.project.member.login.msg");
+                if (ar.isLoggedIn()) {
+                    streamJSP(ar, "WarningNotMember");
+                }
+                else {
+                    showWarningView(ar, "nugen.project.login.msg");
+                }
+                return;
             }
 
             String isAccessThroughEmail = ar.reqParam("isAccessThroughEmail");

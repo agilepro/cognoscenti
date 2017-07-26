@@ -109,7 +109,7 @@ public class MainTabsViewControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPAnonymous(ar, siteId, pageId, "NotesList");
+        showJSPMembers(ar, siteId, pageId, "NotesList");
     }
 
 
