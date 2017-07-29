@@ -23,23 +23,23 @@
             {{goal.synopsis}} ~ {{goal.description}}
           </td>
         </tr>
-        <tr title="Give a Red-Amber-Green estimate on the status">
+        <tr title="Give a Red-Yellow-Green estimate on the status">
           <td>
-            <label>RAG:</label>
+            <label>R-Y-G:</label>
           </td>
           <td style="padding:10px;">
               <img src="../../../assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
-                   title="In trouble" ng-click="changeRAG(goal, 'bad')">
+                   title="Red: In trouble" ng-click="changeRAG(goal, 'bad')">
               <img src="../../../assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
-                   title="In trouble" >
+                   title="Red: In trouble" >
               <img src="../../../assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
-                   title="Warning" ng-click="changeRAG(goal, 'ok')">
+                   title="Yellow: Warning" ng-click="changeRAG(goal, 'ok')">
               <img src="../../../assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
-                   title="Warning" >
+                   title="Yellow: Warning" >
               <img src="../../../assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
-                   title="Good shape" ng-click="changeRAG(goal, 'good')">
+                   title="Green: Good shape" ng-click="changeRAG(goal, 'good')">
               <img src="../../../assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
-                   title="Good shape">
+                   title="Green: Good shape">
           </td>
         </tr>
         <tr title="Provide a due date if there is one">

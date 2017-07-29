@@ -643,17 +643,17 @@ function addvalue() {
             <td style="width:72px;padding:0px;">
               <span>
                 <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="area.prospects=='bad'"
-                     title="In trouble" ng-click="setProspectsArea(area, 'bad')" class="stoplight">
+                     title="Red: In trouble" ng-click="setProspectsArea(area, 'bad')" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="area.prospects=='bad'"
-                     title="In trouble" class="stoplight">
+                     title="Red: In trouble" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="area.prospects=='ok'"
-                     title="Warning" ng-click="setProspectsArea(area, 'ok')" class="stoplight">
+                     title="Yellow: Warning" ng-click="setProspectsArea(area, 'ok')" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="area.prospects=='ok'"
-                     title="Warning" class="stoplight">
+                     title="Yellow: Warning" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="area.prospects=='good'"
-                     title="Good shape" ng-click="setProspectsArea(area, 'good')" class="stoplight">
+                     title="Green: Good shape" ng-click="setProspectsArea(area, 'good')" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="area.prospects=='good'"
-                     title="Good shape" class="stoplight">
+                     title="Green: Good shape" class="stoplight">
               </span>
             </td>
             <td ng-click="openTaskAreaEditor(area)">{{area.status}}</td>

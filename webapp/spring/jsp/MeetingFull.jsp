@@ -778,7 +778,7 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
               <th>Synopsis</th>
               <th>Assignee</th>
               <th>Due</th>
-              <th>Prospect</th>
+              <th title="Red-Yellow-Green assessment of status">R-Y-G</th>
               <th>Status</th>
            </tr>
            <tr ng-repeat="goal in itemGoals(item)" style="margin-left:30px;">
@@ -811,19 +811,19 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
               <td ng-click="openModalActionItem(item,goal)" style="width:100px;">
               <span ng-show="goal.duedate>=0">{{goal.duedate|date}} </span>
               </td>
-              <td style="width:120px;">
-                  <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
-                       title="Good shape" ng-click="changeGoalState(goal, 'good')">
-                  <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
-                       title="Good shape">
-                  <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
-                       title="Warning" ng-click="changeGoalState(goal, 'ok')">
-                  <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
-                       title="Warning" >
+              <td style="width:120px;" title="Red-Yellow-Green assessment of status">
                   <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
-                       title="In trouble" ng-click="changeGoalState(goal, 'bad')">
+                       title="Red: In trouble" ng-click="changeGoalState(goal, 'bad')">
                   <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
-                       title="In trouble" >
+                       title="Red: In trouble" >
+                  <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
+                       title="Yellow: Warning" ng-click="changeGoalState(goal, 'ok')">
+                  <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
+                       title="Yellow: Warning" >
+                  <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
+                       title="Green: Good shape" ng-click="changeGoalState(goal, 'good')">
+                  <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
+                       title="Green: Good shape">
               </td>
               <td style="max-width:300px;" ng-click="openModalActionItem(item,goal)">
                 {{goal.status}}

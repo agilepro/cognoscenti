@@ -129,31 +129,32 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
         <th></th>
         <th>Name</th>
         <th>Assignee</th>
-        <th>RAG</th>
+        <th title="Red-Yellow-Green assessment of status">R-Y-G</th>
         <th>Status</th>
       </tr>
       <tr ng-repeat="ta in allTaskAreas">
-        <td style="cursor:pointer" ng-click="openTaskAreaEditor(ta)" style="max-width:40px">
+        <td style="cursor:pointer" ng-click="openTaskAreaEditor(ta)" style="max-width:40px"
+            title="Edit this task area">
           <span class="fa fa-edit"></span></td>
         <td ng-click="openTaskAreaEditor(ta)" >{{ta.name}}</td>
-        <td >
+        <td title="Click on person name to see their profile information">
             <div ng-repeat="ass in ta.assignees">
                 <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass.uid}}">{{ass.name}}</div>
         </td>
-        <td style="width:150px">
+        <td style="width:150px" title="Red-Yellow-Green assessment of status">
           <span>
             <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="ta.prospects=='bad'"
-                 title="In trouble" ng-click="setProspects(ta, 'bad')" class="stoplight">
+                 title="Red: In trouble" ng-click="setProspects(ta, 'bad')" class="stoplight">
             <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="ta.prospects=='bad'"
-                 title="In trouble" class="stoplight">
+                 title="Red: In trouble" class="stoplight">
             <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="ta.prospects=='ok'"
-                 title="Warning" ng-click="setProspects(ta, 'ok')" class="stoplight">
+                 title="Yellow: Warning" ng-click="setProspects(ta, 'ok')" class="stoplight">
             <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="ta.prospects=='ok'"
-                 title="Warning" class="stoplight">
+                 title="Yellow: Warning" class="stoplight">
             <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="ta.prospects=='good'"
-                 title="Good shape" ng-click="setProspects(ta, 'good')" class="stoplight">
+                 title="Green: Good shape" ng-click="setProspects(ta, 'good')" class="stoplight">
             <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="ta.prospects=='good'"
-                 title="Good shape" class="stoplight">
+                 title="Green: Good shape" class="stoplight">
           </span>
         </td>
         <td ng-click="openTaskAreaEditor(ta)" >{{ta.status}}</td>

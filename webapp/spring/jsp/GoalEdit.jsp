@@ -562,8 +562,8 @@ function addvalue() {
                     Click to record status</span>
             </td>
         </tr>
-        <tr title="Red-Amber-Green is a high-level status saying how things are going generally">
-            <td class="gridTableColummHeader">RAG:</td>
+        <tr title="Red-Yellow-Green is a high-level status saying how things are going generally">
+            <td class="gridTableColummHeader">R-Y-G:</td>
             <td>
                 <span>
                     <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goalInfo.prospects=='bad'"

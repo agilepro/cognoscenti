@@ -681,7 +681,7 @@ public class ProjectGoalController extends BaseController {
                 hasChanged = true;
             }
             if (!previousProspects.equals(gr.getProspects())) {
-                inventedComment.append(" Prospects:");
+                inventedComment.append(" R-Y-G:");
                 inventedComment.append(gr.getProspects());
                 hasChanged = true;
             }
