@@ -8,8 +8,9 @@ body{background-color:#fafafa;color:#291720;font-family:"PT_Sans",Helvetica,sans
 
 
 .instruction {
-    color:lightblue;
-    font-size: 14px;
+    color:green;
+    font-size: 16px;
+    font-style: italic;
 }
 
 .labelButton {
@@ -30,9 +31,7 @@ body{background-color:#fafafa;color:#291720;font-family:"PT_Sans",Helvetica,sans
 
 
 a, a:focus, a:hover {
-    *color: #23527c;
     color: #AB37C8;
-    *text-decoration: underline;
 }
 
 .guideVocal{
@@ -56,4 +55,47 @@ a, a:focus, a:hover {
 
 .page-name {
     color: lightgray;
+}
+
+.qqTabHeader {
+    line-height:1.4;
+    background-color:#F0D7F7;
+}
+.qqTabSelected {
+    border:2px solid gray;
+    background-color: white;
+    border-bottom:2px solid white;
+    margin:0px;
+    padding:8px 15px;
+    font-size:16px;
+    font-weight:bold;
+}
+.qqTabUnselected {
+    border:2px solid #F0D7F7;
+    background-color: #F0D7F7;
+    border-bottom:2px solid gray;
+    margin:0px;
+    padding:8px 15px;
+    font-size:16px;
+    font-weight:bold;
+}
+.qqTabBand {
+    background-color:#F0D7F7;
+    padding:8px 15px;
+    border:2px solid #F0D7F7;
+    border-bottom:2px solid gray
+}
+.sBoxTop {
+    padding:5px 5px;
+    height:36px;width:100%;
+    background-color:#eee;
+    border-top:1px solid gray;
+    border-left:1px solid gray;
+    border-right:1px solid gray
+}
+.sBoxMain {
+    height:400px;
+    overflow: auto;
+    border:1px solid gray;
+    padding:5px;
 }

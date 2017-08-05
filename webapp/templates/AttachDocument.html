@@ -16,22 +16,31 @@
     background-color: lawngreen;
 }
 
+
 </style>
 
-<div class="modal-header">
-    <h3 class="modal-title" style="float:left">Attach Documents</h3>
-    <div style="clear: both"></div>
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-click="selectedTab='Settings'" 
+          ng-class="selectedTab=='Settings'?'qqTabSelected':'qqTabUnselected'">
+    Attach Documents
+    </span>
+    <span ng-click="selectedTab='Upload'"  
+          ng-class="selectedTab=='Upload'?'qqTabSelected':'qqTabUnselected'">
+    Upload New Document
+    </span>
+  </div>
 </div>
 <div class="modal-body {{greenOnDrag()}}"  style="min-height:300px" 
     ondragover="window.MY_SCOPE.dragIn(event)"
     ondragleave="window.MY_SCOPE.dragOut(event)"
     ondrop="window.MY_SCOPE.dragDrop(event)">
-   <div ng-hide="uploadMode">
-      <div> Filter <input type="text" ng-model="realDocumentFilter"> </div>
+   <div ng-show="selectedTab=='Settings'">
       <table style="width:100%"><tr>
-      <td style="width:50%;vertical-align:top;padding:20px;">
-        <div style="max-height:400px;overflow: auto">
-          <table class="docTable">
+      <td style="width:50%;vertical-align:top;padding:10px;">
+        <div class="sBoxTop"> Available Documents - Filter <input type="text" ng-model="realDocumentFilter"> </div>
+        <div class="sBoxMain">
+          <table class="docTable" style="">
             <tr ng-repeat="doc in filterDocs()" ng-click="addDocToItem(doc)" style="cursor:pointer" 
                 title="Click to add document to the list.">
                 <td >
@@ -49,8 +58,9 @@
           </table>
         </div>
       </td>
-      <td style="width:50%;vertical-align:top;padding:20px;">
-        <div style="max-height:400px;overflow: auto">
+      <td style="width:50%;vertical-align:top;padding:10px;">
+        <div class="sBoxTop"> Chosen Documents </div>
+        <div class="sBoxMain">
           <table class="docTable">
             <tr ng-repeat="doc in itemDocs()" ng-click="removeDocFromItem(doc)" 
                 title="Click to remove document from list." style="cursor:pointer">
@@ -61,7 +71,7 @@
                 </td>
             </tr>
             <tr ng-show="itemDocs().length==0">
-                <td class="instruction">Nothing attached.<br/><br/>
+                <td class="instruction">Nothing chosen to be attached.<br/><br/>
                 <span ng-show="filterDocs().length>0">Click on a document on the left, to add to the attachments listed here on the right.</span></td>
             </tr>
           </table>
@@ -70,7 +80,7 @@
       </tr>
       </table>
     </div>
-    <div id="TheNewDocument" ng-show=uploadMode>
+    <div ng-show="selectedTab=='Upload'">
         <div>
             <table>
                 <tr>
@@ -109,7 +119,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <span class="instruction">To upload new file: Drop anywhere in panel</span>
+    <span class="instruction" style="margin-right:40px">To upload new file: Drop anywhere in panel</span>
     <button class="btn btn-primary btn-raised"
         type="button" ng-click="ok()">Save</button>
     <button class="btn btn-warning btn-raised" type="button" ng-click="cancel()">

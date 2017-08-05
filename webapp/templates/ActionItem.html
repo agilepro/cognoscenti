@@ -1,11 +1,22 @@
 
-<div class="modal-header">
-    <span style="padding:10px;">
-        <img ng-src="../../../assets/goalstate/large{{goal.state}}.gif"></span>
-    <button class="btn">Action Item</button>
-    <button class="btn btn-default btn-raised" ng-click="editMode='status'">Status</button>
-    <button class="btn btn-default btn-raised" ng-click="editMode='details'">Details</button>
-    <button class="btn btn-default btn-raised" ng-click="editMode='assignee'">Assignment</button>
+
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-click="editMode='status'" 
+          ng-class="editMode=='status'?'qqTabSelected':'qqTabUnselected'">
+    Action Item Status
+    </span>
+    <span ng-click="editMode='details'"  
+          ng-class="editMode=='details'?'qqTabSelected':'qqTabUnselected'">
+    Details
+    </span>
+    <span ng-click="editMode='assignee'"  
+          ng-class="editMode=='assignee'?'qqTabSelected':'qqTabUnselected'">
+    <img ng-src="../../../assets/goalstate/small{{goal.state}}.gif"> Assignment
+    </span>
+    <span class="qqTabUnselected">
+        </span>    
+    </div>
 </div>
 <div class="modal-body" style="min-height:300px">
 <style>
@@ -72,7 +83,8 @@
             <label>Status:</label>
           </td>
           <td>
-            <textarea ng-model="goal.status" class="form-control" style="width:400px"></textarea>
+            <textarea ng-model="goal.status" class="form-control" style="width:400px" 
+                 placeholder="Enter text describing the current status"></textarea>
           </td>
         </tr>
       </table>

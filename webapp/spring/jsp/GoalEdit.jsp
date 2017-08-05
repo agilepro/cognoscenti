@@ -529,7 +529,7 @@ function addvalue() {
                 </span>
             </td>
         </tr>
-        <tr>
+        <tr title="The action item can be assigned to any number of people who will receive reminders until it is completed.">
             <td class="gridTableColummHeader">Assigned To:</td>
             <td>
               <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
@@ -558,8 +558,9 @@ function addvalue() {
             <td class="gridTableColummHeader">Status:</td>
             <td>
                 {{goalInfo.status}}
-                <span ng-hide="goalInfo.status" class="instruction">
-                    Click to record status</span>
+                <span ng-hide="goalInfo.status" class="instruction" 
+                      style="border:1px solid gray;padding:5px 20px">
+                    Click here to record status</span>
             </td>
         </tr>
         <tr title="Red-Yellow-Green is a high-level status saying how things are going generally">

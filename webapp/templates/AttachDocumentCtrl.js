@@ -179,6 +179,6 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, doc
         });
         $scope.uploadMode = moreToUpload;
     }
-
+    $scope.selectedTab = "Settings";
 
 });

@@ -387,8 +387,11 @@ public abstract class NGPage extends ContainerCommon {
     }
 
     @Override
-    public boolean isFrozen() throws Exception
-    {
+    public boolean isFrozen() throws Exception {
+        //every workspace in a frozen site is considered frozen
+        if (prjSite.isFrozen()) {
+            return true;
+        }
         return pageInfo.isFrozen();
     }
     private void freezeWorkspace(AuthRequest ar) {

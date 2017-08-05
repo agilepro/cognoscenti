@@ -109,5 +109,6 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
+    $scope.selectedTab = "Existing";
 
 });

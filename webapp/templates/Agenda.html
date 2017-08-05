@@ -1,11 +1,19 @@
 
-<div class="modal-header">
-    <button class="btn">Edit Agenda Item</button>
-    <button class="btn btn-default btn-raised" ng-click="descriptMode=false">Settings</button>
-    <button class="btn btn-default btn-raised" ng-click="descriptMode=true">Description</button>
+
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-click="selectedTab='Settings'" 
+          ng-class="selectedTab=='Settings'?'qqTabSelected':'qqTabUnselected'">
+    Agenda Item Settings
+    </span>
+    <span ng-click="selectedTab='Description'"  
+          ng-class="selectedTab=='Description'?'qqTabSelected':'qqTabUnselected'">
+    Description
+    </span>
+  </div>
 </div>
 <div class="modal-body" style="min-height:300px">
-    <div ng-hide="descriptMode">
+    <div ng-show="selectedTab=='Settings'">
       <div class="col-sm-12 col-md-6">
         <div class="form-group">
             <label for="labels">Name of Agenda Item:</label>
@@ -34,7 +42,7 @@
         </div>
       </div>
     </div>
-    <div ng-show="descriptMode">
+    <div ng-show="selectedTab=='Description'">
         <div ng-model="agendaItem.desc" ui-tinymce="tinymceOptions"></div>
     </div>
             

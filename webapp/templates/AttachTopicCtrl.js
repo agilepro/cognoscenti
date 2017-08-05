@@ -46,5 +46,21 @@ app.controller('AttachTopicCtrl', function($scope, $modalInstance, selectedTopic
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
+    $scope.tabStyle = function(which) {
+        var sss = {
+            "border":"2px solid #F0D7F7",
+            "border-bottom":"2px solid gray",
+            "margin":"0px",
+            "padding":"8px 15px",
+            "font-size":"16px",
+            "font-weight":"bold"
+        };
+        if ( ("Settings"==which) ) {
+            sss.border="2px solid gray";
+            sss["border-bottom"]="2px solid white";
+            sss["background-color"] = "white";
+        };
+        return sss;
+    };
 
 });

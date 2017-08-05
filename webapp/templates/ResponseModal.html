@@ -1,17 +1,18 @@
 <html>
 <body>
-<style>
-    .ta-editor.form-control.myform2-height  {
-        height: 200px;
-        min-height: 200px;
-    }
-</style>
-<div class="modal-header">
-    <h3>{{response.userName}} - Response to {{commentTypeName()}}</h3>
+
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-class="'qqTabSelected'">
+    {{response.userName}} - Response to {{commentTypeName()}}
+    </span>
+
+  </div>
 </div>
+
 <div class="modal-body">
     <div class="leafContent">
-        <div class="comment-inner" ng-bind-html="cmt.html"></div>
+        <div class="comment-inner" ng-bind-html="cmt.html" style="max-height:200px;overflow: hidden"></div>
     </div>
     <div class="form-inline form-group" style="padding:10px;" ng-show="cmt.commentType==2">
         Choice:  <select class="form-control" ng-model="response.choice"

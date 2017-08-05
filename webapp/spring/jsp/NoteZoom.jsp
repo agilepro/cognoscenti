@@ -21,6 +21,7 @@ Required parameter:
     String pageId      = ar.reqParam("pageId");
     NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngw);
+    JSONObject workspaceInfo = ngw.getConfigJSON();
 
     boolean isLoggedIn = ar.isLoggedIn();
 
@@ -89,6 +90,7 @@ document.title="<% ar.writeJS(note.getSubject());%>";
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize', 'ngTagsInput']);
 app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     window.setMainPageTitle("Discussion Topic");
+    $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
@@ -130,6 +132,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     $scope.myCommentType = 1;   //simple comment
     $scope.myReplyTo = 0;
 
+    $scope.startEdit = function() {
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\nTopics can not be edited in a frozen workspace.");
+            return;
+        }
+        $scope.isEditing = true;
+    }
     $scope.saveEdit = function() {
         $scope.saveEdits(['html','subject']);
         $scope.isEditing = false;
@@ -457,6 +466,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 
 
     $scope.openCommentCreator = function(itemNotUsed, type, replyTo, defaultBody) {
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
+            return;
+        }
         var newComment = {};
         newComment.time = new Date().getTime();
         newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
@@ -477,6 +490,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 
 
     $scope.openCommentEditor = function (itemNotUsed, cmt) {
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
+            return;
+        }
         var modalInstance = $modal.open({
             animation: true,
             templateUrl: '<%=ar.retPath%>templates/CommentModal.html<%=templateCacheDefeater%>',
@@ -505,6 +522,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     };
 
     $scope.openResponseEditor = function (cmt) {
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
+            return;
+        }
 
         var selected = $scope.getResponse(cmt);
         var selResponse = {};
@@ -548,6 +569,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 
 
     $scope.openOutcomeEditor = function (cmt) {
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
+            return;
+        }
 
         var modalInstance = $modal.open({
             animation: false,
@@ -576,6 +601,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 
 
     $scope.createDecision = function(newDecision) {
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
+            return;
+        }
         newDecision.num="~new~";
         newDecision.universalid="~new~";
         var postURL = "updateDecision.json?did=~new~";
@@ -597,6 +626,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     };
 
     $scope.openDecisionEditor = function (itemNotUsed, cmt) {
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
+            return;
+        }
 
         var newDecision = {
             html: cmt.html,
@@ -654,6 +687,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
         window.location="docinfo"+doc.id+".htm";
     }
     $scope.openAttachDocument = function () {
+        
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\Documents can not be attached in a frozen workspace.");
+            return;
+        }
 
         var attachModalInstance = $modal.open({
             animation: true,
@@ -684,6 +722,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 
     $scope.openAttachAction = function (item) {
 
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\Action items can not be attached in a frozen workspace.");
+            return;
+        }
         var attachModalInstance = $modal.open({
             animation: true,
             templateUrl: '<%=ar.retPath%>templates/AttachAction.html<%=templateCacheDefeater%>',
@@ -766,7 +808,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="notesList.htm">List Topics</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="isEditing = !isEditing" target="_blank">Edit This Topic</a></li>
+              ng-click="startEdit()" target="_blank">Edit This Topic</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">Generate PDF</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"

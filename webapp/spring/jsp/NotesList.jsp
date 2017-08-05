@@ -9,6 +9,12 @@
     NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngw);
     NGBook ngb = ngw.getSite();
+    
+    JSONObject siteInfo = ngb.getConfigJSON();
+    siteInfo.put("frozen", ngb.isFrozen());
+    
+    JSONObject workspaceInfo = ngw.getConfigJSON();
+    
     boolean isMember = ar.isMember();
 
     //set 'forceTemplateRefresh' in config file to 'true' to get this
@@ -115,6 +121,8 @@ function httpGet(theUrl)
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Discussion Topics");
+    $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
+    $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.filter = "";
     $scope.showVizPub = true;
@@ -271,6 +279,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.openTopicCreator = function() {
+        
+        if ($scope.workspaceInfo.frozen) {
+            alert("Sorry, this workspace is frozen by the administrator\nNew discussion topics can not be created in a frozen workspace.");
+            return;
+        }
 
         var modalInstance = $modal.open({
             animation: false,
@@ -355,44 +368,36 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </span>
      </div>
 
-    <div class="well fluid-container" ng-show="showFilter">
-        <!--div style="float:right;cursor:pointer;" href="#" ng-click="showFilter=false">x</div-->
-      <div class="row">
-        <div class="col-md-3">
-          Filter
-          <input ng-model="filter">
-        </div>
-        <div class="togglebutton col-md-2">
-          <label>
-            <input type="checkbox" ng-model="showVizPub"> Public
-          </label>
-        </div>
-        <div class="togglebutton col-md-2">
-          <label>
-            <input type="checkbox" ng-model="showVizMem"> Members-Only
-          </label>
-        </div>
-        <div class="togglebutton col-md-3">
-          <label>
-            <input type="checkbox" ng-model="showVizDel"> Include deleted
-          </label>
-        </div>
-        <div class="col-md-2">
-          <span class="dropdown">
-            <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" data-toggle="dropdown"
-            title="Add Filter by Label">Filter by Label</button>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-              <li role="presentation" ng-repeat="rolex in allLabels">
-                  <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm labelButton"
-                  ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}};">
-                      {{rolex.name}}</button>
-              </li>
+    <div class="well" ng-show="!isCreating">
+        Filter <input ng-model="filter"> &nbsp;
+        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showVizDel">
+            Deleted</span> &nbsp;
+        <span class="dropdown" ng-repeat="role in allLabelFilters()">
+            <button class="labelButton" type="button" id="menu2"
+               data-toggle="dropdown" style="background-color:{{role.color}};"
+               ng-show="hasLabel(role.name)">{{role.name}} <i class="fa fa-close"></i></button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+               <li role="presentation"><a role="menuitem" title="{{add}}"
+                  ng-click="toggleLabel(role)">Remove Filter:<br/>{{role.name}}</a></li>
             </ul>
-          </span>
-        </div>
-      </div>
+        </span>
+        <span>
+             <span class="dropdown">
+               <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown"
+                       title="Add Filter by Label"><i class="fa fa-filter"></i></button>
+               <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+                   style="width:320px;left:-130px">
+                 <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                     <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                     ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                         {{rolex.name}}</button>
+                 </li>
+               </ul>
+             </span>
+        </span>
     </div>
-
+     
+     
     <style>
     .regularTopic {
         border: 1px solid lightgrey;

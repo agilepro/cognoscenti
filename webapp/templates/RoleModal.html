@@ -1,10 +1,6 @@
 <html>
 <body>
 <style>
-    .ta-editor.form-control.myform2-height  {
-        height: 200px;
-        min-height: 200px;
-    }
     .spaceyTable {
         width:100%;
     }
@@ -16,31 +12,35 @@
         box-shadow: 1px 1px 1px 0 lightgray inset;
     }
 </style>
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-class="'qqTabSelected'">
+        <span ng-hide="isNew">Edit Players for Role: {{roleInfo.name}}</span>
+        <span ng-show="isNew">Create Role</span>
+    </span>
+  </div>
+</div>
 <div class="modal-body">
     <table ng-hide="isNew" class="spaceyTable">
         <tr>
-            <td class="gridTableColummHeader">Name:</td>
+            <td class="gridTableColummHeader"><label>Color:</label></td>
             <td>
-               <input ng-show="isNew" class="form-control" ng-model="roleInfo.name">
-               <button ng-hide="isNew" class="btn btn-sm" style="background-color:{{roleInfo.color}};">{{roleInfo.name}}</button>
-            </td>
-            <td align="right">
-               <div class="dropdown" style="float: right;">
-                    <b>Color:</b>
-                    <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2"
-                        data-toggle="dropdown" style="background-color:{{roleInfo.color}};">
-                    {{roleInfo.color}} <span class="caret"></span></button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                        <li role="presentation" ng-repeat="color in colors">
-                            <a role="menuitem" style="background-color:{{color}};"
-                            ng-click="roleInfo.color=color;updatePlayers()">{{color}}</a></li>
-                    </ul>
+                <div>
+                <button class="btn btn-default btn-raised dropdown dropdown-toggle" type="button"
+                        id="menu3"
+                    data-toggle="dropdown" style="background-color:{{roleInfo.color}};">
+                {{roleInfo.color}} <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu3">
+                    <li role="presentation" ng-repeat="color in colors">
+                        <a role="menuitem" style="background-color:{{color}};"
+                        ng-click="roleInfo.color=color;updatePlayers()">{{color}}</a></li>
+                </ul>
                 </div>
             </td>
             <td style="width:30px;"></td>
         </tr>
         <tr>
-            <td class="gridTableColummHeader">Players:</td>
+            <td class="gridTableColummHeader"><label>Players:</label></td>
             <td colspan="2">
               <tags-input ng-model="roleInfo.players" placeholder="Enter user name or id"
                           display-property="name" key-property="uid" 
@@ -93,8 +93,8 @@
         <tr>
             <td class="gridTableColummHeader"></td>
             <td>
-               <i>First create the role, then add member to it.  Role names can not be changed.
-                  The name should be short and should use only letters and numbers.</i>
+               <span class="instruction">First create the role, then add member to it.  Role names can not be changed.
+                  The name should be short and should use only letters and numbers.</scan>
             </td>
         </tr>
         <tr>

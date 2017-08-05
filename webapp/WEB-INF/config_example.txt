@@ -46,7 +46,10 @@ identityProvider=https://interstagebpm.com/eid/
 #for a production server, leave this off so it runs FASTER.
 #Set forceTemplateRefresh=true to enable the slow, always refresh mode.
 
-
+#For debugging, sometimes the browser caches the html templates
+#too long.  Set this to true to force the browser to reload the 
+#template everytime.  Do not set on production servers.
+#forceTemplateRefresh=true
 
 #Local Connections designate named paths on the server machine
 #to which a local connection can be made

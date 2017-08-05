@@ -16,19 +16,24 @@
         height:200px;
     }
 </style>
-<div class="modal-header">
-    <div>
-    <span ng-click="showEmail=false" ng-style="getStyle(1)">{{getVerbHeader()}} {{commentTypeName()}}
-    </span><span ng-click="showEmail=true" ng-style="getStyle(2)">Settings
-    </span><span ng-style="getStyle(3)">&nbsp; &nbsp; &nbsp; &nbsp; </span>
-    </div>
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-click="selectedTab='Update'" 
+          ng-class="selectedTab=='Update'?'qqTabSelected':'qqTabUnselected'">
+    {{getVerbHeader()}} {{commentTypeName()}}
+    </span>
+    <span ng-click="selectedTab='Settings'"  
+          ng-class="selectedTab=='Settings'?'qqTabSelected':'qqTabUnselected'">
+    {{commentTypeName()}} Settings
+    </span>
+  </div>
 </div>
 <div class="modal-body" style="min-height:400px">
-    <div ng-hide="showEmail">
+    <div ng-show="selectedTab=='Update'">
     	<div ui-tinymce="tinymceOptions" ng-model="cmt.html" 
              class="leafContent" style="min-height:160px;" id="theOnlyEditor"></div>
     </div>
-    <div ng-show="showEmail">
+    <div ng-show="selectedTab=='Settings'">
       <div class="form-group form-horizontal col-md-6">
         <div class="form-group form-inline">
           <label>Also Notify:</label>
@@ -111,9 +116,9 @@
 
 		</div>
 		<div class="col-md-8 text-right">
-		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised">Close</button>
+		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised">Save &amp; Close</button>
 		  <button ng-click="postIt()" class="btn btn-primary btn-raised" ng-show="cmt.state<=11">
-				Post</button>
+				Save &amp; Post</button>
 		</div>
 	</div>
 </div>

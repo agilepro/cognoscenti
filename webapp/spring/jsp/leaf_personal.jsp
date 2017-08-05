@@ -145,6 +145,9 @@ app.controller('myCtrl', function($scope, $http) {
 .btn {
     margin:0px;
 }
+.guideVocal {
+    margin:0px;
+}
 </style>
 
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -173,7 +176,8 @@ app.controller('myCtrl', function($scope, $http) {
                 <td ng-hide="openWatch">
                     <button class="btn" ng-click="openWatch=!openWatch">?</button>
                 </td>
-                <td ng-show="openWatch" ng-click="openWatch=!openWatch">
+                <td ng-show="openWatch" ng-click="openWatch=!openWatch" >
+                  <div class="guideVocal">
                     <span ng-hide="isWatching"><b>You are not watching this workspace</b></span>
                     <span ng-show="isWatching"><b>You are watching this workspace</b></span>
                     <br/>
@@ -184,8 +188,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <br/>
                     And in future if you do not want that workspace to appear in watched workspace list you can stop
                     watching that workspace immediately.
-                    <br/>
-                    <br/>
+                  </div>
                 </td>
             </tr>
             <tr>
@@ -198,6 +201,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn" ng-click="openTemplate=!openTemplate">?</button>
                 </td>
                 <td ng-show="openTemplate" ng-click="openTemplate=!openTemplate">
+                  <div class="guideVocal">
                     <span ng-hide="isTemplate"><b>This workspace is not one of your template</b></span>
                     <span ng-show="isTemplate"><b>This workspace is one of your template</b></span>
                     <br/>
@@ -205,8 +209,7 @@ app.controller('myCtrl', function($scope, $http) {
                     You can use this workspace as template for your future reference. If you mark this
                     workspace as template then it will appear in the "List of Templates" in your profile's
                     workspace page. At any time you can even stop using this workspace as template.
-                    <br/>
-                    <br/>
+                  </div>
                 </td>
             </tr>
             <tr>
@@ -221,14 +224,14 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn" ng-click="openNotify=!openNotify">?</button>
                 </td>
                 <td ng-show="openNotify" ng-click="openNotify=!openNotify">
+                  <div class="guideVocal">
                     <span ng-hide="isNotify"><b>You are not receiving the digest for this workspace</b></span>
                     <span ng-show="isNotify"><b>You are receiving the digest for this workspace</b></span>
                     <br/>
                     <br/>
                     If you request to receive the digest of changes, then a summary of the changes to this workspace will
                     be included in the period email (daily, weekly, or monthly) that you receive.  Set the notification period in your personal settings.
-                    <br/>
-                    <br/>
+                   </div>
                 </td>
             </tr>
             <tr>
@@ -243,6 +246,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn" ng-click="openMute=!openMute">?</button>
                 </td>
                 <td ng-show="openMute" ng-click="openMute=!openMute">
+                  <div class="guideVocal">
                     <span ng-hide="isMute"><b>You will receive email notification when new Topics are created</b></span>
                     <span ng-show="isMute"><b>You will not receive email notification when new Topics are created</b></span>
                     <br/>
@@ -250,8 +254,7 @@ app.controller('myCtrl', function($scope, $http) {
                     Normally all members will receive an email when a new topic is created.  
                     This option allows you to disable that so that you will not receive any email
                     when a new discussion topic is created.
-                    <br/>
-                    <br/>
+                  </div>
                 </td>
             </tr>
             <tr class="gridTableHeader">
@@ -270,12 +273,14 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn" ng-click="role.show=!role.show">?</button>
                 </td>
                 <td ng-show="role.show"  ng-click="role.show=!role.show">
+                  <div class="guideVocal">
                     <b>Description</b><br/>
                     {{role.description}}
                     <br/>
                     <br/>
                     <b>Requirements</b><br/>
                     {{role.requirements}}
+                  </div>
                 </td>
             </tr>
             <tr class="gridTableHeader">
@@ -294,12 +299,14 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn" ng-click="role.show=!role.show">?</button>
                 </td>
                 <td ng-show="role.show" ng-click="role.show=!role.show">
+                  <div class="guideVocal">
                     <b>Description</b><br/>
                     {{role.description}}
                     <br/>
                     <br/>
                     <b>Requirements</b><br/>
                     {{role.requirements}}
+                  </div>
                 </td>
             </tr>
             <tr class="gridTableHeader">
@@ -318,12 +325,14 @@ app.controller('myCtrl', function($scope, $http) {
                     <button class="btn" ng-click="role.show=!role.show">?</button>
                 </td>
                 <td ng-show="role.show" ng-click="role.show=!role.show">
+                  <div class="guideVocal">
                     <b>Description</b><br/>
                     {{role.description}}
                     <br/>
                     <br/>
                     <b>Requirements</b><br/>
                     {{role.requirements}}
+                  </div>
                 </td>
             </tr>
         </table>

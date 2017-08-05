@@ -869,6 +869,9 @@ public class NGBook extends ContainerCommon {
 
     @Override
     public boolean isFrozen() throws Exception {
+        if (isDeleted()) {
+            return true;
+        }
         return false;
     }
 
@@ -1149,6 +1152,7 @@ public class NGBook extends ContainerCommon {
         jo.put("allowPrivate", getAllowPrivate());
         jo.put("changed", getLastModifyTime());
         jo.put("isDeleted", isDeleted());
+        jo.put("frozen", isFrozen());
         
         NGRole owners = getSecondaryRole();
         JSONArray ja = new JSONArray();
