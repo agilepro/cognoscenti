@@ -518,7 +518,7 @@ public class EmailGenerator extends DOMFace {
         data.put("optout", ooa.getUnsubscribeJSON(ar));
 
         File myTemplate = ar.getCogInstance().getConfig().getFileFromRoot("email/DiscussionTopicManual.chtml");
-        ChunkTemplate.streamIt(ar.w, myTemplate, data);
+        ChunkTemplate.streamIt(ar.w, myTemplate, data, ooa.getTimeZone());
     }
 
     public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw) throws Exception {

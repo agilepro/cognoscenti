@@ -82,40 +82,38 @@
     </div>
     <div ng-show="selectedTab=='Upload'">
         <div>
-            <table>
-                <tr>
-                    <td class="gridTableColummHeader"></td>
-                    <td style="width:20px;"></td>
-                    <td>
-                        <div ng-repeat="fp in fileProgress" class="well" style="min-width:400px;">
-                          <div >
-                              <div style="float:left;"><b>{{fp.file.name}}</b></div>
-
-                              <div style="float:right;">{{fp.status}}</div>
-                              <div style="clear:both;"></div>
-                          </div>
-                          <div ng-hide="fp.done">
-                             How is this document related to this workspace?:<br/>
-                             <textarea ng-model="fp.description" class="form-control"></textarea>
-                          </div>
-                          <div style="padding:3px;" ng-hide="fp.done">
-                              <div style="text-align:center">{{fp.status}}:  {{fp.loaded|number}} of {{fp.file.size|number}} bytes</div>
-                              <div class="progress">
-                                  <div class="progress-bar progress-bar-success" role="progressbar"
-                                       aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
-                                       style="width:{{fp.percent}}%">
-                                  </div>
-                              </div>
-                          </div>
-                          <div ng-hide="fp.done">
-                              <button ng-click="startUpload(fp)" class="btn btn-primary btn-raised">Upload</button>
-                              <button ng-click="cancelUpload(fp)" class="btn btn-primary btn-raised">Cancel</button>
-                          </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+            <div ng-repeat="fp in fileProgress" class="well" style="min-width:400px;">
+              <div >
+                  <div style="float:left;"><b>{{fp.file.name}}</b></div>
+                  <div style="float:right;">{{fp.status}}</div>
+                  <div style="clear:both;"></div>
+              </div>
+              <div ng-hide="fp.done">
+                 How is this document related to this workspace?:<br/>
+                 <textarea ng-model="fp.description" class="form-control"></textarea>
+              </div>
+              <div style="padding:3px;" ng-hide="fp.done">
+                  <div style="text-align:center">{{fp.status}}:  {{fp.loaded|number}} of {{fp.file.size|number}} bytes</div>
+                  <div class="progress">
+                      <div class="progress-bar progress-bar-success" role="progressbar"
+                           aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
+                           style="width:{{fp.percent}}%">
+                      </div>
+                  </div>
+              </div>
+              <div ng-hide="fp.done">
+                  <button ng-click="startUpload(fp)" class="btn btn-primary btn-raised">Upload</button>
+                  <button ng-click="cancelUpload(fp)" class="btn btn-primary btn-raised">Cancel</button>
+              </div>
+            </div>
         </div>
+        <div ng-show="!fileProgress || fileProgress.length==0" 
+             style="width:100%;text-align:center">
+            <span class="instruction">
+                To upload new file: Drop  anywhere in panel
+            </span>
+        </div>
+
     </div>
 </div>
 <div class="modal-footer">

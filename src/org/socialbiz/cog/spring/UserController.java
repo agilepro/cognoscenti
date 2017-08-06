@@ -629,6 +629,7 @@ public class UserController extends BaseController {
             
             JSONObject newUserSettings = this.getPostedObject(ar);
             userBeingEdited.updateFromJSON(newUserSettings);
+            UserManager.writeUserProfilesToFile();
             
             JSONObject userObj = userBeingEdited.getFullJSON();
             userObj.write(ar.w, 2, 2);

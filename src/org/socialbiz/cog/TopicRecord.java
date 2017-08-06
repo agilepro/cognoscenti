@@ -863,7 +863,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           File emailFolder = cog.getConfig().getFileFromRoot("email");
           File templateFile = new File(emailFolder, "NewTopic.chtml");
 
-          ChunkTemplate.streamIt(clone.w, templateFile, data);
+          ChunkTemplate.streamIt(clone.w, templateFile, data, commenterProfile.getTimeZone());
           clone.flush();
 
           String emailSubject = "New Topic: "+note.getSubject();

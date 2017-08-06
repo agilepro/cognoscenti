@@ -265,10 +265,7 @@ public class EmailSender extends TimerTask {
                 ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
                 ngw.gatherUnsentScheduledNotification(resList);
 
-                int total = resList.size();
-                int count = 0;
                 for (ScheduledNotification sn : resList) {
-                    count++;
                     if (sn.timeToSend()<nowTime) {
                         sn.sendIt(ar, emailArchive);
                     }
@@ -412,7 +409,8 @@ public class EmailSender extends TimerTask {
 
         MemFile bodyWriter = new MemFile();
         Writer w = bodyWriter.getWriter();
-        ChunkTemplate.streamIt(w, templateFile, data);
+        
+        ChunkTemplate.streamIt(w, templateFile, data, ooa.getTimeZone());
         w.flush();
 
         createEmailRecordInternal(ngc, from,

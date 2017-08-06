@@ -591,7 +591,7 @@ public class CommentRecord extends DOMFace {
         data.put("resendMessage", resendMessage);
 
         File templateFile = cog.getConfig().getFileFromRoot("email/NewComment.chtml");
-        ChunkTemplate.streamIt(clone.w, templateFile, data);
+        ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getTimeZone());
         clone.flush();
 
         String emailSubject =  noteOrMeet.emailSubject()+": "+opType+cmtType;

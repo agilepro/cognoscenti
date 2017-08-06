@@ -45,12 +45,17 @@ public class OptOutAddr {
 
     AddressListEntry assignee;
     String messageForAssignee = "";
+    String timeZone = null;
 
     public OptOutAddr(AddressListEntry _assignee) {
     	if (!_assignee.isWellFormed()) {
     		throw new RuntimeException("Can't create an OptOutAddr object for a user without an email address: "+_assignee.getUniversalId());
     	}
         assignee = _assignee;
+        UserProfile up = assignee.getUserProfile();
+        if (up!=null) {
+            timeZone = up.getTimeZone();
+        }
     }
 
     /**
@@ -76,6 +81,9 @@ public class OptOutAddr {
         String email = getEmail();
         return (email!=null && email.length()>0);
     }
+    public String getTimeZone() {
+        return timeZone;
+    }
 
     public boolean matches(OptOutAddr ooa) {
         return assignee.hasAnyId(ooa.getEmail());
@@ -96,6 +104,7 @@ public class OptOutAddr {
     public void prepareInternalMessage(Cognoscenti cog) throws Exception {
         MemFile body = new MemFile();
         UserProfile up = UserManager.findUserByAnyId(getEmail());
+        timeZone = up.getTimeZone();
         AuthRequest clone = new AuthDummy(up, body.getWriter(), cog);
         writeUnsubscribeLink(clone);
         clone.flush();
@@ -134,11 +143,15 @@ public class OptOutAddr {
             clone.writeURLData(up.getKey());
             clone.write("&emailId=");
             clone.writeURLData(emailId);
-            clone.write("\">alter your subscriptions</a>.</font></p>");
+            clone.write("\">alter your subscriptions</a>.");
+            clone.write("  Timezone: "+getTimeZone()); 
+            clone.write("</font></p>");
         }
         else {
             clone.write("  You have not created a profile at Weaver, or have not ");
-            clone.write("associated this address with your existing profile.</font></p>");
+            clone.write("associated this address with your existing profile.");
+            clone.write("  Timezone: "+getTimeZone());
+            clone.write("</font></p>");
         }
     }
 

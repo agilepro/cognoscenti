@@ -41,7 +41,7 @@
 <h2><a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a></h2>
 
 <p>
-Scheduled time: <b>{$meeting.startTime|date("MMM dd, YYYY  HH:mm 'GMT'XXX")}</b>
+Scheduled cc time: <b>{$meeting.startTime|date("MMM dd, YYYY  HH:mm '(ttt)' ")}</b>
 </p>
 
 <p>
@@ -84,7 +84,7 @@ Scheduled time: <b>{$meeting.startTime|date("MMM dd, YYYY  HH:mm 'GMT'XXX")}</b>
             >{$ass.name}</span><br/>
             {% onEmpty %}
             {% endloop %}</td>
-        <td>{$goal.duedate|date("MMM dd, YYYY)}</td>
+        <td>{$goal.duedate|date("MMM dd, YYYY")}</td>
         <td>{$goal.status}</td>
     </tr>
     {% onEmpty %}

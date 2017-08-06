@@ -1,7 +1,9 @@
 package org.socialbiz.cog.mail;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.workcast.mendocino.Mel;
 
@@ -34,35 +36,57 @@ z   Time zone   General time zone   Pacific Standard Time; PST; GMT-08:00
 Z   Time zone   RFC 822 time zone   -0800
 X   Time zone   ISO 8601 time zone  -08; -0800; -08:00
 
+SPECIAL EXTENTION:  'ttt' will be replaced with timezone ID
+it must be put in single quotes to hid from normal date format processing
+
 USE THIS in a TEMPLATE:
 
      {$myDate|date(YYYY-MM-dd)}
-
+     {$myDate|date("MMM dd, YYYY  HH:mm 'GMT'XXX")
+     {$myDate|date("MMM dd, YYYY  HH:mm '(ttt)' ")
 
  */
 public class ChunkFilterDate  extends BasicFilter implements ChunkFilter {
-
-        @Override
-        public String transformText(Chunk chunk, String valueIn, FilterArgs args) {
-            long dateVal = Mel.safeConvertLong(valueIn);
-
-            //if this is zero, or close enough to zero, then suppress output
-            //we give about 1 day of slop in case someone distorted things with
-            //a timezone offset.
-            if (dateVal < 100000000L) {
-                return "";
-            }
-            String[] argStrings = args.getFilterArgs();
-            String format = "MMM dd, yyyy  HH:mm z";
-            if (argStrings.length>0 && argStrings[0].length()>0) {
-                format = argStrings[0];
-            }
-            SimpleDateFormat sdf = new SimpleDateFormat(format);
-            return sdf.format(new Date(dateVal));
+    private String timeZoneID;
+    private Calendar cal;
+   
+    public ChunkFilterDate(String _timeZoneID) {
+        timeZoneID = _timeZoneID;
+        if (timeZoneID!=null) {
+            TimeZone tz =  TimeZone.getTimeZone(timeZoneID);
+            cal = Calendar.getInstance(tz);
         }
-
-        @Override
-        public String getFilterName() {
-            return "date";
+        else {
+            cal = Calendar.getInstance();
         }
     }
+
+    @Override
+    public String transformText(Chunk chunk, String valueIn, FilterArgs args) {
+        long dateVal = Mel.safeConvertLong(valueIn);
+
+        //if this is zero, or close enough to zero, then suppress output
+        //we give about 1 day of slop in case someone distorted things with
+        //a timezone offset.
+        if (dateVal < 100000000L) {
+            return "";
+        }
+        String[] argStrings = args.getFilterArgs();
+        String format = "MMM dd, yyyy  HH:mm '(ttt)'";
+        if (argStrings.length>0 && argStrings[0].length()>0) {
+            format = argStrings[0];
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        sdf.setCalendar(cal);
+        String res = sdf.format(new Date(dateVal));
+        if (res.contains("ttt")) {
+            res = res.replace("ttt", cal.getTimeZone().getID());
+        }
+        return res;
+    }
+
+    @Override
+    public String getFilterName() {
+        return "date";
+    }
+}

@@ -67,7 +67,7 @@ public class HistoricActions {
             File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequest.chtml");
             MemFile body = new MemFile();
             Writer w = body.getWriter();
-            ChunkTemplate.streamIt(w, templateFile, jo);
+            ChunkTemplate.streamIt(w, templateFile, jo, up.getTimeZone());
             w.flush();
 
             EmailSender.generalMailToList(cog.getUserManager().getSuperAdminMailList(ar), ar.getBestUserId(),
@@ -120,6 +120,8 @@ public class HistoricActions {
         	//problem with the owner user profile.
         	return;
         }
+        OptOutIndividualRequest ooir = new OptOutIndividualRequest(ale);
+        
         JSONObject jo = new JSONObject();
         jo.put("req", siteRequest.getJSON());
         jo.put("owner", owner.getJSON());
@@ -129,11 +131,11 @@ public class HistoricActions {
         File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequestStatus.chtml");
         MemFile body = new MemFile();
         Writer w = body.getWriter();
-        ChunkTemplate.streamIt(w, templateFile, jo);
+        ChunkTemplate.streamIt(w, templateFile, jo, ooir.getTimeZone());
         w.flush();
 
         List<OptOutAddr> v = new ArrayList<OptOutAddr>();
-        v.add(new OptOutIndividualRequest(ale));
+        v.add(ooir);
 
         EmailSender.generalMailToList(v, ar.getBestUserId(), "Site Request Resolution for " + owner.getName(),
                 body.toString(), cog);

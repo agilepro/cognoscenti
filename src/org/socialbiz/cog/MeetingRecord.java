@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
@@ -488,9 +489,10 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         renumberItems();  //sort & fix any numbering problems
     }
 
-    public String getNameAndDate() throws Exception {
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
-        return getName() + " @ " + DATE_FORMAT.format(new Date(getStartTime()));
+    public String getNameAndDate(Calendar cal) throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
+        sdf.setCalendar(cal);
+        return getName() + " @ " + sdf.format(new Date(getStartTime()));
     }
 
     public String generateWikiRep(AuthRequest ar, NGPage ngp) throws Exception {
@@ -667,10 +669,21 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
 
     public String generateMinutes(AuthRequest ar, NGPage ngp) throws Exception {
-        StringBuilder sb = new StringBuilder();
-        Calendar cal = Calendar.getInstance();
+        String owner = getOwner();
+        UserProfile up = UserManager.findUserByAnyId(owner);
+        Calendar cal = null;
+        if (up!=null) {
+            TimeZone tz = TimeZone.getTimeZone(up.getTimeZone());
+            cal = Calendar.getInstance(tz);
+        }
+        else {
+            cal = Calendar.getInstance();
+        }
+        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
+        sdfTime.setCalendar(cal);
 
-        sb.append("!!!Meeting: "+getNameAndDate());
+        StringBuilder sb = new StringBuilder();
+        sb.append("!!!Meeting: "+getNameAndDate(cal));
 
         sb.append("\n\n");
 
@@ -678,7 +691,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
         sb.append("\n\n");
         sb.append("See original meeting: [");
-        sb.append(getNameAndDate());
+        sb.append(getNameAndDate(cal));
         sb.append("|");
         sb.append(ar.baseURL);
         sb.append(ar.getResourceURL(ngp, "meetingFull.htm?id="+getId()));
@@ -695,12 +708,10 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 sb.append(". ");
             }
             sb.append(ai.getSubject());
-            cal.setTimeInMillis(itemTime);
-            sb.append("\n\n"+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+            sb.append("\n\n"+sdfTime.format(new Date(itemTime)));
             long minutes = ai.getDuration();
             long finishTime = itemTime + (minutes*60*1000);
-            cal.setTimeInMillis(finishTime);
-            sb.append(" - "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+            sb.append(" - "+sdfTime.format(new Date(finishTime)));
             sb.append(" (");
             sb.append(Long.toString(ai.getDuration()));
             sb.append(" minutes)");
@@ -895,7 +906,8 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         return ar.getResourceURL(ngp,  "meetingFull.htm?id="+this.getId());
     }
     public String selfDescription() throws Exception {
-        return "(Meeting) "+getNameAndDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return "(Meeting) "+getName()+" @ " + sdf.format(new Date(getStartTime()));
     }
     public void markTimestamp(long newTime) throws Exception {
         //the meeting does not care about the timestamp that an comment is emailed.

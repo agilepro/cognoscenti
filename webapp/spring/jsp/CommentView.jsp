@@ -45,11 +45,13 @@
         <span ng-show="cmt.commentType==5" title="{{stateName(cmt)}} Minutes">
           <i class="fa fa-file-code-o" style="font-size:130%"></i></span>
                &nbsp; 
-        <span title="Created {{cmt.dueDate|date:'medium'}}">{{cmt.time | date}}</span> -
+        <span title="Created {{cmt.dueDate|date:'medium'}}"
+              ng-click="openCommentEditor(item,cmt)">{{cmt.time | date}}</span> -
         <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
           <span class="red">{{cmt.userName}}</span>
         </a>
-        <span ng-show="cmt.emailPending && !cmt.suppressEmail">-email pending-</span>
+        <span ng-show="cmt.emailPending && !cmt.suppressEmail" 
+              ng-click="openCommentEditor(item,cmt)">-email pending-</span>
         <span ng-show="cmt.replyTo">
           <span ng-show="cmt.commentType==1">
             In reply to                 

@@ -573,7 +573,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         <!-- Form Control BUTTONS -->
         <div class="row">
           <div class="col-md-12 form-group text-right">
-            <button ng-click="saveEmail()" class="btn btn-primary btn-raised">Save Changes</button>
+            <button ng-click="saveEmail()" class="btn btn-primary btn-raised">Save &amp; Preview</button>
             <button ng-click="sendEmail()" class="btn btn-primary btn-raised">Send Now</button>
           </div>
         </div>
@@ -585,7 +585,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 
   <div class="form-inline">
      For Recipient <select class="form-control" ng-model="recipient" ng-options="rec as rec.name for rec in recipientList track by rec.uid"></select>
-     <button ng-click="getRenderedEmail()" class="btn btn-primary btn-raised">Display Email</button>
+     <button ng-click="getRenderedEmail()" class="btn btn-primary btn-raised">Preview Email</button>
   </div>
   <div class="instruction">This is what the email will look like:<br/><br/></div>
   

@@ -133,9 +133,9 @@
    <div style="clear: both"></div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary btn-raised" ng-hide="createMode"
+    <button class="btn btn-primary btn-raised" ng-hide="selectedTab=='Create'"
         type="button" ng-click="ok()">Save</button>
-    <button class="btn btn-primary btn-raised" ng-show="createMode"
+    <button class="btn btn-primary btn-raised" ng-show="selectedTab=='Create'"
         type="button" ng-click="createActionItem()">Create Action Item</button>
     <button class="btn btn-warning btn-raised" type="button" ng-click="cancel()">
         Cancel</button>

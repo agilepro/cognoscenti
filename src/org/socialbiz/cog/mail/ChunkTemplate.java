@@ -111,7 +111,7 @@ public class ChunkTemplate {
     }
 
 
-    public static void streamIt(Writer w, File templateFile, JSONObject data) throws Exception {
+    public static void streamIt(Writer w, File templateFile, JSONObject data, String timeZoneID) throws Exception {
         if (!templateFile.exists()) {
             throw new Exception("The template file is missing: "+templateFile);
         }
@@ -126,7 +126,7 @@ public class ChunkTemplate {
         theme.setEncoding("UTF-8");
 
         //This allows {$myDate|date(YYYY-MM-dd)} style tokens in the file
-        theme.registerFilter(new ChunkFilterDate());
+        theme.registerFilter(new ChunkFilterDate(timeZoneID));
 
         Chunk c = theme.makeChunk(fileName);
 

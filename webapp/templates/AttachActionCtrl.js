@@ -96,6 +96,7 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
             $scope.selectedActions.push(data.universalid);
             $scope.newGoal = {};
             $scope.createMode = false;
+            $modalInstance.close($scope.selectedActions);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
