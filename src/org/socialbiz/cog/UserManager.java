@@ -327,6 +327,10 @@ public class UserManager
         Vector<AddressListEntry> res = new Vector<AddressListEntry>();
         Hashtable<String,String> repeatCheck = new Hashtable<String,String>();
         for (UserProfile up : allUsers) {
+            if (up.getDisabled()) {
+                //skip disabled user accounts
+                continue;
+            }
             String uid = up.getUniversalId();
             if (!repeatCheck.containsKey(uid)) {
                 res.add(new AddressListEntry(up));
