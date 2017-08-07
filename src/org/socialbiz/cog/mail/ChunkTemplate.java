@@ -1,8 +1,10 @@
 package org.socialbiz.cog.mail;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -111,7 +113,7 @@ public class ChunkTemplate {
     }
 
 
-    public static void streamIt(Writer w, File templateFile, JSONObject data, String timeZoneID) throws Exception {
+    public static void streamIt(Writer w, File templateFile, JSONObject data, Calendar cal) throws Exception {
         if (!templateFile.exists()) {
             throw new Exception("The template file is missing: "+templateFile);
         }
@@ -126,9 +128,39 @@ public class ChunkTemplate {
         theme.setEncoding("UTF-8");
 
         //This allows {$myDate|date(YYYY-MM-dd)} style tokens in the file
-        theme.registerFilter(new ChunkFilterDate(timeZoneID));
+        theme.registerFilter(new ChunkFilterDate(cal));
 
         Chunk c = theme.makeChunk(fileName);
+        
+        finishUp(w,c,data);
+    }
+    /**
+     * Takes a string that looks like a template, some data, and a calendar
+     * and returns the string with the data substituted into it.
+     * This is intended for small strings.
+     * 
+     * @param str the template that is to be interpreted
+     * @param data is JSON structured field values
+     * @param cal is teh calendar to use for date conversions
+     * @return the resulting string with the data substituted in
+     */
+    public static String stringIt(String str, JSONObject data, Calendar cal) throws Exception {
+        StringWriter sw = new StringWriter();
+        Theme theme = new Theme();
+        theme.setDefaultFileExtension("chtml");
+        theme.setEncoding("UTF-8");
+
+        //This allows {$myDate|date(YYYY-MM-dd)} style tokens in the file
+        theme.registerFilter(new ChunkFilterDate(cal));
+
+        Chunk c = theme.makeChunk();
+        c.append(str);
+        
+        finishUp(sw,c,data);
+        return sw.toString();
+    }
+    
+    private static void finishUp(Writer w, Chunk c, JSONObject data) throws Exception {
 
         for (String key : data.keySet()) {
             Object kewl = data.get(key);

@@ -324,7 +324,9 @@ public class EmailGenerator extends DOMFace {
             return;
         }
 
-        String entireBody = generateEmailBody(ar, ngp, ooa);
+        String[] subjAndBody = generateEmailBody(ar, ngp, ooa);
+        String subject = subjAndBody[0];
+        String entireBody = subjAndBody[1];
 
         List<String> attachIds = new ArrayList<String>();
         for (String attId : getAttachments()) {
@@ -334,11 +336,13 @@ public class EmailGenerator extends DOMFace {
             }
         }
         
-        mailFile.createEmailWithAttachments(ngp, getFrom(), ooa.getEmail(), getSubject(), entireBody, attachIds);
+        mailFile.createEmailWithAttachments(ngp, getFrom(), ooa.getEmail(), subject, entireBody, attachIds);
     }
 
     
-    public String generateEmailBody(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa) throws Exception {
+    public String[] generateEmailBody(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa) throws Exception {
+        
+        String[] ret = new String[2];
 
         TopicRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
         MemFile bodyChunk = new MemFile();
@@ -376,12 +380,17 @@ public class EmailGenerator extends DOMFace {
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.setPageAccessLevels(ngp);
-
-        writeNoteAttachmentEmailBody2(clone, ngp, noteRec, ooa, getIntro(),
+        
+        JSONObject data = getJSONForTemplate(ar, ngp, noteRec, ooa.getAssignee(), getIntro(), 
                 getIncludeBody(), attachList, meeting);
 
+        writeNoteAttachmentEmailBody2(clone, ooa, data);
         clone.flush();
-        return bodyChunk.toString();
+        ret[1] = bodyChunk.toString();
+        
+        ret[0] = ChunkTemplate.stringIt(getSubject(), data, ooa.getCalendar());
+        
+        return ret;
     }
 
     private static List<AttachmentRecord> getSelectedAttachments(AuthRequest ar,
@@ -504,21 +513,18 @@ public class EmailGenerator extends DOMFace {
         return data;
     }
 
-    private void writeNoteAttachmentEmailBody2(AuthRequest ar,
-            NGWorkspace ngp, TopicRecord selectedNote,
-            OptOutAddr ooa, String intro, boolean includeBody,
-            List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
+    private void writeNoteAttachmentEmailBody2(AuthRequest ar, 
+            OptOutAddr ooa, JSONObject data) throws Exception {
 
         UserProfile ownerProfile = ar.getUserProfile();
         if (ownerProfile==null) {
             throw new Exception("Some problem, so some reason the owner user profile is null");
         }
 
-        JSONObject data = getJSONForTemplate(ar, ngp, selectedNote, ooa.getAssignee(), intro, includeBody, selAtt, meeting);
         data.put("optout", ooa.getUnsubscribeJSON(ar));
 
         File myTemplate = ar.getCogInstance().getConfig().getFileFromRoot("email/DiscussionTopicManual.chtml");
-        ChunkTemplate.streamIt(ar.w, myTemplate, data, ooa.getTimeZone());
+        ChunkTemplate.streamIt(ar.w, myTemplate, data, ooa.getCalendar());
     }
 
     public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw) throws Exception {

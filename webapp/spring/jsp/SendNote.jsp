@@ -96,7 +96,7 @@ Optional Parameters:
             if (mr!=null) {
                 emailInfo.put("meetingInfo", mr.getFullJSON(ar, ngw));
                 if(mailSubject == null){
-                    mailSubject = "Meeting: "+mr.getNameAndDate();
+                    mailSubject = "Meeting: "+mr.getNameAndDate(mr.getOwnerCalendar());
                 }
             }
             targetRole = mr.getTargetRole();
@@ -237,6 +237,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.renderedEmail = $sce.trustAsHtml(data.html);
+            $scope.renderedSubject = data.subject;
             console.log("got RENDER", data);
             if (data.addressees) {
                 var newRecList = [];
@@ -590,6 +591,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
   <div class="instruction">This is what the email will look like:<br/><br/></div>
   
   <div class="well" style="padding:50px">
+     <div style="padding:15px">{{renderedSubject}}</div>
      <div ng-bind-html="renderedEmail"></div>
   </div>
 

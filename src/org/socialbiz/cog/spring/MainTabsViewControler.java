@@ -22,7 +22,9 @@ package org.socialbiz.cog.spring;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -45,6 +47,7 @@ import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.TopicRecord;
+import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
 import org.springframework.stereotype.Controller;
@@ -54,6 +57,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
+
 
 @Controller
 public class MainTabsViewControler extends BaseController {
@@ -1211,6 +1215,65 @@ public class MainTabsViewControler extends BaseController {
 
 
 
+
+
+      @RequestMapping(value = "/{siteId}/{pageId}/timeZoneList.json", method = RequestMethod.POST)
+      public void timeZoneList(@PathVariable String siteId,@PathVariable String pageId,
+              HttpServletRequest request, HttpServletResponse response) {
+          AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          try{
+              JSONObject timeZoneRequest = getPostedObject(ar);
+              
+              Date sourceDate = new Date(timeZoneRequest.getLong("date"));
+              String template = "MMM dd, YYYY  HH:mm";
+              if (timeZoneRequest.has("template")) {
+                  template = timeZoneRequest.getString("template");
+              }
+              
+              SimpleDateFormat sdf = new SimpleDateFormat(template);
+              
+              HashSet<String> allZones = new HashSet<String>();
+              
+              if (timeZoneRequest.has("zones")) {
+                  JSONArray zones = timeZoneRequest.getJSONArray("zones");
+                  for (int i=0; i<zones.length(); i++) {
+                      String oneZone = zones.getString(i);
+                      allZones.add(oneZone);
+                  }
+              }
+              if (timeZoneRequest.has("users")) {
+                  JSONArray users = timeZoneRequest.getJSONArray("users");
+                  for (int i=0; i<users.length(); i++) {
+                      String oneUser = users.getString(i);
+                      UserProfile up = UserManager.findUserByAnyId(oneUser);
+                      if (up!=null) {
+                          String tx = up.getTimeZone();
+                          if (tx!=null && tx.length()>0) {
+                              allZones.add(tx);
+                          }
+                      }
+                  }
+              }
+              JSONObject jo = new JSONObject();
+              JSONArray dates = new JSONArray();
+              for (String aZone : allZones) {
+                  TimeZone tz = TimeZone.getTimeZone(aZone);
+                  if (tz!=null) {
+                      Calendar cal = Calendar.getInstance(tz);
+                      sdf.setCalendar(cal);
+                      dates.put(sdf.format(sourceDate) + " ("+aZone+")");
+                  }
+              }
+              jo.put("dates", dates);
+              jo.put("sourceDate", sourceDate.getTime());
+
+              jo.write(ar.w, 2, 2);
+              ar.flush();
+          }catch(Exception ex){
+              Exception ee = new Exception("Unable to calculate time zone list.", ex);
+              streamException(ee, ar);
+          }
+      }
 
 
 

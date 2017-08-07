@@ -582,7 +582,10 @@ public class ProjectSettingController extends BaseController {
                 //would be better if we could capture the actual relationship
                 OptOutAddr sampleAddressee = eGen.getOOAForUserID(ar,  ngw, sampleUser);
                 
-                repo.put("html", eGen.generateEmailBody(ar, ngw, sampleAddressee));
+                String[] subjAndBody = eGen.generateEmailBody(ar, ngw, sampleAddressee);
+
+                repo.put("subject", subjAndBody[0]);
+                repo.put("html", subjAndBody[1]);
                 repo.put("addressees", addressees);
             }
             

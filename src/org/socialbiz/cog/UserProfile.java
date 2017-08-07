@@ -23,7 +23,9 @@ package org.socialbiz.cog;
 import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
@@ -935,5 +937,22 @@ public class UserProfile implements UserRef
         }
         
     }
+    
+    /**
+     * Each user specifies a time zone.   
+     * @return the Calendar object for the time zone specified by the user 
+     *         or the default time zone (from the server) if the user has
+     *         not specified a time zone.
+     */
+    public Calendar getCalendar() {
+        String tzid = getTimeZone();
+        if (tzid==null || tzid.length()==0) {
+            //this is the default calendar for the server environment
+            return Calendar.getInstance();
+        }
+        TimeZone tz = TimeZone.getTimeZone(tzid);
+        return Calendar.getInstance(tz);
+    }
+    
     
 }

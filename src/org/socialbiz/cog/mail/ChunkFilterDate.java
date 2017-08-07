@@ -3,7 +3,6 @@ package org.socialbiz.cog.mail;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 import org.workcast.mendocino.Mel;
 
@@ -47,10 +46,11 @@ USE THIS in a TEMPLATE:
 
  */
 public class ChunkFilterDate  extends BasicFilter implements ChunkFilter {
-    private String timeZoneID;
     private Calendar cal;
    
-    public ChunkFilterDate(String _timeZoneID) {
+    public ChunkFilterDate(Calendar _cal) {
+        cal = _cal;
+        /*
         timeZoneID = _timeZoneID;
         if (timeZoneID!=null) {
             TimeZone tz =  TimeZone.getTimeZone(timeZoneID);
@@ -59,6 +59,7 @@ public class ChunkFilterDate  extends BasicFilter implements ChunkFilter {
         else {
             cal = Calendar.getInstance();
         }
+        */
     }
 
     @Override

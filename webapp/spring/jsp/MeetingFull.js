@@ -4,7 +4,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Meeting");
     $scope.pageId = embeddedData.pageId;
     $scope.meetId = embeddedData.meetId;
-    $scope.meeting = embeddedData.meeting;
+    $scope.meeting = {rollCall:[],agenda:[]}
     $scope.previousMeeting = embeddedData.previousMeeting;
     $scope.allGoals = embeddedData.allGoals;
     $scope.attachmentList = [];
@@ -13,9 +13,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.allTopics = [];
     $scope.backlogId = embeddedData.backlogId;
     
-    //set to timestamp if trouble getting new templates to load
-    //var templateCacheDefeater = "";
-    var templateCacheDefeater = "?t="+(new Date().getTime());
+    var templateCacheDefeater = embeddedData.templateCacheDefeater;
 
     var n = new Date().getTimezoneOffset();
     var tzNeg = n<0;
@@ -373,7 +371,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.stopEditing();
     };
     $scope.putGetMeetingInfo = function(readyToSave) {
-        var postURL = "meetingUpdate.json?id="+$scope.meeting.id;
+        var postURL = "meetingUpdate.json?id="+$scope.meetId;
         if (readyToSave.id=="~new~") {
             postURL = "agendaAdd.json?id="+$scope.meeting.id;
         }
@@ -812,7 +810,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         else {
             console.log("NO isArray function");
         }
-        var selRole = {};
+        var selRole = {players:[]};
         $scope.allLabels.forEach( function(item) {
             if (item.name === $scope.meeting.targetRole) {
                 selRole = item;
@@ -1400,6 +1398,37 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     
+    $scope.getTimeZoneList = function() {
+        if ($scope.allDates && $scope.allDates.length>0) {
+            $scope.allDates = [];
+            return;
+        }
+        var input = {};
+        input.date = $scope.meeting.startTime;
+        input.template = "MMM dd, YYYY  HH:mm";
+        input.zones = ["America/New_York", "America/Los_Angeles", "America/Chicago", "America/Denver", "Europe/London", "Europe/Paris", "Asia/Tokyo"];
+        input.users = [];
+        var roleName = $scope.meeting.targetRole;
+        embeddedData.allLabels.forEach( function(label) {
+            if (label.name==roleName) {
+                label.players.forEach( function(player) {
+                    input.users.push(player.uid);
+                });
+            } 
+        });
+        var postdata = angular.toJson(input);
+        $scope.showError=false;
+        var promise = $http.post("timeZoneList.json", postdata)
+        promise.success( function(data) {
+            console.log("got this", data);
+            $scope.allDates = data.dates;
+            $scope.allDates.sort();
+        });
+        promise.error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
     
+    $scope.refreshMeetingPromise();
 });
 

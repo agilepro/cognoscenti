@@ -410,7 +410,7 @@ public class EmailSender extends TimerTask {
         MemFile bodyWriter = new MemFile();
         Writer w = bodyWriter.getWriter();
         
-        ChunkTemplate.streamIt(w, templateFile, data, ooa.getTimeZone());
+        ChunkTemplate.streamIt(w, templateFile, data, ooa.getCalendar());
         w.flush();
 
         createEmailRecordInternal(ngc, from,

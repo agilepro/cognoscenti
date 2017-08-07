@@ -67,7 +67,7 @@ public class HistoricActions {
             File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequest.chtml");
             MemFile body = new MemFile();
             Writer w = body.getWriter();
-            ChunkTemplate.streamIt(w, templateFile, jo, up.getTimeZone());
+            ChunkTemplate.streamIt(w, templateFile, jo, up.getCalendar());
             w.flush();
 
             EmailSender.generalMailToList(cog.getUserManager().getSuperAdminMailList(ar), ar.getBestUserId(),
@@ -131,7 +131,7 @@ public class HistoricActions {
         File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequestStatus.chtml");
         MemFile body = new MemFile();
         Writer w = body.getWriter();
-        ChunkTemplate.streamIt(w, templateFile, jo, ooir.getTimeZone());
+        ChunkTemplate.streamIt(w, templateFile, jo, ooir.getCalendar());
         w.flush();
 
         List<OptOutAddr> v = new ArrayList<OptOutAddr>();

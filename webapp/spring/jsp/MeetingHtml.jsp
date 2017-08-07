@@ -198,47 +198,54 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
         </span>
       </div>
       <br/>
-      <div>
-        <div>
-            <b>Scheduled Time:</b> {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} &nbsp &nbsp
+      <table class="table">
+        <tr>
+            <td><b>Scheduled Time:</b></td>
+            <td>{{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} &nbsp &nbsp
             <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
-                <i class="fa fa-calendar"></i></a>
-        </div>
-        <div>
-            <b>State:</b> <span style="{{meetingStateStyle(meeting.state)}};padding:5px;">{{stateName()}}</span>
-        </div>
-        <div>
-            <b>Called By:</b> {{meeting.owner}}
-        </div>
-        <div>
-            <b>Target Role:</b> {{meeting.targetRole}}
-        </div>
-        <div>
-            <b>Description:</b>
-            <div ng-bind-html="meeting.meetingInfo"></div>
-        </div>
-        <div>
-            <b>Minutes:</b>
-                <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                <i class="fa fa-calendar"></i></a></td>
+        </tr>
+        <tr>
+            <td><b>State:</b></td>
+            <td><span style="{{meetingStateStyle(meeting.state)}};padding:5px;">{{stateName()}}</span>
+        </tr>
+        <tr>
+            <td><b>Called By:</b></td>
+            <td>{{meeting.owner}}</td>
+        </tr>
+        <tr>
+            <td><b>Target Role:</b></td>
+            <td>{{meeting.targetRole}}</td>
+        </tr>
+        <tr>
+            <td><b>Description:</b></td>
+            <td><div ng-bind-html="meeting.meetingInfo"></div></td>
+         </tr>
+        <tr>
+            <td><b>Minutes:</b></td>
+            <td><span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                          ng-click="navigateToTopic(meeting.minutesLocalId)">
                          View Minutes
                 </span>
-        </div>
-        <div>
-            <b>Previous Meeting:</b> <a href="meetingFull.htm?id={{previousMeeting.id}}">
-                {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}</a>
-        </div>
-        <div>
-            <b>Previous Minutes:</b> 
-            <span 
+            </td>
+        </tr>
+        <tr>
+            <td><b>Previous Meeting:</b></td>
+            <td><a href="meetingFull.htm?id={{previousMeeting.id}}">
+                {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}</a></td>
+        </tr>
+        <tr>
+            <td><b>Previous Minutes:</b></td>
+            <td><span 
                      ng-click="navigateToTopic(previousMeeting.minutesLocalId)"
                      title="Navigate to the discussion topic that holds the minutes for the previous meeting">
                      Previous Minutes
                 </span>
-        </div>
-        <div>
-            <b>Attendence Planning:</b>
-            <span ng-repeat="pers in peopleStatus">
+            </td>
+        </tr>
+        <tr>
+            <td><b>Attendence Planning:</b></td>
+            <td><span ng-repeat="pers in peopleStatus">
                   <span>
                     <a href="">{{pers.name}}</a>
                     (
@@ -248,15 +255,18 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
                     <span ng-show="pers.attend!='Maybe' && pers.attend!='Yes' && pers.attend!='No'">Unknown</span>
                     {{pers.situation}}
                     )
-                  </span>,
+                  </span><br/>
                 </span>
-        </div>
-        <div>
-            <b>Actual Attendees:</b>
-            <span ng-repeat="person in getAttended()">
-                <a href="">{{person.name}}</a>, 
-            </span>
-        </div>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Actual Attendees:</b></td>
+            <td><span ng-repeat="person in getAttended()">
+                <a href="">{{person.name}}</a><br/> 
+                </span>
+            </td>
+        </tr>
+      </table>
     </div>
 
 

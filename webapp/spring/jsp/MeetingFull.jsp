@@ -124,26 +124,6 @@
           "notes": "",
           "position": 2,
           "subject": "Location of New Offices"
-        },
-        {
-          "actionItems": ["XQCTXVJWG@clone-c-of-clone-4@0938"],
-          "desc": "do you like electric or gasoline?",
-          "docList": [],
-          "duration": 5,
-          "id": "3695",
-          "notes": "",
-          "position": 3,
-          "subject": "Discuss New Car Model"
-        },
-        {
-          "actionItems": [],
-          "desc": "A sociocratic in the future.",
-          "docList": [],
-          "duration": 5,
-          "id": "0675",
-          "notes": "",
-          "position": 4,
-          "subject": "Discuss Budget"
         }
       ],
       "duration": 60,
@@ -223,6 +203,7 @@ embeddedData.allRoles  = <%allRoles.write(out,2,2);%>;
 embeddedData.allLabels = <%allLabels.write(out,2,2);%>;
 embeddedData.backlogId = "<%=backlog.getId()%>";
 embeddedData.retPath   = "<%=ar.retPath%>";
+embeddedData.templateCacheDefeater   = "<%=templateCacheDefeater%>";
 embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
 </script>
 <script src="../../../spring/jsp/MeetingFull.js"></script>
@@ -346,7 +327,9 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
               {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
               &nbsp &nbsp
               <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
-                  <i class="fa fa-calendar"></i></a>
+                  <i class="fa fa-calendar"></i></a> &nbsp;
+              <span ng-click="getTimeZoneList()"><i class="fa fa-eye"></i> Timezones</span><br/>
+              <span ng-repeat="val in allDates">{{val}}<br/></span>
             </td>
           </tr>
           <tr>

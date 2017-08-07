@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
@@ -497,15 +496,17 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
     public String generateWikiRep(AuthRequest ar, NGPage ngp) throws Exception {
         StringBuilder sb = new StringBuilder();
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = getOwnerCalendar();
 
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
-        String dateRep = DATE_FORMAT.format(new Date(getStartTime()));
-
+        SimpleDateFormat sdfFull = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
+        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
+        sdfFull.setCalendar(cal);
+        sdfTime.setCalendar(cal);
+        
         sb.append("!!!"+getName());
 
         sb.append("\n\n!!");
-        sb.append(dateRep);
+        sb.append(sdfFull.format(new Date(getStartTime())));
 
         sb.append("\n\n");
         sb.append(getMeetingDescription());
@@ -519,16 +520,14 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             sb.append(Integer.toString(ai.getPosition()));
             sb.append(". ");
             sb.append(ai.getSubject());
-            cal.setTimeInMillis(itemTime);
-            sb.append("\n\n"+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+            sb.append("\n\n"+sdfTime.format(new Date(itemTime)));
             long minutes = ai.getDuration();
             long finishTime = itemTime + (minutes*60*1000);
-            cal.setTimeInMillis(finishTime);
-            sb.append(" - "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+            sb.append(" - "+sdfTime.format(new Date(finishTime)));
             sb.append(" (");
-            sb.append(Long.toString(ai.getDuration()));
+            sb.append(Long.toString(minutes));
             sb.append(" minutes)");
-            itemTime = itemTime + (ai.getDuration()*60*1000);
+            itemTime = finishTime;
             boolean isFirst = true;
             for (String presenter : ai.getPresenters()) {
                 AddressListEntry ale = new AddressListEntry(presenter);
@@ -609,8 +608,13 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         ar.writeHtml(getName());
         ar.write("</h1>");
 
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
-        String dateRep = DATE_FORMAT.format(new Date(getStartTime()));
+        Calendar cal = getOwnerCalendar();
+        SimpleDateFormat sdfFull = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
+        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
+        sdfFull.setCalendar(cal);
+        sdfTime.setCalendar(cal);
+
+        String dateRep = sdfFull.format(new Date(getStartTime()));
         ar.write("\n<h2>");
         ar.writeHtml(dateRep);
         ar.write("</h2>");
@@ -624,17 +628,17 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
         long itemTime = this.getStartTime();
 
-        Calendar cal = Calendar.getInstance();
         for (AgendaItem ai : getSortedAgendaItems()) {
             long minutes = ai.getDuration();
             if (ai.isSpacer()) {
                 ar.write("<p>");
                 ar.writeHtml(ai.getSubject());
-                 cal.setTimeInMillis(itemTime);
-                ar.write(" - " + cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+                ar.write(" - ");
+                ar.write(sdfTime.format(new Date(itemTime)));
                 itemTime = itemTime + (minutes*60*1000);
                 cal.setTimeInMillis(itemTime);
-                ar.write(" - "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+                ar.write(" - ");
+                ar.write(sdfTime.format(new Date(itemTime)));
                 ar.write(" ("+minutes+" minutes) </p>");
             }
             else {
@@ -644,11 +648,11 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 ar.writeHtml(ai.getSubject());
                 ar.write("</h3>");
 
-                cal.setTimeInMillis(itemTime);
-                ar.write("\n<p>"+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+                ar.write("\n<p>");
+                ar.write(sdfTime.format(new Date(itemTime)));
                 itemTime = itemTime + (minutes*60*1000);
-                cal.setTimeInMillis(itemTime);
-                ar.write(" - "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE));
+                ar.write(" - ");
+                ar.write(sdfTime.format(new Date(itemTime)));
                 ar.write(" ("+minutes+" minutes)");
                 boolean isFirst = true;
                 for (String presenter : ai.getPresenters()) {
@@ -667,18 +671,16 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
 
-
-    public String generateMinutes(AuthRequest ar, NGPage ngp) throws Exception {
-        String owner = getOwner();
-        UserProfile up = UserManager.findUserByAnyId(owner);
-        Calendar cal = null;
+    public Calendar getOwnerCalendar() throws Exception {
+        UserProfile up = UserManager.findUserByAnyId(getOwner());
         if (up!=null) {
-            TimeZone tz = TimeZone.getTimeZone(up.getTimeZone());
-            cal = Calendar.getInstance(tz);
+            return up.getCalendar();
         }
-        else {
-            cal = Calendar.getInstance();
-        }
+        return Calendar.getInstance();
+    }
+    
+    public String generateMinutes(AuthRequest ar, NGPage ngp) throws Exception {
+        Calendar cal = getOwnerCalendar();
         SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
         sdfTime.setCalendar(cal);
 

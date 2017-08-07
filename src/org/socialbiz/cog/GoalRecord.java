@@ -1219,7 +1219,7 @@ public class GoalRecord extends BaseRecord {
         File emailFolder = cog.getConfig().getFileFromRoot("email");
         File templateFile = new File(emailFolder, "ActionItem.chtml");
 
-        ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getTimeZone());
+        ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());
         clone.flush();
 
         String stateNameStr = stateName(getState());

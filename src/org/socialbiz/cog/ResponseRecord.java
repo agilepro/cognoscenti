@@ -185,7 +185,7 @@ public class ResponseRecord extends DOMFace
             throw new Exception("Strange, the template file is missing: "+templateFile);
         }
 
-        ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getTimeZone());
+        ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());
         clone.flush();
         
         String bodyStr = body.toString();
