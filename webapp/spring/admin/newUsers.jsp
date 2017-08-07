@@ -154,7 +154,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <tr ng-repeat="rec in getUsers() | limitTo: 1000">
                     <td><a href="../../v/FindPerson.htm?uid={{rec.uid}}">{{rec.name}}</a></td>
                     <td>{{rec.lastLogin | date}}</td>
-                    <td>{{rec.uid}}</td>
+                    <td><span ng-repeat="id in rec.ids">{{id}}<br/></span></td>
                     <td>
                         <button ng-hide="rec.disabled" style="background-color:lightgreen" ng-click="toggleDisabled(rec)">Disable</span>
                         <button ng-show="rec.disabled" style="background-color:pink" ng-click="toggleDisabled(rec)">Reenable</span>

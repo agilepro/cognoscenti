@@ -138,31 +138,29 @@ public class UserManager
             String key = up.getKey();
             UserProfile other = keyProfMap.get(key);
             if (other!=null) {
+                System.out.println("USER MANAGER FOUND duplicate user key to DELETE: "+key+", "+up.getEmailWithName());
                 //this is a big problem.  Two records with the same KEY.  That can
                 //only happen because of a bug.  Just drop this!
-                boolean swap = false;
-                if (other.getDisabled() && !up.getDisabled()) {
-                    //if the other is disabled, but this not, then swap them
-                    swap = true;
-                }
-                if (other.getLastLogin() < up.getLastLogin()) {
-                    //if the new one has been logged in most frequently, then swap them
-                    swap = true;
-                }
-                        
-                if(!swap) {
-                    //the other one is fine, so no problem, continue loop without new one
-                    continue;
-                }
-                //remove the other and carry on with the current one
-                //after transferring any additional global ids.
-                for (String oneId : other.getAllIds()) {
-                    if (!up.hasAnyId(oneId)) {
-                        up.addId(oneId);
+
+                //after transferring any additional global ids that are not already on
+                //other objects.
+                for (String oneId : up.getAllIds()) {
+                    UserProfile other2 = idProfMap.get(oneId);
+                    if (other2==null) {
+                        System.out.println("USER MANAGER Copied one UID: "+key+", "+oneId);
+                        other.addId(oneId);
+                        idProfMap.put(oneId, other);
                     }
-                    idProfMap.remove(oneId);
                 }
-                keyProfMap.remove(key);
+                
+                if (up.getLastLogin()>other.getLastLogin()) {
+                    other.setLastLogin(up.getLastLogin(), up.getLastLoginId());
+                    other.setName(up.getName());
+                }
+                else if (other.getName()==null || other.getName().length()==0) {
+                    other.setName(up.getName());
+                }
+                continue;
             }
             idsToRemove.clear();
             for (String oneId : up.getAllIds()) {
@@ -178,10 +176,12 @@ public class UserManager
                 }
             }
             for (String removableId : idsToRemove) {
+                System.out.println("USER MANAGER REMOVING one global ID: "+up.getKey()+", "+up.getEmailWithName()+", "+removableId);
                 up.removeId(removableId);
             }
             if (up.getAllIds().size()==0) {
                 //there are no more unique global ids, so drop this one the floor.
+                System.out.println("USER MANAGER REMOVING USER COMPLETELY: "+up.getKey());
                 continue;
             }
             //we get here it means that this has unique key and unique global ids.
