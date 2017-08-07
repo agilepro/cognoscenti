@@ -128,9 +128,65 @@ public class UserManager
         loadCount++;
         
         JSONArray users = userFile.getJSONArray("users");
-
+        
+        Hashtable<String,UserProfile> keyProfMap = new Hashtable<String,UserProfile>();
+        Hashtable<String,UserProfile> idProfMap = new Hashtable<String,UserProfile>();
+        ArrayList<String> idsToRemove = new ArrayList<String>();
+        
         for (int i=0; i<users.length(); i++) {
             UserProfile up = new UserProfile(users.getJSONObject(i));
+            String key = up.getKey();
+            UserProfile other = keyProfMap.get(key);
+            if (other!=null) {
+                //this is a big problem.  Two records with the same KEY.  That can
+                //only happen because of a bug.  Just drop this!
+                boolean swap = false;
+                if (other.getDisabled() && !up.getDisabled()) {
+                    //if the other is disabled, but this not, then swap them
+                    swap = true;
+                }
+                if (other.getLastLogin() < up.getLastLogin()) {
+                    //if the new one has been logged in most frequently, then swap them
+                    swap = true;
+                }
+                        
+                if(!swap) {
+                    //the other one is fine, so no problem, continue loop without new one
+                    continue;
+                }
+                //remove the other and carry on with the current one
+                //after transferring any additional global ids.
+                for (String oneId : other.getAllIds()) {
+                    if (!up.hasAnyId(oneId)) {
+                        up.addId(oneId);
+                    }
+                    idProfMap.remove(oneId);
+                }
+                keyProfMap.remove(key);
+            }
+            idsToRemove.clear();
+            for (String oneId : up.getAllIds()) {
+                other = idProfMap.get(oneId);
+                if (other!=null) {
+                    //if we find any profile that already had that address, 
+                    //then the prior one gets to keep it, and it must be removed
+                    //from here
+                    idsToRemove.add(oneId);
+                }
+                else {
+                    idProfMap.put(oneId, up);
+                }
+            }
+            for (String removableId : idsToRemove) {
+                up.removeId(removableId);
+            }
+            if (up.getAllIds().size()==0) {
+                //there are no more unique global ids, so drop this one the floor.
+                continue;
+            }
+            //we get here it means that this has unique key and unique global ids.
+            //so we can safely retain this.
+            keyProfMap.put(key, up);
             allUsers.add(up);
         }
     }
