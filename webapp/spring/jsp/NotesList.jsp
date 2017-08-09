@@ -131,7 +131,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.filterMap = {};
     $scope.openMap = {};
     $scope.showFilter = <%=ar.isLoggedIn()%>;
-    $scope.allowPrivate = <%=ngb.getAllowPrivate()%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -178,12 +177,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         var src = $scope.notes;
         var res = [];
         src.map( function(aNote) {
-            if (aNote.public && !aNote.deleted && !$scope.showVizPub) {
-                return;
-            }
-            if (!aNote.public && !aNote.deleted && !$scope.showVizMem) {
-                return;
-            }
             if (aNote.deleted && !$scope.showVizDel) {
                 return;
             }
@@ -247,13 +240,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         newRec.deleted = !rec.deleted;
         $scope.updateNote(newRec);
     }
-    $scope.toggleNoteViz = function(rec) {
-        newRec = {};
-        newRec.id = rec.id;
-        newRec.universalid = rec.universalid;
-        newRec.public = !rec.public;
-        $scope.updateNote(newRec);
-    }
     $scope.updateNote = function(rec) {
         var postURL = "updateNote.json?nid="+rec.id;
         var postdata = angular.toJson(rec);
@@ -301,7 +287,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 			newTopic.html = createdTopic.html;
 			newTopic.subject = createdTopic.subject;
 			newTopic.discussionPhase = createdTopic.phase;
-            newTopic.public = !$scope.allowPrivate;
 			newTopic.modUser = {};
 			newTopic.modUser.uid = "<%ar.writeJS(currentUser);%>";
 			newTopic.modUser.name = "<%ar.writeJS(currentUserName);%>";
@@ -444,10 +429,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                           <a role="menuitem" tabindex="-1" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
                       <li role="presentation">
                           <a role="menuitem" tabindex="-1" href="sendNote.htm?noteId={{rec.id}}">Send Email</a></li>
-                      <li role="presentation" ng-hide="rec.public || rec.deleted">
-                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteViz(rec)">Make <img src="<%=ar.retPath%>assets/images/iconPublic.png"> Public</a></li>
-                      <li role="presentation" ng-show="rec.public && allowPrivate">
-                          <a role="menuitem" tabindex="-1" ng-click="toggleNoteViz(rec)">Make <img src="<%=ar.retPath%>assets/images/iconMember.png"> Member Only</a></li>
                       <li role="presentation" ng-hide="rec.deleted">
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
                       <li role="presentation" ng-show="rec.deleted">
@@ -456,8 +437,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   </span>
                   <span style="color:#220011;">
                     <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
-                    <span ng-show="rec.public"><img src="<%=ar.retPath%>assets/images/iconPublic.png"></span>
-                    <span ng-show="!rec.public && !rec.deleted"><img src="<%=ar.retPath%>assets/images/iconMember.png"></span>
+
                     <a href="noteZoom{{rec.id}}.htm" style="color:black;">
                         <b>{{rec.subject}}</b>
                         ({{rec.modUser.name}})

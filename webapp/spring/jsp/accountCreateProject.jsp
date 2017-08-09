@@ -47,8 +47,6 @@ Required parameter:
     {
       "accessState": "Live",
       "allNames": ["Darwin2"],
-      "allowPrivate": true,
-      "allowPublic": true,
       "deleted": false,
       "frozen": false,
       "goal": "",

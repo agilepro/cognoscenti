@@ -28,7 +28,6 @@
     boolean isGone     = atype.equals("GONE");
     boolean isURL      = "URL".equals(atype);
     boolean isFile     = "FILE".equals(atype);
-    boolean allowPrivate = ngp.getSite().getAllowPrivate();
     
     List<AttachmentVersion> vers = attachment.getVersions(ngp);
     boolean isGhost = vers.size()==0;
@@ -69,7 +68,6 @@ app.controller('myCtrl', function($scope, $http) {
         var fract = (time-$scope.today)/(24*60*60*1000);
         return Math.floor(fract+.4);
     }
-    $scope.allowPrivate = <%=allowPrivate%>;
 
     $scope.futureDays = 30;
     if ($scope.docInfo.purgeDate>0) {

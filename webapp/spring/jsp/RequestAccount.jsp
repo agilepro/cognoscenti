@@ -16,7 +16,7 @@
 }
 </style>
 <script>
-    window.setMainPageTitle("Request Account");
+    window.setMainPageTitle("Request New Site");
 </script>
 
 <div>From here you can request to create a new site from where you can create & handle multiple projects.</div>

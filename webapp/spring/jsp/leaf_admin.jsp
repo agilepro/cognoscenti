@@ -70,8 +70,6 @@
     {
       "accessState": "Live",
       "allNames": ["Darwin2"],
-      "allowPrivate": true,
-      "allowPublic": true,
       "deleted": false,
       "frozen": false,
       "goal": "",
@@ -267,9 +265,9 @@ app.filter('escape', function() {
                     <td class="gridTableColummHeader_2" valign="top">Workspace Mode:</td>
                     <td  valign="top">
 
-                        <input type="checkbox" name="allowPublic" value="yes"
+                        <input type="checkbox" value="yes"
                             ng-model="workspaceConfig.frozen"/> Frozen  &nbsp;&nbsp;
-                        <input type="checkbox" name="allowPublic" value="yes"
+                        <input type="checkbox" value="yes"
                             ng-model="workspaceConfig.deleted"/> Deleted
 
                         <input type="hidden" name="projectMode" value="{{projectMode()}}"/>
@@ -285,13 +283,6 @@ app.filter('escape', function() {
                     </td>
                 </tr>
 <% if (showExperimental) { %>
-                <tr>
-                    <td class="gridTableColummHeader_2">Allow Public:</td>
-                    <td>
-                        <input type="checkbox" name="allowPublic" value="yes"
-                            ng-model="workspaceConfig.allowPublic"/> {{workspaceConfig.allowPublic}}
-                    </td>
-                </tr>
                 <tr>
                     <td class="gridTableColummHeader_2">Workspace Email id:</td>
                     <td>

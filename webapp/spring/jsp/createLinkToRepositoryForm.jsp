@@ -92,29 +92,6 @@ Optional parameters:
                         </td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
-                    <tr>
-                        <td width="148" class="gridTableColummHeader"><%ar.writeHtmlMessage("nugen.attachment.uploadattachment.Accessibility",null); %></td>
-                        <td style="width:20px;"></td>
-                        <td>
-                            <% if (Integer.parseInt(atype)>1) { %>
-                            <input type="radio" name="visibility"  value="PUB"/>
-                            <img src="<%=ar.retPath %>assets/images/iconPublic.png" name="PUB"
-                                alt="Public" title="Public"/ > Public Access
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="radio" name="visibility" value="MEM" checked="checked"/>
-                            <img src="<%=ar.retPath %>assets/images/iconMember.png" name="MEM"
-                                alt="Member" title="Member"/ > Member Only Access
-                            <% } else { %>
-                            <input type="radio" name="visibility" value="PUB" checked="checked"/>
-                                <img src="<%=ar.retPath %>assets/images/iconPublic.png" name="PUB" alt="Public"
-                                     title="Public"/ > Public Access
-                            <input type="radio" name="visibility" value="MEM"/>
-                                <img src="<%=ar.retPath %>assets/images/iconMember.png" name="MEM" alt="Member"
-                                     title="Member"/ > Member Only Access
-                            <% } %>
-                        </td>
-                    </tr>
-                    <tr><td style="height:10px"></td></tr>
             <tr>
                 <td class="gridTableColummHeader"  valign="top">Role Access:</td>
                 <td style="width:20px;"></td>

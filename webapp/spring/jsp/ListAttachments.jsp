@@ -24,9 +24,7 @@
     JSONArray allLabels = ngp.getJSONLabels();
     
     String showLimitedMessage = "";
-    if (!ngb.getAllowPrivate()) {
-        //don't make any message if the site does not allow private documents
-    } else if (!ar.isLoggedIn()) {
+    if (!ar.isLoggedIn()) {
         showLimitedMessage = "You are not logged in.  You might see more documents if you log in and if you are a member of the workspace.";
     }
     else if (!isMember) {

@@ -33,7 +33,6 @@ app.controller('myCtrl', function($scope, $http) {
     }
 
     $scope.changeStatus = function(rec, isGranted) {
-        rec.public = !rec.public;
         var postURL = "acceptOrDenySite.json";
         var postObject = {};
         postObject.requestId = rec.requestId;

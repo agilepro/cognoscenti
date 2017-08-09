@@ -123,8 +123,7 @@ app.controller('myCtrl', function($scope, $http) {
             <tr>
                 <td class="gridTableColummHeader_2">Flags:</td>
                 <td style="width:20px;"></td>
-                <td><input type="checkbox" ng-model="siteInfo.showExperimental"> Show Experimental,  
-                    <input type="checkbox" ng-model="siteInfo.allowPrivate"> Allow Private</td>
+                <td><input type="checkbox" ng-model="siteInfo.showExperimental"> Show Experimental
             </tr>
             <tr><td height="10px"></td></tr>
             <tr>

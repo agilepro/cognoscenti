@@ -158,8 +158,6 @@ app.controller('myCtrl', function($scope, $http) {
                 <td>
                     <a href="editDetails{{rec.id}}.htm">
                         <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
-                        <span ng-show="rec.public"><img src="<%=ar.retPath%>assets/images/iconPublic.png"></span>
-                        <span ng-hide="rec.public"><img src="<%=ar.retPath%>assets/images/iconMember.png"></span>
                         <span ng-show="rec.upstream"><img src="<%=ar.retPath%>assets/images/iconUpstream.png"></span>
                         <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
                         <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
