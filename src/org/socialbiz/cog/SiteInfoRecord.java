@@ -110,14 +110,6 @@ public class SiteInfoRecord extends DOMFace {
         return getAttribute("deleteUser");
     }
 
-    public String getAllowPublic() {
-        return getAttribute("allowPublic");
-    }
-
-    public void setAllowPublic(String allowPublic) {
-        setAttribute("allowPublic", allowPublic);
-    }
-
     /**
      * Different sites can have different style sheets (themes) This is the path
      * to the folder that holds the theme files

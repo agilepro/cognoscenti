@@ -887,27 +887,7 @@ public class NGBook extends ContainerCommon {
     }
 
 
-    /**
-     * Ony paying customers can have private information
-     */
-    public boolean getAllowPrivate() throws Exception {
-        return siteInfoRec.getAttributeBool("allowPrivate");
-    }
-    public void setAllowPrivate(boolean val) throws Exception {
-        siteInfoRec.setAttributeBool("allowPrivate", val);
-    }
-
     // //////////////////// DEPRECATED METHODS//////////////////
-
-    @Override @Deprecated
-    public String getAllowPublic() throws Exception {
-        return siteInfoRec.getAllowPublic();
-    }
-
-    @Override @Deprecated
-    public void setAllowPublic(String allowPublic) throws Exception {
-        siteInfoRec.setAllowPublic(allowPublic);
-    }
 
     @Override 
     public void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog) throws Exception {
@@ -1149,7 +1129,6 @@ public class NGBook extends ContainerCommon {
         jo.put("description", this.getDescription());
         jo.put("theme", getThemeName());
         jo.put("showExperimental", getShowExperimental());
-        jo.put("allowPrivate", getAllowPrivate());
         jo.put("changed", getLastModifyTime());
         jo.put("isDeleted", isDeleted());
         jo.put("frozen", isFrozen());
@@ -1182,9 +1161,6 @@ public class NGBook extends ContainerCommon {
         }
         if (jo.has("showExperimental")) {
             setShowExperimental( jo.getBoolean("showExperimental"));
-        }
-        if (jo.has("allowPrivate")) {
-            setAllowPrivate( jo.getBoolean("allowPrivate"));
         }
     }
 

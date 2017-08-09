@@ -211,9 +211,6 @@ public abstract class NGContainer extends DOMFile
     */
     public abstract String emailDependentMagicNumber(String emailId) throws Exception;
 
-    public abstract String getAllowPublic() throws Exception;
-    public abstract void setAllowPublic(String allowPublic) throws Exception;
-
     public abstract boolean isFrozen() throws Exception;
 
     public abstract boolean isAlreadyRequested(String roleName, String requestedBy) throws Exception;

@@ -394,16 +394,6 @@ public class UserPage extends ContainerCommon
          return cType.getResourceInternal(relPath);
      }
 
-    public String getAllowPublic() throws Exception {
-        return getAttribute("allowPublic");
-    }
-
-
-    public void setAllowPublic(String allowPublic) throws Exception {
-        setAttribute("allowPublic", allowPublic);
-    }
-
-
     public boolean isFrozen() throws Exception {
         return false;
     }

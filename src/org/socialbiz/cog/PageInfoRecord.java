@@ -221,15 +221,6 @@ public class PageInfoRecord extends DOMFace
         return getAttribute("freezeUser");
     }
 
-    public void setAllowPublic(String allowPublic)
-    {
-        setAttribute("allowPublic", allowPublic);
-    }
-
-    public String getAllowPublic(){
-        return getAttribute("allowPublic");
-    }
-
     public String getWorkspaceMailId() {
         return getAttribute("projectMailId");
     }

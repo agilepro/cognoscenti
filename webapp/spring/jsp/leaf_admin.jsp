@@ -94,6 +94,8 @@ app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Workspace Administration");
     $scope.workspaceConfig = <%workspaceConfig.write(out,2,4);%>;
     $scope.newName = $scope.workspaceConfig.allNames[0];
+    $scope.editName = false;
+    $scope.editInfo = false;
     
     $scope.allProjects = <%allProjects.write(out,2,4);%>;
     $scope.recentWorkspaces = <%recentWorkspaces.write(out,2,4);%>;
@@ -137,6 +139,20 @@ app.controller('myCtrl', function($scope, $http) {
         $http.post(postURL, postdata)
         .success( function(data) {
             $scope.workspaceConfig = data;
+            $scope.editInfo=false;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    $scope.cancelProjectConfig = function() {
+        var postURL = "updateProjectInfo.json";
+        var postdata = "{}";
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            $scope.workspaceConfig = data;
+            $scope.editInfo=false;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -151,6 +167,7 @@ app.controller('myCtrl', function($scope, $http) {
         $http.post(postURL, postdata)
         .success( function(data) {
             $scope.workspaceConfig = data;
+            $scope.editName = false;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -235,15 +252,8 @@ app.filter('escape', function() {
 
         <div>
             <table class="spaceyTable">
-                <tr>
-                    <td class="gridTableColummHeader_2">Change Name:</td>
-                    <td class="form-inline form-group">
-                        <input type="text" class="form-control" style="width:300px;background-color:white" ng-model="newName"/>
-                        <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)"/>Update Name</button>
-                    </td>
-                </tr>
                 <tr >
-                    <td class="gridTableColummHeader_2">All Names</td>
+                    <td><label>Workspace Names:</label></td>
                     <td>
                         <div ng-repeat="name in workspaceConfig.allNames">
                             <a ng-click="deleteWorkspaceName(name)"
@@ -255,15 +265,30 @@ app.filter('escape', function() {
                     </td>
                 </tr>
                 <tr>
-                    <td class="gridTableColummHeader_2">Public Purpose:</td>
-                    <td><textarea name="purpose" class="form-control" 
+                    <td></td>
+                    <td class="form-inline form-group" ng_show="editName">
+                        <input type="text" class="form-control" style="width:300px;background-color:white" ng-model="newName"/>
+                        <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)"/>Add Name</button>
+                        <button class="btn btn-warning btn-raised" ng-click="editName=false"/>Cancel</button>
+                    </td>
+                    <td ng_hide="editName">
+                        <button class="btn btn-primary btn-raised" ng-click="editName=true"/>Add / Change Name</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Purpose:</label></td>
+                    <td ng-show="editInfo">
+                        <textarea name="purpose" class="form-control" 
                               ng-model="workspaceConfig.purpose" rows="4" 
                               placeholder="Enter a public description of the work that will be done in this workspace" 
                               style="background-color:white;"></textarea></td>
+                    <td ng-hide="editInfo">
+                        {{workspaceConfig.purpose}}
+                    </td>
                 </tr>
                 <tr>
-                    <td class="gridTableColummHeader_2" valign="top">Workspace Mode:</td>
-                    <td  valign="top">
+                    <td valign="top"><label>Workspace Mode:</label></td>
+                    <td  valign="top" ng-show="editInfo">
 
                         <input type="checkbox" value="yes"
                             ng-model="workspaceConfig.frozen"/> Frozen  &nbsp;&nbsp;
@@ -272,26 +297,34 @@ app.filter('escape', function() {
 
                         <input type="hidden" name="projectMode" value="{{projectMode()}}"/>
                     </td>
+                    <td  valign="top" ng-hide="editInfo">
+                        <span ng-show="workspaceConfig.deleted">This workspace is DELETED</span>
+                        <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN</span>
+                        <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available.</span>
+                    </td>
                 </tr>
                 <tr>
-                    <td class="gridTableColummHeader_2">Parent Circle:</td>
-                    <td>
+                    <td><label>Parent Circle:</label></td>
+                    <td ng-show="editInfo">
                         <select ng-model="workspaceConfig.parentKey" class="form-control" style="width:400px">
                             <option value="{{originalParentKey}}">{{originalParentName}}</option>
                             <option ng-repeat="ws in recentWorkspaces" value="{{ws.key}}">{{ws.displayName}}</option>
                             </select>
                     </td>
+                    <td ng-hide="editInfo">
+                        {{workspaceConfig.parentKey}}
+                    </td>
                 </tr>
 <% if (showExperimental) { %>
                 <tr>
-                    <td class="gridTableColummHeader_2">Workspace Email id:</td>
+                    <td ><label>Workspace Email id:</label></td>
                     <td>
                         <input type="text" class="form-control"
                                name="projectMailId" ng-model="workspaceConfig.projectMail" />
                     </td>
                 </tr>
                 <tr>
-                    <td class="gridTableColummHeader_2">Upstream Clone:</td>
+                    <td><label>Upstream Clone:</label></td>
                     <td>
                         <input type="text" class="form-control" style="width:450px" id="upstream"
                                name="upstream" ng-model="workspaceConfig.upstream" />
@@ -299,9 +332,13 @@ app.filter('escape', function() {
                 </tr>
 <% } %>
                 <tr>
-                    <td class="gridTableColummHeader_2"></td>
-                    <td>
-                        <button ng-click="saveProjectConfig();" class="btn btn-primary btn-raised" >Update</button>
+                    <td></td>
+                    <td ng-hide="editInfo">
+                        <button ng-click="editInfo=true" class="btn btn-primary btn-raised" >Modify Settings</button>
+                    </td>
+                    <td ng-show="editInfo">
+                        <button ng-click="saveProjectConfig();" class="btn btn-primary btn-raised" >Save</button>
+                        <button ng-click="cancelProjectConfig()" class="btn btn-warning btn-raised" >Cancel</button>
                     </td>
                 </tr>
             </table>
@@ -317,7 +354,7 @@ app.filter('escape', function() {
                   <input type="hidden" name="go" value="<%ar.writeHtml(allTasksPage);%>">
                   <input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>">
                     <tr>
-                        <td class="gridTableColummHeader_2">Template:</td>
+                        <td>Template:</td>
                         <td style="width:20px;"></td>
                         <td><select name="template" class="form-control" style="width:400px">
                         <%
@@ -332,7 +369,7 @@ app.filter('escape', function() {
                         </select></td>
                     </tr>
                     <tr>
-                        <td class="gridTableColummHeader_2"></td>
+                        <td></td>
                         <td style="width:20px;"></td>
                         <td> <input type="submit" value="Copy From Template" class="btn btn-primary btn-raised"> </td>
                     </tr>

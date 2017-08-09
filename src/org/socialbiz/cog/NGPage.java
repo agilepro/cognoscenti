@@ -1441,20 +1441,6 @@ public abstract class NGPage extends ContainerCommon {
         }
     }
 
-    @Override
-    public void setAllowPublic(String allowPublic)throws Exception{
-        pageInfo.setAllowPublic(allowPublic);
-    }
-
-    @Override
-    public String getAllowPublic() throws Exception{
-        String value = pageInfo.getAllowPublic();
-        if(value == null || value.length() == 0 ){
-            value = "yes";
-        }
-        return value;
-    }
-
 
     public String getWorkspaceMailId() {
         return pageInfo.getWorkspaceMailId();
@@ -1787,7 +1773,6 @@ public abstract class NGPage extends ContainerCommon {
         workspaceConfigInfo.put("goal", process.getSynopsis());
         workspaceConfigInfo.put("purpose", process.getDescription());
         workspaceConfigInfo.put("parentKey", getParentKey());
-        workspaceConfigInfo.put("allowPublic", "yes".equals(getAllowPublic()));
         workspaceConfigInfo.put("frozen", isFrozen());
         workspaceConfigInfo.put("deleted", isDeleted());
         if (isDeleted()) {
@@ -1801,7 +1786,6 @@ public abstract class NGPage extends ContainerCommon {
 
         //read only information from the site
         workspaceConfigInfo.put("showExperimental", this.getSite().getShowExperimental());
-        workspaceConfigInfo.put("allowPrivate", this.getSite().getAllowPrivate());
         
         //returns all the names for this page
         List<String> nameSet = getPageNames();
@@ -1820,14 +1804,6 @@ public abstract class NGPage extends ContainerCommon {
         }
         if (newConfig.has("parentKey")) {
             setParentKey(newConfig.getString("parentKey"));
-        }
-        if (newConfig.has("allowPublic")) {
-            if (newConfig.getBoolean("allowPublic")) {
-                setAllowPublic("yes");
-            }
-            else {
-                setAllowPublic("no");
-            }
         }
         if (newConfig.has("deleted") || newConfig.has("frozen")) {
             boolean newDelete = newConfig.optBoolean("deleted", false);
