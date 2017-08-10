@@ -28,7 +28,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.bootstrap.datetimepicker']);
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.role = <%role.write(out,2,4);%>;
     window.setMainPageTitle("Nominate Role: "+$scope.role.name);
@@ -263,32 +263,20 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
                 <label for="status">Term Start:</label>
-                <span class="dropdown-toggle form-control" id="dropdown2" role="button" 
-                    data-toggle="dropdown" data-target="#">
-                    {{ term.termStart | date:'dd-MMM-yyyy \'at\' HH:mm  \' &nbsp;  GMT\'Z' }}
-                </span>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <datetimepicker
-                        data-ng-model="term.termStart"
-                        data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15,minView:'hour'}"
-                        data-on-set-time="onTimeSet(newDate, 'termStart')"/>
-                </ul>                
+                <span datetime-picker ng-model="term.termStart" datetime-picker 
+                    class="form-control" style="max-width:300px">
+                    {{term.termStart|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                </span> 
             </div>
         </div>
         
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
                 <label for="status">Term End:</label>
-                <span class="dropdown-toggle form-control" id="dropdown3" role="button" 
-                    data-toggle="dropdown" data-target="#">
-                    {{ term.termEnd | date:'dd-MMM-yyyy \'at\' HH:mm  \' &nbsp;  GMT\'Z' }}
-                </span>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <datetimepicker
-                        data-ng-model="term.termEnd"
-                        data-datetimepicker-config="{ dropdownSelector: '#dropdown3',minuteStep: 15,minView:'hour'}"
-                        data-on-set-time="onTimeSet(newDate, 'termEnd')"/>
-                </ul>                
+                <span datetime-picker ng-model="term.termEnd" datetime-picker 
+                    class="form-control" style="max-width:300px">
+                    {{term.termEnd|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                </span> 
             </div>
         </div>
     </div>

@@ -75,7 +75,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http, AllPeople) {
     window.setMainPageTitle("Action Items");
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
@@ -88,7 +88,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     $scope.showCompleted = false;
     $scope.isCreating = false;
     $scope.newGoal = {assignList:[]};
-    $scope.dummyDate1 = new Date();
 
     $scope.newPerson = "";
 
@@ -265,7 +264,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         newRec.assignTo = [];
         newRec.state = 2;
         newRec.assignTo = newRec.assignList;
-        newRec.duedate = $scope.dummyDate1.getTime();
 
         var postURL = "updateGoal.json?gid=~new~";
         var postData = angular.toJson(newRec);
@@ -445,18 +443,10 @@ function addvalue() {
                 <td class="gridTableColummHeader">Due Date:</td>
                 <td style="width:20px;"></td>
                 <td colspan="2">
-                    <input type="text"
-                        style="width:150;margin-top:10px;"
-                        class="form-control"
-                        datepicker-popup="dd-MMMM-yyyy"
-                        ng-model="dummyDate1"
-                        is-open="datePickOpen1"
-                        min-date="minDate"
-                        datepicker-options="datePickOptions"
-                        date-disabled="datePickDisable(date, mode)"
-                        ng-required="true"
-                        ng-click="openDatePicker1($event)"
-                        close-text="Close"/>
+                    <span datetime-picker ng-model="newRec.duedate"  
+                        class="form-control" style="max-width:300px">
+                        {{newRec.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                    </span> 
                 </td>
             </tr>
             <tr><td style="height:10px"></td></tr>

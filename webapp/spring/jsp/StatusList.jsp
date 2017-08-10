@@ -88,7 +88,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.bootstrap.datetimepicker']);
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Action Item Status");
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
@@ -102,7 +102,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.showCompleted = false;
     $scope.isCreating = false;
     $scope.newGoal = {assignList:[],id:"~new~",labelMap:{}};
-    $scope.dummyDate1 = new Date();
 
     $scope.newPerson = "";
 
@@ -357,7 +356,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         newRec.assignTo = [];
         newRec.state = 2;
         newRec.assignTo = newRec.assignList;
-        newRec.duedate = $scope.dummyDate1.getTime();
 
         var postURL = "updateGoal.json?gid=~new~";
         var postData = angular.toJson(newRec);

@@ -1,5 +1,5 @@
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize','ngTagsInput', 'ui.bootstrap.datetimepicker']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize','ngTagsInput', 'angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Meeting");
     $scope.pageId = embeddedData.pageId;
@@ -124,10 +124,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.meeting.totalDuration = runDur;
         return $scope.meeting.agenda;
     };
-    $scope.extractDateParts = function() {
-        $scope.sortItemsB();
-    };
-    $scope.extractDateParts();
 
     $scope.itemHasDoc = function(item, doc) {
         var res = false;
@@ -386,7 +382,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             }
             $scope.meeting = data;
 
-            $scope.extractDateParts();
             $scope.editHead=false;
             $scope.editDesc=false;
             $scope.extractPeopleSituation();
@@ -448,7 +443,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
 
         $scope.newGoal.assignTo.push(player);
-        //$scope.newGoal.duedate = $scope.dummyDate1.getTime();
 
         var postdata = angular.toJson($scope.newGoal);
         $scope.showError=false;
@@ -543,7 +537,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         .success( function(data) {
             $scope.meeting = data;
             $scope.showInput=false;
-            $scope.extractDateParts();
             $scope.refreshTopicList();
         })
         .error( function(data, status, headers, config) {

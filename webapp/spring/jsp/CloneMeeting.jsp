@@ -55,7 +55,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ui.bootstrap.datetimepicker']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("<%=pageTitle%>");
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
@@ -82,16 +82,6 @@ app.controller('myCtrl', function($scope, $http) {
         console.log("NEW TIME:", newDate);
     }
 
-    $scope.extractDateParts = function() {
-        var last = $scope.meeting.agenda.length;
-        var runTime = new Date($scope.meeting.startTime);
-        $scope.meeting.agenda.forEach( function(item) {
-            item.schedule = runTime;
-            runTime = new Date( runTime.getTime() + (item.duration*60000) );
-        });
-        $scope.meeting.endTime = runTime;
-    };
-    $scope.extractDateParts();
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 300;
 
@@ -230,15 +220,10 @@ function GetFirstHundredNoHtml(input) {
                 </label>
                 <div class="col-md-10" 
                          title="Date and time for the beginning of the meeting in YOUR time zone">
-                  <a class="dropdown-toggle form-control" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
-                    {{ meeting.startTime | date:"dd-MMM-yyyy '&nbsp; at &nbsp;' HH:mm  '&nbsp; GMT'Z" }}
-                  </a>
-                  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <datetimepicker
-                         data-ng-model="meeting.startTime"
-                         data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
-                         data-on-set-time="onTimeSet(newDate)"/>
-                  </ul>
+                  <span datetime-picker ng-model="meeting.startTime" datetime-picker 
+                        class="form-control" style="max-width:300px">
+                      {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                  </span> 
                 </div>
                 <br/><!-- stupid extra line to get next DIV to start at the beginning of a line, why do i have to do this? -->
             </div>

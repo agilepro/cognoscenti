@@ -221,15 +221,15 @@
     <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
 
 	<!-- Date and Time Picker -->
-    <link rel="stylesheet" href="<%=ar.baseURL%>dtpicker/css/datetimepicker.css"/>
-    <script src="<%=ar.baseURL%>dtpicker/js/moment.js"></script>
-    <script src="<%=ar.baseURL%>dtpicker/js/datetimepicker.js"></script>
-    <script src="<%=ar.baseURL%>dtpicker/js/datetimepicker.templates.js"></script>
+    <link rel="stylesheet" href="<%=ar.retPath%>bits/angularjs-datetime-picker.css" />
+    <script src="<%=ar.retPath%>bits/angularjs-datetime-picker.js"></script>
+    <script src="<%=ar.retPath%>bits/moment.js"></script>
+    <script>  moment().format(); </script>
 
     <!-- Weaver specific tweaks -->
     <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
 
-
+ 
     <title><% ar.writeHtml(title); %></title>
 
 <script>

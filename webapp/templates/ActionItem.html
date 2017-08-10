@@ -59,22 +59,11 @@
           </td>
           <td>
             <div>
-                <span class="dropdown-toggle form-control" id="dropdown2" role="button" 
-                    data-toggle="dropdown" ng-show="goal.duedate>1000000" data-target="#">
-                    {{ goal.duedate | date:'dd-MMM-yyyy' }} 
-                    &nbsp;at&nbsp; {{ goal.duedate | date:'HH:mm &nbsp; &nbsp;  Z' }}
-                    &nbsp; &nbsp; {{tzIndicator}}
-                </span>
-                <span class="dropdown-toggle form-control" id="dropdown2" role="button" 
-                    data-toggle="dropdown" ng-show="goal.duedate<=1000000" data-target="#">
-                    not set
-                </span>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <datetimepicker
-                        data-ng-model="goal.duedate"
-                        data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15,minView:'hour'}"
-                        data-on-set-time="onTimeSet(newDate, 'duedate')"/>
-                </ul>
+                <span datetime-picker ng-model="goal.duedate" 
+                    class="form-control" style="max-width:300px">
+                    <span ng-show="goal.duedate>1000000" datetime-picker ng-model="goal.duedate" > {{goal.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                    <span ng-show="goal.duedate<=1000000" datetime-picker ng-model="goal.duedate" > not set </span>
+                </span> 
             </div>                
           </td>
         </tr>
@@ -139,45 +128,27 @@
         </div>
         <div class="form-group">
             <label for="startdate">Start Date:</label>
-            <span class="dropdown-toggle form-control" id="dropdown3" role="button" 
-                data-toggle="dropdown" ng-show="goal.startdate>1000000">
-                {{ goal.startdate | date:'dd-MMM-yyyy' }} 
-                &nbsp;at&nbsp; {{ goal.startdate | date:'HH:mm' }}
-                &nbsp; &nbsp; {{tzIndicator}}
-            </span>
-            <span class="dropdown-toggle form-control" id="dropdown3" role="button" 
-                  data-toggle="dropdown" ng-show="goal.startdate<=1000000">
-                not set
-            </span>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                <datetimepicker
-                    data-ng-model="goal.startdate"
-                    data-datetimepicker-config="{ dropdownSelector: '#dropdown3',minuteStep: 15,minView:'hour'}"
-                    data-on-set-time="onTimeSet(newDate, 'startdate')"/>
-            </ul>                
+            <span datetime-picker ng-model="goal.startdate" 
+                class="form-control" style="max-width:300px">
+                <span ng-show="goal.startdate>1000000" datetime-picker ng-model="goal.duedate" > 
+                    {{goal.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                <span ng-show="goal.startdate<=1000000" datetime-picker ng-model="goal.duedate" > 
+                    not set </span>
+            </span> 
         </div>
         <div class="form-group">
             <label for="enddate">End Date:</label>
-            <span class="dropdown-toggle form-control" id="dropdown4" role="button" 
-                data-toggle="dropdown" ng-show="goal.enddate>1000000 && goal.state==5">
-                {{ goal.enddate | date:'dd-MMM-yyyy' }} 
-                &nbsp;at&nbsp; {{ goal.enddate | date:'HH:mm' }}
-                &nbsp; &nbsp; {{tzIndicator}}
-            </span>
-            <span class="dropdown-toggle form-control" id="dropdown4" data-toggle="dropdown"  
-                  role="button" ng-show="goal.enddate<=1000000 && goal.state==5">
-                not set
-            </span>
+            <span datetime-picker ng-model="goal.enddate" 
+                class="form-control" style="max-width:300px" ng-show="goal.state==5">
+                <span ng-show="goal.enddate>1000000" datetime-picker ng-model="goal.duedate" > 
+                    {{goal.enddate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                <span ng-show="goal.enddate<=1000000" datetime-picker ng-model="goal.duedate" > 
+                    not set </span>
+            </span> 
             <span class="dropdown-toggle form-control" 
                   ng-show="goal.state!=5">
                 set end date after action item completed
             </span>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                <datetimepicker
-                    data-ng-model="goal.enddate"
-                    data-datetimepicker-config="{ dropdownSelector: '#dropdown4',minuteStep: 15,minView:'hour'}"
-                    data-on-set-time="onTimeSet(newDate, 'enddate')"/>
-            </ul>                
         </div>
       </div>
     </div>

@@ -327,7 +327,7 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
               {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
               &nbsp &nbsp
               <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
-                  <i class="fa fa-calendar"></i></a> &nbsp;
+                  <i class="fa fa-calendar"></i></a> &nbsp; {{meeting.startTime}}
               <span ng-click="getTimeZoneList()"><i class="fa fa-eye"></i> Timezones</span><br/>
               <span ng-repeat="val in allDates">{{val}}<br/></span>
             </td>
@@ -437,15 +437,9 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
             <tr>
                 <td>Date & Time:</td>
                 <td class="dropdown">
-                  <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
-                    {{ meeting.startTime | date:'dd-MMM-yyyy' }} &nbsp;at&nbsp; {{ meeting.startTime | date:'HH:mm' }} &nbsp; &nbsp; {{tzIndicator}}
-                  </a>
-                  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <datetimepicker 
-                         data-ng-model="meeting.startTime" 
-                         data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
-                         data-on-set-time="onTimeSet(newDate)" />
-                  </ul>
+                  <span datetime-picker ng-model="meeting.startTime" datetime-picker class="form-control">
+                      {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                  </span> 
                 </td> 
             </tr>
             <tr>

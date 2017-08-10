@@ -67,7 +67,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.filter = "";
     $scope.filterMap = {};
     $scope.newDecision = {num:"~new~",universalid:"~new~"};
-    $scope.dummyDate1 = new Date();
 
     $scope.newPerson = "";
 

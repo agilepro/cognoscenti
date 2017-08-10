@@ -113,7 +113,11 @@
                     <td class="gridTableColummHeader">Due Date:</td>
                     <td style="width:20px;"></td>
                     <td colspan="2">
-                        <input type="text"
+                        <span datetime-picker ng-model="newGoal.dueDate"  
+                            class="form-control" style="max-width:300px">
+                            {{newGoal.dueDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                        </span> 
+                        <!--input type="text"
                             style="width:150;margin-top:10px;"
                             class="form-control"
                             datepicker-popup="dd-MMMM-yyyy"
@@ -124,7 +128,7 @@
                             date-disabled="datePickDisable(date, mode)"
                             ng-required="true"
                             ng-click="openDatePicker1($event)"
-                            close-text="Close"/>
+                            close-text="Close"/-->
                     </td>
                 </tr>
             </table>

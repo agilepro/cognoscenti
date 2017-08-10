@@ -185,7 +185,7 @@ Optional Parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput', 'ngSanitize','ui.bootstrap.datetimepicker']);
+var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput', 'ngSanitize','angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     window.setMainPageTitle("Compose Email");
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;
@@ -340,28 +340,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     $scope.datePickDisable = function(date, mode) {
         return false;
     };
-    $scope.dummyDate1 = new Date();
-    $scope.datePickOpen = false;
-    $scope.openDatePicker = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        $scope.datePickOpen = true;
-    };
-    $scope.datePickOpen1 = false;
-    $scope.openDatePicker1 = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        $scope.datePickOpen1 = true;
-    };
 
 
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
-    $scope.onTimeSet = function (newDate, secondparam) {
-        $scope.emailInfo.scheduleTime = newDate.getTime();
-    }
-
 
 
     $scope.getFullDoc = function(docId) {
@@ -553,14 +536,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                   </label>
                 </div>
               <span class="col-md-4" ng-show="emailInfo.scheduleIt">
-                At:  <a class="dropdown-toggle" id="dropdown2" role="button" data-toggle="dropdown" data-target="#" href="#">
-                  {{ emailInfo.scheduleTime | date:'dd-MMM-yyyy' }} &nbsp;at&nbsp; {{ emailInfo.scheduleTime | date:'HH:mm' }} &nbsp; &nbsp; {{tzIndicator}}
-                </a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                  <datetimepicker data-ng-model="emailInfo.scheduleTime"
-                       data-datetimepicker-config="{ dropdownSelector: '#dropdown2',minuteStep: 15}"
-                       data-on-set-time="onTimeSet(newDate)"></datetimepicker>
-                </ul>
+                At:  
+                <span datetime-picker ng-model="emailInfo.scheduleTime" datetime-picker 
+                    class="form-control" style="max-width:300px">
+                    {{emailInfo.scheduleTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                </span> 
               </span>
             </div>
           </div>

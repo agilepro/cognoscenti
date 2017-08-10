@@ -68,13 +68,6 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.meeting.endTime = runTime;
         return $scope.meeting.agenda;
     };
-    $scope.extractDateParts = function() {
-        $scope.meetingTime = new Date($scope.meeting.startTime);
-        $scope.meetingHour = $scope.meetingTime.getHours();
-        $scope.meetingMinutes = $scope.meetingTime.getMinutes();
-        $scope.sortItems();
-    };
-    $scope.extractDateParts();
 
     $scope.datePickOptions = {
         formatYear: 'yyyy',
@@ -107,7 +100,6 @@ app.controller('myCtrl', function($scope, $http) {
             }
             $scope.meeting.agenda = newSet;
             $scope.backlog.agenda.push(row);
-            $scope.extractDateParts();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -130,7 +122,6 @@ app.controller('myCtrl', function($scope, $http) {
             }
             $scope.backlog.agenda = newSet;
             $scope.meeting.agenda.push(newAgendaItem);
-            $scope.extractDateParts();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -148,7 +139,6 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.meeting.agenda.push(data);
             $scope.newAgendaItem = {subject:"",duration:10,desc:"",id:""};
             $scope.showInput=false;
-            $scope.extractDateParts();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -163,7 +153,6 @@ app.controller('myCtrl', function($scope, $http) {
         .success( function(data) {
             $scope.meeting = data;
             $scope.showInput=false;
-            $scope.extractDateParts();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -206,7 +195,6 @@ app.controller('myCtrl', function($scope, $http) {
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.meeting = data;
-            $scope.extractDateParts();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);

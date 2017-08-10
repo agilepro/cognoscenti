@@ -89,18 +89,12 @@
           </tr>
           <tr>
              <td>Due Date:</td>
-             <td><input type="text"
-                    style="width:150px;"
-                    class="form-control"
-                    datepicker-popup="dd-MMMM-yyyy"
-                    ng-model="dummyDate1"
-                    is-open="datePickOpen1"
-                    min-date="minDate"
-                    datepicker-options="datePickOptions"
-                    date-disabled="datePickDisable(date, mode)"
-                    ng-required="true"
-                    ng-click="openDatePicker1($event)"
-                    close-text="Close"/></td>
+             <td>
+                <span datetime-picker ng-model="cmt.dueDate"  
+                    class="form-control" style="max-width:300px">
+                    {{cmt.dueDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                </span> 
+              </td>
           </tr>
         </table>
       </div>

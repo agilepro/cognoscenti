@@ -25,9 +25,6 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
         $scope.goal.state=newState;
     }
     
-    $scope.onTimeSet = function (newDate, param) {
-        $scope.goal[param] = newDate.getTime();
-    }
     $scope.hasLabel = function(searchName) {
         if ($scope.goal.labelMap) {
             return $scope.goal.labelMap[searchName];

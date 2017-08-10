@@ -26,27 +26,4 @@ app.controller('DecisionModalCtrl', function ($scope, $modalInstance, decision, 
         $modalInstance.dismiss('cancel');
     };
 
-    $scope.datePickOptions = {
-        formatYear: 'yyyy',
-        startingDay: 1
-    };
-    $scope.datePickDisable = function(date, mode) {
-        return false;
-    };
-    $scope.dummyDate1 = new Date();
-    $scope.datePickOpen = false;
-    $scope.openDatePicker = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        $scope.datePickOpen = true;
-    };
-    $scope.extractDateParts = function() {
-        if ($scope.decision.timestamp<=0) {
-            $scope.dummyDate = new Date();
-        }
-        else {
-            $scope.dummyDate = new Date($scope.decision.timestamp);
-        }
-    };
-    $scope.extractDateParts();
 });

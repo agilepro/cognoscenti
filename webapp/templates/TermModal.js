@@ -9,9 +9,6 @@ app.controller('TermModal', function ($scope, $modalInstance, $interval, term, i
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
     
-    $scope.onTimeSet = function (newDate, param) {
-        $scope.term[param] = newDate.getTime();
-    }
     $scope.getDays = function(term) {
         if (term.termStart<100000) {
             return 0;

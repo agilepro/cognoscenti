@@ -11,7 +11,6 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
     $scope.newGoal.assignTo = [];
     $scope.realFilter = "";
     $scope.createMode = false;
-    $scope.dummyDate1 = new Date( new Date().getTime() +  (7*24*60*60*1000) );
     
     
 
@@ -86,7 +85,6 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
                 player.uid = player.name;
             }
         });
-        $scope.newGoal.duedate = $scope.dummyDate1.getTime();
 
         var postdata = angular.toJson($scope.newGoal);
         $scope.showError=false;

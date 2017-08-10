@@ -31,11 +31,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         }
 	};
 	
-	$scope.dummyDate1 = new Date();
-    if (cmt.dueDate>0) {
-        $scope.dummyDate1 = new Date(cmt.dueDate);
-    }
-
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 300;
 	$scope.tinymceOptions.init_instance_callback = function(editor) {
@@ -58,7 +53,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         if ($scope.cmt.state == 11 && $scope.autosaveEnabled) {
             $scope.cmt.state = 12;
         }
-        $scope.cmt.dueDate = $scope.dummyDate1.getTime();
         if ($scope.cmt.state==12) {
             if ($scope.cmt.commentType==1 || $scope.cmt.commentType==5) {
                 $scope.cmt.state=13;
@@ -76,7 +70,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 		});
 		console.log("SAVING COMMENT: ", $scope.cmt);
 		$scope.saveDisabled = true;
-        $scope.cmt.dueDate = $scope.dummyDate1.getTime();
 		$scope.$$hashKey = 250;
         $scope.parentScope.updateComment($scope.cmt);
         $scope.unsaved = 0;

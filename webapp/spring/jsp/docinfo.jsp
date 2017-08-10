@@ -100,7 +100,7 @@ Required parameters:
 <script type="text/javascript">
 document.title="<% ar.writeJS(attachment.getDisplayName());%>";
 
-var app = angular.module('myApp', ['ui.bootstrap','ui.tinymce', 'ngSanitize']);
+var app = angular.module('myApp', ['ui.bootstrap','ui.tinymce', 'ngSanitize','angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Access Document");
     $scope.docInfo = <%docInfo.write(out,2,4);%>;
