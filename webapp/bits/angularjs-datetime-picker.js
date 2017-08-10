@@ -127,9 +127,9 @@
     '    <div class="adp-day" ng-show="mv.trailingDays.length < 7" ng-repeat="day in mv.trailingDays">{{::day}}</div>',
     '  </div>',
     '  <div class="adp-days" id="adp-time"> ',
-    '    <label class="timeLabel">Time:</label> <span class="timeValue">{{("0"+inputHour).slice(-2)}} : {{("0"+inputMinute).slice(-2)}}</span><br/>',
-    '    <label class="hourLabel">Hour:</label> <input class="hourInput" type="range" min="0" max="23" ng-model="inputHour" ng-change="updateNgModel()" />',
-    '    <label class="minutesLabel">Min:</label> <input class="minutesInput" type="range" min="0" max="59" ng-model="inputMinute"  ng-change="updateNgModel()"/> ',
+    '    <table><tr><td><span class="angularjs-datetime-label">Time:</span></td><td><span class="timeValue">{{("0"+inputHour).slice(-2)}} : {{("0"+inputMinute).slice(-2)}}</span></td></tr>',
+    '    <tr><td><span class="angularjs-datetime-label">Hour:</span></td><td><input class="hourInput" type="range" min="0" max="23" ng-model="inputHour" ng-change="updateNgModel()" /></td></tr>',
+    '    <tr><td><span class="angularjs-datetime-label">Min:</span></td><td><input class="minutesInput" type="range" min="0" max="59" ng-model="inputMinute"  ng-change="updateNgModel()"/></td></tr></table> ',
     '  </div> ',
     '</div>'].join("\n");
 

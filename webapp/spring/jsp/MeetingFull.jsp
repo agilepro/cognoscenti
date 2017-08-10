@@ -437,9 +437,11 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
             <tr>
                 <td>Date & Time:</td>
                 <td class="dropdown">
-                  <span datetime-picker ng-model="meeting.startTime" datetime-picker class="form-control">
+                <div style="position:relative">
+                  <span datetime-picker ng-model="meeting.startTime" class="form-control" >
                       {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
                   </span> 
+                </div>
                 </td> 
             </tr>
             <tr>

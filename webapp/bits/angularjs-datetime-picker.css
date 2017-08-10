@@ -72,5 +72,16 @@
 }
 
 .angularjs-datetime-picker input[type=range] {
-  width: 150px;
+  width: 140px;
+}
+.angularjs-datetime-label {
+  color: gray;
+  padding:5px;
+}
+
+.hourInput {
+  float:right;
+}
+.minutesInput {
+  float:right;
 }
