@@ -410,14 +410,16 @@ public class EmailGenerator extends DOMFace {
             NGWorkspace ngp, TopicRecord selectedNote,
             AddressListEntry ale, String intro, boolean includeBody,
             List<AttachmentRecord> selAtt, MeetingRecord meeting) throws Exception {
-        UserProfile ownerProfile = ar.getUserProfile();
-        if (ownerProfile==null) {
-            throw new Exception("Some problem, so some reason the owner user profile is null");
-        }
         //Gather all the data into a JSON structure
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
-        data.put("sender",  ownerProfile.getJSON());
+        UserProfile ownerProfile = ar.getUserProfile();
+        if (ownerProfile!=null) {
+            data.put("sender",  ownerProfile.getJSON());
+		}
+		else {
+			System.out.println("AuthRequest user does not have a user profile for the email message: "+ar.getBestUserId());
+		}
 
         String workspaceBaseUrl = ar.baseURL + "t/" + ngp.getSiteKey() + "/" + ngp.getKey() + "/";
         data.put("workspaceName", ngp.getFullName());
@@ -515,11 +517,6 @@ public class EmailGenerator extends DOMFace {
 
     private void writeNoteAttachmentEmailBody2(AuthRequest ar, 
             OptOutAddr ooa, JSONObject data) throws Exception {
-
-        UserProfile ownerProfile = ar.getUserProfile();
-        if (ownerProfile==null) {
-            throw new Exception("Some problem, so some reason the owner user profile is null");
-        }
 
         data.put("optout", ooa.getUnsubscribeJSON(ar));
 
