@@ -381,6 +381,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 data.meetingInfo = "";
             }
             $scope.meeting = data;
+            $scope.sortItemsB();
 
             $scope.editHead=false;
             $scope.editDesc=false;
@@ -536,6 +537,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.meeting = data;
+            $scope.sortItemsB();
             $scope.showInput=false;
             $scope.refreshTopicList();
         })

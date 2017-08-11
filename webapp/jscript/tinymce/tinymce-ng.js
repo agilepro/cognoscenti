@@ -42,7 +42,7 @@ angular.module('ui.tinymce', [])
           } else {
             ensureInstance();
 
-            if (tinyInstance && !tinyInstance.settings.readonly) {
+            if (tinyInstance && tinyInstance.getBody() && !tinyInstance.settings.readonly) {
               tinyInstance.getBody().setAttribute('contenteditable', true);
             }
           }

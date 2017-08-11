@@ -34,7 +34,7 @@
     var datetimePickerEl;
     var _this = this;
     var removeEl = function(el) {
-      el && el.remove();
+      el && el.parentNode.removeChild(el);
       $document[0].body.removeEventListener('click', _this.closeDatetimePicker);
     };
 
@@ -72,7 +72,7 @@
 
       datetimePickerEl.style.position='absolute';
       if(bcr.width > datePickerElBcr.width){
-        datetimePickerEl.style.left= (bcr.left + bcr.width - datePickerElBcr.width + window.scrollX) + 'px';
+        datetimePickerEl.style.left= (bcr.left + window.scrollX) + 'px';
       } else {
         datetimePickerEl.style.left= (bcr.left + window.scrollX) + 'px';
       }

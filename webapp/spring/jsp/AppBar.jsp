@@ -193,7 +193,6 @@
 <% } %> 
           </ul>
         </li>
-        </ul>
       </ul>
       <!-- END App Bar -->
       <!-- BEGIN Input Search -->

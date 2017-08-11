@@ -325,7 +325,7 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
             </td>
             <td>
               {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-              &nbsp &nbsp
+              &nbsp; &nbsp;
               <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
                   <i class="fa fa-calendar"></i></a> &nbsp; {{meeting.startTime}}
               <span ng-click="getTimeZoneList()"><i class="fa fa-eye"></i> Timezones</span><br/>
