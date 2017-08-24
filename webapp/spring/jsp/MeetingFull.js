@@ -389,6 +389,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.editDesc=false;
             $scope.extractPeopleSituation();
             $scope.determineIfAttending();
+            if (data.reminderTime%1440 == 0) {
+                $scope.timeFactor="Days"
+            }
+            else {
+                $scope.timeFactor="Minutes"
+            }
+            if ($scope.timeFactor=="Days") {
+                $scope.factoredTime = $scope.meeting.reminderTime / 1440;
+            }
+            else {
+                $scope.factoredTime = $scope.meeting.reminderTime;
+            }
         });
         promise.error( function(data, status, headers, config) {
             $scope.reportError(data);
