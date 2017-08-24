@@ -1156,19 +1156,6 @@ public abstract class NGPage extends ContainerCommon {
         return noteParent.getChildren("note", TopicRecord.class);
     }
 
-    public List<TopicRecord> getVisibleNotes(AuthRequest ar, int displayLevel)
-            throws Exception {
-        List<TopicRecord> list=new ArrayList<TopicRecord>();
-        List<TopicRecord> fullList = getAllNotes();
-
-        for (TopicRecord note : fullList) {
-            if (note.isVisible(ar, displayLevel) && !note.isDeleted() && !note.isDraftNote()) {
-                list.add(note);
-            }
-        }
-        return list;
-    }
-
     public List<TopicRecord> getDraftNotes(AuthRequest ar)
     throws Exception {
         List<TopicRecord> list=new ArrayList<TopicRecord>();

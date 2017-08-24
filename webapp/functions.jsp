@@ -116,40 +116,6 @@
         return assigness;
     }
 
-    private void writeLeaflets(NGPage ngp, AuthRequest ar, boolean showPublic)
-        throws Exception
-    {
-        ar.write("\n <div class=\"section\"> ");
-
-        ar.write("\n     <div class=\"section_title\"> ");
-        ar.write("\n         <h1 class=\"left\"><b> Topics </a></b></h1> ");
-
-        ar.write("\n         <div class=\"section_date right\">");
-        ar.write("</div> ");
-
-        ar.write("\n         <div class=\"clearer\">&nbsp;</div> ");
-        ar.write("\n     </div> ");
-
-        ar.write("\n     <div class=\"section_body\"> ");
-        int accessLevel = 2;
-        if (showPublic) {
-            accessLevel = 1;
-        }
-        List<TopicRecord> vizComments = ngp.getVisibleNotes(ar, accessLevel);
-
-        int i = -1;
-        for (TopicRecord cr : vizComments) {
-            i++;
-            displayOldLeaflet(ar, ngp, cr, i);
-        }
-
-
-        ar.write("\n     </div> ");
-        ar.write("\n </div> ");
-
-        ar.flush();
-    }
-
 
     /**
      * displayOldLeaflet will display a single comment record. index "i" denotes

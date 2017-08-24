@@ -99,7 +99,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td><input type="checkbox" checked="checked" name="comments"  value="comments"/></td></tr>
         </table>
 
-        <div class="generalHeading">Public Topics :</div>
+        <div class="generalHeading">Discussion Topics :</div>
         <table border="0px solid gray" class="table">
             <thead>
             <tr>
@@ -108,9 +108,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             </thead>
             <%
-                List<TopicRecord> publicComments = ngp.getVisibleNotes(ar, SectionDef.PUBLIC_ACCESS);
-                for(int i=0;i<publicComments.size();i++){
-                    TopicRecord noteRec = publicComments.get(i);
+                for(TopicRecord noteRec:ngp.getAllNotes()){
             %>
             <tr>
                 <td>
@@ -124,43 +122,6 @@ app.controller('myCtrl', function($scope, $http) {
             }
           %>
         </table>
-
-<%
-if (ar.isMember()) {
-%>
-        <div class="generalHeading">Member Topics :</div>
-        <table border="0px solid gray" class="table">
-            <%
-                List<TopicRecord> memberComments = ngp.getVisibleNotes(ar, SectionDef.MEMBER_ACCESS);
-                if(memberComments.size() == 0) {
-                    %> No member topics found. <%
-                }
-                else{
-            %>
-            <thead>
-                <tr>
-                    <th width="75%">&nbsp;&nbsp;&nbsp;<b>Subject</b></th>
-                    <th><b><input type="checkbox" name="memberNotesAll" id="memberNotesAll" onclick="return selectAll('member')" /> &nbsp; Select All</b></th>
-                </tr>
-            </thead>
-         <%
-                    for(int i=0;i<memberComments.size();i++) {
-                        TopicRecord noteRec = memberComments.get(i);
-         %>
-            <tr>
-                <td>
-                  &nbsp;&nbsp;&nbsp; <%ar.writeHtml(noteRec.getSubject()); %>
-                </td>
-                <td>
-                  &nbsp;&nbsp;&nbsp;<input type="checkbox" name="memberNotes"  value="<%ar.writeHtml(noteRec.getId()); %>" onclick="return unSelect('memberNotesAll')"/>
-                </td>
-            </tr>
-          <%            }
-                    }
-          %>
-
-        </table>
-<% } %>
     </form>
 
 </div>

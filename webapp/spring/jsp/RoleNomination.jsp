@@ -263,7 +263,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
                 <label for="status">Term Start:</label>
-                <span datetime-picker ng-model="term.termStart" datetime-picker 
+                <span datetime-picker ng-model="term.termStart"  
                     class="form-control" style="max-width:300px">
                     {{term.termStart|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
                 </span> 
@@ -273,7 +273,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
                 <label for="status">Term End:</label>
-                <span datetime-picker ng-model="term.termEnd" datetime-picker 
+                <span datetime-picker ng-model="term.termEnd"  
                     class="form-control" style="max-width:300px">
                     {{term.termEnd|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
                 </span> 

@@ -184,39 +184,18 @@ public class WikiToPDF
 
     public void writeWikiAsPDF(NGPage ngp, AuthRequest ar)  throws Exception {
 
-        Vector<TopicRecord> publicNotes = new Vector<TopicRecord>();
         Vector<TopicRecord> memberNotes = new Vector<TopicRecord>();
 
         String[] publicNoteIDs = ar.req.getParameterValues("publicNotes");
-        String[] memberNoteIDs = ar.req.getParameterValues("memberNotes");
         
         if (publicNoteIDs==null) {
             publicNoteIDs = new String[0];
-        }
-        if (memberNoteIDs==null) {
-            memberNoteIDs = new String[0];
         }
 
         for (String noteId : publicNoteIDs) {
             TopicRecord lrt = ngp.getNote(noteId);
             if (lrt!=null) {
-                if (lrt.getVisibility()==SectionDef.PUBLIC_ACCESS) {
-                    publicNotes.add(lrt);
-                }
-                else {
-                    memberNotes.add(lrt);
-                }
-            }
-        }
-        for (String noteId : memberNoteIDs) {
-            TopicRecord lrt = ngp.getNote(noteId);
-            if (lrt!=null) {
-                if (lrt.getVisibility()==SectionDef.PUBLIC_ACCESS) {
-                    publicNotes.add(lrt);
-                }
-                else {
-                    memberNotes.add(lrt);
-                }
+                memberNotes.add(lrt);
             }
         }
         
@@ -226,7 +205,7 @@ public class WikiToPDF
         includeRoles = (ar.req.getParameter("roles")!=null);
         includeActionItems = (ar.req.getParameter("actionItems")!=null);
 
-        int totalNotes = publicNotes.size() + memberNotes.size();
+        int totalNotes = memberNotes.size();
         pddoc = new PDDocument();
         
         //set up the print time for use in the footer
@@ -234,17 +213,10 @@ public class WikiToPDF
         
 
         if (totalNotes>1 || includeDecisions || includeAttachments) {
-            writeTOCPage(ngp, publicNotes, memberNotes);
+            writeTOCPage(ngp, memberNotes);
         }
 
         int noteCount = 0;
-        if(publicNotes.size() > 0){
-            for (TopicRecord lr : publicNotes) {
-                noteCount++;
-                writeNoteToPDF(ngp, lr, noteCount);
-            }
-        }
-
         if(memberNotes.size() > 0){
             for (TopicRecord lr : memberNotes) {
                 noteCount++;
@@ -276,7 +248,7 @@ public class WikiToPDF
     }
 
 
-    private void writeTOCPage(NGPage ngp, Vector<TopicRecord> publicNoteList,
+    private void writeTOCPage(NGPage ngp, 
             Vector<TopicRecord> memberNoteList)  throws Exception {
         headerText = "Topic report generated from Weaver";
 
@@ -293,24 +265,11 @@ public class WikiToPDF
 
         int noteCount = 0;
 
-        if(publicNoteList.size() > 0){
-            setPFont();
-            newLine();
-            newLine();
-            writeWrappedLine("Public Topics in this report: ");
-            for (TopicRecord note : publicNoteList) {
-                noteCount++;
-                setH2Font();
-                newLine();
-                writeWrappedLine(Integer.toString(noteCount)+": "+note.getSubject());
-            }
-        }
-
         if(memberNoteList.size() > 0){
             setPFont();
             newLine();
             newLine();
-            writeWrappedLine("Member Topics: ");
+            writeWrappedLine("Discussion Topics: ");
             for (TopicRecord note : memberNoteList) {
                 noteCount++;
                 setH2Font();
