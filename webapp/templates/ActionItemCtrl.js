@@ -1,7 +1,7 @@
 app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAreaList, allLabels, startMode, $http, AllPeople) {
 
     $scope.goalId = goal.id;
-    $scope.goal = {assignTo:[],state:2,startdate:0,enddate:0,duedate:0};
+    $scope.goal = {assignTo:[],state:2,startdate:0,enddate:0,duedate:0,labelMap:{}};
     $scope.taskAreaList = taskAreaList;
     $scope.allLabels = allLabels;
     $scope.editMode = startMode;

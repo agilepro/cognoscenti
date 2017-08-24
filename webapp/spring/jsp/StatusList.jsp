@@ -93,6 +93,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Action Item Status");
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
+    console.log("All labels is: ", $scope.allLabels);
     $scope.stateName = <%stateName.write(out,2,4);%>;
     $scope.taskAreaList = <%taskAreaList.write(out,2,4);%>;
     $scope.filter = "";
