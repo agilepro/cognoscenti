@@ -454,8 +454,12 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
             <tr>
                 <td>Send Reminder:</td>
                 <td colspan="2" class="form-inline form-group">
-                    <input ng-model="meeting.reminderTime" style="width:60px;"  class="form-control" >
-                    Minutes before the meeting
+                    <input ng-model="factoredTime" style="width:60px;"  class="form-control" >
+                    <select ng-model="timeFactor" class="form-control">
+                        <option>Minutes</option>
+                        <option>Days</option>
+                        </select>
+                    before the meeting, ({{meeting.reminderTime}} minutes)
                 </td>
             </tr>
             <tr>

@@ -131,6 +131,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.filterMap = {};
     $scope.openMap = {};
     $scope.showFilter = <%=ar.isLoggedIn()%>;
+    $scope.initialFetchDone = false;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -150,6 +151,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         .success( function(data) {
             $scope.notes = data;
             $scope.sortNotes();
+            $scope.initialFetchDone = true;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -462,11 +464,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
 
         
-    <div class="guideVocal" ng-show="notes.length==0" style="margin-top:80px">
+    <div class="instruction" ng-show="notes.length==0 && !initialFetchDone" style="margin-top:80px">
+    Fetching topics . . .
+    </div>
+    <div class="guideVocal" ng-show="notes.length==0 && initialFetchDone" style="margin-top:80px">
     You have no discussion topics in this workspace yet.
     You can add them using a option from the pull-down in the upper right of this page.
     </div>
-        
+       
 </div>
 
 <script src="<%=ar.retPath%>templates/CreateTopicModal.js"></script>

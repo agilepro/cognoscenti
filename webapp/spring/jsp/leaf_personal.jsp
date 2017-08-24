@@ -162,7 +162,7 @@ app.controller('myCtrl', function($scope, $http) {
     <i class="fa fa-list-alt material-icons"></i> View Emails</a>
 </div>
 
-        <table class="table" style="width:100%;">
+        <table class="table">
             <col width="150px">
             <col width="250px">
             <col width="400px">
@@ -257,84 +257,72 @@ app.controller('myCtrl', function($scope, $http) {
                   </div>
                 </td>
             </tr>
-            <tr class="gridTableHeader">
-                <td colspan="4">
-                    <div class="generalSubHeading" style="margin-top:50px;">Roles You Play in this Workspace</div>
-                </td>
+        </table>
+
+
+        <table class="table" style="margin-top:50px;">
+            <col width="150px"/>
+            <col width="60px"/>
+            <col width="60px"/>
+            <col width="60px"/>
+            <col width="60px"/>
+            <col width="400px"/>
+            <tr>
+                <th>
+                    Roles in Workspace
+                </th>
+                <th style="width:60px;text-align:center">
+                    Playing
+                </th>
+                <th style="width:60px;text-align:center">
+                    Pending
+                </th>
+                <th style="width:60px;text-align:center">
+                    Not Playing
+                </th>
+                <th style="width:60px;text-align:center">
+                </th>
+                <th>
+                    Role Description
+                </th>
             </tr>
-            <tr ng-repeat="role in rolePlayer()">
+            <tr ng-repeat="role in roleList">
                 <td>
                     <button class="labelButton" style="background-color:{{role.color}};">{{role.name}}</button>
                 </td>
-                <td>
-                    <button class="btn" ng-click="roleChange(role, 'Leave')"><i class="fa  fa-check-square-o"></i> in Role</button>
+                <td style="width:60px;text-align:center">
+                    <span ng-show="role.player"><i class="fa  fa-check-square-o"></i></span>
+                    <span ng-hide="role.player"><i class="fa  fa-square-o"></i></span>
                 </td>
-                <td ng-hide="role.show">
-                    <button class="btn" ng-click="role.show=!role.show">?</button>
+                <td style="width:60px;text-align:center">
+                    <span ng-show="!role.player && role.reqPending"><i class="fa  fa-check-square-o"></i></span>
+                    <span ng-hide="!role.player && role.reqPending"><i class="fa  fa-square-o"></i></span>
                 </td>
-                <td ng-show="role.show"  ng-click="role.show=!role.show">
-                  <div class="guideVocal">
-                    <b>Description</b><br/>
-                    {{role.description}}
-                    <br/>
-                    <br/>
-                    <b>Requirements</b><br/>
-                    {{role.requirements}}
-                  </div>
+                <td style="width:60px;text-align:center">
+                    <span ng-show="!role.player && !role.reqPending"><i class="fa  fa-check-square-o"></i></span>
+                    <span ng-hide="!role.player && !role.reqPending"><i class="fa  fa-square-o"></i></span>
                 </td>
-            </tr>
-            <tr class="gridTableHeader">
-                <td colspan="4">
-                    <div class="generalSubHeading" style="margin-top:50px;">Roles Request Pending</div>
-                </td>
-            </tr>
-            <tr ng-repeat="role in rolePending()">
-                <td>
-                    <button class="labelButton" sstyle="background-color:{{role.color}};">{{role.name}}</button>
+                <td style="width:60px;text-align:center">
+                    <button class="btn btn-primary btn-raised" ng-hide="role.player || role.reqPending" ng-click="roleChange(role, 'Join')">Join</button>
+                    <button class="btn btn-primary btn-raised" ng-show="role.player || role.reqPending" ng-click="roleChange(role, 'Leave')">Leave</button>
                 </td>
                 <td>
-                    <button class="btn" ng-click="roleChange(role, 'Leave')"><i class="fa fa-clock-o"></i> pending Role</button>
+                    <div ng-hide="role.show">
+                        <button class="btn" ng-click="role.show=!role.show">?</button>
+                    </div>
+                    <div ng-show="role.show"  ng-click="role.show=!role.show">
+                      <div class="guideVocal">
+                        <b>Description</b><br/>
+                        {{role.description}}
+                        <br/>
+                        <br/>
+                        <b>Requirements</b><br/>
+                        {{role.requirements}}
+                      </div>
+                    </div>
                 </td>
-                <td ng-hide="role.show">
-                    <button class="btn" ng-click="role.show=!role.show">?</button>
-                </td>
-                <td ng-show="role.show" ng-click="role.show=!role.show">
-                  <div class="guideVocal">
-                    <b>Description</b><br/>
-                    {{role.description}}
-                    <br/>
-                    <br/>
-                    <b>Requirements</b><br/>
-                    {{role.requirements}}
-                  </div>
-                </td>
-            </tr>
-            <tr class="gridTableHeader">
-                <td colspan="3">
-                    <div class="generalSubHeading" style="margin-top:50px;">Roles You Don't Play</div>
-                </td>
-            </tr>
-            <tr ng-repeat="role in roleNonPlayer()">
-                <td>
-                    <button class="labelButton" sstyle="background-color:{{role.color}};">{{role.name}}</button>
-                </td>
-                <td>
-                    <button class="btn" ng-click="roleChange(role, 'Join')"><i class="fa  fa-square-o"></i> in Role</button>
-                </td>
-                <td ng-hide="role.show">
-                    <button class="btn" ng-click="role.show=!role.show">?</button>
-                </td>
-                <td ng-show="role.show" ng-click="role.show=!role.show">
-                  <div class="guideVocal">
-                    <b>Description</b><br/>
-                    {{role.description}}
-                    <br/>
-                    <br/>
-                    <b>Requirements</b><br/>
-                    {{role.requirements}}
-                  </div>
-                </td>
-            </tr>
+           </tr>
         </table>
+    <div style="height:100px"></div>
 
 </div>

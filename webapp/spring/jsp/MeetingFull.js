@@ -12,6 +12,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.allLabels = embeddedData.allLabels;
     $scope.allTopics = [];
     $scope.backlogId = embeddedData.backlogId;
+    $scope.timeFactor = "Minutes";
+    $scope.factoredTime = 0;
     
     var templateCacheDefeater = embeddedData.templateCacheDefeater;
 
@@ -1423,7 +1425,30 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.reportError(data);
         });
     }
+
+    $scope.$watch(
+        function(scope) { return scope.factoredTime },
+        function(newValue, oldValue) {
+            if ($scope.timeFactor=="Days") {
+                $scope.meeting.reminderTime = $scope.factoredTime * 1440;
+            }
+            else {
+                $scope.meeting.reminderTime = $scope.factoredTime;
+            }
+        }
+    );
+    $scope.$watch(
+        function(scope) { return scope.timeFactor },
+        function(newValue, oldValue) {
+            if ($scope.timeFactor=="Days") {
+                $scope.meeting.reminderTime = $scope.factoredTime * 1440;
+            }
+            else {
+                $scope.meeting.reminderTime = $scope.factoredTime;
+            }
+        }
+    );
     
-    $scope.refreshMeetingPromise();
+    $scope.refreshMeetingPromise();    
 });
 
