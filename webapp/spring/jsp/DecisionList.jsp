@@ -16,6 +16,7 @@ Required parameters:
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
+    NGBook site = ngp.getSite();
 
     JSONArray allDecisions = new JSONArray();
     for (DecisionRecord dr : ngp.getDecisions()) {
@@ -61,6 +62,7 @@ Required parameters:
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Decision List");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allDecisions = <%allDecisions.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;

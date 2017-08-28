@@ -68,6 +68,14 @@ app.controller('myCtrl', function($scope, $http) {
 
 </script>
 
+
+<style>
+.spaceyTable tr td {
+    padding:8px;
+}
+</style>
+
+
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
@@ -91,19 +99,17 @@ app.controller('myCtrl', function($scope, $http) {
 
 
     <div class="generalContent">
-         <table>
+         <table class="spaceyTable">
             <tr>
                 <td class="gridTableColummHeader_2">New Name:</td>
-                <td style="width:20px;"></td>
                 <td class="form-inline">
                     <input type="text" class="form-control" ng-model="newName">
                     <button ng-click="addName(newName)" class="btn btn-primary btn-raised">Add Name</button>
                 </td>
             </tr>
-            <tr><td height="10px"></td></tr>
             <tr>
                 <td class="gridTableColummHeader_2" valign="top">Current Names:</td>
-                <td style="width:20px;"></td>
+                 
                 <td>
                     <div ng-repeat="name in siteInfo.names">
                         {{name}}
@@ -111,43 +117,47 @@ app.controller('myCtrl', function($scope, $http) {
                     </div>
                 </td>
             </tr>
-            <tr><td height="5px"></td></tr>
             <tr>
-                <td class="gridTableColummHeader_2" valign="top">Site Description:</td>
-                <td style="width:20px;"></td>
+                <td>Site Description:</td>
                 <td>
-                    <textarea  class="form-control" rows="4" ng-model="siteInfo.description"></textarea>
+                    <textarea  class="form-control" rows="4" ng-model="siteInfo.description"
+                    title="The description appears in places where the user needs to know a little more about the purpose and background of the site itself."></textarea>
                 </td>
             </tr>
-            <tr><td height="30px"></td></tr>
             <tr>
                 <td class="gridTableColummHeader_2">Flags:</td>
-                <td style="width:20px;"></td>
-                <td><input type="checkbox" ng-model="siteInfo.showExperimental"> Show Experimental
+                <td>
+                    <input type="checkbox" ng-model="siteInfo.showExperimental"> Show Experimental &nbsp; &nbsp; 
+                    <input type="checkbox" ng-model="siteInfo.frozen"> Frozen &nbsp; &nbsp; 
+                    <input type="checkbox" ng-model="siteInfo.isDeleted"> isDeleted &nbsp; &nbsp; 
+                    <input type="checkbox" ng-model="siteInfo.offLine"> offLine
             </tr>
-            <tr><td height="10px"></td></tr>
+            <tr>
+                <td >Site Message:</td>
+                <td>
+                    <textarea  class="form-control" rows="2" ng-model="siteInfo.siteMsg"
+                    title="This message appears on every page of every workspace.  Use for urgent updates and changes in site status."></textarea>
+                </td>
+            </tr>
             <tr>
                 <td class="gridTableColummHeader_2"></td>
-                <td style="width:20px;"></td>
+                 
                 <td><button class="btn btn-primary btn-raised" ng-click="saveSiteInfo()">Save Changes</button></td>
             </tr>
-            <tr><td height="10px"></td></tr>
             <tr>
                 <td class="gridTableColummHeader_2">Site Key:</td>
-                <td style="width:20px;"></td>
                 <td>{{siteInfo.key}}</td>
             </tr>
-            <tr><td height="10px"></td></tr>
             <tr>
                 <td class="gridTableColummHeader_2">Storage Path:</td>
-                <td style="width:20px;"></td>
+                 
                 <td>
                 {{siteInfo.rootfolder}}
                 </td>
             </tr>
             <tr>
                 <td class="gridTableColummHeader_2">Streaming Link:</td>
-                <td style="width:20px;"></td>
+                 
                 <td><%
                     License lic = null;
                     for (License test : ngb.getLicenses()) {

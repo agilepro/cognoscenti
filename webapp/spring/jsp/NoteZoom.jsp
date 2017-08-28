@@ -754,8 +754,19 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 
     $scope.autosave = function() {
         if ($scope.isEditing) {
-            console.log("AUTOSAVE");
+            if (!$scope.lastAuto) {
+                $scope.lastAuto = {};
+            }
+            if ($scope.noteInfo.html==$scope.lastAuto.html && 
+                            $scope.noteInfo.subject==$scope.lastAuto.subject) {
+                console.log("AUTOSAVE - skipped, nothing new to save");
+                return;
+            }
+            $scope.lastAuto.html = $scope.noteInfo.html;
+            $scope.lastAuto.subject = $scope.noteInfo.subject;
+            console.log("AUTOSAVE at "+new Date());
             saveRecord = {};
+            saveRecord.saveMode = "autosave";
             saveRecord.html = $scope.noteInfo.html;
             saveRecord.subject = $scope.noteInfo.subject;
             saveRecord.id = $scope.noteInfo.id;
@@ -764,6 +775,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             var postdata = angular.toJson(saveRecord);
             //for autosave ... don't complain about errors
             $http.post(postURL ,postdata)
+            .success( $scope.receiveTopicRecord )
             .error( function(data) {
                 console.log("AUTOSAVE FAILED", data);
             });

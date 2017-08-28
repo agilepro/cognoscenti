@@ -139,12 +139,16 @@ public class BaseController {
      * case a frozen (or deleted) workspace should not prompt for that update.
      * @throws Exception
      */
-    protected static boolean checkLoginMemberFrozen(AuthRequest ar, NGPage ngp) throws Exception {
+    protected static boolean checkLoginMemberFrozen(AuthRequest ar, NGContainer ngc) throws Exception {
         if (checkLoginMember(ar)) {
             return true;
         }
-        if(ngp.isFrozen()){
-            showWarningView(ar, "nugen.generatInfo.Frozen");
+        boolean frozen = ngc.isFrozen();
+        if (!frozen && (ngc instanceof NGPage)) {
+            frozen = ((NGPage)ngc).getSite().isFrozen();
+        }
+        if (frozen) {
+            streamJSP(ar, "WarningFrozen");
             return true;
         }
         return false;
@@ -225,6 +229,18 @@ public class BaseController {
         }
     }
 
+    public static void showJSPNotFrozen(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
+        try{
+            NGContainer ngc = registerSiteOrProject(ar, siteId, pageId);
+            if (checkLoginMemberFrozen(ar, ngc)){
+                return;
+            }
+            streamJSP(ar, jspName);
+        }
+        catch(Exception ex){
+            throw new Exception("Unable to prepare JSP view of "+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+        }
+    }
 
 
     /**

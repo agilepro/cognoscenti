@@ -14,6 +14,7 @@
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
+    NGBook site = ngp.getSite();
 
     String aid      = ar.reqParam("aid");
     AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
@@ -61,6 +62,7 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Document Details");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.docInfo = <%docInfo.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.today = (new Date()).getTime();

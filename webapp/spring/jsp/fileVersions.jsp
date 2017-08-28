@@ -7,7 +7,7 @@
     String pageId      = ar.reqParam("pageId");
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
-    NGBook ngb = ngp.getSite();
+    NGBook site = ngp.getSite();
 
     String aid      = ar.reqParam("aid");
     AttachmentRecord attachment = ngp.findAttachmentByID(aid);
@@ -61,6 +61,7 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("List Document Versions");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.attachInfo = <%attachInfo.write(out,2,4);%>;
     $scope.allVersions = <%allVersions.write(out,2,4);%>;
 

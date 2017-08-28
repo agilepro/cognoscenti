@@ -8,7 +8,7 @@
     String pageId      = ar.reqParam("pageId");
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
-    NGBook ngb = ngp.getSite();
+    NGBook site = ngp.getSite();
 
     JSONArray meetings = new JSONArray();
     List<MeetingRecord> allMeets = ngp.getMeetings();
@@ -26,6 +26,7 @@
 var app = angular.module('myApp', ['ui.bootstrap','angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Meetings");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.meetings = <%meetings.write(out,2,4);%>;
     $scope.newMeeting = {
         name:"",
@@ -152,7 +153,6 @@ app.controller('myCtrl', function($scope, $http) {
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
-
 
 <div class="btn-toolbar primary-toolbar">
       <span class="dropdown">

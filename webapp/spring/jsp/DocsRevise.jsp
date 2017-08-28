@@ -11,7 +11,6 @@
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to upload documents");
-    NGBook ngb = ngp.getSite();
     NGBook site = ngp.getSite();
 
     AttachmentRecord attachRec = ngp.findAttachmentByIDOrFail(aid);
@@ -56,6 +55,7 @@ var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Upload Revised Document");
     window.MY_SCOPE = $scope;
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.docInfo = <% docInfo.write(ar.w, 2,4); %>;
     $scope.fileProgress = [];
 

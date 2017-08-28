@@ -9,6 +9,7 @@
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
+    NGBook site = ngp.getSite();
 
     JSONArray labelList = new JSONArray();
     for (NGLabel label : ngp.getAllLabels()) {
@@ -25,6 +26,7 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Labels");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.labelList = <%labelList.write(out,2,4);%>;
     $scope.colors = ["Gold","Yellow","CornSilk","PaleGreen","Orange","Bisque","Coral","LightSteelBlue","Aqua","Thistle","Pink"];
     $scope.newLabel = {name: "", color: $scope.colors[0]};

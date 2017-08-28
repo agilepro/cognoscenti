@@ -111,6 +111,12 @@ app.controller('myCtrl', function($scope, $http) {
     
 <div ng-app="myApp" ng-controller="myCtrl">
 
+<div ng-show="siteInfo.siteMsg">
+    <div class="siteMsg">{{siteInfo.siteMsg}}</div>
+</div>
+
+
+
 <%@include file="ErrorPanel.jsp"%>
 
 
@@ -119,7 +125,7 @@ app.controller('myCtrl', function($scope, $http) {
     padding:5px;
 }
 </style>
-<div style="max-width:500px">
+<div style="max-width:500px" ng-hide="siteInfo.isDeleted || siteInfo.frozen || siteInfo.offLine">
 
     <div class="form-group">
         <label >New Workspace Name</label>
@@ -143,5 +149,16 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
        
 </div>
+
+<div style="max-width:500px" ng-show="siteInfo.isDeleted">
+    <div class="guideVocal">This site is marked as deleted and will automatically disappear at a point of time in the future.</div>
+</div>
+<div style="max-width:500px" ng-show="siteInfo.frozen">
+    <div class="guideVocal">This site is frozen and no new workspaces can be created in it.</div>
+</div>
+<div style="max-width:500px" ng-show="siteInfo.offLine">
+    <div class="guideVocal">This site is off line and no workspaces can be created in it at this time.</div>
+</div>
+
 
 </div>

@@ -34,6 +34,9 @@
     }
     </script>
 
+    <div ng-show="siteInfo.siteMsg" ng-cloak>
+        <div class="siteMsg">{{siteInfo.siteMsg}}</div>
+    </div>
     <div id="ErrorPanel" style="border:2px solid red;display=none;background:LightYellow;margin:10px;"
          ng-show="showError" ng-cloak>
         <div style="margin:10px; float:right;">

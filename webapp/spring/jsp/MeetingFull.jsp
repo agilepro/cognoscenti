@@ -319,6 +319,15 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
           <col width="20px">
           <col width="*">
           <tr>
+            <td>Name:</td>
+            <td>
+              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
+            </td>
+            <td>
+              <b>{{meeting.name}}</a>
+            </td>
+          </tr>
+          <tr>
             <td>Scheduled Time:</td>
             <td>
               <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
@@ -327,9 +336,20 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
               {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
               &nbsp; &nbsp;
               <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
-                  <i class="fa fa-calendar"></i></a> &nbsp; {{meeting.startTime}}
+                  <i class="fa fa-calendar"></i></a> &nbsp; 
               <span ng-click="getTimeZoneList()"><i class="fa fa-eye"></i> Timezones</span><br/>
               <span ng-repeat="val in allDates">{{val}}<br/></span>
+            </td>
+          </tr>
+          <tr>
+            <td>Reminder:</td>
+            <td>
+              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
+            </td>
+            <td>
+              {{factoredTime}} {{timeFactor}} before the meeting. 
+                <span ng-show="meeting.reminderSent<=0"> <i>Not sent.</i></span>
+                <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}
             </td>
           </tr>
           <tr>
@@ -411,6 +431,7 @@ embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
           </tr>
           <tr ng-show="isCompleted()">
             <td>Attendees:</td>
+            <td></td>
             <td>
                 <span ng-repeat="person in getAttended()">{{person.name}}, </span>
             </td>

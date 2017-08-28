@@ -450,6 +450,8 @@ public class MainTabsViewControler extends BaseController {
              ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
+             
+             boolean isAutoSave = noteInfo.has("saveMode") && "autosave".equals(noteInfo.getString("saveMode"));
 
              TopicRecord note = null;
              int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
@@ -466,8 +468,10 @@ public class MainTabsViewControler extends BaseController {
              note.updateHtmlFromJSON(ar, noteInfo);
              note.setLastEdited(ar.nowTime);
              note.setModUser(new AddressListEntry(ar.getBestUserId()));
-             HistoryRecord.createHistoryRecord(ngw, note.getId(), HistoryRecord.CONTEXT_TYPE_LEAFLET,
+             if (!isAutoSave) {
+                 HistoryRecord.createHistoryRecord(ngw, note.getId(), HistoryRecord.CONTEXT_TYPE_LEAFLET,
                      0, eventType, ar, "");
+             }
 
              ngw.saveFile(ar, "Updated Topic Contents");
 

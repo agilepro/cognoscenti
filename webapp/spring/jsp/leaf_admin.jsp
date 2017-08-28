@@ -15,8 +15,8 @@
     NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageId);
     NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngw);
-    NGBook ngb = ngw.getSite();
-    boolean showExperimental = ngb.getShowExperimental();
+    NGBook site = ngw.getSite();
+    boolean showExperimental = site.getShowExperimental();
     Cognoscenti cog = ar.getCogInstance();
 
     UserProfile up = ar.getUserProfile();
@@ -42,7 +42,7 @@
     workspaceConfig.put("parentName", parentName);
 
     JSONArray allProjects = new JSONArray();
-    for (NGPageIndex ngpis : cog.getAllProjectsInSite(ngb.getKey())) {
+    for (NGPageIndex ngpis : cog.getAllProjectsInSite(site.getKey())) {
         if (ngpis.isDeleted) {
             continue;
         }
@@ -92,6 +92,7 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Workspace Administration");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.workspaceConfig = <%workspaceConfig.write(out,2,4);%>;
     $scope.newName = $scope.workspaceConfig.allNames[0];
     $scope.editName = false;

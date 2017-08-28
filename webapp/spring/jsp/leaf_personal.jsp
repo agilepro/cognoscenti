@@ -12,6 +12,7 @@
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertLoggedIn("Must be logged in to set your personal settings");
+    NGBook site = ngp.getSite();
 
     UserProfile uProf = ar.getUserProfile();
     Date date = new Date(ar.getSuperAdminLogFile().getLastNotificationSentTime());
@@ -32,6 +33,7 @@
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Workspace Personal Settings");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.isWatching = <%=uProf.isWatch(pageId)%>;
     $scope.watchTime  = <%=uProf.watchTime(pageId)%>;
     $scope.isTemplate = <%=uProf.isTemplate(pageId)%>;

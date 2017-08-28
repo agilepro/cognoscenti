@@ -8,8 +8,6 @@
     ar.assertSuperAdmin("Must be a super admin to see new site page");
     UserProfile uProf=ar.getUserProfile();
     
-    List<SiteRequest> superRequests = SiteReqFile.getAllSiteReqs();
-
     Cognoscenti cog = Cognoscenti.getInstance(request);
     
     JSONArray allRequests = new JSONArray();
@@ -94,6 +92,8 @@ app.controller('myCtrl', function($scope, $http) {
                             <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                             <span class="caret"></span></button>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                              <li role="presentation">
+                                  <a href="oneSite.htm?siteKey={{rec.key}}">View Details</a></li>
                               <li role="presentation">
                                   <a role="menuitem" ng-click="addAdmin(rec)">Add Yourself to Owners</a></li>
                             </ul>

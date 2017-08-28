@@ -92,7 +92,7 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPMembers(ar, siteId, pageId, "DocsAdd");
+        BaseController.showJSPNotFrozen(ar, siteId, pageId, "DocsAdd");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/docinfo{aid}.htm", method = RequestMethod.GET)

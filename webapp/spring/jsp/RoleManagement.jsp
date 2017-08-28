@@ -10,6 +10,13 @@
     //page must work for both workspaces and for sites
     NGContainer ngc = ar.getCogInstance().getWorkspaceOrSiteOrFail(siteId, pageId);
     ar.setPageAccessLevels(ngc);
+    NGBook site;
+    if (ngc instanceof NGBook) {
+        site = (NGBook) ngc;
+    }
+    else {
+        site = ((NGPage) ngc).getSite();
+    }
     UserProfile uProf = ar.getUserProfile();
     
     String frontPageResource = "frontPage.htm";
@@ -42,6 +49,7 @@
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Roles");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.showInput = false;
 

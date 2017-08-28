@@ -13,7 +13,7 @@ Required parameters:
     String pageId      = ar.reqParam("pageId");
     NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
-    NGBook ngb = ngp.getSite();
+    NGBook site = ngp.getSite();
     Cognoscenti cog = ar.getCogInstance();
     
     //set 'forceTemplateRefresh' in config file to 'true' to get this
@@ -187,6 +187,7 @@ Required parameters:
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Workspace Front Page");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.topHistory = <%topHistory.write(out,2,4);%>;
     $scope.recentChanges = <%recentChanges.write(out,2,4);%>;
     $scope.parent     = <%parent.write(out,2,4);%>;

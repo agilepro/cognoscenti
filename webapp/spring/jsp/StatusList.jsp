@@ -23,6 +23,7 @@ Required parameters:
     NGWorkspace ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
+    NGBook site = ngp.getSite();
 
     List<GoalRecord> allGoalsRaw = ngp.getAllGoals();
     JSONArray allGoals = new JSONArray();
@@ -91,6 +92,7 @@ Required parameters:
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Action Item Status");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     console.log("All labels is: ", $scope.allLabels);

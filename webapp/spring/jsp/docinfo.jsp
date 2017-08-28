@@ -21,7 +21,7 @@ Required parameters:
     String pageId      = ar.reqParam("pageId");
     NGWorkspace ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngp);
-    NGBook ngb = ngp.getSite();
+    NGBook site = ngp.getSite();
     UserProfile uProf = ar.getUserProfile();
     String currentUser = "";
     String currentUserName = "";
@@ -89,7 +89,7 @@ Required parameters:
     String docSpaceURL = "";
     if (uProf!=null) {
         LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
-        docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngp.getKey()
+        docSpaceURL = ar.baseURL +  "api/" + site.getKey() + "/" + ngp.getKey()
                     + "/summary.json?lic="+lfu.getId();
     }
 
@@ -103,6 +103,7 @@ document.title="<% ar.writeJS(attachment.getDisplayName());%>";
 var app = angular.module('myApp', ['ui.bootstrap','ui.tinymce', 'ngSanitize','angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Access Document");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.docInfo = <%docInfo.write(out,2,4);%>;
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;

@@ -112,7 +112,7 @@ app.controller('myCtrl', function($scope, $http) {
         <img src="<%=ar.retPath %>assets/iconAlertBig.gif" title="Alert">
       </td><td>
         <div class="generalContent warningBox">
-            <% ale.writeLink(ar); %> is not in "<b class="red"><%ar.writeHtml(primRoleName);%></b>" role of this workspace.
+            This workspace is frozen and can not be modified.
         </div>
       </td></tr>
       <tr><td>
@@ -164,22 +164,6 @@ app.controller('myCtrl', function($scope, $http) {
                 <td></td><td></td>
               </tr>
             </table>
-        </div>
-        <div ng-hide="enterMode" class="generalContent warningBox">
-            <div ng-show="isRequested">
-                 You requested membership on {{requestDate|date}}.<br/>
-                 The status of that request is: <b>{{requestState}}</b>.
-            </div>
-            <div ng-hide="isRequested">
-                If you think you should be a member then please:  
-            </div>
-        </div>
-        <div ng-show="enterMode" class="generalContent warningBox">
-            <div>Enter a reason to join the workspace:</div>
-            <textarea ng-model="enterRequest" class="form-control"></textarea>
-        </div>
-        <div class="generalContent warningBox">
-            <button class="btn btn-primary btn-raised" ng-click="takeStep()">Request Membership</button>
         </div>
       </td></tr></table>
       

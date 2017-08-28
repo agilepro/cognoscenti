@@ -590,7 +590,7 @@ public class NGBook extends ContainerCommon {
 
     @Override
     public boolean isDeleted() {
-        return false;
+        return getAttributeBool("isDeleted");
     }
 
     @Override
@@ -1130,9 +1130,10 @@ public class NGBook extends ContainerCommon {
         jo.put("theme", getThemeName());
         jo.put("showExperimental", getShowExperimental());
         jo.put("changed", getLastModifyTime());
-        jo.put("isDeleted", isDeleted());
-        jo.put("frozen", isFrozen());
-        
+        jo.put("isDeleted", siteInfoRec.getAttributeBool("isDeleted"));
+        jo.put("frozen", siteInfoRec.getAttributeBool("frozen"));
+        jo.put("offLine", siteInfoRec.getAttributeBool("offLine"));
+        jo.put("siteMsg", siteInfoRec.getAttribute("siteMsg"));
         NGRole owners = getSecondaryRole();
         JSONArray ja = new JSONArray();
         for (AddressListEntry ale : owners.getDirectPlayers()) {
@@ -1161,6 +1162,22 @@ public class NGBook extends ContainerCommon {
         }
         if (jo.has("showExperimental")) {
             setShowExperimental( jo.getBoolean("showExperimental"));
+        }
+        if (jo.has("isDeleted")) {
+            boolean isDel = jo.getBoolean("isDeleted");
+            siteInfoRec.setAttributeBool("isDeleted", isDel);
+            if (isDel) {
+                siteInfoRec.setAttributeBool("frozen", true);
+            }
+        }
+        if (jo.has("frozen")) {
+            siteInfoRec.setAttributeBool("frozen", jo.getBoolean("frozen"));
+        }
+        if (jo.has("offLine")) {
+            siteInfoRec.setAttributeBool("offLine", jo.getBoolean("offLine"));
+        }
+        if (jo.has("siteMsg")) {
+            siteInfoRec.setAttribute("siteMsg", jo.getString("siteMsg"));
         }
     }
 

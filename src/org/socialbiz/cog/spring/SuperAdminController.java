@@ -125,6 +125,17 @@ public class SuperAdminController extends BaseController {
          }
      }
 
+     @RequestMapping(value = "/su/oneSite.htm", method = RequestMethod.GET)
+     public void oneSite(HttpServletRequest request, HttpServletResponse response)
+             throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         try{
+             adminModelSetUp(ar, "oneSite");
+         }catch(Exception ex){
+             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
+         }
+     }
+
      @RequestMapping(value = "/su/acceptOrDenySite.json", method = RequestMethod.POST)
      public void acceptOrDenySite(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
