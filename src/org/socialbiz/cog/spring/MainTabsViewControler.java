@@ -904,9 +904,9 @@ public class MainTabsViewControler extends BaseController {
           try{
               NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngw);
-              ar.assertMember("Must be a member to update a meeting.");
-              ar.assertNotFrozen(ngw);
               String id = ar.reqParam("id");
+              ar.assertMember("Must be a member to update a meeting "+id);
+              ar.assertNotFrozen(ngw);
               MeetingRecord meeting = ngw.findMeeting(id);
               JSONObject meetingInfo = getPostedObject(ar);
 
@@ -930,7 +930,6 @@ public class MainTabsViewControler extends BaseController {
                   }
               }
 
-
               ngw.saveFile(ar, "Updated Meeting");
               JSONObject repo = meeting.getFullJSON(ar, ngw);
               repo.write(ar.w, 2, 2);
@@ -941,6 +940,25 @@ public class MainTabsViewControler extends BaseController {
           }
       }
 
+      @RequestMapping(value = "/{siteId}/{pageId}/meetingRead.json", method = RequestMethod.GET)
+      public void meetingRead(@PathVariable String siteId,@PathVariable String pageId,
+              HttpServletRequest request, HttpServletResponse response) {
+          AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          try{
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
+              String id = ar.reqParam("id");
+              ar.assertMember("Must be a member to read a meeting "+id);
+              MeetingRecord meeting = ngw.findMeeting(id);
+              JSONObject repo = meeting.getFullJSON(ar, ngw);
+              repo.write(ar.w, 2, 2);
+              ar.flush();
+          }catch(Exception ex){
+              Exception ee = new Exception("Unable to read meeting information.", ex);
+              streamException(ee, ar);
+          }
+      }
+      
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingDelete.json", method = RequestMethod.POST)
       public void meetingDelete(@PathVariable String siteId,@PathVariable String pageId,

@@ -5,7 +5,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.siteInfo = embeddedData.siteInfo;
     $scope.pageId = embeddedData.pageId;
     $scope.meetId = embeddedData.meetId;
-    $scope.meeting = {rollCall:[],agenda:[]}
+    $scope.meeting = {rollCall:[],agenda:[]};
     $scope.previousMeeting = embeddedData.previousMeeting;
     $scope.allGoals = embeddedData.allGoals;
     $scope.attachmentList = [];
@@ -100,6 +100,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.showAll();
     }
     $scope.getAgendaItems = function() {
+        if (!$scope.meeting.agenda) {
+            $scope.meeting.agenda = [];
+        }
         $scope.meeting.agenda.forEach( function(item) {
             if (!item.desc) {
                 item.desc = "<p></p>";
@@ -365,21 +368,25 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.saveAgendaItem(itemCopy);
     };
     $scope.revertAllEdits = function() {
-        var saveRecord = {};
-        $scope.putGetMeetingInfo(saveRecord);
+        $scope.putGetMeetingInfo(null);
         $scope.stopEditing();
     };
     $scope.putGetMeetingInfo = function(readyToSave) {
-        var postURL = "meetingUpdate.json?id="+$scope.meetId;
-        if (readyToSave.id=="~new~") {
-            postURL = "agendaAdd.json?id="+$scope.meeting.id;
+        var promise;
+        if (readyToSave) {
+            var postURL = "meetingUpdate.json?id="+$scope.meetId;
+            if (readyToSave.id=="~new~") {
+                postURL = "agendaAdd.json?id="+$scope.meeting.id;
+            }
+            console.log("Saving meeting: ", readyToSave);
+            var postdata = angular.toJson(readyToSave);
+            promise = $http.post(postURL, postdata);
         }
-        console.log("Saving meeting: ", readyToSave);
-        var postdata = angular.toJson(readyToSave);
-        $scope.showError=false;
-        var promise = $http.post(postURL ,postdata)
+        else {
+            promise = $http.get("meetingRead.json?id="+$scope.meetId);
+        }
         promise.success( function(data) {
-            console.log("Received meeting: ", data);
+            console.log("Received meeting data: ", data);
             if (!data.meetingInfo) {
                 data.meetingInfo = "";
             }
@@ -406,10 +413,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         promise.error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
+        $scope.showError=false;
         return promise;
     };
     $scope.refreshMeetingPromise = function() {
-        return $scope.putGetMeetingInfo({});
+        return $scope.putGetMeetingInfo(null);
     }
     $scope.createAgendaItem = function() {
         var newAgenda = {
@@ -524,7 +532,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         //    return;
         //}
         $scope.refreshStatus = "Refreshing";
-        $scope.putGetMeetingInfo( {} );
+        $scope.putGetMeetingInfo( null );
         $scope.refreshCount++;
     }
     $scope.refreshCount = 0;
