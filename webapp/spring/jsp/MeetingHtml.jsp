@@ -20,7 +20,7 @@
         throw new Exception("NGP should not be null!!!!!!");
     }
     
-    NGBook ngb = ngw.getSite();
+    NGBook site = ngw.getSite();
     UserProfile uProf = ar.getUserProfile();
     boolean isLoggedIn = (uProf!=null);
     String currentUser = "";
@@ -82,7 +82,7 @@
 
     if (uProf!=null) {
         LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
-        docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngw.getKey()
+        docSpaceURL = ar.baseURL +  "api/" + site.getKey() + "/" + ngw.getKey()
                     + "/summary.json?lic="+lfu.getId();
     }
 
@@ -140,6 +140,7 @@ embeddedData.allLabels = <%allLabels.write(out,2,2);%>;
 embeddedData.backlogId = "<%=backlog.getId()%>";
 embeddedData.retPath   = "<%=ar.retPath%>";
 embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
+embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 </script>
 <script src="../../../spring/jsp/MeetingFull.js"></script>
 

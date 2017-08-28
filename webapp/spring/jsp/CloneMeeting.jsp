@@ -11,7 +11,7 @@
     String pageId      = ar.reqParam("pageId");
     NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
     ar.setPageAccessLevels(ngw);
-    NGBook ngb = ngw.getSite();
+    NGBook site = ngw.getSite();
 
     JSONObject meetingInfo = null;
     String meetId          = ar.defParam("id", null);
@@ -58,6 +58,7 @@
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("<%=pageTitle%>");
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
 
     var n = new Date().getTimezoneOffset();
@@ -289,7 +290,8 @@ function GetFirstHundredNoHtml(input) {
                           </b>
                           </td>
                       <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>
-                      <td title="Expected duration of the agenda item in minutes">{{rec.duration}}</td>
+                      <td title="Expected duration of the agenda item in minutes">
+                          <input class="form-control" style="width:80px" ng-model="rec.duration"></td>
                   </tr>
               </table>
           </div>

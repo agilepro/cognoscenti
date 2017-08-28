@@ -2,6 +2,7 @@
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize','ngTagsInput', 'angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Meeting");
+    $scope.siteInfo = embeddedData.siteInfo;
     $scope.pageId = embeddedData.pageId;
     $scope.meetId = embeddedData.meetId;
     $scope.meeting = {rollCall:[],agenda:[]}
