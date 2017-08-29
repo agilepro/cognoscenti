@@ -750,7 +750,26 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
         });
     };
     
+    $scope.refreshFromServer = function() {
+		saveRecord = {};
+		saveRecord.saveMode = "autosave";
+		saveRecord.id = $scope.noteInfo.id;
+		saveRecord.universalid = $scope.noteInfo.universalid;
+		var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
+		var postdata = angular.toJson(saveRecord);
+		//does not really save antthing ... just get response
+		$http.post(postURL ,postdata)
+		.success( function(data) {
+			$scope.receiveTopicRecord(data);
+		})
+		.error( function(data) {
+			console.log("AUTOSAVE FAILED", data);
+		});
+    }
+
+
     $scope.receiveTopicRecord($scope.noteInfo);
+    $scope.autoIdleCount = 0;
 
     $scope.autosave = function() {
         if ($scope.isEditing) {
@@ -760,11 +779,18 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             if ($scope.noteInfo.html==$scope.lastAuto.html && 
                             $scope.noteInfo.subject==$scope.lastAuto.subject) {
                 console.log("AUTOSAVE - skipped, nothing new to save");
+                //it IS idle so increase the idle counter, but after ten tried no change, go and fetch the latest
+                //this indicates that the user is not actively typing and might be OK to refresh the edit panel
+				if ($scope.autoIdleCount++ > 10) {
+                    $scope.autoIdleCount = 0;
+					$scope.refreshFromServer();
+				}
                 return;
             }
+			//it is NOT idle so mark it thus
+			$scope.autoIdleCount = 0;
             $scope.lastAuto.html = $scope.noteInfo.html;
             $scope.lastAuto.subject = $scope.noteInfo.subject;
-            console.log("AUTOSAVE at "+new Date());
             saveRecord = {};
             saveRecord.saveMode = "autosave";
             saveRecord.html = $scope.noteInfo.html;
@@ -775,7 +801,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             var postdata = angular.toJson(saveRecord);
             //for autosave ... don't complain about errors
             $http.post(postURL ,postdata)
-            .success( $scope.receiveTopicRecord )
+            .success( function(data) {
+                console.log("AUTOSAVE succeeded at "+new Date());
+            })
             .error( function(data) {
                 console.log("AUTOSAVE FAILED", data);
             });
