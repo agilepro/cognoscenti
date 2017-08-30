@@ -313,6 +313,11 @@ public class SectionUtil
         write4Digits(out, year);
     }
 
+    public static String getDateAndTime(long timestamp)throws Exception{
+        StringWriter out = new StringWriter(20);
+        nicePrintDateAndTime(out, timestamp);
+        return out.toString();
+    }
     /**
     * format is MM/DD/YYYY hh:mm:ss
     */

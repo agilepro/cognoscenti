@@ -700,4 +700,13 @@ System.out.println("Weaver Server Object == Start the Server");
         projectsWithEmailToSend.remove(key);
     }
     
+    public void reinitializeServer(ServletConfig config) {
+        clearAllStaticVariables();
+        initializer = null;
+        lastFailureMsg = null;
+        isInitialized = false;
+        initializingNow = false;
+        startTheServer(config);
+    }
+    
 }

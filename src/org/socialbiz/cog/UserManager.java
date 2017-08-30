@@ -110,6 +110,7 @@ public class UserManager
         refreshHashtables();
         initialized = true;
     }
+    
 
     private void readJSONFile() throws Exception  {
          if(!jsonFileName.exists()) {

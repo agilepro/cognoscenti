@@ -41,6 +41,7 @@ import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
+import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.SuperAdminLogFile;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -162,6 +163,7 @@ public class EmailSender extends TimerTask {
 
         // make sure that this method doesn't throw any exception
         try {
+            System.out.println("EmailSender run: "+SectionUtil.getDateAndTime(startTime));
             NGPageIndex.assertNoLocksOnThread();
             checkAndSendDailyDigest(ar);
             handleGlobalEmail();
