@@ -614,6 +614,8 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 <script>
 </script>
 
+Total Elapsed Time: {{meeting.timerTotal|minutes}}  <button ng-click="stopAgendaRunning()">Stop Timer</button>
+
 <div ng-repeat="item in getAgendaItems()">
     <div class="agendaItemBlank" ng-show="item.isSpacer">
       <div style="padding:5px;">
@@ -694,6 +696,18 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                               Remove Item</a></li>
 
                    </ul>
+                </span>
+                <span ng-show="meeting.state==2">
+                    <span ng-hide="item.timerRunning" style="padding:5px">
+                        <button ng-click="agendaStartButton(item)">Start</button>
+                        Elapsed: {{item.timerTotal| minutes}}
+                        Remaining: {{item.duration - item.timerTotal| minutes}}
+                    </span>
+                    <span ng-show="item.timerRunning" style="background-color:darkred;color:white;padding:5px">
+                        <span>Running</span>
+                        Elapsed: {{item.timerTotal| minutes}}
+                        Remaining: {{item.duration - item.timerTotal| minutes}}
+                    </span>
                 </span>
                 <span style="float:right" ng-hide="item.readyToGo || isCompleted()" >
                     <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"

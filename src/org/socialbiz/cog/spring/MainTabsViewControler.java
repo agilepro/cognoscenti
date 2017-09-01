@@ -932,6 +932,8 @@ public class MainTabsViewControler extends BaseController {
 
               ngw.saveFile(ar, "Updated Meeting");
               JSONObject repo = meeting.getFullJSON(ar, ngw);
+              //this is so that clients can calculate the offset for their particular clock.
+              repo.put("serverTime", System.currentTimeMillis());
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -951,6 +953,7 @@ public class MainTabsViewControler extends BaseController {
               ar.assertMember("Must be a member to read a meeting "+id);
               MeetingRecord meeting = ngw.findMeeting(id);
               JSONObject repo = meeting.getFullJSON(ar, ngw);
+              repo.put("serverTime", System.currentTimeMillis());
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){

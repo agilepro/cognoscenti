@@ -1,6 +1,6 @@
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize','ngTagsInput', 'angularjs-datetime-picker']);
-app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     window.setMainPageTitle("Meeting");
     $scope.siteInfo = embeddedData.siteInfo;
     $scope.pageId = embeddedData.pageId;
@@ -316,12 +316,56 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.editMeetingInfo = false;
         }
     }
+    
+    function startAgendaRunning(agendaItem) {
+        var saveRecord = {};
+        saveRecord.startTimer = agendaItem.id;
+        $scope.putGetMeetingInfo(saveRecord);
+    }
+    $scope.stopAgendaRunning = function() {
+        var saveRecord = {};
+        saveRecord.stopTimer = "0";
+        $scope.putGetMeetingInfo(saveRecord);
+    }
+    
+    $scope.calcTimes = function() {
+        var totalTotal = 0;
+        //get the time that it is on the server
+        var nowTime = new Date().getTime() + $scope.timerCorrection;
+        if ($scope.meeting.state==2) {
+            $scope.meeting.agenda.forEach( function(agendaItem) {
+                if (agendaItem.timerRunning) {
+                    agendaItem.timerTotal = (agendaItem.timerElapsed + nowTime - agendaItem.timerStart)/60000;
+                }
+                else {
+                    agendaItem.timerTotal = (agendaItem.timerElapsed)/60000;
+                }
+                totalTotal += agendaItem.timerTotal;
+            })
+        }
+        $scope.meeting.timerTotal = totalTotal;
+    }
+    function tick() {
+        $scope.calcTimes();
+        $timeout(tick, 1000); // reset the timer
+    }
+    // Start the timer
+    $timeout(tick, 1000);
 
+    
     $scope.changeMeetingState = function(newState) {
+        if ($scope.meeting.state == newState) {
+            //nothing changed, so ignore this
+            return;
+        }
         $scope.savePendingEdits();
         $scope.meeting.state = newState;
+        $scope.stopAgendaRunning();
         $scope.savePartialMeeting(['state']);
     };
+    $scope.agendaStartButton = function(agendaItem) {
+        startAgendaRunning(agendaItem);
+    }
     $scope.changeGoalState = function(goal, newState) {
         goal.prospects = newState;
         $scope.saveGoal(goal);
@@ -390,8 +434,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             if (!data.meetingInfo) {
                 data.meetingInfo = "";
             }
+            $scope.timerCorrection = data.serverTime - new Date().getTime();
             $scope.meeting = data;
             $scope.sortItemsB();
+            $scope.calcTimes();
 
             $scope.editHead=false;
             $scope.editDesc=false;
@@ -1473,3 +1519,21 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.refreshMeetingPromise();    
 });
 
+app.filter('minutes', function() {
+
+  return function(input) {
+      var neg = "";
+    if (input<0) {
+        neg = "-";
+        input = 0-input;
+    }
+    var mins = Math.floor(input);
+    var secs = Math.floor((input-mins) * 60);
+    if (secs<10) {
+        return neg+mins+":0"+secs;
+    }
+    return neg+mins+":"+secs;
+
+  }
+
+});

@@ -248,6 +248,31 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
 
+    public void startTimer(String itemId) throws Exception {
+        if (getState()!=2) {
+            throw new Exception("Can only time an agenda item when the meeting is in run state, and it is in state="+getState());
+        }
+        boolean found = false;
+        for (AgendaItem ai : this.getAgendaItems()) {
+            if (ai.getId().equals(itemId)) {
+                ai.startTimer();
+                found = true;
+            }
+            else {
+                ai.stopTimer();
+            }
+        }
+        if (!found) {
+            throw new Exception("Unable to find an agenda item with the id: "+itemId);
+        }
+    }
+    public void stopTimer() throws Exception {
+        for (AgendaItem ai : this.getAgendaItems()) {
+            ai.stopTimer();
+        }
+    }
+    
+    
     /**
      * A vary small object suitable for notification event lists
      */
@@ -432,6 +457,12 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         if (hasSetMeetingInfo && (owner==null || owner.length()==0)) {
             //set to the person currently saving the record.
             setOwner(ar.getBestUserId());
+        }
+        if (input.has("startTimer")) {
+            startTimer( input.getString("startTimer"));
+        }
+        if (input.has("stopTimer")) {
+            stopTimer();
         }
     }
 

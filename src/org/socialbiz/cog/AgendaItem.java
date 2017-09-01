@@ -184,6 +184,23 @@ public class AgendaItem extends CommentContainer {
         setScalar("editTime", null);
     }
 
+    public void startTimer() {
+        boolean isRunning = getAttributeBool("timerRunning");
+        if (!isRunning) {
+            setAttributeBool("timerRunning", true);
+            setAttributeLong("timerStart", System.currentTimeMillis());
+        }
+    }
+    public void stopTimer() {
+        boolean isRunning = getAttributeBool("timerRunning");
+        if (isRunning) {
+            setAttributeBool("timerRunning", false);
+            long newElapse = System.currentTimeMillis() - getAttributeLong("timerStart");
+            long oldElapse = getAttributeLong("timerElapsed");
+            setAttributeLong("timerElapsed", oldElapse + newElapse);
+        }
+    }
+    
     /**
      * full JSON representation including all comments, etc.
      */
@@ -233,6 +250,9 @@ public class AgendaItem extends CommentContainer {
             aiInfo.put("lockUser",  locker.getJSON());
         }
         extractAttributeBool(aiInfo, "showMinutes");
+        extractAttributeBool(aiInfo, "timerRunning");
+        extractAttributeLong(aiInfo, "timerStart");
+        extractAttributeLong(aiInfo, "timerElapsed");
         return aiInfo;
     }
 
