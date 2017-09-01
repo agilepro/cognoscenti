@@ -331,7 +331,25 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                     <i ng-show="item.topicLink" class="fa fa-lightbulb-o"></i>
                     {{item.subject}} 
                 </span>
-            </div>
+                 <span ng-show="meeting.state==2">
+                    <span ng-hide="item.timerRunning" style="padding:5px">
+                        <i class="fa fa-clock-o"></i>
+                        Elapsed: {{item.timerTotal| minutes}}
+                        Remaining: {{item.duration - item.timerTotal| minutes}}
+                    </span>
+                    <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
+                        <i class="fa fa-clock-o"></i>
+                        Elapsed: {{item.timerTotal| minutes}}
+                        Remaining: {{item.duration - item.timerTotal| minutes}}
+                    </span>
+                </span>
+                <span ng-show="meeting.state>2">
+                    <span ng-show="item.timerTotal>0" style="padding:5px">
+                        <i class="fa fa-clock-o"></i>
+                        Duration: {{item.timerTotal| minutes}}
+                    </span>
+                </span>
+           </div>
             <div>
                 <i>
                 {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
@@ -398,7 +416,12 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 
     </div>
 
+    
     <br/>
+     <hr/>
+    <span ng-show="meeting.state>=2">
+        <i class="fa fa-clock-o"></i> Meeting Duration: {{meeting.timerTotal|minutes}}  
+    </span>
     <br/>
     <br/>
     <br/>

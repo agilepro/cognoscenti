@@ -332,7 +332,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var totalTotal = 0;
         //get the time that it is on the server
         var nowTime = new Date().getTime() + $scope.timerCorrection;
-        if ($scope.meeting.state==2) {
+        if ($scope.meeting.state>=2) {
             $scope.meeting.agenda.forEach( function(agendaItem) {
                 if (agendaItem.timerRunning) {
                     agendaItem.timerTotal = (agendaItem.timerElapsed + nowTime - agendaItem.timerStart)/60000;
@@ -340,10 +340,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 else {
                     agendaItem.timerTotal = (agendaItem.timerElapsed)/60000;
                 }
+                agendaItem.timerRemaining = agendaItem.duration - agendaItem.timerTotal;
                 totalTotal += agendaItem.timerTotal;
             })
         }
         $scope.meeting.timerTotal = totalTotal;
+    }
+    $scope.timerStyle = function(item) {
+        var style = {"background-color":"yellow", "color":"black", "padding":"5px"};
+        if (item.timerRemaining<0) {
+            style["background-color"] = "red";
+        }
+        return style;
     }
     function tick() {
         $scope.calcTimes();

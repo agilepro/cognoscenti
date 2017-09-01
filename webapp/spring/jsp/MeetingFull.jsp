@@ -614,7 +614,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 <script>
 </script>
 
-Total Elapsed Time: {{meeting.timerTotal|minutes}}  <button ng-click="stopAgendaRunning()">Stop Timer</button>
+
 
 <div ng-repeat="item in getAgendaItems()">
     <div class="agendaItemBlank" ng-show="item.isSpacer">
@@ -699,14 +699,19 @@ Total Elapsed Time: {{meeting.timerTotal|minutes}}  <button ng-click="stopAgenda
                 </span>
                 <span ng-show="meeting.state==2">
                     <span ng-hide="item.timerRunning" style="padding:5px">
-                        <button ng-click="agendaStartButton(item)">Start</button>
+                        <button ng-click="agendaStartButton(item)"><i class="fa fa-clock-o"></i> Start</button>
                         Elapsed: {{item.timerTotal| minutes}}
                         Remaining: {{item.duration - item.timerTotal| minutes}}
                     </span>
-                    <span ng-show="item.timerRunning" style="background-color:darkred;color:white;padding:5px">
+                    <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
                         <span>Running</span>
                         Elapsed: {{item.timerTotal| minutes}}
                         Remaining: {{item.duration - item.timerTotal| minutes}}
+                    </span>
+                </span>
+                <span ng-show="meeting.state>2">
+                    <span ng-show="item.timerTotal>0" style="padding:5px">
+                        Duration: {{item.timerTotal| minutes}}
                     </span>
                 </span>
                 <span style="float:right" ng-hide="item.readyToGo || isCompleted()" >
@@ -885,6 +890,14 @@ Total Elapsed Time: {{meeting.timerTotal|minutes}}  <button ng-click="stopAgenda
     </table>
     </div>
 
+    
+    <hr/>
+<span ng-show="meeting.state>=2">
+Meeting Duration: {{meeting.timerTotal|minutes}}  
+<button ng-click="stopAgendaRunning()" ng-show="meeting.state==2"><i class="fa fa-clock-o"></i> Stop</button>
+</span>
+
+    
 <%if (isLoggedIn) { %>
     <hr/>
     <div style="margin:20px;" ng-show="meeting.state<3">
