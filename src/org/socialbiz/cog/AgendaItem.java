@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.socialbiz.cog.mail.ScheduledNotification;
+import org.socialbiz.cog.util.ThreeWayMerge;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
@@ -201,6 +202,17 @@ public class AgendaItem extends CommentContainer {
         }
     }
     
+    public String getMinutes() {
+        return getScalar("minutes");
+    }
+
+    public void mergeMinutes(String oldMins, String newMins) {
+        String curMinutes = getScalar("minutes");
+        String result = ThreeWayMerge.mergeThem(curMinutes, oldMins, newMins);
+        setScalar("minutes", result);
+    }
+    
+    
     /**
      * full JSON representation including all comments, etc.
      */
@@ -253,6 +265,8 @@ public class AgendaItem extends CommentContainer {
         extractAttributeBool(aiInfo, "timerRunning");
         extractAttributeLong(aiInfo, "timerStart");
         extractAttributeLong(aiInfo, "timerElapsed");
+        String htmlMinutes = WikiConverterForWYSIWYG.makeHtmlString(ar, getScalar("minutes"));
+        aiInfo.put("minutes", htmlMinutes);
         return aiInfo;
     }
 

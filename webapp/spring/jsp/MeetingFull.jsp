@@ -285,6 +285,9 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
               title="Compose an email messsage about this meeting and send it"
               href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
           <li role="presentation"><a role="menuitem"
+              title="Open the editor for the minutes of the meeting"
+              ng-click="openEditor()">Edit Minutes</a></li>
+          <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
               href="meetingHtml.htm?id={{meeting.id}}">Show Flat Display</a></li>
           <li role="presentation" class="divider"></li>
@@ -865,6 +868,15 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 
                           <!--  AGENDA comments -->
       <table ng-show="showItemMap[item.id] && !item.isSpacer" >
+      <tr>
+        <td style="width:50px;vertical-align:top;padding:15px;"></td>
+        <td>
+          <div class="comment-outer" ng-show="item.minutes">
+            <div>Minutes</div>
+            <div class="comment-inner" ng-bind-html="item.minutes"></div>
+          </div>
+        </td>
+      </tr>
       <tr ng-repeat="cmt in item.comments">
 
           <%@ include file="/spring/jsp/CommentView.jsp"%>
@@ -881,8 +893,6 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
             <button ng-click="openCommentCreator(item, 3)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-question-circle"></i> Round</button>
-            <button ng-click="openCommentCreator(item, 5)" class="btn btn-default btn-raised">
-                Create New <i class="fa fa-file-code-o"></i> Minutes</button>
         </div>
         </td>
       </tr>

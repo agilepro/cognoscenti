@@ -1524,7 +1524,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
     );
     
-    $scope.refreshMeetingPromise();    
+    $scope.refreshMeetingPromise(); 
+
+    $scope.openEditor = function() {
+        window.open('meetingMinutes.htm?id='+$scope.meeting.id);
+    }
+    
 });
 
 app.filter('minutes', function() {

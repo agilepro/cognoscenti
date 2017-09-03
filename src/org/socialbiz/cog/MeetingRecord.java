@@ -796,6 +796,13 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                         sb.append("]");
                     }
                 }
+                
+                String realMinutes = ai.getScalar("minutes");
+                if (realMinutes!=null && realMinutes.length()>0) {
+                    sb.append("\n\n''Minutes:''\n\n");
+                    sb.append(realMinutes);
+                }
+                
                 for (CommentRecord cr : ai.getComments()) {
                     int cType = cr.getCommentType();
                     if (cType == CommentRecord.COMMENT_TYPE_MINUTES || 
@@ -851,6 +858,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 }
                 long includeCommentRangeStart = getStartTime() - 3*24*60*60*1000;
                 long includeCommentRangeEnd = getStartTime() + 3*24*60*60*1000;
+                
                 for (CommentRecord cr : linkedTopic.getCommentTimeFrame(includeCommentRangeStart, includeCommentRangeEnd)) {
                     if (cr.getCommentType() == CommentRecord.COMMENT_TYPE_MINUTES) {
                         sb.append("\n\n''Minutes:''\n\n");
@@ -1059,4 +1067,36 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
     }
 
+    
+    
+    public JSONObject getAllMinutes() throws Exception {
+        JSONObject jo = new JSONObject();
+        JSONArray ja = new JSONArray();
+        for (AgendaItem ai : getSortedAgendaItems()) {
+            JSONObject oneAi = new JSONObject();
+            oneAi.put("id",    ai.getId());
+            oneAi.put("new",   ai.getMinutes());
+            oneAi.put("title", ai.getSubject());
+            oneAi.put("pos",   ai.getPosition());
+            ai.extractAttributeBool(oneAi, "timerRunning");
+            ai.extractAttributeLong(oneAi, "timerStart");
+            ai.extractAttributeLong(oneAi, "timerElapsed");
+            ai.extractAttributeLong(oneAi, "duration");
+            ja.put(oneAi);
+        }
+        jo.put("minutes", ja);
+        return jo;
+    }
+    
+    public void updateMinutes(JSONObject input) throws Exception {
+        JSONArray ja = input.getJSONArray("minutes");
+        for (int i=0; i<ja.length(); i++) {
+            JSONObject oneAi = ja.getJSONObject(i);
+            String id = oneAi.getString("id");
+            String oldMins = oneAi.getString("old");
+            String newMins = oneAi.getString("new");
+            AgendaItem ai = this.findAgendaItem(id);
+            ai.mergeMinutes(oldMins, newMins);
+        }
+    }
 }

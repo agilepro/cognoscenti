@@ -40,7 +40,6 @@ import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.MeetingRecord;
-import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
@@ -228,6 +227,31 @@ public class MainTabsViewControler extends BaseController {
             }
 
             streamJSP(ar, "MeetingHtml");
+        }catch(Exception ex){
+            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/meetingMinutes.htm", method = RequestMethod.GET)
+    public void meetingMinutes(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+
+            String id = ar.reqParam("id");
+            MeetingRecord meet = ngw.findMeeting(id);
+            boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
+            if (!canAccess) {
+                showJSPMembers(ar, siteId, pageId, "MeetingMinutes");
+                return;
+            }
+
+            ar.setParam("id", id);
+            ar.setParam("pageId", pageId);
+            ar.invokeJSP("/spring/jsp/MeetingMinutes.jsp");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }
@@ -524,7 +548,6 @@ public class MainTabsViewControler extends BaseController {
          String nid = "";
          try{
              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
-             NGBook ngb = ngw.getSite();
              ar.setPageAccessLevels(ngw);
              ar.assertMember("Must be a member to update a topic contents.");
              ar.assertNotFrozen(ngw);
@@ -961,6 +984,52 @@ public class MainTabsViewControler extends BaseController {
               streamException(ee, ar);
           }
       }
+
+      
+      @RequestMapping(value = "/{siteId}/{pageId}/getMinutes.json", method = RequestMethod.GET)
+      public void getMinutes(@PathVariable String siteId,@PathVariable String pageId,
+              HttpServletRequest request, HttpServletResponse response) {
+          AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          try{
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
+              String id = ar.reqParam("id");
+              ar.assertMember("Must be a member to read a meeting "+id);
+              MeetingRecord meeting = ngw.findMeeting(id);
+              
+              JSONObject repo = meeting.getAllMinutes();
+              repo.put("serverTime", System.currentTimeMillis());
+              repo.write(ar.w, 2, 2);
+              ar.flush();
+          }catch(Exception ex){
+              Exception ee = new Exception("Unable to read meeting information.", ex);
+              streamException(ee, ar);
+          }
+      }
+      @RequestMapping(value = "/{siteId}/{pageId}/updateMinutes.json", method = RequestMethod.POST)
+      public void updateMinutes(@PathVariable String siteId,@PathVariable String pageId,
+              HttpServletRequest request, HttpServletResponse response) {
+          AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          try{
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
+              String id = ar.reqParam("id");
+              ar.assertMember("Must be a member to update minutes "+id);
+              MeetingRecord meeting = ngw.findMeeting(id);
+              JSONObject meetingInfo = getPostedObject(ar);
+              meeting.updateMinutes(meetingInfo);
+              ngw.saveFile(ar, "Updated Meeting Minutes");
+              
+              JSONObject repo = meeting.getAllMinutes();
+              repo.put("serverTime", System.currentTimeMillis());
+              repo.write(ar.w, 2, 2);
+              ar.flush();
+          }catch(Exception ex){
+              Exception ee = new Exception("Unable to read meeting information.", ex);
+              streamException(ee, ar);
+          }
+      }
+      
       
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingDelete.json", method = RequestMethod.POST)
