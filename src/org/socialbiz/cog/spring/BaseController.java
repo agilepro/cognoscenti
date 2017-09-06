@@ -33,6 +33,7 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
@@ -373,6 +374,9 @@ public class BaseController {
             //if a project was registered, it will be removed from the cache, causing the next
             //access to come from the previously saved disk file
             ar.rollbackChanges();
+            
+            //let go of any locks you might have on any objects before entering the 3 second delay!
+            NGPageIndex.clearLocksHeldByThisThread();
 
             //all exceptions are delayed by 3 seconds to avoid attempts to
             //mine for valid license numbers

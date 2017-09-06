@@ -531,6 +531,7 @@ public class AuthRequest
             NGPage.removeCachedPage(ngp.getFilePath().toString());
             ngp = null;
         }
+        NGPageIndex.clearLocksHeldByThisThread();
     }
 
 
