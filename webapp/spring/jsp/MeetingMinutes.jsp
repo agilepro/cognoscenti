@@ -149,7 +149,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             $scope.reportError(data);
         });
     }
-	$scope.promiseAutosave = $interval($scope.autosave, 5000);
+	$scope.promiseAutosave = $interval($scope.autosave, 10000);
     
     $scope.closeWindow = function() {
         $scope.autosave();

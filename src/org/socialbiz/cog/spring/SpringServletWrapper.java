@@ -69,10 +69,13 @@ public class SpringServletWrapper extends HttpServlet
     {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         String requestAddr = "unknown";
+        long tid = Thread.currentThread().getId();
 
         try {
             NGPageIndex.assertNoLocksOnThread();
             requestAddr = ar.getCompleteURL();
+            long startTime = System.currentTimeMillis();
+            System.out.println("[Web URL: "+requestAddr+"] tid="+tid);
 
             //test for initialized, and if not redirect to config page
             if (!ar.getCogInstance().isInitialized()) {
@@ -86,13 +89,13 @@ public class SpringServletWrapper extends HttpServlet
                     throw new ServletException("Error while attempting to redirect to the configuration page", e);
                 }
             }
-
-            System.out.println("[Web URL: "+requestAddr+"]");
             wrappedServlet.service(ar.req, ar.resp); //must use the versions from AuthRequest
+            long dur = System.currentTimeMillis()-startTime;
+            System.out.println("     completed "+dur+"ms tid="+tid);
         }
         catch (Exception e) {
-            ar.logException("Unable to handle web request to URL ("+requestAddr+")", e);
-            throw new ServletException("Unable to handle web request to URL ("+requestAddr+")", e);
+            ar.logException("Unable to handle web request to URL ("+requestAddr+") tid="+tid, e);
+            throw new ServletException("Unable to handle web request to URL ("+requestAddr+") tid="+tid, e);
         }
         finally{
             NGPageIndex.clearLocksHeldByThisThread();
