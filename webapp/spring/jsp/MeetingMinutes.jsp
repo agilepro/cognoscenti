@@ -87,9 +87,19 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
         data.minutes.forEach( function(newItem) {
             $scope.allMinutes.forEach( function(found) {
                 if (found.id == newItem.id) {
-                    if (newItem.new != found.new) {
+                    if (newItem.new == found.lastSave) {
+                        //if you get back what you sent to the server
+                        //then ignore it and don't update what the user is typing.
+                        //because nothing new from server
+                        console.log("avoided distubring user.");
+                    } 
+                    else if (newItem.new != found.new) {
+                        //unfortunately, there are edits from someone else to 
+                        //merge in causing some loss from of current typing.
+                        console.log("disturbing user with new version from server.");
                         found.new = newItem.new;
                     }
+                    found.lastSave = null;
                     found.old = newItem.new;
                     found.timerRunning = newItem.timerRunning;
                     found.timerStart = newItem.timerStart;
@@ -125,9 +135,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
         var saveRec = {minutes:[]};
         saveRec.minutes.push(min);
         var postURL = "updateMinutes.json?id="+$scope.meetId;
-        var postDate = JSON.stringify(saveRec);
+        var postData = JSON.stringify(saveRec);
+        min.lastSave = min.new;
         console.log("About to save", postURL, saveRec);
-        $http.post(postURL, postDate)
+        $http.post(postURL, postData)
         .success( function(data) {
             $scope.setMinutesData(data);
         })
@@ -137,8 +148,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     }
     $scope.autosave = function() {
         var postURL = "updateMinutes.json?id="+$scope.meetId;
-        var postRecord = {};
-        postRecord.minutes = $scope.allMinutes;
+        var postRecord = {minutes:[]};
+        $scope.allMinutes.forEach( function(item) {
+            if (item.new != item.old) {
+                postRecord.minutes.push( JSON.parse( JSON.stringify( item )));
+                item.lastSave = item.new;
+            }
+        });
         var postData = JSON.stringify(postRecord);
         console.log("About to AUTO save", postURL, postRecord);
         $http.post(postURL, postData)
