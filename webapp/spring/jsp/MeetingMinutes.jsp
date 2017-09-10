@@ -114,6 +114,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             $scope.selectedTitle = newTitles[0];
         }
         selectMinutes($scope.selectedTitle);
+        $scope.calcTimes();
         $scope.loaded = true;   
     }
     
@@ -137,16 +138,24 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
         var postURL = "updateMinutes.json?id="+$scope.meetId;
         var postData = JSON.stringify(saveRec);
         min.lastSave = min.new;
-        console.log("About to save", postURL, saveRec);
         $http.post(postURL, postData)
         .success( function(data) {
             $scope.setMinutesData(data);
+            //console.log("got response starting to wait");
+            //setTimeout(function() {
+            //   console.log("got response NOW actually handling it");
+            //   $scope.setMinutesData(data);
+            //}, 3000);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
     }
     $scope.autosave = function() {
+        if ($scope.showError) {
+            console.log("Autosave is turned off when there is an error.")
+            return;
+        }
         var postURL = "updateMinutes.json?id="+$scope.meetId;
         var postRecord = {minutes:[]};
         $scope.allMinutes.forEach( function(item) {
@@ -156,7 +165,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             }
         });
         var postData = JSON.stringify(postRecord);
-        console.log("About to AUTO save", postURL, postRecord);
         $http.post(postURL, postData)
         .success( function(data) {
             $scope.setMinutesData(data);
@@ -174,20 +182,27 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     $scope.startAgendaRunning = function(agendaItem) {
         var saveRecord = {};
         saveRecord.startTimer = agendaItem.id;
-        $scope.putGetMeetingInfo(saveRecord);
+        $scope.sendTimerChangeToServer(saveRecord);
     }
     $scope.stopAgendaRunning = function() {
         var saveRecord = {};
         saveRecord.stopTimer = "0";
-        $scope.putGetMeetingInfo(saveRecord);
+        $scope.sendTimerChangeToServer(saveRecord);
     }    
-    $scope.putGetMeetingInfo = function(readyToSave) {
+    $scope.sendTimerChangeToServer = function(readyToSave) {
         var postURL = "meetingUpdate.json?id="+$scope.meetId;
-        console.log("Saving meeting: ", readyToSave);
         var postData = angular.toJson(readyToSave);
         $http.post(postURL, postData)
         .success( function(data) {
-            $scope.getMinutes();
+            data.agenda.forEach( function(receivedItem) {
+                $scope.allMinutes.forEach( function(realItem) {
+                    if (receivedItem.id == realItem.id) {
+                        realItem.timerRunning = receivedItem.timerRunning;
+                        realItem.timerStart = receivedItem.timerStart;
+                        realItem.timerElapsed = receivedItem.timerElapsed;
+                    }
+                });
+            });
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -211,6 +226,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             else {
                 agendaItem.timerTotal = (agendaItem.timerElapsed)/60000;
             }
+            //the 500 is to round the time, instead of truncation
             agendaItem.timerRemaining = agendaItem.duration - agendaItem.timerTotal;
             totalTotal += agendaItem.timerTotal;
         });
@@ -223,13 +239,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 app.filter('minutes', function() {
 
   return function(input) {
-      var neg = "";
+    var neg = "";
     if (input<0) {
         neg = "-";
         input = 0-input;
     }
     var mins = Math.floor(input);
-    var secs = Math.floor((input-mins) * 60);
+    var secs = Math.floor(((input-mins) * 60)+.5);
     if (secs<10) {
         return neg+mins+":0"+secs;
     }
@@ -332,8 +348,7 @@ function setInputSelection(el, startOffset, endOffset) {
         <!-- Logo Brand -->
         <a class="navbar-brand"  title="Weaver Home Page">
           <img class="hidden-xs" alt="Weaver Icon" src="<%=ar.retPath%>bits/header-icon.png">
-          <h1 style="width:100%">Weaver - Minutes Editor  &nbsp;  &nbsp;
-          <button ng-click="closeWindow()" style="font-size:70%;float:right;color:black" ng-hide="min.new==min.old">Close</button>
+          <h1 style="width:100%">Weaver - Meeting Notes  &nbsp;  &nbsp;
           </h1>
         </a>
       </div>
@@ -345,8 +360,13 @@ function setInputSelection(el, startOffset, endOffset) {
       <div class="guideVocal" ng-hide="loaded">
         Fetching the data from the server . . .
       </div>
+      <div class="guideVocal" ng-show="showError">
+        Note: if you are experiencing an error getting or saving data, then this page
+        may be out of date from the server.  You should refresh the page to make sure
+        you are up to date with the server.
+      </div>
 
-      <div ng-show="loaded">
+      <div ng-show="loaded && !showError">
 
         <div class="panel panel-default" ng-repeat="min in allMinutes">
         <div class="panel-heading">{{min.pos}}. {{min.title}}
@@ -354,12 +374,13 @@ function setInputSelection(el, startOffset, endOffset) {
                 <span ng-hide="min.timerRunning" style="padding:5px">
                     <button ng-click="startAgendaRunning(min)"><i class="fa fa-clock-o"></i> Start</button>
                     Elapsed: {{min.timerTotal| minutes}}
-                    Remaining: {{min.duration - min.timerTotal| minutes}}
+                    Remaining: {{min.timerRemaining| minutes}}
                 </span>
                 <span ng-show="min.timerRunning" ng-style="timerStyle(min)">
                     <span>Running</span>
                     Elapsed: {{min.timerTotal| minutes}}
-                    Remaining: {{min.duration - min.timerTotal| minutes}}
+                    Remaining: {{min.timerRemaining| minutes}}
+                    <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
                 </span>
             </span>
             <button ng-click="saveMinutes(min)" style="font-size:70%" ng-hide="min.new==min.old">Save</button>

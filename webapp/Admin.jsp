@@ -107,6 +107,12 @@
                         now on demand, for testing.
                     </td>
                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" name="action" value="Test Merge"/>
+                        Test Merge.
+                    </td>
+               </tr>
         </form>
 
             </table>

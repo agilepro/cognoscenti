@@ -10,6 +10,7 @@
 %><%@page import="org.socialbiz.cog.UserManager"
 %><%@page import="org.socialbiz.cog.rest.ServerInitializer"
 %><%@page import="org.socialbiz.cog.mail.DailyDigest"
+%><%@page import="org.socialbiz.cog.util.ThreeWayMerge"
 %><%
 
     AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
@@ -65,6 +66,9 @@
     }
     else if ("Send Daily Digest".equals(action)) {
         DailyDigest.forceDailyDigest(ar, cog);
+    }
+    else if ("Test Merge".equals(action)) {
+        ThreeWayMerge.testMergeCases();
     }
     else {
         throw new Exception ("Unrecognized command: "+action);
