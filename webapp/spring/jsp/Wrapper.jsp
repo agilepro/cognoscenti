@@ -376,7 +376,6 @@ function standardTinyMCEOptions() {
 
       var knowWeAreLoggedIn = <%= ar.isLoggedIn() %>;
       function displayWelcomeMessage(info) {
-          console.log("LOGIN STATUS: ", info);
           var y = document.getElementById("welcomeMessage");
           if (knowWeAreLoggedIn && info.verified) {
               //nothing to do in this case

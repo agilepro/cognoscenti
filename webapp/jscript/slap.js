@@ -80,7 +80,6 @@ SLAP.getJSON = function(url, passedFunction, errorFunction) {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.withCredentials = true;
-    console.log("CALLING: ",url);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             try {
