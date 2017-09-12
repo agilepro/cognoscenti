@@ -15,56 +15,96 @@ loginInfo = {
     "msg": (last msg from server),
     "userId": (current user email address),
     "userName": (current user name),
-    "verified": (true if full logged into server),
-    "haveNotCheckedYet": (set this to true initially to indicate initial state)
+    "verified": (true if full logged into server)
 }
-displayCallback is a function that takes loginInfo as a parameter.  Every time
+statusCallback is a function that takes loginInfo as a parameter.  Every time
 the login state is changed, this callback is called.
 
-Use 'logOutProvider' to logout.   When logged out, the displayCallback will be called
+Use 'logOutProvider' to logout.   When logged out, the statusCallback will be called
 again, with no user name or id in it. 
 */
 
-var loginConfig = null;
-var loginInfo = null;
-var displayLoginStatus = null;
+SLAP = {
+    loginConfig: {},
+    loginInfo: {},
+    displayLoginStatus: null
+};
 
-function initLogin(config, info, statusCallback) {
-    loginInfo = info;
-    loginConfig = config;
-    displayLoginStatus = statusCallback;
-    if (!loginInfo.verified) {
-        queryTheServer();
-    }
+SLAP.initLogin = function(config, info, statusCallback) {
+    SLAP.retrieveSession();
+    SLAP.loginConfig = config;
+    SLAP.displayLoginStatus = statusCallback;
+    SLAP.queryTheServer();
+    return SLAP.loginInfo;
+};
+
+SLAP.loginUserRedirect = function() {
+    window.location = SLAP.loginConfig.providerUrl + '?openid.mode=quick&go='
+        + encodeURIComponent(window.location);
+};
+
+SLAP.logoutUser = function() {
+    SLAP.logOutProvider();
+    SLAP.loginInfo = {};
+    SLAP.storeSession(SLAP.loginInfo);
+};
+
+SLAP.sendInvitationEmail = function(message) {
+    var pUrl = SLAP.loginConfig.providerUrl + "?openid.mode=apiSendInvite";
+    SLAP.postJSON(pUrl, message, function(data) {
+        alert("invitation email has been sent to "+message.userId);
+    }, function(data) {
+        alert("Failure sending invitation email to "+message.userId+"\n"+data);
+    });
 }
 
-function getJSON(url, passedFunction) {
+//interface methods above, implementation methods below
+
+SLAP.storeSession = function(data) {
+    SLAP.loginInfo = data;
+    sessionStorage.setItem("SSOFI_Logged_User", JSON.stringify(data));
+}
+SLAP.retrieveSession = function() {
+    var oldData = sessionStorage.getItem("SSOFI_Logged_User");
+    if (oldData) {
+        try {
+            SLAP.loginInfo = JSON.parse(oldData);
+        }
+        catch (e) {
+            SLAP.loginInfo = {};
+        }
+    }
+}
+    
+SLAP.getJSON = function(url, passedFunction, errorFunction) {
     var xhr = new XMLHttpRequest();
-    globalForXhr = xhr;
     xhr.open("GET", url, true);
-    xhr.overrideMimeType("application/json");  //stop Mozilla bug
     xhr.withCredentials = true;
+    console.log("CALLING: ",url);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             try {
                 passedFunction(JSON.parse(xhr.responseText));
             }
             catch (e) {
-                alert("Got an exception ("+e+") whille trying to handle: "+url);
+                alert("Got an exception ("+e+") while trying to handle: "+url);
             }
+        }
+        else if (xhr.readyState == 4 && xhr.status != 200) {
+            errorFunction(xhr.responseText);
+        }
+        else if (xhr.status == 0) {
+            console.log("STRANGE browser situation the xhr.status is zero!  Might be due to CORS problem.");
         }
     }
     xhr.send();
-}
+};
 
-
-function postJSON(url, data, passedFunction) {
+SLAP.postJSON = function(url, data, passedFunction, errorFunction) {
     var xhr = new XMLHttpRequest();
-    globalForXhr = xhr;
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
     xhr.setRequestHeader("Content-Type","text/plain");
-    xhr.overrideMimeType("application/json");  //stop Mozilla bug
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             try {
@@ -74,77 +114,95 @@ function postJSON(url, data, passedFunction) {
                 alert("Got an exception ("+e+") whille trying to handle: "+url);
             }
         }
+        else if (xhr.readyState == 4 && xhr.status == 200) {
+            errorFunction(xhr.responseText);
+        }
     }
     xhr.send(JSON.stringify(data));
-}
+};
 
-function queryTheServer() {
-    var pUrl = loginConfig.serverUrl + "auth/";
-    getJSON(pUrl, function(data) {
-        loginInfo = data;
-        displayLoginStatus(loginInfo);
-        if (!loginInfo.verified) {
-            queryTheProvider();
+SLAP.queryTheServer = function() {
+    var pUrl = SLAP.loginConfig.serverUrl + "auth/query";
+    SLAP.getJSON(pUrl, function(data) {
+        SLAP.storeSession(data);
+        SLAP.displayLoginStatus(data);
+        //if the server says which providers it will allow, then just use
+        //that provider automatically
+        if (data.providers) {
+            SLAP.loginConfig.providerUrl = data.providers[0];
         }
+        if (!data.userId) {
+            SLAP.queryTheProvider();
+        }
+    }, function(data) {
+        alert("Failure querying server.  Is server really at:\n "+pUrl);
     });
-}
+};
 
-function queryTheProvider() {
-    var pUrl = loginConfig.providerUrl + "?openid.mode=apiWho";
-    getJSON(pUrl, function(data) {
-        loginInfo = data;
-        displayLoginStatus(loginInfo);
+SLAP.queryTheProvider = function() {
+    var pUrl = SLAP.loginConfig.providerUrl + "?openid.mode=apiWho";
+    SLAP.getJSON(pUrl, function(data) {
+        SLAP.storeSession(data);
+        SLAP.displayLoginStatus(data);
         if (data.userId) {
-            requestChallenge();
+            SLAP.requestChallenge();
         }
+    }, function(data) {
+        alert("Failure querying Identity provider.  Is provider really at:\n "+pUrl);
+    });
+};
+
+SLAP.requestChallenge = function() {
+    var pUrl = SLAP.loginConfig.serverUrl + "auth/getChallenge";
+    SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
+        SLAP.storeSession(data);
+        SLAP.displayLoginStatus(SLAP.loginInfo);
+        SLAP.getToken();
+    }, function(data) {
+        alert("Failure getting challenge from server.  Is server really at:\n "+pUrl);
+    });
+};
+
+SLAP.getToken = function() {
+    var pUrl  = SLAP.loginConfig.providerUrl + "?openid.mode=apiGenerate";
+    SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
+        SLAP.storeSession(data);
+        SLAP.displayLoginStatus(data);
+        SLAP.verifyToken();
+    }, function(data) {
+        alert("Failure getting token from provider.  Is provider really at:\n "+pUrl);
+    });
+};
+
+SLAP.verifyToken = function() {
+    var pUrl = SLAP.loginConfig.serverUrl + "auth/verifyToken";
+    SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
+        SLAP.storeSession(data);
+        SLAP.displayLoginStatus(data);
+    }, function(data) {
+        alert("Failure verifying token.  Is server using the same provider as: "+pUrl);
+    });
+};
+
+SLAP.logOutProvider = function() {
+    var pUrl = SLAP.loginConfig.providerUrl + "?openid.mode=apiLogout";
+    SLAP.storeSession({});
+    SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
+        SLAP.logOutServer();
+    }, function(data) {
+        alert("Failure logging out.  Is provider still at:\n "+pUrl);
+    });
+};
+
+SLAP.logOutServer = function() {
+    var pUrl = SLAP.loginConfig.serverUrl + "auth/logout";
+    SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
+        SLAP.displayLoginStatus(SLAP.loginInfo);
+    }, function(data) {
+        alert("Failure logging out.  Is server really at:\n "+pUrl);
     });
 }
 
-function requestChallenge() {
-    var pUrl = loginConfig.serverUrl + "auth/getChallenge";
-    postJSON(pUrl, loginInfo, function(data) {
-        loginInfo = data;
-        displayLoginStatus(loginInfo);
-        getToken();
-    });
-}
 
-function getToken() {
-    var pUrl  = loginConfig.providerUrl + "?openid.mode=apiGenerate";
-    postJSON(pUrl, loginInfo, function(data) {
-        loginInfo = data;
-        displayLoginStatus(loginInfo);
-        verifyToken();
-    });
-}
 
-function verifyToken() {
-    var pUrl = loginConfig.serverUrl + "auth/verifyToken";
-    postJSON(pUrl, loginInfo, function(data) {
-        loginInfo = data;
-        if (loginInfo.verified) {
-            window.location.reload();
-        }
-        else {
-            alert("Internal Error: was not able to verify token: "+JSON.stringify(data));
-        }
-        displayLoginStatus(loginInfo);
-    });
-}
-
-function logOutProvider() {
-    var pUrl = loginConfig.providerUrl + "?openid.mode=apiLogout";
-    postJSON(pUrl, loginInfo, function(data) {
-        loginInfo = data;
-        logOutServer();
-    });
-}
-function logOutServer() {
-    var pUrl = loginConfig.serverUrl + "auth/logout";
-    postJSON(pUrl, loginInfo, function(data) {
-        loginInfo = data;
-        displayLoginStatus(loginInfo);
-        window.location.reload();
-    });
-}
 

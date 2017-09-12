@@ -200,6 +200,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.sendEmailLoginRequest = function(message) {
+        SLAP.sendInvitationEmail(message);
         var postURL = "<%=ar.getSystemProperty("identityProvider")%>?openid.mode=apiSendInvite";
         var postdata = JSON.stringify(message);
         $http.post(postURL ,postdata)

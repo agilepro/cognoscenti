@@ -14,7 +14,6 @@
 var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Welcome to Weaver");
-    console.log("Wlecome");
 });
 </script>
 

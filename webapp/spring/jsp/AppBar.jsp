@@ -79,7 +79,6 @@
         </a>
       </li>
       
-
       
 <% if (loggedUser!=null) { %>      
       <li class="dropdown">
@@ -121,45 +120,7 @@
         </li>
 
 
-<% if (false) { %>   
-<!-  REMOVED the Sites menu as it is not so useful it needs to always be on the screen
-     Adding a small menu item to the personal list should be enough -->     
-        <!-- Drop Down Sites -->
-        <li>
-          <a class="dropdown-toggle"
-          data-target="#"
-          data-toggle="dropdown"
-          aria-expanded="false"
-          title="Sites">
-            <i class="fa fa-sitemap" aria-hidden="true"></i>
-            <span class="dropdown-toggle-label">
-              Sites
-            </span>
-          </a>
-          <ul class="dropdown-menu pull-right tighten">
-<%
-
-   Properties seenSite = new Properties();
-   for (RUElement rue : recent) {
-       if (seenSite.get(rue.siteKey)!=null) {
-           continue;
-       }
-       seenSite.put(rue.siteKey, rue.siteKey);
-       ar.write("\n<li><a href=\"");
-       ar.write(ar.retPath);
-       ar.write("t/");
-       ar.write(rue.siteKey);
-       ar.write("/$/accountListProjects.htm\">");
-       ar.writeHtml(rue.siteKey);
-       ar.write("</a></li>");
-   }
-
-%>
-            <li role="separator" class="divider"></li>
-            <li><a href="<%=userRelPath%>userAccounts.htm">List Sites</a></li>
-          </ul>
-        </li>
-<% } %>         
+        
         
 <% } %>  
         
@@ -189,7 +150,7 @@
             <li><a href="<%=userRelPath%>../su/emailListnerSettings.htm">Administration</a></li>
 <%} %>
             <li class="divider"></li>
-            <li><a onclick='logOutProvider();'>Log Out</a></li>
+            <li><a onclick='SLAP.logOutProvider();'>Log Out</a></li>
 <% } %> 
           </ul>
         </li>

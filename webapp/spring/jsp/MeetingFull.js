@@ -46,14 +46,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.newAttendee = "";
     $scope.newGoal = {};
     $scope.newPerson = "";
-    $scope.myUserId = loginInfo.userId;
+    $scope.myUserId = SLAP.loginInfo.userId;
     $scope.actionItemFilter = "";
     $scope.realDocumentFilter = "";
 
     $scope.isRegistered = function() {
         var registered = false;
         $scope.meeting.rollCall.forEach( function(item) {
-            if (item.uid == loginInfo.userId) {
+            if (item.uid == SLAP.loginInfo.userId) {
                 registered = ("Unknown" != item.attend);
             }
         });
@@ -843,17 +843,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.getMyResponse = function(cmt) {
         cmt.choices = ["Consent", "Objection"]
         var selected = [];
-        if (cmt.user==loginInfo.userId) {
+        if (cmt.user==SLAP.loginInfo.userId) {
             return selected;
         }
         cmt.responses.map( function(item) {
-            if (item.user==loginInfo.userId) {
+            if (item.user==SLAP.loginInfo.userId) {
                 selected.push(item);
             }
         });
         if (selected.length == 0) {
             var newResponse = {};
-            newResponse.user = loginInfo.userId;
+            newResponse.user = SLAP.loginInfo.userId;
             cmt.responses.push(newResponse);
             selected.push(newResponse);
         }
@@ -911,7 +911,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 };
                 $scope.meeting.rollCall.push(current);
             }
-            if (item.uid === loginInfo.userId) {
+            if (item.uid === SLAP.loginInfo.userId) {
                 $scope.mySitch = [current];
             }
             rez.push(current);
@@ -940,14 +940,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
     $scope.addYouself = function() {
         var fakeMeeting = {};
-        fakeMeeting.attended_add = loginInfo.userId;
+        fakeMeeting.attended_add = SLAP.loginInfo.userId;
         $scope.putGetMeetingInfo(fakeMeeting);
     }
     $scope.determineIfAttending = function() {
         $scope.isInAttendees = false;
         if ($scope.meeting.attended) {
             $scope.meeting.attended.forEach( function(person) {
-                if (person == loginInfo.userId) {
+                if (person == SLAP.loginInfo.userId) {
                     $scope.isInAttendees = true;
                 }
             });
@@ -1095,7 +1095,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
     $scope.getResponse = function(cmt) {
         var selected = cmt.responses.filter( function(item) {
-            return item.user==loginInfo.userId;
+            return item.user==SLAP.loginInfo.userId;
         });
         return selected;
     }
@@ -1108,7 +1108,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
     $scope.updateResponse = function(cmt, response) {
         var selected = cmt.responses.filter( function(item) {
-            return item.user!=loginInfo.userId;
+            return item.user!=SLAP.loginInfo.userId;
         });
         selected.push(response);
         cmt.responses = selected;
@@ -1145,8 +1145,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var selected = $scope.getResponse(cmt);
         var selResponse = {};
         if (selected.length == 0) {
-            selResponse.user = loginInfo.userId;
-            selResponse.userName = loginInfo.userName;
+            selResponse.user = SLAP.loginInfo.userId;
+            selResponse.userName = SLAP.loginInfo.userName;
             selResponse.choice = cmt.choices[0];
             selResponse.isNew = true;
         }
@@ -1218,9 +1218,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         newComment.state = 11;
         newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
         newComment.isNew = true;
-        newComment.user = loginInfo.userId;
-        newComment.userName = loginInfo.userName;
-        newComment.userKey = AllPeople.findUserKey(loginInfo.userId);
+        newComment.user = SLAP.loginInfo.userId;
+        newComment.userName = SLAP.loginInfo.userName;
+        newComment.userKey = AllPeople.findUserKey(SLAP.loginInfo.userId);
         if (replyTo) {
             newComment.replyTo = replyTo;
         }

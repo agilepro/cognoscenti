@@ -48,20 +48,20 @@
     if (ar.isSuperAdmin()) {
         exposeLevel = 2;
     }
-    JSONObject loginInfo = new JSONObject();
+    JSONObject loginInfoPrefetch = new JSONObject();
     if (ar.isLoggedIn()) {
-        loginInfo.put("userId", ar.getBestUserId());
-        loginInfo.put("userName", uProf.getName());
-        loginInfo.put("verified", true);
-        loginInfo.put("msg", "Previously logged into server");
+        loginInfoPrefetch.put("userId", ar.getBestUserId());
+        loginInfoPrefetch.put("userName", uProf.getName());
+        loginInfoPrefetch.put("verified", true);
+        loginInfoPrefetch.put("msg", "Previously logged into server");
     }
     else {
         //use this to indicate the very first display, before the page knows anything
-        loginInfo.put("haveNotCheckedYet", true);
+        loginInfoPrefetch.put("haveNotCheckedYet", true);
     }
-    JSONObject loginConfig = new JSONObject();
-    loginConfig.put("providerUrl", ar.getSystemProperty("identityProvider"));
-    loginConfig.put("serverUrl",   ar.baseURL);
+    JSONObject adminLoginConfig = new JSONObject();
+    adminLoginConfig.put("providerUrl", ar.getSystemProperty("identityProvider"));
+    adminLoginConfig.put("serverUrl",   ar.baseURL);
 
 
     String currentPageURL = ar.getCompleteURL();
@@ -165,7 +165,7 @@
             <li><a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
                 Log In</a></li>
 <% } else { %>
-            <li><a onclick='logOutProvider();'>Log Out</a></li>
+            <li><a onclick='SLAP.logOutProvider();'>Log Out</a></li>
 <% } %>
             <li><a href="<%=userRelPath%>userSettings.htm">Profile</a></li>
             <li><a href="<%=userRelPath%>userAlerts.htm">Updates</a></li>
@@ -224,12 +224,12 @@ function displayWelcomeMessage(info) {
     var y = document.getElementById("welcomeMessage");
     if (info.haveNotCheckedYet) {
         y.innerHTML = 'Checking identity, please <a href="'
-            +loginConfig.providerUrl
+            +SLAP.loginConfig.providerUrl
             +'&go='+window.location+'">Login</a>.';
     }
     else if (!info.userName) {
         y.innerHTML = 'Not logged in, please <a href="'
-            +loginConfig.providerUrl
+            +SLAP.loginConfig.providerUrl
             +'?openid.mode=quick&go='+window.location+'">Login</a>.';
     }
     else if (!info.verified) {
@@ -237,13 +237,13 @@ function displayWelcomeMessage(info) {
     }
     else {
         y.innerHTML = 'Welcome <b>'+info.userName+'</b>.  <a target="_blank" href="'
-            +loginConfig.providerUrl
+            +SLAP.loginConfig.providerUrl
             +'?openid.mode=logout&go='+window.location+'">Logout</a>.';
     }
 }
 
 
-initLogin(<% loginConfig.write(out, 2, 2); %>, <% loginInfo.write(out, 2, 2); %>, displayWelcomeMessage);
+SLAP.initLogin(<% adminLoginConfig.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
 </script>
 <!-- END WrapHeader2.jsp -->
 <% out.flush(); %>

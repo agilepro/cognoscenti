@@ -162,20 +162,24 @@
     if (ar.isSuperAdmin()) {
         exposeLevel = 2;
     }
-    JSONObject loginInfo = new JSONObject();
+    
+
+    JSONObject loginInfoPrefetch = new JSONObject();
     if (ar.isLoggedIn()) {
-        loginInfo.put("userId", ar.getBestUserId());
-        loginInfo.put("userName", loggedUser.getName());
-        loginInfo.put("verified", true);
-        loginInfo.put("msg", "Previously logged into server");
+        loginInfoPrefetch.put("userId", ar.getBestUserId());
+        loginInfoPrefetch.put("userName", loggedUser.getName());
+        loginInfoPrefetch.put("verified", true);
+        loginInfoPrefetch.put("msg", "Previously logged into server");
     }
     else {
         //use this to indicate the very first display, before the page knows anything
-        loginInfo.put("haveNotCheckedYet", true);
+        loginInfoPrefetch.put("haveNotCheckedYet", true);
     }
-    JSONObject loginConfig = new JSONObject();
-    loginConfig.put("providerUrl", ar.getSystemProperty("identityProvider"));
-    loginConfig.put("serverUrl",   ar.baseURL);
+
+    
+    JSONObject loginConfigSetup = new JSONObject();
+    loginConfigSetup.put("providerUrl", ar.getSystemProperty("identityProvider"));
+    loginConfigSetup.put("serverUrl",   ar.baseURL);
 
     String currentPageURL = ar.getCompleteURL();
 
@@ -370,29 +374,37 @@ function standardTinyMCEOptions() {
       }
 
 
+      var knowWeAreLoggedIn = <%= ar.isLoggedIn() %>;
       function displayWelcomeMessage(info) {
+          console.log("LOGIN STATUS: ", info);
           var y = document.getElementById("welcomeMessage");
-          if (info.haveNotCheckedYet) {
+          if (knowWeAreLoggedIn && info.verified) {
+              //nothing to do in this case
+          }
+          else if (knowWeAreLoggedIn && !info.verified) {
+              //this encountered only when logging out
+              window.location.reload();
+          }
+          else if (info.haveNotCheckedYet) {
               y.innerHTML = 'Checking identity, please <a href="'
-                  +loginConfig.providerUrl
+                  +SLAP.loginConfig.providerUrl
                   +'&go='+window.location+'"><span class="btn btn-primary btn-raised">Login</span></a>';
           }
           else if (!info.userName) {
               y.innerHTML = 'Not logged in, please <a href="'
-                  +loginConfig.providerUrl
+                  +SLAP.loginConfig.providerUrl
                   +'?openid.mode=quick&go='+window.location+'"><span class="btn btn-primary btn-raised">Login</span></a>';
           }
           else if (!info.verified) {
               y.innerHTML = 'Hello <b>'+info.userName+'</b>.  Attempting Automatic Login.';
           }
           else {
-              y.innerHTML = 'Welcome <b>'+info.userName+'</b>.  <a target="_blank" href="'
-                  +loginConfig.providerUrl
-                  +'?openid.mode=logout&go='+window.location+'">Logout</a>.';
+              y.innerHTML = 'Hello <b>'+info.userName+'</b>.  You are now logged in.  Refreshing page.';
+              window.location.reload();
           }
       }
 
-      initLogin(<% loginConfig.write(out, 2, 2); %>, <% loginInfo.write(out, 2, 2); %>, displayWelcomeMessage);
+      SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
       </script>
 
       <!-- Begin Template Content (compiled separately) -->
@@ -409,12 +421,12 @@ function standardTinyMCEOptions() {
 <script>
 //every 25 minutes, query the server to keep session alive
 window.setInterval(function() {
-    if (!loginInfo.verified) {
+    if (!SLAP.loginInfo.verified) {
         console.log("Not logged in, no session.");
     }
     else {
-        console.log("Keeping the session alive for: "+loginInfo.userName+" ("+loginInfo.userId+").");
-        queryTheServer();
+        console.log("Keeping the session alive for: "+SLAP.loginInfo.userName+" ("+SLAP.loginInfo.userId+").");
+        SLAP.queryTheServer();
     }
     return 0;
 }, 1500000);
