@@ -68,7 +68,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.stateName = <%stateName.write(out,2,4);%>;
     $scope.filter = "";
     $scope.filterMap = {};
-    $scope.newDecision = {num:"~new~",universalid:"~new~"};
 
     $scope.newPerson = "";
 
@@ -110,11 +109,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
 
     $scope.startCreating = function() {
-        $scope.newDecision = {num:"~new~",universalid:"~new~",labelMap:{}};
-        $scope.openDecisionEditor($scope.newDecision);
-    }
-    $scope.startEditing = function(rec) {
-        $scope.newDecision = rec;
+        var newDec = {num:"~new~",universalid:"~new~",timestamp:new Date().getTime(),labelMap:{}}
+        $scope.openDecisionEditor(newDec);
     }
 
     $scope.saveDecision = function(newRec) {
@@ -131,7 +127,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             });
             newList.push(data);
             $scope.allDecisions = newList;
-            $scope.newDecision = {num:"~new~",universalid:"~new~"};
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
