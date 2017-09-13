@@ -93,7 +93,7 @@ SLAP.getJSON = function(url, passedFunction, errorFunction) {
             errorFunction(xhr.responseText);
         }
         else if (xhr.status == 0) {
-            console.log("STRANGE browser situation the xhr.status is zero!  Might be due to CORS problem.");
+            console.log("STRANGE browser situation the xhr.status is zero!  Might be due to CORS problem or it could be that you have an ad-blocker or privacy-protector active preventing you from being authenticated?");
         }
     }
     xhr.send();
@@ -115,6 +115,9 @@ SLAP.postJSON = function(url, data, passedFunction, errorFunction) {
         }
         else if (xhr.readyState == 4 && xhr.status == 200) {
             errorFunction(xhr.responseText);
+        }
+        else if (xhr.status == 0) {
+            console.log("STRANGE browser situation the xhr.status is zero!  Might be due to CORS problem or it could be that you have an ad-blocker or privacy-protector active preventing you from being authenticated?");
         }
     }
     xhr.send(JSON.stringify(data));
