@@ -1390,7 +1390,6 @@ public class MainTabsViewControler extends BaseController {
       private static void saveAndReleaseLock(NGWorkspace ngw, AuthRequest ar, String msg) throws Exception {
           ngw.saveFile(ar, msg);
           NGPageIndex.clearLocksHeldByThisThread();
-          System.out.println("     file saved tid="+Thread.currentThread().getId()+" time="+(System.currentTimeMillis()%10000));
       }
 
 }
