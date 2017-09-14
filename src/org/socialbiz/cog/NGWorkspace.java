@@ -104,7 +104,7 @@ public class NGWorkspace extends NGPage {
     
     /**
      * Need to inject the saving of the JSON file at this point
-     * to assure that both XML and JSON geet saved.
+     * to assure that both XML and JSON get saved.
      */
     @Override
     public void save() throws Exception {
@@ -115,6 +115,7 @@ public class NGWorkspace extends NGPage {
     public void saveFile(AuthRequest ar, String comment) throws Exception {
         super.saveFile(ar, comment);
         assureLaunchingPad(ar);
+        System.out.println("     file save ("+getFullName()+") tid="+Thread.currentThread().getId()+" time="+(System.currentTimeMillis()%10000));
     }
 
     

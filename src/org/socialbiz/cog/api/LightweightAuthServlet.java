@@ -96,7 +96,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
         setHeadersForRediculousBrowserAuthRequirements(req, resp);
         AuthStatus aStat = AuthStatus.getAuthStatus(req.getSession());
         JSONObject jo = new JSONObject();
-        resp.setContentType("application/json");
+        resp.setContentType("application/json;charset=UTF-8");
         try {
             JSONArray providers = new JSONArray();
             providers.put( trusterProviderUrl );
@@ -126,7 +126,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
         Writer w = null;
         String pathInfo = req.getPathInfo();
 
-        resp.setContentType("application/json");
+        resp.setContentType("application/json;charset=UTF-8");
         try {
             w = resp.getWriter();
             AuthStatus aStat = AuthStatus.getAuthStatus(req.getSession());

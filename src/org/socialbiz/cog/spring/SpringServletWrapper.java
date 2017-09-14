@@ -21,7 +21,6 @@
 package org.socialbiz.cog.spring;
 
 import java.net.URLEncoder;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -67,15 +66,19 @@ public class SpringServletWrapper extends HttpServlet
                 throws ServletException,
                        java.io.IOException
     {
+        long startTime = System.currentTimeMillis();
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
+        String userId = "unknown";
         String requestAddr = "unknown";
         long tid = Thread.currentThread().getId();
 
         try {
+            if (ar.isLoggedIn()) {
+                userId = ar.getBestUserId();
+            }
             NGPageIndex.assertNoLocksOnThread();
             requestAddr = ar.getCompleteURL();
-            long startTime = System.currentTimeMillis();
-            System.out.println("[Web URL: "+requestAddr+"] tid="+tid);
+            System.out.println("[Web URL: "+requestAddr+"] tid="+tid+" start="+(startTime%10000));
 
             //test for initialized, and if not redirect to config page
             if (!ar.getCogInstance().isInitialized()) {
@@ -90,10 +93,14 @@ public class SpringServletWrapper extends HttpServlet
                 }
             }
             wrappedServlet.service(ar.req, ar.resp); //must use the versions from AuthRequest
-            long dur = System.currentTimeMillis()-startTime;
-            System.out.println("     completed "+dur+"ms tid="+tid);
+            long endTime = System.currentTimeMillis();
+            long dur = endTime -startTime;
+            System.out.println("     completed "+dur+"ms tid="+tid+" user="+userId+" end="+(endTime%10000));
         }
         catch (Exception e) {
+            long endTime = System.currentTimeMillis();
+            long dur = endTime -startTime;
+            System.out.println("     exception "+dur+"ms tid="+tid+" user="+userId+" end="+(endTime%10000));
             ar.logException("Unable to handle web request to URL ("+requestAddr+") tid="+tid, e);
             throw new ServletException("Unable to handle web request to URL ("+requestAddr+") tid="+tid, e);
         }

@@ -41,6 +41,7 @@ import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.MeetingRecord;
 import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SearchManager;
@@ -497,9 +498,9 @@ public class MainTabsViewControler extends BaseController {
                      0, eventType, ar, "");
              }
 
-             ngw.saveFile(ar, "Updated Topic Contents");
-
              JSONObject repo = note.getJSONWithComments(ar, ngw);
+             saveAndReleaseLock(ngw, ar, "Updated Topic Contents");
+
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -571,9 +572,9 @@ public class MainTabsViewControler extends BaseController {
 
              note.updateNoteFromJSON(noteInfo, ar);
 
-             ngw.saveFile(ar, "Updated Topic Contents");
-
              JSONObject repo = note.getJSONWithComments(ar, ngw);
+             saveAndReleaseLock(ngw, ar, "Updated Topic Contents");
+
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -597,12 +598,9 @@ public class MainTabsViewControler extends BaseController {
              UserProfile up = ar.getUserProfile();
 
              topic.getSubscriberRole().addPlayer(up.getAddressListEntry());
-             ngw.save(); //just save flag, don't mark page as changed
-
-
              JSONObject repo = topic.getJSONWithComments(ar, ngw);
-             repo.write(ar.w, 2, 2);
-             ar.flush();
+             ngw.save(); //just save flag, don't mark page as changed
+             sendJson(ar, repo);
          }catch(Exception ex){
              Exception ee = new Exception("Unable to subscribe to topic "+nid+" contents", ex);
              streamException(ee, ar);
@@ -625,10 +623,8 @@ public class MainTabsViewControler extends BaseController {
 
              topic.getSubscriberRole().removePlayerCompletely(up);
              ngw.save(); //just save flag, don't mark page as changed
-
              JSONObject repo = topic.getJSONWithComments(ar, ngw);
-             repo.write(ar.w, 2, 2);
-             ar.flush();
+             sendJson(ar, repo);
          }catch(Exception ex){
              Exception ee = new Exception("Unable to subscribe to topic "+nid+" contents", ex);
              streamException(ee, ar);
@@ -681,6 +677,7 @@ public class MainTabsViewControler extends BaseController {
              for (HistoryRecord hist : note.getNoteHistory(ngp)) {
                  repo.put(hist.getJSON(ngp, ar));
              }
+             releaseLock();
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -755,11 +752,11 @@ public class MainTabsViewControler extends BaseController {
         try{
             ar.assertLoggedIn("Must be logged in modify role settings");
             String p = ar.reqParam("p");
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
+            NGWorkspace ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
             String role = ar.reqParam("role");
             NGRole specRole = ngp.getRoleOrFail(role);
             specRole.removePlayer(ar.getUserProfile().getAddressListEntry());
-            ngp.saveFile(ar, "user removed themself from role "+role);
+            saveAndReleaseLock(ngp, ar, "user removed themself from role "+role);
 
             JSONObject results = new JSONObject();
             results.put("result", "ok");
@@ -873,8 +870,7 @@ public class MainTabsViewControler extends BaseController {
               HistoryRecord.createHistoryRecord(ngw, newMeeting.getId(),
                       HistoryRecord.CONTEXT_TYPE_MEETING,
                       HistoryRecord.EVENT_TYPE_CREATED, ar, "");
-
-              ngw.saveFile(ar, "Created new Meeting");
+              saveAndReleaseLock(ngw, ar, "Created new Meeting");
               JSONObject repo = newMeeting.getFullJSON(ar, ngw);
               repo.write(ar.w, 2, 2);
               ar.flush();
@@ -953,8 +949,8 @@ public class MainTabsViewControler extends BaseController {
                   }
               }
 
-              ngw.saveFile(ar, "Updated Meeting");
               JSONObject repo = meeting.getFullJSON(ar, ngw);
+              saveAndReleaseLock(ngw, ar, "Updated Meeting");
               //this is so that clients can calculate the offset for their particular clock.
               repo.put("serverTime", System.currentTimeMillis());
               repo.write(ar.w, 2, 2);
@@ -977,8 +973,7 @@ public class MainTabsViewControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
               JSONObject repo = meeting.getFullJSON(ar, ngw);
               repo.put("serverTime", System.currentTimeMillis());
-              repo.write(ar.w, 2, 2);
-              ar.flush();
+              sendJson(ar, repo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to read meeting information.", ex);
               streamException(ee, ar);
@@ -996,11 +991,9 @@ public class MainTabsViewControler extends BaseController {
               String id = ar.reqParam("id");
               ar.assertMember("Must be a member to read a meeting "+id);
               MeetingRecord meeting = ngw.findMeeting(id);
-              
               JSONObject repo = meeting.getAllMinutes();
               repo.put("serverTime", System.currentTimeMillis());
-              repo.write(ar.w, 2, 2);
-              ar.flush();
+              sendJson(ar, repo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to read meeting information.", ex);
               streamException(ee, ar);
@@ -1018,9 +1011,9 @@ public class MainTabsViewControler extends BaseController {
               MeetingRecord meeting = ngw.findMeeting(id);
               JSONObject meetingInfo = getPostedObject(ar);
               meeting.updateMinutes(meetingInfo);
-              ngw.saveFile(ar, "Updated Meeting Minutes");
-              
               JSONObject repo = meeting.getAllMinutes();
+              saveAndReleaseLock(ngw, ar, "Updated Meeting Minutes");
+              
               repo.put("serverTime", System.currentTimeMillis());
               repo.write(ar.w, 2, 2);
               ar.flush();
@@ -1038,14 +1031,14 @@ public class MainTabsViewControler extends BaseController {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           String meetingId = "";
           try{
-              NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngp);
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to delete a meeting.");
-              ar.assertNotFrozen(ngp);
+              ar.assertNotFrozen(ngw);
               JSONObject meetingInfo = getPostedObject(ar);
               meetingId = meetingInfo.getString("id");
-              ngp.removeMeeting(meetingId);
-              ngp.saveFile(ar, "Deleted new Meeting");
+              ngw.removeMeeting(meetingId);
+              saveAndReleaseLock(ngw, ar, "Deleted new Meeting");
               ar.write("deleted Meeting "+meetingId);
               ar.flush();
           } catch(Exception ex){
@@ -1079,8 +1072,8 @@ public class MainTabsViewControler extends BaseController {
               ai.updateFromJSON(ar, agendaInfo, ngw);
 
               meeting.renumberItems();
-              ngw.saveFile(ar, "Created new Agenda Item");
               JSONObject repo = ai.getJSON(ar, ngw, meeting);
+              saveAndReleaseLock(ngw, ar, "Created new Agenda Item");
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1094,18 +1087,18 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngp);
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to delete a meeting.");
-              ar.assertNotFrozen(ngp);
+              ar.assertNotFrozen(ngw);
               String id = ar.reqParam("id");
-              MeetingRecord meeting = ngp.findMeeting(id);
+              MeetingRecord meeting = ngw.findMeeting(id);
               JSONObject agendaInfo = getPostedObject(ar);
 
               String agendaId = agendaInfo.getString("id");
               meeting.removeAgendaItem(agendaId);
               meeting.renumberItems();
-              ngp.saveFile(ar, "Deleted Agenda Item");
+              saveAndReleaseLock(ngw, ar, "Deleted Agenda Item");
               ar.write("deleted agenda item "+agendaId);
               ar.flush();
           } catch(Exception ex){
@@ -1140,8 +1133,8 @@ public class MainTabsViewControler extends BaseController {
               agendaInfo.put("position", 99999);
               ai.updateFromJSON(ar,agendaInfo, ngw);
               destMeeting.renumberItems();
-              ngw.saveFile(ar, "Move Agenda Item");
               JSONObject repo = ai.getJSON(ar, ngw, meeting);
+              saveAndReleaseLock(ngw, ar, "Move Agenda Item");
               repo.write(ar.w, 2, 2);
               ar.flush();
           } catch(Exception ex){
@@ -1191,8 +1184,8 @@ public class MainTabsViewControler extends BaseController {
               //everything else updated here
               ai.updateFromJSON(ar, agendaInfo, ngw);
 
-              ngw.saveFile(ar, "Updated Agenda Item");
               JSONObject repo = ai.getJSON(ar, ngw, meeting);
+              saveAndReleaseLock(ngw, ar, "Updated Agenda Item");
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1243,9 +1236,9 @@ public class MainTabsViewControler extends BaseController {
                   }
               }
               nr.setLastEdited(ar.nowTime);
-
-              ngw.saveFile(ar, "Created Topic for minutes of meeting.");
               JSONObject repo = meeting.getFullJSON(ar, ngw);
+              saveAndReleaseLock(ngw, ar, "Created Topic for minutes of meeting.");
+              
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1265,30 +1258,29 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngp);
+              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+              ar.setPageAccessLevels(ngw);
               ar.assertMember("Must be a member to create a action item.");
-              ar.assertNotFrozen(ngp);
+              ar.assertNotFrozen(ngw);
 
               JSONObject goalInfo = getPostedObject(ar);
-              GoalRecord gr = ngp.createGoal(ar.getBestUserId());
+              GoalRecord gr = ngw.createGoal(ar.getBestUserId());
 
               //create the history record here.
-              HistoryRecord.createHistoryRecord(ngp, gr.getId(),
+              HistoryRecord.createHistoryRecord(ngw, gr.getId(),
                       HistoryRecord.CONTEXT_TYPE_TASK, HistoryRecord.EVENT_TYPE_CREATED, ar,
                       "action item synopsis: "+gr.getSynopsis());
 
               //currently the update from JSON is designed for upstream sync.
               //There is a check that requires this to do the update.
               goalInfo.put("universalid", gr.getUniversalId());
-              gr.updateGoalFromJSON(goalInfo, ngp, ar);
+              gr.updateGoalFromJSON(goalInfo, ngw, ar);
               gr.setCreator(ar.getBestUserId());
               if (gr.getCreator()==null || gr.getCreator().length()==0) {
                   throw new Exception("can not set the creator");
               }
-
-              ngp.saveFile(ar, "Created action item for minutes of meeting.");
-              JSONObject repo = gr.getJSON4Goal(ngp);
+              JSONObject repo = gr.getJSON4Goal(ngw);
+              saveAndReleaseLock(ngw, ar, "Created action item for minutes of meeting.");
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1386,5 +1378,19 @@ public class MainTabsViewControler extends BaseController {
           }
       }
 
+      private static void releaseLock() throws Exception {
+          NGPageIndex.clearLocksHeldByThisThread();
+          System.out.println("     locks released tid="+Thread.currentThread().getId()+" time="+(System.currentTimeMillis()%10000));
+      }
+      private static void sendJson(AuthRequest ar, JSONObject jo) throws Exception {
+          releaseLock();
+          jo.write(ar.w, 2, 2);
+          ar.flush();
+      }
+      private static void saveAndReleaseLock(NGWorkspace ngw, AuthRequest ar, String msg) throws Exception {
+          ngw.saveFile(ar, msg);
+          NGPageIndex.clearLocksHeldByThisThread();
+          System.out.println("     file saved tid="+Thread.currentThread().getId()+" time="+(System.currentTimeMillis()%10000));
+      }
 
 }
