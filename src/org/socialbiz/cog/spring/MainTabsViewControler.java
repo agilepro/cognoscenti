@@ -61,6 +61,8 @@ import org.workcast.json.JSONObject;
 
 @Controller
 public class MainTabsViewControler extends BaseController {
+    
+    public static MeetingNotesCache meetingCache = new MeetingNotesCache();
 
 
     //////////////////////////////// REDIRECTS ///////////////////////////////////
@@ -239,16 +241,14 @@ public class MainTabsViewControler extends BaseController {
             throws Exception {
 
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
-
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);         
             String id = ar.reqParam("id");
-            MeetingRecord meet = ngw.findMeeting(id);
-            boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
-            if (!canAccess) {
+            if (!meetingCache.canAcccessMeeting(siteId, pageId, ar, id)) {
                 showJSPMembers(ar, siteId, pageId, "MeetingMinutes");
                 return;
             }
+            
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
 
             ar.setParam("id", id);
             ar.setParam("pageId", pageId);
@@ -949,7 +949,7 @@ public class MainTabsViewControler extends BaseController {
                   }
               }
 
-              JSONObject repo = meeting.getFullJSON(ar, ngw);
+              JSONObject repo = meetingCache.updateCacheFull(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Updated Meeting");
               //this is so that clients can calculate the offset for their particular clock.
               repo.put("serverTime", System.currentTimeMillis());
@@ -966,14 +966,10 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngw);
               String id = ar.reqParam("id");
-              ar.assertMember("Must be a member to read a meeting "+id);
-              MeetingRecord meeting = ngw.findMeeting(id);
-              JSONObject repo = meeting.getFullJSON(ar, ngw);
-              repo.put("serverTime", System.currentTimeMillis());
-              sendJson(ar, repo);
+              
+              JSONObject jo = meetingCache.getOrCacheFull(siteId, pageId, ar, id);
+              sendJson(ar, jo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to read meeting information.", ex);
               streamException(ee, ar);
@@ -986,14 +982,11 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
-              NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
-              ar.setPageAccessLevels(ngw);
               String id = ar.reqParam("id");
-              ar.assertMember("Must be a member to read a meeting "+id);
-              MeetingRecord meeting = ngw.findMeeting(id);
-              JSONObject repo = meeting.getAllMinutes();
-              repo.put("serverTime", System.currentTimeMillis());
-              sendJson(ar, repo);
+              
+              JSONObject jo = meetingCache.getOrCacheNotes(siteId, pageId, ar, id);
+
+              sendJson(ar, jo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to read meeting information.", ex);
               streamException(ee, ar);
@@ -1004,14 +997,21 @@ public class MainTabsViewControler extends BaseController {
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
+              String id = ar.reqParam("id");
+              JSONObject meetingInfo = getPostedObject(ar);
+              if (!meetingInfo.has("minutes") || meetingInfo.getJSONArray("minutes").length()==0) {
+                  //this is the case that you are not actually updating anything, so just return 
+                  //the cached notes.
+                  sendJson(ar, meetingCache.getOrCacheNotes(siteId, pageId, ar, id));
+                  return;
+              }
+              
               NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngw);
-              String id = ar.reqParam("id");
               ar.assertMember("Must be a member to update minutes "+id);
               MeetingRecord meeting = ngw.findMeeting(id);
-              JSONObject meetingInfo = getPostedObject(ar);
-              meeting.updateMinutes(meetingInfo);
-              JSONObject repo = meeting.getAllMinutes();
+              meeting.updateMeetingNotes(meetingInfo);
+              JSONObject repo = meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Updated Meeting Minutes");
               
               repo.put("serverTime", System.currentTimeMillis());
@@ -1073,6 +1073,7 @@ public class MainTabsViewControler extends BaseController {
 
               meeting.renumberItems();
               JSONObject repo = ai.getJSON(ar, ngw, meeting);
+              meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Created new Agenda Item");
               repo.write(ar.w, 2, 2);
               ar.flush();
@@ -1098,6 +1099,7 @@ public class MainTabsViewControler extends BaseController {
               String agendaId = agendaInfo.getString("id");
               meeting.removeAgendaItem(agendaId);
               meeting.renumberItems();
+              meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Deleted Agenda Item");
               ar.write("deleted agenda item "+agendaId);
               ar.flush();
@@ -1134,6 +1136,8 @@ public class MainTabsViewControler extends BaseController {
               ai.updateFromJSON(ar,agendaInfo, ngw);
               destMeeting.renumberItems();
               JSONObject repo = ai.getJSON(ar, ngw, meeting);
+              meetingCache.updateCacheNotes(ngw, ar, src);
+              meetingCache.updateCacheNotes(ngw, ar, dest);
               saveAndReleaseLock(ngw, ar, "Move Agenda Item");
               repo.write(ar.w, 2, 2);
               ar.flush();
@@ -1185,6 +1189,7 @@ public class MainTabsViewControler extends BaseController {
               ai.updateFromJSON(ar, agendaInfo, ngw);
 
               JSONObject repo = ai.getJSON(ar, ngw, meeting);
+              meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Updated Agenda Item");
               repo.write(ar.w, 2, 2);
               ar.flush();
@@ -1237,6 +1242,7 @@ public class MainTabsViewControler extends BaseController {
               }
               nr.setLastEdited(ar.nowTime);
               JSONObject repo = meeting.getFullJSON(ar, ngw);
+              meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Created Topic for minutes of meeting.");
               
               repo.write(ar.w, 2, 2);
@@ -1384,6 +1390,7 @@ public class MainTabsViewControler extends BaseController {
       }
       private static void sendJson(AuthRequest ar, JSONObject jo) throws Exception {
           releaseLock();
+          jo.put("serverTime", System.currentTimeMillis());
           jo.write(ar.w, 2, 2);
           ar.flush();
       }

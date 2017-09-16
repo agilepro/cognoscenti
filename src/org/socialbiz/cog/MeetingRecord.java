@@ -1069,7 +1069,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
     
     
-    public JSONObject getAllMinutes() throws Exception {
+    public JSONObject getMeetingNotes() throws Exception {
         JSONObject jo = new JSONObject();
         JSONArray ja = new JSONArray();
         for (AgendaItem ai : getSortedAgendaItems()) {
@@ -1088,7 +1088,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         return jo;
     }
     
-    public void updateMinutes(JSONObject input) throws Exception {
+    public void updateMeetingNotes(JSONObject input) throws Exception {
         JSONArray ja = input.getJSONArray("minutes");
         for (int i=0; i<ja.length(); i++) {
             JSONObject oneAi = ja.getJSONObject(i);
