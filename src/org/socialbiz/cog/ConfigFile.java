@@ -262,6 +262,17 @@ public class ConfigFile {
     public File getUserFolderOrFail() throws Exception {
         return getGenericFolderOrFail("userFolder", "user");
     }
+    
+    /**
+     * The config file has a setting for libFolder that can have multiple
+     * paths in it to folders containing sites.  
+     * 
+     * If the libe folder is specified and it does not exist, it is created
+     * 
+     * If it is not configured, then the parent data folder is found, and a
+     * subfolder named "sites" is used
+     * @return the list of all file folders that might contain sites.
+     */
     public List<File> getSiteFolders() throws Exception {
         List<String> libFolders = getArrayProperty("libFolder");
         List<File> allSiteFiles = new ArrayList<File>();

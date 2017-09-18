@@ -532,8 +532,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
     private synchronized void scanAllPages() throws Exception {
         System.out.println("Beginning SCAN for all pages in system");
-        List<File> allPageFiles = new ArrayList<File>();
-        List<File> allProjectFiles = new ArrayList<File>();
+        List<File> allWorkspaceFolders = new ArrayList<File>();
         NGTerm.initialize();
         keyToContainer = new Hashtable<String, NGPageIndex>();
         upstreamToContainer = new Hashtable<String, NGPageIndex>();
@@ -544,7 +543,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
         List<File> allSiteFiles = new ArrayList<File>();
         for (File libDirectory : theConfig.getSiteFolders()) {
-            seekProjectsAndSites(libDirectory, allProjectFiles, allSiteFiles);
+            seekSitesAndWorkspaces(libDirectory, allWorkspaceFolders, allSiteFiles);
         }
 
         // now process the site files if any
@@ -558,18 +557,8 @@ System.out.println("Weaver Server Object == Start the Server");
                 reportUnparseableFile(aSitePath, eig);
             }
         }
-        // page files for data folder
-        for (File aProjPath : allPageFiles) {
-            try {
-                NGWorkspace aPage = NGWorkspace.readWorkspaceAbsolutePath(aProjPath);
-                makeIndex(aPage);
-            }
-            catch (Exception eig) {
-                reportUnparseableFile(aProjPath, eig);
-            }
-        }
-        // now process the project files if any
-        for (File aProjPath : allProjectFiles) {
+        // now process the workspace files if any
+        for (File aProjPath : allWorkspaceFolders) {
             try {
                 NGWorkspace aProj = NGWorkspace.readWorkspaceAbsolutePath(aProjPath);
                 makeIndex(aProj);
@@ -589,59 +578,56 @@ System.out.println("Weaver Server Object == Start the Server");
         dummy.logException("Initialization Loop Continuing After Failure", wrapper);
     }
 
-    private void seekProjectsAndSites(File folder, List<File> pjs, List<File> acts)
+    /**
+     * Sept 2017 change this algorithm.  the sites must be children of the 
+     * library file folders pased in, and only direct children.  
+     * 
+     * Then the workspaces can only be the direct chidlren of sites.
+     * 
+     * A workspace found in a site is automatically associated with that site.
+     *
+     * @param folder
+     * @param allWorkspaces
+     * @param allSites
+     * @throws Exception
+     */
+    private void seekSitesAndWorkspaces(File folder, List<File> allWorkspaces, List<File> allSites)
             throws Exception {
 
-        // only use the first ".sp" file or ".site" file in a given folder
-        boolean foundOne = false;
+        for (File child : folder.listFiles()) {
+            if (!child.isDirectory()) {
+                //skip any files in the library folder
+                continue;
+            }
 
-        File cogFolder = new File(folder, ".cog");
-        if (cogFolder.exists()) {
-            File projectFile = new File(cogFolder, "ProjInfo.xml");
-            if (projectFile.exists()) {
-                pjs.add(projectFile);
-                foundOne = true;
+            File cogFolder = new File(child, ".cog");
+            if (!cogFolder.exists()) {
+                continue;
             }
             File siteFile = new File(cogFolder, "SiteInfo.xml");
-            if (siteFile.exists()) {
-                acts.add(siteFile);
-                foundOne = true;
+            if (!siteFile.exists()) {
+                continue;
             }
+            allSites.add(siteFile);
+            seekAllWorkspaces(child, allWorkspaces);
         }
+    }
 
-        for (File child : folder.listFiles()) {
-            String name = child.getName();
-            if (child.isDirectory()) {
-                // only drill down if not the cog folder
-                if (!name.equalsIgnoreCase(".cog")) {
-                    seekProjectsAndSites(child, pjs, acts);
-                }
+    private void seekAllWorkspaces(File siteFolder, List<File> allWorkspaces) throws Exception {
+        for (File child : siteFolder.listFiles()) {
+            if (!child.isDirectory()) {
+                //ignore all files in the site folder
                 continue;
             }
-            if (foundOne) {
-                // ignore all files after one is found
+            File cogFolder = new File(child, ".cog");
+            if (!cogFolder.exists()) {
                 continue;
             }
-            if (name.endsWith(".sp")) {
-                // this is the migration case, a .sp file exists, but the
-                // .cog/ProjInfo.xml
-                // does not exist, so move the file there immediately.
-                if (!cogFolder.exists()) {
-                    cogFolder.mkdirs();
-                }
-                String key = name.substring(0, name.length() - 3);
-                File keyFile = new File(cogFolder, "key_" + key);
-                keyFile.createNewFile();
-                File projInfoFile = new File(cogFolder, "ProjInfo.xml");
-                UtilityMethods.copyFileContents(child, projInfoFile);
-                child.delete();
-                pjs.add(projInfoFile);
-                foundOne = true;
+            File workspaceFile = new File(cogFolder, "ProjInfo.xml");
+            if (!workspaceFile.exists()) {
+                continue;
             }
-            else if (name.endsWith(".site")) {
-                acts.add(child);
-                foundOne = true;
-            }
+            allWorkspaces.add(workspaceFile);
         }
     }
 

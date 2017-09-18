@@ -208,7 +208,18 @@ public class NGBook extends ContainerCommon {
                 throw new NGException("nugen.exception.file.not.exist", new Object[] { theFile });
             }
             Document newDoc = readOrCreateFile(theFile, "book");
-            return new NGBook(theFile, newDoc);
+            NGBook newSite = new NGBook(theFile, newDoc);
+            
+            //now fix up the site settings
+            File cogFolder = theFile.getParentFile();
+            File siteFolder = cogFolder.getParentFile();
+            String siteKey = siteFolder.getName();
+            if (!siteKey.equals(newSite.getKey())) {
+                System.out.println("Site ("+siteKey+") != ("+newSite.getKey()+") FIXING UP site "+theFile);
+                newSite.setKey(siteKey);
+                System.out.println("        Site now ("+newSite.getKey()+") ");
+            }
+            return newSite;
         }
         catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.read.file",
@@ -434,8 +445,9 @@ public class NGBook extends ContainerCommon {
     }
 
 
-    public void setKey(String key) {
-        setScalar("key", key.trim());
+    public void setKey(String newKey) {
+        key = newKey.trim();
+        setScalar("key", key);
     }
 
     /**

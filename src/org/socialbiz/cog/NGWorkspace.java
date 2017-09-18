@@ -181,22 +181,31 @@ public class NGWorkspace extends NGPage {
             String fullFilePath = theFile.toString();
 
             //look in the cache
-            NGWorkspace newPage = pageCache.recall(fullFilePath);
-            if (newPage==null) {
+            NGWorkspace newWorkspace = pageCache.recall(fullFilePath);
+            if (newWorkspace==null) {
+                 //determine the site settings
+                File cogFolder = theFile.getParentFile();
+                File workFolder = cogFolder.getParentFile();
+                File siteFolder = workFolder.getParentFile();
+                String siteKey = siteFolder.getName();
+                NGBook theSite = NGBook.readSiteByKey(siteKey);
+             
                 Document newDoc;
                 InputStream is = new FileInputStream(theFile);
                 newDoc = DOMUtils.convertInputStreamToDocument(is, false, false);
                 is.close();
-                newPage = new NGWorkspace(theFile, newDoc, null);
+                newWorkspace = new NGWorkspace(theFile, newDoc, theSite);
+                
+                if (!siteKey.equals(newWorkspace.getSiteKey())) {
+                    System.out.println("Site ("+siteKey+") != ("+newWorkspace.getSiteKey()+") FIXING UP project "+theFile);
+                    newWorkspace.setSiteKey(siteKey);
+                    System.out.println("    NOW ("+newWorkspace.getSiteKey()+")");
+                }
             }
 
-            //store into the cache.  Note, there is possibility
-            //that another thread picks this up before we are done with it...
-            //need to implement page lock mechanism to prevent this, and that
-            //means having reliable clean-up code to store at the end of use.
-            //Probably should lock the file reliably....
-            pageCache.store(fullFilePath, newPage);
-            return newPage;
+            //store into the cache.  
+            pageCache.store(fullFilePath, newWorkspace);
+            return newWorkspace;
         }
         catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.read.file",new Object[]{theFile}, e);

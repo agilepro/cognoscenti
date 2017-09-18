@@ -82,21 +82,14 @@ public abstract class NGPage extends ContainerCommon {
             migrateKeyValue(theFile);
         }
 
-        //initially page names consist entirely of address
-        /*
-        String smallName = theFile.getName();
-        if (smallName.endsWith(".sp")) {
-            smallName = smallName.substring(0, smallName.length()-3);
-        }
-        displayNames = new ArrayList<String>();
-        displayNames.add(smallName);
-        */
 
         pageInfo = requireChild("pageInfo", PageInfoRecord.class);
 
         displayNames = pageInfo.getPageNames();
 
         if (site==null) {
+            throw new Exception("workspaces have to be created with a site object sent in now");
+            /*
             //site==null only when read an existing workspace, not creating
             //in this case, the workspace should have a site setting.
             String siteKey = pageInfo.getSiteKey();
@@ -114,6 +107,7 @@ public abstract class NGPage extends ContainerCommon {
 
             //this throws an exception if book not found
             prjSite = NGBook.readSiteByKey(siteKey);
+            */
         }
         else {
             prjSite = site;
@@ -758,6 +752,9 @@ public abstract class NGPage extends ContainerCommon {
 
     public String getSiteKey() {
         return pageInfo.getSiteKey();
+    }
+    protected void setSiteKey(String newKey) {
+        pageInfo.setSiteKey(newKey);
     }
 
 
