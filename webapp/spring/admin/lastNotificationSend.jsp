@@ -4,7 +4,7 @@
 
     long nextScheduleTime = EmailSender.getNextTime(lastSentTime);
     boolean overDue = (ar.nowTime > nextScheduleTime);
-
+    long serverTime = System.currentTimeMillis();
 
 
 
@@ -14,6 +14,10 @@
 
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
+    $scope.serverTime = <%=serverTime%>;
+    $scope.browserTime = new Date().getTime();
+    $scope.overDue = <%=overDue%>;
+    $scope.protocol = "<%=EmailSender.getProperty("mail.transport.protocol")%>";
 });
 </script>
 
@@ -25,48 +29,41 @@ app.controller('myCtrl', function($scope, $http) {
             Latest Notification
     </div>
 
-        <ul>
-            <li>Last Notification Sent Time: <%
+        <table class="table">
+            <tr><td>Last Notification Sent Time:</td><td> <%
                 SectionUtil.nicePrintDateAndTime(out, lastSentTime);
-            %></li>
-            <li>Next Schedule Time: <%
+            %></td></tr>
+            <tr><td>Next Schedule Time:</td><td><%
                 SectionUtil.nicePrintDateAndTime(out, nextScheduleTime);
-            %></li>
-            <li>Last Check Time: <%
+            %></td></tr>
+            <tr><td>Last Check Time:</td><td><%
                 SectionUtil.nicePrintDateAndTime(out, EmailSender.threadLastCheckTime);
-            %></li>
-            <%
-                String protocol = EmailSender.getProperty("mail.transport.protocol");
-                if (!"smtp".equals(protocol)) {
-            %>
-            <li>Protocol: <%ar.writeHtml(protocol);%> -- <b>Will not actually send SMTP email!</b> see 'mail.transport.protocol'</li>
-            <%
-                }
-                if (overDue) {
-            %>
-            <li><b>Email sending is OverDue!</b></li>
-            <%
-                }
-            %>
+            %></td></tr>
+            <tr><td>Server Time:</td><td>{{serverTime}},  {{serverTime|date:'yyyy MMM dd, HH:mm:ss'}}</td></tr>
+            <tr><td>Browser Time:</td><td>{{browserTime}},  {{browserTime|date:'yyyy MMM dd, HH:mm:ss'}}</td></tr>
+            <tr><td>Difference:</td><td>{{(serverTime-browserTime)/1000}} seconds apart.</td></tr>
+            <tr><td>Protocol:</td><td>{{protocol}} <b ng-hide="protocol='smtp'">-- Will not actually send SMTP email!</b></td></tr>
+            <tr ng-show="overDue"><td></td><td><b>Email sending is OverDue!</b></td></tr>
             <%
                 if (EmailSender.threadLastCheckException!=null) {
                        ar.writeHtml( EmailSender.threadLastCheckException.toString() );
-                       ar.write("</ul>\n<pre>\n");
+                       ar.write("<tr><td></td><td>\n<pre>\n");
                        EmailSender.threadLastCheckException.printStackTrace(new PrintWriter(new HTMLWriter(out)));
-                       ar.write("\n</pre>\n<ul>\n");
+                       ar.write("\n</pre>\n</td></tr>\n");
                    }
             %>
             <%
                 if (EmailSender.threadLastMsgException!=null) {
                        ar.writeHtml( EmailSender.threadLastMsgException.toString() );
-                       ar.write("</ul>\n<pre>\n");
+                       ar.write("<tr><td></td><td>\n<pre>\n");
                        EmailSender.threadLastMsgException.printStackTrace(new PrintWriter(new HTMLWriter(out)));
-                       ar.write("\n</pre>\n<ul>\n");
+                       ar.write("\n</pre>\n</td></tr>\n");
                    }
             %>
-            <li><hr/></li>
-            <%
-                ar.write(ar.getSuperAdminLogFile().getSendLog());
-            %>
+        </td></tr>
+    </table>
+        
+        <hr/><ul>
+            <%ar.write(ar.getSuperAdminLogFile().getSendLog());%>
         </ul>
     </div>
