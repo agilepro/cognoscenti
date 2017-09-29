@@ -977,8 +977,8 @@ public class MainTabsViewControler extends BaseController {
       }
 
       
-      @RequestMapping(value = "/{siteId}/{pageId}/getMinutes.json", method = RequestMethod.GET)
-      public void getMinutes(@PathVariable String siteId,@PathVariable String pageId,
+      @RequestMapping(value = "/{siteId}/{pageId}/getMeetingNotes.json", method = RequestMethod.GET)
+      public void getMeetingNotes(@PathVariable String siteId,@PathVariable String pageId,
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
@@ -988,12 +988,12 @@ public class MainTabsViewControler extends BaseController {
 
               sendJson(ar, jo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to read meeting information.", ex);
+              Exception ee = new Exception("Unable to read meeting notes.", ex);
               streamException(ee, ar);
           }
       }
-      @RequestMapping(value = "/{siteId}/{pageId}/updateMinutes.json", method = RequestMethod.POST)
-      public void updateMinutes(@PathVariable String siteId,@PathVariable String pageId,
+      @RequestMapping(value = "/{siteId}/{pageId}/updateMeetingNotes.json", method = RequestMethod.POST)
+      public void updateMeetingNotes(@PathVariable String siteId,@PathVariable String pageId,
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
@@ -1008,17 +1008,17 @@ public class MainTabsViewControler extends BaseController {
               
               NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
               ar.setPageAccessLevels(ngw);
-              ar.assertMember("Must be a member to update minutes "+id);
+              ar.assertMember("Must be a member to update meeting notes "+id);
               MeetingRecord meeting = ngw.findMeeting(id);
               meeting.updateMeetingNotes(meetingInfo);
               JSONObject repo = meetingCache.updateCacheNotes(ngw, ar, id);
-              saveAndReleaseLock(ngw, ar, "Updated Meeting Minutes");
+              saveAndReleaseLock(ngw, ar, "Updated Meeting Notes");
               
               repo.put("serverTime", System.currentTimeMillis());
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to read meeting information.", ex);
+              Exception ee = new Exception("Unable to read meeting notes.", ex);
               streamException(ee, ar);
           }
       }

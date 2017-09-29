@@ -119,8 +119,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     }
     
     
-    $scope.getMinutes = function() {
-        var postURL = "getMinutes.json?id="+$scope.meetId;
+    $scope.getMeetingNotes = function() {
+        var postURL = "getMeetingNotes.json?id="+$scope.meetId;
         $http.get(postURL)
         .success( function(data) {
             $scope.setMinutesData(data);
@@ -130,12 +130,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
         });
         
     }
-    $scope.getMinutes();
+    $scope.getMeetingNotes();
     
     $scope.saveMinutes = function(min) {
         var saveRec = {minutes:[]};
         saveRec.minutes.push(min);
-        var postURL = "updateMinutes.json?id="+$scope.meetId;
+        var postURL = "updateMeetingNotes.json?id="+$scope.meetId;
         var postData = JSON.stringify(saveRec);
         min.lastSave = min.new;
         $http.post(postURL, postData)
@@ -156,7 +156,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             console.log("Autosave is turned off when there is an error.")
             return;
         }
-        var postURL = "updateMinutes.json?id="+$scope.meetId;
+        var postURL = "updateMeetingNotes.json?id="+$scope.meetId;
         var postRecord = {minutes:[]};
         $scope.allMinutes.forEach( function(item) {
             if (item.new != item.old) {

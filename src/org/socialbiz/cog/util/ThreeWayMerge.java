@@ -244,9 +244,11 @@ public class ThreeWayMerge {
         public String getChunk(int bias) {
             return s.substring(pos+bias, pos+bias+3);
         }
+        /*
         public boolean hasChunk(String chunk) {
             return s.indexOf(chunk, pos)>=pos;
         }
+        */
         public int distanceOf(String chunk) {
             return s.indexOf(chunk, pos)-pos;
         }
@@ -255,6 +257,7 @@ public class ThreeWayMerge {
         }
         //finds the first set of three characters from the other string
         //that is found in this string, and returns the offset where found 
+        /*
         public int distance(PosStr a, PosStr b) {
             int numChunks = a.chunksLeft();
             for (int bias=0; bias<numChunks; bias++) {
@@ -268,6 +271,7 @@ public class ThreeWayMerge {
             }
             return -1;
         }
+        */
         
         public String getDiffBlock() {
             if (diffSize<0) {

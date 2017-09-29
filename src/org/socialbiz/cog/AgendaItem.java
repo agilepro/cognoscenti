@@ -202,7 +202,7 @@ public class AgendaItem extends CommentContainer {
         }
     }
     
-    public String getMinutes() {
+    public String getMeetingNotes() {
         return getScalar("minutes");
     }
 

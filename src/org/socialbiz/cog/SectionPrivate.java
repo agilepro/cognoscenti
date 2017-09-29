@@ -25,7 +25,6 @@ import org.socialbiz.cog.exception.ProgramLogicError;
 import java.io.Writer;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class SectionPrivate extends SectionWiki

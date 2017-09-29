@@ -49,6 +49,7 @@ import javax.mail.UIDFolder;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.socialbiz.cog.exception.NGException;
+import org.workcast.json.JSONException;
 
 public class EmailListener extends TimerTask{
 
@@ -600,7 +601,7 @@ class Outliner extends HTMLEditorKit.ParserCallback {
             out.write(text);
             out.flush();
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            JSONException.traceException(ioe, "Outliner.handleText extended from HTMLEditorKit.ParserCallback.handleText");
             /* Ignore this Exception */
         }
     }

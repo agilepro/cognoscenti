@@ -1075,7 +1075,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         for (AgendaItem ai : getSortedAgendaItems()) {
             JSONObject oneAi = new JSONObject();
             oneAi.put("id",    ai.getId());
-            oneAi.put("new",   ai.getMinutes());
+            oneAi.put("new",   ai.getMeetingNotes());
             oneAi.put("title", ai.getSubject());
             oneAi.put("pos",   ai.getPosition());
             ai.extractAttributeBool(oneAi, "timerRunning");

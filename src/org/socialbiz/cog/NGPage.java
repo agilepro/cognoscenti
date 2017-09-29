@@ -295,6 +295,7 @@ public abstract class NGPage extends ContainerCommon {
     public void saveWithoutMarkingModified(String modUser, String comment, Cognoscenti cog) throws Exception
     {
         try {
+            System.out.println("FILESAVE "+getKey()+" tid="+Thread.currentThread().getId()+" by "+modUser+" for "+comment);
             save();
 
             //update the in memory index because the file has changed
