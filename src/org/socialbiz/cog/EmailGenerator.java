@@ -241,7 +241,7 @@ public class EmailGenerator extends DOMFace {
      * a particular role, or they might be addressed directly.   This returns the right
      * OptOutAddress object for the given user ID.
      */
-    public OptOutAddr getOOAForUserID(AuthRequest ar, NGPage ngp, String userId) throws Exception {
+    public OptOutAddr getOOAForUserID(AuthRequest ar, NGWorkspace ngp, String userId) throws Exception {
         for (OptOutAddr ooa : expandAddresses(ar, ngp)) {
             if (ooa.matches(userId))  {
                 return ooa;
@@ -253,7 +253,7 @@ public class EmailGenerator extends DOMFace {
     }
     
 
-    public List<OptOutAddr> expandAddresses(AuthRequest ar, NGPage ngp) throws Exception {
+    public List<OptOutAddr> expandAddresses(AuthRequest ar, NGWorkspace ngp) throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
         for (String roleName : getRoleNames()) {
             NGRole role = ngp.getRole(roleName);

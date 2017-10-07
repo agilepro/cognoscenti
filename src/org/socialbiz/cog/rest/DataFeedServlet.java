@@ -202,7 +202,7 @@ public class DataFeedServlet extends HttpServlet {
 
         for (int i = 0; i < records.size(); i++) {
             TaskListRecord rec = records.get(i);
-            NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKeyOrFail(rec.pageKey);
+            NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKeyOrFail(rec.pageKey);
 
             Element resultEle = DOMUtils.createChildElement(doc, resultSetEle, "Result");
             DOMUtils.createChildElement(doc, resultEle, "No", String.valueOf((i + 1)));
@@ -286,7 +286,7 @@ public class DataFeedServlet extends HttpServlet {
             if (!ngpi.isProject()) {
                 continue;
             }
-            NGPage aPage = ngpi.getPage();
+            NGPage aPage = ngpi.getWorkspace();
             String pageKey = aPage.getKey();
 
             for (GoalRecord gr : aPage.getAllGoals()) {

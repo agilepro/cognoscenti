@@ -48,7 +48,7 @@ public class MeetingNotesCache {
         NoteHolder nh = cache.get(key);
         if (nh==null) {
             //this gets a lock and that can block....
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(workspace);
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( site, workspace ).getWorkspace();
             ar.setPageAccessLevels(ngw);
             nh = cacheMeeting(ngw,ar,meetingId);
         }
@@ -66,7 +66,7 @@ public class MeetingNotesCache {
         }
         
         //this requires waiting for and getting the lock
-        NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(workspace);
+        NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( site, workspace ).getWorkspace();
         ar.setPageAccessLevels(ngw);
         return updateCacheNotes(ngw, ar, meetingId);
     }
@@ -81,7 +81,7 @@ public class MeetingNotesCache {
         }
         
         //this requires waiting for and getting the lock
-        NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(workspace);
+        NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( site, workspace ).getWorkspace();
         ar.setPageAccessLevels(ngw);
         return updateCacheFull(ngw, ar, meetingId);
     }

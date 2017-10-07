@@ -37,12 +37,12 @@ import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGSection;
 import org.socialbiz.cog.NGWorkspace;
-import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.SectionAttachments;
 import org.socialbiz.cog.SectionForNotes;
 import org.socialbiz.cog.SectionLink;
 import org.socialbiz.cog.SectionTask;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.UtilityMethods;
 import org.socialbiz.cog.exception.NGException;
@@ -111,7 +111,7 @@ public class ResourceSection  implements NGResource
     public void loadSection() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPageIndex ngpi = lar.getCogInstance().getContainerIndexByKey(lpageid);
+        NGPageIndex ngpi = lar.getCogInstance().getWSByCombinedKeyOrFail(lpageid);
         if (ngpi==null)
         {
             lrstatus.setStatusCode(404);
@@ -122,7 +122,7 @@ public class ResourceSection  implements NGResource
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
         }
-        NGPage ngp = ngpi.getPage();
+        NGPage ngp = ngpi.getWorkspace();
         lar.setPageAccessLevels(ngp);
 
         NGSection ngs = ngp.getSection(lname);
@@ -449,7 +449,7 @@ public class ResourceSection  implements NGResource
     {
         ltype = NGResource.TYPE_XML;
         ltype = NGResource.TYPE_XML;
-        NGPageIndex ngpi = lar.getCogInstance().getContainerIndexByKey(lpageid);
+        NGPageIndex ngpi = lar.getCogInstance().getWSByCombinedKeyOrFail(lpageid);
         if (ngpi==null)
         {
             throw new NGException("nugen.exception.page.not.found",new Object[]{lid});
@@ -458,7 +458,7 @@ public class ResourceSection  implements NGResource
         {
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
         }
-        NGPage ngp = ngpi.getPage();
+        NGPage ngp = ngpi.getWorkspace();
         lar.setPageAccessLevels(ngp);
 
         String schema = lserverURL + NGResource.SCHEMA_SECTION_HISTORY;
@@ -576,10 +576,10 @@ public class ResourceSection  implements NGResource
         boolean isExternal = linkAddr.startsWith("http");
         if (!isExternal)
         {
-            NGPageIndex foundPI = ar.getCogInstance().getContainerIndexByKey(linkAddr);
+            NGPageIndex foundPI = ar.getCogInstance().getWSByCombinedKeyOrFail(linkAddr);
             if (foundPI!=null && foundPI.isProject())
             {
-                NGPage ngp = foundPI.getPage();
+                NGPage ngp = foundPI.getWorkspace();
                 linkAddr = lserverURL + "p/" + ngp.getKey() + "/leaf.xml";
             }
         }
@@ -1034,7 +1034,7 @@ public class ResourceSection  implements NGResource
 
     private  void loadTaskData(String dataIds) throws Exception {
         ltype = NGResource.TYPE_XML;
-        NGPageIndex ngpi = lar.getCogInstance().getContainerIndexByKey(lpageid);
+        NGPageIndex ngpi = lar.getCogInstance().getWSByCombinedKeyOrFail(lpageid);
         if (ngpi==null) {
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.page.not.found",new Object[]{lid});
@@ -1043,7 +1043,7 @@ public class ResourceSection  implements NGResource
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
         }
-        NGPage ngp = ngpi.getPage();
+        NGPage ngp = ngpi.getWorkspace();
         lar.setPageAccessLevels(ngp);
 
         TaskHelper th = new TaskHelper(lar.getBestUserId(), lserverURL);

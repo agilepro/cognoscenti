@@ -541,14 +541,14 @@ public class UserController extends BaseController {
             ar.assertLoggedIn("Unable to set to watch this page.");
 
             String p = ar.reqParam("pageId");
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
+            NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
             ar.setPageAccessLevels(ngp);
 
             UserProfile uProf = ar.getUserProfile();
             String action = ar.reqParam("action");
             if ("MarkAsTemplate".equals(action))
             {
-                uProf.setProjectAsTemplate(ngp.getKey());
+                uProf.setProjectAsTemplate(ngp.getSiteKey(), ngp.getKey());
             }
             else if ("removeTemplate".equals(action))
             {
@@ -653,7 +653,7 @@ public class UserController extends BaseController {
             UserProfile uProf = ar.getUserProfile();
 
             String p = ar.reqParam("pageId");
-            NGPage project = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
+            NGPage project = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
             ar.setPageAccessLevels(project);
 
             RoleRequestRecord roleRequestRecord = null;
@@ -935,7 +935,7 @@ public class UserController extends BaseController {
             uPage.getResource(folderId, path);
 
             String p = ar.reqParam("p");
-            ar.getCogInstance().getWorkspaceByKeyOrFail(p);
+            ar.getCogInstance().getWSByCombinedKeyOrFail(p);
             request.setAttribute("folderId", folderId);
             request.setAttribute("path", path);
             streamJSPUserLoggedIn(ar, userKey, "BrowseConnection");
@@ -1009,7 +1009,7 @@ public class UserController extends BaseController {
             String mn       = ar.reqParam("mn");
             String containerId = ar.reqParam( "containerId" );
 
-            NGPage page = ar.getCogInstance().getWorkspaceByKeyOrFail( containerId );
+            NGPage page = ar.getCogInstance().getWSByCombinedKeyOrFail( containerId ).getWorkspace();
             ar.getCogInstance().getSiteByIdOrFail(page.getSite().getKey());
 
             String expectedMN = page.emailDependentMagicNumber(emailId);
@@ -1260,7 +1260,7 @@ public class UserController extends BaseController {
             }
             String pageId = ar.reqParam("pageId");
 
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+            NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
             ar.setPageAccessLevels(ngp);
             UserProfile up = getUserToDisplay(ar, userKey);
 

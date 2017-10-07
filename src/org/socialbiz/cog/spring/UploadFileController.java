@@ -387,7 +387,7 @@ public class UploadFileController extends BaseController {
         try {
             ar = getLoggedInAuthRequest(request, response, "message.must.be.login");
             String containerId=  ar.reqParam("containerId") ;
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(containerId);
+            NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(containerId).getWorkspace();
             ar.setPageAccessLevels(ngw);
             String aid = ar.reqParam("aid");
             AttachmentRecord attachment = ngw.findAttachmentByID(aid);
@@ -482,7 +482,7 @@ public class UploadFileController extends BaseController {
         {
             ar = getLoggedInAuthRequest(request, response, "message.must.be.login");
             String containerId=  ar.reqParam("containerId") ;
-            NGPage ngc = ar.getCogInstance().getWorkspaceByKeyOrFail(containerId);
+            NGPage ngc = ar.getCogInstance().getWSByCombinedKeyOrFail(containerId).getWorkspace();
             ar.setPageAccessLevels(ngc);
             String rid = ar.reqParam("rid");
 
@@ -517,7 +517,7 @@ public class UploadFileController extends BaseController {
             String pageId = ar.reqParam("pageId");
             String isEditMode = ar.reqParam("editing");
 
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail( pageId ).getWorkspace();
             AttachmentRecord attachment = ngw.findAttachmentByIDOrFail(aid);
 
             //attachment.clearDeleted();

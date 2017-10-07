@@ -96,6 +96,14 @@ public class NGWorkspace extends NGPage {
                     +"it was in a folder named "+cogFolder.getName());
         }
         containingFolder = cogFolder.getParentFile();
+        
+        String realName = containingFolder.getName();
+        String key = this.getKey();
+        if (!key.equals(realName)) {
+            //maybe the workspace was moved or renamed
+            System.out.println("For some reason the page ("+realName+") thinks its name is ("+key+") FIXING THIS");
+            this.setKey(realName);
+        }
 
         //upgrade all the note, document, and task records
         cleanUpTaskUniversalId();
@@ -197,9 +205,15 @@ public class NGWorkspace extends NGPage {
                 newWorkspace = new NGWorkspace(theFile, newDoc, theSite);
                 
                 if (!siteKey.equals(newWorkspace.getSiteKey())) {
-                    System.out.println("Site ("+siteKey+") != ("+newWorkspace.getSiteKey()+") FIXING UP project "+theFile);
+                    System.out.println("Site ("+siteKey+") != ("+newWorkspace.getSiteKey()+") FIXING UP workspace "+theFile);
                     newWorkspace.setSiteKey(siteKey);
                     System.out.println("    NOW ("+newWorkspace.getSiteKey()+")");
+                }
+                
+                String workspaceKey = workFolder.getName();
+                if (!workspaceKey.equals(newWorkspace.getKey())) {
+                    System.out.println("Workspace ("+workspaceKey+") != ("+newWorkspace.getKey()+") FIXING UP workspace "+theFile);
+                    newWorkspace.setKey(workspaceKey);
                 }
             }
 

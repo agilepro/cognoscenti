@@ -14,9 +14,9 @@ import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
-import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.ReminderMgr;
 import org.socialbiz.cog.ReminderRecord;
@@ -202,11 +202,11 @@ public class DailyDigest {
 
             JSONArray notifyList = new JSONArray();
             for (String noteKey : up.getNotificationList()) {
-                NGPageIndex ngpi = cog.getContainerIndexByKey(noteKey);
+                NGPageIndex ngpi = cog.getWSByCombinedKeyOrFail(noteKey);
                 if (ngpi == null) {
                     continue;
                 }
-                NGPage ngp = ngpi.getPage();
+                NGPage ngp = ngpi.getWorkspace();
                 List<HistoryRecord> histRecs = ngp.getHistoryRange(
                         historyStartTime, processingStartTime);
                 if (histRecs.size() == 0) {
@@ -246,7 +246,7 @@ public class DailyDigest {
             {
                 List<NGPageIndex> containers = new ArrayList<NGPageIndex>();
                 for (String noteKey : up.getNotificationList()) {
-                    NGPageIndex ngci = clone.getCogInstance().getContainerIndexByKey(noteKey);
+                    NGPageIndex ngci = clone.getCogInstance().getWSByCombinedKeyOrFail(noteKey);
 
                     // users might have items on the notification list that don't exist, because
                     // they signed up for notification, and then the project was deleted.
@@ -359,7 +359,7 @@ public class DailyDigest {
                 throw new Exception("How did I get a null value by iterating a List collection?");
             }
             try {
-                NGContainer container = ngpi.getContainer();
+                NGWorkspace container = ngpi.getWorkspace();
                 List<HistoryRecord> histRecs = container.getHistoryRange(
                         historyRangeStart, historyRangeEnd);
                 if (histRecs.size() == 0) {
@@ -568,7 +568,7 @@ public class DailyDigest {
         ar.writeURLData(gr.getId());
         ar.write(".htm");
         ar.write("?");
-        NGPage ngp = (NGPage) ngpi.getContainer();
+        NGWorkspace ngp = ngpi.getWorkspace();
         ar.write(AccessControl.getAccessGoalParams(ngp, gr));
         ar.write("&ukey=");
         ar.writeURLData(up.getKey());
@@ -606,7 +606,7 @@ public class DailyDigest {
             return noOfReminders;
         }
         int count = 0;
-        NGPage aPage = ngpi.getPage();
+        NGPage aPage = ngpi.getWorkspace();
 
         ReminderMgr rMgr = aPage.getReminderMgr();
         List<ReminderRecord> rVec = rMgr.getUserReminders(up);
@@ -730,7 +730,7 @@ public class DailyDigest {
             if (!ngpi.isProject()) {
                 continue;
             }
-            NGPage aPage = ngpi.getPage();
+            NGPage aPage = ngpi.getWorkspace();
             for (GoalRecord gr : aPage.getAllGoals()) {
                 if (gr.isPassive()) {
                     //ignore tasks that are from other servers
@@ -766,7 +766,7 @@ public class DailyDigest {
 
         public ProjectGoal(GoalRecord aGoal, NGPage aPage, Cognoscenti cog) throws Exception {
             goal = aGoal;
-            ngpi = cog.getContainerIndexByKey(aPage.getKey());
+            ngpi = cog.getWSBySiteAndKey(aPage.getSiteKey(), aPage.getKey());
         }
     }
 

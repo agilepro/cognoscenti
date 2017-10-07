@@ -32,14 +32,16 @@ import org.workcast.json.JSONObject;
 public class OptOutRolePlayer extends OptOutAddr {
 
     String containerID;
+    String siteID;
     String roleName;
 
-    public OptOutRolePlayer(AddressListEntry _assignee, String containerKey, String _roleName) {
+    public OptOutRolePlayer(AddressListEntry _assignee, String siteKey, String containerKey, String _roleName) {
         super(_assignee);
         if (assignee.getEmail()==null || assignee.getEmail().length()==0) {
             throw new RuntimeException("Somehow got an opt out addressee with a missing email address.  Should not happen");
         }
         containerID = containerKey;
+        siteID = siteKey;
         roleName = _roleName;
     }
 
@@ -48,8 +50,8 @@ public class OptOutRolePlayer extends OptOutAddr {
         if (emailId==null || emailId.length()==0) {
             throw new Exception("There is a problem with this addressee, the email field is blank????");
         }
-        NGPageIndex ngpi = clone.getCogInstance().getContainerIndexByKeyOrFail(containerID);
-        NGContainer ngc = ngpi.getContainer();
+        NGPageIndex ngpi = clone.getCogInstance().getWSBySiteAndKeyOrFail(siteID, containerID);
+        NGWorkspace ngc = ngpi.getWorkspace();
 
         //if the project no longer exists, then just use the generic response.
         if (ngc==null) {
@@ -80,8 +82,8 @@ public class OptOutRolePlayer extends OptOutAddr {
 
     public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
         JSONObject jo = super.getUnsubscribeJSON(ar);
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKeyOrFail(containerID);
-        NGContainer ngw = ngpi.getContainer();
+        NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteID, containerID);
+        NGWorkspace ngw = ngpi.getWorkspace();
         String emailId = assignee.getEmail();
         jo.put("leaveRole", ar.baseURL+"t/EmailAdjustment.htm?st=role&p="+containerID
             +"&role="+URLEncoder.encode(roleName,"UTF-8")

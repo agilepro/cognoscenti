@@ -35,6 +35,7 @@ import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.LicensedURL;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.RemoteGoal;
 import org.socialbiz.cog.UserManager;
@@ -81,7 +82,7 @@ public class CreateProjectController extends BaseController {
             String template    = newConfig.optString("template", null);
             NGPage template_ngp = null;
             if (template!=null && template.length()>0) {
-                template_ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(template);
+                template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(template).getWorkspace();
             }            
             
             //since this is a new project in a new folder, we don't have a folder in 
@@ -250,7 +251,7 @@ public class CreateProjectController extends BaseController {
                 NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
                 newPage = createPage(owner, site, projectName, null, upstream, ar.nowTime, ar.getCogInstance());
                 if (templateKey!=null && templateKey.length()>0) {
-                    NGPage template_ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(templateKey);
+                    NGPage template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(templateKey).getWorkspace();
                     newPage.injectTemplate(ar, template_ngp);
                 }
                 if (upstream!=null && upstream.length()>0) {
@@ -318,24 +319,24 @@ public class CreateProjectController extends BaseController {
  * The loc parameter is a path to a place where the folder already exists, and
  * we want to convert an existing folder to a project.
  */
-    private static NGPage createPage(UserProfile uProf, NGBook site, String workspaceName,
+    private static NGWorkspace createPage(UserProfile uProf, NGBook site, String workspaceName,
             String loc, String upstream, long nowTime, Cognoscenti cog) throws Exception {
         if (!site.primaryOrSecondaryPermission(uProf)) {
             throw new NGException("nugen.exception.not.member.of.account",
                     new Object[]{site.getFullName()});
         }
 
-        NGPage ngPage = null;
+        NGWorkspace newWorkspace = null;
         if (loc==null){
             //normal, create a brand new empty project
             String pageKey = makeGoodSearchableName(workspaceName);
             if (pageKey.length()>30) {
                 pageKey = pageKey.substring(0,30);
             }
-            ngPage = site.createProjectByKey(uProf, pageKey, nowTime, cog);
+            newWorkspace = site.createProjectByKey(uProf, pageKey, nowTime, cog);
             List<String> nameSet = new ArrayList<String>();
             nameSet.add(workspaceName);
-            ngPage.setPageNames(nameSet);
+            newWorkspace.setPageNames(nameSet);
         }
         else {
             //in this case, loc is a path from the root of the site
@@ -352,21 +353,21 @@ public class CreateProjectController extends BaseController {
                         + expectedLoc.toString());
             }
 
-            ngPage = site.convertFolderToProj(uProf, expectedLoc, nowTime, cog);
+            newWorkspace = site.convertFolderToProj(uProf, expectedLoc, nowTime, cog);
         }
 
 
         //check for and set the upstream link
         if (upstream!=null && upstream.length()>0) {
-            ngPage.setUpstreamLink(upstream);
+            newWorkspace.setUpstreamLink(upstream);
         }
 
-        ngPage.setSite(site);
-        ngPage.saveWithoutAuthenticatedUser(uProf.getUniversalId(), nowTime, "Creating a workspace", cog);
+        newWorkspace.setSite(site);
+        newWorkspace.saveWithoutAuthenticatedUser(uProf.getUniversalId(), nowTime, "Creating a workspace", cog);
 
-        cog.makeIndex(ngPage);
+        cog.makeIndexForWorkspace(newWorkspace);
 
-        return ngPage;
+        return newWorkspace;
     }
 
     private static NGPage createTemplateProject(AuthRequest ar, String siteId) throws Exception {
@@ -382,7 +383,7 @@ public class CreateProjectController extends BaseController {
 
             String templateName = ar.defParam("templateName", null);
             if (templateName!=null && templateName.length()>0) {
-                NGPage template_ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(templateName);
+                NGPage template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(templateName).getWorkspace();
                 project.injectTemplate(ar, template_ngp);
             }
             return project;
@@ -416,7 +417,7 @@ public class CreateProjectController extends BaseController {
 
             // this is the subprocess address to link to
             String subProcessURL = thisUrl.getCombinedRepresentation();
-            NGPage parentProject = ar.getCogInstance().getWorkspaceByKeyOrFail(projectKey);
+            NGPage parentProject = ar.getCogInstance().getWSByCombinedKeyOrFail(projectKey).getWorkspace();
 
             GoalRecord goal = parentProject.getGoalOrFail(goalId);
             goal.setSub(subProcessURL);

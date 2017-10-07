@@ -44,7 +44,7 @@ public class UserCache {
                 continue;
             }
 
-            NGPage aPage = ngpi.getPage();
+            NGPage aPage = ngpi.getWorkspace();
             for (GoalRecord gr : aPage.getAllGoals()) {
 
                 if (gr.isPassive()) {

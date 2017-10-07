@@ -179,7 +179,7 @@ public class OptOutAddr {
      * Get the users from the role, and add them, only if they are not already
      * in the list. Adds a OptOutRolePlayer type of address.
      */
-    public static void appendUsersFromRole(NGContainer ngc, String roleName,
+    public static void appendUsersFromRole(NGWorkspace ngc, String roleName,
             List<OptOutAddr> collector) throws Exception {
 		try {
 			List<AddressListEntry> players = ngc.getRoleOrFail(roleName)
@@ -192,7 +192,7 @@ public class OptOutAddr {
 				}
 			    String email = ale.getEmail();
 			    if (email!=null && email.length()>0) {
-    				OptOutAddr.appendOneUser(new OptOutRolePlayer(ale, ngc.getKey(), roleName),
+    				OptOutAddr.appendOneUser(new OptOutRolePlayer(ale, ngc.getSiteKey(), ngc.getKey(), roleName),
     						collector);
 			    }
 			}
@@ -211,7 +211,7 @@ public class OptOutAddr {
                 if (!muteRole.isPlayer(ale)) {
                     String email = ale.getEmail();
                     if (email!=null && email.length()>0) {
-                        OptOutAddr.appendOneUser(new OptOutRolePlayer(ale, ngw.getKey(), roleName),
+                        OptOutAddr.appendOneUser(new OptOutRolePlayer(ale, ngw.getSiteKey(), ngw.getKey(), roleName),
                                 collector);
                     }
                 }

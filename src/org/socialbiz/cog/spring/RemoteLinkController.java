@@ -638,7 +638,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.create.connection");
             ar.getCogInstance().getSiteByIdOrFail(siteId);
-            ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+            ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId );
             String action = ar.reqParam("action");
             String aid = ar.defParam("aid", null);
 

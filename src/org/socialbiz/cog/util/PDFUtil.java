@@ -44,11 +44,11 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.IdGenerator;
 import org.socialbiz.cog.LineIterator;
 import org.socialbiz.cog.MimeTypes;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
-import org.socialbiz.cog.TopicRecord;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.SectionWiki;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UserProfile;
 import org.workcast.streams.MemFile;
 
@@ -137,8 +137,8 @@ public class PDFUtil {
     /**
      * TODO: This appears to be a duplicate method, eliminate this or the other
      */
-    public void serveUpFile(AuthRequest ar, String pageId) throws Exception{
-        NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    public void serveUpFile(AuthRequest ar, String siteId, String pageId) throws Exception{
+        NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
         ar.setPageAccessLevels(ngp);
 
         List<TopicRecord> publicNotes = new ArrayList<TopicRecord>();

@@ -45,7 +45,7 @@ public class TestBuildSite implements TestSet {
 
     private void assureTestSiteNotThere() throws Exception {
         //check to see if there is a pre-existing site, and abort
-        NGPageIndex testSiteCon = cog.getContainerIndexByKey(siteKey);
+        NGPageIndex testSiteCon = cog.getSiteByKey(siteKey);
         if (testSiteCon==null) {
             return;
         }
@@ -63,7 +63,7 @@ public class TestBuildSite implements TestSet {
             throw new Exception("Strange.  Found a site with the key '"+siteKey+"' but it is not a NGBook .... don't know what to do with it.");
         }
 
-        NGBook testSite = (NGBook) testSiteCon.getContainer();
+        NGBook testSite = testSiteCon.getSite();
         NGBook.destroySiteAndAllProjects(testSite, cog);
     }
 

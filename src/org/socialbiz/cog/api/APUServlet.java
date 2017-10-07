@@ -230,7 +230,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
             if (!ngpi.isProject()) {
                 continue;
             }
-            NGPage aPage = ngpi.getPage();
+            NGPage aPage = ngpi.getWorkspace();
 
             for (GoalRecord gr : aPage.getAllGoals()) {
                 if (gr.isPassive() || !gr.isAssignee(up)) {

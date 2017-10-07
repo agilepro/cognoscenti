@@ -29,14 +29,16 @@ import org.workcast.json.JSONObject;
 public class OptOutTopicSubscriber extends OptOutAddr {
 
     String containerID;
+    String siteID;
     TopicRecord topic;
 
-    public OptOutTopicSubscriber(AddressListEntry _assignee, String containerKey, TopicRecord tr) {
+    public OptOutTopicSubscriber(AddressListEntry _assignee, String siteKey, String containerKey, TopicRecord tr) {
         super(_assignee);
         if (assignee.getEmail()==null || assignee.getEmail().length()==0) {
             throw new RuntimeException("Somehow got an opt out addressee with a missing email address: "+assignee.getName()+" / "+assignee.getUniversalId() );
         }
         containerID = containerKey;
+        siteID = siteKey;
         topic = tr;
     }
 
@@ -45,8 +47,8 @@ public class OptOutTopicSubscriber extends OptOutAddr {
         if (emailId==null || emailId.length()==0) {
             throw new Exception("There is a problem with this addressee, the email field is blank????");
         }
-        NGPageIndex ngpi = clone.getCogInstance().getContainerIndexByKeyOrFail(containerID);
-        NGContainer ngc = ngpi.getContainer();
+        NGPageIndex ngpi = clone.getCogInstance().getWSBySiteAndKeyOrFail(siteID, containerID);
+        NGWorkspace ngc = ngpi.getWorkspace();
 
         //if the project no longer exists, then just use the generic response.
         if (ngc==null) {
@@ -68,8 +70,8 @@ public class OptOutTopicSubscriber extends OptOutAddr {
 
     public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
         JSONObject jo = super.getUnsubscribeJSON(ar);
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKeyOrFail(containerID);
-        NGContainer ngw = ngpi.getContainer();
+        NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteID, containerID);
+        NGWorkspace ngw = ngpi.getWorkspace();
         jo.put("topicName",  topic.getSubject());
         jo.put("topicURL", ar.baseURL + ar.getResourceURL(ngw, "noteZoom"+topic.getId()+".htm"));
         jo.put("wsURL", ar.baseURL + ar.getDefaultURL(ngpi));

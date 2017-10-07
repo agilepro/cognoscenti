@@ -597,7 +597,7 @@ public class ProjectGoalController extends BaseController {
 
         for (NGPageIndex ngpi : ar.getCogInstance().getAllProjectsInSite(siteId)) {
             if (ngpi.containerKey.equals(projectID)) {
-                NGPage page = ngpi.getPage();
+                NGPage page = ngpi.getWorkspace();
                 ar.setPageAccessLevels(page);
                 ProcessRecord process = page.getProcess();
                 LicensedURL thisProcessUrl = process.getWfxmlLink(ar);
@@ -615,7 +615,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String gid = "";
         try{
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to see a action item.");
             gid = ar.reqParam("gid");
@@ -637,7 +637,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String gid = "";
         try{
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to create a action item.");
             ar.assertNotFrozen(ngp);
@@ -710,7 +710,7 @@ public class ProjectGoalController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to create a action item.");
             ar.assertNotFrozen(ngp);
@@ -757,7 +757,7 @@ public class ProjectGoalController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to get action item history.");
             String gid = ar.reqParam("gid");
@@ -781,7 +781,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String did = "";
         try{
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to update a decision.");
             ar.assertNotFrozen(ngp);
@@ -834,7 +834,7 @@ public class ProjectGoalController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             JSONObject repo = new JSONObject();
             JSONArray shareList = new JSONArray();
             for (TaskArea ta : ngw.getTaskAreas()) {
@@ -867,7 +867,7 @@ public class ProjectGoalController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             TaskArea ta = null;
             boolean needSave = false;
             if ("~new~".equals(id)) {

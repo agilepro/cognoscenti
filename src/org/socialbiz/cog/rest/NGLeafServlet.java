@@ -202,7 +202,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
             String resource = path.substring(slashPos + 1);
 
 
-            NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageid);
+            NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKeyOrFail(pageid);
             if (ngpi == null) {
                 // wait, did not find it. Look again for all lower case
                 // there was a bug in teh system earlier that used to record
@@ -211,7 +211,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
                 // but references to the old pages still exist upper case. This
                 // should fix that at least temporarily.
                 pageid = pageid.toLowerCase();
-                ngpi = ar.getCogInstance().getContainerIndexByKey(pageid);
+                ngpi = ar.getCogInstance().getWSByCombinedKeyOrFail(pageid);
                 if (ngpi == null) {
                     throw new NGException("nugen.exception.project.not.found.check.link", new Object[]{pageid});
                 }
@@ -263,7 +263,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
                 return;
             }
 
-            NGWorkspace ngw = ngpi.getPage();
+            NGWorkspace ngw = ngpi.getWorkspace();
             ar.setPageAccessLevels(ngw);
 
             // see if this is an attachment

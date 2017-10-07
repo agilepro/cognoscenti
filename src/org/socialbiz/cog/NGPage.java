@@ -74,45 +74,16 @@ public abstract class NGPage extends ContainerCommon {
             throw new Exception("Programmer Logic Error: the only file that holds a page should be called ProjInfo.xml");
         }
         
-        //migration code from a time when the key was ONLY the file name.
-        //need to store the key in the file itself, and get that from the
-        //filename properly
-        String key = getKey();
-        if (key==null || key.length()==0) {
-            migrateKeyValue(theFile);
-        }
-
-
         pageInfo = requireChild("pageInfo", PageInfoRecord.class);
 
         displayNames = pageInfo.getPageNames();
 
         if (site==null) {
             throw new Exception("workspaces have to be created with a site object sent in now");
-            /*
-            //site==null only when read an existing workspace, not creating
-            //in this case, the workspace should have a site setting.
-            String siteKey = pageInfo.getSiteKey();
-
-            if (siteKey==null || siteKey.length()==0 || "main".equals(siteKey)) {
-                //silly archaic default, originally pages 'assumed' a site by default
-                //so if the value was missing, we assumed a particular value.
-                //At one time the default site was "main"
-                //but later changed to "mainbook".  Only one server still has this
-                //problem.  Time to fix that server and remove this code.
-                siteKey="mainbook";
-                pageInfo.setSiteKey("mainbook");
-                System.out.println("This server still has a workspace without any site key setting: "+key);
-            }
-
-            //this throws an exception if book not found
-            prjSite = NGBook.readSiteByKey(siteKey);
-            */
         }
-        else {
-            prjSite = site;
-            pageInfo.setSiteKey(site.getKey());
-        }
+        
+        prjSite = site;
+        pageInfo.setSiteKey(site.getKey());
 
         NGSection mAtt = getRequiredSection("Attachments");
         SectionAttachments.assureSchemaMigration(mAtt, this);
@@ -316,9 +287,10 @@ public abstract class NGPage extends ContainerCommon {
      */
     private void refreshOutboundLinks(Cognoscenti cog) throws Exception {
         String key = getKey();
-        NGPageIndex ngpi = cog.getContainerIndexByKey(key);
+        String siteKey = getSiteKey();
+        NGPageIndex ngpi = cog.getWSBySiteAndKey(siteKey, key);
         if (ngpi == null) {
-            throw new NGException("nugen.exception.refresh.links", new Object[] { key });
+            throw new Exception("unable to find a workspace with site ("+siteKey+") and key ("+key+")");
         }
         ngpi.unlinkAll();
         ngpi.buildLinks(this);

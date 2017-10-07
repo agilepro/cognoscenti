@@ -655,7 +655,7 @@ public class ResourceLocater
         String token1 = getPathElement(1);
         String token2 = getPathElement(2);
         String token3 = getPathElement(3);
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(token1);
+        NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKeyOrFail(token1);
         if (ngpi==null)
         {
             lrstatus.setStatusCode(404);
@@ -669,7 +669,7 @@ public class ResourceLocater
         }
 
         NGResource newRs = null;
-        NGPage ngp = ngpi.getPage();
+        NGPage ngp = ngpi.getWorkspace();
         ar.setPageAccessLevels(ngp);
 
         String relayid = token2.substring(5);

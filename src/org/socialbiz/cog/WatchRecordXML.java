@@ -133,12 +133,12 @@ public class WatchRecordXML extends DOMFace
         @Override
         public int compare(WatchRecordXML arg0, WatchRecordXML arg1) {
             try {
-                NGPageIndex ngpi0 = cog.getContainerIndexByKey(arg0.getPageKey());
+                NGPageIndex ngpi0 = cog.getWSByCombinedKeyOrFail(arg0.getPageKey());
                 long time0 = 0;
                 if (ngpi0!=null) {
                     time0 = ngpi0.lastChange;
                 }
-                NGPageIndex ngpi1 = cog.getContainerIndexByKey(arg1.getPageKey());
+                NGPageIndex ngpi1 = cog.getWSByCombinedKeyOrFail(arg1.getPageKey());
                 long time1 = 0;
                 if (ngpi1!=null) {
                     time1 = ngpi1.lastChange;

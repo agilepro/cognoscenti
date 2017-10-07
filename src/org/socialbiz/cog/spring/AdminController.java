@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionWiki;
 import org.socialbiz.cog.exception.NGException;
 import org.springframework.stereotype.Controller;
@@ -45,7 +46,7 @@ public class AdminController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Must be an admin to change workspace info.");
             JSONObject newConfig = getPostedObject(ar);
@@ -71,7 +72,7 @@ public class AdminController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Must be an admin to change workspace info.");
             JSONObject newData = getPostedObject(ar);
@@ -96,7 +97,7 @@ public class AdminController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Must be an admin to change workspace info.");
             JSONObject newData = getPostedObject(ar);
@@ -147,14 +148,14 @@ public class AdminController extends BaseController {
     //TODO: just update the list of names instead of separate operations to add and delete
     //TODO: change this to a JSON post
     @RequestMapping(value = "/{siteId}/{project}/deletePreviousProjectName.htm", method = RequestMethod.GET)
-    public void deletePreviousAccountNameHandler(@PathVariable String siteId, @PathVariable String project,
+    public void deletePreviousAccountNameHandler(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,
             HttpServletResponse response)
     throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("User must be logged in to delete previous name of workspace.");
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(project);
+            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Unable to change the name of this page.");
 
@@ -171,7 +172,7 @@ public class AdminController extends BaseController {
 
             ar.resp.sendRedirect("admin.htm");
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.admin.delete.previous.project.name", new Object[]{project,siteId} , ex);
+            throw new NGException("nugen.operation.fail.admin.delete.previous.project.name", new Object[]{pageId,siteId} , ex);
         }
     }
 

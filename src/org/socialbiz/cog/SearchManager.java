@@ -63,8 +63,9 @@ public class SearchManager {
 
             if (ngpi.isProject()) {
 
-                NGPage ngp = ngpi.getPage();
+                NGPage ngp = ngpi.getWorkspace();
                 String projectKey = ngp.getKey();
+                String siteKey = ngp.getSiteKey();
                 String projectName = ngp.getFullName();
                 String accountName = ngp.getSite().getFullName();
 
@@ -73,6 +74,7 @@ public class SearchManager {
                     Document doc = new Document();
                     doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
                     doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
                     doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
                     doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
                     doc.add(new Field("NOTEID", "$", TextField.TYPE_STORED));
@@ -100,6 +102,7 @@ public class SearchManager {
                     Document doc = new Document();
                     doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
                     doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
                     doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
                     doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
                     doc.add(new Field("NOTEID", note.getId(), TextField.TYPE_STORED));
@@ -119,6 +122,7 @@ public class SearchManager {
                     Document doc = new Document();
                     doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
                     doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
                     doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
                     doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
                     doc.add(new Field("MEETID", meet.getId(), TextField.TYPE_STORED));
@@ -164,12 +168,13 @@ public class SearchManager {
         {
             Document hitDoc = isearcher.doc(hits[i].doc);
             String key = hitDoc.get("PAGEKEY");
+            String siteKey = hitDoc.get("SITEKEY");
             String noteId = hitDoc.get("NOTEID");
             String meetId = hitDoc.get("MEETID");
             String linkAddr = null;
             String noteSubject = null;
 
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(key);
+            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteKey, key).getWorkspace();
 
             //if restricted to one site, check that site first and skip if not matching
             if (siteId!=null) {

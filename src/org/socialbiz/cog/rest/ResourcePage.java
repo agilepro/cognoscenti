@@ -32,9 +32,10 @@ import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGSection;
-import org.socialbiz.cog.TopicRecord;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.SearchResultRecord;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UtilityMethods;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -87,7 +88,7 @@ public class ResourcePage implements NGResource
             throw new Exception("ID for the page resource must be set before attempting to access the resource.");
         }
 
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(lid);
+        NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKeyOrFail(lid);
         if (ngpi==null)
         {
             lrstatus.setStatusCode(404);
@@ -98,7 +99,7 @@ public class ResourcePage implements NGResource
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
         }
-        NGPage ngp = ngpi.getPage();
+        NGPage ngp = ngpi.getWorkspace();
         if (ngp==null)
         {
             lrstatus.setStatusCode(404);
@@ -121,12 +122,12 @@ public class ResourcePage implements NGResource
     public NGPage getPageIfExist()
         throws Exception
     {
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(lid);
+        NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKeyOrFail(lid);
         if (ngpi==null)
         {
             return null;
         }
-        NGPage ngp = ngpi.getPage();
+        NGPage ngp = ngpi.getWorkspace();
         return ngp;
     }
 
@@ -152,7 +153,7 @@ public class ResourcePage implements NGResource
 
         //TODO: surely we can do better than a purely random ID
         String pageAddress = IdGenerator.generateKey();
-        NGPage ngp = ngb.createProjectByKey(ar, pageAddress);
+        NGWorkspace newWorkspace = ngb.createProjectByKey(ar, pageAddress);
 
         String name = DOMUtils.textValueOfChild(element_page, "name", true);
         String abbreviation = DOMUtils.textValueOfChild(element_page, "abbreviation", true);
@@ -162,24 +163,24 @@ public class ResourcePage implements NGResource
             nameSet.add(abbreviation);
         }
 
-        ngp.setPageNames(nameSet);
-        ngp.setSite(ngb);
+        newWorkspace.setPageNames(nameSet);
+        newWorkspace.setSite(ngb);
 
         Element element_goal = DOMUtils.getChildElement(element_page, "goal");
         String synopsis = DOMUtils.textValueOfChild(element_goal, "synopsis", true);
         String description = DOMUtils.textValueOfChild(element_goal, "description", true);
-        ProcessRecord process = ngp.getProcess();
+        ProcessRecord process = newWorkspace.getProcess();
         process.setSynopsis(synopsis);
         process.setDescription(description);
         Element element_sections = DOMUtils.getChildElement(element_page, "sections");
         for (Element element_section : DOMUtils.getChildElementsList(element_sections)) {
             String sname =  DOMUtils.getChildText(element_section,"secname").trim();
             if(sname != null && sname.length()>0
-                && ngp.getSection(sname) == null){
-                ngp.createSection(sname, ar);
+                && newWorkspace.getSection(sname) == null){
+                newWorkspace.createSection(sname, ar);
             }
 
-            NGSection ngs = ngp.getSectionOrFail(sname);
+            NGSection ngs = newWorkspace.getSectionOrFail(sname);
             if(ngs.getName().equals("Description")
                     || ngs.getName().equals("Public Description")
                     || ngs.getName().equals("Notes")
@@ -187,16 +188,16 @@ public class ResourcePage implements NGResource
                     || ngs.getName().equals("Content")
                     || ngs.getName().equals("XXX Notes") ) {
 
-                ResourceSection.updateWikiSection(ngp, ngs,element_section, ar);
+                ResourceSection.updateWikiSection(newWorkspace, ngs,element_section, ar);
 
             }else if(ngs.getName().equals("Tasks")){
-                ResourceSection.updateTaskSection(ngp, ngs,element_section, ar);
+                ResourceSection.updateTaskSection(newWorkspace, ngs,element_section, ar);
             }else if(ngs.getName().equals("Attachments")){
-                ResourceSection.updateAttachmentSection(ngp, ngs,element_section, ar);
+                ResourceSection.updateAttachmentSection(newWorkspace, ngs,element_section, ar);
             }else if(ngs.getName().equals("Comments")){
-                ResourceSection.updateCommentSection(ngp, ngs,element_section, ar);
+                ResourceSection.updateCommentSection(newWorkspace, ngs,element_section, ar);
             }else if(ngs.getName().equals("Public Links")){
-                ResourceSection.updateLinkSection(ngp, ngs,element_section);
+                ResourceSection.updateLinkSection(newWorkspace, ngs,element_section);
             }else if(ngs.getName().equals("See Also")
                 || ngs.getName().equals("Public Comments")
                 || ngs.getName().equals("Geospatial")
@@ -208,15 +209,15 @@ public class ResourcePage implements NGResource
             }
         }
 
-        ngp.saveFile(ar, "Creating a page from a REST API request");
-        ar.getCogInstance().makeIndex(ngp);
+        newWorkspace.saveFile(ar, "Creating a page from a REST API request");
+        ar.getCogInstance().makeIndexForWorkspace(newWorkspace);
 
         //Create Status
-        lrstatus.setResourceid(ngp.getKey());
-        String pageAddr = lserverURL + "p/" + ngp.getKey() + "/leaf.xml";
+        lrstatus.setResourceid(newWorkspace.getKey());
+        String pageAddr = lserverURL + "p/" + newWorkspace.getKey() + "/leaf.xml";
         lrstatus.setResourceURL(pageAddr);
         lrstatus.setSuccess(NGResource.OP_SUCCEEDED);
-        String cmsg = "A new page \"" + ngp.getKey() + "\" is created";
+        String cmsg = "A new page \"" + newWorkspace.getKey() + "\" is created";
         lrstatus.setCommnets(cmsg);
         ltype = lrstatus.getType();
         loutdoc = lrstatus.getDocument();
@@ -227,39 +228,6 @@ public class ResourcePage implements NGResource
         if (true) {
             throw new Exception("Deleting through this rest API no longer supported");
         }
-        /*
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(lid);
-        if (ngpi==null)
-        {
-            lrstatus.setStatusCode(404);
-            throw new NGException("nugen.exception.page.not.found",new Object[]{lid});
-        }
-        NGPage ngp = getPageIfExist();
-        if (ngp==null)
-        {
-            //page does not exist.  Delete is supposed to be idempotent
-            //so if you do it a second time it does not cause error
-            //if page is not there, then report success.
-            //return;
-        }
-        ar.setPageAccessLevels(ngp);
-
-       // ngp.markDeleted(ar);
-         //Create Status
-        lrstatus.setResourceid(ngp.getKey());
-        lrstatus.setSuccess(NGResource.OP_SUCCEEDED);
-        String cmsg = null;
-        if(ngp.isDeleted()){
-            cmsg = "Successfully deleted page " + ngp.getFullName();
-        }
-        else{
-            lrstatus.setStatusCode(500);
-            cmsg = "Failed to delete page " + ngp.getFullName();
-        }
-        lrstatus.setCommnets(cmsg);
-        ltype = lrstatus.getType();
-        loutdoc = lrstatus.getDocument();
-        */
     }
 
     public void loadContent() throws Exception
@@ -383,7 +351,7 @@ public class ResourcePage implements NGResource
     public void loadParent() throws Exception {
         ltype = NGResource.TYPE_XML;
         getPageMustExist();
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(lid);
+        NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKeyOrFail(lid);
 
         String schema = lserverURL + NGResource.SCHEMA_PAGELIST;
         loutdoc = DOMUtils.createDocument("pagelist");

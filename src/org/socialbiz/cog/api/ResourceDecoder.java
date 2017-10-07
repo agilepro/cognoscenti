@@ -108,7 +108,7 @@ public class ResourceDecoder {
             setUserFromLicense(ar);
             return;
         }
-        workspace = ar.getCogInstance().getWorkspaceByKeyOrFail(projId);
+        workspace = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId,projId).getWorkspace();
         ar.setPageAccessLevels(workspace);
         lic = workspace.getLicense(licenseId);
         if (lic==null) {

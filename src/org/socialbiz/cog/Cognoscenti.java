@@ -44,10 +44,10 @@ public class Cognoscenti {
     private UserManager userManager;
 
     //managing the known containers
-    //TODO: get rid of this static variable
-    private static List<NGPageIndex> allContainers;
-    private static Hashtable<String, NGPageIndex> keyToContainer;
-    private static Hashtable<String, NGPageIndex> upstreamToContainer;
+    private List<NGPageIndex> allContainers;
+    private Hashtable<String, NGPageIndex> keyToSites;
+    private Hashtable<String, NGPageIndex> keyToWorkspace;
+    private Hashtable<String, NGPageIndex> upstreamToContainer;
 
     // there may be a number of pages that have unsent email, and so this is a
     // list of keys, but there can be extras in this list without problem
@@ -170,7 +170,8 @@ System.out.println("Weaver Server Object == Start the Server");
         isInitialized = false;
         initializingNow = false;
         allContainers = null;
-        keyToContainer = null;
+        keyToSites = null;
+        keyToWorkspace = null;
         upstreamToContainer = null;
         projectsWithEmailToSend = null;
     }
@@ -311,23 +312,70 @@ System.out.println("Weaver Server Object == Start the Server");
 
 
 
-    public NGPageIndex getContainerIndexByKey(String key) throws Exception {
+    public NGPageIndex getSiteByKey(String key) throws Exception {
         assertInitialized();
         if (key == null) {
             // this programming mistake should never happen
-            throw new ProgramLogicError("null value passed as key to getContainerIndexByKey");
+            throw new ProgramLogicError("null value passed as key to getSiteByKey");
         }
-        return keyToContainer.get(key);
+        return keyToSites.get(key);
     }
 
-    public NGPageIndex getContainerIndexByKeyOrFail(String key) throws Exception {
-        NGPageIndex ngpi = getContainerIndexByKey(key);
+    public NGPageIndex getSiteByKeyOrFail(String key) throws Exception {
+        NGPageIndex ngpi = getSiteByKey(key);
         if (ngpi == null) {
             throw new NGException("nugen.exception.container.not.found", new Object[] { key });
         }
         return ngpi;
     }
 
+    public NGPageIndex getWSBySiteAndKey(String siteKey, String key) throws Exception {
+        if (siteKey == null) {
+            // this programming mistake should never happen
+            throw new ProgramLogicError("null value passed as siteKey to getWorkspaceBySiteAndKey");
+        }
+        if (key == null) {
+            // this programming mistake should never happen
+            throw new ProgramLogicError("null value passed as key to getWorkspaceBySiteAndKey");
+        }
+        assertInitialized();
+        String realKey = siteKey + "|" + key;
+        return keyToWorkspace.get(realKey);
+    }
+    public NGPageIndex getWSBySiteAndKeyOrFail(String siteKey, String key) throws Exception {
+        NGPageIndex ngpi = getWSBySiteAndKey(siteKey, key);
+        if (ngpi == null) {
+            throw new Exception("Unable to find a workspace with the site ("+siteKey+") and key ("+key+")");
+        }
+        return ngpi;
+    }
+    /**
+     * Combined key is   "site|workspace"
+     * That is, the site key, a vertical bar, and the workspace key
+     */
+    public NGPageIndex getWSByCombinedKey(String combinedKey) throws Exception {
+        NGPageIndex ngpi = keyToWorkspace.get(combinedKey);
+        if (ngpi != null) {
+            return ngpi;
+        }
+        //did not find it correctly, but maybe this is a legacy link with just the project key?
+        //we can handle that for the time being
+        for (NGPageIndex ngps : allContainers) {
+            if (ngps.containerKey.equals(combinedKey)) {
+                return ngps;
+            }
+        }
+        return null;
+    }
+    public NGPageIndex getWSByCombinedKeyOrFail(String combinedKey) throws Exception {
+        NGPageIndex ngpi = getWSByCombinedKey(combinedKey);
+        if (ngpi==null) {
+            throw new Exception("Unable to find a workspace with the combined key ("+combinedKey+")");
+        }
+        return ngpi;
+    }
+    
+    
     /**
      * Finding pages by name means that you might find more than one so you get
      * a vector back, which might be empty, it might have one or it might have
@@ -359,13 +407,16 @@ System.out.println("Weaver Server Object == Start the Server");
      * Fails if the key is not matched with anything, or if the key
      * is for a site.
      */
-    public NGWorkspace getWorkspaceByKeyOrFail(String key) throws Exception {
-        NGPageIndex ngpi = getContainerIndexByKeyOrFail(key);
-        NGContainer ngc = ngpi.getContainer();
-        if (!(ngc instanceof NGWorkspace)) {
-            throw new NGException("nugen.exception.container.not.project", new Object[] { key });
+    public NGWorkspace getWorkspaceByKeyOrFail(String siteKey, String key) throws Exception {
+        NGPageIndex ngpi = getWSBySiteAndKey(siteKey, key);
+        return ngpi.getWorkspace();
+    }
+    public NGWorkspace findWorkspaceByCombinedKey(String combined) throws Exception {
+        NGPageIndex ngpi = getWSByCombinedKey(combined);
+        if (ngpi==null) {
+            return null;
         }
-        return (NGWorkspace) ngc;
+        return ngpi.getWorkspace();
     }
 
     
@@ -379,47 +430,7 @@ System.out.println("Weaver Server Object == Start the Server");
         return res;
     }
     
-    /**
-     * This is a convenience function that looks a particular site
-     * up in the index, finds the index entry, and then IF it is a
-     * site, returns that with the right type (NGBook)
-     * Fails if the key is not matched with anything, or if the key
-     * is for a project.
-     */
-    public NGBook getSiteByIdOrFail(String key) throws Exception {
-        NGPageIndex ngpi = getContainerIndexByKeyOrFail(key);
-        NGContainer ngc = ngpi.getContainer();
-        if (!(ngc instanceof NGBook)) {
-            throw new NGException("nugen.exception.container.not.account", new Object[] { key });
-        }
-        return (NGBook) ngc;
-    }
 
-    /**
-     * This is for functions that operate the same on workspaces and sites.
-     * (for example roles)
-     * This is a convenience function that looks for either a workspace or
-     * a site.  If the pageID is not '$' then a workspace with that key is returned.
-     * If ifageID is '$', then the Site is returned with the siteId.
-     */
-    public NGContainer getWorkspaceOrSiteOrFail(String siteId, String pageId) throws Exception {
-        if ("$".equals(pageId)) {
-            NGPageIndex ngpi = getContainerIndexByKeyOrFail(siteId);
-            NGContainer ngc = ngpi.getContainer();
-            if (!(ngc instanceof NGBook)) {
-                throw new NGException("nugen.exception.container.not.account", new Object[] { siteId });
-            }
-            return ngc;
-        }
-        else {
-            NGPageIndex ngpi = getContainerIndexByKeyOrFail(pageId);
-            NGContainer ngc = ngpi.getContainer();
-            if (!(ngc instanceof NGWorkspace)) {
-                throw new NGException("nugen.exception.container.not.project", new Object[] { pageId });
-            }
-            return ngc;
-        }
-    }
 
 
     /**
@@ -430,17 +441,26 @@ System.out.println("Weaver Server Object == Start the Server");
      * is for a project.
      */
     public NGBook getSiteById(String key) throws Exception {
-        NGPageIndex ngpi = getContainerIndexByKey(key);
+        NGPageIndex ngpi = getSiteByKey(key);
         if (ngpi==null) {
             return null;
         }
-        NGContainer ngc = ngpi.getContainer();
-        if (!(ngc instanceof NGBook)) {
-            return null;
-        }
-        return (NGBook) ngc;
+        return ngpi.getSite();
+    }
+    /**
+     * This is a convenience function that looks a particular site
+     * up in the index, finds the index entry, and then IF it is a
+     * site, returns that with the right type (NGBook)
+     * Fails if the key is not matched with anything, or if the key
+     * is for a project.
+     */
+    public NGBook getSiteByIdOrFail(String key) throws Exception {
+        NGPageIndex ngpi = getSiteByKeyOrFail(key);
+        return ngpi.getSite();
     }
 
+    
+    
     /**
      * Returns a vector of NGPageIndex objects which represent projects which
      * are all part of a single site. Should be called get all projects in site
@@ -494,7 +514,7 @@ System.out.println("Weaver Server Object == Start the Server");
                 // only consider project style containers
                 continue;
             }
-            NGContainer container = ngpi.getContainer();
+            NGWorkspace container = ngpi.getWorkspace();
 
             for (CustomRole role : container.getAllRoles()) {
                 if (role.isPlayer(ale)) {
@@ -517,7 +537,7 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         NGPageIndex ngpi = upstreamToContainer.get(upstream.substring(0,lastSlash+1));
         if (ngpi != null) {
-            return ngpi.getPage();
+            return ngpi.getWorkspace();
         }
         return null;
     }
@@ -532,9 +552,10 @@ System.out.println("Weaver Server Object == Start the Server");
 
     private synchronized void scanAllPages() throws Exception {
         System.out.println("Beginning SCAN for all pages in system");
-        List<File> allWorkspaceFolders = new ArrayList<File>();
+        List<File> allWorkspaceFiles = new ArrayList<File>();
         NGTerm.initialize();
-        keyToContainer = new Hashtable<String, NGPageIndex>();
+        keyToSites = new Hashtable<String, NGPageIndex>();
+        keyToWorkspace = new Hashtable<String, NGPageIndex>();
         upstreamToContainer = new Hashtable<String, NGPageIndex>();
         allContainers = new ArrayList<NGPageIndex>();
 
@@ -543,7 +564,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
         List<File> allSiteFiles = new ArrayList<File>();
         for (File libDirectory : theConfig.getSiteFolders()) {
-            seekSitesAndWorkspaces(libDirectory, allWorkspaceFolders, allSiteFiles);
+            seekSitesAndWorkspaces(libDirectory, allWorkspaceFiles, allSiteFiles);
         }
 
         // now process the site files if any
@@ -551,24 +572,23 @@ System.out.println("Weaver Server Object == Start the Server");
             try {
                 NGBook ngb = NGBook.readSiteAbsolutePath(aSitePath);
                 NGBook.registerSite(ngb);
-                makeIndex(ngb);
+                makeIndexForSite(ngb);
             }
             catch (Exception eig) {
                 reportUnparseableFile(aSitePath, eig);
             }
         }
         // now process the workspace files if any
-        for (File aProjPath : allWorkspaceFolders) {
+        for (File aProjPath : allWorkspaceFiles) {
             try {
                 NGWorkspace aProj = NGWorkspace.readWorkspaceAbsolutePath(aProjPath);
-                makeIndex(aProj);
+                makeIndexForWorkspace(aProj);
             }
             catch (Exception eig) {
                 reportUnparseableFile(aProjPath, eig);
             }
         }
         System.out.println("Concluded SCAN for all pages in system.");
-
     }
 
     private void reportUnparseableFile(File badFile, Exception eig) {
@@ -631,39 +651,53 @@ System.out.println("Weaver Server Object == Start the Server");
         }
     }
 
-    public void makeIndex(NGContainer ngc) throws Exception {
-        String key = ngc.getKey();
+    public void makeIndexForSite(NGBook ngb) throws Exception {
+        String key = ngb.getKey();
 
         // clean up old index entries using old name
-        NGPageIndex foundPage = keyToContainer.get(key);
+        NGPageIndex foundPage = keyToSites.get(key);
         if (foundPage != null) {
             foundPage.unlinkAll();
             allContainers.remove(foundPage);
-            keyToContainer.remove(foundPage.containerKey);
+            keyToSites.remove(foundPage.containerKey);
         }
 
-        NGPageIndex bIndex = new NGPageIndex(ngc);
+        NGPageIndex bIndex = new NGPageIndex(ngb);
         if (bIndex.containerType == 0) {
             throw new Exception("uninitialized ngpi.containerType in makeIndex");
         }
         allContainers.add(bIndex);
-        keyToContainer.put(key, bIndex);
-
-        if (ngc instanceof NGPage) {
-            String upstream = ((NGPage)ngc).getUpstreamLink();
-            if (upstream!=null && upstream.length()>0) {
-                int lastSlash = upstream.lastIndexOf("/");
-                upstreamToContainer.put(upstream.substring(0,lastSlash+1), bIndex);
-            }
+        keyToSites.put(key, bIndex);
+    }
+    public void makeIndexForWorkspace(NGWorkspace ngw) throws Exception {
+        String key = ngw.getKey();
+        String workspaceKey = ngw.getSiteKey() + "|" + ngw.getKey();
+        
+        // clean up old index entries using old name
+        NGPageIndex foundPage = keyToWorkspace.get(workspaceKey);
+        if (foundPage != null) {
+            foundPage.unlinkAll();
+            allContainers.remove(foundPage);
+            keyToWorkspace.remove(workspaceKey);
         }
 
+        NGPageIndex bIndex = new NGPageIndex(ngw);
+        if (bIndex.containerType == 0) {
+            throw new Exception("uninitialized ngpi.containerType in makeIndex");
+        }
+        allContainers.add(bIndex);
+        keyToWorkspace.put(workspaceKey, bIndex);
 
+        //special upstream link handling
+        String upstream = ((NGPage)ngw).getUpstreamLink();
+        if (upstream!=null && upstream.length()>0) {
+            int lastSlash = upstream.lastIndexOf("/");
+            upstreamToContainer.put(upstream.substring(0,lastSlash+1), bIndex);
+        }
 
         // look for email and remember if there is some
-        if (ngc instanceof NGPage) {
-            if (((NGPage) ngc).countEmailToSend() > 0) {
-                projectsWithEmailToSend.add(key);
-            }
+        if (((NGPage) ngw).countEmailToSend() > 0) {
+            projectsWithEmailToSend.add(key);
         }
     }
 

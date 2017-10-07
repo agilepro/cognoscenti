@@ -382,7 +382,7 @@ public class SiteController extends BaseController {
                 if (!ngpi.isProject()) {
                     continue;
                 }
-                NGWorkspace ngw = ngpi.getPage();
+                NGWorkspace ngw = ngpi.getWorkspace();
                 System.out.println("Changing '"+sourceUser+"' to '"+destUser+"' in ("+ngw.getFullName()+")");
                 int found = ngw.replaceUserAcrossWorkspace(sourceUser, destUser);
                 if (found>0) {

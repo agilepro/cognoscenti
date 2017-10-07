@@ -121,7 +121,7 @@ public class TaskHelper
             //only includes tasks from projects at this point
             if (ngpi.isProject())
             {
-                NGPage aProject = ngpi.getPage();
+                NGPage aProject = ngpi.getWorkspace();
                 registerGoalsAssignedToUser(aProject, ale);
             }
         }

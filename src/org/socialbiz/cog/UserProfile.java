@@ -664,13 +664,14 @@ public class UserProfile implements UserRef
         return templateList;
     }
 
-    public void setProjectAsTemplate(String pageKey) throws Exception {
-        templateList.add(pageKey);
+    public void setProjectAsTemplate(String siteKey, String pageKey) throws Exception {
+        templateList.add(siteKey + "|" + pageKey);
     }
 
-    public boolean isTemplate(String pageKey) throws Exception {
+    public boolean isTemplate(String siteKey, String pageKey) throws Exception {
+        String combined = siteKey + "|" + pageKey;
         for (String templatePageKey : templateList) {
-            if (pageKey.equals(templatePageKey)) {
+            if (templatePageKey.equals(combined)) {
                 return true;
             }
         }
@@ -696,7 +697,14 @@ public class UserProfile implements UserRef
     public Vector<NGPageIndex> getValidTemplates(Cognoscenti cog) throws Exception {
         Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
         for(String pageKey : templateList) {
-            NGPageIndex ngpi = cog.getContainerIndexByKey(pageKey);
+            int pos = pageKey.indexOf("|");
+            if (pos<=0) {
+                //silently ignore old or invalid key values
+                continue;
+            }
+            String key = pageKey.substring(0, pos);
+            String siteKey = pageKey.substring(pos+1);
+            NGPageIndex ngpi = cog.getWSBySiteAndKey(siteKey, key);
             if (ngpi!=null) {
                 //silently ignore templates that no longer exist
                 templates.add(ngpi);

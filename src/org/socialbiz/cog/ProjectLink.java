@@ -34,20 +34,20 @@ public class ProjectLink extends DOMFace
     //to garbage collect left over dangling project references.
     public boolean touchFlag = false;
 
-    public ProjectLink(Document nDoc, Element nEle, DOMFace p)
-    {
+    public ProjectLink(Document nDoc, Element nEle, DOMFace p) {
         super(nDoc, nEle, p);
     }
 
-    public String getKey()
-        throws Exception
-    {
+    public String getKey() throws Exception {
         return getAttribute("key");
     }
 
-    public void setKey(String newVal)
-        throws Exception
-    {
+    public String getSiteKey() throws Exception {
+        return getAttribute("siteKey");
+    }
+    
+    public void setKeys(String siteKey, String newVal) throws Exception {
+        setAttribute("siteKey", siteKey);
         setAttribute("key", newVal);
     }
 
@@ -56,7 +56,7 @@ public class ProjectLink extends DOMFace
     * associated project.  If the project does not exist, this returns null.
     */
     public NGPageIndex getPageIndexOrNull(Cognoscenti cog) throws Exception {
-        return cog.getContainerIndexByKey(getKey());
+        return cog.getWSBySiteAndKey(getSiteKey(), getKey());
     }
 
 }

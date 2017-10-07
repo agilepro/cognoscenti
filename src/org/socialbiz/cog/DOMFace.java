@@ -729,7 +729,10 @@ public class DOMFace
     // --------------------------------------------------------------------------
     
     public void extractScalarString(JSONObject dest, String fieldName) throws Exception {
-        dest.put(fieldName, getScalar(fieldName));
+        String val = getScalar(fieldName);
+        if (val!=null) {
+            dest.put(fieldName, val);
+        }
     }
     public boolean updateScalarString(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
@@ -758,7 +761,10 @@ public class DOMFace
         return false;
     }
     public void extractAttributeString(JSONObject dest, String fieldName) throws Exception {
-        dest.put(fieldName, getAttribute(fieldName));
+        String val = getAttribute(fieldName);
+        if (val!=null) {
+            dest.put(fieldName, val);
+        }
     }
     public boolean updateAttributeString(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {

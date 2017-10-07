@@ -223,15 +223,18 @@ public class NGPageIndex {
         return tagTerm.targetLeaves;
     }
 
-    public NGWorkspace getPage() throws Exception {
+    public NGWorkspace getWorkspace() throws Exception {
         return (NGWorkspace) getContainer();
+    }
+    public NGBook getSite() throws Exception {
+        return (NGBook) getContainer();
     }
 
     /**
      * Get the container object associated with this index entry, or return a
      * null if one can not be found.
      */
-    public NGContainer getContainer() throws Exception {
+    private NGContainer getContainer() throws Exception {
         setLock();
         if (containerType == CONTAINER_TYPE_PROJECT) {
             return NGWorkspace.readWorkspaceAbsolutePath(containerPath);
@@ -604,13 +607,8 @@ public class NGPageIndex {
         containerPath = container.getFilePath();
         containerKey = container.getKey();
 
-        if (container instanceof NGPage) {
-            if (container instanceof NGWorkspace) {
-                containerType = CONTAINER_TYPE_PROJECT;
-            }
-            else {
-                throw new Exception("CRITICAL ERROR SHOULD ONLY BE NGWorkspace now."+ containerPath);
-            }
+        if (container instanceof NGWorkspace) {
+            containerType = CONTAINER_TYPE_PROJECT;
         }
         else if (container instanceof NGBook) {
             containerType = CONTAINER_TYPE_SITE;

@@ -62,9 +62,9 @@ public class SuperAdminLogFile extends DOMFile {
         for (AdminEvent event : allEvents) {
             if (event.getModTime()>oneHundredDaysAgo) {
                 if (event.getContext().equals(AdminEvent.SITE_CREATED)) {
-                    NGPageIndex ngpi = cog.getContainerIndexByKey(event.getObjectId());
+                    NGPageIndex ngpi = cog.getSiteByKey(event.getObjectId());
                     if (ngpi!=null) {
-                        NGBook site = (NGBook) ngpi.getContainer();
+                        NGBook site = ngpi.getSite();
                         if (site!=null) {
                             newSites.add(site);
                         }

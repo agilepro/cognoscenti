@@ -317,7 +317,7 @@ public class ResourceBook implements NGResource
             {
                 continue;
             }
-            NGPage ngp = ngpi.getPage();
+            NGPage ngp = ngpi.getWorkspace();
             String key = ngp.getKey();
             Object obj  = pageList.put(key, key);
             if(obj != null){

@@ -845,7 +845,7 @@ public class NGBook extends ContainerCommon {
         // if it is already unique, use that. This tests ALL sites currently
         // loaded, but might consider a site-specific test when there is a
         // site specific search for a project.
-        NGPageIndex ngpi = cog.getContainerIndexByKey(key);
+        NGPageIndex ngpi = cog.getSiteByKey(key);
         if (ngpi == null) {
             return key;
         }
@@ -869,7 +869,7 @@ public class NGBook extends ContainerCommon {
         int testNum = 1;
         while (true) {
             String testKey = key + "-" + Integer.toString(testNum);
-            ngpi = cog.getContainerIndexByKey(testKey);
+            ngpi = cog.getSiteByKey(testKey);
             if (ngpi == null) {
                 return testKey;
             }
@@ -920,12 +920,12 @@ public class NGBook extends ContainerCommon {
         UserProfile up = ar.getUserProfile();
         return convertFolderToProj(up, expectedLoc, ar.nowTime, ar.getCogInstance());
     }
-    public NGPage convertFolderToProj(UserProfile up, File expectedLoc, long nowTime, Cognoscenti cog) throws Exception {
+    public NGWorkspace convertFolderToProj(UserProfile up, File expectedLoc, long nowTime, Cognoscenti cog) throws Exception {
         String projectName = expectedLoc.getName();
         String projectKey = SectionWiki.sanitize(projectName);
         projectKey = findUniqueKeyInSite(cog, projectKey);
         File projectFile = new File(expectedLoc, projectKey + ".sp");
-        NGPage ngp = createProjectAtPath(up, projectFile, projectKey, nowTime, cog);
+        NGWorkspace ngp = createProjectAtPath(up, projectFile, projectKey, nowTime, cog);
         List<String> nameSet = new ArrayList<String>();
         nameSet.add(projectName);
         ngp.setPageNames(nameSet);
@@ -962,12 +962,12 @@ public class NGBook extends ContainerCommon {
      * be sure to call "savePage" before finished otherwise nothing is created
      * on disk.
      */
-    public NGPage createProjectByKey(AuthRequest ar, String key) throws Exception {
+    public NGWorkspace createProjectByKey(AuthRequest ar, String key) throws Exception {
         assertPermissionToCreateProject(ar);
         return createProjectByKey(ar.getUserProfile(), key, ar.nowTime, ar.getCogInstance());
     }
 
-    public NGPage createProjectByKey(UserProfile up, String key, long nowTime, Cognoscenti cog) throws Exception {
+    public NGWorkspace createProjectByKey(UserProfile up, String key, long nowTime, Cognoscenti cog) throws Exception {
         if (key.indexOf('/') >= 0) {
             throw new ProgramLogicError(
                     "Expecting a key value, but got something with a slash in it: " + key);
@@ -991,37 +991,37 @@ public class NGBook extends ContainerCommon {
     }
 
 
-    public NGPage createProjectAtPath(UserProfile up, File newFilePath, String newKey, long nowTime, Cognoscenti cog)
+    public NGWorkspace createProjectAtPath(UserProfile up, File newFilePath, String newKey, long nowTime, Cognoscenti cog)
             throws Exception {
         if (newFilePath.exists()) {
             throw new ProgramLogicError("Somehow the file given already exists: " + newFilePath);
         }
 
         Document newDoc = readOrCreateFile(newFilePath, "page");
-        NGPage newPage = new NGWorkspace(newFilePath, newDoc, this);
-        newPage.setKey(newKey);
+        NGWorkspace newWorkspace = new NGWorkspace(newFilePath, newDoc, this);
+        newWorkspace.setKey(newKey);
 
         // make the current user to ALL key roles of the new page
-        newPage.addPlayerToRole("Administrators", up.getUniversalId());
-        newPage.addPlayerToRole("Members", up.getUniversalId());
-        newPage.addPlayerToRole("Facilitator", up.getUniversalId());
-        newPage.addPlayerToRole("Circle Administrator", up.getUniversalId());
-        newPage.addPlayerToRole("Operations Leader", up.getUniversalId());
-        newPage.addPlayerToRole("Representative", up.getUniversalId());
-        newPage.addPlayerToRole("External Expert", up.getUniversalId());
+        newWorkspace.addPlayerToRole("Administrators", up.getUniversalId());
+        newWorkspace.addPlayerToRole("Members", up.getUniversalId());
+        newWorkspace.addPlayerToRole("Facilitator", up.getUniversalId());
+        newWorkspace.addPlayerToRole("Circle Administrator", up.getUniversalId());
+        newWorkspace.addPlayerToRole("Operations Leader", up.getUniversalId());
+        newWorkspace.addPlayerToRole("Representative", up.getUniversalId());
+        newWorkspace.addPlayerToRole("External Expert", up.getUniversalId());
 
         // register this into the page index
-        cog.makeIndex(newPage);
+        cog.makeIndexForWorkspace(newWorkspace);
 
         // add this new project into the user's watched projects list
         // so it is easy for them to find later.
         // Only do this if creating directly, and not through API
         if (up != null) {
-            up.setWatch(newPage.getKey(), nowTime);
+            up.setWatch(newWorkspace.getKey(), nowTime);
             cog.getUserManager().saveUserProfiles();
         }
 
-        return newPage;
+        return newWorkspace;
     }
 
     /**
@@ -1113,7 +1113,7 @@ public class NGBook extends ContainerCommon {
         //projects are being scanned for some other purpose....
         WorkspaceStats siteStats = new WorkspaceStats();
         for (NGPageIndex ngpi : cog.getAllProjectsInSite(this.getKey())) {
-            NGPage ngp = ngpi.getPage();
+            NGPage ngp = ngpi.getWorkspace();
             siteStats.gatherFromWorkspace(ngp);
             siteStats.numWorkspaces++;
         }
@@ -1130,6 +1130,14 @@ public class NGBook extends ContainerCommon {
         JSONObject jo = stats.getJSON();
         jo.writeToFile(getStatsFilePath());
     }
+    
+    public boolean isMoved() {
+        String moveURL = this.getScalar("movedTo");
+        return (moveURL!=null && !moveURL.isEmpty());
+    }
+    public String getMovedTo() {
+        return this.getScalar("movedTo");
+    }
 
 
 
@@ -1142,10 +1150,11 @@ public class NGBook extends ContainerCommon {
         jo.put("theme", getThemeName());
         jo.put("showExperimental", getShowExperimental());
         jo.put("changed", getLastModifyTime());
-        jo.put("isDeleted", siteInfoRec.getAttributeBool("isDeleted"));
-        jo.put("frozen", siteInfoRec.getAttributeBool("frozen"));
-        jo.put("offLine", siteInfoRec.getAttributeBool("offLine"));
-        jo.put("siteMsg", siteInfoRec.getAttribute("siteMsg"));
+        siteInfoRec.extractAttributeBool(jo, "isDeleted");
+        siteInfoRec.extractAttributeBool(jo, "frozen");
+        siteInfoRec.extractAttributeBool(jo, "offLine");
+        siteInfoRec.extractAttributeString(jo, "siteMsg");
+        this.extractScalarString(jo, "movedTo");
         NGRole owners = getSecondaryRole();
         JSONArray ja = new JSONArray();
         for (AddressListEntry ale : owners.getDirectPlayers()) {
@@ -1158,7 +1167,6 @@ public class NGBook extends ContainerCommon {
             ja.put( ale.getJSON() );
         }
         jo.put("executives", ja);
-
         return jo;
     }
 
@@ -1182,15 +1190,10 @@ public class NGBook extends ContainerCommon {
                 siteInfoRec.setAttributeBool("frozen", true);
             }
         }
-        if (jo.has("frozen")) {
-            siteInfoRec.setAttributeBool("frozen", jo.getBoolean("frozen"));
-        }
-        if (jo.has("offLine")) {
-            siteInfoRec.setAttributeBool("offLine", jo.getBoolean("offLine"));
-        }
-        if (jo.has("siteMsg")) {
-            siteInfoRec.setAttribute("siteMsg", jo.getString("siteMsg"));
-        }
+        siteInfoRec.updateAttributeBool("frozen", jo);
+        siteInfoRec.updateAttributeBool("offLine", jo);
+        siteInfoRec.updateAttributeString("siteMsg", jo);
+        this.updateScalarString("movedTo", jo);
     }
 
     /**

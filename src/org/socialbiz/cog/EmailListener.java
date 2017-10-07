@@ -342,12 +342,14 @@ public class EmailListener extends TimerTask{
      * RELEASES LOCK: This must NOT be called with a project file open and locked
      */
     private void createNoteFromMail(Message message) throws Exception {
+        throw new Exception("createNoteFromMail has been disabled for this server.");
+        /*
         NGPageIndex.assertNoLocksOnThread();
         String subject = message.getSubject();
         try{
             Address[] recipientAdrs= message.getAllRecipients();
             String pageKey =  getProjectKey(recipientAdrs[0].toString(), subject);
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageKey);
+            NGPage ngp = ar.getCogInstance().getWorkspaceBySiteAndKeyOrFail(pageKey);
 
             TopicRecord note = ngp.createNote();
 
@@ -375,6 +377,7 @@ public class EmailListener extends TimerTask{
         }catch(Exception e){
             throw new NGException("nugen.exception.cant.create.note.from.msg", new Object[]{subject},e);
         }
+        */
     }
 
     private String getFromAddress(String fromAdr) {

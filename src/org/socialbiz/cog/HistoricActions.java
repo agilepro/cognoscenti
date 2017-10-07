@@ -97,7 +97,7 @@ public class HistoricActions {
             ngb.getPrimaryRole().addPlayer(ale);
             ngb.getSecondaryRole().addPlayer(ale);
             ngb.saveFile(ar, "New Site created");
-            cog.makeIndex(ngb);
+            cog.makeIndexForSite(ngb);
 
             siteRequest.setStatus("Granted");
             ar.getSuperAdminLogFile().createAdminEvent(ngb.getKey(), ar.nowTime,

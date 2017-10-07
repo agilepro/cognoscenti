@@ -243,7 +243,7 @@ public class EmailSender extends TimerTask {
             try {
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
-                NGContainer ngw = ngpi.getContainer();
+                NGWorkspace ngw = ngpi.getWorkspace();
                 ar.ngp = ngw;
 
                 //first, move all the email messages that have been stored in the project from foreground events.
@@ -261,7 +261,7 @@ public class EmailSender extends TimerTask {
             if (ngpi.isProject()){
                 //now open the page and generate all the email messages, remember this
                 //locks the file blocking all other threads, so be quick
-                NGWorkspace ngw = ngpi.getPage();
+                NGWorkspace ngw = ngpi.getWorkspace();
                 ar.ngp = ngw;
 
                 ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();

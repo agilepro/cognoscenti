@@ -209,7 +209,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "Unknown";
         try{
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertLoggedIn("Must be logged in to set personal settings.");
             JSONObject personalInfo = getPostedObject(ar);
@@ -227,7 +227,7 @@ public class ProjectSettingController extends BaseController {
                 userManager.saveUserProfiles();
             }
             else if ("SetTemplate".equals(op)) {
-                up.setProjectAsTemplate(pageId);
+                up.setProjectAsTemplate(siteId, pageId);
                 userManager.saveUserProfiles();
             }
             else if ("ClearTemplate".equals(op)) {
@@ -273,7 +273,7 @@ public class ProjectSettingController extends BaseController {
         String op = "Unknown";
         String roleId= "Unknown";
         try{
-            NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
+            NGWorkspace ngc = (NGWorkspace) registerSiteOrProject(ar, siteId, pageId );
             ar.setPageAccessLevels(ngc);
             ar.assertLoggedIn("Must be logged in to manipuate roles.");
             JSONObject personalInfo = getPostedObject(ar);
@@ -350,7 +350,7 @@ public class ProjectSettingController extends BaseController {
 
 
     private static void sendRoleRequestEmail(AuthRequest ar,
-            RoleRequestRecord roleRequestRecord, NGContainer container)
+            RoleRequestRecord roleRequestRecord, NGWorkspace container)
             throws Exception {
         Cognoscenti cog = ar.getCogInstance();
         UserProfile up = ar.getUserProfile();
@@ -497,7 +497,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String id = "";
         try{
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to create an email generator.");
             JSONObject eGenInfo = getPostedObject(ar);
@@ -551,7 +551,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String id = "";
         try{
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to render an email.");
             JSONObject eGenInfo = getPostedObject(ar);
@@ -605,7 +605,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "";
         try{
-            NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to modify labels.");
             op = ar.reqParam("op");

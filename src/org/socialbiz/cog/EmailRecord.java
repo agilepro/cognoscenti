@@ -99,8 +99,9 @@ public class EmailRecord extends DOMFace
             }
             if ("Role".equals(ootype)) {
                 String containerID = assignee.getAttribute("containerID");
+                String siteID = assignee.getAttribute("siteID");
                 String roleName = assignee.getAttribute("roleName");
-                res.add(new OptOutRolePlayer(ale, containerID, roleName));
+                res.add(new OptOutRolePlayer(ale, siteID, containerID, roleName));
             }
             else if ("Super".equals(ootype)) {
                 res.add(new OptOutSuperAdmin(ale));
@@ -131,6 +132,7 @@ public class EmailRecord extends DOMFace
             OptOutRolePlayer oorm = (OptOutRolePlayer) ooa;
             assignee.setAttribute("ootype", "Role");
             assignee.setAttribute("containerID", oorm.containerID);
+            assignee.setAttribute("siteID", oorm.siteID);
             assignee.setAttribute("roleName", oorm.roleName);
         }
         else if (ooa instanceof OptOutSuperAdmin) {
@@ -157,6 +159,7 @@ public class EmailRecord extends DOMFace
                 OptOutRolePlayer oorm = (OptOutRolePlayer) ooa;
                 assignee.setAttribute("ootype", "Role");
                 assignee.setAttribute("containerID", oorm.containerID);
+                assignee.setAttribute("siteID", oorm.siteID);
                 assignee.setAttribute("roleName", oorm.roleName);
             }
             else if (ooa instanceof OptOutSuperAdmin) {

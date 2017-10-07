@@ -712,8 +712,8 @@ public class UserPage extends ContainerCommon
             if (!ngpi.isProject()) {
                 continue;
             }
-            NGPage aPage = ngpi.getPage();
-            for (GoalRecord gr : aPage.getAllGoals()) {
+            NGWorkspace aWorkspace = ngpi.getWorkspace();
+            for (GoalRecord gr : aWorkspace.getAllGoals()) {
 
                 if (gr.isPassive()) {
                     //ignore tasks that are from other servers.  They will be identified and tracked on
@@ -725,7 +725,7 @@ public class UserPage extends ContainerCommon
                     continue;
                 }
 
-                list.put(gr.getJSON4Goal(aPage));
+                list.put(gr.getJSON4Goal(aWorkspace));
             }
             // clean out any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();

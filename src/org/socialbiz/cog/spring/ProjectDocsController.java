@@ -239,7 +239,7 @@ public class ProjectDocsController extends BaseController {
             AuthRequest ar  = AuthRequest.getOrCreate(request, response);
 
             ar.getCogInstance().getSiteByIdOrFail(siteId);
-            ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+            ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId );
 
             String symbol = ar.reqParam("fid");
 
@@ -291,7 +291,7 @@ public class ProjectDocsController extends BaseController {
             registerRequiredProject(ar, siteId, pageId);
 
             PDFUtil pdfUtil = new PDFUtil();
-            pdfUtil.serveUpFile(ar, pageId);
+            pdfUtil.serveUpFile(ar, siteId, pageId);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.download.document", new Object[]{pageId,siteId} , ex);
         }
@@ -336,7 +336,7 @@ public class ProjectDocsController extends BaseController {
         String did = "";
         try{
             did = ar.reqParam("did");
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to update a document information.");
             ar.assertNotFrozen(ngw);
@@ -379,7 +379,7 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
             boolean isMember = ar.isMember();
 
@@ -415,7 +415,7 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             JSONObject repo = new JSONObject();
             JSONArray shareList = new JSONArray();
             for (SharePortRecord spr : ngw.getSharePorts()) {
@@ -448,7 +448,7 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail( pageId );
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             SharePortRecord spr = null;
             boolean needSave = false;
             if ("~new~".equals(id)) {

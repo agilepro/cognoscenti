@@ -21,6 +21,7 @@
 package org.socialbiz.cog;
 
 import java.util.List;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -78,17 +79,17 @@ public class StatusReport extends DOMFace
         return getChildren("projLink", ProjectLink.class);
     }
 
-    public ProjectLink getOrCreateProject(String key) throws Exception {
+    public ProjectLink getOrCreateProject(String siteKey, String key) throws Exception {
 
         //first lets make sure that this project is not already in the set
         for (ProjectLink pl : getProjects()) {
-            if (pl.getKey().equals(key)) {
+            if (key.equals(pl.getKey()) && siteKey.equals(pl.getSiteKey())) {
                 return pl;
             }
         }
 
         ProjectLink newPl = createChild("projLink", ProjectLink.class);
-        newPl.setKey(key);
+        newPl.setKeys(siteKey, key);
         return newPl;
     }
 
