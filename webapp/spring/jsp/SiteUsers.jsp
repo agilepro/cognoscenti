@@ -12,7 +12,7 @@
     JSONObject userMap = new JSONObject();
     List<NGPageIndex> allWorkspaces = ar.getCogInstance().getAllProjectsInSite(accountId);
     for (NGPageIndex ngpi : allWorkspaces) {
-        NGWorkspace ngw = ngpi.getPage();
+        NGWorkspace ngw = ngpi.getWorkspace();
         for (CustomRole ngr : ngw.getAllRoles()) {
             for (AddressListEntry ale : ngr.getDirectPlayers()) {
                 String uid = ale.getUniversalId();

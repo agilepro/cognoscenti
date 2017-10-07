@@ -8,8 +8,9 @@
 %><%@page import="java.util.Date"
 %>
 <%
-    String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     ar.assertLoggedIn("Must be logged in to set your personal settings");
     NGBook site = ngp.getSite();
@@ -36,7 +37,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.isWatching = <%=uProf.isWatch(pageId)%>;
     $scope.watchTime  = <%=uProf.watchTime(pageId)%>;
-    $scope.isTemplate = <%=uProf.isTemplate(pageId)%>;
+    $scope.isTemplate = <%=uProf.isTemplate(siteId,pageId)%>;
     $scope.isNotify   = <%=uProf.isNotifiedForProject(pageId)%>;
     $scope.isMute     = <%=ngp.getMuteRole().isPlayer(uProf)%>;
     $scope.roleList   = <%roleList.write(out,2,4);%>;

@@ -23,7 +23,7 @@ Required parameter:
     UserProfile uProf = ar.getUserProfile();
     UserPage uPage = ar.getUserPage();
 
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
 
     AttachmentRecord attachment = ngp.findAttachmentByID(aid);
     String name     = attachment.getDisplayName();

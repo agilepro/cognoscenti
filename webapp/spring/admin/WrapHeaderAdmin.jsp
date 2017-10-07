@@ -12,7 +12,7 @@
         List<WatchRecord> wl = loggedUser.getWatchList();
         if (wl.size()>0) {
             mainWorkspaceId = wl.get(0).pageKey;
-            NGPageIndex ngpi = cog.getContainerIndexByKey(mainWorkspaceId);
+            NGPageIndex ngpi = cog.getWSByCombinedKey(mainWorkspaceId);
             if (ngpi!=null) {
                 mainSiteId = ngpi.wsSiteKey;
                 NGBook site = ar.getCogInstance().getSiteByIdOrFail(mainSiteId);

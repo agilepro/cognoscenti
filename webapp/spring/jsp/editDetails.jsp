@@ -9,9 +9,10 @@
 %><%@page import="org.socialbiz.cog.dms.ConnectionSettings"
 %><%
 
-    String pageId  = ar.reqParam("pageId");
     String go      = ar.defParam("go", "listAttachments.htm" );
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
     NGBook site = ngp.getSite();

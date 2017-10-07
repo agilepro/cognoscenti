@@ -10,14 +10,15 @@ Required parameters:
 
     ar.assertLoggedIn("Must be logged in to see a list of meetings");
 
-    String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     String siteKey = ngp.getSiteKey();
     NGBook ngb = ngp.getSite();
     Cognoscenti cog = ar.getCogInstance();
 
-    NGPageIndex parentIndex = cog.getContainerIndexByKey(ngp.getParentKey());
+    NGPageIndex parentIndex = cog.getWSByCombinedKey(ngp.getParentKey());
     if (parentIndex!=null) {
         throw new Exception("this is quite strange ... this page is not supposed to have a parent.");
     }

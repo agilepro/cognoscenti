@@ -3,7 +3,7 @@
 %><%
 
     String pageId = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    NGPage ngp = ar.getCogInstance().findWorkspaceByCombinedKey(pageId);
     ar.setPageAccessLevels(ngp);
 
     ReminderMgr rMgr = ngp.getReminderMgr();

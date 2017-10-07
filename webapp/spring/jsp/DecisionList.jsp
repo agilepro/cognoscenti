@@ -13,7 +13,7 @@ Required parameters:
 */
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
     NGBook site = ngp.getSite();

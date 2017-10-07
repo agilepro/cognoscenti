@@ -28,7 +28,7 @@ Required parameter:
 %><%!String pageTitle="";%><%
     UserProfile uProf = null;
 
-    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
+    ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p);
     ar.setPageAccessLevels(ngp);
 
     pageTitle = "Send Email: "+ngp.getFullName();

@@ -12,7 +12,6 @@ Optional Parameter:
     1. s : This parameter is used to get section if not found set to 'Attachments'.
 */
 
-    String pageId = ar.reqParam("pageId");
     String rid  = ar.reqParam("rid");
 
     String s  = ar.defParam("s", "Attachments");%><%!String pageTitle="";
@@ -26,7 +25,9 @@ Optional Parameter:
 <%
     UserProfile uProf = ar.getUserProfile();
 
-    NGPage ngp =ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
 
     NGBook ngb = ngp.getSite();

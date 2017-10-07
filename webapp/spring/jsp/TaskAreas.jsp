@@ -18,8 +18,9 @@ Required parameters:
         templateCacheDefeater = "?t="+System.currentTimeMillis();
     }
 
-    String pageId      = ar.reqParam("pageId");
-    NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId  = ar.reqParam("pageId");
+    String siteId  = ar.reqParam("siteId");
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     ar.assertMember("Must be a member to see meetings");
     UserProfile uProf = ar.getUserProfile();

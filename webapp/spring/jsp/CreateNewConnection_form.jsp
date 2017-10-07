@@ -26,7 +26,7 @@ Optional Parameters:
     String isNewUpload = ar.defParam("isNewUpload", "yes");
     String aid = ar.defParam("aid", null);
 
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
+    NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
 
     String pageTitle = "Add Remote Attachment to "+ngp.getFullName();

@@ -4,8 +4,9 @@
 %><%@page import="org.socialbiz.cog.OptOutAddr"
 %><%
 
-    String pageId      = ar.reqParam("pageId");
-    NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     ar.assertMember("Must be a member to see meetings");
     NGBook ngb = ngw.getSite();

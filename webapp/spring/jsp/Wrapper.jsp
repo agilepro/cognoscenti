@@ -40,6 +40,7 @@
 
 //this indicates a workspace page
     String pageId = (String)request.getAttribute("pageId");
+    String siteId = (String)request.getAttribute("siteId");
 
 //this indicates a site id
     String bookId = (String)request.getAttribute("book");
@@ -95,7 +96,7 @@
         List<WatchRecord> wl = loggedUser.getWatchList();
         if (wl.size()>0) {
             mainWorkspaceId = wl.get(0).pageKey;
-            NGPageIndex ngpi = cog.getContainerIndexByKey(mainWorkspaceId);
+            NGPageIndex ngpi = cog.getWSByCombinedKey(mainWorkspaceId);
             if (ngpi!=null) {
                 mainSiteId = ngpi.wsSiteKey;
                 NGBook site = ar.getCogInstance().getSiteByIdOrFail(mainSiteId);
@@ -127,7 +128,7 @@
 
 //TODO: why test for pageTitle being null here?
     if(pageTitle == null && pageId != null && !"$".equals(pageId)){
-        ngp  = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+        ngp  = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     }
 
 

@@ -9,7 +9,8 @@
     ar.assertMember("Must be a member to see meetings");
 
     String pageId      = ar.reqParam("pageId");
-    NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String siteId      = ar.reqParam("siteId");
+    NGWorkspace ngw = ar.getCogInstance().getWSByKeyOrFail(siteId, pageId);
     ar.setPageAccessLevels(ngw);
     NGBook ngb = ngw.getSite();
     JSONObject backlogInfo = ngw.getAgendaItemBacklog().getFullJSON(ar, ngw);

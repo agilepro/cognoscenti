@@ -9,14 +9,10 @@ Required parameter:
 
 */
 
-    String p = ar.reqParam("pageId");
-
-%><%!
-        String pageTitle="";
-%>
-<%
     UserProfile uProf = ar.getUserProfile();
-    ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
+    String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
 
     String lastPath = (String) session.getAttribute("lastPath");
     String connectionId = (String) session.getAttribute("connectionId");

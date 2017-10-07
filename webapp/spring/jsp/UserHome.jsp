@@ -41,7 +41,7 @@ Required parameters:
     JSONArray wList = new JSONArray();
     for (WatchRecord wr : watchList) {
         String pageKey = wr.pageKey;
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
+        NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKey(pageKey);
         if (ngpi==null) {
             continue;
         }

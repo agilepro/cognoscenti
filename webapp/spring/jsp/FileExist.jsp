@@ -19,13 +19,11 @@ Required parameter:
     String aid = ar.reqParam("aid");
     String p = ar.reqParam("pageId");
     String folderId = ar.reqParam("folderId");
-%>
-<%!
-    String pageTitle="";
-%>
-<%
+
     UserProfile uProf = ar.getUserProfile();
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
+    String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     AttachmentRecord attachment = ngp.findAttachmentByID(aid);
     String name     = attachment.getDisplayName();
 

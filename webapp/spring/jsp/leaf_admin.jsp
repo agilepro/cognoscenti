@@ -12,8 +12,8 @@
     ar.assertMember("This VIEW only for members in use cases");
 
     String pageId      = ar.reqParam("pageId");
-    NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageId);
-    NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId);
+    NGWorkspace ngw  = ngpi.getWorkspace();
     ar.setPageAccessLevels(ngw);
     NGBook site = ngw.getSite();
     boolean showExperimental = site.getShowExperimental();
@@ -32,7 +32,7 @@
     List<String> names = ngw.getContainerNames();
 
     String parentKey = ngw.getParentKey();
-    NGPageIndex parentIndex = cog.getContainerIndexByKey(parentKey);
+    NGPageIndex parentIndex = cog.getWSByCombinedKey(parentKey);
     String parentName = "";
     if (parentIndex!=null) {
         parentName = parentIndex.containerName;

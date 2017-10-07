@@ -13,12 +13,13 @@ Optional Parameter:
 
 */
 
-    String pageId = ar.reqParam("pageId");
     String maxStr = ar.defParam("max", "1");
 
     GoalRecord task_assign = (GoalRecord)request.getAttribute("task");
 
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
 
     int max = DOMFace.safeConvertInt(maxStr);
     if (max > 4) {

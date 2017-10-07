@@ -8,8 +8,9 @@
 <%
     ar.assertLoggedIn("This VIEW only for logged in use cases");
     ar.assertMember("This VIEW only for members in use cases");
-    String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId  = ar.reqParam("pageId");
+    String siteId  = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     NGBook ngb = ngp.getSite();
     UserProfile up = ar.getUserProfile();

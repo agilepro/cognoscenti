@@ -22,15 +22,15 @@ Required parameters:
         templateCacheDefeater = "?t="+System.currentTimeMillis();
     }
 
-    String pageId      = ar.reqParam("pageId");
-    NGWorkspace ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
 
     String taskId = ar.reqParam("taskId");
     GoalRecord currentTaskRecord=ngp.getGoalOrFail(taskId);
     NGBook site = ngp.getSite();
-    String siteId = ngp.getSiteKey();
 
     UserProfile uProf = ar.getUserProfile();
 

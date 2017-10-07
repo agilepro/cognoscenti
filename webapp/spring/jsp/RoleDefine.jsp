@@ -15,7 +15,7 @@
     String roleName    = ar.reqParam("role");
     
     //page must work for both workspaces and for sites
-    NGContainer ngc = ar.getCogInstance().getWorkspaceOrSiteOrFail(siteId, pageId);
+    NGContainer ngc = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngc);
     UserProfile uProf = ar.getUserProfile();
 

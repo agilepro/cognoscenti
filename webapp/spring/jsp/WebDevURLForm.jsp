@@ -19,7 +19,9 @@ Required parameter:
 <%
     UserProfile uProf = ar.getUserProfile();
 
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(p);
+    String pageId  = ar.reqParam("pageId");
+    String siteId  = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
 
     FolderAccessHelper fdh = new FolderAccessHelper(ar);
 

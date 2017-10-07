@@ -6,8 +6,9 @@
 %><%@page import="org.socialbiz.cog.MicroProfileMgr"
 %><%
 
-    String pageId      = ar.reqParam("pageId");
-    NGWorkspace ngw = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngw.findMeeting(meetId);
@@ -286,7 +287,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
               href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
           <li role="presentation"><a role="menuitem"
               title="Open the editor for the minutes of the meeting"
-              ng-click="openEditor()">Edit Minutes</a></li>
+              ng-click="openEditor()">Edit Meeting Notes</a></li>
           <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
               href="meetingHtml.htm?id={{meeting.id}}">Show Flat Display</a></li>

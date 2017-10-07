@@ -12,7 +12,6 @@ Required parameter:
 
 */
 
-    String pageId = ar.reqParam("pageId");
     String aid    = ar.defParam("aid", "");
     String fndDefLoctn    = ar.defParam("fndDefLoctn", "false");
     
@@ -44,7 +43,7 @@ Required parameter:
     throws Exception {
         try {
             UserPage uPage = ar.getUserPage();
-            NGPage page = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+            NGPage page = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
 
             ar.write("<div class=\"generalArea\">");
             ar.write("\n<div class=\"pageHeading\">");

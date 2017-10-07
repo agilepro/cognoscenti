@@ -7,7 +7,7 @@
 
     JSONArray projList = new JSONArray();
     for (String pageKey : tmpList) {
-        NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageKey);
+        NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKey(pageKey);
         if (ngpi==null) {
             continue;
         }

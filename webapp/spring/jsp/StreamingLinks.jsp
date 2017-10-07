@@ -5,8 +5,9 @@
 %><%@page import="java.util.Date"
 %>
 <%
-    String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId  = ar.reqParam("pageId");
+    String siteId  = ar.reqParam("siteId");
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     ar.assertLoggedIn("Must be logged in to see anything about a user");
     ar.assertMember("This VIEW only for members in use cases");

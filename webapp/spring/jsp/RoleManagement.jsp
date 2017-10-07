@@ -8,7 +8,7 @@
     String siteId      = ar.reqParam("siteId");
     
     //page must work for both workspaces and for sites
-    NGContainer ngc = ar.getCogInstance().getWorkspaceOrSiteOrFail(siteId, pageId);
+    NGContainer ngc = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngc);
     NGBook site;
     if (ngc instanceof NGBook) {

@@ -28,7 +28,7 @@ Optional Parameter:
         ngc = ar.getCogInstance().getSiteByIdOrFail(siteId);
     }
     else {
-        ngc = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+        ngc = ar.getCogInstance().findWorkspaceByCombinedKey(pageId);
         ar.setPageAccessLevels(ngc);
     }
 

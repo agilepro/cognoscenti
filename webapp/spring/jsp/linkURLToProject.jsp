@@ -3,10 +3,11 @@
 %><%
 
     ar.assertLoggedIn("You need to Login to Upload a file.");
-    String pageId = ar.reqParam("pageId");
     String folderVal = ar.defParam("folder", null);
     List<String> folders = UtilityMethods.splitString(folderVal, '|');
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     if (ngp.isFrozen()) {
         throw new Exception("Program Logic Error: addDocument.jsp should never be invoked when the workspace is frozen.  "
            +"Please check the logic of the controller.");

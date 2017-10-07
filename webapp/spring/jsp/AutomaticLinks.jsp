@@ -7,11 +7,11 @@
     ar.assertLoggedIn("Must be logged in to see a list of meetings");
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    String siteId      = ar.reqParam("siteId");
+    NGPageIndex ngpi = ar.getCogInstance().getWorkspaceBySiteAndKeyOrFail(siteId, pageId);
     ar.setPageAccessLevels(ngp);
+    NGPage ngp = ngpi.getWorkspace();
     NGBook ngb = ngp.getSite();
-
-    NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(ngp.getKey());
 
 
 //GET the Recently Visited Workspaces
@@ -21,7 +21,7 @@
         List<RUElement> recent = ngsession.recentlyVisited;
         RUElement.sortByDisplayName(recent);
         for (RUElement rue : recent) {
-            NGPageIndex angpi = ar.getCogInstance().getContainerIndexByKey(rue.key);
+            NGPageIndex angpi = ar.getCogInstance().getWSByCombinedKey(rue.key);
             if (angpi!=null && angpi.isProject()) {
                 recentList.put(angpi.getJSON4List());
             }

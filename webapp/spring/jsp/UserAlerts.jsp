@@ -52,7 +52,7 @@ Required Parameters:
         int count = 0;
         String rowStyleClass = "";
         for (String pageId : notifications) {
-            NGPageIndex ngpi = ar.getCogInstance().getContainerIndexByKey(pageId);
+            NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKey(pageId);
             if (ngpi==null) {
                 continue;
                 //this can happen if you have something to do in a project that is no longer 

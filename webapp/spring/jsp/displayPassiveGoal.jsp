@@ -19,11 +19,12 @@
     }
 
     String pageId = ar.reqParam("pageId");
+    String siteId = ar.reqParam("siteId");
     String taskId = ar.reqParam("taskId");
     String ukey = ar.defParam("ukey", "XXX");
     UserProfile uProf = UserManager.getUserProfileByKey(ukey);
 
-    NGPage ngp = ar.getCogInstance().getWorkspaceByKeyOrFail(pageId);
+    NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
 
     ar.setPageAccessLevels(ngp);
     pageTitle = ngp.getFullName();
