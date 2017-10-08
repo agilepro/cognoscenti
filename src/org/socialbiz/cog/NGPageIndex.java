@@ -123,7 +123,6 @@ public class NGPageIndex {
     public int containerType = 0;
     // use these constants for containerType
     public static final int CONTAINER_TYPE_SITE = 1;
-    public static final int CONTAINER_TYPE_PAGE = 3;
     public static final int CONTAINER_TYPE_PROJECT = 4;
 
     private long lockedBy = 0;
@@ -242,10 +241,9 @@ public class NGPageIndex {
         else if (containerType == CONTAINER_TYPE_SITE) {
             return NGBook.readSiteByKey(containerKey);
         }
-        else if (containerType == CONTAINER_TYPE_PAGE) {
-            throw new Exception("NGPage no longer supported,  NGProj is used instead, should not be creating raw pages any more");
+        else {
+            throw new Exception("Unspecified or illegal containerType value: "+containerType);
         }
-        return null;
     }
 
     /**
@@ -307,9 +305,15 @@ public class NGPageIndex {
 
 
     public boolean isInVector(List<NGPageIndex> v) {
+        boolean isProject = isProject();
         for (NGPageIndex y : v) {
-            if (y.containerKey.equals(containerKey)) {
-                return true;
+            if (containerKey.equals(y.containerKey)) {
+                if (!isProject) {
+                    return true;
+                }
+                if (wsSiteKey!=null && y.wsSiteKey!=null && wsSiteKey.equals(y.wsSiteKey)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -362,10 +366,6 @@ public class NGPageIndex {
     }
 
     public boolean isProject() {
-        //just being paranoid here -- can remove after Feb 2016
-        if (containerType == CONTAINER_TYPE_PAGE) {
-            throw new RuntimeException("Found a PAGE type object, should never happen");
-        }
         return (containerType == CONTAINER_TYPE_PROJECT);
     }
 
@@ -654,7 +654,11 @@ public class NGPageIndex {
         List<NGTerm> nameTermsTmp = new ArrayList<NGTerm>();
 
         // make a link to the page key first
-        NGTerm term = NGTerm.findTerm(containerKey);
+        String combinedKey = containerKey;
+        if (isProject()) {
+            combinedKey = wsSiteKey + "|" + containerKey;
+        }
+        NGTerm term = NGTerm.findTerm(combinedKey);
         if (term == null) {
             throw new NGException("nugen.exception.key.dont.have.alphanum", null);
         }

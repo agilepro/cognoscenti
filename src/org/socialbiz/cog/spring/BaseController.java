@@ -110,6 +110,21 @@ public class BaseController {
     }
 
     /**
+     * If the site has been moved, display a page indicating this
+     */
+    protected static boolean checkMoved(AuthRequest ar) throws Exception {
+        if (ar.ngp!=null && ar.ngp instanceof NGWorkspace) {
+            NGWorkspace ngw = (NGWorkspace) ar.ngp;
+            NGBook site = ngw.getSite();
+            if (site.isMoved()) {
+                streamJSP(ar, "Redirected");
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * This is a set of checks that results in different views depending on the state
      * of the user.  Particularly: must be logged in, must have a name, must have an email
      * address, and must be a member of the page, so the page has to be set as well.
@@ -129,6 +144,9 @@ public class BaseController {
         }
         if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
             showWarningView(ar, "nugen.missingSuperAdmin");
+            return true;
+        }
+        if (checkMoved(ar)) {
             return true;
         }
         return false;
@@ -196,6 +214,9 @@ public class BaseController {
     public static void showJSPAnonymous(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             registerSiteOrProject(ar, siteId, pageId);
+            if (checkMoved(ar)) {
+                return;
+            }
             streamJSP(ar, jspName);
         }
         catch(Exception ex){
@@ -207,6 +228,9 @@ public class BaseController {
         try{
             registerSiteOrProject(ar, siteId, pageId);
             if (checkLogin(ar)){
+                return;
+            }
+            if (checkMoved(ar)) {
                 return;
             }
             streamJSP(ar, jspName);
@@ -263,6 +287,7 @@ public class BaseController {
         ar.req.setAttribute("pageId",     pageId);
         //todo: eliminate this
         ar.req.setAttribute("book",       siteId);
+        /*
         NGBook theSite = ar.getCogInstance().getSiteByIdOrFail(siteId);
         if (theSite.isMoved()) {
             String newBaseUrl = theSite.getMovedTo();
@@ -282,6 +307,7 @@ public class BaseController {
             ar.resp.sendRedirect(newBaseUrl);
             return null;
         }
+        */
         NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
         if (!siteId.equals(ngw.getSiteKey())) {
             throw new NGException("nugen.operation.fail.account.match", new Object[]{pageId,siteId});

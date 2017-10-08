@@ -468,8 +468,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public List<NGPageIndex> getAllProjectsInSite(String accountKey) throws Exception {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
-            if (ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PROJECT
-                    && ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PAGE) {
+            if (!ngpi.isProject()) {
                 // only consider book/project style containers
                 continue;
             }
@@ -491,8 +490,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public List<NGPageIndex> getAllPagesForAdmin(UserProfile user) {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
-            if (ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PROJECT
-                    && ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PAGE) {
+            if (!ngpi.isProject()) {
                 // only consider project style containers
                 continue;
             }
@@ -509,8 +507,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public List<NGPageIndex> getProjectsUserIsPartOf(UserRef ale) throws Exception {
         List<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : getAllContainers()) {
-            if (ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PROJECT
-                    && ngpi.containerType != NGPageIndex.CONTAINER_TYPE_PAGE) {
+            if (!ngpi.isProject()) {
                 // only consider project style containers
                 continue;
             }
@@ -689,14 +686,14 @@ System.out.println("Weaver Server Object == Start the Server");
         keyToWorkspace.put(workspaceKey, bIndex);
 
         //special upstream link handling
-        String upstream = ((NGPage)ngw).getUpstreamLink();
+        String upstream = ngw.getUpstreamLink();
         if (upstream!=null && upstream.length()>0) {
             int lastSlash = upstream.lastIndexOf("/");
             upstreamToContainer.put(upstream.substring(0,lastSlash+1), bIndex);
         }
 
         // look for email and remember if there is some
-        if (((NGPage) ngw).countEmailToSend() > 0) {
+        if (ngw.countEmailToSend() > 0) {
             projectsWithEmailToSend.add(key);
         }
     }

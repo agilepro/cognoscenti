@@ -8,15 +8,20 @@
     String siteId      = ar.reqParam("siteId");
     
     //page must work for both workspaces and for sites
-    NGContainer ngc = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-    ar.setPageAccessLevels(ngc);
+    boolean isSite = ("$".equals(pageId));
     NGBook site;
-    if (ngc instanceof NGBook) {
-        site = (NGBook) ngc;
+    NGContainer ngc;
+    if (isSite) {
+        site = ar.getCogInstance().getSiteByKeyOrFail(siteId).getSite();
+        ngc = site;
     }
     else {
-        site = ((NGPage) ngc).getSite();
+        NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+        site = ngw.getSite();
+        ngc = ngw;
     }
+    ar.setPageAccessLevels(ngc);
+    
     UserProfile uProf = ar.getUserProfile();
     
     String frontPageResource = "frontPage.htm";

@@ -12,7 +12,7 @@
     
     JSONArray allRequests = new JSONArray();
     for (NGPageIndex ngpi : cog.getAllSites()){
-        NGBook site = (NGBook) ngpi.getContainer();
+        NGBook site = ngpi.getSite();
         JSONObject jo = site.getConfigJSON();
         allRequests.put(jo);
     }

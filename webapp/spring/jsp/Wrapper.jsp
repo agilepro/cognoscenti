@@ -400,6 +400,8 @@ function standardTinyMCEOptions() {
           }
           else {
               y.innerHTML = 'Hello <b>'+info.userName+'</b>.  You are now logged in.  Refreshing page.';
+              console.log("LOGIN REFRESH", info)
+              alert("About to refresh because you just logged in");
               window.location.reload();
           }
       }
