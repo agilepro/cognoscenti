@@ -105,7 +105,13 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "leaf_admin");
+        NGContainer ngc = registerSiteOrProject(ar, siteId, pageId);
+        if (ar.isAdmin()) {
+            streamJSP(ar, "leaf_admin");
+        }
+        else {
+            showJSPMembers(ar, siteId, pageId, "leaf_admin");
+        }
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/labelList.htm", method = RequestMethod.GET)

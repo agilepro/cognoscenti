@@ -287,27 +287,6 @@ public class BaseController {
         ar.req.setAttribute("pageId",     pageId);
         //todo: eliminate this
         ar.req.setAttribute("book",       siteId);
-        /*
-        NGBook theSite = ar.getCogInstance().getSiteByIdOrFail(siteId);
-        if (theSite.isMoved()) {
-            String newBaseUrl = theSite.getMovedTo();
-            System.out.println("Site MovedTo URL = "+newBaseUrl);
-            if (!newBaseUrl.endsWith("/")) {
-                throw new Exception("MovedTo URL must end with a slash: "+newBaseUrl);
-            }
-            String reqUrl = ar.realRequestURL;
-            String ctxFrag = ar.req.getContextPath() + "/t/";
-            int pos = reqUrl.indexOf(ctxFrag);
-            if (pos<0) {
-                throw new Exception("Can't understand why context ("+ctxFrag+") is not in real URL: "+reqUrl);
-            }
-            String remaining = reqUrl.substring(pos + ctxFrag.length() + siteId.length() + 1);
-            newBaseUrl = newBaseUrl + remaining;
-            System.out.println("Redirection to new Site location = "+newBaseUrl);
-            ar.resp.sendRedirect(newBaseUrl);
-            return null;
-        }
-        */
         NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
         if (!siteId.equals(ngw.getSiteKey())) {
             throw new NGException("nugen.operation.fail.account.match", new Object[]{pageId,siteId});
