@@ -63,7 +63,23 @@ public class SearchManager {
 
             if (ngpi.isProject()) {
 
-                NGPage ngp = ngpi.getWorkspace();
+                NGWorkspace ngp = ngpi.getWorkspace();
+                if (ngp.isDeleted()) {
+                    //skip all deleted workspaces
+                    continue;
+                }
+                
+                NGBook site = ngp.getSite();
+                if (site.isDeleted()) {
+                    //skip all deleted sites
+                    continue;
+                }
+                if (site.isMoved()) {
+                    //skip all moved sites
+                    continue;
+                }
+                
+                
                 String projectKey = ngp.getKey();
                 String siteKey = ngp.getSiteKey();
                 String projectName = ngp.getFullName();

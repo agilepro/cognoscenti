@@ -36,6 +36,15 @@
         Admin</a></li>
     <li><a href="personal.htm" title="See your own settings that are unique to this workspace">
         Personal</a></li>
+        
+    <% if (isDXP) { %>
+    <li><a href="ProcessApps.htm" title="See process applications you can use in this workspace.">
+        Process</a></li>
+    <li><a href="RulesList.htm" title="See the list of available busienss rules.">
+        Business Rules</a></li>
+    <li><a href="Analytics.htm" title="See analytics for all cases this workspace.">
+        Analytics</a></li>
+    <% } %>
 
     <% } %>
   </ul>

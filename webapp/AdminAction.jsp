@@ -4,7 +4,7 @@
 %><%@page import="org.socialbiz.cog.Cognoscenti"
 %><%@page import="org.socialbiz.cog.GoalRecord"
 %><%@page import="org.socialbiz.cog.NGBook"
-%><%@page import="org.socialbiz.cog.NGPage"
+%><%@page import="org.socialbiz.cog.NGWorkspace"
 %><%@page import="org.socialbiz.cog.NGPageIndex"
 %><%@page import="org.socialbiz.cog.SectionUtil"
 %><%@page import="org.socialbiz.cog.UserManager"
@@ -56,10 +56,9 @@
         cog.resumeServer();
     }
     else if (action.equals("Purge Deleted Documents")) {
-        for (NGPageIndex ngpi : ar.getCogInstance().getAllContainers())
-        {
+        for (NGPageIndex ngpi : ar.getCogInstance().getAllContainers()) {
             if (!ngpi.isDeleted && ngpi.isProject()) {
-                NGPage ngp = ngpi.getPage();
+                NGWorkspace ngp = ngpi.getWorkspace();
                 ngp.purgeDeletedAttachments();
             }
         }

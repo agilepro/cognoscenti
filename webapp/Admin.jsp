@@ -1,6 +1,7 @@
 <%@page errorPage="error.jsp"
 %><%@page contentType="text/html;charset=UTF-8" pageEncoding="ISO-8859-1"
 %><%@page import="java.io.File"
+%><%@page import="java.util.Arrays"
 %><%@page import="java.util.Properties"
 %><%@page import="org.socialbiz.cog.Cognoscenti"
 %><%@page import="org.socialbiz.cog.MimeTypes"
@@ -192,8 +193,9 @@
         File rootWebaps = rootCog.getParentFile();
         File rootTomcat = rootWebaps.getParentFile();
         File rootLogs = new File(rootTomcat, "logs");
-        for (File child : rootLogs.listFiles())
-        {
+        File[] allChildren = rootLogs.listFiles();
+        Arrays.sort(allChildren);
+        for (File child : allChildren) {
             ar.write("\n<li><a href=\"AdminLogFile.jsp?fn=");
             ar.writeURLData(child.getName());
             ar.write("\">");

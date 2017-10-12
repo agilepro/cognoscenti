@@ -28,6 +28,7 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.License;
+import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.UserProfile;
@@ -227,10 +228,18 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
             // start by clearing any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();
 
-            if (!ngpi.isProject()) {
+            if (!ngpi.isProject() || ngpi.isDeleted) {
                 continue;
             }
             NGPage aPage = ngpi.getWorkspace();
+            if (aPage.isDeleted() || aPage.isFrozen()) {
+                continue;
+            }
+            NGBook site = aPage.getSite();
+            if (site.isDeleted() || site.isMoved() || site.isFrozen()) {
+                //ignore any workspaces in deleted, frozen, or moved sites.
+                continue;
+            }
 
             for (GoalRecord gr : aPage.getAllGoals()) {
                 if (gr.isPassive() || !gr.isAssignee(up)) {

@@ -709,10 +709,18 @@ public class UserPage extends ContainerCommon
 
         for (NGPageIndex ngpi : cog.getAllContainers()) {
 
-            if (!ngpi.isProject()) {
+            if (!ngpi.isProject() || ngpi.isDeleted) {
                 continue;
             }
             NGWorkspace aWorkspace = ngpi.getWorkspace();
+            if (aWorkspace.isDeleted() || aWorkspace.isFrozen()) {
+                continue;
+            }
+            NGBook site = aWorkspace.getSite();
+            if (site.isDeleted() || site.isMoved() || site.isFrozen()) {
+                //ignore any workspaces in deleted, frozen, or moved sites.
+                continue;
+            }
             for (GoalRecord gr : aWorkspace.getAllGoals()) {
 
                 if (gr.isPassive()) {

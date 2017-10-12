@@ -37,7 +37,9 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.EmailRecord;
+import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGContainer;
+import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
@@ -292,9 +294,12 @@ public class EmailSender extends TimerTask {
         }
     }
 
-    private ArrayList<NGPageIndex> listOverdueContainers(long cutoffTime) {
+    private ArrayList<NGPageIndex> listOverdueContainers(long cutoffTime) throws Exception {
         ArrayList<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : cog.getAllContainers()) {
+            if (!ngpi.isProject() || ngpi.isDeleted) {
+                continue;
+            }
             if (ngpi.nextScheduledAction>0 && ngpi.nextScheduledAction<cutoffTime) {
                 ret.add(ngpi);
             }

@@ -1,5 +1,8 @@
 <!-- BEGIN AppBar.jsp -->
+<%
 
+    boolean isDXP = "true".equals(ar.getSystemProperty("isDXP"));
+%>
 <script>
 
     function changePage(dest) {
@@ -64,7 +67,11 @@
   <!-- Logo Brand -->
   <a class="navbar-brand" href="<%=userRelPath%>UserHome.htm" title="Access your overall personal Weaver Home Page">
     <img class="hidden-xs" alt="Weaver Icon" src="<%=ar.retPath%>bits/header-icon.png">
+    <% if (isDXP) { %>
+    <h1>DXP</h1>
+    <% } else  { %>
     <h1>Weaver</h1>
+    <% } %>
   </a>
 
   <!-- Drop Down Workspaces -->

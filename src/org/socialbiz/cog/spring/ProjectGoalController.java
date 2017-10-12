@@ -894,5 +894,43 @@ public class ProjectGoalController extends BaseController {
             streamException(ee, ar);
         }
     }
+
+    
+    ////////////////////// Process linkage with BPM //////////////////
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/ProcessApps.htm", method = RequestMethod.GET)
+    public void processApps(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "ProcessApps");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/ProcessRun.htm", method = RequestMethod.GET)
+    public void processRun(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "ProcessRun");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/ProcessTasks.htm", method = RequestMethod.GET)
+    public void processTasks(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "ProcessTasks");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/Analytics.htm", method = RequestMethod.GET)
+    public void analytics(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "Analytics");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/RulesList.htm", method = RequestMethod.GET)
+    public void rulesList(@PathVariable String siteId, @PathVariable String pageId,
+            HttpServletRequest request,   HttpServletResponse response)  throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "RulesList");
+    }
     
 }

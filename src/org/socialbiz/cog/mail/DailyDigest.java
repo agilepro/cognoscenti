@@ -14,6 +14,7 @@ import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
+import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
@@ -206,7 +207,21 @@ public class DailyDigest {
                 if (ngpi == null) {
                     continue;
                 }
+                if (ngpi.isDeleted) {
+                    //ignore any deleted workspaces
+                    continue;
+                }
                 NGPage ngp = ngpi.getWorkspace();
+                if (ngp.isDeleted()) {
+                    //ignore any deleted workspaces
+                    continue;
+                }
+                NGBook site = ngp.getSite();
+                if (site.isDeleted() || site.isMoved()) {
+                    //ignore any workspaces in deleted or moved sites.
+                    continue;
+                }
+                
                 List<HistoryRecord> histRecs = ngp.getHistoryRange(
                         historyStartTime, processingStartTime);
                 if (histRecs.size() == 0) {
@@ -726,11 +741,18 @@ public class DailyDigest {
         for (NGPageIndex ngpi : cog.getAllContainers()) {
             // start by clearing any outstanding locks in every loop
             NGPageIndex.clearLocksHeldByThisThread();
-
-            if (!ngpi.isProject()) {
+            if (!ngpi.isProject() || ngpi.isDeleted) {
                 continue;
             }
             NGPage aPage = ngpi.getWorkspace();
+            if (aPage.isDeleted() || aPage.isFrozen()) {
+                continue;
+            }
+            NGBook site = aPage.getSite();
+            if (site.isDeleted() || site.isMoved() || site.isFrozen()) {
+                //ignore any workspaces in deleted, frozen, or moved sites.
+                continue;
+            }
             for (GoalRecord gr : aPage.getAllGoals()) {
                 if (gr.isPassive()) {
                     //ignore tasks that are from other servers

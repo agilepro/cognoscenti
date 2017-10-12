@@ -1,6 +1,7 @@
 package org.socialbiz.cog;
 
 import java.io.File;
+
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
@@ -40,11 +41,19 @@ public class UserCache {
         UserProfile up = UserManager.getUserProfileByKey(userKey);
 
         for (NGPageIndex ngpi : cog.getAllContainers()) {
-            if (!ngpi.isProject()) {
+            if (!ngpi.isProject() || ngpi.isDeleted) {
                 continue;
             }
-
             NGPage aPage = ngpi.getWorkspace();
+            if (aPage.isDeleted() || aPage.isFrozen()) {
+                continue;
+            }
+            NGBook site = aPage.getSite();
+            if (site.isDeleted() || site.isMoved() || site.isFrozen()) {
+                //ignore any workspaces in deleted, frozen, or moved sites.
+                continue;
+            }
+            
             for (GoalRecord gr : aPage.getAllGoals()) {
 
                 if (gr.isPassive()) {
