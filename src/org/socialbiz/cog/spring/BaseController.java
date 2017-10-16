@@ -21,8 +21,6 @@
 package org.socialbiz.cog.spring;
 
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.util.Properties;
 
@@ -41,6 +39,7 @@ import org.socialbiz.cog.exception.ServletExit;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.workcast.json.JSONArray;
+import org.workcast.json.JSONException;
 import org.workcast.json.JSONObject;
 import org.workcast.json.JSONTokener;
 
@@ -394,25 +393,14 @@ public class BaseController {
 
     protected void streamException(Exception e, AuthRequest ar) {
         try {
+            System.out.println("EXCEPTION (BaseController) tid="+Thread.currentThread().getId()+", unlock, "+ar.getCompleteURL());
+
             //if a project was registered, it will be removed from the cache, causing the next
             //access to come from the previously saved disk file
             ar.rollbackChanges();
             
             //let go of any locks you might have on any objects before entering the 3 second delay!
             NGPageIndex.clearLocksHeldByThisThread();
-
-            //all exceptions are delayed by 3 seconds to avoid attempts to
-            //mine for valid license numbers
-            Thread.sleep(ar.ngsession.getErrorResponseDelay());
-
-            System.out.println("USER_CONTROLLER_ERROR: "+ar.getCompleteURL());
-
-            ar.logException("API Servlet", e);
-
-            JSONObject errorResponse = new JSONObject();
-            errorResponse.put("responseCode", 500);
-            JSONObject exception = new JSONObject();
-            errorResponse.put("exception", exception);
 
             JSONArray msgs = new JSONArray();
             Throwable runner = e;
@@ -426,11 +414,27 @@ public class BaseController {
                 msgs.put(oneMsg);
                 runner = runner.getCause();
             }
+            
+            //all exceptions are delayed by up to 5 seconds to avoid attempts to
+            //mine for valid license numbers
+            Thread.sleep(ar.ngsession.getErrorResponseDelay());
+
+            ar.logException("EXCEPTION (BaseController)", e);
+
+            /*
+            JSONObject errorResponse = new JSONObject();
+            errorResponse.put("responseCode", 500);
+            JSONObject exception = new JSONObject();
+            errorResponse.put("exception", exception);
+
             exception.put("msgs", msgs);
 
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             exception.put("stack", sw.toString());
+            */
+            
+            JSONObject errorResponse = JSONException.convertToJSON(e, "BaseController Exception tid="+Thread.currentThread().getId());
 
             ar.resp.setStatus(400);
             ar.resp.setContentType("application/json");
@@ -438,7 +442,7 @@ public class BaseController {
             ar.flush();
         } catch (Exception eeeee) {
             // nothing we can do here...
-            ar.logException("User Controller Error Within Error", eeeee);
+            System.out.println("DOUBLE EXCEPTION (BaseController) tid="+Thread.currentThread().getId()+", "+eeeee.toString());
         }
     }
 

@@ -20,8 +20,6 @@
 
 package org.socialbiz.cog.spring;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,8 +27,6 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGWorkspace;
-import org.socialbiz.cog.SectionWiki;
-import org.socialbiz.cog.exception.NGException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -144,7 +140,7 @@ public class AdminController extends BaseController {
 
 
 
-
+/*
     //TODO: just update the list of names instead of separate operations to add and delete
     //TODO: change this to a JSON post
     @RequestMapping(value = "/{siteId}/{project}/deletePreviousProjectName.htm", method = RequestMethod.GET)
@@ -175,8 +171,8 @@ public class AdminController extends BaseController {
             throw new NGException("nugen.operation.fail.admin.delete.previous.project.name", new Object[]{pageId,siteId} , ex);
         }
     }
-
-
+*/
+/*
     // compare the sanitized versions of the names in the array, and if
     // the val equals one, return the index of that string, otherwise
     // return -1
@@ -193,6 +189,6 @@ public class AdminController extends BaseController {
         }
         return -1;
     }
-
+*/
 
 }

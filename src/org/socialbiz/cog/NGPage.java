@@ -265,8 +265,9 @@ public abstract class NGPage extends ContainerCommon {
     //This is for config changes, NOT content changes
     public void saveWithoutMarkingModified(String modUser, String comment, Cognoscenti cog) throws Exception
     {
+        long thisThread = Thread.currentThread().getId();
         try {
-            System.out.println("FILESAVE "+getKey()+" tid="+Thread.currentThread().getId()+" by "+modUser+" for "+comment);
+            System.out.println("FILESAVE ("+getKey()+") tid="+thisThread+" by ("+modUser+") for ("+comment+")");
             save();
 
             //update the in memory index because the file has changed
@@ -274,6 +275,7 @@ public abstract class NGPage extends ContainerCommon {
 
             //Update blocking Queue
             NGPageIndex.postEventMsg(this.getKey());
+            System.out.println("FILESAVE done ("+getKey()+") tid="+thisThread);
         }
         catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.write.file",

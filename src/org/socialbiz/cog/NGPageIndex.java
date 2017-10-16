@@ -141,7 +141,7 @@ public class NGPageIndex {
     public static Hashtable<String, ArrayBlockingQueue<String>> bsnList = new Hashtable<String, ArrayBlockingQueue<String>>();
 
     public static final long   PAGE_NTFX_WAIT = 10;
-    public static final String UPDATE_LOCK_WAIT = "updateLockWait";
+    //public static final String UPDATE_LOCK_WAIT = "updateLockWait";
     public static final String LOCK_ID = "lock";
     public static final String NO_LOCK_ID = "nolock";
     private static HashMap<String, List<NGPageIndex>> lockMap = new HashMap<String, List<NGPageIndex>>();
@@ -437,12 +437,15 @@ public class NGPageIndex {
                 // unlocked at once at the end of the web request
                 return;
             }
+            if (lockedBy!=0) {
+                System.out.println("    WAIT: tid="+thisThread+" is about to wait for lock held by tid="+lockedBy+" now="+(System.currentTimeMillis()%10000));
+            }
 
             String ctid = "tid:" + thisThread;
             String lockObj = lockBlq.poll(10, TimeUnit.SECONDS);
             if (lockObj == null) {
-                throw new NGException("nugen.exception.fail.to.lock.container", new Object[] {
-                        ctid, this.containerKey, lockedBy }, lockedByAuditException);
+                throw new Exception("tid="+thisThread+" failed after 10 seconds to set a lock for container ("+this.containerKey
+                         +"), Lock held by tid="+lockedBy,  lockedByAuditException);
             }
 
             lockedBy = thisThread;
@@ -456,9 +459,8 @@ public class NGPageIndex {
             ngpiList.add(this);
         }
         catch (Exception e) {
-            String msg = "Failed to set up the lock for Edit, Please check '" + UPDATE_LOCK_WAIT
-                    + "' setting in Config file.";
-            throw new NGException("nugen.exception.dynamic.data", new Object[] { msg }, e);
+            String msg = "Failed to set up the lock for Edit of ("+this.containerKey+") tid="+thisThread;
+            throw new Exception(msg, e);
         }
     }
 
@@ -475,8 +477,7 @@ public class NGPageIndex {
                 // not right
                 // and, not sure what we can do about it. Unlocking should
                 // continue.
-                System.out
-                        .println("LOCK ERROR - clear lock called when thread does not have lock!");
+                System.out.println("LOCK ERROR - clear lock called when thread tid="+thisThread+" does not have lock!");
                 return;
             }
             this.lockedBy = 0;
@@ -517,13 +518,14 @@ public class NGPageIndex {
             //during initialization all locks are ignored
             return;
         }
-        String ctid = "tid:" + Thread.currentThread().getId();
+        long thisThread = Thread.currentThread().getId();
+        String ctid = "tid:" + thisThread;
         if (lockMap.containsKey(ctid)) {
 
             //This is a pernicious problem that might cause a deadlock, so make a big deal in the
             //log file so that it gets fixed proactively.  You need the stack trace to fix it,
             //so go ahead and put the stack trace in the log file.
-            Exception e = new Exception("program logic error: Thread is holding a lock when it should not.  "
+            Exception e = new Exception("program logic error: Thread tid="+thisThread+" is holding a lock when it should not.  "
                     +"Method that is controlling locks must only be called when no locks are being held.  "
                     +"Clear all locks and all references to locked objects before calling this method.");
             System.out.println("\n\n~~~~~~ THREAD LOCK VIOLATION ~~~~~~~"+new Date());

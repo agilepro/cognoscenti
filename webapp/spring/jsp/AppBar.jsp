@@ -20,8 +20,8 @@
 
 <% if (!isSiteHeader) { %>
     <script>
-        <% if (pageId != null && bookId != null) { %>
-          book='<%=bookId%>';
+        <% if (pageId != null && siteId != null) { %>
+          book='<%=siteId%>';
         <% } %>
     </script>
 

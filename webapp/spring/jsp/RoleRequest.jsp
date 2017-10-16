@@ -22,7 +22,7 @@ Optional Parameter:
 
 
     String pageId      = ar.reqParam("pageId");
-    String siteId      = ar.reqParam("book");
+    String siteId      = ar.reqParam("siteId");
     NGContainer ngc = null;
     if ("$".equals(pageId)) {
         ngc = ar.getCogInstance().getSiteByIdOrFail(siteId);

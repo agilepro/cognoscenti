@@ -42,10 +42,6 @@
     String pageId = (String)request.getAttribute("pageId");
     String siteId = (String)request.getAttribute("siteId");
 
-//this indicates a site id
-    String bookId = (String)request.getAttribute("book");
-//What is the difference beween bookid and accountid?  Account, Site, and Book at all the same thing.
-//TODO: straighten this out to have only one.
 //this also indicates a site id
     String accountId = (String)request.getAttribute("accountId");
 
@@ -65,7 +61,7 @@
     boolean showExperimental= false;
 
     if (isSiteHeader) {
-        if (bookId==null) {
+        if (siteId==null) {
             throw new Exception("Program Logic Error: need a site id passed to a site style header");
         }
     }

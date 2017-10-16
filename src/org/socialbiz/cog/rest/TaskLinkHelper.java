@@ -62,7 +62,7 @@ public class TaskLinkHelper
         Document doc = makeConnection("PUT", parentURL, activityDoc);
         String ex = DOMUtils.getChildText(doc.getDocumentElement(), "reason");
         if(ex != null && ex.length() >0){
-            throw new NGException("nugen.exception.dynamic.data", new Object[]{ex});
+            throw new Exception(ex);
         }
         if(subPagelicense != null && subPagelicense.length() >0){
             constructlicenseDoc();
@@ -79,7 +79,7 @@ public class TaskLinkHelper
         Document doc = makeConnection("POST", parentURL, activityDoc);
         String ex = DOMUtils.getChildText(doc.getDocumentElement(), "reason");
         if(ex != null && ex.length() >0){
-            throw new NGException("nugen.exception.dynamic.data", new Object[]{ex});
+            throw new Exception(ex);
         }
         taskId = DOMUtils.getChildText(doc.getDocumentElement(), "resourceid");
         if(subPagelicense != null && subPagelicense.length() >0){

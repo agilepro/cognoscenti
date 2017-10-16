@@ -389,24 +389,6 @@ public class FolderAccessHelper {
         }
     }
 
-/*
-    public ConnectionType getConnectionType(ConnectionSettings folder) throws Exception
-    {
-        String ptcl = folder.getProtocol();
-        if(ConnectionType.PTCL_WEBDAV.equals(ptcl)){
-            return new WebDavAccess(folder);
-        }else if(ConnectionType.PTCL_SMB.equals(ptcl)){
-            return new SMBAccess(folder);
-        }else if(ConnectionType.PTCL_CVS.equals(ptcl)){
-             return new CVSAccess(folder, ar.getBestUserId());
-        }else if(ConnectionType.PTCL_LOCAL.equals(ptcl)){
-            return new LocalAccess(folder);
-        }else{
-            throw new ProgramLogicError("Invalid Connection type " + ptcl);
-        }
-    }
-*/
-
     private  static String  constructValidUrl(String url, String ptcl, AuthRequest ar) throws Exception{
         String validUrl = url;
         if(ConnectionType.PTCL_SMB.equals(ptcl))

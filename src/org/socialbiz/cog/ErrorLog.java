@@ -154,7 +154,8 @@ public class ErrorLog extends DOMFile {
 
             //redundantly included in the system out as well
             //maybe someday this will not be necessary???
-            System.out.println("\nLOGGED EXCEPTION: "+ new Date(nowTime) + " actually " + new Date());
+            System.out.println("\nLOGGED EXCEPTION: t="+Thread.currentThread().getId()
+                     +", start="+ new Date(nowTime) + ", now=" + new Date());
             PrintWriter pw = new PrintWriter(System.out);
             ex.printStackTrace(pw);
             pw.flush();
