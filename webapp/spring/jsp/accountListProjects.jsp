@@ -141,6 +141,8 @@ app.controller('myCtrl', function($scope, $http) {
                     <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">
                        {{rec.name}}
                        <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
+                       <span ng-show="rec.frozen" style="color:grey"> (FROZEN)</span>
+                       <span ng-show="rec.isMoved" style="color:grey"> (MOVED)</span>
                     </a>
                 </td>
                 <td>{{rec.changed|date}}</span></td>

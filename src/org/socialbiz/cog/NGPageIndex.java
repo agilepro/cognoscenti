@@ -105,6 +105,8 @@ public class NGPageIndex {
     public long lastChange;
     public boolean requestWaiting;
     public boolean isDeleted;
+    private boolean isFrozen;
+    private boolean isMoved;
     public String[] admins; // a.k.a. authors
     public long nextScheduledAction;
 
@@ -593,6 +595,7 @@ public class NGPageIndex {
 
         containerName = "~Container Has No Name";
         isDeleted = container.isDeleted();
+        isFrozen = container.isFrozen();
         lastChange = container.getLastModifyTime();
 
         // consistency check, either the nameTerms or refTerms vectors must
@@ -638,6 +641,7 @@ public class NGPageIndex {
         if (container instanceof NGWorkspace) {
             NGWorkspace ngw = (NGWorkspace) container;
             NGBook ngb = ngw.getSite();
+            isMoved = ngb.isMoved();
             if (ngb != null) {
                 wsSiteName = ngb.getFullName();
                 wsSiteKey = ngb.getKey();
@@ -805,6 +809,8 @@ public class NGPageIndex {
         wObj.put("siteKey", wsSiteKey);
         wObj.put("parentKey", parentKey);
         wObj.put("isDeleted", isDeleted);
+        wObj.put("frozen", isFrozen);
+        wObj.put("isMoved", isMoved);
         return wObj;
     }
 
