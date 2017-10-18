@@ -768,7 +768,6 @@ public class UserController extends BaseController {
 
             File userImageFolder = getUserImageFolder(request);
             String newImageName = profile.getKey()+fileExtension;
-            File oldUserImage = new File(userImageFolder, profile.getImage());
             File newUserImage = new File(userImageFolder, newImageName);
             File userImageTmpFile = new File(userImageFolder, newImageName+".~TMP");
             //clean out any tmp file that might be left around
@@ -779,9 +778,13 @@ public class UserController extends BaseController {
             //write the image content to the temp file
             AttachmentHelper.saveToFileAH(fileInPost, userImageTmpFile);
 
-            //delete the old image if it existed
-            if(oldUserImage.exists()){
-                oldUserImage.delete();
+            String oldImageName = profile.getImage();
+            if (oldImageName!=null) {
+                File oldUserImage = new File(userImageFolder, oldImageName);
+                //delete the old image if it existed
+                if(oldUserImage.exists()){
+                    oldUserImage.delete();
+                }
             }
             //get rid of any garbage that might exist with the new name
             if(newUserImage.exists()){

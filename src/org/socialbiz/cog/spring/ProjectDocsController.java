@@ -438,6 +438,7 @@ public class ProjectDocsController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         ar.setParam("id", id);
         ar.setParam("pageId", pageId);
+        ar.setParam("siteId", siteId);
         ar.invokeJSP("/spring/jsp/Share.jsp");
     }
 

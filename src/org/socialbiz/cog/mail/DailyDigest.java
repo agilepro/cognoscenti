@@ -203,8 +203,9 @@ public class DailyDigest {
 
             JSONArray notifyList = new JSONArray();
             for (String noteKey : up.getNotificationList()) {
-                NGPageIndex ngpi = cog.getWSByCombinedKeyOrFail(noteKey);
+                NGPageIndex ngpi = cog.getWSByCombinedKey(noteKey);
                 if (ngpi == null) {
+                    //ignoring any reference to a workspace that no longer exists
                     continue;
                 }
                 if (!ngpi.isProject()) {
