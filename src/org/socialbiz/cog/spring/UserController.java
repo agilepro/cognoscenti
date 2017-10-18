@@ -1478,9 +1478,9 @@ public class UserController extends BaseController {
                 searchSite = null;
             }
 
-            SearchManager.initializeIndex(ar.getCogInstance());
             List<SearchResultRecord> searchResults = null;
             if (searchText.length()>0) {
+                SearchManager.initializeIndex(ar.getCogInstance());
                 searchResults = SearchManager.performSearch(ar, searchText, searchProject, searchSite);
             }
             else {

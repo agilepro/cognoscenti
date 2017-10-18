@@ -3,15 +3,13 @@ app.service('AllPeople', function($http) {
     
     //get around the JavaScript problems with 'this'
     var AllPeople = this;
-    var nextPeopleFetchTime = 0;
+    var fetchedAt = 0;
     
     AllPeople.findFullName = function (key) {
         if (!AllPeople.allPersonList) {
             AllPeople.getPeopleOutOfStorage();
         }
-        if (AllPeople.allPersonList.validTime<new Date().getTime()) {
-            AllPeople.fetchPeople();
-        }
+        AllPeople.refreshListIfNeeded();
         var fullName = key;
         AllPeople.allPersonList.people.forEach(  function(item) {
             if (item.uid == key) {
@@ -24,9 +22,7 @@ app.service('AllPeople', function($http) {
         if (!AllPeople.allPersonList) {
             AllPeople.getPeopleOutOfStorage();
         }
-        if (AllPeople.allPersonList.validTime<new Date().getTime()) {
-            AllPeople.fetchPeople();
-        }
+        AllPeople.refreshListIfNeeded();
         var thisKey = key;
         AllPeople.allPersonList.people.forEach(  function(item) {
             if (item.uid == key) {
@@ -39,9 +35,7 @@ app.service('AllPeople', function($http) {
         if (!AllPeople.allPersonList) {
             AllPeople.getPeopleOutOfStorage();
         }
-        if (AllPeople.allPersonList.validTime<new Date().getTime()) {
-            AllPeople.fetchPeople();
-        }
+        AllPeople.refreshListIfNeeded();
         var res = [];
         var q = query.toLowerCase();
         AllPeople.allPersonList.people.forEach( function(person) {
@@ -56,9 +50,7 @@ app.service('AllPeople', function($http) {
         if (!AllPeople.allPersonList) {
             AllPeople.getPeopleOutOfStorage();
         }
-        if (AllPeople.allPersonList.validTime<new Date().getTime()) {
-            AllPeople.fetchPeople();
-        }
+        AllPeople.refreshListIfNeeded();
         var res = null;
         var q = query.toLowerCase();
         AllPeople.allPersonList.people.forEach( function(person) {
@@ -70,12 +62,20 @@ app.service('AllPeople', function($http) {
         return res;
     }
     AllPeople.refreshCache = function() {
-        AllPeople.allPersonList = {people:[]};
-        AllPeople.fetchPeople();
+        AllPeople.allPersonList = {people:[],validTime:0};
+        AllPeople.refreshListIfNeeded();
     }
     
     
-    AllPeople.fetchPeople = function () {
+    AllPeople.refreshListIfNeeded = function () {
+        var curTime = new Date().getTime();
+        if (AllPeople.allPersonList.validTime>curTime) {
+            return;
+        }
+        if (fetchedAt>curTime-10000) {
+            return;
+        }
+        fetchedAt = curTime;
         $http.get("../../AllPeople.json")
         .success( function(data) {
             AllPeople.allPersonList = data;
@@ -105,9 +105,7 @@ app.service('AllPeople', function($http) {
         AllPeople.allPersonList.people = [];
         AllPeople.allPersonList.validTime = 0;
     }
-    if (AllPeople.allPersonList.people.length==0) {
-        AllPeople.fetchPeople();
-    }
+    AllPeople.refreshListIfNeeded();
     console.log("AllPeople service is running, cache = "+AllPeople.allPersonList.people.length 
               +", valid until ="+new Date(AllPeople.allPersonList.validTime));
     

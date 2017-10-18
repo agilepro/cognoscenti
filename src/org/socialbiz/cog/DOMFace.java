@@ -434,8 +434,7 @@ public class DOMFace
             return retval;
         }
         catch (Exception e) {
-            throw new NGException("nugen.exception.unable.to.create.object",
-                    new Object[] { childClass.getName() }, e);
+            throw new Exception("Unable to construct XML object for "+childClass.getName(), e);
         }
     }
 

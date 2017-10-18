@@ -53,6 +53,8 @@ public class SearchManager {
     public static synchronized void initializeIndex(Cognoscenti cog) throws Exception {
         analyzer = new StandardAnalyzer(Version.LUCENE_42);
         directory = new RAMDirectory();
+        
+        System.out.println("SearchManager - starting to build the internal index.");
 
         AuthRequest ar = AuthDummy.serverBackgroundRequest();
 
@@ -164,6 +166,7 @@ public class SearchManager {
     public static synchronized List<SearchResultRecord> performSearch(AuthRequest ar,
                 String queryStr, String relationship, String siteId) throws Exception {
 
+        System.out.println("SearchManager - actually performing a search for "+queryStr);
         List<SearchResultRecord> vec = new ArrayList<SearchResultRecord>();
 
         boolean onlyOwner = ("owner".equals(relationship));

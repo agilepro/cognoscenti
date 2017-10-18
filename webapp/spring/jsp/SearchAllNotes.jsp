@@ -32,6 +32,11 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.actualSearch = "";
 
     $scope.doSearch = function() {
+        if (!$scope.query.searchFilter) {
+            console.log("Nothing specified to search for")
+            return;
+        }
+        $scope.actualSearch = $scope.query.searchFilter;
         var postURL = "searchNotes.json";
         var postdata = angular.toJson($scope.query);
         $scope.showError=false;
@@ -41,7 +46,6 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.results = data;
             $scope.hasResults = ($scope.results.length>0);
             $scope.isSearching = false;
-            $scope.actualSearch = $scope.query.searchFilter;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -54,9 +58,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.actualSearch = "";
     }
 
-    <% if (searchText.length()>0) { %>
     $scope.doSearch();
-    <% } %>
 });
 </script>
 

@@ -207,6 +207,10 @@ public class DailyDigest {
                 if (ngpi == null) {
                     continue;
                 }
+                if (!ngpi.isProject()) {
+                    //ignore site objects
+                    continue;
+                }
                 if (ngpi.isDeleted) {
                     //ignore any deleted workspaces
                     continue;

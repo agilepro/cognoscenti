@@ -260,15 +260,11 @@
         );
         scope.selectedDay = scope.selectedDate.getDate();
         if (attrs.ngModel) {
-          console.log('attrs.ngModel',attrs.ngModel,"TYPE");
           var elScope = ctrl.triggerEl.scope(), dateValue;
-          console.log("DATATYPP", typeof elScope.$eval(attrs.ngModel) === 'number')
           if (true) {
               dateValue = new Date(dateFilter(scope.selectedDate, dateFormat)).getTime();
-              console.log("setting the value to a number: ", dateValue);
           } else {
               dateValue = dateFilter(scope.selectedDate, dateFormat);
-              console.log("setting the value to a string: ", dateValue);
           }
           elScope.$eval(attrs.ngModel + '= date', {date: dateValue});
         }
@@ -304,17 +300,14 @@
       link: function(scope, element, attrs, ctrl) {
         // Attach validation watcher
         scope.$watch(attrs.ngModel, function(value) {
-          console.log("WATCH datatype number: ", typeof value === 'number')
           if( !value || value == '' ){
               return;
           }
           if (!typeof value === 'number') {
-              console.log("DATE-TIME picker only works on integer epoch values");
               return;
           }
           // The value has already been cleaned by the above code
           var date = new Date(value);
-          console.log("DATETIME set to: ", date);
           ctrl.$setValidity('date', !date? false : true);
           var now = new Date();
           if( attrs.hasOwnProperty('futureOnly') ){

@@ -795,9 +795,9 @@ public class MainTabsViewControler extends BaseController {
                 siteId = null;
             }
 
-            SearchManager.initializeIndex(ar.getCogInstance());
             List<SearchResultRecord> searchResults = null;
             if (searchText.length()>0) {
+                SearchManager.initializeIndex(ar.getCogInstance());
                 searchResults = SearchManager.performSearch(ar, searchText, searchProject, siteId);
             }
             else {
