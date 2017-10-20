@@ -86,13 +86,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" href="ProcessApps.htm">
-              Process Applications</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="ProcessRun.htm">
-              Running Process</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="ProcessTasks.htm">
-              Process Tasks</a>
+              <i class="fa fa-backward"></i> Process Applications</a>
           </li>
         </ul>
       </span>

@@ -80,12 +80,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <li role="presentation"><a role="menuitem" href="ProcessApps.htm">
               <i class="fa fa-backward"></i> Process Applications</a>
           </li>
-          <li role="presentation"><a role="menuitem" href="ProcessRun.htm">
-              Running Process</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="ProcessTasks.htm">
-              Process Tasks</a>
-          </li>
         </ul>
       </span>
      </div>
@@ -93,10 +87,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <table class="table">
       <tr>
         <td></td>
-        <td>ID</td>
+        <td>Assignee</td>
         <td>Name</td>
-        <td>Due</td>
-        <td>State</td>
+        <td>Created</td>
+        <td>Values</td>
       </tr>
       <tr ng-repeat="proc in processes">
         <td>
@@ -109,10 +103,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </ul>
           </div>
         </td>
-        <td>{{proc.idInst}}</td>
+        <td>{{proc.assignee}}</td>
         <td><a href="{{proc.uiurl}}">{{proc.name}} <i class="fa fa-external-link"></i></a></td>
-        <td>{{proc.due | date}}</td>
-        <td>{{proc.state}}</td>
+        <td>{{proc.creationTime | date}}</td>
+        <td><div ng-repeat="(name,val) in proc.uda">{{name}}: {{val}}</div></td>
       </tr>
     </table>
 

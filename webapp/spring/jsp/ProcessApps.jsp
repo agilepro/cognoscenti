@@ -87,12 +87,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <li role="presentation"><a role="menuitem" href="ProcessApps.htm">
               Process Applications</a>
           </li>
-          <li role="presentation"><a role="menuitem" href="ProcessRun.htm">
-              Running Process</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="ProcessTasks.htm">
-              Process Tasks</a>
-          </li>
         </ul>
       </span>
      </div>
@@ -100,8 +94,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <table class="table">
       <tr>
         <td></td>
-        <td>Tenant / ID</td>
-        <td>Name</td>
+        <td>Application Name</td>
+        <td>Description</td>
         <td>Owner</td>
       </tr>
       <tr ng-repeat="app in processes">
@@ -117,8 +111,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </ul>
           </div>
         </td>
-        <td>{{app.tenant}} / {{app.id}}</td>
         <td><a href="{{app.homePage}}?CaseID={{caseId}}">{{app.name}} <i class="fa fa-external-link"></i></a></td>
+        <td style="max-width:500px">{{app.description}} -  {{app.tenant}} / {{app.id}}</td>
         <td>{{app.owner}}</td>
       </tr>
     </table>
