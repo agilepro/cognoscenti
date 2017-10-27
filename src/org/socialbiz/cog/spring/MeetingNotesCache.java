@@ -17,6 +17,7 @@ public class MeetingNotesCache {
     
     private class NoteHolder {
         List<AddressListEntry> members;
+        String targetRole;
         long cacheTime = 0;
         JSONObject notesObject;
         JSONObject fullObject;
@@ -33,7 +34,7 @@ public class MeetingNotesCache {
                 throw new Exception("Must be logged in to access meeting "+meetingId+".");
             }
             if (!canAccess(user)) {
-                throw new Exception("User ("+user.getUniversalId()+") is not in the target role for meeting "+meetingId+" and can not access the meeting");
+                throw new Exception("User ("+user.getUniversalId()+") is not in the target role ("+targetRole+") for meeting "+meetingId+" and can not access the meeting");
             }
         }
     }
@@ -107,7 +108,8 @@ public class MeetingNotesCache {
         nh.cacheTime = System.currentTimeMillis();
         nh.notesObject = meeting.getMeetingNotes();
         nh.fullObject = meeting.getFullJSON(ar, ngw);
-        nh.members = ngw.getRoleOrFail(meeting.getTargetRole()).getExpandedPlayers(ngw);
+        nh.targetRole = meeting.getTargetRole();
+        nh.members = ngw.getRoleOrFail(nh.targetRole).getExpandedPlayers(ngw);
         nh.meetingId = meeting.getId();
         nh.assertMeetingParticipant(ar.getUserProfile());
         cache.put(key, nh);
