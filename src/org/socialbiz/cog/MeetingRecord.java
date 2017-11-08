@@ -357,10 +357,17 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         //if they exist.  Look it up every time.
         String previousMeetingId = getScalar("previousMeeting");
         if (previousMeetingId!=null && previousMeetingId.length()>0) {
-            MeetingRecord prevMeet = ngw.findMeeting(previousMeetingId);
-            String minutesID = prevMeet.getMinutesId();
-            if (minutesID!=null && minutesID.length()>0) {
-                meetingInfo.put("previousMinutes", minutesID);
+            MeetingRecord prevMeet = ngw.findMeetingOrNull(previousMeetingId);
+            //check that the meeting really exists
+            if (prevMeet!=null) {
+                String minutesID = prevMeet.getMinutesId();
+                if (minutesID!=null && minutesID.length()>0) {
+                    //check that the minutes really exist
+                    TopicRecord tr = ngw.getNote(minutesID);
+                    if (tr!=null) {
+                        meetingInfo.put("previousMinutes", minutesID);
+                    }
+                }
             }
         }
         return meetingInfo;

@@ -7,6 +7,14 @@
             $scope.errorMsgs = exception.msgs;
             $scope.errorTrace = exception.stack;
         }
+        else if (errorData.error) {
+            var error = errorData.error;
+            $scope.errorMsgs = [];
+            error.details.forEach( function(item) {
+                $scope.errorMsgs.push(item.message);
+            });
+            $scope.errorTrace = error.stack;
+        }
         else {
             $scope.errorMsgs = [];
             $scope.errorMsgs.push(stripHtml(errorData));
