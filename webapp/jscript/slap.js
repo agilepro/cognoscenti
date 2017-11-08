@@ -137,7 +137,7 @@ SLAP.queryTheServer = function() {
             SLAP.queryTheProvider();
         }
     }, function(data) {
-        alert("Failure querying server.  Is server really at:\n "+pUrl);
+        console.log("Failure querying server.  Is server really at:\n "+pUrl);
     });
 };
 
@@ -150,7 +150,7 @@ SLAP.queryTheProvider = function() {
             SLAP.requestChallenge();
         }
     }, function(data) {
-        alert("Failure querying Identity provider.  Is provider really at:\n "+pUrl);
+        console.log("Failure querying Identity provider.  Is provider really at:\n "+pUrl);
     });
 };
 
@@ -161,7 +161,7 @@ SLAP.requestChallenge = function() {
         SLAP.displayLoginStatus(SLAP.loginInfo);
         SLAP.getToken();
     }, function(data) {
-        alert("Failure getting challenge from server.  Is server really at:\n "+pUrl);
+        console.log("Failure getting challenge from server.  Is server really at:\n "+pUrl);
     });
 };
 
@@ -172,7 +172,7 @@ SLAP.getToken = function() {
         SLAP.displayLoginStatus(data);
         SLAP.verifyToken();
     }, function(data) {
-        alert("Failure getting token from provider.  Is provider really at:\n "+pUrl);
+        console.log("Failure getting token from provider.  Is provider really at:\n "+pUrl);
     });
 };
 
@@ -182,7 +182,7 @@ SLAP.verifyToken = function() {
         SLAP.storeSession(data);
         SLAP.displayLoginStatus(data);
     }, function(data) {
-        alert("Failure verifying token.  Is server using the same provider as: "+pUrl);
+        console.log("Failure verifying token.  Is server using the same provider as: "+pUrl);
     });
 };
 
@@ -192,7 +192,7 @@ SLAP.logOutProvider = function() {
     SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
         SLAP.logOutServer();
     }, function(data) {
-        alert("Failure logging out.  Is provider still at:\n "+pUrl);
+        console.log("Failure logging out.  Is provider still at:\n "+pUrl);
     });
 };
 
@@ -201,7 +201,7 @@ SLAP.logOutServer = function() {
     SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
         SLAP.displayLoginStatus(SLAP.loginInfo);
     }, function(data) {
-        alert("Failure logging out.  Is server really at:\n "+pUrl);
+        console.log("Failure logging out.  Is server really at:\n "+pUrl);
     });
 }
 
