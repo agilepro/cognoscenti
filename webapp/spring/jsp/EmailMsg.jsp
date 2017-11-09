@@ -112,6 +112,10 @@ app.controller('myCtrl', function($scope, $http) {
     <td>Status</td>
     <td>{{emailMsg.Status}}</td>
   </tr>
+  <tr ng-show="emailMsg.exception">
+    <td>Error</td>
+    <td><div ng-repeat="ee in emailMsg.exception.split('\n')">{{ee}}</div></td>
+  </tr>
   <tr>
     <td>Created</td>
     <td>{{emailMsg.CreateDate |date:"dd-MMM-yyyy 'at' HH:mm"}}</td>
