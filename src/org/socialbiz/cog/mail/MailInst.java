@@ -153,6 +153,10 @@ public class MailInst extends JSONWrapper {
         Transport transport = null;
         String addressee = "UNSPECIFIED";
 
+        if ("true".equals(mailer.getProperty("traceProperties"))) {
+            mailer.dumpPropertiesToLog();
+        }
+        
         try {
 
 
@@ -160,12 +164,13 @@ public class MailInst extends JSONWrapper {
             //to allow testing the server when there was no SMTP server availble.
             //Now we have kMail to simulate a server anywhere, so it is better to
             //use that instead.
-            if (!"smtp".equals(mailer.getProperty("mail.transport.protocol"))) {
+            String transportProtocol = mailer.getProperty("mail.transport.protocol");
+            if ("none".equals(transportProtocol) ) {
                 //if protocol is set to anything else, then just ignore this request
                 //this is an easy way to disable the sending of email across board
                 setStatus(EmailRecord.SKIPPED);
                 setLastSentDate(sendTime);
-                System.out.println("DEPRECATED: Email skipped, not sent because mail.transport.protocol!=smtp ");
+                System.out.println("DEPRECATED: Email skipped, because mail.transport.protocol=none ");
                 System.out.println("            Please use kMail instead of setting mail.transport.protocol to a strange value.");
                 return true;  //act like mail was sent
             }

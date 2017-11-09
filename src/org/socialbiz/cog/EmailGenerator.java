@@ -418,7 +418,7 @@ public class EmailGenerator extends DOMFace {
             data.put("sender",  ownerProfile.getJSON());
 		}
 		else {
-			System.out.println("AuthRequest user does not have a user profile for the email message: "+ar.getBestUserId());
+			System.out.println("No Sender info set.  AuthRequest user ("+ar.getBestUserId()+") does not have a user profile for the email message");
 		}
 
         String workspaceBaseUrl = ar.baseURL + "t/" + ngp.getSiteKey() + "/" + ngp.getKey() + "/";

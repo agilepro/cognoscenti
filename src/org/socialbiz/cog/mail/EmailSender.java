@@ -37,9 +37,7 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.EmailRecord;
-import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGContainer;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
@@ -218,17 +216,15 @@ public class EmailSender extends TimerTask {
         NGPageIndex.assertNoLocksOnThread();
         Mailer mailer = new Mailer(cog.getConfig().getFile("EmailNotification.properties"));
 
-        //default delay is 5 minutes AFTER the scheduled time.  This 5 minutes is to allow people who
-        //create something a few minutes to edit before it is sent.  However, this can be set in the
-        //properties to be more or less than that.
-        int delayTime = 5*60*1000;
-        //int delayTime = 0;
+        //default delay is 0 minutes AFTER the scheduled time.  This delay is to allow people who
+        //create something a few minutes to edit before it is sent.  
+        int delayTime = 0;
         String delayStr = mailer.getProperty("automated.email.delay");
         if (delayStr!=null) {
             //delay time config parameter is in minutes
             delayTime = DOMFace.safeConvertInt(delayStr)*1000*60;
         }
-
+        
         long nowTime = ar.nowTime;
         List<NGPageIndex> allOverdue = listOverdueContainers(nowTime-delayTime);
         int iCount = 0;

@@ -28,5 +28,18 @@ public class Mailer {
     public Properties getProperties() {
         return emailProperties;
     }
+    
+    public void dumpPropertiesToLog() {
+        System.out.println("%%%%%%% EMAIL PROPERTY FILE %%%%%%");
+        for (String key : emailProperties.stringPropertyNames()) {
+            if (key.contains("password")) {
+                System.out.println("    - "+key+" = ********");
+            }
+            else {
+                System.out.println("    - "+key+" = "+emailProperties.getProperty(key));
+            }
+        }
+        System.out.println("");
+    }
 
 }
