@@ -23,6 +23,7 @@ package org.socialbiz.cog;
 import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.socialbiz.cog.exception.NGException;
 import org.workcast.json.JSONObject;
@@ -58,8 +59,13 @@ public class OptOutAddr {
             cal = up.getCalendar();
         }
         else {
-            // use the system default calendar if there is no user profile
-            cal = Calendar.getInstance();
+            String tzid = UserProfile.defaultTimeZone;
+            if (tzid==null || tzid.length()==0) {
+                //this is the default calendar for the server environment
+                throw new RuntimeException("UserProfile.defaultTimeZone is not set!");
+            }
+            TimeZone tz = TimeZone.getTimeZone(tzid);
+            cal = Calendar.getInstance(tz);
         }
     }
 

@@ -35,6 +35,8 @@ import org.workcast.json.JSONObject;
 
 public class UserProfile implements UserRef
 {
+    public static String defaultTimeZone = "America/Los_Angeles";
+    
     private String key = "";
     private String name = "";
     private String description;
