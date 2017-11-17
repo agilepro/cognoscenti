@@ -14,6 +14,9 @@
     for (NGPageIndex ngpi : cog.getAllSites()){
         NGBook site = ngpi.getSite();
         JSONObject jo = site.getConfigJSON();
+        WorkspaceStats stats = site.getRecentStats(ar.getCogInstance());
+        jo.put("numWorkspaces", stats.numWorkspaces);
+        jo.put("numTopics", stats.numTopics);
         allRequests.put(jo);
     }
 
@@ -79,10 +82,13 @@ app.controller('myCtrl', function($scope, $http) {
                 <thead>
                     <tr>
                         <th></th>
+                        <th >ID</th>
                         <th >Site Name</th>
                         <th >Last Change</th>
-                        <th >Deleted</th>
+                        <th >Status</th>
                         <th >Owners</th>
+                        <th >WS</th>
+                        <th >Topics</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -99,10 +105,17 @@ app.controller('myCtrl', function($scope, $http) {
                             </ul>
                           </div>
                         </td>
-                        <td><a href="../../t/{{rec.key}}/$/SiteStats.htm"><b>{{rec.names[0]}}</b></a> ({{rec.key}})</td>
+                        <td>{{rec.key}}</td>
+                        <td><a href="../../t/{{rec.key}}/$/SiteStats.htm"><b>{{rec.names[0]}}</b></a></td>
                         <td>{{rec.changed|date}}</td>
-                        <td>{{rec.isDeleted}}</td>
+                        <td><div ng-show="rec.isDeleted">Deleted</div>
+                            <div ng-show="rec.frozen">Frozen</div>
+                            <div ng-show="rec.offLine">OffLine</div>
+                            <div ng-show="rec.movedTo">Moved</div>
+                        </td>
                         <td><div ng-repeat="owner in rec.owners">{{owner.name}}</div></td>
+                        <td>{{rec.numWorkspaces}}</td>
+                        <td>{{rec.numTopics}}</td>
                     </tr>
                 </tbody>
             </table>
