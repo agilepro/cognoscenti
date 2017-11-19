@@ -193,7 +193,7 @@ public class AttachmentRecordProj extends AttachmentRecord
     }
 
     @Override
-    public String getResourceURL(AuthRequest ar, NGPage ngp) throws Exception {
+    public String getEmailURL(AuthRequest ar, NGPage ngp) throws Exception {
         return ar.getResourceURL(ngp,  "docinfo"+this.getId()+".htm");
     }
 

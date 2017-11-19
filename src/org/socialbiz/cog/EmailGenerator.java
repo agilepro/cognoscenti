@@ -381,7 +381,7 @@ public class EmailGenerator extends DOMFace {
         clone.retPath = ar.baseURL;
         clone.setPageAccessLevels(ngp);
         
-        JSONObject data = getJSONForTemplate(ar, ngp, noteRec, ooa.getAssignee(), getIntro(), 
+        JSONObject data = getJSONForTemplate(clone, ngp, noteRec, ooa.getAssignee(), getIntro(), 
                 getIncludeBody(), attachList, meeting);
 
         writeNoteAttachmentEmailBody2(clone, ooa, data);
@@ -413,7 +413,7 @@ public class EmailGenerator extends DOMFace {
         //Gather all the data into a JSON structure
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
-        UserProfile ownerProfile = ar.getUserProfile();
+        UserProfile ownerProfile = UserManager.findUserByAnyId(getOwner());
         if (ownerProfile!=null) {
             data.put("sender",  ownerProfile.getJSON());
 		}
@@ -442,10 +442,14 @@ public class EmailGenerator extends DOMFace {
                 + "?" + AccessControl.getAccessNoteParams(ngp, selectedNote)
                 + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
             data.put("noteName", selectedNote.getSubject());
+            
+            
             JSONObject noteObj = selectedNote.getJSONWithHtml(ar, ngp);
             noteObj.put("noteUrl", ar.retPath + ar.getResourceURL(ngp, selectedNote)
                     + "?" + AccessControl.getAccessNoteParams(ngp, selectedNote)
                     + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
+            AttachmentRecord.addEmailStyleAttList(noteObj, ar, ngp, selectedNote.getDocList());
+            
             data.put("note", noteObj);
             if (includeBody) {
                 data.put("includeTopic", "yes");

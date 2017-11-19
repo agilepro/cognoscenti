@@ -23,6 +23,14 @@ Workspace: <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a>
 {$comment.html}
 </div>
 
+{% if($attList) %}
+<b>Attachments:</b><br/>
+<ul>
+{% loop in $attList as $doc %}
+<li><a href="{$doc.url}">{$doc.name}</a></li>
+{% endloop %}
+</ul>
+{% endif %}
 
 {% if($isClosed!=true) %}
 {% if ($cmtType=="proposal") %}

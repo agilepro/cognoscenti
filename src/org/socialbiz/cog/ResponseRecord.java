@@ -158,9 +158,9 @@ public class ResponseRecord extends DOMFace
         
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
-        data.put("parentURL", ar.baseURL + noteOrMeet.getResourceURL(clone, ngp));
+        data.put("parentURL", ar.baseURL + noteOrMeet.getEmailURL(clone, ngp));
         data.put("parentName", noteOrMeet.emailSubject());
-        data.put("commentURL", ar.baseURL + noteOrMeet.getResourceURL(clone, ngp)+ "#cmt" + getTime());
+        data.put("commentURL", ar.baseURL + noteOrMeet.getEmailURL(clone, ngp)+ "#cmt" + getTime());
         data.put("comment", cr.getHtmlJSON(ar));
         data.put("response", this.getJSON(ar));
         data.put("choice", this.getChoice());

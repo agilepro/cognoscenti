@@ -859,6 +859,8 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));
           data.put("wsName", ngp.getFullName());
           data.put("optout", ooa.getUnsubscribeJSON(ar));
+          
+          AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
 
           File emailFolder = cog.getConfig().getFileFromRoot("email");
           File templateFile = new File(emailFolder, "NewTopic.chtml");
@@ -1032,8 +1034,9 @@ public class TopicRecord extends CommentContainer implements EmailContext {
          return getSubject();
      }
 
-     public String getResourceURL(AuthRequest ar, NGPage ngp) throws Exception {
-         return ar.getResourceURL(ngp,  "noteZoom"+this.getId()+".htm");
+     public String getEmailURL(AuthRequest ar, NGPage ngp) throws Exception {
+         return ar.getResourceURL(ngp,  "noteZoom"+this.getId()+".htm?") 
+                 + AccessControl.getAccessNoteParams(ngp, this);
      }
      public String selfDescription() throws Exception {
          return "(Note) "+getSubject();

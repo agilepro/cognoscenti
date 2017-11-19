@@ -19,6 +19,15 @@ in workspace <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a></p>
 
 {$topic.html}
 
+{% if($attList) %}
+<b>Attachments:</b><br/>
+<ul>
+{% loop in $attList as $doc %}
+<li><a href="{$doc.url}">{$doc.name}</a></li>
+{% endloop %}
+</ul>
+{% endif %}
+
 </div>
 
 {% include OptOut %}

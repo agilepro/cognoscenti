@@ -266,12 +266,17 @@ public class DailyDigest {
             {
                 List<NGPageIndex> containers = new ArrayList<NGPageIndex>();
                 for (String noteKey : up.getNotificationList()) {
-                    NGPageIndex ngci = clone.getCogInstance().getWSByCombinedKeyOrFail(noteKey);
+                    NGPageIndex ngci = clone.getCogInstance().getWSByCombinedKey(noteKey);
 
                     // users might have items on the notification list that don't exist, because
-                    // they signed up for notification, and then the project was deleted.
+                    // they signed up for notification, and then the project was deleted.  
+                    //Or because it was moved and we don't know the new name.
                     if (ngci != null) {
-                        containers.add(ngci);
+                        //apparently it is possible for people to get a 'Site' in their
+                        //notify list.
+                        if (ngci.isProject()) {
+                            containers.add(ngci);
+                        }
                     }
                 }
                 userLog.put("notifyCount", containers.size());
@@ -377,6 +382,10 @@ public class DailyDigest {
         for (NGPageIndex ngpi : containers) {
             if (ngpi==null) {
                 throw new Exception("How did I get a null value by iterating a List collection?");
+            }
+            if (!ngpi.isProject()) {
+                //ignore sites
+                continue;
             }
             try {
                 NGWorkspace container = ngpi.getWorkspace();

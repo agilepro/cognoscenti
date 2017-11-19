@@ -8,7 +8,7 @@ public interface EmailContext {
 
     public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw)  throws Exception;
     
-    public String getResourceURL(AuthRequest ar, NGPage ngp) throws Exception;
+    public String getEmailURL(AuthRequest ar, NGPage ngp) throws Exception;
 
     public String selfDescription() throws Exception;
 

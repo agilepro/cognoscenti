@@ -301,6 +301,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     }
 
     $scope.startResponse = function(cmt) {
+        if (!$scope.canUpdate) {
+            alert("You must be logged in to ceate a response");
+            return;
+        }
         $scope.openResponseEditor(cmt)
     }
 
@@ -471,6 +475,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
             return;
         }
+        if (!$scope.canUpdate) {
+            alert("You must be logged in to ceate a response");
+            return;
+        }
         var newComment = {};
         newComment.time = new Date().getTime();
         newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
@@ -631,6 +639,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
             return;
         }
+        if (!$scope.canUpdate) {
+            alert("You must be logged in to ceate a response");
+            return;
+        }
 
         var newDecision = {
             html: cmt.html,
@@ -676,7 +688,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 	
     $scope.getFullDoc = function(docId) {
         var doc = {};
-        $scope.attachmentList.filter( function(item) {
+        $scope.attachmentList.forEach( function(item) {
             if (item.universalid == docId) {
                 doc = item;
             }

@@ -569,9 +569,10 @@ public class CommentRecord extends DOMFace {
 
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
-        data.put("parentURL", ar.baseURL + noteOrMeet.getResourceURL(clone, ngp));
+        String fullURLtoContext = ar.baseURL + noteOrMeet.getEmailURL(clone, ngp);
+        data.put("parentURL", fullURLtoContext);
         data.put("parentName", noteOrMeet.emailSubject());
-        data.put("commentURL", ar.baseURL + noteOrMeet.getResourceURL(clone, ngp)+ "#cmt" + getTime());
+        data.put("commentURL", fullURLtoContext + "#cmt" + getTime());
         data.put("comment", this.getHtmlJSON(clone));
         data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngp));
         data.put("wsName", ngp.getFullName());
@@ -589,6 +590,8 @@ public class CommentRecord extends DOMFace {
         data.put("outcomeHtml", this.getOutcomeHtml(clone));
         data.put("optout", ooa.getUnsubscribeJSON(clone));
         data.put("resendMessage", resendMessage);
+        
+        AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
 
         File templateFile = cog.getConfig().getFileFromRoot("email/NewComment.chtml");
         ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());

@@ -788,7 +788,8 @@ public class UserProfile implements UserRef
         if (imageFile.exists()) {
             return;
         }
-        char uidLetter = this.getUniversalId().charAt(0);
+        char uidLetter = Character.toLowerCase(this.getUniversalId().charAt(0));
+        
         File defaultFile =  new File(imageFolder, "fake-"+uidLetter+".jpg");
         if (!defaultFile.exists()) {
             throw new Exception("The default user image file is missing!: "+defaultFile);

@@ -936,6 +936,24 @@ public abstract class AttachmentRecord extends CommentContainer implements Email
     }
 
 
+    public static boolean addEmailStyleAttList(JSONObject jo, AuthRequest ar, NGPage ngp, List<String> docUIDs) throws Exception {
+        JSONArray attachInfo = new JSONArray();
+        for (String docUID : docUIDs) {
+            AttachmentRecord att = ngp.findAttachmentByUidOrNull(docUID);
+            if (att!=null) {
+                JSONObject jatt = new JSONObject();
+                jatt.put("name", att.getNiceName());
+                jatt.put("url", ar.baseURL + ar.getResourceURL(ngp, "docinfo" + att.getId() + ".htm?")
+                        + AccessControl.getAccessDocParams(ngp, att));
+                attachInfo.put(jatt);
+            }
+        }
+        if (attachInfo.length()==0) {
+            return false;
+        }
+        jo.put("attList", attachInfo);
+        return true;
+    }
 
     public JSONObject getMinJSON(NGPage ngp) throws Exception {
         JSONObject thisDoc = new JSONObject();
