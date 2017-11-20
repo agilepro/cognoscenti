@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
-public class MeetingRecord extends DOMFace implements EmailContext { 
+public class MeetingRecord extends DOMFace implements EmailContext {
 
     public static final int MEETING_TYPE_CIRCLE = 1;
     public static final int MEETING_TYPE_OPERATIONAL = 2;
@@ -945,13 +945,14 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
     /**
-     * Needed for the EmailContext interface
+     * Needed for the EmailContext interface x
      */
     public String emailSubject() throws Exception {
         return getName();
     }
-    public String getResourceURL(AuthRequest ar, NGPage ngp) throws Exception {
-        return ar.getResourceURL(ngp,  "meetingFull.htm?id="+this.getId());
+    public String getEmailURL(AuthRequest ar, NGPage ngp) throws Exception {
+        return ar.getResourceURL(ngp,  "meetingFull.htm?id="+this.getId()) 
+                + "&" + AccessControl.getAccessMeetParams(ngp, this);
     }
     public String selfDescription() throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
