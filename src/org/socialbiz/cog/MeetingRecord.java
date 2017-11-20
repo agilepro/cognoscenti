@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
 import org.workcast.json.JSONArray;
 import org.workcast.json.JSONObject;
 
-public class MeetingRecord extends DOMFace implements EmailContext {
+public class MeetingRecord extends DOMFace implements EmailContext { 
 
     public static final int MEETING_TYPE_CIRCLE = 1;
     public static final int MEETING_TYPE_OPERATIONAL = 2;
