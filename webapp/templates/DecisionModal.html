@@ -2,12 +2,17 @@
 
 <div class="modal-header qqTabHeader">
   <div class="qqTabBand">
-    <span ng-class="'qqTabSelected'">
+    <span ng-click="editMode='decision'"  
+          ng-class="editMode=='decision'?'qqTabSelected':'qqTabUnselected'">
     Edit Decision
+    </span>
+    <span ng-click="editMode='details'"  
+          ng-class="editMode=='details'?'qqTabSelected':'qqTabUnselected'">
+    Details
     </span>
   </div>
 </div>
-<div class="modal-body">
+<div class="modal-body" ng-show="editMode=='decision'">
     <div style="margin-bottom:15px;">
     	<div ui-tinymce="tinymceOptions" ng-model="decision.html" 
              class="leafContent" style="min-height:200px;" ></div>
@@ -44,6 +49,39 @@
       </span>
     </div>
 </div>
+<div class="modal-body" ng-show="editMode=='details'">
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="startdate">Created Date:</label>
+            <span datetime-picker ng-model="decision.timestamp" 
+                class="form-control" style="max-width:300px">
+                <span ng-show="decision.timestamp>1000000" 
+                      datetime-picker ng-model="decision.timestamp" > 
+                    {{decision.timestamp|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                <span ng-show="decision.timestamp<=1000000" datetime-picker 
+                      ng-model="decision.timestamp" > 
+                    not set </span>
+            </span> 
+        </div>
+        <div class="form-group">
+            <label for="startdate">Review Date:</label>
+            <span datetime-picker ng-model="decision.reviewDate" 
+                class="form-control" style="max-width:300px">
+                <span ng-show="decision.reviewDate>1000000" 
+                      datetime-picker ng-model="decision.reviewDate" > 
+                    {{decision.reviewDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                <span ng-show="decision.reviewDate<=1000000" datetime-picker 
+                      ng-model="decision.reviewDate" > 
+                    not set </span>
+            </span> 
+        </div>
+        <div class="form-group">
+            <label for="startdate">Review Completed:</label>
+            <button class="btn btn-primary" ng-click="advanceReviewDate()">Advance by 1 year</button>
+        </div>
+      </div>
+</div>
+    <div style="clear:both"></div>
 <div class="modal-footer">
     <button ng-show="decision.num=='~new~'" class="btn btn-primary btn-raised"
         type="button" ng-click="ok()">Create</button>

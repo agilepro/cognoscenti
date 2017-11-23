@@ -147,6 +147,7 @@ public class SiteController extends BaseController {
             site.saveFile(ar, "adding super admin to site owners");
             
             JSONObject jo = site.getConfigJSON();
+            testLatencyDelay();
             jo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
@@ -396,6 +397,7 @@ public class SiteController extends BaseController {
                     
             JSONObject jo = new JSONObject();
             jo.put("updated", count);
+            testLatencyDelay();
             jo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){

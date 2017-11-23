@@ -365,6 +365,7 @@ public class ProjectDocsController extends BaseController {
 
             ngw.saveFile(ar, "Updated Agenda Item");
             JSONObject repo = aDoc.getJSON4Doc(ar, ngw);
+            testLatencyDelay();
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
@@ -394,6 +395,7 @@ public class ProjectDocsController extends BaseController {
 
             JSONObject repo = new JSONObject();
             repo.put("docs", attachmentList);
+            testLatencyDelay();
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
@@ -422,6 +424,7 @@ public class ProjectDocsController extends BaseController {
                 shareList.put(spr.getMinJSON());
             }
             repo.put("shares", shareList);
+            testLatencyDelay();
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
@@ -469,6 +472,7 @@ public class ProjectDocsController extends BaseController {
                 ngw.saveContent(ar, "updating the share ports");
             }
             JSONObject repo = spr.getFullJSON(ngw);
+            testLatencyDelay();
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){

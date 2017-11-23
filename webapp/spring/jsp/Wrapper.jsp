@@ -234,50 +234,7 @@
     <title><% ar.writeHtml(title); %></title>
 
 <script>
-/* NEW UI TEMPPORARY SCRIPTS */
-// TODO Remove this after removing the options dropdown
-$(document).ready(function() {
-    $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
-    $('.rightDivContent .dropdown-menu').addClass('pull-right');
-    /* INIT Bootstrap Material Design */
-    $.material.init();
-});
 
-/* INIT tinyMCE */
-tinyMCE.PluginManager.add('stylebuttons', function(editor, url) {
-  ['p', 'h1', 'h2', 'h3'].forEach(function(name){
-   editor.addButton("style-" + name, {
-       tooltip: "Toggle " + name,
-         text: name.toUpperCase(),
-         onClick: function() { editor.execCommand('mceToggleFormat', false, name); },
-         onPostRender: function() {
-             var self = this, setup = function() {
-                 editor.formatter.formatChanged(name, function(state) {
-                     self.active(state);
-                 });
-             };
-             editor.formatter ? setup() : editor.on('init', setup);
-         }
-     })
-  });
-});
-
-function standardTinyMCEOptions() {
-    return {
-		handle_event_callback: function (e) {
-		// put logic here for keypress
-		},
-        browser_spellcheck: true,
-        plugins: "link stylebuttons lists",
-        inline: false,
-        menubar: false,
-        body_class: 'leafContent',
-        statusbar: false,
-        toolbar: "style-p, style-h1, style-h2, style-h3, bullist, outdent, indent | bold, italic, link |  cut, copy, paste, undo, redo",
-        target_list: false,
-        link_title: false
-	};
-}
  </script>
 
 
@@ -335,40 +292,7 @@ function standardTinyMCEOptions() {
       <!-- Welcome Message -->
       <div id="welcomeMessage"></div>
       <script>
-      function validateDelimEmails(field) {
-          var count = 1;
-          var result = "";
-          var spiltedEmails;
-          var value = trimme(field.value);
-          if(value != ""){
-              if(value.indexOf(";") != -1){
-                  spiltedEmails = value.split(";");
-              }else if(value.indexOf(",") != -1){
-                  spiltedEmails = value.split(",");
-              }else if(value.indexOf("\n") != -1){
-                  spiltedEmails = value.split("\n");
-              }else{
-                  value = value+";";
-                  spiltedEmails = value.split(";");
-              }
-              for(var i = 0;i < spiltedEmails.length;i++){
-                  var email_id = trimme(spiltedEmails[i]);
-                  if(email_id != ""){
-                      if(!validateEmail(email_id)){
-                          result += "  "+count+".    "+email_id+" \n";
-                          count++;
-                      }
-                  }
-              }
-          }
-          if(result != ""){
-              alert("Below is the list of id(s) which does not look like an email. Please enter an email id(s).\n\n"+result);
-              field.focus();
-              return false;
-          }
 
-          return true;
-      }
 
 
       var knowWeAreLoggedIn = <%= ar.isLoggedIn() %>;

@@ -73,24 +73,58 @@ Optional Parameters:
 
 %>
 <head>
-    <script type="text/javascript">
-        function validate(form) {
-            var field = document.emailForm.emailto;
-            if(validateDelimEmails(field)){
-                var total=""
-                for(var i=0;i<document.emailForm.checkboxRole.length;i++){
-                    if(document.emailForm.checkboxRole[i].checked){
-                        total +=document.emailForm.checkboxRole[i].value+"," ;
-                    }
-                }
-                document.emailForm.toRole.value = total;
-                return true;
+<script type="text/javascript">
+    function validateDelimEmails(field) {
+      var count = 1;
+      var result = "";
+      var spiltedEmails;
+      var value = trimme(field.value);
+      if(value != ""){
+          if(value.indexOf(";") != -1){
+              spiltedEmails = value.split(";");
+          }else if(value.indexOf(",") != -1){
+              spiltedEmails = value.split(",");
+          }else if(value.indexOf("\n") != -1){
+              spiltedEmails = value.split("\n");
+          }else{
+              value = value+";";
+              spiltedEmails = value.split(";");
+          }
+          for(var i = 0;i < spiltedEmails.length;i++){
+              var email_id = trimme(spiltedEmails[i]);
+              if(email_id != ""){
+                  if(!validateEmail(email_id)){
+                      result += "  "+count+".    "+email_id+" \n";
+                      count++;
+                  }
+              }
+          }
+      }
+      if(result != ""){
+          alert("Below is the list of id(s) which does not look like an email. Please enter an email id(s).\n\n"+result);
+          field.focus();
+          return false;
+      }
 
-            }else{
-                return false;
+      return true;
+    }    
+    function validate(form) {
+        var field = document.emailForm.emailto;
+        if(validateDelimEmails(field)){
+            var total=""
+            for(var i=0;i<document.emailForm.checkboxRole.length;i++){
+                if(document.emailForm.checkboxRole[i].checked){
+                    total +=document.emailForm.checkboxRole[i].value+"," ;
+                }
             }
+            document.emailForm.toRole.value = total;
+            return true;
+
+        }else{
+            return false;
         }
-    </script>
+    }
+</script>
 </head>
 
 <!--  here is where the content goes -->

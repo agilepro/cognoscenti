@@ -445,6 +445,23 @@ public class BaseController {
             System.out.println("DOUBLE EXCEPTION (BaseController) tid="+Thread.currentThread().getId()+", "+eeeee.toString());
         }
     }
+    
+    /**
+     * This is a testing tool.  It is simply a delay.  In normal production
+     * operation this delay should be zero in order to respond as quickly as
+     * possible.  But in order to test latency situations, this can be a
+     * one to three to ten second delay to slow down the response time.
+     */
+    public static void testLatencyDelay() {
+        try {
+            //comment this line out for production use
+            //TODO: make this configurable
+            //Thread.sleep(5000);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Exception during test latency delay", e);
+        }
+    }
 
 }
 

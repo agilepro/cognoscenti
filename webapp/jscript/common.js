@@ -1,6 +1,6 @@
 // Please add all the common function here.
 
-function DaysInBetweenDates(date1, date2) {
+function DaysInBetweenDatesXXXXXXXX(date1, date2) {
 
     // The number of milliseconds in one day
     var ONE_DAY = 1000 * 60 * 60 * 24
@@ -17,7 +17,7 @@ function DaysInBetweenDates(date1, date2) {
 
 }
 
-function DateAdd(objDate, strInterval, intIncrement)
+function DateAddXXXXXXXX(objDate, strInterval, intIncrement)
 {
     if(typeof(objDate) == "string")
     {
@@ -105,3 +105,49 @@ function DateAdd(objDate, strInterval, intIncrement)
     }
     return objDate;
 }
+
+/* NEW UI TEMPPORARY SCRIPTS */
+// TODO Remove this after removing the options dropdown
+$(document).ready(function() {
+    $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
+    $('.rightDivContent .dropdown-menu').addClass('pull-right');
+    /* INIT Bootstrap Material Design */
+    $.material.init();
+});
+
+/* INIT tinyMCE */
+tinyMCE.PluginManager.add('stylebuttons', function(editor, url) {
+  ['p', 'h1', 'h2', 'h3'].forEach(function(name){
+   editor.addButton("style-" + name, {
+       tooltip: "Toggle " + name,
+         text: name.toUpperCase(),
+         onClick: function() { editor.execCommand('mceToggleFormat', false, name); },
+         onPostRender: function() {
+             var self = this, setup = function() {
+                 editor.formatter.formatChanged(name, function(state) {
+                     self.active(state);
+                 });
+             };
+             editor.formatter ? setup() : editor.on('init', setup);
+         }
+     })
+  });
+});
+
+function standardTinyMCEOptions() {
+    return {
+		handle_event_callback: function (e) {
+		// put logic here for keypress
+		},
+        browser_spellcheck: true,
+        plugins: "link stylebuttons lists",
+        inline: false,
+        menubar: false,
+        body_class: 'leafContent',
+        statusbar: false,
+        toolbar: "style-p, style-h1, style-h2, style-h3, bullist, outdent, indent | bold, italic, link |  cut, copy, paste, undo, redo",
+        target_list: false,
+        link_title: false
+	};
+}
+

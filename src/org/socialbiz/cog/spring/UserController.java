@@ -390,6 +390,7 @@ public class UserController extends BaseController {
             }
             JSONObject result = new JSONObject();
             result.put("people", peopleList);
+            testLatencyDelay();
             result.write(ar.w, 2, 2);
             ar.flush();
         }
@@ -632,6 +633,7 @@ public class UserController extends BaseController {
             UserManager.writeUserProfilesToFile();
             
             JSONObject userObj = userBeingEdited.getFullJSON();
+            testLatencyDelay();
             userObj.write(ar.w, 2, 2);
             ar.flush();
         }
@@ -1095,6 +1097,7 @@ public class UserController extends BaseController {
             MicroProfileMgr.setDisplayName(emailId, idDisplayName);
             MicroProfileMgr.save();
 
+            testLatencyDelay();
             received.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
@@ -1494,6 +1497,7 @@ public class UserController extends BaseController {
             for (SearchResultRecord srr : searchResults) {
                 resultList.put(srr.getJSON());
             }
+            testLatencyDelay();
             resultList.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){

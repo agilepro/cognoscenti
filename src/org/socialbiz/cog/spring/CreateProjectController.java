@@ -98,6 +98,7 @@ public class CreateProjectController extends BaseController {
             }            
 
             JSONObject repo = newWorkspace.getConfigJSON();
+            testLatencyDelay();
             repo.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){

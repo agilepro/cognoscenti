@@ -146,17 +146,18 @@ public class DecisionRecord extends DOMFace {
         JSONObject thisDecision = new JSONObject();
         thisDecision.put("universalid", getUniversalId());
         thisDecision.put("num", getNumber());
-        thisDecision.put("timestamp", getTimestamp());
+        extractAttributeLong(thisDecision, "timestamp");
         JSONObject labelMap = new JSONObject();
         for (NGLabel lRec : getLabels(ngp) ) {
             labelMap.put(lRec.getName(), true);
         }
         thisDecision.put("labelMap",  labelMap);
         thisDecision.put("html", getContentHtml(ar));
-        thisDecision.put("sourceType", getSourceType());
-        thisDecision.put("sourceId", getSourceId());
-        thisDecision.put("sourceCmt", getSourceCmt());
         thisDecision.put("sourceUrl", getSourceUrl(ar, ngp));
+        extractAttributeString(thisDecision, "sourceId");
+        extractAttributeInt(thisDecision, "sourceType");
+        extractAttributeLong(thisDecision, "sourceCmt");
+        extractAttributeLong(thisDecision, "reviewDate");
         return thisDecision;
     }
 
@@ -170,9 +171,7 @@ public class DecisionRecord extends DOMFace {
         if (decisionObj.has("html")) {
             setContentHtml(ar, decisionObj.getString("html"));
         }
-        if (decisionObj.has("timestamp")) {
-            setTimestamp(decisionObj.getLong("timestamp"));
-        }
+        updateAttributeLong("timestamp", decisionObj);
         if (decisionObj.has("labelMap")) {
             JSONObject labelMap = decisionObj.getJSONObject("labelMap");
             List<NGLabel> selectedLabels = new ArrayList<NGLabel>();
@@ -185,15 +184,10 @@ public class DecisionRecord extends DOMFace {
             setLabels(selectedLabels);
         }
 
-        if (decisionObj.has("sourceType")) {
-            setSourceType(decisionObj.getInt("sourceType"));
-        }
-        if (decisionObj.has("sourceId")) {
-            setSourceId(decisionObj.getString("sourceId"));
-        }
-        if (decisionObj.has("sourceCmt")) {
-            setSourceCmt(decisionObj.getLong("sourceCmt"));
-        }
+        updateAttributeInt("sourceType", decisionObj);
+        updateAttributeString("sourceId", decisionObj);
+        updateAttributeLong("sourceCmt", decisionObj);
+        updateAttributeLong("reviewDate", decisionObj);
 
     }
 

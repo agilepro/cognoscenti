@@ -48,6 +48,7 @@ Required parameters:
     <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
     <!-- Weaver specific tweaks -->
     <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
+    <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
 
 <script type="text/javascript">
 
@@ -58,6 +59,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     $scope.allMinutes = [];
     $scope.allTitles = [];
     $scope.selectedMinutes = {};
+    
+    //setting isUpdating to true prevents a second overlapping update
+    $scope.isUpdating = false;
+    //up an update was requested while updating, then mark here and 
+    //immediately do another update when the current one finished.
+    $scope.deferredUpdate = false;
     
 
     $scope.showError = false;
@@ -82,32 +89,35 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     $scope.setMinutesData = function(data) {
         $scope.timerCorrection = data.serverTime - new Date().getTime();
         var newTitles = [];
-        if ($scope.allMinutes.length==0) {
-            $scope.allMinutes = data.minutes;
-        }
         data.minutes.forEach( function(newItem) {
+            existing = null;
             $scope.allMinutes.forEach( function(found) {
                 if (found.id == newItem.id) {
-                    if (newItem.new == found.lastSave) {
-                        //if you get back what you sent to the server
-                        //then ignore it and don't update what the user is typing.
-                        //because nothing new from server
-                        console.log("avoided distubring user.");
-                    } 
-                    else if (newItem.new != found.new) {
-                        //unfortunately, there are edits from someone else to 
-                        //merge in causing some loss from of current typing.
-                        console.log("disturbing user with new version from server.");
-                        found.new = newItem.new;
-                    }
-                    found.lastSave = null;
-                    found.old = newItem.new;
-                    found.timerRunning = newItem.timerRunning;
-                    found.timerStart = newItem.timerStart;
-                    found.timerElapsed = newItem.timerElapsed;
-                    found.duration = newItem.duration;
+                    existing = found;
                 }
             });
+            if (!existing) {
+                $scope.allMinutes.push(newItem);
+                existing = newItem;
+            }
+            else if (newItem.new == existing.lastSave) {
+                //if you get back what you sent to the server
+                //then ignore it and don't update what the user is typing.
+                //because nothing new from server
+                console.log("avoided disturbing user.");
+            } 
+            else if (newItem.new != existing.new) {
+                //unfortunately, there are edits from someone else to 
+                //merge in causing some loss from of current typing.
+                console.log("merging new version from server.",newItem,existing);
+                existing.new = Textmerger.get().merge(existing.lastSave, existing.new,                 newItem.new);
+            }
+            existing.lastSave = null;
+            existing.old = newItem.new;
+            existing.timerRunning = newItem.timerRunning;
+            existing.timerStart = newItem.timerStart;
+            existing.timerElapsed = newItem.timerElapsed;
+            existing.duration = newItem.duration;
             newTitles.push(newItem.title);
         });
         if ($scope.allTitles.length==0) {
@@ -121,10 +131,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     
     
     $scope.getMeetingNotes = function() {
+        $scope.isUpdating = true;
         var postURL = "getMeetingNotes.json?id="+$scope.meetId;
         $http.get(postURL)
         .success( function(data) {
             $scope.setMinutesData(data);
+            $scope.handleDeferred();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -133,45 +145,70 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     }
     $scope.getMeetingNotes();
     
+    $scope.handleDeferred = function() {
+        $scope.isUpdating = false;
+        if ($scope.deferredUpdate) {
+            $scope.deferredUpdate = false;
+            $scope.autosave();
+        }
+    }
+    
     $scope.saveMinutes = function(min) {
+        if ($scope.isUpdating) {
+            console.log("update was deferred because we are already updating");
+            $scope.deferredUpdate = true;
+            return;
+        }
+        $scope.autosave();
+        /*
+        $scope.isUpdating = true;
         var saveRec = {minutes:[]};
         saveRec.minutes.push(min);
         var postURL = "updateMeetingNotes.json?id="+$scope.meetId;
+        console.log("Saving Current State: ", saveRec);
         var postData = JSON.stringify(saveRec);
         min.lastSave = min.new;
         $http.post(postURL, postData)
         .success( function(data) {
             $scope.setMinutesData(data);
-            //console.log("got response starting to wait");
-            //setTimeout(function() {
-            //   console.log("got response NOW actually handling it");
-            //   $scope.setMinutesData(data);
-            //}, 3000);
+            $scope.handleDeferred();
+            console.log("Got Back: ", data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
+            $scope.handleDeferred();
         });
+        */
     }
     $scope.autosave = function() {
         if ($scope.showError) {
             console.log("Autosave is turned off when there is an error.")
             return;
         }
+        if ($scope.isUpdating) {
+            console.log("update was skipped because we are already updating");
+            return;
+        }
+        $scope.isUpdating = true;
         var postURL = "updateMeetingNotes.json?id="+$scope.meetId;
         var postRecord = {minutes:[]};
         $scope.allMinutes.forEach( function(item) {
             if (item.new != item.old) {
                 postRecord.minutes.push( JSON.parse( JSON.stringify( item )));
-                item.lastSave = item.new;
             }
+            item.lastSave = item.new;
         });
+        console.log("Autosave Init: ", postRecord);
         var postData = JSON.stringify(postRecord);
         $http.post(postURL, postData)
         .success( function(data) {
             $scope.setMinutesData(data);
+            $scope.handleDeferred();
+            console.log("Autosave Got Back: ", data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
+            $scope.handleDeferred();
         });
     }
 	$scope.promiseAutosave = $interval($scope.autosave, 6000);
@@ -376,6 +413,7 @@ function setInputSelection(el, startOffset, endOffset) {
                     <button ng-click="startAgendaRunning(min)"><i class="fa fa-clock-o"></i> Start</button>
                     Elapsed: {{min.timerTotal| minutes}}
                     Remaining: {{min.timerRemaining| minutes}}
+                        {{isUpdating}} {{deferredUpdate}}
                 </span>
                 <span ng-show="min.timerRunning" ng-style="timerStyle(min)">
                     <span>Running</span>

@@ -454,6 +454,7 @@ public class MainTabsViewControler extends BaseController {
                  }
              }
 
+             testLatencyDelay();
              notes.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -532,6 +533,7 @@ public class MainTabsViewControler extends BaseController {
 
              JSONObject repo = new JSONObject();
              repo.put("topics", allTopics);
+             testLatencyDelay();
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -575,6 +577,7 @@ public class MainTabsViewControler extends BaseController {
              JSONObject repo = note.getJSONWithComments(ar, ngw);
              saveAndReleaseLock(ngw, ar, "Updated Topic Contents");
 
+             testLatencyDelay();
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -678,6 +681,7 @@ public class MainTabsViewControler extends BaseController {
                  repo.put(hist.getJSON(ngp, ar));
              }
              releaseLock();
+             testLatencyDelay();
              repo.write(ar.w, 2, 2);
              ar.flush();
          }catch(Exception ex){
@@ -760,6 +764,7 @@ public class MainTabsViewControler extends BaseController {
 
             JSONObject results = new JSONObject();
             results.put("result", "ok");
+            testLatencyDelay();
             results.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
@@ -808,6 +813,7 @@ public class MainTabsViewControler extends BaseController {
             for (SearchResultRecord srr : searchResults) {
                 resultList.put(srr.getJSON());
             }
+            testLatencyDelay();
             resultList.write(ar.w, 2, 2);
             ar.flush();
         }catch(Exception ex){
@@ -872,6 +878,7 @@ public class MainTabsViewControler extends BaseController {
                       HistoryRecord.EVENT_TYPE_CREATED, ar, "");
               saveAndReleaseLock(ngw, ar, "Created new Meeting");
               JSONObject repo = newMeeting.getFullJSON(ar, ngw);
+              testLatencyDelay();
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -953,6 +960,7 @@ public class MainTabsViewControler extends BaseController {
               saveAndReleaseLock(ngw, ar, "Updated Meeting");
               //this is so that clients can calculate the offset for their particular clock.
               repo.put("serverTime", System.currentTimeMillis());
+              testLatencyDelay();
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1015,6 +1023,7 @@ public class MainTabsViewControler extends BaseController {
               saveAndReleaseLock(ngw, ar, "Updated Meeting Notes");
               
               repo.put("serverTime", System.currentTimeMillis());
+              testLatencyDelay();
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1075,6 +1084,7 @@ public class MainTabsViewControler extends BaseController {
               JSONObject repo = ai.getJSON(ar, ngw, meeting);
               meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Created new Agenda Item");
+              testLatencyDelay();
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1139,6 +1149,7 @@ public class MainTabsViewControler extends BaseController {
               meetingCache.updateCacheNotes(ngw, ar, src);
               meetingCache.updateCacheNotes(ngw, ar, dest);
               saveAndReleaseLock(ngw, ar, "Move Agenda Item");
+              testLatencyDelay();
               repo.write(ar.w, 2, 2);
               ar.flush();
           } catch(Exception ex){
@@ -1191,6 +1202,7 @@ public class MainTabsViewControler extends BaseController {
               JSONObject repo = ai.getJSON(ar, ngw, meeting);
               meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Updated Agenda Item");
+              testLatencyDelay();
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1244,7 +1256,8 @@ public class MainTabsViewControler extends BaseController {
               JSONObject repo = meeting.getFullJSON(ar, ngw);
               meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Created Topic for minutes of meeting.");
-              
+
+              testLatencyDelay();
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1287,6 +1300,7 @@ public class MainTabsViewControler extends BaseController {
               }
               JSONObject repo = gr.getJSON4Goal(ngw);
               saveAndReleaseLock(ngw, ar, "Created action item for minutes of meeting.");
+              testLatencyDelay();
               repo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1349,6 +1363,7 @@ public class MainTabsViewControler extends BaseController {
               jo.put("dates", dates);
               jo.put("sourceDate", sourceDate.getTime());
 
+              testLatencyDelay();
               jo.write(ar.w, 2, 2);
               ar.flush();
           }catch(Exception ex){
@@ -1391,6 +1406,7 @@ public class MainTabsViewControler extends BaseController {
       private static void sendJson(AuthRequest ar, JSONObject jo) throws Exception {
           releaseLock();
           jo.put("serverTime", System.currentTimeMillis());
+          testLatencyDelay();
           jo.write(ar.w, 2, 2);
           ar.flush();
       }
