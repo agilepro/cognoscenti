@@ -9,6 +9,9 @@
     for (String pageKey : tmpList) {
         NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKey(pageKey);
         if (ngpi==null) {
+            ngpi = ar.getCogInstance().lookForWSBySimpleKeyOnly(pageKey);
+        }
+        if (ngpi==null) {
             continue;
         }
         JSONObject wObj = ngpi.getJSON4List();

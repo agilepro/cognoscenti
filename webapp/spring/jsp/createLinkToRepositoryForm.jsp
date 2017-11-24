@@ -17,7 +17,6 @@ Optional parameters:
     7. aid         : This is attachment id to get Attachment details.
 */
 
-    String p = ar.reqParam("pageId");
     String symbol = ar.reqParam("symbol");
     String atype = ar.defParam("atype", "2");
     String comment = ar.defParam("comment", "");
@@ -28,9 +27,12 @@ Optional parameters:
         String pageTitle="";
 %><%
 
-    NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
+    String pageId      = ar.reqParam("pageId");
+    String siteId      = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKey(siteId,pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Can not attach a document to this workspace.");
+    String p = pageId;
 
     UserProfile uProf = ar.getUserProfile();
     UserPage uPage    = ar.getUserPage();

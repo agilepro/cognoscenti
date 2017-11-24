@@ -63,6 +63,8 @@ public class NGWorkspace extends NGPage {
 
     public NGWorkspace(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc, site);
+        
+        System.out.println("READING workspace: "+theFile);
 
         jsonFilePath = new File(theFile.getParent(), "WorkspaceInfo.json");
         if (jsonFilePath.exists()) {
@@ -118,6 +120,11 @@ public class NGWorkspace extends NGPage {
     public void save() throws Exception {
         super.save();
         workspaceJSON.writeToFile(jsonFilePath);
+        //store into the cache.  Something might be copying things in memory,
+        //and this assures that the cache matches the latest written version.
+        //String fullFilePath = associatedFile.toString();
+        //pageCache.store(fullFilePath, this);
+        pageCache.emptyCache();
     }
 
     public void saveFile(AuthRequest ar, String comment) throws Exception {

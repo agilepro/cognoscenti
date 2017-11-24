@@ -116,6 +116,9 @@ Required parameters:
     JSONObject parent = new JSONObject();
     NGPageIndex parentIndex = cog.getWSByCombinedKey(ngp.getParentKey());
     if (parentIndex==null) {
+        parentIndex = ar.getCogInstance().lookForWSBySimpleKeyOnly(ngp.getParentKey());
+    }
+    if (parentIndex==null) {
         parent.put("name", "");
         parent.put("site", "");
         parent.put("key",  "");

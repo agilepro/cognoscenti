@@ -18,7 +18,14 @@ Required parameter:
     String fndDefLoctn    = ar.reqParam("fndDefLoctn");%>
     <div class="generalArea">
         <%
-            NGPage ngPage = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
+        NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKey(p);
+        if (ngpi==null) {
+            ngpi = ar.getCogInstance().lookForWSBySimpleKeyOnly(p);
+        }
+        if (ngpi==null) {
+            throw new Exception("Old JSP unable to find page for "+p);
+        }
+        NGPage page = ngpi.getWorkspace();
                 FolderAccessHelper fdh = new FolderAccessHelper(ar);
                 ResourceEntity ent = fdh.getRemoteResource(folderId, path, true);
 

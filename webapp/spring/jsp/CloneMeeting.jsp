@@ -9,7 +9,8 @@
     ar.assertLoggedIn("Must be logged in to see anything about a user");
 
     String pageId      = ar.reqParam("pageId");
-    NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
+    String siteId      = ar.reqParam("siteId");
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKey(siteId,pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     NGBook site = ngw.getSite();
 

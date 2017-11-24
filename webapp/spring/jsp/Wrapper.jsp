@@ -93,6 +93,10 @@
         if (wl.size()>0) {
             mainWorkspaceId = wl.get(0).pageKey;
             NGPageIndex ngpi = cog.getWSByCombinedKey(mainWorkspaceId);
+            if (ngpi==null) {
+                //transition to combined key for everyone someday
+                ngpi = cog.lookForWSBySimpleKeyOnly(mainWorkspaceId);
+            }
             if (ngpi!=null) {
                 mainSiteId = ngpi.wsSiteKey;
                 NGBook site = ar.getCogInstance().getSiteByIdOrFail(mainSiteId);

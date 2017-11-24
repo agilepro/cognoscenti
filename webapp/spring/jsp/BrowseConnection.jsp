@@ -47,7 +47,14 @@ Required parameter:
 <%@ include file="functions.jsp"%>
 <%!public String displayRepositoryFolderQ(AuthRequest ar,String folderId, String path, String p) throws Exception
     {
-        NGPage page = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
+        NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKey(p);
+        if (ngpi==null) {
+            ngpi = ar.getCogInstance().lookForWSBySimpleKeyOnly(p);
+        }
+        if (ngpi==null) {
+            throw new Exception("Old JSP unable to find page for "+p);
+        }
+        NGPage page = ngpi.getWorkspace();
         String go = ar.getCompleteURL();
         FolderAccessHelper fdh = new FolderAccessHelper(ar);
         ResourceEntity ent = fdh.getRemoteResource(folderId, path, true);

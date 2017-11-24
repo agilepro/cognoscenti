@@ -47,6 +47,9 @@ public class DOMFile extends DOMFace {
 
     public DOMFile(File path, Document doc) {
         super(doc, doc.getDocumentElement(), null);
+        
+        System.out.println("READING DOMFILE path: "+path);
+
         associatedFile = path;
     }
 

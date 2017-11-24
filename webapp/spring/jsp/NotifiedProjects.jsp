@@ -8,6 +8,9 @@
     JSONArray projList = new JSONArray();
     for (String pageKey : notifications) {
         NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKey(pageKey);
+        if (parentIndex==null) {
+            ngpi = ar.getCogInstance().lookForWSBySimpleKeyOnly(pageKey);
+        }
         if (ngpi==null) {
             continue;
         }

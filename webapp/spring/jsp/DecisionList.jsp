@@ -13,7 +13,8 @@ Required parameters:
 */
 
     String pageId      = ar.reqParam("pageId");
-    NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
+    String siteId      = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKey(siteId,pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
     NGBook site = ngp.getSite();
@@ -21,6 +22,7 @@ Required parameters:
     JSONArray allDecisions = new JSONArray();
     for (DecisionRecord dr : ngp.getDecisions()) {
         allDecisions.put(dr.getJSON4Decision(ngp, ar));
+        out.write("\n<!-- "+dr.getAttributeLong("reviewDate")+" -->\n");
     }
 
     UserProfile uProf = ar.getUserProfile();
@@ -59,7 +61,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize','angularjs-datetime-picker']);
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Decision List");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
@@ -185,7 +187,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         var modalInstance = $modal.open({
             animation: false,
-            templateUrl: "<%=ar.retPath%>templates/DecisionModal.html",
+            templateUrl: "<%=ar.retPath%>templates/DecisionModal.html?t="+new Date().getTime(),
             controller: 'DecisionModalCtrl',
             size: 'lg',
             backdrop: "static",

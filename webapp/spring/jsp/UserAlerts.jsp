@@ -54,6 +54,9 @@ Required Parameters:
         for (String pageId : notifications) {
             NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKey(pageId);
             if (ngpi==null) {
+                ngpi = ar.getCogInstance().lookForWSBySimpleKeyOnly(pageId);
+            }
+            if (ngpi==null) {
                 continue;
                 //this can happen if you have something to do in a project that is no longer 
                 //in the project.  Right now we ignore them....

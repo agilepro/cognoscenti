@@ -349,6 +349,9 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         return ngpi;
     }
+    
+    
+    
     /**
      * Combined key is   "site|workspace"
      * That is, the site key, a vertical bar, and the workspace key
@@ -360,11 +363,15 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         //did not find it correctly, but maybe this is a legacy link with just the project key?
         //we can handle that for the time being
+        //Exception e = new Exception("getWSByCombinedKey SECOND try for project with this name: "+combinedKey);
+        //throw e;
+
         for (NGPageIndex ngps : allContainers) {
             if (ngps.containerKey.equals(combinedKey)) {
                 return ngps;
             }
         }
+
         return null;
     }
     public NGPageIndex getWSByCombinedKeyOrFail(String combinedKey) throws Exception {
@@ -373,6 +380,22 @@ System.out.println("Weaver Server Object == Start the Server");
             throw new Exception("Unable to find a workspace with the combined key ("+combinedKey+")");
         }
         return ngpi;
+    }
+    
+    /**
+     * Note, the simply workspace key is NOT UNIQUE.
+     * This will work only as long as it is, otherwise you might get the 
+     * wrong key.   This method is meant only as a temporary solution
+     * to allow people with old lists of just the workspace, to 
+     * migrate to the combined keys.
+     */
+    public NGPageIndex lookForWSBySimpleKeyOnly(String nonUniqueSimpleKey) {
+        for (NGPageIndex ngps : allContainers) {
+            if (ngps.containerKey.equals(nonUniqueSimpleKey)) {
+                return ngps;
+            }
+        }
+        return null;
     }
     
     

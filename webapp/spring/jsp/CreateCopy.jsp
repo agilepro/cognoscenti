@@ -8,13 +8,14 @@ Required parameter:
     2. aid      : This parameter is attachment id used here to get the detail of an attachment.
 */
 
-    String p = ar.reqParam("pageId");
     String aid = ar.reqParam("aid");%>
 <%!String pageTitle="";%>
 <%
     UserProfile uProf = ar.getUserProfile();
 
-    NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
+    String pageId      = ar.reqParam("pageId");
+    String siteId      = ar.reqParam("siteId");
+    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKey(siteId,pageId).getWorkspace();
 
     UserPage uPage = ar.getUserPage();
 

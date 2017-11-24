@@ -12,7 +12,8 @@
     ar.assertMember("This VIEW only for members in use cases");
 
     String pageId      = ar.reqParam("pageId");
-    NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId);
+    String siteId      = ar.reqParam("siteId");
+    NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKey(siteId,pageId);
     NGWorkspace ngw  = ngpi.getWorkspace();
     ar.setPageAccessLevels(ngw);
     NGBook site = ngw.getSite();
