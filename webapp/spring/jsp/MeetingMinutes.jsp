@@ -413,7 +413,6 @@ function setInputSelection(el, startOffset, endOffset) {
                     <button ng-click="startAgendaRunning(min)"><i class="fa fa-clock-o"></i> Start</button>
                     Elapsed: {{min.timerTotal| minutes}}
                     Remaining: {{min.timerRemaining| minutes}}
-                        {{isUpdating}} {{deferredUpdate}}
                 </span>
                 <span ng-show="min.timerRunning" ng-style="timerStyle(min)">
                     <span>Running</span>

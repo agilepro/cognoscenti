@@ -250,7 +250,8 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
     public void startTimer(String itemId) throws Exception {
         if (getState()!=2) {
-            throw new Exception("Can only time an agenda item when the meeting is in run state, and it is in state="+getState());
+            //if the meeting is not currently "running" then make it so
+            setState(2);
         }
         boolean found = false;
         for (AgendaItem ai : this.getAgendaItems()) {
