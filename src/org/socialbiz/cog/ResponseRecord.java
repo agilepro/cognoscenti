@@ -121,7 +121,7 @@ public class ResponseRecord extends DOMFace
         setEmailSent(true);
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
+    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, OptOutAddr ooa,
             CommentRecord cr, UserProfile commenterProfile, MailFile mailFile) throws Exception  {
 
         if (!ooa.hasEmailAddress()) {
@@ -158,15 +158,15 @@ public class ResponseRecord extends DOMFace
         
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
-        data.put("parentURL", ar.baseURL + noteOrMeet.getEmailURL(clone, ngp));
+        data.put("parentURL", ar.baseURL + noteOrMeet.getEmailURL(clone, ngw));
         data.put("parentName", noteOrMeet.emailSubject());
-        data.put("commentURL", ar.baseURL + noteOrMeet.getEmailURL(clone, ngp)+ "#cmt" + getTime());
+        data.put("commentURL", ar.baseURL + noteOrMeet.getEmailURL(clone, ngw)+ "#cmt" + getTime());
         data.put("comment", cr.getHtmlJSON(ar));
         data.put("response", this.getJSON(ar));
         data.put("choice", this.getChoice());
-        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngp));
+        data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngw));
         data.put("isProposal", isProposal);
-        data.put("wsName", ngp.getFullName());
+        data.put("wsName", ngw.getFullName());
         if (ownerProfile!=null) {
             data.put("userURL", ar.baseURL + "v/"+ownerProfile.getKey()+"/userSettings.htm");
             data.put("userName", ownerProfile.getName());

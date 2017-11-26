@@ -38,6 +38,7 @@ import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionAttachments;
 import org.socialbiz.cog.SharePortRecord;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.WikiToPDF;
 import org.socialbiz.cog.dms.FolderAccessHelper;
 import org.socialbiz.cog.exception.NGException;
@@ -433,18 +434,6 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/share/{id}.htm", method = RequestMethod.GET)
-    public void onePortHTML(@PathVariable String siteId, 
-            @PathVariable String pageId,
-            @PathVariable String id,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        ar.setParam("id", id);
-        ar.setParam("pageId", pageId);
-        ar.setParam("siteId", siteId);
-        ar.invokeJSP("/spring/jsp/Share.jsp");
-    }
-
     @RequestMapping(value = "/{siteId}/{pageId}/share/{id}.json")
     public void onePortJSON(@PathVariable String siteId, 
             @PathVariable String pageId,
@@ -481,5 +470,66 @@ public class ProjectDocsController extends BaseController {
         }
     }
     
-    
+    @RequestMapping(value = "/{siteId}/{pageId}/share/{id}.htm", method = RequestMethod.GET)
+    public void specialShare(@PathVariable String siteId, 
+            @PathVariable String pageId,
+            @PathVariable String id,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        ar.setParam("id", id);
+        specialAnonJSP(ar, siteId, pageId, "Share.jsp");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.htm", method = RequestMethod.GET)
+    public void specialReply(@PathVariable String siteId, 
+            @PathVariable String pageId,
+            @PathVariable String topicId,
+            @PathVariable String commentId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+        TopicRecord note = ngp.getNoteOrFail(topicId);
+        //normally the permission comes from a license in the URL for anonymous access
+        boolean canAccessNote  = AccessControl.canAccessNote(ar, ngp, note);
+        if (!canAccessNote) {
+            ar.assertMember("must have permission to make a reply");
+        }
+        ar.setParam("topicId", topicId);
+        ar.setParam("commentId", commentId);
+        specialAnonJSP(ar, siteId, pageId, "Reply.jsp");
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.json", method = RequestMethod.POST)
+    public void specialReplySave(@PathVariable String siteId, 
+            @PathVariable String pageId,
+            @PathVariable String topicId,
+            @PathVariable String commentId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            TopicRecord note = ngw.getNoteOrFail(topicId);
+            //normally the permission comes from a license in the URL for anonymous access
+            boolean canAccessNote  = AccessControl.canAccessNote(ar, ngw, note);
+            if (!canAccessNote) {
+                ar.assertMember("must have permission to make a reply");
+            }
+            
+            JSONObject input = getPostedObject(ar);
+            if (!input.has("comments")) {
+                throw new Exception("posted object to specialReplySave needs to have a comments list");
+            }
+            note.updateCommentsFromJSON(input, ar);
+            ngw.saveFile(ar, "saving comment using special reply");
+            
+            JSONObject repo = note.getJSONWithComments(ar, ngw);
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }
+        catch (Exception ex) {
+            Exception ee = new Exception("Unable to update the comment in specialReplySave", ex);
+            streamException(ee, ar);
+        }
+    }
+
 }

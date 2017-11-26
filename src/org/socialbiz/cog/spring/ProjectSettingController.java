@@ -470,22 +470,28 @@ public class ProjectSettingController extends BaseController {
             ar.assertMember("Must be a member to modify roles.");
             op = ar.reqParam("op");
             JSONObject roleInfo = getPostedObject(ar);
-            String roleName = roleInfo.getString("name");
             JSONObject repo = new JSONObject();
 
             if ("Update".equals(op)) {
-                CustomRole role = ngc.getRoleOrFail(roleName);
+                CustomRole role = ngc.getRoleOrFail(roleInfo.getString("name"));
                 role.updateFromJSON(roleInfo);
                 repo = role.getJSONDetail();
             }
             else if ("Create".equals(op)) {
-                CustomRole role = ngc.createRole(roleName, "");
+                CustomRole role = ngc.createRole(roleInfo.getString("name"), "");
                 role.updateFromJSON(roleInfo);
                 repo = role.getJSONDetail();
             }
             else if ("Delete".equals(op)) {
-                ngc.deleteRole(roleName);
+                ngc.deleteRole(roleInfo.getString("name"));
                 repo.put("success",  true);
+            }
+            else if ("GetAll".equals(op)) {
+                JSONArray ja = new JSONArray();
+                for (NGRole ngr : ngc.getAllRoles()) {
+                    ja.put(ngr.getJSON());
+                }
+                repo.put("roles", ja);
             }
 
             ngc.saveFile(ar, "Updated Role");

@@ -5,6 +5,9 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     $scope.roleInfo = roleInfo;
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
+    $scope.allRoles = [];
+    $scope.roleToCopy = "";
+    
 
     $scope.reportError = function(data) {
         console.log("ERROR in RoleModel Dialog: ", data);
@@ -36,6 +39,19 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     }
     $scope.getCurrentTerm();
 
+    $scope.getAllRoles = function() {
+        var postdata = "{}";
+        postURL = "roleUpdate.json?op=GetAll";
+        $http.post(postURL,postdata)
+        .success( function(data) {
+            $scope.allRoles = data.roles;
+            console.log("AllRoles is: ",data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });        
+    }
+    $scope.getAllRoles();
 
     $scope.updatePlayers = function() {
         var role = {};
@@ -48,6 +64,11 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     }
     
     $scope.createAndClose = function () {
+        if ($scope.roleToCopy) {
+            var roleName = $scope.roleInfo.name;
+            $scope.roleInfo = JSON.parse(JSON.stringify($scope.roleToCopy));
+            $scope.roleInfo.name = roleName;
+        }
         $scope.parentScope.saveCreatedRole($scope.roleInfo);
         $modalInstance.dismiss('cancel');
     };

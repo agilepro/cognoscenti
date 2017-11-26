@@ -253,6 +253,18 @@ public class BaseController {
         }
     }
 
+    
+    public static void specialAnonJSP(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
+        try{
+            ar.setParam("pageId", pageId);
+            ar.setParam("siteId", siteId);
+            ar.invokeJSP("/spring/anon/"+jspName);
+        }
+        catch(Exception ex){
+            throw new Exception("Unable to prepare JSP view of anon/"+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
+        }
+    }
+    
     public static void showJSPNotFrozen(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             NGContainer ngc = registerSiteOrProject(ar, siteId, pageId);

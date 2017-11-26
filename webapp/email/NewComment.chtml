@@ -35,11 +35,14 @@ Workspace: <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a>
 {% if($isClosed!=true) %}
 {% if ($cmtType=="proposal") %}
 <hr/>
-<div style="color:grey;font-weight: bold;">
+<div style="color:grey;font-weight:bold;">
   Please click to <a href="{$commentURL}">Enter Your Response To This</a>
 </div>
 
 {% endif %}
+{% endif %}
+{% if ($cmtType=="comment") %}
+<div style="color:grey;font-weight:bold;">ACTION:  <span><a href="{$replyUrl}">Reply to this</a></span></div>
 {% endif %}
 </div>
 

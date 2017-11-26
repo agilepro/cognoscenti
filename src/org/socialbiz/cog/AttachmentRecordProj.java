@@ -193,8 +193,13 @@ public class AttachmentRecordProj extends AttachmentRecord
     }
 
     @Override
-    public String getEmailURL(AuthRequest ar, NGPage ngp) throws Exception {
-        return ar.getResourceURL(ngp,  "docinfo"+this.getId()+".htm");
+    public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
+        return ar.getResourceURL(ngw,  "docinfo"+this.getId()+".htm");
+    }
+    @Override
+    public String getReplyURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
+        //don't know how to go straight into reply mode, so just go to the meeting
+        return getEmailURL(ar, ngw) + "#cmt"+commentId;
     }
 
     @Override

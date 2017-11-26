@@ -1144,9 +1144,9 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-    public TopicRecord getNote(String cmtId) throws Exception {
+    public TopicRecord getNote(String topicId) throws Exception {
         for (TopicRecord lr : getAllNotes()) {
-            if (cmtId.equals(lr.getId())) {
+            if (topicId.equals(lr.getId())) {
                 return lr;
             }
         }

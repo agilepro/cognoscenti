@@ -23,7 +23,7 @@
 <div class="modal-body">
     <table ng-hide="isNew" class="spaceyTable">
         <tr>
-            <td class="gridTableColummHeader"><label>Color:</label></td>
+            <td ><label>Color:</label></td>
             <td>
                 <div style="position:relative">
                 <button class="btn btn-default btn-raised dropdown dropdown-toggle" type="button"
@@ -40,7 +40,7 @@
             <td style="width:30px;"></td>
         </tr>
         <tr>
-            <td class="gridTableColummHeader"><label>Players:</label></td>
+            <td ><label>Players:</label></td>
             <td colspan="2">
               <tags-input ng-model="roleInfo.players" placeholder="Enter user name or id"
                           display-property="name" key-property="uid" 
@@ -55,7 +55,7 @@
              <td colspan="2">{{roleInfo.description}}</td>
         </tr>
         <tr>
-             <td class="gridTableColummHeader">Term:</td>
+             <td >Term:</td>
              <td colspan="2">
                  <span ng-show="currentTerm">
                       {{currentTerm.termStart | date}} to {{currentTerm.termEnd | date}}.
@@ -65,7 +65,7 @@
              </td>
         </tr>
         <tr>
-             <td class="gridTableColummHeader">Responsibities:</td>
+             <td >Responsibities:</td>
              <td colspan="2">
                  <span ng-repeat="resp in roleInfo.responsibilities">
                       {{resp.text}}, </span>
@@ -74,7 +74,7 @@
              </td>
         </tr>
         <tr>
-            <td class="gridTableColummHeader"></td>
+            <td ></td>
             <td colspan="2">
                 <div style="float: right;">
                     <button ng-click="cancel()" class="btn btn-default btn-raised">Close</button>
@@ -87,14 +87,24 @@
         <tr>
             <td class="gridTableColummHeader">Name:</td>
             <td>
-               <input ng-show="isNew" class="form-control" ng-model="roleInfo.name">
+               <input class="form-control" style="max-width:400px" ng-model="roleInfo.name">
             </td>
         </tr>
         <tr>
-            <td class="gridTableColummHeader"></td>
-            <td>
-               <span class="instruction">First create the role, then add member to it.  Role names can not be changed.
+            <td ></td>
+            <td style="max-width:500px">
+               <span class="instruction">First create the role, then add member to it.  
+                  Role names can not be changed.  Copy a role to change its name.
                   The name should be short and should use only letters and numbers.</scan>
+            </td>
+        </tr>
+        <tr>
+            <td >Copy From:</td>
+            <td>
+               <select class="form-control" style="max-width:400px" ng-model="roleToCopy"
+                       ng-options="role.name for role in allRoles">
+                   <option value="">-- choose to copy --</option>
+               </select>
             </td>
         </tr>
         <tr>

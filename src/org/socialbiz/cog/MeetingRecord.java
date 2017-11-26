@@ -951,9 +951,13 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     public String emailSubject() throws Exception {
         return getName();
     }
-    public String getEmailURL(AuthRequest ar, NGPage ngp) throws Exception {
-        return ar.getResourceURL(ngp,  "meetingFull.htm?id="+this.getId()) 
-                + "&" + AccessControl.getAccessMeetParams(ngp, this);
+    public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
+        return ar.getResourceURL(ngw,  "meetingFull.htm?id="+this.getId()) 
+                + "&" + AccessControl.getAccessMeetParams(ngw, this);
+    }
+    public String getReplyURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
+        //don't know how to go straight into reply mode, so just go to the meeting
+        return getEmailURL(ar, ngw) + "#cmt"+commentId;
     }
     public String selfDescription() throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");

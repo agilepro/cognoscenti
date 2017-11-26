@@ -69,6 +69,11 @@ Required parameter:
         docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngw.getKey()
                     + "/summary.json?lic="+lfu.getId();
     }
+    
+    //to access the email-ready page, you need to get the license parameter
+    //for this note.  This string saves this for use below on reply to comments
+    String specialAccess =  AccessControl.getAccessNoteParams(ngw, note)
+                + "&emailId=" + URLEncoder.encode(ar.getBestUserId(), "UTF-8");
 
 %>
 
@@ -962,36 +967,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 
     <div style="height:30px;"></div>
 
-<style>
-.comment-outer {
-    border: 1px solid lightgrey;
-    border-radius:8px;
-    padding:5px;
-    margin-top:15px;
-    background-color:#EEE;
-    cursor: pointer;
-}
-.comment-inner {
-    border: 1px solid lightgrey;
-    border-radius:6px;
-    padding:5px;
-    background-color:white;
-    margin:2px
-}
-.comment-state-draft {
-    background-color:yellow;
-}
-.comment-state-active {
-    background-color:#DEF;
-}
-.comment-state-complete {
-    background-color:#EEE;
-}
-.comment-phase-change {
-    border: 1px solid #DFD;
-    background-color:#EFE;
-}
-</style>
 
 <table>
   <tr ng-repeat="cmt in getComments()">

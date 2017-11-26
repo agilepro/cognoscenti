@@ -131,7 +131,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.saveCreatedRole = function(newOne) {
         var key = newOne.name;
         $scope.allRoles.push(newOne);
-        var postdata = angular.toJson({name: key});
+        var postdata = angular.toJson(newOne);
         postURL = "roleUpdate.json?op=Create";
         $http.post(postURL,postdata)
         .success( function(data) {

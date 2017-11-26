@@ -201,15 +201,15 @@
     <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/slap.js"></script>
+    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
 
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
 
-    <script src="<%=ar.baseURL%>jscript/slap.js"></script>
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
-    <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
     <!-- Bootstrap Material Design -->

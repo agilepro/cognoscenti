@@ -1034,9 +1034,13 @@ public class TopicRecord extends CommentContainer implements EmailContext {
          return getSubject();
      }
 
-     public String getEmailURL(AuthRequest ar, NGPage ngp) throws Exception {
-         return ar.getResourceURL(ngp,  "noteZoom"+this.getId()+".htm?") 
-                 + AccessControl.getAccessNoteParams(ngp, this);
+     public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
+         return ar.getResourceURL(ngw,  "noteZoom"+this.getId()+".htm?") 
+                 + AccessControl.getAccessNoteParams(ngw, this);
+     }
+     public String getReplyURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
+         return ar.getResourceURL(ngw,  "reply/"+this.getId()+"/"+commentId+".htm?") 
+                 + AccessControl.getAccessNoteParams(ngw, this);
      }
      public String selfDescription() throws Exception {
          return "(Note) "+getSubject();

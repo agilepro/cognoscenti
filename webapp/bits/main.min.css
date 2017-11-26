@@ -114,3 +114,32 @@ a, a:focus, a:hover {
     border:1px solid gray;
     padding:5px;
 }
+
+.comment-outer {
+    border: 1px solid lightgrey;
+    border-radius:8px;
+    padding:5px;
+    margin-top:15px;
+    background-color:#EEE;
+    cursor: pointer;
+}
+.comment-inner {
+    border: 1px solid lightgrey;
+    border-radius:6px;
+    padding:5px;
+    background-color:white;
+    margin:2px
+}
+.comment-state-draft {
+    background-color:yellow;
+}
+.comment-state-active {
+    background-color:#DEF;
+}
+.comment-state-complete {
+    background-color:#EEE;
+}
+.comment-phase-change {
+    border: 1px solid #DFD;
+    background-color:#EFE;
+}

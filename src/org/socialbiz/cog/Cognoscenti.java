@@ -361,18 +361,12 @@ System.out.println("Weaver Server Object == Start the Server");
         if (ngpi != null) {
             return ngpi;
         }
+        
         //did not find it correctly, but maybe this is a legacy link with just the project key?
-        //we can handle that for the time being
-        //Exception e = new Exception("getWSByCombinedKey SECOND try for project with this name: "+combinedKey);
-        //throw e;
-
-        for (NGPageIndex ngps : allContainers) {
-            if (ngps.containerKey.equals(combinedKey)) {
-                return ngps;
-            }
-        }
-
-        return null;
+        //we can handle that for the time being.   BUT REMOVE THIS LATER!
+        return lookForWSBySimpleKeyOnly(combinedKey);
+        
+        //return null;
     }
     public NGPageIndex getWSByCombinedKeyOrFail(String combinedKey) throws Exception {
         NGPageIndex ngpi = getWSByCombinedKey(combinedKey);

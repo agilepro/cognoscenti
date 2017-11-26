@@ -1,6 +1,7 @@
 package org.socialbiz.cog;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -539,7 +540,7 @@ public class CommentRecord extends DOMFace {
         throw new RuntimeException("Program Logic Error: This comment type is missing a name: "+this.getCommentType());
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, EmailContext noteOrMeet, OptOutAddr ooa,
+    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, EmailContext noteOrMeet, OptOutAddr ooa,
             UserProfile commenterProfile, MailFile mailFile, String resendMessage) throws Exception  {
         Cognoscenti cog = ar.getCogInstance();
         if (!ooa.hasEmailAddress()) {
@@ -591,6 +592,9 @@ public class CommentRecord extends DOMFace {
         data.put("optout", ooa.getUnsubscribeJSON(clone));
         data.put("resendMessage", resendMessage);
         
+        data.put("replyUrl", ar.baseURL + noteOrMeet.getReplyURL(ar,ngp,this.getTime())
+                + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
+
         AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
 
         File templateFile = cog.getConfig().getFileFromRoot("email/NewComment.chtml");
