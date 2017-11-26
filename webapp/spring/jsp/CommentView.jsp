@@ -1,8 +1,8 @@
 <!-- begin CommentView.jsp -->
 
   <td style="width:50px;vertical-align:top;padding:15px;">
-    <img id="cmt{{cmt.time}}" class="img-circle" style="height:35px;width:35px;" ng-src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg"
-    title="{{cmt.userName}} - {{cmt.user}}">
+    <img id="cmt{{cmt.time}}" class="img-circle" title="{{cmt.userName}} - {{cmt.user}}" style="height:35px;width:35px;" 
+         ng-src="<%=ar.retPath%>/users/{{cmt.userKey}}.jpg" alt="{{cmt.user|limitTo : 8}}" >
   </td>
   <td>
     <div class="comment-outer  {{stateClass(cmt)}}">

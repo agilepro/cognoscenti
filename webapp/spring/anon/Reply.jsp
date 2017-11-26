@@ -23,7 +23,7 @@ Required parameters:
     JSONObject topicInfo = topic.getJSONWithComments(ar, ngw);
     
     String specialAccess = AccessControl.getAccessNoteParams(ngw, topic)
-                + "&emailId=" + URLEncoder.encode(ar.getBestUserId(), "UTF-8");
+                + "&emailId=" + URLEncoder.encode(emailId, "UTF-8");
     
     
 %>

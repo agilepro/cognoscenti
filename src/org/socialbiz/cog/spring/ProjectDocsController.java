@@ -30,6 +30,7 @@ import org.socialbiz.cog.AccessControl;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AttachmentVersion;
 import org.socialbiz.cog.AuthRequest;
+import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.MimeTypes;
@@ -39,6 +40,8 @@ import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionAttachments;
 import org.socialbiz.cog.SharePortRecord;
 import org.socialbiz.cog.TopicRecord;
+import org.socialbiz.cog.UserManager;
+import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.WikiToPDF;
 import org.socialbiz.cog.dms.FolderAccessHelper;
 import org.socialbiz.cog.exception.NGException;
@@ -494,6 +497,16 @@ public class ProjectDocsController extends BaseController {
         if (!canAccessNote) {
             ar.assertMember("must have permission to make a reply");
         }
+        String emailId = ar.reqParam("emailId");
+        Cognoscenti cog = ar.getCogInstance();
+        UserManager userManager = cog.getUserManager();
+        if (!ar.isLoggedIn()) {
+            UserProfile licensedUser = userManager.findUserByAnyId(emailId);
+            if (licensedUser == null) {
+                userManager.createUserWithId(emailId);
+            }
+            ar.setUserForOneRequest(licensedUser);
+        }
         ar.setParam("topicId", topicId);
         ar.setParam("commentId", commentId);
         specialAnonJSP(ar, siteId, pageId, "Reply.jsp");
@@ -513,6 +526,16 @@ public class ProjectDocsController extends BaseController {
             boolean canAccessNote  = AccessControl.canAccessNote(ar, ngw, note);
             if (!canAccessNote) {
                 ar.assertMember("must have permission to make a reply");
+            }
+            String emailId = ar.reqParam("emailId");
+            Cognoscenti cog = ar.getCogInstance();
+            UserManager userManager = cog.getUserManager();
+            if (!ar.isLoggedIn()) {
+                UserProfile licensedUser = userManager.findUserByAnyId(emailId);
+                if (licensedUser == null) {
+                    userManager.createUserWithId(emailId);
+                }
+                ar.setUserForOneRequest(licensedUser);
             }
             
             JSONObject input = getPostedObject(ar);
