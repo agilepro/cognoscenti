@@ -108,6 +108,9 @@ public class CommentRecord extends DOMFace {
         return new AddressListEntry(getAttribute("user"));
     }
     public void setUser(UserRef newVal) {
+        if (newVal==null) {
+            throw new RuntimeException("setUser was called with a null parameter");
+        }
         setAttribute("user", newVal.getUniversalId());
     }
     

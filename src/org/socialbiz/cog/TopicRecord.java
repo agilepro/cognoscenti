@@ -21,6 +21,7 @@
 package org.socialbiz.cog;
 
 import java.io.File;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -854,11 +855,16 @@ public class TopicRecord extends CommentContainer implements EmailContext {
 
           JSONObject data = new JSONObject();
           data.put("baseURL", ar.baseURL);
-          data.put("topicURL", ar.baseURL + ar.getResourceURL(ngp, this));
+          data.put("topicURL", ar.baseURL + ar.getResourceURL(ngp, this) 
+                   + AccessControl.getAccessTopicParams(ngp, this)
+                   + "&emailId=" +URLEncoder.encode(ooa.getEmail(), "UTF-8"));
           data.put("topic", this.getJSONWithHtml(ar, ngp));
           data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));
           data.put("wsName", ngp.getFullName());
           data.put("optout", ooa.getUnsubscribeJSON(ar));
+          String replyUrl = ar.baseURL + this.getReplyURL(ar,ngp, 0)
+                  + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8");
+          data.put("replyURL", replyUrl);
           
           AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
 
@@ -1036,11 +1042,11 @@ public class TopicRecord extends CommentContainer implements EmailContext {
 
      public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
          return ar.getResourceURL(ngw,  "noteZoom"+this.getId()+".htm?") 
-                 + AccessControl.getAccessNoteParams(ngw, this);
+                 + AccessControl.getAccessTopicParams(ngw, this);
      }
      public String getReplyURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
          return ar.getResourceURL(ngw,  "reply/"+this.getId()+"/"+commentId+".htm?") 
-                 + AccessControl.getAccessNoteParams(ngw, this);
+                 + AccessControl.getAccessTopicParams(ngw, this);
      }
      public String selfDescription() throws Exception {
          return "(Note) "+getSubject();

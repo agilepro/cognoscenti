@@ -166,7 +166,7 @@ public class MainTabsViewControler extends BaseController {
            request.setAttribute("lid", lid);
            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
            TopicRecord note = ngp.getNoteOrFail(lid);
-           boolean canAccessNote  = AccessControl.canAccessNote(ar, ngp, note);
+           boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
            if (canAccessNote) {
                showJSPAnonymous(ar, siteId, pageId, "NoteZoom");
            }
@@ -594,13 +594,25 @@ public class MainTabsViewControler extends BaseController {
          try{
              NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
              ar.setPageAccessLevels(ngw);
-             ar.assertMember("Must be a member to subscribe to a topic.");
              ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
              TopicRecord topic = ngw.getNote(nid);
+             boolean canAccessTopic  = AccessControl.canAccessTopic(ar, ngw, topic);
+             if (!canAccessTopic) {
+                 ar.assertMember("must have permission to subscribe to a topic");
+             }
              UserProfile up = ar.getUserProfile();
+             AddressListEntry ale;
+             if (up==null) {
+                 //if they are not logged in, but allowed, then they must have
+                 //and emailId parameter
+                 ale = new AddressListEntry(ar.reqParam("emailId"));
+             }
+             else {
+                 ale = up.getAddressListEntry();
+             }
 
-             topic.getSubscriberRole().addPlayer(up.getAddressListEntry());
+             topic.getSubscriberRole().addPlayer(ale);
              JSONObject repo = topic.getJSONWithComments(ar, ngw);
              ngw.save(); //just save flag, don't mark page as changed
              sendJson(ar, repo);
@@ -622,9 +634,25 @@ public class MainTabsViewControler extends BaseController {
              ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
              TopicRecord topic = ngw.getNote(nid);
+             boolean canAccessTopic  = AccessControl.canAccessTopic(ar, ngw, topic);
+             if (!canAccessTopic) {
+                 //well ... the idea is that anyone can UNSUBSCRIBE.
+                 //this might be open to abuse, allowing people to unsubscribe others
+                 //but they will be resubscribed on the next comment ... so maybe
+                 //harmless?
+             }
              UserProfile up = ar.getUserProfile();
+             AddressListEntry ale;
+             if (up==null) {
+                 //if they are not logged in, but allowed, then they must have
+                 //and emailId parameter
+                 ale = new AddressListEntry(ar.reqParam("emailId"));
+             }
+             else {
+                 ale = up.getAddressListEntry();
+             }
 
-             topic.getSubscriberRole().removePlayerCompletely(up);
+             topic.getSubscriberRole().removePlayerCompletely(ale);
              ngw.save(); //just save flag, don't mark page as changed
              JSONObject repo = topic.getJSONWithComments(ar, ngw);
              sendJson(ar, repo);
@@ -1399,17 +1427,6 @@ public class MainTabsViewControler extends BaseController {
           }
       }
 
-      private static void releaseLock() throws Exception {
-          NGPageIndex.clearLocksHeldByThisThread();
-          System.out.println("     locks released tid="+Thread.currentThread().getId()+" time="+(System.currentTimeMillis()%10000));
-      }
-      private static void sendJson(AuthRequest ar, JSONObject jo) throws Exception {
-          releaseLock();
-          jo.put("serverTime", System.currentTimeMillis());
-          testLatencyDelay();
-          jo.write(ar.w, 2, 2);
-          ar.flush();
-      }
       private static void saveAndReleaseLock(NGWorkspace ngw, AuthRequest ar, String msg) throws Exception {
           ngw.saveFile(ar, msg);
           NGPageIndex.clearLocksHeldByThisThread();

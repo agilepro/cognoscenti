@@ -46,8 +46,7 @@ Required parameter:
     String lid = ar.reqParam("lid");
     TopicRecord note = ngw.getNoteOrFail(lid);
 
-    boolean canAccessNote  = AccessControl.canAccessNote(ar, ngw, note);
-    if (!canAccessNote) {
+    if (!AccessControl.canAccessTopic(ar, ngw, note)) {
         throw new Exception("Program Logic Error: this view should only display when user can actually access the note.");
     }
 
@@ -72,7 +71,7 @@ Required parameter:
     
     //to access the email-ready page, you need to get the license parameter
     //for this note.  This string saves this for use below on reply to comments
-    String specialAccess =  AccessControl.getAccessNoteParams(ngw, note)
+    String specialAccess =  AccessControl.getAccessTopicParams(ngw, note)
                 + "&emailId=" + URLEncoder.encode(ar.getBestUserId(), "UTF-8");
 
 %>

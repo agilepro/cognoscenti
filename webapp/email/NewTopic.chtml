@@ -28,8 +28,14 @@ in workspace <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a></p>
 </ul>
 {% endif %}
 
+<div style="color:grey;font-weight:bold;">ACTION:  <span><a href="{$replyURL}">Make a Comment</a></span></div>
+
 </div>
 
 {% include OptOut %}
+
+<!--
+{$debugDump}
+-->
 
 </body></html>

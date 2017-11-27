@@ -22,7 +22,7 @@ Required parameters:
     
     JSONObject topicInfo = topic.getJSONWithComments(ar, ngw);
     
-    String specialAccess = AccessControl.getAccessNoteParams(ngw, topic)
+    String specialAccess = AccessControl.getAccessTopicParams(ngw, topic)
                 + "&emailId=" + URLEncoder.encode(emailId, "UTF-8");
     
     
@@ -77,11 +77,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.sentAlready = false;
     $scope.userCounts = {};
     $scope.emailId = "<%ar.writeJS(emailId);%>";
+    $scope.isSubscriber = true;
     $scope.newComment = {html:"",state:11,user:"<%ar.writeJS(emailId);%>"};
     $scope.newComment.time = $scope.nowTime;
     $scope.specialAccess = "<%ar.writeJS(specialAccess);%>";
     
     $scope.distributeComments = function() {
+        var newCounts = {};
+        var allOthers = [];
         $scope.topicInfo.comments.forEach( function(cmt) {
             if (cmt.time == $scope.focusId) {
                 $scope.focusComment = cmt;
@@ -90,15 +93,24 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 $scope.newComment = cmt;
             }
             else if (cmt.state!=11) {
-                $scope.otherComments.push(cmt);
+                allOthers.push(cmt);
             }
-            if ($scope.userCounts[cmt.userName]) {
-                $scope.userCounts[cmt.userName]++;
+            if (newCounts[cmt.userName]) {
+                newCounts[cmt.userName]++;
             }
             else {
-                $scope.userCounts[cmt.userName] = 1;
+                newCounts[cmt.userName] = 1;
             }
+            var isSub = false;
+            $scope.topicInfo.subscribers.forEach( function(sub) {
+                if ($scope.emailId.toLowerCase() == sub.uid.toLowerCase()) {
+                    isSub = true;
+                }
+            });
+            $scope.isSubscriber = isSub;
         });
+        $scope.otherComments = allOthers;        
+        $scope.userCounts = newCounts;
     }
     $scope.distributeComments();
     
@@ -129,6 +141,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.goToDiscussion = function() {
         var url = "../../noteZoom"+$scope.topicInfo.id+".htm";
         window.location = url;
+    }
+
+    $scope.changeSubscription = function(onOff) {
+        var url = "../../topicSubscribe.json?nid="+$scope.topicInfo.id + "&" + $scope.specialAccess
+        if (!onOff) {
+            url = "../../topicUnsubscribe.json?nid="+$scope.topicInfo.id + "&" + $scope.specialAccess
+        }
+        console.log("SENDING:", url);
+        $http.get(url)
+        .success( function(data) {
+            console.log("GOT BACK:", data);
+            $scope.topicInfo = data;
+            $scope.distributeComments();
+        } )
+        .error( function(data, status, headers, config) {
+            console.log("ERROR",data);
+        });
     }
     
 });
@@ -181,6 +210,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <td><span ng-repeat="sub in topicInfo.subscribers">{{sub.name}}, </span></td>
         </tr>
         <tr>
+            <td>Your Participation</td>
+            <td>
+                <button ng-click="changeSubscription(false)" ng-show="isSubscriber" 
+                        class="btn btn-default btn-raised">Unsubscribe</button>
+                <button ng-click="changeSubscription(true)" ng-hide="isSubscriber" 
+                        class="btn btn-default btn-raised">Subscribe</button>
+                <span style="color:lightgray">Controls whether you receive future email messages.</span>
+            </td>
+        </tr>
+        <tr>
             <td>Count</td>
             <td>{{topicInfo.comments.length}} comments</td>
         </tr>
@@ -223,14 +262,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             </div>
         </div>
 
-
-        <h2>You are replying to:</h2>
-        
-        <div class="comment-outer">
-          <div>{{focusComment.userName}} - {{focusComment.time|date:'MMM dd, yyyy - HH:mm'}}</div>
-          <div class="comment-inner">
-            <div ng-bind-html="focusComment.html"></div>
-          </div>
+        <div ng_show="$scope.focusId>0">
+            <h2>You are replying to:</h2>
+            
+            <div class="comment-outer">
+              <div>{{focusComment.userName}} - {{focusComment.time|date:'MMM dd, yyyy - HH:mm'}}</div>
+              <div class="comment-inner">
+                <div ng-bind-html="focusComment.html"></div>
+              </div>
+            </div>
         </div>
 
         <h2>Other Comments:</h2>

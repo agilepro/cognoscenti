@@ -86,7 +86,7 @@ public class AccessControl {
         //now check to see if you have any special access to a Discussion Topic that has attached
         //this document.  In that case you are allowed access as well!
         for (TopicRecord note : attachRec.getLinkedTopics(ngc)) {
-            if (canAccessNote(ar, ngc, note)) {
+            if (canAccessTopic(ar, ngc, note)) {
                 //have to remember that you have access to this attachment to allow download
                 ar.setSpecialSessionAccess(resourceId);
                 return true;
@@ -193,12 +193,12 @@ public class AccessControl {
         return "mntask=" + encodedValue;
     }
 
-    public static boolean canAccessNote(AuthRequest ar, NGContainer ngc, TopicRecord noteRec)
+    public static boolean canAccessTopic(AuthRequest ar, NGContainer ngc, TopicRecord topicRec)
     throws Exception {
         //first, anyone can access a public topic
-        if (noteRec.getVisibility() == SectionDef.PUBLIC_ACCESS) {
-            return true;
-        }
+        //if (topicRec.getVisibility() == SectionDef.PUBLIC_ACCESS) {
+        //    return true;
+        //}
         //then, if user is logged in, and is a member, then can access
         if (ar.isLoggedIn()) {
             UserProfile user = ar.getUserProfile();
@@ -208,27 +208,55 @@ public class AccessControl {
         }
 
         //then, check to see if there is any special condition in session
-        String resourceId = "goal:"+noteRec.getId()+":"+ngc.getKey();
+        String resourceId = "goal:"+topicRec.getId()+":"+ngc.getKey();
         if (ar.hasSpecialSessionAccess(resourceId)) {
+            assureTemporaryProfile(ar);
             return true;
         }
 
         //now, check the query parameters, and if appropriate, set up the special access
         //url must have "mnnote"  (magic number for note)
-        String mndoc = ar.defParam("mnnote", null);
-        if (mndoc != null) {
+        String mnnote = ar.defParam("mnnote", null);
+        if (mnnote != null) {
             String expectedMN = ngc.emailDependentMagicNumber(resourceId);
-            if (expectedMN.equals(mndoc)) {
-                ar.setSpecialSessionAccess(resourceId);
-                return true;
+            if (!expectedMN.equals(mnnote)) {
+                return false;
             }
         }
+        
+        //at this point, we have seen a magic number allowing access to this page
+        //so set up the rest of the login credentials for one request
+        ar.setSpecialSessionAccess(resourceId);
+        assureTemporaryProfile(ar);
 
-        return false;
+        return true;
+    }
+    
+    public static void assureTemporaryProfile(AuthRequest ar) throws Exception {
+        if (!ar.isLoggedIn()) {
+            String emailId = ar.reqParam("emailId");
+            if (emailId!=null) {
+                Cognoscenti cog = ar.getCogInstance();
+                UserManager userManager = cog.getUserManager();
+                UserProfile licensedUser = userManager.findUserByAnyId(emailId);
+                if (licensedUser == null) {
+                    licensedUser = userManager.createUserWithId(emailId);
+                }
+                if (licensedUser == null) {
+                    throw new Exception("For some reason the user manager did not create the profile.");
+                }
+                ar.setUserForOneRequest(licensedUser);
+                UserProfile up = ar.getUserProfile();
+                if (up==null) {
+                    throw new Exception("something wrong, user profile is null after setUserForOneRequest ");
+                }
+                
+            }
+        }
     }
 
-    public static String getAccessNoteParams(NGContainer ngc, TopicRecord noteRec) throws Exception{
-        String resourceId = "goal:"+noteRec.getId()+":"+ngc.getKey();
+    public static String getAccessTopicParams(NGContainer ngc, TopicRecord topicRec) throws Exception{
+        String resourceId = "goal:"+topicRec.getId()+":"+ngc.getKey();
         String encodedValue = URLEncoder.encode(ngc.emailDependentMagicNumber(resourceId), "UTF-8");
         return "mnnote=" + encodedValue;
     }

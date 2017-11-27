@@ -438,16 +438,15 @@ public class EmailGenerator extends DOMFace {
         data.put("attach", attachArray);
 
         if (selectedNote != null) {
-            data.put("noteUrl", ar.retPath + ar.getResourceURL(ngp, selectedNote)
-                + "?" + AccessControl.getAccessNoteParams(ngp, selectedNote)
-                + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
+            String licensedUrl = ar.retPath + ar.getResourceURL(ngp, selectedNote)
+                    + "?" + AccessControl.getAccessTopicParams(ngp, selectedNote)
+                    + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8");
+            data.put("noteUrl", licensedUrl);
             data.put("noteName", selectedNote.getSubject());
             
             
             JSONObject noteObj = selectedNote.getJSONWithHtml(ar, ngp);
-            noteObj.put("noteUrl", ar.retPath + ar.getResourceURL(ngp, selectedNote)
-                    + "?" + AccessControl.getAccessNoteParams(ngp, selectedNote)
-                    + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
+            noteObj.put("noteUrl", licensedUrl);
             AttachmentRecord.addEmailStyleAttList(noteObj, ar, ngp, selectedNote.getDocList());
             
             data.put("note", noteObj);

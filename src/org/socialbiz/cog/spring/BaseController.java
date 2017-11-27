@@ -474,6 +474,17 @@ public class BaseController {
             throw new RuntimeException("Exception during test latency delay", e);
         }
     }
+    protected static void releaseLock() throws Exception {
+        NGPageIndex.clearLocksHeldByThisThread();
+        System.out.println("     locks released tid="+Thread.currentThread().getId()+" time="+(System.currentTimeMillis()%10000));
+    }
+    protected static void sendJson(AuthRequest ar, JSONObject jo) throws Exception {
+        releaseLock();
+        jo.put("serverTime", System.currentTimeMillis());
+        testLatencyDelay();
+        jo.write(ar.w, 2, 2);
+        ar.flush();
+    }
 
 }
 
