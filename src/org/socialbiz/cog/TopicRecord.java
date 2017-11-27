@@ -856,7 +856,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           JSONObject data = new JSONObject();
           data.put("baseURL", ar.baseURL);
           data.put("topicURL", ar.baseURL + ar.getResourceURL(ngp, this) 
-                   + AccessControl.getAccessTopicParams(ngp, this)
+                   + "?" + AccessControl.getAccessTopicParams(ngp, this)
                    + "&emailId=" +URLEncoder.encode(ooa.getEmail(), "UTF-8"));
           data.put("topic", this.getJSONWithHtml(ar, ngp));
           data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));

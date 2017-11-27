@@ -210,8 +210,7 @@ public class AccessControl {
         //then, check to see if there is any special condition in session
         String resourceId = "goal:"+topicRec.getId()+":"+ngc.getKey();
         if (ar.hasSpecialSessionAccess(resourceId)) {
-            assureTemporaryProfile(ar);
-            return true;
+            return assureTemporaryProfile(ar);
         }
 
         //now, check the query parameters, and if appropriate, set up the special access
@@ -227,32 +226,32 @@ public class AccessControl {
         //at this point, we have seen a magic number allowing access to this page
         //so set up the rest of the login credentials for one request
         ar.setSpecialSessionAccess(resourceId);
-        assureTemporaryProfile(ar);
-
-        return true;
+        return assureTemporaryProfile(ar);
     }
     
-    public static void assureTemporaryProfile(AuthRequest ar) throws Exception {
-        if (!ar.isLoggedIn()) {
-            String emailId = ar.reqParam("emailId");
-            if (emailId!=null) {
-                Cognoscenti cog = ar.getCogInstance();
-                UserManager userManager = cog.getUserManager();
-                UserProfile licensedUser = userManager.findUserByAnyId(emailId);
-                if (licensedUser == null) {
-                    licensedUser = userManager.createUserWithId(emailId);
-                }
-                if (licensedUser == null) {
-                    throw new Exception("For some reason the user manager did not create the profile.");
-                }
-                ar.setUserForOneRequest(licensedUser);
-                UserProfile up = ar.getUserProfile();
-                if (up==null) {
-                    throw new Exception("something wrong, user profile is null after setUserForOneRequest ");
-                }
-                
-            }
+    public static boolean assureTemporaryProfile(AuthRequest ar) throws Exception {
+        if (ar.isLoggedIn()) {
+            throw new Exception("PROGRAM LOGIC ERROR: assureTemporaryProfile should be called onl when NOT logged in.");
         }
+        String emailId = ar.defParam("emailId", null);
+        if (emailId==null) {
+            return false;
+        }
+        Cognoscenti cog = ar.getCogInstance();
+        UserManager userManager = cog.getUserManager();
+        UserProfile licensedUser = userManager.findUserByAnyId(emailId);
+        if (licensedUser == null) {
+            licensedUser = userManager.createUserWithId(emailId);
+        }
+        if (licensedUser == null) {
+            throw new Exception("For some reason the user manager did not create the profile.");
+        }
+        ar.setUserForOneRequest(licensedUser);
+        UserProfile up = ar.getUserProfile();
+        if (up==null) {
+            throw new Exception("something wrong, user profile is null after setUserForOneRequest ");
+        }
+        return true;
     }
 
     public static String getAccessTopicParams(NGContainer ngc, TopicRecord topicRec) throws Exception{
