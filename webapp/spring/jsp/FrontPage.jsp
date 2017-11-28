@@ -402,7 +402,7 @@ a {
       <div class="col-md-4 col-sm-12">
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
-              <div style="float:left">Recent Updates XXXX</div>
+              <div style="float:left">Recent Updates</div>
               <div style="float:right" title="Access the detailed history of events in this workspace">
                   <a href="history.htm">
                       <i class="fa fa-list"></i></a></div>

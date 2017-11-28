@@ -261,8 +261,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               </div>
             </div>
         </div>
-
-        <div ng_show="$scope.focusId>0">
+        {{}}
+        <div ng_show="focusId>0">
             <h2>You are replying to:</h2>
             
             <div class="comment-outer">
