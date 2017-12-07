@@ -261,7 +261,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               </div>
             </div>
         </div>
-        {{}}
+
         <div ng_show="focusId>0">
             <h2>You are replying to:</h2>
             
@@ -279,6 +279,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <div>{{cmt.userName}} - {{cmt.time|date:'MMM dd, yyyy - HH:mm'}}</div>
           <div class="comment-inner">
             <div ng-bind-html="cmt.html"></div>
+          </div>
+        </div>
+        
+        <h2>Original Topic:</h2>
+        
+        <div class="comment-outer">
+          <div class="comment-inner">
+            <div ng-bind-html="topicInfo.html"></div>
           </div>
         </div>
         
