@@ -279,9 +279,6 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Create a new agenda item at the bottom of the meeting"
               href="#" ng-click="createAgendaItem()" >Create Agenda Item</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="A special view mode to sort and arrange the agenda items more easily"
-              href="meeting.htm?id={{meeting.id}}" >Arrange Agenda</a></li>
           <li role="presentation"><a role="menuitem"
               title="Compose an email messsage about this meeting and send it"
               href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>

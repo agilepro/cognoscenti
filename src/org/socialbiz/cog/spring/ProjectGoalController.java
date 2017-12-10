@@ -622,9 +622,7 @@ public class ProjectGoalController extends BaseController {
             GoalRecord gr = null;
             gr = ngp.getGoalOrFail(gid);
             JSONObject repo = gr.getJSON4Goal(ngp);
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to fetch Action Item ("+gid+")", ex);
             streamException(ee, ar);
@@ -698,9 +696,7 @@ public class ProjectGoalController extends BaseController {
             ngp.renumberGoalRanks();
             ngp.saveFile(ar, "Updated action item "+gid);
             JSONObject repo = gr.getJSON4Goal(ngp);
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to update Action Item ("+gid+")", ex);
             streamException(ee, ar);
@@ -746,9 +742,7 @@ public class ProjectGoalController extends BaseController {
             ngp.saveFile(ar, "Updated multiple action items");
             JSONObject repo = new JSONObject();
             repo.put("list",  responseList);
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to update multiple Action Items", ex);
             streamException(ee, ar);
@@ -770,9 +764,7 @@ public class ProjectGoalController extends BaseController {
             for (HistoryRecord hist : gr.getTaskHistory(ngp)) {
                 repo.put(hist.getJSON(ngp, ar));
             }
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJsonArray(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to create Action Item for minutes of meeting.", ex);
             streamException(ee, ar);
@@ -817,9 +809,7 @@ public class ProjectGoalController extends BaseController {
 
             ngp.saveFile(ar, "Updated decision "+did);
             JSONObject repo = dr.getJSON4Decision(ngp, ar);
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to update Decision ("+did+")", ex);
             streamException(ee, ar);
@@ -846,9 +836,7 @@ public class ProjectGoalController extends BaseController {
                 shareList.put(ta.getMinJSON());
             }
             repo.put("taskAreas", shareList);
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to get the list of task areas ", ex);
             streamException(ee, ar);
@@ -893,9 +881,7 @@ public class ProjectGoalController extends BaseController {
                 ngw.saveContent(ar, "updating the TaskArea");
             }
             JSONObject repo = ta.getMinJSON();
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to get the list of task areas ", ex);
             streamException(ee, ar);

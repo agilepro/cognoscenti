@@ -17,6 +17,7 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.mail.EmailSender;
 import org.socialbiz.cog.rest.ServerInitializer;
+import org.socialbiz.cog.spring.BaseController;
 
 /**
  * This is the main class for the Cognoscenti object package.
@@ -229,6 +230,7 @@ System.out.println("Weaver Server Object == Start the Server");
             serverId = theConfig.getServerGlobalId();
             LightweightAuthServlet.init(theConfig.getProperty("identityProvider"));
 
+            BaseController.initBaseController(this);
             isInitialized = true;
         }
         catch (Exception e) {

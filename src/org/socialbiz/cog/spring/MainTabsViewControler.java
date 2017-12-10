@@ -435,18 +435,18 @@ public class MainTabsViewControler extends BaseController {
                  String discussionPhase = aNote.getDiscussionPhase();
 
                  if (aNote.isPublic()) {
-                     notes.put( aNote.getJSONWithHtml(ar, ngw) );
+                     notes.put( aNote.getJSON(ngw) );
                  }
                  else if (!ar.isLoggedIn()) {
                      continue;
                  }
                  else if ("Draft".equals(discussionPhase)) {
                      if (ar.getUserProfile().hasAnyId(aNote.getModUser().getUniversalId())) {
-                         notes.put( aNote.getJSONWithHtml(ar, ngw) );
+                         notes.put( aNote.getJSON(ngw) );
                      }
                  }
                  else if (isMember) {
-                     notes.put( aNote.getJSONWithHtml(ar, ngw) );
+                     notes.put( aNote.getJSON(ngw) );
                  }
                  else {
                      //run through all the roles here and see if any role
@@ -454,9 +454,7 @@ public class MainTabsViewControler extends BaseController {
                  }
              }
 
-             testLatencyDelay();
-             notes.write(ar.w, 2, 2);
-             ar.flush();
+             sendJsonArray(ar, notes);
          }catch(Exception ex){
              Exception ee = new Exception("Unable to fetch the list of topics", ex);
              streamException(ee, ar);
@@ -533,9 +531,7 @@ public class MainTabsViewControler extends BaseController {
 
              JSONObject repo = new JSONObject();
              repo.put("topics", allTopics);
-             testLatencyDelay();
-             repo.write(ar.w, 2, 2);
-             ar.flush();
+             sendJson(ar, repo);
          }catch(Exception ex){
              Exception ee = new Exception("Unable to updated topic "+nid+" contents", ex);
              streamException(ee, ar);
@@ -576,10 +572,7 @@ public class MainTabsViewControler extends BaseController {
 
              JSONObject repo = note.getJSONWithComments(ar, ngw);
              saveAndReleaseLock(ngw, ar, "Updated Topic Contents");
-
-             testLatencyDelay();
-             repo.write(ar.w, 2, 2);
-             ar.flush();
+             sendJson(ar, repo);
          }catch(Exception ex){
              Exception ee = new Exception("Unable to updated topic "+nid+" contents", ex);
              streamException(ee, ar);
@@ -704,14 +697,12 @@ public class MainTabsViewControler extends BaseController {
              String nid = ar.reqParam("nid");
              TopicRecord note = ngp.getNoteOrFail(nid);
 
-             JSONArray repo = new JSONArray();
+             JSONArray noteArray = new JSONArray();
              for (HistoryRecord hist : note.getNoteHistory(ngp)) {
-                 repo.put(hist.getJSON(ngp, ar));
+                 noteArray.put(hist.getJSON(ngp, ar));
              }
              releaseLock();
-             testLatencyDelay();
-             repo.write(ar.w, 2, 2);
-             ar.flush();
+             sendJsonArray(ar, noteArray);
          }catch(Exception ex){
              Exception ee = new Exception("Unable to get history for note.", ex);
              streamException(ee, ar);
@@ -792,9 +783,7 @@ public class MainTabsViewControler extends BaseController {
 
             JSONObject results = new JSONObject();
             results.put("result", "ok");
-            testLatencyDelay();
-            results.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, results);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to remove user from role.", ex);
             streamException(ee, ar);
@@ -841,9 +830,7 @@ public class MainTabsViewControler extends BaseController {
             for (SearchResultRecord srr : searchResults) {
                 resultList.put(srr.getJSON());
             }
-            testLatencyDelay();
-            resultList.write(ar.w, 2, 2);
-            ar.flush();
+            sendJsonArray(ar, resultList);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to search for topics.", ex);
             streamException(ee, ar);
@@ -906,9 +893,7 @@ public class MainTabsViewControler extends BaseController {
                       HistoryRecord.EVENT_TYPE_CREATED, ar, "");
               saveAndReleaseLock(ngw, ar, "Created new Meeting");
               JSONObject repo = newMeeting.getFullJSON(ar, ngw);
-              testLatencyDelay();
-              repo.write(ar.w, 2, 2);
-              ar.flush();
+              sendJson(ar, repo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to create meeting.", ex);
               streamException(ee, ar);
@@ -988,9 +973,7 @@ public class MainTabsViewControler extends BaseController {
               saveAndReleaseLock(ngw, ar, "Updated Meeting");
               //this is so that clients can calculate the offset for their particular clock.
               repo.put("serverTime", System.currentTimeMillis());
-              testLatencyDelay();
-              repo.write(ar.w, 2, 2);
-              ar.flush();
+              sendJson(ar, repo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to update meeting information.", ex);
               streamException(ee, ar);
@@ -1049,11 +1032,7 @@ public class MainTabsViewControler extends BaseController {
               meeting.updateMeetingNotes(meetingInfo);
               JSONObject repo = meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Updated Meeting Notes");
-              
-              repo.put("serverTime", System.currentTimeMillis());
-              testLatencyDelay();
-              repo.write(ar.w, 2, 2);
-              ar.flush();
+              sendJson(ar, repo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to read meeting notes.", ex);
               streamException(ee, ar);
@@ -1112,9 +1091,7 @@ public class MainTabsViewControler extends BaseController {
               JSONObject repo = ai.getJSON(ar, ngw, meeting);
               meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Created new Agenda Item");
-              testLatencyDelay();
-              repo.write(ar.w, 2, 2);
-              ar.flush();
+              sendJson(ar, repo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to create agenda item on meeting", ex);
               streamException(ee, ar);
@@ -1177,9 +1154,7 @@ public class MainTabsViewControler extends BaseController {
               meetingCache.updateCacheNotes(ngw, ar, src);
               meetingCache.updateCacheNotes(ngw, ar, dest);
               saveAndReleaseLock(ngw, ar, "Move Agenda Item");
-              testLatencyDelay();
-              repo.write(ar.w, 2, 2);
-              ar.flush();
+              sendJson(ar, repo);
           } catch(Exception ex){
               Exception ee = new Exception("Unable to move agenda item.", ex);
               streamException(ee, ar);
@@ -1230,9 +1205,7 @@ public class MainTabsViewControler extends BaseController {
               JSONObject repo = ai.getJSON(ar, ngw, meeting);
               meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Updated Agenda Item");
-              testLatencyDelay();
-              repo.write(ar.w, 2, 2);
-              ar.flush();
+              sendJson(ar, repo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to update agenda item.", ex);
               streamException(ee, ar);
@@ -1284,10 +1257,7 @@ public class MainTabsViewControler extends BaseController {
               JSONObject repo = meeting.getFullJSON(ar, ngw);
               meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Created Topic for minutes of meeting.");
-
-              testLatencyDelay();
-              repo.write(ar.w, 2, 2);
-              ar.flush();
+              sendJson(ar, repo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to create Topic for minutes of meeting.", ex);
               streamException(ee, ar);
@@ -1328,9 +1298,7 @@ public class MainTabsViewControler extends BaseController {
               }
               JSONObject repo = gr.getJSON4Goal(ngw);
               saveAndReleaseLock(ngw, ar, "Created action item for minutes of meeting.");
-              testLatencyDelay();
-              repo.write(ar.w, 2, 2);
-              ar.flush();
+              sendJson(ar, repo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to create Action Item for minutes of meeting.", ex);
               streamException(ee, ar);
@@ -1391,9 +1359,8 @@ public class MainTabsViewControler extends BaseController {
               jo.put("dates", dates);
               jo.put("sourceDate", sourceDate.getTime());
 
-              testLatencyDelay();
-              jo.write(ar.w, 2, 2);
-              ar.flush();
+
+              sendJson(ar, jo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to calculate time zone list.", ex);
               streamException(ee, ar);

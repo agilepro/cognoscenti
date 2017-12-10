@@ -36,33 +36,6 @@
         currentUserKey = up.getKey();
     }
 
-    List<TopicRecord> aList = ngw.getAllNotes();
-
-    JSONArray notes = new JSONArray();
-    for (TopicRecord aNote : aList) {
-
-        String discussionPhase = aNote.getDiscussionPhase();
-
-        if (aNote.isPublic()) {
-            notes.put( aNote.getJSONWithHtml(ar, ngw) );
-        }
-        else if (!ar.isLoggedIn()) {
-            continue;
-        }
-        else if ("Draft".equals(discussionPhase)) {
-            if (ar.getUserProfile().hasAnyId(aNote.getModUser().getUniversalId())) {
-                notes.put( aNote.getJSONWithHtml(ar, ngw) );
-            }
-        }
-        else if (isMember) {
-            notes.put( aNote.getJSONWithHtml(ar, ngw) );
-        }
-        else {
-            //run through all the roles here and see if any role
-            //has access to the note
-        }
-    }
-
     JSONArray allLabels = ngw.getJSONLabels();
 
 
@@ -321,6 +294,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             return "regularTopic";
         }
     }
+    $scope.imageName = function(player) {
+        if (player.key) {
+            return player.key+".jpg";
+        }
+        else {
+            var lc = player.uid.toLowerCase();
+            var ch = lc.charAt(0);
+            var i =1;
+            while(i<lc.length && (ch<'a'||ch>'z')) {
+                ch = lc.charAt(i); i++;
+            }
+            return "fake-"+ch+".jpg";
+        }
+    }
+    $scope.navigateToUser = function(player) {
+        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.uid);
+    }
 
 });
 
@@ -408,6 +398,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         padding:5px;
         background-color:pink;
     }
+    .infoRow {
+        min-height:35px;
+        padding:5px;
+    }
+    .infoRow td {
+        padding:5px 10px;
+    }
 
     </style>
 
@@ -448,18 +445,71 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     </a>
 
                     <span ng-repeat="label in getNoteLabels(rec)">
-                      <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
+                      <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)"
+                              title="click to filter/unfilter all topics by this label">
                       {{label.name}}
                       </button>
                     </span>
                   </span>
                   &nbsp;
-                  <a class="fa fa-minus-square-o meeting-icon" ng-click="openMap[rec.id]=false" ng-show="openMap[rec.id]"></a>
-                  <a class="fa fa-plus-square-o meeting-icon" ng-click="openMap[rec.id]=true" ng-show="!openMap[rec.id]" title="preview this topic"></a>
+                  <a class="fa fa-minus-square-o meeting-icon" ng-click="openMap[rec.id]=false" ng-show="openMap[rec.id]" 
+                     title="close the info"></a>
+                  <a class="fa fa-plus-square-o meeting-icon" ng-click="openMap[rec.id]=true" ng-show="!openMap[rec.id]" 
+                     title="info of this topic"></a>
                    <span ng-show="rec.discussionPhase=='Draft'"> <b>-DRAFT-</b> </span>
                 </div>
                 <div class="leafContent" ng-show="openMap[rec.id]" style="background-color:white;border-radius:10px;margin:5px;">
-                    <div ng-bind-html="rec.html"></div>
+                    <table>
+                    <tr class="infoRow">
+                      <td>Last Update by:</td> 
+                      <td>
+                        <span class="dropdown">
+                            <span id="menu1" data-toggle="dropdown">
+                            <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(rec.modUser)}}" 
+                                 style="width:32px;height:32px" title="{{rec.modUser.name}} - {{rec.modUser.uid}}">
+                            </span>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                              <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                                  tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                                  {{rec.modUser.name}}<br/>{{rec.modUser.uid}}</a></li>
+                              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                                  ng-click="navigateToUser(rec.modUser)">
+                                  <span class="fa fa-user"></span> Visit Profile</a></li>
+                            </ul>
+                        </span>
+                        {{rec.modUser.name}}
+                      </td>
+                    </tr>
+                    <tr class="infoRow">
+                      <td>Last Modified:</td>
+                      <td>{{rec.modTime|date:"MMM dd, yyyy 'at' HH:mm:ss"}}</td>
+                    </tr>
+                    <tr class="infoRow">
+                      <td>Discussion Phase:</td>
+                      <td>{{rec.discussionPhase}}</td>
+                    </tr>
+                    <tr class="infoRow">
+                      <td>Subscribers:</td>
+                      <td>
+                        <span ng-repeat="person in rec.subscribers">
+                          <span class="dropdown">
+                            <span id="menu1" data-toggle="dropdown">
+                            <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(person)}}" 
+                                 style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
+                            </span>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                              <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                                  tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                                  {{person.name}}<br/>{{person.uid}}</a></li>
+                              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                                  ng-click="navigateToUser(person)">
+                                  <span class="fa fa-user"></span> Visit Profile</a></li>
+                            </ul>
+                          </span>
+                        </span>
+                      </td>
+                    </tr>
+                    </table>
                 </div>
             </div>
         </div>

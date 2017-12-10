@@ -263,9 +263,7 @@ public class ProjectSettingController extends BaseController {
             JSONObject repo = new JSONObject();
             repo.put("op",  op);
             repo.put("success",  true);
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }
         catch(Exception ex){
             Exception ee = new Exception("Unable to update the user setting for "+op+" on workspace "+pageId, ex);
@@ -346,9 +344,7 @@ public class ProjectSettingController extends BaseController {
             repo.put("player", role.isPlayer(up));
             RoleRequestRecord rrr2 = ngc.getRoleRequestRecord(role.getName(),up.getUniversalId());
             repo.put("reqPending", (rrr2!=null && !rrr2.isCompleted()));
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }
         catch(Exception ex){
             Exception ee = new Exception("Unable to update the user setting for "+op+" on role "+roleId+" workspace  "+pageId, ex);
@@ -445,9 +441,7 @@ public class ProjectSettingController extends BaseController {
             JSONObject repo = new JSONObject();
             repo.put("state", rrr.getState());
             repo.put("completed", rrr.isCompleted());
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }
         catch(Exception ex){
             Exception ee = new Exception("Unable to update the user setting for "+op+" on role "+roleName+" workspace  "+pageId, ex);
@@ -495,9 +489,7 @@ public class ProjectSettingController extends BaseController {
             }
 
             ngc.saveFile(ar, "Updated Role");
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to '"+op+"' the role.", ex);
             streamException(ee, ar);
@@ -551,9 +543,7 @@ public class ProjectSettingController extends BaseController {
 
             ngw.saveFile(ar, "Updated Email Generator "+id);
             JSONObject repo = eGen.getJSON(ar, ngw);
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }
         catch(Exception ex){
             Exception ee = new Exception("Unable to update Email Generator "+id, ex);
@@ -606,9 +596,7 @@ public class ProjectSettingController extends BaseController {
                 repo.put("addressees", addressees);
             }
 
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }
         catch(Exception ex){
             Exception ee = new Exception("Unable to update Email Generator "+id, ex);
@@ -658,9 +646,7 @@ public class ProjectSettingController extends BaseController {
 
             ngp.saveFile(ar, "Updated Agenda Item");
             JSONObject repo = label.getJSON();
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to modify "+op+" label.", ex);
             streamException(ee, ar);

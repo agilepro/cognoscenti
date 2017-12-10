@@ -147,9 +147,7 @@ public class SiteController extends BaseController {
             site.saveFile(ar, "adding super admin to site owners");
             
             JSONObject jo = site.getConfigJSON();
-            testLatencyDelay();
-            jo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, jo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to take ownership of the site.", ex);
             streamException(ee, ar);
@@ -397,9 +395,7 @@ public class SiteController extends BaseController {
                     
             JSONObject jo = new JSONObject();
             jo.put("updated", count);
-            testLatencyDelay();
-            jo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, jo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to create Action Item for minutes of meeting.", ex);
             streamException(ee, ar);

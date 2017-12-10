@@ -390,9 +390,7 @@ public class UserController extends BaseController {
             }
             JSONObject result = new JSONObject();
             result.put("people", peopleList);
-            testLatencyDelay();
-            result.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, result);
         }
         catch(Exception ex){
             Exception ee = new Exception("Unable to generate people information.", ex);
@@ -633,9 +631,7 @@ public class UserController extends BaseController {
             UserManager.writeUserProfilesToFile();
             
             JSONObject userObj = userBeingEdited.getFullJSON();
-            testLatencyDelay();
-            userObj.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, userObj);
         }
         catch(Exception ex){
             Exception ee = new Exception("Unable to update user "+userKey, ex);
@@ -1097,9 +1093,7 @@ public class UserController extends BaseController {
             MicroProfileMgr.setDisplayName(emailId, idDisplayName);
             MicroProfileMgr.save();
 
-            testLatencyDelay();
-            received.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, received);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to update micro profile.", ex);
             streamException(ee, ar);
@@ -1497,9 +1491,7 @@ public class UserController extends BaseController {
             for (SearchResultRecord srr : searchResults) {
                 resultList.put(srr.getJSON());
             }
-            testLatencyDelay();
-            resultList.write(ar.w, 2, 2);
-            ar.flush();
+            sendJsonArray(ar, resultList);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to search for notes.", ex);
             streamException(ee, ar);

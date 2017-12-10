@@ -98,9 +98,7 @@ public class CreateProjectController extends BaseController {
             }            
 
             JSONObject repo = newWorkspace.getConfigJSON();
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to a workspace.", ex);
             streamException(ee, ar);

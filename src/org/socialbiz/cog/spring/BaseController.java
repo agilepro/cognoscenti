@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AuthRequest;
+import org.socialbiz.cog.Cognoscenti;
+import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
@@ -46,6 +48,26 @@ import org.workcast.json.JSONTokener;
 @Controller
 public class BaseController {
 
+    static boolean indentJson = false;
+    static int latencyMillis = 0;
+    
+    /**
+     * Call this from the initialization classes in order to configure how
+     * the spring controller classes operate.
+     */
+    public static void initBaseController(Cognoscenti cog) {
+        String indentStr = cog.getConfig().getProperty("indentJson");
+        if (indentStr!=null && "true".equals(indentStr)) {
+            indentJson = true;
+        }
+        String latencyStr = cog.getConfig().getProperty("latencyMillis");
+        if (latencyStr!=null) {
+            //number of milliseconds to delay for every call
+            latencyMillis = DOMFace.safeConvertInt(latencyStr);
+        }
+    }
+    
+    
     @ExceptionHandler(Exception.class)
     public void handleException(Exception ex, HttpServletRequest request,
             HttpServletResponse response) {
@@ -464,11 +486,11 @@ public class BaseController {
      * possible.  But in order to test latency situations, this can be a
      * one to three to ten second delay to slow down the response time.
      */
-    public static void testLatencyDelay() {
+    private static void testLatencyDelay() {
         try {
-            //comment this line out for production use
-            //TODO: make this configurable
-            //Thread.sleep(5000);
+            if (latencyMillis>0) {
+                Thread.sleep(latencyMillis);
+            }
         }
         catch (Exception e) {
             throw new RuntimeException("Exception during test latency delay", e);
@@ -478,11 +500,44 @@ public class BaseController {
         NGPageIndex.clearLocksHeldByThisThread();
         System.out.println("     locks released tid="+Thread.currentThread().getId()+" time="+(System.currentTimeMillis()%10000));
     }
+    /**
+     * Call this to properly send the JSON back to the client.
+     * This should be the LAST thing of a JSON call
+     */
     protected static void sendJson(AuthRequest ar, JSONObject jo) throws Exception {
         releaseLock();
+        
+        //this has no effect since getWriter has already been called
+        ar.resp.setContentType("application/json");
+        
         jo.put("serverTime", System.currentTimeMillis());
         testLatencyDelay();
-        jo.write(ar.w, 2, 2);
+        if (indentJson) {
+            jo.write(ar.w, 2, 2);
+        }
+        else {
+            jo.write(ar.w, 0, 0);
+        }
+        ar.flush();
+    }
+    
+    /**
+     * Should probably NEVER be sending an array, but there are some cases where it
+     * was done and so this method supports it while cleaning them out.
+     */
+    protected static void sendJsonArray(AuthRequest ar, JSONArray jo) throws Exception {
+        releaseLock();
+
+        //this has no effect since getWriter has already been called
+        ar.resp.setContentType("application/json");
+        
+        testLatencyDelay();
+        if (indentJson) {
+            jo.write(ar.w, 2, 2);
+        }
+        else {
+            jo.write(ar.w, 0, 0);
+        }
         ar.flush();
     }
 

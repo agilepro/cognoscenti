@@ -367,9 +367,7 @@ public class ProjectDocsController extends BaseController {
 
             ngw.saveFile(ar, "Updated Agenda Item");
             JSONObject repo = aDoc.getJSON4Doc(ar, ngw);
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to update document "+did, ex);
             streamException(ee, ar);
@@ -397,9 +395,7 @@ public class ProjectDocsController extends BaseController {
 
             JSONObject repo = new JSONObject();
             repo.put("docs", attachmentList);
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to get the list of attachments ", ex);
             streamException(ee, ar);
@@ -426,9 +422,7 @@ public class ProjectDocsController extends BaseController {
                 shareList.put(spr.getMinJSON());
             }
             repo.put("shares", shareList);
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to get the list of share ports ", ex);
             streamException(ee, ar);
@@ -462,9 +456,7 @@ public class ProjectDocsController extends BaseController {
                 ngw.saveContent(ar, "updating the share ports");
             }
             JSONObject repo = spr.getFullJSON(ngw);
-            testLatencyDelay();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
+            sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to get the list of share ports ", ex);
             streamException(ee, ar);

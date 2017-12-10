@@ -1,473 +1,440 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.MeetingRecord"
+%><%@page import="org.socialbiz.cog.LicenseForUser"
+%><%@page import="org.socialbiz.cog.AccessControl"
+%><%@page import="org.socialbiz.cog.MicroProfileMgr"
 %><%
-
-
+ 
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
-    ar.assertMember("Must be a member to see meetings");
-    NGBook ngb = ngw.getSite();
     String meetId          = ar.reqParam("id");
-    MeetingRecord oneRef   = ngw.findMeeting(meetId);
-    JSONObject meetingInfo = oneRef.getFullJSON(ar, ngw);
-    JSONArray attachmentList = ngw.getJSONAttachments(ar);
+    MeetingRecord mRec     = ngw.findMeeting(meetId);
 
-    String minutesId = oneRef.getMinutesId();
-    if (minutesId!=null) {
-        TopicRecord  nr = ngw.getNoteByUidOrNull(minutesId);
-        if (nr==null) {
-            //schema migration to move to universal id
-            nr = ngw.getNote(minutesId);
-        }
-        if (nr!=null) {
-            meetingInfo.put("minutesLocalId", nr.getId());
-        }
+    if (!AccessControl.canAccessMeeting(ar, ngw, mRec)) {
+        throw new Exception("Please log in to see this meeting.");
     }
 
-    JSONObject backlogInfo = ngw.getAgendaItemBacklog().getFullJSON(ar, ngw);
-    JSONArray goalList = ngw.getJSONGoals();
+    if (ar.ngp==null) {
+        throw new Exception("NGP should not be null!!!!!!");
+    }
+    
+    NGBook site = ngw.getSite();
+    UserProfile uProf = ar.getUserProfile();
+    boolean isLoggedIn = (uProf!=null);
+    String currentUser = "";
+    String currentUserName = "Unknown";
+    String currentUserKey = "";
+    if (isLoggedIn) {
+        currentUser = uProf.getUniversalId();
+        currentUserName = uProf.getName();
+        currentUserKey = uProf.getKey();
+    }
+
+    String targetRole = mRec.getTargetRole();
+    if (targetRole==null || targetRole.length()==0) {
+        mRec.setTargetRole(ngw.getPrimaryRole().getName());
+    }
+    JSONObject meetingInfo = mRec.getFullJSON(ar, ngw);
+    
+    JSONObject previousMeeting = new JSONObject();
+    if (meetingInfo.has("previousMeeting")) {
+        String previousId = meetingInfo.getString("previousMeeting");
+        if (previousId.length()>0) {
+            MeetingRecord previous = ngw.findMeetingOrNull(previousId);
+            if (previous!=null) {
+                previousMeeting = new JSONObject();
+                JSONObject temp = previous.getFullJSON(ar, ngw);
+                previousMeeting.put("startTime", temp.getLong("startTime"));
+                previousMeeting.put("id", temp.getString("id"));
+                previousMeeting.put("minutesId", temp.getString("minutesId"));
+                if (temp.has("minutesLocalId")) {
+                    previousMeeting.put("minutesLocalId", temp.getString("minutesLocalId"));
+                }
+            }
+        }
+    }
+    
+    JSONArray attachmentList = new JSONArray();
+    for (AttachmentRecord doc : ngw.getAllAttachments()) {
+        if (doc.isDeleted()) {
+            continue;
+        }
+        attachmentList.put(doc.getJSON4Doc(ar, ngw));
+    }
+
+    JSONArray allGoals     = ngw.getJSONGoals();
+
+    JSONArray allRoles = new JSONArray();
+    for (NGRole aRole : ngw.getAllRoles()) {
+        allRoles.put(aRole.getName());
+    }
+
+    JSONArray allTopics = new JSONArray();
+    for (TopicRecord aNote : ngw.getAllNotes()) {
+        allTopics.put(aNote.getJSON(ngw));
+    }
+
+    JSONArray allLabels = ngw.getJSONLabels();
+
+    String docSpaceURL = "";
+
+    if (uProf!=null) {
+        LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
+        docSpaceURL = ar.baseURL +  "api/" + site.getKey() + "/" + ngw.getKey()
+                    + "/summary.json?lic="+lfu.getId();
+    }
+
+    MeetingRecord backlog = ngw.getAgendaItemBacklog();
+
+
+
 
 %>
 
-<script type="text/javascript">
+<style>
+.meeting-icon {
+   cursor:pointer;
+   color:LightSteelBlue;
+}
 
-var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Arrange Meeting Agenda");
-    $scope.meeting = <%meetingInfo.write(out,2,4);%>;
-    $scope.backlog = <%backlogInfo.write(out,2,4);%>;
-    $scope.goalList = <%goalList.write(out,2,4);%>;
-    $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
-    $scope.newAgendaItem = {subject:"",duration:10,desc:"",id:""};
-    $scope.showInput = false;
-    $scope.showError = false;
-    $scope.errorMsg = "";
-    $scope.errorTrace = "";
-    $scope.showTrace = false;
-    $scope.reportError = function(serverErr) {
-        var exception = serverErr.exception;
-        $scope.errorMsg = exception.join();
-        $scope.errorTrace = exception.stack;
-        $scope.showError=true;
-        $scope.showTrace = false;
-    };
+.comment-outer {
+    border: 1px solid lightgrey;
+    border-radius:8px;
+    padding:5px;
+    margin-top:15px;
+    background-color:#EEE;
+    cursor: pointer;
+}
+.comment-inner {
+    border: 1px solid lightgrey;
+    border-radius:6px;
+    padding:5px;
+    background-color:white;
+}
+.comment-state-draft {
+    background-color:yellow;
+}
+.comment-state-active {
+    background-color:#DEF;
+}
+.comment-state-complete {
+    background-color:#EEE;
+}
+.comment-phase-change {
+    border: 1px solid #DFD;
+    background-color:#EFE;
+}
+</style>
 
-    $scope.sortItems = function() {
-        $scope.meeting.agenda.sort( function(a, b){
-            return a.position - b.position;
-        } );
-        var runTime = $scope.meetingTime;
-        for (var i=0; i<$scope.meeting.agenda.length; i++) {
-            var item = $scope.meeting.agenda[i];
-            item.position = i+1;
-            item.schedule = runTime;
-            runTime = new Date( runTime.getTime() + (item.duration*60000) );
-        }
-        $scope.meeting.endTime = runTime;
-        return $scope.meeting.agenda;
-    };
-
-    $scope.datePickOptions = {
-        formatYear: 'yyyy',
-        startingDay: 1
-    };
-    $scope.datePickDisable = function(date, mode) {
-        return false;
-    };
-    $scope.datePickOpen = false;
-    $scope.openDatePicker = function($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        $scope.datePickOpen = true;
-    };
-
-
-    $scope.deleteRow = function(row) {
-        var delId = row.id;
-        var postURL = "agendaMove.json?src="+$scope.meeting.id+"&dest="+$scope.backlog.id;
-        var postdata = angular.toJson(row);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            var newSet = [];
-            for( var i =0; i<$scope.meeting.agenda.length; i++) {
-                var irow = $scope.meeting.agenda[i];
-                if (delId != irow.id) {
-                    newSet.push(irow);
-                }
-            }
-            $scope.meeting.agenda = newSet;
-            $scope.backlog.agenda.push(row);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
-
-    $scope.acquire = function(row) {
-        var delId = row.id;
-        var postURL = "agendaMove.json?src="+$scope.backlog.id+"&dest="+$scope.meeting.id;
-        var postdata = angular.toJson(row);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(newAgendaItem) {
-            var newSet = [];
-            for( var i =0; i<$scope.backlog.agenda.length; i++) {
-                var irow = $scope.backlog.agenda[i];
-                if (delId != irow.id) {
-                    newSet.push(irow);
-                }
-            }
-            $scope.backlog.agenda = newSet;
-            $scope.meeting.agenda.push(newAgendaItem);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
-
-
-    $scope.createRow = function() {
-        var postURL = "agendaAdd.json?id="+$scope.meeting.id;
-        var postdata = angular.toJson($scope.newAgendaItem);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-
-            $scope.meeting.agenda.push(data);
-            $scope.newAgendaItem = {subject:"",duration:10,desc:"",id:""};
-            $scope.showInput=false;
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
-
-    $scope.createMinutes = function() {
-        var postURL = "createMinutes.json?id="+$scope.meeting.id;
-        var postdata = angular.toJson("");
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            $scope.meeting = data;
-            $scope.showInput=false;
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
-
-    $scope.getAllocated = function() {
-        var total = 0;
-        for( var i =0; i<$scope.meeting.agenda.length; i++) {
-            var irow = $scope.meeting.agenda[i];
-            total = total + irow.duration;
-        }
-        return total;
-    };
-
-
-    $scope.changeMeetingState = function(newState) {
-        $scope.meeting.state = newState;
-        $scope.saveMeeting();
-    };
-    $scope.stateName = function() {
-        if ($scope.meeting.state<=1) {
-            return "Planning";
-        }
-        if ($scope.meeting.state==2) {
-            return "Running";
-        }
-        return "Completed";
-    };
-
-    $scope.saveMeeting = function() {
-        $scope.meetingTime.setHours($scope.meetingHour);
-        $scope.meetingTime.setMinutes($scope.meetingMinutes);
-        $scope.meeting.startTime = $scope.meetingTime.getTime();
-
-        $scope.sortItems();
-        var postURL = "meetingUpdate.json?id="+$scope.meeting.id;
-        var postdata = angular.toJson($scope.meeting);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            $scope.meeting = data;
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-    };
-
-    $scope.allActionItems = function() {
-        var list = [];
-        $scope.meeting.agenda.map( function(ai) {
-            ai.actionItems.map( function(item) {
-                $scope.goalList.map( function(goal) {
-                    if (goal.universalid == item) {
-                        list.push(goal);
-                    }
-                    else if (goal.id == item) {
-                        list.push(goal);
-                    };
-                });
-            });
-        });
-        return list;
-    };
-
-    $scope.moveItem = function(rec, offset) {
-        var pos = rec.position-1;
-        var size = $scope.meeting.agenda.length;
-        var other = pos + offset;
-        if (other >= 0 && other < size) {
-            var buf = $scope.meeting.agenda[pos].position;
-            $scope.meeting.agenda[pos].position = $scope.meeting.agenda[other].position;
-            $scope.meeting.agenda[other].position = buf;
-            $scope.saveMeeting();
-        };
-    };
-
-    $scope.getItemIndex = function(rec) {
-        var last = $scope.meeting.agenda.length;
-        for (var i=0; i<last; i++) {
-            var item = $scope.meeting.agenda[i];
-            if (item.id == rec.id) {
-                return i;
-            }
-        }
-        return -1;
-    };
-
-    $scope.allDocuments = function() {
-        var coll = [];
-        var eliminateDups = {};
-        $scope.meeting.agenda.map( function(agendaItem) {
-            agendaItem.docList.map( function(docid) {
-                console.log("Considering "+docid);
-                if (!eliminateDups[docid]) {
-                    $scope.attachmentList.map( function(att) {
-                        if (att.universalid == docid) {
-                            coll.push(att);
-                        }
-                    });
-                }
-                eliminateDups[docid] = true;
-            });
-        });
-        return coll;
-    }
-    $scope.iconName = function(rec) {
-        var type = rec.attType;
-        if ("FILE"==type) {
-            return "iconFile.png";
-        }
-        if ("URL" == type) {
-            return "iconUrl.png";
-        }
-        return "iconFileExtra.png";
-    }
-    $scope.meetingStateStyle = function(val) {
-        if (val<=1) {
-            return "background-color:white";
-        }
-        if (val==2) {
-            return "background-color:lightgreen";
-        }
-        if (val>2) {
-            return "background-color:gray";
-        }
-        return "Unknown";
-    }
-
-});
-
+<script>
+var embeddedData = {};
+embeddedData.pageId    = "<%ar.writeJS(pageId);%>";
+embeddedData.meetId    = "<%ar.writeJS(meetId);%>";
+embeddedData.meeting   = <%meetingInfo.write(out,2,2);%>;
+embeddedData.previousMeeting = <%previousMeeting.write(out,2,2);%>;
+embeddedData.allGoals  = <%allGoals.write(out,2,2);%>;
+embeddedData.allRoles  = <%allRoles.write(out,2,2);%>;
+embeddedData.allLabels = <%allLabels.write(out,2,2);%>;
+embeddedData.backlogId = "<%=backlog.getId()%>";
+embeddedData.retPath   = "<%=ar.retPath%>";
+embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
+embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 </script>
+<script src="../../../spring/jsp/MeetingFull.js"></script>
 
-<div ng-app="myApp" ng-controller="myCtrl">
+<script src="../../../jscript/AllPeople.js"></script>
+
+<style>
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+.blankTitle {
+    font-size: 130%;
+    font-weight: bold;
+}
+.agendaTitle {
+    font-size: 130%;
+    font-weight: bold;
+    border-style:dotted;
+    border-color:white;
+}
+.spaceyTable tr td {
+    padding:5px;
+}
+
+</style>
+
+<div ng-app="myApp" ng-controller="myCtrl" ng-cloak>
 
 <%@include file="ErrorPanel.jsp"%>
 
+
+<%if (isLoggedIn) { %>
     <div class="upRightOptions rightDivContent">
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="#"  ng-click="showInput=!showInput">Create New Agenda Item</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="#"  ng-click="showBacklog=!showBacklog">Get Agenda Item from Backlog</a></li>
+          <li role="presentation"><a role="menuitem"
+              title="Display the meeting as a HTML page that can be copied into an editor"
+              href="meetingFull.htm?id={{meeting.id}}">Show Full Display</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem"
-              href="meetingFull.htm?id={{meeting.id}}">View Full Meeting</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="cloneMeeting.htm?id={{meeting.id}}">Clone This Meeting</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem"
-              href="#" ng-click="createMinutes()">Generate Minutes</a></li>
-          <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"
-              href="noteZoom{{meeting.minutesLocalId}}.htm">View Minutes</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem"
+              title="Return back to the list of all meetings in the workspace"
               href="meetingList.htm">List All Meetings</a></li>
         </ul>
       </span>
+
     </div>
+<% } %>
 
-
-
-    <div id="NewAgenda" class="well" ng-show="showInput" ng-cloak>
-      <form class="horizontal-form">
-        <fieldset>
-          <!-- Form Control NAME -->
-          <div class="form-group">
-            <label class="col-md-2 control-label">Subject</label>
-            <div class="col-md-10">
-              <input type="text" class="form-control" ng-model="newAgendaItem.subject"/>
-            </div>
-          </div>
-          <!-- Form Control DESCRIPTION -->
-          <div class="form-group">
-            <label class="col-md-2 control-label">Description</label>
-            <div class="col-md-10">
-              <textarea type="text" class="form-control" ng-model="newAgendaItem.desc"></textarea>
-            </div>
-          </div>
-          <!-- Form Control DURATION -->
-          <div class="form-group">
-            <label class="col-md-2 control-label">Duration</label>
-            <div class="col-md-10">
-              <input type="text" class="form-control" ng-model="newAgendaItem.duration"/>
-            </div>
-          </div>
-        </fieldset>
-        <!-- Form Control BUTTONS Begin -->
-        <div class="form-group text-right">
-          <button type="button" class="btn btn-warning btn-raised" ng-click="showInput=false">Cancel</button>
-          <button type="submit" class="btn btn-primary btn-raised"  ng-click="createRow()">Create Agenda Item</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="well"  ng-show="showBacklog" ng-cloak>
-        <div class="rightDivContent">
-            <a href="#" ng-click="showBacklog=!showBacklog"><img src="<%= ar.retPath%>assets/iconBlackDelete.gif"/></a>
-        </div>
-        <div class="generalSettings">
-            <table class="gridTable2" width="100%">
-                <tr class="gridTableHeader">
-                    <td width="50px">Action</td>
-                    <td width="200px">Backlog Agenda Item</td>
-                    <td width="200px">Description</td>
-                    <td width="50px">Duration</td>
-                </tr>
-                <tr ng-repeat="bi in backlog.agenda">
-                    <td><button class="dropdown-toggle specCaretBtn" ng-click="acquire(bi)" title="Move this item to the meeting">Move</button></td>
-                    <td>{{bi.subject}}</td>
-                    <td>{{bi.desc|limitTo:50}}</td>
-                    <td>{{bi.duration}}</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
-
-    <table class="gridTable2" width="100%">
-        <tr class="gridTableHeader">
-            <td width="50px"></td>
-            <td width="30px">Time</td>
-            <td width="200px">Agenda Item</td>
-            <td width="200px">Description</td>
-            <td width="50px">Duration</td>
-        </tr>
-        <tr ng-repeat="rec in sortItems()">
-            <td>
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button" id="menu1" data-toggle="dropdown">
-                <span class="caret"></span></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation"><a role="menuitem" tabindex="-1"
-                      href="#"  ng-click="moveItem(rec, -1)">Move Up</a></li>
-                  <li role="presentation"><a role="menuitem" tabindex="-1"
-                      href="#"  ng-click="moveItem(rec, 1)">Move Down</a></li>
-                  <li role="presentation" class="divider"></li>
-                  <li role="presentation"><a role="menuitem" tabindex="-1"
-                      href="#"  ng-click="deleteRow(rec)">Move to Backlog</a></li>
-                </ul>
-              </div>
-            </td>
-            <td >
-                {{rec.schedule | date: 'HH:mm'}}</td>
-            <td><b>{{rec.position}}. {{rec.subject}}</b>
-                </td>
-            <td style="line-height: 1.3;">{{rec.desc|limitTo:200}}</td>
-            <td>{{rec.duration}}</td>
+    <div style="width:100%">
+      <div class="leafContent">
+        <span style="font-size:150%;font-weight: bold;">
+            <i class="fa fa-gavel" style="font-size:130%"></i>
+            {{meeting.name}}
+        </span>
+      </div>
+      <br/>
+      <table class="table">
+        <tr>
+            <td><b>Scheduled Time:</b></td>
+            <td>{{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} &nbsp &nbsp
+            <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
+                <i class="fa fa-calendar"></i></a></td>
         </tr>
         <tr>
-            <td>
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button" id="menu1" data-toggle="dropdown">
-                <span class="caret"></span></button>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation"><a role="menuitem" tabindex="-1"
-                      href="#"  ng-click="showInput=!showInput">Create New Agenda Item</a></li>
-                  <li role="presentation"><a role="menuitem" tabindex="-1"
-                      href="#"  ng-click="showBacklog=!showBacklog">Get Agenda Item from Backlog</a></li>
-                </ul>
-              </div>
-            </td>
-            <td >
-                {{meeting.endTime | date: 'HH:mm'}}
-            </td>
-            <td>~end~</td>
-            <td></td>
-            <td></td>
+            <td><b>State:</b></td>
+            <td><span style="{{meetingStateStyle(meeting.state)}};padding:5px;">{{stateName()}}</span>
         </tr>
-    </table>
-
-    <div style="height:30px;"></div>
-
-    <table class="gridTable2" width="100%">
-        <tr class="gridTableHeader">
-            <td width="200px">Action Item ~ Description</td>
-            <td width="50px">Assignees</td>
+        <tr>
+            <td><b>Called By:</b></td>
+            <td>{{meeting.owner}}</td>
         </tr>
-        <tr ng-repeat="rec in allActionItems()">
-            <td >
-                <img ng-src="<%= ar.retPath %>assets/goalstate/small{{rec.state}}.gif">
-                <a href="task{{rec.id}}.htm">{{rec.synopsis}}</a>
-                ~
-                {{rec.description}}
-            </td>
-            <td>
-                <span ng-repeat="person in rec.assignTo"> {{person.name}} </span>
-            </td>
-
+        <tr>
+            <td><b>Target Role:</b></td>
+            <td>{{meeting.targetRole}}</td>
         </tr>
-    </table>
-
-    <div class="generalSettings">
-
-        <table class="gridTable2" width="100%">
-            <tr class="gridTableHeader">
-                <td width="200px">Attachment Name</td>
-                <td width="200px">Description</td>
-            </tr>
-            <tr ng-repeat="doc in allDocuments()">
-                <td class="repositoryName">
-                    <a href="docinfo{{doc.id}}.htm">
-                       <img src="<%=ar.retPath%>assets/images/{{iconName(doc)}}"/>
-                       {{doc.name}}
-                    </a>
-                </td>
-                <td style="line-height: 1.3;">{{doc.description}}</span></td>
-            </tr>
-        </table>
+        <tr>
+            <td><b>Description:</b></td>
+            <td><div ng-bind-html="meeting.meetingInfo"></div></td>
+         </tr>
+        <tr>
+            <td><b>Minutes:</b></td>
+            <td><span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                         ng-click="navigateToTopic(meeting.minutesLocalId)">
+                         View Minutes
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Previous Meeting:</b></td>
+            <td><a href="meetingFull.htm?id={{previousMeeting.id}}">
+                {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}</a></td>
+        </tr>
+        <tr>
+            <td><b>Previous Minutes:</b></td>
+            <td><span 
+                     ng-click="navigateToTopic(previousMeeting.minutesLocalId)"
+                     title="Navigate to the discussion topic that holds the minutes for the previous meeting">
+                     Previous Minutes
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Attendence Planning:</b></td>
+            <td><span ng-repeat="pers in peopleStatus">
+                  <span>
+                    <a href="">{{pers.name}}</a>
+                    (
+                    <span ng-show="pers.attend=='Yes'">Will attend</span>
+                    <span ng-show="pers.attend=='No'">Will not attend</span>
+                    <span ng-show="pers.attend=='Maybe'">Might attend</span>
+                    <span ng-show="pers.attend!='Maybe' && pers.attend!='Yes' && pers.attend!='No'">Unknown</span>
+                    {{pers.situation}}
+                    )
+                  </span><br/>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Actual Attendees:</b></td>
+            <td><span ng-repeat="person in getAttended()">
+                <a href="">{{person.name}}</a><br/> 
+                </span>
+            </td>
+        </tr>
+      </table>
     </div>
 
+
+
+<style>
+.agendaItemFull {
+    border: 1px solid lightgrey;
+    border-radius:10px;
+    margin-top:20px;
+}
+.agendaItemBlank {
+    background-color:lightgray;
+    margin-top:20px;
+}
+</style>
+<script>
+</script>
+
+<hr/>
+
+<div ng-repeat="item in getAgendaItems()">
+    <div class="agendaItemBlank" ng-show="item.isSpacer">
+      <div style="padding:5px;">
+        <div style="width:100%">
+                <span class="blankTitle" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
+                    {{item.subject}} </span>  &nbsp;
+
+                <span>
+                    <i>({{item.duration}} minutes) {{item.schedule | date: 'HH:mm'}}
+                      - {{item.scheduleEnd | date: 'HH:mm'}} </i>
+                </span>
+        </div>
+          <div ng-show="editItemDetailsMap[item.id]" class="well" style="margin:20px">
+            <div class="form-inline form-group" ng-hide="item.topicLink">
+              Name: <input ng-model="item.subject"  class="form-control" style="width:200px;"
+                           placeholder="Enter Agenda Item Name"/>
+                    <input type="checkbox"  ng-model="item.isSpacer"
+                             class="form-control" style="width:50px;"/>
+                    Break Time
+            </div>
+            <div class="form-inline form-group">
+              Duration: <input ng-model="item.duration"  class="form-control" style="width:50px;"/>
+            </div>
+            <div class="form-inline form-group">
+              <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
+              <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="agendaItemFull"  ng-hide="item.isSpacer">
+    <table style="width:100%">
+
+                          <!--  AGENDA HEADER -->
+      <tr>
+        <td style="width:100%">
+          <div style="padding:5px;">
+            <div style="width:100%">
+                <span class="agendaTitle">
+                    {{item.number}}.
+                    <i ng-show="item.topicLink" class="fa fa-lightbulb-o"></i>
+                    {{item.subject}} 
+                </span>
+                 <span ng-show="meeting.state==2">
+                    <span ng-hide="item.timerRunning" style="padding:5px">
+                        <i class="fa fa-clock-o"></i>
+                        Elapsed: {{item.timerTotal| minutes}}
+                        Remaining: {{item.duration - item.timerTotal| minutes}}
+                    </span>
+                    <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
+                        <i class="fa fa-clock-o"></i>
+                        Elapsed: {{item.timerTotal| minutes}}
+                        Remaining: {{item.duration - item.timerTotal| minutes}}
+                    </span>
+                </span>
+                <span ng-show="meeting.state>2">
+                    <span ng-show="item.timerTotal>0" style="padding:5px">
+                        <i class="fa fa-clock-o"></i>
+                        Duration: {{item.timerTotal| minutes}}
+                    </span>
+                </span>
+           </div>
+            <div>
+                <i>
+                {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
+            </div>
+          </div>
+        </td>
+      </tr>
+
+                          <!--  AGENDA BODY -->
+      <tr>
+        <td style="width:100%">
+          
+           <div style="padding:10px">
+             <div ng-bind-html="item.desc"></div>
+           </div>
+        </td>
+      </tr>
+
+                          <!--  AGENDA ATTACHMENTS -->
+      <tr>
+        <td>
+           <div style="margin:10px;" ng-repeat="topic in itemTopics(item)">
+              Topic: 
+              <span ng-click="navigateToTopic(item.topicLink)">
+                <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
+                <a href="">{{topic.subject}}</a>
+              </span>
+           </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+           <div style="margin:10px;" ng-repeat="docid in item.docList">
+              Attachment: 
+              <span ng-click="navigateToDoc(docid)">
+                <a href="">{{getFullDoc(docid).name}}</a>
+              </span>
+           </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+           <div style="margin:10px;" ng-repeat="goal in itemGoals(item)">
+              Action Item: 
+              <span>
+                <a href="">{{goal.synopsis}}</a>, 
+                <span ng-repeat="person in goal.assignTo">{{person.name}}, </span>
+                {{goal.status}}
+              </span>
+           </div>
+        </td>
+      </tr>
+
+    </table>
+    </div>
+
+                         <!--  AGENDA comments -->
+      <div ng-repeat="cmt in item.comments" style="padding:15px">
+
+          {{cmt.userName}} ({{cmt.user}}) on {{cmt.time | date}} said
+          <div ng-bind-html="cmt.html"></div>
+
+      </div>
+
+    </div>
+
+    
+    <br/>
+     <hr/>
+    <span ng-show="meeting.state>=2">
+        <i class="fa fa-clock-o"></i> Meeting Duration: {{meeting.timerTotal|minutes}}  
+    </span>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    
 </div>
+
+<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/CommentModal.js"></script>
+<script src="<%=ar.retPath%>templates/ResponseModal.js"></script>
+<script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>
+<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/AttachTopicCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>

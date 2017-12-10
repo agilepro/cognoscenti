@@ -166,9 +166,7 @@ public class SuperAdminController extends BaseController {
              }
 
              JSONObject repo = siteRequest.getJSON();
-             testLatencyDelay();
-             repo.write(ar.w, 2, 2);
-             ar.flush();
+             sendJson(ar, repo);
          }
          catch(Exception ex){
              Exception ee = new Exception("Unable to update site request ("+requestId+")", ex);
