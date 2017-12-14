@@ -26,8 +26,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
 * An entry in the address list.  Holds the email address

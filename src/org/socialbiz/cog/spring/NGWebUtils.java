@@ -37,7 +37,7 @@ import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.exception.NGException;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 public class NGWebUtils {
 

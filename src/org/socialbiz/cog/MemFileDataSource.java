@@ -6,7 +6,7 @@ import java.io.OutputStream;
 
 import javax.activation.DataSource;
 
-import org.workcast.streams.MemFile;
+import com.purplehillsbooks.streams.MemFile;
 
 public class MemFileDataSource implements DataSource{
     private MemFile mf;

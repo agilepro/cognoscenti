@@ -25,9 +25,9 @@ import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.MemFileDataSource;
 import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.exception.NGException;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
-import org.workcast.streams.MemFile;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 
 /**
  * Represents a single email message to a single recipient.

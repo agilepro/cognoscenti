@@ -36,7 +36,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpSession;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.workcast.streams.HTMLWriter;
+import com.purplehillsbooks.streams.HTMLWriter;
 
 public class UtilityMethods {
     public static String subString(String s, int pos, int len) throws Exception {

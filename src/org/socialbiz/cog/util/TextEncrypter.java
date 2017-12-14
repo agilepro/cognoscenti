@@ -37,7 +37,7 @@ import javax.crypto.spec.DESedeKeySpec;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.workcast.streams.Base64;
+import com.purplehillsbooks.streams.Base64;
 
 /**
  * TextEncrypter handles the encruption of password in ini file

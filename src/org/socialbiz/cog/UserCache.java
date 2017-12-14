@@ -2,8 +2,8 @@ package org.socialbiz.cog;
 
 import java.io.File;
 
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 
 public class UserCache {
     JSONObject cacheObj;

@@ -3,7 +3,7 @@ package org.socialbiz.cog;
 import java.util.List;
 
 import org.socialbiz.cog.util.NameCounter;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 public class WorkspaceStats {
 

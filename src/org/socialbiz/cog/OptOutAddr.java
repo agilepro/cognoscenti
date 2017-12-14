@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.socialbiz.cog.exception.NGException;
-import org.workcast.json.JSONObject;
-import org.workcast.streams.MemFile;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 
 /**
 * The purpose of this class it to remember an assignee to an email message

@@ -49,7 +49,7 @@ import javax.mail.UIDFolder;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.socialbiz.cog.exception.NGException;
-import org.workcast.json.JSONException;
+import com.purplehillsbooks.json.JSONException;
 
 public class EmailListener extends TimerTask{
 

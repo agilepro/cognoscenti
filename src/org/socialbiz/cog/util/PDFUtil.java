@@ -50,7 +50,7 @@ import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.SectionWiki;
 import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UserProfile;
-import org.workcast.streams.MemFile;
+import com.purplehillsbooks.streams.MemFile;
 
 public class PDFUtil {
 

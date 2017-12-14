@@ -7,8 +7,8 @@ import org.socialbiz.cog.mail.ScheduledNotification;
 import org.socialbiz.cog.util.ThreeWayMerge;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 
 public class AgendaItem extends CommentContainer {
 

@@ -21,7 +21,7 @@
 package org.socialbiz.cog;
 
 import org.socialbiz.cog.mail.JSONWrapper;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 public class TaskArea extends JSONWrapper {
     

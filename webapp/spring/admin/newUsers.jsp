@@ -1,6 +1,6 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="java.io.FileInputStream"
-%><%@page import="org.workcast.streams.StreamHelper"
+%><%@page import="com.purplehillsbooks.streams.StreamHelper"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
 

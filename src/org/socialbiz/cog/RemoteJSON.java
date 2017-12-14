@@ -26,9 +26,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
-import org.workcast.json.JSONTokener;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.json.JSONTokener;
 
 /**
 * A remote retrieval of JSON (GET) and call (POST)

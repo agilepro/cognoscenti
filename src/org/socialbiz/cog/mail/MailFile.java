@@ -29,9 +29,9 @@ import java.util.List;
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
-import org.workcast.json.JSONTokener;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.json.JSONTokener;
 
 /**
 * Holds all the email to be sent, and already sent,

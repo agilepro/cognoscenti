@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
  * A RemoteGoal is a reference to a Goal at a remote site, or even the local

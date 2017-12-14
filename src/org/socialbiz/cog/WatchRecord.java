@@ -1,6 +1,6 @@
 package org.socialbiz.cog;
 
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 public class WatchRecord {
     

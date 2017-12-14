@@ -49,7 +49,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
  * This class will handle all requests that are coming to create a new Workspace.

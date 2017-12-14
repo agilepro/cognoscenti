@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
  * NGPageIndex is an index entry in an index of pages

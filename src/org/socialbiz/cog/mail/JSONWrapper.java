@@ -1,7 +1,7 @@
 package org.socialbiz.cog.mail;
 
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
  * This is a base class for other JSONObject wrapper classes, that is 

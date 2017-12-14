@@ -23,8 +23,8 @@ package org.socialbiz.cog.api;
 import java.net.URL;
 import java.util.Hashtable;
 
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.RemoteGoal;
 import org.socialbiz.cog.RemoteJSON;

@@ -40,10 +40,10 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ServletExit;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONException;
-import org.workcast.json.JSONObject;
-import org.workcast.json.JSONTokener;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.json.JSONTokener;
 
 @Controller
 public class BaseController {

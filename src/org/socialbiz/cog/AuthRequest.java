@@ -48,7 +48,7 @@ import javax.servlet.http.HttpSession;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.exception.ServletExit;
-import org.workcast.streams.HTMLWriter;
+import com.purplehillsbooks.streams.HTMLWriter;
 
 /**
 * AuthRequest is the "Authorized Request and Response" class for the
@@ -1147,7 +1147,7 @@ public class AuthRequest
      * characters to a code-point expression.
      */
     public void writeJS(String val)  throws Exception {
-        org.workcast.streams.JavaScriptWriter.encode(w, val);
+        com.purplehillsbooks.streams.JavaScriptWriter.encode(w, val);
     }
 
 

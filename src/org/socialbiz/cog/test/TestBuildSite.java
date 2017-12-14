@@ -6,9 +6,9 @@ import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGRole;
-import org.workcast.testframe.TestDriver;
-import org.workcast.testframe.TestRecorder;
-import org.workcast.testframe.TestSet;
+import com.purplehillsbooks.testframe.TestDriver;
+import com.purplehillsbooks.testframe.TestRecorder;
+import com.purplehillsbooks.testframe.TestSet;
 
 
 /**

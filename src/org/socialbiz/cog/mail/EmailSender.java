@@ -45,8 +45,8 @@ import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.SuperAdminLogFile;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.workcast.json.JSONObject;
-import org.workcast.streams.MemFile;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 
 /**
  * Support class for sending email messages based on an email configuration

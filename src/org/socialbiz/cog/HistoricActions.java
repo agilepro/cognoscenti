@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.socialbiz.cog.mail.ChunkTemplate;
 import org.socialbiz.cog.mail.EmailSender;
-import org.workcast.json.JSONObject;
-import org.workcast.streams.MemFile;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 
 public class HistoricActions {
 

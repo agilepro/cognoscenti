@@ -325,9 +325,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
                 Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <!--li role="presentation"><a role="menuitem" ng-click="showFilter=true">
-              Show Filter</a>
-          </li-->
           <li role="presentation"><a role="menuitem" ng-click="openTopicCreator()">
               Create New Topic</a>
           </li>

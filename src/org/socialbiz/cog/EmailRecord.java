@@ -29,9 +29,9 @@ import java.util.List;
 import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
-import org.workcast.streams.MemFile;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 
 /**
  * This class represents an email message in the ngPage world.

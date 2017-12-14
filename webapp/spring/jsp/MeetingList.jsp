@@ -145,6 +145,9 @@ app.controller('myCtrl', function($scope, $http) {
         return "Unknown";
     }
     
+    $scope.createMeeting = function() {
+        window.location = "cloneMeeting.htm";
+    }
 });
 </script>
 
@@ -155,7 +158,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-<div class="btn-toolbar primary-toolbar">
+<div class="upRightOptions rightDivContent">
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
@@ -163,9 +166,6 @@ app.controller('myCtrl', function($scope, $http) {
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Create a new meeting record"
               href="cloneMeeting.htm" ><i class="fa fa-plus"></i>New Meeting</a></li>
-          <li role="presentation"><a role="menuitem" 
-              title="Access agenda items removed from other meetings"
-              href="agendaBacklog.htm" ><i class="fa fa-list-alt material-icons"></i> Agenda Backlog</a></li>
           
         </ul>
       </span>
@@ -203,6 +203,8 @@ app.controller('myCtrl', function($scope, $http) {
             <td>{{rec.duration}}</td>
         </tr>
     </table>
+    
+    <button class="btn btn-primary btn-raised" ng-click="createMeeting()"><i class="fa fa-plus"></i> Create New Meeting</button>
 
     <div class="guideVocal" ng-show="meetings.length==0" style="margin-top:80px">
     You have no meetings in this workspace yet.<br/>

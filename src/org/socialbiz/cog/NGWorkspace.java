@@ -35,9 +35,9 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
-import org.workcast.streams.HTMLWriter;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.HTMLWriter;
 
 /**
 * NGWorkspace is a Container that represents a Workspace.

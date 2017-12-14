@@ -39,7 +39,7 @@ import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.UtilityMethods;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.streams.HTMLWriter;
+import com.purplehillsbooks.streams.HTMLWriter;
 
 
 /**

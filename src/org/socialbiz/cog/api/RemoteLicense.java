@@ -20,7 +20,7 @@
 
 package org.socialbiz.cog.api;
 
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 import org.socialbiz.cog.License;
 
 /**

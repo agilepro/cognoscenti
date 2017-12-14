@@ -33,9 +33,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.HttpServletResponseWithoutBug;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.workcast.json.JSONObject;
-import org.workcast.streams.TemplateJSONRetriever;
-import org.workcast.streams.TemplateStreamer;
+
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.temps.TemplateJSONRetriever;
+import com.purplehillsbooks.temps.TemplateStreamer;
 
 /**
  * The emergency config servlet is used for special server states when the

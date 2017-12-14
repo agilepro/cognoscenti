@@ -27,8 +27,8 @@ import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.util.StringCounter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
 * A custom role is defined by the users on a project, but

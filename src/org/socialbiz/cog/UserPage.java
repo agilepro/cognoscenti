@@ -32,7 +32,7 @@ import org.socialbiz.cog.dms.ResourceEntity;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
-import org.workcast.json.JSONArray;
+import com.purplehillsbooks.json.JSONArray;
 
 /**
 * Holds extra information for a particular user.

@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
-import org.workcast.json.JSONTokener;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.json.JSONTokener;
 
 /**
  * This servlet implements the Lightweight Authentication Protocol

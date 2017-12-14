@@ -21,8 +21,8 @@
 package org.socialbiz.cog;
 
 import org.socialbiz.cog.mail.JSONWrapper;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 
 public class SharePortRecord extends JSONWrapper {
     

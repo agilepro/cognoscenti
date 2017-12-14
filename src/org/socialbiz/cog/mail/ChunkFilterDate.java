@@ -4,8 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.workcast.mendocino.Mel;
-
+import com.purplehillsbooks.xml.Mel;
 import com.x5.template.Chunk;
 import com.x5.template.filters.BasicFilter;
 import com.x5.template.filters.ChunkFilter;

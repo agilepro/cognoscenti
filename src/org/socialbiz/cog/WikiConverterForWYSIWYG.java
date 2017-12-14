@@ -22,7 +22,7 @@ package org.socialbiz.cog;
 
 import java.util.List;
 
-import org.workcast.streams.MemFile;
+import com.purplehillsbooks.streams.MemFile;
 
 /**
  * This is a sub class of WikiConverter that handles the HTML to WIKI conversion

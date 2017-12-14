@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 
 import com.x5.template.Chunk;
 import com.x5.template.Theme;

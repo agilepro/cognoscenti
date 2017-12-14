@@ -20,7 +20,7 @@
 
 package org.socialbiz.cog;
 
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
  * Projects will have a set of labels to label documents, action items, and topics with.

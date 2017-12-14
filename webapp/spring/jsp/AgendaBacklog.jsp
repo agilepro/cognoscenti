@@ -10,7 +10,7 @@
 
     String pageId      = ar.reqParam("pageId");
     String siteId      = ar.reqParam("siteId");
-    NGWorkspace ngw = ar.getCogInstance().getWSByKeyOrFail(siteId, pageId);
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId);
     ar.setPageAccessLevels(ngw);
     NGBook ngb = ngw.getSite();
     JSONObject backlogInfo = ngw.getAgendaItemBacklog().getFullJSON(ar, ngw);

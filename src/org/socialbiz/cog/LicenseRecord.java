@@ -20,7 +20,7 @@
 
 package org.socialbiz.cog;
 
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

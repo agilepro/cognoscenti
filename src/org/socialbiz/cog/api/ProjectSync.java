@@ -39,8 +39,8 @@ import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.SectionDef;
 import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UtilityMethods;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
 * supports comparing a local and remote project

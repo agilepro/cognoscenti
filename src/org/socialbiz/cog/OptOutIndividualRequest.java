@@ -20,7 +20,7 @@
 
 package org.socialbiz.cog;
 
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
 * This is for email messages which are send in order to satisfy a

@@ -28,7 +28,7 @@ import java.util.Properties;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
-import org.workcast.streams.NullWriter;
+import com.purplehillsbooks.streams.NullWriter;
 
 /**
 * AuthDummy is a dummy request object which can be used inside the server

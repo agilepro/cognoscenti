@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.socialbiz.cog.util.StringCounter;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
  * This is a role that extacts the assignees of a task, and returns that using

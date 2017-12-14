@@ -9,7 +9,7 @@ import org.socialbiz.cog.CustomRole;
 import org.socialbiz.cog.MeetingRecord;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.UserRef;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 public class MeetingNotesCache {
     

@@ -1,6 +1,6 @@
 package org.socialbiz.cog.mail;
 
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
  * Hold the address of a recipient along with the REASON that the person

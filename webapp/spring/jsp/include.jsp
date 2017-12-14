@@ -70,9 +70,9 @@
 %><%@page import="org.socialbiz.cog.rest.DataFeedServlet"
 %><%@page import="org.socialbiz.cog.spring.NGWebUtils"
 %><%@page import="org.w3c.dom.Element"
-%><%@page import="org.workcast.json.JSONArray"
-%><%@page import="org.workcast.json.JSONObject"
-%><%@page import="org.workcast.streams.StreamHelper"
+%><%@page import="com.purplehillsbooks.json.JSONArray"
+%><%@page import="com.purplehillsbooks.json.JSONObject"
+%><%@page import="com.purplehillsbooks.streams.StreamHelper"
 %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
 %><%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
 %><%

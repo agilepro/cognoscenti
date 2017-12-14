@@ -22,7 +22,7 @@ package org.socialbiz.cog;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
 * A nomination is the proposal of a particular person

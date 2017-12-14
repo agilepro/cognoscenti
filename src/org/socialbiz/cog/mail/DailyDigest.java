@@ -28,11 +28,11 @@ import org.socialbiz.cog.SuperAdminLogFile;
 import org.socialbiz.cog.UserCache;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
-import org.workcast.json.JSONTokener;
-import org.workcast.streams.HTMLWriter;
-import org.workcast.streams.MemFile;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.json.JSONTokener;
+import com.purplehillsbooks.streams.HTMLWriter;
+import com.purplehillsbooks.streams.MemFile;
 
 public class DailyDigest {
 

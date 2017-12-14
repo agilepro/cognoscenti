@@ -34,8 +34,8 @@ import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.workcast.json.JSONArray;
-import org.workcast.json.JSONObject;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 
 public abstract class AttachmentRecord extends CommentContainer implements EmailContext {
     private static String ATTACHMENT_ATTB_RLINK = "rlink";
