@@ -21,7 +21,9 @@ Required parameters:
     List<GoalRecord> allGoalsRaw = ngp.getAllGoals();
     JSONArray allGoals = new JSONArray();
     for (GoalRecord gr : allGoalsRaw) {
-        allGoals.put(gr.getJSON4Goal(ngp));
+        if (!gr.isPassive()) {
+            allGoals.put(gr.getJSON4Goal(ngp));
+        }
     }
 
     UserProfile uProf = ar.getUserProfile();

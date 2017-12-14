@@ -51,6 +51,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -116,7 +117,7 @@ public class ProjectGoalController extends BaseController {
             //only get here if you are logged in, and you have permission to access the task.
             request.setAttribute("taskId", taskId);
             if(goal.isPassive()) {
-                streamJSP(ar, "displayPassiveGoal");
+                throw new Exception("Passive goals are not supported any more");
             }
             else{
                 streamJSP(ar, "GoalEdit");
