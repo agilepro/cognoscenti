@@ -12,6 +12,7 @@ import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -194,6 +195,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         }
     }
 
+   
     /**
      * Gives all the agenda items sequential increasing numbers
      */
@@ -211,6 +213,36 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 ai.setNumber(++num);
             }
         }
+    }
+    
+    /**
+     * 
+     */
+    private void verifyTargetRole(NGWorkspace ngw) throws Exception {
+        String target = this.getTargetRole();
+        NGRole ngr = ngw.getRole(target);
+        if (ngr!=null) {
+            //ok, role exists, return
+            return;
+        }
+        
+        //specified role does not exist
+        //so set it to 'Members'
+        ngr = ngw.getRole("Members");
+        if (ngr!=null) {
+            this.setTargetRole("Members");
+            return;
+        }
+        
+        //oops, not even members exists.
+        //set to the first role
+        for (NGRole ngr2 : ngw.getAllRoles()) {
+            this.setTargetRole(ngr2.getName());
+            return;
+        }
+        
+        //oh no, there are no roles at all.  Give up
+        throw new Exception("Workspace ("+ngw.getFullName()+") does not appear to have any roles and at least one is required to have a meeting.");
     }
 
     /**
@@ -328,6 +360,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
      * @throws Exception
      */
     public JSONObject getFullJSON(AuthRequest ar, NGWorkspace ngw) throws Exception {
+        verifyTargetRole(ngw);
         JSONObject meetingInfo = getListableJSON(ar);
         JSONArray aiArray = new JSONArray();
         for (AgendaItem ai : getAgendaItems()) {
