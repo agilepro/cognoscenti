@@ -57,6 +57,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         var res = {};
         $scope.role.terms.forEach( function(term) {
             if (term.key == $scope.termKey) {
+                if (!term.nominations) {
+                    term.nominations = [];
+                }
                 res = term;
             }
         });

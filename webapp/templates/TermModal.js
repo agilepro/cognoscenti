@@ -6,6 +6,22 @@ app.controller('TermModal', function ($scope, $modalInstance, $interval, term, i
     
     $scope.isCurrent = (parentScope.role.currentTerm == term.key);
     
+    if (!term.termStart || term.termStart<100000) {
+        term.termStart = (new Date()).getTime();
+        //look for the last term end date
+        if (parentScope.role.terms) {
+            parentScope.role.terms.forEach( function(aTerm) {
+                var newStart = aTerm.termEnd;
+                if (newStart>term.termStart) {
+                    term.termStart = newStart;
+                }
+            });
+        }
+    }
+    if (!term.termEnd || term.termEnd<term.termStart) {
+        term.termEnd = term.termStart + 365*24*60*60*1000;
+    }
+    
     // parent scope with all the crud methods
     $scope.parentScope = parentScope;
     

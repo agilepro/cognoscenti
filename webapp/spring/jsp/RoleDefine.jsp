@@ -138,6 +138,27 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     
+    $scope.createTerm = function (term) {
+        var term = {};
+        term.termStart = (new Date()).getTime();
+        var estimatedDuration = 365*24*60*60*1000;
+        //look for the last term end date
+        if ($scope.role.terms) {
+            $scope.role.terms.forEach( function(aTerm) {
+                var newStart = aTerm.termEnd;
+                if (newStart>term.termStart) {
+                    term.termStart = newStart;
+                    estimatedDuration = (aTerm.termEnd - aTerm.termStart);
+                }
+            });
+        }
+        term.termEnd = term.termStart + estimatedDuration;
+        if (!$scope.role.terms) {
+            $scope.role.terms = [];
+        }
+        $scope.role.terms.push(term);
+        $scope.updateRole($scope.role);
+    }
     $scope.openTermModal = function (term) {
         var isNew = false;
         if (!term) {   
@@ -243,33 +264,30 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
-                <label for="synopsis">Terms on Record:</label>
+                <label for="synopsis">Terms of Office:</label>
                 <table class="table">
                 <tr>
                     <td></td>
-                    <td></td>
                     <td>Start</td>
-                    <td>Days</td>
+                    <td>End</td>
+                    <td>State</td>
                 </tr>
                 <tr ng-repeat="aterm in role.terms" >
-                    <td class="actions" title="Edit this term to sent time span and to make it the current term.">
+                    <td class="actions" title="Edit this term to sent time span and to make it the current term. Nominations and elections of members to the term of the role">
                         <button type="button" name="edit" class="btn btn-primary" 
-                                ng-click="openTermModal(aterm)">
+                                ng-click="goNominate(aterm)">
                             <span class="fa fa-edit"></span>
                         </button>
                     </td>
-                    <td class="actions" title="Nominations and elections of members to the term of the role.">
-                        <button type="button" name="edit" class="btn btn-primary" 
-                                ng-click="goNominate(aterm)">
-                            <span class="fa fa-flag"></span>
-                        </button>
-                    </td>
-                    <td ng-click="openTermModal(aterm)" ng-style="termColor(aterm)" 
+                    <td ng-click="goNominate(aterm)" ng-style="termColor(aterm)" 
                         title="Date that the term is proposed to start - click to edit">
                         {{aterm.termStart |  date}}</td>
-                    <td ng-click="openTermModal(aterm)"
-                        title="The term in days is set by setting the end date - click to edit">
-                        {{getDays(aterm)}}</td>
+                    <td ng-click="goNominate(aterm)"
+                        title="click to edit">
+                        {{aterm.termEnd |  date}}</td>
+                    <td ng-click="goNominate(aterm)"
+                        title="click to edit">
+                        {{aterm.state}}</td>
                     <td class="actions">
                         <button type="button" name="delete" class='btn btn-warning' 
                                 ng-click="deleteTerm(aterm)"
@@ -280,19 +298,26 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </tr>
                 </table>
                 <div ng-show="role.terms.length==0" class="guideVocal">
-                    There are no designated terms for this role.
+                    There are no designated terms for this role.  Create one!<br/>
                 </div>
             </div>
             <div>
-                <button ng-click="openTermModal()" class="btn btn-default btn-raised">Create Term</button>
+                <button ng-click="createTerm()" class="btn btn-default btn-raised">Create Term</button>
                 <span class="fa fa-question-circle helpIcon" ng-click="termHelp=!termHelp"></span>
             </div>
-            <div class="guideVocal" ng-show="termHelp" ng-click="termHelp=false">
-                You can create 'terms' for this role, those are particular time periods for which 
-                people will hold the role.  Terms can be set up in advance so that you are prepared
-                to pass the role from one player to another.  Terms also serve as a record of who
-                played the role in the past, and when they did so.  When a new term is proposed,
-                it supports the nomination and selection process for that new time period for the role.
+            <div class="guideVocal" ng-show="termHelp || role.terms.length==0" ng-click="termHelp=false">
+                You can create a 'term of office' for this role, those are particular time periods for which 
+                people will hold the role.  <br/>
+                <br/>
+                <b>Role Elections:</b><br/>
+                People are elected to a term, that is, a period of time that they hold the role.  
+                In order to hold an election, first
+                define a term and then there are options for 
+                electing the role player.<br/>
+                <br/>
+                <b>Non Elected Roles:</b><br/>
+                Alternatively, you can just assign people to a role indefinitely, and
+                they will remain in that role until it is changed.
             </div>
         </div>
 

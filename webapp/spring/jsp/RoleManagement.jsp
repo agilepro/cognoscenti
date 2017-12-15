@@ -279,6 +279,53 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     
+    $scope.goNomination = function(role) {
+        if (!role.terms) {
+            role.terms = [];
+        }
+        if (role.terms.length > 0) {
+            var selTerm = role.terms[role.terms.length-1];
+            window.location = "roleNomination.htm?role="+role.name+"&term="+selTerm.key;
+            return;
+        }
+        
+        //need to create a term so you can vote on it
+        
+        var newTerm = {state: "Nominating"};
+        var proposeBegin = (new Date()).getTime();
+        newTerm.termStart = proposeBegin;
+        newTerm.termEnd = proposeBegin + 365*24*60*60*1000;
+        role.terms.push(newTerm);
+        
+        var postURL = "roleUpdate.json?op=Update";
+        role.players.forEach( function(item) {
+            if (!item.uid) {
+                item.uid = item.name;
+            }
+        });
+        var postdata = angular.toJson(role);
+        updateRoleList(role);
+        $scope.showError=false;
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            $scope.cleanDuplicates(data);
+            updateRoleList(data);
+            var createdTerm = false;
+            data.terms.forEach( function(aTerm) {
+                if (aTerm.termStart == proposeBegin) {
+                    createdTerm = true;
+                    window.location = "roleNomination.htm?role="+role.name+"&term="+aTerm.key;
+                }
+            });
+            if (!createdTerm) {
+                console.log("DID NOT FIND the term that was supposed to be created!", newTerm, data);
+            }
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    
 });
 
 </script>
@@ -326,6 +373,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                   <li role="presentation"><a role="menuitem" 
                       href="roleDefine.htm?role={{role.name}}">
                       <span class="fa fa-street-view"></span> Define Role </a></li>
+                  <li role="presentation"><a role="menuitem" 
+                      ng-click="goNomination(role)">
+                      <span class="fa fa-flag-o"></span> Role Elections </a></li>
                   <li role="presentation" class="divider"></li>
                   <li role="presentation"><a role="menuitem" 
                       ng-click="deleteRole(role)">
