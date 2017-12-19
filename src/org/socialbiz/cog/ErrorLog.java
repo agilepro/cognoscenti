@@ -100,8 +100,8 @@ public class ErrorLog extends DOMFile {
 
         ErrorLogDetails errorLogDetails = createNewError();
 
-        long exceptionNO = SuperAdminLogFile.getInstance(cog).getNextExceptionNo();
-        SuperAdminLogFile.getInstance(cog).setLastExceptionNo(exceptionNO);
+        SuperAdminLogFile salf = SuperAdminLogFile.getInstance(cog);
+        long exceptionNO = salf.incrementExceptionNo();
 
         errorLogDetails.setErrorNo(String.valueOf(exceptionNO));
 

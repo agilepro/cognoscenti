@@ -146,16 +146,16 @@ public class SuperAdminLogFile extends DOMFile {
         return requireChild("events", DOMFace.class);
     }
 
-    public void setLastExceptionNo(long exceptionNO) throws Exception {
+/*    public void setLastExceptionNo(long exceptionNO) throws Exception {
         setScalar("exceptionNumber",
                 String.valueOf(exceptionNO));
         save();
-    }
+    }*/
 
-    public long getNextExceptionNo() throws Exception {
-        String exceptionNo = getScalar("exceptionNumber");
-        long exceptionNO = safeConvertLong(exceptionNo) + 1;
-        return exceptionNO;
+    public long incrementExceptionNo() throws Exception {
+        long exceptionNo = getScalarLong("exceptionNumber") + 1;
+        setScalarLong("exceptionNumber", exceptionNo);
+        return exceptionNo;
     }
 
     public void setEmailListenerPropertiesFlag(boolean flag)

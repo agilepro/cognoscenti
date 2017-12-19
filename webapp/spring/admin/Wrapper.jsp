@@ -43,7 +43,6 @@
  
     <script src="<%=ar.baseURL%>jscript/slap.js"></script>
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
-    <script src="<%=ar.baseURL%>jfunc.js"></script>
 
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />

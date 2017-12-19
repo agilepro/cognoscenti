@@ -22,14 +22,10 @@ package org.socialbiz.cog;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONObject;
 
 
-/**
- * @author banerjso
- *
- *
- */
 public class ErrorLogDetails extends DOMFace {
 
     public ErrorLogDetails(Document doc, Element ele, DOMFace p) {
@@ -95,17 +91,17 @@ public class ErrorLogDetails extends DOMFace {
         jo.put("stackTrace",   this.getErrorDetails());
         jo.put("comment",      this.getUserComment());
         jo.put("modTime",      this.getModTime());
+        jo.put("modUser",      this.getModUser());
+        jo.put("uri",          this.getURI());
         return jo;
     }
     public void setFromJSON(JSONObject input) throws Exception {
-        if (input.has("errorMessage")) {
-            setErrorMessage(input.getString("errorMessage"));
-        }
-        if (input.has("errorDetails")) {
-            setErrorDetails(input.getString("errorDetails"));
-        }
-        if (input.has("modTime")) {
-            setErrorMessage(input.getString("modTime"));
+        updateScalarString("errorMessage", input);
+        updateScalarString("errorDetails", input);
+        updateAttributeLong("modTime", input);
+        updateAttributeString("modUser", input);
+        if (input.has("uri")) {
+            this.setURI(input.getString("uri"));
         }
     }
 }

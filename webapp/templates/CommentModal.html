@@ -57,6 +57,10 @@
       <div class="form-group form-horizontal col-md-6">
         <table class="spacey">
           <tr>
+             <td>Exclude:</td>
+             <td><input type="checkbox" ng-model="cmt.excludeSelf"/> Youself</td>
+          </tr>
+          <tr>
              <td>Email:</td>
              <td><select class="form-control" ng-model="cmt.suppressEmail">
                       <option value="false">Send</option>

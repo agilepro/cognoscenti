@@ -29,14 +29,9 @@ Required Parameters:
     String formattedDate = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss.SSS").format(eDetails.getModTime());
     
     
-    JSONObject errDetails = new JSONObject();
-    errDetails.put("errNo", eDetails.getErrorNo());
-    errDetails.put("message", eDetails.getErrorMessage());
-    errDetails.put("stackTrace", eDetails.getErrorDetails());
-    errDetails.put("comment", eDetails.getUserComment());
-    errDetails.put("modTime", eDetails.getModTime());
-    errDetails.put("modUser", eDetails.getModUser());
-    errDetails.put("uri", eDetails.getURI());
+    JSONObject errDetails = eDetails.getJSON();
+    errDetails.put("logDate", errorDate);
+    
 
 %>
 <script type="text/javascript">
@@ -47,7 +42,31 @@ function postMyComment(){
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.errDetails = <%errDetails.write(out,2,4);%>;
-    $scope.searchDateStr = "<%ar.writeJS(searchDate);%>"
+    $scope.searchDateStr = "<%ar.writeJS(searchDate);%>";
+    $scope.showError = false;
+    $scope.errorMsg = "";
+    $scope.errorTrace = "";
+    $scope.showTrace = false;
+    $scope.reportError = function(serverErr) {
+        errorPanelHandler($scope, serverErr);
+    };
+    $scope.postMyComment = function() {
+        var newErr = {};
+        newErr.errNo = $scope.errDetails.errNo;
+        newErr.logDate = $scope.errDetails.logDate;
+        newErr.comment = $scope.errDetails.comment;
+        var postdata = angular.toJson(newErr);
+        console.log("sending this: ", newErr);
+        $http.post("http://submitCommentxxxxx/nnmn" ,postdata)
+        .success( function(data) {
+            console.log("got a response: ", data);
+            $scope.errDetails = data;
+        })
+        .error( function(data) {
+           console.log("got error: ", data);
+           $scope.reportError(data);
+        });
+    }
 });
 
 </script>
@@ -55,6 +74,7 @@ app.controller('myCtrl', function($scope, $http) {
 <!-- Begin mainContent (Body area) -->
 <div ng-app="myApp" ng-controller="myCtrl">
 
+<%@include file="ErrorPanel.jsp"%>
 
     <div class="upRightOptions rightDivContent">
       <span class="dropdown">
@@ -86,8 +106,7 @@ app.controller('myCtrl', function($scope, $http) {
                   ng-model="errDetails.comment"></textarea>
         <br />
         <br />
-        <input type="submit" class="btn btn-primary btn-raised" value="<fmt:message key="nugen.button.comments.update" />"
-                                                onclick="postMyComment()">
+        <button class="btn btn-primary btn-raised" ng-click="postMyComment()">Update Comments</button>
          </form>
          <hr/>
          <div>

@@ -106,14 +106,6 @@ function DateAddXXXXXXXX(objDate, strInterval, intIncrement)
     return objDate;
 }
 
-/* NEW UI TEMPPORARY SCRIPTS */
-// TODO Remove this after removing the options dropdown
-$(document).ready(function() {
-    $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
-    $('.rightDivContent .dropdown-menu').addClass('pull-right');
-    /* INIT Bootstrap Material Design */
-    $.material.init();
-});
 
 /* INIT tinyMCE */
 tinyMCE.PluginManager.add('stylebuttons', function(editor, url) {

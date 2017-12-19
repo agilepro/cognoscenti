@@ -238,6 +238,14 @@
     <title><% ar.writeHtml(title); %></title>
 
 <script>
+/* NEW UI TEMPPORARY SCRIPTS */
+// TODO Remove this after removing the options dropdown
+$(document).ready(function() {
+    $('.rightDivContent').insertAfter('.title').css({float:'right','margin-right':0});
+    $('.rightDivContent .dropdown-menu').addClass('pull-right');
+    /* INIT Bootstrap Material Design */
+    $.material.init();
+});
 
  </script>
 

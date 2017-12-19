@@ -20,21 +20,17 @@
 
 package org.socialbiz.cog.spring;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AuthRequest;
-import org.socialbiz.cog.DOMUtils;
+import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.ErrorLog;
+import org.socialbiz.cog.ErrorLogDetails;
 import org.socialbiz.cog.HistoricActions;
 import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
 import org.socialbiz.cog.exception.NGException;
-import org.socialbiz.cog.exception.ProgramLogicError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -42,7 +38,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.w3c.dom.Document;
+
 import com.purplehillsbooks.json.JSONObject;
 
 @Controller
@@ -174,7 +170,39 @@ public class SuperAdminController extends BaseController {
          }
      }
 
+     
+     @RequestMapping(value = "/su/submitComment", method = RequestMethod.POST)
+     public void submitComment(HttpServletRequest request, 
+             HttpServletResponse response) throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         try{
+             Cognoscenti cog = ar.getCogInstance();
+             JSONObject requestInfo = getPostedObject(ar);
+             JSONObject result = null;
+             if (requestInfo.has("errNo") && requestInfo.has("logDate")) {
+                 ErrorLog eLog = ErrorLog.getLogForDate(System.currentTimeMillis(), cog);
+                 ErrorLogDetails det = eLog.createNewError();
+                 det.updateFromJSON(requestInfo);
+                 result = det.getJSON();
+                 eLog.save();
+             }
+             else {
+                 ErrorLog eLog = ErrorLog.getLogForDate(requestInfo.getLong("logDate"), cog);
+                 ErrorLogDetails det = eLog.getDetails(requestInfo.getString("errNo"));
+                 det.updateFromJSON(requestInfo);
+                 result = det.getJSON();
+                 eLog.save();                 
+             }
+             sendJson(ar, result);
+         }catch(Exception ex){
+             Exception ee = new Exception("Unable to create or update comment", ex);
+             streamException(ee, ar);
+         }
+     }
 
+     
+     
+/*
      @RequestMapping(value = "/su/getErrorLogXML.ajax", method = RequestMethod.GET)
      public void errorLogXMLData(@RequestParam String searchByDate,HttpServletRequest request,
              HttpServletResponse response)
@@ -201,7 +229,17 @@ public class SuperAdminController extends BaseController {
              streamException(ee, ar);
          }
      }
+     private void writeXMLToResponse(AuthRequest ar, Document doc) throws Exception {
 
+         if (ar == null){
+             throw new ProgramLogicError("writeXMLToResponse requires a non-null AuthRequest parameter");
+         }
+         ar.resp.setContentType("text/xml;charset=UTF-8");
+         DOMUtils.writeDom(doc, ar.w);
+         ar.flush();
+     }
+*/
+     
      /**
       * TODO: this is ridiculous having the user ID in the path... not needed, not used
       */
@@ -241,15 +279,6 @@ public class SuperAdminController extends BaseController {
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.error.log.user.comment", null , ex);
          }
-     }
-     private void writeXMLToResponse(AuthRequest ar, Document doc) throws Exception {
-
-         if (ar == null){
-             throw new ProgramLogicError("writeXMLToResponse requires a non-null AuthRequest parameter");
-         }
-         ar.resp.setContentType("text/xml;charset=UTF-8");
-         DOMUtils.writeDom(doc, ar.w);
-         ar.flush();
      }
 
      private static void adminModelSetUp(AuthRequest ar,

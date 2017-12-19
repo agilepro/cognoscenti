@@ -15,8 +15,13 @@ Required parameters:
     String pageId    = ar.reqParam("pageId");
     String siteId    = ar.reqParam("siteId");
     String emailId    = ar.reqParam("emailId");
+    String linkedEmailId = emailId;
     NGWorkspace ngw  = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
+    
+    if (ar.isLoggedIn()) {
+        emailId = ar.getBestUserId();
+    }
 
     TopicRecord topic = ngw.getNote(topicId);
     
@@ -77,6 +82,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.sentAlready = false;
     $scope.userCounts = {};
     $scope.emailId = "<%ar.writeJS(emailId);%>";
+    $scope.linkedEmailId = "<%ar.writeJS(linkedEmailId);%>";
     $scope.isSubscriber = true;
     $scope.newComment = {html:"",state:11,user:"<%ar.writeJS(emailId);%>"};
     $scope.newComment.time = $scope.nowTime;
@@ -213,10 +219,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <td>Your Participation</td>
             <td>
                 <button ng-click="changeSubscription(false)" ng-show="isSubscriber" 
-                        class="btn btn-default btn-raised">Unsubscribe</button>
+                        class="btn btn-default btn-raised" 
+                        title="Click to remove yourself from the list and stop getting notifications from this discussion topic">
+                        Unsubscribe</button>
                 <button ng-click="changeSubscription(true)" ng-hide="isSubscriber" 
-                        class="btn btn-default btn-raised">Subscribe</button>
-                <span style="color:lightgray">Controls whether you receive future email messages.</span>
+                        class="btn btn-default btn-raised" 
+                        title="Click to remove add youself to the list and start getting notifications from this discussion topic">
+                        Subscribe</button>
+                <span style="color:lightgray">&nbsp; Controls future email messages</span>
             </td>
         </tr>
         <tr>
@@ -229,7 +239,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </tr>
         <tr>
             <td>Reply as</td>
-            <td>{{emailId}}</td>
+            <td>{{emailId}}   
+              <span ng-hide="emailId==linkedEmailId" style="color:red">(You used a link for {{linkedEmailId}})</span>
+            </td>
         </tr>
         </table>
 

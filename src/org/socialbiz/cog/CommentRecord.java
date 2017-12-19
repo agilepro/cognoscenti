@@ -10,6 +10,7 @@ import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -437,6 +438,7 @@ public class CommentRecord extends DOMFace {
     public void commentEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
     	try {
 	        List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
+	        boolean excludeSelf = getAttributeBool("excludeSelf");
 	        
 	        List<AddressListEntry> notifyList = getNotifyRole().getDirectPlayers();
 	        noteOrMeet.extendNotifyList(notifyList);  //so it can remember it
@@ -444,7 +446,9 @@ public class CommentRecord extends DOMFace {
 	
 	        //add the commenter in case missing from the target role
 	        AddressListEntry commenter = getUser();
-	        OptOutAddr.appendOneDirectUser(commenter, sendTo);
+	        if (!excludeSelf) {
+	            OptOutAddr.appendOneDirectUser(commenter, sendTo);
+	        }
 	        OptOutAddr.appendUsers(notifyList, sendTo); //in case the container does not remember it
 	
 	        UserProfile commenterProfile = commenter.getUserProfile();
@@ -461,6 +465,13 @@ public class CommentRecord extends DOMFace {
 	                    ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
 	                }
 	            }
+	            if (excludeSelf) {
+	                if (commenter.equals(ooa.assignee)) {
+	                    //skip sending email if the user said to exclude themselves
+	                    continue;
+	                }
+	            }	            
+	            
 	            constructEmailRecordOneUser(ar, ngw, noteOrMeet, ooa, commenterProfile, mailFile, null);
 	        }
 	
@@ -626,18 +637,19 @@ public class CommentRecord extends DOMFace {
         commInfo.put("dueDate",  getDueDate());
         commInfo.put("commentType",getCommentType());
         commInfo.put("emailPending",needCreateEmailSent()||needCloseEmailSent());  //display only
-        commInfo.put("replyTo",  getReplyTo());
-        commInfo.put("newPhase",  getNewPhase());
+        extractScalarLong(commInfo, "replyTo");
+        extractScalarString(commInfo, "newPhase");
         JSONArray replyArray = new JSONArray();
         for (Long val : getReplies()) {
             replyArray.put(val.longValue());
         }
         commInfo.put("replies",  replyArray);
         commInfo.put("decision", getDecision());
-        commInfo.put("suppressEmail",  getSuppressEmail());
+        extractAttributeBool(commInfo, "suppressEmail");
+        extractAttributeBool(commInfo, "excludeSelf");
 
         //this is temporary
-        commInfo.put("poll",     getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE);
+        commInfo.put("poll", getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE);
         return commInfo;
     }
     public JSONObject getHtmlJSON(AuthRequest ar) throws Exception {
@@ -723,9 +735,8 @@ public class CommentRecord extends DOMFace {
         if (input.has("docList")) {
             setDocList(constructVector(input.getJSONArray("docList")));
         }
-        if (input.has("suppressEmail")) {
-            setSuppressEmail(input.getBoolean("suppressEmail"));
-        }
+        updateAttributeBool("suppressEmail", input);
+        updateAttributeBool("excludeSelf", input);
         
 
         //A simple comment should never be "open", only draft or closed, so assure that here
