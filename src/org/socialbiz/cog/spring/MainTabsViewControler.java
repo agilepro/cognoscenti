@@ -248,7 +248,7 @@ public class MainTabsViewControler extends BaseController {
                 return;
             }
             
-            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            registerRequiredProject(ar, siteId, pageId);
 
             ar.setParam("id", id);
             ar.setParam("pageId", pageId);

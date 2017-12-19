@@ -2,7 +2,6 @@
 %><%@page import="org.socialbiz.cog.ErrorLog"
 %><%@page import="org.socialbiz.cog.ErrorLogDetails"
 %><%@ include file="/spring/jsp/include.jsp"
-%><%@ include file="/spring/jsp/functions.jsp"
 %><%
 
 /*
@@ -16,7 +15,7 @@ Required Parameters:
 
 
     long errorDate = Long.parseLong((String)request.getAttribute("errorDate"));
-    String errorId =(String)request.getAttribute("errorId");
+    int errorId = Integer.parseInt((String)request.getAttribute("errorId"));
     String searchByDate=ar.reqParam("searchByDate");
     String goURL=ar.reqParam("goURL");
 
@@ -36,9 +35,6 @@ Required Parameters:
 %>
 <script type="text/javascript">
 
-function postMyComment(){
-    document.forms["logUserComents"].submit();
-}
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
     $scope.errDetails = <%errDetails.write(out,2,4);%>;
@@ -56,10 +52,8 @@ app.controller('myCtrl', function($scope, $http) {
         newErr.logDate = $scope.errDetails.logDate;
         newErr.comment = $scope.errDetails.comment;
         var postdata = angular.toJson(newErr);
-        console.log("sending this: ", newErr);
-        $http.post("http://submitCommentxxxxx/nnmn" ,postdata)
+        $http.post("../su/submitComment", postdata)
         .success( function(data) {
-            console.log("got a response: ", data);
             $scope.errDetails = data;
         })
         .error( function(data) {
@@ -86,12 +80,6 @@ app.controller('myCtrl', function($scope, $http) {
         Details of Error: {{errDetails.errNo}}
     </div>
     <div>
-         <form name="logUserComents" action="logUserComents.form" method="post">
-
-          <input type="hidden" name="errorNo" id="errorNo" value="{{errDetails.errNo}}"/>
-          <input type="hidden" name="searchByDate" id="searchByDate" value="<%ar.writeHtml(searchByDate); %>"/>
-          <input type="hidden" name="goURL" id="goURL" value="<%ar.writeHtml(goURL); %>"/>
-
         <b>Error Message:</b> <span style="white-space:pre-wrap;"> {{errDetails.message}} </span>
         <br /><br />
         <b>Page:</b> <a href="{{errDetails.uri}}">{{errDetails.uri}}</a>
@@ -107,15 +95,18 @@ app.controller('myCtrl', function($scope, $http) {
         <br />
         <br />
         <button class="btn btn-primary btn-raised" ng-click="postMyComment()">Update Comments</button>
-         </form>
-         <hr/>
-         <div>
-            <button class="btn btn-default btn-raised" ng-hide="showTrace" ng-click="showTrace=!showTrace">
+        <hr/>
+        <div ng-hide="showTrace" >
+            <button class="btn btn-default btn-raised" ng-click="showTrace=!showTrace">
                 Show Error Details 
              </button>
-         </div>
+        </div>
         <div class="errorStyle" ng-show="showTrace">
-        <pre style="overflow:auto;width:900px;" ng-click="showTrace=!showTrace">{{errDetails.stackTrace}}</pre>
+          <button class="btn btn-default btn-raised" ng-click="showTrace=!showTrace">
+             Hide Error Details 
+          </button>
+          <pre style="overflow:auto;width:900px;" >{{errDetails.stackTrace}}
+          </pre>
         </div>
     </div>
  </div>

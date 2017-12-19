@@ -14,12 +14,12 @@
         pageTitle = "Error Page";
     }
 
-    String exceptionNO = ar.defParam("exceptionNO", null);
+    int exceptionNO = ar.defParamInt("exceptionNO", 0);
 
     //this code was allowing a display to be made of an unlogged exception, logging
     //it here is a little sloppy.  Should assure that all errors are logged before this page.
-    if (exceptionNO == null) {
-        exceptionNO=String.valueOf(ar.logException("", exception));
+    if (exceptionNO == 0) {
+        exceptionNO=ar.logException("", exception);
     }
 
     Cognoscenti cog = Cognoscenti.getInstance(request);

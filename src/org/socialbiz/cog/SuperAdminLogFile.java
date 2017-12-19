@@ -152,9 +152,10 @@ public class SuperAdminLogFile extends DOMFile {
         save();
     }*/
 
-    public long incrementExceptionNo() throws Exception {
-        long exceptionNo = getScalarLong("exceptionNumber") + 1;
+    public int incrementExceptionNo() throws Exception {
+        int exceptionNo = (int) getScalarLong("exceptionNumber") + 1;
         setScalarLong("exceptionNumber", exceptionNo);
+        save();
         return exceptionNo;
     }
 

@@ -94,7 +94,7 @@ public class BaseController {
             long exceptionNO=ar.logException("Caught in user interface", extd);
             ar.req.setAttribute("display_exception", extd);
             ar.req.setAttribute("log_number", exceptionNO);
-            streamJSP(ar, "DisplayException");
+            ar.invokeJSP("/spring/anon/Error.jsp");
         }
         catch (Exception e) {
             System.out.println("%%%%%% Exception while reporting exception in BaseController");

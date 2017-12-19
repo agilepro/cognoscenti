@@ -66,9 +66,9 @@ public class ErrorLog extends DOMFile {
      * @param errorId that you are looking for details on
      * @return the error details, or null if no error with that id
      */
-    public ErrorLogDetails getDetails(String errorId) throws Exception {
+    public ErrorLogDetails getDetails(int errorId) throws Exception {
         for (ErrorLogDetails errorLogDetails : getChildren("error", ErrorLogDetails.class)) {
-            if(errorLogDetails.getErrorNo().equals(errorId)){
+            if(errorLogDetails.getErrorNo() == errorId){
                 return errorLogDetails;
             }
         }
@@ -84,11 +84,15 @@ public class ErrorLog extends DOMFile {
     }
 
 
-    public ErrorLogDetails createNewError() throws Exception {
-        return createChild("error", ErrorLogDetails.class);
+    public ErrorLogDetails createNewError(Cognoscenti cog) throws Exception {
+        ErrorLogDetails errorLogDetails = createChild("error", ErrorLogDetails.class);
+        SuperAdminLogFile salf = SuperAdminLogFile.getInstance(cog);
+        int exceptionNO = salf.incrementExceptionNo();
+        errorLogDetails.setErrorNo(exceptionNO);   
+        return errorLogDetails;
     }
     
-    private long logsError(UserProfile up,String msg,Throwable ex, String errorURL,
+    private int logsError(UserProfile up,String msg,Throwable ex, String errorURL,
             long nowTime, Cognoscenti cog) throws Exception {
 
         String userName="GUEST";
@@ -98,12 +102,7 @@ public class ErrorLog extends DOMFile {
         }
         StackTraceElement[] element =ex.getStackTrace()  ;
 
-        ErrorLogDetails errorLogDetails = createNewError();
-
-        SuperAdminLogFile salf = SuperAdminLogFile.getInstance(cog);
-        long exceptionNO = salf.incrementExceptionNo();
-
-        errorLogDetails.setErrorNo(String.valueOf(exceptionNO));
+        ErrorLogDetails errorLogDetails = createNewError(cog);
 
         errorLogDetails.setModified(userName, nowTime);
 
@@ -118,7 +117,7 @@ public class ErrorLog extends DOMFile {
         errorLogDetails.setErrorDetails(convertStackTraceToString(ex));
 
         save();
-        return exceptionNO;
+        return errorLogDetails.getErrorNo();
     }
 
 
@@ -131,7 +130,7 @@ public class ErrorLog extends DOMFile {
 
 
 
-    public void logUserComments(String errorId, long logFileDate, String comments) throws Exception {
+    public void logUserComments(int errorId, long logFileDate, String comments) throws Exception {
 
         ErrorLogDetails eDetails = getDetails(errorId);
         eDetails.setUserComment(comments);

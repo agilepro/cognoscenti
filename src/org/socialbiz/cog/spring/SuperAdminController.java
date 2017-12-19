@@ -179,16 +179,24 @@ public class SuperAdminController extends BaseController {
              Cognoscenti cog = ar.getCogInstance();
              JSONObject requestInfo = getPostedObject(ar);
              JSONObject result = null;
-             if (requestInfo.has("errNo") && requestInfo.has("logDate")) {
-                 ErrorLog eLog = ErrorLog.getLogForDate(System.currentTimeMillis(), cog);
-                 ErrorLogDetails det = eLog.createNewError();
+             int errNo = requestInfo.getInt("errNo");
+             if (errNo<0) {
+                 ErrorLog eLog = ErrorLog.getLogForDate(ar.nowTime, cog);
+                 ErrorLogDetails det = eLog.createNewError(cog);
                  det.updateFromJSON(requestInfo);
                  result = det.getJSON();
                  eLog.save();
              }
              else {
-                 ErrorLog eLog = ErrorLog.getLogForDate(requestInfo.getLong("logDate"), cog);
-                 ErrorLogDetails det = eLog.getDetails(requestInfo.getString("errNo"));
+                 long logDate = requestInfo.getLong("logDate");
+                 ErrorLog eLog = ErrorLog.getLogForDate(logDate, cog);
+                 ErrorLogDetails det = eLog.getDetails(errNo);
+                 if (det==null) {
+                     throw new Exception("Unable to find an error with number "+errNo);
+                 }
+                 if (errNo != det.getErrorNo()) {
+                     throw new Exception("For some reason looked for error "+errNo+" but got error "+det.getErrorNo());
+                 }
                  det.updateFromJSON(requestInfo);
                  result = det.getJSON();
                  eLog.save();                 
@@ -259,7 +267,7 @@ public class SuperAdminController extends BaseController {
      }
 
      @RequestMapping(value = "/su/logUserComents.form", method = RequestMethod.POST)
-     public void logUserComents(@RequestParam String errorNo,HttpServletRequest request,
+     public void logUserComents(@RequestParam int errorNo,HttpServletRequest request,
              HttpServletResponse response)
      throws Exception {
 

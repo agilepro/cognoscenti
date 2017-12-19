@@ -21,12 +21,7 @@
     ErrorLog eLog = ErrorLog.getLogForDate(errorDate, cog);
     JSONArray allDetails = new JSONArray();
     for (ErrorLogDetails eld  : eLog.getAllDetails()) {
-        JSONObject jo = new JSONObject();
-        jo.put("errNo", eld.getErrorNo());
-        jo.put("message", eld.getErrorMessage());
-        jo.put("stackTrace", eld.getErrorDetails());
-        jo.put("comment", eld.getUserComment());
-        jo.put("modTime", eld.getModTime());
+        JSONObject jo = eld.getJSON();
         allDetails.put(jo);
     }
 

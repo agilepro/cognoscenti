@@ -128,7 +128,7 @@
 
 //TODO: why test for pageTitle being null here?
     if(pageTitle == null && pageId != null && !"$".equals(pageId)){
-        ngp  = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+        ngp  = ar.getCogInstance().getWSBySiteAndKey(siteId, pageId).getWorkspace();
     }
 
 

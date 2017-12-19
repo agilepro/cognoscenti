@@ -32,57 +32,61 @@ public class ErrorLogDetails extends DOMFace {
         super(doc, ele, p);
     }
 
-    public void setModified(String userId, long time) {
-        setAttribute("modUser", userId);
-        setAttribute("modTime", Long.toString(time));
-    }
     public long getModTime() {
         return safeConvertLong(getAttribute("modTime"));
     }
     public String getModUser() {
         return getAttribute("modUser");
     }
-    public void setErrorNo(String errorNo) {
-        setAttribute("errorNo", errorNo);
+    public void setModified(String userId, long time) {
+        setAttribute("modUser", userId);
+        setAttribute("modTime", Long.toString(time));
     }
-    public String getErrorNo() {
-        return getAttribute("errorNo");
+    
+    public int getErrorNo() {
+        return getAttributeInt("errorNo");
     }
-
-    public void setFileName(String fileName) {
-        setScalar("errorfileName", fileName);
-    }
-    public void setErrorMessage(String errorMessage) {
-        setScalar("errorMessage", errorMessage);
-    }
-    public void setURI(String URI) {
-        setScalar("errorURI", URI);
-    }
-    public void setErrorDetails(String errorDetails) {
-        setScalar("errorDetails", errorDetails);
-    }
-
-    public void setUserComment(String comments) {
-        setScalar("userComments", comments);
-    }
-
-    public String getErrorDetails() {
-        return getScalar("errorDetails");
-    }
-    public String getErrorMessage() {
-        return getScalar("errorMessage");
+    public void setErrorNo(int errorNo) {
+        setAttributeInt("errorNo", errorNo);
     }
 
     public String getFileName() {
         return getScalar("errorfileName");
     }
+    public void setFileName(String fileName) {
+        setScalar("errorfileName", fileName);
+    }
+    
+    public String getErrorMessage() {
+        return getScalar("errorMessage");
+    }
+    public void setErrorMessage(String errorMessage) {
+        setScalar("errorMessage", errorMessage);
+    }
+    
     public String getURI() {
         return getScalar("errorURI");
+    }
+    public void setURI(String URI) {
+        setScalar("errorURI", URI);
+    }
+    
+    public String getErrorDetails() {
+        return getScalar("errorDetails");
+    }
+    public void setErrorDetails(String errorDetails) {
+        setScalar("errorDetails", errorDetails);
     }
 
     public String getUserComment() {
         return getScalar("userComments");
     }
+    public void setUserComment(String comments) {
+        setScalar("userComments", comments);
+    }
+
+
+
     
     public JSONObject getJSON() throws Exception {
         JSONObject jo = new JSONObject();
@@ -95,13 +99,16 @@ public class ErrorLogDetails extends DOMFace {
         jo.put("uri",          this.getURI());
         return jo;
     }
-    public void setFromJSON(JSONObject input) throws Exception {
+    public void updateFromJSON(JSONObject input) throws Exception {
         updateScalarString("errorMessage", input);
         updateScalarString("errorDetails", input);
         updateAttributeLong("modTime", input);
         updateAttributeString("modUser", input);
         if (input.has("uri")) {
             this.setURI(input.getString("uri"));
+        }
+        if (input.has("comment")) {
+            this.setUserComment(input.getString("comment"));
         }
     }
 }

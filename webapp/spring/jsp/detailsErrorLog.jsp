@@ -16,7 +16,7 @@ Required Parameters:
 
 
     long errorDate = Long.parseLong((String)request.getAttribute("errorDate"));
-    String errorId =(String)request.getAttribute("errorId");
+    int errorId = Integer.parseInt((String)request.getAttribute("errorId"));
     String searchByDate=ar.reqParam("searchByDate");
     String goURL=ar.reqParam("goURL");
 
