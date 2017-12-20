@@ -42,6 +42,9 @@ public class ErrorLogDetails extends DOMFace {
         setAttribute("modUser", userId);
         setAttribute("modTime", Long.toString(time));
     }
+    public void setModTime(long time) {
+        setAttribute("modTime", Long.toString(time));
+    }
     
     public int getErrorNo() {
         return getAttributeInt("errorNo");
@@ -100,8 +103,12 @@ public class ErrorLogDetails extends DOMFace {
         return jo;
     }
     public void updateFromJSON(JSONObject input) throws Exception {
-        updateScalarString("errorMessage", input);
-        updateScalarString("errorDetails", input);
+        if (input.has("stackTrace")) {
+            this.setErrorDetails(input.getString("stackTrace"));
+        }
+        if (input.has("message")) {
+            this.setErrorMessage(input.getString("message"));
+        }
         updateAttributeLong("modTime", input);
         updateAttributeString("modUser", input);
         if (input.has("uri")) {

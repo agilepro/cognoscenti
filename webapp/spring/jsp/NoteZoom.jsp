@@ -766,6 +766,27 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             //cancel action - nothing really to do
         });
     };
+    $scope.openFeedbackModal = function (item) {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: '<%=ar.retPath%>templates/Feedback.html<%=templateCacheDefeater%>',
+            controller: 'FeedbackCtrl',
+            size: 'lg',
+            resolve: {
+                currentUser: function () {
+                    return "<%ar.writeJS(currentUser);%>";
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (selectedActionItems) {
+            //not sure what to do here
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
     
     $scope.refreshFromServer = function() {
 		saveRecord = {};
@@ -873,7 +894,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
           <li role="presentation" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="changeSubscription(true)">Subscribe to this Topic</a></li>
           <li role="presentation" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
-              ng-click="changeSubscription(false)">Unsubscribing from this Topic</a></li>
+              ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></li>
+          <li role="presentation" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
+              ng-click="openFeedbackModal()">Feedback</a></li>
+              
         </ul>
       </span>
     </div>
@@ -1022,5 +1046,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/Feedback.js"></script>
 
 <%out.flush();%>

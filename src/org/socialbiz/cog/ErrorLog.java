@@ -86,9 +86,12 @@ public class ErrorLog extends DOMFile {
 
     public ErrorLogDetails createNewError(Cognoscenti cog) throws Exception {
         ErrorLogDetails errorLogDetails = createChild("error", ErrorLogDetails.class);
+        //fine the next error number and initialize it to that
         SuperAdminLogFile salf = SuperAdminLogFile.getInstance(cog);
         int exceptionNO = salf.incrementExceptionNo();
-        errorLogDetails.setErrorNo(exceptionNO);   
+        errorLogDetails.setErrorNo(exceptionNO);
+        //just in case it is not set elsewhere, give it a valid timestamp
+        errorLogDetails.setModTime(System.currentTimeMillis());
         return errorLogDetails;
     }
     
