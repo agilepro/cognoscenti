@@ -491,21 +491,15 @@ public class ProjectDocsController extends BaseController {
         if (!canAccessNote) {
             ar.assertMember("must have permission to make a reply");
         }
-        /*
-        String emailId = ar.reqParam("emailId");
-        Cognoscenti cog = ar.getCogInstance();
-        UserManager userManager = cog.getUserManager();
-        if (!ar.isLoggedIn()) {
-            UserProfile licensedUser = userManager.findUserByAnyId(emailId);
-            if (licensedUser == null) {
-                userManager.createUserWithId(emailId);
-            }
-            ar.setUserForOneRequest(licensedUser);
-        }
-        */
         ar.setParam("topicId", topicId);
         ar.setParam("commentId", commentId);
         specialAnonJSP(ar, siteId, pageId, "Reply.jsp");
+    }
+
+    @RequestMapping(value = "/su/Feedback.htm", method = RequestMethod.GET)
+    public void Feedback(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        specialAnonJSP(ar, "NA", "NA", "Feedback.jsp");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.json", method = RequestMethod.POST)

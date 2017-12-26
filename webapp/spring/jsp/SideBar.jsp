@@ -46,6 +46,10 @@
         Analytics</a></li>
     <% } %>
 
+    <li><a href="../../su/Feedback.htm?url=<% ar.writeHtml(ar.getCompleteURL()); %>" 
+           title="Tells us what you think about this page or what happened when you used it.">
+        Feedback</a></li>
+    
     <% } %>
   </ul>
 </nav>
