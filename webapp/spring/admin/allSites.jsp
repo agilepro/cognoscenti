@@ -65,6 +65,33 @@ app.controller('myCtrl', function($scope, $http) {
             });
         }
     };
+    
+    $scope.garbageCollect = function(rec) {
+        if (confirm("Are you sure you want to delete parts from site: "
+                    +rec.names[0]+" ("+rec.key+")")) {
+            var siteKey = rec.key;
+            var postURL = "garbageCollect.json";
+            var postObj = {};
+            postObj.key = rec.key;
+            var postdata = angular.toJson(postObj);
+            $scope.showError=false;
+            $http.post(postURL, postdata)
+            .success( function(data) {
+                console.log("GC got success: ", data);
+                var newList = [];
+                $scope.allRequests.forEach( function(item) {
+                    if (item.key!=siteKey) {
+                        newList.push(item);
+                    }
+                });
+                $scope.allRequests = newList;
+            })
+            .error( function(data, status, headers, config) {
+                $scope.reportError(data);
+            });
+        }
+    };
+    
 });
 
 </script>
@@ -102,6 +129,8 @@ app.controller('myCtrl', function($scope, $http) {
                                   <a href="oneSite.htm?siteKey={{rec.key}}">View Details</a></li>
                               <li role="presentation">
                                   <a role="menuitem" ng-click="addAdmin(rec)">Add Yourself to Owners</a></li>
+                              <li role="presentation">
+                                  <a role="menuitem" ng-click="garbageCollect(rec)">Garbage Collect</a></li>
                             </ul>
                           </div>
                         </td>

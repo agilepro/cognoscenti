@@ -685,9 +685,20 @@ System.out.println("Weaver Server Object == Start the Server");
         allContainers.add(bIndex);
         keyToSites.put(key, bIndex);
     }
+    
+    public void eliminateIndexForSite(NGBook site) {
+        String key = site.getKey();
+        NGPageIndex foundPage = keyToSites.get(key);
+        if (foundPage != null) {
+            foundPage.unlinkAll();
+            allContainers.remove(foundPage);
+            keyToSites.remove(foundPage.containerKey);
+        }
+    }
+    
     public void makeIndexForWorkspace(NGWorkspace ngw) throws Exception {
         String key = ngw.getKey();
-        String workspaceKey = ngw.getSiteKey() + "|" + ngw.getKey();
+        String workspaceKey = ngw.getSiteKey() + "|" + key;
         
         // clean up old index entries using old name
         NGPageIndex foundPage = keyToWorkspace.get(workspaceKey);
@@ -717,6 +728,19 @@ System.out.println("Weaver Server Object == Start the Server");
         }
     }
 
+    public void eliminateIndexForWorkspace(NGWorkspace ngw) {
+        String key = ngw.getKey();
+        String workspaceKey = ngw.getSiteKey() + "|" + key;
+        
+        // clean up old index entries using old name
+        NGPageIndex foundPage = keyToWorkspace.get(workspaceKey);
+        if (foundPage != null) {
+            foundPage.unlinkAll();
+            allContainers.remove(foundPage);
+            keyToWorkspace.remove(workspaceKey);
+        }
+    }
+    
     /**
      * Get the first page that has email that still needs to be sent Returns
      * null if there are not any

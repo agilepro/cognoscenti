@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog.spring;
 
+import java.io.File;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
 import com.purplehillsbooks.json.JSONObject;
 
 @Controller
@@ -116,9 +118,8 @@ public class SiteController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{userKey}/takeOwnershipSite.json", method = RequestMethod.POST)
-    public void takeOwnershipSite(@PathVariable
-            String userKey, HttpServletRequest request, HttpServletResponse response)
+    @RequestMapping(value = "/su/takeOwnershipSite.json", method = RequestMethod.POST)
+    public void takeOwnershipSite(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response); 
@@ -151,6 +152,74 @@ public class SiteController extends BaseController {
         }catch(Exception ex){
             Exception ee = new Exception("Unable to take ownership of the site.", ex);
             streamException(ee, ar);
+        }
+    }
+
+    @RequestMapping(value = "/su/garbageCollect.json", method = RequestMethod.POST)
+    public void garbageCollect(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        AuthRequest ar = AuthRequest.getOrCreate(request, response); 
+        try{
+            ar.assertLoggedIn("Must be logged to garbage collect a site.");
+            if(!ar.isSuperAdmin()){
+                throw new Exception("Must be super admin to garbage collect a site.");
+            }
+            JSONObject incoming = getPostedObject(ar);
+            if (!incoming.has("key")) {
+                throw new Exception("Must specify 'key' of the site you want to take ownership of");
+            }
+            String siteKey = incoming.getString("key");
+            Cognoscenti cog = ar.getCogInstance();
+            NGBook site = cog.getSiteById(siteKey);
+            if (site==null) {
+                throw new Exception("Unable to find a site with the key: "+siteKey);
+            }
+            String operation = "nothing";
+            if (site.isDeleted()) {
+                operation = "delete entire site";
+                File folder = site.getFilePath();
+                File cogFolder = folder.getParentFile();
+                File siteFolder = cogFolder.getParentFile();
+                if (!siteKey.equalsIgnoreCase(siteFolder.getName())) {
+                    throw new Exception("Something strange: expected site named ("+siteKey+") but folder is "+siteFolder);
+                }
+                for (NGPageIndex ngpi : cog.getAllProjectsInSite(siteKey)) {
+                    NGWorkspace ngw = ngpi.getWorkspace();
+                    cog.eliminateIndexForWorkspace(ngw);
+                }
+                cog.eliminateIndexForSite(site);
+                deleteRecursive(siteFolder);
+            }
+            else {
+                
+            }
+            
+            
+            JSONObject jo = new JSONObject();
+            jo.put("key", siteKey);
+            jo.put("op", operation);
+            jo.put("status", "success");
+            sendJson(ar, jo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to garbage collect the site.", ex);
+            streamException(ee, ar);
+        }
+    }
+    
+    private void deleteRecursive(File f) throws Exception {
+        try {
+            if (f.isDirectory()) {
+                for (File c : f.listFiles()) {
+                    deleteRecursive(c);
+                }
+            }
+            if (!f.delete()) {
+                throw new Exception("Delete command returned false for file: " + f);
+            }
+        } 
+        catch (Exception e) {
+            throw new Exception("Failed to delete the folder: " + f, e);
         }
     }
 

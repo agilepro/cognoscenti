@@ -28,6 +28,7 @@ import java.util.List;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -602,7 +603,7 @@ public class NGBook extends ContainerCommon {
 
     @Override
     public boolean isDeleted() {
-        return getAttributeBool("isDeleted");
+        return siteInfoRec.getAttributeBool("isDeleted");
     }
 
     @Override
