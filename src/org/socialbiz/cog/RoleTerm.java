@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -107,6 +108,15 @@ public class RoleTerm extends DOMFace {
     }
     public void clear() {
         clearVector("players");
+    }
+    public boolean isComplete() {
+        String state = this.getAttribute("state");
+        return "Completed".equals(state);
+    }
+    public boolean includesDate(long testDate) {
+        long termStart = getAttributeLong("termStart");
+        long termEnd = getAttributeLong("termEnd");
+        return (testDate >= termStart && testDate < termEnd);
     }
     
     

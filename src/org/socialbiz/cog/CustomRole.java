@@ -27,6 +27,7 @@ import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.util.StringCounter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -78,11 +79,7 @@ public class CustomRole extends DOMFace implements NGRole
     }
 
     public List<AddressListEntry> getDirectPlayers() throws Exception {
-        String termId = getCurrentTermId();
-        if (termId==null || termId.length()==0) {
-            return getNonTermList();
-        }
-        RoleTerm term = findChildWithID("terms", RoleTerm.class,  "key", termId);
+        RoleTerm term = getCurrentTerm();
         if (term==null) {
             return getNonTermList();
         }
@@ -188,8 +185,14 @@ public class CustomRole extends DOMFace implements NGRole
     public void setColor(String color) {
         setAttribute("color", color);
     }
-    public String getCurrentTermId() {
-        return getAttribute("currentTerm");
+    public RoleTerm getCurrentTerm() throws Exception {
+        long nowTime = System.currentTimeMillis();
+        for( RoleTerm rt : getAllTerms()) {
+            if (rt.isComplete() && rt.includesDate(nowTime)) {
+                return rt;
+            }
+        }
+        return null;
     }
 
 
@@ -334,14 +337,6 @@ public class CustomRole extends DOMFace implements NGRole
         List<RoleTerm> list= this.getChildren("terms", RoleTerm.class);
         return list;
     }
-    private RoleTerm getCurrentTerm() throws Exception {
-        String termId = this.getCurrentTermId();
-        if (termId==null || termId.length()==0) {
-            return null;
-        }
-        return this.findChildWithID("terms", RoleTerm.class, "key", termId);
-    }
-
 
     /**
      * getJSON is for normal lists of roles, the current players, and such.
@@ -351,7 +346,13 @@ public class CustomRole extends DOMFace implements NGRole
         JSONObject jObj = new JSONObject();
         jObj.put("name", getName());
         extractAttributeString(jObj, "color");
-        extractAttributeString(jObj, "currentTerm");
+        RoleTerm curTerm = this.getCurrentTerm();
+        if (curTerm!=null) {
+            jObj.put("currentTerm", curTerm.getKey());
+        }
+        else {
+            jObj.put("currentTerm", "");
+        }
         extractScalarString(jObj, "description");
         jObj.put("requirements", getRequirements());
         JSONArray playerArray = new JSONArray();
@@ -392,7 +393,6 @@ public class CustomRole extends DOMFace implements NGRole
     }
     public void updateFromJSON(JSONObject roleInfo) throws Exception {
         updateAttributeString("color", roleInfo);
-        updateAttributeString("currentTerm", roleInfo);
         updateScalarString("description", roleInfo);
         updateAttributeInt("termLength", roleInfo);
         if (roleInfo.has("requirements")) {

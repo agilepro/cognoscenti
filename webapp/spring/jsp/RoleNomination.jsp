@@ -38,9 +38,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.setComment = function(newComm) {
         $scope.comment = newComm;
     }
-    if (!$scope.role.state) {
-        $scope.role.state = "Nominating";
-    }
     
     $scope.showInput = false;
 
@@ -66,7 +63,26 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return res;
     }
     $scope.term = $scope.findTerm();
+    if (!$scope.term.state) {
+        $scope.term.state = "Initial Check";
+    }
+
+    $scope.findNom = function() {
+        var res = {};
+        $scope.term.nominations.forEach( function(anom) {
+            if (anom.owner == $scope.thisUser) {
+                res = anom;
+            }
+        });
+        return res;
+    }
+    $scope.nom = $scope.findNom();
+    
+    
     $scope.stateStyle = function() {
+        if ($scope.term.state=="Initial Check") {
+            return {"background-color": "pink"};
+        }
         if ($scope.term.state=="Nominating") {
             return {"background-color": "lightgreen"};
         }
@@ -148,6 +164,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         termObj.responses = [];
         termObj.responses.push(respObj);
         $scope.updateTerm(termObj);
+    }
+    $scope.save = function() {
+        $scope.updateTerm($scope.term);
     }
     $scope.updateState = function(newState) {
         var termObj = {};
@@ -250,6 +269,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             {{term.state}}: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
+              ng-click="updateState('Initial Check')">State &#10132; Initial Check</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
               ng-click="updateState('Nominating')">State &#10132; Nominating</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               ng-click="updateState('Changing')">State &#10132; Changing</a></li>
@@ -266,8 +287,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
                 <label for="status">Term Start:</label>
-                <span datetime-picker ng-model="term.termStart"  
-                    class="form-control" style="max-width:300px">
+                <span>
                     {{term.termStart|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
                 </span> 
             </div>
@@ -276,21 +296,82 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
                 <label for="status">Term End:</label>
+                <span >
+                    {{term.termEnd|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                </span> 
+            </div>
+        </div>
+    </div>
+    <div ng-show="term.state=='Initial Check'">
+        <div class="guideVocal">
+            <b>Step 1:</b> Check that the dates for this term is correct.   
+            If you modify the dates, press save before continuing.<br/>
+            <button class="btn btn-primary" ng-click="updateState('Nominating')">
+                Next <i class="fa fa-forward"></i></button>
+        </div>
+        <div >
+            <div class="form-group">
+                <label for="status">Term Start:</label>
+                <span datetime-picker ng-model="term.termStart"  
+                    class="form-control" style="max-width:300px">
+                    {{term.termStart|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                </span> 
+            </div>
+        </div>
+        
+        <div >
+            <div class="form-group">
+                <label for="status">Term End:</label>
                 <span datetime-picker ng-model="term.termEnd"  
                     class="form-control" style="max-width:300px">
                     {{term.termEnd|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
                 </span> 
             </div>
         </div>
+        <div class="form-group" title="The duration is the number of days between the start and end dates.">
+            <label for="status">Duration:</label>
+            <span >
+                {{ getDays(term) }} Days
+            </span>
+        </div>
+        <button class="btn btn-primary btn-raised" ng-click="save()">Save</button>
     </div>
-    <div>
+    <div ng-show="term.state=='Nominating'">
+        <div class="guideVocal">
+            <b>Step 2:</b> Enter the email address of the person you want to nominate and give a good reason for why they are good for this role.
+            Other people can access this page and make nominations as well.
+            You will only see your own nomination at this stage.<br/>
+            <button class="btn btn-primary" ng-click="updateState('Initial Check')">
+                <i class="fa fa-backward"></i>Back </button>
+            <button class="btn btn-primary" ng-click="updateState('Changing')">
+                Next <i class="fa fa-forward"></i></button>
+        </div>
         <div class="col-12">
-            <div class="form-group" title="The duration is the number of days between the start and end dates.">
-                <label for="status">Duration:</label>
-                <span >
-                    {{ getDays(term) }} Days
-                </span>
+            <div class="form-group" style="max-width:600px">
+                <label for="status">Nominator: (you)</label>
+                <input class="form-control" ng-model="nom.owner"/>
             </div>
+            <div class="form-group" style="max-width:600px">
+                <label for="status">Nominee:</label>
+                <input class="form-control" ng-model="nom.nominee"/>
+            </div>
+            <div class="form-group" style="max-width:600px">
+                <label for="status">Reason:</label>
+                <textarea class="form-control" ng-model="nom.comment"></textarea>
+            </div>
+            <button class="btn btn-primary btn-raised" ng-click="updateNomination(nom)">Save</button>
+        </div>
+    </div>
+    <div ng-show="term.state=='Changing'">
+        <div class="guideVocal">
+            <b>Step 3:</b> Review all of the nominations made so far.  
+            People can change their nominations if they want to.<br/>
+            <button class="btn btn-primary" ng-click="updateState('Nominating')">
+                <i class="fa fa-backward"></i>Back </button>
+            <button class="btn btn-primary" ng-click="updateState('Proposing')">
+                Next <i class="fa fa-forward"></i></button>
+        </div>
+        <div class="col-12">
         
             <div class="form-group" ng-show="showNominations()">
                 <label for="synopsis">Nominations:</label>
@@ -328,16 +409,67 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 There are no nominations for this term at this time.
                 </div>
             </div>
-            <div ng-show="isNominating()" class="guideVocal">
-                During the nomination phase, you can only see your own nomination!
-            </div>
             <hr/>
         </div>
     </div>
-    <div class="row" ng-show="isProposingCompleting()">
+    <div ng-show="term.state=='Proposing'">
+        <div class="guideVocal">
+            <b>Step 4:</b> Given the nominations, the leader makes a proposal for role player,
+                 and each participant can express consent or object to that.<br/>
+            <button class="btn btn-primary" ng-click="updateState('Changing')">
+                <i class="fa fa-backward"></i>Back </button>
+            <button class="btn btn-primary" ng-click="updateState('Completed')">
+                Next <i class="fa fa-forward"></i></button>
+        </div>
+        <div style="max-width:600px">
+            <div class="form-group">
+                <label for="status">Players (Proposed)</label>
+                <tags-input ng-model="term.players" placeholder="Enter user name or id" 
+                            display-property="name" key-property="uid" 
+                            on-tag-added="updatePlayers(term.players)" 
+                            on-tag-removed="updatePlayers(term.players)">
+                    <auto-complete source="loadPersonList($query)"></auto-complete>
+                </tags-input>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                   <li role="presentation"><a role="menuitem" title="{{add}}"
+                      ng-click="">Remove Label:<br/>{{role.name}}</a></li>
+                </ul>
+            </div>
+            <div class="form-group" ng-show="isProposing()">
+                <label for="status"><br/>Your Response:</label>
+                <textarea ng-model="comment" class="form-control"></textarea>
+            </div>
+            <div class="form-group" ng-show="isProposing()"">
+                <button ng-click="consent()" class="btn btn-primary btn-raised">Consent</button>
+                <button ng-click="object()" class="btn btn-primary btn-raised">Object</button>
+            </div>
+            <div class="form-group">
+                <label for="status"><br/>All Responses So Far:</label>
+                <table class="table">
+                    <tr>
+                        <td><label>Member</label></td>
+                        <td><label>Choice</label></td>
+                        <td><label>Comment</label></td>
+                    </tr>
+                    <tr ng-repeat="resp in term.responses" ng-click="setComment(resp.comment)">
+                        <td>{{resp.owner}}</td>
+                        <td>{{resp.choice}}</td>
+                        <td>{{resp.comment}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div ng-show="term.state=='Completed'">
+        <div class="guideVocal">
+            <b>Step 5:</b> Celebrate!  You are done.   The selected person(s) will be automatically
+                placed in the role during the dates specified by the term.<br/>
+            <button class="btn btn-primary" ng-click="updateState('Proposing')">
+                <i class="fa fa-backward"></i>Back </button>
+        </div>
         <div class="col-md-6 col-sm-12">
             <div class="form-group">
-                <label for="status">Players <span ng-hide="isCompleted()">(Proposed)</span></label>
+                <label for="status">Players </label>
                 <tags-input ng-model="term.players" placeholder="Enter user name or id" 
                             display-property="name" key-property="uid" 
                             on-tag-added="updatePlayers(term.players)" 
@@ -350,7 +482,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </ul>
             </div>
             <div class="form-group">
-                <label for="status">Responses:</label>
+                <label for="status"><br/>All Confirmations:</label>
                 <table class="table">
                     <tr>
                         <td><label>Member</label></td>
@@ -376,7 +508,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             </div>
         </div>
     </div>
-
 </div>
 
 <script src="<%=ar.retPath%>templates/NominationModal.js"></script>
