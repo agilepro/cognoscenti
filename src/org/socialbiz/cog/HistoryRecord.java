@@ -29,6 +29,7 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONObject;
 
 
@@ -116,6 +117,7 @@ public class HistoryRecord extends DOMFace
     public final static int EVENT_DOC_APPROVED = 33;  //I read it and it is OK
     public final static int EVENT_DOC_REJECTED = 34;  //I read it and it needs improvement
     public final static int EVENT_DOC_SKIPPED  = 35;  //I decided not to read it
+    public final static int EVENT_DOC_DOWNLOADED = 36;
     public final static int EVENT_COMMENT_ADDED= 39;
     public final static int EVENT_EMAIL_SENT   = 40;
 
@@ -576,6 +578,8 @@ public class HistoryRecord extends DOMFace
                 return messageID+"mark.reject";
             case EVENT_DOC_SKIPPED:
                 return messageID+"mark.skipped";
+            case EVENT_DOC_DOWNLOADED:
+                return messageID+"downloaded";
             case EVENT_EMAIL_SENT:
                 //history.note.email.sent   1173
                 //history.process.email.sent  1
@@ -709,6 +713,8 @@ history.task.subtask.add    113
                 return "marked as revisions needed";
             case EVENT_DOC_SKIPPED:
                 return "marked as skipped";
+            case EVENT_DOC_DOWNLOADED:
+                return "downloaded";
             case EVENT_EMAIL_SENT:
                 return "sent as email";
             case EVENT_COMMENT_ADDED:

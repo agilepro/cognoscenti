@@ -48,6 +48,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -186,7 +187,7 @@ public class ProjectDocsController extends BaseController {
             boolean canAccessDoc = AccessControl.canAccessDoc(ar, ngw, att);
 
             if(!canAccessDoc){
-                 sendRedirectToLogin(ar);
+                sendRedirectToLogin(ar);
                 return;
             }
 
@@ -208,12 +209,15 @@ public class ProjectDocsController extends BaseController {
 
             AttachmentVersion attachmentVersion = SectionAttachments.getVersionOrLatest(ngw,attachmentName,version);
             ar.resp.setHeader( "Content-Length", Long.toString(attachmentVersion.getFileSize()) );
+            
+            att.createHistory(ar, ngw, HistoryRecord.EVENT_DOC_DOWNLOADED, "Downloaded document "+attachmentName);
 
             InputStream fis = attachmentVersion.getInputStream();
 
             //NOTE: now that we have the input stream, we can let go of the project.  This is important
             //to prevent holding the lock for the entire time that it takes for the client to download
             //the file.  Remember, slow clients might take minutes to download a large file.
+            ngw.save();
             NGPageIndex.releaseLock(ngw);
             ngw=null;
 
