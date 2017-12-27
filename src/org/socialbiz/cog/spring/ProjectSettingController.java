@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -529,16 +530,22 @@ public class ProjectSettingController extends BaseController {
             //this is a non persistent flag in the body ... could be a URL parameter
             boolean sendIt = eGenInfo.optBoolean("sendIt");
             boolean scheduleIt = eGenInfo.optBoolean("scheduleIt");
-            eGen.updateFromJSON(eGenInfo);
-
-            if (sendIt) {
-                //send it 5 seconds from now.  Background thread has to pick it up..
-                eGen.setScheduleTime(ar.nowTime + 5000);
-                eGen.scheduleEmail(ar);
+            boolean deleteIt = eGenInfo.optBoolean("deleteIt");
+            if (deleteIt) {
+                ngw.deleteEmailGenerator(eGen.getId());
             }
-            else if (scheduleIt) {
-                //time to send must have been set in the updateFromJSON
-                eGen.scheduleEmail(ar);
+            else {
+                eGen.updateFromJSON(eGenInfo);
+                if (sendIt) {
+                    //send it 5 seconds from now.  Background thread has to pick it up..
+                    eGen.setScheduleTime(ar.nowTime + 5000);
+                    eGen.scheduleEmail(ar);
+                }
+                else if (scheduleIt) {
+                    eGen.updateFromJSON(eGenInfo);
+                    //time to send must have been set in the updateFromJSON
+                    eGen.scheduleEmail(ar);
+                }
             }
 
             ngw.saveFile(ar, "Updated Email Generator "+id);

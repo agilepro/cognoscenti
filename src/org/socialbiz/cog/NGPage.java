@@ -33,6 +33,7 @@ import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.util.StringCounter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -1582,46 +1583,11 @@ public abstract class NGPage extends ContainerCommon {
         EmailGenerator egen = meetings.createChildWithID("emailGenerator", EmailGenerator.class, "id", this.getUniqueOnPage());
         return egen;
     }
-
-
-    /**
-     * Walk through all the references and make a list of all the people that are
-     * mentioned at any point in the workspace, and returns the AddressListEntry
-     * for each
-     *
-    private List<AddressListEntry> getAllAddressInWorkspace() throws Exception {
-        HashSet<String> nameSet = new HashSet<String>();
-        List<AddressListEntry> result = new ArrayList<AddressListEntry>();
-        for (NGRole role : getAllRoles()) {
-            for (AddressListEntry ale : role.getExpandedPlayers(this)) {
-                String uid = ale.getUniversalId();
-                if (!nameSet.contains(uid)) {
-                    nameSet.add(uid);
-                    result.add(ale);
-                }
-            }
-        }
-        return result;
+    
+    public void deleteEmailGenerator(String id) throws Exception {
+        DOMFace generators =  requireChild("generators", DOMFace.class);
+        generators.removeChildrenByNameAttrVal("emailGenerator", "id", id);
     }
-    */
-
-    /**
-     * Walk through all the references and make a list of all the people that are
-     * mentioned at any point in the workspace, and returns the combined address
-     * that has a name and an email address like this:
-     *
-     *      John Smith <jsmith@example.com>
-     *
-     *
-    public JSONArray getAllPeopleInProject() throws Exception {
-        List<AddressListEntry> nameSet = getAllAddressInWorkspace();
-        JSONArray list = new JSONArray();
-        for (AddressListEntry ale : nameSet) {
-            list.put(ale.generateCombinedAddress());
-        }
-        return list;
-    }
-    */
 
 
     /**

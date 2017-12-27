@@ -48,6 +48,7 @@ import javax.servlet.http.HttpSession;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.exception.ServletExit;
+
 import com.purplehillsbooks.streams.HTMLWriter;
 
 /**
@@ -1399,22 +1400,17 @@ public class AuthRequest
     * Given the name of a JSP file, this will call it, and the
     * output will appear in the place of the call.
     */
-    public void invokeJSP(String JSPName)
-        throws Exception
-    {
-        try
-        {
+    public void invokeJSP(String JSPName) throws Exception {
+        try {
             nestingCount++;
-            if (nestingCount>5)
-            {
+            if (nestingCount>10) {
                 throw new NGException("nugen.exception.nested.jsp.call", new Object[]{JSPName,getCompleteURL()});
             }
             String relPath = getRelPathFromCtx();
             resp.setContentType("text/html;charset=UTF-8");
 
             RequestDispatcher rd = req.getRequestDispatcher(relPath+JSPName);
-            if (rd==null)
-            {
+            if (rd==null) {
                 //at one point we needed a retPath in here, but now we
                 //don't need it, and I am not sure why....
                 throw new NGException("nugen.exception.unable.to.find.resource", new Object[]{relPath+JSPName});
@@ -1427,11 +1423,12 @@ public class AuthRequest
             //so replace the writer that we had before.
             w = saveWriter;
             flush();
-            nestingCount--;
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.invoke.jsp", new Object[]{JSPName}, e);
+        }
+        finally {
+            nestingCount--;            
         }
     }
 

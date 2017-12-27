@@ -185,12 +185,12 @@ app.controller('myCtrl', function($scope, $http) {
                     <span ng-show="isWatching"><b>You are watching this workspace</b></span>
                     <br/>
                     <br/>
-                    In order to view your recent &amp; selected modified projects list at a glance from your
-                    profile's homepage, you can simply click the "<b>Start Watching</b>" button and the workspace name
-                    will appear in the list of "<b>Watched Workspaces</b>" under homepage.<br/>
+                    Watching a workspace means simply that that workspace name
+                    will appear in the list of "<b>Watched Workspaces</b>" on your personal home page.<br/>
                     <br/>
-                    And in future if you do not want that workspace to appear in watched workspace list you can stop
-                    watching that workspace immediately.
+                    You can add and remove workspaces from the list at any time with immediate effect.  
+                    Performing some operations in the workspace (such as creating a discussion topic) 
+                    will automatically add the workspace to your watched list.
                   </div>
                 </td>
             </tr>
@@ -205,13 +205,13 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
                 <td ng-show="openTemplate" ng-click="openTemplate=!openTemplate">
                   <div class="guideVocal">
-                    <span ng-hide="isTemplate"><b>This workspace is not one of your template</b></span>
-                    <span ng-show="isTemplate"><b>This workspace is one of your template</b></span>
+                    <span ng-hide="isTemplate"><b>This workspace is not one of your templates</b></span>
+                    <span ng-show="isTemplate"><b>This workspace is one of your templates</b></span>
                     <br/>
                     <br/>
                     You can use this workspace as template for your future reference. If you mark this
-                    workspace as template then it will appear in the "List of Templates" in your profile's
-                    workspace page. At any time you can even stop using this workspace as template.
+                    workspace as template then it will appear in the "List of Templates". 
+                    At any time you can stop using this workspace as template.
                   </div>
                 </td>
             </tr>

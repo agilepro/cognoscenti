@@ -152,6 +152,7 @@
             <li><a href="<%=userRelPath%>userSettings.htm">Profile</a></li>
             <li><a href="<%=userRelPath%>userAlerts.htm">Updates</a></li>
             <li><a href="<%=userRelPath%>notificationSettings.htm">Notifications</a></li>
+            <li><a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB">Training</a></li>
 <%if(ar.isSuperAdmin()){ %>
             <li class="divider"></li>
             <li><a href="<%=userRelPath%>../su/emailListnerSettings.htm">Administration</a></li>

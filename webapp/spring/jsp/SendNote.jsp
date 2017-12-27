@@ -148,12 +148,12 @@ Optional Parameters:
       "noteInfo": {
         "comments": [
           {
-            "content": "this is a comment on a topic.   I cut back to Weaver and am back on Katie\u2019s training screen. I decide to look at our training materials. A tag in the corner of the front pages says that the whole package is scheduled for review in seven months. I click on Minutes in the tag and view the record of the decision a year ago to adopt the materials and set a one-year review date. No one had expressed any doubts at the time. I close the minutes and the training materials, and there is the familiar ring of Wellness Support faces again.",
+            "content": "xxx",
             "time": 1435356818486,
             "user": "kswenson@us.fujitsu.com"
           },
           {
-            "content": "I cut back to Weaver and am back on Katie\u2019s training screen. I decide to look at our training materials. A tag in the corner of the front pages says that the whole package is scheduled for review in seven months. I click on Minutes in the tag and view the record of the decision a year ago to adopt the materials and set a one-year review date. No one had expressed any doubts at the time. I close the minutes and the training materials, and there is the familiar ring of Wellness Support faces again.",
+            "content": "yyy",
             "time": 1435356822441,
             "user": "kswenson@us.fujitsu.com"
           }
@@ -161,7 +161,7 @@ Optional Parameters:
         "deleted": false,
         "docList": ["EZIGICMWG@facility-1-wellness-circle@8170"],
         "draft": false,
-        "html": "<p>\nthis is a public note\n<\/p>\n<p>\nasdf asd  fas  df  \n<br>alksdjflaskdfjlakj sdf\n<\/p>\n<p>\nas  dfas  dfasd  fas  dfasdf\n<\/p>\n<p>\nI click on Training Records and see that she has had full standard Alzheimer\u2019s training. I close the training record and look at her personal development plan that we did after her first 60 days of employment. Nothing unusual in it and there was even one comment about \u201cThe residents love your smile. Keep smiling!\u201d I click the State Software button and go through their clumsy system to review incident reports for the last several months, and see that there were a variety of reports regarding our Stage 3 residents involving different residents and different caregivers. I note the locations of some of those reports on the pop up scrach pad. Now I had a mystery. What\u2019s going on with our protocols around Stage 3 Alzheimers?\n<\/p>\n<p>\nI click on Training Records and see that she has had full standard Alzheimer\u2019s training. I close the training record and look at her personal development plan that we did after her first 60 days of employment. Nothing unusual in it and there was even one comment about \u201cThe residents love your smile. Keep smiling!\u201d I click the State Software button and go through their clumsy system to review incident reports for the last several months, and see that there were a variety of reports regarding our Stage 3 residents involving different residents and different caregivers. I note the locations of some of those reports on the pop up scrach pad. Now I had a mystery. What\u2019s going on with our protocols around Stage 3 Alzheimers?\n<\/p>\n",
+        "html": "<p>xxx<\/p>\n",
         "id": "3896",
         "labelMap": {
           "Members": true,
@@ -217,7 +217,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
-            if ($scope.emailInfo.sendIt == true) {
+            if ($scope.emailInfo.sendIt == true || $scope.emailInfo.deleteIt == true) {
                 window.location = "listEmail.htm";
                 return;
             }
@@ -262,6 +262,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     $scope.scheduleEmail = function() {
         $scope.emailInfo.sendIt = false;
         $scope.emailInfo.scheduleIt = true;
+        $scope.saveEmail();
+    }
+    $scope.deleteEmail = function() {
+        $scope.emailInfo.sendIt = false;
+        $scope.emailInfo.scheduleIt = false;
+        $scope.emailInfo.deleteIt = true;
         $scope.saveEmail();
     }
 
@@ -555,6 +561,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         <!-- Form Control BUTTONS -->
         <div class="row">
           <div class="col-md-12 form-group text-right">
+            <button ng-click="deleteEmail()" class="btn btn-warning btn-raised" 
+                    ng-hide="emailInfo.id=='~new~'">Delete</button>
             <button ng-click="saveEmail()" class="btn btn-primary btn-raised">Save &amp; Preview</button>
             <button ng-click="sendEmail()" class="btn btn-primary btn-raised">Send Now</button>
           </div>

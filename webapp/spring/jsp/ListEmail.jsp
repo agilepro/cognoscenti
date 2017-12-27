@@ -12,8 +12,15 @@
     NGBook ngb = ngw.getSite();
 
     JSONArray eGenList = ngw.getJSONEmailGenerators(ar);
-
-
+    
+    //email must have a subject otherwise the UI will no allow selection of it
+    for (int i=0; i<eGenList.length(); i++) {
+        JSONObject oneEmail = eGenList.getJSONObject(i);
+        String subject = oneEmail.getString("subject");
+        if (subject.trim().length()==0) {
+            oneEmail.put("subject", "No Subject");
+        }
+    }
 
 %>
 
@@ -96,6 +103,25 @@ app.controller('myCtrl', function($scope, $http) {
         return full;
     }
 
+    $scope.deleteEmail = function(rec) {
+        rec.deleteIt = true;
+        var postURL = "emailGeneratorUpdate.json?id="+rec.id;
+        var postdata = angular.toJson(rec);
+        $scope.showError=false;
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            var newList = [];
+            $scope.eGenList.forEach( function(item) {
+                if (item.id != rec.id) {
+                    newList.push(item);
+                }
+            });
+            $scope.eGenList = newList;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
 
 });
 
@@ -122,7 +148,14 @@ app.controller('myCtrl', function($scope, $http) {
             <td>{{namePart(rec.from)}}</td>
             <td><a href="sendNote.htm?id={{rec.id}}">{{rec.subject}}</a></td>
             <td>{{stateName(rec.state)}}</td>
-            <td>{{bestDate(rec)|date:'M/d/yy H:mm'}}</td>
+            <td ng-show="rec.state<=1">
+              <a role="menuitem" tabindex="-1" title="Delete Email" href="#" ng-click="deleteEmail(rec)">
+                <button type="button" name="delete" class='btn btn-warning'>
+                    <span class="fa fa-trash"></span>
+                </button>
+              </a>
+            </td>
+            <td ng-hide="rec.state<=1">{{bestDate(rec)|date:'M/d/yy H:mm'}}</td>
         </tr>
     </table>
 

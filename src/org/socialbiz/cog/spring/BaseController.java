@@ -40,6 +40,7 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ServletExit;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -89,7 +90,7 @@ public class BaseController {
      * system is truly breaking -- the support necessary to create the nice display
      * might not be functioning well enough to display anything.
      */
-    protected void displayException(AuthRequest ar, Exception extd) {
+    private void displayException(AuthRequest ar, Exception extd) {
         try {
             long exceptionNO=ar.logException("Caught in user interface", extd);
             ar.req.setAttribute("display_exception", extd);
