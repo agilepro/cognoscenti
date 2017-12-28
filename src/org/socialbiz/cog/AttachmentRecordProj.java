@@ -201,6 +201,10 @@ public class AttachmentRecordProj extends AttachmentRecord
         //don't know how to go straight into reply mode, so just go to the meeting
         return getEmailURL(ar, ngw) + "#cmt"+commentId;
     }
+    public String getUnsubURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
+        //don't know how to go straight into reply mode, so just go to the meeting
+        return getEmailURL(ar, ngw) + "#cmt"+commentId;
+    }
 
     @Override
     public String selfDescription() throws Exception {

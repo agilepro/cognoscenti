@@ -496,6 +496,25 @@ public class ProjectDocsController extends BaseController {
         specialAnonJSP(ar, siteId, pageId, "Reply.jsp");
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/unsub/{topicId}/{commentId}.htm", method = RequestMethod.GET)
+    public void specialUnsub(@PathVariable String siteId, 
+            @PathVariable String pageId,
+            @PathVariable String topicId,
+            @PathVariable String commentId,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+        TopicRecord note = ngp.getNoteOrFail(topicId);
+        //normally the permission comes from a license in the URL for anonymous access
+        //boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
+        //if (!canAccessNote) {
+        //    ar.assertMember("must have permission to make a reply");
+        //}
+        ar.setParam("topicId", topicId);
+        ar.setParam("commentId", commentId);
+        specialAnonJSP(ar, siteId, pageId, "Unsub.jsp");
+    }
+
     @RequestMapping(value = "/su/Feedback.htm", method = RequestMethod.GET)
     public void Feedback(HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);

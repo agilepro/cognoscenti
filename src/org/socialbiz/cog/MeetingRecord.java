@@ -992,6 +992,10 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         //don't know how to go straight into reply mode, so just go to the meeting
         return getEmailURL(ar, ngw) + "#cmt"+commentId;
     }
+    public String getUnsubURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
+        //don't know how to go straight into unsub mode, so just go to the meeting
+        return getEmailURL(ar, ngw) + "#cmt"+commentId;
+    }
     public String selfDescription() throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         return "(Meeting) "+getName()+" @ " + sdf.format(new Date(getStartTime()));

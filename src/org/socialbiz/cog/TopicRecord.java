@@ -1068,6 +1068,10 @@ public class TopicRecord extends CommentContainer implements EmailContext {
          return ar.getResourceURL(ngw,  "reply/"+this.getId()+"/"+commentId+".htm?") 
                  + AccessControl.getAccessTopicParams(ngw, this);
      }
+     public String getUnsubURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
+         return ar.getResourceURL(ngw,  "unsub/"+this.getId()+"/"+commentId+".htm?") 
+                 + AccessControl.getAccessTopicParams(ngw, this);
+     }
      public String selfDescription() throws Exception {
          return "(Note) "+getSubject();
      }

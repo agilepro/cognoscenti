@@ -608,6 +608,8 @@ public class CommentRecord extends DOMFace {
         
         data.put("replyUrl", ar.baseURL + noteOrMeet.getReplyURL(ar,ngp,this.getTime())
                 + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
+        data.put("unsubUrl", ar.baseURL + noteOrMeet.getUnsubURL(ar,ngp,this.getTime())
+                + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
 
         AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
 

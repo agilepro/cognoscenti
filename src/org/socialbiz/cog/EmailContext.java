@@ -10,7 +10,8 @@ public interface EmailContext {
     
     public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception;
     public String getReplyURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception;
-
+    public String getUnsubURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception;
+    
     public String selfDescription() throws Exception;
 
     /*
