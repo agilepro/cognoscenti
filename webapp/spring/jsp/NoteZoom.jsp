@@ -93,7 +93,7 @@ Required parameter:
 document.title="<% ar.writeJS(note.getSubject());%>";
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize', 'ngTagsInput','angularjs-datetime-picker']);
-app.controller('myCtrl', function($scope, $http, $modal, $interval) {
+app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     window.setMainPageTitle("Discussion Topic");
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
@@ -102,6 +102,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     $scope.canUpdate = <%=canUpdate%>;
     $scope.history = <%history.write(out,2,4);%>;
     $scope.allGoals = <%allGoals.write(out,2,4);%>;
+    $scope.addressMode = false;
 
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 400;
@@ -452,13 +453,31 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             return;
         }
         $scope.noteInfo.discussionPhase = newPhase;
-        $scope.saveEdits(['discussionPhase','suppressEmail']);
+        $scope.saveEdits(['discussionPhase','suppressEmail','subscribers']);
     }
     $scope.getPhaseStyle = function() {
         if ($scope.noteInfo.draft) {
             return "background-color:yellow;";
         }
         return "";
+    }
+    $scope.startSend = function() {
+        $scope.addressMode = true;
+        $scope.allLabels.forEach( function(item) {
+            if (item.name=="Members") {
+                var listCopy = [];
+                item.players.forEach( function(player) {
+                    listCopy.push(player)
+                });
+                $scope.noteInfo.subscribers = listCopy;
+                console.log("found members", item);
+            }
+        });
+    }
+    $scope.postIt = function(sendEmail) {
+        $scope.noteInfo.sendEmailNow = sendEmail;
+        $scope.setPhase("Freeform");
+        $scope.addressMode = false;
     }
     
     $scope.changeSubscription = function(onOff) {
@@ -849,6 +868,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     }
 	$scope.promiseAutosave = $interval($scope.autosave, 15000);
     
+    $scope.loadPersonList = function(query) {
+        return AllPeople.findMatchingPeople(query);
+    }
 	
 });
 
@@ -860,14 +882,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 <%@include file="ErrorPanel.jsp"%>
 
     <div class="upRightOptions rightDivContent">
-      <span class="dropdown" ng-show="noteInfo.draft" ng-click="noteInfo.suppressEmail = !noteInfo.suppressEmail">
-          <button class="btn btn-default btn-raised" type="button" 
-                  title="Choose whether to send email when this topic is posted">
-          <input type="checkbox" ng-model="noteInfo.suppressEmail">
-          Suppress Email </button>
-      </span>
       <span class="dropdown" ng-show="noteInfo.draft">
-          <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="setPhase('Freeform')"
+          <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="startSend()"
                   title="Post this topic to allow others to see it">
           Post Topic </button>
       </span>
@@ -902,6 +918,31 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
       </span>
     </div>
     
+    <div class="well" ng-show="addressMode" ng-cloak>
+      <h2>Email Notification To (Subscribers):</h2>
+      <div>
+          <tags-input ng-model="noteInfo.subscribers" placeholder="Enter users to send notification email to"
+                      display-property="name" key-property="uid">
+              <auto-complete source="loadPersonList($query)"></auto-complete>
+          </tags-input>
+      </div>
+      <span class="dropdown">
+          <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(false)"
+                  title="Post this topic but don't send any email">
+          Suppress Email </button>
+      </span>
+      <span class="dropdown">
+          <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(true)"
+                  title="Post this topic and send the email to selected users">
+          Send </button>
+      </span>
+      <span class="dropdown">
+          <button class="btn btn-default btn-warning btn-raised" type="button" ng-click="addressMode = false"
+                  title="Cancel and leave this in draft mode.">
+          Cancel </button>
+      </span>
+      
+    </div>
     
     <div style="height:40px;margin-bottom:15px">
         <div class="leftDivContent">
@@ -957,9 +998,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
 <% } %>
 
     <div style="color:lightgrey;font-style:italic">Last modified: {{noteInfo.modTime|date}}</div>
-
-
-
 
     <div style="width:100%;margin-top:50px;"></div>
     <div>

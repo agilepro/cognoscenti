@@ -32,6 +32,7 @@ import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -1020,10 +1021,29 @@ public class TopicRecord extends CommentContainer implements EmailContext {
          if (noteObj.has("discussionPhase")) {
              setDiscussionPhase(noteObj.getString("discussionPhase"), ar);
          }
-         updateAttributeBool("suppressEmail", noteObj);
+         if (noteObj.has("sendEmailNow")) {
+             boolean sendEmailNow = noteObj.getBoolean("sendEmailNow");
+             setAttributeBool("suppressEmail", !sendEmailNow);
+             if (sendEmailNow) {
+                 setAttributeBool("emailSent", false);
+             }
+         }
+         else {
+             updateAttributeBool("suppressEmail", noteObj);
+         }
+         NGRole subRole = getSubscriberRole();
+         if (noteObj.has("subscribers")) {
+             subRole.clear();
+             JSONArray ja = noteObj.getJSONArray("subscribers");
+             for (int i=0; i<ja.length(); i++) {
+                 JSONObject oneSub = ja.getJSONObject(i);
+                 String uid = oneSub.getString("uid");
+                 subRole.addPlayerIfNotPresent(new AddressListEntry(uid));
+             }
+         }
 
          //simplistic for now ... if you update anything, you get added to the subscribers
-         getSubscriberRole().addPlayerIfNotPresent(ar.getUserProfile().getAddressListEntry());
+         subRole.addPlayerIfNotPresent(ar.getUserProfile().getAddressListEntry());
          
      }
      public void updateHtmlFromJSON(AuthRequest ar, JSONObject noteObj) throws Exception {
