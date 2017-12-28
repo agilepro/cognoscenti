@@ -463,6 +463,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             else {
                 $scope.factoredTime = $scope.meeting.reminderTime;
             }
+            $scope.addYouselfIfAppropriate()
         });
         promise.error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -942,6 +943,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var fakeMeeting = {};
         fakeMeeting.attended_add = SLAP.loginInfo.userId;
         $scope.putGetMeetingInfo(fakeMeeting);
+    }
+    $scope.addYouselfIfAppropriate = function() {
+        if ($scope.meeting.state==2) {
+            var foundMe = false;
+            $scope.meeting.attended.forEach( function(item) {
+                if (item==SLAP.loginInfo.userId) {
+                    foundMe=true;
+                }
+            });
+            if (!foundMe) {
+                $scope.addYouself();
+            }
+        }
     }
     $scope.determineIfAttending = function() {
         $scope.isInAttendees = false;

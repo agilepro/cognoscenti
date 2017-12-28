@@ -13,6 +13,8 @@
     String meetId          = ar.reqParam("id");
     MeetingRecord mRec     = ngw.findMeeting(meetId);
 
+    UserProfile uProf = ar.getUserProfile();
+    
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
@@ -29,7 +31,6 @@
     }
     
     NGBook site = ngw.getSite();
-    UserProfile uProf = ar.getUserProfile();
     boolean isLoggedIn = (uProf!=null);
     String currentUser = "";
     String currentUserName = "Unknown";
@@ -93,6 +94,7 @@
         docSpaceURL = ar.baseURL +  "api/" + site.getKey() + "/" + ngw.getKey()
                     + "/summary.json?lic="+lfu.getId();
     }
+    
 
     MeetingRecord backlog = ngw.getAgendaItemBacklog();
 
@@ -197,7 +199,6 @@
 var embeddedData = {};
 embeddedData.pageId    = "<%ar.writeJS(pageId);%>";
 embeddedData.meetId    = "<%ar.writeJS(meetId);%>";
-embeddedData.meeting   = <%meetingInfo.write(out,2,2);%>;
 embeddedData.previousMeeting = <%previousMeeting.write(out,2,2);%>;
 embeddedData.allGoals  = <%allGoals.write(out,2,2);%>;
 embeddedData.allRoles  = <%allRoles.write(out,2,2);%>;

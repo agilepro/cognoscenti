@@ -66,7 +66,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         setScalar("meetingInfo", newVal);
     }
 
-    public int getState()  throws Exception {
+    public int getState() {
         return getAttributeInt("state");
     }
     public void setState(int newVal) throws Exception {
@@ -173,6 +173,30 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         setAttributeLong("reminderSent", newVal);
     }
 
+    /**
+     * If the meeting is in running state, and if the specified person is 
+     * not in the attendee list, this will add them.
+     * 
+     * Returns true if it actually made a change, false if not
+     * @param uRef
+     */
+    public boolean addAttendeeIfNeeded(UserRef uRef) {
+        if (MeetingRecord.MEETING_STATE_RUNNING == getState()) {
+            List<String> attendees = getVector("attended");
+            boolean foundMe = false;
+            for (String attendee : attendees) {
+                if (uRef.hasAnyId(attendee)) {
+                    foundMe = true;
+                }
+            }
+            if (!foundMe) {
+                attendees.add(uRef.getUniversalId());
+                setVector("attended", attendees);
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     /**
