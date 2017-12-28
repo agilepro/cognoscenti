@@ -63,18 +63,17 @@ Required parameter:
 %>
 
 <script>
-
-var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http) {
+var app = angular.module('myApp', ['ui.bootstrap', 'ngTagsInput']);
+app.controller('myCtrl', function($scope, $http, AllPeople) {
     window.setMainPageTitle("Create New Workspace");
     $scope.siteInfo = <% site.getConfigJSON().write(ar.w,2,4); %>;
     $scope.accountKey = "<%ar.writeJS(accountKey);%>";
     $scope.upstream = "<%ar.writeJS(upstream);%>";
     $scope.pname = "<%ar.writeJS(pname);%>";
-    $scope.desc = "<%ar.writeJS(desc);%>";
     $scope.templateList = <% templateList.write(ar.w,2,4); %>;
     $scope.selectedTemplate = "";
-    $scope.newWorkspace = {newName:"",template:""};
+    $scope.newWorkspace = {newName:"",template:"",purpose:"",members:[]};
+    $scope.newWorkspace.purpose = "<%ar.writeJS(desc);%>";
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -90,15 +89,25 @@ app.controller('myCtrl', function($scope, $http) {
             alert("Please enter a name for this new workspace.");
             return;
         }
+        var urlAddress = $scope.getURLAddress();
+        if (urlAddress.length < 6) {
+            alert("Please specify a longer name with more than 6 alphabet characters");
+            return;
+        }
+        $scope.newWorkspace.members.forEach( function(item) {
+            if (!item.uid) {
+                item.uid = item.name;
+            }
+        });
         var postURL = "createWorkspace.json";
         var postdata = angular.toJson($scope.newWorkspace);
+        console.log("new data", $scope.newWorkspace);
         $scope.showError=false;
         $http.post(postURL, postdata)
         .success( function(data) {
-            alert("You new workspace has been created!   Now set the description so that people"
-                  + " know what it is for, and so that people can find it by searching on key words.");
-            var newws = "../"+data.key+"/admin.htm";
             console.log("CREATED WORKSPACE: ", data);
+            alert("You new workspace "+data.name+" has been created!");
+            var newws = "../"+data.key+"/roleManagement.htm";
             window.location = newws;
         })
         .error( function(data, status, headers, config) {
@@ -106,9 +115,34 @@ app.controller('myCtrl', function($scope, $http) {
         });
     };
     
+    $scope.getURLAddress = function() {
+        var res = "";
+        var str = $scope.newWorkspace.newName;
+        var isInGap = false;
+        for (i=0; i<str.length; i++) {
+            var ch = str[i].toLowerCase();
+            var isAddable = ( (ch>='a' && ch<='z') || (ch>='0' && ch<='9') );
+            if (isAddable) {
+                if (isInGap) {
+                    res = res + "-";
+                    isInGap = false;
+                }
+                res = res + ch;
+            }
+            else {
+                isInGap = res.length > 0;
+            }
+        }
+        return res;
+    }
+    $scope.loadPersonList = function(query) {
+        return AllPeople.findMatchingPeople(query);
+    }
+
 });
 </script>
-    
+<script src="../../../jscript/AllPeople.js"></script>
+
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <div ng-show="siteInfo.siteMsg">
@@ -128,9 +162,56 @@ app.controller('myCtrl', function($scope, $http) {
 <div style="max-width:500px" ng-hide="siteInfo.isDeleted || siteInfo.frozen || siteInfo.offLine">
 
     <div class="form-group">
-        <label >New Workspace Name</label>
+        <label ng-click="showNameHelp=!showNameHelp">
+            New Workspace Name &nbsp; <i class="fa fa- fa-question-circle-o"></i>
+        </label>
         <input type="text" class="form-control" ng-model="newWorkspace.newName"/>
     </div>
+    <div class="form-group">
+        <label>
+            URL Address:  
+        </label>
+        {{getURLAddress()}}
+    </div>
+    <div class="guideVocal" ng-show="showNameHelp" ng-click="showNameHelp=!showNameHelp">
+        Pick a short clear name that would be useful to people that don't already know
+        about the group using the workspace.  You can change the name at any time, 
+        however the first name you pick will set the URL address and that can not be 
+        changed later.
+    </div>
+    <div class="form-group">
+        <label ng-click="showPurposeHelp=!showPurposeHelp">
+            Workspace Purpose &nbsp; <i class="fa fa- fa-question-circle-o"></i>
+        </label>
+        <textarea class="form-control" ng-model="newWorkspace.purpose"></textarea>
+    </div>
+    <div class="guideVocal" ng-show="showPurposeHelp" ng-click="showPurposeHelp=!showPurposeHelp">
+        Describe in a sentence or two the <b>purpose</b> of the workspace in a way that 
+        people who are not (yet) part of the workspace will understand,
+        and to help them know whether they should or should not be 
+        part of that workspace. <br/>
+        This description will be available to the public if the workspace
+        ever appears in a public list of workspaces.
+    </div>
+    <div class="form-group">
+        <label ng-click="showMembersHelp=!showMembersHelp">
+            Initial Members &nbsp; <i class="fa fa- fa-question-circle-o"></i>
+        </label>
+          <tags-input ng-model="newWorkspace.members" placeholder="Enter email/name of members for this workspace"
+                      display-property="name" key-property="uid">
+              <auto-complete source="loadPersonList($query)"></auto-complete>
+          </tags-input>
+    </div>
+    <div class="guideVocal" ng-show="showMembersHelp" ng-click="showMembersHelp=!showMembersHelp">
+        Members are allowed to access the workspace.  
+        You can enter their email address if they have not accessed the system before. 
+        If not novices, type three letters to get a list of known users that match.  
+        Later, you can add and remove members whenever needed.<br/>
+        <br/>
+        After the workspace is created go to each <b>novice</b> user and send them an 
+        invitation to join.
+    </div>
+    
     
     <div class="form-group">
         <button class="btn btn-primary btn-raised" ng-click="createNewWorkspace()">

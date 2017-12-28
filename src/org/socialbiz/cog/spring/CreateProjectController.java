@@ -20,13 +20,13 @@
 
 package org.socialbiz.cog.spring;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AgentRule;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.BaseRecord;
@@ -35,6 +35,7 @@ import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.LicensedURL;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.ProcessRecord;
 import org.socialbiz.cog.RemoteGoal;
@@ -49,6 +50,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -61,7 +64,7 @@ import com.purplehillsbooks.json.JSONObject;
 public class CreateProjectController extends BaseController {
 
     @RequestMapping(value = "/{siteId}/$/createWorkspace.json", method = RequestMethod.POST)
-    public void createWorkspace(@PathVariable String siteId,
+    public void createWorkspaceAPI(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
@@ -75,27 +78,39 @@ public class CreateProjectController extends BaseController {
             JSONObject newConfig = getPostedObject(ar);
             UserProfile uProf  = ar.getUserProfile();
             long nowTime       = ar.nowTime;
-            String projectName = newConfig.getString("newName");
+            String workspaceName = newConfig.getString("newName");
             String upstream    = newConfig.optString("upstream", null);
 
-            //first, if given a template, check to make sure it exists
+            //first, if given a template, check to make sure it exists else error before creating workspace
             String template    = newConfig.optString("template", null);
-            NGPage template_ngp = null;
+            NGWorkspace templateWorkspace = null;
             if (template!=null && template.length()>0) {
-                template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(template).getWorkspace();
-            }            
+                templateWorkspace = ar.getCogInstance().getWSByCombinedKeyOrFail(template).getWorkspace();
+            }
             
-            //since this is a new project in a new folder, we don't have a folder in 
-            //mind to put in, and we don't care where it is placed.
-            String unspecifiedFolderLocation = null;
-
             //now actually create it
-            NGPage newWorkspace = createPage(uProf, site, projectName, unspecifiedFolderLocation, upstream, nowTime, ar.getCogInstance());
+            NGWorkspace newWorkspace = createWorkspace(uProf, site, workspaceName, upstream, nowTime, ar.getCogInstance());
+            
+            //set the purpose / description
+            String purpose     = newConfig.optString("purpose", "");
+            newWorkspace.setPurpose(purpose);
+            
+            //do the members if any specified
+            JSONArray members  = newConfig.optJSONArray("members");
+            if (members!=null) {
+                NGRole memberRole = newWorkspace.getRole("Members");
+                for (int i=0; i<members.length(); i++) {
+                    JSONObject memberObj = members.getJSONObject(i);
+                    String memberAddress = memberObj.getString("uid");
+                    memberRole.addPlayerIfNotPresent(new AddressListEntry(memberAddress));
+                }
+            }
 
             //now apply template if found
-            if (template_ngp!=null) {
-                newWorkspace.injectTemplate(ar, template_ngp);
-            }            
+            if (templateWorkspace!=null) {
+                newWorkspace.injectTemplate(ar, templateWorkspace);
+            }
+            newWorkspace.saveContent(ar, "Workspace created from web api");
 
             JSONObject repo = newWorkspace.getConfigJSON();
             sendJson(ar, repo);
@@ -126,7 +141,7 @@ public class CreateProjectController extends BaseController {
 
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
 
-            NGPage project = createPage(ar.getUserProfile(), site, remoteName+"(clone)", null, upstream, ar.nowTime, ar.getCogInstance());
+            NGWorkspace project = createWorkspace(ar.getUserProfile(), site, remoteName+"(clone)", upstream, ar.nowTime, ar.getCogInstance());
             ar.setPageAccessLevels(project);
             project.saveFile(ar, "Created new cloned project");
 
@@ -178,10 +193,10 @@ public class CreateProjectController extends BaseController {
             String goUrl = ar.reqParam("goUrl");
             String siteId=ar.reqParam("siteId");
 
-            NGPage project= createTemplateProject(ar,siteId);
+            NGWorkspace newWorkspace = createTemplateProject(ar,siteId);
 
             if (goUrl==null) {
-                goUrl = ar.retPath+ar.getDefaultURL(project);
+                goUrl = ar.retPath+ar.getDefaultURL(newWorkspace);
             }
             response.sendRedirect(goUrl);
         }catch(Exception ex){
@@ -201,7 +216,7 @@ public class CreateProjectController extends BaseController {
                 sendRedirectToLogin(ar);
                 return;
             }
-            NGPage created = createProjectFromAgentRules(ar);
+            NGWorkspace created = createProjectFromAgentRules(ar);
             String goUrl = "Agents.htm";
             if (created!=null){
                 goUrl = ar.baseURL + ar.getDefaultURL(created);
@@ -212,7 +227,7 @@ public class CreateProjectController extends BaseController {
         }
     }
 
-    private NGPage createProjectFromAgentRules(AuthRequest ar) throws Exception {
+    private NGWorkspace createProjectFromAgentRules(AuthRequest ar) throws Exception {
         Cognoscenti cog = ar.getCogInstance();
         UserManager userManager = cog.getUserManager();
         UserProfile uProf = ar.getUserProfile();
@@ -236,8 +251,8 @@ public class CreateProjectController extends BaseController {
                 }
 
                 String upstream = rg.getProjectAccessURL();
-                NGPage newPage = ar.getCogInstance().getProjectByUpstreamLink(upstream);
-                if (newPage!=null) {
+                NGWorkspace newWorkspace = ar.getCogInstance().getWorkspaceByUpstreamLink(upstream);
+                if (newWorkspace!=null) {
                     //looks like a clone already exists, so nothing more to do with this one
                     continue;
                 }
@@ -248,18 +263,18 @@ public class CreateProjectController extends BaseController {
                 String projectName = rg.getProjectName() + " (clone)";
                 UserProfile owner = userManager.findUserByAnyIdOrFail(rule.getOwner());
                 NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
-                newPage = createPage(owner, site, projectName, null, upstream, ar.nowTime, ar.getCogInstance());
+                newWorkspace = createWorkspace(owner, site, projectName, upstream, ar.nowTime, ar.getCogInstance());
                 if (templateKey!=null && templateKey.length()>0) {
                     NGPage template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(templateKey).getWorkspace();
-                    newPage.injectTemplate(ar, template_ngp);
+                    newWorkspace.injectTemplate(ar, template_ngp);
                 }
                 if (upstream!=null && upstream.length()>0) {
                     RemoteProject remProj = new RemoteProject(upstream);
-                    ProjectSync ps = new ProjectSync(newPage, remProj, ar, "xxx");
+                    ProjectSync ps = new ProjectSync(newWorkspace, remProj, ar, "xxx");
                     ps.downloadAll();
                 }
-
-                return newPage;
+                newWorkspace.saveContent(ar, "Created by agent rule "+rule.getId());
+                return newWorkspace;
             }
         }
         return null;
@@ -268,19 +283,18 @@ public class CreateProjectController extends BaseController {
     ////////////////// HELPER FUNCTIONS /////////////////////////////////
 
 
-    private static NGPage createPage(AuthRequest ar, NGBook site)
-            throws Exception {
-        UserProfile uProf = ar.getUserProfile();
-        long nowTime       = ar.nowTime;
-        String projectName = ar.reqParam("projectname").trim();
-        String loc         = ar.defParam("loc", null);
-        String upstream    = ar.defParam("upstream", null);
-        NGPage newPage = createPage(uProf, site, projectName, loc, upstream, nowTime, ar.getCogInstance());
-        ar.setPageAccessLevels(newPage);
-        return newPage;
-    }
-
-
+    /**
+     * Takes a nice display name and turns it into a 
+     * nice URL value.
+     * 
+     * The input:  "My favorite, usual Hangout!"
+     * produces:   "my-favorite-usual-hangout"
+     * 
+     * All the letters are lower cased.
+     * Only A-Z is supported with numerals
+     * any gaps of other characters of any kind replaced with hyphen
+     * hyphen avoided on either end
+     */
     private static String makeGoodSearchableName(String source) {
         StringBuffer result = new StringBuffer();
         source = source.trim();
@@ -288,73 +302,54 @@ public class CreateProjectController extends BaseController {
         boolean betweenWords = false;
         for (int i=0; i<last; i++) {
             char ch = source.charAt(i);
-            boolean addAChar = false;
+            boolean addableChar = false;
             if (ch >= 'a' && ch <= 'z') {
-                addAChar = true;
+                addableChar = true;
             }
             else if (ch >= '0' && ch <= '9') {
-                addAChar = true;
+                addableChar = true;
             }
             else if (ch >= 'A' && ch <= 'Z') {
                 ch = (char) (ch + 32);
-                addAChar = true;
+                addableChar = true;
             }
-            if (addAChar) {
+            if (addableChar) {
+                if (betweenWords) {
+                    result.append('-');
+                }
                 result.append(ch);
                 betweenWords = false;
             }
             else {
-                if (!betweenWords) {
-                    result.append('-');
-                    betweenWords = true;
-                }
+                //this avoid adding a hypen at the beginning if no
+                //acceptable character has been seen yet.
+                betweenWords = result.length()>0;
             }
         }
         return result.toString();
     }
 
 
-/**
- * The loc parameter is a path to a place where the folder already exists, and
- * we want to convert an existing folder to a project.
- */
-    private static NGWorkspace createPage(UserProfile uProf, NGBook site, String workspaceName,
-            String loc, String upstream, long nowTime, Cognoscenti cog) throws Exception {
+    /**
+     * Creates a workspace, but does not save it.   
+     * Caller must save the workspace ... otherwise bad things could happen.
+     */
+    private static NGWorkspace createWorkspace(UserProfile uProf, NGBook site, String workspaceName,
+        String upstream, long nowTime, Cognoscenti cog) throws Exception {
         if (!site.primaryOrSecondaryPermission(uProf)) {
             throw new NGException("nugen.exception.not.member.of.account",
                     new Object[]{site.getFullName()});
         }
 
         NGWorkspace newWorkspace = null;
-        if (loc==null){
-            //normal, create a brand new empty project
-            String pageKey = makeGoodSearchableName(workspaceName);
-            if (pageKey.length()>30) {
-                pageKey = pageKey.substring(0,30);
-            }
-            newWorkspace = site.createProjectByKey(uProf, pageKey, nowTime, cog);
-            List<String> nameSet = new ArrayList<String>();
-            nameSet.add(workspaceName);
-            newWorkspace.setPageNames(nameSet);
+        String pageKey = makeGoodSearchableName(workspaceName);
+        if (pageKey.length()>30) {
+            pageKey = pageKey.substring(0,30);
         }
-        else {
-            //in this case, loc is a path from the root of the site
-            //to a folder that already exists, and which should be
-            //converted to a project.
-            File siteRoot = site.getSiteRootFolder();
-            if (siteRoot == null) {
-                throw new Exception("Failed to create workspace at specified site because site does "
-                        +"not have a root folder for some reason: "+site.getFullName());
-            }
-            File expectedLoc = new File(siteRoot, loc);
-            if (!expectedLoc.exists()) {
-                throw new Exception("Failed to create workspace because location does not exist: "
-                        + expectedLoc.toString());
-            }
-
-            newWorkspace = site.convertFolderToProj(uProf, expectedLoc, nowTime, cog);
-        }
-
+        newWorkspace = site.createProjectByKey(uProf, pageKey, nowTime, cog);
+        List<String> nameSet = new ArrayList<String>();
+        nameSet.add(workspaceName);
+        newWorkspace.setPageNames(nameSet);
 
         //check for and set the upstream link
         if (upstream!=null && upstream.length()>0) {
@@ -362,14 +357,13 @@ public class CreateProjectController extends BaseController {
         }
 
         newWorkspace.setSite(site);
-        newWorkspace.saveWithoutAuthenticatedUser(uProf.getUniversalId(), nowTime, "Creating a workspace", cog);
 
         cog.makeIndexForWorkspace(newWorkspace);
 
         return newWorkspace;
     }
 
-    private static NGPage createTemplateProject(AuthRequest ar, String siteId) throws Exception {
+    private static NGWorkspace createTemplateProject(AuthRequest ar, String siteId) throws Exception {
         try {
 
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
@@ -378,14 +372,20 @@ public class CreateProjectController extends BaseController {
                         new Object[] { site.getFullName() });
             }
 
-            NGPage project = createPage(ar, site);
-
+            UserProfile uProf = ar.getUserProfile();
+            long nowTime       = ar.nowTime;
+            String projectName = ar.reqParam("projectname").trim();
+            String upstream    = ar.defParam("upstream", null);
+            NGWorkspace newWorkspace = createWorkspace(uProf, site, projectName, upstream, nowTime, ar.getCogInstance());
+            ar.setPageAccessLevels(newWorkspace);            
+            
             String templateName = ar.defParam("templateName", null);
             if (templateName!=null && templateName.length()>0) {
                 NGPage template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(templateName).getWorkspace();
-                project.injectTemplate(ar, template_ngp);
+                newWorkspace.injectTemplate(ar, template_ngp);
             }
-            return project;
+            newWorkspace.saveContent(ar, "workspace created from template: "+templateName);
+            return newWorkspace;
         } catch (Exception ex) {
             throw new Exception("Unable to create a workspace from template for site "
                     +siteId, ex);

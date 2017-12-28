@@ -916,22 +916,7 @@ public class NGBook extends ContainerCommon {
 
     }
 
-   
-    public NGPage convertFolderToProj(AuthRequest ar, File expectedLoc) throws Exception {
-        UserProfile up = ar.getUserProfile();
-        return convertFolderToProj(up, expectedLoc, ar.nowTime, ar.getCogInstance());
-    }
-    public NGWorkspace convertFolderToProj(UserProfile up, File expectedLoc, long nowTime, Cognoscenti cog) throws Exception {
-        String projectName = expectedLoc.getName();
-        String projectKey = SectionWiki.sanitize(projectName);
-        projectKey = findUniqueKeyInSite(cog, projectKey);
-        File projectFile = new File(expectedLoc, projectKey + ".sp");
-        NGWorkspace ngp = createProjectAtPath(up, projectFile, projectKey, nowTime, cog);
-        List<String> nameSet = new ArrayList<String>();
-        nameSet.add(projectName);
-        ngp.setPageNames(nameSet);
-        return ngp;
-    }
+
 
     private void assertPermissionToCreateProject(AuthRequest ar) throws Exception {
         if (ar.isLoggedIn()) {

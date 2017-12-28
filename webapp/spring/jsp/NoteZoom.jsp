@@ -457,9 +457,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     $scope.getPhaseStyle = function() {
         if ($scope.noteInfo.draft) {
-            return "background-color:yellow;";
+            return "background-color:yellow;cursor:pointer";
         }
-        return "";
+        return "cursor:pointer";
     }
     $scope.startSend = function() {
         $scope.addressMode = true;
@@ -929,12 +929,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
       <span class="dropdown">
           <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(false)"
                   title="Post this topic but don't send any email">
-          Suppress Email </button>
+          Post Without Email </button>
       </span>
       <span class="dropdown">
           <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(true)"
                   title="Post this topic and send the email to selected users">
-          Send </button>
+          Post &amp; Send Email </button>
       </span>
       <span class="dropdown">
           <button class="btn btn-default btn-warning btn-raised" type="button" ng-click="addressMode = false"
@@ -944,6 +944,27 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
       
     </div>
     
+    <div  class="h1" style="{{getPhaseStyle()}}"  ng-hide="isEditing" ng-click="startEdit()" >
+        <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
+        {{noteInfo.subject}}
+    </div>
+
+    <div class="leafContent" ng-hide="isEditing">
+    	<div  ng-bind-html="noteInfo.html"></div>
+    </div>
+<%if (isLoggedIn) { %>
+    <div class="leafContent" ng-show="isEditing">
+        <input type="text" class="form-control" ng-model="noteInfo.subject">
+        <div style="height:15px"></div>
+    	<div ui-tinymce="tinymceOptions" ng-model="noteInfo.html"></div>
+        <div style="height:15px"></div>
+        <button class="btn btn-primary btn-raised" ng-click="saveEdit()">Close Editor</button>
+    </div>
+<% } %>
+
+    <div style="color:lightgrey;font-style:italic">Last modified: {{noteInfo.modTime|date}}</div>
+
+    <div style="width:100%;margin-top:50px;"></div>
     <div style="height:40px;margin-bottom:15px">
         <div class="leftDivContent">
           <span style="margin-left:20px">Labels:</span>
@@ -958,48 +979,28 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                      Remove Label:<br/>{{role.name}}</a></li>
             </ul>
           </span>
-<%if (isLoggedIn) { %>
-<span class="dropdown">
-   <button class="btn btn-sm btn-primary btn-raised labelButton" 
-       type="button" 
-       id="menu1" 
-       data-toggle="dropdown"
-       title="Add Label"
-       style="padding:5px 10px">
-       <i class="fa fa-plus"></i></button>
-   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
-           style="width:320px;left:-130px">
-       <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-           <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
-                   ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
-               {{rolex.name}}</button>
-       </li>
-   </ul>
-</span>
-<% } %>
+
+        <%if (isLoggedIn) { %>
+        <span class="dropdown">
+           <button class="btn btn-sm btn-primary btn-raised labelButton" 
+               type="button" 
+               id="menu1" 
+               data-toggle="dropdown"
+               title="Add Label"
+               style="padding:5px 10px">
+               <i class="fa fa-plus"></i></button>
+           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+                   style="width:320px;left:-130px">
+               <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
+                   <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                           ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
+                       {{rolex.name}}</button>
+               </li>
+           </ul>
+        </span>
+        <% } %>
         </div>
     </div>
-    <div  class="h1" style="{{getPhaseStyle()}}">
-        <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
-        {{noteInfo.subject}}
-    </div>
-
-    <div class="leafContent" ng-hide="isEditing">
-    	<div  ng-bind-html="noteInfo.html"></div>
-    </div>
-<%if (isLoggedIn) { %>
-    <div class="leafContent" ng-show="isEditing">
-        <input type="text" class="form-control" ng-model="noteInfo.subject">
-        <div style="height:15px"></div>
-    	<div ui-tinymce="tinymceOptions" ng-model="noteInfo.html"></div>
-        <div style="height:15px"></div>
-        <button class="btn btn-primary btn-raised" ng-click="saveEdit()">Save</button>
-    </div>
-<% } %>
-
-    <div style="color:lightgrey;font-style:italic">Last modified: {{noteInfo.modTime|date}}</div>
-
-    <div style="width:100%;margin-top:50px;"></div>
     <div>
       <span style="width:150px">Attachments:</span>
       <span ng-repeat="docid in noteInfo.docList" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"

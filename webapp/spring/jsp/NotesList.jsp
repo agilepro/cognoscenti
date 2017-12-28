@@ -409,8 +409,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     <% if (isMember) { %>
         <div>
-            <button class="btn btn-default btn-raised" ng-click="openTopicCreator()">
-			    Create New Topic
+            <button class="btn btn-primary btn-raised" ng-click="openTopicCreator()">
+			    <i class="fa fa-plus"></i> Create New Topic
             </button>
         </div>
     <% } %>

@@ -149,6 +149,10 @@ app.controller('myCtrl', function($scope, $http) {
                 <td><a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.parentKey}}/frontPage.htm">{{getWorkspaceName(rec.parentKey)}}</a></td>
             </tr>
         </table>
+        
+        <a href="accountCreateProject.htm" >
+            <button class="btn btn-primary btn-raised"><i class="fa fa-plus"></i> Create Workspace</button>
+        </a>
 
         <div class="guideVocal" ng-show="noneFound">
             User <% uProf.writeLink(ar); %> has not created any projects, and does not have any access to sites to create one in.

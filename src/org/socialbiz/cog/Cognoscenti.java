@@ -543,7 +543,7 @@ System.out.println("Weaver Server Object == Start the Server");
         return ret;
     }
 
-    public NGPage getProjectByUpstreamLink(String upstream) throws Exception {
+    public NGWorkspace getWorkspaceByUpstreamLink(String upstream) throws Exception {
         if (upstream==null || upstream.length()==0) {
             return null;
         }

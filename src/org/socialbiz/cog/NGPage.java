@@ -56,6 +56,7 @@ public abstract class NGPage extends ContainerCommon {
 
     private PageInfoRecord pageInfo;
     private ReminderMgr reminderMgr;
+    private ProcessRecord pageProcess;
     
     protected List<String> displayNames;
     protected List<NGSection> sectionElements = null;
@@ -93,6 +94,7 @@ public abstract class NGPage extends ContainerCommon {
         getRequiredSection("Folders");
 
         //forces the Tasks section, and also the process initialization
+        //guarantees the initialization of pageProcess member variable
         getProcess();
 
         //SCHEMA MIGRATION to remove Public Attachments Section
@@ -836,9 +838,10 @@ public abstract class NGPage extends ContainerCommon {
 
     //a page always has a process, so if asked for, and we can't find
     //it, then we create it.
-    public ProcessRecord getProcess()
-        throws Exception
-    {
+    public ProcessRecord getProcess() throws Exception {
+        if (pageProcess!=null) {
+            return pageProcess;
+        }
         NGSection sec = getRequiredSection("Tasks");
         ProcessRecord pr = sec.requireChild("process", ProcessRecord.class);
         if (pr.getId() == null || pr.getId().length() == 0)  {
@@ -846,7 +849,8 @@ public abstract class NGPage extends ContainerCommon {
             pr.setId(getUniqueOnPage());
             pr.setState(BaseRecord.STATE_UNSTARTED);
         }
-        return pr;
+        pageProcess =  pr;
+        return pageProcess;
     }
 
 
@@ -1692,6 +1696,13 @@ public abstract class NGPage extends ContainerCommon {
         return count;
     }
 
+    public String getPurpose() throws Exception {
+        return getProcess().getDescription();
+    }
+    public void setPurpose(String purp) throws Exception {
+        getProcess().setDescription(purp);
+    }
+    
     public JSONObject getConfigJSON() throws Exception {
         ProcessRecord process = getProcess();
         JSONObject workspaceConfigInfo = new JSONObject();
