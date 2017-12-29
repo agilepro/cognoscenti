@@ -352,13 +352,39 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         return doc;
     }
-    $scope.navigateToDoc = function(doc) {
+    $scope.navigateToDocOld = function(doc) {
         if (!doc.id) {
             console.log("DOCUMENT without id", doc);
             alert("That document does not have an id");
             return;
         }
         window.location="docinfo"+doc.id+".htm";
+    }
+    $scope.navigateToDoc = function(docId) {
+        var doc = $scope.getFullDoc(docId);
+        window.location="docinfo"+doc.id+".htm";
+    }
+    $scope.navigateToDocDetails = function(docId) {
+        var doc = $scope.getFullDoc(docId);
+        window.location="editDetails"+doc.id+".htm";
+    }
+    $scope.sendDocByEmail = function(docId) {
+        var doc = $scope.getFullDoc(docId);
+        window.location="sendNote.htm?att="+doc.id;
+    }
+    $scope.downloadDocument = function(docId) {
+        var doc = $scope.getFullDoc(docId);
+        window.location="a/"+doc.name;
+    }
+    $scope.unattachDocFromItem = function(docId) {
+        var newList = [];
+        $scope.goalInfo.docLinks.forEach( function(iii) {
+            if (iii != docId) {
+                newList.push(iii);
+            }
+        });
+        $scope.goalInfo.docLinks = newList;
+        $scope.saveGoal(['docLinks']);
     }
     $scope.openAttachDocument = function () {
 
@@ -658,32 +684,62 @@ function addvalue() {
             </td>
         </tr>
         <tr>
-            <td class="gridTableColummHeader">Linked Documents:</td>
-            <td >
-                <span ng-repeat="doc in getDocs()" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                    ng-click="navigateToDoc(doc)">
-                    <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{doc.name}}
-                </span>
-                  <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
-                      title="Attach a document">
-                      ADD </button>
-            </td>
+              <td>Attachments: </td>
+              <td ><span ng-repeat="docid in goalInfo.docLinks" style="vertical-align: top">
+                  <span class="dropdown" title="Access this attachment">
+                      <button class="attachDocButton" id="menu1" data-toggle="dropdown">
+                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> 
+                      {{getFullDoc(docid).name | limitTo : 15}}</button>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
+                        <li role="presentation" style="background-color:lightgrey">
+                            <a role="menuitem" 
+                            title="This is the full name of the document"
+                            ng-click="navigateToDoc(docid)">{{getFullDoc(docid).name}}</a></li>
+                        <li role="presentation"><a role="menuitem" 
+                            title="Use DRAFT to set the meeting without any notifications going out"
+                            ng-click="navigateToDoc(docid)">Access Document</a></li>
+                        <li role="presentation"><a role="menuitem"
+                            title="Use PLAN to allow everyone to get prepared for the meeting"
+                            ng-click="downloadDocument(docid)">Download File</a></li>
+                        <li role="presentation"><a role="menuitem"
+                            title="Use RUN while the meeting is actually in session"
+                            ng-click="navigateToDocDetails(docid).htm">Document Details</a></li>
+                        <li role="presentation"><a role="menuitem"
+                            title="Use RUN while the meeting is actually in session"
+                            ng-click="sendDocByEmail(docid)">Send by Email</a></li>
+                        <li role="presentation"><a role="menuitem"
+                            title="Use RUN while the meeting is actually in session"
+                            ng-click="unattachDocFromItem(docid)">Un-attach</a></li>
+                      </ul>
+                  </span>
+              </span>
+              <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
+                  title="Attach a document">
+                  ADD </button>
+           </td>
         </tr>
         <tr>
-            <td class="gridTableColummHeader">Linked Topics:</td>
-            <td >
+            <td title="On the discussion topic page, you can link action items, and those topics will appear here">Linked Topics:</td>
+            <td title="On the discussion topic page, you can link action items, and those topics will appear here">
                 <span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                     ng-click="navigateToTopic(topic)">
                     <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
                 </span>
+                <span ng-show="!linkedTopics || linkedTopics.length==0" style="color:lightgray">
+                    No discussion topics have links to this action item.
+                </span>
             </td>
         </tr>
         <tr>
-            <td class="gridTableColummHeader">Linked Meetings:</td>
-            <td >
+            <td title="On the meeting page, you can link action items, and those meetings will appear here">
+                Linked Meetings:</td>
+            <td title="On the meeting page, you can link action items, and those meetings will appear here">
                 <span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
                     ng-click="navigateToMeeting(meet)">
                     <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
+                </span>
+                <span ng-show="!linkedMeetings || linkedMeetings.length==0" style="color:lightgray">
+                    No meetings have links to this action item.
                 </span>
             </td>
         </tr>

@@ -1370,6 +1370,28 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var doc = $scope.getFullDoc(docId);
         window.location="docinfo"+doc.id+".htm";
     }
+    $scope.navigateToDocDetails = function(docId) {
+        var doc = $scope.getFullDoc(docId);
+        window.location="editDetails"+doc.id+".htm";
+    }
+    $scope.sendDocByEmail = function(docId) {
+        var doc = $scope.getFullDoc(docId);
+        window.location="sendNote.htm?att="+doc.id;
+    }
+    $scope.downloadDocument = function(docId) {
+        var doc = $scope.getFullDoc(docId);
+        window.location="a/"+doc.name;
+    }
+    $scope.unattachDocFromItem = function(item, docId) {
+        var newList = [];
+        item.docList.forEach( function(iii) {
+            if (iii != docId) {
+                newList.push(iii);
+            }
+        });
+        item.docList = newList;
+        $scope.saveAgendaItemParts(item, ['docList']);
+    }
     $scope.openAttachDocument = function (item) {
 
         var attachModalInstance = $modal.open({

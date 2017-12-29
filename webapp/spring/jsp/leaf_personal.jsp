@@ -209,9 +209,11 @@ app.controller('myCtrl', function($scope, $http) {
                     <span ng-show="isTemplate"><b>This workspace is one of your templates</b></span>
                     <br/>
                     <br/>
-                    You can use this workspace as template for your future reference. If you mark this
-                    workspace as template then it will appear in the "List of Templates". 
-                    At any time you can stop using this workspace as template.
+                    A template workspace is used at the time that you create a new workspace, 
+                    and all of the roles and action items will be copied from the template to the 
+                    newly created workspace (but without any users assigned to them).  
+                    List your templates by choosing "Workspaces &gt; Templates" from the 
+                    navigation bar at the top of the screen. 
                   </div>
                 </td>
             </tr>

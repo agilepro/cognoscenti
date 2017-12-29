@@ -143,3 +143,11 @@ a, a:focus, a:hover {
     border: 1px solid #DFD;
     background-color:#EFE;
 }
+.attachDocButton {
+    border:1px solid skyblue;
+    border-radius:5px;
+    margin:3px;
+    padding:5px;
+    box-shadow: 2px 2px #BBBBBB;
+    max-width:200px;
+}

@@ -737,7 +737,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 <% } %>
             </div>
             <div>
-                <i ng-click="startItemDetailEdit(item)">
+                <i ng-click="openAgenda(item)">
                 {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
             </div>
           </div>
@@ -778,18 +778,42 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
       </tr>
       <tr ng-show="showItemMap[item.id]">
         <td>
-           <div style="margin:10px;">
-              <b>Attachments: </b>
-              <span ng-repeat="docid in item.docList" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                   ng-click="navigateToDoc(docid)">
-                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{getFullDoc(docid).name}}
+           <table style="margin:10px;"><tr>
+              <td><b>Attachments: </b></td>
+              <td><span ng-repeat="docid in item.docList" style="vertical-align: top">
+                  <span class="dropdown" title="Access this attachment">
+                      <button class="attachDocButton" id="menu1" data-toggle="dropdown">
+                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> 
+                      {{getFullDoc(docid).name |limitTo:15}}</button>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
+                        <li role="presentation" style="background-color:lightgrey">
+                            <a role="menuitem" 
+                            title="This is the full name of the document"
+                            ng-click="navigateToDoc(docid)">{{getFullDoc(docid).name}}</a></li>
+                        <li role="presentation"><a role="menuitem" 
+                            title="Use DRAFT to set the meeting without any notifications going out"
+                            ng-click="navigateToDoc(docid)">Access Document</a></li>
+                        <li role="presentation"><a role="menuitem"
+                            title="Use PLAN to allow everyone to get prepared for the meeting"
+                            ng-click="downloadDocument(docid)">Download File</a></li>
+                        <li role="presentation"><a role="menuitem"
+                            title="Use RUN while the meeting is actually in session"
+                            ng-click="navigateToDocDetails(docid).htm">Document Details</a></li>
+                        <li role="presentation"><a role="menuitem"
+                            title="Use RUN while the meeting is actually in session"
+                            ng-click="sendDocByEmail(docid)">Send by Email</a></li>
+                        <li role="presentation"><a role="menuitem"
+                            title="Use RUN while the meeting is actually in session"
+                            ng-click="unattachDocFromItem(item, docid)">Un-attach</a></li>
+                      </ul>
+                  </span>
               </span>
 <%if (isLoggedIn) { %>
               <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument(item)"
                   title="Attach a document">
                   ADD </button>
 <% } %>
-           </div>
+           </td></tr></table>
         </td>
       </tr>
 
