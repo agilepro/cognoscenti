@@ -1358,7 +1358,6 @@ public class UserController extends BaseController {
                     }
                 }
 
-                request.setAttribute("book",    null);
                 request.setAttribute("ngpage",null);
                 request.setAttribute("userName",userName);
                 request.setAttribute("flag","true");
@@ -1404,7 +1403,6 @@ public class UserController extends BaseController {
                     }
                 }
 
-                request.setAttribute("book",    null);
                 request.setAttribute("ngpage",ngp);
                 request.setAttribute("userName",userName);
                 request.setAttribute("flag","true");

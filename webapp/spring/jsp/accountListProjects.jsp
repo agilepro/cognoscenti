@@ -6,7 +6,7 @@
     
     List<NGPageIndex> ownedProjs = ar.getCogInstance().getAllContainers();
     boolean noneFound = ownedProjs.size()==0;
-    String accountKey = ar.reqParam("accountId");
+    String accountKey = ar.reqParam("siteId");
     NGBook site = cog.getSiteByIdOrFail(accountKey);
     boolean showExperimental = site.getShowExperimental();
 

@@ -43,7 +43,7 @@
     String siteId = (String)request.getAttribute("siteId");
 
 //this also indicates a site id
-    String accountId = (String)request.getAttribute("accountId");
+    String accountId = (String)request.getAttribute("siteId");
 
 //apparently this is calculated elsewhere and passed in.
     String viewingSelfStr = (String)request.getAttribute("viewingSelf");
@@ -104,7 +104,7 @@
             }
         }
     }
-    String accountKey = ar.defParam("accountId", null);
+    String accountKey = ar.defParam("siteId", null);
     NGBook site = null;
     if (accountKey!=null) {
         site = cog.getSiteByIdOrFail(accountKey);

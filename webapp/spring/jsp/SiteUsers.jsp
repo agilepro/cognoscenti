@@ -5,7 +5,7 @@
 %><%
 
     ar.assertLoggedIn("");
-    String accountId = ar.reqParam("accountId");
+    String accountId = ar.reqParam("siteId");
     NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(accountId);
     String pageAddress = ar.getResourceURL(ngb,"personal.htm");
 

@@ -133,7 +133,7 @@ public class RemoteLinkController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         try{
-            request.setAttribute("book", siteId);
+            request.setAttribute("siteId", siteId);
             request.setAttribute("pageId", pageId);
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGPage ngp = registerRequiredProject(ar, siteId, pageId);

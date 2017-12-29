@@ -24,7 +24,7 @@
             }
         }
     }
-    String accountKey = ar.defParam("accountId", null);
+    String accountKey = ar.defParam("siteId", null);
     NGBook site = null;
     if (accountKey!=null) {
         site = cog.getSiteByIdOrFail(accountKey);

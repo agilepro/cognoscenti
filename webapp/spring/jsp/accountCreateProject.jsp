@@ -13,7 +13,7 @@ Required parameter:
     //this page should only be called when logged in and having access to the site
     ar.assertLoggedIn("Must be logged in to create a workspace");
 
-    String accountKey = ar.reqParam("accountId");
+    String accountKey = ar.reqParam("siteId");
     NGBook site = ar.getCogInstance().getSiteByIdOrFail(accountKey);
 
     UserProfile  uProf =ar.getUserProfile();

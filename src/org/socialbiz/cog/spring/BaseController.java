@@ -319,8 +319,6 @@ public class BaseController {
         ar.req.setAttribute("headerType", "project");
         ar.req.setAttribute("siteId",     siteId);
         ar.req.setAttribute("pageId",     pageId);
-        //todo: eliminate this
-        ar.req.setAttribute("book",       siteId);
         NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
         if (!siteId.equals(ngw.getSiteKey())) {
             throw new NGException("nugen.operation.fail.account.match", new Object[]{pageId,siteId});
@@ -335,10 +333,6 @@ public class BaseController {
         ar.req.setAttribute("headerType", "site");
         ar.req.setAttribute("siteId",    siteId);
         ar.req.setAttribute("pageId",    "$");
-        //TODO: eliminate this
-        ar.req.setAttribute("book",      siteId);
-        //TODO: eliminate this
-        ar.req.setAttribute("accountId", siteId);
         NGBook site = ar.getCogInstance().getSiteByIdOrFail( siteId );
         ar.setPageAccessLevels(site);
         ar.req.setAttribute("title", site.getFullName());

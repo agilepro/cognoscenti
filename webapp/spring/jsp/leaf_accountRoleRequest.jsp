@@ -6,7 +6,7 @@
 %><%
 
     ar.assertLoggedIn("");
-    String accountId = ar.reqParam("accountId");
+    String accountId = ar.reqParam("siteId");
     NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(accountId);
     String go = "t/"+URLEncoder.encode(accountId, "UTF-8")+"/$/roleManagement.htm";
     List<CustomRole> roles = ngb.getAllRoles();
