@@ -32,6 +32,7 @@ import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -50,7 +51,7 @@ public class GoalRecord extends BaseRecord {
      * Make sure that all the important attributes are copied from another action item
      * object, but NOT the id. The ID remains unchanged.
      */
-    public void copyFrom(GoalRecord other) throws Exception {
+    private void copyFrom(GoalRecord other) throws Exception {
         setSynopsis(other.getSynopsis());
         setDescription(other.getDescription());
         setActionScripts(other.getActionScripts());
@@ -914,6 +915,8 @@ public class GoalRecord extends BaseRecord {
     public List<String> getDocLinks() {
         return getVector("docLinks");
     }
+    
+
 
     public JSONObject getJSON4Goal(NGPage ngp) throws Exception {
         JSONObject thisGoal = new JSONObject();
@@ -962,6 +965,8 @@ public class GoalRecord extends BaseRecord {
         }
         thisGoal.put("labelMap",  labelMap);
         thisGoal.put("docLinks",  constructJSONArray(getDocLinks()));
+        
+        extractScalarString(thisGoal, "checklist");
 
         return thisGoal;
     }
@@ -1089,6 +1094,7 @@ public class GoalRecord extends BaseRecord {
             setDocLinks(constructVector(goalObj.getJSONArray("docLinks")));
         }
         updateScalarString("taskArea", goalObj);
+        updateScalarString("checklist", goalObj);
     }
 
     //This used to be a time scheduled to send the email, but it was only lbeing used

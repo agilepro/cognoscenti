@@ -274,6 +274,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         newList.push(goal);
         $scope.allGoals = newList;
+        $scope.constructAllCheckItems();
     }
     $scope.saveGoal = function(goal) {
         var postURL = "updateGoal.json?gid="+goal.id;
@@ -284,6 +285,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         objForUpdate.prospects = goal.prospects;  
         objForUpdate.duedate = goal.duedate;  
         objForUpdate.status = goal.status;  
+        objForUpdate.checklist = goal.checklist;  
         var postdata = angular.toJson(objForUpdate);
         $scope.showError=false;
         $http.post(postURL, postdata)
@@ -500,6 +502,54 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     
     $scope.getTaskAreas();
     
+    $scope.constructAllCheckItems = function() {
+        $scope.allGoals.forEach( function(actionItem) {
+            var list = [];
+            if (actionItem.checklist) {
+                var lines = actionItem.checklist.split("\n");
+                var idx = 0;
+                lines.forEach( function(item) {
+                    item = item.trim();
+                    if (item && item.length>0) {
+                        if (item.startsWith("x ")) {
+                            list.push( {name: item.substring(2), checked:true, index: idx} );
+                            idx++;
+                        }
+                        else {
+                            list.push( {name: item, checked:false, index: idx} );
+                            idx++;
+                        } 
+                    }
+                });
+            }
+            actionItem.checkitems = list;
+            console.log("CHECKITEMS", actionItem);
+        });
+    }
+    $scope.toggleCheckItem = function($event,item, changeIndex) {
+        item.checkitems.forEach( function(item) {
+            if (item.index==changeIndex) {
+                item.checked = !item.checked;
+            }
+        });
+        var newList = [];
+        item.checkitems.forEach( function(item) {
+            if (item.checked) {
+                newList.push("x " + item.name);
+            }
+            else {
+                newList.push(item.name);
+            }
+        });
+        item.checklist = newList.join("\n");
+        console.log("SAVING", item);
+        $scope.saveGoal(item);
+        $event.stopPropagation();
+    }
+    
+    $scope.constructAllCheckItems();
+    
+    
     $scope.openTaskAreaEditor = function (ta) {
         
         if (!ta.id) {
@@ -593,6 +643,8 @@ function addvalue() {
                </ul>
              </span>
         </span>
+        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showChecklists">
+            Show Checklists</span>
     </div>
 
 
@@ -631,15 +683,14 @@ function addvalue() {
            <th></th>
            <th>Synopsis</th>
            <th>Assigned</th>
-           <th title="The date the action item is due to be completed">Due Date</th>
-           <th title="The date the action item was accepted and started">Started</th>
+           <th title="Dates that the action was started, due, and completed">Dates</th>
            <th title="Give a Red-Yellow-Green indication of how it is going"></th>
            <th title="A written summary of the current status">Status</th>
         </tr>
         <tbody ng-repeat="area in taskAreaList">
           <tr class="headerRow">
             <td colspan="2" ng-click="openTaskAreaEditor(area)">{{area.name}}&nbsp;</td>
-            <td colspan="3">
+            <td colspan="2">
                 <div ng-repeat="ass in area.assignees">
                   <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass.uid}}">{{ass.name}}</a>
                 </div>
@@ -710,6 +761,13 @@ function addvalue() {
                   {{label.name}}
                 </button>
               </span>
+              <div ng-show="showChecklists">
+                  <div ng-repeat="ci in rec.checkitems" ng-click="toggleCheckItem($event,rec,ci.index)">
+                    <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
+                    <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
+                    &nbsp; {{ci.name}}
+                  </div>
+              </div>
             </td>
             <td title="People assigned to complete this action item.">
               <div>
@@ -718,15 +776,16 @@ function addvalue() {
                 </div>
               </div>
             </td>
-            <td style="width:120px"  ng-click="openModalActionItem(rec, 'status')"
-                title="The date the action item is due to be completed">
-              <div ng-show="rec.duedate>100" >
-                {{rec.duedate | date}}
+            <td style="width:150px"  ng-click="openModalActionItem(rec, 'status')"
+                title="Dates the action item was started, due, or completed">
+              <div ng-show="rec.startdate>100" >
+                start: {{rec.startdate | date}}
               </div>
-            </td>
-            <td style="width:120px" ng-click="openModalActionItem(rec, 'details')"
-                title="The date the action item was accepted and started">
-              <div ng-show="rec.startdate>100">{{rec.startdate | date}}
+              <div ng-show="rec.duedate>100" >
+                due: {{rec.duedate | date}}
+              </div>
+              <div ng-show="rec.enddate>100" >
+                end: {{rec.enddate | date}}
               </div>
             </td>
             <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going">

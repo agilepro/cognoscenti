@@ -501,13 +501,16 @@ public class NGBook extends ContainerCommon {
 
     @Override
     public List<RoleRequestRecord> getAllRoleRequest() throws Exception {
-
+        long tooOld = System.currentTimeMillis() - 90*24*60*60*1000;
         List<RoleRequestRecord> requestList = new ArrayList<RoleRequestRecord>();
         DOMFace rolelist = siteInfoRec.requireChild("Role-Requests", DOMFace.class);
         List<RoleRequestRecord> children = rolelist.getChildren("requests",
                 RoleRequestRecord.class);
         for (RoleRequestRecord rrr : children) {
-            requestList.add(rrr);
+            if (rrr.getModifiedDate() > tooOld) {
+                //only add requests that are not too old
+                requestList.add(rrr);
+            }
         }
         return requestList;
     }

@@ -1096,7 +1096,21 @@ public abstract class NGPage extends ContainerCommon {
     @Override
     public RoleRequestRecord createRoleRequest(String roleName, String requestedBy, long modifiedDate, String modifiedBy, String requestDescription) throws Exception
     {
+        //remove any old requests more than 90 days old, before creating a new one
+        List<String> removalList = new ArrayList<String>();
+        long tooOld = System.currentTimeMillis() - 90*24*60*60*1000;
         DOMFace rolelist = pageInfo.requireChild("Role-Requests", DOMFace.class);
+        List<RoleRequestRecord> children =  rolelist.getChildren("requests", RoleRequestRecord.class);
+        for (RoleRequestRecord rrr: children) {
+            if (rrr.getModifiedDate() < tooOld) {
+                removalList.add(rrr.getRequestId());
+            }
+        }
+        //now clean up the removals.
+        for (String oldId : removalList) {
+            rolelist.removeChildrenByNameAttrVal("requests", "id", oldId);
+        }
+        
         RoleRequestRecord newRoleRequest = rolelist.createChild("requests", RoleRequestRecord.class);
         newRoleRequest.setRequestId(generateKey());
         newRoleRequest.setModifiedDate(modifiedDate);
@@ -1117,12 +1131,15 @@ public abstract class NGPage extends ContainerCommon {
 
     @Override
     public List<RoleRequestRecord> getAllRoleRequest() throws Exception {
-
+        long tooOld = System.currentTimeMillis() - 90*24*60*60*1000;
         List<RoleRequestRecord> requestList = new ArrayList<RoleRequestRecord>();
         DOMFace rolelist = pageInfo.requireChild("Role-Requests", DOMFace.class);
         List<RoleRequestRecord> children =  rolelist.getChildren("requests", RoleRequestRecord.class);
         for (RoleRequestRecord rrr: children) {
-            requestList.add(rrr);
+            if (rrr.getModifiedDate() > tooOld) {
+                //only add requests that are not too old
+                requestList.add(rrr);
+            }
         }
         return requestList;
     }

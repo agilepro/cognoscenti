@@ -215,7 +215,7 @@ public class ResourceDecoder {
             NGRole specifiedRole = site.getRole(restrictRole);
             licensedRoles.add(specifiedRole);
         }
-        if (lic instanceof LicenseForUser) {
+        else if (lic instanceof LicenseForUser) {
             //for user license, find all the roles they play
             licensedRoles = workspace.findRolesOfPlayer(licenseOwner);
         }

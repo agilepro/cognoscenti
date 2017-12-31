@@ -216,6 +216,48 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.startEdit = function(startMode) {
         $scope.openModalActionItem(startMode);
     }
+    $scope.constructCheckItems = function() {
+        var list = [];
+        if ($scope.goalInfo.checklist) {
+            var lines = $scope.goalInfo.checklist.split("\n");
+            var idx = 0;
+            lines.forEach( function(item) {
+                item = item.trim();
+                if (item && item.length>0) {
+                    if (item.startsWith("x ")) {
+                        list.push( {name: item.substring(2), checked:true, index: idx} );
+                        idx++;
+                    }
+                    else {
+                        list.push( {name: item, checked:false, index: idx} );
+                        idx++;
+                    } 
+                }
+            });
+        }
+        $scope.checkitems = list;
+        console.log("CHECKITEMS", list);
+    }
+    $scope.toggleCheckItem = function(changeIndex) {
+        $scope.checkitems.forEach( function(item) {
+            if (item.index==changeIndex) {
+                item.checked = !item.checked;
+            }
+        });
+        var newList = [];
+        $scope.checkitems.forEach( function(item) {
+            if (item.checked) {
+                newList.push("x " + item.name);
+            }
+            else {
+                newList.push(item.name);
+            }
+        });
+        $scope.goalInfo.checklist = newList.join("\n");
+        console.log("SAVING", $scope.goalInfo)
+        $scope.saveGoal();
+    }
+    $scope.constructCheckItems();
     $scope.saveGoal = function() {
         var postURL = "updateGoal.json?gid="+$scope.goalInfo.id;
         var postdata = angular.toJson($scope.goalInfo);
@@ -225,6 +267,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $http.post(postURL, postdata)
         .success( function(data) {
             $scope.goalInfo = data;
+            $scope.constructCheckItems();
             $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
@@ -240,6 +283,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         .success( function(data) {
             console.log("CALL to success from undoGoalChanges");
             $scope.goalInfo = data;
+            $scope.constructCheckItems();
             $scope.refreshHistory();
         })
         .error( function(data, status, headers, config) {
@@ -292,8 +336,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             $scope.reportError(data);
         });
     }
-    $scope.changeRAG = function(newRAG) {
-        console.log("CALL to changeRAG");
+    $scope.changeRYG = function(newRAG) {
+        console.log("CALL to changeRYG");
         $scope.goalInfo.prospects = newRAG;
         $scope.saveGoal();
         $scope.refreshHistory();
@@ -472,6 +516,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
         modalInstance.result.then(function (modifiedGoal) {
             $scope.goalInfo = modifiedGoal;
+            $scope.constructCheckItems();
         }, function () {
           //cancel action
         });
@@ -537,7 +582,7 @@ function addvalue() {
     <table ng-hide="editGoalInfo" class="spaceyTable">
         <tr class="clickable" ng-click="startEdit('assignee')" 
             title="Click here to update the status of this action item">
-            <td class="gridTableColummHeader">
+            <td >
                 <img ng-src="<%=ar.retPath%>assets/goalstate/large{{goalInfo.state}}.gif" />
             </td>
             <td>
@@ -546,7 +591,7 @@ function addvalue() {
         </tr>
         <tr class="clickable" ng-click="startEdit('details')" 
             title="Click here to update the description of this action item">
-            <td class="gridTableColummHeader">Summary:</td>
+            <td >Summary:</td>
             <td>
                 <b>{{goalInfo.synopsis}}</b>
                 ~ {{goalInfo.description}}
@@ -558,7 +603,7 @@ function addvalue() {
             </td>
         </tr>
         <tr title="The action item can be assigned to any number of people who will receive reminders until it is completed.">
-            <td class="gridTableColummHeader">Assigned To:</td>
+            <td >Assigned To:</td>
             <td>
               <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
                   <auto-complete source="loadPersonList($query)"></auto-complete>
@@ -570,7 +615,7 @@ function addvalue() {
             </td>
         </tr>
         <tr ng-show="selectedPersonShow">
-            <td class="gridTableColummHeader"></td>
+            <td ></td>
             <td class="well"> 
                for <b>{{selectedPerson.name}}</b>:
                <button ng-click="navigateToUser(selectedPerson)" class="btn btn-info">
@@ -583,28 +628,42 @@ function addvalue() {
         </tr>
         <tr class="clickable" ng-click="startEdit('status')" 
             title="Click here to update the status of this action item">
-            <td class="gridTableColummHeader">Status:</td>
+            <td >Status:</td>
             <td>
                 {{goalInfo.status}}
-                <span ng-hide="goalInfo.status" class="instruction" 
+                <span ng-hide="goalInfo.status" class="instruction"
                       style="border:1px solid gray;padding:5px 20px">
                     Click here to record status</span>
             </td>
         </tr>
+        <tr class="clickable"  
+            title="Manage the check list of items to do for this action">
+            <td ng-click="startEdit('assignee')" >Checklist:</td>
+            <td>
+                <div ng-repeat="ci in checkitems" ng-click="toggleCheckItem(ci.index)">
+                    <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
+                    <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
+                    &nbsp; {{ci.name}}
+                </div>
+                <span ng-hide="checkitems.length>0" class="instruction" ng-click="startEdit('assignee')"
+                      style="border:1px solid gray;padding:5px 20px">
+                    Click here to create a checklist</span>
+            </td>
+        </tr>
         <tr title="Red-Yellow-Green is a high-level status saying how things are going generally">
-            <td class="gridTableColummHeader">R-Y-G:</td>
+            <td >R-Y-G:</td>
             <td>
                 <span>
                     <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goalInfo.prospects=='bad'"
-                         title="In trouble" ng-click="changeRAG('bad')">
+                         title="In trouble" ng-click="changeRYG('bad')">
                     <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goalInfo.prospects=='bad'"
                          title="In trouble">
                     <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goalInfo.prospects=='ok'"
-                         title="Warning" ng-click="changeRAG('ok')">
+                         title="Warning" ng-click="changeRYG('ok')">
                     <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goalInfo.prospects=='ok'"
                          title="Warning">
                     <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goalInfo.prospects=='good'"
-                         title="Good shape" ng-click="changeRAG('good')">
+                         title="Good shape" ng-click="changeRYG('good')">
                     <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goalInfo.prospects=='good'"
                          title="Good shape">
                 </span>
@@ -752,7 +811,7 @@ function addvalue() {
 
         <tr><td height="20px"></td></tr>
         <tr>
-            <td class="gridTableColummHeader">Accomplishments:</td>
+            <td >Accomplishments:</td>
             <td style="width:20px;"></td>
             <td><textarea ng-model="newAccomplishment" class="form-control"></textarea></td>
             <td style="width:40px;"></td>
@@ -770,7 +829,7 @@ function addvalue() {
     <table width="100%">
         <tr><td height="20px"></td></tr>
         <tr ng-show="subGoals.length>0">
-            <td class="gridTableColummHeader">Sub Action Items:</td>
+            <td >Sub Action Items:</td>
             <td style="width:20px;"></td>
             <td>
                 <div ng-repeat="sub in subGoals">
@@ -815,7 +874,7 @@ function updateVal(){
                                 <table>
                                     <tr><td style="height:20px"></td></tr>
                                     <tr>
-                                        <td class="gridTableColummHeader">Sub Workspace Name:</td>
+                                        <td >Sub Workspace Name:</td>
                                         <td style="width:20px;"></td>
                                         <td>
                                             <input type="text" onblur="validateProjectField()" class="inputGeneral"
@@ -824,7 +883,7 @@ function updateVal(){
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="gridTableColummHeader"></td>
+                                        <td ></td>
                                         <td style="width:20px;"></td>
                                         <td width="396px">
                                             <b>Note:</b> From here you can create a new subproject.The subproject will be connected to this activity, and will be completed when the subproject process is completed.
@@ -832,7 +891,7 @@ function updateVal(){
                                     </tr>
                                     <tr><td style="height:10px"></td></tr>
                                     <tr>
-                                        <td class="gridTableColummHeader">Select Template:</td>
+                                        <td >Select Template:</td>
                                         <td style="width:20px;"></td>
                                         <td><Select class="selectGeneral" id="templateName" name="templateName">
                                             <option value="" selected>Select</option>
@@ -847,7 +906,7 @@ function updateVal(){
                                       </tr>
                                       <tr><td style="height:15px"></td></tr>
                                       <tr>
-                                          <td class="gridTableColummHeader"><fmt:message key="nugen.userhome.Account"/></td>
+                                          <td ><fmt:message key="nugen.userhome.Account"/></td>
                                           <td style="width:20px;"></td>
                                           <td><select class="selectGeneral" name="accountId" id="accountId">
                                             <%
@@ -868,13 +927,13 @@ function updateVal(){
                                      </tr>
                                      <tr><td style="height:15px"></td></tr>
                                      <tr>
-                                         <td class="gridTableColummHeader" style="vertical-align:top"><fmt:message key="nugen.project.desc.text"/></td>
+                                         <td  style="vertical-align:top"><fmt:message key="nugen.project.desc.text"/></td>
                                          <td style="width:20px;"></td>
                                          <td><textarea name="description" id="description" class="textAreaGeneral" rows="4" tabindex=7></textarea></td>
                                      </tr>
                                      <tr><td style="height:10px"></td></tr>
                                      <tr>
-                                         <td class="gridTableColummHeader"></td>
+                                         <td ></td>
                                          <td style="width:20px;"></td>
                                          <td>
                                              <input type="button" value="Create Sub Workspace" class="btn btn-primary btn-raised" onclick="createProject();" />
@@ -906,7 +965,7 @@ function updateVal(){
                                                 <table width="100%" border="0" cellpadding="0" cellspacing="0">
                                                     <tr><td height="22px"></td></tr>
                                                     <tr>
-                                                        <td class="gridTableColummHeader"><fmt:message key="nugen.process.taskname.display.text"/>:</td>
+                                                        <td ><fmt:message key="nugen.process.taskname.display.text"/>:</td>
                                                         <td style="width:20px;"></td>
                                                         <td>
                                                             <input type="text" class="inputGeneral" name="taskname" id="taskname" tabindex=1 value ='<fmt:message key="nugen.process.taskname.textbox.text"/>'  onKeyup="updateTaskVal();" onfocus="clearField('taskname');" onblur="defaultTaskValue('taskname');"/>&nbsp;
@@ -915,7 +974,7 @@ function updateVal(){
                                                     </tr>
                                                     <tr><td height="15px"></td></tr>
                                                     <tr>
-                                                        <td class="gridTableColummHeader"><fmt:message key="nugen.process.assignto.text"/></td>
+                                                        <td ><fmt:message key="nugen.process.assignto.text"/></td>
                                                         <td style="width:20px;"></td>
                                                         <td><input type="text" class="wickEnabled" name="assignto_SubTask" id="assignto_SubTask" style="height:20px" tabindex=2 value='<fmt:message key="nugen.process.emailaddress.textbox.text"/>' onkeydown="updateAssigneeVal();" autocomplete="off" onkeyup="autoComplete(event,this);"  onfocus="clearFieldAssignee('assignto_SubTask');initsmartInputWindowVlaue('smartInputFloater1','smartInputFloaterContent1');" onblur="defaultAssigneeValue('assignto_SubTask');"/>
                                                             <div style="position:relative;text-align:left">
@@ -935,7 +994,7 @@ function updateVal(){
                                                 <div id="assignTask" style="display: inline">
                                                     <table width="100%" border="0" cellpadding="0" cellspacing="0">
                                                         <tr>
-                                                            <td class="gridTableColummHeader"><fmt:message key="nugen.process.priority.text"/></td>
+                                                            <td ><fmt:message key="nugen.process.priority.text"/></td>
                                                             <td style="width:20px;"></td>
                                                             <td>
                                                                 <table>
@@ -963,13 +1022,13 @@ function updateVal(){
                                                         </tr>
                                                         <tr><td height="15px"></td></tr>
                                                         <tr>
-                                                            <td class="gridTableColummHeader"><fmt:message key="nugen.project.desc.text"/></td>
+                                                            <td ><fmt:message key="nugen.project.desc.text"/></td>
                                                             <td style="width:20px;"></td>
                                                             <td><textarea name="description" id="description" class="textAreaGeneral" rows="4" tabindex=7></textarea></td>
                                                         </tr>
                                                         <tr><td height="10px"></td></tr>
                                                         <tr>
-                                                            <td class="gridTableColummHeader"></td>
+                                                            <td ></td>
                                                             <td style="width:20px;"></td>
                                                             <td><input type="button" value="Create Sub Action Item" class="btn btn-primary btn-raised" tabindex=3 onclick="createSubTask();"/></td>
                                                         </tr>

@@ -13,6 +13,9 @@
     
     NGBook theSite = cog.getSiteByIdOrFail(siteKey);
     
+    //JSONArray fullList = new JSONArray();
+    //fullList.put("/api/"+siteKey+"/{proj}/summary.json");
+    
 
 %>
 <script type="text/javascript">
