@@ -221,6 +221,27 @@
                 </ul>
             </span>
         </div>
+        <div class="" ng-show="goal.state==3 && goal.waitUntil<nowTime">
+            <table><tr><td>
+              <button ng-click="setWaitUntil()" class="btn btn-default btn-raised" 
+                    ng-show="goal.waitUntil<nowTime">Pause Task</button>
+            </td><td style="padding:5px">
+              until 
+            </td><td>
+              <span datetime-picker ng-model="waitProxy" 
+                class="form-control" style="max-width:150px">
+                {{waitProxy|date:"dd-MMM-yyyy"}}
+              </span> 
+            </td></tr></table>
+        </div>        
+        <div class="" ng-show="goal.waitUntil>=nowTime">
+            <table><tr><td>
+              Paused until  
+              {{goal.waitUntil|date:"dd-MMM-yyyy"}} 
+            </td><td style="padding:5px">
+              <button ng-click="cancelWaitUntil()" class="btn btn-default btn-raised" >Cancel</button>
+            </td></tr></table>
+        </div>
       </div>
     </div>
     <div style="clear:both"></div>

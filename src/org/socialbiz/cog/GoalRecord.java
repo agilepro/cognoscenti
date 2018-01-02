@@ -967,7 +967,9 @@ public class GoalRecord extends BaseRecord {
         thisGoal.put("docLinks",  constructJSONArray(getDocLinks()));
         
         extractScalarString(thisGoal, "checklist");
-
+        extractAttributeLong(thisGoal, "waitUntil");
+        extractVectorString(thisGoal, "waitFor");
+        
         return thisGoal;
     }
     public JSONObject getJSON4Goal(NGPage ngp, String baseURL, License license) throws Exception {
@@ -1093,8 +1095,10 @@ public class GoalRecord extends BaseRecord {
         if (goalObj.has("docLinks")) {
             setDocLinks(constructVector(goalObj.getJSONArray("docLinks")));
         }
-        updateScalarString("taskArea", goalObj);
-        updateScalarString("checklist", goalObj);
+        updateScalarString( "taskArea",  goalObj);
+        updateScalarString( "checklist", goalObj);
+        updateAttributeLong("waitUntil", goalObj);
+        updateVectorString( "waitFor",   goalObj);
     }
 
     //This used to be a time scheduled to send the email, but it was only lbeing used

@@ -1,5 +1,5 @@
 app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAreaList, allLabels, startMode, $http, AllPeople) {
-
+    $scope.nowTime = new Date().getTime();
     $scope.goalId = goal.id;
     $scope.goal = {assignTo:[],state:2,startdate:0,enddate:0,duedate:0,labelMap:{}};
     $scope.taskAreaList = taskAreaList;
@@ -40,8 +40,12 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
         $scope.showError=false;
         $http.get(postURL)
         .success( function(data) {
-            $scope.goal = data;
             $scope.goalId = data.id;
+            if (data.waitUntil<$scope.nowTime) {
+                data.waitUntil=$scope.nowTime-100;
+            }
+            $scope.waitProxy = data.waitUntil;
+            $scope.goal = data;
         })
         .error( function(data, status, headers, config) {
             alert("problem handling get: "+JSON.stringify(data));
@@ -84,5 +88,15 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
-    
+    $scope.setWaitUntil = function() {
+        if ($scope.waitProxy<$scope.nowTime) {
+            $scope.waitProxy += $scope.nowTime + 7*24*60*60*1000;
+        }
+        $scope.goal.waitUntil = $scope.waitProxy;
+        $scope.goal.state = 4;
+    }
+    $scope.cancelWaitUntil = function() {
+        $scope.goal.waitUntil = $scope.nowTime-100;;
+        $scope.goal.state = 3;
+    }
 });
