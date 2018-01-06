@@ -84,8 +84,7 @@
           id="toggle-search">
           <i class="fa fa-search" aria-hidden="true"></i>
         </a>
-      </li>
-      
+      </li>  
       
 <% if (loggedUser!=null) { %>      
       <li class="dropdown">
@@ -95,9 +94,7 @@
             aria-expanded="false"
             title="Workspaces">
               <i class="fa fa-circle-o" aria-hidden="true"></i>
-              <span class="dropdown-toggle-label">
-                Workspaces
-              </span>
+              <span class="dropdown-toggle-label" translate>Workspaces</span>
               <div class="ripple-container"></div>
             </a>
             <ul class="dropdown-menu pull-right tighten">

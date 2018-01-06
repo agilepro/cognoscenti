@@ -67,8 +67,8 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http) {
+var myApp = angular.module('myApp',['ui.bootstrap','pascalprecht.translate']);
+myApp.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Home for <%ar.writeJS(loggedUser.getName());%>");
     $scope.futureMeetings  = <%futureMeetings.write(out,2,4);%>;
     $scope.futureMeetings.sort( function(a,b) {
@@ -152,7 +152,7 @@ app.controller('myCtrl', function($scope, $http) {
 
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
-              <div style="float:left">Top Action Items</div>
+              <div style="float:left"><span translate>Top Action Items</span></div>
               <div style="float:right">
                   <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userActiveTasks.htm">
                       <i class="fa fa-list"></i></a></div>
@@ -172,7 +172,7 @@ app.controller('myCtrl', function($scope, $http) {
 
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
-              <div style="float:left">Upcoming Meetings</div>
+              <div style="float:left"><span translate>Upcoming Meetings</span></div>
               <div style="float:right">
                   <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/UserHome.htm">
                       <i class="fa fa-list"></i></a></div>

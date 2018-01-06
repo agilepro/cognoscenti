@@ -197,7 +197,8 @@
     <meta name="google-signin-client_id" content="866856018924-boo9af1565ijlrsd0760b10lqdqlorkg.apps.googleusercontent.com">
 
     <!-- INCLUDE the ANGULAR JS library -->
-    <script src="<%=ar.baseURL%>jscript/angular.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/angular.js"></script>
+    <script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
     <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
@@ -211,6 +212,7 @@
 
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
+    <script src="<%=ar.baseURL%>jscript/translation.js"></script>
 
     <!-- Bootstrap Material Design -->
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
@@ -246,6 +248,7 @@ $(document).ready(function() {
     /* INIT Bootstrap Material Design */
     $.material.init();
 });
+
 
  </script>
 
@@ -362,7 +365,9 @@ window.setInterval(function() {
     }
     return 0;
 }, 1500000);
+
 </script>
+
 </body>
 </html>
 
