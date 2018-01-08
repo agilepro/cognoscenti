@@ -188,7 +188,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Workspace Front Page");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;

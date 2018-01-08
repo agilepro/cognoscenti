@@ -24,7 +24,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Workspaces <% ar.writeJS(uProf.getName()); %> Participate In");
     $scope.projList = <%projList.write(out,2,4);%>;

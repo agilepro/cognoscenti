@@ -21,7 +21,7 @@
 
 <script>
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Available Process Applications");
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;

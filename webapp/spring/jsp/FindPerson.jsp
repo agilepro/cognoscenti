@@ -21,7 +21,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Find Person");
     $scope.userId = "<%ar.writeJS(uid);%>";

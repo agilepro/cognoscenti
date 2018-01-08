@@ -35,8 +35,8 @@ Required Parameters:
 %>
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http) {
+var myApp = angular.module('myApp');
+myApp.controller('myCtrl', function($scope, $http) {
     $scope.errDetails = <%errDetails.write(out,2,4);%>;
     $scope.searchDateStr = "<%ar.writeJS(searchDate);%>";
     $scope.showError = false;

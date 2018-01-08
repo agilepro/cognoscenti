@@ -49,7 +49,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ngSanitize']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Email Sent");
     $scope.emailMsg = <%emailMsg.write(out,2,4);%>;

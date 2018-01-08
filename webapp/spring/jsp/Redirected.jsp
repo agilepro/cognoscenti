@@ -26,7 +26,7 @@
 %>
 <!-- Redirected.jsp -->
 <script>
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Moved to New Location");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;

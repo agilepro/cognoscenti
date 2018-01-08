@@ -67,7 +67,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var myApp = angular.module('myApp',['ui.bootstrap','pascalprecht.translate']);
+var myApp = angular.module('myApp');
 myApp.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Home for <%ar.writeJS(loggedUser.getName());%>");
     $scope.futureMeetings  = <%futureMeetings.write(out,2,4);%>;

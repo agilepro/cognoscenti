@@ -29,7 +29,7 @@
 %>
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     $scope.allDetails = <%allDetails.write(out,2,4);%>;
 

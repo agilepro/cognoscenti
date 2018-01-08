@@ -90,7 +90,7 @@
 <fmt:setBundle basename="messages"/>
 <script type="text/javascript" language="JavaScript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Workspace Administration");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;

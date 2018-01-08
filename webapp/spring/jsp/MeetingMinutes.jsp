@@ -52,7 +52,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     $scope.loaded = false;
     $scope.meetId = "<%ar.writeJS(meetId);%>";

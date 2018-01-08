@@ -29,7 +29,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Share Ports");
     $scope.loaded = false;

@@ -212,7 +212,6 @@
 
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
-    <script src="<%=ar.baseURL%>jscript/translation.js"></script>
 
     <!-- Bootstrap Material Design -->
     <script src="<%=ar.baseURL%>jscript/bootstrap-material-design/ripples.min.js"></script>
@@ -249,6 +248,9 @@ $(document).ready(function() {
     $.material.init();
 });
 
+//Must initialize the app with all the right packages here, before the 
+//individual pages create the controlles
+var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.tinymce','angularjs-datetime-picker','pascalprecht.translate', 'ngSanitize']);
 
  </script>
 
@@ -367,6 +369,8 @@ window.setInterval(function() {
 }, 1500000);
 
 </script>
+
+<script src="<%=ar.baseURL%>jscript/translation.js"></script>
 
 </body>
 </html>

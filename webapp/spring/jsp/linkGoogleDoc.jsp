@@ -54,7 +54,7 @@ var FILE_COUNTER = 0;
 var FOLDER_ARRAY = [];
 var SIGNED_IN=false;
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Link Google Docs");
     window.MY_SCOPE = $scope;

@@ -46,12 +46,17 @@
 %>
 
 <script type="text/javascript">
-
-var app = angular.module('myApp', ['ui.bootstrap']);
-app.controller('myCtrl', function($scope, $http) {
+console.log("RUNNING");
+var myApp = angular.module('myApp');
+console.log("RUNNING",myApp);
+myApp.controller('myCtrl', function($scope, $http) {
+    console.log("CONTROLLER",myApp);
     window.setMainPageTitle("Edit Your Profile");
     $scope.profile = <%userObj.write(out,2,4);%>;
     $scope.timeZoneList = <%timeZoneList.write(out,2,4);%>;
+    
+    $scope.myTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    console.log("TIMEZONE", $scope.myTimeZone);
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -225,7 +230,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td colspan="2"><button class="btn btn-primary btn-raised" ng-click="updatePersonal()">Update Personal Details</button></td>
         </tr>
         <tr><td>&nbsp;</td></tr>
-        <tr ng-repeat="email in profile.ids">
+        <tr >
             <td class="firstcol">Email Id:</td>
             <td>{{email}}
                 <span class="labelButton" style="background-color:yellow" ng-show="email==profile.preferred"
@@ -234,6 +239,11 @@ app.controller('myCtrl', function($scope, $http) {
                     ng-click="makePreferred(email)">Make Preferred</span>
                 <span class="btn btn-sm btn-primary btn-raised" ng-hide="email==profile.preferred"
                     ng-click="deleteEmail(email)">Delete</span>
+            </td>
+        </tr>
+        <tr ng-repeat="email in profile.ids">
+            <td class="firstcol">TimeZone:</td>
+            <td>
             </td>
         </tr>
     </table>

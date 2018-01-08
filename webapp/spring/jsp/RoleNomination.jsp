@@ -28,7 +28,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','angularjs-datetime-picker']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.role = <%role.write(out,2,4);%>;
     window.setMainPageTitle("Nominate Role: "+$scope.role.name);

@@ -21,7 +21,7 @@
 
 <script>
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Business Rules / Decisions");
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;

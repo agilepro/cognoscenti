@@ -186,7 +186,7 @@ Optional Parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput', 'ngSanitize','angularjs-datetime-picker']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     window.setMainPageTitle("Compose Email");
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;

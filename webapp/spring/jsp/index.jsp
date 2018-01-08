@@ -11,7 +11,7 @@
 %>
 <!-- index.jsp -->
 <script>
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Welcome to Weaver");
 });

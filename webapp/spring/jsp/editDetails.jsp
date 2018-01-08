@@ -60,7 +60,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Document Details");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;

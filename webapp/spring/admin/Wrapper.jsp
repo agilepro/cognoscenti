@@ -32,17 +32,19 @@
 
     <!-- INCLUDE the ANGULAR JS library -->
     <script src="<%=ar.baseURL%>jscript/angular.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
     <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/slap.js"></script>
 
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
  
-    <script src="<%=ar.baseURL%>jscript/slap.js"></script>
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
+    <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
@@ -88,6 +90,9 @@ function standardTinyMCEOptions() {
         link_title: false
 	};
 }
+
+var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','pascalprecht.translate']);
+// ,'angularjs-datetime-picker'
  </script>
 
 

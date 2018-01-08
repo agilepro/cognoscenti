@@ -92,7 +92,7 @@ Required parameter:
 <script type="text/javascript">
 document.title="<% ar.writeJS(note.getSubject());%>";
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize', 'ngTagsInput','angularjs-datetime-picker']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     window.setMainPageTitle("Discussion Topic");
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;

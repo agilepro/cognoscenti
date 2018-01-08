@@ -1,6 +1,9 @@
+console.log("TRANSLATION");
 var myApp = angular.module('myApp');
+console.log("TRANSLATION", myApp);
 myApp.config(['$translateProvider', function($translateProvider) {
 
+        console.log("FUNCTION(translateProvider)");
         var dxp_monitor_de ={
             "Workspaces" : "Arbeitsbereiche",
             "Top Action Items":"Top-Aktionselemente",

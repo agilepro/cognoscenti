@@ -78,7 +78,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput','angularjs-datetime-picker']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople) {
     window.setMainPageTitle("Action Items");
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;

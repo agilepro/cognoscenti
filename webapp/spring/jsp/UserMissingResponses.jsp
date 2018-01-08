@@ -27,7 +27,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Missing Responses for <%ar.writeJS(uProf.getName());%>");
     $scope.proposalList = <%proposalList.write(out,2,4);%>;

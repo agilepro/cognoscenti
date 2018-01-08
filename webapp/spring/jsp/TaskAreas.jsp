@@ -36,7 +36,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
     window.setMainPageTitle("Task Areas & Work Groupings");
     $scope.loaded = false;

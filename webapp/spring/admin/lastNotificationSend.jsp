@@ -12,7 +12,7 @@
 
 <script>
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     $scope.serverTime = <%=serverTime%>;
     $scope.browserTime = new Date().getTime();

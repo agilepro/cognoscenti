@@ -34,7 +34,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Remote Action Items");
     $scope.workList = <%workList.write(out,2,4);%>;

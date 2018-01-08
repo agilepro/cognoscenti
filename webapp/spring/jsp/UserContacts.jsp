@@ -36,7 +36,7 @@
 %>
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Contacts for <%ar.writeJS(uProf.getName());%>");
     $scope.contacts = <%contacts.write(out,2,4);%>;

@@ -51,7 +51,7 @@
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap','ngTagsInput']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Roles");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
@@ -210,7 +210,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         var postdata = JSON.stringify(message);
         $http.post(postURL ,postdata)
         .success( function(data) {
-            alert("message has been sent to "+message.userId);
+            console.log("message has been sent to "+message.userId);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -291,7 +291,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         
         //need to create a term so you can vote on it
         
-        var newTerm = {state: "Nominating"};
+        var newTerm = {state: "Initial Check"};
         var proposeBegin = (new Date()).getTime();
         newTerm.termStart = proposeBegin;
         newTerm.termEnd = proposeBegin + 365*24*60*60*1000;

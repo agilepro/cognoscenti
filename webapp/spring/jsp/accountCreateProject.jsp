@@ -63,7 +63,7 @@ Required parameter:
 %>
 
 <script>
-var app = angular.module('myApp', ['ui.bootstrap', 'ngTagsInput']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople) {
     window.setMainPageTitle("Create New Workspace");
     $scope.siteInfo = <% site.getConfigJSON().write(ar.w,2,4); %>;

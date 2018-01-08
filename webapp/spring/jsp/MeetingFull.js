@@ -1,5 +1,5 @@
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize','ngTagsInput', 'angularjs-datetime-picker']);
+var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     window.setMainPageTitle("Meeting");
     $scope.siteInfo = embeddedData.siteInfo;
