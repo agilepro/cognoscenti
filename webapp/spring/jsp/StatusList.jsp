@@ -106,6 +106,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.showActive = true;
     $scope.showFuture = false;
     $scope.showCompleted = false;
+    $scope.showRecent = true;
+    $scope.showChecklists = true;
     $scope.isCreating = false;
     $scope.newGoal = {assignList:[],id:"~new~",labelMap:{}};
 
@@ -140,8 +142,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         for (var j=0; j<lcFilterList.length; j++) {
             var lcfilter = lcFilterList[j];
+            var recentLine = (new Date()).getTime() - 7*24*60*60*1000;
+            console.log("RECENT LINE: ", recentLine);
             var res = [];
             src.forEach( function(rec) {
+                if ($scope.showRecent && (rec.modifiedtime > recentLine || rec.startdate > recentLine || rec.enddate > recentLine)) {
+                    res.push(rec);
+                    return;
+                }
                 if (!$scope.showActive && rec.state>=2 && rec.state<=4) {
                     return;
                 }
@@ -341,6 +349,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         newRec.id = rec.id;
         newRec.universalid = rec.universalid;
         newRec.state = newState;
+        newRec.modifiedtime = new Date().getTime();
+        newRec.modifieduser = SLAP.loginInfo.userId;
 
         var postURL = "updateGoal.json?gid="+rec.id;
         var postdata = angular.toJson(newRec);
@@ -364,6 +374,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         newRec.assignTo = [];
         newRec.state = 2;
         newRec.assignTo = newRec.assignList;
+        newRec.modifiedtime = new Date().getTime();
+        newRec.modifieduser = SLAP.loginInfo.userId;
 
         var postURL = "updateGoal.json?gid=~new~";
         var postData = angular.toJson(newRec);
@@ -620,6 +632,8 @@ function addvalue() {
             Future</span> &nbsp;
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showCompleted">
             Completed</span>
+        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showRecent">
+            Recent</span>
         <span class="dropdown" ng-repeat="role in allLabelFilters()">
             <button class="labelButton" type="button" id="menu2"
                data-toggle="dropdown" style="background-color:{{role.color}};"
@@ -787,6 +801,9 @@ function addvalue() {
               <div ng-show="rec.enddate>100" >
                 end: {{rec.enddate | date}}
               </div>
+              <!--div ng-show="rec.modifiedtime>100" >
+                mod: {{rec.modifiedtime | date}}
+              </div-->
             </td>
             <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going">
               <span>

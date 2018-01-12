@@ -73,6 +73,9 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
     };
     $scope.saveAndClose = function() {
         $scope.cleanUpAssignees();
+        $scope.goal.modifiedtime = new Date().getTime();
+        $scope.goal.modifieduser = SLAP.loginInfo.userId;
+        
         var postURL = "updateGoal.json?gid="+$scope.goalId;
         var postdata = angular.toJson($scope.goal);
         $scope.showError=false;
