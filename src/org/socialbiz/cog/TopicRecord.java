@@ -821,9 +821,11 @@ public class TopicRecord extends CommentContainer implements EmailContext {
 
       public void topicEmailRecord(AuthRequest ar, NGWorkspace ngw, TopicRecord topic, MailFile mailFile) throws Exception {
           List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
-          //Note, the email about the TOPIC goes to everyone in target role.
-          //The subscribers control the recipients of comment emails
-          OptOutAddr.appendUnmutedUsersFromRole(ngw, getTargetRole(), sendTo);
+          
+          //The user interface will initialize the subscribers to the members of the target role
+          //and will allow editing of those subscribers just before sending the first time
+          //so email to the subscribers.
+          OptOutAddr.appendUsers(getSubscriberRole().getExpandedPlayers(ngw), sendTo);
 
           UserRef creator = getModUser();
           UserProfile creatorProfile = ar.getCogInstance().getUserManager().lookupUserByAnyId(creator.getUniversalId());

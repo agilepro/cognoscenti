@@ -436,34 +436,8 @@ public class NGWorkspace extends NGPage {
             attach.gatherUnsentScheduledNotification(this, resList);
         }
     }
-    /**
-     * Acts on and performs a SINGLE scheduled action that is scheduled to be done
-     * before the current time.  Actions are done one at a time so that the calling
-     * code can decide to save the page before calling to execute the next action,
-     * or to spread a large number of actions out a bit.
-     *
-     * This should ONLY be called on the background email thread.
-     */
-    public void performScheduledAction(AuthRequest ar, MailFile mailFile) throws Exception {
 
-        ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
-        gatherUnsentScheduledNotification(resList);
-        ScheduledNotification earliest = null;
-        long nextTime = System.currentTimeMillis() + 31000000000L;
-
-        for (ScheduledNotification sn : resList) {
-            if (sn.timeToSend() < nextTime) {
-                earliest = sn;
-                nextTime = sn.timeToSend();
-            }
-        }
-
-        if (earliest!=null) {
-            earliest.sendIt(ar, mailFile);
-            return;   //only one thing at a time
-        }
-    }
-
+    
 
     /**
     * schema migration ...
