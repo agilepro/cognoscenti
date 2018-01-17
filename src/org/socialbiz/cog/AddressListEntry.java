@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -609,12 +610,19 @@ public class AddressListEntry implements UserRef
     }
 
     public static AddressListEntry fromJSON(JSONObject jObj) throws Exception {
-        String uid = jObj.getString("uid");
-        String name = jObj.optString("name");
-        if (name==null) {
-            return new AddressListEntry(uid);
+        if (jObj.has("name")) {
+            String name = jObj.optString("name");
+            if (jObj.has("uid")) {
+                return new AddressListEntry(jObj.getString("uid"), name);
+            }
+            else {
+                return new AddressListEntry(name);
+            }
         }
-        return new AddressListEntry(uid, name);
+        if (jObj.has("uid")) {
+            return new AddressListEntry(jObj.getString("uid"));
+        }
+        throw new Exception("Unable to parse JSON for user address because neither 'uid' nor 'name' are present.");
     }
 
     public static JSONArray getJSONArray(List<AddressListEntry> addressList) throws Exception {

@@ -1069,7 +1069,7 @@ public class GoalRecord extends BaseRecord {
                 if (!person.has("uid")) {
                     continue;  //ignore any entry without a UID
                 }
-                assigneeRole.addPlayer(new AddressListEntry(person.getString("uid"), person.getString("name")));
+                assigneeRole.addPlayer(AddressListEntry.fromJSON(person));
             }
             int numPeopleAfter = assigneeRole.getDirectPlayers().size();
             if (numPeopleBefore != numPeopleAfter) {

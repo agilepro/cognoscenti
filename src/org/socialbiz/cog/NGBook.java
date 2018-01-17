@@ -501,7 +501,7 @@ public class NGBook extends ContainerCommon {
 
     @Override
     public List<RoleRequestRecord> getAllRoleRequest() throws Exception {
-        long tooOld = System.currentTimeMillis() - 90*24*60*60*1000;
+        long tooOld = System.currentTimeMillis() - 90L*24*60*60*1000;
         List<RoleRequestRecord> requestList = new ArrayList<RoleRequestRecord>();
         DOMFace rolelist = siteInfoRec.requireChild("Role-Requests", DOMFace.class);
         List<RoleRequestRecord> children = rolelist.getChildren("requests",
@@ -1093,7 +1093,7 @@ public class NGBook extends ContainerCommon {
     public WorkspaceStats getRecentStats(Cognoscenti cog) throws Exception {
         File statsFile = getStatsFilePath();
         long timeStamp = statsFile.lastModified();
-        long recentEnough = System.currentTimeMillis() - 24*60*60*1000;
+        long recentEnough = System.currentTimeMillis() - 24L*60*60*1000;
         if (timeStamp>recentEnough) {
             return getStatsFile();
         }

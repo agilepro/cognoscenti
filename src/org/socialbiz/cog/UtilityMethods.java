@@ -36,6 +36,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpSession;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
+
 import com.purplehillsbooks.streams.HTMLWriter;
 
 public class UtilityMethods {
@@ -546,7 +547,7 @@ public class UtilityMethods {
      */
     public static long getDurationInDays(long newTime, long existingTime) {
         long timeInterval = newTime - existingTime;
-        return timeInterval / (24 * 60 * 60 * 1000);
+        return timeInterval / (24L * 60 * 60 * 1000);
     }
 
     public static void copyFileContents(File source, File dest) throws Exception {

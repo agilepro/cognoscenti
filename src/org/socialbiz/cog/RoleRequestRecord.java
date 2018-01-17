@@ -104,7 +104,7 @@ public class RoleRequestRecord extends DOMFace {
     }
 
     public boolean showRecord() throws Exception {
-        long oldestLegalRecord = System.currentTimeMillis()-(HISTORY_MAX_DAYS*24*60*60*1000);
+        long oldestLegalRecord = System.currentTimeMillis()-(24L*60*60*1000*HISTORY_MAX_DAYS);
         return getModifiedDate()>oldestLegalRecord;
     }
 }

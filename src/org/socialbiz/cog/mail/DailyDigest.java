@@ -28,6 +28,7 @@ import org.socialbiz.cog.SuperAdminLogFile;
 import org.socialbiz.cog.UserCache;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
@@ -149,7 +150,7 @@ public class DailyDigest {
             //schema migration ... some users will not have this value set.
             //never go back more than twice the notification period.
             //This avoids getting a message with all possible history in it
-            long earliestPossible = System.currentTimeMillis()-(up.getNotificationPeriod()*2*24*60*60*1000);
+            long earliestPossible = System.currentTimeMillis()-(up.getNotificationPeriod()*2L*24*60*60*1000);
             if (historyStartTime<earliestPossible) {
                 historyStartTime = earliestPossible;
             }

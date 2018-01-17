@@ -193,7 +193,7 @@ public class CommentRecord extends DOMFace {
                 //simple comments go directly to closed
                 state = COMMENT_STATE_CLOSED;
             }
-            else if (getTime()<System.currentTimeMillis()-14*24*60*60*1000) {
+            else if (getTime()<System.currentTimeMillis()-14L*24*60*60*1000) {
                 //if more than 2 weeks old, close it
                 state = COMMENT_STATE_CLOSED;
             }
@@ -217,7 +217,7 @@ public class CommentRecord extends DOMFace {
         long dueDate = getAttributeLong("dueDate");
         if (dueDate <= 0) {
             //default duedate to one day from when created
-            dueDate = getTime() + 24*60*60*1000;
+            dueDate = getTime() + 24L*60*60*1000;
         }
         return dueDate;
     }

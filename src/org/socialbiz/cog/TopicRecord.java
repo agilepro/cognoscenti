@@ -59,7 +59,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
     //startup methods for an arbitrary time long enough ago that automated notifications
     //should be cancelled or ignored.  If the server stays on a long this value will
     //not be updated -- it remains the time a week before starting the server.
-    public static final long ONE_WEEK_AGO = System.currentTimeMillis() - 7*24*60*60*1000;
+    public static final long ONE_WEEK_AGO = System.currentTimeMillis() - 7L*24*60*60*1000;
 
     public TopicRecord(Document definingDoc, Element definingElement, DOMFace new_ngs) {
         super(definingDoc, definingElement, new_ngs);
@@ -1039,8 +1039,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
              JSONArray ja = noteObj.getJSONArray("subscribers");
              for (int i=0; i<ja.length(); i++) {
                  JSONObject oneSub = ja.getJSONObject(i);
-                 String uid = oneSub.getString("uid");
-                 subRole.addPlayerIfNotPresent(new AddressListEntry(uid));
+                 subRole.addPlayerIfNotPresent(AddressListEntry.fromJSON(oneSub));
              }
          }
 

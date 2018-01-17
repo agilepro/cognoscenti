@@ -47,7 +47,6 @@ import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.TopicRecord;
-import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
 import org.springframework.stereotype.Controller;
@@ -55,6 +54,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -203,6 +203,19 @@ public class MainTabsViewControler extends BaseController {
             if (!canAccess) {
                 showJSPMembers(ar, siteId, pageId, "MeetingFull");
                 return;
+            }
+            String roleName = meet.getTargetRole();
+            NGRole role = ngw.getRole(roleName);
+            if (role!=null) {
+                UserProfile user = ar.getUserProfile();
+                if (user!=null) {
+                    if (!role.isPlayer(user)) {
+                        ar.req.setAttribute("roleName", roleName);
+                        ar.req.setAttribute("objectName", "Meeting");
+                        streamJSP(ar, "WarningNotTargetRole");
+                        return;
+                    }
+                }
             }
 
             streamJSP(ar, "MeetingFull");
@@ -990,7 +1003,7 @@ public class MainTabsViewControler extends BaseController {
               JSONObject jo = meetingCache.getOrCacheFull(siteId, pageId, ar, id);
               sendJson(ar, jo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to read meeting information.", ex);
+              Exception ee = new Exception("Unable to access meeting information.", ex);
               streamException(ee, ar);
           }
       }
@@ -1007,7 +1020,7 @@ public class MainTabsViewControler extends BaseController {
 
               sendJson(ar, jo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to read meeting notes.", ex);
+              Exception ee = new Exception("Unable to access meeting notes.", ex);
               streamException(ee, ar);
           }
       }

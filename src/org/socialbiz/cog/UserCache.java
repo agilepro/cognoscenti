@@ -89,7 +89,8 @@ public class UserCache {
                 }
 
                 //if the meeting is still planned to be run
-                if (meet.getState() == MeetingRecord.MEETING_STATE_PLANNING) {
+                if (meet.getState() == MeetingRecord.MEETING_STATE_PLANNING 
+                        || meet.getState() == MeetingRecord.MEETING_STATE_RUNNING) {
                     //now determine if the user is asked to attend this meeting
                     NGRole targetRole = aPage.getRole(meet.getTargetRole());
                     if (targetRole!=null && targetRole.isPlayer(up)) {

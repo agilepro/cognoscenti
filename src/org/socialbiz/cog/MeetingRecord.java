@@ -663,7 +663,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                         if (goal.getDueDate()<ar.nowTime){
                             overDue.add(goal);
                         }
-                        else if (goal.getDueDate()< (ar.nowTime + (7*24*60*60*1000))) {
+                        else if (goal.getDueDate()< (ar.nowTime + (7L*24*60*60*1000))) {
                             almostDue.add(goal);
                         }
                     }
@@ -918,8 +918,8 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                         sb.append("]");
                     }
                 }
-                long includeCommentRangeStart = getStartTime() - 3*24*60*60*1000;
-                long includeCommentRangeEnd = getStartTime() + 3*24*60*60*1000;
+                long includeCommentRangeStart = getStartTime() - 3L*24*60*60*1000;
+                long includeCommentRangeEnd = getStartTime() + 3L*24*60*60*1000;
                 
                 for (CommentRecord cr : linkedTopic.getCommentTimeFrame(includeCommentRangeStart, includeCommentRangeEnd)) {
                     if (cr.getCommentType() == CommentRecord.COMMENT_TYPE_MINUTES) {

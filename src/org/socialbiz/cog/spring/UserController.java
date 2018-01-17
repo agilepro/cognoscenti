@@ -77,6 +77,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -323,52 +324,6 @@ public class UserController extends BaseController {
         request.setAttribute("userKey", userKey);
         streamJSPUserLogged2(request, response, userKey, "../jsp/SearchAllNotes");
     }
-
-
-
-
-
-
-
-
-    ////////////////////// REDIRECTS ////////////////////////
-
-    //TODO: eliminate unnecessary address
-    @RequestMapping(value = "/{userKey}/userCompletedTasks.htm", method = RequestMethod.GET)
-    public void userCompletedTasks(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("userActiveTasks.htm");
-    }
-
-    //TODO: eliminate unnecessary address
-    @RequestMapping(value = "/{userKey}/userFutureTasks.htm", method = RequestMethod.GET)
-    public void userFutureTasks(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("userActiveTasks.htm");
-    }
-
-    //TODO: eliminate unnecessary address
-    @RequestMapping(value = "/{userKey}/userAllTasks.htm", method = RequestMethod.GET)
-    public void userAllTasks(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("userActiveTasks.htm");
-    }
-    @RequestMapping(value = "/{userKey}/userTasks.htm", method = RequestMethod.GET)
-    public void loadUserTasks(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("userActiveTasks.htm");
-    }
-
-    @RequestMapping(value = "/{userKey}/administration.htm", method = RequestMethod.GET)
-    public void loadAdministration(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("emailListnerSettings.htm");
-    }
-
-
-
-
-
 
 
 
@@ -863,6 +818,9 @@ public class UserController extends BaseController {
 
             String requestId = ar.reqParam("requestId");
             RoleRequestRecord roleRequestRecord = ngc.getRoleRequestRecordById(requestId);
+            if (roleRequestRecord==null) {
+                throw new Exception("Unable to find a role request record with id="+requestId);
+            }
             boolean canAccessPage = AccessControl.canAccessRoleRequest(ar, ngc, roleRequestRecord);
 
             if(!canAccessPage){

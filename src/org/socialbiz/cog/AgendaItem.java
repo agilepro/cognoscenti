@@ -7,6 +7,7 @@ import org.socialbiz.cog.mail.ScheduledNotification;
 import org.socialbiz.cog.util.ThreeWayMerge;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -245,8 +246,8 @@ public class AgendaItem extends CommentContainer {
         aiInfo.put("presenterList", presenterList);
         
         if (linkedTopic!=null) {
-            long includeCommentRangeStart = meet.getStartTime() - 7*24*60*60*1000;
-            long includeCommentRangeEnd = meet.getStartTime() + 7*24*60*60*1000;
+            long includeCommentRangeStart = meet.getStartTime() - 7L*24*60*60*1000;
+            long includeCommentRangeEnd = meet.getStartTime() + 7L*24*60*60*1000;
             aiInfo.put("actionItems", constructJSONArray(linkedTopic.getActionList()));
             aiInfo.put("docList", constructJSONArray(linkedTopic.getDocList()));
             linkedTopic.addJSONComments(ar, aiInfo, includeCommentRangeStart, includeCommentRangeEnd);
