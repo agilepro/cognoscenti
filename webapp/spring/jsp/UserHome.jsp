@@ -172,7 +172,7 @@ myApp.controller('myCtrl', function($scope, $http) {
 
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
-              <div style="float:left"><span translate>Upcoming Meetings</span></div>
+              <div style="float:left"><span translate>Planned Meetings</span></div>
               <div style="float:right">
                   <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/UserHome.htm">
                       <i class="fa fa-list"></i></a></div>

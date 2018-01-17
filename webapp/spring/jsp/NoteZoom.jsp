@@ -353,6 +353,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.history = data;
         })
         .error( function(data, status, headers, config) {
+            console.log("FAILED TO GET: "+postURL, data, status, headers, config);
             $scope.reportError(data);
         });
     }

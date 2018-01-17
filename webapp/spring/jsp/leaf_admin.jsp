@@ -216,6 +216,7 @@ app.filter('escape', function() {
 
 <%@include file="ErrorPanel.jsp"%>
 
+<% if (ar.isAdmin()) { %>
     <div class="upRightOptions rightDivContent">
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
@@ -233,6 +234,7 @@ app.filter('escape', function() {
         </ul>
       </span>
     </div>
+<% } %>
 
     <div>
 

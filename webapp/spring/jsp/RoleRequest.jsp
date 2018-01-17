@@ -28,7 +28,7 @@ Optional Parameter:
         ngc = ar.getCogInstance().getSiteByIdOrFail(siteId);
     }
     else {
-        ngc = ar.getCogInstance().findWorkspaceByCombinedKey(pageId);
+        ngc = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId,pageId).getWorkspace();
         ar.setPageAccessLevels(ngc);
     }
 
@@ -44,15 +44,19 @@ Optional Parameter:
     String roleRequest_State = "";
 
     JSONArray allRoleRequests = new JSONArray();
-    for (RoleRequestRecord rrr : ngc.getAllRoleRequest()) {
+    
+    List<RoleRequestRecord> allRRs = ngc.getAllRoleRequest();
+    for (RoleRequestRecord rrr : allRRs) {
         JSONObject nrrr = new JSONObject();
-        UserProfile uPro = UserManager.findUserByAnyId(rrr.getRequestedBy());
+        String reqBy = rrr.getRequestedBy();
+        UserProfile uPro = UserManager.findUserByAnyId(reqBy);
         if (uPro==null) {
             //this should never happen in normal circumstances, that a role request comes from 
             //a user that does not have a profile.  But it can happen if
             //a workspace is moved from server to server, such that the request exists
             //but the user had never been there.   
             //Ignore requests that have no user.
+            System.out.println("ROLE REQUEST: came from a user that does not have a profile! ("+reqBy+")");
             continue;
         }
         nrrr.put("id", rrr.getRequestId());
