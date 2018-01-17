@@ -330,7 +330,7 @@ public class GoalRecord extends BaseRecord {
                 Integer.toString(getState()));
         DOMUtils.createChildElement(doc, actEle, "assignee",
                 getAssigneeCommaSeparatedList());
-        UserProfile creatorUser = UserManager.findUserByAnyId(getCreator());
+        UserProfile creatorUser = UserManager.getStaticUserManager().lookupUserByAnyId(getCreator());
         if (creatorUser != null) {
             DOMUtils.createChildElement(doc, actEle, "creator",
                     creatorUser.getUniversalId());
@@ -1168,7 +1168,7 @@ public class GoalRecord extends BaseRecord {
             OptOutAddr.appendUsers(players, sendTo);
 
             for (OptOutAddr ooa : sendTo) {
-                UserProfile toProfile = UserManager.findUserByAnyId(ooa.getEmail());
+                UserProfile toProfile = UserManager.getStaticUserManager().lookupUserByAnyId(ooa.getEmail());
                 if (toProfile!=null) {
                     ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
                 }
@@ -1240,7 +1240,7 @@ public class GoalRecord extends BaseRecord {
         }
 
         String emailSubject = "Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr;
-        mailFile.createEmailRecord(requesterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, body.toString());
+        mailFile.createEmailRecord(requesterProfile.getUniversalId(), ooa.getEmail(), emailSubject, body.toString());
     }
 
     public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {

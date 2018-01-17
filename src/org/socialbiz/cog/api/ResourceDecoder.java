@@ -170,7 +170,7 @@ public class ResourceDecoder {
     private void setUserFromLicense(AuthRequest ar) throws Exception {
         if (lic!=null) {
             String userId = lic.getCreator();
-            UserProfile up = UserManager.findUserByAnyId(userId);
+            UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(userId);
             if (up==null) {
                 throw new Exception("This license '"+licenseId+"' is no longer valid because the creator of the license can not be found.");
             }

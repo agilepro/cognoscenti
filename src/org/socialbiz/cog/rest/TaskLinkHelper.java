@@ -30,7 +30,6 @@ import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.License;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
-import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

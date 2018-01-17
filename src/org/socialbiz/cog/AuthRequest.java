@@ -496,7 +496,7 @@ public class AuthRequest
         }
         if (userid!=null)
         {
-            user = UserManager.findUserByAnyId(userid);
+            user = UserManager.getStaticUserManager().lookupUserByAnyId(userid);
         }
     }
 

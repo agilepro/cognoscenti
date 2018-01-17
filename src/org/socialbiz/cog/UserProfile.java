@@ -241,7 +241,7 @@ public class UserProfile implements UserRef
             }
         }
 
-        UserProfile otherUser = UserManager.findUserByAnyId(newId);
+        UserProfile otherUser = UserManager.getStaticUserManager().lookupUserByAnyId(newId);
         while (otherUser!=null) {
             //user could be found because this is an email, openid, key or name of that user
             //if it is email or openid we can remove it.
@@ -747,6 +747,8 @@ public class UserProfile implements UserRef
     * returns a properly formatted SMTP user name with email
     * address together as one string.
     */
+    
+    /*
     public String getEmailWithName() {
         StringBuilder sb = new StringBuilder();
 
@@ -764,7 +766,7 @@ public class UserProfile implements UserRef
         sb.append(">");
         return sb.toString();
     }
-
+*/
 
 
 
@@ -963,6 +965,30 @@ public class UserProfile implements UserRef
         }
         TimeZone tz = TimeZone.getTimeZone(tzid);
         return Calendar.getInstance(tz);
+    }
+    
+    
+    /**
+     * This use can and has indicated that they want to receive email that is 
+     * FROM the person who initiated the action.   If FALSE, then all email
+     * sent to this person should be from the global Weaver email address.
+     * 
+     * Some users have spam filters that remove email without telling them 
+     * that the email has been removed.  Sometimes the email servers between
+     * the sender and the receiver will check to see if the sending email 
+     * server is capable of actually sending to the user mentioned in the 
+     * from address.  Thus when Weaver sends an email address from a particular
+     * user such as alix@example.com and Weaver itself is not at example.com, 
+     * those email messages can be filtered out.   This depends on a user
+     * by user basis as to whether they can receive these or not.
+     * 
+     * So this flag allows us to track users who have indicated that they would 
+     * like the from address of the REAL user.
+     * 
+     * Initial implementation: return false until we track people opting in.
+     */
+    public boolean canAcceptRealUserFromAddress() {
+        return false;
     }
     
     

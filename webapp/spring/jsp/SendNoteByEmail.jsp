@@ -277,7 +277,8 @@ Optional Parameters:
                             (for each of the <%=roles.size()%> roles):
                             <%
                                for (NGRole ngRole: roles){
-                                   String url = ar.retPath+"t/EmailAdjustment.htm?p="+URLEncoder.encode(p,"UTF-8")
+                                   String url = ar.retPath+"t/EmailAdjustment.htm?pageId="+URLEncoder.encode(p,"UTF-8")
+                                        +"&siteId="+URLEncoder.encode(p.getSiteKey(),"UTF-8")
                                         +"&st=role&role="+URLEncoder.encode(ngRole.getName(),"UTF-8")
                                         +"&email="+URLEncoder.encode("sample@example.com","UTF-8")
                                         +"&mn="+URLEncoder.encode(ngp.emailDependentMagicNumber("sample@example.com"),"UTF-8");

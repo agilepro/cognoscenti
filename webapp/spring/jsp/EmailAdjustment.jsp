@@ -6,10 +6,8 @@
 /*
 Required parameters:
 
-    1. st   : style of request.  Known styles:
-              role - this is an email message sent because you are a member of a role, ad this
-                     page will allow you to leave the role.
-    2. p    : This is the id of a Workspace.
+    1. pageId    : This is the id of a Workspace.
+    2. siteId    : This is the id of a Site.
     3. role : the name of the role
     4. email: the email address that was sent the email, and received it.  This is the email address
               that the owner owns.
@@ -19,8 +17,6 @@ Optional Parameters:
 
 */
 
-    String st = ar.reqParam("st");
-    String p = ar.reqParam("p");
     String role = ar.reqParam("role");
     String email = ar.reqParam("email");
     String mn = ar.reqParam("mn");
@@ -33,15 +29,7 @@ Optional Parameters:
     ar.setPageAccessLevels(ngp);
     pageTitle  ="Adjust Email Subscriptions";
     UserProfile uProf = ar.getUserProfile();
-    NGRole specRole = null;
-
-    if ("role".equals(st)) {
-        specRole = ngp.getRoleOrFail(role);
-
-    }
-    else {
-        throw new Exception("Program Logic Error: do not understand specified mode ("+st+")");
-    }
+    NGRole specRole = ngp.getRoleOrFail(role);
 
     String expectedMn = ngp.emailDependentMagicNumber(email);
     if (!expectedMn.equals(mn)) {
@@ -57,8 +45,7 @@ Optional Parameters:
     <div class="generalArea">
         <div class="generalContent">
             <form name="emailForm" id="emailForm" action="<%=ar.retPath%>t/EmailAdjustmentAction.form" method="post">
-                <input type="hidden" name="p"       value="<%ar.writeHtml(p);%>"/>
-                <input type="hidden" name="st"      value="<%ar.writeHtml(st);%>"/>
+                <input type="hidden" name="p"       value="<%ar.writeHtml(pageId);%>"/>
                 <input type="hidden" name="role"    value="<%ar.writeHtml(role);%>"/>
                 <input type="hidden" name="email"   value="<%ar.writeHtml(email);%>"/>
                 <input type="hidden" name="mn"      value="<%ar.writeHtml(mn);%>"/>
@@ -72,7 +59,6 @@ Optional Parameters:
                             messages in the future.</td>
                         </td>
                     </tr>
-<%if ("role".equals(st)) {%>
                     <tr><td style="height:10px"></td></tr>
                     <tr>
                         <td class="gridTableColummHeader">Reason:</td>
@@ -129,8 +115,6 @@ Optional Parameters:
                             }
                             %></td>
                     </tr>
-<% } %>
-
                 </table>
             </form>
         </div>

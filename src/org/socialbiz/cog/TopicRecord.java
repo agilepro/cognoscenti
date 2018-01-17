@@ -826,7 +826,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           OptOutAddr.appendUnmutedUsersFromRole(ngw, getTargetRole(), sendTo);
 
           UserRef creator = getModUser();
-          UserProfile creatorProfile = UserManager.findUserByAnyId(creator.getUniversalId());
+          UserProfile creatorProfile = ar.getCogInstance().getUserManager().lookupUserByAnyId(creator.getUniversalId());
           if (creatorProfile==null) {
               System.out.println("DATA PROBLEM: discussion topic came from a person without a profile ("+getModUser().getUniversalId()+") ignoring");
               setEmailSent(true);
@@ -876,7 +876,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           clone.flush();
 
           String emailSubject = "New Topic: "+note.getSubject();
-          mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, body.toString());
+          mailFile.createEmailRecord(commenterProfile.getUniversalId(), ooa.getEmail(), emailSubject, body.toString());
       }
 
 

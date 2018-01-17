@@ -45,9 +45,10 @@ import com.purplehillsbooks.streams.MemFile;
 */
 public class OptOutAddr {
 
-    AddressListEntry assignee;
-    String messageForAssignee = "";
-    Calendar cal = null;
+    public AddressListEntry assignee;
+    public String messageForAssignee = "";
+    public Calendar cal = null;
+    public boolean fromRealUser = false;
 
     public OptOutAddr(AddressListEntry _assignee) {
     	if (!_assignee.isWellFormed()) {
@@ -57,6 +58,7 @@ public class OptOutAddr {
         UserProfile up = assignee.getUserProfile();
         if (up!=null) {
             cal = up.getCalendar();
+            fromRealUser = up.canAcceptRealUserFromAddress();
         }
         else {
             String tzid = UserProfile.defaultTimeZone;
@@ -107,14 +109,14 @@ public class OptOutAddr {
     }
 
     public boolean isUserWithProfile() {
-        UserProfile up = UserManager.findUserByAnyId(getEmail());
+        UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(getEmail());
         return (up!=null);
     }
 
 
     public void prepareInternalMessage(Cognoscenti cog) throws Exception {
         MemFile body = new MemFile();
-        UserProfile up = UserManager.findUserByAnyId(getEmail());
+        UserProfile up = cog.getUserManager().lookupUserByAnyId(getEmail());
         AuthRequest clone = new AuthDummy(up, body.getWriter(), cog);
         writeUnsubscribeLink(clone);
         clone.flush();
@@ -141,7 +143,7 @@ public class OptOutAddr {
     
     protected void writeConcludingPart(AuthRequest clone) throws Exception {
         String emailId = assignee.getEmail();
-        UserProfile up = UserManager.findUserByAnyId(emailId);
+        UserProfile up = clone.getCogInstance().getUserManager().lookupUserByAnyId(emailId);
         if(up != null){
             clone.write("  To change the e-mail communication you receive from ");
             clone.write("Weaver in future, you can ");
@@ -165,7 +167,7 @@ public class OptOutAddr {
 
     public JSONObject getUnsubscribeJSON(AuthRequest ar) throws Exception {
         assertValidEmail();
-        UserProfile up = UserManager.findUserByAnyId(assignee.getEmail());
+        UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(assignee.getEmail());
         JSONObject jo = new JSONObject();
         String emailId = assignee.getEmail();
         jo.put("emailId", emailId);

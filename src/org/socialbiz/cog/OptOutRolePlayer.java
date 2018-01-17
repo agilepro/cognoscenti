@@ -68,8 +68,10 @@ public class OptOutRolePlayer extends OptOutAddr {
         clone.write("You can ");
         clone.write("<a href=\"");
         clone.writeHtml(clone.baseURL);
-        clone.write("t/EmailAdjustment.htm?st=role&p=");
+        clone.write("t/EmailAdjustment.htm?st=role&pageId=");
         clone.writeURLData(containerID);
+        clone.write("&siteId=");
+        clone.writeURLData(ngc.getSiteKey());
         clone.write("&role=");
         clone.writeURLData(roleName);
         clone.write("&email=");
@@ -85,7 +87,8 @@ public class OptOutRolePlayer extends OptOutAddr {
         NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteID, containerID);
         NGWorkspace ngw = ngpi.getWorkspace();
         String emailId = assignee.getEmail();
-        jo.put("leaveRole", ar.baseURL+"t/EmailAdjustment.htm?st=role&p="+containerID
+        jo.put("leaveRole", ar.baseURL+"t/EmailAdjustment.htm?pageId="+containerID
+            +"&siteId="+URLEncoder.encode(ngw.getSiteKey(),"UTF-8")
             +"&role="+URLEncoder.encode(roleName,"UTF-8")
             +"&email="+URLEncoder.encode(emailId,"UTF-8")
             +"&mn="+URLEncoder.encode(ngw.emailDependentMagicNumber(emailId),"UTF-8"));

@@ -87,46 +87,50 @@ public class AddressListEntry implements UserRef
     UserProfile  user;
     String       namePart;
 
+    static final char RAQUO = '\u00BB';
+    static final char LAQUO = '\u00AB';
+
+
     /**
-     * This is the main constructor used on a unique id of a person, 
-     * could be an email address or an OpenID style uid.  
+     * This is the main constructor used on a unique id of a person,
+     * could be an email address or an OpenID style uid.
      * It will search and try to find the user.
      */
     public AddressListEntry(String addr) {
         if (addr==null) {
             throw new ProgramLogicError("attempt to construct an AddressListEntry with a null value");
         }
-        if (addr.indexOf('«')>=0 || addr.indexOf('<')>=0) {
+        if (addr.indexOf(LAQUO)>=0 || addr.indexOf('<')>=0) {
             throw new ProgramLogicError("looks like a combined address value and should be using parseCombinedAddress method: "+addr);
         }
-        user = UserManager.findUserByAnyId(addr);
+        user = UserManager.getStaticUserManager().lookupUserByAnyId(addr);
         rawAddress = addr;
     }
 
     /**
      * This constructor is used when you have two values, one
-     * universal id, and a name.  First the uid will be used to 
+     * universal id, and a name.  First the uid will be used to
      * try and find the user object.  If found, then the name
      * is ignored.  If not found, then the name is remembered.
-     * @throws Exception 
+     * @throws Exception
      */
     public AddressListEntry(String uid, String name) throws Exception {
         this(uid);
         if (user==null && name!=null && name.length()>0) {
-            
+
             //check to see if we have seen this email address before
             //and if so we will be using the previously recorded name
             MicroProfileRecord record = MicroProfileMgr.findMicroProfileById(uid);
-            
-            //if not, then put the name we have at this point into the 
+
+            //if not, then put the name we have at this point into the
             //microprofile because it is better than nothing
             if (record==null) {
                 MicroProfileMgr.setDisplayName(uid, name);
             }
         }
     }
-    
-    
+
+
     public AddressListEntry(UserProfile knownUser)
     {
         if (knownUser==null)
@@ -165,15 +169,15 @@ public class AddressListEntry implements UserRef
         //if it does not look like an email address, return a null string.
         return "";
     }
-    
+
     /**
      * An ALE is constructed on a string value.  That value might or might not
-     * be appropriate to designate a user.  Use this function to see if the 
+     * be appropriate to designate a user.  Use this function to see if the
      * ALE looks like it is a valid representation of a user.
-     * 
+     *
      * Every user HAS to have an email address at this point, so this method
      * will check to make sure that they have an email.  In the future if there
-     * are any other consistency constraints we can set that here.  
+     * are any other consistency constraints we can set that here.
      */
     public boolean isWellFormed() {
     	String email = getEmail();
@@ -422,8 +426,8 @@ public class AddressListEntry implements UserRef
     {
         //first check for the laquo and raquo case.  This is NOT
         //standard, but it is easier to deal with in HTML code
-        int braketStart = nameAddress.lastIndexOf('«');
-        int braketEnd   = nameAddress.lastIndexOf('»');
+        int braketStart = nameAddress.lastIndexOf(LAQUO);
+        int braketEnd   = nameAddress.lastIndexOf(RAQUO);
 
         //next, look for the normal angle brackets as per standard
         if (braketStart < 0 || braketEnd < 0) {
@@ -450,7 +454,7 @@ public class AddressListEntry implements UserRef
     * the email address in a single string value.
     * Note: it uses values from the user profile & microprofile if one has been associated.
     * Email address is always between angle brackets
-    */
+    *
     public String generateCombinedAddress()
     {
         String theName = namePart;
@@ -464,24 +468,36 @@ public class AddressListEntry implements UserRef
             }
         }
         if (theName == null) {
-            return "«" + getEmail() + "»";
+            return "Â«" + getEmail() + "Â»";
         }
-        return theName + " «" + getEmail() + "»";
+        return theName + " Â«" + getEmail() + "Â»";
     }
+    */
 
     /**
      * In some cases we use email addresses with laquo and raquo demarking
      * the name.  This cleans that up, and uses angle brackets instead.
      */
     public static String cleanQuotes(String eAddress) throws Exception {
-        int braketStart = eAddress.lastIndexOf('«');
-        int braketEnd   = eAddress.lastIndexOf('»');
+
+        //clean out legacy use of LAQUO and RAQUO to delimit user names.
+        //hopefully not doing this any more anywhere.
+        int braketStart = eAddress.lastIndexOf(LAQUO);
+        int braketEnd   = eAddress.lastIndexOf(RAQUO);
         if (braketStart >= 0 && braketEnd >= 0) {
-            if (braketStart < 0 || braketEnd < 0 || braketEnd <= braketStart) {
-                throw new Exception("Got an address with only a start laquo or only an end raquo -- the address should have both start and end, or none");
+            if (braketStart < 0) {
+                throw new Exception("Got an address with only an end raquo char -- the address should have both start and end, or none");
+            }
+            if (braketEnd < 0) {
+                throw new Exception("Got an address with only a start laquo char -- the address should have both start and end, or none");
+            }
+            if (braketEnd <= braketStart) {
+                throw new Exception("Got an address with laquo and raquo in the wrong order");
             }
             eAddress =  eAddress.substring(0, braketStart) + '<' + eAddress.substring(braketStart+1, braketEnd) + '>';
         }
+
+        //also eliminate any quote characters that might exist
         if (eAddress.indexOf("\"")>=0) {
             //we have to get rid of all the double quotes as well, replace them with spaces
             //for the email that is actually being sent.
@@ -551,8 +567,8 @@ public class AddressListEntry implements UserRef
 
         return res;
     }
-    
-    
+
+
     /**
      * Convert a list of string values into a list of address list entry objects
      */
@@ -600,13 +616,13 @@ public class AddressListEntry implements UserRef
         }
         return new AddressListEntry(uid, name);
     }
-    
+
     public static JSONArray getJSONArray(List<AddressListEntry> addressList) throws Exception {
         JSONArray array = new JSONArray();
         for (AddressListEntry ale : addressList) {
             array.put(ale.getJSON());
         }
-        return array;     
+        return array;
     }
-    
+
 }

@@ -183,18 +183,22 @@ public class MailInst extends JSONWrapper {
             transport = mailSession.getTransport();
             transport.connect();
 
-            String overrideAddress = mailer.getProperty("overrideAddress");
-
             addressee = getAddressee();
 
             MimeMessage message = new MimeMessage(mailSession);
             message.setSentDate(new Date(sendTime));
 
+            /*
             String rawFrom = getFrom();
             if (rawFrom==null || rawFrom.length()==0) {
                 throw new Exception("Attempt to send an email record that does not have a from address");
             }
+            
             message.setFrom(new InternetAddress(AddressListEntry.cleanQuotes(rawFrom)));
+            */
+            
+            message.setFrom(new InternetAddress(AddressListEntry.cleanQuotes(mailer.getProperty("mail.smtp.from"))));
+            
             String encodedSubjectLine = MimeUtility.encodeText(getSubject(), "utf-8", "B");
             message.setSubject(encodedSubjectLine);
 
@@ -216,13 +220,7 @@ public class MailInst extends JSONWrapper {
             InternetAddress[] addressTo = new InternetAddress[1];
 
             try {
-                // if overrideAddress is configured, then all email will go
-                // to that email address, instead of the address in the profile.
-                if (overrideAddress != null && overrideAddress.length() > 0) {
-                    addressTo[0] = new InternetAddress(overrideAddress);
-                } else {
-                    addressTo[0] = new InternetAddress(AddressListEntry.cleanQuotes(addressee));
-                }
+                addressTo[0] = new InternetAddress(AddressListEntry.cleanQuotes(addressee));
             } catch (Exception ex) {
                 throw new Exception("Error while attempting to send email to ("+addressee+")", ex);
             }

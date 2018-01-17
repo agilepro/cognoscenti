@@ -181,9 +181,6 @@ public class DailyDigest {
             UserCache userCache = cog.getUserCacheMgr().getCache(up.getKey());
             //because this is background, it is a good time to refresh the data in the cache
             userCache.refreshCache(cog);
-            int reportableThings = userCache.getActionItems().length();
-            reportableThings += userCache.getOpenRounds().length();
-            reportableThings += userCache.getProposals().length();
 
             userLog.put("ActionItems", userCache.getActionItems().length());
             userLog.put("OpenRounds",  userCache.getOpenRounds().length());

@@ -139,7 +139,7 @@ public class UserManager
             String key = up.getKey();
             UserProfile other = keyProfMap.get(key);
             if (other!=null) {
-                System.out.println("USER MANAGER FOUND duplicate user key to DELETE: "+key+", "+up.getEmailWithName());
+                System.out.println("USER MANAGER FOUND duplicate user key to DELETE: "+key+", "+up.getUniversalId());
                 //this is a big problem.  Two records with the same KEY.  That can
                 //only happen because of a bug.  Just drop this!
 
@@ -177,7 +177,7 @@ public class UserManager
                 }
             }
             for (String removableId : idsToRemove) {
-                System.out.println("USER MANAGER REMOVING one global ID: "+up.getKey()+", "+up.getEmailWithName()+", "+removableId);
+                System.out.println("USER MANAGER REMOVING one global ID: "+up.getKey()+", "+up.getUniversalId()+", "+removableId);
                 up.removeId(removableId);
             }
             if (up.getAllIds().size()==0) {
@@ -343,7 +343,7 @@ public class UserManager
     }
 
     public synchronized UserProfile findUserByAnyIdOrFail(String anyId){
-        UserProfile up = findUserByAnyId(anyId);
+        UserProfile up = lookupUserByAnyId(anyId);
         if (up == null) {
             throw new RuntimeException("Can not find a user profile for the id: "+anyId);
         }
@@ -351,7 +351,7 @@ public class UserManager
     }
 
     public synchronized UserProfile createUserWithId(String newId) throws Exception {
-        if (UserManager.findUserByAnyId(newId)!=null) {
+        if (lookupUserByAnyId(newId)!=null) {
             throw new ProgramLogicError("Can not create a new user profile using an address that some other profile already has: "+newId);
         }
 

@@ -504,7 +504,7 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGPage ngp = registerRequiredProject(ar, siteId, pageId);
-        TopicRecord note = ngp.getNoteOrFail(topicId);
+        ngp.getNoteOrFail(topicId);
         //normally the permission comes from a license in the URL for anonymous access
         //boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
         //if (!canAccessNote) {

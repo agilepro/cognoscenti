@@ -107,7 +107,7 @@ public class SiteRequest extends DOMFace {
     }
 
     public JSONObject getJSON() throws Exception {
-        UserProfile userProfile =  UserManager.findUserByAnyId(getModUser());
+        UserProfile userProfile =  UserManager.getStaticUserManager().lookupUserByAnyId(getModUser());
         JSONObject jo = new JSONObject();
         jo.put("requestId", getRequestId());
         jo.put("name", getName());

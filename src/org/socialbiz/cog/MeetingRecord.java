@@ -90,9 +90,6 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         setAttributeLong("duration", newVal);
     }
 
-    private long getMeetingType() {
-        return getAttributeInt("meetingType");
-    }
     private void setMeetingType(int newVal) {
         setAttributeInt("meetingType", newVal);
     }
@@ -768,7 +765,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
 
     public Calendar getOwnerCalendar() throws Exception {
-        UserProfile up = UserManager.findUserByAnyId(getOwner());
+        UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
         if (up!=null) {
             return up.getCalendar();
         }
@@ -956,7 +953,6 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 throw new Exception("The owner of the meeting has not been set.");
             }
             emg.setOwner(meetingOwner);
-            emg.setFrom(meetingOwner);
             emg.constructEmailRecords(ar, ngw, mailFile);
             setReminderSent(ar.nowTime);
         }

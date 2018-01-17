@@ -172,7 +172,7 @@ public class SectionUtil
     }
 
     public static String getShortNameByUserId(String userId) {
-        UserProfile up = UserManager.getStaticUserManager().findUserByAnyId(userId);
+        UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(userId);
         if(up != null) {
             return up.getName();
         }

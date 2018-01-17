@@ -204,22 +204,7 @@ public class ThreeWayMerge {
         neu.skipDiff();
     }
     
-    private static int smallest(int a, int b) {
-        if (a<0) {
-            //b might be -1 but if so that is OK
-            return b;
-        }
-        if (b<0) {
-            return a;
-        }
-        if (a<b) {
-            return a;
-        }
-        else {
-            return b;
-        }
-    }
-    
+
     private class PosStr {
         public String s;
         public int pos;

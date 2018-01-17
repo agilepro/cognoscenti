@@ -39,7 +39,6 @@ Optional Parameters:
     ar.assertMember("Must be a member to send email");
     UserProfile uProf = ar.getUserProfile();
     AddressListEntry uAle = new AddressListEntry(uProf);
-    String userFromAddress = uAle.generateCombinedAddress();
 
     String eGenId      = ar.defParam("id", null);
     JSONObject emailInfo = null;
@@ -83,7 +82,6 @@ Optional Parameters:
         }
         emailInfo.put("docList", docList);
 
-        emailInfo.put("from", userFromAddress);
         emailInfo.put("alsoTo", new JSONArray());
         emailInfo.put("excludeResponders", false);
         emailInfo.put("includeSelf", false);
@@ -139,7 +137,6 @@ Optional Parameters:
       "attachFiles": false,
       "docList": [],
       "excludeResponders": false,
-      "from": "Keith Swenson �kswenson@us.fujitsu.com�",
       "id": "~new~",
       "includeBody": false,
       "includeSelf": false,
@@ -445,16 +442,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
       <form class="form-horizontal">
         <fieldset>
           <div class="form-group">
-            <label class="col-md-2 control-label" for="from">From</label>
-            <div class="col-md-10">
-              <select ng-model="emailInfo.from"  class="form-control" style="width: 380px">
-                <option value="<% ar.writeHtml(userFromAddress); %>"><% ar.writeHtml(userFromAddress); %></option>
-                <option value="<% ar.writeHtml(composeFromAddress(ngw)); %>"><% ar.writeHtml(composeFromAddress(ngw)); %></option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-2 control-label" for="from">To Role</label>
+            <label class="col-md-2 control-label">To Role</label>
             <div class="col-md-10">
               <span ng-repeat="role in allRoles">
                 <span class="role-label" ng-show="hasRole(role.name)">

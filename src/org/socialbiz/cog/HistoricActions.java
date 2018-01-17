@@ -171,7 +171,7 @@ public class HistoricActions {
 
     private void sendInviteEmail(NGContainer container, String emailId, String role) throws Exception {
         MemFile body = new MemFile();
-        UserProfile receivingUser = UserManager.findUserByAnyId(emailId);
+        UserProfile receivingUser = UserManager.getStaticUserManager().lookupUserByAnyId(emailId);
         AuthRequest clone = new AuthDummy(receivingUser, body.getWriter(), cog);
         UserProfile requestingUser = ar.getUserProfile();
 

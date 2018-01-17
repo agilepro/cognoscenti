@@ -83,14 +83,6 @@ public class EmailGenerator extends DOMFace {
     }
 
 
-    public String getFrom() throws Exception {
-        return getScalar("from");
-    }
-
-    public void setFrom(String newVal) throws Exception {
-        setScalar("from", newVal);
-    }
-
     public String getSubject() throws Exception {
         return getScalar("subject");
     }
@@ -280,8 +272,7 @@ public class EmailGenerator extends DOMFace {
             }
         }
         if (getIncludeSelf()) {
-            //TODO: the 'from' is not always the user who caused this email to be sent.
-            String from = getFrom();
+            String from = getOwner();
             if (from!=null && from.length()>0) {
                 AddressListEntry aleself = AddressListEntry.parseCombinedAddress(from);
                 OptOutAddr.appendOneUser(new OptOutDirectAddress(aleself), sendTo);
@@ -318,7 +309,7 @@ public class EmailGenerator extends DOMFace {
             //don't send anything if the user does not have an email address
             return;
         }
-        UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
+        UserProfile originalSender = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
         if (originalSender==null) {
             System.out.println("DATA PROBLEM: email generator came from a person without a profile ("+getOwner()+") ignoring");
             return;
@@ -336,7 +327,7 @@ public class EmailGenerator extends DOMFace {
             }
         }
         
-        mailFile.createEmailWithAttachments(ngp, getFrom(), ooa.getEmail(), subject, entireBody, attachIds);
+        mailFile.createEmailWithAttachments(ngp, getOwner(), ooa.getEmail(), subject, entireBody, attachIds);
     }
 
     
@@ -346,7 +337,7 @@ public class EmailGenerator extends DOMFace {
 
         TopicRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
         MemFile bodyChunk = new MemFile();
-        UserProfile originalSender = UserManager.findUserByAnyId(getOwner());
+        UserProfile originalSender = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
         
         List<AttachmentRecord> attachList = getSelectedAttachments(ar, ngp);
         List<String> attachIds = new ArrayList<String>();
@@ -413,7 +404,7 @@ public class EmailGenerator extends DOMFace {
         //Gather all the data into a JSON structure
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
-        UserProfile ownerProfile = UserManager.findUserByAnyId(getOwner());
+        UserProfile ownerProfile = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
         if (ownerProfile!=null) {
             data.put("sender",  ownerProfile.getJSON());
 		}
@@ -530,7 +521,7 @@ public class EmailGenerator extends DOMFace {
     public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw) throws Exception {
         JSONObject obj = new JSONObject();
         obj.put("id", getId());
-        obj.put("from", getFrom());
+        obj.put("from", getOwner());
         obj.put("subject", getSubject());
         obj.put("state", getState());
         obj.put("sendDate", getSendDate());
@@ -583,9 +574,6 @@ public class EmailGenerator extends DOMFace {
     }
 
     public void updateFromJSON(JSONObject obj) throws Exception {
-        if (obj.has("from")) {
-            setFrom(obj.getString("from"));
-        }
         if (obj.has("subject")) {
             setSubject(obj.getString("subject"));
         }

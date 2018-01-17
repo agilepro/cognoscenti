@@ -1011,20 +1011,21 @@ public class UserController extends BaseController {
             String containerId = ar.reqParam( "containerId" );
 
             NGPage page = ar.getCogInstance().getWSByCombinedKeyOrFail( containerId ).getWorkspace();
-            ar.getCogInstance().getSiteByIdOrFail(page.getSite().getKey());
+            Cognoscenti cog = ar.getCogInstance();
+            cog.getSiteByIdOrFail(page.getSite().getKey());
 
             String expectedMN = page.emailDependentMagicNumber(emailId);
             if(!mn.equals(expectedMN)){
                 throw new NGException("nugen.exception.link.configured.improperly", new Object[]{emailId});
             }
-            UserProfile  profileExists = UserManager.findUserByAnyId( emailId );
+            UserProfile  profileExists =  cog.getUserManager().lookupUserByAnyId( emailId );
             if(profileExists != null){
                 throw new NGException("nugen.exception.invalid.link",null);
             }
             UserProfile up = ar.getUserProfile();
             up.addId(emailId);
             up.setLastUpdated(ar.nowTime);
-            ar.getCogInstance().getUserManager().saveUserProfiles();
+            cog.getUserManager().saveUserProfiles();
 
             //remove micro profile if exists.
             MicroProfileMgr.removeMicroProfileRecord(emailId);
@@ -1589,7 +1590,7 @@ public class UserController extends BaseController {
                 return;
             }
             String userKey = ar.reqParam("uid");
-            UserProfile searchedFor = UserManager.findUserByAnyId(userKey);
+            UserProfile searchedFor = ar.getCogInstance().getUserManager().lookupUserByAnyId(userKey);
             if (searchedFor!=null) {
                 //so if we find it, just redirect to the settings page
                 response.sendRedirect(ar.retPath+"v/"+searchedFor.getKey()+"/userSettings.htm");

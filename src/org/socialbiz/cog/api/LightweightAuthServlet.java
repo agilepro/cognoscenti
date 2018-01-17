@@ -186,7 +186,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
                     aStat.setName(response.getString("userName"));
 
                     //remember for the user that they logged in at this time
-                    UserProfile up = UserManager.findUserByAnyId(userId);
+                    UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(userId);
 
                     //This could be the first time a user accesses, so create profile
                     if (up==null) {

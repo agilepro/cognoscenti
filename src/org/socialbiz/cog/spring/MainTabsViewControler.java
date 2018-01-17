@@ -1337,7 +1337,7 @@ public class MainTabsViewControler extends BaseController {
                   JSONArray users = timeZoneRequest.getJSONArray("users");
                   for (int i=0; i<users.length(); i++) {
                       String oneUser = users.getString(i);
-                      UserProfile up = UserManager.findUserByAnyId(oneUser);
+                      UserProfile up = ar.getCogInstance().getUserManager().lookupUserByAnyId(oneUser);
                       if (up!=null) {
                           String tx = up.getTimeZone();
                           if (tx!=null && tx.length()>0) {

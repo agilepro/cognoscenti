@@ -87,7 +87,7 @@ public class NGSession
         //was preserved and reset the session so the user is logged in.
         String key = (String) session.getAttribute("userKey");
         if (key!=null) {
-            UserProfile oldUser = UserManager.findUserByAnyId(key);
+            UserProfile oldUser = UserManager.getStaticUserManager().lookupUserByAnyId(key);
             if (oldUser!=null) {
                 setLoggedInUser(oldUser, key);
             }
@@ -167,7 +167,7 @@ public class NGSession
         if (userGlobalId==null) {
             return null;
         }
-        return UserManager.findUserByAnyId(userGlobalId);
+        return UserManager.getStaticUserManager().lookupUserByAnyId(userGlobalId);
     }
 
     /**

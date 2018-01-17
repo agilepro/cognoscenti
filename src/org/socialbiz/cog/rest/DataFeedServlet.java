@@ -133,7 +133,7 @@ public class DataFeedServlet extends HttpServlet {
         String listType = reqParam(ar.req, PARAM_TASKLIST);
         String openId = defParam(ar.req, "u", ar.getBestUserId());
 
-        UserProfile up = UserManager.findUserByAnyId(openId);
+        UserProfile up = ar.getCogInstance().getUserManager().lookupUserByAnyId(openId);
         List<TaskListRecord> tasks = getTaskList(up, listType, ar.getCogInstance());
 
         writeTaskListToResponse(ar, tasks);
@@ -163,7 +163,7 @@ public class DataFeedServlet extends HttpServlet {
             DOMUtils.createChildElement(doc, resultEle, "BookName", sr.getBookName());
             DOMUtils.createChildElement(doc, resultEle, "NoteSubj", sr.getNoteSubject());
 
-            UserProfile uProf = UserManager.findUserByAnyId(sr.getLastModifiedBy());
+            UserProfile uProf = ar.getCogInstance().getUserManager().lookupUserByAnyId(sr.getLastModifiedBy());
             String userName = "unknown";
             String userKey = "unknown";
             if (uProf != null) {

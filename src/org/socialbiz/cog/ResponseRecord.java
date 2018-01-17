@@ -134,7 +134,7 @@ public class ResponseRecord extends DOMFace
             ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
         }
         AddressListEntry owner = new AddressListEntry(this.getUserId());
-        UserProfile ownerProfile = UserManager.findUserByAnyId(this.getUserId());
+        UserProfile ownerProfile = cog.getUserManager().lookupUserByAnyId(this.getUserId());
         String detailMsg = "??";
         boolean isProposal = false;
         switch (cr.getCommentType()) {
@@ -190,7 +190,7 @@ public class ResponseRecord extends DOMFace
         
         String bodyStr = body.toString();
         String emailSubject =  noteOrMeet.emailSubject()+": "+detailMsg;
-        mailFile.createEmailRecord(commenterProfile.getEmailWithName(), ooa.getEmail(), emailSubject, bodyStr);
+        mailFile.createEmailRecord(commenterProfile.getUniversalId(), ooa.getEmail(), emailSubject, bodyStr);
     }
 
     public JSONObject getJSON(AuthRequest ar) throws Exception {
