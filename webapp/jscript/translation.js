@@ -7,7 +7,7 @@ myApp.config(['$translateProvider', function($translateProvider) {
         var dxp_monitor_de ={
             "Workspaces" : "Arbeitsbereiche",
             "Top Action Items":"Top-Aktionselemente",
-            "Planned Meetings":"Bevorstehende Treffen"
+            "Upcoming Meetings":"Bevorstehende Treffen"
         };
 
         var dxp_monitor_en ={
