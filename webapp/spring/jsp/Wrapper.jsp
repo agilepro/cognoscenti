@@ -252,6 +252,7 @@ $(document).ready(function() {
 //individual pages create the controlles
 var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.tinymce','angularjs-datetime-picker','pascalprecht.translate', 'ngSanitize']);
 
+
  </script>
 
 
