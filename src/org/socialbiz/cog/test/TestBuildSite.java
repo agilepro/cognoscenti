@@ -6,6 +6,7 @@ import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGRole;
+
 import com.purplehillsbooks.testframe.TestDriver;
 import com.purplehillsbooks.testframe.TestRecorder;
 import com.purplehillsbooks.testframe.TestSet;
@@ -89,7 +90,6 @@ public class TestBuildSite implements TestSet {
         testBoolean("isFrozen default should be false", testSite.isFrozen(), false);
 
         testNotNull("getSiteRootFolder should not be null", testSite.getSiteRootFolder());
-        testBoolean("isSiteFolderStructure default should be true", testSite.isSiteFolderStructure(), true);
 
         //test the default role settings
         NGRole prim =  testSite.getPrimaryRole();
@@ -119,7 +119,6 @@ public class TestBuildSite implements TestSet {
         testBoolean("isFrozen default should be false", testSite.isFrozen(), false);
 
         testNotNull("getSiteRootFolder should not be null", testSite.getSiteRootFolder());
-        testBoolean("isSiteFolderStructure default should be true", testSite.isSiteFolderStructure(), true);
 
         //test the default role settings
         prim =  testSite.getPrimaryRole();

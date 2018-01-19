@@ -466,7 +466,7 @@ public class SiteController extends BaseController {
             jo.put("updated", count);
             sendJson(ar, jo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to create Action Item for minutes of meeting.", ex);
+            Exception ee = new Exception("Unable to replace users in site ("+siteId+")", ex);
             streamException(ee, ar);
         }
     }

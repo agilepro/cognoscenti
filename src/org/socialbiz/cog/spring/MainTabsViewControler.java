@@ -1313,7 +1313,7 @@ public class MainTabsViewControler extends BaseController {
               saveAndReleaseLock(ngw, ar, "Created action item for minutes of meeting.");
               sendJson(ar, repo);
           }catch(Exception ex){
-              Exception ee = new Exception("Unable to create Action Item for minutes of meeting.", ex);
+              Exception ee = new Exception("Unable to create Action Item .", ex);
               streamException(ee, ar);
           }
       }

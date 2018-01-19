@@ -153,6 +153,9 @@ public class NGSession
             String attribute = e.nextElement();
             session.removeAttribute(attribute);
         }
+        
+        //erase any special privileges collected along the way
+        honorarium.clear();
 
         //force the construction of a new, empty AuthStatus object
         aStat = AuthStatus.getAuthStatus(session);
