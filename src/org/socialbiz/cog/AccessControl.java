@@ -158,6 +158,11 @@ public class AccessControl {
             if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
                 return true;
             }
+            
+            //also allow the assignee of an actoin item free access as well
+            if (gr.isAssignee(user)) {
+                return true;
+            }
         }
 
         //then, check to see if there is any special condition in session
@@ -166,7 +171,7 @@ public class AccessControl {
             return true;
         }
 
-        //now, check the query parameters, and if apprpriate, set up the special access
+        //now, check the query parameters, and if appropriate, set up the special access
         //url must have "mntask"  (magic number for task)
         String mntask = ar.defParam("mntask", null);
         if (mntask != null) {

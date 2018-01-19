@@ -639,7 +639,6 @@ public class ProjectGoalController extends BaseController {
         try{
             NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
-            ar.assertMember("Must be a member to create a action item.");
             ar.assertNotFrozen(ngp);
             gid = ar.reqParam("gid");
             JSONObject goalInfo = getPostedObject(ar);
@@ -647,12 +646,19 @@ public class ProjectGoalController extends BaseController {
             int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
             boolean isNew = "~new~".equals(gid);
             if (isNew) {
+                //if it is a new goal you MUST be a member
+                ar.assertMember("Need to be Member or assignee of task");
                 gr = ngp.createGoal(ar.getBestUserId());
                 goalInfo.put("universalid", gr.getUniversalId());
                 eventType = HistoryRecord.EVENT_TYPE_CREATED;
             }
             else {
+                //you might be an assignee to gain access
                 gr = ngp.getGoalOrFail(gid);
+                boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, gr);
+                if (!canAccessGoal) {
+                    ar.assertMember("Need to be Member or assignee of task");
+                }
             }
 
             int previousState = gr.getState();
@@ -757,9 +763,12 @@ public class ProjectGoalController extends BaseController {
         try{
             NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
-            ar.assertMember("Must be a member to get action item history.");
             String gid = ar.reqParam("gid");
             GoalRecord gr = ngp.getGoalOrFail(gid);
+            boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, gr);
+            if (!canAccessGoal) {
+                ar.assertMember("Need to be Member or assignee of task");
+            }
 
             JSONArray repo = new JSONArray();
             for (HistoryRecord hist : gr.getTaskHistory(ngp)) {
@@ -767,7 +776,7 @@ public class ProjectGoalController extends BaseController {
             }
             sendJsonArray(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to create Action Item for minutes of meeting.", ex);
+            Exception ee = new Exception("Unable to get history for Action Item.", ex);
             streamException(ee, ar);
         }
     }

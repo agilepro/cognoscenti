@@ -52,7 +52,7 @@ Required parameters:
 
 <script type="text/javascript">
 
-var app = angular.module('myApp');
+var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     $scope.loaded = false;
     $scope.meetId = "<%ar.writeJS(meetId);%>";
@@ -272,7 +272,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     }
     // Start the clock timer
     $interval($scope.calcTimes, 1000);
-    
+    console.log("All loaded");
 });
 app.filter('minutes', function() {
 

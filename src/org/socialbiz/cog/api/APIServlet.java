@@ -40,10 +40,11 @@ import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
-import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.SectionWiki;
+import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UtilityMethods;
 import org.socialbiz.cog.WikiConverter;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
@@ -347,9 +348,6 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         if (resDec.site==null) {
             throw new Exception("Unable to fine a site with the id: "+resDec.siteId);
         }
-        if (!resDec.site.isSiteFolderStructure()) {
-            throw new Exception("This operation requires a site that is structured with site-folder structure");
-        }
         if (!resDec.site.isValidLicense(resDec.lic, ar.nowTime)) {
             throw new Exception("The license ("+resDec.licenseId+") has expired.  "
                     +"To exchange information, you will need to get an updated license");
@@ -413,9 +411,6 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         if (resDec.lic.isReadOnly()) {
             throw new Exception("The license ("+resDec.licenseId+") is a read-only license and "
                     +"can not be used to update information on this server.");
-        }
-        if (!resDec.site.isSiteFolderStructure()) {
-            throw new Exception("This operation requires a site that is structured with site-folder structure");
         }
 
         responseOK.put("license", getLicenseInfo(resDec.lic));

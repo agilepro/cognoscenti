@@ -791,16 +791,6 @@ public class NGBook extends ContainerCommon {
     }
 
     /**
-     * Returns true if this is a site with a folder structure that the projects
-     * should be put into.
-     *
-     * Returns false if this is a site & project in the datafolder
-     */
-    public boolean isSiteFolderStructure() {
-        return (getSiteRootFolder() != null);
-    }
-
-    /**
      * Given a new project with a key 'p', this will return the File for the new
      * project file (which does not exist yet). There are two methods:
      *
