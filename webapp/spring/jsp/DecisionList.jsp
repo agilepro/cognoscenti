@@ -207,6 +207,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             //cancel action - nothing really to do
         });
     };
+    
+    $scope.reviewStyle = function(date) {
+        var diff = (date-(new Date()).getTime())/(24*60*60*1000);
+        if (diff<0) {
+            return {"color":"red","font-weight": "bold"};
+        }
+        else if (diff<14) {
+            return {"color":"orange"};
+        }
+        return {"color":"lightgrey"};
+    }
+    
+    $scope.advanceDate = function(decision) {
+        decision.reviewDate = decision.reviewDate + (365*24*60*60*1000);
+        $scope.saveDecision(decision);
+    }
 });
 
 
@@ -268,7 +284,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         data-toggle="dropdown"> <span class="caret"></span> </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                       <li role="presentation"><a role="menuitem" tabindex="-1"
-                          ng-click="openDecisionEditor(rec)">Edit Decision</a></li>
+                          ng-click="openDecisionEditor(rec)" 
+                          title="Open the decision edit box.">
+                          Edit Decision</a></li>
+                      <li role="presentation"><a role="menuitem" tabindex="-1"
+                          ng-click="advanceDate(rec)" translate
+                          title="Sets the review date to be one year later than currently set">
+                          Advance Review Date 1 Year</a></li>
                     </ul>
                   </div>
                 </td>
@@ -286,6 +308,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                                   {{label.name}}
                               </button>
                             </span>
+                            <span ng-show="rec.reviewDate>10000" ng-style="reviewStyle(rec.reviewDate)">&nbsp; - &nbsp; Review By: {{rec.reviewDate|date}}</span>
                         </div>
                     </div>
                     <div ng-click="rec.show=!rec.show" >

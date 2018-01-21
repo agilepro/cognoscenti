@@ -1,9 +1,6 @@
-console.log("TRANSLATION");
 var myApp = angular.module('myApp');
-console.log("TRANSLATION", myApp);
 myApp.config(['$translateProvider', function($translateProvider) {
 
-    console.log("FUNCTION(translateProvider)");
     var dxp_monitor_de ={
         "Workspaces" : "Arbeitsbereiche",
         "Top Action Items":"Aktionselemente",
@@ -12,7 +9,14 @@ myApp.config(['$translateProvider', function($translateProvider) {
         "Need to Complete": "Unvollendet",
         "Workspaces you Watch": "Arbeitsbereiche",
         "Sites you Manage": "Standorten",
-        "See all...": "Mehr..."
+        "See all...": "Mehr...",
+        "Options":"Optionen",
+        "User Alerts":"Benutzerwarnungen",
+        "A list of things that have changed in the pages that you watch":"Eine Liste der Dinge, die sich auf den von Ihnen beobachteten Seiten geändert haben",
+        "Recalculate":"Neu berechnen",
+        "Use this option if you want to see changes that occurred in the past 24 hours":"Verwenden Sie diese Option, wenn Sie Änderungen sehen möchten, die in den letzten 24 Stunden aufgetreten sind",
+        "Advance Review Date 1 Year":"Vorabüberprüfungsdatum 1 Jahr",
+        "Sets the review date to be one year later than currently set":"Legt das Überprüfungsdatum auf ein Jahr später fest als derzeit festgelegt"
     };
 
     var dxp_monitor_en ={
@@ -42,7 +46,6 @@ myApp.config(['$translateProvider', function($translateProvider) {
         }
         return "en";
     }
-    console.log("LANGAUGE:", getAcceptedLanguages(), getPreferredLanguage());
     
     $translateProvider
         .translations('en', dxp_monitor_en)
