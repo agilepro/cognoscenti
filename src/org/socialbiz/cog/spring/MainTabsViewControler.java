@@ -163,12 +163,17 @@ public class MainTabsViewControler extends BaseController {
            throws Exception {
        try{
            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-           request.setAttribute("lid", lid);
+           boolean reallyLoggedIn = ar.isLoggedIn();
+           request.setAttribute("topicId", lid);
            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
            TopicRecord note = ngp.getNoteOrFail(lid);
            boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
-           if (canAccessNote) {
-               showJSPAnonymous(ar, siteId, pageId, "NoteZoom");
+           if (reallyLoggedIn && canAccessNote) {
+               showJSPMembers(ar, siteId, pageId, "NoteZoom");
+           }
+           else if (canAccessNote) {
+               //show to people not logged in, but with special key to access it
+               specialAnonJSP(ar, siteId, pageId, "Topic.jsp");
            }
            else {
                showJSPMembers(ar, siteId, pageId, "NoteZoom");

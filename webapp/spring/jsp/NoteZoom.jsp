@@ -8,7 +8,7 @@
 Required parameter:
 
     1. pageId : This is the id of a Workspace and used to retrieve NGPage.
-    2. lid    : This is id of note (TopicRecord).
+    2. topicId: This is id of note (TopicRecord).
 
 */
     //set 'forceTemplateRefresh' in config file to 'true' to get this
@@ -43,8 +43,8 @@ Required parameter:
         currentUserKey = uProf.getKey();
     }
 
-    String lid = ar.reqParam("lid");
-    TopicRecord note = ngw.getNoteOrFail(lid);
+    String topicId = ar.reqParam("topicId");
+    TopicRecord note = ngw.getNoteOrFail(topicId);
 
     if (!AccessControl.canAccessTopic(ar, ngw, note)) {
         throw new Exception("Program Logic Error: this view should only display when user can actually access the note.");
@@ -68,7 +68,7 @@ Required parameter:
         docSpaceURL = ar.baseURL +  "api/" + ngb.getKey() + "/" + ngw.getKey()
                     + "/summary.json?lic="+lfu.getId();
     }
-    
+
     //to access the email-ready page, you need to get the license parameter
     //for this note.  This string saves this for use below on reply to comments
     String specialAccess =  AccessControl.getAccessTopicParams(ngw, note)
@@ -169,7 +169,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.reportError(data);
         });
     };
-    
+
     $scope.receiveTopicRecord = function(data) {
         $scope.noteInfo = data;
         var check = false;
@@ -353,7 +353,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.history = data;
         })
         .error( function(data, status, headers, config) {
-            console.log("FAILED TO GET: "+postURL, data, status, headers, config);
+            console.log("FAILED TO refreshHistory: "+postURL, data, status, headers, config);
             $scope.reportError(data);
         });
     }
@@ -480,7 +480,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.setPhase("Freeform");
         $scope.addressMode = false;
     }
-    
+
     $scope.changeSubscription = function(onOff) {
         var url = "topicSubscribe.json?nid="+$scope.noteInfo.id;
         if (!onOff) {
@@ -709,7 +709,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 		})
 		return res;
 	}
-	
+
     $scope.getFullDoc = function(docId) {
         var doc = {};
         $scope.attachmentList.forEach( function(item) {
@@ -746,7 +746,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.saveEdits(['docList']);
     }
     $scope.openAttachDocument = function () {
-        
+
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\Documents can not be attached in a frozen workspace.");
             return;
@@ -829,7 +829,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             //cancel action - nothing really to do
         });
     };
-    
+
     $scope.refreshFromServer = function() {
 		saveRecord = {};
 		saveRecord.saveMode = "autosave";
@@ -856,7 +856,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             if (!$scope.lastAuto) {
                 $scope.lastAuto = {};
             }
-            if ($scope.noteInfo.html==$scope.lastAuto.html && 
+            if ($scope.noteInfo.html==$scope.lastAuto.html &&
                             $scope.noteInfo.subject==$scope.lastAuto.subject) {
                 console.log("AUTOSAVE - skipped, nothing new to save");
                 //it IS idle so increase the idle counter, but after ten tried no change, go and fetch the latest
@@ -890,11 +890,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
     }
 	$scope.promiseAutosave = $interval($scope.autosave, 15000);
-    
+
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
     }
-	
+
 });
 
 </script>
@@ -917,7 +917,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             <li role="presentation" ng-repeat="phase in getPhases()"><a role="menuitem"
                 ng-click="setPhase(phase)">{{showDiscussionPhase(phase)}}</a></li>
           </ul>
-      </span>      
+      </span>
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
@@ -936,11 +936,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               ng-click="changeSubscription(false)">Unsubscribe from this Topic</a></li>
           <li role="presentation" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="openFeedbackModal()">Feedback</a></li>
-              
+
         </ul>
       </span>
     </div>
-    
+
     <div class="well" ng-show="addressMode" ng-cloak>
       <h2>Email Notification To (Subscribers):</h2>
       <div>
@@ -964,9 +964,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                   title="Cancel and leave this in draft mode.">
           Cancel </button>
       </span>
-      
+
     </div>
-    
+
     <div  class="h1" style="{{getPhaseStyle()}}"  ng-hide="isEditing" ng-click="startEdit()" >
         <i class="fa fa-lightbulb-o" style="font-size:130%"></i>
         {{noteInfo.subject}}
@@ -1005,17 +1005,17 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
         <%if (isLoggedIn) { %>
         <span class="dropdown">
-           <button class="btn btn-sm btn-primary btn-raised labelButton" 
-               type="button" 
-               id="menu1" 
+           <button class="btn btn-sm btn-primary btn-raised labelButton"
+               type="button"
+               id="menu1"
                data-toggle="dropdown"
                title="Add Label"
                style="padding:5px 10px">
                <i class="fa fa-plus"></i></button>
-           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
+           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1"
                    style="width:320px;left:-130px">
                <li role="presentation" ng-repeat="rolex in allLabels" style="float:left">
-                   <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton" 
+                   <button role="menuitem" tabindex="-1" ng-click="toggleLabel(rolex)" class="labelButton"
                            ng-hide="hasLabel(rolex.name)" style="background-color:{{rolex.color}}">
                        {{rolex.name}}</button>
                </li>
@@ -1030,14 +1030,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
               <td ><span ng-repeat="docid in noteInfo.docList" style="vertical-align: top">
                   <span class="dropdown" title="Access this attachment">
                       <button class="attachDocButton" id="menu1" data-toggle="dropdown">
-                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> 
+                      <img src="<%=ar.retPath%>assets/images/iconFile.png">
                       {{getFullDoc(docid).name | limitTo : 15}}</button>
                       <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
                         <li role="presentation" style="background-color:lightgrey">
-                            <a role="menuitem" 
+                            <a role="menuitem"
                             title="This is the full name of the document"
                             ng-click="navigateToDoc(docid)">{{getFullDoc(docid).name}}</a></li>
-                        <li role="presentation"><a role="menuitem" 
+                        <li role="presentation"><a role="menuitem"
                             title="Use DRAFT to set the meeting without any notifications going out"
                             ng-click="navigateToDoc(docid)">Access Document</a></li>
                         <li role="presentation"><a role="menuitem"
@@ -1060,9 +1060,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                   title="Attach a document">
                   ADD </button>
 <% } %>
-           </td></tr></table>    
-    
-    
+           </td></tr></table>
+
+
     </div>
 
     <div>
@@ -1121,12 +1121,12 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
       <span ng-hide="isSubscriber" ng-click="changeSubscription(true)" class="btn btn-sm btn-primary btn-raised"
           title="subscribe yourself to this topic">
           <i class="fa  fa-plus"></i> Subscribe</span>
-      <span ng-show="isSubscriber" ng-click="changeSubscription(false)" class="btn btn-sm btn-primary btn-raised" 
+      <span ng-show="isSubscriber" ng-click="changeSubscription(false)" class="btn btn-sm btn-primary btn-raised"
           title="unsubscribe yourself from this topic">
           <i class="fa  fa-minus"></i> Unsubscribe</span>
     </div>
 
-    
+
 
 </div>
 
