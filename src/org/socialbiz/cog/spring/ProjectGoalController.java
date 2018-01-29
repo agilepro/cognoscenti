@@ -105,6 +105,7 @@ public class ProjectGoalController extends BaseController {
             NGPage ngp = registerRequiredProject(ar, siteId, pageId);
 
             GoalRecord goal = ngp.getGoalOrFail(taskId);
+            boolean isLoggedIn = ar.isLoggedIn();
             boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, goal);
 
             if(!canAccessGoal){
@@ -118,6 +119,9 @@ public class ProjectGoalController extends BaseController {
             request.setAttribute("taskId", taskId);
             if(goal.isPassive()) {
                 throw new Exception("Passive goals are not supported any more");
+            }
+            else if (!isLoggedIn) {
+                specialAnonJSP(ar, siteId, pageId, "ActionItem.jsp");
             }
             else{
                 streamJSP(ar, "GoalEdit");

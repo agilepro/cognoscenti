@@ -1537,7 +1537,6 @@ public abstract class NGPage extends ContainerCommon {
     public List<DecisionRecord> getDecisions() throws Exception {
         DOMFace meetings = requireChild("decisions", DOMFace.class);
         List<DecisionRecord> ret =  meetings.getChildren("decision", DecisionRecord.class);
-        System.out.println("getDecisions found "+ret.size()+" decisions");
         return ret;
     }
     public DecisionRecord createDecision() throws Exception {

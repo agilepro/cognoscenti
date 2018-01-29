@@ -21,7 +21,9 @@
 package org.socialbiz.cog;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.util.StringCounter;
@@ -355,11 +357,22 @@ public class CustomRole extends DOMFace implements NGRole
         }
         extractScalarString(jObj, "description");
         jObj.put("requirements", getRequirements());
+        Set<String> uniquenessEnforcer = new HashSet<String>();
         JSONArray playerArray = new JSONArray();
         for (AddressListEntry player : getDirectPlayers()) {
-            if (player.getUniversalId().length()>0) {
-                playerArray.put( player.getJSON() );
+            String uniqueId = player.getUniversalId();
+            if (uniqueId==null || uniqueId.length()==0) {
+                //should not be any of these, but ignore any member without a unique global id
+                continue;
             }
+            if (uniquenessEnforcer.contains(uniqueId)) {
+                //each member should be in the set only once.  There was some cases where this 
+                //was somehow happening, maybe people changing name, or whatever, so always 
+                //enforce uniqueness in the output list.
+                continue;
+            }
+            uniquenessEnforcer.add(uniqueId);
+            playerArray.put( player.getJSON() );
         }
         jObj.put("players", playerArray);
 

@@ -21,12 +21,14 @@
 package org.socialbiz.cog;
 
 import java.io.IOException;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 
 public class NGFilter implements Filter {
 
@@ -39,6 +41,10 @@ public class NGFilter implements Filter {
         try{
             //always set the encoding to UTF-8 in filter, as early as possible to avoid well known J2EE bug
             request.setCharacterEncoding("UTF-8");
+            if (response instanceof HttpServletResponse) {
+                HttpServletResponse rsp = (HttpServletResponse) response;
+                rsp.setHeader("Cache-Control", "must-revalidate");
+            }
             chain.doFilter(request, response);
         }finally{
             NGPageIndex.clearLocksHeldByThisThread();
