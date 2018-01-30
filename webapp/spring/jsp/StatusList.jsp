@@ -143,7 +143,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         for (var j=0; j<lcFilterList.length; j++) {
             var lcfilter = lcFilterList[j];
             var recentLine = (new Date()).getTime() - 7*24*60*60*1000;
-            console.log("RECENT LINE: ", recentLine);
             var res = [];
             src.forEach( function(rec) {
                 if ($scope.showRecent && (rec.modifiedtime > recentLine || rec.startdate > recentLine || rec.enddate > recentLine)) {

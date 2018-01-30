@@ -71,50 +71,48 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
-        <div>Filter <input ng-model="filter"></div>
-        <div style="height:30px;"></div>
+    <div>Filter <input ng-model="filter"></div>
+    <div style="height:30px;"></div>
 
-        <table class="gridTable2" width="100%">
-            <tr class="gridTableHeader">
-                <td width="50px"></td>
-                <td width="200px">Workspace</td>
-                <td width="100px">Changed</td>
-            </tr>
-            <tr ng-repeat="rec in getRows()">
-                <td>
-                  <div class="dropdown">
-                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-                        data-toggle="dropdown"> <span class="caret"></span> </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Workspace</a></li>
-                    </ul>
-                  </div>
-                </td>
-                <td class="repositoryName">
-                    <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">
-                       {{rec.name}}
-                       <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
-                       <span ng-show="rec.frozen" style="color:grey"> (FROZEN)</span>
-                       <span ng-show="rec.isMoved" style="color:grey"> (MOVED)</span>
-                    </a>
-                </td>
-                <td>{{rec.changed|date}}</span></td>
-            </tr>
-        </table>
+    <table class="gridTable2" width="100%">
+        <tr class="gridTableHeader">
+            <td width="50px"></td>
+            <td width="200px">Workspace</td>
+            <td width="100px">Changed</td>
+        </tr>
+        <tr ng-repeat="rec in getRows()">
+            <td>
+              <div class="dropdown">
+                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                    data-toggle="dropdown"> <span class="caret"></span> </button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation">
+                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Workspace</a></li>
+                </ul>
+              </div>
+            </td>
+            <td class="repositoryName">
+                <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">
+                   {{rec.name}}
+                   <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
+                   <span ng-show="rec.frozen" style="color:grey"> (FROZEN)</span>
+                   <span ng-show="rec.isMoved" style="color:grey"> (MOVED)</span>
+                </a>
+            </td>
+            <td>{{rec.changed|date}}</td>
+        </tr>
+    </table>
 
-        <div class="guideVocal" ng-show="noneFound">
-            User <% uProf.writeLink(ar); %> has not created any projects, and does not have any access to sites to create one in.
-           <br/>
-           When a user create projects, they will be listed here.<br/>
-           <br/>
-           In order to create a workspace, you need to be an "Owner" or an "Executive" of an "Site".<br/>
-           <br/>
-           Use <button class="btn btn-sm" onClick="location.href='userAccounts.htm'">Settings &gt; Sites</button>
-           to view your sites, or request a new site from the system administrator.
-           If approved you will be the owner of that new site,
-           and can create new projects within it.
-        </div>
-
+    <div class="guideVocal" ng-show="noneFound">
+        User <% uProf.writeLink(ar); %> has not created any projects, and does not have any access to sites to create one in.
+       <br/>
+       When a user create projects, they will be listed here.<br/>
+       <br/>
+       In order to create a workspace, you need to be an "Owner" or an "Executive" of an "Site".<br/>
+       <br/>
+       Use <button class="btn btn-sm" onClick="location.href='userAccounts.htm'">Settings &gt; Sites</button>
+       to view your sites, or request a new site from the system administrator.
+       If approved you will be the owner of that new site,
+       and can create new projects within it.
     </div>
 </div>

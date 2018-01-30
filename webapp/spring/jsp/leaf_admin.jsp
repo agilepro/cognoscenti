@@ -272,11 +272,11 @@ app.filter('escape', function() {
                     <td></td>
                     <td class="form-inline form-group" ng_show="editName">
                         <input type="text" class="form-control" style="width:300px;background-color:white" ng-model="newName"/>
-                        <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)"/>Add Name</button>
-                        <button class="btn btn-warning btn-raised" ng-click="editName=false"/>Cancel</button>
+                        <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)">Add Name</button>
+                        <button class="btn btn-warning btn-raised" ng-click="editName=false">Cancel</button>
                     </td>
                     <td ng_hide="editName">
-                        <button class="btn btn-primary btn-raised" ng-click="editName=true"/>Add / Change Name</button>
+                        <button class="btn btn-primary btn-raised" ng-click="editName=true">Add / Change Name</button>
                     </td>
                 </tr>
                 <tr>
@@ -355,8 +355,8 @@ app.filter('escape', function() {
                 <div class="generalSubHeading paddingTop">Copy From Template</div>
                 <table width="720px" class="spaceyTable">
                   <form action="<%=ar.retPath%>CopyFromTemplate.jsp" method="post">
-                  <input type="hidden" name="go" value="<%ar.writeHtml(allTasksPage);%>">
-                  <input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>">
+                  <input type="hidden" name="go" value="<%ar.writeHtml(allTasksPage);%>"/>
+                  <input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>"/>
                     <tr>
                         <td>Template:</td>
                         <td style="width:20px;"></td>
@@ -375,7 +375,7 @@ app.filter('escape', function() {
                     <tr>
                         <td></td>
                         <td style="width:20px;"></td>
-                        <td> <input type="submit" value="Copy From Template" class="btn btn-primary btn-raised"> </td>
+                        <td> <input type="submit" value="Copy From Template" class="btn btn-primary btn-raised"/> </td>
                     </tr>
                   </form>
                 </table>

@@ -98,7 +98,7 @@ app.controller('myCtrl', function($scope, $http) {
                        <span ng-show="rec.isMoved" style="color:grey"> (MOVED)</span>
                 </a>
             </td>
-            <td>{{rec.changed|date}}</span></td>
+            <td>{{rec.changed|date}}</td>
         </tr>
     </table>
 

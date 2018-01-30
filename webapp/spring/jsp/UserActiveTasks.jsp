@@ -142,7 +142,4 @@ app.controller('myCtrl', function($scope, $http) {
             </table>
         </div>
 
-
-
-    </div>
 </div>

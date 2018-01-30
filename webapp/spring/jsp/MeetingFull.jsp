@@ -328,7 +328,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
               <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
             </td>
             <td>
-              <b>{{meeting.name}}</a>
+              <b>{{meeting.name}}</b>
             </td>
           </tr>
           <tr>
@@ -353,7 +353,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             <td>
               {{factoredTime}} {{timeFactor}} before the meeting. 
                 <span ng-show="meeting.reminderSent<=0"> <i>Not sent.</i></span>
-                <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}
+                <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}</span>
             </td>
           </tr>
           <tr>

@@ -439,7 +439,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <label for="status"><br/>Your Response:</label>
                 <textarea ng-model="comment" class="form-control"></textarea>
             </div>
-            <div class="form-group" ng-show="isProposing()"">
+            <div class="form-group" ng-show="isProposing()">
                 <button ng-click="consent()" class="btn btn-primary btn-raised">Consent</button>
                 <button ng-click="object()" class="btn btn-primary btn-raised">Object</button>
             </div>
@@ -502,7 +502,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <label for="status">Your Response:</label>
                 <textarea ng-model="comment" class="form-control"></textarea>
             </div>
-            <div class="form-group" ng-show="isProposing()"">
+            <div class="form-group" ng-show="isProposing()">
                 <button ng-click="consent()" class="btn btn-primary btn-raised">Consent</button>
                 <button ng-click="object()" class="btn btn-primary btn-raised">Object</button>
             </div>
