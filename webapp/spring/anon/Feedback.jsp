@@ -8,7 +8,7 @@
     String url = ar.defParam("url", "");
 
 %>
-
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -46,7 +46,6 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap']);
-console.log("RUN RUN");
 
 app.controller('myCtrl', function($scope, $http) {
     $scope.log_number = -1;
@@ -77,9 +76,6 @@ app.controller('myCtrl', function($scope, $http) {
 });
 </script>
 
-</head>
-
-
 <style type="text/css">
 td {
     padding:100;
@@ -91,6 +87,8 @@ td {
     padding: 5px 10px;
 }
 </style>
+
+</head>
 <body>
   <div ng-app="myApp" ng-controller="myCtrl" style="margin:50px;max-width:800px">
 
@@ -151,7 +149,7 @@ td {
         Thanks for sending additional information, this has been recorded in a file
         accessible to the administrators.  
     </div>
-    
+  </div>
 </body>
 </html>
 

@@ -28,10 +28,16 @@ myApp.config(['$translateProvider', function($translateProvider) {
         // navigator.language:     Safari & Others 
         // navigator.userLanguage: IE & Others 
         if (window.navigator) { 
-          return window.navigator.languages || [root.navigator.language || root.navigator.userLanguage]; 
-        } else { 
-           return []; 
-        } 
+          if (window.navigator.languages ){
+              return window.navigator.languages;
+          }
+        }
+        //if (root) {
+        //  if (root.navigator) {
+        //      return [root.navigator.language || root.navigator.userLanguage]; 
+        //  }
+        //}
+        return []; 
     };
     function getPreferredLanguage() {
         var langs = getAcceptedLanguages();
