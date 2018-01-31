@@ -4,12 +4,16 @@
 <div class="modal-header qqTabHeader">
   <div class="qqTabBand">
     <span ng-class="'qqTabSelected'">
-    Invite User: {{email}}
+    Invite User: {{message.userId}}
     </span>
   </div>
 </div>
-<div class="modal-body">
-    <textarea ng-model="message" class="form-control visibleBox" style="height:200px"></textarea>
+<div class="modal-body" ng-show="editingMsg">
+    <textarea ng-model="message.msg" class="form-control visibleBox" style="height:200px"></textarea>
+</div>
+<div class="modal-body" ng-hide="editingMsg">
+    <br/>
+    Sending email to {{message.userId}} please wait a moment...
 </div>
 <div class="modal-footer">
       <button ng-click="ok()" class="btn btn-primary btn-raised">Send Invitation</button>

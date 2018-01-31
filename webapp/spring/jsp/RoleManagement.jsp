@@ -205,16 +205,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.sendEmailLoginRequest = function(message) {
-        SLAP.sendInvitationEmail(message);
-        var postURL = "<%=ar.getSystemProperty("identityProvider")%>?openid.mode=apiSendInvite";
-        var postdata = JSON.stringify(message);
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            console.log("message has been sent to "+message.userId);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
+        console.log("Unnecessary method $scope.sendEmailLoginRequest");
     }
 
     $scope.navigateToUser = function(player) {
@@ -222,6 +213,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     
     $scope.openInviteSender = function (player) {
+
+        var proposedMessage = {}
+        proposedMessage.msg = $scope.inviteMsg;
+        proposedMessage.userId = player.uid;
+        proposedMessage.name   = player.name;
+        proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngc, "frontPage.htm")%>";
 
         var modalInstance = $modal.open({
             animation: false,
@@ -234,17 +231,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     return player.uid;
                 },
                 msg: function() {
-                    return $scope.inviteMsg;
+                    return proposedMessage;
                 }
             }
         });
 
-        modalInstance.result.then(function (message) {
-            $scope.inviteMsg = message.msg;
-            message.userId = player.uid;
-            message.name = player.name;
-            message.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngc, frontPageResource)%>";
-            $scope.sendEmailLoginRequest(message);
+        modalInstance.result.then(function (actualMessage) {
+            $scope.inviteMsg = actualMessage.msg;
         }, function () {
             //cancel action - nothing really to do
         });

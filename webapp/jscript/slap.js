@@ -49,13 +49,15 @@ SLAP.logoutUser = function() {
     SLAP.storeSession(SLAP.loginInfo);
 };
 
-SLAP.sendInvitationEmail = function(message) {
+SLAP.sendInvitationEmail = function(message, success, failure) {
+    if (!success) {
+        success = function(data) {alert("invitation email has been sent to "+message.userId);};
+    }
+    if (!failure) {
+        failure = function(data) {alert("Failure sending invitation email to "+message.userId+"\n"+data);};
+    }
     var pUrl = SLAP.loginConfig.providerUrl + "?openid.mode=apiSendInvite";
-    SLAP.postJSON(pUrl, message, function(data) {
-        alert("invitation email has been sent to "+message.userId);
-    }, function(data) {
-        alert("Failure sending invitation email to "+message.userId+"\n"+data);
-    });
+    SLAP.postJSON(pUrl, message, success, failure);
 }
 
 //interface methods above, implementation methods below

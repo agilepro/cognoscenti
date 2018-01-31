@@ -286,7 +286,6 @@ myApp.controller('myCtrl', function($scope, $http) {
                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userAccounts.htm" 
                      class="btn btn-sm btn-default btn-raised" translate>See all...</a>
                </div>
-               </ul>
            </div>
        </div>
     </div>
