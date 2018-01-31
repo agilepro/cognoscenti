@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
+import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.Multipart;
@@ -25,6 +26,7 @@ import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.MemFileDataSource;
 import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.exception.NGException;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -187,16 +189,17 @@ public class MailInst extends JSONWrapper {
 
             MimeMessage message = new MimeMessage(mailSession);
             message.setSentDate(new Date(sendTime));
-
-            /*
+            
+            //The FROM of the message gets put into the reply-to field
+            //so replies go to the person who started the message.
             String rawFrom = getFrom();
-            if (rawFrom==null || rawFrom.length()==0) {
-                throw new Exception("Attempt to send an email record that does not have a from address");
+            if (rawFrom!=null && rawFrom.length()>0) {
+                Address[] replyAddresses = new Address[1];
+                replyAddresses[0] = new InternetAddress(AddressListEntry.cleanQuotes(rawFrom));
+                message.setReplyTo(replyAddresses);
             }
             
-            message.setFrom(new InternetAddress(AddressListEntry.cleanQuotes(rawFrom)));
-            */
-            
+            //Always use a fixed from address to avoid being tagged as a spammer
             message.setFrom(new InternetAddress(AddressListEntry.cleanQuotes(mailer.getProperty("mail.smtp.from"))));
             
             String encodedSubjectLine = MimeUtility.encodeText(getSubject(), "utf-8", "B");

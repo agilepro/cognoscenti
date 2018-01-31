@@ -3,14 +3,21 @@ console.log("loaded the ModalResponseCtrl-0");
 app.controller('InviteModalCtrl', function ($scope, $modalInstance, msg) {
 
     $scope.message = msg;
-    $scope.editingMsg = true;
+    $scope.dialogMode = 1;
 
     $scope.ok = function () {
-        $scope.editingMsg = false;
+        $scope.dialogMode = 2;
         SLAP.sendInvitationEmail($scope.message, function(data) {
-            $modalInstance.close($scope.message);
+            $scope.dialogMode = 3;
+            $scope.$apply();
         });
     };
+    
+    $scope.done = function () {
+        $scope.dialogMode = 4;
+        $modalInstance.close($scope.message);
+    };
+            
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
