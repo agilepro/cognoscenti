@@ -26,7 +26,7 @@ Required parameters:
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Must be a member to see meetings");
+    ar.assertMember("Must be a member to see this task");
 
     String taskId = ar.reqParam("taskId");
     GoalRecord currentTaskRecord=ngp.getGoalOrFail(taskId);

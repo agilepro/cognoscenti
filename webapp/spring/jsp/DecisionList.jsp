@@ -16,7 +16,7 @@ Required parameters:
     String siteId      = ar.reqParam("siteId");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKey(siteId,pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Must be a member to see meetings");
+    ar.assertMember("Must be a member to see decisions");
     NGBook site = ngp.getSite();
 
     JSONArray allDecisions = new JSONArray();

@@ -12,7 +12,24 @@
     JSONArray allLabels = ngw.getJSONLabels();
     GoalRecord actionItem = ngw.getGoalOrFail(taskId);
     JSONObject actionItemObj = actionItem.getJSON4Goal(ngw);
-        
+
+    JSONObject stateName = new JSONObject();
+    stateName.put("0", BaseRecord.stateName(0));
+    stateName.put("1", BaseRecord.stateName(1));
+    stateName.put("2", BaseRecord.stateName(2));
+    stateName.put("3", BaseRecord.stateName(3));
+    stateName.put("4", BaseRecord.stateName(4));
+    stateName.put("5", BaseRecord.stateName(5));
+    stateName.put("6", BaseRecord.stateName(6));
+    stateName.put("7", BaseRecord.stateName(7));
+    stateName.put("8", BaseRecord.stateName(8));
+    stateName.put("9", BaseRecord.stateName(9));
+    
+    JSONObject cUser = new JSONObject();
+    if (ar.isLoggedIn()) {
+        cUser = ar.getUserProfile().getJSON();
+    }
+    
 %>
 
 <html>
@@ -53,6 +70,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.actionItem = <%actionItemObj.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.nowTime = new Date().getTime();
+    $scope.stateName = <%stateName.write(out,2,4);%>;
+    $scope.cUser = <%cUser.write(out,2,4);%>;
     
     $scope.acessDocument = function (doc) {
         if (doc.attType=="URL") {
@@ -91,6 +110,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     max-width:300px;
     background-color: white !important;
 }
+.fieldName {
+    max-width:150px;
+}
 </style>
 
 
@@ -107,14 +129,27 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <div ng-app="myApp" ng-controller="myCtrl">
 
         <div class="page-name">
-            <h1 id="mainPageTitle">{{actionItem.synopsis}}</h1>
+            <h1 id="mainPageTitle">Action Item</h1>
         </div>
 
-        <div class="comment-outer">
-          <div class="comment-inner">
-          {{actionItem.description}}
-          </div>
-        </div>
+        <table class="table">
+        <tr><td class="fieldName">Synopsis</td><td>{{actionItem.synopsis}}</td></tr>
+        <tr><td class="fieldName">Description</td><td>{{actionItem.description}}</td></tr>
+        <tr><td class="fieldName">State</td><td><img src="<%=ar.retPath%>assets/goalstate/small{{actionItem.state}}.gif">
+            {{stateName[actionItem.state]}}</td></tr>
+        <tr><td class="fieldName">Assigned</td><td>
+            <div ng-repeat="person in actionItem.assignTo">{{person.name}}</div></td></tr>
+        <tr ng-show="actionItem.duedate>100000">
+            <td class="fieldName">Due Date</td><td>{{actionItem.duedate|date}}</td></tr>
+        <tr ng-show="actionItem.startdate>100000">
+            <td class="fieldName">Start Date</td><td>{{actionItem.startdate|date}}</td></tr>
+        <tr ng-show="actionItem.enddate>100000">
+            <td class="fieldName">End Date</td><td>{{actionItem.enddate|date}}</td></tr>
+        <tr><td class="fieldName">Workspace</td><td>{{actionItem.sitename}} / {{actionItem.projectname}}</td></tr>
+        <tr ng-show="actionItem.duedate>100000">
+            <td class="fieldName">Last Updated</td><td>{{actionItem.modifiedtime|date}}</td></tr>
+        <tr><td class="fieldName">You</td><td>{{cUser.name}}</td></tr>
+        </table>
 
     </div>
   </div>

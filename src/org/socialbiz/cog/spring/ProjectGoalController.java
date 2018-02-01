@@ -94,6 +94,21 @@ public class ProjectGoalController extends BaseController {
     }
 
 
+    /**
+     * Access right on this are a little complicated.  These elements
+     * 1. are you logged in
+     * 2. if logged in, are you a member of the workspace
+     *    people assigned to a task are considered members while the task is open
+     * 3. do you have a magic number for the task in order access it anonymously.
+     * 
+     * Situations:
+     * 
+     * 1. login-yes, member-yes, magic number-NA
+     * 2. login-no,  member-NA,  magic number-no, show the login error page
+     * 3. login-no,  member-NA,  magic number-yes, show the special anon page
+     * 4. login-yes, member-no,  magic number-no, show not a member error
+     * 5. login-yes, member-no,  magic number-yes, show the special anon page
+     */
     @RequestMapping(value = "/{siteId}/{pageId}/task{taskId}.htm", method = RequestMethod.GET)
     public void displayTask(@PathVariable String siteId,
         @PathVariable String pageId,  @PathVariable String taskId,
@@ -105,25 +120,21 @@ public class ProjectGoalController extends BaseController {
             NGPage ngp = registerRequiredProject(ar, siteId, pageId);
 
             GoalRecord goal = ngp.getGoalOrFail(taskId);
-            boolean isLoggedIn = ar.isLoggedIn();
-            boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, goal);
-
-            if(!canAccessGoal){
-                if (checkLoginMember(ar)) {
-                    return;
-                }
-                throw new Exception("Program Logic Error: logged in member should be able to see task.");
-            }
-            
-            //only get here if you are logged in, and you have permission to access the task.
-            request.setAttribute("taskId", taskId);
             if(goal.isPassive()) {
                 throw new Exception("Passive goals are not supported any more");
             }
-            else if (!isLoggedIn) {
+            boolean isLoggedIn = ar.isLoggedIn();
+            boolean isMember   = ar.isMember();
+            boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, goal);
+
+            request.setAttribute("taskId", taskId);
+            if (canAccessGoal && (!isLoggedIn || !isMember) ) {
                 specialAnonJSP(ar, siteId, pageId, "ActionItem.jsp");
             }
             else{
+                if (checkLoginMember(ar)) {
+                    return;
+                }
                 streamJSP(ar, "GoalEdit");
             }
 
