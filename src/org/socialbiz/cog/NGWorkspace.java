@@ -32,9 +32,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.socialbiz.cog.exception.NGException;
-import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.HTMLWriter;
@@ -393,7 +393,7 @@ public class NGWorkspace extends NGPage {
                 //so return now minus 1 minutes
                 long reminderTime = System.currentTimeMillis()-60000;
                 if (reminderTime < nextTime) {
-                    System.out.println("Workspace has email that needs to be collected");
+                    //Workspace has email that needs to be collected
                     nextTime = reminderTime;
                 }
             }
@@ -412,8 +412,8 @@ public class NGWorkspace extends NGPage {
             }
         }
         if (first!=null) {
-            System.out.println("Found the next event to be: "+first.selfDescription()+" at "
-                     +new Date(first.timeToSend()));
+            System.out.println("Found the next event to be: ("+first.selfDescription()+") to be sent at (" 
+                     +new Date(first.timeToSend())+")");
         }
         return nextTime;
     }

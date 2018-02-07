@@ -453,8 +453,9 @@ public class CommentRecord extends DOMFace {
 	
 	        UserProfile commenterProfile = commenter.getUserProfile();
 	        if (commenterProfile==null) {
-	            System.out.println("DATA PROBLEM: comment came from a person without a profile ("+getUser().getEmail()+") ignoring");
+	            System.out.println("DATA PROBLEM: comment "+this.getTime()+" came from a person without a profile ("+getUser().getEmail()+") ignoring.");
 	            setEmailSent(true);
+	            setCloseEmailSent(true);
 	            return;
 	        }
 	
@@ -518,6 +519,7 @@ public class CommentRecord extends DOMFace {
         if (commenterProfile==null) {
             System.out.println("DATA PROBLEM: comment came from a person without a profile ("+getUser().getEmail()+") ignoring");
             setEmailSent(true);
+            setCloseEmailSent(true);
             return;
         }
 
@@ -831,7 +833,7 @@ public class CommentRecord extends DOMFace {
         }
 
         public String selfDescription() throws Exception {
-            return "(Comment) "+cr.getUser().getName()+" on "+noteOrMeet.selfDescription();
+            return "("+cr.getTypeName()+") "+cr.getUser().getName()+" on "+noteOrMeet.selfDescription();
         }
 
     }

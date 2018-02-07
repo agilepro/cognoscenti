@@ -45,6 +45,7 @@ import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.SuperAdminLogFile;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -248,7 +249,8 @@ public class EmailSender extends TimerTask {
                 MailConversions.moveEmails(ngw, emailArchive, cog);
 
                 ngpi.nextScheduledAction = ngw.nextActionDue();
-                ngw.saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime, "Moved email to email file", ar.getCogInstance());
+                ngw.saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime, 
+                        "Processing handleAllOverdueScheduledEvents", cog);
                 NGPageIndex.clearLocksHeldByThisThread();
                 emailArchive.save();
             }

@@ -45,6 +45,7 @@ public abstract class ContainerCommon extends NGContainer
     DOMFace historyParent;
     DOMFace infoParent;
 
+
     public ContainerCommon(File path, Document doc) throws Exception
     {
         super(path, doc);

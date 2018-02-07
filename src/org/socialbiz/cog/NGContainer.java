@@ -32,7 +32,6 @@ import org.w3c.dom.Document;
 */
 public abstract class NGContainer extends DOMFile
 {
-
     public NGContainer(File path, Document doc) throws Exception {
         super(path,doc);
     }
