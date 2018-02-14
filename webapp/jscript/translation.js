@@ -49,6 +49,7 @@ myApp.config(['$translateProvider', function($translateProvider) {
             if (langs[pos].startsWith("de")) {
                 return "de";
             }
+            pos++;
         }
         return "en";
     }
