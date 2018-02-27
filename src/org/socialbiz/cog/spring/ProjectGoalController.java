@@ -124,6 +124,9 @@ public class ProjectGoalController extends BaseController {
                 throw new Exception("Passive goals are not supported any more");
             }
             boolean isLoggedIn = ar.isLoggedIn();
+
+            //TODO: why does login not work?
+            //System.out.println("task page logged in: "+isLoggedIn);
             boolean isMember   = ar.isMember();
             boolean canAccessGoal = AccessControl.canAccessGoal(ar, ngp, goal);
 

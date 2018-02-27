@@ -76,6 +76,14 @@ public class ProjectSettingController extends BaseController {
         showJSPMembers(ar, siteId, pageId, "RoleManagement");
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/MultiInvite.htm", method = RequestMethod.GET)
+    public void MultiInvite(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "MultiInvite");
+    }
+    
     @RequestMapping(value = "/{siteId}/{pageId}/roleDefine.htm", method = RequestMethod.GET)
     public void roleDefine(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
