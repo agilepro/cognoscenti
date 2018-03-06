@@ -16,6 +16,7 @@ Required parameters:
     ar.setPageAccessLevels(ngp);
     NGBook site = ngp.getSite();
     Cognoscenti cog = ar.getCogInstance();
+    boolean isMember = ar.isMember();
     
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
@@ -24,89 +25,8 @@ Required parameters:
     }
 
 
-    List<HistoryRecord> histRecs = ngp.getAllHistory();
     JSONArray topHistory = new JSONArray();
     JSONArray recentChanges = new JSONArray();
-    int limit=10;
-    Hashtable<String,String> seenBefore = new Hashtable<String,String>();
-
-    for (HistoryRecord hist : histRecs) {
-        AddressListEntry ale = new AddressListEntry(hist.getResponsible());
-        UserProfile responsible = ale.getUserProfile();
-        String imagePath = "assets/photoThumbnail.gif";
-        if(responsible!=null) {
-            String personImage = responsible.getImage();
-            if (personImage!=null && personImage.length() > 0) {
-                imagePath = "users/"+personImage;
-            }
-        }
-        String objectKey = hist.getContext();
-        int contextType = hist.getContextType();
-        String key = hist.getCombinedKey();
-        String url = "";
-        String cType = HistoryRecord.getContextTypeName(contextType);
-        String objName = "Unidentified";
-        if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
-            url = ar.getResourceURL(ngp, "projectAllTasks.htm");
-            objName = "";
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
-            url = ar.getResourceURL(ngp, "task"+objectKey+".htm");
-            GoalRecord gr = ngp.getGoalOrNull(objectKey);
-            if (gr!=null) {
-                objName = gr.getSynopsis();
-            }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-            url = ar.getResourceURL(ngp, "findUser.htm?id=")+URLEncoder.encode(objectKey, "UTF-8");
-            objName = objectKey;
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
-            url = ar.getResourceURL(ngp, "docinfo"+objectKey+".htm");
-            AttachmentRecord att = ngp.findAttachmentByID(objectKey);
-            if (att!=null) {
-                objName = att.getDisplayName();
-            }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
-            url = ar.getResourceURL(ngp, "noteZoom"+objectKey+".htm");
-            TopicRecord nr = ngp.getNote(objectKey);
-            if (nr!=null) {
-                objName = nr.getSubject();
-            }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-            url = ar.getResourceURL(ngp, "roleManagement.htm");
-            NGRole role = ngp.getRole(objectKey);
-            if (role!=null) {
-                objName = role.getName();
-            }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
-            url = ar.getResourceURL(ngp, "meetingFull.htm?id="+objectKey);
-            MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
-            if (meet!=null) {
-                objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
-            }
-        }
-        else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
-            url = ar.getResourceURL(ngp, "decisionList.htm?id="+objectKey);
-            MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
-        }
-        JSONObject jObj = hist.getJSON(ngp,ar);
-        jObj.put("contextUrl", url );
-
-        //elliminate duplicate objects
-        boolean seen = seenBefore.containsKey(objectKey);
-        if (!seen && contextType!=HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
-            seenBefore.put(objectKey,objectKey);
-            recentChanges.put(jObj);
-            if (limit-- < 0) {
-                break;
-            }
-        }
-        topHistory.put(jObj);
-    }
 
     JSONObject thisCircle = new JSONObject();
     thisCircle.put("name", ngp.getFullName());
@@ -146,41 +66,125 @@ Required parameters:
     UserProfile uProf = ar.getUserProfile();
 
     JSONArray yourRoles = new JSONArray();
-    for (NGRole ngr : ngp.getAllRoles()) {
-        JSONObject jo = new JSONObject();
-        jo.put("name", ngr.getName());
-        jo.put("player", ngr.isPlayer(uProf));
-        yourRoles.put(jo);
-    }
-
     JSONArray otherMembers = new JSONArray();
-    for (AddressListEntry ale : ngp.getPrimaryRole().getExpandedPlayers(ngp)) {
-        if (uProf.hasAnyId(ale.getUniversalId())) {
-            continue;
-        }
-        otherMembers.put(ale.getJSON());
-    }
-
     JSONArray myMeetings = new JSONArray();
-    for (MeetingRecord meet : ngp.getMeetings()) {
-        if (meet.getState() > 1) {
-            continue;
-        }
-        if (meet.isBacklogContainer()) {
-            continue;
-        }
-        myMeetings.put(meet.getListableJSON(ar));
-    }
-
     JSONArray myActions = new JSONArray();
-    for (GoalRecord action : ngp.getAllGoals()) {
-        NGRole assignees = action.getAssigneeRole();
-        if (!assignees.isExpandedPlayer(uProf, ngp)) {
-            continue;
+    
+    if (isMember) {
+        List<HistoryRecord> histRecs = ngp.getAllHistory();
+        int limit=10;
+        Hashtable<String,String> seenBefore = new Hashtable<String,String>();
+
+        for (HistoryRecord hist : histRecs) {
+            AddressListEntry ale = new AddressListEntry(hist.getResponsible());
+            UserProfile responsible = ale.getUserProfile();
+            String imagePath = "assets/photoThumbnail.gif";
+            if(responsible!=null) {
+                String personImage = responsible.getImage();
+                if (personImage!=null && personImage.length() > 0) {
+                    imagePath = "users/"+personImage;
+                }
+            }
+            String objectKey = hist.getContext();
+            int contextType = hist.getContextType();
+            String key = hist.getCombinedKey();
+            String url = "";
+            String cType = HistoryRecord.getContextTypeName(contextType);
+            String objName = "Unidentified";
+            if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
+                url = ar.getResourceURL(ngp, "projectAllTasks.htm");
+                objName = "";
+            }
+            else if (contextType == HistoryRecord.CONTEXT_TYPE_TASK) {
+                url = ar.getResourceURL(ngp, "task"+objectKey+".htm");
+                GoalRecord gr = ngp.getGoalOrNull(objectKey);
+                if (gr!=null) {
+                    objName = gr.getSynopsis();
+                }
+            }
+            else if (contextType == HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+                url = ar.getResourceURL(ngp, "findUser.htm?id=")+URLEncoder.encode(objectKey, "UTF-8");
+                objName = objectKey;
+            }
+            else if (contextType == HistoryRecord.CONTEXT_TYPE_DOCUMENT) {
+                url = ar.getResourceURL(ngp, "docinfo"+objectKey+".htm");
+                AttachmentRecord att = ngp.findAttachmentByID(objectKey);
+                if (att!=null) {
+                    objName = att.getDisplayName();
+                }
+            }
+            else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
+                url = ar.getResourceURL(ngp, "noteZoom"+objectKey+".htm");
+                TopicRecord nr = ngp.getNote(objectKey);
+                if (nr!=null) {
+                    objName = nr.getSubject();
+                }
+            }
+            else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
+                url = ar.getResourceURL(ngp, "roleManagement.htm");
+                NGRole role = ngp.getRole(objectKey);
+                if (role!=null) {
+                    objName = role.getName();
+                }
+            }
+            else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
+                url = ar.getResourceURL(ngp, "meetingFull.htm?id="+objectKey);
+                MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
+                if (meet!=null) {
+                    objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );
+                }
+            }
+            else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
+                url = ar.getResourceURL(ngp, "decisionList.htm?id="+objectKey);
+                MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
+            }
+            JSONObject jObj = hist.getJSON(ngp,ar);
+            jObj.put("contextUrl", url );
+
+            //elliminate duplicate objects
+            boolean seen = seenBefore.containsKey(objectKey);
+            if (!seen && contextType!=HistoryRecord.CONTEXT_TYPE_PERMISSIONS) {
+                seenBefore.put(objectKey,objectKey);
+                recentChanges.put(jObj);
+                if (limit-- < 0) {
+                    break;
+                }
+            }
+            topHistory.put(jObj);
         }
-        int state = action.getState();
-        if (state==BaseRecord.STATE_OFFERED || state==BaseRecord.STATE_ACCEPTED) {
-            myActions.put(action.getJSON4Goal(ngp));
+        for (NGRole ngr : ngp.getAllRoles()) {
+            JSONObject jo = new JSONObject();
+            jo.put("name", ngr.getName());
+            jo.put("player", ngr.isPlayer(uProf));
+            yourRoles.put(jo);
+        }
+
+        for (AddressListEntry ale : ngp.getPrimaryRole().getExpandedPlayers(ngp)) {
+            if (uProf.hasAnyId(ale.getUniversalId())) {
+                continue;
+            }
+            otherMembers.put(ale.getJSON());
+        }
+
+        for (MeetingRecord meet : ngp.getMeetings()) {
+            if (meet.getState() > 1) {
+                continue;
+            }
+            if (meet.isBacklogContainer()) {
+                continue;
+            }
+            myMeetings.put(meet.getListableJSON(ar));
+        }
+
+        for (GoalRecord action : ngp.getAllGoals()) {
+            NGRole assignees = action.getAssigneeRole();
+            if (!assignees.isExpandedPlayer(uProf, ngp)) {
+                continue;
+            }
+            int state = action.getState();
+            if (state==BaseRecord.STATE_OFFERED || state==BaseRecord.STATE_ACCEPTED) {
+                myActions.put(action.getJSON4Goal(ngp));
+            }
         }
     }
 
