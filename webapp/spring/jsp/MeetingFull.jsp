@@ -346,6 +346,15 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             </td>
           </tr>
           <tr>
+            <td>Duration:</td>
+            <td>
+              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
+            </td>
+            <td>
+              {{meeting.duration}} Minutes ({{meeting.totalDuration}} currently allocated)
+            </td>
+          </tr>
+          <tr>
             <td>Reminder:</td>
             <td>
               <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
