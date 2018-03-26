@@ -463,7 +463,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             else {
                 $scope.factoredTime = $scope.meeting.reminderTime;
             }
-            $scope.addYouselfIfAppropriate()
+            $scope.addYouselfIfAppropriate();
         });
         promise.error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -567,11 +567,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     };
 
     $scope.refresh = function() {
+        window.setTimeout( function() {$scope.refresh()}, 15000);
         if ($scope.meeting.state!=2) {
+            console.log("Meeting is in state: "+$scope.refreshStatus);
             $scope.refreshStatus = "No refresh because meeting is not being run";
             return;  //don't set of refresh unless in run mode
         }
-        window.setTimeout( function() {$scope.refresh()}, 60000);
         var nowEditing = $scope.editMeetingDesc;
         Object.keys($scope.editItemDescMap).forEach( function(key) {
             if ($scope.editItemDescMap[key]==true) {
@@ -591,7 +592,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.refreshCount++;
     }
     $scope.refreshCount = 0;
-    $scope.refresh();
+    window.setTimeout( function() {$scope.refresh()}, 30000);
 
     $scope.toggleReady = function(item) {
         if (!item.readyToGo) {
@@ -873,6 +874,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
 
     $scope.mySitch = [];
+    $scope.getMeetingRole = function() {
+        var selRole = {players:[]};
+        $scope.allLabels.forEach( function(item) {
+            if (item.name === $scope.meeting.targetRole) {
+                selRole = item;
+            }
+        });
+        return selRole;
+    }
+    
+    
     $scope.extractPeopleSituation = function() {
         if (Array.isArray) {
             if (!Array.isArray($scope.allLabels)) {
@@ -883,12 +895,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         else {
             console.log("NO isArray function");
         }
-        var selRole = {players:[]};
-        $scope.allLabels.forEach( function(item) {
-            if (item.name === $scope.meeting.targetRole) {
-                selRole = item;
-            }
-        });
+        var selRole = $scope.getMeetingRole();
         var rez = [];
         $scope.mySitch = [];
         selRole.players.forEach( function(item) {
@@ -1107,18 +1114,21 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         diff = Math.trunc(diff / 7);
         return "due in "+diff+" weeks";
     }
-    $scope.getResponse = function(cmt) {
-        var selected = cmt.responses.filter( function(item) {
-            return item.user==SLAP.loginInfo.userId;
+    $scope.getResponse = function(cmt, userId) {
+        var selected = null;
+        cmt.responses.forEach( function(item) {
+            if(item.user==userId) {
+                selected = item;
+            }
         });
         return selected;
     }
-    $scope.noResponseYet = function(cmt) {
+    $scope.noResponseYet = function(cmt, userId) {
         if (cmt.state!=12) { //not open
             return false;
         }
-        var whatNot = $scope.getResponse(cmt);
-        return (whatNot.length == 0);
+        var whatNot = $scope.getResponse(cmt, userId);
+        return (whatNot!=null);
     }
     $scope.updateResponse = function(cmt, response) {
         var selected = cmt.responses.filter( function(item) {
@@ -1147,7 +1157,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.saveMeeting();
     }
 
-    $scope.openResponseEditor = function (cmt) {
+    $scope.openResponseEditor = function (cmt, userId) {
 
         if (cmt.choices.length==0) {
             cmt.choices = ["Consent", "Objection"];
@@ -1156,16 +1166,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             }
         }
 
-        var selected = $scope.getResponse(cmt);
-        var selResponse = {};
-        if (selected.length == 0) {
-            selResponse.user = SLAP.loginInfo.userId;
-            selResponse.userName = SLAP.loginInfo.userName;
-            selResponse.choice = cmt.choices[0];
+        var selResponse = $scope.getResponse(cmt, userId);
+        if (selResponse==null) {
+            selResponse = {
+                user: SLAP.loginInfo.userId,
+                userName: SLAP.loginInfo.userName,
+                choice: cmt.choices[0]
+            }
             selResponse.isNew = true;
-        }
-        else {
-            selResponse = selected[0];
         }
 
         var modalInstance = $modal.open({
@@ -1195,11 +1203,46 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             //cancel action - nothing really to do
         });
     };
+    $scope.removeResponse =  function(cmt,resp) {
+        if (!confirm("Are you sure you want to remove the response from "+resp.userName)) {
+            return;
+        }
+        cmt.responses.forEach( function(item) {
+            if (item.user == resp.user) {
+                item.removeMe = true;
+            }
+        });
+        $scope.updateComment(cmt);
+    }
 
     $scope.commentItemBeingEdited = 0;
     $scope.updateComment = function(cmt) {
         console.log("Saving it", cmt);
-        $scope.saveComment($scope.commentItemBeingEdited, cmt);
+        var agendaItem = null;
+        $scope.meeting.agenda.forEach( function(ai) {
+            if (hasComment(ai,cmt)) {
+                agendaItem = ai;
+            }
+        });
+        if (agendaItem) {
+            $scope.saveComment(agendaItem, cmt);
+        }
+        else if ($scope.commentItemBeingEdited) {
+            //this is needed for the comment CREATE case
+            $scope.saveComment($scope.commentItemBeingEdited, cmt);
+        }
+        else {
+            console.log("DID NOT find an agenda item for comment", cmt);
+        }
+    }
+    function hasComment(ai,cmt) {
+        var foundIt = false;
+        ai.comments.forEach( function(item) {
+            if (item.time == cmt.time) {
+                foundIt = true;
+            }
+        });
+        return foundIt;
     }
     $scope.toggleSelectedPerson = function(tag) {
         $scope.selectedPersonShow = !$scope.selectedPersonShow;
@@ -1240,6 +1283,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         if (defaultBody) {
             newComment.html = defaultBody;
+        }
+        newComment.responses = [];
+        if (type==2 || type==3) {
+            var selRole = $scope.getMeetingRole();
+            selRole.players.forEach( function(item) {
+                newComment.responses.push({
+                    "choice": "None",
+                    "html": "",
+                    "user": item.uid,
+                    "key": item.key,
+                    "userName": item.name,
+                });
+            });
         }
         console.log("New COMMENT", newComment)
         $scope.openCommentEditor(item, newComment);

@@ -250,6 +250,9 @@ public class CommentRecord extends DOMFace {
         rr.setTime(ar.nowTime);
         rr.setHtml(ar, htmlContent);
     }
+    public void removeResponse(UserRef user) throws Exception  {
+        this.removeChildrenByNameAttrVal("response", "uid", user.getUniversalId());
+    }
 
 
     public List<String> getChoices() {
@@ -698,10 +701,13 @@ public class CommentRecord extends DOMFace {
             for (int i=0; i<responseArray.length(); i++) {
                 JSONObject oneResp = responseArray.getJSONObject(i);
                 String responseUser = oneResp.getString("user");
-
-                //only update the response from a user if that user is the one logged in
-                if (user.hasAnyId(responseUser)) {
-                    ResponseRecord rr = getOrCreateResponse(user);
+                AddressListEntry ale = new AddressListEntry(responseUser);
+                boolean removeMe = (oneResp.has("removeMe") && oneResp.getBoolean("removeMe"));
+                if (removeMe) {
+                    removeResponse(ale);
+                }
+                else {
+                    ResponseRecord rr = getOrCreateResponse(ale);
                     rr.updateFromJSON(oneResp, ar);
                     rr.setTime(ar.nowTime);
                 }

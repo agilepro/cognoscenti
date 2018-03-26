@@ -210,6 +210,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         saveRecord.universalid = $scope.noteInfo.universalid;
         saveRecord.comments = [];
         saveRecord.comments.push(cmt);
+        console.log("Saving NOTE comment: ", saveRecord);
         $scope.savePartial(saveRecord);
     }
     $scope.saveDocs = function() {
@@ -266,10 +267,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         window.location="task"+oneAct.id+".htm";
     }
 
-    $scope.getResponse = function(cmt) {
+    $scope.getResponse = function(cmt, user) {
+        if (!user) {
+            user = "<%ar.writeJS(currentUser);%>";
+        }
         var selected = [];
-        cmt.responses.map( function(item) {
-            if (item.user=="<%ar.writeJS(currentUser);%>") {
+        cmt.responses.forEach( function(item) {
+            if (item.user==user) {
                 selected.push(item);
             }
         });
@@ -512,12 +516,26 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         newComment.user = "<%ar.writeJS(currentUser);%>";
         newComment.userName = "<%ar.writeJS(currentUserName);%>";
         newComment.userKey = "<%ar.writeJS(currentUserKey);%>";
+        newComment.responses = [];
+        if (type==2 || type==3) {
+            $scope.noteInfo.subscribers.forEach( function(item) {
+                newComment.responses.push({
+                    "choice": "None",
+                    "html": "",
+                    "user": item.uid,
+                    "key": item.key,
+                    "userName": item.name,
+                });
+            });
+        }
+        
         if (replyTo) {
             newComment.replyTo = replyTo;
         }
         if (defaultBody) {
             newComment.html = defaultBody;
         }
+        console.log("STARTING WITH: ", newComment);
         $scope.openCommentEditor({}, newComment);
     }
 
@@ -554,13 +572,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
     };
 
-    $scope.openResponseEditor = function (cmt) {
+    $scope.openResponseEditor = function (cmt, user) {
         if ($scope.workspaceInfo.frozen) {
-            alert("Sorry, this workspace is frozen by the administrator\Comments can not be modified in a frozen workspace.");
+            alert("Sorry, this workspace is frozen by the administrator\nComments can not be modified in a frozen workspace.");
             return;
         }
 
-        var selected = $scope.getResponse(cmt);
+        var selected = $scope.getResponse(cmt, user);
         var selResponse = {};
         if (selected.length == 0) {
             selResponse.user = "<%ar.writeJS(currentUser);%>";
@@ -600,6 +618,17 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
     };
 
+    $scope.removeResponse =  function(cmt,resp) {
+        if (!confirm("Are you sure you want to remove the response from "+resp.userName)) {
+            return;
+        }
+        cmt.responses.forEach( function(item) {
+            if (item.user == resp.user) {
+                item.removeMe = true;
+            }
+        });
+        $scope.updateComment(cmt);
+    }
 
     $scope.openOutcomeEditor = function (cmt) {
         if ($scope.workspaceInfo.frozen) {

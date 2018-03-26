@@ -424,4 +424,16 @@ public class CreateProjectController extends BaseController {
             parentProject.saveFile(ar, "Linked with Subprocess");
         }
     }
+    
+    @RequestMapping(value = "/NewSiteApplication.htm", method = RequestMethod.GET)
+    public void NewSiteApplication(HttpServletRequest request, HttpServletResponse response)
+           throws Exception {
+       try{
+           AuthRequest ar = AuthRequest.getOrCreate(request, response);
+           specialAnonJSP(ar, "N/A", "N/A", "NewSiteApplication.jsp");
+       }catch(Exception ex){
+           throw new Exception("Unable to display the Register New Site page", ex);
+       }
+   }
+    
 }

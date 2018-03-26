@@ -24,8 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
 import java.util.HashSet;
@@ -33,15 +31,12 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.FetchProfile;
 import javax.mail.Flags.Flag;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
@@ -49,6 +44,7 @@ import javax.mail.UIDFolder;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.socialbiz.cog.exception.NGException;
+
 import com.purplehillsbooks.json.JSONException;
 
 public class EmailListener extends TimerTask{
@@ -380,6 +376,7 @@ public class EmailListener extends TimerTask{
         */
     }
 
+    /*
     private String getFromAddress(String fromAdr) {
         int startBrace = fromAdr.indexOf("<");
         int endBrace = fromAdr.indexOf(">");
@@ -388,7 +385,9 @@ public class EmailListener extends TimerTask{
         }
         return fromAdr;
     }
+    */
 
+    /*
     private String getProjectKey(String recipientAdr, String subject) throws Exception {
         int afterPlusPos = recipientAdr.indexOf("+")+1;
         int atPos = recipientAdr.indexOf("@");
@@ -495,10 +494,11 @@ public class EmailListener extends TimerTask{
             throw new NGException("nugen.exception.cant.handle.email.att", new Object[]{message},e);
         }
     }
+    
 
     /**
      * RELEASES LOCK:  this must NOT be called from within a project workspace code
-    */
+    *
     private void createDocumentRecord(NGPage ngp,InputStream is,String fileName,String fromAdd) throws Exception {
         NGPageIndex.assertNoLocksOnThread();
         try{
@@ -532,6 +532,7 @@ public class EmailListener extends TimerTask{
             throw new NGException("nugen.exception.cant.carete.doc.from.email",null,e);
         }
     }
+    */
 
     public static void saveUploadedFile(AuthRequest ar, AttachmentRecord att,
            InputStream is,String fileExtension, String fromAdd, NGContainer ngp) throws Exception {

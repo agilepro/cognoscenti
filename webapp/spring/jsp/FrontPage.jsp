@@ -17,6 +17,7 @@ Required parameters:
     NGBook site = ngp.getSite();
     Cognoscenti cog = ar.getCogInstance();
     boolean isMember = ar.isMember();
+    //UserProfile uProf = ar.getUserProfile();
     
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
@@ -160,9 +161,8 @@ Required parameters:
         }
 
         for (AddressListEntry ale : ngp.getPrimaryRole().getExpandedPlayers(ngp)) {
-            if (uProf.hasAnyId(ale.getUniversalId())) {
-                continue;
-            }
+            //used to remove the current user here, but feedback suggests
+            //that we should include the current user in this list.
             otherMembers.put(ale.getJSON());
         }
 
@@ -187,6 +187,8 @@ Required parameters:
             }
         }
     }
+    
+    boolean isWatching = uProf.isWatch(pageId);
 
 %>
 
@@ -206,6 +208,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.myMeetings = <%myMeetings.write(out,2,4);%>;
     $scope.myActions  = <%myActions.write(out,2,4);%>;
     $scope.purpose = "<%ar.writeJS(ngp.getProcess().getDescription());%>";
+    $scope.isWatching = <%=isWatching%>;
     $scope.filter = "";
 
     $scope.showInput = false;
@@ -561,6 +564,7 @@ a {
           </div>
           <div class="panel-body">
               {{purpose}}
+              <br/>
           </div>
         </div>
         
@@ -581,6 +585,11 @@ a {
                   {{role.name}}
                   </a>
             </div>
+            <div>
+                <span ng-show="isWatching">
+                    You <span class="fa fa-eye"></span> watch this workspace
+                </span>
+            </div>
           </div>
         </div>
 <style>
@@ -590,7 +599,7 @@ a {
 </style>
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
-              <div style="float:left">Other Members</div>
+              <div style="float:left">Members</div>
               <div style="float:right" title="View and manage the roles in this workspace">
                   <a href="roleManagement.htm">
                       <i class="fa fa-users"></i></a></div>

@@ -106,7 +106,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         $http.post(postURL, postdata)
         .success( function(data) {
             console.log("CREATED WORKSPACE: ", data);
-            alert("You new workspace "+data.name+" has been created!");
             var newws = "../"+data.key+"/roleManagement.htm";
             window.location = newws;
         })
@@ -141,7 +140,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
 });
 </script>
-<script src="../../../jscript/AllPeople.js"></script>
+<script src="<%=ar.retPath%>jscript/AllPeople.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 

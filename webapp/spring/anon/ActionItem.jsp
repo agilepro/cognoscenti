@@ -29,21 +29,7 @@
     if (ar.isLoggedIn()) {
         cUser = ar.getUserProfile().getJSON();
     }
-    JSONObject loginInfoPrefetch = new JSONObject();
-    if (ar.isLoggedIn()) {
-        //loginInfoPrefetch.put("userId", ar.getBestUserId());
-        //loginInfoPrefetch.put("userName", loggedUser.getName());
-        //loginInfoPrefetch.put("verified", true);
-        //loginInfoPrefetch.put("msg", "Previously logged into server");
-    //}
-    //else {
-        //use this to indicate the very first display, before the page knows anything
-        loginInfoPrefetch.put("haveNotCheckedYet", true);
-    }
-    JSONObject loginConfigSetup = new JSONObject();
-    loginConfigSetup.put("providerUrl", ar.getSystemProperty("identityProvider"));
-    loginConfigSetup.put("serverUrl",   ar.baseURL);
-    
+   
 %>
 
 <html>
@@ -98,8 +84,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
 });
 
-SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.write(out, 2, 2); %>, displayWelcomeMessage);
-
 </script>
 
 </head>
@@ -107,51 +91,13 @@ SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, <% loginInfoPrefetch.wr
 <body>
   <div class="bodyWrapper"  style="margin:50px">
 
-  
-  
-    <nav class="navbar navbar-default appbar">
-      <div class="container-fluid">
-
-      
 <style>
-.tighten li a {
-    padding: 0px 5px !important;
-    background-color: white;
-}
-.tighten li {
-    background-color: white;
-}
-.tighten {
-    padding: 5px !important;
-    border: 5px #F0D7F7 solid !important;
-    max-width:300px;
-    background-color: white !important;
-}
 .fieldName {
     max-width:150px;
 }
-</style>
+</style>  
 
-
-        <!-- Logo Brand -->
-        <a class="navbar-brand" href="<%=ar.retPath%>" title="Weaver Home Page">
-          <img class="hidden-xs" alt="Weaver Icon" src="<%=ar.retPath%>bits/header-icon.png">
-          <h1>Weaver</h1>
-        </a>
-
-        <a class="navbar-brand pull-right"  title="Authenticate Yourself"
-           href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode("http://bobcat:8080/cg2/t/index.htm", "UTF-8")%>">
-          <h1>FAKE</h1>
-        </a>
-
-        
-        <a class="navbar-brand pull-right"  title="Authenticate Yourself"
-           href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(ar.realRequestURL, "UTF-8")%>">
-          <h1>Login</h1>
-        </a>
-
-      </div>
-    </nav>
+<%@ include file="AnonNavBar.jsp" %>
   
     <div ng-app="myApp" ng-controller="myCtrl">
 

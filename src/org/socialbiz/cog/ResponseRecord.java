@@ -30,6 +30,7 @@ import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -196,16 +197,22 @@ public class ResponseRecord extends DOMFace
     public JSONObject getJSON(AuthRequest ar) throws Exception {
         JSONObject jo = new JSONObject();
         AddressListEntry ale = new AddressListEntry(getUserId());
+        jo.put("alt", ale.getJSON());
         jo.put("user", ale.getUniversalId());
+        jo.put("userName", ale.getName());
+        if (ale.user!=null) {
+            jo.put("key", ale.user.getKey());
+        }
         jo.put("userName", ale.getName());
         jo.put("choice",  getChoice());
         jo.put("html", getHtml(ar));
+        jo.put("time", getTime());
         return jo;
     }
 
     public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
         //can not change the user id since that is the key field.
-        //user name is not stored here either
+        //user name and key is not stored here either
         if (input.has("html")) {
             setHtml(ar, input.getString("html"));
         }

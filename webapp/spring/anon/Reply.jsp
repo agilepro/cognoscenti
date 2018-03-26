@@ -18,19 +18,19 @@ Required parameters:
     String linkedEmailId = emailId;
     NGWorkspace ngw  = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
-    
+
     if (ar.isLoggedIn()) {
         emailId = ar.getBestUserId();
     }
 
     TopicRecord topic = ngw.getNote(topicId);
-    
+
     JSONObject topicInfo = topic.getJSONWithComments(ar, ngw);
-    
+
     String specialAccess = AccessControl.getAccessTopicParams(ngw, topic)
                 + "&emailId=" + URLEncoder.encode(emailId, "UTF-8");
-    
-    
+
+
 %>
 <!DOCTYPE html>
 <html>
@@ -87,7 +87,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.newComment = {html:"",state:11,user:"<%ar.writeJS(emailId);%>"};
     $scope.newComment.time = $scope.nowTime;
     $scope.specialAccess = "<%ar.writeJS(specialAccess);%>";
-    
+
     $scope.distributeComments = function() {
         var newCounts = {};
         var allOthers = [];
@@ -115,15 +115,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             });
             $scope.isSubscriber = isSub;
         });
-        $scope.otherComments = allOthers;        
+        $scope.otherComments = allOthers;
         $scope.userCounts = newCounts;
     }
     $scope.distributeComments();
-    
+
     $scope.otherComments.sort(function(a,b) {
         return (b.time-a.time);
     });
-    
+
     $scope.saveIt = function() {
         var postURL = $scope.focusId + ".json?" + $scope.specialAccess;
         var postObj = {comments:[]};
@@ -165,7 +165,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             console.log("ERROR",data);
         });
     }
-    
+
 });
 </script>
 
@@ -174,12 +174,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 <body>
   <div class="bodyWrapper"  style="margin:50px">
 
-  
-  
-    <nav class="navbar navbar-default appbar">
-      <div class="container-fluid">
 
-      
 <style>
 .spacey tr td {
     padding: 5px 10px;
@@ -187,16 +182,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </style>
 
 
-        <!-- Logo Brand -->
-        <a class="navbar-brand" href="<%=ar.retPath%>" title="Weaver Home Page">
-          <img class="hidden-xs" alt="Weaver Icon" src="<%=ar.retPath%>bits/header-icon.png">
-          <h1>Weaver</h1>
-        </a>
+<%@ include file="AnonNavBar.jsp" %>
 
-
-      </div>
-    </nav>
-  
     <div ng-app="myApp" ng-controller="myCtrl">
 
         <div class="page-name">
@@ -205,7 +192,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 {{topicInfo.subject}} <i class="fa fa-caret-square-o-down"></i>
             </h1>
         </div>
-        
+
         <table ng-show="infoOpen" class="table">
         <tr>
             <td>Discussion Topic</td>
@@ -218,12 +205,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <tr>
             <td>Your Participation</td>
             <td>
-                <button ng-click="changeSubscription(false)" ng-show="isSubscriber" 
-                        class="btn btn-default btn-raised" 
+                <button ng-click="changeSubscription(false)" ng-show="isSubscriber"
+                        class="btn btn-default btn-raised"
                         title="Click to remove yourself from the list and stop getting notifications from this discussion topic">
                         Unsubscribe</button>
-                <button ng-click="changeSubscription(true)" ng-hide="isSubscriber" 
-                        class="btn btn-default btn-raised" 
+                <button ng-click="changeSubscription(true)" ng-hide="isSubscriber"
+                        class="btn btn-default btn-raised"
                         title="Click to remove add youself to the list and start getting notifications from this discussion topic">
                         Subscribe</button>
                 <span style="color:lightgray">&nbsp; Controls future email messages</span>
@@ -239,7 +226,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </tr>
         <tr>
             <td>Reply as</td>
-            <td>{{emailId}}   
+            <td>{{emailId}}
               <span ng-hide="emailId==linkedEmailId" style="color:red">(You used a link for {{linkedEmailId}})</span>
             </td>
         </tr>
@@ -256,7 +243,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 title="Link to the full discussion with all the options">Go To Full Discussion</button></td>
             <td><span ng-hide="isLoggedIn" style="color:lightgray">You will need to log in to access the discussion</span></td>
             </tr></table>
-            <div ui-tinymce="tinymceOptions" ng-model="newComment.html" 
+            <div ui-tinymce="tinymceOptions" ng-model="newComment.html"
                  class="leafContent" style="min-height:160px;" id="theOnlyEditor"></div>
         </div>
         <div ng-show="sentAlready">
@@ -276,7 +263,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
         <div ng_show="focusId>0">
             <h2>You are replying to:</h2>
-            
+
             <div class="comment-outer">
               <div>{{focusComment.userName}} - {{focusComment.time|date:'MMM dd, yyyy - HH:mm'}}</div>
               <div class="comment-inner">
@@ -286,23 +273,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
 
         <h2>Other Comments:</h2>
-        
+
         <div ng-repeat="cmt in otherComments" class="comment-outer">
           <div>{{cmt.userName}} - {{cmt.time|date:'MMM dd, yyyy - HH:mm'}}</div>
           <div class="comment-inner">
             <div ng-bind-html="cmt.html"></div>
           </div>
         </div>
-        
+
         <h2>Original Topic:</h2>
-        
+
         <div class="comment-outer">
           <div class="comment-inner">
             <div ng-bind-html="topicInfo.html"></div>
           </div>
         </div>
-        
-        
+
+
     </div>
   </div>
 </body>

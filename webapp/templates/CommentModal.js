@@ -21,6 +21,20 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     $scope.docSpaceURL = docSpaceURL;
     $scope.attachmentList = attachmentList;
     $scope.showEmail = false;
+    if (!$scope.cmt.responses) {
+        $scope.cmt.responses = [];
+    }
+    $scope.responders = [];
+    
+    if (cmt.commentType==2 || cmt.commentType==3) {
+        $scope.cmt.responses.forEach( function(item)  {
+            $scope.responders.push({
+                "uid": item.user,
+                "name": item.userName,
+                "key": item.key
+            });
+        });
+    }
 	
 	// return a readable status message
 	$scope.getStatusMassage = function() {
@@ -62,6 +76,13 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
    };
 
     $scope.save = function() {
+        if ($scope.cmt.commentType==2 || $scope.cmt.commentType==3) {
+            console.log("RESPONDERS: ", $scope.responders)
+            $scope.responders.forEach( function(userRec) {
+                assureResponderZ(userRec);
+            });
+            console.log("RESPONCES: ", $scope.cmt.responses);
+        }
 		//assure that the uid is set for raw email addresses entered
 		$scope.cmt.notify.forEach( function(item) {
 			if (!item.uid) {
@@ -75,6 +96,23 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         $scope.unsaved = 0;
         $scope.cmt.isNew = false;
         $scope.flattenedCmt = JSON.stringify($scope.cmt);       
+    }
+    
+    function assureResponderZ(userRec) {
+        var found = false;
+        $scope.cmt.responses.forEach( function(resp) {
+            if (resp.user == userRec.uid) {
+                found = true;
+            }
+        });
+        if (!found) {
+            $scope.cmt.responses.push({
+                "choice": "None",
+                "html": "",
+                "user": userRec.uid
+            })
+            console.log("ADDING responder: "+userRec.uid, $scope.cmt);
+        }
     }
 
     $scope.saveAndClose = function () {

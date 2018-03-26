@@ -16,7 +16,8 @@
             <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
               <a role="menuitem" ng-click="openCommentEditor(item,cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
             <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
-              <a role="menuitem" ng-click="openResponseEditor(cmt)">Create/Edit Response:</a></li>
+              <a role="menuitem" ng-click="openResponseEditor(cmt, '<%ar.writeJS(currentUser);%>')">
+                Create/Edit Response:</a></li>
             <li role="presentation" ng-show="cmt.state==11 && cmt.user=='<%ar.writeJS(currentUser);%>'">
               <a role="menuitem" ng-click="postComment(item, cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
             <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
@@ -79,34 +80,38 @@
         <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}} @ {{cmt.meet.startTime | date}}
       </div>
 
-      <table style="min-width:500px;" ng-show="cmt.commentType==2 || cmt.commentType==3">
+      <table style="min-width:500px;overflow:hidden" ng-show="cmt.commentType==2 || cmt.commentType==3">
         <col style="width:120px">
         <col style="width:10px">
         <col width="width:1*">
         <tr ng-repeat="resp in cmt.responses">
-          <td style="padding:5px;max-width:100px;">
+          <td style="padding:5px;max-width:100px;overflow:hidden">
             <div ng-show="cmt.commentType==2">
               <b>{{resp.choice}}</b></div>
             <div>{{resp.userName}}</div>
           </td>
           <td>
-            <span ng-show="resp.user=='<%ar.writeJS(currentUser);%>' && cmt.state==12" ng-click="openResponseEditor(cmt)" style="cursor:pointer;">
-              <a href="#cmt{{cmt.time}}" title="Edit your response to this {{commentTypeName(cmt)}}">
+            <span ng-show="cmt.state==12" ng-click="openResponseEditor(cmt, resp.user)" 
+                  style="cursor:pointer;">
+              <a href="#cmt{{cmt.time}}" title="Edit this response">
                 <i class="fa fa-edit"></i></a>
             </span>
           </td>
           <td style="padding:5px;">
             <div class="leafContent comment-inner" ng-bind-html="resp.html"></div>
           </td>
+          <td ng-click="removeResponse(cmt,resp)" ng-show="cmt.state==12" >
+            <span class="fa fa-trash" style="color:orange"></span>
+          </td>
         </tr>
-        <tr ng-show="noResponseYet(cmt)">
+        <tr ng-show="noResponseYet(cmt, '<% ar.writeHtml(currentUserName); %>' )">
           <td style="padding:5px;max-width:100px;">
             <b>????</b>
             <br/>
             <% ar.writeHtml(currentUserName); %>
           </td>
           <td>
-            <span ng-click="openResponseEditor(cmt)" style="cursor:pointer;">
+            <span ng-click="openResponseEditor(cmt,'<%ar.writeJS(currentUser);%>')" style="cursor:pointer;">
               <a href="#" title="Create a response to this {{commentTypeName(cmt)}}"><i class="fa fa-edit"></i></a>
             </span>
           </td>
