@@ -4,8 +4,21 @@
     loginConfigSetup.put("serverUrl",   ar.baseURL);
 %> 
 <script>
-SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, {}, reloadIfLoggedIn);
+SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, {}, updateBar);
 
+function updateBar() {
+    var x = document.getElementById("nb-must-login");
+    var y = document.getElementById("nb-is-login");
+    if (!SLAP.loginInfo.verified) {
+        y.style.display = "none";
+        x.style.display = "block";
+    } else {
+        document.getElementById("nb-user-name").textContent = SLAP.loginInfo.userName;
+        y.style.display = "block";
+        x.style.display = "none";
+    }
+    reloadIfLoggedIn();
+} 
 
 </script>
 
@@ -18,10 +31,18 @@ SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, {}, reloadIfLoggedIn);
       <h1>Weaver</h1>
     </a>
 
-    <a class="navbar-brand pull-right"  title="Authenticate Yourself"
+    <div class="navbar-brand pull-right" id="nb-must-login" >
+       <a title="Authenticate Yourself"
        href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(ar.realRequestURL, "UTF-8")%>">
-      <h1>Login</h1>
-    </a>
+          <h1>Login</h1>
+       </a>
+    </div>
+    <div class="navbar-brand pull-right" id="nb-is-login" >
+       <a title="Authenticate Yourself"
+       href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(ar.realRequestURL, "UTF-8")%>">
+          <h1 id="nb-user-name">Do Nutin</h1>
+       </a>
+    </div>
 
   </div>
 </nav>

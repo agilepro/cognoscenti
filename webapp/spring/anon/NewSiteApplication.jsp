@@ -44,9 +44,13 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize', 'ngTagsInput']);
-app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+var theOnlyScope = {};
 
-    $scope.newWorkspace = {newName:"",template:"",purpose:"",members:[]};
+app.controller('myCtrl', function($scope, $http, $modal) {
+    theOnlyScope = $scope;
+    $scope.newSite = {name:"",key:"",purpose:"",email:"", preapprove:""};
+    $scope.duplicateEmail = "";
+    $scope.phase = 1;
     
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -59,7 +63,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     $scope.getURLAddress = function() {
         var res = "";
-        var str = $scope.newWorkspace.newName;
+        var str = $scope.newSite.name;
         var isInGap = false;
         for (i=0; i<str.length && res.length<8; i++) {
             var ch = str[i].toLowerCase();
@@ -77,18 +81,69 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         return res;
     }
-    $scope.loadPersonList = function(query) {
-        console.log("loadPersonList called")
-        return AllPeople.findMatchingPeople(query);
+    
+    $scope.next = function() {
+        if ($scope.phase==1) {
+            if (!$scope.newSite.name || $scope.newSite.name.length<5) {
+                return;
+            }
+            $scope.newSite.key = $scope.getURLAddress();
+            $scope.phase=2;
+        }
+        else if ($scope.phase==2) {
+            if (!$scope.newSite.key || $scope.newSite.key.length<4) {
+                return;
+            }
+            $scope.phase=3;
+        }
+        else if ($scope.phase==3) {
+            $scope.phase=4;
+        }
+        else if ($scope.phase==4) {
+            if ($scope.duplicateEmail === $scope.newSite.email) {
+                $scope.phase=5;
+            } 
+            else {
+                alert("the email addresses do not match");
+                return;
+            }
+            
+        }
+        else if ($scope.phase==5) {
+            $scope.phase=6;
+        }
+        else if ($scope.phase==6) {
+            $scope.phase=7;
+        }
+    }
+    $scope.prev = function() {
+        if ($scope.phase>1) {
+            $scope.phase = $scope.phase - 1;
+        }
+    }
+    
+    $scope.submitItAll = function() {
+        var postURL = "siteRequest.json";
+        var postObj = $scope.newSite;
+        var postData = angular.toJson(postObj);
+        console.log("DOING IT:", postURL, postData)
+        $http.post(postURL, postData)
+        .success( function(data) {
+            alert("OK, request has been made");
+        })
+        .error( function(data, status, headers, config) {
+            console.log("ERROR", data, status)
+        });
     }
     
 });
 
 function reloadIfLoggedIn() {
-    //stay on this page whether logged in or not.
+    if (SLAP.loginInfo.verified) {
+        theOnlyScope.loggedEmail = SLAP.loginInfo.userId;
+    }
 }
 </script>
-<script src="<%=ar.baseURL%>jscript/AllPeople.js"></script>
 
 </head>
 
@@ -100,6 +155,9 @@ function reloadIfLoggedIn() {
 .spacey tr td {
     padding: 5px 10px;
 }
+.bigletters tr td {
+    font-size: 20px;
+}
 </style>
 
 
@@ -107,65 +165,192 @@ function reloadIfLoggedIn() {
 
 <div style="max-width:500px" ng-app="myApp" ng-controller="myCtrl">
 
-    <div class="form-group">
-        <label ng-click="showNameHelp=!showNameHelp">
-            New Site Name &nbsp; <i class="fa fa-question-circle-o"></i>
-        </label>
-        <input type="text" class="form-control" ng-model="newWorkspace.newName"/>
-    </div>
+  <h1>Request a Weaver site.</h1>
+  
+  <table class="table bigletters">
+  
+    <tr ng-show="phase>1">
+      <td>Site Name:</td>
+      <td ng-click="phase=1">{{newSite.name}}</td>
+    </tr>
+    <tr ng-show="phase>2">
+      <td>URL Key:</td>
+      <td ng-click="phase=2">{{newSite.key}}</td>
+    </tr>
+    <tr ng-show="phase>3">
+      <td>Purpose:</td>
+      <td ng-click="phase=3">{{newSite.purpose}}</td>
+    </tr>
+    <tr ng-show="phase>4">
+      <td>Owner:</td>
+      <td ng-click="phase=4">{{newSite.email}}</td>
+    </tr>
+    <tr ng-show="phase>5">
+      <td>Pre-approval:</td>
+      <td ng-click="phase=5">{{newSite.preapprove}}</td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td></td>
+    </tr>
+  </table>
+  
+  <div ng-show="phase==1" class="well">
+    
+    <p>A <i>site</i> is a place where you can create workspaces.   
+    You can have as many workspaces as you would like, one for each 
+    team you want to coordinate, and maybe a few more for shared use.
+    All of this can be done in one site.</p>
+    
+    <p>A site can be accessed by any number of people, and you can 
+    control who has access to the site, and to each workspace.</p>
+    
+    <p><b>Step 1: </b> Please provide a full name for your site.</p>
+    
+    <p> Pick a short clear name that would be useful to people that don't already know
+    about the group using the site.  You can change the name at any time.
+    Just a few words, maybe 20 to 50 letters total.</p>
+        
     <div class="form-group">
         <label>
-            URL Address:  
+            Site Name
         </label>
-        {{getURLAddress()}}
+        <input type="text" class="form-control" ng-model="newSite.name"/>
     </div>
-    <div class="guideVocal" ng-show="showNameHelp" ng-click="showNameHelp=!showNameHelp">
-        Pick a short clear name that would be useful to people that don't already know
-        about the group using the site.  You can change the name at any time, 
-        however the first name you pick will set the URL address and that can not be 
-        changed later.
-    </div>
+    
+    <button class="btn btn-primary btn-raised" ng-click="next()" ng-show="newSite.name.length>5">Next</button>
+    
+  </div>
+    
+  <div ng-show="phase==2" class="well">
+  
+    <p><b>Step 2: </b> Please provide a key for the URL.</p>
+    
+    <p>This will be part of your web address.  
+    Please specify a short key with only 4 to 8 letters or numbers.   
+    You are allowed to use simple letters and numbers or a hyphen.</p>
+
     <div class="form-group">
-        <label ng-click="showPurposeHelp=!showPurposeHelp">
-            Site Purpose &nbsp; <i class="fa fa-question-circle-o"></i>
+        <label>
+            Site URL Key
         </label>
-        <textarea class="form-control" ng-model="newWorkspace.purpose"></textarea>
+        <input type="text" class="form-control" ng-model="newSite.key"/>
     </div>
-    <div class="guideVocal" ng-show="showPurposeHelp" ng-click="showPurposeHelp=!showPurposeHelp">
-        Describe in a sentence or two the <b>purpose</b> of the workspace in a way that 
+
+    <button class="btn btn-primary btn-raised" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised" ng-click="next()" ng-show="newSite.name.length>5">Next</button>
+
+  </div>
+    
+  <div ng-show="phase==3" class="well">
+
+    <p><b>Step 3: </b> Describe the purpose of the site.</p>
+    
+    <p>Describe in a sentence or two the <b>purpose</b> of the workspace in a way that 
         people who are not (yet) part of the workspace will understand,
         and to help them know whether they should or should not be 
         part of that workspace. <br/>
         This description will be available to the public if the workspace
-        ever appears in a public list of workspaces.
-    </div>
+        ever appears in a public list of workspaces.</p>
+
     <div class="form-group">
-        <label ng-click="showMembersHelp=!showMembersHelp">
-            Initial Members &nbsp; <i class="fa fa-question-circle-o"></i>
+        <label>
+            Site Purpose
         </label>
-        <tags-input ng-model="newWorkspace.members" 
-                    placeholder="Enter email/name of members for this workspace"
-                    display-property="name" key-property="uid">
-            <auto-complete source="loadPersonList($query)"></auto-complete>
-        </tags-input>
-    </div>
-    <div class="guideVocal" ng-show="showMembersHelp" ng-click="showMembersHelp=!showMembersHelp">
-        Members are allowed to access the workspace.  
-        You can enter their email address if they have not accessed the system before. 
-        If not novices, type three letters to get a list of known users that match.  
-        Later, you can add and remove members whenever needed.<br/>
-        <br/>
-        After the workspace is created go to each <b>novice</b> user and send them an 
-        invitation to join.
+        <textarea class="form-control" ng-model="newSite.purpose"></textarea>
     </div>
     
+    <button class="btn btn-primary btn-raised" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised" ng-click="next()">Next</button>
+
+  </div>
+    
+  <div ng-show="phase==4" class="well">
+    <p><b>Step 4: </b> Your Email Address.</p>
+    
+    <p>Enter the email address that you will use to log into the site, 
+    and to which we will send correspondence about the site.  
+    You will be able to change your email address later if you have to.
+    Your site will not be granted until we have verified your email address.</p>
+
+    <div class="form-group">
+        <label>
+            Owner Email
+        </label>
+        <input type="text" class="form-control" ng-model="newSite.email"/>
+    </div>
+
+    <div class="form-group">
+        <label>
+            Enter it again
+        </label>
+        <input type="text" class="form-control" ng-model="duplicateEmail"/>
+    </div>
+    
+    <button class="btn btn-primary btn-raised" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised" ng-click="next()">Next</button>
+
+  </div>
+    
+  <div ng-show="phase==5" class="well">
+    
+    <p><b>Step 5: </b> Enter 'Pre-approval Code' if you have one.</p>
+    
+    <p>If you have been given a pre-approval code, enter it here in order to 
+    expedite the creation of a site.  
+    </p>
+
+    <p>If you do not have one, don't worry, you can still apply here and we 
+    will review your application shortly.    
+    </p>
     
     <div class="form-group">
-        <button class="btn btn-primary btn-raised" ng-click="createNewWorkspace()">
+        <label>
+            Pre-approval Code
+        </label>
+        <input type="text" class="form-control" ng-model="newSite.preapprove"/>
+    </div>
+    
+    <button class="btn btn-primary btn-raised" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised" ng-click="next()">Next</button>
+
+  </div>
+    
+  <div ng-show="phase==6" class="well">
+    
+    <p><b>Step 6: </b> Are you a robot?</p>
+    
+    <p>To protect the site from malicious attach, 
+       please enter the lesser of 512 and 307 in the 
+       box below.
+    </p>
+ 
+    <div class="form-group">
+        <label>
+            Your response
+        </label>
+        <input type="text" class="form-control" ng-model="newSite.capcha"/>
+    </div>
+    
+    <button class="btn btn-primary btn-raised" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised" ng-click="next()">Next</button>
+
+  </div>
+    
+  <div ng-show="phase==7" class="well">
+    <p><b>Step 7: </b> Submit</p>
+    
+    <p>Review all the information above, and confirm correct.
+       If you want to change a value click on it.
+    </p>
+    <div class="form-group">
+        <button class="btn btn-primary btn-raised" ng-click="submitItAll()">
             Request Site</button>
     </div>
 
-       
+  </div>
+  
+  {{loggedEmail}}
 </div>
 
 

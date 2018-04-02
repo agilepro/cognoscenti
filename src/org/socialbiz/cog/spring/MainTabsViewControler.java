@@ -426,7 +426,7 @@ public class MainTabsViewControler extends BaseController {
                  return null;
              }
 
-             streamJSP(ar, "index");
+             specialAnonJSP(ar, "N/A", "N/A", "Index.jsp");
              return null;
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.project.welcome.page", null , ex);

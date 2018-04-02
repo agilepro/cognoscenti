@@ -208,6 +208,10 @@ app.filter('escape', function() {
 <style>
 .spaceyTable tr td {
     padding:8px;
+    border-bottom: 1px solid #ddd;
+}
+.spaceyTable tr:hover {
+    background-color: #f5f5f5;
 }
 </style>
 
@@ -282,12 +286,45 @@ app.filter('escape', function() {
                 <tr>
                     <td><label>Purpose:</label></td>
                     <td ng-show="editInfo">
-                        <textarea name="purpose" class="form-control" 
+                        <textarea class="form-control" 
                               ng-model="workspaceConfig.purpose" rows="4" 
                               placeholder="Enter a public description of the work that will be done in this workspace" 
                               style="background-color:white;"></textarea></td>
                     <td ng-hide="editInfo">
                         {{workspaceConfig.purpose}}
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Mission:</label></td>
+                    <td ng-show="editInfo">
+                        <textarea class="form-control" 
+                              ng-model="workspaceConfig.mission" rows="4" 
+                              placeholder="Enter a mission statement for the circle working in this  workspace, if any" 
+                              style="background-color:white;"></textarea></td>
+                    <td ng-hide="editInfo">
+                        {{workspaceConfig.mission}}
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Vision:</label></td>
+                    <td ng-show="editInfo">
+                        <textarea class="form-control" 
+                              ng-model="workspaceConfig.vision" rows="4" 
+                              placeholder="Enter a vision statement for the circle working in this  workspace, if any" 
+                              style="background-color:white;"></textarea></td>
+                    <td ng-hide="editInfo">
+                        {{workspaceConfig.vision}}
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Aim:</label></td>
+                    <td ng-show="editInfo">
+                        <textarea class="form-control" 
+                              ng-model="workspaceConfig.aim" rows="4" 
+                              placeholder="Enter a statement of aims for the circle working in this  workspace, if any" 
+                              style="background-color:white;"></textarea></td>
+                    <td ng-hide="editInfo">
+                        {{workspaceConfig.aim}}
                     </td>
                 </tr>
                 <tr>

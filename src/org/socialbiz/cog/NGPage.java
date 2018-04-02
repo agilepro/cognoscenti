@@ -1744,6 +1744,10 @@ public abstract class NGPage extends ContainerCommon {
         //returns all the names for this page
         List<String> nameSet = getPageNames();
         workspaceConfigInfo.put("allNames", constructJSONArray(nameSet));
+        
+        process.extractScalarString(workspaceConfigInfo, "mission");
+        process.extractScalarString(workspaceConfigInfo, "vision");
+        process.extractScalarString(workspaceConfigInfo, "aim");
 
         return workspaceConfigInfo;
     }
@@ -1778,6 +1782,9 @@ public abstract class NGPage extends ContainerCommon {
         if (newConfig.has("projectMail")) {
             setWorkspaceMailId(newConfig.getString("projectMail"));
         }
+        process.updateScalarString("mission", newConfig);
+        process.updateScalarString("vision", newConfig);
+        process.updateScalarString("aim", newConfig);
     }
 
 

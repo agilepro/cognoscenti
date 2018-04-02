@@ -118,6 +118,35 @@ public class SiteController extends BaseController {
         }
     }
 
+    
+    @RequestMapping(value = "/siteRequest.json", method = RequestMethod.POST)
+    public void siteRequest(@PathVariable
+            String userKey, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            JSONObject incoming = getPostedObject(ar);
+
+            if(incoming.has("name") && incoming.has("key") && incoming.has("email")){
+
+                String accountID = incoming.getString("key");
+                String accountName = incoming.getString("name");
+                String accountDesc = incoming.getString("purpose");
+
+                HistoricActions ha = new HistoricActions(ar);
+                ha.createNewSiteRequest(accountID, accountName, accountDesc);
+            }
+            else {
+                throw new Exception("Create site request must have name, key, and email at least");
+            }
+
+            redirectBrowser(ar, "userAccounts.htm");
+        }catch(Exception ex){
+            throw new Exception("Unable to request site", ex);
+        }
+    }
+    
+    
     @RequestMapping(value = "/su/takeOwnershipSite.json", method = RequestMethod.POST)
     public void takeOwnershipSite(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
