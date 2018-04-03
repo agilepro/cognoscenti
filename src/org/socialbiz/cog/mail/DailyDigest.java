@@ -290,7 +290,8 @@ public class DailyDigest {
                 if (clone.isSuperAdmin(up.getKey())) {
                     String doublecheck = clone.getSystemProperty("superAdmin");
                     if (up.getKey().equals(doublecheck)) {
-                        List<SiteRequest> delayedSites = SiteReqFile.scanAllDelayedSiteReqs();
+                        SiteReqFile siteReqFile = new SiteReqFile(cog);
+                        List<SiteRequest> delayedSites = siteReqFile.scanAllDelayedSiteReqs();
                         numberOfUpdates += delayedSites.size();
                         writeDelayedSiteList(clone, delayedSites);
                     } else {
@@ -485,10 +486,10 @@ public class DailyDigest {
             clone.write("\n <tr " + ((i % 2 == 0) ? "class=\"Odd\"" : " ")
                     + ">");
             clone.write("<td>");
-            clone.write(details.getName());
+            clone.write(details.getSiteName());
             clone.write("</td>");
             clone.write("<td>");
-            clone.write(details.getUniversalId());
+            clone.write(details.getRequester());
             clone.write("</td>");
             clone.write("<td>");
             clone.writeHtml(SectionUtil.getNicePrintDate(details.getModTime()));

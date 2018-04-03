@@ -26,9 +26,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.socialbiz.cog.exception.NGException;
-import org.socialbiz.cog.exception.ProgramLogicError;
-import org.w3c.dom.Document;
+import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
  * Holds New Site Requests
@@ -42,264 +41,207 @@ import org.w3c.dom.Document;
  * The site persists if granted, but otherwise forgotten about.
  *
  */
-public class SiteReqFile extends DOMFile {
+public class SiteReqFile {
 
-    private static ArrayList<SiteRequest> allRequests = null;
-    private static SiteReqFile siteReqFile = null;
+    File requestFile;
+    JSONObject contents;
 
-    public synchronized static void clearAllStaticVars() {
-        siteReqFile = null;
-        allRequests = null;
-    }
-
-    public static synchronized void initSiteList(Cognoscenti cog) throws Exception {
-        siteReqFile = readSiteReqFile(cog);
-
-        long hundredDaysAgo = System.currentTimeMillis() - 8640000000L;
-        List<SiteRequest> requests = siteReqFile.getChildren("request", SiteRequest.class);
-        ArrayList<SiteRequest> outOfDate = new ArrayList<SiteRequest>();
-        allRequests = new ArrayList<SiteRequest>();
-        for (SiteRequest accountDetails : requests) {
-            long time = accountDetails.getModTime();
-            if (time < hundredDaysAgo) {
-                // collect all the old requests
-                outOfDate.add(accountDetails);
+    public SiteReqFile(Cognoscenti cog) throws Exception {
+        File userFolder = cog.getConfig().getUserFolderOrFail();
+        requestFile = new File(userFolder, "siteRequests.json");
+        if (!requestFile.exists()) {
+            //initialize it here
+            contents = new JSONObject();
+            contents.put("reqs", new JSONArray());
+        }
+        else {
+            contents = JSONObject.readFromFile(requestFile);
+            JSONArray reqs = contents.getJSONArray("reqs");
+            
+            //now remove anything more than ninety days old
+            long ninetyDaysAgo = System.currentTimeMillis() - 90L*24*60*60*1000;  //ninety days
+            JSONArray cleanList = new JSONArray();
+            for (int i=0; i<reqs.length(); i++) {
+                JSONObject oneReq = reqs.getJSONObject(i);
+                if (oneReq.optLong("modTime",0)>=ninetyDaysAgo) {
+                    cleanList.put(oneReq);
+                }
             }
-            else {
-                allRequests.add(accountDetails);
-            }
+            contents.put("reqs", cleanList);
         }
-
-        // now actually get rid of the out of date children in case this is
-        // saved back to file
-        for (SiteRequest accountDetails : outOfDate) {
-            siteReqFile.removeChild(accountDetails);
-        }
-
-        Collections.sort(allRequests, new SortByDateComparator());
     }
-
-
-    public SiteReqFile(File path, Document newDoc) throws Exception {
-        super(path, newDoc);
+    
+    public void save() throws Exception {
+        contents.writeToFile(requestFile);
     }
-
+    
+    
+    
     /**
-     * Save the one file holding all the site requests
+     * Get all requests
      */
-    public static void saveAll() throws Exception {
-        if (siteReqFile == null) {
-            throw new ProgramLogicError(
-                    "Program logic Error: attempting to save site request records "
-                            + "when they have not been read yet.");
+    public List<SiteRequest> getAllSiteReqs() throws Exception {
+        List<SiteRequest> usersReqs = new ArrayList<SiteRequest>();
+        JSONArray reqs = contents.getJSONArray("reqs");
+        for (int i=0; i<reqs.length(); i++) {
+            SiteRequest oneReq = new SiteRequest(reqs.getJSONObject(i));
+            usersReqs.add( oneReq );
         }
-        siteReqFile.save();
+        sortSiteRequests(usersReqs);
+        return usersReqs;
     }
-
-    /**
-     * Get ALL requests in the file
-     */
-    public static List<SiteRequest> getAllSiteReqs() throws Exception {
-        if (allRequests == null) {
-            throw new Exception("SiteReqFile is not initialized");
-        }
-        return allRequests;
-    }
+    
     /**
      * Get requests for one user
      */
-    public static List<SiteRequest> getUsersSiteRequests(UserProfile up) throws Exception {
+    public List<SiteRequest> getUsersSiteRequests(UserProfile up) throws Exception {
         List<SiteRequest> usersReqs = new ArrayList<SiteRequest>();
-        for (SiteRequest oneReq : getAllSiteReqs()) {
-            if(up.hasAnyId(oneReq.getUniversalId())) {
+        JSONArray reqs = contents.getJSONArray("reqs");
+        for (int i=0; i<reqs.length(); i++) {
+            SiteRequest oneReq = new SiteRequest(reqs.getJSONObject(i));
+            if(up.hasAnyId(oneReq.getRequester())) {
                 usersReqs.add( oneReq );
             }
         }
+        sortSiteRequests(usersReqs);
         return usersReqs;
     }
 
+    
     /**
      * Get requests more than 48 hours old
      */
-    public static List<SiteRequest> scanAllDelayedSiteReqs() throws Exception {
-        if (allRequests == null) {
-            throw new Exception("SiteReqFile is not initialized");
-        }
+    public List<SiteRequest> scanAllDelayedSiteReqs() throws Exception {
         List<SiteRequest> delayedList = new ArrayList<SiteRequest>();
-
-        long timeSpan = 0;
-        long accountModTime = 0;
-        for (SiteRequest oneReq : allRequests) {
+        long fortyEightHoursAgo = System.currentTimeMillis() - 172800000; // 172800000 = 48 hours
+        JSONArray reqs = contents.getJSONArray("reqs");
+        for (int i=0; i<reqs.length(); i++) {
+            SiteRequest oneReq = new SiteRequest(reqs.getJSONObject(i));
             if ((oneReq.getStatus().equalsIgnoreCase("requested"))) {
-                accountModTime = oneReq.getModTime();
-                timeSpan = System.currentTimeMillis() - accountModTime;
-                if (timeSpan >= 172800000) // 172800000 = 48 hours
-                {
+                if (oneReq.getModTime() < fortyEightHoursAgo) {
                     delayedList.add(oneReq);
                 }
             }
         }
+        sortSiteRequests(delayedList);
         return delayedList;
     }
+    
+    
+    public SiteRequest getRequestByKey(String key) throws Exception {
+        JSONArray reqs = contents.getJSONArray("reqs");
+        for (int i=0; i<reqs.length(); i++) {
+            SiteRequest oneReq = new SiteRequest(reqs.getJSONObject(i));
+            if (key.equals(oneReq.getRequestId())) {
+                return oneReq;
+            }
+        }
+        return null;
+    }
+
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
 
     /**
      * Create new request for new site with the specified name and description.
      * And save the file.
      */
-    public static SiteRequest createNewSiteRequest(String siteId, String displayName,
-            String description, AuthRequest ar) throws Exception {
-        if (allRequests == null) {
-            initSiteList(ar.getCogInstance());
+    public static SiteRequest createNewSiteRequest(JSONObject newSiteReq, Cognoscenti cog) throws Exception {
+        
+        String siteId      = newSiteReq.getString("siteId");
+        String siteName    = newSiteReq.getString("siteName");
+        String purpose     = newSiteReq.getString("purpose");
+        String requester   = newSiteReq.getString("requester");
+        
+        
+        // first, lets see if there is a site already with that ID
+        NGContainer site = cog.getSiteById(siteId);
+        if (site != null) {
+            throw new Exception("Sorry, there already exists an site with that ID (" + siteId
+                    + ").  Please try again with a different ID.");
         }
-
-        if (displayName.length() < 4) {
-            throw new NGException("nugen.exception.site.name.length", null);
+        
+        if (siteName.length() < 4) {
+            throw new Exception("New site must have a name with 4 or more letters");
         }
         if (siteId == null) {
-            throw new Exception("SiteId parameter can not be null");
+            throw new Exception("SiteId parameter can not be null in createNewSiteRequest");
         }
         if (siteId.length() < 4 || siteId.length() > 8) {
             throw new Exception(
                     "AccountId must be four to eight charcters/numbers long.  Received (" + siteId
                             + ")");
         }
+        
+        // to avoid file system problems all ids need to be lower case.
+        siteId = siteId.toLowerCase();
         for (int i = 0; i < siteId.length(); i++) {
             char ch = siteId.charAt(i);
-            if (ch < '0' || (ch > '9' && ch < 'A') || (ch > 'Z' && ch < 'a') || ch > 'z') {
+            if (ch < '0' || (ch > '9' && ch < 'a') || ch > 'z') {
                 throw new Exception(
                         "AccountId must have only letters and numbers - no spaces or punctuation.  Received ("
                                 + siteId + ")");
             }
         }
 
-        // to avoid file system problems all ids need to be lower case.
-        siteId = siteId.toLowerCase();
 
-        // now, lets see if there is a site already with that ID
-        NGContainer site = ar.getCogInstance().getSiteById(siteId);
-        if (site != null) {
-            throw new Exception("Sorry, there already exists an site with that ID (" + siteId
-                    + ").  Please try again with a different ID.");
-        }
 
-        String status = "requested";
-        String universalId = ar.getUserProfile().getUniversalId();
-        String modUser = ar.getUserProfile().getKey();
-
-        SiteRequest accountReq = siteReqFile.createNewRequest(siteId, displayName, description,
-                status, universalId, ar.nowTime, modUser);
-
-        saveAll();
-        return accountReq;
-    }
-
-    public static SiteRequest getRequestByKey(String key) throws Exception {
-        if (allRequests == null) {
-            throw new Exception("SiteReqFile is not initialized");
-        }
-        for (SiteRequest accountDetails : allRequests) {
-            if (key.equals(accountDetails.getRequestId())) {
-                return accountDetails;
-            }
-        }
-        return null;
-    }
-
-    public static void removeRequest(String reqId) throws Exception {
-        if (allRequests == null) {
-            throw new Exception("SiteReqFile is not initialized");
-        }
-        for (SiteRequest accountDetails : allRequests) {
-            if (reqId.equals(accountDetails.getRequestId())) {
-                siteReqFile.removeChild(accountDetails);
-                allRequests.remove(accountDetails);
-            }
-        }
-    }
-
-    private SiteRequest createNewRequest(String siteId, String displayName, String description,
-            String status, String universalId, long modTime, String modUser) throws Exception {
-        if (siteId == null) {
-            throw new RuntimeException("createNewRequest was passed a null siteId parameter");
-        }
-        if (displayName == null || displayName.equals("")) {
-            throw new RuntimeException("createNewRequest was passed a null displayName parameter");
-        }
-        String requestedId = IdGenerator.generateKey();
-
-        SiteRequest newRequest = createChild("request", SiteRequest.class);
-
-        newRequest.setRequestId(requestedId);
-        newRequest.setStatus(status);
-        newRequest.setModified(modUser, modTime);
-
-        newRequest.setName(displayName);
-        newRequest.setDescription(description);
-        newRequest.setSiteId(siteId);
-        newRequest.setUniversalId(universalId);
-        allRequests.add(newRequest);
+        //actually update the file
+        SiteReqFile siteReqFile = new SiteReqFile(cog);
+        SiteRequest newRequest = siteReqFile.createNewRequest(newSiteReq);
+        siteReqFile.save();
         return newRequest;
     }
 
-    /**
-     * Read the site request file, and automatically remove old requests from
-     * the in-memory version.
-     */
 
-    private static SiteReqFile readSiteReqFile(Cognoscenti cog) throws Exception {
-        File requestFile = null;
-        try {
-            File userFolder = cog.getConfig().getUserFolderOrFail();
-            requestFile = new File(userFolder, "siteRequests.xml");
-            Document newDoc = readOrCreateFile(requestFile, "accounts-request");
-            SiteReqFile site = new SiteReqFile(requestFile, newDoc);
-            return site;
-        }
-        catch (Exception e) {
-            throw new NGException("nugen.exception.unable.load.account.request.file",
-                    new Object[] { requestFile }, e);
-        }
+
+    private SiteRequest createNewRequest(JSONObject newSiteReq) throws Exception {
+        String requestedId = IdGenerator.generateKey();
+
+        SiteRequest newRequest = new SiteRequest(newSiteReq);
+        newRequest.setRequestId(requestedId);
+        newRequest.setStatus("requested");
+        newRequest.setModified("", System.currentTimeMillis());
+
+        JSONArray reqs = contents.getJSONArray("reqs");
+        reqs.put(newRequest.getJSON());
+        return newRequest;
     }
 
-    public synchronized List<SiteRequest> scanPendingSiteRequests() throws Exception {
-        List<SiteRequest> pendingReqs = new ArrayList<SiteRequest>();
-        for (SiteRequest oneReq : allRequests) {
-            if ((oneReq.getStatus().equalsIgnoreCase("requested"))
-                    || (oneReq.getStatus().equalsIgnoreCase("Denied"))) {
-                pendingReqs.add(oneReq);
-            }
-        }
-        return pendingReqs;
-    }
-
-    public static List<SiteRequest> scanDeniedSiteReqs() throws Exception {
-        if (allRequests == null) {
-            throw new Exception("SiteReqFile is not initialized");
-        }
-        List<SiteRequest> deniedReqs = new ArrayList<SiteRequest>();
-        for (SiteRequest oneReq : allRequests) {
-            if ((oneReq.getStatus().equalsIgnoreCase("Denied"))) {
-                deniedReqs.add(oneReq);
-            }
-        }
-        return deniedReqs;
-    }
 
     /**
      * Sort reverse chronological, so most recent is first
      *
      */
+    public static void sortSiteRequests(List<SiteRequest> sortable) throws Exception {
+        Collections.sort(sortable, new SortByDateComparator());
+    }
     private static class SortByDateComparator implements Comparator<SiteRequest> {
 
         public SortByDateComparator() {}
 
         @Override
         public int compare(SiteRequest arg0, SiteRequest arg1) {
-            if (arg0.getModTime() == arg1.getModTime()) {
-                return 0;
+            try {
+                if (arg0.getModTime() == arg1.getModTime()) {
+                    return 0;
+                }
+                if (arg1.getModTime() < arg0.getModTime()) {
+                    return -1;
+                }
             }
-            if (arg1.getModTime() < arg0.getModTime()) {
-                return -1;
+            catch (Exception e) {
+                //this should never happen...
+                throw new RuntimeException(e);
             }
             return 1;
 

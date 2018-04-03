@@ -165,7 +165,6 @@ System.out.println("Weaver Server Object == Start the Server");
         NGTerm.clearAllStaticVars();
         SectionDef.clearAllStaticVars();
         UserManager.clearAllStaticVars();
-        SiteReqFile.clearAllStaticVars();
         MicroProfileMgr.clearAllStaticVars();
         AuthDummy.clearStaticVariables();
         isInitialized = false;
@@ -224,7 +223,6 @@ System.out.println("Weaver Server Object == Start the Server");
                 EmailListener.initListener(backgroundTimer);
             }
 
-            SiteReqFile.initSiteList(this);
             FolderAccessHelper.initLocalConnections(this);
             FolderAccessHelper.initCVSConnections(this);
             serverId = theConfig.getServerGlobalId();

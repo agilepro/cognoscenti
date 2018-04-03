@@ -101,12 +101,14 @@ public class SiteController extends BaseController {
 
             if(action.equals( "Submit" )){
 
-                String accountID = ar.reqParam("accountID");
-                String accountName = ar.reqParam("accountName");
-                String accountDesc = ar.defParam("accountDesc","");
+                JSONObject reqObj = new JSONObject();
+                reqObj.put("siteId", ar.reqParam("accountID"));
+                reqObj.put("siteName", ar.reqParam("accountName"));
+                reqObj.put("purpose", ar.defParam("accountDesc",""));
+                reqObj.put("requester", ar.getBestUserId());
 
                 HistoricActions ha = new HistoricActions(ar);
-                ha.createNewSiteRequest(accountID, accountName, accountDesc);
+                ha.createNewSiteRequest(reqObj);
             }
             else {
                 throw new Exception("Method requestNewSite does not understand the action: "+action);
@@ -120,29 +122,19 @@ public class SiteController extends BaseController {
 
     
     @RequestMapping(value = "/siteRequest.json", method = RequestMethod.POST)
-    public void siteRequest(@PathVariable
-            String userKey, HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public void siteRequest(HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             JSONObject incoming = getPostedObject(ar);
 
-            if(incoming.has("name") && incoming.has("key") && incoming.has("email")){
+            SiteRequest newSiteRequest = SiteReqFile.createNewSiteRequest(incoming, ar.getCogInstance());
 
-                String accountID = incoming.getString("key");
-                String accountName = incoming.getString("name");
-                String accountDesc = incoming.getString("purpose");
-
-                HistoricActions ha = new HistoricActions(ar);
-                ha.createNewSiteRequest(accountID, accountName, accountDesc);
-            }
-            else {
-                throw new Exception("Create site request must have name, key, and email at least");
-            }
-
-            redirectBrowser(ar, "userAccounts.htm");
-        }catch(Exception ex){
-            throw new Exception("Unable to request site", ex);
+            newSiteRequest.sendSiteRequestEmail(ar);
+            
+            sendJson(ar, newSiteRequest.getJSON());
+        } catch(Exception ex){
+            Exception ee = new Exception("Unable to a request a site", ex);
+            streamException(ee, ar);
         }
     }
     
@@ -266,7 +258,8 @@ public class SiteController extends BaseController {
             }
 
             String requestId = ar.reqParam("requestId");
-            SiteRequest siteRequest = SiteReqFile.getRequestByKey(requestId);
+            SiteReqFile siteReqFile = new SiteReqFile(ar.getCogInstance());
+            SiteRequest siteRequest = siteReqFile.getRequestByKey(requestId);
             if (siteRequest==null) {
                 throw new NGException("nugen.exceptionhandling.not.find.account.request",new Object[]{requestId});
             }
@@ -283,6 +276,9 @@ public class SiteController extends BaseController {
             else{
                 throw new Exception("Unrecognized action '"+action+"' in acceptOrDeny.form");
             }
+            
+            //if we made any changes save them
+            siteReqFile.save();
 
             //TODO: need a go parameter
             redirectBrowser(ar, "requestedAccounts.htm");

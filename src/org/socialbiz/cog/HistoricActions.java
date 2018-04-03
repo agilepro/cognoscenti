@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.socialbiz.cog.mail.ChunkTemplate;
 import org.socialbiz.cog.mail.EmailSender;
+
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -35,46 +36,14 @@ public class HistoricActions {
      * @return
      * @throws Exception
      */
-    public SiteRequest createNewSiteRequest(String siteId, String siteName,
-            String siteDescription) throws Exception {
-        SiteRequest accountDetails = SiteReqFile.createNewSiteRequest(siteId,
-            siteName, siteDescription, ar);
+    public SiteRequest createNewSiteRequest(JSONObject newSiteObj) throws Exception {
+        SiteRequest accountDetails = SiteReqFile.createNewSiteRequest(newSiteObj, cog);
 
-        sendSiteRequestEmail(accountDetails);
+        accountDetails.sendSiteRequestEmail(ar);
         return accountDetails;
     }
 
-    /**
-     * Do all the things necessary for creating and recording the creation of a site
-     * but don't send email, and don't wait for the administrator to approve
-     * the new site.
-     */
-    public NGBook createNewSiteImmediately(String siteId, String siteName,
-            String siteDescription) throws Exception {
-        SiteRequest immediateRequest = SiteReqFile.createNewSiteRequest(siteId,
-            siteName, siteDescription, ar);
-        return completeSiteRequest(immediateRequest, true,
-                "Granted immediately without administrator involvement");
-    }
 
-    private void sendSiteRequestEmail(SiteRequest siteRequest) throws Exception {
-        for (UserProfile up : cog.getUserManager().getAllSuperAdmins(ar)) {
-            JSONObject jo = new JSONObject();
-            jo.put("req", siteRequest.getJSON());
-            jo.put("baseURL", ar.baseURL);
-            jo.put("admin", up.getJSON());
-            
-            File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequest.chtml");
-            MemFile body = new MemFile();
-            Writer w = body.getWriter();
-            ChunkTemplate.streamIt(w, templateFile, jo, up.getCalendar());
-            w.flush();
-
-            EmailSender.generalMailToList(cog.getUserManager().getSuperAdminMailList(ar), ar.getBestUserId(),
-                    "Site Approval for " + ar.getBestUserId(),
-                    body.toString(), cog);
-        }
-    }
 
     /**
      * When a user has requested a site, the administrator is involved to approve or deny
@@ -87,11 +56,11 @@ public class HistoricActions {
      */
     public NGBook completeSiteRequest(SiteRequest siteRequest, boolean granted, String adminComment) throws Exception {
         siteRequest.setAdminComment(adminComment);
-        AddressListEntry ale = new AddressListEntry(siteRequest.getUniversalId());
+        AddressListEntry ale = new AddressListEntry(siteRequest.getRequester());
         NGBook ngb = null;
         if (granted) {
             //Create new Site
-            ngb = NGBook.createNewSite(siteRequest.getSiteId(), siteRequest.getName(), cog);
+            ngb = NGBook.createNewSite(siteRequest.getSiteId(), siteRequest.getSiteName(), cog);
             ngb.setKey(siteRequest.getSiteId());
             ngb.setDescription(siteRequest.getDescription());
             ngb.getPrimaryRole().addPlayer(ale);
@@ -108,19 +77,17 @@ public class HistoricActions {
             ar.getSuperAdminLogFile().createAdminEvent(siteRequest.getRequestId(), ar.nowTime,
                 ar.getBestUserId(), AdminEvent.SITE_DENIED);
         }
-        siteResolutionEmail(ale.getUserProfile(), siteRequest);
-        SiteReqFile.saveAll();
+        siteResolutionEmail(ale, siteRequest);
         return ngb;
     }
 
-    private void siteResolutionEmail(UserProfile owner, SiteRequest siteRequest) throws Exception {
-        AddressListEntry ale = new AddressListEntry(owner);
-        if (!ale.isWellFormed()) {
+    private void siteResolutionEmail(AddressListEntry owner, SiteRequest siteRequest) throws Exception {
+        if (!owner.isWellFormed()) {
         	//no email is sent if there is no email address of the owner, or any other 
         	//problem with the owner user profile.
         	return;
         }
-        OptOutIndividualRequest ooir = new OptOutIndividualRequest(ale);
+        OptOutIndividualRequest ooir = new OptOutIndividualRequest(owner);
         
         JSONObject jo = new JSONObject();
         jo.put("req", siteRequest.getJSON());

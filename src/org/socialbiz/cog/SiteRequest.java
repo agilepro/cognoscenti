@@ -20,103 +20,115 @@
 
 package org.socialbiz.cog;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.io.File;
+import java.io.Writer;
+
+import org.socialbiz.cog.mail.ChunkTemplate;
+import org.socialbiz.cog.mail.EmailSender;
+
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 
 /**
  *
  */
-public class SiteRequest extends DOMFace {
-
-    public SiteRequest(Document doc, Element ele, DOMFace p) {
-         super(doc, ele, p);
+public class SiteRequest {
+    JSONObject sr;
+    
+    public SiteRequest(JSONObject jo) {
+        sr = jo;
     }
 
-    public String getName() {
-        return getScalar("displayName");
+    public String getSiteName() throws Exception {
+        return sr.getString("siteName");
+    }
+    public void setSiteName(String displayName) throws Exception {
+        sr.put("siteName", displayName.trim());
     }
 
-    public void setName(String displayName) {
-
-        setScalar("displayName", displayName.trim());
+    public String getDescription() throws Exception {
+        return sr.getString("purpose");
+    }
+    public void setDescription(String descr) throws Exception {
+        sr.put("purpose", descr.trim());
     }
 
-    public String getDescription() {
-        return getScalar("description");
+    public String getAdminComment() throws Exception {
+        return sr.getString("adminComment");
+    }
+    public void setAdminComment(String descr) throws Exception {
+        sr.put("adminComment", descr.trim());
     }
 
-    public void setDescription(String descr) {
-        setScalar("description", descr.trim());
+    public String getSiteId() throws Exception {
+        return sr.getString("siteId");
+    }
+    public void setSiteId(String siteId) throws Exception {
+        sr.put("siteId", siteId.trim());
     }
 
-    public String getAdminComment() {
-        return getScalar("comment");
+    public String getRequestId() throws Exception {
+        return sr.getString("requestId");
     }
-
-    public void setAdminComment(String descr) {
-        setScalar("comment", descr.trim());
+    public void setRequestId(String requestId) throws Exception {
+        sr.put("requestId", requestId);
     }
-
-    public String getSiteId() {
-        return getScalar("accountId");
-    }
-
-    public void setSiteId(String siteId) {
-
-        setScalar("accountId", siteId.trim());
-    }
-
-    public void setUniversalId(String universalId) {
-        setScalar("universalId", universalId.trim());
-    }
-
+    
     /*
      * This returns email id of the user who has requested site.
      */
-    public String getUniversalId() {
-        return getScalar("universalId");
+    public String getRequester() throws Exception {
+        return sr.getString("requester");
+    }
+    public void setRequester(String requester) throws Exception {
+        sr.put("requester", requester.trim());
     }
 
-    public void setRequestId(String Id) {
-        setAttribute("Id", Id.trim());
+
+    public void setStatus(String status) throws Exception {
+        sr.put("status", status.trim());
+    }
+    public String getStatus() throws Exception {
+        return sr.getString("status");
     }
 
-    public void setStatus(String status) {
-        setAttribute("status", status.trim());
+
+
+    public long getModTime() throws Exception {
+        return sr.getLong("modTime");
+    }
+    public String getModUser() throws Exception {
+        return sr.getString("modUser");
+    }
+    public void setModified(String userId, long time) throws Exception {
+        sr.put("modUser", userId);
+        sr.put("modTime", time);
     }
 
-    public void setModified(String userId, long time) {
-        setAttribute("modUser", userId);
-        setAttribute("modTime", Long.toString(time));
-    }
+    
+    public void sendSiteRequestEmail(AuthRequest ar) throws Exception {
+        Cognoscenti cog = ar.getCogInstance();
+        for (UserProfile up : cog.getUserManager().getAllSuperAdmins(ar)) {
+            JSONObject jo = new JSONObject();
+            jo.put("req", this.getJSON());
+            jo.put("baseURL", ar.baseURL);
+            jo.put("admin", up.getJSON());
+            
+            File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequest.chtml");
+            MemFile body = new MemFile();
+            Writer w = body.getWriter();
+            ChunkTemplate.streamIt(w, templateFile, jo, up.getCalendar());
+            w.flush();
 
-    public String getStatus() {
-        return getAttribute("status");
+            EmailSender.generalMailToList(cog.getUserManager().getSuperAdminMailList(ar), ar.getBestUserId(),
+                    "Site Approval for " + ar.getBestUserId(),
+                    body.toString(), cog);
+        }
     }
-
-    public String getRequestId() {
-        return getAttribute("Id");
-    }
-
-    public long getModTime() {
-        return safeConvertLong(getAttribute("modTime"));
-    }
-    public String getModUser() {
-        return getAttribute("modUser");
-    }
-
+    
+    
     public JSONObject getJSON() throws Exception {
-        UserProfile userProfile =  UserManager.getStaticUserManager().lookupUserByAnyId(getModUser());
-        JSONObject jo = new JSONObject();
-        jo.put("requestId", getRequestId());
-        jo.put("name", getName());
-        jo.put("status", getStatus());
-        jo.put("desc", getDescription());
-        jo.put("modTime", getModTime());
-        jo.put("adminComment", getAdminComment());
-        jo.put("requester", userProfile.getJSON());
-        return jo;
+        return sr;
     }
 
 

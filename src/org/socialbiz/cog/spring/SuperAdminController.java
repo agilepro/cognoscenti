@@ -142,7 +142,8 @@ public class SuperAdminController extends BaseController {
 
 
              requestId = requestInfo.getString("requestId");
-             SiteRequest siteRequest = SiteReqFile.getRequestByKey(requestId);
+             SiteReqFile siteReqFile = new SiteReqFile(ar.getCogInstance());
+             SiteRequest siteRequest = siteReqFile.getRequestByKey(requestId);
              if (siteRequest==null) {
                  throw new NGException("nugen.exceptionhandling.not.find.account.request",new Object[]{requestId});
              }
@@ -160,6 +161,7 @@ public class SuperAdminController extends BaseController {
              else{
                  throw new Exception("Unrecognized new status ("+newStatus+") in acceptOrDenySite.json");
              }
+             siteReqFile.save();
 
              JSONObject repo = siteRequest.getJSON();
              sendJson(ar, repo);
