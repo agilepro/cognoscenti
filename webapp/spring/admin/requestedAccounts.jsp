@@ -7,7 +7,8 @@
     ar.assertLoggedIn("New Site page should never be accessed when not logged in");
     ar.assertSuperAdmin("Must be a super admin to see new site page");
     UserProfile uProf=ar.getUserProfile();
-    List<SiteRequest> superRequests = SiteReqFile.getAllSiteReqs();
+    SiteReqFile siteReqFile = new SiteReqFile(ar.getCogInstance());
+    List<SiteRequest> superRequests = siteReqFile.getAllSiteReqs();
 
     JSONArray allRequests = new JSONArray();
     for (SiteRequest requestRecord : superRequests) {
@@ -70,12 +71,10 @@ app.controller('myCtrl', function($scope, $http) {
                 <thead>
                     <tr>
                         <th></th>
-                        <th >Request Id</th>
-                        <th >Site Name</th>
-                        <th >State</th>
+                        <th >Request Id<br/>Status</th>
+                        <th >Site Name<br/>Site Id</th>
                         <th >Description</th>
-                        <th >Date</th>
-                        <th >Requested by</th>
+                        <th >Requested by<br/>Date</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -94,13 +93,12 @@ app.controller('myCtrl', function($scope, $http) {
                             </ul>
                           </div>
                         </td>
-                        <td>{{rec.requestId}}</td>
-                        <td>{{rec.name}}</td>
-                        <td>{{rec.status}}</td>
-                        <td>{{rec.desc}}</td>
-                        <td>{{rec.modTime|date}}</td>
-                        <td>{{rec.requester.name}}</td>
+                        <td>{{rec.requestId}}<br/>{{rec.status}}</td>
+                        <td>{{rec.siteName}}<br/>{{rec.siteId}}</td>
+                        <td>{{rec.purpose}}</td>
+                        <td>{{rec.requester}}<br/>{{rec.modTime|date}}</td>
                     </tr>
+                    <tr><td></td><td></td><td></td><td></td><td></td></tr>
                 </tbody>
             </table>
         </div>

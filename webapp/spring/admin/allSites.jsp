@@ -1,6 +1,4 @@
 <%@page errorPage="/spring/jsp/error.jsp"
-%><%@page import="org.socialbiz.cog.SiteRequest"
-%><%@page import="org.socialbiz.cog.SiteReqFile"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
 

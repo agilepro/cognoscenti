@@ -15,7 +15,10 @@ Required parameter:
     String canAccess = ar.defParam("canAccess", "false");
     boolean canAccessPage = Boolean.parseBoolean(canAccess);
 
-    String userKey = ar.defParam("userId", null);%><%!String pageTitle="";%><%SiteRequest accountDetails=SiteReqFile.getRequestByKey(requestId);%>
+    String userKey = ar.defParam("userId", null);
+    SiteRequest accountDetails=SiteReqFile.getRequestByKey(requestId);
+    
+    %><%!String pageTitle="";%>
 <style type="text/css">
     html {
         background-color:#C1BFC0;

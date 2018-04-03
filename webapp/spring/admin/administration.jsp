@@ -1,7 +1,5 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
-%><%@page import="org.socialbiz.cog.SiteReqFile"
-%><%@page import="org.socialbiz.cog.SiteRequest"
 %><%@page import="org.socialbiz.cog.SuperAdminLogFile"
 %><%@page import="com.purplehillsbooks.streams.HTMLWriter"
 %><%@page import="java.io.PrintWriter"
@@ -10,15 +8,6 @@
 
     request.setCharacterEncoding("UTF-8");
 
-    //List<SiteRequest> allaccounts = SiteReqFile.getAllSiteReqs();
-    //List<SiteRequest> deniedAccounts = SiteReqFile.scanDeniedSiteReqs();
-    //List<SiteRequest> superRequests = new ArrayList<SiteRequest>();
-    //for (SiteRequest accountDetails: allaccounts)
-    //{   if (accountDetails.getStatus().equalsIgnoreCase("requested"))
-    //    {
-    //        superRequests.add(accountDetails);
-    //    }
-    //}
     long lastSentTime = ar.getSuperAdminLogFile().getLastNotificationSentTime();
     
 %>

@@ -44,13 +44,14 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize', 'ngTagsInput']);
-var theOnlyScope = {};
+var theOnlyScope = null;
 
 app.controller('myCtrl', function($scope, $http, $modal) {
     theOnlyScope = $scope;
-    $scope.newSite = {name:"",key:"",purpose:"",email:"", preapprove:""};
+    $scope.newSite = {siteName:"",siteId:"",purpose:"",requester:"", preapprove:""};
     $scope.duplicateEmail = "";
     $scope.phase = 1;
+    $scope.identityProvider = "<%ar.writeJS(ar.getSystemProperty("identityProvider"));%>";
     
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -61,16 +62,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         errorPanelHandler($scope, serverErr);
     };
 
-    $scope.getURLAddress = function() {
+    $scope.getURLAddress = function(source) {
         var res = "";
-        var str = $scope.newSite.name;
+        var str = source;
         var isInGap = false;
         for (i=0; i<str.length && res.length<8; i++) {
             var ch = str[i].toLowerCase();
             var isAddable = ( (ch>='a' && ch<='z') || (ch>='0' && ch<='9') );
             if (isAddable) {
                 if (isInGap) {
-                    res = res + "-";
+                    //res = res + "-";
                     isInGap = false;
                 }
                 res = res + ch;
@@ -83,41 +84,36 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
     
     $scope.next = function() {
-        if ($scope.phase==1) {
-            if (!$scope.newSite.name || $scope.newSite.name.length<5) {
+        if ($scope.phase==12) {
+            if (!$scope.newSite.siteName || $scope.newSite.siteName.length<5) {
                 return;
             }
-            $scope.newSite.key = $scope.getURLAddress();
-            $scope.phase=2;
+            $scope.newSite.siteId = $scope.getURLAddress($scope.newSite.siteName);
+            $scope.phase=13;
         }
-        else if ($scope.phase==2) {
-            if (!$scope.newSite.key || $scope.newSite.key.length<4) {
+        else if ($scope.phase==13) {
+            if (!$scope.newSite.siteId || $scope.newSite.siteId.length<4) {
                 return;
             }
-            $scope.phase=3;
+            $scope.newSite.siteId = $scope.getURLAddress($scope.newSite.siteId);
+            $scope.phase=14;
         }
-        else if ($scope.phase==3) {
-            $scope.phase=4;
-        }
-        else if ($scope.phase==4) {
-            if ($scope.duplicateEmail === $scope.newSite.email) {
-                $scope.phase=5;
-            } 
-            else {
-                alert("the email addresses do not match");
+        else if ($scope.phase==14) {
+            if (!$scope.newSite.purpose || $scope.newSite.purpose.length < 15) {
+                alert("Please enter a longer purpose for the site.");
                 return;
             }
-            
+            $scope.phase=15;
         }
-        else if ($scope.phase==5) {
-            $scope.phase=6;
+        else if ($scope.phase==15) {
+            $scope.phase=16;
         }
-        else if ($scope.phase==6) {
-            $scope.phase=7;
+        else if ($scope.phase==16) {
+            $scope.phase=17;
         }
     }
     $scope.prev = function() {
-        if ($scope.phase>1) {
+        if ($scope.phase>12) {
             $scope.phase = $scope.phase - 1;
         }
     }
@@ -129,11 +125,39 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         console.log("DOING IT:", postURL, postData)
         $http.post(postURL, postData)
         .success( function(data) {
-            alert("OK, request has been made");
+            $scope.phase = 19;
         })
         .error( function(data, status, headers, config) {
-            console.log("ERROR", data, status)
+            $scope.error = data;
+            $scope.phase = 20;
         });
+        $scope.phase = 18;
+    }
+    
+    $scope.login = function() {
+        window.location = "<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(ar.realRequestURL, "UTF-8")%>";
+    }
+    
+    $scope.verifyEmail = function() {
+        if ($scope.newSite.requester != $scope.duplicateEmail) {
+            alert("Please enter the same email address in each box");
+            return;
+        }
+        if (!validateEmail($scope.newSite.requester)) {
+            alert("Please check your email, it does not appear to be a valid email address form: "
+                  +$scope.newSite.requester);
+            return;
+        }
+        var message = {};
+        message.msg = "This message send by Weaver to verify your email.  If you have requested this, then click on the link below and set your password to continue.";
+        message.userId = $scope.newSite.requester;
+        message.return = "<%ar.writeJS(ar.realRequestURL);%>";
+        message.subject="Confirm your email address";
+        $scope.phase = 2;
+        SLAP.sendInvitationEmail(message, function(data) {
+            $scope.phase = 3;
+            $scope.$apply();
+        });        
     }
     
 });
@@ -141,7 +165,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 function reloadIfLoggedIn() {
     if (SLAP.loginInfo.verified) {
         theOnlyScope.loggedEmail = SLAP.loginInfo.userId;
+        theOnlyScope.newSite.requester = SLAP.loginInfo.userId;
+        theOnlyScope.phase = 12;
+        theOnlyScope.$apply();
     }
+}
+function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
 }
 </script>
 
@@ -170,24 +201,24 @@ function reloadIfLoggedIn() {
   <table class="table bigletters">
   
     <tr ng-show="phase>1">
+      <td>Requester:</td>
+      <td>{{newSite.requester}}</td>
+    </tr>
+    <tr ng-show="phase>12">
       <td>Site Name:</td>
-      <td ng-click="phase=1">{{newSite.name}}</td>
+      <td ng-click="phase=12">{{newSite.siteName}}</td>
     </tr>
-    <tr ng-show="phase>2">
+    <tr ng-show="phase>13">
       <td>URL Key:</td>
-      <td ng-click="phase=2">{{newSite.key}}</td>
+      <td ng-click="phase=13">{{newSite.siteId}}</td>
     </tr>
-    <tr ng-show="phase>3">
+    <tr ng-show="phase>14">
       <td>Purpose:</td>
-      <td ng-click="phase=3">{{newSite.purpose}}</td>
+      <td ng-click="phase=14">{{newSite.purpose}}</td>
     </tr>
-    <tr ng-show="phase>4">
-      <td>Owner:</td>
-      <td ng-click="phase=4">{{newSite.email}}</td>
-    </tr>
-    <tr ng-show="phase>5">
+    <tr ng-show="phase>15">
       <td>Pre-approval:</td>
-      <td ng-click="phase=5">{{newSite.preapprove}}</td>
+      <td ng-click="phase=15">{{newSite.preapprove}}</td>
     </tr>
     <tr>
       <td>&nbsp;</td>
@@ -196,6 +227,49 @@ function reloadIfLoggedIn() {
   </table>
   
   <div ng-show="phase==1" class="well">
+    <p><b>Step 1: </b> Your Email Address.</p>
+    
+    <p>Do you have a Weaver account?  If you do, please log in now.</p>
+       
+    <button class="btn btn-primary btn-raised" 
+            ng-click="login()">Login</button>
+    <hr/>        
+    <p>Otherwise we can set you up with a login account right away.
+    Enter the email address that you will use to log into the site, 
+    and to which we will send correspondence about the site. 
+    We will send you an email to verify your email address, 
+    and you can set your password right away.</p>
+
+    <div class="form-group">
+        <label>
+            Owner Email
+        </label>
+        <input type="text" class="form-control" ng-model="newSite.requester"/>
+    </div>
+
+    <div class="form-group">
+        <label>
+            Enter it again
+        </label>
+        <input type="text" class="form-control" ng-model="duplicateEmail"/>
+    </div>
+    
+    <button class="btn btn-primary btn-raised" 
+            ng-click="verifyEmail()">Send Email Verification</button>
+
+  </div>
+
+  <div ng-show="phase==2" class="well">
+    <p>Sending email to '{{newSite.requester}}.'</p>
+  </div>
+  <div ng-show="phase==3" class="well">
+    <p>An email has been sent to '{{newSite.requester}}.'
+    Please check you email inbox.  Use the link in that message
+    to set a password for yourself, and to continue the process
+    of creating a site.</p>
+  </div>
+  
+  <div ng-show="phase==12" class="well" style="overflow: hidden">
     
     <p>A <i>site</i> is a place where you can create workspaces.   
     You can have as many workspaces as you would like, one for each 
@@ -205,7 +279,7 @@ function reloadIfLoggedIn() {
     <p>A site can be accessed by any number of people, and you can 
     control who has access to the site, and to each workspace.</p>
     
-    <p><b>Step 1: </b> Please provide a full name for your site.</p>
+    <p><b>Step 2: </b> Please provide a full name for your site.</p>
     
     <p> Pick a short clear name that would be useful to people that don't already know
     about the group using the site.  You can change the name at any time.
@@ -215,16 +289,18 @@ function reloadIfLoggedIn() {
         <label>
             Site Name
         </label>
-        <input type="text" class="form-control" ng-model="newSite.name"/>
+        <input type="text" class="form-control" ng-model="newSite.siteName"/>
     </div>
     
-    <button class="btn btn-primary btn-raised" ng-click="next()" ng-show="newSite.name.length>5">Next</button>
+    <button class="btn btn-default btn-raised" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised" ng-click="next()" style="float:right" 
+            ng-show="newSite.siteName.length>5">Next</button>
     
   </div>
     
-  <div ng-show="phase==2" class="well">
+  <div ng-show="phase==13" class="well">
   
-    <p><b>Step 2: </b> Please provide a key for the URL.</p>
+    <p><b>Step 3: </b> Please provide a key for the URL.</p>
     
     <p>This will be part of your web address.  
     Please specify a short key with only 4 to 8 letters or numbers.   
@@ -234,17 +310,18 @@ function reloadIfLoggedIn() {
         <label>
             Site URL Key
         </label>
-        <input type="text" class="form-control" ng-model="newSite.key"/>
+        <input type="text" class="form-control" ng-model="newSite.siteId"/>
     </div>
 
-    <button class="btn btn-primary btn-raised" ng-click="prev()">Back</button>
-    <button class="btn btn-primary btn-raised" ng-click="next()" ng-show="newSite.name.length>5">Next</button>
+    <button class="btn btn-default btn-raised" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised" style="float:right" 
+            ng-click="next()" ng-show="newSite.siteId.length>3">Next</button>
 
   </div>
     
-  <div ng-show="phase==3" class="well">
+  <div ng-show="phase==14" class="well">
 
-    <p><b>Step 3: </b> Describe the purpose of the site.</p>
+    <p><b>Step 4: </b> Describe the purpose of the site.</p>
     
     <p>Describe in a sentence or two the <b>purpose</b> of the workspace in a way that 
         people who are not (yet) part of the workspace will understand,
@@ -260,39 +337,14 @@ function reloadIfLoggedIn() {
         <textarea class="form-control" ng-model="newSite.purpose"></textarea>
     </div>
     
-    <button class="btn btn-primary btn-raised" ng-click="prev()">Back</button>
-    <button class="btn btn-primary btn-raised" ng-click="next()">Next</button>
+    <button class="btn btn-default btn-raised" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised" style="float:right" 
+            ng-click="next()"  ng-show="newSite.purpose.length>15">Next</button>
 
   </div>
     
-  <div ng-show="phase==4" class="well">
-    <p><b>Step 4: </b> Your Email Address.</p>
     
-    <p>Enter the email address that you will use to log into the site, 
-    and to which we will send correspondence about the site.  
-    You will be able to change your email address later if you have to.
-    Your site will not be granted until we have verified your email address.</p>
-
-    <div class="form-group">
-        <label>
-            Owner Email
-        </label>
-        <input type="text" class="form-control" ng-model="newSite.email"/>
-    </div>
-
-    <div class="form-group">
-        <label>
-            Enter it again
-        </label>
-        <input type="text" class="form-control" ng-model="duplicateEmail"/>
-    </div>
-    
-    <button class="btn btn-primary btn-raised" ng-click="prev()">Back</button>
-    <button class="btn btn-primary btn-raised" ng-click="next()">Next</button>
-
-  </div>
-    
-  <div ng-show="phase==5" class="well">
+  <div ng-show="phase==15" class="well">
     
     <p><b>Step 5: </b> Enter 'Pre-approval Code' if you have one.</p>
     
@@ -311,12 +363,13 @@ function reloadIfLoggedIn() {
         <input type="text" class="form-control" ng-model="newSite.preapprove"/>
     </div>
     
-    <button class="btn btn-primary btn-raised" ng-click="prev()">Back</button>
-    <button class="btn btn-primary btn-raised" ng-click="next()">Next</button>
+    <button class="btn btn-default btn-raised" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised" style="float:right" 
+            ng-click="next()">Next</button>
 
   </div>
     
-  <div ng-show="phase==6" class="well">
+  <div ng-show="phase==16" class="well">
     
     <p><b>Step 6: </b> Are you a robot?</p>
     
@@ -332,25 +385,51 @@ function reloadIfLoggedIn() {
         <input type="text" class="form-control" ng-model="newSite.capcha"/>
     </div>
     
-    <button class="btn btn-primary btn-raised" ng-click="prev()">Back</button>
-    <button class="btn btn-primary btn-raised" ng-click="next()">Next</button>
+    <button class="btn btn-default btn-raised" ng-click="prev()">Back</button>
+    <button class="btn btn-primary btn-raised" style="float:right" 
+            ng-click="next()"
+            ng-show="newSite.capcha==='307'">Next</button>
 
   </div>
     
-  <div ng-show="phase==7" class="well">
+  <div ng-show="phase==17" class="well"  style="overflow: hidden">
     <p><b>Step 7: </b> Submit</p>
     
     <p>Review all the information above, and confirm correct.
        If you want to change a value click on it.
     </p>
     <div class="form-group">
-        <button class="btn btn-primary btn-raised" ng-click="submitItAll()">
+        <button class="btn btn-primary btn-raised" style="float:right" 
+            ng-click="submitItAll()">
             Request Site</button>
     </div>
 
   </div>
+    
+  <div ng-show="phase==18" class="well">
+    <p>Requesting site.</p>
+  </div>
+  <div ng-show="phase==19" class="well">
+    <p>The site has been requested, and an email sent to the 
+    administrator.  You will receive an email letting you know
+    when it has been approved for use.</p>
+  </div>
+  <div ng-show="phase==20" class="well">
+    <p>Something went wrong with the request.  
+    Perhaps the information below will be helpful.</p>
+    
+    <ul>
+    <li ng-repeat="msg in error.error.details">
+      {{msg.message}}
+    </li>
+    </ul>
+    
+    <p>You might be able click on the value and correct the 
+    request to submit again, or you might need to contact
+    the system administrator.  This piece of software
+    can't tell you which at this point.</p>
+  </div>
   
-  {{loggedEmail}}
 </div>
 
 

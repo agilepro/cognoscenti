@@ -27,13 +27,13 @@
 <tr><td>Comment: &nbsp;</td>
     <td>{$req.adminComment|html}</td></tr>
 <tr><td>Site Name: &nbsp;</td>
-    <td><a href="{$baseURL}v/{$req.requester.key}/userAccounts.htm">{$req.name|html}</a></td></tr>
+    <td><a href="{$baseURL}t/{$req.siteId}/$/SiteAdmin.htm">{$req.siteName|html}</a></td></tr>
 <tr><td>Description: &nbsp;</td>
-    <td>{$req.desc|html}</td></tr>
+    <td>{$req.purpose|html}</td></tr>
 <tr><td>Requested by: &nbsp; </td>
     <td>
         <a href="{$baseURL}v/FindPerson.htm?uid={$req.requester.uid}" title="access the profile of this user, if one exists">
-            <span class="red">{$req.requester.name|html}</span>
+            <span class="red">{$req.requester|html}</span>
         </a>
     </td></tr>
 </table>

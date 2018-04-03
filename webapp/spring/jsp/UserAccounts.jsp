@@ -24,7 +24,7 @@
         JSONObject jObj = new JSONObject();
         jObj.put("siteKey",  site.getKey());
         jObj.put("siteDesc", site.getDescription());
-        jObj.put("name",     site.getFullName());
+        jObj.put("siteName",     site.getFullName());
         WorkspaceStats stats = site.getRecentStats(ar.getCogInstance());
         jObj.put("numWorkspaces", stats.numWorkspaces);
         jObj.put("numTopics", stats.numTopics);
@@ -35,19 +35,14 @@
     JSONArray superList = new JSONArray();
 
     boolean isSuper = ar.isSuperAdmin();
-    List<SiteRequest> allRequests = SiteReqFile.getAllSiteReqs();
+    SiteReqFile siteReqFile = new SiteReqFile(ar.getCogInstance());
+    List<SiteRequest> allRequests = siteReqFile.getAllSiteReqs();
     for (SiteRequest oneRequest: allRequests) {
-        JSONObject jObj = new JSONObject();
-        jObj.put("name",    oneRequest.getName());
-        jObj.put("desc",    oneRequest.getDescription());
-        jObj.put("status",  oneRequest.getStatus());
-        jObj.put("siteKey", oneRequest.getSiteId());
-        jObj.put("date",    oneRequest.getModTime());
-        if(uProf.hasAnyId(oneRequest.getUniversalId())) {
-            requestList.put(jObj);
+        if(uProf.hasAnyId(oneRequest.getRequester())) {
+            requestList.put(oneRequest.getJSON());
         }
         if (isSuper && oneRequest.getStatus().equalsIgnoreCase("requested")) {
-            superList.put(jObj);
+            superList.put(oneRequest.getJSON());
         }
     }
 %>
@@ -103,7 +98,7 @@ app.controller('myCtrl', function($scope, $http) {
                 </tr>
                 <tr ng-repeat="rec in siteList">
                     <td>
-                        <a href="<%=ar.retPath%>t/{{rec.siteKey}}/$/accountListProjects.htm" title="navigate to the site">{{rec.name}}</a>
+                        <a href="<%=ar.retPath%>t/{{rec.siteId}}/$/accountListProjects.htm" title="navigate to the site">{{rec.siteName}}</a>
                     </td>
                     <td>{{rec.siteDesc}}</td>
                     <td>{{rec.numWorkspaces}}</td>
@@ -145,13 +140,13 @@ app.controller('myCtrl', function($scope, $http) {
                     <tr ng-repeat="rec in requestList">
                         <td>
                             <span ng-show="rec.status=='Granted'">
-                                <a href="<%=ar.retPath%>t/{{rec.siteKey}}/$/accountListProjects.htm">{{rec.name}}</a>
+                                <a href="<%=ar.retPath%>t/{{rec.siteId}}/$/accountListProjects.htm">{{rec.siteName}}</a>
                             </span>
-                            <span ng-hide="rec.status=='Granted'">{{rec.name}}</span>
+                            <span ng-hide="rec.status=='Granted'">{{rec.siteName}}</span>
                         </td>
-                        <td>{{rec.desc}}</td>
+                        <td>{{rec.purpose}}</td>
                         <td>{{rec.status}}</td>
-                        <td>{{rec.date | date}}</td>
+                        <td>{{rec.modTime | date}}</td>
                     </tr>
                 </table>
             </div>
