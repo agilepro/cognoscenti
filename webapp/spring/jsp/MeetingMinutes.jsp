@@ -49,15 +49,19 @@ Required parameters:
     <!-- Weaver specific tweaks -->
     <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
     <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+    <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
 
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal, $interval) {
     $scope.loaded = false;
     $scope.meetId = "<%ar.writeJS(meetId);%>";
     $scope.allMinutes = [];
     $scope.allTitles = [];
+    $scope.allHtml = [];
+    $scope.isEditing = -1;
     $scope.selectedMinutes = {};
     
     //setting isUpdating to true prevents a second overlapping update
@@ -126,6 +130,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
         }
         selectMinutes($scope.selectedTitle);
         $scope.calcTimes();
+        $scope.allMinutes.forEach( function(min) {
+            min.html = convertMarkdownToHtml(min.new);
+        });
         $scope.loaded = true;   
     }
     
@@ -270,6 +277,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
         });
         $scope.timerTotal = totalTotal;
     }
+    $scope.startEditing = function(min) {
+        $scope.allMinutes.forEach( function(min) {
+            min.isEditing = false;
+            min.html = convertMarkdownToHtml(min.new);
+        });   
+        min.isEditing = true;        
+    }
     // Start the clock timer
     $interval($scope.calcTimes, 1000);
     console.log("All loaded");
@@ -361,6 +375,8 @@ function setInputSelection(el, startOffset, endOffset) {
 }
 </script>
 
+
+
 </head>
 
 <style>
@@ -407,26 +423,29 @@ function setInputSelection(el, startOffset, endOffset) {
       <div ng-show="loaded && !showError">
 
         <div class="panel panel-default" ng-repeat="min in allMinutes">
-        <div class="panel-heading">{{min.pos}}. {{min.title}}
-            <span style="font-size:70%">
-                <span ng-hide="min.timerRunning" style="padding:5px">
-                    <button ng-click="startAgendaRunning(min)"><i class="fa fa-clock-o"></i> Start</button>
-                    Elapsed: {{min.timerTotal| minutes}}
-                    Remaining: {{min.timerRemaining| minutes}}
+            <div class="panel-heading">{{min.pos}}. {{min.title}}
+                <span style="font-size:70%">
+                    <span ng-hide="min.timerRunning" style="padding:5px">
+                        <button ng-click="startAgendaRunning(min)"><i class="fa fa-clock-o"></i> Start</button>
+                        Elapsed: {{min.timerTotal| minutes}}
+                        Remaining: {{min.timerRemaining| minutes}}
+                    </span>
+                    <span ng-show="min.timerRunning" ng-style="timerStyle(min)">
+                        <span>Running</span>
+                        Elapsed: {{min.timerTotal| minutes}}
+                        Remaining: {{min.timerRemaining| minutes}}
+                        <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
+                    </span>
                 </span>
-                <span ng-show="min.timerRunning" ng-style="timerStyle(min)">
-                    <span>Running</span>
-                    Elapsed: {{min.timerTotal| minutes}}
-                    Remaining: {{min.timerRemaining| minutes}}
-                    <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
-                </span>
-            </span>
-            <button ng-click="saveMinutes(min)" style="font-size:70%" ng-hide="min.new==min.old">Save</button>
-        </div>
-        <div class="panel-body">
-            <textarea ng-model="min.new" class="form-control" style="width:100%;height:200px"></textarea>
-            
-        </div>
+                <button ng-click="saveMinutes(min)" style="font-size:70%" ng-hide="min.new==min.old">Save</button>
+            </div>
+            <div class="panel-body" ng-show="min.isEditing"  style="background-color:lightyellow">
+                <textarea ng-model="min.new" class="form-control" style="width:100%;height:200px"></textarea>
+            </div>
+            <div class="panel-body" ng-hide="min.isEditing" ng-click="startEditing(min)">
+                <div ng-bind-html="min.html" ></div>
+                <div>&nbsp;</div>
+            </div>
 
         </div>
         
