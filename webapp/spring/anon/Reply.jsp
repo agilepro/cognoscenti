@@ -167,6 +167,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
 });
+
+function reloadIfLoggedIn() {
+    if (SLAP.loginInfo.verified) {
+        //don't do anything
+    }
+}
 </script>
 
 </head>

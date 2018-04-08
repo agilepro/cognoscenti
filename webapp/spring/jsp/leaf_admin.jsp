@@ -56,15 +56,26 @@
     WorkspaceStats wStats = new WorkspaceStats();
     wStats.gatherFromWorkspace(ngw);
     
+    boolean foundInRecents = false;
     JSONArray recentWorkspaces = new JSONArray();
     List<RUElement> recent = ar.getSession().recentlyVisited;    
     for (RUElement rue : recent) {
         JSONObject rujo = new JSONObject();
+        if (parentKey.equals(parentKey)) {
+            foundInRecents = true;
+        }
         rujo.put("siteKey", rue.siteKey);
         rujo.put("key", rue.key);
         rujo.put("displayName", rue.displayName);
         recentWorkspaces.put(rujo);      
     }  
+    if (!foundInRecents && parentIndex!=null) {
+        JSONObject includeParent = new JSONObject();
+        includeParent.put("siteKey", parentIndex.wsSiteKey);
+        includeParent.put("name", parentIndex.containerName);
+        includeParent.put("key", parentIndex.containerKey);
+        recentWorkspaces.put(includeParent);
+    }
 
     /*
     Data from the server is the workspace config structure
@@ -98,15 +109,11 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.newName = $scope.workspaceConfig.allNames[0];
     $scope.editName = false;
     $scope.editInfo = false;
+    $scope.foo = "<p>This <b>bold</b> statement.</p>"
     
     $scope.allProjects = <%allProjects.write(out,2,4);%>;
     $scope.recentWorkspaces = <%recentWorkspaces.write(out,2,4);%>;
-    
-    if (!$scope.workspaceConfig.parentName) {
-        $scope.workspaceConfig.parentName = "(unknown parent workspace)";
-    }
-    $scope.originalParentKey = $scope.workspaceConfig.parentKey;
-    $scope.originalParentName = $scope.workspaceConfig.parentName;
+       
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -134,13 +141,40 @@ app.controller('myCtrl', function($scope, $http) {
         }
         return "normalMode";
     }
+    $scope.setEdit = function(fieldName) {
+        if (<%=ar.isAdmin()%>) {
+            $scope.isEditing = fieldName;
+        }
+        else {
+            $scope.isEditing = null;
+            console.log("Non-admin not allowed to edit.")
+        }
+    }
+    $scope.generateTheHtmlValues = function() {
+        $scope.purposeHtml = convertMarkdownToHtml($scope.workspaceConfig.purpose);
+        $scope.visionHtml  = convertMarkdownToHtml($scope.workspaceConfig.vision);
+        $scope.missionHtml = convertMarkdownToHtml($scope.workspaceConfig.mission);
+        $scope.aimHtml     = convertMarkdownToHtml($scope.workspaceConfig.aim);
+    }
+    $scope.generateTheHtmlValues();
+    $scope.saveOneField = function(fieldName) {
+        var newData = {};
+        newData[fieldName] = $scope.workspaceConfig[fieldName];
+        $scope.saveRecord(newData);
+        $scope.isEditing = null;
+    }
     $scope.saveProjectConfig = function() {
+        $scope.saveRecord($scope.workspaceConfig);
+    }
+    $scope.saveRecord = function(rec) {
+        $scope.generateTheHtmlValues();
         var postURL = "updateProjectInfo.json";
-        var postdata = angular.toJson($scope.workspaceConfig);
+        var postdata = angular.toJson(rec);
         $scope.showError=false;
         $http.post(postURL, postdata)
         .success( function(data) {
             $scope.workspaceConfig = data;
+            $scope.generateTheHtmlValues();
             $scope.editInfo=false;
         })
         .error( function(data, status, headers, config) {
@@ -148,12 +182,14 @@ app.controller('myCtrl', function($scope, $http) {
         });
     };
     $scope.cancelProjectConfig = function() {
+        $scope.generateTheHtmlValues();
         var postURL = "updateProjectInfo.json";
         var postdata = "{}";
         $scope.showError=false;
         $http.post(postURL, postdata)
         .success( function(data) {
             $scope.workspaceConfig = data;
+            $scope.generateTheHtmlValues();
             $scope.editInfo=false;
         })
         .error( function(data, status, headers, config) {
@@ -197,7 +233,6 @@ app.controller('myCtrl', function($scope, $http) {
         });
     };
 
-
 });
 app.filter('escape', function() {
   return window.encodeURIComponent;
@@ -206,12 +241,21 @@ app.filter('escape', function() {
 
 
 <style>
+.spaceyTable {
+    min-width:400px;
+    max-width:800px;
+}
 .spaceyTable tr td {
     padding:8px;
     border-bottom: 1px solid #ddd;
 }
 .spaceyTable tr:hover {
     background-color: #f5f5f5;
+}
+editBoxStyle {
+    background-color: red;
+    width:400px;
+    height:150px;
 }
 </style>
 
@@ -242,27 +286,14 @@ app.filter('escape', function() {
 
     <div>
 
-<% if (!ar.isAdmin()) { %>
-
-        <div class="generalContent">
-            <fmt:message key="nugen.generatInfo.Admin.administration">
-                <fmt:param value='<%=ar.getBestUserId()%>'/>
-            </fmt:message><br/>
-        </div>
-        <div class="generalSubHeading"><fmt:message key="nugen.generatInfo.PageNameCaption"/> </div>
-        <div class="generalContent">
-            <ul class="bulletLinks">
-            <li ng-repeat="name in workspaceConfig.allNames">{{name}}</li>
-            </ul>
-        </div>
-
-<% }else { %>
-
         <div>
             <table class="spaceyTable">
                 <tr >
                     <td><label>Workspace Names:</label></td>
-                    <td>
+                    <td ng-hide="editName" ng-click="editName=true">
+                        <h1>{{workspaceConfig.allNames[0]}}</h1>
+                    </td>
+                    <td class="form-inline form-group" ng-show="editName">
                         <div ng-repeat="name in workspaceConfig.allNames">
                             <a ng-click="deleteWorkspaceName(name)"
                                title="delete this name from workspace">
@@ -270,75 +301,92 @@ app.filter('escape', function() {
                                <img src="<%=ar.retPath%>/assets/iconDelete.gif">
                             </a>
                         </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td class="form-inline form-group" ng_show="editName">
                         <input type="text" class="form-control" style="width:300px;background-color:white" ng-model="newName"/>
                         <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)">Add Name</button>
                         <button class="btn btn-warning btn-raised" ng-click="editName=false">Cancel</button>
                     </td>
-                    <td ng_hide="editName">
-                        <button class="btn btn-primary btn-raised" ng-click="editName=true">Add / Change Name</button>
-                    </td>
                 </tr>
                 <tr>
                     <td><label>Purpose:</label></td>
-                    <td ng-show="editInfo">
-                        <textarea class="form-control" 
-                              ng-model="workspaceConfig.purpose" rows="4" 
+                    <td ng-show="isEditing=='purpose'">
+                        <textarea class="form-control editBoxStyle" 
                               placeholder="Enter a public description of the work that will be done in this workspace" 
-                              style="background-color:white;"></textarea></td>
-                    <td ng-hide="editInfo">
-                        {{workspaceConfig.purpose}}
+                              ng-model="workspaceConfig.purpose" rows="14" cols="80"></textarea>
+                              <button ng-click="saveOneField('purpose')" class="btn btn-primary btn-raised">
+                                  Save</button>
+                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                                  Cancel</button>
+                              </td>
+                    <td ng-hide="isEditing=='purpose'" ng-click="setEdit('purpose')">
+                        <div ng-bind-html="purposeHtml"></div>
                     </td>
                 </tr>
                 <tr>
                     <td><label>Mission:</label></td>
-                    <td ng-show="editInfo">
-                        <textarea class="form-control" 
-                              ng-model="workspaceConfig.mission" rows="4" 
+                    <td ng-show="isEditing=='mission'">
+                        <textarea class="form-control editBoxStyle" 
                               placeholder="Enter a mission statement for the circle working in this  workspace, if any" 
-                              style="background-color:white;"></textarea></td>
-                    <td ng-hide="editInfo">
-                        {{workspaceConfig.mission}}
+                              ng-model="workspaceConfig.mission" rows="14" cols="80"></textarea>
+                              <button ng-click="saveOneField('mission')" class="btn btn-primary btn-raised">
+                                  Save</button>
+                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                                  Cancel</button>
+                              </td>
+                    <td ng-hide="isEditing=='mission'" ng-click="setEdit('mission')">
+                        <div ng-bind-html="missionHtml"></div>
                     </td>
                 </tr>
                 <tr>
                     <td><label>Vision:</label></td>
-                    <td ng-show="editInfo">
-                        <textarea class="form-control" 
-                              ng-model="workspaceConfig.vision" rows="4" 
+                    <td ng-show="isEditing=='vision'">
+                        <textarea class="form-control editBoxStyle" 
                               placeholder="Enter a vision statement for the circle working in this  workspace, if any" 
-                              style="background-color:white;"></textarea></td>
-                    <td ng-hide="editInfo">
-                        {{workspaceConfig.vision}}
+                              ng-model="workspaceConfig.vision" rows="14" cols="80"></textarea>
+                              <button ng-click="saveOneField('vision')" class="btn btn-primary btn-raised">
+                                  Save</button>
+                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                                  Cancel</button>
+                              </td>
+                    <td ng-hide="isEditing=='vision'" ng-click="setEdit('vision')">
+                        <div ng-bind-html="visionHtml"></div>
                     </td>
                 </tr>
                 <tr>
                     <td><label>Aim:</label></td>
-                    <td ng-show="editInfo">
-                        <textarea class="form-control" 
-                              ng-model="workspaceConfig.aim" rows="4" 
-                              placeholder="Enter a statement of aims for the circle working in this  workspace, if any" 
-                              style="background-color:white;"></textarea></td>
-                    <td ng-hide="editInfo">
-                        {{workspaceConfig.aim}}
+                    <td ng-show="isEditing=='aim'">
+                        <textarea class="form-control editBoxStyle" 
+                              placeholder="Enter a aim statement for the circle working in this  workspace, if any" 
+                              ng-model="workspaceConfig.aim" rows="14" cols="80"></textarea>
+                              <button ng-click="saveOneField('aim')" class="btn btn-primary btn-raised">
+                                  Save</button>
+                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                                  Cancel</button>
+                              </td>
+                    <td ng-hide="isEditing=='aim'" ng-click="setEdit('aim')">
+                        <div ng-bind-html="aimHtml"></div>
                     </td>
                 </tr>
                 <tr>
                     <td valign="top"><label>Workspace Mode:</label></td>
-                    <td  valign="top" ng-show="editInfo">
+                    <td  valign="top" ng-show="isEditing=='frozen'">
 
-                        <input type="checkbox" value="yes"
-                            ng-model="workspaceConfig.frozen"/> Frozen  &nbsp;&nbsp;
-                        <input type="checkbox" value="yes"
-                            ng-model="workspaceConfig.deleted"/> Deleted
-
-                        <input type="hidden" name="projectMode" value="{{projectMode()}}"/>
+                        <button ng-click="workspaceConfig.frozen=true;saveOneField('frozen')" 
+                            class="btn btn-primary btn-raised" ng-hide="workspaceConfig.frozen">
+                            Freeze Workspace</button>
+                        <button ng-click="workspaceConfig.frozen=false;saveOneField('frozen')" 
+                            class="btn btn-primary btn-raised" 
+                            ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">
+                            Unfreeze Workspace</button>
+                        <button ng-click="workspaceConfig.deleted=true;saveOneField('deleted')" 
+                            class="btn btn-primary btn-raised" ng-hide="workspaceConfig.deleted">
+                            Delete Workspace</button>
+                        <button ng-click="workspaceConfig.deleted=false;saveOneField('deleted')" 
+                            class="btn btn-primary btn-raised" ng-show="workspaceConfig.deleted">
+                            Undelete Workspace</button>
+                        <button ng-click="isEditing=null" class="btn btn-raised">
+                            Cancel</button>
                     </td>
-                    <td  valign="top" ng-hide="editInfo">
+                    <td  valign="top" ng-hide="isEditing=='frozen'" ng-click="setEdit('frozen')">
                         <span ng-show="workspaceConfig.deleted">This workspace is DELETED</span>
                         <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN</span>
                         <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available.</span>
@@ -346,13 +394,17 @@ app.filter('escape', function() {
                 </tr>
                 <tr>
                     <td><label>Parent Circle:</label></td>
-                    <td ng-show="editInfo">
+                    <td ng-show="isEditing=='parentKey'">
                         <select ng-model="workspaceConfig.parentKey" class="form-control" style="width:400px">
-                            <option value="{{originalParentKey}}">{{originalParentName}}</option>
+                            <option value="">(No Parent)</option>
                             <option ng-repeat="ws in recentWorkspaces" value="{{ws.key}}">{{ws.displayName}}</option>
                             </select>
+                        <button ng-click="saveOneField('parentKey')" class="btn btn-primary btn-raised">
+                            Save</button>
+                        <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                            Cancel</button>
                     </td>
-                    <td ng-hide="editInfo">
+                    <td ng-hide="isEditing=='parentKey'" ng-click="setEdit('parentKey')">
                         {{workspaceConfig.parentKey}}
                     </td>
                 </tr>
@@ -372,16 +424,6 @@ app.filter('escape', function() {
                     </td>
                 </tr>
 <% } %>
-                <tr>
-                    <td></td>
-                    <td ng-hide="editInfo">
-                        <button ng-click="editInfo=true" class="btn btn-primary btn-raised" >Modify Settings</button>
-                    </td>
-                    <td ng-show="editInfo">
-                        <button ng-click="saveProjectConfig();" class="btn btn-primary btn-raised" >Save</button>
-                        <button ng-click="cancelProjectConfig()" class="btn btn-warning btn-raised" >Cancel</button>
-                    </td>
-                </tr>
             </table>
         </div>
 
@@ -418,8 +460,10 @@ app.filter('escape', function() {
                 </table>
             </div>
     <% } %>
-<% } %>
 
+
+<hr/>
+<h1>Statistics</h1>
             <div class="generalContent">
                 <div class="generalSubHeading paddingTop">Future Scheduled Actions</div>
                 <div>
@@ -465,7 +509,7 @@ app.filter('escape', function() {
 
             <div class="generalContent">
                 <div class="generalSubHeading paddingTop">Statistics</div>
-                <table class="table">
+                <table class="spaceyTable">
                 <tr>
                    <td>Number of Topics:</td>
                    <td><%=wStats.numTopics%></td>

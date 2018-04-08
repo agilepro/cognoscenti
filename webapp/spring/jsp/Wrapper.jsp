@@ -209,6 +209,7 @@
     <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
+    <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
 
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">

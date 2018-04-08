@@ -210,6 +210,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.purpose = "<%ar.writeJS(ngp.getProcess().getDescription());%>";
     $scope.isWatching = <%=isWatching%>;
     $scope.filter = "";
+    
+    if (!$scope.purpose) {
+        $scope.purposeHtml = "<i>no description</i>";
+    }
+    else if ($scope.purpose.length<200) {
+        $scope.purposeHtml = convertMarkdownToHtml($scope.purpose);
+    }
+    else {
+        $scope.purposeHtml = convertMarkdownToHtml($scope.purpose.substring(0,198)+" ...");
+    }
 
     $scope.showInput = false;
     $scope.showError = false;
@@ -560,11 +570,15 @@ a {
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
               <div style="float:left">Purpose of Workspace</div>
+              <div style="float:right" title="View and manage the roles in this workspace">
+                  <a href="admin.htm">
+                      <i class="fa fa-info-circle"></i></a></div>
               <div style="clear:both"></div>
           </div>
-          <div class="panel-body">
-              {{purpose}}
-              <br/>
+          <div class="panel-body" >
+              <a href="admin.htm">
+              <div ng-bind-html="purposeHtml"></div>
+              </a>
           </div>
         </div>
         
