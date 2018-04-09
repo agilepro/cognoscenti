@@ -98,7 +98,7 @@ app.controller('myCtrl', function($scope, $http) {
                 </tr>
                 <tr ng-repeat="rec in siteList">
                     <td>
-                        <a href="<%=ar.retPath%>t/{{rec.siteId}}/$/accountListProjects.htm" title="navigate to the site">{{rec.siteName}}</a>
+                        <a href="<%=ar.retPath%>t/{{rec.siteKey}}/$/accountListProjects.htm" title="navigate to the site">{{rec.siteName}}</a>
                     </td>
                     <td>{{rec.siteDesc}}</td>
                     <td>{{rec.numWorkspaces}}</td>

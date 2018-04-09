@@ -16,6 +16,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.timeFactor = "Minutes";
     $scope.factoredTime = 0;
     
+    $scope.showTimeSlots = false;
+    $scope.showFutureSlots = false;
+    $scope.timeSlotResponders = [];
+    $scope.futureSlotResponders = [];
+    $scope.newProposedTime = 0;
+    
     var templateCacheDefeater = embeddedData.templateCacheDefeater;
 
     var n = new Date().getTimezoneOffset();
@@ -464,6 +470,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 $scope.factoredTime = $scope.meeting.reminderTime;
             }
             $scope.addYouselfIfAppropriate();
+            $scope.timeSlotResponders = calcResponders(data.timeSlots);
+            $scope.futureSlotResponders = calcResponders(data.futureSlots);
+
         });
         promise.error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -1622,7 +1631,58 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         window.open('meetingMinutes.htm?id='+$scope.meeting.id);
     }
     
+    $scope.createTime = function(timeSlots) {
+        if ($scope.newProposedTime>0) {
+            var newSlot = {proposedTime:$scope.newProposedTime,people:{}};
+            timeSlots.push(newSlot);
+            $scope.savePartialMeeting(['timeSlots','futureSlots']);
+        }
+    }
+    $scope.addProposedVoter = function(whichOne, newVoter) {
+        console.log("Adding voter "+newVoter);
+        var current = $scope.meeting[whichOne];
+        if (newVoter) {
+            current.forEach( function(slot) {
+                slot.people[newVoter] = 3;
+            });
+        }
+        $scope.savePartialMeeting([whichOne]);
+    }
+    $scope.removeTime = function(whichOne,time) {
+        var current = $scope.meeting[whichOne];
+        var newArray = [];
+        current.forEach( function(slot) {
+            if (slot.proposedTime != time) {
+                newArray.push(slot);
+            }
+        });
+        $scope.meeting[whichOne] = newArray;
+        $scope.savePartialMeeting([whichOne]);
+    }
+    $scope.setVote = function(people, resp, newVal) {
+        people[resp] = newVal;
+        $scope.savePartialMeeting(['timeSlots','futureSlots']);
+    }
+    $scope.setMeetingTime = function(propTime) {
+        $scope.meeting.startTime = propTime;
+        $scope.savePartialMeeting(['startTime']);
+    }
 });
+
+function calcResponders(slots) {
+    var res = [];
+    slots.forEach( function(oneTime) {
+        Object.keys(oneTime.people).forEach( function(person) {
+            if (res.indexOf(person)<0) {
+                res.push(person);
+            }
+        });
+    });
+    if (res.indexOf(SLAP.loginInfo.userId)<0) {
+        res.push(SLAP.loginInfo.userId);
+    }
+    return res;
+}
 
 app.filter('minutes', function() {
 

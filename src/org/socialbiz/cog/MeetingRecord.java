@@ -407,6 +407,12 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             timeSlotArray.put(oneSlot.getJSON());
         }
         meetingInfo.put("timeSlots", timeSlotArray);
+        timeSlotArray = new JSONArray();
+        timeSlot = getChildren("futureSlots", MeetingProposeTime.class);
+        for (MeetingProposeTime oneSlot : timeSlot) {
+            timeSlotArray.put(oneSlot.getJSON());
+        }
+        meetingInfo.put("futureSlots", timeSlotArray);
         
         //we need to know the id of the minutes of the previous meeting
         //if they exist.  Look it up every time.
@@ -509,6 +515,15 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             for(int i=0; i<timeSlotArray.length(); i++) {
                 JSONObject oneSlot = timeSlotArray.getJSONObject(i);
                 MeetingProposeTime mpt = createChild("timeSlots", MeetingProposeTime.class);
+                mpt.updateFromJSON(oneSlot);
+            }
+        }
+        if (input.has("futureSlots")) {
+            this.removeAllNamedChild("futureSlots");
+            JSONArray timeSlotArray = input.getJSONArray("futureSlots");
+            for(int i=0; i<timeSlotArray.length(); i++) {
+                JSONObject oneSlot = timeSlotArray.getJSONObject(i);
+                MeetingProposeTime mpt = createChild("futureSlots", MeetingProposeTime.class);
                 mpt.updateFromJSON(oneSlot);
             }
         }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import com.purplehillsbooks.json.JSONArray;
+
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -41,11 +41,19 @@ public class MeetingProposeTime extends DOMFace {
         JSONObject proposalInfo = new JSONObject();
 
         proposalInfo.put("proposedTime",  getProposedTime());
-        JSONArray peopleList = new JSONArray();
+        JSONObject peopleList = new JSONObject();
         for (String onePerson : getPeople()){
-            AddressListEntry ale = new AddressListEntry(onePerson);
-            JSONObject sub = ale.getJSON();
-            peopleList.put(sub);
+            String name = onePerson;
+            int val = 3;
+            int pos = onePerson.lastIndexOf(":");
+            if (pos>0) {
+                name = onePerson.substring(0,pos);
+                val = DOMFace.safeConvertInt(onePerson.substring(pos+1));
+                if (val<1 || val > 5) {
+                    val = 3;
+                }
+            }
+            peopleList.put(name, val);
         }
         proposalInfo.put("people",  peopleList);
         return proposalInfo;
@@ -56,13 +64,11 @@ public class MeetingProposeTime extends DOMFace {
             setProposedTime(input.getLong("proposedTime"));
         }
         if (input.has("people")) {
-            JSONArray peopleList = input.getJSONArray("people");
+            JSONObject peopleList = input.getJSONObject("people");
             List<String> res = new ArrayList<String>();
-            for (int i=0; i<peopleList.length(); i++) {
-                JSONObject one = peopleList.getJSONObject(i);
-                if (one.has("udi")) {
-                    res.add(one.getString("uid"));
-                }
+            for (String key : peopleList.keySet()) {
+                int val = peopleList.getInt(key);
+                res.add(key + ":" + val);
             }
             setPeople(res);
         }
