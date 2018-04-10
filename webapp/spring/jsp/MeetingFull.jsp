@@ -1048,7 +1048,107 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
     </table>
     </div>
 
+<!-- Here is the voting for future meeting proposed time section -->
     
+    
+    <div class="comment-outer" ng-show="showFutureSlots" 
+         title="Shows what time slots people might be able to attend.">
+      <div style="float:right" ng-click="showFutureSlots=false"><i class="fa fa-close"></i></div>
+      <div>Future Meeting Times</div>
+      <div class="comment-inner">
+          <table class="table">
+          <tr>
+              <th></th>
+              <th>Time</th>
+              <th style="width:20px;"></th>
+              <th ng-repeat="resp in futureSlotResponders" title="{{resp}}"    
+                  style="text-align:center">
+              {{resp|limitTo:6}}
+              </th>
+          </tr>
+          <tr ng-repeat="time in meeting.futureSlots">
+              <td>
+                <span class="dropdown">
+                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
+                        data-toggle="dropdown"> <span class="caret"></span> </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="removeTime('futureSlots',time.proposedTime)">
+                          <i class="fa fa-times"></i>
+                          Remove Proposed Time</a></li>
+                    </ul>
+                </span>
+              </td>
+              <td>{{time.proposedTime |date:"dd-MMM-yyyy HH:mm"}}</td>
+              <td style="width:20px;"></td>
+              <td ng-repeat="resp in futureSlotResponders"   
+                  style="text-align:center">
+                 <span class="dropdown">
+                    <button class="dropdown-toggle btn votingButton" type="button"  d="menu" style="margin:0px"
+                        data-toggle="dropdown"> &nbsp;
+                        <span ng-show="time.people[resp]==1" title="very bad time for me" style="color:red;">
+                            <span class="fa fa-minus-circle"></span>
+                            <span class="fa fa-minus-circle"></span></span>
+                        <span ng-show="time.people[resp]==2" title="bad time for me" style="color:red;">
+                            <span class="fa fa-minus-circle"></span></span>
+                        <span ng-show="time.people[resp]==3" title="don't know" style="color:#eeeeee;">
+                            <span class="fa fa-question-circle"></span></span>
+                        <span ng-show="time.people[resp]==4" title="ok time for me" style="color:green;">
+                            <span class="fa fa-plus-circle"></span></span>
+                        <span ng-show="time.people[resp]==5" title="good time for me" style="color:green;">
+                            <span class="fa fa-plus-circle"></span>
+                            <span class="fa fa-plus-circle"></span></span>
+                        &nbsp;
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="setVote(time.people, resp, 5)">
+                          <i class="fa fa-plus-circle" style="color:green"></i>
+                          <i class="fa fa-plus-circle" style="color:green"></i>
+                          Good Time</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="setVote(time.people, resp, 4)">
+                          <i class="fa fa-plus-circle" style="color:green"></i>
+                          OK Time</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="setVote(time.people, resp, 3)">
+                          <i class="fa fa-question-circle" style="color:gray"></i>
+                          Indifferent</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="setVote(time.people, resp, 2)">
+                          <i class="fa fa-minus-circle" style="color:red"></i>
+                          Bad time</a></li>
+                      <li role="presentation">
+                          <a role="menuitem" ng-click="setVote(time.people, resp, 1)">
+                          <i class="fa fa-minus-circle" style="color:red"></i>
+                          <i class="fa fa-minus-circle" style="color:red"></i>
+                          Impossible</a></li>
+                    </ul>
+                </span>
+              </td>
+          </tr>
+          </table>
+          <table><tr>
+          <td>
+            <button ng-click="createTime(meeting.futureSlots)" class="btn btn-primary btn-raised">Add Future Time</button>
+          </td>
+          <td>
+            <span datetime-picker ng-model="newProposedTime" class="form-control" >
+              {{newProposedTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+          </span> 
+          </td>
+          <td>
+            <button ng-click="addProposedVoter('futureSlots', newProposedVoter)" class="btn btn-primary btn-raised">Add Voter</button>
+          </td>
+          <td>
+            <input type="text" ng-model="newProposedVoter" class="form-control" 
+               placeholder="Enter email address" style="margin: 10px"
+               typeahead="person.uid as person.name for person in getPeople($viewValue) | limitTo:12">
+          </td>
+          </tr></table>
+       </div>
+    </div>
+            
     <hr/>
 <span ng-show="meeting.state>=2">
 Meeting Duration: {{meeting.timerTotal|minutes}}  
