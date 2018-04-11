@@ -25,6 +25,19 @@ public class MeetingProposeTime extends DOMFace {
     }
     public void setProposedTime(long timeVal) {
         setAttributeLong("proposedTime", timeVal);
+        
+        //every time the time is set, reset all the values to 3, it any
+        List<String> source = getVector("people");
+        List<String> dest = new ArrayList<String>();
+        for (String onePerson : source) {
+            int pos = onePerson.lastIndexOf(":");
+            if (pos<=0) {
+                continue;
+            }
+            String name = onePerson.substring(0,pos);
+            dest.add(name+":3");
+        }
+        setPeople(dest);
     }
 
     public List<String> getPeople() {
@@ -32,6 +45,31 @@ public class MeetingProposeTime extends DOMFace {
     }
     public void setPeople(List<String> timeVal) {
         setVector("people", timeVal);
+    }
+    
+    /**
+     * find a person and set their value.
+     * set to 0 to remove person from the list.
+     */
+    public void setPersonValue(String user, int value) {
+        List<String> source = getVector("people");
+        List<String> dest = new ArrayList<String>();
+        for (String onePerson : source) {
+            int pos = onePerson.lastIndexOf(":");
+            if (pos<=0) {
+                continue;
+            }
+            String name = onePerson.substring(0,pos);
+            if (!user.equals(name)) {
+                dest.add(onePerson);
+            }
+        }
+        if (value>0) {
+            //setting zero simply removes the person from the set
+            //otherwise values should be  1..5
+            dest.add(user+":"+value);
+        }
+        setPeople(dest);
     }
 
     /**

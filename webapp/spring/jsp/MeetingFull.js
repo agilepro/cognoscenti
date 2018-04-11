@@ -444,35 +444,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             promise = $http.get("meetingRead.json?id="+$scope.meetId);
         }
         promise.success( function(data) {
-            console.log("Received meeting data: ", data);
-            if (!data.meetingInfo) {
-                data.meetingInfo = "";
-            }
-            $scope.timerCorrection = data.serverTime - new Date().getTime();
-            $scope.meeting = data;
-            $scope.sortItemsB();
-            $scope.calcTimes();
-
-            $scope.editHead=false;
-            $scope.editDesc=false;
-            $scope.extractPeopleSituation();
-            $scope.determineIfAttending();
-            if (data.reminderTime%1440 == 0) {
-                $scope.timeFactor="Days"
-            }
-            else {
-                $scope.timeFactor="Minutes"
-            }
-            if ($scope.timeFactor=="Days") {
-                $scope.factoredTime = $scope.meeting.reminderTime / 1440;
-            }
-            else {
-                $scope.factoredTime = $scope.meeting.reminderTime;
-            }
-            $scope.addYouselfIfAppropriate();
-            $scope.timeSlotResponders = calcResponders(data.timeSlots);
-            $scope.futureSlotResponders = calcResponders(data.futureSlots);
-
+            $scope.setMeetingData(data);
         });
         promise.error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -482,6 +454,42 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     };
     $scope.refreshMeetingPromise = function() {
         return $scope.putGetMeetingInfo(null);
+    }
+    $scope.setMeetingData = function(data) {
+        console.log("Received meeting data: ", data);
+        if (!data.meetingInfo) {
+            data.meetingInfo = "";
+        }
+        $scope.timerCorrection = data.serverTime - new Date().getTime();
+        $scope.meeting = data;
+        $scope.sortItemsB();
+        $scope.calcTimes();
+
+        $scope.editHead=false;
+        $scope.editDesc=false;
+        $scope.extractPeopleSituation();
+        $scope.determineIfAttending();
+        if (data.reminderTime%1440 == 0) {
+            $scope.timeFactor="Days"
+        }
+        else {
+            $scope.timeFactor="Minutes"
+        }
+        if ($scope.timeFactor=="Days") {
+            $scope.factoredTime = $scope.meeting.reminderTime / 1440;
+        }
+        else {
+            $scope.factoredTime = $scope.meeting.reminderTime;
+        }
+        $scope.addYouselfIfAppropriate();
+        data.timeSlots.sort(function(a,b) {
+            return a.proposedTime - b.proposedTime;
+        });
+        data.futureSlots.sort(function(a,b) {
+            return a.proposedTime - b.proposedTime;
+        });
+        $scope.timeSlotResponders = calcResponders(data.timeSlots);
+        $scope.futureSlotResponders = calcResponders(data.futureSlots);
     }
     $scope.createAgendaItem = function() {
         var newAgenda = {
@@ -1631,37 +1639,67 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         window.open('meetingMinutes.htm?id='+$scope.meeting.id);
     }
     
-    $scope.createTime = function(timeSlots) {
-        if ($scope.newProposedTime>0) {
-            var newSlot = {proposedTime:$scope.newProposedTime,people:{}};
-            timeSlots.push(newSlot);
-            $scope.savePartialMeeting(['timeSlots','futureSlots']);
-        }
+    $scope.createTime = function(fieldName,newTime) {
+        var isCurrent = ("timeSlots" == fieldName);
+        var obj = {action:"AddTime", isCurrent: isCurrent, time: newTime};
+        var postURL = "proposedTimes.json?id="+$scope.meeting.id;
+        var postdata = angular.toJson(obj);
+        $http.post(postURL,postdata)
+        .success( function(data) {
+            $scope.setMeetingData(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
     }
-    $scope.addProposedVoter = function(whichOne, newVoter) {
+    $scope.addProposedVoter = function(fieldName, newVoter) {
         console.log("Adding voter "+newVoter);
-        var current = $scope.meeting[whichOne];
+        var current = $scope.meeting[fieldName];
         if (newVoter) {
             current.forEach( function(slot) {
-                slot.people[newVoter] = 3;
+                if (!slot.people[newVoter]) {
+                    $scope.setVote(fieldName, slot.proposedTime, newVoter, 3);
+                }
             });
         }
-        $scope.savePartialMeeting([whichOne]);
     }
-    $scope.removeTime = function(whichOne,time) {
-        var current = $scope.meeting[whichOne];
-        var newArray = [];
-        current.forEach( function(slot) {
-            if (slot.proposedTime != time) {
-                newArray.push(slot);
-            }
+    $scope.removeVoter = function(fieldName, newVoter) {
+        console.log("Adding voter "+newVoter);
+        var current = $scope.meeting[fieldName];
+        if (newVoter) {
+            current.forEach( function(slot) {
+                $scope.setVote(fieldName, slot.proposedTime, newVoter, 0);
+            });
+        }
+    }
+    $scope.removeTime = function(fieldName,time) {
+        var isCurrent = ("timeSlots" == fieldName);
+        var obj = {action:"RemoveTime", isCurrent: isCurrent, time: time};
+        var postURL = "proposedTimes.json?id="+$scope.meeting.id;
+        var postdata = angular.toJson(obj);
+        $http.post(postURL,postdata)
+        .success( function(data) {
+            $scope.setMeetingData(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
         });
-        $scope.meeting[whichOne] = newArray;
-        $scope.savePartialMeeting([whichOne]);
     }
-    $scope.setVote = function(people, resp, newVal) {
-        people[resp] = newVal;
-        $scope.savePartialMeeting(['timeSlots','futureSlots']);
+    $scope.setVote = function(fieldName, time, resp, newVal) {
+        var isCurrent = ("timeSlots" == fieldName);
+        var obj = {action:"SetValue", isCurrent: isCurrent, time: time, user: resp, value:newVal};
+        var postURL = "proposedTimes.json?id="+$scope.meeting.id;
+        var postdata = angular.toJson(obj);
+        $http.post(postURL,postdata)
+        .success( function(data) {
+            $scope.setMeetingData(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    $scope.setProposedTime = function(propTime) {
+        $scope.newProposedTime = propTime;
     }
     $scope.setMeetingTime = function(propTime) {
         $scope.meeting.startTime = propTime;
@@ -1681,6 +1719,7 @@ function calcResponders(slots) {
     if (res.indexOf(SLAP.loginInfo.userId)<0) {
         res.push(SLAP.loginInfo.userId);
     }
+    res.sort();
     return res;
 }
 

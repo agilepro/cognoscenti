@@ -997,6 +997,34 @@ public class MainTabsViewControler extends BaseController {
               streamException(ee, ar);
           }
       }
+      
+
+      @RequestMapping(value = "/{siteId}/{pageId}/proposedTimes.json", method = RequestMethod.POST)
+      public void meetingTimes(@PathVariable String siteId,@PathVariable String pageId,
+              HttpServletRequest request, HttpServletResponse response) {
+          AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          try{
+              NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+              ar.setPageAccessLevels(ngw);
+              String id = ar.reqParam("id");
+              ar.assertMember("Must be a member to update a meeting "+id);
+              ar.assertNotFrozen(ngw);
+              MeetingRecord meeting = ngw.findMeeting(id);
+              JSONObject timeUpdateInfo = getPostedObject(ar);
+
+              meeting.actOnProposedTime(timeUpdateInfo);
+
+              JSONObject repo = meetingCache.updateCacheFull(ngw, ar, id);
+              saveAndReleaseLock(ngw, ar, "Updated Meeting");
+              //this is so that clients can calculate the offset for their particular clock.
+              repo.put("serverTime", System.currentTimeMillis());
+              sendJson(ar, repo);
+          }catch(Exception ex){
+              Exception ee = new Exception("Unable to update meeting proposed times.", ex);
+              streamException(ee, ar);
+          }
+      }
+      
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingRead.json", method = RequestMethod.GET)
       public void meetingRead(@PathVariable String siteId,@PathVariable String pageId,

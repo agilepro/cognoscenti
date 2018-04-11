@@ -328,6 +328,85 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     
     
     /**
+     * This is used to set particular aspects of the meeting time, without having to save
+     * (and potentialy overwrite) another person's settings, allowing people to be settings 
+     * times simultaneously.
+     * 
+     * Send in 
+     * 
+     * {
+     *     "action":    "SetValue",
+     *     "isCurrent": true/false,
+     *     "time":      15432432534,
+     *     "user":      "george.washington@whitehouse.gov",
+     *     "value":     3
+     * }
+     * 
+     * or 
+     * 
+     * {
+     *     "action":    "AddTime",
+     *     "isCurrent": true/false,
+     *     "time":      15432432534
+     * }
+     * {
+     *     "action":    "RemoveTime",
+     *     "isCurrent": true/false,
+     *     "time":      15432432534
+     * }
+     * {
+     *     "action":    "ChangeTime",
+     *     "isCurrent": true/false,
+     *     "time":      15432432534,
+     *     "newTime":   15432888888
+     * }
+     * 
+     */
+    public void actOnProposedTime(JSONObject cmdInput) throws Exception {
+        String action = cmdInput.getString("action");
+        String fieldName = "timeSlots";
+        if (!cmdInput.getBoolean("isCurrent")) {
+            fieldName = "futureSlots";
+        }
+        long time = cmdInput.getLong("time");
+        if ("SetValue".equals(action)) {
+            MeetingProposeTime mpt = findProposedTime(fieldName, time);
+            if (mpt==null) {
+                throw new Exception("This meeting does not have a "+fieldName+" time of "+time);
+            }
+            String user = cmdInput.getString("user");
+            int value = cmdInput.getInt("value");
+            mpt.setPersonValue(user, value);
+        }
+        else if ("AddTime".equals(action)) {
+            MeetingProposeTime mpt = createChild(fieldName, MeetingProposeTime.class);
+            mpt.setProposedTime(time);
+        }
+        else if ("RemoveTime".equals(action)) {
+            this.removeChildrenByNameAttrVal(fieldName, "proposedTime", Long.toString(time));
+        }
+        else if ("ChangeTime".equals(action)) {
+            long newTime = cmdInput.getLong("newTime");
+            MeetingProposeTime mpt = createChild(fieldName, MeetingProposeTime.class);
+            mpt.setProposedTime(newTime);
+        }
+        else {
+            throw new Exception("actOnProposedTime does not understand the command: "+action);
+        }
+    }
+    
+    private MeetingProposeTime findProposedTime(String fieldName, long timeValue) throws Exception {
+        List<MeetingProposeTime> timeSlot = getChildren(fieldName, MeetingProposeTime.class);
+        for (MeetingProposeTime oneSlot : timeSlot) {
+            if (oneSlot.getProposedTime() == timeValue) {
+                return oneSlot;
+            }
+        }
+        return null;
+    }
+    
+    
+    /**
      * A vary small object suitable for notification event lists
      */
     public JSONObject getMinimalJSON() throws Exception {
