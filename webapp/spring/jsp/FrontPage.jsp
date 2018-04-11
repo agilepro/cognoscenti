@@ -569,7 +569,7 @@ a {
 
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
-              <div style="float:left">Purpose of Workspace</div>
+              <div style="float:left">Aim of Workspace</div>
               <div style="float:right" title="View and manage the roles in this workspace">
                   <a href="admin.htm">
                       <i class="fa fa-info-circle"></i></a></div>

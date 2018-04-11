@@ -1747,7 +1747,7 @@ public abstract class NGPage extends ContainerCommon {
         
         process.extractScalarString(workspaceConfigInfo, "mission");
         process.extractScalarString(workspaceConfigInfo, "vision");
-        process.extractScalarString(workspaceConfigInfo, "aim");
+        process.extractScalarString(workspaceConfigInfo, "domain");
 
         return workspaceConfigInfo;
     }
@@ -1756,9 +1756,6 @@ public abstract class NGPage extends ContainerCommon {
         ProcessRecord process = getProcess();
         if (newConfig.has("goal")) {
             process.setSynopsis(newConfig.getString("goal"));
-        }
-        if (newConfig.has("purpose")) {
-            process.setDescription(newConfig.getString("purpose"));
         }
         if (newConfig.has("parentKey")) {
             setParentKey(newConfig.getString("parentKey"));
@@ -1782,9 +1779,13 @@ public abstract class NGPage extends ContainerCommon {
         if (newConfig.has("projectMail")) {
             setWorkspaceMailId(newConfig.getString("projectMail"));
         }
+        if (newConfig.has("purpose")) {
+            //also known as 'aim'
+            process.setDescription(newConfig.getString("purpose"));
+        }
         process.updateScalarString("mission", newConfig);
         process.updateScalarString("vision", newConfig);
-        process.updateScalarString("aim", newConfig);
+        process.updateScalarString("domain", newConfig);
     }
 
 

@@ -13,6 +13,9 @@ var userKey;
 
 
 function convertMarkdownToHtml(markdown) {
+    if (!markdown) {
+        return "";
+    }
     var lineArray = markdown.split("\n");
     var res = "";
     lineArray.forEach( function(line) {

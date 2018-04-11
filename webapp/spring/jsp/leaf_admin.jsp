@@ -154,7 +154,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.purposeHtml = convertMarkdownToHtml($scope.workspaceConfig.purpose);
         $scope.visionHtml  = convertMarkdownToHtml($scope.workspaceConfig.vision);
         $scope.missionHtml = convertMarkdownToHtml($scope.workspaceConfig.mission);
-        $scope.aimHtml     = convertMarkdownToHtml($scope.workspaceConfig.aim);
+        $scope.domainHtml  = convertMarkdownToHtml($scope.workspaceConfig.domain);
     }
     $scope.generateTheHtmlValues();
     $scope.saveOneField = function(fieldName) {
@@ -307,21 +307,6 @@ editBoxStyle {
                     </td>
                 </tr>
                 <tr>
-                    <td><label>Purpose:</label></td>
-                    <td ng-show="isEditing=='purpose'">
-                        <textarea class="form-control editBoxStyle" 
-                              placeholder="Enter a public description of the work that will be done in this workspace" 
-                              ng-model="workspaceConfig.purpose" rows="14" cols="80"></textarea>
-                              <button ng-click="saveOneField('purpose')" class="btn btn-primary btn-raised">
-                                  Save</button>
-                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
-                                  Cancel</button>
-                              </td>
-                    <td ng-hide="isEditing=='purpose'" ng-click="setEdit('purpose')">
-                        <div ng-bind-html="purposeHtml"></div>
-                    </td>
-                </tr>
-                <tr>
                     <td><label>Mission:</label></td>
                     <td ng-show="isEditing=='mission'">
                         <textarea class="form-control editBoxStyle" 
@@ -353,17 +338,32 @@ editBoxStyle {
                 </tr>
                 <tr>
                     <td><label>Aim:</label></td>
-                    <td ng-show="isEditing=='aim'">
+                    <td ng-show="isEditing=='purpose'">
                         <textarea class="form-control editBoxStyle" 
-                              placeholder="Enter a aim statement for the circle working in this  workspace, if any" 
-                              ng-model="workspaceConfig.aim" rows="14" cols="80"></textarea>
-                              <button ng-click="saveOneField('aim')" class="btn btn-primary btn-raised">
+                              placeholder="Enter a public description of the work that will be done in this workspace, the aim of this workspace." 
+                              ng-model="workspaceConfig.purpose" rows="14" cols="80"></textarea>
+                              <button ng-click="saveOneField('purpose')" class="btn btn-primary btn-raised">
                                   Save</button>
                               <button ng-click="saveOneField('frozen')" class="btn btn-raised">
                                   Cancel</button>
                               </td>
-                    <td ng-hide="isEditing=='aim'" ng-click="setEdit('aim')">
-                        <div ng-bind-html="aimHtml"></div>
+                    <td ng-hide="isEditing=='purpose'" ng-click="setEdit('purpose')">
+                        <div ng-bind-html="purposeHtml"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Domain:</label></td>
+                    <td ng-show="isEditing=='domain'">
+                        <textarea class="form-control editBoxStyle" 
+                              placeholder="Enter a domain statement for the circle working in this  workspace, if any" 
+                              ng-model="workspaceConfig.domain" rows="14" cols="80"></textarea>
+                              <button ng-click="saveOneField('domain')" class="btn btn-primary btn-raised">
+                                  Save</button>
+                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                                  Cancel</button>
+                              </td>
+                    <td ng-hide="isEditing=='domain'" ng-click="setEdit('domain')">
+                        <div ng-bind-html="domainHtml"></div>
                     </td>
                 </tr>
                 <tr>
