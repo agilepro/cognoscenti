@@ -31,6 +31,7 @@ import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -422,7 +423,8 @@ public class EmailGenerator extends DOMFace {
         for (AttachmentRecord att : selAtt) {
             JSONObject oneAtt = new JSONObject();
             oneAtt.put("url", ar.baseURL + ar.getResourceURL(ngp, "docinfo" + att.getId() + ".htm?")
-                    + AccessControl.getAccessDocParams(ngp, att));
+                    + AccessControl.getAccessDocParams(ngp, att)
+                    + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
             oneAtt.put("name", att.getNiceName());
             attachArray.put(oneAtt);
         }
@@ -449,7 +451,8 @@ public class EmailGenerator extends DOMFace {
         if (meeting!=null) {
             JSONObject meetingObj = meeting.getFullJSON(ar, ngp);
             meetingObj.put("meetingUrl", ar.retPath + ar.getResourceURL(ngp, "meetingFull.htm?id="+meeting.getId()
-                    +"&"+AccessControl.getAccessMeetParams(ngp, meeting)));
+                    +"&"+AccessControl.getAccessMeetParams(ngp, meeting))
+                    + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
             data.put("meeting", meetingObj);
 
             //TODO: this is temporary until templates can handle dates

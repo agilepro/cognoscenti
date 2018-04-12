@@ -168,6 +168,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             res.push(aNote);
         });
         src = res;
+        
         var filterlist = $scope.filter.split(" ");
         for (var j=0; j<filterlist.length; j++) {
             var res = [];
@@ -176,12 +177,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 if (aNote.subject.toLowerCase().indexOf(lcfilter)>=0) {
                     res.push(aNote);
                 }
-                else if (aNote.html.toLowerCase().indexOf(lcfilter)>=0) {
-                    res.push(aNote);
-                }
             });
             src = res;
         }
+        $scope.lastDisplayedSetSize = src.length;
         return src;
     }
     $scope.hasLabel = function(searchName) {
@@ -342,8 +341,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </ul>
       </span>
      </div>
-
-    <div class="well" ng-show="!isCreating">
+     
+    <div class="well">
         Filter <input ng-model="filter"> &nbsp;
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showVizDel">
             Deleted</span> &nbsp;
@@ -512,13 +511,18 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </div>
 
         
-    <div class="instruction" ng-show="notes.length==0 && !initialFetchDone" style="margin-top:80px">
+    <div class="instruction" ng-show="!initialFetchDone" style="margin-top:80px">
     Fetching topics . . .
     </div>
     <div class="guideVocal" ng-show="notes.length==0 && initialFetchDone" style="margin-top:80px">
     You have no discussion topics in this workspace yet.
     You can add them using a option from the pull-down in the upper right of this page.
     </div>
+    <div class="guideVocal" ng-show="notes.length>0 && initialFetchDone && lastDisplayedSetSize==0" style="margin-top:80px">
+    None of the {{notes.length}} topics match the filter conditions you have chosen.
+    </div>
+    
+    
        
 </div>
 

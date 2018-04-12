@@ -262,6 +262,19 @@ public class MailInst extends JSONWrapper {
         }
     }
 
+    
+    public void setFromMessage(Message message) throws Exception {
+        Address[] from = message.getFrom();
+        if (from!=null && from.length>0) {
+            this.setFrom(from[0].toString());
+        }
+        this.setSubject(message.getSubject());
+        MemFile mf = new MemFile();
+        mf.fillWithInputStream(message.getInputStream());
+        this.setBodyText(mf.toString());
+        this.setCreateDate(message.getSentDate().getTime());
+        this.setLastSentDate(message.getReceivedDate().getTime());
+    }
 
     /**
      * Note that this method needs to work without accessing the NGPage object

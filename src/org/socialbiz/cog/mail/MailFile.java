@@ -26,9 +26,12 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.mail.Message;
+
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.exception.ProgramLogicError;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
@@ -146,8 +149,8 @@ public class MailFile extends JSONWrapper {
 
     /**
      * construct and store an email message for sending later.
-     * For the Opt-Out Address, yuo either must include the message int he email body
-     * or you must "prepare" the bject to have the message as a string.
+     * For the Opt-Out Address, you either must include the message in the email body
+     * or you must "prepare" the object to have the message as a string.
      */
     public MailInst createEmailRecord(
                     String from,
@@ -277,4 +280,8 @@ public class MailFile extends JSONWrapper {
         return emailList;
     }
     
+    public void storeMessage(Message message) throws Exception {
+        MailInst emailRec = this.createMessage();
+        emailRec.setFromMessage(message);
+    }
 }

@@ -44,6 +44,7 @@ import javax.mail.UIDFolder;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.socialbiz.cog.exception.NGException;
+import org.socialbiz.cog.mail.MailFile;
 
 import com.purplehillsbooks.json.JSONException;
 
@@ -325,13 +326,21 @@ public class EmailListener extends TimerTask{
     private void processEmailMsg(Message message) throws Exception {
         try{
 
-            createNoteFromMail(message);
+            storeInboundMsg(message);
             message.setFlag(Flag.DELETED, true);
 
         }catch (Exception e) {
             //May be in this case we should also send reply to sender stating that 'topic could not be created due to some reason'.
             throw new NGException("nugen.exception.could.not.process.email", new Object[]{message.getSubject()},e);
         }
+    }
+    
+    private void storeInboundMsg(Message message) throws Exception {
+        File userFolder = ar.getCogInstance().getConfig().getUserFolderOrFail();
+        File inboundMailPath = new File(userFolder, "inboundMail.json");
+        MailFile inboundMail = MailFile.readOrCreate(inboundMailPath);
+        inboundMail.storeMessage(message);
+        inboundMail.save();
     }
 
     /**

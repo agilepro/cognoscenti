@@ -307,21 +307,6 @@ editBoxStyle {
                     </td>
                 </tr>
                 <tr>
-                    <td><label>Mission:</label></td>
-                    <td ng-show="isEditing=='mission'">
-                        <textarea class="form-control editBoxStyle" 
-                              placeholder="Enter a mission statement for the circle working in this  workspace, if any" 
-                              ng-model="workspaceConfig.mission" rows="14" cols="80"></textarea>
-                              <button ng-click="saveOneField('mission')" class="btn btn-primary btn-raised">
-                                  Save</button>
-                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
-                                  Cancel</button>
-                              </td>
-                    <td ng-hide="isEditing=='mission'" ng-click="setEdit('mission')">
-                        <div ng-bind-html="missionHtml"></div>
-                    </td>
-                </tr>
-                <tr>
                     <td><label>Vision:</label></td>
                     <td ng-show="isEditing=='vision'">
                         <textarea class="form-control editBoxStyle" 
@@ -334,6 +319,21 @@ editBoxStyle {
                               </td>
                     <td ng-hide="isEditing=='vision'" ng-click="setEdit('vision')">
                         <div ng-bind-html="visionHtml"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Mission:</label></td>
+                    <td ng-show="isEditing=='mission'">
+                        <textarea class="form-control editBoxStyle" 
+                              placeholder="Enter a mission statement for the circle working in this  workspace, if any" 
+                              ng-model="workspaceConfig.mission" rows="14" cols="80"></textarea>
+                              <button ng-click="saveOneField('mission')" class="btn btn-primary btn-raised">
+                                  Save</button>
+                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                                  Cancel</button>
+                              </td>
+                    <td ng-hide="isEditing=='mission'" ng-click="setEdit('mission')">
+                        <div ng-bind-html="missionHtml"></div>
                     </td>
                 </tr>
                 <tr>
