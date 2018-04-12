@@ -404,6 +404,15 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         }
         return null;
     }
+
+    public MeetingProposeTime findOrCreateProposedTime(String fieldName, long timeValue) throws Exception {
+        MeetingProposeTime mpt = findProposedTime(fieldName, timeValue);
+        if (mpt == null) {
+            mpt = createChild(fieldName, MeetingProposeTime.class);
+            mpt.setProposedTime(timeValue);
+        }
+        return mpt;
+    }
     
     
     /**

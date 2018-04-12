@@ -2,6 +2,8 @@
     JSONObject loginConfigSetup = new JSONObject();
     loginConfigSetup.put("providerUrl", ar.getSystemProperty("identityProvider"));
     loginConfigSetup.put("serverUrl",   ar.baseURL);
+    String myPath = request.getRequestURL().toString()+"?"+request.getQueryString();
+    String otherPath = ar.getCompleteURL();
 %> 
 <script>
 SLAP.initLogin(<% loginConfigSetup.write(out, 2, 2); %>, {}, updateBar);
@@ -33,13 +35,13 @@ function updateBar() {
 
     <div class="navbar-brand pull-right" id="nb-must-login" >
        <a title="Authenticate Yourself"
-       href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(ar.realRequestURL, "UTF-8")%>">
+       href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(otherPath, "UTF-8")%>">
           <h1>Login</h1>
        </a>
     </div>
     <div class="navbar-brand pull-right" id="nb-is-login" >
        <a title="Authenticate Yourself"
-       href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(ar.realRequestURL, "UTF-8")%>">
+       href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(otherPath, "UTF-8")%>">
           <h1 id="nb-user-name">Do Nutin</h1>
        </a>
     </div>

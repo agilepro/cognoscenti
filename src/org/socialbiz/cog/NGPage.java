@@ -60,7 +60,7 @@ public abstract class NGPage extends ContainerCommon {
     
     protected List<String> displayNames;
     protected List<NGSection> sectionElements = null;
-    protected NGBook prjSite;
+    private NGBook prjSite;
     protected List<String> existingIds = null;
 
 
@@ -244,9 +244,9 @@ public abstract class NGPage extends ContainerCommon {
             setLastModify(ar);
             saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime, comment, ar.getCogInstance());
 
-            if (prjSite!=null) {
-                prjSite.saveFile(ar, comment);
-            }
+            //if (prjSite!=null) {
+            //    prjSite.saveFile(ar, comment);
+            //}
         }
         catch (Exception e) {
             throw new NGException("nugen.exception.unable.to.write.file",
@@ -714,7 +714,7 @@ public abstract class NGPage extends ContainerCommon {
     public void setLastModify(AuthRequest ar)
         throws Exception
     {
-        ar.assertLoggedIn("Must be logged in in order to modify page.");
+        //ar.assertLoggedIn("Must be logged in in order to modify page.");
         pageInfo.setModTime(ar.nowTime);
         pageInfo.setModUser(ar.getBestUserId());
     }

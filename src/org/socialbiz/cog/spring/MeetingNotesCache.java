@@ -111,7 +111,7 @@ public class MeetingNotesCache {
         nh.targetRole = meeting.getTargetRole();
         nh.members = ngw.getRoleOrFail(nh.targetRole).getExpandedPlayers(ngw);
         nh.meetingId = meeting.getId();
-        nh.assertMeetingParticipant(ar.getUserProfile());
+        //nh.assertMeetingParticipant(ar.getUserProfile());
         cache.put(key, nh);
         return nh;
     }

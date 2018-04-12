@@ -209,6 +209,10 @@ public class MainTabsViewControler extends BaseController {
                 showJSPMembers(ar, siteId, pageId, "MeetingFull");
                 return;
             }
+            if(!ar.isLoggedIn()) {
+                specialAnonJSP(ar, siteId, pageId, "MeetingAnon.jsp");
+                return;
+            }
             String roleName = meet.getTargetRole();
             NGRole role = ngw.getRole(roleName);
             if (role!=null) {
@@ -1007,9 +1011,12 @@ public class MainTabsViewControler extends BaseController {
               NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
               ar.setPageAccessLevels(ngw);
               String id = ar.reqParam("id");
-              ar.assertMember("Must be a member to update a meeting "+id);
               ar.assertNotFrozen(ngw);
               MeetingRecord meeting = ngw.findMeeting(id);
+              boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meeting);
+              if (!canAccess) {
+                  throw new Exception("not a member and no magic number");
+              }
               JSONObject timeUpdateInfo = getPostedObject(ar);
 
               meeting.actOnProposedTime(timeUpdateInfo);

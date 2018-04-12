@@ -1114,7 +1114,7 @@ Meeting Duration: {{meeting.timerTotal|minutes}}
                     </ul>
                 </span>
               </td>
-              <td>{{time.proposedTime |date:"dd-MMM-yyyy HH:mm"}}</td>
+              <td><div ng-click="setProposedTime(time.proposedTime)">{{time.proposedTime |date:"dd-MMM-yyyy HH:mm"}}</div></td>
               <td style="width:20px;"></td>
               <td ng-repeat="resp in futureSlotResponders"   
                   style="text-align:center">
