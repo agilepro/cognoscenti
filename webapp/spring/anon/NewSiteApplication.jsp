@@ -1,8 +1,49 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="org.socialbiz.cog.SharePortRecord"
 %><%@page import="org.socialbiz.cog.AccessControl"
+%><%@page import="org.socialbiz.cog.SiteReqFile"
+%><%@page import="org.socialbiz.cog.SiteRequest"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
+
+
+    Cognoscenti cog = ar.getCogInstance();
+    
+    JSONObject newSite = new JSONObject();
+    SiteRequest foundIt = null;
+    JSONArray prevReqs = new JSONArray();
+    if (ar.isLoggedIn()) {
+        String thisUser = ar.getBestUserId();
+        SiteReqFile siteReqFile = new SiteReqFile(cog);
+        List<SiteRequest> superRequests = siteReqFile.getAllSiteReqs();
+        for (SiteRequest item : superRequests) {
+            if (thisUser.equals(item.getRequester())) {
+                JSONObject jo = new JSONObject();
+                jo.put("siteName", item.getSiteName());
+                jo.put("status", item.getStatus());
+                jo.put("modTime", item.getModTime());
+                prevReqs.put(jo);
+                if ("requested".equals(item.getStatus())) {
+                    foundIt = item;
+                }
+            }
+        }
+    }
+    
+    if (foundIt!=null) {
+        newSite.put("siteName", foundIt.getSiteName());
+        newSite.put("siteId", foundIt.getSiteId());
+        newSite.put("purpose", foundIt.getDescription());
+        newSite.put("requester", foundIt.getRequester());
+        newSite.put("preapprove", "");
+    }
+    else {
+        newSite.put("siteName", "");
+        newSite.put("siteId", "");
+        newSite.put("purpose", "");
+        newSite.put("requester", "");
+        newSite.put("preapprove", "");
+    }
 
 %>
 <!DOCTYPE html>
@@ -48,10 +89,11 @@ var theOnlyScope = null;
 
 app.controller('myCtrl', function($scope, $http, $modal) {
     theOnlyScope = $scope;
-    $scope.newSite = {siteName:"",siteId:"",purpose:"",requester:"", preapprove:""};
+    $scope.newSite = <%newSite.write(out, 2,2); %>;
     $scope.duplicateEmail = "";
     $scope.phase = 1;
     $scope.identityProvider = "<%ar.writeJS(ar.getSystemProperty("identityProvider"));%>";
+    $scope.prevReqs = <% prevReqs.write(out,2,2); %>;
     
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -197,6 +239,10 @@ function validateEmail(email) {
 <div style="max-width:500px" ng-app="myApp" ng-controller="myCtrl">
 
   <h1>Request a Weaver site.</h1>
+  
+  <div ng-repeat="prev in prevReqs" class="guideVocal">
+  Your site '{{prev.siteName}}' has been in status '{{prev.status}}' since {{prev.modTime|date}}.
+  </div>
   
   <table class="table bigletters">
   

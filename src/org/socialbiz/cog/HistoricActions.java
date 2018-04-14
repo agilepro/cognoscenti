@@ -37,7 +37,7 @@ public class HistoricActions {
      * @throws Exception
      */
     public SiteRequest createNewSiteRequest(JSONObject newSiteObj) throws Exception {
-        SiteRequest accountDetails = SiteReqFile.createNewSiteRequest(newSiteObj, cog);
+        SiteRequest accountDetails = SiteReqFile.createNewSiteRequest(newSiteObj, ar);
 
         accountDetails.sendSiteRequestEmail(ar);
         return accountDetails;

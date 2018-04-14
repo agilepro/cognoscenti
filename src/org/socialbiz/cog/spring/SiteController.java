@@ -127,7 +127,7 @@ public class SiteController extends BaseController {
         try{
             JSONObject incoming = getPostedObject(ar);
 
-            SiteRequest newSiteRequest = SiteReqFile.createNewSiteRequest(incoming, ar.getCogInstance());
+            SiteRequest newSiteRequest = SiteReqFile.createNewSiteRequest(incoming, ar);
 
             newSiteRequest.sendSiteRequestEmail(ar);
             

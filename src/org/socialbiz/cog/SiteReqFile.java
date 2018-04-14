@@ -155,12 +155,14 @@ public class SiteReqFile {
      * Create new request for new site with the specified name and description.
      * And save the file.
      */
-    public static SiteRequest createNewSiteRequest(JSONObject newSiteReq, Cognoscenti cog) throws Exception {
+    public static SiteRequest createNewSiteRequest(JSONObject newSiteReq, AuthRequest ar) throws Exception {
+        
+        Cognoscenti cog = ar.getCogInstance();
         
         String siteId      = newSiteReq.getString("siteId");
         String siteName    = newSiteReq.getString("siteName");
-        String purpose     = newSiteReq.getString("purpose");
-        String requester   = newSiteReq.getString("requester");
+        //String purpose     = newSiteReq.getString("purpose");
+        //String requester   = newSiteReq.getString("requester");
         
         
         // first, lets see if there is a site already with that ID
@@ -198,7 +200,15 @@ public class SiteReqFile {
         //actually update the file
         SiteReqFile siteReqFile = new SiteReqFile(cog);
         SiteRequest newRequest = siteReqFile.createNewRequest(newSiteReq);
+
+        String preApprove = newSiteReq.getString("preapprove").toLowerCase();
+        if (preApprove.equals("ccc2018")) {
+            HistoricActions ha = new HistoricActions(ar);
+            ha.completeSiteRequest(newRequest, true, "Accepted pre-approval code: "+preApprove);
+        }
+        
         siteReqFile.save();
+               
         return newRequest;
     }
 

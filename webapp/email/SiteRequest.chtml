@@ -18,6 +18,8 @@
         <td><b>{$req.siteName|html}</b></td></tr>
     <tr><td>Description: &nbsp;</td>
         <td>{$req.purpose|html}</td></tr>
+    <tr><td>Status: &nbsp;</td>
+        <td>{$req.status|html}</td></tr>
     <tr><td>Requested by: &nbsp; </td>
         <td>
             <a href="{$baseURL}v/FindPerson.htm?uid={$req.requester}" title="access the profile of this user, if one exists">
