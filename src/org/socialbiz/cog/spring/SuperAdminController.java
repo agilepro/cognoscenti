@@ -23,14 +23,17 @@ package org.socialbiz.cog.spring;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.ErrorLog;
 import org.socialbiz.cog.ErrorLogDetails;
 import org.socialbiz.cog.HistoricActions;
+import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
 import org.socialbiz.cog.exception.NGException;
+import org.socialbiz.cog.mail.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -56,6 +59,19 @@ public class SuperAdminController extends BaseController {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
              adminModelSetUp(ar, "errorLog");
+
+         }catch(Exception ex){
+             throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
+         }
+     }
+
+     @RequestMapping(value = "/su/testEmail.htm", method = RequestMethod.GET)
+     public void testEmail(HttpServletRequest request,
+             HttpServletResponse response)
+     throws Exception {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         try{
+             adminModelSetUp(ar, "testEmail");
 
          }catch(Exception ex){
              throw new NGException("nugen.operation.fail.administration.page", new Object[]{ar.getBestUserId()} , ex);
@@ -173,6 +189,31 @@ public class SuperAdminController extends BaseController {
      }
 
      
+     @RequestMapping(value = "/su/testEmailSend.json", method = RequestMethod.POST)
+     public void testEmailSend(HttpServletRequest request, HttpServletResponse response) {
+         AuthRequest ar = AuthRequest.getOrCreate(request, response);
+         String requestId = "";
+         try{
+             ar.assertSuperAdmin("Must be a super admin to accept site requests.");
+             JSONObject requestInfo = getPostedObject(ar);
+             
+             String toAddress = requestInfo.getString("to");
+             String from = requestInfo.getString("from");
+             String body = requestInfo.getString("body");
+             String subject = requestInfo.getString("subject");
+             OptOutAddr ooa = new OptOutAddr(new AddressListEntry(toAddress));
+             EmailSender.generalMailToOne(ooa, from, subject, body, ar.getCogInstance());
+
+             requestInfo.put("status", "success");
+             sendJson(ar, requestInfo);
+         }
+         catch(Exception ex){
+             Exception ee = new Exception("Unable to update site request ("+requestId+")", ex);
+             streamException(ee, ar);
+         }
+     }
+     
+     
      @RequestMapping(value = "/su/submitComment", method = RequestMethod.POST)
      public void submitComment(HttpServletRequest request, 
              HttpServletResponse response) throws Exception {
@@ -212,47 +253,7 @@ public class SuperAdminController extends BaseController {
 
      
      
-/*
-     @RequestMapping(value = "/su/getErrorLogXML.ajax", method = RequestMethod.GET)
-     public void errorLogXMLData(@RequestParam String searchByDate,HttpServletRequest request,
-             HttpServletResponse response)
-     throws Exception {
-         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try {
-             ar.isSuperAdmin("User must be logged in as a Super admin to see the error Log.");
-             Date date = new SimpleDateFormat("MM/dd/yyyy").parse(searchByDate);
-             File xmlFile=ErrorLog.getErrorFileFullPath(date, ar.getCogInstance());
-
-             if (!xmlFile.exists()) {
-                 Document doc = DOMUtils.createDocument("errorlog");
-                 doc.getDocumentElement().setAttribute("missingFile", xmlFile.toString());
-                 writeXMLToResponse(ar,doc);
-             }
-             else {
-                 Document doc = ErrorLog.readOrCreateFile(xmlFile, "errorlog");
-                 doc.getDocumentElement().setAttribute("fileName", xmlFile.toString());
-                 writeXMLToResponse(ar,doc);
-             }
-         }
-         catch (Exception e) {
-             Exception ee = new Exception("Unable to get error information ("+searchByDate+")", e);
-             streamException(ee, ar);
-         }
-     }
-     private void writeXMLToResponse(AuthRequest ar, Document doc) throws Exception {
-
-         if (ar == null){
-             throw new ProgramLogicError("writeXMLToResponse requires a non-null AuthRequest parameter");
-         }
-         ar.resp.setContentType("text/xml;charset=UTF-8");
-         DOMUtils.writeDom(doc, ar.w);
-         ar.flush();
-     }
-*/
      
-     /**
-      * TODO: this is ridiculous having the user ID in the path... not needed, not used
-      */
      @RequestMapping(value = "/su/errorDetails{errorId}.htm", method = RequestMethod.GET)
      public void errorDetailsPage(@PathVariable String errorId,
              @RequestParam String searchByDate,HttpServletRequest request,

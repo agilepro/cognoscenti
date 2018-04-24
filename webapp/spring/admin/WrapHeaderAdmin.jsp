@@ -157,6 +157,7 @@
             <li><a href="newUsers.htm" >Users</a></li>
             <li><a href="requestedAccounts.htm" >Requested Sites</a></li>
             <li><a href="allSites.htm" >All Sites</a></li>
+            <li><a href="testEmail.htm" >Test Email</a></li>
           </ul>
         </li>
       </ul>
