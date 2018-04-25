@@ -161,7 +161,7 @@ public class EmailListener extends TimerTask{
              threadLastCheckException = failure;
              try {
                  SuperAdminLogFile salf = ar.getSuperAdminLogFile();
-                 salf.setEmailListenerPropertiesFlag(false);
+                 salf.setEmailListenerWorking(false);
                  salf.setEmailListenerProblem(failure);
              } catch (Exception ex) {
                  ar.logException("Could not set EmailListenerPropertiesFlag in superadmin.logs file.", ex);
@@ -242,7 +242,7 @@ public class EmailListener extends TimerTask{
                 throw new Exception("for some reason the 'INBOX' folder was not opened.");
             }
 
-            ar.getSuperAdminLogFile().setEmailListenerPropertiesFlag(true);
+            ar.getSuperAdminLogFile().setEmailListenerWorking(true);
 
             return popFolder;
 

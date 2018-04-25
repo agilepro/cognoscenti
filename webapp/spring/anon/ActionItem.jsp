@@ -84,6 +84,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     
 });
 
+function reloadIfLoggedIn() {
+    if (SLAP.loginInfo.verified) {
+        window.location = "<%= ar.getCompleteURL() %>";
+    }
+}
 </script>
 
 </head>

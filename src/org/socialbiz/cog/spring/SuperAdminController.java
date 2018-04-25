@@ -296,7 +296,8 @@ public class SuperAdminController extends BaseController {
               String jspName) throws Exception {
 
          if(!ar.isLoggedIn()){
-             throw new NGException("nugen.project.login.msg",null);
+             specialAnonJSP(ar, "","","Admin.jsp");
+             return;
          }
          if(!ar.isSuperAdmin()){
              throw new NGException("nugen.exceptionhandling.system.admin.rights",null);

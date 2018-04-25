@@ -21,12 +21,9 @@
 package org.socialbiz.cog;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import org.socialbiz.cog.exception.NGException;
-import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 
 /**
@@ -54,6 +51,7 @@ public class SuperAdminLogFile extends DOMFile {
      * This method returns a list of ALL sites created
      * within the last 100 days.
      */
+    /*
     public List<NGBook> getAllNewSites(Cognoscenti cog) throws Exception {
         List<AdminEvent> allEvents = getEventsParent().getChildren("event",
                 AdminEvent.class);
@@ -74,6 +72,7 @@ public class SuperAdminLogFile extends DOMFile {
         }
         return newSites;
     }
+    */
 
 
     /**
@@ -83,6 +82,7 @@ public class SuperAdminLogFile extends DOMFile {
      * mechanism that removes the old registrations from the file, so that only
      * the new ones are left.
      */
+    /*
     public List<UserProfile> getAllNewRegisteredUsers() throws Exception {
         List<AdminEvent> allEvents = getEventsParent().getChildren("event",
                 AdminEvent.class);
@@ -99,6 +99,7 @@ public class SuperAdminLogFile extends DOMFile {
         }
         return newUsers;
     }
+    */
 
     public void createAdminEvent(String objectId, long modTime,
             String modUser, String context) throws Exception {
@@ -119,15 +120,14 @@ public class SuperAdminLogFile extends DOMFile {
 
     public void setLastNotificationSentTime(long time, String logTrace)
             throws Exception {
-        setScalar("lastnotificationsenttime", Long.toString(time));
+        setScalarLong("lastnotificationsenttime", time);
         setScalar("previousSendLog", getScalar("lastSendLog"));
         setScalar("lastSendLog", logTrace);
         save();
     }
 
     public long getLastNotificationSentTime() throws Exception {
-        String timeString = getScalar("lastnotificationsenttime");
-        return safeConvertLong(timeString);
+        return getScalarLong("lastnotificationsenttime");
     }
 
     public String getSendLog() throws Exception {
@@ -137,20 +137,16 @@ public class SuperAdminLogFile extends DOMFile {
     /**
      * Get a four digit numeric id which is unique on the page.
      */
+    /*
     public String getUniqueOnPage() throws Exception {
         // getUniqueOnPage is not implemented. Do we need this???
         throw new ProgramLogicError("getUniqueOnPage is not implemented.");
     }
+    */
 
     protected DOMFace getEventsParent() throws Exception {
         return requireChild("events", DOMFace.class);
     }
-
-/*    public void setLastExceptionNo(long exceptionNO) throws Exception {
-        setScalar("exceptionNumber",
-                String.valueOf(exceptionNO));
-        save();
-    }*/
 
     public int incrementExceptionNo() throws Exception {
         int exceptionNo = (int) getScalarLong("exceptionNumber") + 1;
@@ -159,10 +155,9 @@ public class SuperAdminLogFile extends DOMFile {
         return exceptionNo;
     }
 
-    public void setEmailListenerPropertiesFlag(boolean flag)
+    public void setEmailListenerWorking(boolean flag)
             throws Exception {
-        setScalar("emailListenerPropertiesFlag",
-                String.valueOf(flag));
+        setScalar("emailListenerPropertiesFlag",Boolean.toString(flag));
         save();
     }
 
@@ -172,7 +167,7 @@ public class SuperAdminLogFile extends DOMFile {
         save();
     }
 
-    public boolean getEmailListenerPropertiesFlag() throws Exception {
+    public boolean getEmailListenerWorking() throws Exception {
         boolean emailListenerPropertiesFlag = false;
         String flag = getScalar("emailListenerPropertiesFlag");
         if (flag != null && flag.length() > 0 && "true".equals(flag)) {
@@ -181,7 +176,9 @@ public class SuperAdminLogFile extends DOMFile {
         return emailListenerPropertiesFlag;
     }
 
+    /*
     public String getEmailListenerProblem() throws Exception {
         return getScalar("emailListenerProblem");
     }
+    */
 }

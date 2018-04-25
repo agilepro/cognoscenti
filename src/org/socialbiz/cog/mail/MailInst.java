@@ -272,8 +272,15 @@ public class MailInst extends JSONWrapper {
         MemFile mf = new MemFile();
         mf.fillWithInputStream(message.getInputStream());
         this.setBodyText(mf.toString());
-        this.setCreateDate(message.getSentDate().getTime());
-        this.setLastSentDate(message.getReceivedDate().getTime());
+        this.setCreateDate(safeGetTime(message.getSentDate()));
+        this.setLastSentDate(safeGetTime(message.getReceivedDate()));
+    }
+    
+    private long safeGetTime(Date d) {
+        if (d==null) {
+            return 0;
+        }
+        return d.getTime();
     }
 
     /**

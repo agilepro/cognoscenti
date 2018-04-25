@@ -419,7 +419,7 @@ function validateEmail(email) {
     
     <p><b>Step 6: </b> Are you a robot?</p>
     
-    <p>To protect the site from malicious attach, 
+    <p>To protect the site from malicious attacks, 
        please enter the lesser of 512 and 307 in the 
        box below.
     </p>
