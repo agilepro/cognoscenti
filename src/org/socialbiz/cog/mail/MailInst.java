@@ -199,7 +199,7 @@ public class MailInst extends JSONWrapper {
             
             //Always use a fixed from address to avoid being tagged as a spammer
             String stdFromAddress = mailer.getProperty("mail.smtp.from");
-            message.setFrom(makeAddress(fromName, stdFromAddress)[0]);
+            message.setFrom(makeAddress("\u2379 "+fromName, stdFromAddress)[0]);
             
             String encodedSubjectLine = MimeUtility.encodeText(getSubject(), "utf-8", "B");
             message.setSubject(encodedSubjectLine);
