@@ -88,8 +88,8 @@ public class AddressListEntry implements UserRef
     UserProfile  user;
     String       namePart;
 
-    static final char RAQUO = '\u00BB';
-    static final char LAQUO = '\u00AB';
+    public static final char RAQUO = '\u00BB';
+    public static final char LAQUO = '\u00AB';
 
 
     /**

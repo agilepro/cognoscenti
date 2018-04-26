@@ -81,11 +81,23 @@ public class MailInst extends JSONWrapper {
         kernel.put("Addressee", val);
     }
 
-    public String getFrom() throws Exception {
+    public String getFromAddress() throws Exception {
         return kernel.getString("From");
     }
-    public void setFrom(String val) throws Exception {
+    public void setFromAddress(String val) throws Exception {
+        //there were some email addresses floating around that had 'angle quotes' in them.
+        //This is an attempt to keep them from ever being used in this class.
+        //Can probable remove after 2018 is over
+        if (val.indexOf(AddressListEntry.LAQUO)>=0) {
+            throw new Exception("MailInst.setFromAddress requires a straight SMTP email address and should not have LAQUO in it");
+        }
         kernel.put("From", val);
+    }
+    public String getFromName() throws Exception {
+        return kernel.getString("FromName");
+    }
+    public void setFromName(String val) throws Exception {
+        kernel.put("FromName", val);
     }
 
     public String getSubject() throws Exception {
@@ -161,23 +173,6 @@ public class MailInst extends JSONWrapper {
         
         try {
 
-
-            //check that server is configured to send email, this is OLD functionality
-            //to allow testing the server when there was no SMTP server availble.
-            //Now we have kMail to simulate a server anywhere, so it is better to
-            //use that instead.
-            String transportProtocol = mailer.getProperty("mail.transport.protocol");
-            if ("none".equals(transportProtocol) ) {
-                //if protocol is set to anything else, then just ignore this request
-                //this is an easy way to disable the sending of email across board
-                setStatus(EmailRecord.SKIPPED);
-                setLastSentDate(sendTime);
-                System.out.println("DEPRECATED: Email skipped, because mail.transport.protocol=none ");
-                System.out.println("            Please use kMail instead of setting mail.transport.protocol to a strange value.");
-                return true;  //act like mail was sent
-            }
-
-
             Authenticator authenticator = new MyAuthenticator(mailer.getProperties());
             Session mailSession = Session.getInstance(mailer.getProperties(), authenticator);
             mailSession.setDebug("true".equals(mailer.getProperty("mail.debug")));
@@ -192,15 +187,19 @@ public class MailInst extends JSONWrapper {
             
             //The FROM of the message gets put into the reply-to field
             //so replies go to the person who started the message.
-            String rawFrom = getFrom();
+            String rawFrom = getFromAddress();
+            String fromName = getFromName();
+            if (fromName==null || fromName.length()==0) {
+                //must have something, for the conversion cases
+                fromName = "Weaver User";
+            }
             if (rawFrom!=null && rawFrom.length()>0) {
-                Address[] replyAddresses = new Address[1];
-                replyAddresses[0] = new InternetAddress(AddressListEntry.cleanQuotes(rawFrom));
-                message.setReplyTo(replyAddresses);
+                message.setReplyTo(makeAddress(fromName, rawFrom));
             }
             
             //Always use a fixed from address to avoid being tagged as a spammer
-            message.setFrom(new InternetAddress(AddressListEntry.cleanQuotes(mailer.getProperty("mail.smtp.from"))));
+            String stdFromAddress = mailer.getProperty("mail.smtp.from");
+            message.setFrom(makeAddress(fromName, stdFromAddress)[0]);
             
             String encodedSubjectLine = MimeUtility.encodeText(getSubject(), "utf-8", "B");
             message.setSubject(encodedSubjectLine);
@@ -261,12 +260,44 @@ public class MailInst extends JSONWrapper {
             }
         }
     }
+    
+    private Address[] makeAddress(String name, String address) throws Exception {
+        InternetAddress iAdd = new InternetAddress(address, name, "UTF-8");
+        iAdd.validate();         //make sure there are no problems
+        Address[] addressArray = new Address[1];
+        addressArray[0] = iAdd;
+        return addressArray;
+    }
 
     
     public void setFromMessage(Message message) throws Exception {
         Address[] from = message.getFrom();
         if (from!=null && from.length>0) {
-            this.setFrom(from[0].toString());
+            Address thisFrom = from[0];
+            String fromAddress = thisFrom.toString().trim();
+            int bracketPos = fromAddress.indexOf("<");
+            int endPos = fromAddress.indexOf(">");
+            if (bracketPos>0 && endPos>bracketPos) {
+                this.setFromName(fromAddress.substring(0,bracketPos).trim());
+                this.setFromAddress(fromAddress.substring(bracketPos+1,endPos).trim());
+            }
+            else {
+                this.setFromName(fromAddress);
+                this.setFromAddress(fromAddress);
+            }
+        }
+        Address[] to = message.getAllRecipients();
+        if (to!=null && to.length>0) {
+            Address thisTo = to[0];
+            String toAddress = thisTo.toString().trim();
+            int bracketPos = toAddress.indexOf("<");
+            int endPos = toAddress.indexOf(">");
+            if (bracketPos>0 && endPos>bracketPos) {
+                this.setAddressee(toAddress.substring(bracketPos+1,endPos).trim());
+            }
+            else {
+                this.setFromAddress(toAddress);
+            }
         }
         this.setSubject(message.getSubject());
         MemFile mf = new MemFile();

@@ -191,7 +191,7 @@ public class ResponseRecord extends DOMFace
         
         String bodyStr = body.toString();
         String emailSubject =  noteOrMeet.emailSubject()+": "+detailMsg;
-        mailFile.createEmailRecord(commenterProfile.getUniversalId(), ooa.getEmail(), emailSubject, bodyStr);
+        mailFile.createEmailRecord(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, bodyStr);
     }
 
     public JSONObject getJSON(AuthRequest ar) throws Exception {

@@ -1240,7 +1240,7 @@ public class GoalRecord extends BaseRecord {
         }
 
         String emailSubject = "Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr;
-        mailFile.createEmailRecord(requesterProfile.getUniversalId(), ooa.getEmail(), emailSubject, body.toString());
+        mailFile.createEmailRecord(requesterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
     }
 
     public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {

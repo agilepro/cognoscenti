@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.socialbiz.cog.exception.NGException;
+
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -87,6 +88,9 @@ public class OptOutAddr {
         return assignee;
     }
 
+    /**
+     * Returns the email address portion only, should look like a standard email address
+     */
     public String getEmail() {
         return assignee.getEmail();
     }
@@ -94,6 +98,15 @@ public class OptOutAddr {
         String email = getEmail();
         return (email!=null && email.length()>0);
     }
+    
+    /**
+     * This is the name of the user that this is referring to, the name that should
+     * go along with the email address.
+     */
+    public String getName() {
+        return assignee.getName();
+    }
+    
     public Calendar getCalendar() {
         return cal;
     }

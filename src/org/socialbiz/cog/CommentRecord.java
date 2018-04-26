@@ -623,7 +623,7 @@ public class CommentRecord extends DOMFace {
         clone.flush();
 
         String emailSubject =  noteOrMeet.emailSubject()+": "+opType+cmtType;
-        mailFile.createEmailRecord(commenterProfile.getUniversalId(), ooa.getEmail(), emailSubject, body.toString());
+        mailFile.createEmailRecord(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
     }
 
 

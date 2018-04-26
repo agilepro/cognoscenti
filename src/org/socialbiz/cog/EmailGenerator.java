@@ -328,7 +328,7 @@ public class EmailGenerator extends DOMFace {
             }
         }
         
-        mailFile.createEmailWithAttachments(ngp, getOwner(), ooa.getEmail(), subject, entireBody, attachIds);
+        mailFile.createEmailWithAttachments(ngp, new AddressListEntry(getOwner()), ooa.getEmail(), subject, entireBody, attachIds);
     }
 
     

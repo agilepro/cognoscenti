@@ -878,7 +878,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           clone.flush();
 
           String emailSubject = "New Topic: "+note.getSubject();
-          mailFile.createEmailRecord(commenterProfile.getUniversalId(), ooa.getEmail(), emailSubject, body.toString());
+          mailFile.createEmailRecord(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
       }
 
 

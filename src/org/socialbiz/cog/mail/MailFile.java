@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.mail.Message;
 
+import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -123,7 +124,7 @@ public class MailFile extends JSONWrapper {
 
 
     public MailInst createEmailWithAttachments(NGPage ngc,
-            String from,
+            AddressListEntry from,
             String addressee,
             String subject,
             String emailBody,
@@ -153,7 +154,7 @@ public class MailFile extends JSONWrapper {
      * or you must "prepare" the object to have the message as a string.
      */
     public MailInst createEmailRecord(
-                    String from,
+                    AddressListEntry from,
                     String addressee,
                     String subject,
                     String emailBody) throws Exception {
@@ -168,13 +169,14 @@ public class MailFile extends JSONWrapper {
             if (addressee == null || addressee.length() == 0) {
                 throw new ProgramLogicError("createEmailRecord requires a non empty 'addresses' parameter");
             }
-            if (from == null || from.length() == 0) {
+            if (from == null) {
                 throw new ProgramLogicError("createEmailRecord requires a non null 'from' parameter");
             }
 
             MailInst emailRec = this.createMessage();
             emailRec.setStatus(EmailRecord.READY_TO_GO);
-            emailRec.setFrom(from);
+            emailRec.setFromName(from.getName());
+            emailRec.setFromAddress(from.getEmail());
             emailRec.setCreateDate(getUniqueTime());
             emailRec.setAddressee(addressee);
 

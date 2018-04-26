@@ -120,7 +120,7 @@ public class SiteRequest {
             ChunkTemplate.streamIt(w, templateFile, jo, up.getCalendar());
             w.flush();
 
-            EmailSender.generalMailToList(cog.getUserManager().getSuperAdminMailList(ar), ar.getBestUserId(),
+            EmailSender.generalMailToList(cog.getUserManager().getSuperAdminMailList(ar), new AddressListEntry(ar.getBestUserId()),
                     "Site Approval for " + ar.getBestUserId(),
                     body.toString(), cog);
         }

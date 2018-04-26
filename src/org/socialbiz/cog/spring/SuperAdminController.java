@@ -199,10 +199,11 @@ public class SuperAdminController extends BaseController {
              
              String toAddress = requestInfo.getString("to");
              String from = requestInfo.getString("from");
+             AddressListEntry fromAddress = new AddressListEntry(from);
              String body = requestInfo.getString("body");
              String subject = requestInfo.getString("subject");
              OptOutAddr ooa = new OptOutAddr(new AddressListEntry(toAddress));
-             EmailSender.generalMailToOne(ooa, from, subject, body, ar.getCogInstance());
+             EmailSender.generalMailToOne(ooa, fromAddress, subject, body, ar.getCogInstance());
 
              requestInfo.put("status", "success");
              sendJson(ar, requestInfo);

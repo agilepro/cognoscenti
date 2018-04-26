@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.NGContainer;
@@ -27,6 +28,7 @@ public class MailConversions {
     public static void moveEmails(NGContainer ngp, MailFile newArchive, Cognoscenti cog) throws Exception {
         List<EmailRecord> allEmail = ngp.getAllEmail();
         for (EmailRecord er : allEmail) {
+            AddressListEntry fromAle = new AddressListEntry(er.getFromAddress());
             List<OptOutAddr> allAddressees = er.getAddressees();
             for (OptOutAddr oaa : allAddressees) {
                 //create a message for each addressee ... actually there is
@@ -35,7 +37,8 @@ public class MailConversions {
                 inst.setAddressee(oaa.getEmail());
                 inst.setStatus(er.getStatus());
                 inst.setSubject(er.getSubject());
-                inst.setFrom(er.getFromAddress());
+                inst.setFromAddress(fromAle.getEmail());
+                inst.setFromName(fromAle.getName());
                 oaa.prepareInternalMessage(cog);
                 inst.setBodyText(er.getBodyText()+oaa.getUnSubscriptionAsString());
                 inst.setLastSentDate(er.getLastSentDate());

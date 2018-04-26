@@ -32,6 +32,7 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
@@ -465,7 +466,7 @@ public class EmailSender extends TimerTask {
      * Email is stored in the GlobalMailArchive momentarily before actually
      * sending it.
      */
-    public static void generalMailToOne(OptOutAddr ooa, String from, String subject,
+    public static void generalMailToOne(OptOutAddr ooa, AddressListEntry from, String subject,
             String emailBody, Cognoscenti cog) throws Exception {
         List<OptOutAddr> v = new ArrayList<OptOutAddr>();
         v.add(ooa);
@@ -485,7 +486,7 @@ public class EmailSender extends TimerTask {
      * Email is stored in the GlobalMailArchive momentarily before actually
      * sending it.
      */
-    public static void generalMailToList(List<OptOutAddr> addresses, String from,
+    public static void generalMailToList(List<OptOutAddr> addresses, AddressListEntry from,
             String subject, String emailBody, Cognoscenti cog) throws Exception {
         if (subject == null || subject.length() == 0) {
             throw new ProgramLogicError("simpleEmail requires a non null subject parameter");
@@ -496,8 +497,8 @@ public class EmailSender extends TimerTask {
         if (addresses == null || addresses.size() == 0) {
             throw new ProgramLogicError("simpleEmail requires a non empty addresses parameter");
         }
-        if (from == null || from.length() == 0) {
-            from = emailProperties.getProperty("mail.smtp.from");
+        if (from == null) {
+            throw new ProgramLogicError("simpleEmail requires a non empty from parameter");
         }
         synchronized(globalMailArchive) {
             try {

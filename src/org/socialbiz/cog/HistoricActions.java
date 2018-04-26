@@ -104,7 +104,7 @@ public class HistoricActions {
         List<OptOutAddr> v = new ArrayList<OptOutAddr>();
         v.add(ooir);
 
-        EmailSender.generalMailToList(v, ar.getBestUserId(), "Site Request Resolution for " + owner.getName(),
+        EmailSender.generalMailToList(v, new AddressListEntry(ar.getBestUserId()), "Site Request Resolution for " + owner.getName(),
                 body.toString(), cog);
     }
 
