@@ -2,7 +2,12 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
     $scope.nowTime = new Date().getTime();
     $scope.goalId = goal.id;
     $scope.goal = {assignTo:[],state:2,startdate:0,enddate:0,duedate:0,labelMap:{}};
-    $scope.taskAreaList = taskAreaList;
+    $scope.taskAreaList = [];
+    taskAreaList.forEach( function(item) {
+        if (item.name!="Unspecified") {
+            $scope.taskAreaList.push(item);
+        }
+    });
     $scope.allLabels = allLabels;
     $scope.editMode = startMode;
 

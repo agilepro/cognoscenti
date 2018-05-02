@@ -42,7 +42,6 @@ public class MailConversions {
                 oaa.prepareInternalMessage(cog);
                 inst.setBodyText(er.getBodyText()+oaa.getUnSubscriptionAsString());
                 inst.setLastSentDate(er.getLastSentDate());
-                inst.setExceptionMessage(er.getExceptionMessage());
                 inst.setCreateDate(er.getCreateDate());
                 ArrayList<File> attachments = new ArrayList<File>();
                 if (ngp instanceof NGWorkspace) {
@@ -60,28 +59,5 @@ public class MailConversions {
 
         ngp.clearAllEmail();
     }
-
-    /*
-    public static void sendAllMail(File projectfolder, AuthRequest ar) throws Exception {
-
-        File emailFilePath = new File(projectfolder, "mailArchive.json");
-        if (!emailFilePath.exists()) {
-            throw new Exception("the mail archieve does ont exist: "+emailFilePath);
-        }
-        MailFile newArchive = MailFile.readOrCreate(emailFilePath);
-
-        Mailer mailer = new Mailer(ar.getCogInstance().getConfig().getFile("EmailNotification.properties"));
-
-        List<MailInst> allEmail = newArchive.getAllMessages();
-
-        for (MailInst inst : allEmail) {
-
-            if (MailInst.READY_TO_GO.equals(inst.getStatus())) {
-                inst.sendPreparedMessageImmediately(mailer);
-            }
-        }
-    }
-*/
-
 
 }

@@ -25,9 +25,8 @@ import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.MemFileDataSource;
 import org.socialbiz.cog.MimeTypes;
-import org.socialbiz.cog.exception.NGException;
-
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -117,12 +116,14 @@ public class MailInst extends JSONWrapper {
     public String getExceptionMessage() throws Exception {
         return kernel.getString("Exception");
     }
-    public void setExceptionMessage(Exception e) throws Exception {
-        kernel.put("exception", NGException.getFullMessage(e));
+    public void setExceptionMessage(Exception e, String context) throws Exception {
+        kernel.put("exception", JSONException.convertToJSON(e, context));
     }
+    /*
     public void setExceptionMessage(String s) throws Exception {
         kernel.put("exception", s);
     }
+    */
 
 
     /**
@@ -237,12 +238,12 @@ public class MailInst extends JSONWrapper {
             return true;
         } catch (Exception me) {
             try {
-                System.out.println("Failed ("+new Date()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): "
-                        + me);
+                String context = "Failed ("+new Date()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): ";
+                setExceptionMessage(me, context);
+                setLastSentDate(sendTime);
+                System.out.println(context);
                 me.printStackTrace(System.out);
                 setStatus(EmailRecord.FAILED);
-                setLastSentDate(sendTime);
-                setExceptionMessage(me);
             }
             catch (Exception eee) {
                 System.out.println("EXCEPTION within EXCEPTION: "+eee);
