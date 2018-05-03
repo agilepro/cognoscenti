@@ -1071,15 +1071,30 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
 
+    /*
+     * Sorts all of the not-proposed items first, in numerical order,
+     * then all the proposed ones, in numerical order.
+     * 
+     * An item should typically start as "proposed" and then be 
+     * be moved to a not-proposed (accepted) position
+     */
     static class AgendaItemPositionComparator implements Comparator<AgendaItem> {
 
         @Override
         public int compare(AgendaItem arg0, AgendaItem arg1) {
             //this syntax allowed in JAva 7 and later
-            //return Integer.compare(arg0.getPosition(), arg1.getPosition());
+            if (arg0.isProposed()==arg1.isProposed()) {
+                return Integer.compare(arg0.getPosition(), arg1.getPosition());
+            }
+            else if (arg0.isProposed()) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
 
             //this for before Java 7
-            return Integer.valueOf(arg0.getPosition()).compareTo(Integer.valueOf(arg1.getPosition()));
+            //return Integer.valueOf(arg0.getPosition()).compareTo(Integer.valueOf(arg1.getPosition()));
         }
 
     }

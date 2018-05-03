@@ -120,7 +120,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
     $scope.sortItemsB = function() {
         $scope.meeting.agenda.sort( function(a, b){
-            return a.position - b.position;
+            if (a.proposed==b.proposed) {
+                return a.position - b.position;
+            }
+            else if (a.proposed) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
         } );
         var runTime = new Date($scope.meeting.startTime);
         var runDur = 0;
@@ -500,7 +508,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             docList:[],
             presenters:[],
             presenterList:[],
-            actionItems:[]
+            actionItems:[],
+            proposed:true
         };
         $scope.meeting.agenda.push(newAgenda);
         $scope.openAgenda(newAgenda);
@@ -620,6 +629,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         item.readyToGo=!item.readyToGo
         $scope.saveAgendaItemParts(item, ['readyToGo']);
+    }
+    $scope.toggleProposed = function(item) {
+        if (item.proposed) {
+            item.proposed = false;
+        }
+        else {
+            item.proposed = true;
+        }
+        $scope.saveAgendaItemParts(item, ['proposed']);
     }
 
     $scope.createMinutes = function() {
@@ -1573,7 +1591,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         agendaModalInstance.result
         .then(function (changedAgendaItem) {
             $scope.saveAgendaItemParts(changedAgendaItem, 
-                ["subject", "desc","duration","isSpacer","presenters"]);
+                ["subject", "desc","duration","isSpacer","presenters","proposed"]);
         }, function () {
             //cancel action - nothing really to do
         });

@@ -291,7 +291,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
               href="#" ng-click="showFutureSlots=true" >Show Next Meeting Times</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Create a new agenda item at the bottom of the meeting"
-              href="#" ng-click="createAgendaItem()" >Create Agenda Item</a></li>
+              href="#" ng-click="createAgendaItem()" >Propose Agenda Item</a></li>
           <li role="presentation"><a role="menuitem"
               title="Compose an email messsage about this meeting and send it"
               href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
@@ -791,7 +791,9 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
           <div style="padding:5px;">
             <div style="width:100%">
                 <span class="agendaTitle" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
-                    {{item.number}}.
+                    <span ng-show="item.proposed" >--</span>
+                    <span ng-hide="item.proposed" >{{item.number}}.</span>
+                    
                     <i ng-show="item.topicLink" class="fa fa-lightbulb-o"></i>
                     {{item.subject}} </span>  &nbsp;
 <%if (isLoggedIn) { %>
@@ -822,6 +824,9 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                       <li role="presentation">
                           <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i>
                              Toggle Ready Flag</a></li>
+                      <li role="presentation" >
+                          <a role="menuitem" ng-click="toggleProposed(item)"><i class="fa fa-thumbs-o-up"></i>
+                             Toggle Accepted/Proposed</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i>
                              Move Up</a></li>
@@ -834,6 +839,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 
                    </ul>
                 </span>
+                <span ng-show="item.proposed" style="background-color:yellow;padding:3px;cursor:pointer" ng-click="toggleProposed(item)">Proposed</span>
                 <span ng-show="meeting.state==2">
                     <span ng-hide="item.timerRunning" style="padding:5px">
                         <button ng-click="agendaStartButton(item)"><i class="fa fa-clock-o"></i> Start</button>
@@ -1070,7 +1076,7 @@ Meeting Duration: {{meeting.timerTotal|minutes}}
 <%if (isLoggedIn) { %>
     <hr/>
     <div style="margin:20px;" ng-show="meeting.state<3">
-        <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">Create New Agenda Item</button>
+        <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">Propose New Agenda Item</button>
     </div>
 
 <% } %>

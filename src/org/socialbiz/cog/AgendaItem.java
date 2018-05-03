@@ -120,6 +120,16 @@ public class AgendaItem extends CommentContainer {
         setAttributeBool("readyToGo", newVal);
     }
 
+    /**
+     * An agenda item might start as a proposed, and then later be
+     * accepted (not proposed).  
+     * 
+     * For schema migration, old agenda items without a setting will
+     * be considered to be already accepted (not proposed).
+     */
+    public boolean isProposed() {
+        return getAttributeBool("proposed");
+    }
 
     public List<String> getActionItems()  throws Exception {
         return getVector("actionId");
@@ -266,6 +276,7 @@ public class AgendaItem extends CommentContainer {
         extractAttributeBool(aiInfo, "timerRunning");
         extractAttributeLong(aiInfo, "timerStart");
         extractAttributeLong(aiInfo, "timerElapsed");
+        extractAttributeBool(aiInfo, "proposed");
         String htmlMinutes = WikiConverterForWYSIWYG.makeHtmlString(ar, getScalar("minutes"));
         aiInfo.put("minutes", htmlMinutes);
         return aiInfo;
@@ -346,6 +357,7 @@ public class AgendaItem extends CommentContainer {
         }
         updateAttributeBool("isSpacer", input);
         updateAttributeBool("showMinutes", input);
+        updateAttributeBool("proposed", input);
     }
 
     public void gatherUnsentScheduledNotification(NGWorkspace ngw, EmailContext meet, ArrayList<ScheduledNotification> resList) throws Exception {

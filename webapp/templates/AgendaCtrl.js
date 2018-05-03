@@ -8,7 +8,6 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
     console.log("AgendaItem is: ", agendaItem);
 
     $scope.ok = function () {
-        console.log("OK PRESSED", $scope.goal);
         $modalInstance.close($scope.agendaItem);
     };
 
