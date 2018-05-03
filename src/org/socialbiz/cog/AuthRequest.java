@@ -1311,7 +1311,7 @@ public class AuthRequest
             //if the superAdmin not defined, then NOBODY is super admin
             return false;
         }
-        return superAdmin.equals(key);
+        return superAdmin.contains(key);
     }
 
     /**
