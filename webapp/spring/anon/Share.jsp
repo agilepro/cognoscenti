@@ -104,6 +104,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     max-width:300px;
     background-color: white !important;
 }
+.dateColumn {
+    min-width:100px;
+}
+tr:hover {
+    background-color: #EEE;
+}
 </style>
 
 
@@ -133,16 +139,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <tr>
                <th></th>
                <th>Name</th>
-               <th>Updated</th>
+               <th class="dateColumn">Updated</th>
                <th style="text-align:right">Size</th>
             </tr>
-            <tr ng-repeat="rec in sharePort.docs" ng-click="acessDocument(rec)" style="cursor:pointer">
+            <tr ng-repeat="rec in sharePort.docs" ng-click="acessDocument(rec)" style="cursor:pointer" title="Click to access document">
                <td ng-hide="rec.url" >
                  <span class="fa fa-download"></scan></td>
                <td ng-show="rec.url" >
                  <span class="fa fa-external-link"></scan></td>
                <td><b>{{rec.name}}</b> ~ {{rec.description}}</td>
-               <td>{{rec.modifiedtime|date}}</td>
+               <td class="dateColumn">{{rec.modifiedtime|date}}</td>
                <td ng-show="rec.size>=0" style="text-align:right">{{rec.size|number}}</td>
                <td ng-hide="rec.size>=0" style="text-align:right;color:lightgray">Web Link</td>
             </tr>
