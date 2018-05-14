@@ -115,7 +115,7 @@
         <javac debug="on" includeAntRuntime="false" nowarn="true"
                srcdir="${source.dir.src}" destdir="${target.dir}/jartemp"
                target="1.6" source="1.6"
-               includes="org/socialbiz/cog/util/*.java,org/socialbiz/cog/*.java,org/socialbiz/cog/exception/*.java">
+               includes="org/socialbiz/cog/util/*.java,org/socialbiz/cog/*.java,org/socialbiz/cog/exception/*.java,org/socialbiz/cog/capture/*.java">
             <classpath refid="build.classpathJar" />
         </javac>
 
@@ -133,7 +133,7 @@
         <javac debug="on" includeAntRuntime="false" nowarn="true"
                srcdir="${source.dir.src}" destdir="${target.dir}/cog/WEB-INF/classes"
                target="1.6" source="1.6"
-               includes="org/socialbiz/cog/rest/*.java,org/socialbiz/cog/spring/*.java,org/socialbiz/cog/test/*.java,org/socialbiz/cog/api/*.java,org/socialbiz/cog/mail/*.java">
+               includes="org/socialbiz/cog/rest/*.java,org/socialbiz/cog/spring/*.java,org/socialbiz/cog/test/*.java,org/socialbiz/cog/api/*.java,org/socialbiz/cog/mail/*.java,org/socialbiz/cog/capture/*.java">
             <classpath refid="build.classpath" />
         </javac>
 
