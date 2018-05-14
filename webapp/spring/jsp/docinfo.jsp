@@ -446,6 +446,8 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
             <%}else if("URL".equals(attachment.getType())){ %>
             <a href="<%ar.write(permaLink); %>" target="_blank"><img
                 src="<%=ar.retPath%>assets/btnAccessLinkURL.gif"></a> 
+            <a href="CleanAtt.htm?path=<% ar.writeURLData(permaLink); %>" target="_blank">
+                <button class="btn btn-primary btn-raised">View Text Only</button></a>
             <%} %>
 
             </td>

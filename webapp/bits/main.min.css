@@ -151,3 +151,16 @@ a, a:focus, a:hover {
     box-shadow: 2px 2px #BBBBBB;
     max-width:200px;
 }
+
+h1{
+    font-size:36px;
+    font-weight:300;
+}
+h2{
+    font-size:30px;
+    font-weight:300;
+}
+h3{
+    font-size:24px;
+    font-weight:300;
+}

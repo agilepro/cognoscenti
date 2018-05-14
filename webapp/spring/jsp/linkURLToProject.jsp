@@ -131,6 +131,15 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
         <tr>
             <td class="firstcol">
+                
+            </td>
+            <td>
+                <a href="CleanAtt.htm?path={{newLink.url}}" target="_blank">
+                    <button class="btn btn-prinary btn-raised">View as a Text Only page</button></a>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol">
                 Name:
             </td>
             <td>
