@@ -626,7 +626,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp, 3)">
                           <i class="fa fa-question-circle" style="color:gray"></i>
-                          Indifferent</a></li>
+                          Unknown</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp, 2)">
                           <i class="fa fa-minus-circle" style="color:red"></i>
@@ -1154,7 +1154,7 @@ Meeting Duration: {{meeting.timerTotal|minutes}}
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp, 3)">
                           <i class="fa fa-question-circle" style="color:gray"></i>
-                          Indifferent</a></li>
+                          Unknown</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp, 2)">
                           <i class="fa fa-minus-circle" style="color:red"></i>

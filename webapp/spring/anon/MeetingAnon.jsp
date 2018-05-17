@@ -251,7 +251,7 @@ function reloadIfLoggedIn() {
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp, 3)">
                           <i class="fa fa-question-circle" style="color:gray"></i>
-                          Indifferent</a></li>
+                          Unknown</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp, 2)">
                           <i class="fa fa-minus-circle" style="color:red"></i>
