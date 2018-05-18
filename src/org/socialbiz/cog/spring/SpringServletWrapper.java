@@ -21,6 +21,7 @@
 package org.socialbiz.cog.spring;
 
 import java.net.URLEncoder;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,8 +31,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.NGPageIndex;
-import org.socialbiz.cog.util.SSLPatch;
 import org.springframework.web.servlet.DispatcherServlet;
+
+import com.purplehillsbooks.streams.SSLPatch;
 
 
 /**

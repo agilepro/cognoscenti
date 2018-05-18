@@ -167,25 +167,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             return;
         }
         $scope.autosave();
-        /*
-        $scope.isUpdating = true;
-        var saveRec = {minutes:[]};
-        saveRec.minutes.push(min);
-        var postURL = "updateMeetingNotes.json?id="+$scope.meetId;
-        console.log("Saving Current State: ", saveRec);
-        var postData = JSON.stringify(saveRec);
-        min.lastSave = min.new;
-        $http.post(postURL, postData)
-        .success( function(data) {
-            $scope.setMinutesData(data);
-            $scope.handleDeferred();
-            console.log("Got Back: ", data);
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-            $scope.handleDeferred();
-        });
-        */
     }
     $scope.autosave = function() {
         if ($scope.showError) {
@@ -218,7 +199,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
             $scope.handleDeferred();
         });
     }
-	$scope.promiseAutosave = $interval($scope.autosave, 6000);
+	$scope.promiseAutosave = $interval($scope.autosave, 3000);
     
     $scope.closeWindow = function() {
         $scope.autosave();

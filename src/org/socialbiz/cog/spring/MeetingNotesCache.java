@@ -18,7 +18,6 @@ public class MeetingNotesCache {
     private class NoteHolder {
         List<AddressListEntry> members;
         String targetRole;
-        long cacheTime = 0;
         JSONObject notesObject;
         JSONObject fullObject;
         String meetingId;
@@ -105,7 +104,6 @@ public class MeetingNotesCache {
         String key = ngw.getSiteKey() + "|" + ngw.getKey() + "|" + meetingId;
         MeetingRecord meeting = ngw.findMeeting(meetingId);
         NoteHolder nh = new NoteHolder();
-        nh.cacheTime = System.currentTimeMillis();
         nh.notesObject = meeting.getMeetingNotes();
         nh.fullObject = meeting.getFullJSON(ar, ngw);
         nh.targetRole = meeting.getTargetRole();

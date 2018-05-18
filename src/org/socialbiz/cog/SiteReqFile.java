@@ -201,7 +201,7 @@ public class SiteReqFile {
         SiteReqFile siteReqFile = new SiteReqFile(cog);
         SiteRequest newRequest = siteReqFile.createNewRequest(newSiteReq);
 
-        String preApprove = newSiteReq.getString("preapprove").toLowerCase();
+        String preApprove = newSiteReq.optString("preapprove", "").toLowerCase();
         if (preApprove.equals("ccc2018")) {
             HistoricActions ha = new HistoricActions(ar);
             ha.completeSiteRequest(newRequest, true, "Accepted pre-approval code: "+preApprove);

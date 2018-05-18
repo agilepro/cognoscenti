@@ -47,28 +47,6 @@ public class GoalRecord extends BaseRecord {
 
     }
 
-    /**
-     * Make sure that all the important attributes are copied from another action item
-     * object, but NOT the id. The ID remains unchanged.
-     */
-    private void copyFrom(GoalRecord other) throws Exception {
-        setSynopsis(other.getSynopsis());
-        setDescription(other.getDescription());
-        setActionScripts(other.getActionScripts());
-        setDueDate(other.getDueDate());
-        setStartDate(other.getStartDate());
-        setEndDate(other.getEndDate());
-        setPriority(other.getPriority());
-        setDuration(other.getDuration());
-        setCreator(other.getCreator());
-        setState(other.getState());
-        setRank(other.getRank());
-        setStatus(other.getStatus());
-        setPercentComplete(other.getPercentComplete());
-        setAssigneeCommaSeparatedList(other.getAssigneeCommaSeparatedList());
-        setLastState(other.getLastState());
-        setProspects(other.getProspects());
-    }
 
     /**
      * Generates a fully qualified, licensed, Wf-XML link for this action item This is

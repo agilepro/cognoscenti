@@ -50,6 +50,16 @@ public class ThreeWayMerge {
         return result.toString();
     }
     
+    /**
+     * This is the easy part of the algorithm, which is walk through
+     * the strings advancing each as long as they are all three exactly 
+     * the same.   Advance increments the pos pointer in the PosString
+     * with the understanding that what is before the pos pointer has
+     * been found to be identical.  Remember that due to previous differences
+     * the actual offset might be different, but we are walking through
+     * spans of the strings that are identical looking for the beginning
+     * of a span for which one or two of the strings are different.
+     */
     private void skipEqualsSpan() {
         while (cur.isMore() && 
                old.isMore() && 
@@ -66,12 +76,12 @@ public class ThreeWayMerge {
 
     /**
      * The goal here is to find the span of differences in the three strings.
-     * That is, we want to find a span of three or more characters that are
+     * That is, we want to find the next span of three or more characters that are
      * the same in all three string after the current point.
      * We hope to find the shortest span across the three.
      * In many cases, two strings might be identical.
      * But we need to find a span that exists in all three strings, 
-     * and that span that is closets to the beginning so that we have
+     * and that span that is closest to the beginning so that we have
      * a minimal span of difference.
      * 
      * for example
@@ -90,9 +100,10 @@ public class ThreeWayMerge {
      *     abc ^ 123ghi456 ^ ghi
      *     abc ^ x         ^ ghi456ghi
      * 
-     * So, we start looking for chunks (3-letter-strings) that are clost to the
-     * beginning of each of the strings.  Gradually look for further and further
-     * chunks.  Continue to try to find the minimal.
+     * So, we start looking for chunks (3-letter-strings) that are closest to the
+     * beginning of each of the strings -- actually closest to the beginning of the 
+     * the span after the section that was found identical.  Gradually look for further and further
+     * chunks.  Continue to try to find the minimal distance.
      */
     private void findShortestDiffBlock() {
         
@@ -122,7 +133,6 @@ public class ThreeWayMerge {
                     cur.setDiffSize(chunk);
                     old.setDiffSize(chunk);
                     neu.setDiffSize(chunk);
-                    //System.out.println("     setting chunk: "+chunk+" at "+cur.diffSize+" + "+old.diffSize+" + "+neu.diffSize);                
                 }
                 return;
             }
@@ -131,8 +141,10 @@ public class ThreeWayMerge {
                 //nothing left in this source, try the next
                 continue;
             }
+            
+            //A chunk is a three letter string at a particular bias position
+            //beyond the end of the last matching section.
             String chunk = allPosStr[which].getChunk(bias);
-            //System.out.println("Trying: which="+which+", bias="+bias+", wich chunk: "+chunk);
             
             int curPos = cur.distanceOf(chunk);
             if (curPos<0) {
@@ -192,11 +204,19 @@ public class ThreeWayMerge {
             result.append(newDiff);
         }
         else {
-            //this is a case where all three are different.  Blow away
-            //whatever changes were there, and blast the new case in
-            //people were editing the same thing at the same time, 
-            //so just take the newest version even though it means
-            //losing some changes from someone else
+            //this is a case where all three are different, and it 
+            //means that two people were typing new material into the
+            //same spot at the same time.
+            //Include BOTH the changes from the current version
+            //and ALSO the changes from the new version.
+            //This might result in some duplication.
+            //An earlier version of this algorithm used to delete the 
+            //earlier modification, but this caused a lot of problem with
+            //multiple people typing on the end of the text at the same time.
+            //People would LOSE sentences and things like that.  
+            //This will cause each person's merges to appear mixed with the 
+            //other, but it will still be there to move and fix by editing.
+            result.append(curDiff);
             result.append(newDiff);
         }
         cur.skipDiff();
@@ -229,34 +249,12 @@ public class ThreeWayMerge {
         public String getChunk(int bias) {
             return s.substring(pos+bias, pos+bias+3);
         }
-        /*
-        public boolean hasChunk(String chunk) {
-            return s.indexOf(chunk, pos)>=pos;
-        }
-        */
         public int distanceOf(String chunk) {
             return s.indexOf(chunk, pos)-pos;
         }
         public void setDiffSize(String chunk) {
             diffSize = distanceOf(chunk);
         }
-        //finds the first set of three characters from the other string
-        //that is found in this string, and returns the offset where found 
-        /*
-        public int distance(PosStr a, PosStr b) {
-            int numChunks = a.chunksLeft();
-            for (int bias=0; bias<numChunks; bias++) {
-                String chunk = a.getChunk(bias);
-                int off = s.indexOf(chunk, pos);
-                if (off>=pos) {
-                    if (b.hasChunk(chunk)) {
-                        return off-pos;
-                    }
-                }
-            }
-            return -1;
-        }
-        */
         
         public String getDiffBlock() {
             if (diffSize<0) {
@@ -454,6 +452,15 @@ public class ThreeWayMerge {
             curStr = "abcxxxghi"; //replace some
             neuStr = "abcdzzzefghi"; //add different
             testOneMerge("abcdzzzefghi", curStr, oldStr, neuStr);
+            
+            //now test the special cases on the end, where both have added
+            //and we want to preserve both changes, even though the clash
+            //might be non-sense.  At least is it better than losing your entire change.
+            oldStr = "abcdefghi";
+            curStr = "abcdefghijlk";
+            neuStr = "abcdefghimno";
+            testOneMerge("abcdefghijlkmno", curStr, oldStr, neuStr);
+            
     
             curStr = "This is a proper test sentence"; //add some
             oldStr = "This is a proper sentence"; //add some
@@ -480,11 +487,11 @@ public class ThreeWayMerge {
         }
     }
     
-    public static void testOneMerge(String res, String curStr, String oldStr, 
+    public static void testOneMerge(String result, String curStr, String oldStr, 
             String neuStr) throws Exception {
         String actual = ThreeWayMerge.mergeThem(curStr, oldStr, neuStr);
-        if (!actual.equals(res)) {
-            throw new Exception("MERGE FAIL:  got ("+actual+") instead of expected ("+res+")");
+        if (!actual.equals(result)) {
+            throw new Exception("MERGE FAIL:  got ("+actual+") instead of expected ("+result+")");
         }
         System.out.println("TEST MERGE: ("+curStr+")("+oldStr+")("+neuStr
                     +")  got ("+actual+")");

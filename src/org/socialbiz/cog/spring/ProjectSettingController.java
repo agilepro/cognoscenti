@@ -114,7 +114,7 @@ public class ProjectSettingController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGContainer ngc = registerSiteOrProject(ar, siteId, pageId);
+        registerSiteOrProject(ar, siteId, pageId);
         if (ar.isAdmin()) {
             streamJSP(ar, "leaf_admin");
         }
