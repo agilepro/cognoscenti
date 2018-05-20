@@ -210,7 +210,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         saveRecord.universalid = $scope.noteInfo.universalid;
         saveRecord.comments = [];
         saveRecord.comments.push(cmt);
-        console.log("Saving NOTE comment: ", saveRecord);
         $scope.savePartial(saveRecord);
     }
     $scope.saveDocs = function() {
@@ -458,7 +457,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             return;
         }
         $scope.noteInfo.discussionPhase = newPhase;
-        $scope.saveEdits(['discussionPhase','suppressEmail','subscribers']);
+        $scope.saveEdits(['discussionPhase','suppressEmail','subscribers','sendEmailNow']);
     }
     $scope.getPhaseStyle = function() {
         if ($scope.noteInfo.draft) {
@@ -475,7 +474,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                     listCopy.push(player)
                 });
                 $scope.noteInfo.subscribers = listCopy;
-                console.log("found members", item);
             }
         });
     }
@@ -535,7 +533,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         if (defaultBody) {
             newComment.html = defaultBody;
         }
-        console.log("STARTING WITH: ", newComment);
         $scope.openCommentEditor({}, newComment);
     }
 
