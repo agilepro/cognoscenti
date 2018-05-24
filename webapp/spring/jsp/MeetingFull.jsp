@@ -555,7 +555,8 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
     
     <div class="comment-outer"  
          title="Shows what time slots people might be able to attend.">
-      <div ng-click="showTimeSlots=!showTimeSlots">Proposed Meeting Times</div>
+      <div ng-click="showTimeSlots=!showTimeSlots">Proposed Meeting Times 
+          <span ng-hide="showTimeSlots"><a>(Click to view)</a></span> </div>
       <div class="comment-inner" ng-show="showTimeSlots">
           <table class="table">
           <tr>
@@ -1086,7 +1087,8 @@ Meeting Duration: {{meeting.timerTotal|minutes}}
     
     <div class="comment-outer" style="margin-top:50px" 
          title="Shows what time slots people might be able to attend for the next meeting.">
-      <div ng-click="showFutureSlots=!showFutureSlots">Future Meeting Times</div>
+      <div ng-click="showFutureSlots=!showFutureSlots">Future Meeting Times
+          <span ng-hide="showFutureSlots"><a>(Click to view)</a></span></div>
       <div class="comment-inner" ng-show="showFutureSlots" >
           <table class="table">
           <tr>
