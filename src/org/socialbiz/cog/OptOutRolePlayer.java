@@ -50,8 +50,18 @@ public class OptOutRolePlayer extends OptOutAddr {
         if (emailId==null || emailId.length()==0) {
             throw new Exception("There is a problem with this addressee, the email field is blank????");
         }
-        NGPageIndex ngpi = clone.getCogInstance().getWSBySiteAndKeyOrFail(siteID, containerID);
-        NGWorkspace ngc = ngpi.getWorkspace();
+        
+        NGPageIndex ngpi = null;
+        if (siteID==null || siteID.length()==0) {
+            ngpi = clone.getCogInstance().lookForWSBySimpleKeyOnly(containerID);
+        }
+        else {
+            ngpi = clone.getCogInstance().getWSBySiteAndKey(siteID, containerID);
+        }
+        NGWorkspace ngc = null;
+        if (ngpi!=null) {
+            ngc = ngpi.getWorkspace();
+        }
 
         //if the project no longer exists, then just use the generic response.
         if (ngc==null) {

@@ -28,7 +28,8 @@ public class MailConversions {
     public static void moveEmails(NGContainer ngp, MailFile newArchive, Cognoscenti cog) throws Exception {
         List<EmailRecord> allEmail = ngp.getAllEmail();
         for (EmailRecord er : allEmail) {
-            AddressListEntry fromAle = new AddressListEntry(er.getFromAddress());
+            String fullFromAddress = er.getFromAddress();
+            AddressListEntry fromAle = AddressListEntry.parseCombinedAddress(fullFromAddress);
             List<OptOutAddr> allAddressees = er.getAddressees();
             for (OptOutAddr oaa : allAddressees) {
                 //create a message for each addressee ... actually there is
