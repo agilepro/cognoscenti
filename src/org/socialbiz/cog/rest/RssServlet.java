@@ -39,6 +39,9 @@ import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.UtilityMethods;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.HTMLWriter;
 
 
@@ -222,6 +225,7 @@ public class RssServlet extends javax.servlet.http.HttpServlet
     private void handleException(HttpServletResponse resp, Exception e)
     {
         try {
+            JSONObject exObj = JSONException.convertToJSON(e, "RssServlet");
             OutputStream out = resp.getOutputStream();
             resp.setContentType("text/html;charset=UTF-8");
             if (out == null) {
@@ -234,7 +238,7 @@ public class RssServlet extends javax.servlet.http.HttpServlet
             w.write("<hr/>\n");
             w.write("<a href=\"main.jsp\">Main</a>\n");
             w.write("<hr/>\n<pre>");
-            e.printStackTrace(new PrintWriter(new HTMLWriter(w)));
+            exObj.write(new HTMLWriter(w));
             w.write("</pre></body></html>\n");
             w.flush();
         }

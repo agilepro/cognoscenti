@@ -98,8 +98,8 @@ public class BaseController {
             ar.invokeJSP("/spring/anon/Error.jsp");
         }
         catch (Exception e) {
-            System.out.println("%%%%%% Exception while reporting exception in BaseController");
-            e.printStackTrace(System.out);
+            JSONException.traceException(System.out, e,
+                    "%%%%%% Exception while reporting exception in BaseController");
         }
     }
 
@@ -450,19 +450,6 @@ public class BaseController {
 
             ar.logException("EXCEPTION (BaseController)", e);
 
-            /*
-            JSONObject errorResponse = new JSONObject();
-            errorResponse.put("responseCode", 500);
-            JSONObject exception = new JSONObject();
-            errorResponse.put("exception", exception);
-
-            exception.put("msgs", msgs);
-
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            exception.put("stack", sw.toString());
-            */
-            
             JSONObject errorResponse = JSONException.convertToJSON(e, "BaseController Exception tid="+Thread.currentThread().getId());
 
             ar.resp.setStatus(400);

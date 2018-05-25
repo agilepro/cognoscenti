@@ -37,6 +37,8 @@ import org.socialbiz.cog.DOMFile;
 import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
 
+import com.purplehillsbooks.json.JSONException;
+
 
     public class WebCrawler {
 
@@ -299,7 +301,7 @@ import org.w3c.dom.Document;
                 }
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                JSONException.traceException(System.out, ex, "WebCrawler.main");
             }
 
         }

@@ -50,6 +50,8 @@ import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.SectionWiki;
 import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UserProfile;
+
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.streams.MemFile;
 
 public class PDFUtil {
@@ -758,7 +760,7 @@ public class PDFUtil {
             System.out.println("DONE..");
 
         }catch(Exception e){
-            e.printStackTrace();
+            JSONException.traceException(System.out, e, "PDF Generator Exception");
         }
     }
 }

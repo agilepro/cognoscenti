@@ -2,6 +2,8 @@ package org.socialbiz.cog.test;
 
 import java.io.File;
 
+import com.purplehillsbooks.json.JSONException;
+
 public class CogModuleTest {
 
     public CogModuleTest(String path) throws Exception {
@@ -25,7 +27,7 @@ public class CogModuleTest {
         }
         catch (Exception e) {
             System.out.print("\n\nFATAL ERROR EXIT PROGRAM:\n");
-            e.printStackTrace();
+            JSONException.traceException(System.out, e, "FATAL ERROR EXIT PROGRAM");
         }
     }
 }

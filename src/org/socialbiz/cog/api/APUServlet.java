@@ -162,40 +162,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
     }
 
     private void streamException(Exception e, AuthRequest ar) {
-        try {
-            //all exceptions are delayed by 3 seconds to avoid attempts to
-            //mine for valid license numbers
-            Thread.sleep(3000);
-
-            System.out.println("API_ERROR: "+ar.getCompleteURL());
-
-            ar.logException("APU Servlet", e);
-
-            JSONObject errorResponse = new JSONObject();
-            errorResponse.put("responseCode", 500);
-            JSONObject exception = new JSONObject();
-            errorResponse.put("exception", exception);
-
-            JSONArray msgs = new JSONArray();
-            Throwable runner = e;
-            while (runner!=null) {
-                System.out.println("    ERROR: "+runner.toString());
-                msgs.put(runner.toString());
-                runner = runner.getCause();
-            }
-            exception.put("msgs", msgs);
-
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            exception.put("stack", sw.toString());
-
-            ar.resp.setContentType("application/json");
-            errorResponse.write(ar.resp.writer, 2, 0);
-            ar.flush();
-        } catch (Exception eeeee) {
-            // nothing we can do here...
-            ar.logException("API Servlet Error Within Error", eeeee);
-        }
+        APIServlet.streamException(e,ar);
     }
 
 

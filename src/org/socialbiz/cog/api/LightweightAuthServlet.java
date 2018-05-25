@@ -29,7 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
+
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
 
@@ -114,8 +116,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
             jo.write(w);
             w.flush();
         } catch (Exception e) {
-            System.out.println("COG-LAuth FAILURE LightweightAuthServlet handling GET request "+e);
-            e.printStackTrace(System.out);
+            JSONException.traceException(System.out, e, "COG-LAuth FAILURE LightweightAuthServlet handling GET request");
         }
     }
 
@@ -212,17 +213,9 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
             }
         }
         catch (Exception e) {
-            System.out.println("COG-LAuth FAILURE handling "+pathInfo);
-            e.printStackTrace(System.out);
             try {
-                JSONObject err = new JSONObject();
-                JSONArray msgs = new JSONArray();
-                Throwable t = e;
-                while (t!=null) {
-                    msgs.put(t.toString());
-                    t = t.getCause();
-                }
-                err.put("exception", msgs);
+                JSONObject err = JSONException.convertToJSON(e, "COG-LAuth FAILURE handling "+pathInfo);
+                JSONException.traceConvertedException(System.out, err);
                 if (w!=null) {
                     err.write(w,2,0);
                     w.flush();

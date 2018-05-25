@@ -53,6 +53,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -390,7 +391,7 @@ public class ProjectGoalController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/updateTaskStatus.ajax", method = RequestMethod.POST)
-    public void handleActivityUpdates(@PathVariable String siteId, @PathVariable String pageId,@RequestParam String pId,
+    public void updateTaskStatus(@PathVariable String siteId, @PathVariable String pageId,@RequestParam String pId,
                 HttpServletRequest request, HttpServletResponse response) throws Exception
     {
         AuthRequest ar = null;
@@ -437,7 +438,7 @@ public class ProjectGoalController extends BaseController {
             NGWebUtils.sendResponse(ar, jo.toString());
         }catch (Exception ex) {
             ar.logException("Caught by updateTaskStatus.ajax", ex);
-            NGWebUtils.sendResponse(ar, NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale()));
+            NGWebUtils.sendResponse(ar, JSONException.convertToJSON(ex, "updateTaskStatus").toString());
         }
     }
 
@@ -604,7 +605,7 @@ public class ProjectGoalController extends BaseController {
             }
             responseMessage = param.toString();
         }catch(Exception ex){
-            responseMessage = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
+            responseMessage = JSONException.convertToJSON(ex, "searchSubProcess").toString();
             ar.logException("Caught by subProcess.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, responseMessage);

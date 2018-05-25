@@ -46,6 +46,7 @@ import org.socialbiz.cog.UtilityMethods;
 import org.socialbiz.cog.WikiConverter;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
 
@@ -554,7 +555,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         //don't initialize here.  Instead, initialize in SpringServlet!
     }
 
-    private void streamException(Exception e, AuthRequest ar) {
+    public static void streamException(Exception e, AuthRequest ar) {
         try {
             //all exceptions are delayed by 3 seconds to avoid attempts to
             //mine for valid license numbers
@@ -564,24 +565,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
             ar.logException("API Servlet", e);
 
-            JSONObject errorResponse = new JSONObject();
-            errorResponse.put("responseCode", 500);
-            JSONObject exception = new JSONObject();
-            errorResponse.put("exception", exception);
-
-            JSONArray msgs = new JSONArray();
-            Throwable runner = e;
-            while (runner!=null) {
-                System.out.println("    ERROR: "+runner.toString());
-                msgs.put(runner.toString());
-                runner = runner.getCause();
-            }
-            exception.put("msgs", msgs);
-
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            exception.put("stack", sw.toString());
-
+            JSONObject errorResponse = JSONException.convertToJSON(e, "API Exception");
             ar.resp.setContentType("application/json");
             errorResponse.write(ar.resp.writer, 2, 0);
             ar.flush();

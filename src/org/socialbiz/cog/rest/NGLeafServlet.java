@@ -36,6 +36,8 @@ import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionAttachments;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.streams.HTMLWriter;
 
 /**
@@ -384,7 +386,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
             ar.write(ar.retPath);
             ar.write("\" title=\"Access the root\">Main</a>\n");
             ar.write("<hr/>\n<pre>");
-            e.printStackTrace(new PrintWriter(new HTMLWriter(ar.w)));
+            JSONException.convertToJSON(e, "NG Leaf Servlet").write(new HTMLWriter(ar.w));
             ar.write("</pre></body></html>\n");
             ar.flush();
         } catch (Exception eeeee) {

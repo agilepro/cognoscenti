@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 
@@ -884,7 +885,7 @@ public class MainTabsViewControler extends BaseController {
              responseText = paramMap.toString();
          }
          catch (Exception ex) {
-             responseText = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
+             responseText = JSONException.convertToJSON(ex, "isNoteDeleted").toString();
              ar.logException("Caught by isNoteDeleted.ajax", ex);
          }
          NGWebUtils.sendResponse(ar, responseText);

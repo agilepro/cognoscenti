@@ -50,6 +50,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
+import com.purplehillsbooks.json.JSONException;
+
 @Controller
 public class UploadFileController extends BaseController {
 
@@ -399,7 +401,7 @@ public class UploadFileController extends BaseController {
             ngw.saveContent( ar, "Modified attachments");
         }
         catch(Exception ex){
-            message = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
+            message = JSONException.convertToJSON(ex, "unDeleteAttachment").toString();
             ar.logException("Caught by getFileAccessName.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, message);
@@ -499,14 +501,14 @@ public class UploadFileController extends BaseController {
             ngc.saveContent( ar, "Modified attachments");
         }
         catch(Exception ex){
-            message = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
+            message = JSONException.convertToJSON(ex, "deleteReminder").toString();
             ar.logException("Caught by deleteReminder.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, message);
     }
 
     @RequestMapping(value = "/setEditMode.ajax", method = RequestMethod.POST)
-    protected void setEditAttachmentMode( HttpServletRequest request,
+    protected void setEditMode( HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
         String responseText = null;
@@ -534,7 +536,7 @@ public class UploadFileController extends BaseController {
             ngw.saveContent( ar, "Modified attachments");
         }
         catch (Exception ex) {
-            responseText = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
+            responseText = JSONException.convertToJSON(ex, "setEditMode").toString();
             ar.logException("Caught by setEditMode.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, responseText);

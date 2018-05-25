@@ -47,6 +47,7 @@ import org.socialbiz.cog.SuperAdminLogFile;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -174,10 +175,8 @@ public class EmailSender extends TimerTask {
             Exception failure = new Exception(
                     "EmailSender-TimerTask failed in run method.",
                     e);
-            System.out.println("EmailSender-TimerTask: FATAL FAILURE - " + e);
-            failure.printStackTrace(System.out);
+            JSONException.traceException(System.out, failure, "EmailSender-TimerTask failed in run method.");
             threadLastCheckException = failure;
-            System.out.println("EmailSender-TimerTask: ---------------------------- ");
         }
         finally {
             //only call this when you are sure you are not holding on to any containers
@@ -208,8 +207,7 @@ public class EmailSender extends TimerTask {
                 globalArchive.save();
             }
             catch (Exception e) {
-                System.out.println("FATAL ERROR HANDLING GLOBAL EMAIL: "+e.toString());
-                e.printStackTrace(System.out);
+                JSONException.traceException(System.out, e, "FATAL ERROR HANDLING GLOBAL EMAIL");
             }
         }
     }

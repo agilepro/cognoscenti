@@ -35,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -532,7 +534,7 @@ public class NGPageIndex {
                     +"Clear all locks and all references to locked objects before calling this method.");
             System.out.println("\n\n~~~~~~ THREAD LOCK VIOLATION ~~~~~~~"+new Date());
             PrintStream ps = new PrintStream(System.out);
-            e.printStackTrace(ps);
+            JSONException.traceException(ps, e, "THREAD LOCK VIOLATION");
             System.out.println("~~~~~~ THIS IS PROGRAM LOGIC ERROR ~~~~~~~\n\n");
             throw e;
         }

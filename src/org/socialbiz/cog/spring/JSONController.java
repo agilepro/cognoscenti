@@ -40,6 +40,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.purplehillsbooks.json.JSONException;
+
 /**
  * this class contains all the JSON style REST web service requests
  * because error handling is defined on a class basis, and we need
@@ -118,27 +120,6 @@ public class JSONController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/isProjectExistOnSystem.ajax", method = RequestMethod.GET)
-    public void isProjectExistOnSystem(@PathVariable String siteId,
-            @RequestParam String projectname, HttpServletRequest request,
-            HttpServletResponse response)
-            throws Exception {
-        String message = "";
-        AuthRequest ar = null;
-
-        try{
-            ar = NGWebUtils.getAuthRequest(request, response,"Could not check workspace name.");
-
-            message=projectNameValidity(siteId, ar,context);
-
-        }catch(Exception ex){
-            ar.logException(message, ex);
-        }
-        NGWebUtils.sendResponse(ar, message);
-
-    }
-
-
 
     private static String projectNameValidity(String book, AuthRequest ar,
             ApplicationContext context) throws Exception {
@@ -153,8 +134,7 @@ public class JSONController extends BaseController {
                 message = NGWebUtils.getJSONMessage("no", projectName,"");
             }
         } catch (Exception ex) {
-            message = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar
-                    .getLocale());
+            message = JSONException.convertToJSON(ex, "projectNameValidity").toString();
             ar.logException(message, ex);
         }
         return message;

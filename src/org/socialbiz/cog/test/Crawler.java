@@ -42,6 +42,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
+import com.purplehillsbooks.json.JSONException;
 
 public class Crawler {
 
@@ -316,7 +317,7 @@ public class Crawler {
 
                 String summary = "EXCEPTION CAUGHT testing [<a href=\"" + pts.getUrl() + "\" target=\"_blank\">"+ pts.getUrl() + "</a>] : " + e.toString();
                 log.prn(Log.ERROR, "<a name=\"e"+ (errors.size()+1) + "\"/>"+summary);
-                e.printStackTrace(out);
+                JSONException.traceException(System.out, e, summary);
                 errors.add(summary);
                 if (excludePages.toString().length() == 0 || excludePages.toString().indexOf(path) < 0)
                 {

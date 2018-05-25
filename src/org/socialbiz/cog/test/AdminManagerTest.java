@@ -33,14 +33,6 @@ public class AdminManagerTest extends BaseTest {
         //specify the form method and the form action
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "/SomnathBook/Test4/admin.htm");
         request.addParameter("pageId", "Test4");
-
-        //Cognoscenti cog = Cognoscenti.getInstance(request);
-
-        try {
-            //cog.initializeAll(..., ...);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 

@@ -27,6 +27,8 @@ import java.util.TimerTask;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.NGPageIndex;
 
+import com.purplehillsbooks.json.JSONException;
+
 /**
  * Implements the server initialization protocol.  The variable "serverInitState" tells
  * what the current state of the entire server initialization.  All other services should
@@ -210,7 +212,7 @@ public class ServerInitializer extends TimerTask {
             serverInitState = STATE_FAILED;
             try {
                 System.out.println("ServerInitializer: (FAILED) because "+e.toString());
-                e.printStackTrace();
+                JSONException.traceException(System.out, e, "ServerInitializer: (FAILED)");
                 if (timerForOtherTasks!=null) {
                     timerForOtherTasks.cancel();
                 }

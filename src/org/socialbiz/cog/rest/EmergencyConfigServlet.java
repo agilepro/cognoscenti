@@ -34,6 +34,7 @@ import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.HttpServletResponseWithoutBug;
 import org.socialbiz.cog.exception.ProgramLogicError;
 
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.temps.TemplateJSONRetriever;
 import com.purplehillsbooks.temps.TemplateStreamer;
@@ -223,20 +224,8 @@ public class EmergencyConfigServlet extends javax.servlet.http.HttpServlet {
         JSONObject jo = new JSONObject();
         Exception ex = cog.initializer.lastFailureMsg;
 
-
         if (ex!=null) {
-            StringBuilder exMsg = new StringBuilder("\r");
-            Throwable t = ex;
-            while (t!=null) {
-                exMsg.append(t.toString());
-                exMsg.append("\r");  //just white space
-                t = t.getCause();
-            }
-            jo.put("exceptionMsg", exMsg.toString());
-
-            StringWriter sw = new StringWriter();
-            ex.printStackTrace(new PrintWriter(sw));
-            jo.put("exceptionTrace", sw.toString());
+            jo.put("exception", JSONException.convertToJSON(ex, ""));
         }
 
         jo.put("serverState", cog.initializer.getServerStateString());

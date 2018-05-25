@@ -21,13 +21,9 @@
 package org.socialbiz.cog.spring;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,18 +32,9 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.UserPage;
-import org.socialbiz.cog.exception.NGException;
 import com.purplehillsbooks.json.JSONObject;
 
 public class NGWebUtils {
-
-    public static String getExceptionMessageForAjaxRequest(Exception e,
-            Locale locale) throws Exception {
-        StringWriter stackOutput = new StringWriter();
-        e.printStackTrace(new PrintWriter(stackOutput));
-        return getJSONMessage("failure",
-                NGException.getFullMessage(e, locale), stackOutput.toString());
-    }
 
     public static String getJSONMessage(String msgType, String message,
             String comments) throws Exception {

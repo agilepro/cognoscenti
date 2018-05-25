@@ -25,6 +25,7 @@ import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.MemFileDataSource;
 import org.socialbiz.cog.MimeTypes;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
@@ -241,13 +242,12 @@ public class MailInst extends JSONWrapper {
                 String context = "Failed ("+new Date()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): ";
                 setExceptionMessage(me, context);
                 setLastSentDate(sendTime);
-                System.out.println(context);
-                me.printStackTrace(System.out);
+                JSONException.traceException(System.out, me, context);
                 setStatus(EmailRecord.FAILED);
             }
             catch (Exception eee) {
                 System.out.println("EXCEPTION within EXCEPTION: "+eee);
-                eee.printStackTrace(System.out);
+                JSONException.traceException(System.out, eee, "EXCEPTION within EXCEPTION");
             }
             return false;
         } finally {
@@ -255,8 +255,7 @@ public class MailInst extends JSONWrapper {
                 try {
                     transport.close();
                 } catch (Exception ce) { /* ignore this exception */
-                    System.out.println("transport.close() threw an exception in a finally block!  Ignored!");
-                    ce.printStackTrace(System.out);
+                    JSONException.traceException(System.out, ce, "transport.close() threw an exception in a finally block!  Ignored!");
                 }
             }
         }

@@ -47,6 +47,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.traversal.DocumentTraversal;
 import org.w3c.dom.traversal.NodeFilter;
 import org.w3c.dom.traversal.NodeIterator;
+
+import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.HTMLWriter;
 
 public class ResourceLocater
@@ -91,12 +94,9 @@ public class ResourceLocater
 
             lrstat.setCommnets("Unable to handle a REST API request for "+ar.getCompleteURL());
 
-            StringWriter sw = new StringWriter();
-            PrintWriter w = new PrintWriter(new HTMLWriter(sw));
-            e.printStackTrace(w);
-
+            JSONObject exObj = JSONException.convertToJSON(e, "Unable to handle a REST API request for "+ar.getCompleteURL());
             lrstat.setSuccess(NGResource.OP_FAILED);
-            lrstat.setReason( sw.toString());
+            lrstat.setReason(exObj.toString());
 
             if(lrstat.getStatusCode() != 200) {
                 ar.resp.setStatus(lrstat.getStatusCode());

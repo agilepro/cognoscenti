@@ -79,6 +79,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -522,8 +523,8 @@ public class UserController extends BaseController {
             responseMessage = paramMap.toString();
         }
         catch(Exception ex){
-            responseMessage = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
-            ar.logException("Caught by projectNotifications.ajax", ex);
+            responseMessage = JSONException.convertToJSON(ex, "markAsTemplate").toString();
+            ar.logException("Caught by markAsTemplate.ajax", ex);
         }
 
         NGWebUtils.sendResponse(ar, responseMessage);
@@ -678,7 +679,7 @@ public class UserController extends BaseController {
             responseMessage = paramMap.toString();
         }
         catch(Exception ex){
-            responseMessage = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
+            responseMessage = JSONException.convertToJSON(ex, "approveOrRejectRoleRequest").toString();
             ar.logException("Caught by approveOrRejectRoleRequest.ajax", ex);
         }
 
@@ -800,7 +801,7 @@ public class UserController extends BaseController {
                 responseMessage = paramMap.toString();
             }
         }catch(Exception ex){
-            responseMessage = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
+            responseMessage = JSONException.convertToJSON(ex, "deleteUserId").toString();
             ar.logException("Caught by deleteUserId.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, responseMessage);
@@ -1100,7 +1101,7 @@ public class UserController extends BaseController {
 
             responseMessage = parameters.toString();
         }catch(Exception ex){
-            responseMessage = NGWebUtils.getExceptionMessageForAjaxRequest(ex, ar.getLocale());
+            responseMessage = JSONException.convertToJSON(ex, "getPeopleYouMayKnowList").toString();
             ar.logException("Caught by getPeopleYouMayKnowList.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, responseMessage);

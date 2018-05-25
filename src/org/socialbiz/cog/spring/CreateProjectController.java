@@ -435,5 +435,16 @@ public class CreateProjectController extends BaseController {
            throw new Exception("Unable to display the Register New Site page", ex);
        }
    }
-    
+
+
+    @RequestMapping(value = "/DisplayInfo.htm", method = RequestMethod.GET)
+    public void DisplayInfo(HttpServletRequest request, HttpServletResponse response)
+           throws Exception {
+       try{
+           AuthRequest ar = AuthRequest.getOrCreate(request, response);
+           specialAnonJSP(ar, "N/A", "N/A", "NewSiteApplication.jsp");
+       }catch(Exception ex){
+           throw new Exception("Unable to display the requested info", ex);
+       }
+   }    
 }

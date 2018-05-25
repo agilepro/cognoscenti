@@ -22,7 +22,6 @@ package org.socialbiz.cog;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +30,8 @@ import java.util.Locale;
 
 import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
+
+import com.purplehillsbooks.json.JSONException;
 
 public class ErrorLog extends DOMFile {
 
@@ -140,13 +141,8 @@ public class ErrorLog extends DOMFile {
         save();
     }
 
-    public static String convertStackTraceToString(Throwable exception) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        pw.print(" [ ");
-        exception.printStackTrace(pw);
-        pw.print(" ] ");
-        return sw.toString();
+    private static String convertStackTraceToString(Throwable exception) throws Exception {
+        return JSONException.convertToJSON(new Exception(exception), "ErrorLog").toString();
     }
 
 
@@ -158,9 +154,7 @@ public class ErrorLog extends DOMFile {
             //maybe someday this will not be necessary???
             System.out.println("\nLOGGED EXCEPTION: t="+Thread.currentThread().getId()
                      +", start="+ new Date(nowTime) + ", now=" + new Date());
-            PrintWriter pw = new PrintWriter(System.out);
-            ex.printStackTrace(pw);
-            pw.flush();
+            JSONException.traceException(System.out, ex, msg);
 
             return logsError(userProfile, msg, ex, errorURL, nowTime, cog);
         }
