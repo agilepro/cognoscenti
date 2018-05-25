@@ -678,8 +678,6 @@ public class CommentRecord extends DOMFace {
     }
 
     public void updateFromJSON(JSONObject input, AuthRequest ar) throws Exception {
-        //UserRef owner = getUser();
-        UserProfile user = ar.getUserProfile();
         boolean wasDraft = getState()==COMMENT_STATE_DRAFT;
 
         if (input.has("html")) {

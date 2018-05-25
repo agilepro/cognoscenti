@@ -21,7 +21,6 @@
 package org.socialbiz.cog;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -142,7 +141,7 @@ public class ErrorLog extends DOMFile {
     }
 
     private static String convertStackTraceToString(Throwable exception) throws Exception {
-        return JSONException.convertToJSON(new Exception(exception), "ErrorLog").toString();
+        return JSONException.convertToJSON(new Exception(exception), "ErrorLog").toString(2);
     }
 
 

@@ -523,7 +523,7 @@ public class UserController extends BaseController {
             responseMessage = paramMap.toString();
         }
         catch(Exception ex){
-            responseMessage = JSONException.convertToJSON(ex, "markAsTemplate").toString();
+            responseMessage = JSONException.convertToJSON(ex, "markAsTemplate").toString(2);
             ar.logException("Caught by markAsTemplate.ajax", ex);
         }
 
@@ -679,7 +679,7 @@ public class UserController extends BaseController {
             responseMessage = paramMap.toString();
         }
         catch(Exception ex){
-            responseMessage = JSONException.convertToJSON(ex, "approveOrRejectRoleRequest").toString();
+            responseMessage = JSONException.convertToJSON(ex, "approveOrRejectRoleRequest").toString(2);
             ar.logException("Caught by approveOrRejectRoleRequest.ajax", ex);
         }
 
@@ -801,7 +801,7 @@ public class UserController extends BaseController {
                 responseMessage = paramMap.toString();
             }
         }catch(Exception ex){
-            responseMessage = JSONException.convertToJSON(ex, "deleteUserId").toString();
+            responseMessage = JSONException.convertToJSON(ex, "deleteUserId").toString(2);
             ar.logException("Caught by deleteUserId.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, responseMessage);
@@ -1101,7 +1101,7 @@ public class UserController extends BaseController {
 
             responseMessage = parameters.toString();
         }catch(Exception ex){
-            responseMessage = JSONException.convertToJSON(ex, "getPeopleYouMayKnowList").toString();
+            responseMessage = JSONException.convertToJSON(ex, "getPeopleYouMayKnowList").toString(2);
             ar.logException("Caught by getPeopleYouMayKnowList.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, responseMessage);

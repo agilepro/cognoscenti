@@ -21,8 +21,6 @@
 package org.socialbiz.cog.rest;
 
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -50,7 +48,6 @@ import org.w3c.dom.traversal.NodeIterator;
 
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.HTMLWriter;
 
 public class ResourceLocater
 {
@@ -96,7 +93,7 @@ public class ResourceLocater
 
             JSONObject exObj = JSONException.convertToJSON(e, "Unable to handle a REST API request for "+ar.getCompleteURL());
             lrstat.setSuccess(NGResource.OP_FAILED);
-            lrstat.setReason(exObj.toString());
+            lrstat.setReason(exObj.toString(2));
 
             if(lrstat.getStatusCode() != 200) {
                 ar.resp.setStatus(lrstat.getStatusCode());

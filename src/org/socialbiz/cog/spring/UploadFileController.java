@@ -401,7 +401,7 @@ public class UploadFileController extends BaseController {
             ngw.saveContent( ar, "Modified attachments");
         }
         catch(Exception ex){
-            message = JSONException.convertToJSON(ex, "unDeleteAttachment").toString();
+            message = JSONException.convertToJSON(ex, "unDeleteAttachment").toString(2);
             ar.logException("Caught by getFileAccessName.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, message);
@@ -501,7 +501,7 @@ public class UploadFileController extends BaseController {
             ngc.saveContent( ar, "Modified attachments");
         }
         catch(Exception ex){
-            message = JSONException.convertToJSON(ex, "deleteReminder").toString();
+            message = JSONException.convertToJSON(ex, "deleteReminder").toString(2);
             ar.logException("Caught by deleteReminder.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, message);
@@ -536,7 +536,7 @@ public class UploadFileController extends BaseController {
             ngw.saveContent( ar, "Modified attachments");
         }
         catch (Exception ex) {
-            responseText = JSONException.convertToJSON(ex, "setEditMode").toString();
+            responseText = JSONException.convertToJSON(ex, "setEditMode").toString(2);
             ar.logException("Caught by setEditMode.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, responseText);

@@ -885,7 +885,7 @@ public class MainTabsViewControler extends BaseController {
              responseText = paramMap.toString();
          }
          catch (Exception ex) {
-             responseText = JSONException.convertToJSON(ex, "isNoteDeleted").toString();
+             responseText = JSONException.convertToJSON(ex, "isNoteDeleted").toString(2);
              ar.logException("Caught by isNoteDeleted.ajax", ex);
          }
          NGWebUtils.sendResponse(ar, responseText);

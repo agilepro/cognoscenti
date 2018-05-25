@@ -438,7 +438,7 @@ public class ProjectGoalController extends BaseController {
             NGWebUtils.sendResponse(ar, jo.toString());
         }catch (Exception ex) {
             ar.logException("Caught by updateTaskStatus.ajax", ex);
-            NGWebUtils.sendResponse(ar, JSONException.convertToJSON(ex, "updateTaskStatus").toString());
+            NGWebUtils.sendResponse(ar, JSONException.convertToJSON(ex, "updateTaskStatus").toString(2));
         }
     }
 
@@ -605,7 +605,7 @@ public class ProjectGoalController extends BaseController {
             }
             responseMessage = param.toString();
         }catch(Exception ex){
-            responseMessage = JSONException.convertToJSON(ex, "searchSubProcess").toString();
+            responseMessage = JSONException.convertToJSON(ex, "searchSubProcess").toString(2);
             ar.logException("Caught by subProcess.ajax", ex);
         }
         NGWebUtils.sendResponse(ar, responseMessage);

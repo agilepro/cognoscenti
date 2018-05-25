@@ -22,7 +22,6 @@ package org.socialbiz.cog.rest;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -238,7 +237,7 @@ public class RssServlet extends javax.servlet.http.HttpServlet
             w.write("<hr/>\n");
             w.write("<a href=\"main.jsp\">Main</a>\n");
             w.write("<hr/>\n<pre>");
-            exObj.write(new HTMLWriter(w));
+            exObj.write(new HTMLWriter(w),2,0);
             w.write("</pre></body></html>\n");
             w.flush();
         }

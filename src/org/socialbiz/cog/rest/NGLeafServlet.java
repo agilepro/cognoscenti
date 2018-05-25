@@ -21,7 +21,6 @@
 package org.socialbiz.cog.rest;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.net.URLEncoder;
 
 import javax.servlet.ServletConfig;
@@ -386,7 +385,7 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
             ar.write(ar.retPath);
             ar.write("\" title=\"Access the root\">Main</a>\n");
             ar.write("<hr/>\n<pre>");
-            JSONException.convertToJSON(e, "NG Leaf Servlet").write(new HTMLWriter(ar.w));
+            JSONException.convertToJSON(e, "NG Leaf Servlet").write(new HTMLWriter(ar.w),2,0);
             ar.write("</pre></body></html>\n");
             ar.flush();
         } catch (Exception eeeee) {

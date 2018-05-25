@@ -35,7 +35,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -134,7 +133,7 @@ public class JSONController extends BaseController {
                 message = NGWebUtils.getJSONMessage("no", projectName,"");
             }
         } catch (Exception ex) {
-            message = JSONException.convertToJSON(ex, "projectNameValidity").toString();
+            message = JSONException.convertToJSON(ex, "projectNameValidity").toString(2);
             ar.logException(message, ex);
         }
         return message;
