@@ -36,6 +36,12 @@ app.controller('myCtrl', function($scope, $http) {
         return (rec.status == "requested");
     }
 
+    $scope.sortSites = function() {
+        $scope.allRequests.sort( function(a,b) {
+            return (b.changed-a.changed);
+        });
+    }
+    $scope.sortSites();
     $scope.addAdmin = function(rec) {
         if (confirm("Are you sure you want to add youself as an owner of the site: "
                     +rec.names[0]+" ("+rec.key+")")) {

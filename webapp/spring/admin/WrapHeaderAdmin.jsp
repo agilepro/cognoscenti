@@ -93,62 +93,6 @@
       <ul class="nav navbar-nav">
         <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" role="button" 
-             aria-haspopup="true" aria-expanded="false">Workspaces <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-<%
-
-   List<RUElement> recent = ar.getSession().recentlyVisited;
-   for (RUElement rue : recent) {
-       ar.write("\n<li><a href=\"");
-       ar.write(ar.retPath);
-       ar.write("t/");
-       ar.write(rue.siteKey);
-       ar.write("/");
-       ar.write(rue.key);
-       ar.write("/frontPage.htm\">");
-       ar.writeHtml(rue.displayName);
-       ar.write("</a></li>");   
-   }
-
-%>
-            <li role="separator" class="divider"></li>
-            <li><a href="<%=userRelPath%>watchedProjects.htm">Watched Workspaces</a></li>
-            <li><a href="<%=userRelPath%>templates.htm">Templates</a></li>
-            <li><a href="<%=userRelPath%>ownerProjects.htm">Administered</a></li>
-            <li><a href="<%=userRelPath%>participantProjects.htm">Participant</a></li>
-            <li><a href="<%=userRelPath%>allProjects.htm">All</a></li>
-          </ul>
-        </li>
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" role="button" 
-             aria-haspopup="true" aria-expanded="false">Sites <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-<%
-
-   Properties seenSite = new Properties();
-   for (RUElement rue : recent) {
-       if (seenSite.get(rue.siteKey)!=null) {
-           continue;
-       }
-       seenSite.put(rue.siteKey, rue.siteKey);
-       ar.write("\n<li><a href=\"");
-       ar.write(ar.retPath);
-       ar.write("t/");
-       ar.write(rue.siteKey);
-       ar.write("/$/accountListProjects.htm\">");
-       ar.writeHtml(rue.siteKey);
-       ar.write("</a></li>");   
-   }
-
-%>
-            <li role="separator" class="divider"></li>
-            <li><a href="<%=userRelPath%>userAccounts.htm">List Sites</a></li>
-          </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav">
-        <li class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" role="button" 
              aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="errorLog.htm" >Error Log</a></li>
@@ -241,9 +185,7 @@ function displayWelcomeMessage(info) {
         y.innerHTML = 'Hello <b>'+info.userName+'</b>.  Attempting Automatic Login.';
     }
     else {
-        y.innerHTML = 'Welcome <b>'+info.userName+'</b>.  <a target="_blank" href="'
-            +SLAP.loginConfig.providerUrl
-            +'?openid.mode=logout&go='+window.location+'">Logout</a>.';
+        y.innerHTML = 'Welcome <b>'+info.userName+'</b>';
     }
 }
 
