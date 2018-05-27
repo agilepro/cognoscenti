@@ -30,6 +30,7 @@ import java.util.Vector;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -267,7 +268,7 @@ public class UserProfile implements UserRef
             otherUser.removeId(foundId);
 
             //are there any more users with this ID?
-            otherUser = UserManager.findUserByAnyId(newId);
+            otherUser = UserManager.getStaticUserManager().lookupUserByAnyId(newId);
         }
         ids.add(newId);
     }

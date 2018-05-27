@@ -214,4 +214,40 @@ public class UserCache {
     public JSONObject getAsJSON() {
         return cacheObj;
     }
+    
+    public String genEmailAddressAttempt(String email) throws Exception {
+        JSONArray allAttempts = cacheObj.requireJSONArray("emailAddAttempts");
+        String token = IdGenerator.generateDoubleKey();
+        JSONObject newAttempt = new JSONObject();
+        newAttempt.put("email", email);
+        newAttempt.put("timestamp", System.currentTimeMillis());
+        newAttempt.put("token", token);
+        allAttempts.put(newAttempt);
+        save();
+        return token;
+    }
+
+    public boolean verifyEmailAddressAttempt(UserProfile user, String token) throws Exception {
+        JSONArray allAttempts = cacheObj.requireJSONArray("emailAddAttempts");
+        JSONArray remainingAttempts = new JSONArray();
+        boolean foundIt = false;
+        long timeLimit = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000);
+        for (int i=0; i<allAttempts.length(); i++) {
+            JSONObject oneAttempt = allAttempts.getJSONObject(i);
+            //eliminate timed out attempts
+            if (oneAttempt.getLong("timestamp")>timeLimit) {
+                remainingAttempts.put(oneAttempt);
+                if (token.equals(oneAttempt.getString("token"))) {
+                    foundIt = true;
+                    String email = oneAttempt.getString("email");
+                    user.addId(email);
+                    UserManager.writeUserProfilesToFile();
+                }
+            }
+        }
+        cacheObj.put("emailAddAttempts", remainingAttempts);
+        save();
+        return foundIt;
+    }
+    
 }

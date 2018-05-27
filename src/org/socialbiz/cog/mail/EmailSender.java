@@ -22,7 +22,6 @@ package org.socialbiz.cog.mail;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -49,7 +48,6 @@ import org.socialbiz.cog.exception.ProgramLogicError;
 
 import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
-import com.purplehillsbooks.streams.MemFile;
 
 /**
  * Support class for sending email messages based on an email configuration
@@ -411,15 +409,9 @@ public class EmailSender extends TimerTask {
             from = composeFromAddress(ngc);
         }
 
-        MemFile bodyWriter = new MemFile();
-        Writer w = bodyWriter.getWriter();
-        
-        ChunkTemplate.streamIt(w, templateFile, data, ooa.getCalendar());
-        w.flush();
+        String body = ChunkTemplate.streamToString(templateFile, data, ooa.getCalendar());
 
-        createEmailRecordInternal(ngc, from,
-                ooa, subject, bodyWriter.toString(),
-                attachIds, cog);
+        createEmailRecordInternal(ngc, from, ooa, subject, body, attachIds, cog);
     }
 
 

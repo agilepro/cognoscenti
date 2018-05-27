@@ -39,8 +39,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.purplehillsbooks.json.JSONException;
-
 /**
  * this class contains all the JSON style REST web service requests
  * because error handling is defined on a class basis, and we need
@@ -108,35 +106,20 @@ public class JSONController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             ar.assertLoggedIn("Must be logged in to check workspace name.");
-            String message=projectNameValidity(siteId, ar,context);
-            sendJSONResponse(ar, message);
+            ar.getCogInstance().getSiteByIdOrFail(siteId);
+            String projectName = ar.reqParam("projectname");
+            
+            if (doesProjectExist(ar, projectName)) {
+                sendJson(ar,NGWebUtils.getJSONMessage("yes", context.getMessage(
+                        "nugen.userhome.project.name.already.exists",null, ar.getLocale()), ""));
+            } 
+            else {
+                sendJson(ar,NGWebUtils.getJSONMessage("no", projectName,""));
+            }
         }
         catch (Exception e) {
-            //not sure what to do here.  Expected response is in JSON format
-            //but how then do we format errors?  Set the error code
-            ar.logException("Unable to tell if workspace exists", e);
-            sendErrorResponse(ar, "Unable to tell if workspace exists", e);
+            streamException(e,ar);
         }
-    }
-
-
-    private static String projectNameValidity(String book, AuthRequest ar,
-            ApplicationContext context) throws Exception {
-        String message = "";
-        String projectName = ar.reqParam("projectname");
-        try {
-            ar.getCogInstance().getSiteByIdOrFail(book);
-            if (doesProjectExist(ar, projectName)) {
-                message = NGWebUtils.getJSONMessage("yes", context.getMessage(
-                        "nugen.userhome.project.name.already.exists",null, ar.getLocale()), "");
-            } else {
-                message = NGWebUtils.getJSONMessage("no", projectName,"");
-            }
-        } catch (Exception ex) {
-            message = JSONException.convertToJSON(ex, "projectNameValidity").toString(2);
-            ar.logException(message, ex);
-        }
-        return message;
     }
 
 

@@ -53,7 +53,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -435,10 +434,9 @@ public class ProjectGoalController extends BaseController {
             jo.put("taskId", task.getId());
             jo.put("index", index);
             jo.put("taskState", String.valueOf(task.getState()));
-            NGWebUtils.sendResponse(ar, jo.toString());
+            sendJson(ar, jo);
         }catch (Exception ex) {
-            ar.logException("Caught by updateTaskStatus.ajax", ex);
-            NGWebUtils.sendResponse(ar, JSONException.convertToJSON(ex, "updateTaskStatus").toString(2));
+            streamException(ex,ar);
         }
     }
 
@@ -582,7 +580,6 @@ public class ProjectGoalController extends BaseController {
     public void searchSubProcess(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        String responseMessage = "";
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             ar.assertLoggedIn("You need to login to access subProcess.ajax.");
@@ -603,12 +600,10 @@ public class ProjectGoalController extends BaseController {
                 param.put("msgType", SUCCESS_REMOTE);
                 param.put("msg", REMOTE_PROJECT);
             }
-            responseMessage = param.toString();
+            sendJson(ar,param);
         }catch(Exception ex){
-            responseMessage = JSONException.convertToJSON(ex, "searchSubProcess").toString(2);
-            ar.logException("Caught by subProcess.ajax", ex);
+            streamException(ex,ar);
         }
-        NGWebUtils.sendResponse(ar, responseMessage);
     }
 
 

@@ -229,21 +229,18 @@ myApp.controller('myCtrl', function($scope, $http) {
             <td class="firstcol"></td>
             <td colspan="2"><button class="btn btn-primary btn-raised" ng-click="updatePersonal()">Update Personal Details</button></td>
         </tr>
-        <tr><td>&nbsp;</td></tr>
-        <tr >
+    </table>
+    <table>
+        <tr ng-repeat="email in profile.ids">
             <td class="firstcol">Email Id:</td>
-            <td>{{email}}
+            <td>{{email}}</td>
+            <td>
                 <span class="labelButton" style="background-color:yellow" ng-show="email==profile.preferred"
                     title="This is where all email notifications from Weaver will be sent">Preferred</span>
                 <span class="btn btn-sm btn-primary btn-raised" ng-hide="email==profile.preferred"
                     ng-click="makePreferred(email)">Make Preferred</span>
                 <span class="btn btn-sm btn-primary btn-raised" ng-hide="email==profile.preferred"
                     ng-click="deleteEmail(email)">Delete</span>
-            </td>
-        </tr>
-        <tr ng-repeat="email in profile.ids">
-            <td class="firstcol">TimeZone:</td>
-            <td>
             </td>
         </tr>
     </table>

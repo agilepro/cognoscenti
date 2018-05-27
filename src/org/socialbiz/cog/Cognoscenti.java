@@ -211,7 +211,7 @@ System.out.println("Weaver Server Object == Start the Server");
 
             AuthDummy.initializeDummyRequest(this);
             userManager = new UserManager(this);
-            userManager.loadUpUserProfilesInMemory();
+            userManager.loadUpUserProfilesInMemory(this);
             userCacheMgr = new UserCacheMgr(this);
 
             NGPageIndex.initAllStaticVars();

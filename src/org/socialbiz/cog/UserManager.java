@@ -31,6 +31,7 @@ import java.util.Vector;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -47,7 +48,6 @@ public class UserManager
     private static boolean initialized = false;
 
     private static File     jsonFileName;
-    private static File     xmlFileName;
 
     //TODO: get rid of this static
     private static Cognoscenti cog;
@@ -86,24 +86,26 @@ public class UserManager
         return cog.getUserManager();
     }
     
-    public synchronized void loadUpUserProfilesInMemory() throws Exception {
+    public synchronized void loadUpUserProfilesInMemory(Cognoscenti cog) throws Exception {
         //check to see if this has already been loaded, if so, there is nothing to do
         if (initialized) {
             return;
         }
 
         File userFolder = cog.getConfig().getUserFolderOrFail();
-        xmlFileName = new File(userFolder, "UserProfiles.xml");
-        File oldjsonFile = new File(userFolder, "UserProfiles.json");
-        if (oldjsonFile.exists()) {
-            oldjsonFile.delete();
-        }
+        
         jsonFileName = new File(userFolder, "UserProfs.json");
+        if(!jsonFileName.exists()) {
+            File xmlFileName = new File(userFolder, "UserProfiles.xml");
+            convertXMLtoJSON(xmlFileName);
+            if(!jsonFileName.exists()) {
+                throw new Exception("Conversion of user profiles to JSON format failed somehow.");
+            }
+        }
         
         //clear out any left over evidence of an earlier initialization
         allUsers = new Vector<UserProfile>();
 
-        //readXMLFile();
         //need to make sure all the same information is in the JSON file....
         readJSONFile();
         
@@ -113,12 +115,6 @@ public class UserManager
     
 
     private void readJSONFile() throws Exception  {
-         if(!jsonFileName.exists()) {
-            if (xmlFileName.exists()) {
-                readXMLFile();
-            }
-            saveUserProfiles();
-        }
         
         if(!jsonFileName.exists()) {
             throw new Exception("Not able to create the user profile file: "+jsonFileName);
@@ -133,6 +129,7 @@ public class UserManager
         Hashtable<String,UserProfile> keyProfMap = new Hashtable<String,UserProfile>();
         Hashtable<String,UserProfile> idProfMap = new Hashtable<String,UserProfile>();
         ArrayList<String> idsToRemove = new ArrayList<String>();
+        Vector<UserProfile> readUsers = new Vector<UserProfile>();
         
         for (int i=0; i<users.length(); i++) {
             UserProfile up = new UserProfile(users.getJSONObject(i));
@@ -188,20 +185,19 @@ public class UserManager
             //we get here it means that this has unique key and unique global ids.
             //so we can safely retain this.
             keyProfMap.put(key, up);
-            allUsers.add(up);
+            readUsers.add(up);
         }
+        
+        //now it is all there, assign the result collection
+        allUsers = readUsers;
     }
     
     /**
      * This will be retired some day...
      */
-    private void readXMLFile() throws Exception  {
+    private void convertXMLtoJSON(File xmlFileName) throws Exception  {
         if(!xmlFileName.exists()) {
-            saveUserProfiles();
-        }
-        
-        if(!xmlFileName.exists()) {
-            throw new Exception("Not able to create the user profile file: "+jsonFileName);
+            throw new Exception("Can't find the new or the old user profiles. ("+xmlFileName+") giving up.");
         }
         
         InputStream is = new FileInputStream(xmlFileName);
@@ -209,7 +205,7 @@ public class UserManager
         DOMFile profileFile = new DOMFile(xmlFileName, userDoc);
         loadCount++;
 
-        //there was some kind of but that allowed multiple entries to be created
+        //there was some kind of bug that allowed multiple entries to be created
         //with the same unique key, and that causes all sorts of problems.
         //This code will check and make sure that every Key value is unique.
         //if a duplicate is found (which might happen when someone edits this
@@ -230,6 +226,8 @@ public class UserManager
             guaranteeUnique.put(upKey, upKey);
             allUsers.add(up);
         }
+        
+        this.saveUserProfiles();
     }
 
 
@@ -248,28 +246,23 @@ public class UserManager
         userFile.put("lastUpdate", System.currentTimeMillis());
         userFile.writeToFile(jsonFileName);
         
-        Document userDoc = DOMUtils.createDocument("userprofiles");
-        DOMFile profileFile = new DOMFile(xmlFileName, userDoc);
-        for (UserProfile uprof : allUsers) {
-            UserProfileXML upXML = profileFile.createChild("userprofile", UserProfileXML.class);  
-            uprof.transferAllValues(upXML);
-        }
-        profileFile.save();
         saveCount++;
     }
 
    
 
     private synchronized void refreshHashtables() {
-        userHashByUID = new Hashtable<String, UserProfile>();
-        userHashByKey = new Hashtable<String, UserProfile>();
+        Hashtable<String, UserProfile> readHashByUID = new Hashtable<String, UserProfile>();
+        Hashtable<String, UserProfile> readHashByKey = new Hashtable<String, UserProfile>();
 
         for (UserProfile up : allUsers) {
             for (String idval : up.getAllIds()) {
-                userHashByUID.put(idval, up);
+                readHashByUID.put(idval, up);
             }
-            userHashByKey.put(up.getKey(), up);
+            readHashByKey.put(up.getKey(), up);
         }
+        userHashByUID = readHashByUID;
+        userHashByKey = readHashByKey;
     }
 
 
@@ -296,13 +289,14 @@ public class UserManager
     * find one that is existing, it will return null.
     *
     * Should ONLY fid by confirmed IDs, not by any proposed IDs.
-    */
+    *
     public static UserProfile findUserByAnyId(String anyId)
     {
         //here is how we find the singleton....
         UserManager userManager = cog.getUserManager();
         return userManager.lookupUserByAnyId(anyId);
     }
+    */
         
         
     public synchronized UserProfile lookupUserByAnyId(String anyId) {
@@ -509,5 +503,5 @@ public class UserManager
         }
         return sb.toString();
     }
-    
+
 }

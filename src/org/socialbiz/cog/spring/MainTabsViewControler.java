@@ -56,7 +56,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 
@@ -865,7 +864,6 @@ public class MainTabsViewControler extends BaseController {
       @RequestMapping(value = "/isNoteDeleted.ajax", method = RequestMethod.POST)
       public void isNoteDeleted(HttpServletRequest request, HttpServletResponse response)
              throws Exception {
-         String responseText = null;
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try {
              ar.assertLoggedIn("Must be logged in to create a topic.");
@@ -882,13 +880,11 @@ public class MainTabsViewControler extends BaseController {
                  paramMap.put("msgType", "no");
              }
 
-             responseText = paramMap.toString();
+             sendJson(ar,paramMap);
          }
          catch (Exception ex) {
-             responseText = JSONException.convertToJSON(ex, "isNoteDeleted").toString(2);
-             ar.logException("Caught by isNoteDeleted.ajax", ex);
+             streamException(ex,ar);
          }
-         NGWebUtils.sendResponse(ar, responseText);
      }
 
 

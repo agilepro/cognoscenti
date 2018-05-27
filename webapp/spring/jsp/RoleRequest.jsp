@@ -49,7 +49,7 @@ Optional Parameter:
     for (RoleRequestRecord rrr : allRRs) {
         JSONObject nrrr = new JSONObject();
         String reqBy = rrr.getRequestedBy();
-        UserProfile uPro = UserManager.findUserByAnyId(reqBy);
+        UserProfile uPro = UserManager.getStaticUserManager().lookupUserByAnyId(reqBy);
         if (uPro==null) {
             //this should never happen in normal circumstances, that a role request comes from 
             //a user that does not have a profile.  But it can happen if

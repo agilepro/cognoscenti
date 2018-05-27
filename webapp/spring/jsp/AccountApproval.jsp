@@ -40,7 +40,7 @@ Required parameter:
         String status = accountDetails.getStatus();
         boolean isGranted = status.equals("Granted");
 
-        UserProfile requester = UserManager.findUserByAnyId(accountDetails.getModUser());
+        UserProfile requester = UserManager.getStaticUserManager().lookupUserByAnyId(accountDetails.getModUser());
 
     %>
     <div id="loginDivArea">

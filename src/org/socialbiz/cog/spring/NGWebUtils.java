@@ -20,50 +20,28 @@
 
 package org.socialbiz.cog.spring;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.UserPage;
+
 import com.purplehillsbooks.json.JSONObject;
 
 public class NGWebUtils {
 
-    public static String getJSONMessage(String msgType, String message,
+    public static JSONObject getJSONMessage(String msgType, String message,
             String comments) throws Exception {
         JSONObject jsonMsg = new JSONObject();
         jsonMsg.put("msgType", msgType);
         jsonMsg.put("msg", message);
         jsonMsg.put("comments", comments);
-        String res = jsonMsg.toString();
-        return res;
+        return jsonMsg;
     }
 
-    public static void sendResponse(AuthRequest ar, String responseMessage)
-            throws IOException {
-        ar.resp.setContentType("text/xml; charset=UTF-8");
-        ar.resp.setHeader("Cache-Control", "no-cache");
-        Writer writer = ar.resp.getWriter();
-        writer.write(responseMessage);
-        writer.close();
-    }
-
-
-    public static AuthRequest getAuthRequest(HttpServletRequest request,
-            HttpServletResponse response, String assertLoggedInMsg)
-            throws Exception {
-
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        ar.assertLoggedIn(assertLoggedInMsg);
-        return ar;
-    }
 
     public static List<AddressListEntry> getExistingContacts(UserPage up)
             throws Exception {

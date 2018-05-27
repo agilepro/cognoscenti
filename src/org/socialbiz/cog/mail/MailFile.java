@@ -31,6 +31,7 @@ import javax.mail.Message;
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.exception.ProgramLogicError;
 
 import com.purplehillsbooks.json.JSONArray;
@@ -206,6 +207,12 @@ public class MailFile extends JSONWrapper {
         catch (Exception e) {
             throw new Exception("unable to compose email record from '"+from+"' on: "+subject, e);
         }
+    }
+    
+    public MailInst createEmailFromTemplate( OptOutAddr ooa, String addressee,
+            String subject, File templateFile, JSONObject data) throws Exception {
+        String body = ChunkTemplate.streamToString(templateFile, data, ooa.getCalendar());
+        return createEmailRecord( ooa.getAssignee(), addressee, subject, body);
     }
 
     public void sendAllMail(Mailer mailer) throws Exception {

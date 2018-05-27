@@ -50,8 +50,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
-import com.purplehillsbooks.json.JSONException;
-
 @Controller
 public class UploadFileController extends BaseController {
 
@@ -384,7 +382,6 @@ public class UploadFileController extends BaseController {
     protected void unDeleteAttachment( HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        String message="";
         AuthRequest ar = null;
         try {
             ar = getLoggedInAuthRequest(request, response, "message.must.be.login");
@@ -397,14 +394,12 @@ public class UploadFileController extends BaseController {
                 throw new NGException("nugen.exception.no.attachment.found", new Object[]{aid, ngw.getFullName()});
             }
             attachment.clearDeleted();
-            message = NGWebUtils.getJSONMessage("success" , "" , "");
             ngw.saveContent( ar, "Modified attachments");
+            sendJson(ar, NGWebUtils.getJSONMessage("success" , "" , ""));
         }
         catch(Exception ex){
-            message = JSONException.convertToJSON(ex, "unDeleteAttachment").toString(2);
-            ar.logException("Caught by getFileAccessName.ajax", ex);
+            streamException(ex,ar);
         }
-        NGWebUtils.sendResponse(ar, message);
     }
 
      @RequestMapping(value = "/{siteId}/{pageId}/remindAttachment.htm", method = RequestMethod.GET)
@@ -478,7 +473,6 @@ public class UploadFileController extends BaseController {
     protected void deleteReminder( HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        String message="";
         AuthRequest ar = null;
         try
         {
@@ -492,19 +486,16 @@ public class UploadFileController extends BaseController {
 
             ReminderRecord rRec = rMgr.findReminderByID(rid);
 
-            if(rRec != null){
-                rMgr.removeReminder(rid);
-                message = NGWebUtils.getJSONMessage("success" , "" , "");
-            }else{
+            if(rRec == null){
                 throw new NGException("nugen.exception.no.attachment.found", new Object[]{rid, ngc.getFullName()});
             }
+            rMgr.removeReminder(rid);
             ngc.saveContent( ar, "Modified attachments");
+            sendJson(ar, NGWebUtils.getJSONMessage("success" , "" , ""));
         }
         catch(Exception ex){
-            message = JSONException.convertToJSON(ex, "deleteReminder").toString(2);
-            ar.logException("Caught by deleteReminder.ajax", ex);
+            streamException(ex,ar);
         }
-        NGWebUtils.sendResponse(ar, message);
     }
 
     @RequestMapping(value = "/setEditMode.ajax", method = RequestMethod.POST)
@@ -522,24 +513,22 @@ public class UploadFileController extends BaseController {
             NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail( pageId ).getWorkspace();
             AttachmentRecord attachment = ngw.findAttachmentByIDOrFail(aid);
 
-            //attachment.clearDeleted();
-            if(attachment != null){
-                if(isEditMode.equals("true")){
-                    attachment.setEditMode(ar);
-                }else{
-                    attachment.clearEditMode();
-                }
-                responseText = NGWebUtils.getJSONMessage("success" , "" , "");
-            }else{
+            if(attachment == null){
                 throw new NGException("nugen.exception.no.attachment.found", new Object[]{aid, ngw.getFullName()});
             }
+            
+            if(isEditMode.equals("true")){
+                attachment.setEditMode(ar);
+            }
+            else{
+                attachment.clearEditMode();
+            }
+            sendJson(ar, NGWebUtils.getJSONMessage("success" , "" , ""));
             ngw.saveContent( ar, "Modified attachments");
         }
         catch (Exception ex) {
-            responseText = JSONException.convertToJSON(ex, "setEditMode").toString(2);
-            ar.logException("Caught by setEditMode.ajax", ex);
+            streamException(ex,ar);
         }
-        NGWebUtils.sendResponse(ar, responseText);
     }
 
 

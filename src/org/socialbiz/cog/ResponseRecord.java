@@ -130,7 +130,7 @@ public class ResponseRecord extends DOMFace
         }
 
         Cognoscenti cog = ar.getCogInstance();
-        UserProfile toProfile = UserManager.findUserByAnyId(ooa.getEmail());
+        UserProfile toProfile = UserManager.getStaticUserManager().lookupUserByAnyId(ooa.getEmail());
         if (toProfile!=null) {
             ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
         }

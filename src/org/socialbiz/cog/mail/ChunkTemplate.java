@@ -11,7 +11,7 @@ import java.util.Set;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
-
+import com.purplehillsbooks.streams.MemFile;
 import com.x5.template.Chunk;
 import com.x5.template.Theme;
 
@@ -134,6 +134,16 @@ public class ChunkTemplate {
         
         finishUp(w,c,data);
     }
+    public static String streamToString(File templateFile, JSONObject data, Calendar cal) throws Exception {
+        MemFile mf = new MemFile();
+        Writer w = mf.getWriter();
+        streamIt(w,templateFile, data,cal);
+        w.flush();
+        return mf.toString();
+    }
+    
+    
+    
     /**
      * Takes a string that looks like a template, some data, and a calendar
      * and returns the string with the data substituted into it.

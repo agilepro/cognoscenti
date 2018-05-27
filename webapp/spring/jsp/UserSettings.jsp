@@ -37,6 +37,8 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.editAgent=false;
     $scope.newAgent = {};
+    $scope.addingEmail = false;
+    $scope.newEmail = "";
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -51,6 +53,20 @@ app.controller('myCtrl', function($scope, $http) {
             return;
         }
         window.location = "editUserProfile.htm";
+    }
+    $scope.requestEmail = function() {
+        var url="addEmailAddress.htm?newEmail="+encodeURIComponent($scope.newEmail);
+        promise = $http.get(url)
+        .success( function(data) {
+            console.log("EMAIL: ", data);
+            $scope.addingEmail=false;
+            alert("Email has been sent to '"+$scope.newEmail+"'.  Find that email in your mailbox "+
+                  "and click on the link to add the email to your profile.");
+        })
+        .error( function(data) {
+            $scope.reportError(data);
+        });
+        
     }
 });
 </script>
@@ -80,6 +96,8 @@ app.controller('myCtrl', function($scope, $http) {
           <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="goToEdit()" >
                     <img src="<%=ar.retPath%>assets/iconEditProfile.gif"/>
                     Update Settings</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="addingEmail=!addingEmail" >
+                    Add Email Address</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" href="RemoteProfiles.htm" >
                     Remote Profiles</a></li>
@@ -115,9 +133,27 @@ app.controller('myCtrl', function($scope, $http) {
 if (ar.isLoggedIn()) { %>
         <tr><td style="height:10px"></td></tr>
         <tr>
-            <td class="firstcol">Email Id:</td>
+            <td class="firstcol">Email Ids:</td>
             <td>
-                <div ng-repeat="email in userInfo.ids">{{email}}</div>
+                <div ng-repeat="email in userInfo.ids">{{email}}<br/></div>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol"></td>
+            <td ng-hide="addingEmail">
+                <button class="btn btn-default btn-raised" ng-click="addingEmail=true">Add Email Id</button>
+            </td>
+            <td ng-show="addingEmail" class="form-group">
+                <div class="well" style="max-width:500px">
+                <h3>Add an email address to your profile</h3>
+                <p>If you use multiple email addresses, you can add as many as you like to your profile.  
+                We just need to confirm your email address before it will be added.</p>
+                <input type="text" ng-model="newEmail" class="form-control" style="width:300px">
+                <p>Enter an email address, a confirmation message will be sent.
+                When you receive that, click the link to add the email address to your profile.</p>
+                <button class="btn btn-primary btn-raised" ng-click="requestEmail()">Request Confirmation Email</button>
+                <button class="btn btn-warning btn-raised" ng-click="addingEmail=false">Cancel</button>
+                </div>
             </td>
         </tr>
         <tr>
@@ -148,8 +184,8 @@ if (ar.isLoggedIn()) { %>
             <td class="firstcol">API Token:</td>
             <td><% ar.writeHtml(uProf.getLicenseToken());%></td>
         </tr>
+    </table>
 <% } %>
 <%} %>
-    </table>
 
 </div>

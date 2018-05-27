@@ -15,7 +15,7 @@
     JSONArray allRequests = new JSONArray();
     for (RoleRequestRecord rrr : roleRequestRecordList) {
         JSONObject nrrr = new JSONObject();
-        UserProfile uPro = UserManager.findUserByAnyId(rrr.getRequestedBy());
+        UserProfile uPro = UserManager.getStaticUserManager().lookupUserByAnyId(rrr.getRequestedBy());
         nrrr.put("id", rrr.getRequestId());
         nrrr.put("state", rrr.getState());
         nrrr.put("requestKey", uPro.getKey());

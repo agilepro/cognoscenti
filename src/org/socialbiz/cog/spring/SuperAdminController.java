@@ -276,8 +276,8 @@ public class SuperAdminController extends BaseController {
      throws Exception {
 
          try{
-             AuthRequest ar =NGWebUtils.getAuthRequest(request, response,
-                     "User must be logged in as a Super admin to see the error Log.");
+             AuthRequest ar = AuthRequest.getOrCreate(request, response);
+             ar.assertLoggedIn("User must be logged in as a Super admin to see the error Log.");
              String userComments=ar.defParam("comments", "");
 
              String searchByDate=ar.reqParam("searchByDate");

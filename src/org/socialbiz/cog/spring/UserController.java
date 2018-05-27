@@ -61,6 +61,8 @@ import org.socialbiz.cog.RemoteGoal;
 import org.socialbiz.cog.RoleRequestRecord;
 import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
+import org.socialbiz.cog.UserCache;
+import org.socialbiz.cog.UserCacheMgr;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.UserProfile;
@@ -69,6 +71,8 @@ import org.socialbiz.cog.dms.FolderAccessHelper;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.mail.EmailSender;
+import org.socialbiz.cog.mail.MailFile;
+import org.socialbiz.cog.mail.MailInst;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,7 +83,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -462,7 +465,8 @@ public class UserController extends BaseController {
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         try{
-            AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not update user contacts.");
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            ar.assertLoggedIn("Can not update user contacts.");
 
             String go = ar.reqParam("go");
 
@@ -489,7 +493,6 @@ public class UserController extends BaseController {
     public void markAsTemplate(HttpServletRequest request, HttpServletResponse response)
     throws Exception {
 
-        String responseMessage = "";
         AuthRequest ar = null;
         try{
             ar = AuthRequest.getOrCreate(request, response);
@@ -520,14 +523,11 @@ public class UserController extends BaseController {
             JSONObject paramMap = new JSONObject();
             paramMap.put("msgType" , "success");
             paramMap.put("action", action);
-            responseMessage = paramMap.toString();
+            sendJson(ar, paramMap);
         }
         catch(Exception ex){
-            responseMessage = JSONException.convertToJSON(ex, "markAsTemplate").toString(2);
-            ar.logException("Caught by markAsTemplate.ajax", ex);
+            streamException(ex,ar);
         }
-
-        NGWebUtils.sendResponse(ar, responseMessage);
     }
 
     @RequestMapping(value = "/{userKey}/EditUserProfileAction.form", method = RequestMethod.POST)
@@ -600,7 +600,6 @@ public class UserController extends BaseController {
     public void approveOrRejectRoleRequest(HttpServletRequest request, HttpServletResponse response)
     throws Exception {
         AuthRequest ar = null;
-        String responseMessage = "";
         try{
             ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Must be logged in to approve a role request.");
@@ -676,14 +675,11 @@ public class UserController extends BaseController {
             paramMap.put("msgType" , "success");
             paramMap.put("action", action);
             paramMap.put("roleName", roleName);
-            responseMessage = paramMap.toString();
+            sendJson(ar, paramMap);
         }
         catch(Exception ex){
-            responseMessage = JSONException.convertToJSON(ex, "approveOrRejectRoleRequest").toString(2);
-            ar.logException("Caught by approveOrRejectRoleRequest.ajax", ex);
+            streamException(ex,ar);
         }
-
-        NGWebUtils.sendResponse(ar, responseMessage);
     }
 
     private File getUserImageFolder(HttpServletRequest request) {
@@ -773,8 +769,6 @@ public class UserController extends BaseController {
     throws Exception {
 
         AuthRequest ar = null;
-
-        String responseMessage  ="";
         try{
             ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("You need to login to perform this function.");
@@ -783,7 +777,7 @@ public class UserController extends BaseController {
             String u = ar.reqParam("u");
             String modid = ar.reqParam("modid");
 
-            UserProfile profile = ar.getCogInstance().getUserManager().getUserProfileOrFail(u);
+            UserProfile profile = ar.getCogInstance().getUserManager().lookupUserByAnyId(u);
 
             if (action.equals("removeId"))
             {
@@ -798,13 +792,11 @@ public class UserController extends BaseController {
                 JSONObject paramMap = new JSONObject();
                 paramMap.put("msgType" , "success");
                 paramMap.put("modid", modid);
-                responseMessage = paramMap.toString();
+                sendJson(ar, paramMap);
             }
         }catch(Exception ex){
-            responseMessage = JSONException.convertToJSON(ex, "deleteUserId").toString(2);
-            ar.logException("Caught by deleteUserId.ajax", ex);
+            streamException(ex,ar);
         }
-        NGWebUtils.sendResponse(ar, responseMessage);
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/approveOrRejectRoleReqThroughMail.htm", method = RequestMethod.GET)
@@ -1006,7 +998,8 @@ public class UserController extends BaseController {
 
         try{
 
-            AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "CAN_NOT_UPLOAD_ATTACHMENT");
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            ar.assertLoggedIn("Can not upload an attachment.");
             ar.req = request;
 
             request.setCharacterEncoding("UTF-8");
@@ -1044,7 +1037,8 @@ public class UserController extends BaseController {
     @RequestMapping(value="/updateMicroProfile.json", method = RequestMethod.POST)
     public void updateMicroProfile(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not update user contacts.");
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        ar.assertLoggedIn("Can not update user contacts.");
         try{
 
             JSONObject received = this.getPostedObject(ar);
@@ -1067,7 +1061,8 @@ public class UserController extends BaseController {
             HttpServletResponse response) throws Exception {
 
         try{
-            AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not update user contacts.");
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            ar.assertLoggedIn("Can not update user contacts.");
 
             String emailId = ar.reqParam("emailId").trim();
             String idDisplayName = ar.reqParam("userName");
@@ -1089,8 +1084,9 @@ public class UserController extends BaseController {
             HttpServletResponse response) throws Exception {
 
         String responseMessage = null;
-        AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not get PeopleYouMayKnow List.");
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
+            ar.assertLoggedIn("Can not update user contacts.");
 
             String searchStr = ar.defParam("searchStr","");
 
@@ -1099,12 +1095,10 @@ public class UserController extends BaseController {
             JSONArray array = getPeopleListInJSONArray(ar, searchStr);
             parameters.put("datatable", array );
 
-            responseMessage = parameters.toString();
+            sendJson(ar, parameters);
         }catch(Exception ex){
-            responseMessage = JSONException.convertToJSON(ex, "getPeopleYouMayKnowList").toString(2);
-            ar.logException("Caught by getPeopleYouMayKnowList.ajax", ex);
+            streamException(ex, ar);
         }
-        NGWebUtils.sendResponse(ar, responseMessage);
     }
 
     @RequestMapping(value="/{userKey}/confirmedAddIdView.htm", method = RequestMethod.GET)
@@ -1114,7 +1108,8 @@ public class UserController extends BaseController {
             HttpServletResponse response) throws Exception {
 
         try{
-            AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not open confirm page.");
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            ar.assertLoggedIn("Can not open confirm page.");
             request.setAttribute("userKey", ar.getUserProfile().getKey());
             streamJSPUserLogged2(request, response, userKey, "../jsp/confirmedAddIdView");
         }
@@ -1129,7 +1124,8 @@ public class UserController extends BaseController {
             HttpServletResponse response) throws Exception {
 
         try{
-            AuthRequest ar = NGWebUtils.getAuthRequest(request, response, "Can not update user contacts.");
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            ar.assertLoggedIn("Can not update user contacts.");
 
             String pop3Host = ar.reqParam("pop3Host");
             String pop3Port = ar.reqParam("pop3Port");
@@ -1562,6 +1558,70 @@ public class UserController extends BaseController {
         }
     }
 
+    
+    @RequestMapping(value="/{userKey}/addEmailAddress.htm", method = RequestMethod.GET)
+    public void addEmailAddress(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable String userKey) throws Exception {
+
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            ar.assertLoggedIn("must be logged in to add an email address");
+            Cognoscenti cog = ar.getCogInstance();
+            
+            String newEmail = ar.reqParam("newEmail");
+            UserProfile user = ar.getUserProfile();
+            UserCacheMgr cacheMgr = cog.getUserCacheMgr();
+            UserCache uCache = cacheMgr.getCache(user.getKey());
+            String token = uCache.genEmailAddressAttempt(newEmail);
+            
+            File userFolder = cog.getConfig().getUserFolderOrFail();
+            File mailFilePath = new File(userFolder, "GlobalEmailArchive.json");
+            
+            MailFile globalArchive = MailFile.readOrCreate(mailFilePath);
+            File templateFile = cog.getConfig().getFileFromRoot("email/ConfirmEmail.chtml");
+            OptOutAddr ooa = new OptOutAddr(user.getAddressListEntry());
+            String confirmAddress = "v/" + userKey + "/confirmEmailAddress.htm?token=" + token;
+            
+            JSONObject mailData = user.getJSON();
+            mailData.put("url", ar.baseURL + confirmAddress);
+            mailData.put("newEmail", newEmail); 
+            mailData.put("token", token); 
+            MailInst mi = globalArchive.createEmailFromTemplate(ooa, newEmail, "Confirm your email address", templateFile, mailData);
+            globalArchive.save();
+            sendJson(ar,mi.getJSON());
+
+        }catch(Exception ex){
+            streamException(ex,ar);
+        }
+    }
+    
+    
+    @RequestMapping(value="/{userKey}/confirmEmailAddress.htm", method = RequestMethod.GET)
+    public void confirmEmailAddress(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable String userKey) throws Exception {
+
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            Cognoscenti cog = ar.getCogInstance();
+            UserProfile user = cog.getUserManager().findUserByAnyIdOrFail(userKey);
+            
+            
+            String token = ar.reqParam("token");
+            UserCacheMgr cacheMgr = cog.getUserCacheMgr();
+            UserCache uCache = cacheMgr.getCache(user.getKey());
+            if (!uCache.verifyEmailAddressAttempt(user, token)) {
+                throw new Exception("Unable to confirm that email address");
+            }
+
+            redirectBrowser(ar,"userSettings.htm");
+        }catch(Exception ex){
+            throw new Exception("Email address not added to profile", ex);
+        }
+    }
 
 }
 
