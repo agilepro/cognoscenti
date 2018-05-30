@@ -465,7 +465,7 @@ a {
           </div>
           <div class="panel-body">
             <div ng-repeat="meet in myMeetings"  class="clipping">
-              <a href="meetingFull.htm?id={{meet.id}}">{{meet.name}} @ {{meet.startTime|date}}</a>
+              <a href="meetingFull.htm?id={{meet.id}}">{{meet.name}}, {{meet.startTime|date: "MMM dd, HH:mm"}}</a>
             </div>
           </div>
         </div>

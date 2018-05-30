@@ -525,7 +525,13 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             <tr>
                 <td>Target Role:</td>
                 <td colspan="2" class="form-inline form-group">
-                    <select class="form-control" ng-model="meeting.targetRole" ng-options="value for value in allRoles"></select>
+                    <select class="form-control" ng-model="meeting.targetRole" ng-options="value for value in allRoles" ng-change="checkRole()"></select>
+                </td>
+            </tr>
+            <tr ng-show="roleWarningMessage">
+                <td></td>
+                <td colspan="2" class="form-inline form-group" style="color:red">
+                {{roleWarningMessage}}
                 </td>
             </tr>
             <tr>

@@ -506,6 +506,32 @@ public class ProjectSettingController extends BaseController {
     }
 
 
+    //pass the parameter 'role' to see if logged in user is a player of that role
+    @RequestMapping(value = "/{siteId}/{pageId}/isRolePlayer.json", method = RequestMethod.GET)
+    public void isRolePlayer(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String roleName = "";
+        try{
+            NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
+            ar.assertLoggedIn("Must be logged in to check your role membership");
+            ar.setPageAccessLevels(ngc);
+            roleName = ar.reqParam("role");
+            JSONObject repo = new JSONObject();
+
+            NGRole role = ngc.getRole(roleName);
+            if (role==null) {
+                throw new Exception("Can not file a role named '"+roleName+"'");
+            }
+            boolean isPlayer = role.isExpandedPlayer(ar.getUserProfile(), ngc);
+            
+            repo.put("isPlayer", isPlayer);
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to determine if user is player of role '"+roleName, ex);
+            streamException(ee, ar);
+        }
+    }
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/emailGeneratorUpdate.json", method = RequestMethod.POST)

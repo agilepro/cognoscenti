@@ -9,6 +9,7 @@ import org.socialbiz.cog.CustomRole;
 import org.socialbiz.cog.MeetingRecord;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.UserRef;
+
 import com.purplehillsbooks.json.JSONObject;
 
 public class MeetingNotesCache {
@@ -21,19 +22,31 @@ public class MeetingNotesCache {
         JSONObject notesObject;
         JSONObject fullObject;
         String meetingId;
+        String siteKey;
+        String workspaceKey;
 
-        boolean canAccess(UserRef user) throws Exception {
+        boolean canAccess(AuthRequest ar) throws Exception {
+            UserRef user = ar.getUserProfile();
             if (user==null) {
                 return false;
             }
-            return CustomRole.isPlayerOfAddressList(user, members);
+            if (CustomRole.isPlayerOfAddressList(user, members)) {
+                return true;
+            }
+            
+            //here is the problem, the list of users was cached, and if the role has changed
+            //we should check one more time to see if the user is in the official list
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteKey, workspaceKey ).getWorkspace();
+            CustomRole meetRole = ngw.getRole(targetRole);
+            members = meetRole.getExpandedPlayers(ngw);
+            return meetRole.isPlayer(user);
         }
-        void assertMeetingParticipant(UserRef user) throws Exception {
-            if (user==null) {
+        void assertMeetingParticipant(AuthRequest ar) throws Exception {
+            if (!ar.isLoggedIn()) {
                 throw new Exception("Must be logged in to access meeting "+meetingId+".");
             }
-            if (!canAccess(user)) {
-                throw new Exception("User ("+user.getUniversalId()+") is not in the target role ("+targetRole+") for meeting "+meetingId+" and can not access the meeting");
+            if (!canAccess(ar)) {
+                throw new Exception("User ("+ar.getBestUserId()+") is not in the target role ("+targetRole+") for meeting "+meetingId+" and can not access the meeting");
             }
         }
     }
@@ -52,7 +65,7 @@ public class MeetingNotesCache {
             ar.setPageAccessLevels(ngw);
             nh = cacheMeeting(ngw,ar,meetingId);
         }
-        return nh.canAccess(ar.getUserProfile());
+        return nh.canAccess(ar);
     }
 
     
@@ -61,7 +74,7 @@ public class MeetingNotesCache {
         String key = site + "|" + workspace + "|" + meetingId;
         NoteHolder nh = cache.get(key);
         if (nh!=null) {
-            nh.assertMeetingParticipant(ar.getUserProfile());
+            nh.assertMeetingParticipant(ar);
             return nh.notesObject;
         }
         
@@ -76,7 +89,7 @@ public class MeetingNotesCache {
         String key = site + "|" + workspace + "|" + meetingId;
         NoteHolder nh = cache.get(key);
         if (nh!=null) {
-            nh.assertMeetingParticipant(ar.getUserProfile());
+            nh.assertMeetingParticipant(ar);
             return nh.fullObject;
         }
         
@@ -109,7 +122,8 @@ public class MeetingNotesCache {
         nh.targetRole = meeting.getTargetRole();
         nh.members = ngw.getRoleOrFail(nh.targetRole).getExpandedPlayers(ngw);
         nh.meetingId = meeting.getId();
-        //nh.assertMeetingParticipant(ar.getUserProfile());
+        nh.siteKey = ngw.getSiteKey();
+        nh.workspaceKey = ngw.getKey();
         cache.put(key, nh);
         return nh;
     }

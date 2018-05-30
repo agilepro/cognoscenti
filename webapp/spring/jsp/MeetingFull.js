@@ -1723,6 +1723,22 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.meeting.startTime = propTime;
         $scope.savePartialMeeting(['startTime']);
     }
+    $scope.checkRole = function() {
+        $scope.roleWarningMessage = "Checking role "+$scope.meeting.targetRole+" now.";
+        var postURL = "isRolePlayer.json?role="+encodeURIComponent($scope.meeting.targetRole);
+        $http.get(postURL)
+        .success( function(data) {
+            if (data.isPlayer) {
+                $scope.roleWarningMessage = null;
+            }
+            else {
+                $scope.roleWarningMessage = "You are not a player of "+$scope.meeting.targetRole+". If you save this, you will no longer have access to this meeting.";
+            }
+        })
+        .error( function(data, status, headers, config) {
+            $scope.roleWarningMessage = "Unable to read role information about "+$scope.meeting.targetRole;
+        });
+    }
 });
 
 function calcResponders(slots) {
