@@ -748,7 +748,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         List<GoalRecord> overDue = new ArrayList<GoalRecord>();
         List<GoalRecord> almostDue = new ArrayList<GoalRecord>();
         List<AgendaItem> presentingList = new ArrayList<AgendaItem>();
-        for (AgendaItem ai : this.getAgendaItems()) {
+        for (AgendaItem ai : getSortedAgendaItems()) {
             for (String presenter : ai.getPresenters()) {
                 if (ale.hasAnyId(presenter)) {
                     presentingList.add(ai);

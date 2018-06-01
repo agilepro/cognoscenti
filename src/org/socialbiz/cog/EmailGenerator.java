@@ -355,7 +355,7 @@ public class EmailGenerator extends DOMFace {
         if (meetId!=null && meetId.length()>0) {
             meeting = ngp.findMeetingOrNull(meetId);
             if (meeting!=null) {
-	            for (AgendaItem ai : meeting.getAgendaItems()) {
+	            for (AgendaItem ai : meeting.getSortedAgendaItems()) {
 	                for (String docId : ai.getDocList()) {
 	                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(docId);
 	                    attachList.add(aRec);
