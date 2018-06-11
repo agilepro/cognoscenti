@@ -337,44 +337,83 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
           <tr>
             <td>Name:</td>
             <td>
-              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
+              <i class="fa fa-edit" ng-click="editMeetingPart='name'"></i>
             </td>
-            <td>
+            <td ng-hide="'name'==editMeetingPart">
               <b>{{meeting.name}}</b>
+            </td>
+            <td ng-show="'name'==editMeetingPart">
+                <div class="well form-horizontal form-group" style="max-width:400px">
+                    <input ng-model="meeting.name"  class="form-control">
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                </div>
             </td>
           </tr>
           <tr>
             <td>Scheduled Time:</td>
             <td>
-              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
+              <i class="fa fa-edit" ng-click="editMeetingPart='startTime'"></i>
             </td>
-            <td>
-              {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+            <td ng-hide="'startTime'==editMeetingPart">
+              <div ng-show="meeting.startTime>0">
+                {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
               &nbsp; &nbsp;
-              <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
+                <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
                   <i class="fa fa-calendar"></i></a> &nbsp; 
-              <span ng-click="getTimeZoneList()"><i class="fa fa-eye"></i> Timezones</span><br/>
-              <span ng-repeat="val in allDates">{{val}}<br/></span>
+                <span ng-click="getTimeZoneList()"><i class="fa fa-eye"></i> Timezones</span><br/>
+                <span ng-repeat="val in allDates">{{val}}<br/></span>
+              </div>
+              <div ng-hide="meeting.startTime>0">
+                <i>( To Be Determined )</i>
+              </div>
+            </td>
+            <td ng-show="'startTime'==editMeetingPart">
+                <div class="well" style="max-width:400px">
+                    <span datetime-picker ng-model="meeting.startTime" 
+                          class="form-control">
+                      {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                    </span> 
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                    <button class="btn btn-warning btn-raised" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button>
+                </div>
             </td>
           </tr>
           <tr>
             <td>Duration:</td>
             <td>
-              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
+              <i class="fa fa-edit" ng-click="editMeetingPart='duration'"></i>
             </td>
-            <td>
+            <td ng-hide="'duration'==editMeetingPart">
               {{meeting.duration}} Minutes ({{meeting.totalDuration}} currently allocated)
+            </td>
+            <td ng-show="'duration'==editMeetingPart" >
+                <div class="well form-inline form-group" style="max-width:400px">
+                    <input ng-model="meeting.duration" style="width:60px;"  class="form-control" >
+                    Minutes ({{meeting.totalDuration}} currently allocated)<br/>
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                </div>
             </td>
           </tr>
           <tr>
             <td>Reminder:</td>
             <td>
-              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
+              <i class="fa fa-edit" ng-click="editMeetingPart='reminder'"></i>
             </td>
-            <td>
+            <td ng-hide="'reminder'==editMeetingPart">
               {{factoredTime}} {{timeFactor}} before the meeting. 
                 <span ng-show="meeting.reminderSent<=0"> <i>Not sent.</i></span>
                 <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}</span>
+            </td>
+            <td ng-show="'reminder'==editMeetingPart">
+                <div class="well form-inline form-group" style="max-width:600px">
+                    <input ng-model="factoredTime" style="width:60px;"  class="form-control" >
+                    <select ng-model="timeFactor" class="form-control">
+                        <option>Minutes</option>
+                        <option>Days</option>
+                        </select>
+                    before the meeting, ({{meeting.reminderTime}} minutes)<br/>
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                </div>
             </td>
           </tr>
           <tr>
@@ -387,10 +426,18 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
           <tr>
             <td>Target Role:</td>
             <td>
-              <i class="fa fa-edit" ng-click="editMeetingInfo=true"></i>
+              <i class="fa fa-edit" ng-click="editMeetingPart='targetRole'"></i>
             </td>
-            <td>
+            <td ng-hide="'targetRole'==editMeetingPart">
               <a href="roleManagement.htm">{{meeting.targetRole}}</a>
+            </td>
+            <td ng-show="'targetRole'==editMeetingPart">
+                <div class="well form-inline form-group" style="max-width:400px">
+                    <select class="form-control" ng-model="meeting.targetRole" 
+                            ng-options="value for value in allRoles" ng-change="checkRole()"></select>
+                    <br/>
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                </div>
             </td>
           </tr>
           <tr>
@@ -562,8 +609,8 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
     <div class="comment-outer"  
          title="Shows what time slots people might be able to attend.">
       <div ng-click="showTimeSlots=!showTimeSlots">Proposed Meeting Times 
-          <span ng-hide="showTimeSlots"><a>(Click to view)</a></span> </div>
-      <div class="comment-inner" ng-show="showTimeSlots">
+          <span ng-hide="showTimeSlots || meeting.startTime<=0"><a>(Click to view)</a></span> </div>
+      <div class="comment-inner" ng-show="showTimeSlots || meeting.startTime<=0">
           <table class="table">
           <tr>
               <th></th>

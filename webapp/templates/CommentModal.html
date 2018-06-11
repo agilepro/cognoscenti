@@ -44,7 +44,7 @@
           <label>Also Notify:</label>
           <tags-input ng-model="cmt.notify" placeholder="Enter user name or id"
                       display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
-              <auto-complete source="loadPersonList($query)"></auto-complete>
+              <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
         </div>
         <div class="form-inline form-group">
@@ -113,7 +113,7 @@
           <label>Add Potential Responder:</label>
           <tags-input ng-model="responders" placeholder="Enter user name or id"
                       display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
-              <auto-complete source="loadPersonList($query)"></auto-complete>
+              <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
           <div style="color:lightgrey">
             You can add people here, but removing their name here will have no effect.

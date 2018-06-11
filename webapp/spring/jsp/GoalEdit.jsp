@@ -606,7 +606,7 @@ function addvalue() {
             <td >Assigned To:</td>
             <td>
               <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
-                  <auto-complete source="loadPersonList($query)"></auto-complete>
+                  <auto-complete source="loadPersonList($query)"  min-length="1"></auto-complete>
               </tags-input>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                    <li role="presentation"><a role="menuitem" title="{{add}}"

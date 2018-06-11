@@ -1167,7 +1167,7 @@ public class UserController extends BaseController {
             }
 
             //this will fail if not logged in
-            streamJSPUserLogged2(request, response, userKey, "../jsp/NotificationSettings");
+            streamJSPUserLoggedIn(ar, userKey, "../jsp/NotificationSettings");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.open.notification.page", new Object[]{userKey} , ex);
         }

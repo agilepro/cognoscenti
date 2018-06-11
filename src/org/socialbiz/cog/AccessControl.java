@@ -362,6 +362,11 @@ public class AccessControl {
                 return true;
             }
         }
+        
+        //members of the workspace always allowed in
+        if (ar.isMember()) {
+            return true;
+        }
 
         //then, check to see if there is any special condition in session
         String resourceId = "meet:"+meet.getId()+":"+ngc.getKey();

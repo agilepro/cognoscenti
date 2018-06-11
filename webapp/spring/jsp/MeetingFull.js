@@ -321,14 +321,26 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.editMeetingDesc=true
     }
     $scope.savePendingEdits = function() {
+        var parts = [];
         if ($scope.editMeetingDesc) {
-            $scope.savePartialMeeting(['meetingInfo']);
-            $scope.editMeetingDesc = false;
+            parts.push('meetingInfo');
         }
         if ($scope.editMeetingInfo) {
-            $scope.savePartialMeeting(['name','startTime','targetRole','duration','reminderTime','meetingType','reminderSent']);
-            $scope.editMeetingInfo = false;
+            parts.push('name');
+            parts.push('startTime');
+            parts.push('targetRole');
+            parts.push('duration');
+            parts.push('reminderTime');
+            parts.push('meetingType');
+            parts.push('reminderSent');
         }
+        if ($scope.editMeetingPart) {
+            parts.push($scope.editMeetingPart);
+        }
+        $scope.savePartialMeeting(parts);
+        $scope.editMeetingDesc = false;
+        $scope.editMeetingInfo = false;
+        $scope.editMeetingPart = null;
     }
     
     function startAgendaRunning(agendaItem) {

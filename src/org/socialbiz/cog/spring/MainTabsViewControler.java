@@ -201,6 +201,7 @@ public class MainTabsViewControler extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            ar.setPageAccessLevels(ngw);
 
             String id = ar.reqParam("id");
             MeetingRecord meet = ngw.findMeeting(id);
@@ -211,6 +212,10 @@ public class MainTabsViewControler extends BaseController {
             }
             if(!ar.isLoggedIn()) {
                 specialAnonJSP(ar, siteId, pageId, "MeetingAnon.jsp");
+                return;
+            }
+            if (ar.isMember()) {
+                streamJSP(ar, "MeetingFull");
                 return;
             }
             String roleName = meet.getTargetRole();

@@ -46,7 +46,7 @@
                           display-property="name" key-property="uid" 
                           on-tag-added="updatePlayers()" 
                           on-tag-removed="updatePlayers()">
-                  <auto-complete source="loadPersonList($query)"></auto-complete>
+                  <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
               </tags-input>
             </td>
         </tr>

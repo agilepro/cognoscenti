@@ -428,7 +428,7 @@ function addvalue() {
                 <td colspan="2">
                   <tags-input ng-model="newGoal.assignList" placeholder="Enter user name or id"
                               display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
-                      <auto-complete source="loadPersonList($query)"></auto-complete>
+                      <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
                   </tags-input>
                 </td>
             </tr>

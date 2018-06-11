@@ -103,7 +103,7 @@ app.controller('myCtrl', function($scope, $http) {
 
 </script>
 
-<!--WarningNotMember.jsp-->
+<!--WarningNotTargetRole.jsp-->
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>

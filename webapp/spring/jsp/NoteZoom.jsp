@@ -972,7 +972,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
       <div>
           <tags-input ng-model="noteInfo.subscribers" placeholder="Enter users to send notification email to"
                       display-property="name" key-property="uid">
-              <auto-complete source="loadPersonList($query)"></auto-complete>
+              <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
       </div>
       <span class="dropdown">

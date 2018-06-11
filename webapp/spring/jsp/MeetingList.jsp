@@ -198,7 +198,10 @@ app.controller('myCtrl', function($scope, $http) {
               </a>
             </td>
             <td><b><a title="View Meeting" href="meetingFull.htm?id={{rec.id}}">{{rec.name}}</a></b></td>
-            <td>{{rec.startTime|date: "dd-MMM-yyyy 'at' HH:mm"}}</td>
+            <td>
+                <span ng-show="rec.startTime>0">{{rec.startTime|date: "dd-MMM-yyyy 'at' HH:mm"}}</span>
+                <span ng-show="rec.startTime<=0"><i>( To Be Determined )</i></span>
+            </td>
             <td style="{{meetingStateStyle(rec.state)}}">{{meetingStateName(rec.state)}}</td>
             <td>{{rec.duration}}</td>
         </tr>

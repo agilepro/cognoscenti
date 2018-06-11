@@ -161,7 +161,7 @@
             <label for="synopsis">Assigned To:</label>
               <tags-input ng-model="goal.assignTo" placeholder="Enter user name or id" 
                           display-property="name" key-property="uid">
-                  <auto-complete source="loadPersonList($query)"></auto-complete>
+                  <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
               </tags-input>
         </div>
         <div class="form-group">

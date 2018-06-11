@@ -37,7 +37,7 @@
          title="Assignee is the person who is tracking status on items assigned to this area">
       <label for="labels">Assignee:</label>
       <tags-input ng-model="taskArea.assignees" placeholder="Enter user name or id" display-property="name" key-property="uid">
-          <auto-complete source="loadPersonList($query)"></auto-complete>
+          <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
       </tags-input>
     </div>
     

@@ -7,6 +7,7 @@ import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.CustomRole;
 import org.socialbiz.cog.MeetingRecord;
+import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.UserRef;
 
@@ -36,11 +37,25 @@ public class MeetingNotesCache {
             
             //here is the problem, the list of users was cached, and if the role has changed
             //we should check one more time to see if the user is in the official list
+            calculateMemberList(ar);
+            return CustomRole.isPlayerOfAddressList(user, members);
+        }
+        
+        private void calculateMemberList(AuthRequest ar) throws Exception {
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteKey, workspaceKey ).getWorkspace();
             CustomRole meetRole = ngw.getRole(targetRole);
             members = meetRole.getExpandedPlayers(ngw);
-            return meetRole.isPlayer(user);
+            
+            //now add the regular workspace members
+            NGRole memberRole = ngw.getPrimaryRole();
+            for (AddressListEntry one : memberRole.getExpandedPlayers(ngw)) {
+                //add member only if not already there
+                if (!meetRole.isExpandedPlayer(one, ngw)) {
+                    members.add(one);
+                }
+            }
         }
+        
         void assertMeetingParticipant(AuthRequest ar) throws Exception {
             if (!ar.isLoggedIn()) {
                 throw new Exception("Must be logged in to access meeting "+meetingId+".");
@@ -120,10 +135,10 @@ public class MeetingNotesCache {
         nh.notesObject = meeting.getMeetingNotes();
         nh.fullObject = meeting.getFullJSON(ar, ngw);
         nh.targetRole = meeting.getTargetRole();
-        nh.members = ngw.getRoleOrFail(nh.targetRole).getExpandedPlayers(ngw);
         nh.meetingId = meeting.getId();
         nh.siteKey = ngw.getSiteKey();
         nh.workspaceKey = ngw.getKey();
+        nh.calculateMemberList(ar);
         cache.put(key, nh);
         return nh;
     }

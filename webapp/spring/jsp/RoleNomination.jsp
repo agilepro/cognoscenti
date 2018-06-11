@@ -428,7 +428,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                             display-property="name" key-property="uid" 
                             on-tag-added="updatePlayers(term.players)" 
                             on-tag-removed="updatePlayers(term.players)">
-                    <auto-complete source="loadPersonList($query)"></auto-complete>
+                    <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
                 </tags-input>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                    <li role="presentation"><a role="menuitem" title="{{add}}"
@@ -474,7 +474,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                             display-property="name" key-property="uid" 
                             on-tag-added="updatePlayers(term.players)" 
                             on-tag-removed="updatePlayers(term.players)">
-                    <auto-complete source="loadPersonList($query)"></auto-complete>
+                    <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
                 </tags-input>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
                    <li role="presentation"><a role="menuitem" title="{{add}}"

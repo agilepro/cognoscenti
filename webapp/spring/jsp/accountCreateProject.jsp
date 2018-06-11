@@ -198,7 +198,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         </label>
           <tags-input ng-model="newWorkspace.members" placeholder="Enter email/name of members for this workspace"
                       display-property="name" key-property="uid">
-              <auto-complete source="loadPersonList($query)"></auto-complete>
+              <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
     </div>
     <div class="guideVocal" ng-show="showMembersHelp" ng-click="showMembersHelp=!showMembersHelp">

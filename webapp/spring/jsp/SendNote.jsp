@@ -469,7 +469,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             <label class="col-md-2 control-label" for="alsoalsoTo">Also to</label>
             <div class="col-md-10">
               <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)" class="form-control">
-                  <auto-complete source="loadPersonList($query)"></auto-complete>
+                  <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
               </tags-input>
             </div>
           </div>
