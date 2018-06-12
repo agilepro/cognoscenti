@@ -16,6 +16,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.timeFactor = "Minutes";
     $scope.factoredTime = 0;
     
+    $scope.userZone = embeddedData.userZone;
+    $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
     $scope.showTimeSlots = false;
     $scope.showFutureSlots = false;
     $scope.timeSlotResponders = [];
@@ -43,7 +46,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
     $scope.onTimeSet = function (newDate) {
         $scope.meeting.startTime = newDate.getTime();
-        console.log("NEW TIME:", newDate);
     }    
     
     
@@ -508,8 +510,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         data.futureSlots.sort(function(a,b) {
             return a.proposedTime - b.proposedTime;
         });
-        $scope.timeSlotResponders = calcResponders(data.timeSlots);
-        $scope.futureSlotResponders = calcResponders(data.futureSlots);
+        $scope.timeSlotResponders = calcResponders(data.timeSlots, AllPeople);
+        $scope.futureSlotResponders = calcResponders(data.futureSlots, AllPeople);
     }
     $scope.createAgendaItem = function() {
         var newAgenda = {
@@ -1264,7 +1266,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
     $scope.commentItemBeingEdited = 0;
     $scope.updateComment = function(cmt) {
-        console.log("Saving it", cmt);
         var agendaItem = null;
         $scope.meeting.agenda.forEach( function(ai) {
             if (hasComment(ai,cmt)) {
@@ -1631,7 +1632,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.showError=false;
         var promise = $http.post("timeZoneList.json", postdata)
         promise.success( function(data) {
-            console.log("got this", data);
             $scope.allDates = data.dates;
             $scope.allDates.sort();
         });
@@ -1693,14 +1693,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             });
         }
     }
-    $scope.removeVoter = function(fieldName, newVoter) {
-        console.log("Adding voter "+newVoter);
-        var current = $scope.meeting[fieldName];
-        if (newVoter) {
-            current.forEach( function(slot) {
-                $scope.setVote(fieldName, slot.proposedTime, newVoter, 0);
-            });
-        }
+    $scope.removeVoter = function(fieldName, oldVoter) {
+        console.log("Removing voter "+oldVoter);
+        var isCurrent = ("timeSlots" == fieldName);
+        var obj = {action:"RemoveUser", isCurrent: isCurrent, user: oldVoter};
+        var postURL = "proposedTimes.json?id="+$scope.meeting.id;
+        var postdata = angular.toJson(obj);
+        $http.post(postURL,postdata)
+        .success( function(data) {
+            $scope.setMeetingData(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
     }
     $scope.removeTime = function(fieldName,time) {
         var isCurrent = ("timeSlots" == fieldName);
@@ -1751,21 +1756,27 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             $scope.roleWarningMessage = "Unable to read role information about "+$scope.meeting.targetRole;
         });
     }
+    
 });
 
-function calcResponders(slots) {
+function calcResponders(slots, AllPeople) {
     var res = [];
+    var checker = [];
     slots.forEach( function(oneTime) {
-        Object.keys(oneTime.people).forEach( function(person) {
-            if (res.indexOf(person)<0) {
-                res.push(person);
+        Object.keys(oneTime.people).forEach( function(email) {
+            if (checker.indexOf(email)<0) {
+                res.push(AllPeople.findUserFromID(email));
+                checker.push(email);
             }
         });
     });
-    if (res.indexOf(SLAP.loginInfo.userId)<0) {
-        res.push(SLAP.loginInfo.userId);
+    if (checker.indexOf(embeddedData.userId)<0) {
+        res.push(AllPeople.findUserFromID(embeddedData.userId));
     }
-    res.sort();
+    res.sort( function(a,b) {
+        return a.name.localeCompare(b.name);
+    });
+    console.log("CALCRESPONDERS", res);
     return res;
 }
 

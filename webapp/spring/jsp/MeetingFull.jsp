@@ -16,6 +16,7 @@
     MeetingRecord mRec     = ngw.findMeeting(meetId);
 
     UserProfile uProf = ar.getUserProfile();
+    String userTimeZone = uProf.getTimeZone();
     
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
@@ -201,6 +202,8 @@
 var embeddedData = {};
 embeddedData.pageId    = "<%ar.writeJS(pageId);%>";
 embeddedData.meetId    = "<%ar.writeJS(meetId);%>";
+embeddedData.userId    = "<%ar.writeJS(ar.getBestUserId());%>";
+embeddedData.userZone  = "<%ar.writeJS(userTimeZone);%>";
 embeddedData.previousMeeting = <%previousMeeting.write(out,2,2);%>;
 embeddedData.allGoals  = <%allGoals.write(out,2,2);%>;
 embeddedData.allRoles  = <%allRoles.write(out,2,2);%>;
@@ -356,8 +359,8 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             </td>
             <td ng-hide="'startTime'==editMeetingPart">
               <div ng-show="meeting.startTime>0">
-                {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-              &nbsp; &nbsp;
+                {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}&nbsp;
+                ({{browserZone}})
                 <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
                   <i class="fa fa-calendar"></i></a> &nbsp; 
                 <span ng-click="getTimeZoneList()"><i class="fa fa-eye"></i> Timezones</span><br/>
@@ -369,10 +372,11 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             </td>
             <td ng-show="'startTime'==editMeetingPart">
                 <div class="well" style="max-width:400px">
-                    <span datetime-picker ng-model="meeting.startTime" 
+                    <span datetime-picker ng-model="meeting.startTime"
                           class="form-control">
-                      {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-                    </span> 
+                      {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
+                    </span>
+                    <span>&nbsp; ({{browserZone}})</span><br/>
                     <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
                     <button class="btn btn-warning btn-raised" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button>
                 </div>
@@ -487,7 +491,8 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             <td></td>
             <td>
               <a href="meetingFull.htm?id={{previousMeeting.id}}">
-                {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}</a>
+                {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}</a> 
+                <span>&nbsp; ({{browserZone}})</span>
             </td>
           </tr>
           <tr ng-show="previousMeeting.minutesId">
@@ -531,9 +536,10 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                 <td>Date & Time:</td>
                 <td class="dropdown">
                 <div style="position:relative">
-                  <span datetime-picker ng-model="meeting.startTime" class="form-control" >
-                      {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                  <span datetime-picker ng-model="meeting.startTime" class="form-control" style="display:inline">
+                      {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
                   </span> 
+                  <span>&nbsp; ({{browserZone}})</span>
                 </div>
                 </td> 
             </tr>
@@ -606,6 +612,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 <!-- Here is the voting for proposed time section -->
     
     
+
     <div class="comment-outer"  
          title="Shows what time slots people might be able to attend.">
       <div ng-click="showTimeSlots=!showTimeSlots">Proposed Meeting Times 
@@ -614,21 +621,29 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
           <table class="table">
           <tr>
               <th></th>
-              <th>Time</th>
+              <th>Time ({{browserZone}})</th>
               <th style="width:20px;"></th>
-              <th ng-repeat="resp in timeSlotResponders" title="{{resp}}"    
+              <th ng-repeat="player in timeSlotResponders" title="{{player.name}}"    
                   style="text-align:center">
-                <span class="dropdown">
-                    <div class="dropdown-toggle specCaretBtn" type="button"  d="menu"
-                        data-toggle="dropdown">{{resp|limitTo:6}}</div>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="removeVoter('timeSlots',resp)">
-                          <i class="fa fa-times"></i>
-                          Remove User</a></li>
+                  <span class="dropdown" >
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" 
+                         ng-src="<%=ar.retPath%>users/{{player.image}}" 
+                         style="width:32px;height:32px" 
+                         title="{{player.name}} - {{player.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" style="text-decoration: none;text-align:center">
+                          {{player.name}}<br/>{{player.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(player)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="removeVoter('timeSlots',player.uid)">
+                          <span class="fa fa-times"></span> Remove User </a></li>
                     </ul>
-                </span>
-              
+                  </span>
               </th>
           </tr>
           <tr ng-repeat="time in meeting.timeSlots">
@@ -646,47 +661,50 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                     </ul>
                 </span>
               </td>
-              <td><div ng-click="setProposedTime(time.proposedTime)">{{time.proposedTime |date:"dd-MMM-yyyy HH:mm"}}</div></td>
+              <td><div ng-click="setProposedTime(time.proposedTime)">
+                  {{time.proposedTime |date:"dd-MMM-yyyy HH:mm"}}
+                  <span ng-show="time.proposedTime == meeting.startTime" class="fa fa-check"></span>
+              </div></td>
               <td style="width:20px;"></td>
               <td ng-repeat="resp in timeSlotResponders"   
                   style="text-align:center">
                  <span class="dropdown">
                     <button class="dropdown-toggle btn votingButton" type="button"  d="menu" style="margin:0px"
                         data-toggle="dropdown"> &nbsp;
-                        <span ng-show="time.people[resp]==1" title="very bad time for me" style="color:red;">
+                        <span ng-show="time.people[resp.uid]==1" title="very bad time for me" style="color:red;">
                             <span class="fa fa-minus-circle"></span>
                             <span class="fa fa-minus-circle"></span></span>
-                        <span ng-show="time.people[resp]==2" title="bad time for me" style="color:red;">
+                        <span ng-show="time.people[resp.uid]==2" title="bad time for me" style="color:red;">
                             <span class="fa fa-minus-circle"></span></span>
-                        <span ng-show="time.people[resp]==3" title="don't know" style="color:#eeeeee;">
+                        <span ng-show="time.people[resp.uid]==3" title="don't know" style="color:#eeeeee;">
                             <span class="fa fa-question-circle"></span></span>
-                        <span ng-show="time.people[resp]==4" title="ok time for me" style="color:green;">
+                        <span ng-show="time.people[resp.uid]==4" title="ok time for me" style="color:green;">
                             <span class="fa fa-plus-circle"></span></span>
-                        <span ng-show="time.people[resp]==5" title="good time for me" style="color:green;">
+                        <span ng-show="time.people[resp.uid]==5" title="good time for me" style="color:green;">
                             <span class="fa fa-plus-circle"></span>
                             <span class="fa fa-plus-circle"></span></span>
                         &nbsp;
                     </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                       <li role="presentation">
-                          <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp, 5)">
+                          <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 5)">
                           <i class="fa fa-plus-circle" style="color:green"></i>
                           <i class="fa fa-plus-circle" style="color:green"></i>
                           Good Time</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp, 4)">
+                          <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 4)">
                           <i class="fa fa-plus-circle" style="color:green"></i>
                           OK Time</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp, 3)">
+                          <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 3)">
                           <i class="fa fa-question-circle" style="color:gray"></i>
                           Unknown</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp, 2)">
+                          <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 2)">
                           <i class="fa fa-minus-circle" style="color:red"></i>
                           Bad time</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp, 1)">
+                          <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 1)">
                           <i class="fa fa-minus-circle" style="color:red"></i>
                           <i class="fa fa-minus-circle" style="color:red"></i>
                           Impossible</a></li>
@@ -700,9 +718,10 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             <button ng-click="createTime('timeSlots', newProposedTime)" class="btn btn-primary btn-raised">Add Proposed Time</button>
           </td>
           <td>
-            <div datetime-picker ng-model="newProposedTime" class="form-control" >
-              {{newProposedTime|date:"dd-MMM-yyyy   HH:mm"}}
-          </div> 
+            <span datetime-picker ng-model="newProposedTime" class="form-control" style="display:inline">
+              {{newProposedTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}  
+            </span> 
+              &nbsp; ({{browserZone}})
           </td>
           </tr><tr>
           <td>
@@ -715,8 +734,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
           </td>
           </tr></table>
        </div>
-    </div>
-        
+    </div>        
     
     
 <!-- THIS IS THE ROLL CALL SECTION -->
@@ -1146,20 +1164,29 @@ Meeting Duration: {{meeting.timerTotal|minutes}}
           <table class="table">
           <tr>
               <th></th>
-              <th>Time</th>
+              <th>Time ({{browserZone}})</th>
               <th style="width:20px;"></th>
-              <th ng-repeat="resp in futureSlotResponders" title="{{resp}}"    
+              <th ng-repeat="player in futureSlotResponders" title="{{player.name}}"    
                   style="text-align:center">
-                <span class="dropdown">
-                    <div class="dropdown-toggle specCaretBtn" type="button"  d="menu"
-                        data-toggle="dropdown">{{resp|limitTo:6}}</div>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="removeVoter('futureSlots',resp)">
-                          <i class="fa fa-times"></i>
-                          Remove User</a></li>
+                  <span class="dropdown" >
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" 
+                         ng-src="<%=ar.retPath%>users/{{player.image}}" 
+                         style="width:32px;height:32px" 
+                         title="{{player.name}} - {{player.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" style="text-decoration: none;text-align:center">
+                          {{player.name}}<br/>{{player.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(player)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="removeVoter('futureSlots',player.uid)">
+                          <span class="fa fa-times"></span> Remove User </a></li>
                     </ul>
-                </span>
+                  </span>
               </th>
           </tr>
           <tr ng-repeat="time in meeting.futureSlots">
@@ -1182,40 +1209,40 @@ Meeting Duration: {{meeting.timerTotal|minutes}}
                  <span class="dropdown">
                     <button class="dropdown-toggle btn votingButton" type="button"  d="menu" style="margin:0px"
                         data-toggle="dropdown"> &nbsp;
-                        <span ng-show="time.people[resp]==1" title="very bad time for me" style="color:red;">
+                        <span ng-show="time.people[resp.uid]==1" title="very bad time for me" style="color:red;">
                             <span class="fa fa-minus-circle"></span>
                             <span class="fa fa-minus-circle"></span></span>
-                        <span ng-show="time.people[resp]==2" title="bad time for me" style="color:red;">
+                        <span ng-show="time.people[resp.uid]==2" title="bad time for me" style="color:red;">
                             <span class="fa fa-minus-circle"></span></span>
-                        <span ng-show="time.people[resp]==3" title="don't know" style="color:#eeeeee;">
+                        <span ng-show="time.people[resp.uid]==3" title="don't know" style="color:#eeeeee;">
                             <span class="fa fa-question-circle"></span></span>
-                        <span ng-show="time.people[resp]==4" title="ok time for me" style="color:green;">
+                        <span ng-show="time.people[resp.uid]==4" title="ok time for me" style="color:green;">
                             <span class="fa fa-plus-circle"></span></span>
-                        <span ng-show="time.people[resp]==5" title="good time for me" style="color:green;">
+                        <span ng-show="time.people[resp.uid]==5" title="good time for me" style="color:green;">
                             <span class="fa fa-plus-circle"></span>
                             <span class="fa fa-plus-circle"></span></span>
                         &nbsp;
                     </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
                       <li role="presentation">
-                          <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp, 5)">
+                          <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp.uid, 5)">
                           <i class="fa fa-plus-circle" style="color:green"></i>
                           <i class="fa fa-plus-circle" style="color:green"></i>
                           Good Time</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp, 4)">
+                          <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp.uid, 4)">
                           <i class="fa fa-plus-circle" style="color:green"></i>
                           OK Time</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp, 3)">
+                          <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp.uid, 3)">
                           <i class="fa fa-question-circle" style="color:gray"></i>
                           Unknown</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp, 2)">
+                          <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp.uid, 2)">
                           <i class="fa fa-minus-circle" style="color:red"></i>
                           Bad time</a></li>
                       <li role="presentation">
-                          <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp, 1)">
+                          <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp.uid, 1)">
                           <i class="fa fa-minus-circle" style="color:red"></i>
                           <i class="fa fa-minus-circle" style="color:red"></i>
                           Impossible</a></li>
@@ -1229,9 +1256,10 @@ Meeting Duration: {{meeting.timerTotal|minutes}}
             <button ng-click="createTime('futureSlots', newProposedTime)" class="btn btn-primary btn-raised">Add Future Time</button>
           </td>
           <td>
-            <span datetime-picker ng-model="newProposedTime" class="form-control" >
-              {{newProposedTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-          </span> 
+            <span datetime-picker ng-model="newProposedTime" class="form-control" style="display:inline">
+              {{newProposedTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
+            </span>
+            <span>&nbsp; ({{browserZone}})</span>
           </td>
           </tr><tr>
           <td>

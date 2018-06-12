@@ -65,6 +65,43 @@ app.service('AllPeople', function($http) {
         AllPeople.allPersonList = {people:[],validTime:0};
         AllPeople.refreshListIfNeeded();
     }
+    AllPeople.findUserFromID = function(email) {
+        var res = {};
+        AllPeople.allPersonList.people.forEach(  function(item) {
+            if (item.uid == email || item.key == email) {
+                res = item;
+            }
+        });
+        if (!res.uid) {
+            res.uid = email;
+        }
+        if (!res.name) {
+            res.name = email;
+        }
+        res.image = AllPeople.imageName(res);
+        return res;
+    }
+    AllPeople.findUsersFromID = function(emailList) {
+        var res = [];
+        emailList.forEach( function(email) {
+            res.push(AllPeople.findUserFromID(email));
+        });
+        return res;
+    }
+    AllPeople.imageName = function(player) {
+        if (player.key) {
+            return player.key+".jpg";
+        }
+        else {
+            var lc = player.uid.toLowerCase();
+            var ch = lc.charAt(0);
+            var i =1;
+            while(i<lc.length && (ch<'a'||ch>'z')) {
+                ch = lc.charAt(i); i++;
+            }
+            return "fake-"+ch+".jpg";
+        }
+    }
     
     
     AllPeople.refreshListIfNeeded = function () {

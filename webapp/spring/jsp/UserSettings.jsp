@@ -40,6 +40,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.addingEmail = false;
     $scope.newEmail = "";
 
+    $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
@@ -138,6 +140,7 @@ if (ar.isLoggedIn()) { %>
                 <div ng-repeat="email in userInfo.ids">{{email}}<br/></div>
             </td>
         </tr>
+<%if (viewingSelf){ %>
         <tr>
             <td class="firstcol"></td>
             <td ng-hide="addingEmail">
@@ -156,9 +159,18 @@ if (ar.isLoggedIn()) { %>
                 </div>
             </td>
         </tr>
+<%} %>
         <tr>
             <td class="firstcol">Email Time Zone:</td>
-            <td>{{userInfo.timeZone}} </td>
+            <td>{{userInfo.timeZone}} 
+                
+            </td>
+        </tr>
+        <tr ng-show="browserZone!=userInfo.timeZone">
+            <td></td>
+            <td>
+                <span  style="color:red">Note, your browser is set to '{{browserZone}}' -- is above setting correct?</span>
+            </td>
         </tr>
         <tr>
             <td class="firstcol">Last Login:</td>

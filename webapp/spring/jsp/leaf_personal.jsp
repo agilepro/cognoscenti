@@ -41,7 +41,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.isNotify   = <%=uProf.isNotifiedForProject(pageId)%>;
     $scope.isMute     = <%=ngp.getMuteRole().isPlayer(uProf)%>;
     $scope.roleList   = <%roleList.write(out,2,4);%>;
-
+    
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";

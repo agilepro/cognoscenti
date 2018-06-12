@@ -71,6 +71,21 @@ public class MeetingProposeTime extends DOMFace {
         }
         setPeople(dest);
     }
+    public void clearPersonValue(String user) {
+        List<String> source = getVector("people");
+        List<String> dest = new ArrayList<String>();
+        for (String onePerson : source) {
+            int pos = onePerson.lastIndexOf(":");
+            if (pos<=0) {
+                continue;
+            }
+            String name = onePerson.substring(0,pos);
+            if (!user.equals(name)) {
+                dest.add(onePerson);
+            }
+        }
+        setPeople(dest);
+    }
 
     /**
      * A small object suitable for lists of meetings

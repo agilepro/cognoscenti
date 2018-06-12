@@ -368,8 +368,8 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         if (!cmdInput.getBoolean("isCurrent")) {
             fieldName = "futureSlots";
         }
-        long time = cmdInput.getLong("time");
         if ("SetValue".equals(action)) {
+            long time = cmdInput.getLong("time");
             MeetingProposeTime mpt = findProposedTime(fieldName, time);
             if (mpt==null) {
                 throw new Exception("This meeting does not have a "+fieldName+" time of "+time);
@@ -379,16 +379,22 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             mpt.setPersonValue(user, value);
         }
         else if ("AddTime".equals(action)) {
+            long time = cmdInput.getLong("time");
             MeetingProposeTime mpt = createChild(fieldName, MeetingProposeTime.class);
             mpt.setProposedTime(time);
         }
         else if ("RemoveTime".equals(action)) {
+            long time = cmdInput.getLong("time");
             this.removeChildrenByNameAttrVal(fieldName, "proposedTime", Long.toString(time));
         }
         else if ("ChangeTime".equals(action)) {
             long newTime = cmdInput.getLong("newTime");
             MeetingProposeTime mpt = createChild(fieldName, MeetingProposeTime.class);
             mpt.setProposedTime(newTime);
+        }
+        else if ("RemoveUser".equals(action)) {
+            String user = cmdInput.getString("user");
+            this.removeUserFromAllSlots(fieldName, user);
         }
         else {
             throw new Exception("actOnProposedTime does not understand the command: "+action);
@@ -413,6 +419,15 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         }
         return mpt;
     }
+
+    private MeetingProposeTime removeUserFromAllSlots(String fieldName, String userName) throws Exception {
+        List<MeetingProposeTime> timeSlot = getChildren(fieldName, MeetingProposeTime.class);
+        for (MeetingProposeTime oneSlot : timeSlot) {
+            oneSlot.clearPersonValue(userName);
+        }
+        return null;
+    }
+
     
     
     /**
