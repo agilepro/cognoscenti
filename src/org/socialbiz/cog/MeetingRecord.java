@@ -534,6 +534,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 }
             }
         }
+        meetingInfo.put("participant", constructJSONArray(this.getVector("participant")));
         return meetingInfo;
     }
 
@@ -612,6 +613,17 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         if (input.has("attended_remove")) {
             this.removeVectorValue("attended", input.getString("attended_remove"));
         }
+        
+        if (input.has("participant")) {
+            this.setVector("participant", constructVector(input.getJSONArray("participant")));
+        }
+        if (input.has("participant_add")) {
+            this.addUniqueValue("participant", input.getString("participant_add"));
+        }
+        if (input.has("participant_remove")) {
+            this.removeVectorValue("participant", input.getString("participant_remove"));
+        }
+        
         if (input.has("timeSlots")) {
             this.removeAllNamedChild("timeSlots");
             JSONArray timeSlotArray = input.getJSONArray("timeSlots");

@@ -61,6 +61,7 @@ app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("<%=pageTitle%>");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
+    $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     var n = new Date().getTimezoneOffset();
     var tzNeg = n<0;
@@ -163,6 +164,17 @@ app.controller('myCtrl', function($scope, $http) {
         //return item.desc;
     }
 });
+app.filter('sdate', function() {
+    return function(input, fmtString) {
+        if (!fmtString) {
+            fmtString = "dd-MMM-yyyy"
+        }
+        if (input<=0) {
+            return "(to be determined)";
+        }
+        return moment(input).format(fmtString);
+    };
+});
 
 function GetFirstHundredNoHtml(input) {
      var limit = 100;
@@ -216,44 +228,20 @@ function GetFirstHundredNoHtml(input) {
               </div>
             </div>
             <!-- Form Control DATE Begin -->
-            <div class="form-group">
+            <div class="form-group form-inline">
                 <label class="col-md-2 control-label" title="Date and time for the beginning of the meeting in YOUR time zone">
                   Date &amp; Time
                 </label>
                 <div class="col-md-10" 
                          title="Date and time for the beginning of the meeting in YOUR time zone">
-                  <span datetime-picker ng-model="meeting.startTime" datetime-picker 
-                        class="form-control" style="max-width:300px">
-                      {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                  <span datetime-picker ng-model="meeting.startTime" 
+                        class="form-control" style="width:180px">
+                      {{meeting.startTime|sdate:"DD-MMM-YYYY &nbsp; HH:mm"}}
                   </span> 
+                  <span style="padding:10px">{{browserZone}}</span>
+                  <button ng-click="meeting.startTime=0" class="btn btn-default btn-raised">Clear</button>
                 </div>
                 <br/><!-- stupid extra line to get next DIV to start at the beginning of a line, why do i have to do this? -->
-            </div>
-            <!-- Form Control TYPE Begin -->
-            <div class="form-group">
-              <label class="col-md-2 control-label" 
-                     title="Meetings have two types: Circle and Operational">
-                     Type</label>
-              <div class="col-md-10">
-                <div class="radio radio-primary">
-                  <label title="Circle meetings are for strategic decision making">
-                    <input type="radio" ng-model="meeting.meetingType" value="1"
-                        class="form-control">
-                        <span class="circle"></span>
-                        <span class="check"></span>
-                        Circle Meeting
-                  </label>
-                  <label title="Operational meetings are for 
-                  checking and communicating completion 
-                  status on work assignments">
-                    <input type="radio" ng-model="meeting.meetingType" value="2"
-                        class="form-control">
-                        <span class="circle"></span>
-                        <span class="check"></span>
-                        Operational Meeting
-                  </label>
-                </div>
-              </div>
             </div>
             <!-- Form Control DESCRIPTION Begin -->
             <div class="form-group">
