@@ -115,7 +115,7 @@ app.controller('myCtrl', function($scope, $http) {
         
         var postURL = "meetingCreate.json";
         var minutesFromNow = Math.floor(($scope.meeting.startTime - (new Date()).getTime()) / 60000);
-        if (minutesFromNow<0) {
+        if ($scope.meeting.startTime>1000000 && minutesFromNow<0) {
             if (!confirm("Warning: this meeting is being scheduled for time in the past.  An email message will be sent immediately informing people of the meeting before you get a chance to change the date.   If you mean to schedule a meeting for the future, press 'Cancel' and correct the date.   Do you still want to create a meeting for the past?")) {
                 return;
             }

@@ -258,7 +258,14 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 
 <%if (isLoggedIn) { %>
     <div class="upRightOptions rightDivContent">
-      <span class="dropdown" title="Control the way people see this meeting.">
+      <span class="dropdown" ng-show="meeting.state<=0">
+          <button class="btn btn-default btn-primary btn-raised"
+                  ng-click="startSend()"
+                  title="Post this meeting to allow others to start planning for it">
+          Post Meeting </button>
+      </span>
+      <span class="dropdown" title="Control the way people see this meeting." 
+            ng-hide="meeting.state<=0">
           <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}">
           State: {{stateName()}} <span class="caret"></span></button>
           <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
@@ -323,6 +330,37 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 
     </div>
 <% } %>
+
+
+    <div class="well" ng-show="addressMode" ng-cloak>
+      <h2>Set Meeting Participants:</h2>
+      <div>
+          <tags-input ng-model="meeting.participants" 
+                      placeholder="Enter users to send notification email to"
+                      display-property="name" key-property="uid">
+              <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+          </tags-input>
+      </div>
+      <span class="dropdown">
+          <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(false)"
+                  title="Post this topic but don't send any email">
+          Post Without Email </button>
+      </span>
+      <span class="dropdown">
+          <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(true)"
+                  title="Post this topic and send the email to selected users">
+          Post &amp; Send Email </button>
+      </span>
+      <span class="dropdown">
+          <button class="btn btn-default btn-warning btn-raised" type="button" ng-click="addressMode = false"
+                  title="Cancel and leave this in draft mode.">
+          Cancel </button>
+      </span>
+
+    </div>
+
+
+
 
     <div style="width:100%">
       <div class="leafContent">
@@ -401,17 +439,17 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
           <tr>
             <td>Reminder:</td>
             <td>
-              <i class="fa fa-edit" ng-click="editMeetingPart='reminder'"></i>
+              <i class="fa fa-edit" ng-click="editMeetingPart='reminderTime'"></i>
             </td>
-            <td ng-hide="'reminder'==editMeetingPart">
+            <td ng-hide="'reminderTime'==editMeetingPart">
               {{factoredTime}} {{timeFactor}} before the meeting. 
                 <span ng-show="meeting.reminderSent<=0"> <i>Not sent.</i></span>
                 <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}</span>
             </td>
-            <td ng-show="'reminder'==editMeetingPart">
+            <td ng-show="'reminderTime'==editMeetingPart">
                 <div class="well form-inline form-group" style="max-width:600px">
                     <input ng-model="factoredTime" style="width:60px;"  class="form-control" >
-                    <select ng-model="timeFactor" class="form-control">
+                    <select ng-model="timeFactor" class="form-control" ng-change="">
                         <option>Minutes</option>
                         <option>Days</option>
                         </select>
@@ -442,6 +480,46 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                     <br/>
                     <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
                 </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Participants:</td>
+            <td>
+              <i class="fa fa-edit" ng-click="editMeetingPart='participants'"></i>
+            </td>
+            <td class="form-inline form-group" ng-hide="'participants'==editMeetingPart">
+                <span ng-repeat="player in meeting.participants" title="{{player.name}}"    
+                  style="text-align:center">
+                  <span class="dropdown" >
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" 
+                         ng-src="<%=ar.retPath%>users/{{player.image}}" 
+                         style="width:32px;height:32px" 
+                         title="{{player.name}} - {{player.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" style="text-decoration: none;text-align:center">
+                          {{player.name}}<br/>{{player.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(player)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                      <!--li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="removeVoter('timeSlots',player.uid)">
+                          <span class="fa fa-times"></span> Remove User </a></li-->
+                    </ul>
+                  </span>
+                </span>
+            </td>
+            <td class="form-inline form-group" ng-show="'participants'==editMeetingPart">
+              <div>
+                  <tags-input ng-model="meeting.participants" 
+                              placeholder="Enter users to send notification email to"
+                              display-property="name" key-property="uid">
+                      <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+                  </tags-input>
+                  <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+              </div>
             </td>
           </tr>
           <tr>
@@ -607,6 +685,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
         </div>
     </div>
+
 
     
 <!-- Here is the voting for proposed time section -->

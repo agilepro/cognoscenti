@@ -49,16 +49,6 @@ public class ChunkFilterDate  extends BasicFilter implements ChunkFilter {
    
     public ChunkFilterDate(Calendar _cal) {
         cal = _cal;
-        /*
-        timeZoneID = _timeZoneID;
-        if (timeZoneID!=null) {
-            TimeZone tz =  TimeZone.getTimeZone(timeZoneID);
-            cal = Calendar.getInstance(tz);
-        }
-        else {
-            cal = Calendar.getInstance();
-        }
-        */
     }
 
     @Override
@@ -69,7 +59,7 @@ public class ChunkFilterDate  extends BasicFilter implements ChunkFilter {
         //we give about 1 day of slop in case someone distorted things with
         //a timezone offset.
         if (dateVal < 100000000L) {
-            return "";
+            return "(to be determined)";
         }
         String[] argStrings = args.getFilterArgs();
         String format = "MMM dd, yyyy  HH:mm '(ttt)'";

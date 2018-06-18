@@ -102,11 +102,19 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         setAttribute("targetRole", newVal);
     }
     public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
-        String targetRole = getTargetRole();
-        if (targetRole==null || targetRole.length()==0) {
-            targetRole = "Members";
+        List<String> partUsers = this.getVector("participants");
+        if (partUsers.size()>0) {
+            //append the participants if there are any
+            OptOutAddr.appendUsersEmail(partUsers,sendTo);
         }
-        OptOutAddr.appendUnmutedUsersFromRole(ngw, targetRole, sendTo);
+        else {
+            //if no participants, get the members of the role
+            String targetRole = getTargetRole();
+            if (targetRole==null || targetRole.length()==0) {
+                targetRole = "Members";
+            }
+            OptOutAddr.appendUnmutedUsersFromRole(ngw, targetRole, sendTo);
+        }
     }
 
     public List<AgendaItem> getAgendaItems() throws Exception {
@@ -534,7 +542,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 }
             }
         }
-        meetingInfo.put("participant", constructJSONArray(this.getVector("participant")));
+        meetingInfo.put("participants", AddressListEntry.getJSONArrayFromIds(this.getVector("participants")));
         return meetingInfo;
     }
 
@@ -614,15 +622,17 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             this.removeVectorValue("attended", input.getString("attended_remove"));
         }
         
-        if (input.has("participant")) {
-            this.setVector("participant", constructVector(input.getJSONArray("participant")));
+        if (input.has("participants")) {
+            this.setVector("participants", AddressListEntry.uidListfromJSONArray(input.getJSONArray("participants")));
         }
+        /*
         if (input.has("participant_add")) {
             this.addUniqueValue("participant", input.getString("participant_add"));
         }
         if (input.has("participant_remove")) {
             this.removeVectorValue("participant", input.getString("participant_remove"));
         }
+        */
         
         if (input.has("timeSlots")) {
             this.removeAllNamedChild("timeSlots");
@@ -712,24 +722,17 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
     public String getNameAndDate(Calendar cal) throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
-        sdf.setCalendar(cal);
-        return getName() + " @ " + sdf.format(new Date(getStartTime()));
+        return getName() + " @ " + formatDate(getStartTime(), cal, "HH:mm z 'on' dd-MMM-yyyy", "(to be determined)");
     }
 
     public String generateWikiRep(AuthRequest ar, NGPage ngp) throws Exception {
         StringBuilder sb = new StringBuilder();
         Calendar cal = getOwnerCalendar();
 
-        SimpleDateFormat sdfFull = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
-        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
-        sdfFull.setCalendar(cal);
-        sdfTime.setCalendar(cal);
-        
         sb.append("!!!"+getName());
 
         sb.append("\n\n!!");
-        sb.append(sdfFull.format(new Date(getStartTime())));
+        sb.append(formatDate(getStartTime(), cal, "HH:mm z 'on' dd-MMM-yyyy", "(to be determined)"));
 
         sb.append("\n\n");
         sb.append(getMeetingDescription());
@@ -743,10 +746,12 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             sb.append(Integer.toString(ai.getPosition()));
             sb.append(". ");
             sb.append(ai.getSubject());
-            sb.append("\n\n"+sdfTime.format(new Date(itemTime)));
+            sb.append("\n\n");
+            sb.append(formatDate(itemTime, cal, "HH:mm", "(tbd)"));
             long minutes = ai.getDuration();
             long finishTime = itemTime + (minutes*60*1000);
-            sb.append(" - "+sdfTime.format(new Date(finishTime)));
+            sb.append(" - ");
+            sb.append(formatDate(finishTime, cal, "HH:mm", "(tbd)"));
             sb.append(" (");
             sb.append(Long.toString(minutes));
             sb.append(" minutes)");
@@ -768,7 +773,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         return sb.toString();
     }
 
-
+/*
     public void generateReminderHtml(AuthRequest ar, NGPage ngp, AddressListEntry ale) throws Exception {
 
         //notice section
@@ -832,12 +837,8 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         ar.write("</h1>");
 
         Calendar cal = getOwnerCalendar();
-        SimpleDateFormat sdfFull = new SimpleDateFormat("HH:mm z 'on' dd-MMM-yyyy");
-        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
-        sdfFull.setCalendar(cal);
-        sdfTime.setCalendar(cal);
-
-        String dateRep = sdfFull.format(new Date(getStartTime()));
+        String dateRep = formatDate(getStartTime(), cal, "HH:mm z 'on' dd-MMM-yyyy", "(to be determined)");
+        
         ar.write("\n<h2>");
         ar.writeHtml(dateRep);
         ar.write("</h2>");
@@ -857,11 +858,11 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 ar.write("<p>");
                 ar.writeHtml(ai.getSubject());
                 ar.write(" - ");
-                ar.write(sdfTime.format(new Date(itemTime)));
+                ar.write(formatDate(itemTime,cal,"HH:mm",""));
                 itemTime = itemTime + (minutes*60*1000);
                 cal.setTimeInMillis(itemTime);
                 ar.write(" - ");
-                ar.write(sdfTime.format(new Date(itemTime)));
+                ar.write(formatDate(itemTime,cal,"HH:mm",""));
                 ar.write(" ("+minutes+" minutes) </p>");
             }
             else {
@@ -872,10 +873,10 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 ar.write("</h3>");
 
                 ar.write("\n<p>");
-                ar.write(sdfTime.format(new Date(itemTime)));
+                ar.write(formatDate(itemTime,cal,"HH:mm",""));
                 itemTime = itemTime + (minutes*60*1000);
                 ar.write(" - ");
-                ar.write(sdfTime.format(new Date(itemTime)));
+                ar.write(formatDate(itemTime,cal,"HH:mm",""));
                 ar.write(" ("+minutes+" minutes)");
                 boolean isFirst = true;
                 for (String presenter : ai.getPresenters()) {
@@ -892,7 +893,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             }
         }
     }
-
+*/
 
     public Calendar getOwnerCalendar() throws Exception {
         UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
@@ -904,8 +905,6 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     
     public String generateMinutes(AuthRequest ar, NGPage ngp) throws Exception {
         Calendar cal = getOwnerCalendar();
-        SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
-        sdfTime.setCalendar(cal);
 
         StringBuilder sb = new StringBuilder();
         sb.append("!!!Meeting: "+getNameAndDate(cal));
@@ -933,10 +932,10 @@ public class MeetingRecord extends DOMFace implements EmailContext {
                 sb.append(". ");
             }
             sb.append(ai.getSubject());
-            sb.append("\n\n"+sdfTime.format(new Date(itemTime)));
+            sb.append("\n\n"+formatDate(itemTime, cal, "HH:mm", ""));
             long minutes = ai.getDuration();
             long finishTime = itemTime + (minutes*60*1000);
-            sb.append(" - "+sdfTime.format(new Date(finishTime)));
+            sb.append(" - "+formatDate(finishTime, cal, "HH:mm", ""));
             sb.append(" (");
             sb.append(Long.toString(ai.getDuration()));
             sb.append(" minutes)");
@@ -1070,13 +1069,25 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             //TODO: make a non-persistent version of EmailGenerator -- no real reason to save this
             EmailGenerator emg = ngw.createEmailGenerator();
             emg.setSubject("Reminder for meeting: "+this.getName());
-            List<String> names = new ArrayList<String>();
-            String tRole = getTargetRole();
-            if (tRole==null || tRole.length()==0) {
-                tRole = "Members";
+            
+            List<String> partUsers = this.getVector("participants");
+            if (partUsers.size()>0) {
+                //put the participants into the "also to" field
+                emg.setAlsoTo(partUsers);
             }
-            names.add(tRole);
-            emg.setRoleNames(names);
+            else {
+                //of no participants, use the role
+                List<String> names = new ArrayList<String>();
+                String tRole = getTargetRole();
+                if (tRole==null || tRole.length()==0) {
+                    tRole = "Members";
+                }
+                names.add(tRole);
+                emg.setRoleNames(names);
+            }
+            
+            
+            
             emg.setMeetingId(getId());
             String meetingOwner = getOwner();
             if (meetingOwner==null || meetingOwner.length()==0) {
@@ -1131,11 +1142,21 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         @Override
         public int compare(MeetingRecord arg0, MeetingRecord arg1) {
             try {
+                //if the meeting time is NOT set, then consider it sorted in the place
+                //of the current time.....
+                long st0 = arg0.getStartTime();
+                if (st0<=0) {
+                    st0 = System.currentTimeMillis();
+                }
+                long st1 = arg1.getStartTime();
+                if (st1<=0) {
+                    st1 = System.currentTimeMillis();
+                }
                 //this syntax allowed in JAva 7 and later
                 //return 0 - Integer.compare(arg0.getPosition(), arg1.getPosition());
 
                 //this for before Java 7
-                return 0 - Long.valueOf(arg0.getStartTime()).compareTo(Long.valueOf(arg1.getStartTime()));
+                return 0 - Long.valueOf(st0).compareTo(Long.valueOf(st1));
             }
             catch (Exception e) {
                 return 0;
@@ -1162,8 +1183,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         return getEmailURL(ar, ngw) + "#cmt"+commentId;
     }
     public String selfDescription() throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        return "(Meeting) "+getName()+" @ " + sdf.format(new Date(getStartTime()));
+        return "(Meeting) "+getName()+" @ " + formatDate(getStartTime(), getOwnerCalendar(), "yyyy-MM-dd HH:mm", "(to be determined)");
     }
     public void markTimestamp(long newTime) throws Exception {
         //the meeting does not care about the timestamp that an comment is emailed.
@@ -1313,5 +1333,17 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             AgendaItem ai = this.findAgendaItem(id);
             ai.mergeMinutes(oldMins, newMins);
         }
+    }
+    
+    
+    
+    public static String formatDate(long dateTime, Calendar cal, String format, String nullValue) {
+        if (dateTime<=0) {
+            return (nullValue);
+        }
+        SimpleDateFormat sdfFull = new SimpleDateFormat(format);
+        sdfFull.setCalendar(cal);
+        
+        return sdfFull.format(new Date(dateTime));
     }
 }

@@ -625,6 +625,14 @@ public class AddressListEntry implements UserRef
         throw new Exception("Unable to parse JSON for user address because neither 'uid' nor 'name' are present.");
     }
 
+    public static JSONArray getJSONArrayFromIds(List<String> idList) throws Exception {
+        JSONArray array = new JSONArray();
+        for (String id : idList) {
+            AddressListEntry ale = new AddressListEntry(id);
+            array.put(ale.getJSON());
+        }
+        return array;
+    }
     public static JSONArray getJSONArray(List<AddressListEntry> addressList) throws Exception {
         JSONArray array = new JSONArray();
         for (AddressListEntry ale : addressList) {

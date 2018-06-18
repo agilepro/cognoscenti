@@ -256,6 +256,15 @@ public class OptOutAddr {
         	}
         }
     }
+    public static void appendUsersEmail(List<String> emailList,
+            List<OptOutAddr> collector) throws Exception {
+        for (String email : emailList) {
+            AddressListEntry ale = new AddressListEntry(email);
+            if (ale.isWellFormed()) {
+                appendOneUser(new OptOutDirectAddress(ale), collector);
+            }
+        }
+    }
 
     /**
      * Only add the user if the user is not already present.

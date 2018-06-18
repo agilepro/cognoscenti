@@ -273,6 +273,32 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         return "Trouble";
     };
+    $scope.startSend = function() {
+        $scope.addressMode = true;
+        if (!$scope.meeting.participants || $scope.meeting.participants.length==0) {
+            $scope.allLabels.forEach( function(item) {
+                console.log("LOOKING: does "+item.name+" equal "+$scope.meeting.targetRole);
+                if (item.name==$scope.meeting.targetRole) {
+                    var listCopy = [];
+                    item.players.forEach( function(player) {
+                        listCopy.push(player)
+                    });
+                    $scope.meeting.participants = listCopy;
+                    console.log("set participants from "+item.name+" to ",$scope.meeting.participants);
+                }
+            });
+        }
+    }
+    $scope.postIt = function(sendEmail) {
+        $scope.meeting.sendEmailNow = sendEmail;
+        $scope.meeting.state=1;
+        $scope.savePartialMeeting(['state','sendEmailNow','participants']);
+        $scope.addressMode = false;
+    }
+    $scope.loadPersonList = function(query) {
+        return AllPeople.findMatchingPeople(query);
+    }
+    
 
     $scope.meetingStateStyle = function(val) {
         if (val<=0) {
@@ -454,6 +480,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.putGetMeetingInfo = function(readyToSave) {
         var promise;
         if (readyToSave) {
+            if (readyToSave.participants) {
+                readyToSave.participants.forEach( function(item) {
+                    if (!item.uid) {
+                        item.uid = item.name;
+                    }
+                });
+            }
             var postURL = "meetingUpdate.json?id="+$scope.meetId;
             if (readyToSave.id=="~new~") {
                 postURL = "agendaAdd.json?id="+$scope.meeting.id;
@@ -482,6 +515,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         if (!data.meetingInfo) {
             data.meetingInfo = "";
         }
+        data.participants.forEach( function(item) {
+            item.image = AllPeople.imageName(item);
+        });
         $scope.timerCorrection = data.serverTime - new Date().getTime();
         $scope.meeting = data;
         $scope.sortItemsB();
@@ -512,6 +548,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
         $scope.timeSlotResponders = calcResponders(data.timeSlots, AllPeople);
         $scope.futureSlotResponders = calcResponders(data.futureSlots, AllPeople);
+        
     }
     $scope.createAgendaItem = function() {
         var newAgenda = {
@@ -1643,6 +1680,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.$watch(
         function(scope) { return scope.factoredTime },
         function(newValue, oldValue) {
+            console.log("Factored Time Change: "+newValue)
             if ($scope.timeFactor=="Days") {
                 $scope.meeting.reminderTime = $scope.factoredTime * 1440;
             }

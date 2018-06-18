@@ -309,10 +309,10 @@ public class MainTabsViewControler extends BaseController {
             sb.append("PRODID:-//Fujitsu/Weaver//NONSGML v1.0//EN\n");
             sb.append("BEGIN:VEVENT\n");
             sb.append("UID:"+ngw.getSiteKey()+ngw.getKey()+meet.getId()+"\n");
-            sb.append("DTSTAMP:"+getSpecialDateFormat(System.currentTimeMillis())+"\n");
+            sb.append("DTSTAMP:"+getSpecialICSFormat(System.currentTimeMillis())+"\n");
             sb.append("ORGANIZER:CN="+ale.getName()+":MAILTO:"+ale.getEmail()+"\n");
-            sb.append("DTSTART:"+getSpecialDateFormat(meet.getStartTime())+"\n");
-            sb.append("DTEND:"+getSpecialDateFormat(meet.getStartTime()+(meet.getDuration()*60*1000))+"\n");
+            sb.append("DTSTART:"+getSpecialICSFormat(meet.getStartTime())+"\n");
+            sb.append("DTEND:"+getSpecialICSFormat(meet.getStartTime()+(meet.getDuration()*60*1000))+"\n");
             sb.append("SUMMARY:"+meet.getName()+"\n");
             sb.append("DESCRIPTION:"+specialEncode(meet.getMeetingDescription())+"\n");
             sb.append("END:VEVENT\n");
@@ -326,12 +326,13 @@ public class MainTabsViewControler extends BaseController {
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }
     }
-
-    private String getSpecialDateFormat(long date) {
+    private String getSpecialICSFormat(long date) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         return formatter.format(new Date(date));
     }
+
+    
     private String specialEncode(String input) {
         StringBuilder sb = new StringBuilder();
         for (int i=0; i<input.length(); i++) {
