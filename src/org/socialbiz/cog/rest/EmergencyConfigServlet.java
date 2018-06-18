@@ -21,8 +21,6 @@
 package org.socialbiz.cog.rest;
 
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 
 import javax.servlet.ServletConfig;

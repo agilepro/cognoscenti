@@ -16,9 +16,6 @@
 
 package org.socialbiz.cog.api;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
