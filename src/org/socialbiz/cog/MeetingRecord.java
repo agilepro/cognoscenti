@@ -1,5 +1,6 @@
 package org.socialbiz.cog;
 
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -7,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.ScheduledNotification;
@@ -1346,4 +1348,42 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         
         return sdfFull.format(new Date(dateTime));
     }
+    
+    public void streamICSFile(Writer w, NGWorkspace ngw) throws Exception {
+        AddressListEntry ale = new AddressListEntry(getOwner());
+        w.write("BEGIN:VCALENDAR\n");
+        w.write("VERSION:2.0\n");
+        w.write("PRODID:-//Fujitsu/Weaver//NONSGML v1.0//EN\n");
+        w.write("BEGIN:VEVENT\n");
+        w.write("UID:"+ngw.getSiteKey()+ngw.getKey()+getId()+"\n");
+        w.write("DTSTAMP:"+getSpecialICSFormat(System.currentTimeMillis())+"\n");
+        w.write("ORGANIZER:CN="+ale.getName()+":MAILTO:"+ale.getEmail()+"\n");
+        w.write("DTSTART:"+getSpecialICSFormat(getStartTime())+"\n");
+        w.write("DTEND:"+getSpecialICSFormat(getStartTime()+(getDuration()*60*1000))+"\n");
+        w.write("SUMMARY:"+getName()+"\n");
+        w.write("DESCRIPTION:"+specialEncode(getMeetingDescription())+"\n");
+        w.write("END:VEVENT\n");
+        w.write("END:VCALENDAR\n");        
+    }
+    private String getSpecialICSFormat(long date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return formatter.format(new Date(date));
+    }
+    private String specialEncode(String input) {
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i<input.length(); i++) {
+            char ch = input.charAt(i);
+            if (ch=='\n') {
+                sb.append("\\n");
+            }
+            else if (ch<' ') {
+                //do nothing
+            }
+            else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }    
 }

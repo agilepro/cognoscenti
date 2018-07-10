@@ -21,6 +21,9 @@
 package org.socialbiz.cog;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -319,18 +322,56 @@ public class EmailGenerator extends DOMFace {
         String[] subjAndBody = generateEmailBody(ar, ngp, ooa);
         String subject = subjAndBody[0];
         String entireBody = subjAndBody[1];
+        
+        MeetingRecord meeting = getMeetingIfPresent(ngp);
 
-        List<String> attachIds = new ArrayList<String>();
-        for (String attId : getAttachments()) {
-            AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(attId);
-            if (getAttachFiles()) {
-                attachIds.add(aRec.getId());
+        ArrayList<File> attachments = new ArrayList<File>();
+        if (getAttachFiles()) {
+            for (String attId : getAttachments()) {
+                File path = ngp.getAttachmentPathOrNull(attId);
+                if (path!=null) {
+                    attachments.add(path);
+                }
+            }
+            if (meeting!=null) {
+                for (AgendaItem ai : meeting.getSortedAgendaItems()) {
+                    for (String docId : ai.getDocList()) {
+                        File path = ngp.getAttachmentPathOrNull(docId);
+                        if (path!=null) {
+                            attachments.add(path);
+                        }
+                    }
+                }
             }
         }
+        //always attach the ICS file whether they ask for it or not
+        if (meeting!=null) {
+            File projectFolder = ngp.containingFolder;
+            File cogFolder = new File(projectFolder, ".cog");
+            File icsFile = new File(cogFolder, "meet"+meeting.getId()+".ics");
+            File icsFileTmp = new File(cogFolder, "meet"+meeting.getId()+".ics~tmp"+System.currentTimeMillis());
+            FileOutputStream fos = new FileOutputStream(icsFileTmp);
+            Writer w = new OutputStreamWriter(fos, "UTF-8");
+            meeting.streamICSFile(w, ngp);
+            w.close();
+            if (icsFile.exists()) {
+                icsFile.delete();
+            }
+            icsFileTmp.renameTo(icsFile);
+            attachments.add(icsFile);
+        }
         
-        mailFile.createEmailWithAttachments(ngp, new AddressListEntry(getOwner()), ooa.getEmail(), subject, entireBody, attachIds);
+        mailFile.createEmailWithAttachments(new AddressListEntry(getOwner()), ooa.getEmail(), subject, entireBody, attachments);
     }
 
+    private MeetingRecord getMeetingIfPresent(NGWorkspace ngp) throws Exception {
+        String meetId = getMeetingId();
+        if (meetId==null || meetId.length()==0) {
+            return null;
+        }
+        MeetingRecord meeting = ngp.findMeetingOrNull(meetId);
+        return meeting;
+    }
     
     public String[] generateEmailBody(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa) throws Exception {
         
@@ -341,12 +382,14 @@ public class EmailGenerator extends DOMFace {
         UserProfile originalSender = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
         
         List<AttachmentRecord> attachList = getSelectedAttachments(ar, ngp);
-        List<String> attachIds = new ArrayList<String>();
+        //List<String> attachIds = new ArrayList<String>();
         for (String attId : getAttachments()) {
             AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(attId);
-            attachList.add(aRec);
-            if (getAttachFiles()) {
-                attachIds.add(aRec.getId());
+            if (aRec!=null) {
+                attachList.add(aRec);
+                //if (getAttachFiles()) {
+                //    attachIds.add(aRec.getId());
+                //}
             }
         }
 
@@ -359,9 +402,9 @@ public class EmailGenerator extends DOMFace {
 	                for (String docId : ai.getDocList()) {
 	                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(docId);
 	                    attachList.add(aRec);
-	                    if (getAttachFiles()) {
-	                        attachIds.add(aRec.getId());
-	                    }
+	                    //if (getAttachFiles()) {
+	                    //    attachIds.add(aRec.getId());
+	                    //}
 	                }
 	            }
             }

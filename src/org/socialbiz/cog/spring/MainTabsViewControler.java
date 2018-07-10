@@ -57,6 +57,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 
 
 @Controller
@@ -301,54 +302,22 @@ public class MainTabsViewControler extends BaseController {
             
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             MeetingRecord meet = ngw.findMeeting(meetId);
-            AddressListEntry ale = new AddressListEntry(meet.getOwner());
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("BEGIN:VCALENDAR\n");
-            sb.append("VERSION:2.0\n");
-            sb.append("PRODID:-//Fujitsu/Weaver//NONSGML v1.0//EN\n");
-            sb.append("BEGIN:VEVENT\n");
-            sb.append("UID:"+ngw.getSiteKey()+ngw.getKey()+meet.getId()+"\n");
-            sb.append("DTSTAMP:"+getSpecialICSFormat(System.currentTimeMillis())+"\n");
-            sb.append("ORGANIZER:CN="+ale.getName()+":MAILTO:"+ale.getEmail()+"\n");
-            sb.append("DTSTART:"+getSpecialICSFormat(meet.getStartTime())+"\n");
-            sb.append("DTEND:"+getSpecialICSFormat(meet.getStartTime()+(meet.getDuration()*60*1000))+"\n");
-            sb.append("SUMMARY:"+meet.getName()+"\n");
-            sb.append("DESCRIPTION:"+specialEncode(meet.getMeetingDescription())+"\n");
-            sb.append("END:VEVENT\n");
-            sb.append("END:VCALENDAR\n");
+            
+            MemFile mf = new MemFile();
+            
+            meet.streamICSFile(mf.getWriter(), ngw);
 
             ar.resp.setContentType("text/calendar");
-            ar.write(sb.toString());
+            mf.outToWriter(ar.w);
             ar.flush();
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }
     }
-    private String getSpecialICSFormat(long date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
-        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return formatter.format(new Date(date));
-    }
 
     
-    private String specialEncode(String input) {
-        StringBuilder sb = new StringBuilder();
-        for (int i=0; i<input.length(); i++) {
-            char ch = input.charAt(i);
-            if (ch=='\n') {
-                sb.append("\\n");
-            }
-            else if (ch<' ') {
-                //do nothing
-            }
-            else {
-                sb.append(ch);
-            }
-        }
-        return sb.toString();
-    }
+
 
     @RequestMapping(value = "/{siteId}/{pageId}/cloneMeeting.htm", method = RequestMethod.GET)
     public void cloneMeeting(@PathVariable String siteId,@PathVariable String pageId,

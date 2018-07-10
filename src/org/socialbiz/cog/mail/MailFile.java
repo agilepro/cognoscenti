@@ -30,7 +30,6 @@ import javax.mail.Message;
 
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.EmailRecord;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.exception.ProgramLogicError;
 
@@ -124,26 +123,15 @@ public class MailFile extends JSONWrapper {
 
 
 
-    public MailInst createEmailWithAttachments(NGPage ngc,
+    public MailInst createEmailWithAttachments(
             AddressListEntry from,
             String addressee,
             String subject,
             String emailBody,
-            List<String> attachIds) throws Exception {
-
-        if (ngc == null) {
-            throw new ProgramLogicError("createEmailRecord requires a non null ngc parameter");
-        }
+            List<File> attachments) throws Exception {
 
         MailInst mi = createEmailRecord(from, addressee, subject, emailBody);
 
-        ArrayList<File> attachments = new ArrayList<File>();
-        for (String id : attachIds) {
-            File path = ngc.getAttachmentPathOrNull(id);
-            if (path!=null) {
-                attachments.add(path);
-            }
-        }
         mi.setAttachmentFiles(attachments);
         return mi;
     }

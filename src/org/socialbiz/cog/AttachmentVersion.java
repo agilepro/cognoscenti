@@ -87,19 +87,6 @@ public interface AttachmentVersion
     public File getLocalFile();
 
     /**
-    * If you had a writable version, after writing the contents to the file, you
-    * must call commit in order to actually save the contents to the versioning system.
-    * This will also release and clean up any unnecessary temporary files or resources.
-    */
-    //public void commitLocalFile();
-
-    /**
-    * In some cases in the past a local file would be created to access a version, and this
-    * would free up the local file (delete it).  This is no longer needed.
-    */
-    //public void releaseLocalFile();
-
-    /**
      * Some versioning systems have a 'working copy' of the file hanging around in
      * the project folder, and not checked into the archive folder.  This working
      * copy is represented as a version of the document with a version number
