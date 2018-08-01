@@ -641,4 +641,15 @@ public class AddressListEntry implements UserRef
         return array;
     }
 
+    public static void addIfNotPresent(List<AddressListEntry> addressList, 
+            AddressListEntry newMember) throws Exception {
+        for (AddressListEntry one : addressList) {
+            if (one.equals(newMember)) {
+                return;
+            }
+        }
+        addressList.add(newMember);
+    }
+    
+    
 }

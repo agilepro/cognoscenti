@@ -499,9 +499,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             promise = $http.get("meetingRead.json?id="+$scope.meetId);
         }
         promise.success( function(data) {
+            console.log("set meeting 1");
             $scope.setMeetingData(data);
         });
         promise.error( function(data, status, headers, config) {
+            console.log("ERROROROROR", data);
             $scope.reportError(data);
         });
         $scope.showError=false;
@@ -511,6 +513,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         return $scope.putGetMeetingInfo(null);
     }
     $scope.setMeetingData = function(data) {
+        if (!data) {
+            console.log("ASKED to SET MEETING DATA but no meeting data passed");
+            throw "ASKED to SET MEETING DATA but no meeting data passed";
+        }
         console.log("Received meeting data: ", data);
         if (!data.meetingInfo) {
             data.meetingInfo = "";
@@ -1714,6 +1720,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var postdata = angular.toJson(obj);
         $http.post(postURL,postdata)
         .success( function(data) {
+            console.log("set meeting 2");
             $scope.setMeetingData(data);
         })
         .error( function(data, status, headers, config) {
@@ -1739,6 +1746,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var postdata = angular.toJson(obj);
         $http.post(postURL,postdata)
         .success( function(data) {
+            console.log("set meeting 3");
             $scope.setMeetingData(data);
         })
         .error( function(data, status, headers, config) {
@@ -1752,6 +1760,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var postdata = angular.toJson(obj);
         $http.post(postURL,postdata)
         .success( function(data) {
+            console.log("set meeting 4");
             $scope.setMeetingData(data);
         })
         .error( function(data, status, headers, config) {
@@ -1765,6 +1774,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var postdata = angular.toJson(obj);
         $http.post(postURL,postdata)
         .success( function(data) {
+            console.log("set meeting 5");
             $scope.setMeetingData(data);
         })
         .error( function(data, status, headers, config) {

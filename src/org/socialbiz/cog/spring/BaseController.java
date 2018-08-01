@@ -523,6 +523,10 @@ public class BaseController {
         ar.flush();
     }
 
+    protected static void saveAndReleaseLock(NGWorkspace ngw, AuthRequest ar, String msg) throws Exception {
+        ngw.saveFile(ar, msg);
+        NGPageIndex.clearLocksHeldByThisThread();
+    }    
 }
 
 

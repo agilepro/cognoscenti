@@ -47,59 +47,8 @@ public class SuperAdminLogFile extends DOMFile {
         return new SuperAdminLogFile(superAdminFile, newDoc);
     }
 
-    /**
-     * This method returns a list of ALL sites created
-     * within the last 100 days.
-     */
-    /*
-    public List<NGBook> getAllNewSites(Cognoscenti cog) throws Exception {
-        List<AdminEvent> allEvents = getEventsParent().getChildren("event",
-                AdminEvent.class);
-        List<NGBook> newSites = new ArrayList<NGBook>();
-        long oneHundredDaysAgo = System.currentTimeMillis()-(86000*1000*100);
-        for (AdminEvent event : allEvents) {
-            if (event.getModTime()>oneHundredDaysAgo) {
-                if (event.getContext().equals(AdminEvent.SITE_CREATED)) {
-                    NGPageIndex ngpi = cog.getSiteByKey(event.getObjectId());
-                    if (ngpi!=null) {
-                        NGBook site = ngpi.getSite();
-                        if (site!=null) {
-                            newSites.add(site);
-                        }
-                    }
-                }
-            }
-        }
-        return newSites;
-    }
-    */
 
 
-    /**
-     * This method returns a list of ALL users registered
-     * TODO: either fix this
-     * to return registrations created in a particular timespan OR: implement a
-     * mechanism that removes the old registrations from the file, so that only
-     * the new ones are left.
-     */
-    /*
-    public List<UserProfile> getAllNewRegisteredUsers() throws Exception {
-        List<AdminEvent> allEvents = getEventsParent().getChildren("event",
-                AdminEvent.class);
-        List<UserProfile> newUsers = new ArrayList<UserProfile>();
-        for (AdminEvent event : allEvents) {
-            if (event.getContext().equals(AdminEvent.NEW_USER_REGISTRATION)) {
-                UserProfile profile = UserManager.getUserProfileByKey(event
-                        .getObjectId());
-                if (profile != null) {
-                    //TODO: is this a bad error situation if null??
-                    newUsers.add(profile);
-                }
-            }
-        }
-        return newUsers;
-    }
-    */
 
     public void createAdminEvent(String objectId, long modTime,
             String modUser, String context) throws Exception {
@@ -134,15 +83,6 @@ public class SuperAdminLogFile extends DOMFile {
         return getScalar("lastSendLog");
     }
 
-    /**
-     * Get a four digit numeric id which is unique on the page.
-     */
-    /*
-    public String getUniqueOnPage() throws Exception {
-        // getUniqueOnPage is not implemented. Do we need this???
-        throw new ProgramLogicError("getUniqueOnPage is not implemented.");
-    }
-    */
 
     protected DOMFace getEventsParent() throws Exception {
         return requireChild("events", DOMFace.class);
@@ -175,10 +115,4 @@ public class SuperAdminLogFile extends DOMFile {
         }
         return emailListenerPropertiesFlag;
     }
-
-    /*
-    public String getEmailListenerProblem() throws Exception {
-        return getScalar("emailListenerProblem");
-    }
-    */
 }

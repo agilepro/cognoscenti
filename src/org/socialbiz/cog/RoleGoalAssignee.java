@@ -54,12 +54,7 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
 
     public List<AddressListEntry> getDirectPlayers() throws Exception {
         List<AddressListEntry> list = new ArrayList<AddressListEntry>();
-        String assigneeList = getList();
-        if (assigneeList == null) {
-            return list;
-        }
-        List<String> assignees = UtilityMethods.splitString(assigneeList, ',');
-        for (String assignee : assignees) {
+        for (String assignee : getAssigneeList()) {
             if (assignee.length() > 0) {
                 list.add(new AddressListEntry(assignee));
             }
@@ -116,8 +111,12 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
         }
     }
 
-    private String getList() {
-        return goal.getAssigneeCommaSeparatedList();
+    private List<String> getAssigneeList() {
+        String rawList = goal.getAssigneeCommaSeparatedList();
+        if (rawList==null || rawList.length()==0) {
+            return new ArrayList<String>();
+        }
+        return UtilityMethods.splitString(rawList, ',');
     }
 
     private void setList(String newVal) {
@@ -157,12 +156,7 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
 
 
     public void countIdentifiersInRole(StringCounter sc) {
-        String assigneeList = getList();
-        if (assigneeList == null) {
-            return;
-        }
-
-        for (String id : UtilityMethods.splitString(assigneeList, ',')) {
+        for (String id : getAssigneeList()) {
             sc.increment(id);
         }
     }
@@ -173,13 +167,8 @@ public class RoleGoalAssignee extends RoleSpecialBase implements NGRole {
      * any duplication.
      */
     public boolean replaceId(String sourceId, String destId) {
-        String assigneeList = getList();
-        if (assigneeList == null) {
-            return false;
-        }
-
         //first a clear search path to see if one is there.
-        List<String> assignees = UtilityMethods.splitString(assigneeList, ',');
+        List<String> assignees = getAssigneeList();
         boolean foundOne = false;
         for (String oneAss : assignees) {
             if (oneAss.equalsIgnoreCase(sourceId)) {

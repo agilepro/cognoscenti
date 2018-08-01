@@ -44,16 +44,20 @@ public class MeetingNotesCache {
         private void calculateMemberList(AuthRequest ar) throws Exception {
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteKey, workspaceKey ).getWorkspace();
             CustomRole meetRole = ngw.getRole(targetRole);
-            members = meetRole.getExpandedPlayers(ngw);
+            List<AddressListEntry> targetPlayers = meetRole.getExpandedPlayers(ngw);
             
             //now add the regular workspace members
             NGRole memberRole = ngw.getPrimaryRole();
             for (AddressListEntry one : memberRole.getExpandedPlayers(ngw)) {
-                //add member only if not already there
-                if (!meetRole.isExpandedPlayer(one, ngw)) {
-                    members.add(one);
-                }
+                AddressListEntry.addIfNotPresent(targetPlayers,one);
             }
+            
+            //now add the participants if any
+            MeetingRecord meet = ngw.findMeeting(this.meetingId);
+            for (String part : meet.getParticipants()) {
+                AddressListEntry.addIfNotPresent(targetPlayers, new AddressListEntry(part));
+            }
+            members = targetPlayers;
         }
         
         void assertMeetingParticipant(AuthRequest ar) throws Exception {
@@ -61,7 +65,7 @@ public class MeetingNotesCache {
                 throw new Exception("Must be logged in to access meeting "+meetingId+".");
             }
             if (!canAccess(ar)) {
-                throw new Exception("User ("+ar.getBestUserId()+") is not in the target role ("+targetRole+") for meeting "+meetingId+" and can not access the meeting");
+                throw new Exception("User ("+ar.getBestUserId()+") is not a perticipant for meeting "+meetingId+" and can not access the meeting");
             }
         }
     }

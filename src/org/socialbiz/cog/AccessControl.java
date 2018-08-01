@@ -22,6 +22,7 @@ package org.socialbiz.cog;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 
 public class AccessControl {
 
@@ -361,13 +362,29 @@ public class AccessControl {
             if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
                 return true;
             }
+
+            //members of the workspace always allowed in
+            if (ar.isMember()) {
+                return true;
+            }
+            
+            //players of the target role are always allowed in as well
+            NGRole targetRole = ngc.getRole(meet.getTargetRole());
+            if (targetRole.isExpandedPlayer(user, ngc)) {
+                return true;
+            }
+
+            //The actual participants of the meeting are allowed as well
+            //regardless of whether they are in workspace or not
+            List<String> participantIds = meet.getParticipants();
+            for (String id : participantIds) {
+                if (user.hasAnyId(id)) {
+                    return true;
+                }
+            }
         }
         
-        //members of the workspace always allowed in
-        if (ar.isMember()) {
-            return true;
-        }
-
+        
         //then, check to see if there is any special condition in session
         String resourceId = "meet:"+meet.getId()+":"+ngc.getKey();
         if (ar.hasSpecialSessionAccess(resourceId)) {

@@ -74,15 +74,15 @@ public class UtilityMethods {
      * Trims the string values of space next to delimiter
      * For example the results from splitString(val, ",")
      * <pre>
-     *   "a,b,c"    gives   {"a","b","c"}
-     *   "a,b,c,"   gives   {"a","b","c"}
-     *   "a , b ,c" gives   {"a","b","c"}
-     *   "a,,c"     gives   {"a","c"}
-     *   "a,   ,c"  gives   {"a","c"}
-     *   ",b,c"     gives   {"b","c"}
-     *   ""         gives   {}
-     *   "     "    gives   {}
-     *   ","        gives   {}
+     *   "a,b,c"    gives   ["a","b","c"]
+     *   "a,b,c,"   gives   ["a","b","c"]
+     *   "a , b ,c" gives   ["a","b","c"]
+     *   "a,,c"     gives   ["a","c"]
+     *   "a,   ,c"  gives   ["a","c"]
+     *   ",b,c"     gives   ["b","c"]
+     *   ""         gives   []
+     *   "     "    gives   []
+     *   ","        gives   []
      * </pre>
      */
     static public List<String> splitString(String str, char delim) {
