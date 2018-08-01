@@ -352,7 +352,7 @@ public class EmailGenerator extends DOMFace {
             File icsFileTmp = new File(cogFolder, "meet"+meeting.getId()+".ics~tmp"+System.currentTimeMillis());
             FileOutputStream fos = new FileOutputStream(icsFileTmp);
             Writer w = new OutputStreamWriter(fos, "UTF-8");
-            meeting.streamICSFile(w, ngp);
+            meeting.streamICSFile(ar, w, ngp);
             w.close();
             if (icsFile.exists()) {
                 icsFile.delete();

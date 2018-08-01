@@ -1354,7 +1354,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         return sdfFull.format(new Date(dateTime));
     }
     
-    public void streamICSFile(Writer w, NGWorkspace ngw) throws Exception {
+    public void streamICSFile(AuthRequest ar, Writer w, NGWorkspace ngw) throws Exception {
         AddressListEntry ale = new AddressListEntry(getOwner());
         w.write("BEGIN:VCALENDAR\n");
         w.write("VERSION:2.0\n");
@@ -1366,7 +1366,9 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         w.write("DTSTART:"+getSpecialICSFormat(getStartTime())+"\n");
         w.write("DTEND:"+getSpecialICSFormat(getStartTime()+(getDuration()*60*1000))+"\n");
         w.write("SUMMARY:"+getName()+"\n");
-        w.write("DESCRIPTION:"+specialEncode(getMeetingDescription())+"\n");
+        String descriptionHtml = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingDescription());
+                getMeetingDescription();
+        w.write("DESCRIPTION:"+specialEncode(descriptionHtml)+"\n");
         w.write("END:VEVENT\n");
         w.write("END:VCALENDAR\n");        
     }

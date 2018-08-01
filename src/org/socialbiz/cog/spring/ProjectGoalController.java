@@ -54,6 +54,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 
 /**
  * This class will handle all requests managing process/tasks. Currently this is
@@ -912,6 +913,35 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/{siteId}/{pageId}/ActionItem{actId}Due.ics", method = RequestMethod.GET)
+    public void meetingTime(@PathVariable String siteId,@PathVariable String pageId,
+            @PathVariable String actId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            //NOTE: you do NOT need to be logged in to get the calendar file
+            //It is important to allow anyone to receive these links in an email
+            //and not be logged in, and still be able to get the calendar on 
+            //their calendar.  So allow this information to ANYONE who has a link.
+            
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            GoalRecord goal = ngw.getGoalOrFail(actId);
+            
+            MemFile mf = new MemFile();
+            
+            goal.streamICSFile(ar, mf.getWriter(), ngw);
+
+            ar.resp.setContentType("text/calendar");
+            mf.outToWriter(ar.w);
+            ar.flush();
+
+        }catch(Exception ex){
+            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+    
     
     ////////////////////// Process linkage with BPM //////////////////
     

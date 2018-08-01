@@ -5,6 +5,11 @@ app.service('AllPeople', function($http) {
     var AllPeople = this;
     var fetchedAt = 0;
     
+    //There is a problem with pages continually asking for new user lists after the 
+    //page has been logged out, so as soon as the first error is encountered fetching
+    //a list, disable any additional fetching until the page is refreshed.
+    var refreshDisabled = false;
+    
     AllPeople.findFullName = function (key) {
         if (!AllPeople.allPersonList) {
             AllPeople.getPeopleOutOfStorage();
@@ -105,6 +110,9 @@ app.service('AllPeople', function($http) {
     
     
     AllPeople.refreshListIfNeeded = function () {
+        if (refreshDisabled) {
+            return;
+        }
         var curTime = new Date().getTime();
         if (AllPeople.allPersonList.validTime>curTime) {
             return;
@@ -122,6 +130,9 @@ app.service('AllPeople', function($http) {
                         +", valid until ="+new Date(AllPeople.allPersonList.validTime));
         })
         .error( function(data) {
+            //we got an error and the most common error is because user logged out.
+            //this prevents the continued polling after logging out.
+            refreshDisabled = true;
             console.log("AllPeople FAILURE: ", data);
         });
     }

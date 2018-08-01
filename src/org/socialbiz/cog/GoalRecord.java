@@ -21,10 +21,16 @@
 package org.socialbiz.cog;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.mail.ChunkTemplate;
@@ -1098,7 +1104,7 @@ public class GoalRecord extends BaseRecord {
 
     ////////////////////////// EMAIL /////////////////////////////
 
-    public void goalEmailRecord(AuthRequest ar, NGPage ngp, MailFile mailFile) throws Exception {
+    public void goalEmailRecord(AuthRequest ar, NGWorkspace ngp, MailFile mailFile) throws Exception {
         try {
             if (!needSendEmail()) {
                 throw new Exception("Program Logic Error: attempt to send email on action item when no schedule for sending is set");
@@ -1160,7 +1166,7 @@ public class GoalRecord extends BaseRecord {
         }
     }
 
-    private void constructEmailRecordOneUser(AuthRequest ar, NGPage ngp, OptOutAddr ooa,
+    private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa,
             UserProfile requesterProfile, MailFile mailFile) throws Exception  {
         if (!ooa.hasEmailAddress()) {
             return;  //ignore users without email addresses
@@ -1216,12 +1222,68 @@ public class GoalRecord extends BaseRecord {
             //if it is not finished and past due date, then say that
             overdueStr = " Overdue!";
         }
+        
+        ArrayList<File> attachments = new ArrayList<File>();        
+        if (this.getDueDate()>0) {
+            File projectFolder = ngp.getContainingFolder();
+            File cogFolder = new File(projectFolder, ".cog");
+            File icsFile = new File(cogFolder, "actitem"+this.getId()+".ics");
+            File icsFileTmp = new File(cogFolder, "meet"+this.getId()+".ics~tmp"+System.currentTimeMillis());
+            FileOutputStream fos = new FileOutputStream(icsFileTmp);
+            Writer w = new OutputStreamWriter(fos, "UTF-8");
+            streamICSFile(ar, w, ngp);
+            w.close();
+            if (icsFile.exists()) {
+                icsFile.delete();
+            }
+            icsFileTmp.renameTo(icsFile);
+            attachments.add(icsFile);
+        }
 
         String emailSubject = "Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr;
         mailFile.createEmailRecord(requesterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
     }
+    
+    public void streamICSFile(AuthRequest ar, Writer w, NGWorkspace ngw) throws Exception {
+        UserProfile creatorUser = UserManager.getStaticUserManager().lookupUserByAnyId(getCreator());
+        w.write("BEGIN:VCALENDAR\n");
+        w.write("VERSION:2.0\n");
+        w.write("PRODID:-//Fujitsu/Weaver//NONSGML v1.0//EN\n");
+        w.write("BEGIN:VEVENT\n");
+        w.write("UID:"+ngw.getSiteKey()+ngw.getKey()+getId()+"\n");
+        w.write("DTSTAMP:"+getSpecialICSFormat(System.currentTimeMillis())+"\n");
+        w.write("ORGANIZER:CN="+creatorUser.getName()+":MAILTO:"+creatorUser.getAddressListEntry().getEmail()+"\n");
+        w.write("DTSTART:"+getSpecialICSFormat(getDueDate())+"\n");
+        w.write("DTEND:"+getSpecialICSFormat(getDueDate()+(30*60*1000))+"\n");
+        w.write("SUMMARY:"+getSynopsis()+"\n");
+        w.write("DESCRIPTION:"+specialEncode(this.getSynopsis()+"-"+this.getDescription())+"\n");
+        w.write("END:VEVENT\n");
+        w.write("END:VCALENDAR\n");
+        w.flush();
+    }
+    private String getSpecialICSFormat(long date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return formatter.format(new Date(date));
+    }
+    private String specialEncode(String input) {
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i<input.length(); i++) {
+            char ch = input.charAt(i);
+            if (ch=='\n') {
+                sb.append("\\n");
+            }
+            else if (ch<' ') {
+                //do nothing
+            }
+            else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }    
 
-    public void gatherUnsentScheduledNotification(NGPage ngp, ArrayList<ScheduledNotification> resList) throws Exception {
+    public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList) throws Exception {
         //don't send email if there is no assignee.  Wait till there is an assignee
         if (needSendEmail()) {
             resList.add(new GScheduledNotification(ngp, this));
@@ -1229,10 +1291,10 @@ public class GoalRecord extends BaseRecord {
     }
 
     private class GScheduledNotification implements ScheduledNotification {
-        NGPage ngp;
+        NGWorkspace ngp;
         GoalRecord goal;
 
-        public GScheduledNotification( NGPage _ngp, GoalRecord _goal) {
+        public GScheduledNotification( NGWorkspace _ngp, GoalRecord _goal) {
             ngp  = _ngp;
             goal = _goal;
         }
