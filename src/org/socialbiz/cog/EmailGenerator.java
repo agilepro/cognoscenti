@@ -180,6 +180,7 @@ public class EmailGenerator extends DOMFace {
         this.setAttributeBool("excludeResponders", newVal);
     }
 
+    /*
     public boolean getIncludeSelf() throws Exception {
         return getAttributeBool("includeSelf");
     }
@@ -187,6 +188,7 @@ public class EmailGenerator extends DOMFace {
     public void setIncludeSelf(boolean newVal) throws Exception {
         this.setAttributeBool("includeSelf", newVal);
     }
+    */
 
     public boolean getMakeMembers() throws Exception {
         return getAttributeBool("makeMembers");
@@ -273,13 +275,6 @@ public class EmailGenerator extends DOMFace {
             for (LeafletResponseRecord llr : noteRec.getResponses()) {
                 String responder = llr.getUser();
                 OptOutAddr.removeFromList(sendTo, responder);
-            }
-        }
-        if (getIncludeSelf()) {
-            String from = getOwner();
-            if (from!=null && from.length()>0) {
-                AddressListEntry aleself = AddressListEntry.parseCombinedAddress(from);
-                OptOutAddr.appendOneUser(new OptOutDirectAddress(aleself), sendTo);
             }
         }
         return sendTo;
@@ -581,7 +576,6 @@ public class EmailGenerator extends DOMFace {
         obj.put("alsoTo", toList);
         obj.put("intro", getIntro());
         obj.put("excludeResponders", getExcludeResponders());
-        obj.put("includeSelf", getIncludeSelf());
         obj.put("makeMembers", getMakeMembers());
         obj.put("includeBody", getIncludeBody());
         obj.put("attachFiles", getAttachFiles());
@@ -654,7 +648,6 @@ public class EmailGenerator extends DOMFace {
         if (obj.has("excludeResponders")) {
             setExcludeResponders(obj.getBoolean("excludeResponders"));
         }
-        this.updateAttributeBool("includeSelf", obj);
         if (obj.has("makeMembers")) {
             setMakeMembers(obj.getBoolean("makeMembers"));
         }

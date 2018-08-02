@@ -41,6 +41,7 @@ Optional Parameters:
     AddressListEntry uAle = new AddressListEntry(uProf);
 
     String eGenId      = ar.defParam("id", null);
+    String selectedRole = "Members";
     JSONObject emailInfo = null;
     if (eGenId!=null) {
         EmailGenerator eGen = ngw.getEmailGeneratorOrFail(eGenId);
@@ -53,6 +54,11 @@ Optional Parameters:
         emailInfo.put("intro", ar.defParam("intro",
                 "Sending this note to let you know about a recent update to this web page "
                 +"has information that is relevant to you.  Follow the link to see the most recent version."));
+        emailInfo.put("alsoTo", new JSONArray());
+        emailInfo.put("excludeResponders", false);
+        emailInfo.put("makeMembers", false);
+        emailInfo.put("includeBody", false);
+        emailInfo.put("scheduleTime", new Date().getTime());
 
         String mailSubject  = ar.defParam("subject", null);
         String noteId = ar.defParam("noteId", null);
@@ -68,6 +74,7 @@ Optional Parameters:
             emailInfo.put("noteInfo", noteRec.getJSONWithHtml(ar, ngw));
 
             targetRole = noteRec.getTargetRole();
+            emailInfo.put("alsoTo", AddressListEntry.getJSONArray(noteRec.getSubscriberRole().getExpandedPlayers(ngw)));
         }
 
 
@@ -82,12 +89,6 @@ Optional Parameters:
         }
         emailInfo.put("docList", docList);
 
-        emailInfo.put("alsoTo", new JSONArray());
-        emailInfo.put("excludeResponders", false);
-        emailInfo.put("includeSelf", false);
-        emailInfo.put("makeMembers", false);
-        emailInfo.put("includeBody", false);
-        emailInfo.put("scheduleTime", new Date().getTime());
 
         String meetId      = ar.defParam("meet", null);
         if (meetId!=null && meetId.length()>0) {
@@ -97,6 +98,7 @@ Optional Parameters:
                 if(mailSubject == null){
                     mailSubject = "Meeting: "+mr.getNameAndDate(mr.getOwnerCalendar());
                 }
+                emailInfo.put("alsoTo", AddressListEntry.getJSONArrayFromIds(mr.getParticipants()));
             }
             targetRole = mr.getTargetRole();
         }
@@ -107,11 +109,9 @@ Optional Parameters:
         emailInfo.put("subject", mailSubject);
         JSONArray defaultRoles = new JSONArray();
         if (targetRole!=null && targetRole.length()>0) {
-            defaultRoles.put(targetRole);
+            selectedRole = targetRole;
         }
-        else {
-            defaultRoles.put("Members");
-        }
+        defaultRoles.put(selectedRole);
         emailInfo.put("roleNames", defaultRoles);
 
     }
@@ -139,7 +139,6 @@ Optional Parameters:
       "excludeResponders": false,
       "id": "~new~",
       "includeBody": false,
-      "includeSelf": false,
       "intro": "Sending this note to let you know about a recent update to this web page has information that is relevant to you.  Follow the link to see the most recent version.",
       "makeMembers": false,
       "noteInfo": {
@@ -186,6 +185,7 @@ Optional Parameters:
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     window.setMainPageTitle("Compose Email");
+    $scope.isNew = <%=(eGenId==null)%>;
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
@@ -204,6 +204,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     $scope.newAttachment = "";
 
     $scope.saveEmail = function() {
+        console.log("SAVE EMAIL");
         $scope.emailInfo.alsoTo.forEach(function(item) {
             if (!item.uid) {
                 item.uid = item.name;
@@ -217,6 +218,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             if ($scope.emailInfo.sendIt == true || $scope.emailInfo.deleteIt == true) {
                 window.location = "listEmail.htm";
                 return;
+            }
+            if ($scope.isNew) {
+                console.log("OK, we need to navigate to thenew ID");
+                window.location = "sendNote.htm?id="+data.id;
             }
             $scope.emailInfo = data;
             console.log("Got Email Object", data);
@@ -290,6 +295,36 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                 }
             });
             $scope.emailInfo.roleNames = newSet;
+        }
+    }
+    $scope.addPlayers = function() {
+        console.log("addPlayers: ",$scope.selectedRole);
+        if (!$scope.selectedRole) {
+            return;
+        }
+        $scope.allRoles.forEach( function(role) {
+            if (role.name == $scope.selectedRole.name) {
+                role.players.forEach( function(player) {
+                    addToTo(player);
+                });
+            }
+        });
+    }
+    
+    function addToTo(player) {
+        var found = false;
+        $scope.emailInfo.alsoTo.forEach( function(person) {
+            if (person.name == player.name) {
+                found = true;
+            }
+        });
+        if (!found) {
+            console.log("Adding player: ",player);
+            $scope.emailInfo.alsoTo.push({name: player.name, uid: player.uid});
+        }
+        else {
+            console.log("Ignorint player: ",player);
+            
         }
     }
 
@@ -420,6 +455,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
+<style>
+.spaceBefore {
+    margin-top:20px;
+}
+</style>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
@@ -442,45 +482,21 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
       <form class="form-horizontal">
         <fieldset>
           <div class="form-group">
-            <label class="col-md-2 control-label">To Role</label>
+            <label class="col-md-2 control-label">Roles</label>
             <div class="col-md-10">
-              <span ng-repeat="role in allRoles">
-                <span class="role-label" ng-show="hasRole(role.name)">
-                   <span class="label" style="background-color: {{role.color}} !important">{{role.name}}</span>
-                   <a title="Remove Role {{role.name}}" ng-click="toggleRole(role.name)"><i class="fa fa-minus"></i></a>
-                </span>
-              </span>
-              <span>
-                 <span class="dropdown">
-                   <button class="btn btn-primary btn-sm btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                     <i class="fa fa-plus"></i> Add Role
-                   </button>
-                   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                     <li role="presentation" ng-repeat="rolex in allRoles">
-                         <div role="menuitem" tabindex="-1" href="#"  ng-click="toggleRole(rolex.name)" class="label role-label"
-                         ng-hide="hasRole(rolex.name)" style="margin: 0.3em; background-color:{{rolex.color}};">
-                             {{rolex.name}}</div></li>
-                   </ul>
-                 </span>
-              </span>
+              <div class="form-inline">
+                <select ng-model="selectedRole" ng-options="role.name for role in allRoles" class="form-control"></select>
+                <button class="btn btn-primary btn-sm btn-raised" ng-click="addPlayers()" ng-show="selectedRole">
+                    <i class="fa fa-plus"></i> Add Players from {{selectedRole.name}} </button>
+              </div>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-2 control-label" for="alsoalsoTo">Also to</label>
+            <label class="col-md-2 control-label" for="alsoalsoTo">Send To</label>
             <div class="col-md-10">
-              <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)" class="form-control">
+              <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
                   <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
               </tags-input>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-2 control-label" for="alsoalsoTo"></label>
-            <div class="col-md-10">
-                <div class="togglebutton col-md-4">
-                  <label>
-                    <input type="checkbox" ng-model="emailInfo.includeSelf">  Include Yourself
-                  </label>
-                </div>              
             </div>
           </div>
           <div class="form-group">
@@ -492,16 +508,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
           <div class="form-group">
             <label class="col-md-2 control-label" for="intro">Introduction</label>
             <div class="col-md-10">
-              <textarea id="intro" ng-model="emailInfo.intro" class="form-control"></textarea>
+              <textarea id="intro" ng-model="emailInfo.intro" class="form-control" style="height:200px"
+                  title="Enter a message in Mark-Down format">
+              </textarea>
             </div>
           </div>
-          <div class="form-group" ng-show="emailInfo.noteInfo.id">
-            <label class="col-md-2 control-label" for="includeBody">Topic</label>
-            <div class="col-md-10">
-            {{emailInfo.noteInfo.subject}}
-            </div>
-          </div>
+          
           <div class="form-group">
+          <hr/>
             <label class="col-md-2 control-label">Attachments</label>
             <div class="col-md-10">
               <span ng-repeat="docid in emailInfo.docList" style="vertical-align: top">
@@ -541,17 +555,25 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
           <div class="form-group">
             <label class="col-md-2 control-label"></label>
             <div class="col-md-10">
-              <input type="checkbox" ng-model="emailInfo.includeBody"/>  Include Files as Attachments
+                <div class="form-inline">
+                    <span class="form-control" ng-click="emailInfo.includeBody=!emailInfo.includeBody">
+                        <input type="checkbox" ng-model="emailInfo.includeBody"/>  Include Files as Attachments
+                    </span>
+                </div>
             </div>
           </div>
+          
           <div class="form-group" ng-show="emailInfo.meetingInfo.name">
+            <hr/>
             <label class="col-md-2 control-label">Meeting</label>
             <div class="col-md-10">
               <span class="btn btn-sm btn-default btn-raised">{{emailInfo.meetingInfo.name}}</span>
               Included into email
             </div>
           </div>
+
           <div class="form-group" ng-show="emailInfo.noteInfo.subject">
+            <hr/>          
             <label class="col-md-2 control-label">Discussion Topic</label>
             <div class="col-md-10">
                 <div class="togglebutton">
@@ -563,16 +585,23 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-2 control-label">Tasks?</label>
+            <hr/>
+            <label class="col-md-2 control-label">Action Items:</label>
             <div class="col-md-10">
-               <select class="form-control" ng-model="emailInfo.tasksOption" style="width:300px"
-                       title="Select whether a task list should be included in the message">
-                  <option value="None">No Tasks</option>
-                  <option value="Assignee">Only to Assignees</option>
-                  <option value="All">All Tasks to Everyone</option>
-               </select>
+                <div class="form-inline">
+                    <span class="form-control" ng-click="emailInfo.tasksOption='None'">
+                        <input type="radio" ng-model="emailInfo.tasksOption" value="None"> None &nbsp 
+                    </span>
+                    <span class="form-control" ng-click="emailInfo.tasksOption='Assignee'">
+                        <input type="radio" ng-model="emailInfo.tasksOption" value="Assignee"> Only to Assignee &nbsp 
+                    </span>
+                    <span class="form-control" ng-click="emailInfo.tasksOption='All'">
+                        <input type="radio" ng-model="emailInfo.tasksOption" value="All"> All Action Items to Everyone
+                    </span>
+                </div>
             </div>
           </div>
+          <hr/>
           <!-- Form Control Schedule Time Begin -->
           <div class="form-group" >
             <label class="col-md-2 control-label" for="scheduledTime">When?</label>

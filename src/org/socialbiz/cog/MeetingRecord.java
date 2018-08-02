@@ -236,8 +236,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
      * Gives all the agenda items sequential increasing numbers
      */
     public void renumberItems() throws Exception {
-        List<AgendaItem> tempList = getAgendaItems();
-        Collections.sort(tempList, new AgendaItemPositionComparator());
+        List<AgendaItem> tempList = getSortedAgendaItems();
         int pos = 0;
         int num = 0;
         for (AgendaItem ai : tempList) {
@@ -305,7 +304,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
      */
     public List<AgendaItem> getDocumentLinkedAgendaItems(String docUniversalId) throws Exception {
         ArrayList<AgendaItem> allItems = new ArrayList<AgendaItem>();
-        for (AgendaItem ai : this.getAgendaItems()) {
+        for (AgendaItem ai : this.getSortedAgendaItems()) {
             for (String docId : ai.getDocList()) {
                 if (docUniversalId.equals(docId)) {
                     allItems.add(ai);
@@ -502,7 +501,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         verifyTargetRole(ngw);
         JSONObject meetingInfo = getListableJSON(ar);
         JSONArray aiArray = new JSONArray();
-        for (AgendaItem ai : getAgendaItems()) {
+        for (AgendaItem ai : getSortedAgendaItems()) {
             aiArray.put(ai.getJSON(ar, ngw, this));
         }
         meetingInfo.put("agenda", aiArray);
@@ -780,127 +779,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
         return sb.toString();
     }
 
-/*
-    public void generateReminderHtml(AuthRequest ar, NGPage ngp, AddressListEntry ale) throws Exception {
 
-        //notice section
-        List<GoalRecord> overDue = new ArrayList<GoalRecord>();
-        List<GoalRecord> almostDue = new ArrayList<GoalRecord>();
-        List<AgendaItem> presentingList = new ArrayList<AgendaItem>();
-        for (AgendaItem ai : getSortedAgendaItems()) {
-            for (String presenter : ai.getPresenters()) {
-                if (ale.hasAnyId(presenter)) {
-                    presentingList.add(ai);
-                }
-            }
-
-            for (String actionId : ai.getActionItems()) {
-                GoalRecord goal = ngp.getGoalOrNull(actionId);
-                if (goal!=null) {
-                    if (goal.isAssignee(ale)) {
-                        if (BaseRecord.isFinal(goal.getState())) {
-                            continue;
-                        }
-
-                        if (goal.getDueDate()<ar.nowTime){
-                            overDue.add(goal);
-                        }
-                        else if (goal.getDueDate()< (ar.nowTime + (7L*24*60*60*1000))) {
-                            almostDue.add(goal);
-                        }
-                    }
-                }
-            }
-        }
-
-        String workspaceAddress = ar.baseURL + ar.getResourceURL(ngp, "");
-        if (overDue.size()>0 || almostDue.size()>0 || presentingList.size()>0 ) {
-
-            ar.write("\n<div style=\"border:5px solid red;padding:10px;\">");
-            ar.write("Notice about this meeting:");
-            ar.write("\n<ul>");
-            for (GoalRecord goal : overDue) {
-                ar.write("\n<li><b>Overdue</b> action item: <a href=\"" + workspaceAddress + "task"+goal.getId()+".htm\">");
-                ar.writeHtml(goal.getSynopsis());
-                ar.write("</a></li>");
-            }
-            for (AgendaItem agit : presentingList) {
-                ar.write("\n<li>You are presenting agenda item: <b>");
-                ar.writeHtml(agit.getSubject());
-                ar.write("</b></li>");
-            }
-            for (GoalRecord goal : almostDue) {
-                ar.write("\n<li>Due soon: <a href=\"" + workspaceAddress + "task"+goal.getId()+".htm\">");
-                ar.writeHtml(goal.getSynopsis());
-                ar.write("</a></li>");
-            }
-            ar.write("\n</ul>");
-            ar.write("</div>");
-        }
-
-
-        ar.write("\n<h1>");
-        ar.writeHtml(getName());
-        ar.write("</h1>");
-
-        Calendar cal = getOwnerCalendar();
-        String dateRep = formatDate(getStartTime(), cal, "HH:mm z 'on' dd-MMM-yyyy", "(to be determined)");
-        
-        ar.write("\n<h2>");
-        ar.writeHtml(dateRep);
-        ar.write("</h2>");
-
-        ar.write("\n<div class=\"leafContent\" >");
-        WikiConverter.writeWikiAsHtml(ar, getMeetingDescription());
-        ar.write("</div>");
-
-
-        ar.write("\n<h2>Agenda</h2>");
-
-        long itemTime = this.getStartTime();
-
-        for (AgendaItem ai : getSortedAgendaItems()) {
-            long minutes = ai.getDuration();
-            if (ai.isSpacer()) {
-                ar.write("<p>");
-                ar.writeHtml(ai.getSubject());
-                ar.write(" - ");
-                ar.write(formatDate(itemTime,cal,"HH:mm",""));
-                itemTime = itemTime + (minutes*60*1000);
-                cal.setTimeInMillis(itemTime);
-                ar.write(" - ");
-                ar.write(formatDate(itemTime,cal,"HH:mm",""));
-                ar.write(" ("+minutes+" minutes) </p>");
-            }
-            else {
-                ar.write("\n<h3>");
-                ar.write(Integer.toString(ai.getNumber()));
-                ar.write(". ");
-                ar.writeHtml(ai.getSubject());
-                ar.write("</h3>");
-
-                ar.write("\n<p>");
-                ar.write(formatDate(itemTime,cal,"HH:mm",""));
-                itemTime = itemTime + (minutes*60*1000);
-                ar.write(" - ");
-                ar.write(formatDate(itemTime,cal,"HH:mm",""));
-                ar.write(" ("+minutes+" minutes)");
-                boolean isFirst = true;
-                for (String presenter : ai.getPresenters()) {
-                    AddressListEntry pale = new AddressListEntry(presenter);
-                    if (isFirst) {
-                        ar.write(" Presented by: ");
-                    }
-                    else {
-                        ar.write(", ");
-                    }
-                    isFirst = false;
-                    pale.writeLink(ar);
-                }
-            }
-        }
-    }
-*/
 
     public Calendar getOwnerCalendar() throws Exception {
         UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
@@ -1211,7 +1090,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
             resList.add(sn);
         }
-        for (AgendaItem ai : this.getAgendaItems()) {
+        for (AgendaItem ai : this.getSortedAgendaItems()) {
             ai.gatherUnsentScheduledNotification(ngp, this, resList);
         }
     }

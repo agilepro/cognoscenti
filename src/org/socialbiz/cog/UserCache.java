@@ -82,7 +82,7 @@ public class UserCache {
                 }
 
                 String address = "meetingFull.htm?id="+meet.getId();
-                for (AgendaItem ai : meet.getAgendaItems()) {
+                for (AgendaItem ai : meet.getSortedAgendaItems()) {
                     for (CommentRecord cr : ai.getComments()) {
                         addPollIfNoResponse(proposalList, openRounds, cr, up, aPage, meet.getTargetRole(), address, nowTime);
                     }

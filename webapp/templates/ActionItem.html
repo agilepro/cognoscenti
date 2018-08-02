@@ -60,10 +60,13 @@
           <td>
             <div>
                 <span datetime-picker ng-model="goal.duedate" 
-                    class="form-control" style="max-width:300px">
+                    class="form-control" style="max-width:300px;display:inline">
                     <span ng-show="goal.duedate>1000000" datetime-picker ng-model="goal.duedate" > {{goal.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
                     <span ng-show="goal.duedate<=1000000" datetime-picker ng-model="goal.duedate" > not set </span>
                 </span> 
+                <span style="padding:10px">
+                   <a href="ActionItem{{goal.id}}Due.ics">calendar</a>
+                </span>
             </div>                
           </td>
         </tr>

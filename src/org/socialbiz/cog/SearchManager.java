@@ -149,7 +149,7 @@ public class SearchManager {
                     
                     doc.add(new Field("BODY", meet.getName(), TextField.TYPE_STORED));
                     doc.add(new Field("BODY", meet.generateWikiRep(ar, ngp), TextField.TYPE_STORED));
-                    for (AgendaItem ai : meet.getAgendaItems()) {
+                    for (AgendaItem ai : meet.getSortedAgendaItems()) {
                         for (CommentRecord cr : ai.getComments()) {
                             doc.add(new Field("BODY", cr.getContent(), TextField.TYPE_STORED));
                         }

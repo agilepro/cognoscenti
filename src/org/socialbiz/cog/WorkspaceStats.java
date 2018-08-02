@@ -3,6 +3,7 @@ package org.socialbiz.cog;
 import java.util.List;
 
 import org.socialbiz.cog.util.NameCounter;
+
 import com.purplehillsbooks.json.JSONObject;
 
 public class WorkspaceStats {
@@ -54,7 +55,7 @@ public class WorkspaceStats {
             if (owner!=null && owner.length()>0) {
                 meetingsPerUser.increment(owner);
             }
-            for (AgendaItem ai : meet.getAgendaItems()) {
+            for (AgendaItem ai : meet.getSortedAgendaItems()) {
                 countComments(ai.getComments());
             }
         }

@@ -47,6 +47,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
@@ -168,7 +169,7 @@ public class MeetingControler extends BaseController {
             
             MemFile mf = new MemFile();
             
-            meet.streamICSFile(mf.getWriter(), ngw);
+            meet.streamICSFile(ar, mf.getWriter(), ngw);
 
             ar.resp.setContentType("text/calendar");
             mf.outToWriter(ar.w);
@@ -688,7 +689,7 @@ public class MeetingControler extends BaseController {
               nr.setDiscussionPhase(TopicRecord.DISCUSSION_PHASE_DRAFT, ar);
 
               //now copy all the attachment references across
-              for (AgendaItem ai : meeting.getAgendaItems()) {
+              for (AgendaItem ai : meeting.getSortedAgendaItems()) {
                   for (String aid : ai.getDocList()) {
                       AttachmentRecord att = ngw.findAttachmentByID(aid);
                       if (att!=null) {
