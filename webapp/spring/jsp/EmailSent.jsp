@@ -97,13 +97,31 @@ app.controller('myCtrl', function($scope, $http) {
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" href="listEmail.htm">
+              Email Prepared</a>
+          </li>
+          <li role="presentation"><a role="menuitem" href="emailSent.htm">
+              Email Sent</a>
+          </li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem" href="sendNote.htm">
+              Create Email</a>
+          </li>
+        </ul>
+      </span>
+    </div>
 
         <div>
             Filter: <input ng-model="filter">
         </div>
         <div style="height:20px;"></div>
-        <table class="gridTable2" width="100%">
-            <tr class="gridTableHeader">
+        <table class="table" width="100%">
+            <tr>
                 <td width="100px">From</td>
                 <td width="300px">Subject</td>
                 <td width="100px">Recipient</td>

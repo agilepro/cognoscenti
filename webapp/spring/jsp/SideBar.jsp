@@ -28,6 +28,8 @@
         Action Items</a></li>
     <li><a href="decisionList.htm" title="Each workspace has a list of decisions that have been made over time.">
         Decisions</a></li>
+    <li><a href="listEmail.htm" title="Email that has been sent by anyone about this workspace.">
+        Email</a></li>
     <li><a href="labelList.htm" title="Create labels to help categorize documents, discussions, and action items.">
         Labels</a></li>
     <li><a href="roleManagement.htm" title="Manage the roles that define who is able to what in this workspace">
