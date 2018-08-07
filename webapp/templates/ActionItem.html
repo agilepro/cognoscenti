@@ -25,20 +25,19 @@
 }
 </style>
   <div ng-show="editMode=='status'">
-      <table id="displayTable" class="spacyTable">
-        <tr title="This is the overall synopsis and description of the action item">
-          <td>
-            <label>Summary:</label>
-          </td>
-          <td>
-            {{goal.synopsis}} ~ {{goal.description}}
-          </td>
-        </tr>
-        <tr title="Give a Red-Yellow-Green estimate on the status">
-          <td>
-            <label>R-Y-G:</label>
-          </td>
-          <td style="padding:10px;">
+    <div style="text-align:center">
+      {{goal.synopsis}}
+    </div>
+    <div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group" 
+             title="status is a freeform text statement about your current progress on action item">
+            <label for="synopsis">Status:</label>
+            <textarea ng-model="goal.status" class="form-control"     
+                placeholder="Enter text describing the current status"></textarea>            
+        </div>
+        <div class="form-group">
+            <div style="padding:10px;">
               <img src="../../../assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
                    title="Red: In trouble" ng-click="changeRAG(goal, 'bad')">
               <img src="../../../assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
@@ -51,13 +50,10 @@
                    title="Green: Good shape" ng-click="changeRAG(goal, 'good')">
               <img src="../../../assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
                    title="Green: Good shape">
-          </td>
-        </tr>
-        <tr title="Provide a due date if there is one">
-          <td>
-            <label>Due Date:</label>
-          </td>
-          <td>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="synopsis">Due Date:</label>
             <div>
                 <span datetime-picker ng-model="goal.duedate" 
                     class="form-control" style="max-width:300px;display:inline">
@@ -67,19 +63,16 @@
                 <span style="padding:10px">
                    <a href="ActionItem{{goal.id}}Due.ics">calendar</a>
                 </span>
-            </div>                
-          </td>
-        </tr>
-        <tr  title="status is a freeform text statement about your current progress on action item">
-          <td>
-            <label>Status:</label>
-          </td>
-          <td>
-            <textarea ng-model="goal.status" class="form-control" style="width:400px" 
-                 placeholder="Enter text describing the current status"></textarea>
-          </td>
-        </tr>
-      </table>
+            </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="synopsis">Checklist:</label>
+              <textarea class="form-control" ng-model="goal.checklist" style="min-height:200px"></textarea>
+        </div>
+      </div>
+    </div>
   </div>
   <div ng-show="editMode=='details'">
     <div>

@@ -450,13 +450,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return AllPeople.findMatchingPeople(query);
     }
 
-    $scope.setProspects = function(goal, newVal) {
+    $scope.setProspects = function(goal, newVal, $event) {
         goal.prospects = newVal;
         $scope.saveGoal(goal);
+        $event.stopPropagation();
     }
-    $scope.setProspectArea = function(area, newVal) {
+    $scope.setProspectArea = function(area, newVal, $event) {
         area.prospects = newVal;
         $scope.saveArea(area);
+        $event.stopPropagation();
     }
 
     $scope.openModalActionItem = function (goal, startMode) {
@@ -711,15 +713,15 @@ function addvalue() {
             <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going">
               <span>
                 <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="area.prospects=='bad'"
-                     title="Red: In trouble" ng-click="setProspectsArea(area, 'bad')" class="stoplight">
+                     title="Red: In trouble" ng-click="setProspectArea(area, 'bad', $event)" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="area.prospects=='bad'"
                      title="Red: In trouble" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="area.prospects=='ok'"
-                     title="Yellow: Warning" ng-click="setProspectsArea(area, 'ok')" class="stoplight">
+                     title="Yellow: Warning" ng-click="setProspectArea(area, 'ok', $event)" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="area.prospects=='ok'"
                      title="Yellow: Warning" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="area.prospects=='good'"
-                     title="Green: Good shape" ng-click="setProspectsArea(area, 'good')" class="stoplight">
+                     title="Green: Good shape" ng-click="setProspectArea(area, 'good', $event)" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="area.prospects=='good'"
                      title="Green: Good shape" class="stoplight">
               </span>
@@ -774,15 +776,9 @@ function addvalue() {
                   {{label.name}}
                 </button>
               </span>
-              <div ng-show="showChecklists">
-                  <div ng-repeat="ci in rec.checkitems" ng-click="toggleCheckItem($event,rec,ci.index)">
-                    <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
-                    <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
-                    &nbsp; {{ci.name}}
-                  </div>
-              </div>
             </td>
-            <td title="People assigned to complete this action item.">
+            <td title="People assigned to complete this action item."  
+                ng-click="openModalActionItem(rec, 'assignee')">
               <div>
                 <div ng-repeat="ass in rec.assignees">
                   <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a>
@@ -804,18 +800,19 @@ function addvalue() {
                 mod: {{rec.modifiedtime | date}}
               </div-->
             </td>
-            <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going">
+            <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going"
+                ng-click="openModalActionItem(rec, 'status')">
               <span>
                 <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="rec.prospects=='bad'"
-                     title="Red: In trouble" ng-click="setProspects(rec, 'bad')" class="stoplight">
+                     title="Red: In trouble" ng-click="setProspects(rec, 'bad', $event)" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="rec.prospects=='bad'"
                      title="Red: In trouble" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="rec.prospects=='ok'"
-                     title="Yellow: Warning" ng-click="setProspects(rec, 'ok')" class="stoplight">
+                     title="Yellow: Warning" ng-click="setProspects(rec, 'ok', $event)" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="rec.prospects=='ok'"
                      title="Yellow: Warning" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="rec.prospects=='good'"
-                     title="Green: Good shape" ng-click="setProspects(rec, 'good')" class="stoplight">
+                     title="Green: Good shape" ng-click="setProspects(rec, 'good', $event)" class="stoplight">
                 <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="rec.prospects=='good'"
                      title="Green: Good shape" class="stoplight">
               </span>
@@ -823,6 +820,16 @@ function addvalue() {
             <td  style="max-width:300px"  ng-click="openModalActionItem(rec, 'status')"
                  title="A textual description of the current status of the action item.">
               <div>{{rec.status}} &nbsp;</div>
+              <div ng-show="showChecklists" style="cursor:context-menu">
+                  <div ng-repeat="ci in rec.checkitems" >
+                    <span ng-click="toggleCheckItem($event,rec,ci.index)" style="cursor:pointer">
+                      <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
+                      <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
+                    &nbsp; 
+                    </span>
+                    {{ci.name}}
+                  </div>
+              </div>
             </td>
           </tr>
         </tbody>
