@@ -327,6 +327,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             
         }
     }
+    
 
     $scope.namePart = function(email) {
         var pos = email.indexOf("�");
@@ -382,7 +383,22 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 
 
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        //note: this is a hack, if the also to list has objects without
+        //uid field, the input-tags form control fails to function
+        //so this puts the uid value into the records.
+        //Could not get this called from the input-tags control
+        //when new tag created.  I don't know why.
+        $scope.cleanUpAlsoTo();
+        var people = AllPeople.findMatchingPeople(query);
+        return people;
+    }
+    
+    $scope.cleanUpAlsoTo = function() {
+        $scope.emailInfo.alsoTo.forEach( function(person) {
+            if (!person.uid) {
+                person.uid = person.name;
+            }
+        });
     }
 
 
@@ -494,7 +510,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
           <div class="form-group">
             <label class="col-md-2 control-label" for="alsoalsoTo">Send To</label>
             <div class="col-md-10">
-              <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
+              <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" 
+                          key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)"
+                          onTagAdded="cleanUpAlsoTo()">
                   <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
               </tags-input>
             </div>
