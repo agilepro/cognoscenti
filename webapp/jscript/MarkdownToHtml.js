@@ -27,21 +27,21 @@ function convertMarkdownToHtml(markdown) {
 
 function formatLine(line) {
     var res = "";
-    var isIndented = line.startsWith(" ");
+    var isIndented = line.indexOf(" ")==0;
     line = line.trim();
     if (line.length == 0) {
         res += terminate();
-    } else if (line.startsWith("!!!")) {
+    } else if (line.indexOf("!!!")==0) {
         res += startHeader(line, 3);
-    } else if (line.startsWith("!!")) {
+    } else if (line.indexOf("!!")==0) {
         res += startHeader(line, 2);
-    } else if (line.startsWith("!")) {
+    } else if (line.indexOf("!")==0) {
         res += startHeader(line, 1);
-    } else if (line.startsWith("***")) {
+    } else if (line.indexOf("***")==0) {
         res += startBullet(line, 3);
-    } else if (line.startsWith("**")) {
+    } else if (line.indexOf("**")==0) {
         res += startBullet(line, 2);
-    } else if (line.startsWith("*")) {
+    } else if (line.indexOf("*")==0) {
         res += startBullet(line, 1);
     } else if (isIndented) {
         // continue whatever mode there is
@@ -234,7 +234,7 @@ function outputProperLink(linkContentText) {
         linkAddr = linkContentText.substring(barPos+1).trim();
     }
 
-    var isExternal = (linkAddr.startsWith("http") && linkAddr.indexOf("/") >= 0);
+    var isExternal = (linkAddr.indexOf("http")==0 && linkAddr.indexOf("/") >= 0);
     var target = null;
     if (isExternal) {
         target = "_blank";

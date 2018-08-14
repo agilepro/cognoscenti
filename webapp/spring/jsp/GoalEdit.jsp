@@ -224,7 +224,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             lines.forEach( function(item) {
                 item = item.trim();
                 if (item && item.length>0) {
-                    if (item.startsWith("x ")) {
+                    if (item.indexOf("x ")==0) {
                         list.push( {name: item.substring(2), checked:true, index: idx} );
                         idx++;
                     }

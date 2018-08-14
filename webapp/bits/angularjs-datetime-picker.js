@@ -72,15 +72,15 @@
 
       datetimePickerEl.style.position='absolute';
       if(bcr.width > datePickerElBcr.width){
-        datetimePickerEl.style.left= (bcr.left + window.scrollX) + 'px';
+        datetimePickerEl.style.left= (bcr.left + (window.scrollX ? window.scrollX : 0 )) + 'px';
       } else {
-        datetimePickerEl.style.left= (bcr.left + window.scrollX) + 'px';
+        datetimePickerEl.style.left= (bcr.left + (window.scrollX ? window.scrollX : 0 )) + 'px';
       }
 
       if (bcr.top < 300 || window.innerHeight - bcr.bottom > 300) {
-        datetimePickerEl.style.top = (bcr.bottom + window.scrollY) + 'px';
+        datetimePickerEl.style.top = (bcr.bottom + (window.scrollY ? window.scrollY : 0 )) + 'px';
       } else {
-        datetimePickerEl.style.top = (bcr.top - datePickerElBcr.height + window.scrollY) + 'px';
+        datetimePickerEl.style.top = (bcr.top - datePickerElBcr.height + (window.scrollY ? window.scrollY : 0 )) + 'px';
       }
 
       $document[0].body.addEventListener('click', this.closeDatetimePicker);
@@ -262,6 +262,7 @@
         if (attrs.ngModel) {
           var elScope = ctrl.triggerEl.scope(), dateValue;
           if (true) {
+              dateFormat="medium";
               dateValue = new Date(dateFilter(scope.selectedDate, dateFormat)).getTime();
           } else {
               dateValue = dateFilter(scope.selectedDate, dateFormat);

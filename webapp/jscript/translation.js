@@ -43,10 +43,10 @@ myApp.config(['$translateProvider', function($translateProvider) {
         var langs = getAcceptedLanguages();
         var pos = 0;
         while (pos<langs.length) {
-            if (langs[pos].startsWith("en")) {
+            if (langs[pos].indexOf("en")==0) {
                 return "en";
             }
-            if (langs[pos].startsWith("de")) {
+            if (langs[pos].indexOf("de")==0) {
                 return "de";
             }
             pos++;
