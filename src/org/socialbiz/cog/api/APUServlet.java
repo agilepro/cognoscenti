@@ -29,6 +29,7 @@ import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.UserProfile;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -88,7 +89,8 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
             doAuthenticatedGet(ar);
         }
         catch (Exception e) {
-            streamException(e, ar);
+            Exception ctx = new Exception("Unable to handle GET to "+ar.getCompleteURL(), e);
+            streamException(ctx, ar);
         }
         finally {
             NGPageIndex.clearLocksHeldByThisThread();
@@ -115,7 +117,8 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
             root.write(ar.w, 2, 0);
             ar.flush();
         } catch (Exception e) {
-            streamException(e, ar);
+            Exception ctx = new Exception("Unable to handle GET to "+ar.getCompleteURL(), e);
+            streamException(ctx, ar);
         }
     }
 

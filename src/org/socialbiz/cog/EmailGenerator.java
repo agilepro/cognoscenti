@@ -180,24 +180,6 @@ public class EmailGenerator extends DOMFace {
         this.setAttributeBool("excludeResponders", newVal);
     }
 
-    /*
-    public boolean getIncludeSelf() throws Exception {
-        return getAttributeBool("includeSelf");
-    }
-
-    public void setIncludeSelf(boolean newVal) throws Exception {
-        this.setAttributeBool("includeSelf", newVal);
-    }
-    */
-
-    public boolean getMakeMembers() throws Exception {
-        return getAttributeBool("makeMembers");
-    }
-
-    public void setMakeMembers(boolean newVal) throws Exception {
-        this.setAttributeBool("makeMembers", newVal);
-    }
-
     /**
      * This boolean controls whether the body of the NOTE is included
      * in the message, or whether the topic is simply linked.
@@ -253,21 +235,10 @@ public class EmailGenerator extends DOMFace {
 
     public List<OptOutAddr> expandAddresses(AuthRequest ar, NGWorkspace ngp) throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
-        for (String roleName : getRoleNames()) {
-            NGRole role = ngp.getRole(roleName);
-            if (role!=null) {
-                OptOutAddr.appendUsersFromRole(ngp, roleName, sendTo);
-            }
-        }
-        boolean makeMember = getMakeMembers();
-        NGRole memberRole = ngp.getRoleOrFail("Members");
         for (String address : getAlsoTo()) {
             AddressListEntry enteredAddress = AddressListEntry.parseCombinedAddress(address);
             if (enteredAddress.isWellFormed()) {
 	            OptOutAddr.appendOneUser(new OptOutDirectAddress(enteredAddress), sendTo);
-	            if(makeMember && !ngp.primaryOrSecondaryPermission(enteredAddress)) {
-	                memberRole.addPlayer(enteredAddress);
-	            }
             }
         }
         TopicRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
@@ -576,7 +547,6 @@ public class EmailGenerator extends DOMFace {
         obj.put("alsoTo", toList);
         obj.put("intro", getIntro());
         obj.put("excludeResponders", getExcludeResponders());
-        obj.put("makeMembers", getMakeMembers());
         obj.put("includeBody", getIncludeBody());
         obj.put("attachFiles", getAttachFiles());
         obj.put("scheduleTime", getScheduleTime());
@@ -647,9 +617,6 @@ public class EmailGenerator extends DOMFace {
         }
         if (obj.has("excludeResponders")) {
             setExcludeResponders(obj.getBoolean("excludeResponders"));
-        }
-        if (obj.has("makeMembers")) {
-            setMakeMembers(obj.getBoolean("makeMembers"));
         }
         if (obj.has("includeBody")) {
             setIncludeBody(obj.getBoolean("includeBody"));

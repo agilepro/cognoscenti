@@ -71,14 +71,22 @@ public class SectionUtil
 
 
     public static String encodeURLData(String in)
-        throws Exception
     {
         // avoid NPE.
         if (in == null || in.length() == 0) {
             return "";
         }
 
-        String encoded = URLEncoder.encode(in, "UTF-8");
+        String encoded = null;
+        try {
+            encoded = URLEncoder.encode(in, "UTF-8");
+        }
+        catch (Exception uee) {
+            //it really is not conceivable that UTF-8 is not a
+            //supported encoding.  Just not possible.
+            //and throwing an exception from this method
+            //it really a lot of trouble to handle.
+        }
 
         //here is the problem: URL encoding says that spaces can be encoded using
         //a plus (+) character.  But, strangely, sometimes this does not work, either

@@ -1024,10 +1024,11 @@ public class AuthRequest
     /**
     * Return the complete URL that got us here, including query parameters
     * so we can redirect back as necessary.
+    * 
+    * Made so it does not throw exceptions so that this can be used in 
+    * exception handlers easily.
     */
-    public String getCompleteURL()
-            throws Exception
-    {
+    public String getCompleteURL() {
         StringBuilder qs = new StringBuilder(getRequestURL());
         @SuppressWarnings("unchecked")
         Enumeration<String> en = req.getParameterNames();

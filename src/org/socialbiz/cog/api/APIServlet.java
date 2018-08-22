@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -142,7 +143,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             doAuthenticatedGet(ar);
         }
         catch (Exception e) {
-            streamException(e, ar);
+            Exception ctx = new Exception("Unable to handle GET to "+ar.getCompleteURL(), e);
+            streamException(ctx, ar);
         }
         finally {
             NGPageIndex.clearLocksHeldByThisThread();
@@ -179,7 +181,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             ar.flush();
 
         } catch (Exception e) {
-            streamException(e, ar);
+            Exception ctx = new Exception("Unable to handle GET to "+ar.getCompleteURL(), e);
+            streamException(ctx, ar);
         }
     }
 
@@ -208,7 +211,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             ar.flush();
         }
         catch (Exception e) {
-            streamException(e, ar);
+            Exception ctx = new Exception("Unable to handle PUT to "+ar.getCompleteURL(), e);
+            streamException(ctx, ar);
         }
     }
 
@@ -247,7 +251,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             ar.flush();
         }
         catch (Exception e) {
-            streamException(e, ar);
+            Exception ctx = new Exception("Unable to handle POST to "+ar.getCompleteURL(), e);
+            streamException(ctx, ar);
         }
     }
 

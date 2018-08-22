@@ -344,12 +344,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
       <span class="dropdown">
           <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(false)"
                   title="Post this topic but don't send any email">
-          Post Without Email </button>
-      </span>
-      <span class="dropdown">
-          <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(true)"
-                  title="Post this topic and send the email to selected users">
-          Post &amp; Send Email </button>
+          Post to these Participants </button>
       </span>
       <span class="dropdown">
           <button class="btn btn-default btn-warning btn-raised" type="button" ng-click="addressMode = false"

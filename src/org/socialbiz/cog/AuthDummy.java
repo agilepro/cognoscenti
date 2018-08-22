@@ -28,6 +28,7 @@ import java.util.Properties;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+
 import com.purplehillsbooks.streams.NullWriter;
 
 /**
@@ -165,9 +166,7 @@ public class AuthDummy extends AuthRequest
     * Return the complete URL that got us here, including query parameters
     * so we can redirect back as necessary.
     */
-    public String getCompleteURL()
-            throws Exception
-    {
+    public String getCompleteURL() {
         return "DummyRequest";
     }
 
