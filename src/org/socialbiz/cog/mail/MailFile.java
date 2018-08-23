@@ -254,7 +254,6 @@ public class MailFile extends JSONWrapper {
      * @return a JSONArray with all the messages represented as JSON objects
      *         while also assuring that each message has a unique create date
      *         since some existing files might not have unique create date 
-     * @throws Exception
      */
     public JSONArray getAllJSON() throws Exception {
         //this is a test to make sure that sent data and from is unique
@@ -273,6 +272,32 @@ public class MailFile extends JSONWrapper {
             checker.put(testObj, mi);
             
             emailList.put(mi.getJSON());
+        }
+        return emailList;
+    }
+    
+    /**
+     * @return a JSONArray with all the messages represented as JSON objects
+     *         while also assuring that each message has a unique create date
+     *         since some existing files might not have unique create date 
+     */
+    public JSONArray getAllListableJSON() throws Exception {
+        //this is a test to make sure that sent data and from is unique
+        Hashtable<Long,MailInst>checker = new Hashtable<Long,MailInst>();
+        
+        JSONArray emailList = new JSONArray();
+        for (MailInst mi : getAllMessages() ) {
+            long testVal = new Long(mi.getCreateDate());
+            Long testObj = new Long(testVal);
+            if (checker.contains(testObj)) {
+                while (checker.contains(testObj)) {
+                    testObj = new Long(++testVal);
+                }
+                mi.setCreateDate(testVal);
+            }
+            checker.put(testObj, mi);
+            
+            emailList.put(mi.getListableJSON());
         }
         return emailList;
     }

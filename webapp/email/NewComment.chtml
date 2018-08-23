@@ -70,6 +70,6 @@ Workspace: <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a>
 {% include OptOut %}
 
 <script>
-{$debugDump}
+//{-dollar- debugDump}
 </script>
 </body></html>

@@ -103,6 +103,19 @@ public class JSONWrapper {
     public JSONObject getJSON() {
         return kernel;
     }
+    
+    
+    public JSONObject getListableJSON() throws Exception {
+        JSONObject e2 = new JSONObject();
+        e2.put("Addressee",    kernel.getString("Addressee"));
+        e2.put("CreateDate",   kernel.getLong("CreateDate"));
+        e2.put("From",         kernel.getString("From"));
+        e2.put("FromName",     kernel.getString("FromName"));
+        e2.put("LastSentDate", kernel.getLong("LastSentDate"));
+        e2.put("Status",       kernel.getString("Status"));
+        e2.put("Subject",      kernel.getString("Subject"));
+        return e2;
+    }
 
 
 }

@@ -114,6 +114,6 @@ Scheduled time: <b>{$meeting.startTime|date("MMM dd, YYYY  HH:mm '(ttt)' ")}</b>
 {% include OptOut %}
 
 <script>
-{$debugDump}
+//{-dollar- debugDump}
 </script>
 </body></html>

@@ -19,15 +19,32 @@
 
     MailFile mailArchive = MailFile.readOrCreate(emailFilePath);
     JSONArray emailList = mailArchive.getAllJSON();
+    JSONArray emailList2 = new JSONArray();
+    for (int i=0; i<emailList.length(); i++) {
+        JSONObject email = emailList.getJSONObject(i);
+        JSONObject e2 = new JSONObject();
+        e2.put("Addressee",email.get("Addressee"));
+        e2.put("CreateDate",email.get("CreateDate"));
+        e2.put("From",email.get("From"));
+        e2.put("FromName",email.get("FromName"));
+        e2.put("LastSentDate",email.get("LastSentDate"));
+        e2.put("Status",email.get("Status"));
+        e2.put("Subject",email.get("Subject"));
+        emailList2.put(e2);
+    }
 
 /* PROTOTYPE EMAIL RECORD
       {
-        "from": "Keith local Test <kswenson@us.fujitsu.com>",
-        "sendDate": 1431876589439,
-        "status": "Sent",
-        "subject": "This is a new NOTE",
-        "to": ["kswenson@us.fujitsu.com"]
-      },
+        "Addressee": "Bernd.Schroettle-Henning@ts.fujitsu.com",
+        "AttachmentFiles": ["/opt/weaver_sites/fujitsu/fujitsu-distinguished-engineer/.cog/meet1923.ics"],
+        "BodyText": "....\n",
+        "CreateDate": 1534966224915,
+        "From": "jonathan.schwartz@ca.fujitsu.com",
+        "FromName": "JONATHAN SCHWARTZ",
+        "LastSentDate": 1534966478516,
+        "Status": "Sent",
+        "Subject": "Reminder for meeting: Monthly FDE Meeting - August"
+      }
 */
 
 
@@ -38,7 +55,7 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Email Sent");
-    $scope.emailList = <%emailList.write(out,2,4);%>;
+    $scope.emailList = <%emailList2.write(out,2,4);%>;
     $scope.filter = "<%ar.writeJS(filter);%>";
     $scope.showError = false;
     $scope.errorMsg = "";

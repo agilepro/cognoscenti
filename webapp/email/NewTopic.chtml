@@ -35,7 +35,7 @@ in workspace <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a></p>
 {% include OptOut %}
 
 <!--
-{$debugDump}
+//{-dollar- debugDump}
 -->
 
 </body></html>

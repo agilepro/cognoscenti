@@ -41,10 +41,10 @@ web browser to access the page for uploading the file:</p>
 
 </div>
 
-<h2>DATA</h2>
-<pre>
-{$debugDump}
-</pre>
+
+<script>
+//{-dollar- debugDump}
+</script>
 
 
 
