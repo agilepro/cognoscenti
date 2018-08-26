@@ -53,6 +53,9 @@ public class Cognoscenti {
     // there may be a number of pages that have unsent email, and so this is a
     // list of keys, but there can be extras in this list without problem
     public List<String> projectsWithEmailToSend = new ArrayList<String>();
+    
+    SearchManager searchManager = null;
+    private long searchIndexBuildtime = 0;
 
     private Cognoscenti(ServletContext sc) {
         System.out.println("Weaver Server Object == Constructing");
@@ -765,6 +768,19 @@ System.out.println("Weaver Server Object == Start the Server");
         isInitialized = false;
         initializingNow = false;
         startTheServer(config);
+    }
+    
+    public synchronized List<SearchResultRecord> performSearch(AuthRequest ar,
+            String queryStr, String relationship, String siteId) throws Exception {
+        if (searchManager==null) {
+            searchManager = new SearchManager(this);
+        }
+        //if it has not been built this hour, rebuild
+        if (searchIndexBuildtime < System.currentTimeMillis()- (60 * 60 * 1000)) {
+            searchManager.initializeIndex();
+            searchIndexBuildtime = System.currentTimeMillis();
+        }
+        return searchManager.performSearch(ar, queryStr, relationship, siteId);
     }
     
 }

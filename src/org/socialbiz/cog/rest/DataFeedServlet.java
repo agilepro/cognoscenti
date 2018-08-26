@@ -36,7 +36,6 @@ import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
-import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.UserManager;
@@ -262,8 +261,7 @@ public class DataFeedServlet extends HttpServlet {
         if ("new".equals(u)) {
             ar.setNewUI(true);
         }
-        SearchManager.initializeIndex(ar.getCogInstance());
-        return SearchManager.performSearch(ar, searchText, pf, null);
+        return ar.getCogInstance().performSearch(ar, searchText, pf, null);
     }
 
     // operation get task list.

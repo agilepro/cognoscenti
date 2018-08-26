@@ -59,7 +59,6 @@ import org.socialbiz.cog.ReminderMgr;
 import org.socialbiz.cog.ReminderRecord;
 import org.socialbiz.cog.RemoteGoal;
 import org.socialbiz.cog.RoleRequestRecord;
-import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.UserCache;
 import org.socialbiz.cog.UserCacheMgr;
@@ -1434,8 +1433,7 @@ public class UserController extends BaseController {
 
             List<SearchResultRecord> searchResults = null;
             if (searchText.length()>0) {
-                SearchManager.initializeIndex(ar.getCogInstance());
-                searchResults = SearchManager.performSearch(ar, searchText, searchProject, searchSite);
+                searchResults = ar.getCogInstance().performSearch(ar, searchText, searchProject, searchSite);
             }
             else {
                 searchResults = new ArrayList<SearchResultRecord>();

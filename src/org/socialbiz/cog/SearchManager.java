@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,29 +38,41 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 
 public class SearchManager {
 
-    private static Directory directory = null;
-    private static Analyzer analyzer = null;
+    private Directory directory = null;
+    private Analyzer analyzer = null;
+    private Cognoscenti cog = null;
 
-    private SearchManager() {
-        //no instances allowed
+    public SearchManager(Cognoscenti _cog) {
+        cog = _cog;
     }
 
-    public static synchronized void initializeIndex(Cognoscenti cog) throws Exception {
+    public synchronized void initializeIndex() throws Exception {
         analyzer = new StandardAnalyzer(Version.LUCENE_42);
-        directory = new RAMDirectory();
         
+        File directoryFolder = new File(cog.getConfig().getUserFolderOrFail(), ".search");
+
+        //directory = new RAMDirectory();
+        if (directory==null) {
+            directory = FSDirectory.open(directoryFolder);
+        }
+        
+        long startTime = System.currentTimeMillis();
         System.out.println("SearchManager - starting to build the internal index.");
 
         AuthRequest ar = AuthDummy.serverBackgroundRequest();
 
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42, analyzer);
         IndexWriter iWriter = new IndexWriter(directory, config);
+        
+        //get rid of all the existing files.   Make sure that search methods
+        //are synchronized so you don't have any searches  while updating the index.
+        iWriter.deleteAll();
 
         for (NGPageIndex ngpi : cog.getAllContainers()) {
 
@@ -158,14 +171,16 @@ public class SearchManager {
                 }
             }
         }
+        System.out.println("SearchManager - finished building index: "+(System.currentTimeMillis()-startTime)+" ms");
         iWriter.commit();
         iWriter.close();
     }
 
 
-    public static synchronized List<SearchResultRecord> performSearch(AuthRequest ar,
+    public synchronized List<SearchResultRecord> performSearch(AuthRequest ar,
                 String queryStr, String relationship, String siteId) throws Exception {
 
+        long startTime = System.currentTimeMillis();
         System.out.println("SearchManager - actually performing a search for "+queryStr);
         List<SearchResultRecord> vec = new ArrayList<SearchResultRecord>();
 
@@ -265,6 +280,7 @@ public class SearchManager {
         }
 
         ireader.close();
+        System.out.println("SearchManager - finished serching: "+(System.currentTimeMillis()-startTime)+" ms");
         return vec;
     }
 

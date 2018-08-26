@@ -22,6 +22,7 @@ package org.socialbiz.cog.spring;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,11 +31,9 @@ import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
-import org.socialbiz.cog.MeetingRecord;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
-import org.socialbiz.cog.SearchManager;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UserProfile;
@@ -635,8 +634,7 @@ public class MainTabsViewControler extends BaseController {
 
             List<SearchResultRecord> searchResults = null;
             if (searchText.length()>0) {
-                SearchManager.initializeIndex(ar.getCogInstance());
-                searchResults = SearchManager.performSearch(ar, searchText, searchProject, siteId);
+                searchResults = ar.getCogInstance().performSearch(ar, searchText, searchProject, siteId);
             }
             else {
                 searchResults = new ArrayList<SearchResultRecord>();
