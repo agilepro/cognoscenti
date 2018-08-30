@@ -1252,7 +1252,9 @@ public class GoalRecord extends BaseRecord {
         w.write("BEGIN:VEVENT\n");
         w.write("UID:"+ngw.getSiteKey()+ngw.getKey()+getId()+"\n");
         w.write("DTSTAMP:"+getSpecialICSFormat(System.currentTimeMillis())+"\n");
-        w.write("ORGANIZER:CN="+creatorUser.getName()+":MAILTO:"+creatorUser.getAddressListEntry().getEmail()+"\n");
+        if (creatorUser!=null) {
+            w.write("ORGANIZER:CN="+creatorUser.getName()+":MAILTO:"+creatorUser.getAddressListEntry().getEmail()+"\n");
+        }
         w.write("DTSTART:"+getSpecialICSFormat(getDueDate())+"\n");
         w.write("DTEND:"+getSpecialICSFormat(getDueDate()+(30*60*1000))+"\n");
         w.write("SUMMARY:"+getSynopsis()+"\n");

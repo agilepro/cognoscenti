@@ -23,13 +23,13 @@
     for (int i=0; i<emailList.length(); i++) {
         JSONObject email = emailList.getJSONObject(i);
         JSONObject e2 = new JSONObject();
-        e2.put("Addressee",email.get("Addressee"));
+        e2.put("Addressee", email.optString("Addressee","unknown"));
         e2.put("CreateDate",email.get("CreateDate"));
-        e2.put("From",email.get("From"));
-        e2.put("FromName",email.get("FromName"));
+        e2.put("From",     email.optString("From","unknown"));
+        e2.put("FromName",email.optString("FromName","unknown"));
         e2.put("LastSentDate",email.get("LastSentDate"));
-        e2.put("Status",email.get("Status"));
-        e2.put("Subject",email.get("Subject"));
+        e2.put("Status",email.optString("Status","unknown"));
+        e2.put("Subject",email.optString("Subject","unknown"));
         emailList2.put(e2);
     }
 

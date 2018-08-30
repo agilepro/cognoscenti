@@ -364,6 +364,18 @@ public class MailInst extends JSONWrapper {
         }
     }
 
+    public JSONObject getListableJSON() throws Exception {
+        JSONObject e2 = new JSONObject();
+        e2.put("Addressee",    kernel.optString("Addressee", "unknown"));
+        e2.put("CreateDate",   kernel.optLong("CreateDate",0));
+        e2.put("From",         kernel.optString("From", "unknown"));
+        e2.put("FromName",     kernel.optString("FromName", "unknown"));
+        e2.put("LastSentDate", kernel.optLong("LastSentDate",0));
+        e2.put("Status",       kernel.optString("Status", "Unknown Status"));
+        e2.put("Subject",      kernel.optString("Subject", "Unknown Subject"));
+        return e2;
+    }
+
 
 
 }
