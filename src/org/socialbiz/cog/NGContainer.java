@@ -135,6 +135,7 @@ public abstract class NGContainer extends DOMFile
     public abstract void copyHistoryForResource(NGContainer ngc, int contextType, String oldID, String newID) throws Exception;
 
     public abstract HistoryRecord createNewHistory() throws Exception;
+    public abstract HistoryRecord getLatestHistory() throws Exception;
 
 
     ////////////// Other container bookkeeping methods ////////////////////

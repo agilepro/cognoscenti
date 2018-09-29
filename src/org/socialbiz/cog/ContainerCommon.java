@@ -506,6 +506,11 @@ public abstract class ContainerCommon extends NGContainer
         newHist.setId(getUniqueOnPage());
         return newHist;
     }
+    
+    public HistoryRecord getLatestHistory() throws Exception {
+        List<HistoryRecord> allSortedHist = getAllHistory();
+        return allSortedHist.get(0);
+    }
 
 
     ////////////////////// WRITE LINKS //////////////////////////

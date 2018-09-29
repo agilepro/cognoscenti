@@ -385,7 +385,18 @@ public class HistoryRecord extends DOMFace
         String objectID, int contextType, long contextVersion, int eventType,
         AuthRequest ar, String comments) throws Exception
     {
-        HistoryRecord hr = ngc.createNewHistory();
+        //there are certain situations where the editor is doing automatic saves, and creating the same 
+        //history item over and over.  This suppresses all the duplicate history records, but looking
+        //at the last history.  If it is the same, then it simply updates the timestamp, and retains
+        //that, without creating a new history item.
+        HistoryRecord hr = ngc.getLatestHistory();
+        if (hr.getContextType() == contextType && hr.getContext().equals(objectID) && 
+                hr.getEventType() == eventType) {
+            hr.setTimeStamp(ar.nowTime);
+            return hr;
+        }
+                
+        hr = ngc.createNewHistory();
         hr.setContext(objectID);
         hr.setContextType(contextType);
         hr.setContextVersion(contextVersion);

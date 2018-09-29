@@ -190,6 +190,14 @@ public class ProjectSettingController extends BaseController {
     }
 
 
+    @RequestMapping(value = "/{siteId}/{pageId}/RoleInvite.htm", method = RequestMethod.GET)
+    public void RoleInvite(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        showJSPMembers(ar, siteId, pageId, "UserInvite");
+    }
+    
 
 
 

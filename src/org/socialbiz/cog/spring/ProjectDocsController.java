@@ -575,14 +575,14 @@ public class ProjectDocsController extends BaseController {
     public void cleanAtt(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        String path = ar.reqParam("path");
+        ar.reqParam("path");
         BaseController.showJSPMembers(ar, siteId, pageId, "CleanAtt");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/CleanDebug.htm", method = RequestMethod.GET)
     public void cleanDebug(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        String path = ar.reqParam("path");
+        ar.reqParam("path");
         BaseController.showJSPMembers(ar, siteId, pageId, "CleanDebug");
     }
 
