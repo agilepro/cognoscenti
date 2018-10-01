@@ -334,9 +334,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="openRoleModal(null)">Create New Role</a></li>
+              href="roleManagement.htm">Manage Roles</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="RoleInvite.htm">Invite Users</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="MultiInvite.htm">Multi-Person Invite</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              ng-click="openRoleModal(null)">Create New Role</a></li>
         </ul>
       </span>
     </div>

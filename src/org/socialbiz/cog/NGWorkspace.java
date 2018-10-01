@@ -73,6 +73,7 @@ public class NGWorkspace extends NGPage {
         else {
             workspaceJSON = new JSONObject();
         }
+        removeOldInvitations();
         
         
         String name = theFile.getName();
@@ -119,6 +120,7 @@ public class NGWorkspace extends NGPage {
     @Override
     public void save() throws Exception {
         super.save();
+        
         workspaceJSON.writeToFile(jsonFilePath);
         //store into the cache.  Something might be copying things in memory,
         //and this assures that the cache matches the latest written version.
@@ -586,4 +588,51 @@ public class NGWorkspace extends NGPage {
         throw new Exception("Could not find a task area with the id="+id);
     }
 
+    
+    
+    ///////////////////////// Invitations //////////////////
+    
+    public List<RoleInvitation> getInvitations() throws Exception {
+        if (!workspaceJSON.has("roleInvitations")) {
+            workspaceJSON.put("roleInvitations", new JSONArray());
+        }
+        JSONArray invites = workspaceJSON.getJSONArray("roleInvitations");
+        ArrayList<RoleInvitation> res = new ArrayList<RoleInvitation>();
+        for (int i=0; i<invites.length(); i++) {
+            JSONObject onePort = invites.getJSONObject(i);
+            RoleInvitation spr = new RoleInvitation(onePort);
+            res.add(spr);
+        }
+        return res;
+    }
+    public void removeOldInvitations() throws Exception {
+        if (!workspaceJSON.has("roleInvitations")) {
+            return;
+        }
+        long timeLimit = System.currentTimeMillis() - 180L*24*60*60*1000;
+        JSONArray invites = workspaceJSON.getJSONArray("roleInvitations");
+        JSONArray newInvites = new JSONArray();
+        for (int i=0; i<invites.length(); i++) {
+            JSONObject onePort = invites.getJSONObject(i);
+            if (onePort.getLong("timestamp")>timeLimit) {
+                newInvites.put(onePort);
+            }
+        }
+        workspaceJSON.put("roleInvitations", newInvites);
+    }
+    public RoleInvitation findOrCreateInvite(String email) throws Exception {
+        for (RoleInvitation m : getInvitations()) {
+            if (email.equalsIgnoreCase(m.getEmail())) {
+                return m;
+            }
+        }
+        JSONArray invites = workspaceJSON.getJSONArray("roleInvitations");
+        JSONObject newInvite = new JSONObject();
+        newInvite.put("email", email);
+        invites.put(newInvite);
+        return new RoleInvitation(newInvite);
+    }
+    
+    
+    
 }

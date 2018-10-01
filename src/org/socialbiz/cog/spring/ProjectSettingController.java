@@ -40,6 +40,7 @@ import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
+import org.socialbiz.cog.RoleInvitation;
 import org.socialbiz.cog.RoleRequestRecord;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
@@ -195,7 +196,7 @@ public class ProjectSettingController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "UserInvite");
+        showJSPMembers(ar, siteId, pageId, "RoleInvite");
     }
     
 
@@ -701,5 +702,45 @@ public class ProjectSettingController extends BaseController {
             streamException(ee, ar);
         }
     }
-
+    
+    
+    ///////////////////////// Invitations ///////////////////
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/invitations.json", method = RequestMethod.GET)
+    public void invitations(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            JSONObject repo = new JSONObject();
+            JSONArray shareList = new JSONArray();
+            for (RoleInvitation ta : ngw.getInvitations()) {
+                shareList.put(ta.getInvitationJSON());
+            }
+            repo.put("invitations", shareList);
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get the list of invitations ", ex);
+            streamException(ee, ar);
+        }
+    }    
+    @RequestMapping(value = "/{siteId}/{pageId}/invitationUpdate.json", method = RequestMethod.POST)
+    public void invitationUpdate(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            JSONObject posted = this.getPostedObject(ar);
+            String email = posted.getString("email");
+            RoleInvitation ri = ngw.findOrCreateInvite(email);
+            ri.updateFromJSON(posted);
+            
+            JSONObject repo = ri.getInvitationJSON();
+            ngw.saveFile(ar, "Updated Agenda Item");
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to update an invitation", ex);
+            streamException(ee, ar);
+        }
+    }    
 }
