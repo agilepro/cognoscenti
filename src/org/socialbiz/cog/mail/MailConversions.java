@@ -18,7 +18,7 @@ public class MailConversions {
         File folder = ngp.getFilePath().getParentFile();
         File emailFilePath = new File(folder, "mailArchive.json");
 
-        MailFile newArchive = MailFile.readOrCreate(emailFilePath);
+        MailFile newArchive = MailFile.readOrCreate(emailFilePath, 3);
         moveEmails(ngp, newArchive, cog);
 
         newArchive.save();

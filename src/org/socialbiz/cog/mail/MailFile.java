@@ -54,11 +54,16 @@ import com.purplehillsbooks.json.JSONTokener;
 public class MailFile extends JSONWrapper {
 
     File myPath;
+    
+    //important mail files get a retention factor of 3
+    //daily digest files use a factor of 1 to keep the files smaller
+    int  retentionFactor;
 
-    public static MailFile readOrCreate(File path) throws Exception {
+    public static MailFile readOrCreate(File path, int _retentionFactor) throws Exception {
+        
         if (!path.exists()) {
             JSONObject newFile = new JSONObject();
-            return new MailFile(path, newFile);
+            return new MailFile(path, newFile, _retentionFactor);
         }
         else {
             try{
@@ -66,7 +71,7 @@ public class MailFile extends JSONWrapper {
                 JSONTokener jt = new JSONTokener(fis);
                 JSONObject newKernel = new JSONObject(jt);
                 fis.close();
-                return new MailFile(path, newKernel);
+                return new MailFile(path, newKernel, _retentionFactor);
             }
             catch (Exception e) {
                 throw new Exception("Unable to read global email file: "+path, e);
@@ -90,8 +95,9 @@ public class MailFile extends JSONWrapper {
     private static long lastTimeValue = 0;
 
     
-    private MailFile(File path, JSONObject _kernel) throws Exception {
+    private MailFile(File path, JSONObject _kernel, int factor) throws Exception {
         super(_kernel);
+        retentionFactor = factor;
         myPath = path;
     }
 
@@ -221,8 +227,10 @@ public class MailFile extends JSONWrapper {
      * 9 months old -- removed entirely
      */
     public void pruneOldRecords() throws Exception {
-        long THREE_MONTHS_AGO = System.currentTimeMillis() - 90L*24L*60L*60L*1000L;
-        long NINE_MONTHS_AGO = System.currentTimeMillis() - 270L*24L*60L*60L*1000L;
+        
+        //if retentionFactor is 3 these names are correct
+        long THREE_MONTHS_AGO = System.currentTimeMillis() - retentionFactor*30L*24L*60L*60L*1000L;
+        long NINE_MONTHS_AGO = System.currentTimeMillis() - retentionFactor*90L*24L*60L*60L*1000L;
 
         //the mail file might be empty (no message yet) so check first
         if (!kernel.has("msgs")) {

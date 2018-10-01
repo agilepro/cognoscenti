@@ -338,7 +338,7 @@ public class EmailListener extends TimerTask{
     private void storeInboundMsg(Message message) throws Exception {
         File userFolder = ar.getCogInstance().getConfig().getUserFolderOrFail();
         File inboundMailPath = new File(userFolder, "inboundMail.json");
-        MailFile inboundMail = MailFile.readOrCreate(inboundMailPath);
+        MailFile inboundMail = MailFile.readOrCreate(inboundMailPath, 3);
         inboundMail.storeMessage(message);
         inboundMail.save();
     }

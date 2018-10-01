@@ -145,8 +145,6 @@ public class EmailSender extends TimerTask {
         // The first mailing will be tested one minute from now,
         // and every 30 seconds after that.
         timer.scheduleAtFixedRate(singletonSender, 30000, TWICE_PER_MINUTE);
-        //timer.scheduleAtFixedRate(singletonSender, 10000, 5000);
-
     }
     
     static long runCount = 0;
@@ -200,7 +198,7 @@ public class EmailSender extends TimerTask {
         synchronized(globalMailArchive) {
             try {
                 Mailer mailer = new Mailer(cog.getConfig().getFile("EmailNotification.properties"));
-                MailFile globalArchive = MailFile.readOrCreate(globalMailArchive);
+                MailFile globalArchive = MailFile.readOrCreate(globalMailArchive, 1);
                 globalArchive.sendAllMail(mailer);
                 globalArchive.save();
             }
@@ -234,7 +232,7 @@ public class EmailSender extends TimerTask {
 
             //open and read the archive first .. it is safe because this is the only thread
             //that reads the email archive.
-            MailFile emailArchive = MailFile.readOrCreate(emailArchiveFile);
+            MailFile emailArchive = MailFile.readOrCreate(emailArchiveFile, 3);
 
             try {
                 //now open the page and generate all the email messages, remember this
@@ -492,7 +490,7 @@ public class EmailSender extends TimerTask {
         }
         synchronized(globalMailArchive) {
             try {
-                MailFile globalArchive = MailFile.readOrCreate(globalMailArchive);
+                MailFile globalArchive = MailFile.readOrCreate(globalMailArchive, 1);
                 for (OptOutAddr ooa : addresses) {
                     globalArchive.createEmailRecord(from, ooa.getEmail(), subject, emailBody);
                 }
@@ -504,6 +502,20 @@ public class EmailSender extends TimerTask {
         }
     }
 
+    public static MailInst createEmailFromTemplate( OptOutAddr ooa, String addressee,
+            String subject, File templateFile, JSONObject data) throws Exception {
+        synchronized(globalMailArchive) {
+            try {
+                MailFile globalArchive = MailFile.readOrCreate(globalMailArchive, 1);
+                MailInst mi = globalArchive.createEmailFromTemplate(ooa, addressee, subject, templateFile, data);
+                globalArchive.save();
+                return mi;
+            }
+            catch (Exception e) {
+                throw new Exception("Failure while composing an email message for the global archive", e);
+            }
+        }        
+    }
 
 
     private static String composeFromAddress(NGContainer ngc) throws Exception {

@@ -70,7 +70,6 @@ import org.socialbiz.cog.dms.FolderAccessHelper;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.mail.EmailSender;
-import org.socialbiz.cog.mail.MailFile;
 import org.socialbiz.cog.mail.MailInst;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -1574,10 +1573,6 @@ public class UserController extends BaseController {
             UserCache uCache = cacheMgr.getCache(user.getKey());
             String token = uCache.genEmailAddressAttempt(newEmail);
             
-            File userFolder = cog.getConfig().getUserFolderOrFail();
-            File mailFilePath = new File(userFolder, "GlobalEmailArchive.json");
-            
-            MailFile globalArchive = MailFile.readOrCreate(mailFilePath);
             File templateFile = cog.getConfig().getFileFromRoot("email/ConfirmEmail.chtml");
             OptOutAddr ooa = new OptOutAddr(user.getAddressListEntry());
             String confirmAddress = "v/" + userKey + "/confirmEmailAddress.htm?token=" + token;
@@ -1586,9 +1581,9 @@ public class UserController extends BaseController {
             mailData.put("url", ar.baseURL + confirmAddress);
             mailData.put("newEmail", newEmail); 
             mailData.put("token", token); 
-            MailInst mi = globalArchive.createEmailFromTemplate(ooa, newEmail, "Confirm your email address", templateFile, mailData);
-            globalArchive.save();
-            sendJson(ar,mi.getJSON());
+            
+            MailInst mi = EmailSender.createEmailFromTemplate(ooa, newEmail, "Confirm your email address", templateFile, mailData);
+            sendJson(ar, mi.getJSON());
 
         }catch(Exception ex){
             streamException(ex,ar);
