@@ -310,8 +310,10 @@ public class EmailGenerator extends DOMFace {
                 }
             }
         }
+        
         //always attach the ICS file whether they ask for it or not
-        if (meeting!=null) {
+        //but only if the meeting is scheduled for some time in the future
+        if (meeting!=null && meeting.getStartTime()>System.currentTimeMillis()) {
             File projectFolder = ngp.containingFolder;
             File cogFolder = new File(projectFolder, ".cog");
             File icsFile = new File(cogFolder, "meet"+meeting.getId()+".ics");
