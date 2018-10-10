@@ -177,8 +177,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
                 }
 
                 //Now, actually call the provider and see if this is true
-                String destUrl = trusterProviderUrl + "?openid.mode=apiVerify";
-                JSONObject response = postToRemote(new URL(destUrl), objIn);
+                JSONObject response = postToTrustedProvider("?openid.mode=apiVerify", objIn);
                 boolean valid = response.getBoolean("verified");
 
                 if (valid) {
@@ -232,7 +231,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
      * Send a JSONObject to this server as a POST and
      * get a JSONObject back with the response.
      */
-    private static JSONObject postToRemote(URL url, JSONObject msg) throws Exception {
+    public static JSONObject postToRemote(URL url, JSONObject msg) throws Exception {
         try {
             HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
             httpCon.setDoOutput(true);
@@ -261,5 +260,11 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
         }
     }
 
+    public static JSONObject postToTrustedProvider(String postFix, JSONObject objIn) throws Exception {
+        String destUrl = trusterProviderUrl + postFix;
+        JSONObject response = postToRemote(new URL(destUrl), objIn);
+        return response;
+    }
+    
 
 }

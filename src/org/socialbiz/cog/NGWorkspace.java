@@ -599,8 +599,8 @@ public class NGWorkspace extends NGPage {
         JSONArray invites = workspaceJSON.getJSONArray("roleInvitations");
         ArrayList<RoleInvitation> res = new ArrayList<RoleInvitation>();
         for (int i=0; i<invites.length(); i++) {
-            JSONObject onePort = invites.getJSONObject(i);
-            RoleInvitation spr = new RoleInvitation(onePort);
+            JSONObject riObj = invites.getJSONObject(i);
+            RoleInvitation spr = new RoleInvitation(riObj);
             res.add(spr);
         }
         return res;
@@ -621,9 +621,9 @@ public class NGWorkspace extends NGPage {
         workspaceJSON.put("roleInvitations", newInvites);
     }
     public RoleInvitation findOrCreateInvite(String email) throws Exception {
-        for (RoleInvitation m : getInvitations()) {
-            if (email.equalsIgnoreCase(m.getEmail())) {
-                return m;
+        for (RoleInvitation ri : getInvitations()) {
+            if (email.equalsIgnoreCase(ri.getEmail())) {
+                return ri;
             }
         }
         JSONArray invites = workspaceJSON.getJSONArray("roleInvitations");
@@ -633,6 +633,13 @@ public class NGWorkspace extends NGPage {
         return new RoleInvitation(newInvite);
     }
     
+    public void sendInvitations() throws Exception {
+        for (RoleInvitation ri : getInvitations()) {
+            if ("New".equals(ri.getStatus())) {
+                
+            }
+        }
+    }
     
     
 }

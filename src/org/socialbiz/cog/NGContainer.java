@@ -35,7 +35,7 @@ public abstract class NGContainer extends DOMFile
     public NGContainer(File path, Document doc) throws Exception {
         super(path,doc);
     }
-    
+
     /**
     * Every container has a key that uniquely identifies it from all other containers.
     * In many cases the key is used as the name of the file that stores it, or as a key
@@ -115,7 +115,7 @@ public abstract class NGContainer extends DOMFile
     public abstract void addPlayerToRole(String roleName,String newMember)throws Exception;
     public abstract List<NGRole> findRolesOfPlayer(UserRef user) throws Exception;
 
-    
+
     public abstract RoleRequestRecord getRoleRequestRecord(String roleName, String requestedBy) throws Exception;
     public abstract List<RoleRequestRecord> getAllRoleRequestByState(String state, boolean completedReq) throws Exception;
     public abstract RoleRequestRecord getRoleRequestRecordById(String requestId)throws Exception;

@@ -37,6 +37,11 @@
     }
 
     JSONArray allLabels = ngw.getJSONLabels();
+    
+    JSONArray allRoles = new JSONArray();
+    for (NGRole aRole : ngw.getAllRoles()) {
+        allRoles.put(aRole.getName());
+    }
 
 
 /* NOTES RECORD PROTOTYPE
@@ -98,6 +103,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
+    $scope.allRoles  = <%allRoles.write(out,2,2);%>;
     $scope.filter = "";
     $scope.showVizPub = true;
     $scope.showVizMem = true;
@@ -266,7 +272,6 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 			newTopic.modUser.uid = "<%ar.writeJS(currentUser);%>";
 			newTopic.modUser.name = "<%ar.writeJS(currentUserName);%>";
 			newTopic.modUser.key = "<%ar.writeJS(currentUserKey);%>";
-
 			var postURL = "noteHtmlUpdate.json?nid=~new~";
 			var postdata = angular.toJson(newTopic);
 			$scope.showError=false;

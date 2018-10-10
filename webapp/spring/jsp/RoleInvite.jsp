@@ -36,10 +36,16 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Invite Members");
     $scope.allRoles  = <%allRoles.write(out,2,2);%>;
+    
     $scope.targetRole = "Members";
     $scope.invitations = [];
     $scope.newEmail = "";
     $scope.newName = "";
+    $scope.message = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
+                    +" participate in the workspace for '<%ar.writeHtml(ngc.getFullName());%>'."
+                    +"\n\nThe links below will make registration quick and easy, and"
+                    +" after that you will be able to"
+                    +" participate directly with the others through the site.";
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -92,6 +98,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         obj.name = $scope.newName;
         obj.email = $scope.newEmail;
+        obj.msg = $scope.message;
         obj.status = "New";
         obj.timestamp = new Date().getTime();
         updateInvite(obj);
@@ -147,7 +154,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     </style>
     
     
-
+<div class="guideVocal">
+<b>Important:</b> This page is under development.  It is not functional at this time . . . 
+</div>
 
     
 

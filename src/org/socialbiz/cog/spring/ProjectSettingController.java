@@ -45,6 +45,7 @@ import org.socialbiz.cog.RoleRequestRecord;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.mail.EmailSender;
+import org.socialbiz.cog.mail.MailFile;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -702,6 +703,27 @@ public class ProjectSettingController extends BaseController {
             streamException(ee, ar);
         }
     }
+    
+    
+    ///////////////////////// Eamil ///////////////////////
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/QueryEmail.json", method = RequestMethod.POST)
+    public void queryEmail(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            JSONObject posted = this.getPostedObject(ar);
+            
+            JSONObject repo = MailFile.queryEmail(ngw, posted);
+            
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get email", ex);
+            streamException(ee, ar);
+        }
+    }    
+    
     
     
     ///////////////////////// Invitations ///////////////////

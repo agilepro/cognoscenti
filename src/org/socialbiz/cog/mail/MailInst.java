@@ -46,8 +46,8 @@ public class MailInst extends JSONWrapper {
     public static final String SENT = "Sent";
     public static final String FAILED = "Failed";
     public static final String SKIPPED = "Skipped";
-    
-    
+
+
 
 
     public MailInst(JSONObject _kernel) {
@@ -120,11 +120,26 @@ public class MailInst extends JSONWrapper {
     public void setExceptionMessage(Exception e, String context) throws Exception {
         kernel.put("exception", JSONException.convertToJSON(e, context));
     }
-    /*
-    public void setExceptionMessage(String s) throws Exception {
-        kernel.put("exception", s);
+
+    public boolean containsValue(String s) throws Exception {
+        if ((s==null) || s.length()==0) {
+            return true;
+        }
+        s = s.toLowerCase();
+        if (getSubject().toLowerCase().contains(s)) {
+            return true;
+        }
+        if (this.getAddressee().toLowerCase().contains(s)) {
+            return true;
+        }
+        if (this.getFromAddress().toLowerCase().contains(s)) {
+            return true;
+        }
+        if (this.getFromName().toLowerCase().contains(s)) {
+            return true;
+        }
+        return false;
     }
-    */
 
 
     /**
@@ -172,7 +187,7 @@ public class MailInst extends JSONWrapper {
         if ("true".equals(mailer.getProperty("traceProperties"))) {
             mailer.dumpPropertiesToLog();
         }
-        
+
         try {
 
             Authenticator authenticator = new MyAuthenticator(mailer.getProperties());
@@ -186,7 +201,7 @@ public class MailInst extends JSONWrapper {
 
             MimeMessage message = new MimeMessage(mailSession);
             message.setSentDate(new Date(sendTime));
-            
+
             //The FROM of the message gets put into the reply-to field
             //so replies go to the person who started the message.
             String rawFrom = getFromAddress();
@@ -198,11 +213,11 @@ public class MailInst extends JSONWrapper {
             if (rawFrom!=null && rawFrom.length()>0) {
                 message.setReplyTo(makeAddress(fromName, rawFrom));
             }
-            
+
             //Always use a fixed from address to avoid being tagged as a spammer
             String stdFromAddress = mailer.getProperty("mail.smtp.from");
             message.setFrom(makeAddress("\u2379 "+fromName, stdFromAddress)[0]);
-            
+
             String encodedSubjectLine = MimeUtility.encodeText(getSubject(), "utf-8", "B");
             message.setSubject(encodedSubjectLine);
 
@@ -260,7 +275,7 @@ public class MailInst extends JSONWrapper {
             }
         }
     }
-    
+
     private Address[] makeAddress(String name, String address) throws Exception {
         InternetAddress iAdd = new InternetAddress(address, name, "UTF-8");
         iAdd.validate();         //make sure there are no problems
@@ -269,7 +284,7 @@ public class MailInst extends JSONWrapper {
         return addressArray;
     }
 
-    
+
     public void setFromMessage(Message message) throws Exception {
         Address[] from = message.getFrom();
         if (from!=null && from.length>0) {
@@ -306,7 +321,7 @@ public class MailInst extends JSONWrapper {
         this.setCreateDate(safeGetTime(message.getSentDate()));
         this.setLastSentDate(safeGetTime(message.getReceivedDate()));
     }
-    
+
     private long safeGetTime(Date d) {
         if (d==null) {
             return 0;

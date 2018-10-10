@@ -390,7 +390,7 @@ public class HistoryRecord extends DOMFace
         //at the last history.  If it is the same, then it simply updates the timestamp, and retains
         //that, without creating a new history item.
         HistoryRecord hr = ngc.getLatestHistory();
-        if (hr.getContextType() == contextType && hr.getContext().equals(objectID) && 
+        if (hr!=null && hr.getContextType() == contextType && hr.getContext().equals(objectID) && 
                 hr.getEventType() == eventType) {
             hr.setTimeStamp(ar.nowTime);
             return hr;

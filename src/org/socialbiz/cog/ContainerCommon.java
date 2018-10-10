@@ -509,6 +509,9 @@ public abstract class ContainerCommon extends NGContainer
     
     public HistoryRecord getLatestHistory() throws Exception {
         List<HistoryRecord> allSortedHist = getAllHistory();
+        if (allSortedHist.size()==0) {
+            return null;
+        }
         return allSortedHist.get(0);
     }
 
@@ -609,12 +612,12 @@ public abstract class ContainerCommon extends NGContainer
             }
             else if ("External Expert".equals(roleName))
             {
-                desc = "Person from outside the company who has expertise about the company’s environment, "
+                desc = "Person from outside the company who has expertise about the companyï¿½s environment, "
                         +"eg, regulatory, economic, social, technical, or ecology. Able to provide information "
                         +"and feedback not available inside the company and to inform or influence key "
                         +"external institutions. ";
                 elegibility = "Expertise in and well-connected to a field important to the company. "
-                        +"Experienced. Able to think rationally at the most abstract level of the company’s work. "
+                        +"Experienced. Able to think rationally at the most abstract level of the companyï¿½s work. "
                         +"Well-prepared. Forward thinking.";
             }
             else

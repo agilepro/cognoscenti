@@ -20,18 +20,17 @@
     File folder = ngp.getFilePath().getParentFile();
     File emailFilePath = new File(folder, "mailArchive.json");
 
-    MailFile archive = MailFile.readOrCreate(emailFilePath);
+    MailFile archive = MailFile.readOrCreate(emailFilePath,3);
 
 
-    JSONObject emailMsg = null;
+    MailInst emailMsg = MailFile.getMessage(ngp, msgId);
+    JSONObject mailObject = new JSONObject();
     String specialBody = "";
     boolean bodyIsDeleted = false;
-    for (MailInst mi : archive.getAllMessages() ) {
-        if (msgId == mi.getCreateDate()) {
-            emailMsg = mi.getJSON();
-            specialBody = mi.getBodyText();
-            bodyIsDeleted = specialBody.startsWith("*deleted");
-        }
+    if (emailMsg != null) {
+        mailObject = emailMsg.getJSON();
+        specialBody = emailMsg.getBodyText();
+        bodyIsDeleted = specialBody.startsWith("*deleted");
     }
 
 /* PROTOTYPE EMAIL RECORD
@@ -52,7 +51,7 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Email Sent");
-    $scope.emailMsg = <%emailMsg.write(out,2,4);%>;
+    $scope.emailMsg = <%mailObject.write(out,2,4);%>;
     $scope.filter = "<%ar.writeJS(filter);%>";
     $scope.bodyIsDeleted = <%=bodyIsDeleted%>;
     $scope.showError = false;

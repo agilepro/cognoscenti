@@ -9,38 +9,28 @@
     String filter      = ar.defParam("f", "");
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
-    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
-    ar.setPageAccessLevels(ngp);
+    NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+    ar.setPageAccessLevels(ngw);
     ar.assertMember("Must be a member to see meetings");
-    NGBook ngb = ngp.getSite();
+    NGBook ngb = ngw.getSite();
 
-    File folder = ngp.getFilePath().getParentFile();
-    File emailFilePath = new File(folder, "mailArchive.json");
 
-    MailFile mailArchive = MailFile.readOrCreate(emailFilePath);
-    JSONArray emailList = mailArchive.getAllJSON();
-    JSONArray emailList2 = new JSONArray();
-    for (int i=0; i<emailList.length(); i++) {
-        JSONObject email = emailList.getJSONObject(i);
-        JSONObject e2 = new JSONObject();
-        e2.put("Addressee", email.optString("Addressee","unknown"));
-        e2.put("CreateDate",email.get("CreateDate"));
-        e2.put("From",     email.optString("From","unknown"));
-        e2.put("FromName",email.optString("FromName","unknown"));
-        e2.put("LastSentDate",email.get("LastSentDate"));
-        e2.put("Status",email.optString("Status","unknown"));
-        e2.put("Subject",email.optString("Subject","unknown"));
-        emailList2.put(e2);
-    }
+    
+    JSONObject newQuery = new JSONObject();
+    newQuery.put("offset", 0);
+    newQuery.put("batch", 50);
+    newQuery.put("includeBody", false);
+    JSONObject mailQueryResult = MailFile.queryEmail(ngw, newQuery);
+    JSONArray mailList = mailQueryResult.getJSONArray("list");
 
 /* PROTOTYPE EMAIL RECORD
       {
-        "Addressee": "Bernd.Schroettle-Henning@ts.fujitsu.com",
+        "Addressee": "Bernd.Schroettle@xx.fujitsu.com",
         "AttachmentFiles": ["/opt/weaver_sites/fujitsu/fujitsu-distinguished-engineer/.cog/meet1923.ics"],
         "BodyText": "....\n",
         "CreateDate": 1534966224915,
-        "From": "jonathan.schwartz@ca.fujitsu.com",
-        "FromName": "JONATHAN SCHWARTZ",
+        "From": "john.schwartz@xx.fujitsu.com",
+        "FromName": "JOHN SCHWARTZ",
         "LastSentDate": 1534966478516,
         "Status": "Sent",
         "Subject": "Reminder for meeting: Monthly FDE Meeting - August"
@@ -55,8 +45,9 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Email Sent");
-    $scope.emailList = <%emailList2.write(out,2,4);%>;
+    $scope.emailList = [];
     $scope.filter = "<%ar.writeJS(filter);%>";
+    $scope.offset = 0;
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
@@ -69,23 +60,30 @@ app.controller('myCtrl', function($scope, $http) {
             return b.sendDate - a.sendDate;
         });
     };
-    $scope.sortInverseChron();
-    $scope.getFiltered = function() {
-        var searchVal = $scope.filter.toLowerCase();
-        var res = [];
-        if ($scope.filter==null || $scope.filter.length==0) {
-            res = $scope.emailList;
+    $scope.fetchEmailRecords = function(diff) {
+        console.log("fetching records");
+        var postURL = "QueryEmail.json";
+        var newPos = $scope.offset + diff;
+        if (newPos<0) {
+            newPos = 0;
         }
-        else {
-            res = $scope.emailList.filter( function(oneEmail) {
-                return (oneEmail.Subject.toLowerCase().indexOf(searchVal)>=0)
-                    || (oneEmail.Addressee.toLowerCase().indexOf(searchVal)>=0);
-            });
-        }
-        res = res.sort( function(a,b) {
-            return $scope.bestDate(b)-$scope.bestDate(a);
+        var query = {
+            offset: newPos,
+            batch: 5,
+            searchValue: $scope.filter
+        };
+        var postdata = angular.toJson(query);
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            console.log("received records");
+            $scope.emailList = data.list;
+            $scope.offset = data.query.offset;
+            $scope.sortInverseChron();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
         });
-        return res;
+        console.log("fetching records 2");
     }
     $scope.namePart = function(val) {
         var pos = val.indexOf('�');
@@ -106,6 +104,7 @@ app.controller('myCtrl', function($scope, $http) {
             return rec.CreateDate;
         }
     }
+    $scope.fetchEmailRecords();
 });
 
 </script>
@@ -135,17 +134,22 @@ app.controller('myCtrl', function($scope, $http) {
 
         <div>
             Filter: <input ng-model="filter">
+            <button ng-click="fetchEmailRecords(0)" class="btn btn-default btn-raised">Refresh</button>
+            <button ng-click="fetchEmailRecords(-5)" class="btn btn-default btn-raised">Previous</button>
+            <button ng-click="fetchEmailRecords(5)" class="btn btn-default btn-raised">Next</button>
         </div>
         <div style="height:20px;"></div>
         <table class="table" width="100%">
             <tr>
+                <td width="15px">#</td>
                 <td width="100px">From</td>
                 <td width="300px">Subject</td>
                 <td width="100px">Recipient</td>
                 <td width="50px">Status</td>
                 <td width="100px">Send Date</td>
             </tr>
-            <tr ng-repeat="rec in getFiltered()|limitTo: 50">
+            <tr ng-repeat="rec in emailList">
+                <td>{{offset+$index}}</td>
                 <td>{{namePart(rec.From)}}</td>
                 <td><a href="emailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
                 <td>{{rec.Addressee}}</td>

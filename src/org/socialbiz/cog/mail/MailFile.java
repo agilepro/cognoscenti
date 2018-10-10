@@ -23,13 +23,13 @@ package org.socialbiz.cog.mail;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.mail.Message;
 
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.EmailRecord;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.exception.ProgramLogicError;
 
@@ -54,13 +54,78 @@ import com.purplehillsbooks.json.JSONTokener;
 public class MailFile extends JSONWrapper {
 
     File myPath;
-    
+
     //important mail files get a retention factor of 3
     //daily digest files use a factor of 1 to keep the files smaller
     int  retentionFactor;
 
+
+
+    public static JSONObject queryEmail(NGWorkspace ngw, JSONObject query) throws Exception {
+
+        int offset = query.optInt("offset", 0);
+        if (offset<0) {
+            offset = 0;
+        }
+        int batch  = query.optInt("batch", 50);
+        boolean includeBody = query.has("includeBody") && query.getBoolean("includeBody");
+        String searchValue  = query.optString("searchValue", "");
+        long msgId  = query.optLong("msgId", 0);
+
+        query.put("offset", offset);
+        query.put("batch",  batch);
+
+        File cogFolder = ngw.getFilePath().getParentFile();
+        File emailFilePath = new File(cogFolder, "mailArchive.json");
+
+        MailFile mailArchive = MailFile.readOrCreate(emailFilePath,3);
+
+        JSONObject res = new JSONObject();
+        res.put("query", query);
+
+        JSONArray actualList = new JSONArray();
+        res.put("list", actualList);
+
+        int pos = offset;
+        int count = 0;
+        List<MailInst> list = mailArchive.getAllMessages();
+        while (pos < list.size() && count < batch) {
+            MailInst mi = list.get(pos++);
+            if (msgId>0) {
+                if (mi.getCreateDate()==msgId) {
+                    actualList.put(mi.getJSON());
+                }
+            }
+            else if (mi.containsValue(searchValue)) {
+                if (includeBody) {
+                    actualList.put(mi.getListableJSON());
+                }
+                else {
+                    actualList.put(mi.getJSON());
+                }
+                count++;
+            }
+        }
+        return res;
+    }
+
+
+    public static MailInst getMessage(NGWorkspace ngw, long msgId) throws Exception {
+        File cogFolder = ngw.getFilePath().getParentFile();
+        File emailFilePath = new File(cogFolder, "mailArchive.json");
+
+        MailFile mailArchive = MailFile.readOrCreate(emailFilePath,3);
+        List<MailInst> list = mailArchive.getAllMessages();
+        for (MailInst mi : list) {
+            if (mi.getCreateDate() == msgId) {
+                return mi;
+            }
+        }
+        return null;
+    }
+
     public static MailFile readOrCreate(File path, int _retentionFactor) throws Exception {
-        
+
         if (!path.exists()) {
             JSONObject newFile = new JSONObject();
             return new MailFile(path, newFile, _retentionFactor);
@@ -94,7 +159,7 @@ public class MailFile extends JSONWrapper {
     }
     private static long lastTimeValue = 0;
 
-    
+
     private MailFile(File path, JSONObject _kernel, int factor) throws Exception {
         super(_kernel);
         retentionFactor = factor;
@@ -202,7 +267,7 @@ public class MailFile extends JSONWrapper {
             throw new Exception("unable to compose email record from '"+from+"' on: "+subject, e);
         }
     }
-    
+
     public MailInst createEmailFromTemplate( OptOutAddr ooa, String addressee,
             String subject, File templateFile, JSONObject data) throws Exception {
         String body = ChunkTemplate.streamToString(templateFile, data, ooa.getCalendar());
@@ -227,7 +292,7 @@ public class MailFile extends JSONWrapper {
      * 9 months old -- removed entirely
      */
     public void pruneOldRecords() throws Exception {
-        
+
         //if retentionFactor is 3 these names are correct
         long THREE_MONTHS_AGO = System.currentTimeMillis() - retentionFactor*30L*24L*60L*60L*1000L;
         long NINE_MONTHS_AGO = System.currentTimeMillis() - retentionFactor*90L*24L*60L*60L*1000L;
@@ -257,16 +322,16 @@ public class MailFile extends JSONWrapper {
         kernel.put("msgs", newEmailList);
     }
 
-    
+
     /**
      * @return a JSONArray with all the messages represented as JSON objects
      *         while also assuring that each message has a unique create date
-     *         since some existing files might not have unique create date 
-     */
+     *         since some existing files might not have unique create date
+     *
     public JSONArray getAllJSON() throws Exception {
         //this is a test to make sure that sent data and from is unique
         Hashtable<Long,MailInst>checker = new Hashtable<Long,MailInst>();
-        
+
         JSONArray emailList = new JSONArray();
         for (MailInst mi : getAllMessages() ) {
             long testVal = new Long(mi.getCreateDate());
@@ -278,24 +343,38 @@ public class MailFile extends JSONWrapper {
                 mi.setCreateDate(testVal);
             }
             checker.put(testObj, mi);
-            
+
             emailList.put(mi.getJSON());
         }
         return emailList;
     }
-    
+    */
+
     /**
      * @return a JSONArray with all the messages represented as JSON objects
      *         while also assuring that each message has a unique create date
-     *         since some existing files might not have unique create date 
-     */
-    public JSONArray getAllListableJSON() throws Exception {
+     *         since some existing files might not have unique create date
+     *
+    public JSONArray getAllListableJSON(int offset, int batch) throws Exception {
         //this is a test to make sure that sent data and from is unique
         Hashtable<Long,MailInst>checker = new Hashtable<Long,MailInst>();
-        
+
         JSONArray emailList = new JSONArray();
-        for (MailInst mi : getAllMessages() ) {
-            long testVal = new Long(mi.getCreateDate());
+
+        List<MailInst> list = getAllMessages();
+
+        if (offset>=list.size()) {
+            return emailList;
+        }
+
+        int end = offset + batch;
+        if (end>list.size()) {
+            end = list.size();
+        }
+
+        for (int i = offset; i<end; i++) {
+            MailInst mi = list.get(i);
+            long testVal = mi.getCreateDate();
             Long testObj = new Long(testVal);
             if (checker.contains(testObj)) {
                 while (checker.contains(testObj)) {
@@ -304,12 +383,13 @@ public class MailFile extends JSONWrapper {
                 mi.setCreateDate(testVal);
             }
             checker.put(testObj, mi);
-            
+
             emailList.put(mi.getListableJSON());
         }
         return emailList;
     }
-    
+    */
+
     public void storeMessage(Message message) throws Exception {
         MailInst emailRec = this.createMessage();
         emailRec.setFromMessage(message);
