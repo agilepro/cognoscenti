@@ -28,6 +28,7 @@ import java.util.List;
 import org.socialbiz.cog.mail.EmailSender;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -327,29 +328,29 @@ public class ReminderRecord extends DOMFace
     }
     
     public static void reminderEmail(AuthRequest ar, String pageId,String reminderId,
-            String emailto, NGContainer ngp) throws Exception {
+            String emailto, NGWorkspace ngw) throws Exception {
 
         Cognoscenti cog = ar.getCogInstance();
-        ReminderMgr rMgr = ngp.getReminderMgr();
+        ReminderMgr rMgr = ngw.getReminderMgr();
         ReminderRecord rRec = rMgr.findReminderByIDOrFail(reminderId);
         String subject = "Reminder to Upload: " + rRec.getSubject();
         List<AddressListEntry> addressList = AddressListEntry.parseEmailList(emailto);
         for (AddressListEntry ale : addressList) {
             OptOutAddr ooa = new OptOutAddr(ale);
             
-            JSONObject data = rRec.getReminderEmailData(ar, ngp);
+            JSONObject data = rRec.getReminderEmailData(ar, ngw);
             
             File templateFile = cog.getConfig().getFileFromRoot("email/Reminder.chtml");
             
-            EmailSender.containerEmail(ooa, ngp, subject, templateFile, data, null, new ArrayList<String>(), cog);
+            EmailSender.containerEmail(ooa, ngw, subject, templateFile, data, null, new ArrayList<String>(), cog);
         }
-        if (ngp instanceof NGPage) {
-            HistoryRecord.createHistoryRecord(ngp, reminderId,
+        if (ngw instanceof NGPage) {
+            HistoryRecord.createHistoryRecord(ngw, reminderId,
                     HistoryRecord.CONTEXT_TYPE_DOCUMENT, ar.nowTime,
                     HistoryRecord.EVENT_DOC_UPDATED, ar, "Reminder Emailed to "
                             + emailto);
         }
-        ngp.saveContent(ar, "sending reminder email");
+        ngw.saveContent(ar, "sending reminder email");
     }
 
 }

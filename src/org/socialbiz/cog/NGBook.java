@@ -98,6 +98,7 @@ public class NGBook extends ContainerCommon {
         // just in case this is an old site object, we need to look for and
         // copy members from the members tag into the role itself
         moveOldMembersToRole();
+        assureColorsExist();
     }
 
     private void assureNameExists() {
@@ -108,6 +109,23 @@ public class NGBook extends ContainerCommon {
             }
             displayNames.add(possibleName);
             //TODO: should this be stored back in file at this point?
+        }
+    }
+    private void assureColorsExist() {
+        List<String> foundColors = siteInfoRec.getVector("labelColors");
+        if (foundColors.size()==0) {
+            foundColors.add("Gold");
+            foundColors.add("Yellow");
+            foundColors.add("CornSilk");
+            foundColors.add("PaleGreen");
+            foundColors.add("Orange");
+            foundColors.add("Bisque");
+            foundColors.add("Coral");
+            foundColors.add("LightSteelBlue");
+            foundColors.add("Aqua");
+            foundColors.add("Thistle");
+            foundColors.add("Pink");
+            siteInfoRec.setVector("labelColors", foundColors);
         }
     }
 
@@ -609,13 +627,6 @@ public class NGBook extends ContainerCommon {
         return siteInfoRec.getAttributeBool("isDeleted");
     }
 
-    @Override
-    public ReminderMgr getReminderMgr() throws Exception {
-        if (reminderMgr == null) {
-            reminderMgr = requireChild("reminders", ReminderMgr.class);
-        }
-        return reminderMgr;
-    }
 
     public void changeVisibility(String oid, AuthRequest ar) throws Exception {
         throw new Exception("Can not change the visibility of a note on a book, because there are no notes on books");
@@ -1133,6 +1144,7 @@ public class NGBook extends ContainerCommon {
         siteInfoRec.extractAttributeBool(jo, "frozen");
         siteInfoRec.extractAttributeBool(jo, "offLine");
         siteInfoRec.extractAttributeString(jo, "siteMsg");
+        siteInfoRec.extractVectorString(jo, "labelColors");
         this.extractScalarString(jo, "movedTo");
         NGRole owners = getSecondaryRole();
         JSONArray ja = new JSONArray();
@@ -1150,18 +1162,14 @@ public class NGBook extends ContainerCommon {
     }
 
     public void updateConfigJSON(JSONObject jo) throws Exception {
-        if (jo.has("description")) {
-            setDescription( jo.getString("description"));
-        }
+        siteInfoRec.updateScalarString("description", jo);
         if (jo.has("theme")) {
             setThemeName( jo.getString("theme"));
         }
         if (jo.has("names")) {
             setContainerNames( constructVector(jo.getJSONArray("names")));
         }
-        if (jo.has("showExperimental")) {
-            setShowExperimental( jo.getBoolean("showExperimental"));
-        }
+        siteInfoRec.updateAttributeBool("showExperimental", jo);
         if (jo.has("isDeleted")) {
             boolean isDel = jo.getBoolean("isDeleted");
             siteInfoRec.setAttributeBool("isDeleted", isDel);
@@ -1172,6 +1180,7 @@ public class NGBook extends ContainerCommon {
         siteInfoRec.updateAttributeBool("frozen", jo);
         siteInfoRec.updateAttributeBool("offLine", jo);
         siteInfoRec.updateAttributeString("siteMsg", jo);
+        siteInfoRec.updateVectorString("labelColors", jo);
         this.updateScalarString("movedTo", jo);
     }
 

@@ -32,6 +32,7 @@ import org.socialbiz.cog.dms.ResourceEntity;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
+
 import com.purplehillsbooks.json.JSONArray;
 
 /**
@@ -208,10 +209,6 @@ public class UserPage extends ContainerCommon
     public List<String> getContainerNames()
     {
         throw new RuntimeException("getContainerNames not implemented on UserPage");
-    }
-    public ReminderMgr getReminderMgr() throws Exception
-    {
-        throw new ProgramLogicError("getReminderMgr not implemented on UserPage");
     }
 
 

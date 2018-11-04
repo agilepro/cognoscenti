@@ -155,7 +155,6 @@ public abstract class NGContainer extends DOMFile
     public abstract List<String> getContainerNames();
     public abstract void setContainerNames(List<String> nameSet);
 
-    public abstract ReminderMgr getReminderMgr() throws Exception;
 
     /**
     * Primary level permissions are for "participants" of the container.

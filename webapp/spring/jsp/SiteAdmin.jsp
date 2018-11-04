@@ -28,6 +28,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.allThemes = <%allThemes.write(out,2,4);%>;
     $scope.newName = $scope.siteInfo.names[0];
+    $scope.colorList = $scope.siteInfo.labelColors.join(",");
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -51,6 +52,14 @@ app.controller('myCtrl', function($scope, $http) {
         if ($scope.siteInfo.names.length===0) {
             alert("Site must have at least one name at all times.  Please add a name.");
             return;
+        }
+        var rawList = $scope.colorList.split(",");
+        if (rawList.length>2) {
+            var newList = [];
+            rawList.forEach( function(item) {
+                newList.push(item.trim());
+            });
+            $scope.siteInfo.labelColors = newList;
         }
         var postURL = "updateSiteInfo.json";
         var postdata = angular.toJson($scope.siteInfo);
@@ -137,6 +146,13 @@ app.controller('myCtrl', function($scope, $http) {
                 <td>
                     <textarea  class="form-control" rows="2" ng-model="siteInfo.siteMsg"
                     title="This message appears on every page of every workspace.  Use for urgent updates and changes in site status."></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td >Label Colors:</td>
+                <td>
+                    <textarea  class="form-control" rows="2" ng-model="colorList"
+                    title="A comma separated list of standard color names."></textarea>
                 </td>
             </tr>
             <tr>

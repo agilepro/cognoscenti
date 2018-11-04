@@ -146,8 +146,8 @@ public class UploadFileController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.send.email");
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
-            ar.assertNotFrozen(ngp);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            ar.assertNotFrozen(ngw);
 
             String comment = ar.reqParam("comment");
             String pname = ar.defParam("pname", "");
@@ -156,8 +156,8 @@ public class UploadFileController extends BaseController {
             String subj = ar.reqParam("subj");
             String visibility = ar.reqParam("visibility");
 
-            ReminderMgr rMgr = ngp.getReminderMgr();
-            ReminderRecord rRec = rMgr.createReminder(ngp.getUniqueOnPage());
+            ReminderMgr rMgr = ngw.getReminderMgr();
+            ReminderRecord rRec = rMgr.createReminder(ngw.getUniqueOnPage());
             rRec.setFileDesc(comment);
             rRec.setInstructions(instruct);
             rRec.setAssignee(assignee);
@@ -167,10 +167,10 @@ public class UploadFileController extends BaseController {
             rRec.setModifiedDate(ar.nowTime);
             rRec.setDestFolder(visibility);
             rRec.setSendNotification("yes");
-            HistoryRecord.createHistoryRecord(ngp, rRec.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
+            HistoryRecord.createHistoryRecord(ngw, rRec.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
                     ar.nowTime, HistoryRecord.EVENT_DOC_ADDED, ar, "Added Reminder for "+assignee);
 
-            ngp.saveFile(ar, "Modified attachments");
+            ngw.saveFile(ar, "Modified attachments");
             response.sendRedirect("reminders.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.email.reminder", new Object[]{pageId,siteId} , ex);
@@ -198,11 +198,11 @@ public class UploadFileController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.resend.email.reminder");
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
 
             String reminderId = ar.reqParam("rid");
             String emailto = ar.defParam("emailto", null);
-            ReminderRecord.reminderEmail(ar, pageId, reminderId, emailto, ngp);
+            ReminderRecord.reminderEmail(ar, pageId, reminderId, emailto, ngw);
 
             response.sendRedirect("reminders.htm");
         }catch(Exception ex){
@@ -408,13 +408,13 @@ public class UploadFileController extends BaseController {
                 HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
+            ar.setPageAccessLevels(ngw);
 
             String rid = ar.reqParam("rid");
-            ReminderMgr mgr = ngp.getReminderMgr();
+            ReminderMgr mgr = ngw.getReminderMgr();
             ReminderRecord reminderRecord = mgr.findReminderByIDOrFail(rid);
-            if (AccessControl.canAccessReminder(ar, ngp, reminderRecord)) {
+            if (AccessControl.canAccessReminder(ar, ngw, reminderRecord)) {
                 showJSPMembers(ar, siteId, pageId, "remindAttachment");
                 return;
             }
@@ -478,19 +478,19 @@ public class UploadFileController extends BaseController {
         {
             ar = getLoggedInAuthRequest(request, response, "message.must.be.login");
             String containerId=  ar.reqParam("containerId") ;
-            NGPage ngc = ar.getCogInstance().getWSByCombinedKeyOrFail(containerId).getWorkspace();
-            ar.setPageAccessLevels(ngc);
+            NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(containerId).getWorkspace();
+            ar.setPageAccessLevels(ngw);
             String rid = ar.reqParam("rid");
 
-            ReminderMgr rMgr = ngc.getReminderMgr();
+            ReminderMgr rMgr = ngw.getReminderMgr();
 
             ReminderRecord rRec = rMgr.findReminderByID(rid);
 
             if(rRec == null){
-                throw new NGException("nugen.exception.no.attachment.found", new Object[]{rid, ngc.getFullName()});
+                throw new NGException("nugen.exception.no.attachment.found", new Object[]{rid, ngw.getFullName()});
             }
             rMgr.removeReminder(rid);
-            ngc.saveContent( ar, "Modified attachments");
+            ngw.saveContent( ar, "Modified attachments");
             sendJson(ar, NGWebUtils.getJSONMessage("success" , "" , ""));
         }
         catch(Exception ex){

@@ -52,6 +52,7 @@ import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGRole;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.OptOutIndividualRequest;
 import org.socialbiz.cog.ProfileRef;
@@ -1081,7 +1082,6 @@ public class UserController extends BaseController {
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        String responseMessage = null;
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             ar.assertLoggedIn("Can not update user contacts.");
@@ -1214,14 +1214,14 @@ public class UserController extends BaseController {
             }
             String pageId = ar.reqParam("pageId");
 
-            NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
-            ar.setPageAccessLevels(ngp);
+            NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
+            ar.setPageAccessLevels(ngw);
             UserProfile up = getUserToDisplay(ar, userKey);
 
             String sendDigest = ar.defParam("sendDigest", null);
             if(sendDigest != null && "never".equals(sendDigest)){
 
-                up.clearNotification( ngp.getKey());
+                up.clearNotification( ngw.getKey());
                 ar.getCogInstance().getUserManager().saveUserProfiles();
             }
 
@@ -1230,13 +1230,13 @@ public class UserController extends BaseController {
             if(tasksToBeCompleted != null && tasksToBeCompleted.length > 0){
                 GoalRecord taskRecord = null;
                 for (String taskId : tasksToBeCompleted) {
-                    taskRecord = ngp.getGoalOrFail(taskId);
+                    taskRecord = ngw.getGoalOrFail(taskId);
                     taskRecord.setEndDate(ar.nowTime);
                     taskRecord.setStateAndAct(BaseRecord.STATE_COMPLETE, ar);
                     eventType = HistoryRecord.EVENT_TYPE_STATE_CHANGE_COMPLETE;
                     taskRecord.setModifiedDate(ar.nowTime);
                     taskRecord.setModifiedBy(ar.getBestUserId());
-                    HistoryRecord.createHistoryRecord(ngp, taskRecord.getId(),
+                    HistoryRecord.createHistoryRecord(ngw, taskRecord.getId(),
                             HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar, "task completed");
                 }
             }
@@ -1245,23 +1245,23 @@ public class UserController extends BaseController {
             if(tasksToBeUnassigned != null && tasksToBeUnassigned.length > 0){
                 GoalRecord taskRecord = null;
                 for (String taskId : tasksToBeUnassigned) {
-                    taskRecord = ngp.getGoalOrFail(taskId);
+                    taskRecord = ngw.getGoalOrFail(taskId);
                     taskRecord.getAssigneeRole().removePlayer(new AddressListEntry(up.getPreferredEmail()));
                     taskRecord.setModifiedDate(ar.nowTime);
                     taskRecord.setModifiedBy(ar.getBestUserId());
-                    HistoryRecord.createHistoryRecord(ngp, taskRecord.getId(),
+                    HistoryRecord.createHistoryRecord(ngw, taskRecord.getId(),
                             HistoryRecord.CONTEXT_TYPE_TASK,
                             HistoryRecord.EVENT_TYPE_MODIFIED, ar, "unassigned");
                 }
             }
 
             String[] stopRolePlayer= ar.req.getParameterValues("stoproleplayer");
-            removeFromRole(ngp, new AddressListEntry(up), stopRolePlayer);
+            removeFromRole(ngw, new AddressListEntry(up), stopRolePlayer);
 
 
             String[] stopReminding= ar.req.getParameterValues("stopReminding");
             if(stopReminding != null && stopReminding.length > 0){
-                ReminderMgr rMgr = ngp.getReminderMgr();
+                ReminderMgr rMgr = ngw.getReminderMgr();
                 ReminderRecord rRec = null;
                 for (String reminderId : stopReminding) {
                     rRec = rMgr.findReminderByID(reminderId);
@@ -1269,7 +1269,7 @@ public class UserController extends BaseController {
                 }
             }
 
-            ngp.saveFile(ar,"updated notification settings");
+            ngw.saveFile(ar,"updated notification settings");
             redirectBrowser(ar,"notificationSettings.htm");
 
         }catch(Exception ex){

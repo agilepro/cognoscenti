@@ -29,7 +29,15 @@ app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Labels");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.labelList = <%labelList.write(out,2,4);%>;
-    $scope.colors = ["Gold","Yellow","CornSilk","PaleGreen","Orange","Bisque","Coral","LightSteelBlue","Aqua","Thistle","Pink"];
+    $scope.colors = [];
+    var testColor = {};
+    $scope.siteInfo.labelColors.forEach( function(color) {
+        if (!testColor[color]) {
+            $scope.colors.push(color);
+            testColor[color] = true;
+        }
+    });
+    console.log("Colors are: ", $scope.colors);
     $scope.newLabel = {name: "", color: $scope.colors[0]};
 
     $scope.showInput = false;
