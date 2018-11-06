@@ -1,4 +1,3 @@
-console.log("loaded the ModalResponseCtrl-0");
 
 app.controller('InviteModalCtrl', function ($scope, $modalInstance, msg) {
 

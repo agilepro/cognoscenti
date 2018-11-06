@@ -28,6 +28,12 @@ public class CommentRecord extends DOMFace {
     public static final int COMMENT_STATE_OPEN    = 12;
     public static final int COMMENT_STATE_CLOSED  = 13;
 
+    public static final char CONTAINER_TYPE_MEETING = 'M';
+    public static final char CONTAINER_TYPE_TOPIC = 'T';
+    public static final char CONTAINER_TYPE_ATTACHMENT = 'A';
+    
+    public char containerType = '?';
+    public String containerID = "";
 
     public CommentRecord(Document doc, Element ele, DOMFace p) {
         super(doc, ele, p);
@@ -635,6 +641,8 @@ public class CommentRecord extends DOMFace {
             userKey = up.getKey();
         }
         JSONObject commInfo = new JSONObject();
+        commInfo.put("containerType",  ""+containerType);
+        commInfo.put("containerID",  containerID);
         commInfo.put("user",     ale.getUniversalId());
         commInfo.put("userName", ale.getName());
         commInfo.put("userKey",  userKey);

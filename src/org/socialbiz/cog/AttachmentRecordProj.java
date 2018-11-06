@@ -220,5 +220,10 @@ public class AttachmentRecordProj extends AttachmentRecord
     public void extendNotifyList(List<AddressListEntry> addressList) throws Exception {
         //there is no subscribers for document attachments
     }
-
+    
+    //This is a callback from container to set the specific fields
+    public void addContainerFields(CommentRecord cr) {
+        cr.containerType = CommentRecord.CONTAINER_TYPE_TOPIC;
+        cr.containerID = this.getId();
+    }
 }

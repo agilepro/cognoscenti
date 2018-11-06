@@ -101,6 +101,11 @@ public class TopicRecord extends CommentContainer implements EmailContext {
     }
 
 
+    //This is a callback from container to set the specific fields
+    public void addContainerFields(CommentRecord cr) {
+        cr.containerType = CommentRecord.CONTAINER_TYPE_TOPIC;
+        cr.containerID = getId();
+    }
 
     public String getId() {
         return getAttribute("id");

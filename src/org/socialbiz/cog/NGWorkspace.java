@@ -641,5 +641,44 @@ public class NGWorkspace extends NGPage {
         }
     }
     
+    public CommentRecord getCommentOrNull(long cid) throws Exception {
+        for (TopicRecord note : this.getAllNotes()) {
+            for (CommentRecord comm : note.getComments()) {
+                if (comm.getTime()==cid) {
+                    comm.containerType = CommentRecord.CONTAINER_TYPE_TOPIC;
+                    comm.containerID = note.getId();
+                    return comm;
+                }
+            }
+        }
+        for (MeetingRecord meet : getMeetings()) {
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                for (CommentRecord comm : ai.getComments()) {
+                    if (comm.getTime()==cid) {
+                        comm.containerType = CommentRecord.CONTAINER_TYPE_MEETING;
+                        comm.containerID = meet.getId()+":"+ai.getId();
+                        return comm;
+                    }
+                }
+            }
+        }
+        for (AttachmentRecord doc : this.getAllAttachments()) {
+            for (CommentRecord comm : doc.getComments()) {
+                if (comm.getTime()==cid) {
+                    comm.containerType = CommentRecord.CONTAINER_TYPE_ATTACHMENT;
+                    comm.containerID = doc.getId();
+                    return comm;
+                }
+            }
+        }
+        return null;
+    }
+    public CommentRecord getCommentOrFail(long cid) throws Exception {
+        CommentRecord com = getCommentOrNull(cid);
+        if (com==null) {
+            throw new Exception("Unable to find any comment "+cid+" on workspace "+this.getFullName());
+        }
+        return com;
+    }
     
 }

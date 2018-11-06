@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -35,7 +36,7 @@ import com.purplehillsbooks.json.JSONObject;
 * This abstract bas class offers some functionality to both 
 * to support holding and manipulating comments, rounds, proposals, and meeting minutes
 */
-public class CommentContainer extends DOMFace {
+public abstract class CommentContainer extends DOMFace {
 
 
     public CommentContainer(Document definingDoc, Element definingElement, DOMFace new_ngs) {
@@ -58,6 +59,7 @@ public class CommentContainer extends DOMFace {
         CommentRecord newCR = createChild("comment", CommentRecord.class);
         newCR.setTime(ar.nowTime);
         newCR.setUser(ar.getUserProfile());
+        addContainerFields(newCR);
         return newCR;
     }
     public void deleteComment(long timeStamp)  throws Exception {
@@ -67,6 +69,7 @@ public class CommentContainer extends DOMFace {
         }
     }
 
+    public abstract void addContainerFields(CommentRecord cr) throws Exception;
 
 
 /////////////////////////// JSON ///////////////////////////////

@@ -169,6 +169,19 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.reportError(data);
         });
     };
+    function refreshTopic() {
+        var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
+        var rec = {};
+        rec.id = $scope.noteInfo.id
+        rec.universalid = $scope.noteInfo.universalid;
+        var postdata = angular.toJson(rec);
+        $scope.showError=false;
+        $http.post(postURL, postdata)
+        .success( $scope.receiveTopicRecord )
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
 
     $scope.receiveTopicRecord = function(data) {
         $scope.noteInfo = data;
@@ -284,17 +297,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }
         var whatNot = $scope.getResponse(cmt);
         return (whatNot.length == 0);
-    }
-    $scope.updateResponse = function(cmt, response) {
-        var selected = [];
-        cmt.responses.map( function(item) {
-            if (item.user!="<%ar.writeJS(currentUser);%>") {
-                selected.push(item);
-            }
-        });
-        selected.push(response);
-        cmt.responses = selected;
-        $scope.updateComment(cmt);
     }
     $scope.getOrCreateResponse = function(cmt) {
         var selected = $scope.getResponse(cmt);
@@ -506,7 +508,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             return;
         }
         var newComment = {};
-        newComment.time = new Date().getTime();
+        newComment.time = -1;
+        newComment.containerType = "T";
+        newComment.containerID = $scope.noteInfo.id;
         newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
         newComment.commentType = type;
         newComment.state = 11;
@@ -550,7 +554,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             backdrop: "static",
             resolve: {
                 cmt: function () {
-                    return JSON.parse(JSON.stringify(cmt));
+                    return cmt;
                 },
                 attachmentList: function() {
                     return $scope.attachmentList;
@@ -563,9 +567,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
 
         modalInstance.result.then(function (returnedCmt) {
-            //this is never called
+            refreshTopic();
         }, function () {
             //cancel action - nothing really to do
+            refreshTopic();
         });
     };
 
@@ -575,18 +580,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             return;
         }
 
-        var selected = $scope.getResponse(cmt, user);
-        var selResponse = {};
-        if (selected.length == 0) {
-            selResponse.user = "<%ar.writeJS(currentUser);%>";
-            selResponse.userName = "<%ar.writeJS(currentUserName);%>";
-            selResponse.choice = cmt.choices[0];
-            selResponse.isNew = true;
-        }
-        else {
-            selResponse = JSON.parse(JSON.stringify(selected[0]));
-        }
-
         var modalInstance = $modal.open({
             animation: false,
             templateUrl: '<%=ar.retPath%>templates/ResponseModal.html<%=templateCacheDefeater%>',
@@ -594,24 +587,20 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             size: 'lg',
             backdrop: "static",
             resolve: {
-                response: function () {
-                    return selResponse;
+                responseUser: function () {
+                    return user;
                 },
-                cmt: function () {
-                    return cmt;
+                cmtId: function () {
+                    return cmt.time;
                 }
             }
         });
 
         modalInstance.result.then(function (response) {
-            var cleanResponse = {};
-            cleanResponse.html = response.html;
-            cleanResponse.user = response.user;
-            cleanResponse.userName = response.userName;
-            cleanResponse.choice = response.choice;
-            $scope.updateResponse(cmt, cleanResponse);
+            refreshTopic();
         }, function () {
             //cancel action - nothing really to do
+            refreshTopic();
         });
     };
 

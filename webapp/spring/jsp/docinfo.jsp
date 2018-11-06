@@ -124,6 +124,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
     $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
 
+    $scope.refreshData = function(cmt) {
+        var saveRecord = {};
+        saveRecord.id = $scope.docInfo.id;
+        saveRecord.universalid = $scope.docInfo.universalid;
+        $scope.savePartial(saveRecord);
+    }
     $scope.updateComment = function(cmt) {
         var saveRecord = {};
         saveRecord.id = $scope.docInfo.id;
@@ -171,8 +177,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.openCommentCreator = function(itemNotUsed, type, replyTo, defaultBody) {
         var newComment = {};
-        newComment.time = (new Date()).getTime();
+        newComment.time = -1;
         newComment.commentType = type;
+        newComment.containerType = "A";
+        newComment.containerID = $scope.docInfo.id;
         newComment.state = 11;
         newComment.isNew = true;
         newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
@@ -211,20 +219,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
 
         modalInstance.result.then(function (returnedCmt) {
-            var cleanCmt = {};
-            cleanCmt.time = cmt.time;
-            cleanCmt.html = returnedCmt.html;
-            cleanCmt.state = returnedCmt.state;
-            cleanCmt.commentType = returnedCmt.commentType;
-            if (cleanCmt.state==12) {
-                if (cleanCmt.commentType==1 || cleanCmt.commentType==5) {
-                    cleanCmt.state=13;
-                }
-            }
-            cleanCmt.replyTo = returnedCmt.replyTo;
-            $scope.updateComment(cleanCmt);
+            $scope.refreshData();
         }, function () {
             //cancel action - nothing really to do
+            $scope.refreshData();
         });
     };
     

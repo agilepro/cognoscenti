@@ -22,12 +22,15 @@ package org.socialbiz.cog;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.socialbiz.cog.exception.NGException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
@@ -360,21 +363,24 @@ public class DOMFace
     * if you give this something that is not a number, you
     * get surprising result.  Zero if no numerals at all.
     */
-    public static long safeConvertLong(String val)
-    {
-        if (val==null)
-        {
+    public static long safeConvertLong(String val) {
+        if (val==null) {
             return 0;
         }
         long res = 0;
+        boolean isNegative = false;
         int last = val.length();
-        for (int i=0; i<last; i++)
-        {
+        for (int i=0; i<last; i++) {
             char ch = val.charAt(i);
-            if (ch>='0' && ch<='9')
-            {
+            if (ch>='0' && ch<='9') {
                 res = res*10 + ch - '0';
             }
+            else if (ch=='-') {
+                isNegative = true;
+            }
+        }
+        if (isNegative) {
+            res = -res;
         }
         return res;
     }
@@ -748,16 +754,40 @@ public class DOMFace
         dest.put(fieldName, ja);
     }
     public boolean updateVectorString(String fieldName, JSONObject srce) throws Exception {
-        if (srce.has(fieldName)) {
-            JSONArray ja = srce.getJSONArray(fieldName);
-            List<String> vals = new ArrayList<String>();
-            for (int i=0; i<ja.length(); i++) {
-                vals.add(ja.getString(i));
-            }
-            setVector(fieldName, vals);
-            return true;
+        if (!srce.has(fieldName)) {
+            return false;
         }
-        return false;
+        JSONArray ja = srce.getJSONArray(fieldName);
+        if (ja.length()==0) {
+            return false;
+        }
+        List<String> vals = new ArrayList<String>();
+        for (int i=0; i<ja.length(); i++) {
+            vals.add(ja.getString(i));
+        }
+        setVector(fieldName, vals);
+        return true;
+    }
+    public boolean updateUniqueVectorString(String fieldName, JSONObject srce) throws Exception {
+        Set<String> uniqueCheck = new HashSet<String>();
+        if (!srce.has(fieldName)) {
+            return false;
+        }
+        JSONArray ja = srce.getJSONArray(fieldName);
+        if (ja.length()==0) {
+            return false;
+        }
+        List<String> vals = new ArrayList<String>();
+        for (int i=0; i<ja.length(); i++) {
+            String value = ja.getString(i).trim();
+            String lcvalue = value.toLowerCase();
+            if (!uniqueCheck.contains(lcvalue)) {
+                vals.add(value);
+                uniqueCheck.add(lcvalue);
+            }
+        }
+        setVector(fieldName, vals);
+        return true;
     }
     public void extractAttributeString(JSONObject dest, String fieldName) throws Exception {
         String val = getAttribute(fieldName);

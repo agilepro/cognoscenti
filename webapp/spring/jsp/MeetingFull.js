@@ -975,6 +975,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
         return selRole;
     }
+    $scope.getMeetingParticipants = function() {
+        var parts = [];
+        if ($scope.meeting.participants.length > 0) {
+            return $scope.meeting.participants;
+        }
+        $scope.allLabels.forEach( function(item) {
+            if (item.name === $scope.meeting.targetRole) {
+                return item.players;
+            }
+        });
+        return [];
+    }
     
     
     $scope.extractPeopleSituation = function() {
@@ -1258,16 +1270,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             }
         }
 
-        var selResponse = $scope.getResponse(cmt, userId);
-        if (selResponse==null) {
-            selResponse = {
-                user: SLAP.loginInfo.userId,
-                userName: SLAP.loginInfo.userName,
-                choice: cmt.choices[0]
-            }
-            selResponse.isNew = true;
-        }
-
         var modalInstance = $modal.open({
             animation: false,
             templateUrl: embeddedData.retPath+"templates/ResponseModal.html"+templateCacheDefeater,
@@ -1275,24 +1277,20 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             size: 'lg',
             backdrop: "static",
             resolve: {
-                response: function () {
-                    return JSON.parse(JSON.stringify(selResponse));
+                responseUser: function () {
+                    return userId;
                 },
-                cmt: function () {
-                    return JSON.parse(JSON.stringify(cmt));
+                cmtId: function () {
+                    return cmt.time;
                 }
             }
         });
 
-        modalInstance.result.then(function (response) {
-            var cleanResponse = {};
-            cleanResponse.html = response.html;
-            cleanResponse.user = response.user;
-            cleanResponse.userName = response.userName;
-            cleanResponse.choice = response.choice;
-            $scope.updateResponse(cmt, cleanResponse);
+        modalInstance.result.then(function () {
+            $scope.refreshMeetingPromise();
         }, function () {
             //cancel action - nothing really to do
+            $scope.refreshMeetingPromise();
         });
     };
     $scope.removeResponse =  function(cmt,resp) {
@@ -1361,8 +1359,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         
         var newComment = {};
-        newComment.time = new Date().getTime();
+        newComment.time = -1;
         newComment.commentType = type;
+        newComment.containerType = "M";
+        newComment.containerID = $scope.meetId + ":" + item.id;
         newComment.state = 11;
         newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
         newComment.isNew = true;
@@ -1377,8 +1377,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         newComment.responses = [];
         if (type==2 || type==3) {
-            var selRole = $scope.getMeetingRole();
-            selRole.players.forEach( function(item) {
+            var selRole = $scope.getMeetingParticipants();
+            selRole.forEach( function(item) {
                 newComment.responses.push({
                     "choice": "None",
                     "html": "",
@@ -1415,10 +1415,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             }
         });
 
-        modalInstance.result.then(function (returnedCmt) {
-            $scope.saveComment(item, returnedCmt);
+        modalInstance.result.then(function () {
+            $scope.refreshMeetingPromise();
         }, function () {
             //cancel action - nothing really to do
+            $scope.refreshMeetingPromise();
         });
     };
 

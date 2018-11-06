@@ -502,7 +502,6 @@ public class UploadFileController extends BaseController {
     protected void setEditMode( HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        String responseText = null;
         AuthRequest ar = null;
         try {
             ar = getLoggedInAuthRequest(request, response, "message.must.be.login");

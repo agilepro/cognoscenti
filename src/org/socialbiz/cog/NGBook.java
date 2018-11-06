@@ -1180,7 +1180,7 @@ public class NGBook extends ContainerCommon {
         siteInfoRec.updateAttributeBool("frozen", jo);
         siteInfoRec.updateAttributeBool("offLine", jo);
         siteInfoRec.updateAttributeString("siteMsg", jo);
-        siteInfoRec.updateVectorString("labelColors", jo);
+        siteInfoRec.updateUniqueVectorString("labelColors", jo);
         this.updateScalarString("movedTo", jo);
     }
 

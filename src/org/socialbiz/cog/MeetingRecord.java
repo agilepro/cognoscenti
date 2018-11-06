@@ -39,11 +39,11 @@ public class MeetingRecord extends DOMFace implements EmailContext {
 
 
 
-    public String getId()  throws Exception {
+    public String getId() {
         return getAttribute("id");
     }
 
-    public String getName()  throws Exception {
+    public String getName() {
         return getAttribute("name");
     }
     public void setName(String newVal) throws Exception {
@@ -125,10 +125,14 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
 
     public List<AgendaItem> getAgendaItems() throws Exception {
-        return getChildren("agenda", AgendaItem.class);
+        List<AgendaItem> ret = getChildren("agenda", AgendaItem.class);
+        for (AgendaItem ai : ret) {
+            ai.meetingId = this.getId();
+        }
+        return ret;
     }
     public List<AgendaItem> getSortedAgendaItems() throws Exception {
-        List<AgendaItem> tempList =  getChildren("agenda", AgendaItem.class);
+        List<AgendaItem> tempList = getAgendaItems();
         Collections.sort(tempList, new AgendaItemPositionComparator());
         return tempList;
     }
@@ -149,6 +153,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     }
     public AgendaItem createAgendaItem(NGPage ngp) throws Exception {
         AgendaItem ai = createChildWithID("agenda", AgendaItem.class, "id", ngp.getUniqueOnPage());
+        ai.meetingId = this.getId();
         ai.setPosition(99999);   //position it at the end
         return ai;
     }

@@ -16,6 +16,8 @@ public class AgendaItem extends CommentContainer {
     public static final int STATUS_GOOD = 1;
     public static final int STATUS_MID  = 2;
     public static final int STATUS_POOR = 3;
+    
+    public String meetingId = "";
 
 
     public AgendaItem(Document doc, Element ele, DOMFace p) {
@@ -29,7 +31,13 @@ public class AgendaItem extends CommentContainer {
     }
 
 
-    public String getId()  throws Exception {
+    //This is a callback from container to set the specific fields
+    public void addContainerFields(CommentRecord cr) {
+        cr.containerType = CommentRecord.CONTAINER_TYPE_MEETING;
+        cr.containerID = meetingId+":"+getId();
+    }
+
+    public String getId() {
         return getAttribute("id");
     }
 
