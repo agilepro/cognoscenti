@@ -30,13 +30,6 @@
 
     <property name="war.file.name"                  value="cog"/>
 
-    <condition property="autodeploy"                value="${env.AUTO_DEPLOY}">
-      <isset property="${env.AUTO_DEPLOY}" />
-    </condition>
-    <property name="autodeploy" value="false" />
-    <echo message="Autodeploy #${autodeploy}"/>
-
-
      <target name="clean">
         <mkdir dir="${target.dir}/cog"/>
         <delete failonerror="false" dir="${target.dir}/cog" />

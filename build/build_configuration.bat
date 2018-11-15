@@ -3,14 +3,14 @@
 :# Java home
 :#
 :#####################################################################################################
-set JAVA_HOME=c:\Program Files\Java\jdk1.6.0_29\
+set JAVA_HOME=c:\Program Files\Java\jdk1.8.0_191\
 
 :#####################################################################################################
 :#
 :# Path to nugen source directory. Specify ONLY absolute directory.
 :#
 :#####################################################################################################
-set SOURCE_DIR=c:\sandbox\ps\nugen\
+set SOURCE_DIR=d:\GitHub\cognoscenti\
 
 :#####################################################################################################
 :#
@@ -19,22 +19,8 @@ set SOURCE_DIR=c:\sandbox\ps\nugen\
 :# WARNING - do not specify an already existing directory containing data.
 :#
 :#####################################################################################################
-set TARGET_DIR=c:\sandbuild\nugen\
+set TARGET_DIR=d:\build\cog\
 
-:#####################################################################################################
-:#
-:# Tomcat installed directory location.
-:#
-:#####################################################################################################
-set CATALINA_HOME=c:\ApacheTomcat 6\
-
-:#####################################################################################################
-:#
-:# Optional deploy or not deploy
-:#
-:#####################################################################################################
-
-set AUTO_DEPLOY=false
 
 
 :#####################################################################################################
@@ -79,17 +65,6 @@ pause
 echo on
 goto exit1
 
-:step4
-IF EXIST "%CATALINA_HOME%" goto step5
-
-echo off
-echo ************************************************************
-echo The Catalina home folder (%CATALINA_HOME%) does not exist.
-echo please change CATALINA_HOME to a valid folder where Apache Tomcat is installed
-echo ************************************************************
-pause
-echo on
-goto exit1
 
 :step5
 
