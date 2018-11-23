@@ -437,6 +437,9 @@ public class NGWorkspace extends NGPage {
         for (AttachmentRecord attach : this.getAllAttachments()) {
             attach.gatherUnsentScheduledNotification(this, resList);
         }
+        for (RoleInvitation ri : getInvitations()) {
+            ri.gatherUnsentScheduledNotification(this, resList);
+        }
     }
 
     
@@ -620,26 +623,56 @@ public class NGWorkspace extends NGPage {
         }
         workspaceJSON.put("roleInvitations", newInvites);
     }
-    public RoleInvitation findOrCreateInvite(String email) throws Exception {
+    public RoleInvitation findOrCreateInvite(AddressListEntry ale) throws Exception {
         for (RoleInvitation ri : getInvitations()) {
-            if (email.equalsIgnoreCase(ri.getEmail())) {
+            if (ale.hasAnyId(ri.getEmail())) {
                 return ri;
             }
         }
         JSONArray invites = workspaceJSON.getJSONArray("roleInvitations");
         JSONObject newInvite = new JSONObject();
-        newInvite.put("email", email);
+        newInvite.put("email", ale.getEmail());
         invites.put(newInvite);
         return new RoleInvitation(newInvite);
     }
     
+    /**
+     * When users are invited, and the invitation send, then 
+     * we mark the invitation as "joined" when they actually
+     * visit the workspace in question.
+     */
+    public void registerJoining(UserProfile user) throws Exception {
+        boolean needSave = false;
+        for (RoleInvitation ri : getInvitations()) {
+            if (user.hasAnyId(ri.getEmail())) {
+                if (!ri.isJoined()) {
+                    ri.markJoined();
+                    needSave = true;
+                    
+                    //if the user has entered a name for themselves
+                    //copy it into the invite so that there is less confusion
+                    //even though this is temporary
+                    String userName = user.getName();
+                    if (userName!=null && userName.length()>3) {
+                        ri.setName(userName);
+                    }
+                }
+            }
+        }
+        if (needSave) {
+            this.save();
+        }
+    }
+    
+    /*
     public void sendInvitations() throws Exception {
         for (RoleInvitation ri : getInvitations()) {
             if ("New".equals(ri.getStatus())) {
-                
+                ri.sendEmail(ar);
             }
         }
     }
+    */
     
     public CommentRecord getCommentOrNull(long cid) throws Exception {
         for (TopicRecord note : this.getAllNotes()) {

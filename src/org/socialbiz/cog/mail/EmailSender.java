@@ -263,7 +263,7 @@ public class EmailSender extends TimerTask {
                 ngw.gatherUnsentScheduledNotification(resList);
 
                 for (ScheduledNotification sn : resList) {
-                    if (sn.timeToSend()<nowTime) {
+                    if (sn.timeToSend()<=nowTime) {
                         sn.sendIt(ar, emailArchive);
                     }
                 }

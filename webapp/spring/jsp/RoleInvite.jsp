@@ -41,6 +41,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.invitations = [];
     $scope.newEmail = "";
     $scope.newName = "";
+    $scope.newRole = "Members";
+    
     $scope.message = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
                     +" participate in the workspace for '<%ar.writeHtml(ngc.getFullName());%>'."
                     +"\n\nThe links below will make registration quick and easy, and"
@@ -59,6 +61,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         var postURL = "invitations.json";
         $http.get(postURL)
         .success( function(data) {
+            console.log("GET INVITATIONS: ", data);
             $scope.invitations = data.invitations;
             $scope.invitations.sort( function(a,b) {return b.timestamp - a.timestamp} );
         } )
@@ -98,6 +101,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         }
         obj.name = $scope.newName;
         obj.email = $scope.newEmail;
+        obj.role = $scope.newRole;
         obj.msg = $scope.message;
         obj.status = "New";
         obj.timestamp = new Date().getTime();
@@ -109,6 +113,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.refresh = function() {
         getAllInvites();
+    }
+    $scope.reset = function(invite) {
+        $scope.newEmail = invite.email;
+        $scope.newName = invite.name;
+        if (invite.role) {
+            $scope.newRole = invite.role;
+        }
+        if (invite.msg) {
+            $scope.message = invite.msg;
+        }
     }
     getAllInvites();
 });
@@ -152,13 +166,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         max-width: 800px;
     }
     </style>
-    
-    
-<div class="guideVocal">
-<b>Important:</b> This page is under development.  It is not functional at this time . . . 
-</div>
 
-    
 
     
   <div class="well" style="max-width:500px;margin-bottom:50px">
@@ -173,6 +181,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <label>Full Name</label>
         <input class="form-control" ng-model="newName"/>
     </div>
+    <div class="form-group">
+        <label>Role</label>
+        <select class="form-control" ng-model="newRole"
+                ng-options="r for r in allRoles"></select>
+    </div>
+    <div class="form-group">
+        <label>Message</label>
+        <textarea class="form-control" style="height:200px" ng-model="message"></textarea>
+    </div>
     <div>
         <button ng-click="inviteOne()" class="btn btn-sm btn-primary btn-raised"/>Invite</button>
     </div>
@@ -181,12 +198,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
   <h2>Previously Invited</h2>
   
     <table class="spacey">
-    <tr><th>Email</th><th>Name</th><th>Status</th><th>Date</th></tr>
-    <tr ng-repeat="invite in invitations">
+    <tr><th>Email</th><th>Name</th><th>Status</th><th>Date</th><th>Visited</th></tr>
+    <tr ng-repeat="invite in invitations" title="Click row to copy into the send form"
+        ng-click="reset(invite)">
         <td>{{invite.email}}</td>
         <td>{{invite.name}}</td>
         <td>{{invite.status}}</td>
         <td>{{invite.timestamp | date}}</td>
+        <td>{{invite.joinTime | date}}</td>
     </tr>
 
     </table>

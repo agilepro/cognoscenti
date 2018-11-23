@@ -753,12 +753,29 @@ public class ProjectSettingController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             JSONObject posted = this.getPostedObject(ar);
+            
             String email = posted.getString("email");
-            RoleInvitation ri = ngw.findOrCreateInvite(email);
+            AddressListEntry ale = new AddressListEntry(email);
+            
+            //check that the role exists to avoid getting invitations for non existent roles.
+            boolean found = false;
+            String roleName = posted.getString("role");
+            for (CustomRole existingRole : ngw.getAllRoles()) {
+                if (roleName.equals(existingRole.getName())) {
+                    existingRole.addPlayerIfNotPresent(ale);
+                    found = true;
+                }
+            }
+            if (!found) {
+                throw new Exception("Can not find a role named '"+roleName+"' in the workspace "+ngw.getFullName());
+            }
+            
+            RoleInvitation ri = ngw.findOrCreateInvite(ale);
             ri.updateFromJSON(posted);
+            ri.resendInvite();
             
             JSONObject repo = ri.getInvitationJSON();
-            ngw.saveFile(ar, "Updated Agenda Item");
+            ngw.saveFile(ar, "Created a inviation to join workspace");
             sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to update an invitation", ex);

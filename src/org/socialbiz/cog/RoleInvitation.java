@@ -20,10 +20,15 @@
 
 package org.socialbiz.cog;
 
+import java.util.ArrayList;
+import java.util.Date;
+
+import org.socialbiz.cog.api.LightweightAuthServlet;
 import org.socialbiz.cog.mail.JSONWrapper;
+import org.socialbiz.cog.mail.MailFile;
+import org.socialbiz.cog.mail.ScheduledNotification;
 
 import com.purplehillsbooks.json.JSONObject;
-import org.socialbiz.cog.api.LightweightAuthServlet;
 
 public class RoleInvitation extends JSONWrapper {
     
@@ -32,15 +37,39 @@ public class RoleInvitation extends JSONWrapper {
     public static String STATUS_JOINED  = "Joined";
     
     
-    public RoleInvitation(JSONObject jo) {
+    public RoleInvitation(JSONObject jo) throws Exception {
         super(jo);
+        if (!kernel.has("status")) {
+            kernel.put("status", STATUS_NEW);
+        }
     }
     
     public String getEmail() throws Exception {
         return kernel.getString("email");
     }
     public String getStatus() throws Exception {
-        return kernel.getString("status");
+        return kernel.optString("status", STATUS_NEW);
+    }
+    public String getRole() throws Exception {
+        return kernel.getString("role");
+    }
+    public String getName() throws Exception {
+        return kernel.getString("name");
+    }
+    public void setName(String newName) throws Exception {
+        kernel.put("name", newName);
+    }
+    
+    public boolean isJoined() throws Exception {
+        return STATUS_JOINED.equals(getStatus());
+    }
+    
+    public void markJoined() throws Exception {
+        kernel.put("status", STATUS_JOINED);
+        kernel.put("joinTime", System.currentTimeMillis());
+    }
+    public void resendInvite() throws Exception {
+        kernel.put("status", STATUS_NEW);
     }
 
     public JSONObject getInvitationJSON() throws Exception {
@@ -49,8 +78,9 @@ public class RoleInvitation extends JSONWrapper {
         extractString(thisPort, "role");
         extractString(thisPort, "name");
         extractString(thisPort, "msg");
-        extractString(thisPort, "status");        
+        extractString(thisPort, "status");
         extractLong(thisPort, "timestamp");
+        extractLong(thisPort, "joinTime");
         return thisPort;
     }
 
@@ -59,7 +89,6 @@ public class RoleInvitation extends JSONWrapper {
         //email is never updated because that is the key field
         boolean changed = copyStringToKernel(input, "role");
         changed = copyStringToKernel(input, "name") || changed;
-        changed = copyStringToKernel(input, "status") || changed;
         changed = copyStringToKernel(input, "msg") || changed;
         if (changed) {
             kernel.put("timestamp", System.currentTimeMillis());
@@ -85,7 +114,7 @@ public class RoleInvitation extends JSONWrapper {
                 +" after that you will be able to"
                 +" participate directly with the others through the site.";
         }
-        String returnUrl = ar.getResourceURL(ar.ngp, "frontPage.htm");
+        String returnUrl = ar.baseURL + ar.getResourceURL(ar.ngp, "frontPage.htm");
         
         JSONObject jo = new JSONObject();
         jo.put("userId", kernel.getString("email"));
@@ -97,5 +126,40 @@ public class RoleInvitation extends JSONWrapper {
             kernel.put("status", STATUS_INVITED);
         }        
     }
+    
+    public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList) throws Exception {
+        if ("New".equals(this.getStatus())) {
+            RIScheduledNotification sn = new RIScheduledNotification(this);
+            resList.add(sn);
+        }
+    }
 
+    
+    private class RIScheduledNotification implements ScheduledNotification {
+        RoleInvitation ri;
+
+        public RIScheduledNotification( RoleInvitation _ri) {
+            ri = _ri;
+        }
+        public boolean needsSending() throws Exception {
+            return ("New".equals(ri.getStatus()));
+        }
+
+        public long timeToSend() throws Exception {
+            return System.currentTimeMillis()-1000;   //one second ago
+        }
+
+        public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
+            if ("New".equals(ri.getStatus())) {
+                System.out.println("ROLE INVITATION: "+new Date()+" to "+ri.getEmail()+" sending.");
+                ri.sendEmail(ar);
+            }
+        }
+
+        public String selfDescription() throws Exception {
+            return "Role Invitation to "+ri.getEmail();
+        }
+
+    }
+    
 }

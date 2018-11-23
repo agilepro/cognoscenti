@@ -136,8 +136,11 @@
         ar.setPageAccessLevels(ngp);
         pageTitle = ngp.getFullName();
         if(ngp instanceof NGPage) {
-            ngb = ((NGPage)ngp).getSite();
+            ngb = ((NGWorkspace)ngp).getSite();
             showExperimental = ngb.getShowExperimental();
+            if (loggedUser!=null) {
+                ((NGWorkspace)ngp).registerJoining(loggedUser);
+            }
         }
         else if(ngp instanceof NGBook) {
             ngb = ((NGBook)ngp);
