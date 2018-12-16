@@ -522,8 +522,8 @@ public class UploadFileController extends BaseController {
             else{
                 attachment.clearEditMode();
             }
-            sendJson(ar, NGWebUtils.getJSONMessage("success" , "" , ""));
             ngw.saveContent( ar, "Modified attachments");
+            sendJson(ar, NGWebUtils.getJSONMessage("success" , "" , ""));
         }
         catch (Exception ex) {
             streamException(ex,ar);

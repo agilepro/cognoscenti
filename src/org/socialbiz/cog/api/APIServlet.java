@@ -143,7 +143,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             doAuthenticatedGet(ar);
         }
         catch (Exception e) {
-            Exception ctx = new Exception("Unable to handle GET to "+ar.getCompleteURL(), e);
+            Exception ctx = new JSONException("Unable to handle GET to %s", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
         finally {

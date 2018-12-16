@@ -79,12 +79,14 @@ public abstract class CommentContainer extends DOMFace {
         JSONArray allCommentss = new JSONArray();
         UserProfile thisUser = ar.getUserProfile();
         for (CommentRecord cr : getComments()) {
+            /*  can't skip because this is cached for everyone
             if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT
                     && (thisUser==null
                     || !thisUser.hasAnyId(cr.getUser().getEmail()))) {
                 //skip draft email from other people
                 continue;
             }
+            */
             allCommentss.put(cr.getHtmlJSON(ar));
         }
         return allCommentss;

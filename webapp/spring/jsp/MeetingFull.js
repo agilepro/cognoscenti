@@ -87,14 +87,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
     //control what is open and closed
     $scope.showItemMap = {};
-    $scope.editMeetingInfo = false;
     $scope.editMeetingDesc = false;
-    $scope.editItemDescMap = {};
 
     $scope.stopEditing =  function() {
-        $scope.editMeetingInfo = false;
         $scope.editMeetingDesc = false;
-        $scope.editItemDescMap = {};
     }
 
 
@@ -340,34 +336,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         return "background-color:lavender";
     }
 
-    $scope.startEditMeetingInfo = function() {
-        $scope.savePendingEdits();
-        $scope.editMeetingInfo=true;
-    }
-    $scope.startEditDescription = function() {
-        $scope.savePendingEdits();
-        $scope.editMeetingDesc=true
-    }
+
     $scope.savePendingEdits = function() {
         var parts = [];
         if ($scope.editMeetingDesc) {
             parts.push('meetingInfo');
-        }
-        if ($scope.editMeetingInfo) {
-            parts.push('name');
-            parts.push('startTime');
-            parts.push('targetRole');
-            parts.push('duration');
-            parts.push('reminderTime');
-            parts.push('meetingType');
-            parts.push('reminderSent');
         }
         if ($scope.editMeetingPart) {
             parts.push($scope.editMeetingPart);
         }
         $scope.savePartialMeeting(parts);
         $scope.editMeetingDesc = false;
-        $scope.editMeetingInfo = false;
         $scope.editMeetingPart = null;
     }
     
@@ -657,11 +636,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             return;  //don't set of refresh unless in run mode
         }
         var nowEditing = $scope.editMeetingDesc;
-        Object.keys($scope.editItemDescMap).forEach( function(key) {
-            if ($scope.editItemDescMap[key]==true) {
-                nowEditing = true;
-            }
-        });
         if (nowEditing) {
             $scope.refreshStatus = "No refresh because currently editing";
             return;
@@ -823,53 +797,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
 
 
-    $scope.startEditLockDescription = function(item) {
-        var rec = {};
-        rec.id = item.id;
-        rec.setLock = true;
-        var saveRecord = {};
-        saveRecord.agenda = [rec];
-        $scope.putGetMeetingInfo(saveRecord);
-        $scope.showItemMap[item.id]=true;
-        $scope.editItemDescMap[item.id]=true;
-    }
-    $scope.saveEditUnlockDesciption = function(item) {
-        var rec = {};
-        rec.id = item.id;
-        rec.clearLock = true;
-        rec.desc = item.desc;
-        var saveRecord = {};
-        saveRecord.agenda = [rec];
-        $scope.putGetMeetingInfo(saveRecord);
-        $scope.editItemDescMap[item.id]=false;
-    }
-    $scope.cancelEditUnlockDesciption = function(item) {
-        var rec = {};
-        rec.id = item.id;
-        rec.clearLock = true;
-        var saveRecord = {};
-        saveRecord.agenda = [rec];
-        $scope.putGetMeetingInfo(saveRecord);
-        $scope.editItemDescMap[item.id]=false;
-    }
 
-
-    $scope.startNewComment = function(item, theType, cmt) {
-        item.newComment = {};
-        item.newComment.choices = ["Consent", "Objection"];
-        item.newComment.html="";
-        item.newComment.commentType=theType;
-        if (cmt) {
-            item.newComment.replyTo = cmt.time;
-        }
-        $scope.openCommentEditor(8,item.id)
-    }
-    $scope.saveNewComment = function(item) {
-        var itemCopy = {};
-        itemCopy.id = item.id;
-        itemCopy.newComment = item.newComment;
-        $scope.saveAgendaItem(itemCopy);
-    }
     $scope.saveComment = function(item, cmt) {
         var itemCopy = {};
         itemCopy.id = item.id;
