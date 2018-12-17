@@ -137,13 +137,13 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             NGPageIndex.assertNoLocksOnThread();
             System.out.println("API_GET: "+ar.getCompleteURL());
             if (!ar.getCogInstance().isInitialized()) {
-                throw new Exception("Server is not ready to handle requests.");
+                throw new JSONException("Server is not ready to handle requests.");
             }
 
             doAuthenticatedGet(ar);
         }
         catch (Exception e) {
-            Exception ctx = new Exception("Unable to handle GET to "+ar.getCompleteURL(), e);
+            Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
         finally {
@@ -176,12 +176,12 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 streamNote(ar, resDec);
             }
             else {
-                throw new Exception("don't understand that resource URL: "+ar.getCompleteURL());
+                throw new JSONException("don't understand that resource URL: "+ar.getCompleteURL());
             }
             ar.flush();
 
         } catch (Exception e) {
-            Exception ctx = new Exception("Unable to handle GET to "+ar.getCompleteURL(), e);
+            Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
     }
@@ -206,12 +206,12 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 result.write(ar.resp.getWriter(), 2, 0);
             }
             else {
-                throw new Exception("Can not do a PUT to that resource URL: "+ar.getCompleteURL());
+                throw new JSONException("Can not do a PUT to that resource URL: {0}", ar.getCompleteURL());
             }
             ar.flush();
         }
         catch (Exception e) {
-            Exception ctx = new Exception("Unable to handle PUT to "+ar.getCompleteURL(), e);
+            Exception ctx = new JSONException("Unable to handle PUT to {0}", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
     }
@@ -236,7 +236,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             String op = objIn.getString("operation");
             System.out.println("API_POST: operation="+op);
             if (op==null || op.length()==0) {
-                throw new Exception("Request object needs to have a specified 'operation'."
+                throw new JSONException("Request object needs to have a specified 'operation'."
                         +" None found.");
             }
 
@@ -251,7 +251,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             ar.flush();
         }
         catch (Exception e) {
-            Exception ctx = new Exception("Unable to handle POST to "+ar.getCompleteURL(), e);
+            Exception ctx = new JSONException("Unable to handle POST to {0}", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
     }
@@ -276,11 +276,11 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         String myUrl = ar.baseURL;
         int slashPos = myUrl.indexOf("://");
         if (slashPos<0) {
-            throw new Exception("The BaseURL needs to look like a URL, and it must have a :// in it, but does not:  "+myUrl);
+            throw new JSONException("The BaseURL needs to look like a URL, and it must have a :// in it, but does not:  {0}",myUrl);
         }
         int slash2 = myUrl.indexOf("/", slashPos+3);
         if (slashPos<0) {
-            throw new Exception("The BaseURL needs to look like a URL, and it must have a second slash in it, but does not:  "+myUrl);
+            throw new JSONException("The BaseURL needs to look like a URL, and it must have a second slash in it, but does not:  {0}",myUrl);
         }
         root.put("host", myUrl.substring(slashPos+3, slash2));
         //swagger spec says that partial paths start with a slash, and don't end with them...
@@ -349,21 +349,21 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         }
 
         if (resDec.site==null) {
-            throw new Exception("Unable to fine a site with the id: "+resDec.siteId);
+            throw new JSONException("Unable to fine a site with the id: {0}",resDec.siteId);
         }
         if (!resDec.site.isValidLicense(resDec.lic, ar.nowTime)) {
-            throw new Exception("The license ("+resDec.licenseId+") has expired.  "
-                    +"To exchange information, you will need to get an updated license");
+            throw new JSONException("The license ({0}) has expired.  "
+                    +"To exchange information, you will need to get an updated license", resDec.licenseId);
         }
         if (resDec.lic.isReadOnly()) {
-            throw new Exception("The license ("+resDec.licenseId+") is a read-only license and "
-                    +"can not be used to update information on this server.");
+            throw new JSONException("The license ({0}) is a read-only license and "
+                    +"can not be used to update information on this server.", resDec.licenseId);
         }
 
         responseOK.put("license", getLicenseInfo(resDec.lic));
         if ("createProject".equals(op)) {
             if (!"$".equals(resDec.projId)) {
-                throw new Exception("create workspace can only be called on a site URL, not workspace: "+resDec.projId);
+                throw new JSONException("create workspace can only be called on a site URL, not workspace: {0} ",resDec.projId);
             }
             NGBook site = resDec.site;
             String projectName = objIn.getString("projectName");
@@ -385,7 +385,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             return responseOK;
         }
 
-        throw new Exception("API does not understand operation: "+op);
+        throw new JSONException("API does not understand operation: {0}",op);
     }
 
 
@@ -402,18 +402,18 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
 
         NGPage ngp = resDec.workspace;
         if (ngp == null) {
-            throw new Exception("Unable to find a workspace with the id "+resDec.projId);
+            throw new JSONException("Unable to find a workspace with the id {0}",resDec.projId);
         }
         if (resDec.lic == null) {
-            throw new Exception("Unable to find a license with the id "+resDec.licenseId);
+            throw new JSONException("Unable to find a license with the id {0}",resDec.licenseId);
         }
         if (!ngp.isValidLicense(resDec.lic, ar.nowTime)) {
-            throw new Exception("The license ("+resDec.licenseId+") has expired.  "
-                    +"To exchange information, you will need to get an updated license");
+            throw new JSONException("The license ({0}) has expired.  "
+                    +"To exchange information, you will need to get an updated license", resDec.licenseId);
         }
         if (resDec.lic.isReadOnly()) {
-            throw new Exception("The license ("+resDec.licenseId+") is a read-only license and "
-                    +"can not be used to update information on this server.");
+            throw new JSONException("The license ({0}) is a read-only license and "
+                    +"can not be used to update information on this server.", resDec.licenseId);
         }
 
         responseOK.put("license", getLicenseInfo(resDec.lic));
@@ -428,8 +428,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         if ("newNote".equals(op)) {
             JSONObject newNoteObj = objIn.getJSONObject("note");
             if (!resDec.hasFullMemberAccess()) {
-                throw new Exception("The license ("+resDec.licenseId
-                        +") does not have full member access which is needed in order to create a new topic.");
+                throw new JSONException("The license ({0}) does not have full member access which is needed in order to create a new topic.", resDec.licenseId);
             }
             TopicRecord newNote = resDec.workspace.createNote();
             newNote.setUniversalId(newNoteObj.getString("universalid"));
@@ -444,11 +443,10 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             String noteUID = newNoteObj.getString("universalid");
             TopicRecord note = resDec.workspace.getNoteByUidOrNull(noteUID);
             if (note==null) {
-                throw new Exception("Unable to find an existing topic with UID ("+noteUID+")");
+                throw new JSONException("Unable to find an existing topic with UID ("+noteUID+")");
             }
             if (!resDec.canAccessNote(note)) {
-                throw new Exception("The license ("+resDec.licenseId
-                        +") does not have right to access topic ("+noteUID+").");
+                throw new JSONException("The license ({0}) does not have right to access topic ({1}).", resDec.licenseId, noteUID);
             }
             note.updateNoteFromJSON(newNoteObj, ar);
             HistoryRecord.createNoteHistoryRecord(resDec.workspace, note, HistoryRecord.EVENT_TYPE_MODIFIED, ar,
@@ -463,8 +461,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             File folder = resDec.workspace.getContainingFolder();
             File tempFile = new File(folder, tempFileName);
             if (!tempFile.exists()) {
-                throw new Exception("Attemped operation failed because the temporary file "
-                        +"does not exist: "+tempFile);
+                throw new JSONException("Attemped operation failed because the temporary file does not exist: {0}",tempFile);
             }
 
             AttachmentRecord att;
@@ -476,15 +473,14 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 att = resDec.workspace.findAttachmentByUidOrNull(newUid);
                 if (!resDec.canAccessAttachment(att)) {
                     tempFile.delete();
-                    throw new Exception("The license ("+resDec.licenseId
+                    throw new JSONException("The license ("+resDec.licenseId
                             +") does not have right to access document ("+newUid+").");
                 }
             }
             else {
                 if (!resDec.hasFullMemberAccess()) {
                     tempFile.delete();
-                    throw new Exception("The license ("+resDec.licenseId
-                            +") does not have right to create new documents.");
+                    throw new JSONException("The license ({0}) does not have right to create new documents.", resDec.licenseId);
                 }
                 String newName = newDocObj.getString("name");
                 att = ngp.findAttachmentByName(newName);
@@ -492,9 +488,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                     //updateDoc requires that the universalID be set and be correct
                     //uploadDoc will allow a similarly named files to become new versions
                     if (att!=null && newUid!=null && !newUid.equals(att.getUniversalId())) {
-                        throw new Exception("Attempt to update a document with the name "+newName
-                                +" with information from another document with the same name, but different universal ID. "
-                                +" Something is wrong with upstream/downstream exchange.");
+                        throw new JSONException("Attempt to update a document with the name {0} with information from another document with the same name, but different universal ID. "
+                                +" Something is wrong with upstream/downstream exchange.", newName);
                     }
                     updateReason = "From downstream workspace by synchronization license "+resDec.licenseId;
                 }
@@ -543,13 +538,13 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             return responseOK;
         }
 
-        throw new Exception("API does not understand operation: "+op);
+        throw new JSONException("API does not understand operation: {0}",op);
     }
 
     @Override
     public void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
-        streamException(new Exception("not implemented yet"), ar);
+        streamException(new JSONException("not implemented yet"), ar);
     }
 
     @Override
@@ -586,15 +581,14 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         String licenseId = resDec.licenseId;
         if (site==null) {
             //this is probably unnecessary, having hit an exception earlier, but just begin sure
-            throw new Exception("Something is wrong, can not find a site object.");
+            throw new JSONException("Something is wrong, can not find a site object.");
         }
         if (false==true) {
             if (licenseId == null || licenseId.length()==0 || resDec.lic==null) {
-                throw new Exception("All operations on the site need to be licensed, but did not get a license id in that URL.");
+                throw new JSONException("All operations on the site need to be licensed, but did not get a license id in that URL.");
             }
             if (!site.isValidLicense(resDec.lic, ar.nowTime)) {
-                throw new Exception("The license ("+resDec.licenseId+") has expired.  "
-                        +"To exchange information, you will need to get an updated license");
+                throw new JSONException("The license ({0}) has expired.   To exchange information, you will need to get an updated license", resDec.licenseId);
             }
         }
         JSONObject root = new JSONObject();
@@ -618,14 +612,14 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         NGPage ngp = resDec.workspace;
         if (ngp==null) {
             //this is probably unnecessary, having hit an exception earlier, but just begin sure
-            throw new Exception("Something is wrong, can not find a site object.");
+            throw new JSONException("Something is wrong, can not find a site object.");
         }
         if (resDec.licenseId == null || resDec.licenseId.length()==0 || resDec.lic==null) {
-            throw new Exception("All operations on the site need to be licensed, but did not get a license id in that URL.");
+            throw new JSONException("All operations on the site need to be licensed, but did not get a license id in that URL.");
         }
         if (!ngp.isValidLicense(resDec.lic, ar.nowTime)) {
-            throw new Exception("The license ("+resDec.licenseId+") has expired.  "
-                    +"To exchange information, you will need to get an updated license");
+            throw new JSONException("The license ({0}) has expired.  "
+                    +"To exchange information, you will need to get an updated license", resDec.licenseId);
         }
         root.put("license", getLicenseInfo(resDec.lic));
         NGBook site = ngp.getSite();
@@ -688,8 +682,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     private void streamDocument(AuthRequest ar, ResourceDecoder resDec) throws Exception {
         AttachmentRecord att = resDec.workspace.findAttachmentByIDOrFail(resDec.docId);
         if (!resDec.canAccessAttachment(att)) {
-            throw new Exception("Specified license ("+resDec.licenseId
-                    +") is not able to access document ("+resDec.docId+")");
+            throw new JSONException("Specified license ({0}) is not able to access document ({1})", resDec.licenseId, resDec.docId);
         }
 
         ar.resp.setContentType(MimeTypes.getMimeType(att.getNiceName()));
@@ -709,8 +702,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     private void streamNote(AuthRequest ar, ResourceDecoder resDec) throws Exception {
         TopicRecord note = resDec.workspace.getNoteOrFail(resDec.noteId);
         if (!resDec.canAccessNote(note)) {
-            throw new Exception("Specified license ("+resDec.licenseId
-                    +") is not able to access topic ("+resDec.noteId+")");
+            throw new JSONException("Specified license ({0}) is not able to access topic ({1})", resDec.licenseId, resDec.noteId);
         }
         String contents = note.getWiki();
         if (contents.length()==0) {
@@ -740,7 +732,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     private JSONObject getLicenseInfo(License lic) throws Exception {
         JSONObject licenseInfo = new JSONObject();
         if (lic == null) {
-            throw new Exception("Program Logic Error: null license passed to getLicenseInfo");
+            throw new JSONException("Program Logic Error: null license passed to getLicenseInfo");
         }
         licenseInfo.put("id", lic.getId());
         licenseInfo.put("timeout", lic.getTimeout());
