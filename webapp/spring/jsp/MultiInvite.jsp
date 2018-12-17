@@ -36,7 +36,8 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Multi-Person Invite");
     $scope.allRoles  = <%allRoles.write(out,2,2);%>;
-    $scope.targetRole = "Members";
+    $scope.newRole = "Members";
+    $scope.invitations = [];
     $scope.message = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
                     +" participate in the workspace for '<%ar.writeHtml(ngc.getFullName());%>'."
                     +"\n\nThe links below will make registration quick and easy, and"
@@ -46,17 +47,69 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.results = [];
     $scope.retAddr = "<%=ar.baseURL%><%=ar.getResourceURL(ngc, "frontPage.htm")%>";
 
+    function getAllInvites() {
+        var postURL = "invitations.json";
+        $http.get(postURL)
+        .success( function(data) {
+            console.log("GET INVITATIONS: ", data);
+            $scope.invitations = data.invitations;
+            $scope.invitations.sort( function(a,b) {return b.timestamp - a.timestamp} );
+        } )
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    $scope.refresh = function() {
+        getAllInvites();
+    }
+    getAllInvites();
+    function updateInvite(invite) {
+        var email = invite.email;
+        var postURL = "invitationUpdate.json";
+        var postdata = angular.toJson(invite);
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            var newList = [];
+            $scope.invitations.forEach( function(item) {
+                if (email != item.email) {
+                    newList.push(item);
+                }
+            });
+            newList.push(data);
+            newList.sort( function(a,b) {return b.timestamp - a.timestamp} );
+            $scope.invitations = newList;
+        } )
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    function inviteOne(newEmail, newName) {
+        if (!newName || newName.length==0) {
+            alert("Enter a name before inviting this person");
+            return;
+        }
+        if (!newEmail || newEmail.length==0) {
+            alert("Enter a email address before inviting this person");
+            return;
+        }
+        var obj = {};
+        obj.name = newName;
+        obj.email = newEmail;
+        obj.role = $scope.newRole;
+        obj.msg = $scope.message;
+        obj.status = "New";
+        obj.timestamp = new Date().getTime();
+        updateInvite(obj);
+        $scope.newName = "";
+        $scope.newEmail = "";
+    }
     
     $scope.blastIt = function() {
         list = parseList($scope.emailList);
         console.log("LIST", list);
         list.forEach( function(item) {
             console.log("inviting: ", item);
-            var msg1 = {userId:item,msg:$scope.message,return:$scope.retAddr};
-            SLAP.sendInvitationEmail(msg1, function(data) {
-                $scope.results.push(item);
-                $scope.$apply();
-            });
+            inviteOne(item, item);
         });
         $scope.emailList = "";
     }
@@ -124,12 +177,12 @@ function parseList(inText) {
     
     <p><i>Add people to the project by clicking on selecting a role, entering a list of email addresses, and a message to send to each as an invitation.</i></p>
 
-
+    <div class="well">
     <table class="spacey">
     
     <tr>
         <td>Role:</td>
-        <td><select class="form-control" ng-model="targetRole" ng-options="value for value in allRoles"></select></td>
+        <td><select class="form-control" ng-model="newRole" ng-options="value for value in allRoles"></select></td>
     </tr>
     <tr>
         <td>Addresses:</td>
@@ -149,12 +202,27 @@ function parseList(inText) {
         <td></td>
         <td><div ng-repeat="res in results track by $index">Sent to: <b>{{res}}</b></div></td>
     </tr>
-    <tr ng-show="results.length==0">
-        <td></td>
-        <td><div class="guideVocal"><i>No invitations sent yet.</i></div></td>
+    </table>
+    </div>
+
+  <h2>Previously Invited</h2>
+  
+    <table class="spacey">
+    <tr><th>Email</th><th>Name</th><th>Status</th><th>Date</th><th>Visited</th></tr>
+    <tr ng-repeat="invite in invitations" title="Click row to copy into the send form"
+        ng-click="reset(invite)">
+        <td>{{invite.email}}</td>
+        <td>{{invite.name}}</td>
+        <td>{{invite.status}}</td>
+        <td>{{invite.timestamp | date}}</td>
+        <td>{{invite.joinTime | date}}</td>
     </tr>
+
     </table>
 
+    <div><button class="btn btn-default btn-raised" ng-click="refresh()">Refresh List</button></div>
+    
+    
 </div>
 <script src="<%=ar.retPath%>templates/RoleModalCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/InviteModal.js"></script>
