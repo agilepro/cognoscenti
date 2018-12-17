@@ -42,6 +42,20 @@ import com.purplehillsbooks.json.JSONObject;
 public class CommentController extends BaseController {
 
 
+    private void countComments(NGWorkspace ngw) throws Exception {
+        int count = 0;
+        StringBuilder sb = new StringBuilder();
+        for (MeetingRecord meet : ngw.getMeetings()) {
+            for (AgendaItem ai : meet.getAgendaItems()) {
+                for (CommentRecord cr : ai.getComments()) {
+                    count++;
+                    sb.append(",");
+                    sb.append(Long.toString(cr.getTime()%1000));
+                }
+            }
+        }
+        System.out.println("*** CommentController: Number of comments: "+count+sb.toString());
+    }
 
     @RequestMapping(value = "/{siteId}/{pageId}/info/{command}")
     public void fetchInfo(@PathVariable String siteId,@PathVariable String pageId,
@@ -51,6 +65,7 @@ public class CommentController extends BaseController {
         try{
             ar.assertLoggedIn("Must be logged in to access workspace information.");
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            countComments(ngw);
             ar.setPageAccessLevels(ngw);
             ar.assertMember("Must be a member to access workspace information.");
             boolean isPost = request.getMethod().equalsIgnoreCase("POST");
@@ -74,6 +89,7 @@ public class CommentController extends BaseController {
 
     private JSONObject handleComment(AuthRequest ar, NGWorkspace ngw, JSONObject postObject) throws Exception {
         long cid = DOMFace.safeConvertLong(ar.reqParam("cid"));
+        System.out.println("Comment Controller: handling comment: "+cid);
         CommentRecord cr = null;
         if (cid>0) {
             cr = ngw.getCommentOrFail(cid);
@@ -84,12 +100,14 @@ public class CommentController extends BaseController {
         if (postObject != null) {
             cr.updateFromJSON(postObject, ar);
             
+            ngw.saveContent(ar, "updated comment "+cid);
             //now we have to tell the meeting controlled to update cache if meeting comment
             if (cr.containerType == CommentRecord.CONTAINER_TYPE_MEETING) {
                 int pos = cr.containerID.indexOf(":");
                 String meetingId = cr.containerID.substring(0,pos);
                 MeetingControler.meetingCache.updateCacheFull(ngw, ar, meetingId);
             }
+            System.out.println("Comment Controller: workspace is saved for: "+cid);
         }
         return cr.getHtmlJSON(ar);
     }

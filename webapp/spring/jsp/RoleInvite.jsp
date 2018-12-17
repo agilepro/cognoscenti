@@ -159,7 +159,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         border-top: solid lightgrey 1px
     }
     .spacey tr:hover {
-        background-color:white;
+        background-color:lightgrey;
     }
     .spacey {
         width: 100%;

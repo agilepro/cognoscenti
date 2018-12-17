@@ -365,7 +365,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
         </span>
       </div>
       <br/>
-      <div ng-hide="editMeetingInfo || editMeetingDesc">
+      <div ng-hide="editMeetingDesc">
         <table class="table">
           <col width="130px">
           <col width="20px">
@@ -583,95 +583,14 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             <td>Attendees:</td>
             <td></td>
             <td>
-                <span ng-repeat="person in getAttended()">{{person.name}}, </span>
+                <span ng-repeat="person in getAttended() track by $index">{{person.name}}, </span>
             </td>
           </tr>
           <tr><td></td><td></td><td></td>
           </tr>
         </table>
       </div>
-      <div class="well" ng-show="editMeetingInfo">
-        <table class="spaceyTable">
-            <tr id="trspath">
-                <td>Type:</td>
-                <td colspan="2" class="form-inline form-group">
-                    <input type="radio" ng-model="meeting.meetingType" value="1"
-                        class="form-control" /> Circle Meeting   &nbsp;
-                    <input type="radio" ng-model="meeting.meetingType" value="2"
-                        class="form-control" /> Operational Meeting
-                </td>
-            </tr>
-            <tr>
-                <td>Name:</td>
-                <td colspan="2"><input ng-model="meeting.name"  class="form-control"></td>
-            </tr>
-            <tr>
-                <td>Date & Time:</td>
-                <td class="dropdown">
-                <div style="position:relative">
-                  <span datetime-picker ng-model="meeting.startTime" class="form-control" style="display:inline">
-                      {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
-                  </span> 
-                  <span>&nbsp; ({{browserZone}})</span>
-                </div>
-                </td> 
-            </tr>
-            <tr>
-                <td>Duration:</td>
-                <td colspan="2" class="form-inline form-group">
-                    <input ng-model="meeting.duration" style="width:60px;"  class="form-control" >
-                    Minutes ({{meeting.totalDuration}} currently allocated)
-                </td>
-            </tr>
-            <tr>
-                <td>Send Reminder:</td>
-                <td colspan="2" class="form-inline form-group">
-                    <input ng-model="factoredTime" style="width:60px;"  class="form-control" >
-                    <select ng-model="timeFactor" class="form-control">
-                        <option>Minutes</option>
-                        <option>Days</option>
-                        </select>
-                    before the meeting, ({{meeting.reminderTime}} minutes)
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td colspan="2" class="form-inline form-group">
-                    {{meeting.startTime-(meeting.reminderTime*60000)|date:'dd-MMM-yyyy H:mm'}}
-                </td>
-            </tr>
-            <tr>
-                <td>Reminder:</td>
-                <td colspan="2" class="form-inline form-group">
-                    <span ng-show="meeting.reminderSent==0"> <i>Not yet sent.</i></span>
-                    <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td>Target Role:</td>
-                <td colspan="2" class="form-inline form-group">
-                    <select class="form-control" ng-model="meeting.targetRole" ng-options="value for value in allRoles" ng-change="checkRole()"></select>
-                </td>
-            </tr>
-            <tr ng-show="roleWarningMessage">
-                <td></td>
-                <td colspan="2" class="form-inline form-group" style="color:red">
-                {{roleWarningMessage}}
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td colspan="2" class="form-inline form-group">
-                    <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
-                    <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
-                </td>
-            </tr>
 
-
-          </table>
-       </div>
-    </div>
     <div ng-show="editMeetingDesc" style="width:100%">
         <div class="well leafContent">
             <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
@@ -1033,20 +952,12 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 
                           <!--  AGENDA BODY -->
       <tr ng-show="showItemMap[item.id]">
-        <td ng-hide="editItemDescMap[item.id] && myUserId == item.lockUser.uid" style="width:100%">
+        <td style="width:100%">
            <button ng-show="item.lockUser.uid && item.lockUser.uid.length>0" class="btn btn-sm" style="background-color:lightyellow;margin-left:20px;">
                {{item.lockUser.name}} is editing.
            </button>
            <div class="leafContent">
              <div ng-bind-html="item.desc"></div>
-           </div>
-        </td>
-        <td ng-show="editItemDescMap[item.id] && myUserId == item.lockUser.uid" style="width:100%">
-           <div class="well leafContent">
-             <div ng-model="item.desc" ui-tinymce="tinymceOptions"></div>
-
-             <button ng-click="saveEditUnlockDesciption(item)" class="btn btn-primary btn-raised">Save</button>
-             <button ng-click="cancelEditUnlockDesciption(item)" class="btn btn-warning btn-raised">Cancel</button>
            </div>
         </td>
       </tr>

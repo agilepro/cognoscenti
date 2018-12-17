@@ -144,6 +144,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         }
         catch (Exception e) {
             Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
+
             streamException(ctx, ar);
         }
         finally {

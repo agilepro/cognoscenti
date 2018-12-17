@@ -28,38 +28,38 @@
     <property name="src.spring.home.dir"            value="${source.dir}/thirdparty/spring-framework-3.0.2.RELEASE"/>
     <property name="src.servletcontainer.home.dir"  value="${source.dir}/thirdparty/servlet-container"/>
 
-    <property name="war.file.name"                  value="cog"/>
+    <property name="war.file.name"                  value="weaver"/>
 
      <target name="clean">
-        <mkdir dir="${target.dir}/cog"/>
-        <delete failonerror="false" dir="${target.dir}/cog" />
+        <mkdir dir="${target.dir}/weaver"/>
+        <delete failonerror="false" dir="${target.dir}/weaver" />
         <delete failonerror="false" dir="${target.dir}/jartemp" />
-        <delete failonerror="false" file="${target.dir}/cog.war" />
-        <delete failonerror="false" file="${target.dir}/cog.1.jar" />
+        <delete failonerror="false" file="${target.dir}/weaver.war" />
+        <delete failonerror="false" file="${target.dir}/weaverClasses.jar" />
     </target>
 
 
     <target name="init">
 
         <mkdir dir="${target.dir}"/>
-        <mkdir dir="${target.dir}/cog"/>
+        <mkdir dir="${target.dir}/weaver"/>
 
         <!-- copy cvs webapps directory -->
-        <copy preservelastmodified="true" todir="${target.dir}/cog">
+        <copy preservelastmodified="true" todir="${target.dir}/weaver">
             <fileset dir="${source.dir.webapp}">
                 <include name="**/*"/>
             </fileset>
         </copy>
 
         <!-- copy spring jar files -->
-        <copy preservelastmodified="true" todir="${target.dir}/cog/WEB-INF/lib">
+        <copy preservelastmodified="true" todir="${target.dir}/weaver/WEB-INF/lib">
             <fileset dir="${src.spring.home.dir}">
                 <include name="*.jar"/>
             </fileset>
         </copy>
 
         <!-- copy html unit jar files -->
-        <copy preservelastmodified="true" todir="${target.dir}/cog/WEB-INF/lib">
+        <copy preservelastmodified="true" todir="${target.dir}/weaver/WEB-INF/lib">
             <fileset dir="${src.htmlunit.home.dir}/lib">
                 <include name="*.jar"/>
             </fileset>
@@ -67,11 +67,11 @@
 
         <!-- set classpath for compiling the java classes -->
         <path id="build.classpath">
-            <fileset dir="${target.dir}/cog/WEB-INF/lib">
+            <fileset dir="${target.dir}/weaver/WEB-INF/lib">
                 <include name="*.jar" />
             </fileset>
-            <fileset dir="${target.dir}/cog/WEB-INF/lib">
-                <include name="cog.1.jar" />
+            <fileset dir="${target.dir}/weaver/WEB-INF/lib">
+                <include name="weaverClasses.jar" />
             </fileset>
             <fileset dir="${src.servletcontainer.home.dir}">
                 <include name="*.jar" />
@@ -84,7 +84,7 @@
     <target name="compileJar" depends="init">
 
         <delete failonerror="false"
-                file="${target.dir}/cog.1.jar" />
+                file="${target.dir}/weaverClasses.jar" />
 
         <mkdir dir="${target.dir}/jartemp"/>
 
@@ -97,7 +97,7 @@
 
         <!-- set classpath for compiling the java classes -->
         <path id="build.classpathJar">
-            <fileset dir="${target.dir}/cog/WEB-INF/lib">
+            <fileset dir="${target.dir}/weaver/WEB-INF/lib">
                 <include name="*.jar" />
             </fileset>
             <fileset dir="${src.servletcontainer.home.dir}">
@@ -112,19 +112,19 @@
             <classpath refid="build.classpathJar" />
         </javac>
 
-        <jar destfile="${target.dir}/cog.1.jar"
+        <jar destfile="${target.dir}/weaverClasses.jar"
              basedir="${target.dir}/jartemp" />
     </target>
 
     <target name="compile" depends="compileJar">
 
-        <copy file="${target.dir}/cog.1.jar" todir="${target.dir}/cog/WEB-INF/lib" />
+        <copy file="${target.dir}/weaverClasses.jar" todir="${target.dir}/weaver/WEB-INF/lib" />
         <delete failonerror="false"
-                dir="${target.dir}/cog/WEB-INF/lib"
+                dir="${target.dir}/weaver/WEB-INF/lib"
                 includes="**/*.class" />
 
         <javac debug="on" includeAntRuntime="false" nowarn="true"
-               srcdir="${source.dir.src}" destdir="${target.dir}/cog/WEB-INF/classes"
+               srcdir="${source.dir.src}" destdir="${target.dir}/weaver/WEB-INF/classes"
                target="1.6" source="1.6"
                includes="org/socialbiz/cog/rest/*.java,org/socialbiz/cog/spring/*.java,org/socialbiz/cog/test/*.java,org/socialbiz/cog/api/*.java,org/socialbiz/cog/mail/*.java,org/socialbiz/cog/capture/*.java">
             <classpath refid="build.classpath" />
@@ -135,13 +135,13 @@
               timezone="UTC" unit="hour"/>
         </tstamp>
         <echo>BuildNumber=${time}</echo>
-        <echo file="${target.dir}/cog/WEB-INF/BuildInfo.properties" append="false">BuildNumber=${time}
+        <echo file="${target.dir}/weaver/WEB-INF/BuildInfo.properties" append="false">BuildNumber=${time}
         </echo>
         
     </target>
 
   <target name="package" depends="clean, init, compile">
-    <war destfile="${target.dir}/cog.war" needxmlfile="false" basedir="${target.dir}/cog"/>
+    <war destfile="${target.dir}/weaver.war" needxmlfile="false" basedir="${target.dir}/weaver"/>
   </target>
 
     <target name="javaDoc" depends="init">
