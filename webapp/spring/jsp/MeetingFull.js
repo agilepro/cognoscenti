@@ -1027,17 +1027,22 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     }
     $scope.getAttended = function() {
+        var check = {};
         var res = [];
         if ($scope.meeting.attended) {
             $scope.meeting.attended.forEach( function(trial) {
+                var trialPerson = AllPeople.findPerson(trial);
+                if (!trialPerson || !trialPerson.uid) {
+                    return;
+                }
                 var found = false;
                 res.forEach( function(itemx) {
-                    if (itemx && itemx.uid == trial) {
+                    if (itemx && itemx.uid == trialPerson.uid) {
                         found = true;
                     }
                 });
                 if (!found) {
-                    res.push(AllPeople.findPerson(trial));                
+                    res.push(trialPerson);                
                 }
             });
         }

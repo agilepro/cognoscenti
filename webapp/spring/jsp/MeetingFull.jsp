@@ -583,7 +583,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             <td>Attendees:</td>
             <td></td>
             <td>
-                <span ng-repeat="person in getAttended()">{{person.name}}, </span>
+                <span ng-repeat="person in getAttended() track by $index">{{person.name}}, </span>
             </td>
           </tr>
           <tr><td></td><td></td><td></td>

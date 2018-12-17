@@ -166,9 +166,6 @@ function parseList(inText) {
     .spacey tr td{
         padding: 8px;
     }
-    .spacey tr:hover {
-        background-color:lightgrey;
-    }
     .spacey {
         width: 100%;
         max-width: 800px;
@@ -209,7 +206,7 @@ function parseList(inText) {
   
     <table class="spacey">
     <tr><th>Email</th><th>Name</th><th>Status</th><th>Date</th><th>Visited</th></tr>
-    <tr ng-repeat="invite in invitations" title="Click row to copy into the send form"
+    <tr ng-repeat="invite in invitations" title="This form only displays the invited people, go to 'Invite Users' to re-invite a person"
         ng-click="reset(invite)">
         <td>{{invite.email}}</td>
         <td>{{invite.name}}</td>
