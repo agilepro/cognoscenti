@@ -140,7 +140,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     }
     $scope.saveAndClose = function () {
 		saveComment("Y");
-        $interval.cancel($scope.promiseAutosave);
+        //$interval.cancel($scope.promiseAutosave);
     };
     $scope.postIt = function () {
         if ($scope.cmt.state == 11 && $scope.autosaveEnabled) {
@@ -208,7 +208,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         }
     }
 	if ($scope.autosaveEnabled) {
-		$scope.promiseAutosave = $interval($scope.autosave, 15000);
+        //disable autosave almost ... set the duration to 20 minutes
+		//$scope.promiseAutosave = $interval($scope.autosave, 1200000);
     }
     
     $scope.loadPersonList = function(query) {

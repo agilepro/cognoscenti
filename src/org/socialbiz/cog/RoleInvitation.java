@@ -31,19 +31,20 @@ import org.socialbiz.cog.mail.ScheduledNotification;
 import com.purplehillsbooks.json.JSONObject;
 
 public class RoleInvitation extends JSONWrapper {
-    
+
     public static String STATUS_NEW     = "New";
     public static String STATUS_INVITED = "Invited";
     public static String STATUS_JOINED  = "Joined";
-    
-    
+    public static String STATUS_FAILED  = "Failed";
+
+
     public RoleInvitation(JSONObject jo) throws Exception {
         super(jo);
         if (!kernel.has("status")) {
             kernel.put("status", STATUS_NEW);
         }
     }
-    
+
     public String getEmail() throws Exception {
         return kernel.getString("email");
     }
@@ -59,11 +60,11 @@ public class RoleInvitation extends JSONWrapper {
     public void setName(String newName) throws Exception {
         kernel.put("name", newName);
     }
-    
+
     public boolean isJoined() throws Exception {
         return STATUS_JOINED.equals(getStatus());
     }
-    
+
     public void markJoined() throws Exception {
         kernel.put("status", STATUS_JOINED);
         kernel.put("joinTime", System.currentTimeMillis());
@@ -95,13 +96,13 @@ public class RoleInvitation extends JSONWrapper {
         }
         return changed;
     }
-    
+
     public void sendEmail(AuthRequest ar) throws Exception {
-        
+
         if (!STATUS_NEW.equals(kernel.getString("status"))) {
             throw new Exception("Program Logic Error: send is being called when the invite is not in NEW status");
         }
-        
+
         //var msg1 = {userId:item,msg:$scope.message,return:$scope.retAddr};
         String msg = null;
         if (kernel.has("msg")) {
@@ -115,18 +116,22 @@ public class RoleInvitation extends JSONWrapper {
                 +" participate directly with the others through the site.";
         }
         String returnUrl = ar.baseURL + ar.getResourceURL(ar.ngp, "frontPage.htm");
-        
+
         JSONObject jo = new JSONObject();
         jo.put("userId", kernel.getString("email"));
         jo.put("msg", msg);
         jo.put("return", returnUrl);
-        
+
         JSONObject res = LightweightAuthServlet.postToTrustedProvider("?openid.mode=apiSendInvite", jo);
         if (res.has("result") && "ok".equals(res.getString("result"))) {
             kernel.put("status", STATUS_INVITED);
-        }        
+        }
+        else {
+            kernel.put("status", STATUS_FAILED);
+            System.out.println("ROLE INVITATION FAILED: "+res.toString());
+        }
     }
-    
+
     public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList) throws Exception {
         if ("New".equals(this.getStatus())) {
             RIScheduledNotification sn = new RIScheduledNotification(this);
@@ -134,7 +139,7 @@ public class RoleInvitation extends JSONWrapper {
         }
     }
 
-    
+
     private class RIScheduledNotification implements ScheduledNotification {
         RoleInvitation ri;
 
@@ -161,5 +166,5 @@ public class RoleInvitation extends JSONWrapper {
         }
 
     }
-    
+
 }
