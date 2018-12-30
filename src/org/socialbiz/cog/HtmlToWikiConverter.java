@@ -376,6 +376,16 @@ class HTMLParser extends HTMLEditorKit.ParserCallback {
             }
 
         }
+        else if (t == HTML.Tag.DIV) {
+            //some cases have DIV tags only, and we need to treat them like 
+            //paragraphs.
+            startBlock("\n");
+        }
+        else if (t == HTML.Tag.TD || t == HTML.Tag.TH) {
+            //if you are in a table, then we should treat the cells in the table as creating
+            //new paragraph blocks.
+            startBlock("\n");
+        }
     }
 
     public void handleEndTag(HTML.Tag t, int pos) {
@@ -401,7 +411,8 @@ class HTMLParser extends HTMLEditorKit.ParserCallback {
             return;
         }
         else if (t == HTML.Tag.H1 || t == HTML.Tag.H2
-            || t == HTML.Tag.H3 || t == HTML.Tag.P)
+            || t == HTML.Tag.H3 || t == HTML.Tag.P || t == HTML.Tag.DIV
+            || t == HTML.Tag.TD || t == HTML.Tag.TH )
         {
             concludeBlock();
         }

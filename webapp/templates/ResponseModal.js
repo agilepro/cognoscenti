@@ -39,7 +39,6 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
         });
     }
     function setComment(newComment) {
-        console.log("GOT comment: ", newComment);
         newComment.choices = ["Consent", "Objection"];
         $scope.cmt = newComment;
         $scope.cmtOriginal = JSON.parse(JSON.stringify(newComment));

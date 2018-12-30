@@ -3,7 +3,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 
     // initial comment object
     setComment(cmt);
-    console.log("Received comment is ", cmt);
     
 	// parent scope with all the crud methods
     $scope.parentScope = parentScope;
@@ -76,7 +75,6 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         .error( handleHTTPError );
     }
     function setComment(newComment) {
-        console.log("GOT comment: ", newComment);
         if (!newComment.responses) {
             newComment.responses = [];
         }
