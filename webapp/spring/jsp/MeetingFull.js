@@ -1688,6 +1688,25 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     }
     $scope.removeTime = function(fieldName,time) {
+        console.log("meeting", $scope.meeting);
+        console.log("meeting[fieldName]", $scope.meeting[fieldName]);
+        console.log("meeting[fieldName].people", $scope.meeting[fieldName].people);
+        var hasSetting = false;
+        if ($scope.meeting[fieldName]) {
+            $scope.meeting[fieldName].forEach( function(aTime) {
+                if (aTime.proposedTime == time) {
+                    if (Object.keys(aTime.people).length > 0) {
+                        hasSetting = true;
+                    }
+                }
+            });
+        }
+        if (hasSetting) {
+            if (!confirm("Are you sure to remove this row?  User values will be lost.")) {
+                return;
+            }
+        }
+        
         var isCurrent = ("timeSlots" == fieldName);
         var obj = {action:"RemoveTime", isCurrent: isCurrent, time: time};
         var postURL = "proposedTimes.json?id="+$scope.meeting.id;
