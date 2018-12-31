@@ -467,6 +467,9 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             </td>
             <td ng-hide="'targetRole'==editMeetingPart">
               <a href="roleManagement.htm">{{meeting.targetRole}}</a>
+              <span ng-hide="roleEqualsParticipants" style="color:red">
+                  . . . includes people who are not meeting participants!
+              </span>
             </td>
             <td ng-show="'targetRole'==editMeetingPart">
                 <div class="well form-inline form-group" style="max-width:400px">
@@ -499,9 +502,6 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                       <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
                           ng-click="navigateToUser(player)">
                           <span class="fa fa-user"></span> Visit Profile</a></li>
-                      <!--li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="removeVoter('timeSlots',player.uid)">
-                          <span class="fa fa-times"></span> Remove User </a></li-->
                     </ul>
                   </span>
                 </span>
@@ -514,6 +514,9 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                       <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
                   </tags-input>
                   <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                  <button class="btn btn-default btn-raised" ng-click="appendRolePlayers()" ng-hide="roleEqualsParticipants">
+                      Add Everyone from {{meeting.targetRole}}
+                  </button>
               </div>
             </td>
           </tr>

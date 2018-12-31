@@ -479,7 +479,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         promise.success( function(data) {
             console.log("set meeting 1");
-            $scope.setMeetingData(data);
+            setMeetingData(data);
         });
         promise.error( function(data, status, headers, config) {
             console.log("ERROROROROR", data);
@@ -491,7 +491,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.refreshMeetingPromise = function() {
         return $scope.putGetMeetingInfo(null);
     }
-    $scope.setMeetingData = function(data) {
+    function setMeetingData(data) {
         if (!data) {
             console.log("ASKED to SET MEETING DATA but no meeting data passed");
             throw "ASKED to SET MEETING DATA but no meeting data passed";
@@ -533,8 +533,74 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
         $scope.timeSlotResponders = calcResponders(data.timeSlots, AllPeople);
         $scope.futureSlotResponders = calcResponders(data.futureSlots, AllPeople);
-        
+        determineRoleEqualsParticipants();
+        console.log("roleEqualsParticipants", $scope.roleEqualsParticipants);
     }
+    function determineRoleEqualsParticipants() {
+        $scope.roleEqualsParticipants = false;
+        var roleName = $scope.meeting.targetRole;
+        if (!roleName) {
+            //nothing else to do
+            console.log("Meeting has no target Role");
+            return;
+        }
+        var theRole = getMeetingRole();
+        if (!theRole) {
+            //name appears to be invalid
+            console.log("Meeting has invalid targetRole: "+roleName, $scope.allRoles);
+            return;
+        }
+        if ($scope.meeting.participants.length < theRole.length) {
+            //less people, so must be some missing
+            return;
+        }
+        for (var i=0; i<theRole.players.length; i++) {
+            var rolePerson = theRole.players[i];
+            var found = false;
+            for (var j=0; j<$scope.meeting.participants.length; j++) {
+                var participant = $scope.meeting.participants[j];
+                if (participant.uid == rolePerson.uid) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                //mismatch, return
+                console.log("meeting is missing user: ", rolePerson);
+                return;
+            }
+        }
+        //everything matched down to here, so matches
+        $scope.roleEqualsParticipants = true;
+    }
+    $scope.appendRolePlayers = function() {
+        console.log("----PARTICIPANTS", $scope.meeting.participants);
+        var theRole = getMeetingRole();
+        if (!theRole) {
+            //name appears to be invalid
+            console.log("Meeting has invalid targetRole");
+            return;
+        }
+        for (var i=0; i<theRole.players.length; i++) {
+            var rolePerson = theRole.players[i];
+            console.log("SEARCHING", rolePerson.uid);
+            var found = false;
+            for (var j=0; j<$scope.meeting.participants.length; j++) {
+                var participant = $scope.meeting.participants[j];
+                    console.log("  CHECKING", participant.uid);
+                if (participant.uid == rolePerson.uid) {
+                    found = true;
+                    console.log("    FOUND", participant.uid);
+                }
+            }
+            if (!found) {
+                console.log("    ADDING", rolePerson.uid);
+                $scope.meeting.participants.push(rolePerson);
+            }
+        }
+    }
+    
+    
+    
     $scope.createAgendaItem = function() {
         var newAgenda = {
             id:"~new~",
@@ -894,7 +960,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
 
     $scope.mySitch = [];
-    $scope.getMeetingRole = function() {
+    
+    function getMeetingRole() {
         var selRole = {players:[]};
         $scope.allLabels.forEach( function(item) {
             if (item.name === $scope.meeting.targetRole) {
@@ -927,7 +994,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         else {
             console.log("NO isArray function");
         }
-        var selRole = $scope.getMeetingRole();
+        var selRole = getMeetingRole();
         var rez = [];
         $scope.mySitch = [];
         selRole.players.forEach( function(item) {
@@ -1655,7 +1722,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $http.post(postURL,postdata)
         .success( function(data) {
             console.log("set meeting 2");
-            $scope.setMeetingData(data);
+            setMeetingData(data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -1681,7 +1748,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $http.post(postURL,postdata)
         .success( function(data) {
             console.log("set meeting 3");
-            $scope.setMeetingData(data);
+            setMeetingData(data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -1714,7 +1781,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $http.post(postURL,postdata)
         .success( function(data) {
             console.log("set meeting 4");
-            $scope.setMeetingData(data);
+            setMeetingData(data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -1728,7 +1795,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $http.post(postURL,postdata)
         .success( function(data) {
             console.log("set meeting 5");
-            $scope.setMeetingData(data);
+            setMeetingData(data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
