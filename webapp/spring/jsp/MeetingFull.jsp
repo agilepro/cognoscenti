@@ -915,7 +915,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                         Remaining: {{item.duration - item.timerTotal| minutes}}
                     </span>
                     <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
-                        <span>Running</span>
+                        <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
                         Elapsed: {{item.timerTotal| minutes}}
                         Remaining: {{item.duration - item.timerTotal| minutes}}
                     </span>
