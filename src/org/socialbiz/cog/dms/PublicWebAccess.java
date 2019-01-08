@@ -20,12 +20,15 @@
 
 package org.socialbiz.cog.dms;
 
-import org.socialbiz.cog.exception.NGException;
-import org.socialbiz.cog.exception.ProgramLogicError;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+
+import org.socialbiz.cog.exception.NGException;
+import org.socialbiz.cog.exception.ProgramLogicError;
+
+import com.purplehillsbooks.json.JSONException;
 
 /**
 * PublicWebAccess is a special type of connection, it is a dummy connection
@@ -72,7 +75,7 @@ public class PublicWebAccess implements ConnectionType  {
     {
         //internal path is just the global path with a slash in front of it
         if (!relPath.startsWith("/")) {
-            throw new Exception("Somethign wrong, the internal path for a public web access caes should start with a slash: "+relPath);
+            throw new JSONException("Somethign wrong, the internal path for a public web access caes should start with a slash: {0}", relPath);
         }
         //they had better pass the full address into public access.
         return relPath.substring(1);

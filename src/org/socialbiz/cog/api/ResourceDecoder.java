@@ -32,6 +32,8 @@ import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.ProgramLogicError;
 
+import com.purplehillsbooks.json.JSONException;
+
 public class ResourceDecoder {
 
     public String siteId;
@@ -92,18 +94,18 @@ public class ResourceDecoder {
         curPos = slashPos+1;
         slashPos = path.indexOf("/", curPos);
         if (slashPos<=curPos) {
-            throw new Exception("Can't find a workspace ID in the URL.");
+            throw new JSONException("Can't find a workspace ID in the URL.");
         }
         projId = path.substring(curPos, slashPos);
 
         if ("$".equals(projId)) {
             isSite = true;
             if (licenseId==null) {
-                throw new Exception("Can not access the site '"+site.getKey()+"' without any license.");
+                throw new JSONException("Can not access the site '{0}' without any license.", site.getKey());
             }
             lic = site.getLicense(licenseId);
             if (lic==null) {
-                throw new Exception("Can not find the license '"+licenseId+"' on site '"+site.getKey()+"'");
+                throw new JSONException("Can not find the license '{0}' on site '{1}'", licenseId, site.getKey());
             }
             setUserFromLicense(ar);
             return;
@@ -112,7 +114,7 @@ public class ResourceDecoder {
         ar.setPageAccessLevels(workspace);
         lic = workspace.getLicense(licenseId);
         if (lic==null) {
-            throw new Exception("Can not find the license '"+licenseId+"' on workspace '"+projId+"'");
+            throw new JSONException("Can not find the license '{0}' on workspace '{1}'", licenseId, projId);
         }
         licenseOwner = new AddressListEntry(lic.getCreator());
         setUserFromLicense(ar);
@@ -172,11 +174,11 @@ public class ResourceDecoder {
             String userId = lic.getCreator();
             UserProfile up = UserManager.getStaticUserManager().lookupUserByAnyId(userId);
             if (up==null) {
-                throw new Exception("This license '"+licenseId+"' is no longer valid because the creator of the license can not be found.");
+                throw new JSONException("This license '{0}' is no longer valid because the creator of the license can not be found.", licenseId);
             }
             //check that user is still valid
             if (up.getDisabled()) {
-                throw new Exception("This license '"+licenseId+"' is no longer valid because the creator of the license is no longer enabled.");
+                throw new JSONException("This license '{0}' is no longer valid because the creator of the license is no longer enabled.", licenseId);
             }
             //check that user is in the role of this license
             //as long as this does not throw exception, everything is ok
@@ -226,9 +228,8 @@ public class ResourceDecoder {
             //if the license owner is not a member, then the license owner must be
             //a member of the specified role.
             if (!ownerIsMemberofWorkspace() && !specifiedRole.isExpandedPlayer(licenseOwner, workspace)) {
-                throw new Exception("The license ("+licenseId
-                        +") is invalid because the user who created license is no longer a "
-                        +"member of the role ("+restrictRole+")");
+                throw new JSONException("The license ({0}) is invalid because the user who created license is no longer a "
+                        +"member of the role ({0})", licenseId, restrictRole);
             }
             licensedRoles.add(specifiedRole);
         }

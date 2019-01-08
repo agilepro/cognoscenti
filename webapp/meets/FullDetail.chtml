@@ -1,0 +1,103 @@
+<html>
+<style>
+.emailbody {
+    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+    border: 2px solid skyblue;
+    padding:10px;
+    border-radius:10px;
+}
+.niceTable tr td { 
+    padding:8px 
+}
+.smallPrint {
+    font-size:-2;
+}
+</style>
+<body>
+<div >
+<!--TEMPLATE FlatDetailAgenda.chtml-->
+<table class="table">
+<tr style="background-color:lightskyblue">
+<td colspan="2"><h1>{$name|html}</h1></td>
+</tr>
+<tr>
+<td>Scheduled Time:</td><td>{$startTime|date("MMM dd, YYYY -- HH:mm")}</td>
+</tr>
+<tr>
+<td>Duration:</td><td>{$duration} Minutes</td>
+</tr>
+<tr>
+<td>Description:</td><td>{$meetingInfo}</td>
+</tr>
+<tr>
+<td>State:</td><td>{$state}</td>
+</tr>
+<tr>
+<td>Target Role:</td><td>{$targetRole}</td>
+</tr>
+<tr>
+<td>Participants:</td>
+    <td>
+    {% loop in $participants as $part %}
+    <a href="FindPerson.htm?email={$part.key}">{$part.name}</a>{% divider %}<br/>{% enddivider %}
+    {% onEmpty %}
+    <i>(none specified)</i>
+    {% endloop %}
+    </td>
+</tr>
+
+</table>
+
+
+<table class="table">
+{% loop in $agenda as $aggie %}
+{% if ($aggie.isSpacer != true) %}
+<tr style="background-color:lightskyblue">
+<td>{$aggie.number}.</td>
+<td colspan="2"><b>{$aggie.subject|html}</b></li>
+{% else %}
+<tr style="background-color:darkblue;color:white;">
+<td></td>
+<td colspan="2" style="padding:25px;"><b>{$aggie.subject|html}</b> - {$aggie.duration} Minutes</li>
+{% endif %}
+
+</td>
+</tr>
+
+{% if ($aggie.isSpacer != true) %}
+    <tr>
+    <td></td>
+    <td>Time:</td>
+    <td>{$aggie.duration} Minutes</li>
+    </td>
+    </tr>
+
+    <tr>
+    <td></td>
+    <td colspan="2">{$aggie.desc}</li>
+    </td>
+    </tr>
+
+
+    <tr>
+    <td></td>
+    <td>Presenters:</td>
+    <td>
+    {% loop in $aggie.presenters as $part %}
+        {$part}{% divider %}, {% enddivider %}
+    {% onEmpty %}
+        <i>(none specified)</i>
+    {% endloop %}
+    </td>
+    </tr>
+{% endif %}
+
+{% onEmpty %}
+<tr><td>No agenda items specified for this meeting</td></tr>
+{% endloop %}
+</table>
+
+</div>
+
+
+</body></html>

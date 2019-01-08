@@ -35,6 +35,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -295,7 +296,7 @@ public abstract class NGPage extends ContainerCommon {
         String siteKey = getSiteKey();
         NGPageIndex ngpi = cog.getWSBySiteAndKey(siteKey, key);
         if (ngpi == null) {
-            throw new Exception("unable to find a workspace with site ("+siteKey+") and key ("+key+")");
+            throw new JSONException("unable to find a workspace with site ({0}) and key ({1})", siteKey, key);
         }
         ngpi.unlinkAll();
         ngpi.buildLinks(this);
@@ -1498,7 +1499,7 @@ public abstract class NGPage extends ContainerCommon {
         if (m!=null) {
             return m;
         }
-        throw new Exception("Could not find a meeting with the id="+id);
+        throw new JSONException("Could not find a meeting with the id={0}", id);
     }
     public MeetingRecord findMeetingOrNull(String id) throws Exception {
         for (MeetingRecord m : getMeetings()) {
@@ -1565,7 +1566,7 @@ public abstract class NGPage extends ContainerCommon {
         if (dr!=null) {
             return dr;
         }
-        throw new Exception("Could not find a decision with the number="+num);
+        throw new JSONException("Could not find a decision with the number={0}", num);
     }
 
 
@@ -1640,7 +1641,7 @@ public abstract class NGPage extends ContainerCommon {
     public NGLabel getLabelRecordOrFail(String name) throws Exception {
         NGLabel label = getLabelRecordOrNull(name);
         if (label==null) {
-            throw new Exception("Not able to find a Label Record with the name="+name);
+            throw new JSONException("Not able to find a Label Record with the name={0}", name);
         }
         return label;
     }

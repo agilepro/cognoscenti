@@ -246,7 +246,7 @@ public class NGPageIndex {
             return NGBook.readSiteByKey(containerKey);
         }
         else {
-            throw new Exception("Unspecified or illegal containerType value: "+containerType);
+            throw new JSONException("Unspecified or illegal containerType value: {0}", containerType);
         }
     }
 

@@ -13,6 +13,9 @@
     if (pageTitle == null) {
         pageTitle = "Error Page";
     }
+    if (exception==null) {
+        exception = new Exception("Exception Object not send to error.jsp");
+    }
 
     int exceptionNO = Integer.parseInt(ar.defParam("exceptionNO", "0"));
 

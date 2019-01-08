@@ -197,11 +197,11 @@ public class EmailListener extends TimerTask{
 
             String user = emailProperties.getProperty("mail.pop3.user");
             if (user==null || user.length()==0) {
-                throw new Exception("In order to read email, there must be a setting for 'mail.pop3.user' in "+emailPropFile.getAbsolutePath()+".");
+                throw new JSONException("In order to read email, there must be a setting for 'mail.pop3.user' in {0}.",emailPropFile.getAbsolutePath());
             }
             String pwd = emailProperties.getProperty("mail.pop3.password");
             if (pwd==null || pwd.length()==0) {
-                throw new Exception("In order to read email, there must be a setting for 'mail.pop3.password' in "+emailPropFile.getAbsolutePath()+".");
+                throw new JSONException("In order to read email, there must be a setting for 'mail.pop3.password' in {0}.",emailPropFile.getAbsolutePath());
             }
 
             if (user == null || user.length() == 0 || pwd == null || pwd.length() == 0) {

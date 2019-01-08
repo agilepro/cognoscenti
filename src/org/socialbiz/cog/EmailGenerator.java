@@ -36,6 +36,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -209,8 +210,8 @@ public class EmailGenerator extends DOMFace {
     public void scheduleEmail(AuthRequest ar) throws Exception {
         long aboutFifteenMinutesAgo = ar.nowTime - 15 * 60000;
         if (getScheduleTime()<aboutFifteenMinutesAgo) {
-            throw new Exception("To schedule the email for sending, the schedule time has to be in the future.  Schedule time currently set to: "
-                +new Date(getScheduleTime()));
+            throw new JSONException("To schedule the email for sending, the schedule time has to be in the future.  Schedule time currently set to: {0}",
+                new Date(getScheduleTime()));
         }
         setState(EG_STATE_SCHEDULED);
     }

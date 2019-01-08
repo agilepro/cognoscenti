@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import com.purplehillsbooks.json.JSONException;
+
 public class Mailer {
 
     Properties emailProperties;
@@ -11,7 +13,7 @@ public class Mailer {
     public Mailer(File propFile) throws Exception {
 
         if (!propFile.exists()) {
-            throw new Exception("The mail properties file does not exist: "+propFile);
+            throw new JSONException("The mail properties file does not exist: {0}", propFile);
         }
 
         emailProperties = new Properties();

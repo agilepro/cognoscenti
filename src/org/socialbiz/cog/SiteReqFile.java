@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -168,20 +169,18 @@ public class SiteReqFile {
         // first, lets see if there is a site already with that ID
         NGContainer site = cog.getSiteById(siteId);
         if (site != null) {
-            throw new Exception("Sorry, there already exists an site with that ID (" + siteId
-                    + ").  Please try again with a different ID.");
+            throw new JSONException("Sorry, there already exists an site with that ID ({0}).  Please try again with a different ID.", 
+                    siteId);
         }
         
         if (siteName.length() < 4) {
-            throw new Exception("New site must have a name with 4 or more letters");
+            throw new JSONException("New site must have a name with 4 or more letters");
         }
         if (siteId == null) {
-            throw new Exception("SiteId parameter can not be null in createNewSiteRequest");
+            throw new JSONException("SiteId parameter can not be null in createNewSiteRequest");
         }
         if (siteId.length() < 4 || siteId.length() > 8) {
-            throw new Exception(
-                    "AccountId must be four to eight charcters/numbers long.  Received (" + siteId
-                            + ")");
+            throw new JSONException("AccountId must be four to eight charcters/numbers long.  Received ({0})", siteId);
         }
         
         // to avoid file system problems all ids need to be lower case.
@@ -189,9 +188,8 @@ public class SiteReqFile {
         for (int i = 0; i < siteId.length(); i++) {
             char ch = siteId.charAt(i);
             if (ch < '0' || (ch > '9' && ch < 'a') || ch > 'z') {
-                throw new Exception(
-                        "AccountId must have only letters and numbers - no spaces or punctuation.  Received ("
-                                + siteId + ")");
+                throw new JSONException("AccountId must have only letters and numbers - no spaces or punctuation.  Received ({0})", 
+                        siteId);
             }
         }
 

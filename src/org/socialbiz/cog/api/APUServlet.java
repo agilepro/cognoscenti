@@ -31,6 +31,7 @@ import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.UserProfile;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -89,7 +90,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
             doAuthenticatedGet(ar);
         }
         catch (Exception e) {
-            Exception ctx = new Exception("Unable to handle GET to "+ar.getCompleteURL(), e);
+            Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
         finally {
@@ -117,7 +118,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
             root.write(ar.w, 2, 0);
             ar.flush();
         } catch (Exception e) {
-            Exception ctx = new Exception("Unable to handle GET to "+ar.getCompleteURL(), e);
+            Exception ctx = new JSONException("Unable to handle GET to {0}", e, ar.getCompleteURL());
             streamException(ctx, ar);
         }
     }
@@ -130,7 +131,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         ar.resp.setContentType("application/json");
         try {
-             throw new Exception("Can not do a PUT to that resource URL: "+ar.getCompleteURL());
+             throw new JSONException("Can not do a PUT to that resource URL: {0}", ar.getCompleteURL());
         }
         catch (Exception e) {
             streamException(e, ar);
@@ -145,7 +146,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
         ar.resp.setContentType("application/json");
         try {
-            throw new Exception("Can not do a POST to that resource URL: "+ar.getCompleteURL());
+            throw new JSONException("Can not do a POST to that resource URL: {0}", ar.getCompleteURL());
         }
         catch (Exception e) {
             streamException(e, ar);
@@ -154,7 +155,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
 
     public void doDelete(HttpServletRequest req, HttpServletResponse resp) {
         AuthRequest ar = AuthRequest.getOrCreate(req, resp);
-        streamException(new Exception("not implemented yet"), ar);
+        streamException(new Exception("doDelete not implemented yet"), ar);
     }
 
     public void init(ServletConfig config) throws ServletException {

@@ -34,6 +34,7 @@ import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 
 /**
 * Holds extra information for a particular user.
@@ -530,7 +531,7 @@ public class UserPage extends ContainerCommon
             }
         }
 
-        throw new Exception("Unable to find a status report with id ("+id+")");
+        throw new JSONException("Unable to find a status report with id ({0})", id);
     }
 
     public StatusReport createStatusReport() throws Exception {
@@ -623,7 +624,7 @@ public class UserPage extends ContainerCommon
 
         for (ProfileRef tr : getProfileRefs()) {
             if (urlAddress.equals(tr.getAddress())) {
-                throw new Exception("The reference address already exists: "+urlAddress);
+                throw new JSONException("The reference address already exists: {0}", urlAddress);
             }
         }
 
@@ -680,16 +681,16 @@ public class UserPage extends ContainerCommon
     }
 
     public void purgeDeletedAttachments() throws Exception {
-        throw new Exception("purgeDeletedAttachments should never be needed on User");
+        throw new JSONException("purgeDeletedAttachments should never be needed on User");
     }
     
     @Override
     public List<AttachmentRecord> getAllAttachments() throws Exception {
-        throw new Exception("getAllAttachments should never be needed on User Page");
+        throw new JSONException("getAllAttachments should never be needed on User Page");
     }
     @Override
     public AttachmentRecord createAttachment() throws Exception {
-        throw new Exception("createAttachment should never be needed on User Page");
+        throw new JSONException("createAttachment should never be needed on User Page");
     }
 
 
@@ -700,7 +701,7 @@ public class UserPage extends ContainerCommon
 
         NGPageIndex.assertNoLocksOnThread();
         if (up == null) {
-            throw new Exception("getTaskListJSON requires a UserProfile but got a null");
+            throw new JSONException("getTaskListJSON requires a UserProfile but got a null");
         }
         JSONArray list = new JSONArray();
 

@@ -39,7 +39,9 @@ import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.SectionDef;
 import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UtilityMethods;
+
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -138,9 +140,8 @@ public class ProjectSync {
                 retval.nameRemote = att2.getString("name");
                 retval.timeRemote = att2.getLong("modifiedtime");
                 if (retval.timeRemote==0) {
-                    throw new Exception("Something is wrong with information about remote document ("
-                            +retval.nameRemote+") (id="+retval.idRemote
-                            +") because the timestamp is zero");
+                    throw new JSONException("Something is wrong with information about remote document ({0}) (id={1}) because the timestamp is zero", 
+                            retval.nameRemote, retval.idRemote);
                 }
                 retval.urlRemote = att2.getString("content");
                 retval.sizeRemote = att2.getLong("size");
@@ -620,11 +621,11 @@ public class ProjectSync {
         JSONObject resp = remote.call(msg);
         String op = resp.getString("operation");
         if (op==null || op.length()==0) {
-            throw new Exception("Unable to contact server for a PING response, no operation in response object from: "
-                    +remote.urlStr);
+            throw new JSONException("Unable to contact server for a PING response, no operation in response object from: {0}",
+                    remote.urlStr);
         }
         if (!"ping".equals(op)) {
-            throw new Exception("Error in PING response, wrong operation returned: "+op);
+            throw new JSONException("Error in PING response, wrong operation returned: {0}", op);
         }
         //otherwise the PING is all OK, so no news is good news
     }

@@ -20,10 +20,12 @@
 
 package org.socialbiz.cog.spring;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +39,7 @@ import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.MeetingRecord;
+import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
@@ -49,6 +52,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -122,6 +126,65 @@ public class MeetingControler extends BaseController {
             }
 
             streamJSP(ar, "MeetingHtml");
+        }catch(Exception ex){
+            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/MeetMerge.htm", method = RequestMethod.GET)
+    public void meetMerge(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+
+            String id = ar.reqParam("id");
+            MeetingRecord meet = ngw.findMeeting(id);
+            boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
+            if (!canAccess) {
+                showJSPMembers(ar, siteId, pageId, "MeetingHtml");
+                return;
+            }
+
+            streamJSP(ar, "MeetMerge");
+        }catch(Exception ex){
+            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/MeetPrint.htm", method = RequestMethod.GET)
+    public void MeetPrint(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            NGBook site = ngw.getSite();
+            
+            String id = ar.reqParam("id");
+            MeetingRecord meet = ngw.findMeeting(id);
+            String template = ar.reqParam("tem");
+            if (!template.endsWith("chtml")) {
+                throw new JSONException("Meeting template must end with 'chtml'.  Do you have the right file name? {0}", template);
+            }
+            boolean canAccess = AccessControl.canAccessMeeting(ar, ngw, meet);
+            if (!canAccess) {
+                showJSPMembers(ar, siteId, pageId, "MeetingHtml");
+                return;
+            }
+            
+            JSONObject meetingJSON = meet.getFullJSON(ar, ngw);
+            Hashtable<String, File> templates = site.allMeetingTemplates(ar);
+            File templateFile = templates.get(template);
+            if (templateFile == null) {
+                templateFile = templates.get("FlatDetailAgenda.chtml");
+            }
+            ar.invokeJSP("/spring/jsp/PrintHeaders.jsp");
+            org.socialbiz.cog.mail.ChunkTemplate.streamIt(ar.w, templateFile,   meetingJSON, ar.getUserProfile().getCalendar() );         
+
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }

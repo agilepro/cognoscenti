@@ -32,6 +32,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -440,7 +441,7 @@ public class DOMFace
             return retval;
         }
         catch (Exception e) {
-            throw new Exception("Unable to construct XML object for "+childClass.getName(), e);
+            throw new JSONException("Unable to construct XML object for {0}", e, childClass.getName());
         }
     }
 
@@ -718,12 +719,10 @@ public class DOMFace
      * then an exception will be thrown.
      */
     public void updateFromJSON(JSONObject foo) throws Exception {
-        throw new Exception("UpdateFromJSON method needs to be implemented on the class "
-           +this.getClass().toString());
+        throw new JSONException("UpdateFromJSON method needs to be implemented on the class {0}", this.getClass().getName());
     }
     public JSONObject getJSON() throws Exception {
-        throw new Exception("getJSON method needs to be implemented on the class "
-                +this.getClass().toString());
+        throw new JSONException("getJSON method needs to be implemented on the class {0}", this.getClass().getName());
     }
     
     // --------------------------------------------------------------------------
@@ -934,7 +933,7 @@ public class DOMFace
             }
         }
         catch (Exception e) {
-            throw new Exception("Unable to update collection named "+memberName, e);
+            throw new JSONException("Unable to update collection named {0}", e, memberName);
         }
     }
 

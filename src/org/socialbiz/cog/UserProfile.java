@@ -32,6 +32,7 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 public class UserProfile implements UserRef
@@ -785,7 +786,7 @@ public class UserProfile implements UserRef
     public void assureImage(Cognoscenti cog) throws Exception {
         File imageFolder = cog.getConfig().getFileFromRoot("users");
         if (!imageFolder.exists()) {
-            throw new Exception("Can't find the user folder!: "+imageFolder);
+            throw new JSONException("Can't find the user folder!: {0}", imageFolder);
         }
         File imageFile = new File(imageFolder, getKey()+".jpg");
         if (imageFile.exists()) {

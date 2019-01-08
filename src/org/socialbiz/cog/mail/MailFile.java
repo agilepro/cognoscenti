@@ -34,6 +34,7 @@ import org.socialbiz.cog.OptOutAddr;
 import org.socialbiz.cog.exception.ProgramLogicError;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
 
@@ -139,7 +140,7 @@ public class MailFile extends JSONWrapper {
                 return new MailFile(path, newKernel, _retentionFactor);
             }
             catch (Exception e) {
-                throw new Exception("Unable to read global email file: "+path, e);
+                throw new JSONException("Unable to read global email file: {0}", e, path);
             }
         }
     }
@@ -264,7 +265,7 @@ public class MailFile extends JSONWrapper {
             return emailRec;
         }
         catch (Exception e) {
-            throw new Exception("unable to compose email record from '"+from+"' on: "+subject, e);
+            throw new JSONException("Unable to compose email record from '{0}' on: {1}", e, from, subject);
         }
     }
 

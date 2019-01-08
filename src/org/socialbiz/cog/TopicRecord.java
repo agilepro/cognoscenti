@@ -34,6 +34,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.streams.MemFile;
 
@@ -963,8 +964,8 @@ public class TopicRecord extends CommentContainer implements EmailContext {
          String universalid = noteObj.getString("universalid");
          if (!universalid.equals(getUniversalId())) {
              //just checking, this should never happen
-             throw new Exception("Error trying to update the record for a note with UID ("
-                     +getUniversalId()+") with post from topic with UID ("+universalid+")");
+             throw new JSONException("Error trying to update the record for a note with UID ({0}) with post from topic with UID ({1})", 
+                     getUniversalId(), universalid);
          }
          if (noteObj.has("subject")) {
              setSubject(noteObj.getString("subject"));

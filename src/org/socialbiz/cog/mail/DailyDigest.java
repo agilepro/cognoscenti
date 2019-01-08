@@ -30,6 +30,7 @@ import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.exception.NGException;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 import com.purplehillsbooks.json.JSONTokener;
 import com.purplehillsbooks.streams.HTMLWriter;
@@ -460,7 +461,7 @@ public class DailyDigest {
                 clone.write("</table>");
             }
             catch (Exception e) {
-                throw new Exception("Error while processing container: "+ngpi.containerName, e);
+                throw new JSONException("Error while processing container: {0}", e, ngpi.containerName);
             }
             finally {
                 NGPageIndex.clearLocksHeldByThisThread();

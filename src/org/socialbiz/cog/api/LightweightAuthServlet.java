@@ -162,7 +162,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
                 String chg2 = objIn.getString("challenge");
 
                 if (objIn.getString("token").length()==0) {
-                    throw new Exception("Need to have a 'token' member of the passed JSON in order to verify it.");
+                    throw new Exception("'verifyToken' needs to have a 'token' member of the passed JSON.");
                 }
 
                 if (!chg1.equals(chg2)) {
@@ -208,7 +208,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
                 w.flush();
             }
             else {
-                throw new Exception("Lightweight Auth Servlet can not handle address: "+pathInfo);
+                throw new JSONException("Lightweight Auth Servlet can not handle address: {0}", pathInfo);
             }
         }
         catch (Exception e) {

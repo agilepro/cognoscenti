@@ -22,8 +22,10 @@ package org.socialbiz.cog.api;
 
 import java.net.URL;
 
-import com.purplehillsbooks.json.JSONObject;
 import org.socialbiz.cog.RemoteJSON;
+
+import com.purplehillsbooks.json.JSONException;
+import com.purplehillsbooks.json.JSONObject;
 
 /**
 * A remote site
@@ -45,7 +47,7 @@ public class RemoteSite {
             return guts;
         }
         catch (Exception e) {
-            throw new Exception("Unable to get site detail from url=" + urlStr, e);
+            throw new JSONException("Unable to get site detail from url={0}", e, urlStr);
         }
     }
 

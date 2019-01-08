@@ -33,6 +33,7 @@ import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 public class UserManager
@@ -117,7 +118,7 @@ public class UserManager
     private void readJSONFile() throws Exception  {
         
         if(!jsonFileName.exists()) {
-            throw new Exception("Not able to create the user profile file: "+jsonFileName);
+            throw new JSONException("Not able to create the user profile file: {0}", jsonFileName);
         }
         
        
@@ -197,7 +198,7 @@ public class UserManager
      */
     private void convertXMLtoJSON(File xmlFileName) throws Exception  {
         if(!xmlFileName.exists()) {
-            throw new Exception("Can't find the new or the old user profiles. ("+xmlFileName+") giving up.");
+            throw new JSONException("Can't find the new or the old user profiles. ({0}) giving up.", xmlFileName);
         }
         
         InputStream is = new FileInputStream(xmlFileName);

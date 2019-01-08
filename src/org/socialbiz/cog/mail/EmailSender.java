@@ -168,9 +168,7 @@ public class EmailSender extends TimerTask {
             handleGlobalEmail();
             handleAllOverdueScheduledEvents(ar);
         } catch (Exception e) {
-            Exception failure = new Exception(
-                    "EmailSender-TimerTask failed in run method.",
-                    e);
+            Exception failure = new Exception("EmailSender-TimerTask failed in run method.", e);
             JSONException.traceException(System.out, failure, "EmailSender-TimerTask failed in run method.");
             threadLastCheckException = failure;
         }
@@ -250,7 +248,7 @@ public class EmailSender extends TimerTask {
                 emailArchive.save();
             }
             catch (Exception e) {
-                throw new Exception("Problem with email file: "+emailArchiveFile, e);
+                throw new JSONException("Problem with email file: {0}", e, emailArchiveFile);
             }
 
             if (ngpi.isProject()){

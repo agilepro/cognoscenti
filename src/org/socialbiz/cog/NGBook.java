@@ -1216,5 +1216,30 @@ public class NGBook extends ContainerCommon {
         ar.writeHtml(trimName(getFullName(), len));
         ar.write( "</a>");
     }
+    
+    public Hashtable<String, File> allMeetingTemplates(AuthRequest ar) {
+        File siteFolder = associatedFile.getParentFile();
+        File siteCogFolder = new File(siteFolder, ".cog");
+        File siteMeetsFolder = new File(siteCogFolder, "meets");
+        
+        File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("meets");
+        Hashtable<String, File> allTemplates = new Hashtable<String, File>();
+        
+        File[] children = siteMeetsFolder.listFiles();
+        if (children!=null) {
+            for (File tempName: children) {
+                allTemplates.put(tempName.getName(), tempName);
+            }
+        }
+        children = templateFolder.listFiles();
+        if (children!=null) {
+            for (File tempName: children) {
+                if (!allTemplates.contains(tempName.getName())) {
+                    allTemplates.put(tempName.getName(), tempName);
+                }
+            }
+        }
+        return allTemplates;
+    }
 
 }
