@@ -537,6 +537,7 @@ public class EmailGenerator extends DOMFace {
         JSONObject obj = new JSONObject();
         obj.put("id", getId());
         obj.put("from", getOwner());
+        obj.put("fromUser", new AddressListEntry(getOwner()).getJSON());
         obj.put("subject", getSubject());
         obj.put("state", getState());
         obj.put("sendDate", getSendDate());

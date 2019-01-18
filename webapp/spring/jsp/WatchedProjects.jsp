@@ -59,12 +59,12 @@ app.controller('myCtrl', function($scope, $http) {
         return $scope.wList;
     };
     $scope.getRows = function() {
-        var lcfilter = $scope.filter.toLowerCase();
+        var lcfilter = parseLCList($scope.filter);
         var res = [];
         var last = $scope.wList.length;
         for (var i=0; i<last; i++) {
             var rec = $scope.wList[i];
-            if (rec.name.toLowerCase().indexOf(lcfilter)>=0) {
+            if (containsOne(rec.name, lcfilter)) {
                 res.push(rec);
             }
         }

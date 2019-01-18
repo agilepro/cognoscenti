@@ -85,7 +85,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     };
 
     $scope.findDecisions = function() {
-        var filterlist = $scope.filter.split(" ");
+        var filterlist = parseLCList($scope.filter);
         var src = $scope.allDecisions;
         $scope.allLabelFilters().map( function(label) {
             var res = [];
@@ -96,18 +96,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             });
             src = res;
         });
-        for (var j=0; j<filterlist.length; j++) {
-            var lcfilter = filterlist[j].toLowerCase();
-            var res = [];
-            src.map( function(item) {
-                if (item.html.toLowerCase().indexOf(lcfilter) >=0) {
-                    res.push(item);
-                }
-            });
-            src = res;
-        }
-        src.sort(function(a, b){return b.num-a.num});
-        return src;
+        res = [];
+        src.map( function(item) {
+            if (containsOne(item.html,filterlist)) {
+                res.push(item);
+            }
+        });
+        res.sort(function(a, b){return b.num-a.num});
+        return res;
     };
 
     $scope.startCreating = function() {

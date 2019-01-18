@@ -49,3 +49,29 @@ function standardTinyMCEOptions() {
 	};
 }
 
+//A filter is a string with words separated by spaces
+//this function splits them, trims, and lowercases them
+function parseLCList(str) {
+    var res = [];
+    str.split(" ").forEach( function(item) {
+        var x = item.toLowerCase().trim();
+        if (x.length>0) {
+            res.push(x);
+        }
+    });
+    return res;
+}
+//given a list of filter values, this returns whether
+//the target string contains ALL the filter values
+function containsOne(target, sourceArray) {
+    if (!target) {
+        return false;
+    }
+    var test = target.toLowerCase();
+    for (var i=0; i<sourceArray.length; i++) {
+        if (test.indexOf(sourceArray[i])<0) {
+            return false;
+        }
+    }
+    return true;
+}

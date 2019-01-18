@@ -175,12 +175,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         src = res;
         
-        var filterlist = $scope.filter.split(" ");
+        var filterlist = parseLCList($scope.filter);
         for (var j=0; j<filterlist.length; j++) {
             var res = [];
             var lcfilter = filterlist[j].toLowerCase();
             src.map( function(aNote) {
-                if (aNote.subject.toLowerCase().indexOf(lcfilter)>=0) {
+                if (containsOne(aNote.subject, filterlist)) {
                     res.push(aNote);
                 }
             });

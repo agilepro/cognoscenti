@@ -46,7 +46,7 @@ app.controller('myCtrl', function($scope, $http) {
     };
 
     $scope.getRows = function() {
-        var lcfilter = $scope.filterVal.toLowerCase();
+        var filterList = parseLCList($scope.filterVal);
         var res = $scope.workList.filter( function(item) {
 
             switch (item.state) {
@@ -69,9 +69,9 @@ app.controller('myCtrl', function($scope, $http) {
                         return false;
                     }
             }
-            return ((item.synopsis.toLowerCase().indexOf(lcfilter)>=0) ||
-                  (item.description.toLowerCase().indexOf(lcfilter)>=0) ||
-                  (item.projectname.toLowerCase().indexOf(lcfilter)>=0));
+            return (containsOne(item.synopsis,filterList) ||
+                  containsOne(item.description,filterList) ||
+                  containsOne(item.projectname,filterList));
         });
         return res;
     }

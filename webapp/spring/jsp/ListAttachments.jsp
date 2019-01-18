@@ -90,7 +90,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.sortDocs();
 
     $scope.getRows = function() {
-        var lcfilter = $scope.filter.toLowerCase();
+        var filterlist = parseLCList($scope.filter);
         var res = [];
         var last = $scope.atts.length;
         for (var i=0; i<last; i++) {
@@ -105,10 +105,10 @@ app.controller('myCtrl', function($scope, $http) {
                 continue;
             }
 
-            if (rec.name.toLowerCase().indexOf(lcfilter)>=0) {
+            if (containsOne(rec.name, filterlist)) {
                 res.push(rec);
             }
-            else if (rec.description.toLowerCase().indexOf(lcfilter)>=0) {
+            else if (containsOne(rec.description, filterlist)) {
                 res.push(rec);
             }
         }

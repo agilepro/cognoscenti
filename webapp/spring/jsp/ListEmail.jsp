@@ -27,7 +27,7 @@
 <script>
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, AllPeople) {
     window.setMainPageTitle("Email Prepared");
     $scope.eGenList = <%eGenList.write(out,2,4);%>;
     $scope.filter = "";
@@ -54,33 +54,6 @@ app.controller('myCtrl', function($scope, $http) {
         });
     };
     $scope.sortInverseChron();
-    $scope.getFiltered = function() {
-        var searchVal = $scope.filter.toLowerCase();
-        if ($scope.filter==null || $scope.filter.length==0) {
-            return $scope.eGenList;
-        };
-        var res = [];
-        $scope.eGenList.map( function(oneEmail) {
-            var foundIt = oneEmail.subject.toLowerCase().indexOf(searchVal)>=0;
-            oneEmail.alsoTo.map( function( oneTo ) {
-                if (oneTo.uid.toLowerCase().indexOf(searchVal)>=0) {
-                    foundIt = true;
-                }
-            });
-            oneEmail.attachments.map( function( oneAtt ) {
-                if (oneAtt.name.toLowerCase().indexOf(searchVal)>=0) {
-                    foundIt = true;
-                }
-                else if (oneAtt.description.toLowerCase().indexOf(searchVal)>=0) {
-                    foundIt = true;
-                }
-            });
-            if (foundIt) {
-                res.push(oneEmail);
-            };
-        });
-        return res;
-    }
 
     $scope.stateName = function(val) {
         if (val<=1) {
@@ -122,10 +95,41 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     }
+    $scope.imageName = function(player) {
+        if (player.key) {
+            return player.key+".jpg";
+        }
+        else {
+            var lc = player.uid.toLowerCase();
+            var ch = lc.charAt(0);
+            var i =1;
+            while(i<lc.length && (ch<'a'||ch>'z')) {
+                ch = lc.charAt(i); i++;
+            }
+            return "fake-"+ch+".jpg";
+        }
+    }
+    $scope.navigateToUser = function(player) {
+        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.uid);
+    }
+    $scope.filteredRecs = function(){
+        var filterList = parseLCList($scope.filter);
+        if (filterList.length==0) {
+            return $scope.eGenList;
+        }
+        var res = [];
+        $scope.eGenList.forEach( function(item) {
+            if (containsOne(item.subject, filterList)) {
+                res.push(item);
+            }
+        });
+        return res;
+    }
 
 });
 
 </script>
+<script src="../../../jscript/AllPeople.js"></script>
 
 <!-- MAIN CONTENT SECTION START -->
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -163,8 +167,26 @@ app.controller('myCtrl', function($scope, $http) {
             <td width="50px">State</td>
             <td width="100px">Date</td>
         </tr>
-        <tr ng-repeat="rec in eGenList">
-            <td>{{namePart(rec.from)}}</td>
+        <tr ng-repeat="rec in filteredRecs()">
+            <td>
+                  <span class="dropdown">
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(rec.fromUser)}}" 
+                         style="width:32px;height:32px" title="{{rec.fromUser.name}} - {{rec.fromUser.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                          {{rec.fromUser.name}}<br/>{{rec.fromUser.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(rec.fromUser)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="openInviteSender(rec.fromUser)">
+                          <span class="fa fa-envelope-o"></span> Send Invitation</a></li>
+                    </ul>
+                  </span>
+            </td>
             <td><a href="sendNote.htm?id={{rec.id}}">{{rec.subject}}</a></td>
             <td>{{stateName(rec.state)}}</td>
             <td ng-show="rec.state<=1">

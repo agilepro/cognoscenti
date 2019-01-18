@@ -118,25 +118,25 @@ app.controller('myCtrl', function($scope, $http) {
     }
 
     $scope.getHistory = function() {
-        if ($scope.filter.length==0) {
+        var filterlist = parseLCList($scope.filter);
+        if (filterlist.length==0) {
             return $scope.allHistory;
         }
-        var filter = $scope.filter.toLowerCase();
         var res = [];
-        $scope.allHistory.map(  function(hItem) {
-            if (hItem.responsible.name.toLowerCase().indexOf(filter)>=0) {
+        $scope.allHistory.forEach(  function(hItem) {
+            if (containsOne(hItem.responsible.name, filterlist)) {
                 res.push(hItem);
             }
-            else if (hItem.ctxName.toLowerCase().indexOf(filter)>=0) {
+            else if (containsOne(hItem.ctxName, filterlist)) {
                 res.push(hItem);
             }
-            else if (hItem.comments.toLowerCase().indexOf(filter)>=0) {
+            else if (containsOne(hItem.comments, filterlist)) {
                 res.push(hItem);
             }
-            else if (hItem.ctxType.toLowerCase().indexOf(filter)>=0) {
+            else if (containsOne(hItem.ctxType, filterlist)) {
                 res.push(hItem);
             }
-            else if (hItem.event.toLowerCase().indexOf(filter)>=0) {
+            else if (containsOne(hItem.event, filterlist)) {
                 res.push(hItem);
             }
         });

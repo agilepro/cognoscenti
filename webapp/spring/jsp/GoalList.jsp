@@ -106,45 +106,41 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     };
 
     $scope.findGoals = function() {
-        var lcFilterList = $scope.filter.toLowerCase().split(" ");
+        var lcFilterList = parseLCList($scope.filter);
         $scope.allGoals.sort( function(a,b) {
             return a.rank-b.rank;
         });
-        var src = $scope.allGoals;
-        for (var j=0; j<lcFilterList.length; j++) {
-            var lcfilter = lcFilterList[j];
-            var res = [];
-            src.map( function(rec) {
-                if (!$scope.showActive && rec.state>=2 && rec.state<=4) {
-                    return;
-                }
-                if (!$scope.showFuture && rec.state==1) {
-                    return;
-                }
-                if (!$scope.showCompleted && rec.state>=5) {
-                    return;
-                }
-                if ($scope.filter.length==0) {
+        var res = [];
+        $scope.allGoals.map( function(rec) {
+            if (!$scope.showActive && rec.state>=2 && rec.state<=4) {
+                return;
+            }
+            if (!$scope.showFuture && rec.state==1) {
+                return;
+            }
+            if (!$scope.showCompleted && rec.state>=5) {
+                return;
+            }
+            if ($scope.filter.length==0) {
+                res.push(rec);
+                return;
+            }
+            if (containsOne(rec.synopsis, lcFilterList)) {
+                res.push(rec);
+                return;
+            }
+            if (containsOne(rec.description, lcFilterList)) {
+                res.push(rec);
+                return;
+            }
+            for (var i=rec.assignees.length-1; i>=0; i--) {
+                if (containsOne(rec.assignees[i], lcFilterList)) {
                     res.push(rec);
                     return;
                 }
-                if (rec.synopsis.toLowerCase().indexOf(lcfilter)>=0) {
-                    res.push(rec);
-                    return;
-                }
-                if (rec.description.toLowerCase().indexOf(lcfilter)>=0) {
-                    res.push(rec);
-                    return;
-                }
-                for (var i=rec.assignees.length-1; i>=0; i--) {
-                    if (rec.assignees[i].toLowerCase().indexOf(lcfilter)>=0) {
-                        res.push(rec);
-                        return;
-                    }
-                }
-            });
-            src = res;
-        }
+            }
+        });
+        var src = res;
         var allReqLabels = $scope.allLabelFilters();
         allReqLabels.forEach( function(label) {
             var requiredLabel = label.name;
