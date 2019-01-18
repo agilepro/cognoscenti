@@ -134,9 +134,12 @@
 
 		</div>
 		<div class="col-md-8 text-right">
-		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised">Save &amp; Close</button>
-		  <button ng-click="postIt()" class="btn btn-primary btn-raised" ng-show="cmt.state<=11">
-				Save &amp; Post</button>
+		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised" ng-show="cmt.state<=11">Save Draft</button>
+		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised" ng-hide="cmt.state<=11">Save</button>
+		  <button ng-click="postIt(false)" class="btn btn-primary btn-raised" ng-show="cmt.state<=11">
+				Post without Email</button>
+		  <button ng-click="postIt(true)" class="btn btn-primary btn-raised" ng-show="cmt.state<=11 && allowCommentEmail">
+				Post with Email</button>
 		</div>
 	</div>
 </div>

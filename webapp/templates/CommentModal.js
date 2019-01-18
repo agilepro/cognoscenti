@@ -6,6 +6,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     
 	// parent scope with all the crud methods
     $scope.parentScope = parentScope;
+    $scope.allowCommentEmail = parentScope.allowCommentEmail();
+    
     // are there unsaved changes?
 	$scope.unsaved = 0;
 	// controls if comment can be saved
@@ -140,7 +142,13 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
 		saveComment("Y");
         //$interval.cancel($scope.promiseAutosave);
     };
-    $scope.postIt = function () {
+    $scope.postIt = function (sendEmail) {
+        if (sendEmail && $scope.allowCommentEmail) {
+            $scope.cmt.suppressEmail = false;
+        }
+        else {
+            $scope.cmt.suppressEmail = true;
+        }
         if ($scope.cmt.state == 11 && $scope.autosaveEnabled) {
             $scope.cmt.state = 12;
         }

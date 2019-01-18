@@ -215,7 +215,7 @@ public class AccessControl {
 
         //then, check to see if there is any special condition in session
         String resourceId = "goal:"+topicRec.getId()+":"+ngc.getKey();
-        if (ar.hasSpecialSessionAccess(resourceId)) {
+        if (!ar.isLoggedIn() && ar.hasSpecialSessionAccess(resourceId)) {
             return assureTemporaryProfile(ar);
         }
 

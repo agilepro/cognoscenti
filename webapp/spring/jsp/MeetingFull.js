@@ -1344,6 +1344,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         window.location=embeddedData.retPath+"v/FindPerson.htm?uid="+encodeURIComponent(player.uid);
     }
 
+    $scope.allowCommentEmail = function() {
+        return ($scope.meeting.state>0);
+    }
+
     $scope.openCommentCreator = function(item, type, replyTo, defaultBody) {
         if (item.topicLink) {
             var timeDiff = (new Date()).getTime() - $scope.meeting.startTime;

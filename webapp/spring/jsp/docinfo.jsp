@@ -175,6 +175,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         return "Comment";
     }
 
+    $scope.allowCommentEmail = function() {
+        return true;
+    }
+
     $scope.openCommentCreator = function(itemNotUsed, type, replyTo, defaultBody) {
         var newComment = {};
         newComment.time = -1;

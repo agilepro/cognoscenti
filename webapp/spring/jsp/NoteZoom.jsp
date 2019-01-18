@@ -257,6 +257,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.reportError(data);
         });
     };
+    
+    $scope.allowCommentEmail = function() {
+        return (!$scope.noteInfo.draft);
+    }
 
     $scope.itemHasAction = function(oneAct) {
         var res = false;
