@@ -22,28 +22,22 @@
 <div style="max-width:800px">
 <!--TEMPLATE FlatDetailAgenda.chtml-->
 
-<div class="emailbody" style="width:100%">
-<div class="h1" style="float:center">{$name|html}</div>
-<div style="float:center">{$startTime|date("MMM dd, YYYY -- HH:mm -- ('GMT'X00)")}</div>
-<div style="float:center"></div>
-</div>
+<h1>{$name|html}</h1>
+<div>{$startTime|date("MMM dd, YYYY")}</div>
+<div class="emailbody"><div class="h1" style="float:center"></div></div>
+
 
 <table class="niceTable">
 {% loop in $agenda as $agItem counter=$i,1 %}
 {% if ($agItem.isSpacer != true) %}
 <tr>
-<td style="width:50px"><b>{$agItem.number}.</b></td>
-<td><b>{$agItem.subject|html}</b><br/>
-     <i>({$agItem.duration} minutes)</i><br/>
+<td><b>{$agItem.number}.</b></td>
+<td><div><b>{$agItem.subject|html}</b></div>
+     <div>{$agItem.minutes}</div>
 </td>
-<td style="width:150px">{$agItem.schedStart|date("HH:mm")} to {$agItem.schedEnd|date("HH:mm")}</td>
 </tr>
 {% else %}
-<tr style="background-color:#EEEEEE">
-<td></td>
-<td>{$agItem.subject|html}</td>
-<td style="width:150px">{$agItem.schedStart|date("HH:mm")} to {$agItem.schedEnd|date("HH:mm")}</td>
-</tr>
+<!-- not showing schedule breaks -->
 {% endif %}
 {% onEmpty %}
 No agenda items specified for this meeting

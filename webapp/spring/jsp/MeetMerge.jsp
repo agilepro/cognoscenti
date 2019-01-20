@@ -19,6 +19,51 @@
     MeetingRecord meet = ngw.findMeeting(id);
 
     JSONObject meetingJSON = meet.getFullJSON(ar, ngw);
+    
+    //add some calculation
+    long time = meet.getStartTime();
+    JSONArray agenda = meetingJSON.getJSONArray("agenda");
+    for (int i=0; i<agenda.length(); i++) {
+        JSONObject agendaItem = agenda.getJSONObject(i);
+        agendaItem.put("schedStart", time);
+        time = time + (agendaItem.getLong("duration")*60000);
+        agendaItem.put("schedEnd", time);
+        
+        JSONArray actionItems = agendaItem.getJSONArray("actionItems");
+        JSONArray aiList = new JSONArray();
+        for (int j=0; j<actionItems.length(); j++) {
+            String guid = actionItems.getString(j);
+            GoalRecord gr = ngw.getGoalOrNull(guid);
+            if (gr!=null) {
+                JSONObject oneAI = new JSONObject();
+                oneAI.put("synopsis", gr.getSynopsis());
+                oneAI.put("id", gr.getId());
+                oneAI.put("state", gr.getState());
+                oneAI.put("url", ar.baseURL + ar.getResourceURL(ngw, "task"+gr.getId()+".htm"));
+                aiList.put(oneAI);
+            }
+        }
+        agendaItem.put("aiList", aiList);
+        
+        JSONArray docList = agendaItem.getJSONArray("docList");
+        JSONArray attList = new JSONArray();
+        for (int j=0; j<docList.length(); j++) {
+            String guid = docList.getString(j);
+            int pos = guid.lastIndexOf("@");
+            guid = guid.substring(pos+1);
+            AttachmentRecord arec = ngw.findAttachmentByID(guid);
+            if (arec!=null) {
+                JSONObject oneAI = new JSONObject();
+                oneAI.put("id", arec.getId());
+                oneAI.put("name", arec.getNiceName());
+                oneAI.put("url", ar.baseURL + ar.getResourceURL(ngw, "docinfo"+arec.getId()+".htm"));
+                attList.put(oneAI);
+            }
+        }
+        agendaItem.put("attList", attList);        
+    }
+    
+    
     File parentPath = ngw.getContainingFolder();
     File siteFolder = parentPath.getParentFile();
     File siteCogFolder = new File(siteFolder, ".cog");

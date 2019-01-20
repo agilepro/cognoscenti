@@ -1,0 +1,83 @@
+<html>
+<style>
+.emailbody {
+    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+    border-bottom: 2px solid skyblue;
+    padding:5px;
+    text-align: center;
+}
+.niceTable {
+    width: 100%;
+    max-width:800px;  
+}
+.niceTable tr td { 
+    padding:8px;
+    vertical-align: top;   
+}
+.smallPrint {
+    font-size:-2;
+}
+.docPill {
+    padding:3px;
+    background-color: #EEEEFF;
+    border: solid 1px gray;
+    border-radius:5px;
+    margin:5px;
+}
+</style>
+<body>
+<div style="max-width:800px">
+<!--TEMPLATE FlatDetailAgenda.chtml-->
+
+<h1>{$name|html}</h1>
+<div>{$startTime|date("MMM dd, YYYY")}</div>
+<div class="emailbody"><div class="h1" style="float:center"></div></div>
+
+
+<table class="niceTable">
+{% loop in $agenda as $agItem%}
+{% if ($agItem.isSpacer != true) %}
+<tr>
+<td><b>{$agItem.number}.</b></td>
+<td><div><b>{$agItem.subject|html}</b></div>
+     <div>{$agItem.minutes}</div>
+</td>
+</tr>
+{% else %}
+<!-- not showing schedule breaks -->
+{% endif %}
+
+<tr>
+<td></td>
+<td>
+
+<div style="padding:6px;">
+Attachments: 
+{% loop in $agItem.attList as $aDoc%}
+<span class="docPill"><a href="{$aDoc.url}">{$aDoc.name}</a></span>
+{% onEmpty %}
+{% endloop %}
+</div>
+
+<div style="padding:6px;">
+Action Items: 
+{% loop in $agItem.aiList as $aItem%}
+<span class="docPill"><a href="{$aItem.url}">{$aItem.synopsis}</a></span>
+{% onEmpty %}
+{% endloop %}
+</div>
+
+</td>
+</tr>
+{% onEmpty %}
+No agenda items specified for this meeting
+{% endloop %}
+</table>
+
+</div>
+
+
+
+
+
+</body></html>
