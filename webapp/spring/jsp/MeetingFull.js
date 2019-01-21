@@ -1553,11 +1553,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             size: 'lg',
             backdrop: "static",
             resolve: {
-                docList: function () {
-                    return JSON.parse(JSON.stringify(item.docList));
-                },
-                attachmentList: function() {
-                    return $scope.attachmentList;
+                containingQueryParams: function() {
+                    return "meet="+$scope.meetId+"&ai="+item.id;
                 },
                 docSpaceURL: function() {
                     return embeddedData.docSpaceURL;
@@ -1567,8 +1564,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
         attachModalInstance.result
         .then(function (docList) {
-            item.docList = docList;
-            $scope.saveAgendaItem(item);
+            //something changed, so re-read the meeting
+            $scope.refreshMeetingPromise(); 
         }, function () {
             //cancel action - nothing really to do
         });

@@ -1,12 +1,48 @@
-app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, docList, attachmentList, docSpaceURL) {
+app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, containingQueryParams, 
+               docSpaceURL) {
     window.MY_SCOPE = $scope;
-    $scope.attachmentList = attachmentList;
+    $scope.attachmentList = [];
     $scope.docSpaceURL = docSpaceURL;
-    $scope.docList = docList;
+    $scope.containingQueryParams = containingQueryParams;
+    $scope.docList = [];
     $scope.realDocumentFilter = "";
     $scope.uploadMode = false;
     $scope.fileProgress = [];
 
+    $scope.retrieveDocumentList = function() {
+        var getURL = "docsList.json";
+        $scope.showError=false;
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.attachmentList = data.docs;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+
+        var getURL = "attachedDocs.json?"+containingQueryParams;
+        $http.get(getURL)
+        .success( function(data) {
+            console.log("AttachDocumentCtrl RECEIVED DOCLIST: ", data);
+            $scope.docList = data.list;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+
+    }
+    $scope.retrieveDocumentList();
+    
+    
+    $scope.saveDocumentList = function() {
+        var getURL = "attachedDocs.json?"+containingQueryParams;
+        var newData = {list: $scope.docList};
+        console.log("AttachDocumentCtrl SAVED DOCLIST: ", newData);
+        return $http.post(getURL, JSON.stringify(newData));
+    }
+    
+    
+    
     $scope.filterDocs = function() {
         var filterlc = $scope.realDocumentFilter.toLowerCase();
         var rez =  $scope.attachmentList.filter( function(oneDoc) {
@@ -45,7 +81,14 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, doc
     }
 
     $scope.ok = function () {
-        $modalInstance.close($scope.docList);
+        $scope.saveDocumentList()
+        .success( function(data) {
+            $scope.docList = data.list;
+            $modalInstance.close($scope.docList);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
     };
 
     $scope.cancel = function () {

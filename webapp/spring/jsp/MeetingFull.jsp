@@ -984,7 +984,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
         <td>
            <table style="margin:10px;"><tr>
               <td><b>Attachments: </b></td>
-              <td><span ng-repeat="docid in item.docList" style="vertical-align: top">
+              <td><span ng-repeat="docid in item.docList track by $index" style="vertical-align: top">
                   <span class="dropdown" title="Access this attachment">
                       <button class="attachDocButton" id="menu1" data-toggle="dropdown">
                       <img src="<%=ar.retPath%>assets/images/iconFile.png"> 

@@ -152,7 +152,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.saveEdits = function(fields) {
         var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
         var rec = {};
-        rec.id = $scope.noteInfo.id
+        rec.id = $scope.noteInfo.id;
         rec.universalid = $scope.noteInfo.universalid;
         fields.forEach( function(fieldName) {
             rec[fieldName] = $scope.noteInfo[fieldName];
@@ -777,11 +777,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
-                docList: function () {
-                    return JSON.parse(JSON.stringify($scope.noteInfo.docList));
-                },
-                attachmentList: function() {
-                    return $scope.attachmentList;
+                containingQueryParams: function() {
+                    return "note="+$scope.noteInfo.id;
                 },
                 docSpaceURL: function() {
                     return $scope.docSpaceURL;
@@ -791,8 +788,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
         attachModalInstance.result
         .then(function (docList) {
-            $scope.noteInfo.docList = docList;
-            $scope.saveEdits(['docList']);
+            //don't save, just force re-read
+            $scope.saveEdits([]);
         }, function () {
             //cancel action - nothing really to do
         });

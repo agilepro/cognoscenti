@@ -56,6 +56,7 @@ Required parameters:
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal, $interval) {
+    var templateCacheDefeater = "";
     $scope.loaded = false;
     $scope.meetId = "<%ar.writeJS(meetId);%>";
     $scope.allMinutes = [];
@@ -265,6 +266,36 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
         });   
         min.isEditing = true;        
     }
+    
+    $scope.openAddDocument = function (item) {
+        console.log("STARTING add document", item);
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: "<%=ar.retPath%>templates/AttachDocument.html"+templateCacheDefeater,
+            controller: 'AttachDocumentCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                containingQueryParams: function() {
+                    return "meet="+$scope.meetId+"&ai="+item.id;
+                },
+                docSpaceURL: function() {
+                    return "";
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (docList) {
+            //nothing to do since this page does not display the document list
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
+    
+    
     // Start the clock timer
     $interval($scope.calcTimes, 1000);
     console.log("All loaded");
@@ -422,6 +453,8 @@ function setInputSelection(el, startOffset, endOffset) {
             </div>
             <div class="panel-body" ng-show="min.isEditing"  style="background-color:lightyellow">
                 <textarea ng-model="min.new" class="form-control" style="width:100%;height:200px"></textarea>
+                <button class="btn btn-default btn-raised" ng-click="openAttachActionItem(min)">Add Action Item</button>
+                <button class="btn btn-default btn-raised" ng-click="openAddDocument(min)">Add Document</button>
             </div>
             <div class="panel-body" ng-hide="min.isEditing" ng-click="startEditing(min)">
                 <div ng-bind-html="min.html" ></div>
@@ -446,7 +479,8 @@ function setInputSelection(el, startOffset, endOffset) {
 </body>
 </html>
 
-
+<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 
 
 

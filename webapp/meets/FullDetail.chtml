@@ -21,22 +21,22 @@
 <td colspan="2"><h1>{$name|html}</h1></td>
 </tr>
 <tr>
-<td>Scheduled Time:</td><td>{$startTime|date("MMM dd, YYYY -- HH:mm")}</td>
+<td style="width:100px">Scheduled Time:</td><td>{$startTime|date("MMM dd, YYYY -- HH:mm")}</td>
 </tr>
 <tr>
-<td>Duration:</td><td>{$duration} Minutes</td>
+<td style="width:100px">Duration:</td><td>{$duration} Minutes</td>
 </tr>
 <tr>
-<td>Description:</td><td>{$meetingInfo}</td>
+<td style="width:100px">Description:</td><td>{$meetingInfo}</td>
 </tr>
 <tr>
-<td>State:</td><td>{$state}</td>
+<td style="width:100px">State:</td><td>{$state}</td>
 </tr>
 <tr>
-<td>Target Role:</td><td>{$targetRole}</td>
+<td style="width:100px">Target Role:</td><td>{$targetRole}</td>
 </tr>
 <tr>
-<td>Participants:</td>
+<td style="width:100px">Participants:</td>
     <td>
     {% loop in $participants as $part %}
     <a href="FindPerson.htm?email={$part.key}">{$part.name}</a>{% divider %}<br/>{% enddivider %}

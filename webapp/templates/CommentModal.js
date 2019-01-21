@@ -77,6 +77,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         .error( handleHTTPError );
     }
     function setComment(newComment) {
+        console.log("SET COMMENT", newComment);
         if (!newComment.responses) {
             newComment.responses = [];
         }
@@ -256,11 +257,8 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
-                docList: function () {
-                    return JSON.parse(JSON.stringify($scope.cmt.docList));
-                },
-                attachmentList: function() {
-                    return $scope.attachmentList;
+                containingQueryParams: function() {
+                    return "cmt="+$scope.cmt.time;
                 },
                 docSpaceURL: function() {
                     return $scope.docSpaceURL;

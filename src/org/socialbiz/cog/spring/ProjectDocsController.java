@@ -22,16 +22,21 @@ package org.socialbiz.cog.spring;
 
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AccessControl;
+import org.socialbiz.cog.AgendaItem;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AttachmentVersion;
 import org.socialbiz.cog.AuthRequest;
+import org.socialbiz.cog.CommentRecord;
 import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.HistoryRecord;
+import org.socialbiz.cog.MeetingRecord;
 import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
@@ -586,5 +591,109 @@ public class ProjectDocsController extends BaseController {
         BaseController.showJSPMembers(ar, siteId, pageId, "CleanDebug");
     }
 
-
+    /**
+     * Bot get and update the list of documents attached to either a meeting agenda item
+     * or a discussion topic (Note).  This standard form is easier for the pop up dialog box to 
+     * use.
+     * 
+     * attachedDocs.json?meet=333&ai=4444
+     * attachedDocs.json?note=5555
+     * 
+     * {
+     *   "list": [
+     *     {
+     *        "name":"Mydocument.pdf",
+     *        "url":"http....",
+     *        "id":"456"
+     *     }
+     *   ]
+     * }
+     */
+    @RequestMapping(value = "/{siteId}/{pageId}/attachedDocs.json")
+    public void attachedDocs(@PathVariable String siteId, 
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            List<String> docList = null;
+            
+            String meetId = request.getParameter("meet");
+            String noteId = request.getParameter("note");
+            String cmtId  = request.getParameter("cmt");
+            
+            
+            if ("POST".equalsIgnoreCase(request.getMethod())) {
+                JSONObject posted = this.getPostedObject(ar);
+                JSONArray postedList = posted.getJSONArray("list");
+                List<String> newDocs = new ArrayList<String>();
+                //Set<String> uniquify = new HashSet<String>();
+                for (int i=0; i<postedList.length(); i++) {
+                    String docId = postedList.getString(i);
+                    if (!newDocs.contains(docId)) {
+                        //make sure only unique values get stored once
+                        newDocs.add(docId);
+                    }
+                }
+                if (meetId != null) {
+                    MeetingRecord mr = ngw.findMeeting(meetId);
+                    String agendaId = request.getParameter("ai");
+                    AgendaItem ai = mr.findAgendaItem(agendaId);
+                    ai.setDocList(newDocs);
+                    MeetingControler.meetingCache.updateCacheFull(ngw, ar, meetId);
+                    docList = ai.getDocList();
+                }
+                else if (noteId!=null) {
+                    TopicRecord nr = ngw.getNoteOrFail(noteId);
+                    nr.setDocList(newDocs);
+                    docList = nr.getDocList();
+                }
+                else if (cmtId!=null) {
+                    CommentRecord cr = ngw.getCommentOrFail(DOMFace.safeConvertLong(cmtId));
+                    cr.setDocList(newDocs);
+                    docList = cr.getDocList();
+                }
+                else {
+                    throw new Exception("attachedDocs.json requires a meet or note parameter on this URL");
+                }
+                ngw.save();
+            }
+            else if ("GET".equalsIgnoreCase(request.getMethod())) {
+                if (meetId != null) {
+                    MeetingRecord mr = ngw.findMeeting(meetId);
+                    String agendaId = request.getParameter("ai");
+                    AgendaItem ai = mr.findAgendaItem(agendaId);
+                    docList = ai.getDocList();
+                }
+                else if (noteId!=null) {
+                    TopicRecord nr = ngw.getNoteOrFail(noteId);
+                    docList = nr.getDocList();
+                }
+                else if (cmtId!=null) {
+                    CommentRecord cr = ngw.getCommentOrFail(DOMFace.safeConvertLong(cmtId));
+                    docList = cr.getDocList();
+                }
+                else {
+                    throw new Exception("attachedDocs.json requires a meet or note parameter on this URL");
+                }
+            }
+            else {
+                throw new Exception("attachedDocs.json only allows GET or POST");
+            }
+             
+            JSONObject repo = new JSONObject();
+            JSONArray ja = new JSONArray();
+            for (String docId : docList) {
+                ja.put(docId);
+            }
+            repo.put("list", ja);
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }
+        catch (Exception ex) {
+            Exception ee = new Exception("Unable to GET/POST attachedDocs.json", ex);
+            streamException(ee, ar);
+        }
+    }
+    
 }
