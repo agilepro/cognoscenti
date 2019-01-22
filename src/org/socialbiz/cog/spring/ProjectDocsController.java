@@ -35,6 +35,7 @@ import org.socialbiz.cog.AttachmentVersion;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.CommentRecord;
 import org.socialbiz.cog.DOMFace;
+import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.MeetingRecord;
 import org.socialbiz.cog.MimeTypes;
@@ -592,20 +593,18 @@ public class ProjectDocsController extends BaseController {
     }
 
     /**
-     * Bot get and update the list of documents attached to either a meeting agenda item
-     * or a discussion topic (Note).  This standard form is easier for the pop up dialog box to 
-     * use.
+     * Both get and update the list of documents attached to either a meeting agenda item,
+     * a discussion topic (Note), or a comment  This standard form is easier for the 
+     * pop up dialog box to use.
      * 
      * attachedDocs.json?meet=333&ai=4444
      * attachedDocs.json?note=5555
+     * attachedDocs.json?cmt=5342342342
      * 
      * {
      *   "list": [
-     *     {
-     *        "name":"Mydocument.pdf",
-     *        "url":"http....",
-     *        "id":"456"
-     *     }
+     *      "YPNYCMXCH@weaverdesigncirclecl@2779",
+     *      "YPEJJSJDH@weaverdesigncirclecl@0031"
      *   ]
      * }
      */
@@ -627,7 +626,6 @@ public class ProjectDocsController extends BaseController {
                 JSONObject posted = this.getPostedObject(ar);
                 JSONArray postedList = posted.getJSONArray("list");
                 List<String> newDocs = new ArrayList<String>();
-                //Set<String> uniquify = new HashSet<String>();
                 for (int i=0; i<postedList.length(); i++) {
                     String docId = postedList.getString(i);
                     if (!newDocs.contains(docId)) {
@@ -695,5 +693,118 @@ public class ProjectDocsController extends BaseController {
             streamException(ee, ar);
         }
     }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/allActionsList.json", method = RequestMethod.GET)
+    public void allActionsList(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+
+            JSONArray attachmentList = new JSONArray();
+            for (GoalRecord goal : ngw.getAllGoals()) {
+                attachmentList.put(goal.getJSON4Goal(ngw));
+            }
+
+            JSONObject repo = new JSONObject();
+            repo.put("list", attachmentList);
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get the list of all action items ", ex);
+            streamException(ee, ar);
+        }
+    }
     
+    
+    /**
+     * Both get and update the list of action items attached to either a meeting agenda item
+     * or a discussion topic (Note).  This standard form is easier for the pop up dialog box to 
+     * use.
+     * 
+     * attachedActions.json?meet=333&ai=4444
+     * attachedActions.json?note=5555
+     * 
+     * {
+     *   "list": [
+     *      "YPNYCMXCH@weaverdesigncirclecl@2779",
+     *      "YPEJJSJDH@weaverdesigncirclecl@0031"
+     *   ]
+     * }
+     */
+    @RequestMapping(value = "/{siteId}/{pageId}/attachedActions.json")
+    public void attachedActions(@PathVariable String siteId, 
+            @PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try {
+            NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
+            List<String> actionItemList = null;
+            
+            String meetId = request.getParameter("meet");
+            String noteId = request.getParameter("note");
+            
+            
+            if ("POST".equalsIgnoreCase(request.getMethod())) {
+                JSONObject posted = this.getPostedObject(ar);
+                JSONArray postedList = posted.getJSONArray("list");
+                List<String> newActionItems = new ArrayList<String>();
+                for (int i=0; i<postedList.length(); i++) {
+                    String actionId = postedList.getString(i);
+                    if (!newActionItems.contains(actionId)) {
+                        //make sure unique values get stored only once
+                        newActionItems.add(actionId);
+                    }
+                }
+                if (meetId != null) {
+                    MeetingRecord mr = ngw.findMeeting(meetId);
+                    String agendaId = request.getParameter("ai");
+                    AgendaItem ai = mr.findAgendaItem(agendaId);
+                    ai.setActionItems(newActionItems);
+                    MeetingControler.meetingCache.updateCacheFull(ngw, ar, meetId);
+                    actionItemList = ai.getActionItems();
+                }
+                else if (noteId!=null) {
+                    TopicRecord nr = ngw.getNoteOrFail(noteId);
+                    nr.setActionList(newActionItems);
+                    actionItemList = nr.getActionList();
+                }
+                else {
+                    throw new Exception("attachedActions.json requires a meet or note parameter on this URL");
+                }
+                ngw.save();
+            }
+            else if ("GET".equalsIgnoreCase(request.getMethod())) {
+                if (meetId != null) {
+                    MeetingRecord mr = ngw.findMeeting(meetId);
+                    String agendaId = request.getParameter("ai");
+                    AgendaItem ai = mr.findAgendaItem(agendaId);
+                    actionItemList = ai.getActionItems();
+                }
+                else if (noteId!=null) {
+                    TopicRecord nr = ngw.getNoteOrFail(noteId);
+                    actionItemList = nr.getActionList();
+                }
+                else {
+                    throw new Exception("attachedActions.json requires a meet or note parameter on this URL");
+                }
+            }
+            else {
+                throw new Exception("attachedActions.json only allows GET or POST");
+            }
+             
+            JSONObject repo = new JSONObject();
+            JSONArray ja = new JSONArray();
+            for (String docId : actionItemList) {
+                ja.put(docId);
+            }
+            repo.put("list", ja);
+            repo.write(ar.w, 2, 2);
+            ar.flush();
+        }
+        catch (Exception ex) {
+            Exception ee = new Exception("Unable to GET/POST attachedActions.json", ex);
+            streamException(ee, ar);
+        }
+    }    
 }
