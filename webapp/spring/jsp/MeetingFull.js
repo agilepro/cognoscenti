@@ -1613,19 +1613,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             size: 'lg',
             backdrop: "static",
             resolve: {
-                selectedActions: function () {
-                    return JSON.parse(JSON.stringify(item.actionItems));
-                },
-                allActions: function() {
-                    return $scope.allGoals;
-                },
+                containingQueryParams: function() {
+                    return "meet="+$scope.meetId+"&ai="+item.id;
+                }
             }
         });
 
         attachModalInstance.result
         .then(function (selectedActionItems) {
             item.actionItems = selectedActionItems;
-            $scope.saveAgendaItem(item);
+            //no need to save...
+            $scope.refreshMeetingPromise();
         }, function () {
             //cancel action - nothing really to do
         });

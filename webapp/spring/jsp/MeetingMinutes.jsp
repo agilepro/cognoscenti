@@ -29,6 +29,7 @@ Required parameters:
 
     <!-- INCLUDE the ANGULAR JS library -->
     <script src="<%=ar.baseURL%>jscript/angular.min.js"></script>
+    <script src="<%=ar.baseURL%>jscript/angular-translate.js"></script>
     <script src="<%=ar.baseURL%>jscript/ui-bootstrap-tpls.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/jquery.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/bootstrap.min.js"></script>
@@ -51,12 +52,19 @@ Required parameters:
     <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
-
+    
+    
+    <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
+    <script src="<%=ar.baseURL%>jscript/common.js"></script>
+    
+    
+    
+    
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ngSanitize']);
-app.controller('myCtrl', function($scope, $http, $modal, $interval) {
-    var templateCacheDefeater = "";
+var app = angular.module('myApp', ['ui.bootstrap', 'ngSanitize','ngTagsInput']);
+app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
+    var templateCacheDefeater = "?"+new Date().getTime();
     $scope.loaded = false;
     $scope.meetId = "<%ar.writeJS(meetId);%>";
     $scope.allMinutes = [];
@@ -294,7 +302,28 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval) {
         });
     };
 
-    
+    $scope.openAttachAction = function (item) {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: "<%=ar.retPath%>templates/AttachAction.html"+templateCacheDefeater,
+            controller: 'AttachActionCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                containingQueryParams: function() {
+                    return "meet="+$scope.meetId+"&ai="+item.id;
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (selectedActionItems) {
+            //no need to display anything here
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };    
     
     // Start the clock timer
     $interval($scope.calcTimes, 1000);
@@ -453,7 +482,7 @@ function setInputSelection(el, startOffset, endOffset) {
             </div>
             <div class="panel-body" ng-show="min.isEditing"  style="background-color:lightyellow">
                 <textarea ng-model="min.new" class="form-control" style="width:100%;height:200px"></textarea>
-                <button class="btn btn-default btn-raised" ng-click="openAttachActionItem(min)">Add Action Item</button>
+                <button class="btn btn-default btn-raised" ng-click="openAttachAction(min)">Add Action Item</button>
                 <button class="btn btn-default btn-raised" ng-click="openAddDocument(min)">Add Document</button>
             </div>
             <div class="panel-body" ng-hide="min.isEditing" ng-click="startEditing(min)">
@@ -479,7 +508,8 @@ function setInputSelection(el, startOffset, endOffset) {
 </body>
 </html>
 
-<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
+<script src="../../../jscript/AllPeople.js"></script>
+<script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 
 

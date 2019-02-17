@@ -807,12 +807,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             controller: 'AttachActionCtrl',
             size: 'lg',
             resolve: {
-                selectedActions: function () {
-                    return $scope.noteInfo.actionList;
-                },
-                allActions: function() {
-                    return $scope.allGoals;
-                },
+                containingQueryParams: function() {
+                    return "note="+$scope.noteInfo.id;
+                }
             }
         });
 

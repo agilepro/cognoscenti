@@ -1,17 +1,42 @@
-app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selectedActions, allActions, AllPeople) {
+app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, containingQueryParams, AllPeople) {
 
-    $scope.allActions = allActions;
-    if(selectedActions) {
-        $scope.selectedActions = selectedActions;
-    }
-    else {
-        $scope.selectedActions = [];
-    }
+    $scope.allActions = [];
+    $scope.selectedActions = [];
     $scope.newGoal = {};
     $scope.newGoal.assignTo = [];
+    $scope.containingQueryParams = containingQueryParams;
     $scope.realFilter = "";
-    $scope.createMode = false;
     
+    $scope.retrieveActionList = function() {
+        var getURL = "allActionsList.json";
+        $scope.showError=false;
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.allActions = data.list;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+
+        var getURL = "attachedActions.json?"+containingQueryParams;
+        $http.get(getURL)
+        .success( function(data) {
+            console.log("AttachActionCtrl RECEIVED ACTION LIST: ", data);
+            $scope.selectedActions = data.list;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+
+    }
+    $scope.retrieveActionList();
+    
+    $scope.saveActions = function() {
+        var getURL = "attachedActions.json?"+containingQueryParams;
+        var newData = {list: $scope.selectedActions};
+        console.log("AttachDocumentCtrl SAVED ACTION LIST: ", newData);
+        return $http.post(getURL, JSON.stringify(newData));
+    }
     
 
     $scope.filterActions = function() {
@@ -92,8 +117,9 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
         .success( function(data) {
             $scope.allActions.push(data);
             $scope.selectedActions.push(data.universalid);
+            console.log("ACTION ITEM CREATED", data);
+            $scope.saveActions();
             $scope.newGoal = {};
-            $scope.createMode = false;
             $modalInstance.close($scope.selectedActions);
         })
         .error( function(data, status, headers, config) {
@@ -102,12 +128,16 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, selec
     };
 
     $scope.ok = function () {
-        $modalInstance.close($scope.selectedActions);
+        $scope.saveActions()
+        .success( function(data) {
+            console.log("AttachDocumentCtrl VERIFIED ACTION LIST: ", data);
+            $modalInstance.close($scope.selectedActions);
+        });
     };
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
-    $scope.selectedTab = "Existing";
+    $scope.selectedTab = "Create";
 
 });
