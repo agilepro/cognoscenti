@@ -26,12 +26,17 @@
 
     String remoteProfileURL = ar.baseURL+"apu/"+uProf.getKey()+"/user.json?lic="+uProf.getLicenseToken();
 
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
+    
 %>
 
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Profile Settings");
     $scope.userInfo = <%userInfo.write(out,2,4);%>;
 
@@ -70,6 +75,30 @@ app.controller('myCtrl', function($scope, $http) {
         });
         
     }
+    $scope.openSendEmail = function (item) {
+
+        var attachModalInstance = $modal.open({
+            animation: true,
+            templateUrl: "<%=ar.retPath%>templates/EmailModal.html<%=templateCacheDefeater%>",
+            controller: 'EmailModalCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                userInfo: function () {
+                    return $scope.userInfo;
+                }
+            }
+        });
+
+        attachModalInstance.result
+        .then(function (selectedTopic, topicName) {
+            //nothing really to do
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };
+
+    
 });
 </script>
 
@@ -100,6 +129,9 @@ app.controller('myCtrl', function($scope, $http) {
                     Update Settings</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="addingEmail=!addingEmail" >
                     Add Email Address</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem" ng-click="openSendEmail()" >
+                    Send Email to this User</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" href="RemoteProfiles.htm" >
                     Remote Profiles</a></li>
@@ -201,3 +233,5 @@ if (ar.isLoggedIn()) { %>
 <%} %>
 
 </div>
+
+<script src="<%=ar.retPath%>templates/EmailModal.js"></script>

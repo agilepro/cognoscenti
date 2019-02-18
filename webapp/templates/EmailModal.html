@@ -1,0 +1,58 @@
+<html>
+<body>
+<style>
+    .ta-editor.form-control.myform2-height  {
+        height: 200px;
+        min-height: 200px;
+    }
+    .spacey tr td {
+        padding:8px;
+    }
+    .clipping {
+        overflow: hidden;
+        text-overflow: clip; 
+        border-bottom:1px solid #EEEEEE;
+        border:1px solid gray;
+        height:200px;
+    }
+</style>
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-click="selectedTab='Email'" 
+          ng-class="selectedTab=='Email'?'qqTabSelected':'qqTabUnselected'">
+    Email
+    </span>
+  </div>
+</div>
+<div class="modal-body" style="min-height:400px">
+    <div ng-show="selectedTab=='Email'">
+        <div class="form-group form-inline">
+          <label>To:</label>
+          {{userInfo.name}}
+        </div>
+        <div class="form-group form-inline">
+          <label>Subject:</label>
+          <input ng-model="subject" class="form-control" style="width:400px"/>
+        </div>
+    	<div ui-tinymce="tinymceOptions" ng-model="message" 
+             class="leafContent" style="min-height:400px;margin:20px" id="theOnlyEditor"></div>
+    </div>
+</div>
+<div class="modal-footer">
+	<div class="row">
+		<div class="col-md-4 text-left" id='status'>
+            <button ng-click="save()" class="btn btn-link" ng-disabled="((!unsaved) && (saveDisabled))" style="padding-left: 0" ng-show="autosaveEnabled">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                <span class="text-info">{{getStatusMassage()}}</span>
+            </button>
+
+		</div>
+		<div class="col-md-8 text-right">
+		  <button ng-click="sendEmail()" class="btn btn-default btn-raised" >Send Email</button>
+		  <button ng-click="cancel()" class="btn btn-default btn-raised" >Cancel</button>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+

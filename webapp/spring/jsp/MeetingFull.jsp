@@ -670,12 +670,12 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                  <span class="dropdown">
                     <button class="dropdown-toggle btn votingButton" type="button"  d="menu" style="margin:0px"
                         data-toggle="dropdown"> &nbsp;
-                        <span ng-show="time.people[resp.uid]==1" title="very bad time for me" style="color:red;">
+                        <span ng-show="time.people[resp.uid]==1" title="Conflict for that time" style="color:red;">
                             <span class="fa fa-minus-circle"></span>
                             <span class="fa fa-minus-circle"></span></span>
-                        <span ng-show="time.people[resp.uid]==2" title="bad time for me" style="color:red;">
-                            <span class="fa fa-minus-circle"></span></span>
-                        <span ng-show="time.people[resp.uid]==3" title="don't know" style="color:#eeeeee;">
+                        <span ng-show="time.people[resp.uid]==2" title="Very uncertain, maybe unlikely" style="color:red;">
+                            <span class="fa fa-question-circle"></span></span>
+                        <span ng-show="time.people[resp.uid]==3" title="No response given" style="color:#eeeeee;">
                             <span class="fa fa-question-circle"></span></span>
                         <span ng-show="time.people[resp.uid]==4" title="ok time for me" style="color:green;">
                             <span class="fa fa-plus-circle"></span></span>
@@ -697,16 +697,16 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 3)">
                           <i class="fa fa-question-circle" style="color:gray"></i>
-                          Unknown</a></li>
+                          No Response</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 2)">
-                          <i class="fa fa-minus-circle" style="color:red"></i>
-                          Bad time</a></li>
+                          <i class="fa fa-question-circle" style="color:red"></i>
+                          Uncertain</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('timeSlots', time.proposedTime, resp.uid, 1)">
                           <i class="fa fa-minus-circle" style="color:red"></i>
                           <i class="fa fa-minus-circle" style="color:red"></i>
-                          Impossible</a></li>
+                          Conflict at that Time</a></li>
                     </ul>
                 </span>
               </td>
@@ -1200,12 +1200,12 @@ Meeting Duration: {{meeting.timerTotal|minutes}}
                  <span class="dropdown">
                     <button class="dropdown-toggle btn votingButton" type="button"  d="menu" style="margin:0px"
                         data-toggle="dropdown"> &nbsp;
-                        <span ng-show="time.people[resp.uid]==1" title="very bad time for me" style="color:red;">
+                        <span ng-show="time.people[resp.uid]==1" title="Conflict for that time" style="color:red;">
                             <span class="fa fa-minus-circle"></span>
                             <span class="fa fa-minus-circle"></span></span>
-                        <span ng-show="time.people[resp.uid]==2" title="bad time for me" style="color:red;">
-                            <span class="fa fa-minus-circle"></span></span>
-                        <span ng-show="time.people[resp.uid]==3" title="don't know" style="color:#eeeeee;">
+                        <span ng-show="time.people[resp.uid]==2" title="Very uncertain, maybe unlikely" style="color:red;">
+                            <span class="fa fa-question-circle"></span></span>
+                        <span ng-show="time.people[resp.uid]==3" title="No response given" style="color:#eeeeee;">
                             <span class="fa fa-question-circle"></span></span>
                         <span ng-show="time.people[resp.uid]==4" title="ok time for me" style="color:green;">
                             <span class="fa fa-plus-circle"></span></span>
@@ -1227,16 +1227,16 @@ Meeting Duration: {{meeting.timerTotal|minutes}}
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp.uid, 3)">
                           <i class="fa fa-question-circle" style="color:gray"></i>
-                          Unknown</a></li>
+                          No Response</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp.uid, 2)">
-                          <i class="fa fa-minus-circle" style="color:red"></i>
-                          Bad time</a></li>
+                          <i class="fa fa-question-circle" style="color:red"></i>
+                          Uncertain</a></li>
                       <li role="presentation">
                           <a role="menuitem" ng-click="setVote('futureSlots', time.proposedTime, resp.uid, 1)">
                           <i class="fa fa-minus-circle" style="color:red"></i>
                           <i class="fa fa-minus-circle" style="color:red"></i>
-                          Impossible</a></li>
+                          Conflict at that Time</a></li>
                     </ul>
                 </span>
               </td>

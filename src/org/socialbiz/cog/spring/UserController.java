@@ -1617,6 +1617,38 @@ public class UserController extends BaseController {
     }
     
     
+    @RequestMapping(value="/{userKey}/sendEmail", method = RequestMethod.POST)
+    public void sendEmail(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable String userKey) throws Exception {
+
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            Cognoscenti cog = ar.getCogInstance();
+            UserProfile user = cog.getUserManager().findUserByAnyIdOrFail(userKey);
+            JSONObject postObject = this.getPostedObject(ar);
+            
+            AddressListEntry ale = new AddressListEntry(ar.getBestUserId());
+            OptOutAddr ooa = new OptOutAddr(ale);
+            postObject.put("from", ale.getJSON());
+            
+            AddressListEntry ale2 = new AddressListEntry(user.getPreferredEmail());
+            postObject.put("to", ale2.getJSON());
+            
+            postObject.put("baseURL", ar.baseURL);
+            postObject.put("optout", ooa.getUnsubscribeJSON(ar));
+            
+            File templateFile = ar.getCogInstance().getConfig().getFileFromRoot("email/DirectEmail.chtml");
+            
+            MailInst mi = EmailSender.createEmailFromTemplate( ooa, user.getPreferredEmail(),
+                    postObject.getString("subject"), templateFile, postObject);
+
+            sendJson(ar, mi.getJSON());
+        }catch(Exception ex){
+            streamException(ex,ar);
+        }
+    }
     
 
 
