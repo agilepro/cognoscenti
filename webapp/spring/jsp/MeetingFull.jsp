@@ -344,16 +344,24 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
               <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
       </div>
+      <div>
       <span class="dropdown">
           <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(false)"
                   title="Post this topic but don't send any email">
-          Post to these Participants </button>
+          Post Without Email </button>
+      </span>
+      <span class="dropdown">
+          <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(true)"
+                  title="Post this topic and send email">
+          Post &amp; Prepare Email </button>
       </span>
       <span class="dropdown">
           <button class="btn btn-default btn-warning btn-raised" type="button" ng-click="addressMode = false"
                   title="Cancel and leave this in draft mode.">
           Cancel </button>
       </span>
+      </div>
+      
 
     </div>
 

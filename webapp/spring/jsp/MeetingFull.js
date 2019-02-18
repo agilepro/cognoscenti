@@ -286,10 +286,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
     }
     $scope.postIt = function(sendEmail) {
-        $scope.meeting.sendEmailNow = sendEmail;
         $scope.meeting.state=1;
         $scope.savePartialMeeting(['state','sendEmailNow','participants']);
         $scope.addressMode = false;
+        if (sendEmail) {
+            document.location = "sendNote.htm?meet="+$scope.meetId;
+        }
     }
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query);
