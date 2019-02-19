@@ -58,7 +58,7 @@ public class SiteReqFile {
         else {
             contents = JSONObject.readFromFile(requestFile);
             JSONArray reqs = contents.getJSONArray("reqs");
-            
+
             //now remove anything more than ninety days old
             long ninetyDaysAgo = System.currentTimeMillis() - 90L*24*60*60*1000;  //ninety days
             JSONArray cleanList = new JSONArray();
@@ -71,13 +71,13 @@ public class SiteReqFile {
             contents.put("reqs", cleanList);
         }
     }
-    
+
     public void save() throws Exception {
         contents.writeToFile(requestFile);
     }
-    
-    
-    
+
+
+
     /**
      * Get all requests
      */
@@ -91,7 +91,7 @@ public class SiteReqFile {
         sortSiteRequests(usersReqs);
         return usersReqs;
     }
-    
+
     /**
      * Get requests for one user
      */
@@ -108,7 +108,7 @@ public class SiteReqFile {
         return usersReqs;
     }
 
-    
+
     /**
      * Get requests more than 48 hours old
      */
@@ -127,8 +127,8 @@ public class SiteReqFile {
         sortSiteRequests(delayedList);
         return delayedList;
     }
-    
-    
+
+
     public SiteRequest getRequestByKey(String key) throws Exception {
         JSONArray reqs = contents.getJSONArray("reqs");
         for (int i=0; i<reqs.length(); i++) {
@@ -140,13 +140,13 @@ public class SiteReqFile {
         return null;
     }
 
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
 
 
 
@@ -157,22 +157,22 @@ public class SiteReqFile {
      * And save the file.
      */
     public static SiteRequest createNewSiteRequest(JSONObject newSiteReq, AuthRequest ar) throws Exception {
-        
+
         Cognoscenti cog = ar.getCogInstance();
-        
+
         String siteId      = newSiteReq.getString("siteId");
         String siteName    = newSiteReq.getString("siteName");
         //String purpose     = newSiteReq.getString("purpose");
         //String requester   = newSiteReq.getString("requester");
-        
-        
+
+
         // first, lets see if there is a site already with that ID
         NGContainer site = cog.getSiteById(siteId);
         if (site != null) {
-            throw new JSONException("Sorry, there already exists an site with that ID ({0}).  Please try again with a different ID.", 
+            throw new JSONException("Sorry, there already exists an site with that ID ({0}).  Please try again with a different ID.",
                     siteId);
         }
-        
+
         if (siteName.length() < 4) {
             throw new JSONException("New site must have a name with 4 or more letters");
         }
@@ -182,13 +182,13 @@ public class SiteReqFile {
         if (siteId.length() < 4 || siteId.length() > 8) {
             throw new JSONException("AccountId must be four to eight charcters/numbers long.  Received ({0})", siteId);
         }
-        
+
         // to avoid file system problems all ids need to be lower case.
         siteId = siteId.toLowerCase();
         for (int i = 0; i < siteId.length(); i++) {
             char ch = siteId.charAt(i);
             if (ch < '0' || (ch > '9' && ch < 'a') || ch > 'z') {
-                throw new JSONException("AccountId must have only letters and numbers - no spaces or punctuation.  Received ({0})", 
+                throw new JSONException("AccountId must have only letters and numbers - no spaces or punctuation.  Received ({0})",
                         siteId);
             }
         }
@@ -200,13 +200,13 @@ public class SiteReqFile {
         SiteRequest newRequest = siteReqFile.createNewRequest(newSiteReq);
 
         String preApprove = newSiteReq.optString("preapprove", "").toLowerCase();
-        if (preApprove.equals("ccc2018")) {
+        if (preApprove.equals("ccc2019") || preApprove.equals("ccc2018")) {
             HistoricActions ha = new HistoricActions(ar);
             ha.completeSiteRequest(newRequest, true, "Accepted pre-approval code: "+preApprove);
         }
-        
+
         siteReqFile.save();
-               
+
         return newRequest;
     }
 
