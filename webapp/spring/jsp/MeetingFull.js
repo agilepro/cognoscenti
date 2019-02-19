@@ -505,6 +505,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         data.participants.forEach( function(item) {
             item.image = AllPeople.imageName(item);
         });
+        var totalAgendaTime = 0;
+        data.agenda.forEach( function(item) {
+            totalAgendaTime += item.duration;
+        });
+        data.agendaDuration = totalAgendaTime;
         $scope.timerCorrection = data.serverTime - new Date().getTime();
         $scope.meeting = data;
         $scope.sortItemsB();

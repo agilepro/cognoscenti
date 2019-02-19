@@ -432,7 +432,8 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
               <i class="fa fa-edit" ng-click="editMeetingPart='duration'"></i>
             </td>
             <td ng-hide="'duration'==editMeetingPart">
-              {{meeting.duration}} Minutes ({{meeting.totalDuration}} currently allocated)
+              {{meeting.duration}} Minutes ({{meeting.totalDuration}} currently allocated, 
+              ending at: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}})
             </td>
             <td ng-show="'duration'==editMeetingPart" >
                 <div class="well form-inline form-group" style="max-width:400px">
@@ -1137,9 +1138,15 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 
 
             
-    <hr/>
+<hr/>
+
+<span>
+Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}},
+</span> 
+
+   
 <span ng-show="meeting.state>=2">
-Meeting Duration: {{meeting.timerTotal|minutes}}  
+ elapsed duration: {{meeting.timerTotal|minutes}},
 <button ng-click="stopAgendaRunning()" ng-show="meeting.state==2"><i class="fa fa-clock-o"></i> Stop</button>
 </span>
 
