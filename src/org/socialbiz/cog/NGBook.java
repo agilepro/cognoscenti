@@ -228,7 +228,7 @@ public class NGBook extends ContainerCommon {
             }
             Document newDoc = readOrCreateFile(theFile, "book");
             NGBook newSite = new NGBook(theFile, newDoc);
-            
+
             //now fix up the site settings
             File cogFolder = theFile.getParentFile();
             File siteFolder = cogFolder.getParentFile();
@@ -906,7 +906,7 @@ public class NGBook extends ContainerCommon {
 
     // //////////////////// DEPRECATED METHODS//////////////////
 
-    @Override 
+    @Override
     public void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog) throws Exception {
         try {
             siteInfoRec.setModTime(modTime);
@@ -1120,7 +1120,7 @@ public class NGBook extends ContainerCommon {
         JSONObject jo = stats.getJSON();
         jo.writeToFile(getStatsFilePath());
     }
-    
+
     public boolean isMoved() {
         String moveURL = this.getScalar("movedTo");
         return (moveURL!=null && !moveURL.isEmpty());
@@ -1136,7 +1136,7 @@ public class NGBook extends ContainerCommon {
         jo.put("key", this.getKey());
         jo.put("names", constructJSONArray(getContainerNames()));
         jo.put("rootFolder", this.getSiteRootFolder());
-        jo.put("description", this.getDescription());
+        this.extractScalarString(jo, "description");
         jo.put("theme", getThemeName());
         jo.put("showExperimental", getShowExperimental());
         jo.put("changed", getLastModifyTime());
@@ -1162,7 +1162,7 @@ public class NGBook extends ContainerCommon {
     }
 
     public void updateConfigJSON(JSONObject jo) throws Exception {
-        siteInfoRec.updateScalarString("description", jo);
+        this.updateScalarString("description", jo);
         if (jo.has("theme")) {
             setThemeName( jo.getString("theme"));
         }
@@ -1216,15 +1216,15 @@ public class NGBook extends ContainerCommon {
         ar.writeHtml(trimName(getFullName(), len));
         ar.write( "</a>");
     }
-    
+
     public Hashtable<String, File> allMeetingTemplates(AuthRequest ar) {
         File siteFolder = associatedFile.getParentFile();
         File siteCogFolder = new File(siteFolder, ".cog");
         File siteMeetsFolder = new File(siteCogFolder, "meets");
-        
+
         File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("meets");
         Hashtable<String, File> allTemplates = new Hashtable<String, File>();
-        
+
         File[] children = siteMeetsFolder.listFiles();
         if (children!=null) {
             for (File tempName: children) {
