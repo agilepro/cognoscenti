@@ -323,7 +323,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         }, function () {
             //cancel action - nothing really to do
         });
-    };    
+    };
+    $scope.closeEditor = function() {
+        $scope.allMinutes.forEach( function(min) {
+            min.isEditing = false;
+            min.html = convertMarkdownToHtml(min.new);
+        });
+    }
     
     // Start the clock timer
     $interval($scope.calcTimes, 1000);
@@ -484,6 +490,7 @@ function setInputSelection(el, startOffset, endOffset) {
                 <textarea ng-model="min.new" class="form-control" style="width:100%;height:200px"></textarea>
                 <button class="btn btn-default btn-raised" ng-click="openAttachAction(min)">Add Action Item</button>
                 <button class="btn btn-default btn-raised" ng-click="openAddDocument(min)">Add Document</button>
+                <button class="btn btn-primary btn-raised" style="float:right" ng-click="closeEditor()">Close</button>
             </div>
             <div class="panel-body" ng-hide="min.isEditing" ng-click="startEditing(min)">
                 <div ng-bind-html="min.html" ></div>
