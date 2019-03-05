@@ -23,7 +23,7 @@ app.controller('myCtrl', function($scope, $http) {
         var message = {};
         message.userId = $scope.newEmail;
         message.msg = "This is the email confirmation message that you requested from Weaver.  Use the link below to set (or reset) your password in order to access Weaver";
-        message.return = "<%=ar.baseURL%><%=ar.getCompleteURL()%>"
+        message.return = "<%=ar.getCompleteURL()%>"
         message.subject = "Your Weaver Email Confirmation Message";
         
         SLAP.sendInvitationEmail(message, function(data) {
