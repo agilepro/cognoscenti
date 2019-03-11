@@ -77,7 +77,6 @@ function containsOne(target, sourceArray) {
 }
 
 function superSplit(possibleList) {
-    console.log("SUPERSPLIT in ", possibleList);
     var res = [];
     while (possibleList.length>0) {
         var pos = possibleList.indexOf(",");
@@ -113,7 +112,6 @@ function superSplit(possibleList) {
             }
         }
     }
-    console.log("SUPERSPLIT out", res);
     return res;
 }
 
