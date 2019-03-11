@@ -483,6 +483,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             }
         });
     }
+    $scope.updatePlayers = function() {
+        $scope.noteInfo.subscribers = cleanUserList($scope.noteInfo.subscribers);
+    }    
     $scope.postIt = function(sendEmail) {
         $scope.noteInfo.sendEmailNow = sendEmail;
         $scope.setPhase("Freeform");
@@ -958,7 +961,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
       <h2>Email Notification To (Subscribers):</h2>
       <div>
           <tags-input ng-model="noteInfo.subscribers" placeholder="Enter users to send notification email to"
-                      display-property="name" key-property="uid">
+                      display-property="name" key-property="uid"
+                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="updatePlayers()" 
+                      on-tag-removed="updatePlayers()">
               <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
       </div>

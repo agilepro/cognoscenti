@@ -133,6 +133,16 @@
             </span> 
         </div>
         <div class="form-group">
+            <label for="duedate">Due Date:</label>
+            <span datetime-picker ng-model="goal.duedate" 
+                class="form-control" style="max-width:300px">
+                <span ng-show="goal.duedate>1000000" datetime-picker ng-model="goal.duedate" > 
+                    {{goal.duedate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}} </span>
+                <span ng-show="goal.duedate<=1000000" datetime-picker ng-model="goal.duedate" > 
+                    not set </span>
+            </span> 
+        </div>
+        <div class="form-group">
             <label for="enddate">End Date:</label>
             <span datetime-picker ng-model="goal.enddate" 
                 class="form-control" style="max-width:300px" ng-show="goal.state==5">
@@ -156,7 +166,10 @@
         <div class="form-group">
             <label for="synopsis">Assigned To:</label>
               <tags-input ng-model="goal.assignTo" placeholder="Enter user name or id" 
-                          display-property="name" key-property="uid">
+                          display-property="name" key-property="uid"
+                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                          on-tag-added="updatePlayers()" 
+                          on-tag-removed="updatePlayers()">
                   <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
               </tags-input>
         </div>

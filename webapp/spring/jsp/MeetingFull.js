@@ -285,6 +285,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             });
         }
     }
+    $scope.updatePlayers = function() {
+        $scope.meeting.participants = cleanUserList($scope.meeting.participants);
+    }    
     $scope.postIt = function(sendEmail) {
         $scope.meeting.state=1;
         $scope.savePartialMeeting(['state','sendEmailNow','participants']);

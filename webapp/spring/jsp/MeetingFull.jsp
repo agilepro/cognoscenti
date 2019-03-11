@@ -340,7 +340,10 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
       <div>
           <tags-input ng-model="meeting.participants" 
                       placeholder="Enter users to send notification email to"
-                      display-property="name" key-property="uid">
+                      display-property="name" key-property="uid"
+                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="updatePlayers()" 
+                      on-tag-removed="updatePlayers()">
               <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
       </div>

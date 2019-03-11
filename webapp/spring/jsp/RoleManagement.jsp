@@ -93,7 +93,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.cleanDuplicates(item);
     });
     
-    function updateRoleList(role) {
+    $scope.updateRoleList = function(role) {
         var key = role.name;
         var newRoles = [];
         $scope.allRoles.forEach( function (item) {

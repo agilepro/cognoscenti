@@ -39,7 +39,9 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
     $scope.toggleLabel = function(label) {
         $scope.goal.labelMap[label.name] = !$scope.goal.labelMap[label.name];
     }
-    
+    $scope.updatePlayers = function() {
+        $scope.goal.assignTo = cleanUserList($scope.goal.assignTo);
+    }
     $scope.getGoal = function(id) {
         var postURL = "fetchGoal.json?gid="+id;
         $scope.showError=false;
@@ -59,25 +61,8 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
     if ($scope.goalId != "~new~") {
         $scope.getGoal($scope.goalId);
     }
-    $scope.cleanUpAssignees = function() {
-        var newList = [];
-        $scope.goal.assignTo.forEach( function(item) {
-            var nix = {};
-            if (item.uid) {
-                nix.name = item.name; 
-                nix.uid  = item.uid; 
-                nix.key  = item.key;
-            }
-            else {
-                nix.name = item.name; 
-                nix.uid  = item.name;
-            }    
-            newList.push(nix);
-        });
-        $scope.goal.assignTo = newList;
-    };
     $scope.saveAndClose = function() {
-        $scope.cleanUpAssignees();
+        $scope.goal.assignTo = cleanUserList($scope.goal.assignTo);
         $scope.goal.modifiedtime = new Date().getTime();
         $scope.goal.modifieduser = SLAP.loginInfo.userId;
         

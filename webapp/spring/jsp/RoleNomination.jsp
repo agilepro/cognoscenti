@@ -181,11 +181,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         termObj.nominations.push(nom);
         $scope.updateTerm(termObj);
     }
-    $scope.updatePlayers = function(newList) {
+    $scope.updatePlayers = function() {
         var termObj = {};
         termObj.key = $scope.termKey;
         termObj.players = [];
-        termObj.players = newList;
+        termObj.players = cleanUserList($scope.term.players);
         $scope.updateTerm(termObj);
     }
     $scope.updateTerm = function(termObj) {
@@ -425,9 +425,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <div class="form-group">
                 <label for="status">Players (Proposed)</label>
                 <tags-input ng-model="term.players" placeholder="Enter user name or id" 
-                            display-property="name" key-property="uid" 
-                            on-tag-added="updatePlayers(term.players)" 
-                            on-tag-removed="updatePlayers(term.players)">
+                        display-property="name" key-property="uid" 
+                        replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                        on-tag-added="updatePlayers()" 
+                        on-tag-removed="updatePlayers()">
                     <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
                 </tags-input>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
@@ -471,9 +472,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <div class="form-group">
                 <label for="status">Players </label>
                 <tags-input ng-model="term.players" placeholder="Enter user name or id" 
-                            display-property="name" key-property="uid" 
-                            on-tag-added="updatePlayers(term.players)" 
-                            on-tag-removed="updatePlayers(term.players)">
+                        display-property="name" key-property="uid" 
+                        replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                        on-tag-added="updatePlayers()" 
+                        on-tag-removed="updatePlayers()">
                     <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
                 </tags-input>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">

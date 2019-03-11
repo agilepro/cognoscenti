@@ -256,6 +256,9 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         return AllPeople.findMatchingPeople(query);
     }
 
+    $scope.updatePlayers = function() {
+        $scope.newGoal.assignList = cleanUserList($scope.newGoal.assignList);
+    }    
     $scope.createNewGoal = function() {
         var newRec = $scope.newGoal;
         newRec.id = "~new~";
@@ -423,7 +426,10 @@ function addvalue() {
                 <td style="width:20px;"></td>
                 <td colspan="2">
                   <tags-input ng-model="newGoal.assignList" placeholder="Enter user name or id"
-                              display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+                              display-property="name" key-property="uid" on-tag-clicked="showUser($tag)"
+                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="updatePlayers()" 
+                      on-tag-removed="updatePlayers()">
                       <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
                   </tags-input>
                 </td>

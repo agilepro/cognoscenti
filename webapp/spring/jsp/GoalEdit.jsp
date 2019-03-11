@@ -307,6 +307,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.goalInfo.assignTo.push(player);
         $scope.saveGoal();
     }
+    $scope.updatePlayers = function() {
+        $scope.tagEntry = cleanUserList($scope.tagEntry);
+    }    
     $scope.removePerson = function(person) {
         console.log("CALL to removePerson");
         var res = $scope.goalInfo.assignTo.filter( function(one) {
@@ -605,7 +608,10 @@ function addvalue() {
         <tr title="The action item can be assigned to any number of people who will receive reminders until it is completed.">
             <td >Assigned To:</td>
             <td>
-              <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)">
+              <tags-input ng-model="tagEntry" placeholder="Enter user name or id" display-property="name" key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)"
+                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="updatePlayers()" 
+                      on-tag-removed="updatePlayers()">
                   <auto-complete source="loadPersonList($query)"  min-length="1"></auto-complete>
               </tags-input>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">

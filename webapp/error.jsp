@@ -4,6 +4,7 @@
 %><%@include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.ErrorLog"
 %><%@page import="org.socialbiz.cog.ErrorLogDetails"
+%><%@page import="org.socialbiz.cog.DOMFace"
 %><%String pageTitle = (String) request.getAttribute("pageTitle");
     String userName = "User not logged in";
     if (ar.isLoggedIn()) {
@@ -14,12 +15,12 @@
         pageTitle = "Error Page";
     }
 
-    int exceptionNO = ar.defParamInt("exceptionNO", 0);
+    int exceptionNO = DOMFace.safeConvertInt(ar.defParam("exceptionNO", "0"));
 
     //this code was allowing a display to be made of an unlogged exception, logging
     //it here is a little sloppy.  Should assure that all errors are logged before this page.
     if (exceptionNO == 0) {
-        exceptionNO=ar.logException("", exception);
+        exceptionNO=(int)ar.logException("", exception);
     }
 
     Cognoscenti cog = Cognoscenti.getInstance(request);
@@ -62,7 +63,7 @@ window.setMainPageTitle("Oops ... problem handling that request");
     <table class="spacey">
     <tr>
         <td><b>Reference No:</b></td>
-        <td><% ar.writeHtml(exceptionNO);%></td>
+        <td><%=exceptionNO%></td>
     </tr>
     <tr>
         <td><b>User:</b></td>

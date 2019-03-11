@@ -84,6 +84,9 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         errorPanelHandler($scope, serverErr);
     };
     
+    $scope.updatePlayers = function() {
+        $scope.newWorkspace.members = cleanUserList($scope.newWorkspace.members);
+    }    
     $scope.createNewWorkspace = function() {
         if (!$scope.newWorkspace.newName) {
             alert("Please enter a name for this new workspace.");
@@ -197,7 +200,10 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
             Initial Members &nbsp; <i class="fa fa- fa-question-circle-o"></i>
         </label>
           <tags-input ng-model="newWorkspace.members" placeholder="Enter email/name of members for this workspace"
-                      display-property="name" key-property="uid">
+                      display-property="name" key-property="uid"
+                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="updatePlayers()" 
+                      on-tag-removed="updatePlayers()">
               <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
     </div>

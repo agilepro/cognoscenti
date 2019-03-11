@@ -57,12 +57,48 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         var role = {};
         role.name = $scope.roleInfo.name;
         role.color = $scope.roleInfo.color;
-        role.players = $scope.roleInfo.players;
+        role.players = cleanUserList($scope.roleInfo.players);
         console.log("UPDATING ROLE: ",role);
-        $scope.parentScope.updateRole(role);
+        $scope.updateRole(role);
         $scope.getCurrentTerm();
     }
-    
+
+    $scope.updateRole = function(role) {
+        var postURL = "roleUpdate.json?op=Update";
+        var postdata = angular.toJson(role);
+        $scope.showError=false;
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            console.log("SETTING ROLE TO: ", data);
+            $scope.roleInfo = data;
+            $scope.parentScope.updateRoleList(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    $scope.cleanDuplicates = function(rolePlayers) {
+        var cleanList = [];
+        rolePlayers.forEach( function(item) {
+            var newOne = true;
+            var uidlc = item.uid;
+            if (!uidlc) {
+                uidlc = item.name;
+                item.uid = uidlc;
+            }
+            uidlc = uidlc.toLowerCase();
+            cleanList.forEach( function(inner) {
+                if (uidlc == inner.uid.toLowerCase()) {
+                    newOne = false;
+                }
+            });
+            if (newOne) {
+                cleanList.push(item);
+            }
+        });
+        return cleanList;
+    }
+        
     $scope.createAndClose = function () {
         if ($scope.roleToCopy) {
             var roleName = $scope.roleInfo.name;

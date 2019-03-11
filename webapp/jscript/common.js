@@ -75,3 +75,81 @@ function containsOne(target, sourceArray) {
     }
     return true;
 }
+
+function superSplit(possibleList) {
+    console.log("SUPERSPLIT in ", possibleList);
+    var res = [];
+    while (possibleList.length>0) {
+        var pos = possibleList.indexOf(",");
+        var pos2 = possibleList.indexOf(";");
+        if (pos2>0 && (pos2<pos || pos<0)) {
+            pos = pos2;
+        }
+        var pos2 = possibleList.indexOf(" ");
+        if (pos2>0 && (pos2<pos || pos<0)) {
+            pos = pos2;
+        }
+        var pos2 = possibleList.indexOf("\n");
+        if (pos2>0 && (pos2<pos || pos<0)) {
+            pos = pos2;
+        }
+        if (pos<0) {
+            var newVal = possibleList.trim();
+            if (newVal) {
+                res.push(newVal);
+            }
+            console.log("SUPERSPLIT out", res);
+            return res;
+        }
+        if (pos>=0) {
+            var newVal = possibleList.substring(0,pos).trim();
+            if (newVal) {
+                res.push(newVal);
+            }
+            possibleList=possibleList.substring(pos+1).trim();
+            while (possibleList.length>0 && (possibleList.charAt(0)==" " || possibleList.charAt(0)==","
+                    || possibleList.charAt(0)==";" || possibleList.charAt(0)=="\n")) {
+                possibleList=possibleList.substring(1).trim()
+            }
+        }
+    }
+    console.log("SUPERSPLIT out", res);
+    return res;
+}
+
+/* takes a list of user objects, splits any that appear to 
+have multiple email addresses into separate objects, and then
+eliminates any duplications */
+function cleanUserList(userList) {
+    var expandList = [];
+    userList.forEach( function(item) {
+        var id = item.uid;
+        if (!id) {
+            id = item.name;
+            item.uid = id;
+        }
+        var idList = superSplit(id);
+        if (idList.length==1) {
+            expandList.push(item);
+        }
+        else {
+            idList.forEach( function(part) {
+                expandList.push({uid:part,name:part});
+            });
+        }
+    });
+    var cleanList = [];
+    expandList.forEach( function(item) {
+        var newOne = true;
+        var uidlc = item.uid.toLowerCase();
+        cleanList.forEach( function(inner) {
+            if (uidlc == inner.uid.toLowerCase()) {
+                newOne = false;
+            }
+        });
+        if (newOne) {
+            cleanList.push(item);
+        }
+    });
+    return cleanList;
+}

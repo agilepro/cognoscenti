@@ -120,7 +120,7 @@ function parseList(inText) {
     var oneAddress = "";
     for (var i=0; i<inText.length; i++) {
         var ch = inText.charAt(i);
-        if (ch==";" || ch=="," || ch=="\n") {
+        if (ch==";" || ch=="," || ch=="\n" || ch==" ") {
             var trimmed = oneAddress.trim();
             if (trimmed.length>0) {
                 outList.push(trimmed);

@@ -394,11 +394,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     }
     
     $scope.cleanUpAlsoTo = function() {
-        $scope.emailInfo.alsoTo.forEach( function(person) {
-            if (!person.uid) {
-                person.uid = person.name;
-            }
-        });
+        $scope.emailInfo.alsoTo = cleanUserList($scope.emailInfo.alsoTo);
     }
 
 
@@ -511,8 +507,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             <label class="col-md-2 control-label" for="alsoalsoTo">Send To</label>
             <div class="col-md-10">
               <tags-input ng-model="emailInfo.alsoTo" placeholder="Enter user name or id" display-property="name" 
-                          key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)"
-                          onTagAdded="cleanUpAlsoTo()">
+                      key-property="uid" on-tag-clicked="toggleSelectedPerson($tag)"
+                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="cleanUpAlsoTo()" 
+                      on-tag-removed="cleanUpAlsoTo()">
                   <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
               </tags-input>
             </div>
