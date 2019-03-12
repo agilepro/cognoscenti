@@ -524,8 +524,11 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             <td class="form-inline form-group" ng-show="'participants'==editMeetingPart">
               <div>
                   <tags-input ng-model="meeting.participants" 
-                              placeholder="Enter users to send notification email to"
-                              display-property="name" key-property="uid">
+                      placeholder="Enter users to send notification email to"
+                      display-property="name" key-property="uid"
+                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="updatePlayers()" 
+                      on-tag-removed="updatePlayers()">
                       <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
                   </tags-input>
                   <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
