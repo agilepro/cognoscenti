@@ -910,13 +910,13 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                       <li role="presentation" >
                           <a role="menuitem" ng-click="toggleProposed(item)"><i class="fa fa-thumbs-o-up"></i>
                              Toggle Accepted/Proposed</a></li>
-                      <li role="presentation">
+                      <li role="presentation" ng-hide="item.proposed">
                           <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i>
                              Move Up</a></li>
-                      <li role="presentation">
+                      <li role="presentation" ng-hide="item.proposed">
                           <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i>
                              Move Down</a></li>
-                      <li role="presentation">
+                       <li role="presentation">
                           <a role="menuitem" ng-click="moveItemToBacklog(item)"><i class="fa fa-trash"></i>
                               Remove Item</a></li>
 
@@ -940,23 +940,26 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                         Duration: {{item.timerTotal| minutes}}
                     </span>
                 </span>
-                <span style="float:right" ng-hide="item.readyToGo || isCompleted()" >
+                <span style="float:right" ng-hide="item.readyToGo || isCompleted() || item.proposed" >
                     <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
                          ng-click="toggleReady(item)"
                          title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
                          style="width:24px;height=24px;float:right">
                 </span>
-                <span style="float:right" ng-show="item.readyToGo && !isCompleted()"  >
+                <span style="float:right" ng-show="item.readyToGo && !isCompleted() && !item.proposed"  >
                     <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
                          ng-click="toggleReady(item)"
                          title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
                          style="width:24px;height=24px">
                 </span>
-                <span style="float:right;margin-right:10px" ng-show="!isCompleted()"  ng-click="moveItem(item,-1)" title="Move agenda item up if possible">
+                <span style="float:right;margin-right:10px" ng-show="!isCompleted() && !item.proposed"  ng-click="moveItem(item,-1)" title="Move agenda item up if possible">
                     <i class="fa fa-arrow-up"></i>
                 </span>
-                <span style="float:right;margin-right:10px" ng-show="!isCompleted()"  ng-click="moveItem(item,1)" title="Move agenda item down if possible">
+                <span style="float:right;margin-right:10px" ng-show="!isCompleted() && !item.proposed"  ng-click="moveItem(item,1)" title="Move agenda item down if possible">
                     <i class="fa fa-arrow-down"></i>
+                </span>
+                <span style="float:right;margin-right:10px" ng-show="item.proposed"  ng-click="toggleProposed(item)" title="Accept this proposed agenda item">
+                   ACCEPT</i>
                 </span>
 <% } %>
             </div>

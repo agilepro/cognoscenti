@@ -8,6 +8,10 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
     console.log("AgendaItem is: ", agendaItem);
 
     $scope.ok = function () {
+        if ($scope.agendaItem.isSpacer) {
+            //spacers (breaks) can not be proposed
+            agendaItem.proposed = false;
+        }
         $modalInstance.close($scope.agendaItem);
     };
 

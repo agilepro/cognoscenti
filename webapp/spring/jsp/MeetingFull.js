@@ -108,6 +108,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             $scope.meeting.agenda = [];
         }
         $scope.meeting.agenda.forEach( function(item) {
+            if (item.isSpacer) {
+                //spacers (breaks) can not be proposed
+                item.proposed = false;
+            }
             if (!item.desc) {
                 item.desc = "<p></p>";
             }
