@@ -53,6 +53,10 @@
         Feedback</a></li>
     
     <% } %>
+    <li><a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB" 
+           title="Lots of videos on YouTube to help you learn how to use Weaver."
+           target="Training">
+        Training</a></li> 
   </ul>
 </nav>
 <!-- END SideBar.jsp -->
