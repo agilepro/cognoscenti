@@ -157,7 +157,7 @@ public class ProjectDocsController extends BaseController {
              @PathVariable String pageId,
              HttpServletRequest request,  HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        
+
         //special behavior.  On the Upload New Version page, if someone hits this when NOT LOGGED IN
         //then redirect to the document information page, which is allowed when not logged in,
         //and from there they can decide whether to log in or not, and then to add a new version.
@@ -215,7 +215,7 @@ public class ProjectDocsController extends BaseController {
 
             AttachmentVersion attachmentVersion = SectionAttachments.getVersionOrLatest(ngw,attachmentName,version);
             ar.resp.setHeader( "Content-Length", Long.toString(attachmentVersion.getFileSize()) );
-            
+
             att.createHistory(ar, ngw, HistoryRecord.EVENT_DOC_DOWNLOADED, "Downloaded document "+attachmentName);
 
             InputStream fis = attachmentVersion.getInputStream();
@@ -412,7 +412,7 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/sharePorts.htm", method = RequestMethod.GET)
     public void sharePorts(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -440,7 +440,7 @@ public class ProjectDocsController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/share/{id}.json")
-    public void onePortJSON(@PathVariable String siteId, 
+    public void onePortJSON(@PathVariable String siteId,
             @PathVariable String pageId,
             @PathVariable String id,
             HttpServletRequest request, HttpServletResponse response) {
@@ -472,9 +472,9 @@ public class ProjectDocsController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/share/{id}.htm", method = RequestMethod.GET)
-    public void specialShare(@PathVariable String siteId, 
+    public void specialShare(@PathVariable String siteId,
             @PathVariable String pageId,
             @PathVariable String id,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -484,7 +484,7 @@ public class ProjectDocsController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.htm", method = RequestMethod.GET)
-    public void specialReply(@PathVariable String siteId, 
+    public void specialReply(@PathVariable String siteId,
             @PathVariable String pageId,
             @PathVariable String topicId,
             @PathVariable String commentId,
@@ -503,7 +503,7 @@ public class ProjectDocsController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/unsub/{topicId}/{commentId}.htm", method = RequestMethod.GET)
-    public void specialUnsub(@PathVariable String siteId, 
+    public void specialUnsub(@PathVariable String siteId,
             @PathVariable String pageId,
             @PathVariable String topicId,
             @PathVariable String commentId,
@@ -528,7 +528,7 @@ public class ProjectDocsController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/reply/{topicId}/{commentId}.json", method = RequestMethod.POST)
-    public void specialReplySave(@PathVariable String siteId, 
+    public void specialReplySave(@PathVariable String siteId,
             @PathVariable String pageId,
             @PathVariable String topicId,
             @PathVariable String commentId,
@@ -565,7 +565,7 @@ public class ProjectDocsController extends BaseController {
             }
             note.updateCommentsFromJSON(input, ar);
             ngw.saveFile(ar, "saving comment using special reply");
-            
+
             JSONObject repo = note.getJSONWithComments(ar, ngw);
             repo.write(ar.w, 2, 2);
             ar.flush();
@@ -575,8 +575,8 @@ public class ProjectDocsController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
-    
+
+
     @RequestMapping(value = "/{siteId}/{pageId}/CleanAtt.htm", method = RequestMethod.GET)
     public void cleanAtt(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -594,13 +594,13 @@ public class ProjectDocsController extends BaseController {
 
     /**
      * Both get and update the list of documents attached to either a meeting agenda item,
-     * a discussion topic (Note), or a comment  This standard form is easier for the 
+     * a discussion topic (Note), or a comment  This standard form is easier for the
      * pop up dialog box to use.
-     * 
+     *
      * attachedDocs.json?meet=333&ai=4444
      * attachedDocs.json?note=5555
      * attachedDocs.json?cmt=5342342342
-     * 
+     *
      * {
      *   "list": [
      *      "YPNYCMXCH@weaverdesigncirclecl@2779",
@@ -609,19 +609,20 @@ public class ProjectDocsController extends BaseController {
      * }
      */
     @RequestMapping(value = "/{siteId}/{pageId}/attachedDocs.json")
-    public void attachedDocs(@PathVariable String siteId, 
+    public void attachedDocs(@PathVariable String siteId,
             @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             List<String> docList = null;
-            
+
             String meetId = request.getParameter("meet");
             String noteId = request.getParameter("note");
             String cmtId  = request.getParameter("cmt");
-            
-            
+            String goalId  = request.getParameter("goal");
+
+
             if ("POST".equalsIgnoreCase(request.getMethod())) {
                 JSONObject posted = this.getPostedObject(ar);
                 JSONArray postedList = posted.getJSONArray("list");
@@ -651,6 +652,11 @@ public class ProjectDocsController extends BaseController {
                     cr.setDocList(newDocs);
                     docList = cr.getDocList();
                 }
+                else if (goalId!=null) {
+                    GoalRecord gr = ngw.getGoalOrFail(goalId);
+                    gr.setDocLinks(newDocs);
+                    docList = gr.getDocLinks();
+                }
                 else {
                     throw new Exception("attachedDocs.json requires a meet or note parameter on this URL");
                 }
@@ -671,6 +677,10 @@ public class ProjectDocsController extends BaseController {
                     CommentRecord cr = ngw.getCommentOrFail(DOMFace.safeConvertLong(cmtId));
                     docList = cr.getDocList();
                 }
+                else if (goalId!=null) {
+                    GoalRecord gr = ngw.getGoalOrFail(goalId);
+                    docList = gr.getDocLinks();
+                }
                 else {
                     throw new Exception("attachedDocs.json requires a meet or note parameter on this URL");
                 }
@@ -678,7 +688,7 @@ public class ProjectDocsController extends BaseController {
             else {
                 throw new Exception("attachedDocs.json only allows GET or POST");
             }
-             
+
             JSONObject repo = new JSONObject();
             JSONArray ja = new JSONArray();
             for (String docId : docList) {
@@ -715,16 +725,16 @@ public class ProjectDocsController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
-    
+
+
     /**
      * Both get and update the list of action items attached to either a meeting agenda item
-     * or a discussion topic (Note).  This standard form is easier for the pop up dialog box to 
+     * or a discussion topic (Note).  This standard form is easier for the pop up dialog box to
      * use.
-     * 
+     *
      * attachedActions.json?meet=333&ai=4444
      * attachedActions.json?note=5555
-     * 
+     *
      * {
      *   "list": [
      *      "YPNYCMXCH@weaverdesigncirclecl@2779",
@@ -733,18 +743,18 @@ public class ProjectDocsController extends BaseController {
      * }
      */
     @RequestMapping(value = "/{siteId}/{pageId}/attachedActions.json")
-    public void attachedActions(@PathVariable String siteId, 
+    public void attachedActions(@PathVariable String siteId,
             @PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             List<String> actionItemList = null;
-            
+
             String meetId = request.getParameter("meet");
             String noteId = request.getParameter("note");
-            
-            
+
+
             if ("POST".equalsIgnoreCase(request.getMethod())) {
                 JSONObject posted = this.getPostedObject(ar);
                 JSONArray postedList = posted.getJSONArray("list");
@@ -792,7 +802,7 @@ public class ProjectDocsController extends BaseController {
             else {
                 throw new Exception("attachedActions.json only allows GET or POST");
             }
-             
+
             JSONObject repo = new JSONObject();
             JSONArray ja = new JSONArray();
             for (String docId : actionItemList) {
@@ -806,5 +816,5 @@ public class ProjectDocsController extends BaseController {
             Exception ee = new Exception("Unable to GET/POST attachedActions.json", ex);
             streamException(ee, ar);
         }
-    }    
+    }
 }

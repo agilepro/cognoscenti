@@ -23,7 +23,6 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
         var getURL = "attachedDocs.json?"+containingQueryParams;
         $http.get(getURL)
         .success( function(data) {
-            console.log("AttachDocumentCtrl RECEIVED DOCLIST: ", data);
             $scope.docList = data.list;
         })
         .error( function(data, status, headers, config) {
@@ -37,7 +36,6 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
     $scope.saveDocumentList = function() {
         var getURL = "attachedDocs.json?"+containingQueryParams;
         var newData = {list: $scope.docList};
-        console.log("AttachDocumentCtrl SAVED DOCLIST: ", newData);
         return $http.post(getURL, JSON.stringify(newData));
     }
     

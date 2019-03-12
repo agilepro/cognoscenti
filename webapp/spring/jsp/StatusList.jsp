@@ -98,7 +98,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
-    console.log("All labels is: ", $scope.allLabels);
     $scope.stateName = <%stateName.write(out,2,4);%>;
     $scope.taskAreaList = <%taskAreaList.write(out,2,4);%>;
     $scope.filter = "";
@@ -495,11 +494,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     };
 
     $scope.getTaskAreas = function() {
-        console.log("getting TaskAreas")
         var getURL = "taskAreas.json";
         $http.get(getURL)
         .success( function(data) {
-            console.log("received TaskAreas", data);
             $scope.taskAreaList = data.taskAreas;
             $scope.taskAreaList.push( {name:"Unspecified"} );
             $scope.loaded = true;
@@ -532,7 +529,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 });
             }
             actionItem.checkitems = list;
-            console.log("CHECKITEMS", actionItem);
         });
     }
     $scope.toggleCheckItem = function($event,item, changeIndex) {
@@ -551,7 +547,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             }
         });
         item.checklist = newList.join("\n");
-        console.log("SAVING", item);
         $scope.saveGoal(item);
         $event.stopPropagation();
     }

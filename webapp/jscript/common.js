@@ -97,7 +97,6 @@ function superSplit(possibleList) {
             if (newVal) {
                 res.push(newVal);
             }
-            console.log("SUPERSPLIT out", res);
             return res;
         }
         if (pos>=0) {

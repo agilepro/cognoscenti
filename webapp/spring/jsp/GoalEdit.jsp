@@ -236,7 +236,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             });
         }
         $scope.checkitems = list;
-        console.log("CHECKITEMS", list);
     }
     $scope.toggleCheckItem = function(changeIndex) {
         $scope.checkitems.forEach( function(item) {
@@ -254,7 +253,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             }
         });
         $scope.goalInfo.checklist = newList.join("\n");
-        console.log("SAVING", $scope.goalInfo)
         $scope.saveGoal();
     }
     $scope.constructCheckItems();
@@ -281,7 +279,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.showAccomplishment=false;
         $http.get(postURL)
         .success( function(data) {
-            console.log("CALL to success from undoGoalChanges");
             $scope.goalInfo = data;
             $scope.constructCheckItems();
             $scope.refreshHistory();
@@ -291,12 +288,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     $scope.saveAccomplishment = function() {
-        console.log("CALL to saveAccomplishment");
         $scope.goalInfo.newAccomplishment = $scope.newAccomplishment;
         $scope.saveGoal();
     }
     $scope.addPerson = function() {
-        console.log("CALL to addPerson");
         var player = $scope.newPerson;
         if (typeof player == "string") {
             var pos = player.lastIndexOf(" ");
@@ -311,12 +306,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.tagEntry = cleanUserList($scope.tagEntry);
     }    
     $scope.removePerson = function(person) {
-        console.log("CALL to removePerson");
         var res = $scope.goalInfo.assignTo.filter( function(one) {
             return (person.uid != one.uid);
         });
         $scope.goalInfo.assignTo = res;
-        console.log("About to Save:", res);
         $scope.saveGoal();
     }
     $scope.visitPlayer = function(player) {
@@ -340,7 +333,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     }
     $scope.changeRYG = function(newRAG) {
-        console.log("CALL to changeRYG");
         $scope.goalInfo.prospects = newRAG;
         $scope.saveGoal();
         $scope.refreshHistory();
@@ -401,7 +393,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.navigateToDocOld = function(doc) {
         if (!doc.id) {
-            console.log("DOCUMENT without id", doc);
             alert("That document does not have an id");
             return;
         }
@@ -441,21 +432,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
-                docList: function () {
-                    return JSON.parse(JSON.stringify($scope.goalInfo.docLinks));
-                },
-                attachmentList: function() {
-                    return $scope.attachmentList;
+                containingQueryParams: function() {
+                    return "goal="+$scope.goalInfo.id;
                 },
                 docSpaceURL: function() {
-                    return "<%ar.writeJS(docSpaceURL);%>";
+                    return $scope.docSpaceURL;
                 }
             }
         });
 
         attachModalInstance.result
         .then(function (docList) {
-            console.log("CALL to save from openAttachDocument");
             $scope.goalInfo.docLinks = docList;
             $scope.saveGoal(['docLinks']);
         }, function () {

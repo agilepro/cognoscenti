@@ -195,13 +195,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             }
             item.lastSave = item.new;
         });
-        console.log("Autosave Init: ", postRecord);
         var postData = JSON.stringify(postRecord);
         $http.post(postURL, postData)
         .success( function(data) {
             $scope.setMinutesData(data);
             $scope.handleDeferred();
-            console.log("Autosave Got Back: ", data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -276,7 +274,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     
     $scope.openAddDocument = function (item) {
-        console.log("STARTING add document", item);
 
         var attachModalInstance = $modal.open({
             animation: true,
@@ -333,7 +330,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     
     // Start the clock timer
     $interval($scope.calcTimes, 1000);
-    console.log("All loaded");
 });
 app.filter('minutes', function() {
 
