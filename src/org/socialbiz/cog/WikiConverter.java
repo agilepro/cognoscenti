@@ -116,6 +116,10 @@ public class WikiConverter
             startHeader(line, 2);
         } else if (line.startsWith("!")) {
             startHeader(line, 1);
+        } else if (line.startsWith("*****")) {
+            startBullet(line, 5);
+        } else if (line.startsWith("****")) {
+            startBullet(line, 4);
         } else if (line.startsWith("***")) {
             startBullet(line, 3);
         } else if (line.startsWith("**")) {

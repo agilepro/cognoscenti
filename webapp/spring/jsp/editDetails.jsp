@@ -2,7 +2,6 @@
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="org.socialbiz.cog.AccessControl"
-%><%@page import="org.socialbiz.cog.spring.Constant"
 %><%@page import="org.socialbiz.cog.dms.RemoteLinkCombo"
 %><%@page import="org.socialbiz.cog.AttachmentVersion"
 %><%@page import="org.socialbiz.cog.dms.ConnectionType"

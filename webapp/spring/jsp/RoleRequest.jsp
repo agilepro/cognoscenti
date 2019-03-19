@@ -1,7 +1,6 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="include.jsp"
 %><%@page import="org.socialbiz.cog.ConfigFile"
-%><%@page import="org.socialbiz.cog.spring.Constant"
 %><%@page import="org.socialbiz.cog.RoleRequestRecord"
 %><%@page import="org.socialbiz.cog.AccessControl"
 %><%/*

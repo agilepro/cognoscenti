@@ -37,6 +37,10 @@ function formatLine(line) {
         res += startHeader(line, 2);
     } else if (line.indexOf("!")==0) {
         res += startHeader(line, 1);
+    } else if (line.indexOf("*****")==0) {
+        res += startBullet(line, 5);
+    } else if (line.indexOf("****")==0) {
+        res += startBullet(line, 4);
     } else if (line.indexOf("***")==0) {
         res += startBullet(line, 3);
     } else if (line.indexOf("**")==0) {
