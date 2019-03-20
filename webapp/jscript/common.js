@@ -114,6 +114,19 @@ function superSplit(possibleList) {
     return res;
 }
 
+var VALID_EMAIL_ADDRESS_REGEX = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,6}$/;
+
+function validateEmailAddress(emailStr) {
+    if (VALID_EMAIL_ADDRESS_REGEX.test(emailStr.toLowerCase())) {
+        return true;
+    }
+    else {
+        console.log("BLOCKED invalid email address: ", emailStr);
+        return false;
+    }
+}
+
+
 /* takes a list of user objects, splits any that appear to 
 have multiple email addresses into separate objects, and then
 eliminates any duplications */
@@ -127,11 +140,15 @@ function cleanUserList(userList) {
         }
         var idList = superSplit(id);
         if (idList.length==1) {
-            expandList.push(item);
+            if (validateEmailAddress(id)) {
+                expandList.push(item);
+            }
         }
         else {
             idList.forEach( function(part) {
-                expandList.push({uid:part,name:part});
+                if (validateEmailAddress(part)) {
+                    expandList.push({uid:part,name:part});
+                }
             });
         }
     });

@@ -21,11 +21,21 @@
 package org.socialbiz.cog;
 
 import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class MicroProfileRecord extends DOMFace {
+    
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX = 
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+    public static boolean validEmailAddress(String emailStr) {
+            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(emailStr);
+            return matcher.find();
+    }
 
     public MicroProfileRecord(Document doc, Element ele, DOMFace p) {
         super(doc, ele, p);

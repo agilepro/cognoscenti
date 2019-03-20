@@ -923,7 +923,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     <div class="upRightOptions rightDivContent">
       <span class="dropdown" ng-show="noteInfo.draft">
           <button class="btn btn-default btn-primary btn-raised" ng-click="startSend()"
-                  title="Post this topic to allow others to see it">
+                  title="Post this topic to take it out of Draft mode and allow others to see it">
           Post Topic </button>
       </span>
       <span class="dropdown" ng-hide="noteInfo.draft">

@@ -45,6 +45,24 @@ public class MicroProfileMgr {
         Document newDoc = DOMFile.readOrCreateFile(theFile, "micro-profiles");
         profileFile = new DOMFile(theFile, newDoc);
         refreshMicroProfilesHashTable();
+        
+        //now clean it up because in the past we allowed a lot of bad ids in the list
+        List<String> badIdList = new ArrayList<String>();
+        for (MicroProfileRecord profileRecord : getAllMicroProfileRecords()){
+            String id = profileRecord.getId();
+            if (!MicroProfileRecord.validEmailAddress(id)) {
+                badIdList.add(id);
+            }
+        }
+        
+        if (badIdList.size()>0) {
+            for (String badId : badIdList) {
+                System.out.println("MicroProfileManager: Found and REMOVED a bad id from the file: "+badId);
+                removeMicroProfileRecord(badId);
+            }
+            save();
+        }
+        
     }
 
     public synchronized static void clearAllStaticVars() {
@@ -59,14 +77,19 @@ public class MicroProfileMgr {
         microProfiles = new Hashtable<String, MicroProfileRecord>();
         allProfileIds = new ArrayList<AddressListEntry>();
 
+        //right now there are a bunch of junk entries in the microprofiles table
+        //so we are cleaning them out by considering only entries that look like
+        //actual email addresses.   The rest are forgotten.
         for (MicroProfileRecord profileRecord : getAllMicroProfileRecords()){
             String lowerCase = profileRecord.getId().toLowerCase();
-            microProfiles.put(lowerCase, profileRecord);
-            allProfileIds.add(new AddressListEntry(profileRecord.getId()));
+            if (MicroProfileRecord.validEmailAddress(lowerCase)) {
+                microProfiles.put(lowerCase, profileRecord);
+                allProfileIds.add(new AddressListEntry(profileRecord.getId()));
+            }
         }
     }
 
-    public static List<MicroProfileRecord> getAllMicroProfileRecords() throws Exception
+    private static List<MicroProfileRecord> getAllMicroProfileRecords() throws Exception
     {
         if (profileFile==null)
         {
@@ -83,13 +106,16 @@ public class MicroProfileMgr {
     public static List<AddressListEntry> getAllUsers() throws Exception {
         List<AddressListEntry> res = new ArrayList<AddressListEntry>();
         for (MicroProfileRecord mpr : getAllMicroProfileRecords()) {
-            String dName = mpr.getDisplayName();
-            if (dName!=null && dName.length()>0) {
-                res.add(new AddressListEntry(mpr.getId(), dName));
-            }
-            else {
-                //seems like we should remember email addresses even if we don't have a name
-                res.add(new AddressListEntry(mpr.getId()));
+            String id = mpr.getId();
+            if (MicroProfileRecord.validEmailAddress(id)) {
+                String dName = mpr.getDisplayName();
+                if (dName!=null && dName.length()>0) {
+                    res.add(new AddressListEntry(id, dName));
+                }
+                else {
+                    //seems like we should remember email addresses even if we don't have a name
+                    res.add(new AddressListEntry(id));
+                }
             }
         }
         return res;
@@ -112,6 +138,9 @@ public class MicroProfileMgr {
         }
         if (profileFile==null) {
             throw new ProgramLogicError("profileFile is null when it should not be.  May not have been initialized correctly.");
+        }
+        if (!MicroProfileRecord.validEmailAddress(emailId)) {
+            throw new Exception("This does not look like an email address: "+emailId);
         }
 
         MicroProfileRecord profileRecord = findMicroProfileById(emailId);
