@@ -108,6 +108,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
 
+    $scope.refreshAllRoles = function() {
+        var postURL = "roleUpdate.json?op=GetAll";
+        $scope.showError=false;
+        $http.post(postURL ,"{}")
+        .success( function(data) {
+            console.log("GETALL: ", data);
+            $scope.allRoles = data.roles;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    
     $scope.updateRole = function(role) {
         var key = role.name;
         var postURL = "roleUpdate.json?op=Update";
@@ -266,9 +279,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
 
         modalInstance.result.then(function (message) {
-            //what to do when closing the role modal?
+            $scope.refreshAllRoles();
         }, function () {
-            //cancel action - nothing really to do
+            $scope.refreshAllRoles();
         });
     };
     
@@ -420,6 +433,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 <div ng-show="role.description">
                     <b>Description:</b><br/>
                     {{role.description}}
+                </div>
+                <div ng-show="role.linkedRole">
+                    <b>Linked: </b> {{role.linkedRole}}
                 </div>
                 <div ng-show="role.requirements">
                     <b>Eligibility:</b><br/>

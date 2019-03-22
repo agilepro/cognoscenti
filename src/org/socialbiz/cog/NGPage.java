@@ -58,7 +58,7 @@ public abstract class NGPage extends ContainerCommon {
     private PageInfoRecord pageInfo;
     private ReminderMgr reminderMgr;
     private ProcessRecord pageProcess;
-    
+
     protected List<String> displayNames;
     protected List<NGSection> sectionElements = null;
     private NGBook prjSite;
@@ -72,11 +72,11 @@ public abstract class NGPage extends ContainerCommon {
 
     protected NGPage(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc);
-        
+
         if (!"ProjInfo.xml".equals(theFile.getName())) {
             throw new Exception("Programmer Logic Error: the only file that holds a page should be called ProjInfo.xml");
         }
-        
+
         pageInfo = requireChild("pageInfo", PageInfoRecord.class);
 
         displayNames = pageInfo.getPageNames();
@@ -84,7 +84,7 @@ public abstract class NGPage extends ContainerCommon {
         if (site==null) {
             throw new Exception("workspaces have to be created with a site object sent in now");
         }
-        
+
         prjSite = site;
         pageInfo.setSiteKey(site.getKey());
 
@@ -162,12 +162,13 @@ public abstract class NGPage extends ContainerCommon {
         getRequiredRole("Operations Leader");
         getRequiredRole("Representative");
         getRequiredRole("External Expert");
-        
+
         //refresh the roles from the site if linked
         for (CustomRole aRole : this.getAllRoles()) {
             String linkedRole = aRole.getLinkedRole();
             if (linkedRole!=null && linkedRole.length()>0) {
-                CustomRole linker = prjSite.getRole(linkedRole);
+                String actualName = "~"+linkedRole;
+                CustomRole linker = prjSite.getRole(actualName);
                 if (linker!=null) {
                     //this is saved only if the page is saved for any other reason
                     aRole.updateFromJSON(linker.getJSON());
@@ -299,7 +300,7 @@ public abstract class NGPage extends ContainerCommon {
                     new Object[]{getFilePath().toString()}, e);
         }
     }
-    
+
     /**
      * This should be called everytime the page contents are changed in a way
      * that might effect the links on the page.
@@ -613,7 +614,7 @@ public abstract class NGPage extends ContainerCommon {
         pageInfo.setPageNames(newNames);
         displayNames = pageInfo.getPageNames();
     }
-    
+
     public void setNewName(String newName) {
         List<String> nameSet = getPageNames();
 
@@ -1124,7 +1125,7 @@ public abstract class NGPage extends ContainerCommon {
         for (String oldId : removalList) {
             rolelist.removeChildrenByNameAttrVal("requests", "id", oldId);
         }
-        
+
         RoleRequestRecord newRoleRequest = rolelist.createChild("requests", RoleRequestRecord.class);
         newRoleRequest.setRequestId(generateKey());
         newRoleRequest.setModifiedDate(modifiedDate);
@@ -1583,7 +1584,7 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-    
+
     /**
     * Returns all the email generators for a workspace.
     */
@@ -1617,7 +1618,7 @@ public abstract class NGPage extends ContainerCommon {
         EmailGenerator egen = meetings.createChildWithID("emailGenerator", EmailGenerator.class, "id", this.getUniqueOnPage());
         return egen;
     }
-    
+
     public void deleteEmailGenerator(String id) throws Exception {
         DOMFace generators =  requireChild("generators", DOMFace.class);
         generators.removeChildrenByNameAttrVal("emailGenerator", "id", id);
@@ -1732,7 +1733,7 @@ public abstract class NGPage extends ContainerCommon {
     public void setPurpose(String purp) throws Exception {
         getProcess().setDescription(purp);
     }
-    
+
     public JSONObject getConfigJSON() throws Exception {
         ProcessRecord process = getProcess();
         JSONObject workspaceConfigInfo = new JSONObject();
@@ -1754,11 +1755,11 @@ public abstract class NGPage extends ContainerCommon {
 
         //read only information from the site
         workspaceConfigInfo.put("showExperimental", this.getSite().getShowExperimental());
-        
+
         //returns all the names for this page
         List<String> nameSet = getPageNames();
         workspaceConfigInfo.put("allNames", constructJSONArray(nameSet));
-        
+
         process.extractScalarString(workspaceConfigInfo, "mission");
         process.extractScalarString(workspaceConfigInfo, "vision");
         process.extractScalarString(workspaceConfigInfo, "domain");

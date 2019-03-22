@@ -144,5 +144,27 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         $scope.refreshRole();
     }
     
-        
+    $scope.makeLink = function() {
+        if (!$scope.newLinkName) {
+            alert("Enter a name to link to");
+            return;
+        }
+        $scope.roleInfo.linkedRole = $scope.newLinkName;
+        var role = {};
+        role.name = $scope.roleInfo.name;
+        role.linkedRole = $scope.roleInfo.linkedRole;
+        console.log("UPDATING LINKED ROLE: ",role);
+        $scope.updateRole(role);
+        $scope.getCurrentTerm();
+    }
+    
+    $scope.unLink = function() {
+        $scope.roleInfo.linkedRole = "";
+        var role = {};
+        role.name = $scope.roleInfo.name;
+        role.linkedRole = $scope.roleInfo.linkedRole;
+        console.log("UPDATING LINKED ROLE: ",role);
+        $scope.updateRole(role);
+        $scope.getCurrentTerm();
+    }    
 });

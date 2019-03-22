@@ -86,7 +86,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "MultiInvite");
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/roleDefine.htm", method = RequestMethod.GET)
     public void roleDefine(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -200,7 +200,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "RoleInvite");
     }
-    
+
 
 
 
@@ -241,7 +241,7 @@ public class ProjectSettingController extends BaseController {
             JSONObject personalInfo = getPostedObject(ar);
             UserProfile up = ar.getUserProfile();
 
-            
+
             op = personalInfo.getString("op");
             UserManager userManager = ar.getCogInstance().getUserManager();
             if ("SetWatch".equals(op)) {
@@ -500,23 +500,25 @@ public class ProjectSettingController extends BaseController {
                     String linkedRole = role.getLinkedRole();
                     System.out.println("ROLE: "+roleName+", LinkedRole: "+linkedRole);
                     if (linkedRole!=null && linkedRole.length()>0) {
+                        String actualName = "~"+linkedRole;
                         site = ((NGPage)ngc).getSite();
-                        CustomRole siteRole = site.getRole(linkedRole);
+                        CustomRole siteRole = site.getRole(actualName);
                         boolean wasCreated = false;
                         if (siteRole==null) {
-                            siteRole = site.createRole(linkedRole, role.getDescription());
+                            siteRole = site.createRole(actualName, role.getDescription());
                             //make a log trace when a role is created
-                            System.out.println("NEW ROLE in site: "+site.getFullName()+" named: "+linkedRole
+                            System.out.println("NEW ROLE in site: "+site.getFullName()+" named: "+actualName
                                     +". because of link from "+ngc.getFullName());
                             wasCreated = true;
                         }
                         if (linkedRole.equals(priorLinkedRole) || wasCreated) {
                             //if the name is the same as before, or if it was just created
                             //push these changed to the site version of the role
+                            //Don't do this just when setting the link name for existing role
                             siteRole.updateFromJSON(roleInfo);
                             saveSite = true;
                         }
-                        //to complete, pull the current 
+                        //to complete, pull the current
                         //state of the site role to this role.
                         role.updateFromJSON(siteRole.getJSON());
                     }
@@ -570,7 +572,7 @@ public class ProjectSettingController extends BaseController {
                 throw new Exception("Can not file a role named '"+roleName+"'");
             }
             boolean isPlayer = role.isExpandedPlayer(ar.getUserProfile(), ngc);
-            
+
             repo.put("isPlayer", isPlayer);
             sendJson(ar, repo);
         }catch(Exception ex){
@@ -638,7 +640,7 @@ public class ProjectSettingController extends BaseController {
         }
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/renderEmail.json", method = RequestMethod.POST)
     public void renderEmail(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -658,11 +660,11 @@ public class ProjectSettingController extends BaseController {
             else {
                 sampleUser = ar.getBestUserId();
             }
-            
+
             JSONObject repo = new JSONObject();
-            
+
             if ("~new~".equals(id)) {
-                
+
                 repo.put("html", "Click 'save' to see the email rendered");
             }
             else {
@@ -672,10 +674,10 @@ public class ProjectSettingController extends BaseController {
                 for (OptOutAddr ooa : oList) {
                     addressees.put(ooa.getAssignee().getJSON());
                 }
-                
+
                 //would be better if we could capture the actual relationship
                 OptOutAddr sampleAddressee = eGen.getOOAForUserID(ar,  ngw, sampleUser);
-                
+
                 String[] subjAndBody = eGen.generateEmailBody(ar, ngw, sampleAddressee);
 
                 repo.put("subject", subjAndBody[0]);
@@ -690,7 +692,7 @@ public class ProjectSettingController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
+
 
     @RequestMapping(value = "/{siteId}/{pageId}/labelUpdate.json", method = RequestMethod.POST)
     public void labelUpdate(@PathVariable String siteId,@PathVariable String pageId,
@@ -739,10 +741,10 @@ public class ProjectSettingController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
-    
+
+
     ///////////////////////// Eamil ///////////////////////
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/QueryEmail.json", method = RequestMethod.POST)
     public void queryEmail(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -750,20 +752,20 @@ public class ProjectSettingController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             JSONObject posted = this.getPostedObject(ar);
-            
+
             JSONObject repo = MailFile.queryEmail(ngw, posted);
-            
+
             sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to get email", ex);
             streamException(ee, ar);
         }
-    }    
-    
-    
-    
+    }
+
+
+
     ///////////////////////// Invitations ///////////////////
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/invitations.json", method = RequestMethod.GET)
     public void invitations(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -781,7 +783,7 @@ public class ProjectSettingController extends BaseController {
             Exception ee = new Exception("Unable to get the list of invitations ", ex);
             streamException(ee, ar);
         }
-    }    
+    }
     @RequestMapping(value = "/{siteId}/{pageId}/invitationUpdate.json", method = RequestMethod.POST)
     public void invitationUpdate(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -789,10 +791,10 @@ public class ProjectSettingController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             JSONObject posted = this.getPostedObject(ar);
-            
+
             String email = posted.getString("email");
             AddressListEntry ale = new AddressListEntry(email);
-            
+
             //check that the role exists to avoid getting invitations for non existent roles.
             boolean found = false;
             String roleName = posted.getString("role");
@@ -805,11 +807,11 @@ public class ProjectSettingController extends BaseController {
             if (!found) {
                 throw new Exception("Can not find a role named '"+roleName+"' in the workspace "+ngw.getFullName());
             }
-            
+
             RoleInvitation ri = ngw.findOrCreateInvite(ale);
             ri.updateFromJSON(posted);
             ri.resendInvite();
-            
+
             JSONObject repo = ri.getInvitationJSON();
             ngw.saveFile(ar, "Created a inviation to join workspace");
             sendJson(ar, repo);
@@ -817,5 +819,5 @@ public class ProjectSettingController extends BaseController {
             Exception ee = new Exception("Unable to update an invitation", ex);
             streamException(ee, ar);
         }
-    }    
+    }
 }

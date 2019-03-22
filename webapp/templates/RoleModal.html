@@ -76,8 +76,17 @@
         </tr>
         <tr>
              <td >Linked to:</td>
-             <td colspan="2">
-                 <input ng-model="roleInfo.linkedRole" class="form-control">
+             <td ng-show="roleInfo.linkedRole">
+                 {{roleInfo.linkedRole}}
+             </td>
+             <td ng-show="roleInfo.linkedRole">
+                 <button ng-click="unLink()" class="btn button-default btn-raised">Unlink</button>
+             </td>
+             <td ng-hide="roleInfo.linkedRole">
+                 <input ng-model="newLinkName" class="form-control" style="width:200px">
+             </td>
+             <td ng-hide="roleInfo.linkedRole">
+                 <button ng-click="makeLink()" class="btn button-default btn-raised">Make Link</button>
              </td>
         </tr>
         <tr>
