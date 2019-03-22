@@ -57,6 +57,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
         var role = {};
         role.name = $scope.roleInfo.name;
         role.color = $scope.roleInfo.color;
+        role.linkedRole = $scope.roleInfo.linkedRole;
         role.players = cleanUserList($scope.roleInfo.players);
         console.log("UPDATING ROLE: ",role);
         $scope.updateRole(role);

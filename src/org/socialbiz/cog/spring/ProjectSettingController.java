@@ -34,6 +34,7 @@ import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.CustomRole;
 import org.socialbiz.cog.EmailGenerator;
 import org.socialbiz.cog.LabelRecord;
+import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGLabel;
 import org.socialbiz.cog.NGPage;
@@ -476,6 +477,8 @@ public class ProjectSettingController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "";
+        boolean saveSite = false;
+        NGBook site = null;
         try{
             NGContainer ngc = registerSiteOrProject(ar, siteId, pageId );
             ar.setPageAccessLevels(ngc);
@@ -484,10 +487,40 @@ public class ProjectSettingController extends BaseController {
             op = ar.reqParam("op");
             JSONObject roleInfo = getPostedObject(ar);
             JSONObject repo = new JSONObject();
+            System.out.println("UPDATEROLE: "+roleInfo.toString());
 
             if ("Update".equals(op)) {
-                CustomRole role = ngc.getRoleOrFail(roleInfo.getString("name"));
+                String roleName = roleInfo.getString("name");
+                CustomRole role = ngc.getRoleOrFail(roleName);
+                String priorLinkedRole = role.getLinkedRole();
                 role.updateFromJSON(roleInfo);
+                if (ngc instanceof NGPage) {
+                    //if there is a linked role on the site, then use the same
+                    //posted information to update that
+                    String linkedRole = role.getLinkedRole();
+                    System.out.println("ROLE: "+roleName+", LinkedRole: "+linkedRole);
+                    if (linkedRole!=null && linkedRole.length()>0) {
+                        site = ((NGPage)ngc).getSite();
+                        CustomRole siteRole = site.getRole(linkedRole);
+                        boolean wasCreated = false;
+                        if (siteRole==null) {
+                            siteRole = site.createRole(linkedRole, role.getDescription());
+                            //make a log trace when a role is created
+                            System.out.println("NEW ROLE in site: "+site.getFullName()+" named: "+linkedRole
+                                    +". because of link from "+ngc.getFullName());
+                            wasCreated = true;
+                        }
+                        if (linkedRole.equals(priorLinkedRole) || wasCreated) {
+                            //if the name is the same as before, or if it was just created
+                            //push these changed to the site version of the role
+                            siteRole.updateFromJSON(roleInfo);
+                            saveSite = true;
+                        }
+                        //to complete, pull the current 
+                        //state of the site role to this role.
+                        role.updateFromJSON(siteRole.getJSON());
+                    }
+                }
                 repo = role.getJSONDetail();
             }
             else if ("Create".equals(op)) {
@@ -508,6 +541,9 @@ public class ProjectSettingController extends BaseController {
             }
 
             ngc.saveFile(ar, "Updated Role");
+            if (saveSite & site!=null) {
+                site.save();
+            }
             sendJson(ar, repo);
         }catch(Exception ex){
             Exception ee = new Exception("Unable to '"+op+"' the role.", ex);

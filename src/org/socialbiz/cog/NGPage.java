@@ -162,6 +162,19 @@ public abstract class NGPage extends ContainerCommon {
         getRequiredRole("Operations Leader");
         getRequiredRole("Representative");
         getRequiredRole("External Expert");
+        
+        //refresh the roles from the site if linked
+        for (CustomRole aRole : this.getAllRoles()) {
+            String linkedRole = aRole.getLinkedRole();
+            if (linkedRole!=null && linkedRole.length()>0) {
+                CustomRole linker = prjSite.getRole(linkedRole);
+                if (linker!=null) {
+                    //this is saved only if the page is saved for any other reason
+                    aRole.updateFromJSON(linker.getJSON());
+                    aRole.setLinkedRole(linkedRole);
+                }
+            }
+        }
 
     }
 

@@ -71,6 +71,22 @@ public class CustomRole extends DOMFace implements NGRole
         setScalar("description", desc);
     }
 
+    /**
+     * Each role in a workspace can be linked to a role in the Site.
+     * These will be synchronized.  When the workspace is read, it will
+     * be refreshed from the linked role.  When the workspace is updated
+     * it will also update the linked role.  The Site become a common 
+     * ground to exchange the list of people who constitute a role.
+     */
+    public String getLinkedRole()
+    {
+        return getAttribute("linkedRole");
+    }
+    public void setLinkedRole(String linkedRole)
+    {
+        setAttribute("linkedRole", linkedRole);
+    }
+    
 
 
     public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) throws Exception
@@ -348,6 +364,7 @@ public class CustomRole extends DOMFace implements NGRole
         JSONObject jObj = new JSONObject();
         jObj.put("name", getName());
         extractAttributeString(jObj, "color");
+        extractAttributeString(jObj, "linkedRole");
         RoleTerm curTerm = this.getCurrentTerm();
         if (curTerm!=null) {
             jObj.put("currentTerm", curTerm.getKey());
@@ -406,6 +423,7 @@ public class CustomRole extends DOMFace implements NGRole
     }
     public void updateFromJSON(JSONObject roleInfo) throws Exception {
         updateAttributeString("color", roleInfo);
+        updateAttributeString("linkedRole", roleInfo);
         updateScalarString("description", roleInfo);
         updateAttributeInt("termLength", roleInfo);
         if (roleInfo.has("requirements")) {
