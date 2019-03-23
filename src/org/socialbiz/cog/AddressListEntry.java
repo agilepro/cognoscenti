@@ -451,31 +451,6 @@ public class AddressListEntry implements UserRef
 
 
     /**
-    * returns a 'combined' address that has both the user name, and
-    * the email address in a single string value.
-    * Note: it uses values from the user profile & microprofile if one has been associated.
-    * Email address is always between angle brackets
-    *
-    public String generateCombinedAddress()
-    {
-        String theName = namePart;
-        if (user!=null) {
-            theName = user.getName();
-        }
-        if (theName == null) {
-            MicroProfileRecord record = MicroProfileMgr.findMicroProfileById(rawAddress);
-            if (record != null) {
-                theName = record.getDisplayName();
-            }
-        }
-        if (theName == null) {
-            return "«" + getEmail() + "»";
-        }
-        return theName + " «" + getEmail() + "»";
-    }
-    */
-
-    /**
      * In some cases we use email addresses with laquo and raquo demarking
      * the name.  This cleans that up, and uses angle brackets instead.
      */

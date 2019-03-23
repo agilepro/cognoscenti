@@ -7,6 +7,7 @@
     UserProfile uProf=ar.getUserProfile();
     
     Cognoscenti cog = Cognoscenti.getInstance(request);
+    List<AddressListEntry> allEmail = new ArrayList<AddressListEntry>();
     
     JSONArray allRequests = new JSONArray();
     for (NGPageIndex ngpi : cog.getAllSites()){
@@ -16,6 +17,23 @@
         jo.put("numWorkspaces", stats.numWorkspaces);
         jo.put("numTopics", stats.numTopics);
         allRequests.put(jo);
+        
+        for (AddressListEntry ale : site.getPrimaryRole().getExpandedPlayers(site)) {
+            AddressListEntry.addIfNotPresent(allEmail, ale);
+        }
+        for (AddressListEntry ale : site.getSecondaryRole().getExpandedPlayers(site)) {
+            AddressListEntry.addIfNotPresent(allEmail, ale);
+        }
+    }
+    
+    boolean notFirstTime = false;
+    StringBuilder emailAddressList = new StringBuilder();
+    for (AddressListEntry ale : allEmail) {
+        if (notFirstTime) {
+            emailAddressList.append(",\n");
+        }
+        notFirstTime = true;
+        emailAddressList.append(ale.getEmail());
     }
 
 %>
@@ -108,51 +126,59 @@ app.controller('myCtrl', function($scope, $http) {
         All Sites
     </div>
 
-        <div id="accountRequestDiv">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th >ID</th>
-                        <th >Site Name</th>
-                        <th >Last Change</th>
-                        <th >Status</th>
-                        <th >Owners</th>
-                        <th >WS</th>
-                        <th >Topics</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="rec in allRequests">
-                        <td>
-                          <div class="dropdown">
-                            <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-                            <span class="caret"></span></button>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                              <li role="presentation">
-                                  <a href="oneSite.htm?siteKey={{rec.key}}">View Details</a></li>
-                              <li role="presentation">
-                                  <a role="menuitem" ng-click="addAdmin(rec)">Add Yourself to Owners</a></li>
-                              <li role="presentation">
-                                  <a role="menuitem" ng-click="garbageCollect(rec)">Garbage Collect</a></li>
-                            </ul>
-                          </div>
-                        </td>
-                        <td>{{rec.key}}</td>
-                        <td><a href="../../t/{{rec.key}}/$/SiteStats.htm"><b>{{rec.names[0]}}</b></a></td>
-                        <td>{{rec.changed|date}}</td>
-                        <td><div ng-show="rec.isDeleted">Deleted</div>
-                            <div ng-show="rec.frozen">Frozen</div>
-                            <div ng-show="rec.offLine">OffLine</div>
-                            <div ng-show="rec.movedTo">Moved</div>
-                        </td>
-                        <td><div ng-repeat="owner in rec.owners">{{owner.name}}</div></td>
-                        <td>{{rec.numWorkspaces}}</td>
-                        <td>{{rec.numTopics}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div id="accountRequestDiv">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th >ID</th>
+                    <th >Site Name</th>
+                    <th >Last Change</th>
+                    <th >Status</th>
+                    <th >Owners</th>
+                    <th >WS</th>
+                    <th >Topics</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="rec in allRequests">
+                    <td>
+                      <div class="dropdown">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                        <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                          <li role="presentation">
+                              <a href="oneSite.htm?siteKey={{rec.key}}">View Details</a></li>
+                          <li role="presentation">
+                              <a role="menuitem" ng-click="addAdmin(rec)">Add Yourself to Owners</a></li>
+                          <li role="presentation">
+                              <a role="menuitem" ng-click="garbageCollect(rec)">Garbage Collect</a></li>
+                        </ul>
+                      </div>
+                    </td>
+                    <td>{{rec.key}}</td>
+                    <td><a href="../../t/{{rec.key}}/$/SiteStats.htm"><b>{{rec.names[0]}}</b></a></td>
+                    <td>{{rec.changed|date}}</td>
+                    <td><div ng-show="rec.isDeleted">Deleted</div>
+                        <div ng-show="rec.frozen">Frozen</div>
+                        <div ng-show="rec.offLine">OffLine</div>
+                        <div ng-show="rec.movedTo">Moved</div>
+                    </td>
+                    <td><div ng-repeat="owner in rec.owners">{{owner.name}}</div></td>
+                    <td>{{rec.numWorkspaces}}</td>
+                    <td>{{rec.numTopics}}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+
+    <div class="h1">
+        Email of all owners and executives
+    </div>
+    
+<pre>
+<% ar.writeHtml(emailAddressList.toString()); %>
+</pre>
+
 </div>
 
