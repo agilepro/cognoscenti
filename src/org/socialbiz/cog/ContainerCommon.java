@@ -462,6 +462,23 @@ public abstract class ContainerCommon extends NGContainer
         return vect;
     }
 
+    public List<HistoryRecord>  getHistoryForResource(int contextType, String id) throws Exception {
+        List<HistoryRecord> allHist = historyParent.getChildren("event", HistoryRecord.class);
+        List<HistoryRecord> newHist = new ArrayList<HistoryRecord>();
+        for (HistoryRecord hr : allHist) {
+            if (contextType != hr.getContextType()) {
+                continue;
+            }
+            if (!id.equals(hr.getContext())) {
+                continue;
+            }
+            newHist.add(hr);
+        }
+        HistoryRecord.sortByTimeStamp(newHist);
+        return newHist;
+    }   
+    
+    
     public List<HistoryRecord> getHistoryRange(long startTime, long endTime)
             throws Exception
     {

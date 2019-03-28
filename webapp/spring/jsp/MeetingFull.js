@@ -2,6 +2,9 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     window.setMainPageTitle("Meeting");
+    
+    var isLinkToComment = ( window.location.href.indexOf("#")>0 );
+    
     $scope.siteInfo = embeddedData.siteInfo;
     $scope.pageId = embeddedData.pageId;
     $scope.meetId = embeddedData.meetId;
@@ -100,9 +103,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     }
 
-    if (window.location.href.indexOf("#cmt")>0) {
-        $scope.showAll();
-    }
     $scope.getAgendaItems = function() {
         if (!$scope.meeting.agenda) {
             $scope.meeting.agenda = [];
@@ -548,7 +548,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.timeSlotResponders = calcResponders(data.timeSlots, AllPeople);
         $scope.futureSlotResponders = calcResponders(data.futureSlots, AllPeople);
         determineRoleEqualsParticipants();
-        console.log("roleEqualsParticipants", $scope.roleEqualsParticipants);
+        if (isLinkToComment) {
+            console.log("Opening the page up");
+            $scope.showAll();
+            isLinkToComment = false;
+        }
     }
     function determineRoleEqualsParticipants() {
         $scope.roleEqualsParticipants = false;

@@ -31,6 +31,24 @@
         }
         allVersions.put(verObj);
     }
+    List<HistoryRecord> histRecs = ngp.getHistoryForResource(HistoryRecord.CONTEXT_TYPE_DOCUMENT,aid);
+    JSONArray allHistory = new JSONArray();
+    for (HistoryRecord hist : histRecs) {
+        JSONObject jo = hist.getJSON(ngp, ar);
+        AddressListEntry ale = new AddressListEntry(hist.getResponsible());
+        jo.put("responsible", ale.getJSON() );
+        UserProfile responsible = ale.getUserProfile();
+        String imagePath = "assets/photoThumbnail.gif";
+        if(responsible!=null) {
+            String imgPath = responsible.getImage();
+            if (imgPath!=null && imgPath.length() > 0) {
+                imagePath = "users/"+imgPath;
+            }
+        }
+        jo.put("imagePath",   imagePath );
+        allHistory.put(jo);
+    }
+    
 
 /***** PROTOTYPE
     $scope.attachInfo = {
@@ -65,6 +83,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.attachInfo = <%attachInfo.write(out,2,4);%>;
     $scope.allVersions = <%allVersions.write(out,2,4);%>;
+    $scope.history = <%allHistory.write(out,2,4);%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -128,4 +147,26 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
         </tbody>
     </table>
+    
+    <h3>History</h3>
+    <table>
+
+        <tr ng-repeat="hist in history"  >
+            <td class="projectStreamIcons" style="padding-bottom:20px;">
+                <img class="img-circle" src="<%=ar.retPath%>{{hist.imagePath}}" alt="" width="50" height="50" />
+            </td>
+            <td class="projectStreamText" style="padding-bottom:10px;">
+                {{hist.time|date}} -
+                <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
+                <br/>
+                {{hist.ctxType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>"
+                was {{hist.event}}.
+                <br/>
+                <i>{{hist.comments}}</i>
+
+            </td>
+        </tr>
+
+    </table>
+    
 </div>
