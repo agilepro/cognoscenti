@@ -72,6 +72,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.allHtml = [];
     $scope.isEditing = -1;
     $scope.selectedMinutes = {};
+    $scope.enableClick = true;
     
     //setting isUpdating to true prevents a second overlapping update
     $scope.isUpdating = false;
@@ -265,11 +266,18 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
         $scope.timerTotal = totalTotal;
     }
-    $scope.startEditing = function(min) {
+    function closeAllEditors() {
         $scope.allMinutes.forEach( function(min) {
             min.isEditing = false;
             min.html = convertMarkdownToHtml(min.new);
-        });   
+        });
+    }
+    
+    $scope.startEditing = function(min) {
+        if (!$scope.enableClick) {
+            return;
+        }
+        closeAllEditors();
         min.isEditing = true;        
     }
     
@@ -326,6 +334,15 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             min.isEditing = false;
             min.html = convertMarkdownToHtml(min.new);
         });
+    }
+    $scope.editMode = function(mode) {
+        closeAllEditors();
+        if ('view'==mode) {
+            $scope.enableClick = false;  
+        }
+        else {
+            $scope.enableClick = true;  
+        }    
     }
     
     // Start the clock timer
@@ -438,7 +455,7 @@ function setInputSelection(el, startOffset, endOffset) {
 }
 </style>
 
-<body>
+<body ng-app="myApp" ng-controller="myCtrl">
   <div class="bodyWrapper"  style="margin:50px">
     <nav class="navbar navbar-default appbar">
       <div class="container-fluid">
@@ -449,9 +466,30 @@ function setInputSelection(el, startOffset, endOffset) {
           </h1>
         </a>
       </div>
+      <div class="upRightOptions rightDivContent" style="z-index: 1001;">
+        <button class="btn btn-sm btn-warning btn-raised" ng-click="editMode('view')" ng-show="enableClick">
+                Editing</button>
+        <button class="btn btn-sm btn-default btn-raised" ng-click="editMode('edit')" ng-hide="enableClick">
+                View Only</button>
+        <span class="dropdown" style="float:right;">
+            <button class="btn btn-default btn-raised btn-sm dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+                Options: <span class="caret"></span></button>
+            <ul class="dropdown-menu tighten" role="menu" aria-labelledby="menu1">
+                <li role="presentation"><a role="menuitem"
+                    title="clicking on the text will not edit it"
+                    href="#" ng-click="editMode('view')" >View Only</a></li>
+                <li role="presentation"><a role="menuitem"
+                    title="Enable click to edit"
+                    href="#" ng-click="editMode('edit')" >Edit</a></li>
+                <!-- li role="presentation"><a role="menuitem"
+                    title="Assure that you are the only one editing"
+                    href="#" ng-click="editMode('exclusive')" >Exclusive Edit</a></li -->
+             </ul>
+        </span> 
+      </div>          
     </nav>
-  
-    <div ng-app="myApp" ng-controller="myCtrl">
+    
+    <div >
     <%@include file="ErrorPanel.jsp"%>
 
       <div class="guideVocal" ng-hide="loaded">
