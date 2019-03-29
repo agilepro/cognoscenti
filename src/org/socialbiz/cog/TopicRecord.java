@@ -45,7 +45,7 @@ import com.purplehillsbooks.streams.MemFile;
 * Leaflet is the old term for this, we prefer the term Topic now everywhere.
 * (Used to be called LeafletRecord, but name changed March 2013)
 */
-public class TopicRecord extends CommentContainer implements EmailContext {
+public class TopicRecord extends CommentContainer {
 
     public static final String DISCUSSION_PHASE_DRAFT               = "Draft";
     public static final String DISCUSSION_PHASE_FREEFORM            = "Freeform";
@@ -825,7 +825,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
       }
       
 
-      public void topicEmailRecord(AuthRequest ar, NGWorkspace ngw, TopicRecord topic, MailFile mailFile) throws Exception {
+      public void topicEmailRecord(AuthRequest ar, NGWorkspace ngw, MailFile mailFile) throws Exception {
           List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
           
           //The user interface will initialize the subscribers to the members of the target role
@@ -842,13 +842,13 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           }
 
           for (OptOutAddr ooa : sendTo) {
-              constructEmailRecordOneUser(ar, ngw, topic, ooa, creatorProfile, mailFile);
+              constructEmailRecordOneUser(ar, ngw, this, ooa, creatorProfile, mailFile);
           }
           setEmailSent(true);
 
           //when the email is sent, update the time
           //of the entire note so that it appears at the top of list.
-          topic.setLastEdited(ar.nowTime);
+          setLastEdited(ar.nowTime);
       }
 
       private void constructEmailRecordOneUser(AuthRequest ar, NGWorkspace ngp, TopicRecord note, OptOutAddr ooa,
@@ -871,7 +871,8 @@ public class TopicRecord extends CommentContainer implements EmailContext {
           data.put("wsURL", ar.baseURL + ar.getDefaultURL(ngp));
           data.put("wsName", ngp.getFullName());
           data.put("optout", ooa.getUnsubscribeJSON(ar));
-          String replyUrl = ar.baseURL + this.getReplyURL(ar,ngp, 0)
+          EmailContext emailContext = new EmailContext(note);
+          String replyUrl = ar.baseURL + emailContext.getReplyURL(ar,ngp, 0)
                   + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8");
           data.put("replyURL", replyUrl);
           
@@ -1063,28 +1064,19 @@ public class TopicRecord extends CommentContainer implements EmailContext {
      /**
       * Needed for the EmailContext interface
       */
-     public String emailSubject() throws Exception {
-         return getSubject();
-     }
+
 
      public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
          return ar.getResourceURL(ngw,  "noteZoom"+this.getId()+".htm?") 
                  + AccessControl.getAccessTopicParams(ngw, this);
      }
-     public String getReplyURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
-         return ar.getResourceURL(ngw,  "reply/"+this.getId()+"/"+commentId+".htm?") 
-                 + AccessControl.getAccessTopicParams(ngw, this);
-     }
+
      public String getUnsubURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
          return ar.getResourceURL(ngw,  "unsub/"+this.getId()+"/"+commentId+".htm?") 
                  + AccessControl.getAccessTopicParams(ngw, this);
      }
-     public String selfDescription() throws Exception {
-         return "(Note) "+getSubject();
-     }
-     public void markTimestamp(long newTime) throws Exception {
-         this.setLastEdited(newTime);
-     }
+
+
      public void extendNotifyList(List<AddressListEntry> addressList) throws Exception {
          getSubscriberRole().addPlayersIfNotPresent(addressList);
 
@@ -1100,7 +1092,7 @@ public class TopicRecord extends CommentContainer implements EmailContext {
              //only look for comments when the email for the note (topic) has been sent
              //avoids problem of comment getting sent before the topic comes out of draft
              for (CommentRecord cr : getComments()) {
-                 cr.gatherUnsentScheduledNotification(ngw, this, resList);
+                 cr.gatherUnsentScheduledNotification(ngw, new EmailContext(this), resList);
              }
          }
      }
@@ -1123,11 +1115,11 @@ public class TopicRecord extends CommentContainer implements EmailContext {
          }
 
          public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
-             note.topicEmailRecord(ar,ngw,note, mailFile);
+             note.topicEmailRecord(ar,ngw, mailFile);
          }
 
          public String selfDescription() throws Exception {
-             return note.selfDescription();
+             return "(Note) "+note.getSubject();
          }
      }
 

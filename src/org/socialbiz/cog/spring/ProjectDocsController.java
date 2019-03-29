@@ -491,11 +491,25 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         NGPage ngp = registerRequiredProject(ar, siteId, pageId);
-        TopicRecord note = ngp.getNoteOrFail(topicId);
-        //normally the permission comes from a license in the URL for anonymous access
-        boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
-        if (!canAccessNote) {
-            ar.assertMember("must have permission to make a reply");
+        
+        int hyphenPos = topicId.indexOf("-");
+        if (hyphenPos>0) {
+            String meetingId = topicId.substring(0,hyphenPos);
+            String agendaId = topicId.substring(hyphenPos+1);
+            MeetingRecord meet = ngp.findMeeting(meetingId);
+            AgendaItem ai = meet.findAgendaItem(agendaId);
+            boolean canAccessMeet  = AccessControl.canAccessMeeting(ar, ngp, meet);
+            if (!canAccessMeet) {
+                ar.assertMember("must have permission to make a reply");
+            }
+        }
+        else {
+            TopicRecord note = ngp.getNoteOrFail(topicId);
+            //normally the permission comes from a license in the URL for anonymous access
+            boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
+            if (!canAccessNote) {
+                ar.assertMember("must have permission to make a reply");
+            }
         }
         ar.setParam("topicId", topicId);
         ar.setParam("commentId", commentId);
@@ -536,37 +550,42 @@ public class ProjectDocsController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try {
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
-            TopicRecord note = ngw.getNoteOrFail(topicId);
-            //normally the permission comes from a license in the URL for anonymous access
-            boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngw, note);
-            if (!canAccessNote) {
-                ar.assertMember("must have permission to make a reply");
-            }
-            String emailId = ar.reqParam("emailId");
-            UserProfile up = ar.getUserProfile();
-            if (up==null) {
-                throw new Exception("something wrong, user profile is null");
-            }
-            /*
-            String emailId = ar.reqParam("emailId");
-            Cognoscenti cog = ar.getCogInstance();
-            UserManager userManager = cog.getUserManager();
-            if (!ar.isLoggedIn()) {
-                UserProfile licensedUser = userManager.findUserByAnyId(emailId);
-                if (licensedUser == null) {
-                    userManager.createUserWithId(emailId);
-                }
-                ar.setUserForOneRequest(licensedUser);
-            }
-            */
             JSONObject input = getPostedObject(ar);
             if (!input.has("comments")) {
                 throw new Exception("posted object to specialReplySave needs to have a comments list");
             }
-            note.updateCommentsFromJSON(input, ar);
+            int hyphenPos = topicId.indexOf("-");
+            JSONObject repo =null;
+            if (hyphenPos>0) {
+                String meetingId = topicId.substring(0,hyphenPos);
+                String agendaId = topicId.substring(hyphenPos+1);
+                MeetingRecord meet = ngw.findMeeting(meetingId);
+                AgendaItem ai = meet.findAgendaItem(agendaId);
+                boolean canAccessMeet  = AccessControl.canAccessMeeting(ar, ngw, meet);
+                if (!canAccessMeet) {
+                    ar.assertMember("must have permission to make a reply");
+                }
+                ai.updateCommentsFromJSON(input, ar);
+                repo = ai.getJSON(ar, ngw, meet);
+            }
+            else {
+                TopicRecord note = ngw.getNoteOrFail(topicId);
+                //normally the permission comes from a license in the URL for anonymous access
+                boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngw, note);
+                if (!canAccessNote) {
+                    ar.assertMember("must have permission to make a reply");
+                }
+                note.updateCommentsFromJSON(input, ar);
+                repo = note.getJSONWithComments(ar, ngw);
+            }
+            //String emailId = ar.reqParam("emailId");
+            UserProfile up = ar.getUserProfile();
+            if (up==null) {
+                throw new Exception("something wrong, user profile is null");
+            }
+            
             ngw.saveFile(ar, "saving comment using special reply");
 
-            JSONObject repo = note.getJSONWithComments(ar, ngw);
             repo.write(ar.w, 2, 2);
             ar.flush();
         }

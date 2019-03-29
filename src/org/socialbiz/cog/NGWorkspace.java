@@ -239,7 +239,7 @@ public class NGWorkspace extends NGPage {
     public List<AttachmentRecord> getAllAttachments() throws Exception {
         @SuppressWarnings("unchecked")
         List<AttachmentRecord> list = (List<AttachmentRecord>)(List<?>)
-                attachParent.getChildren("attachment", AttachmentRecordProj.class);
+                attachParent.getChildren("attachment", AttachmentRecord.class);
         for (AttachmentRecord att : list) {
             att.setContainer(this);
             String atype = att.getType();
@@ -265,7 +265,7 @@ public class NGWorkspace extends NGPage {
     }
 
     public AttachmentRecord createAttachment() throws Exception {
-        AttachmentRecord attach = attachParent.createChild("attachment", AttachmentRecordProj.class);
+        AttachmentRecord attach = attachParent.createChild("attachment", AttachmentRecord.class);
         String newId = getUniqueOnPage();
         attach.setId(newId);
         attach.setContainer(this);
@@ -331,8 +331,8 @@ public class NGWorkspace extends NGPage {
 
 
     public void removeExtrasByName(String name) throws Exception {
-        List<AttachmentRecordProj> list = attachParent.getChildren("attachment", AttachmentRecordProj.class);
-        for (AttachmentRecordProj att : list) {
+        List<AttachmentRecord> list = attachParent.getChildren("attachment", AttachmentRecord.class);
+        for (AttachmentRecord att : list) {
             if (att.getType().equals("EXTRA") && att.getDisplayName().equals(name)) {
                 attachParent.removeChild(att);
                 break;

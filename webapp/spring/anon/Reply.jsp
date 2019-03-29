@@ -1,6 +1,10 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="org.socialbiz.cog.SharePortRecord"
 %><%@page import="org.socialbiz.cog.AccessControl"
+%><%@page import="org.socialbiz.cog.CommentContainer"
+%><%@page import="org.socialbiz.cog.AgendaItem"
+%><%@page import="org.socialbiz.cog.CommentRecord"
+%><%@page import="org.socialbiz.cog.EmailContext"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
 /*
@@ -23,12 +27,39 @@ Required parameters:
         emailId = ar.getBestUserId();
     }
 
-    TopicRecord topic = ngw.getNote(topicId);
-
-    JSONObject topicInfo = topic.getJSONWithComments(ar, ngw);
-
-    String specialAccess = AccessControl.getAccessTopicParams(ngw, topic)
-                + "&emailId=" + URLEncoder.encode(emailId, "UTF-8");
+    EmailContext emailContext = null;
+    String specialAccess = "";
+    String originalTopic = "";
+    String agendaItem = "";
+    String meetingTitle = "";
+    String topicSubject = "";
+    JSONArray comments = new JSONArray();
+    JSONArray subscribers = new JSONArray();
+    int hyphenPos = topicId.indexOf("-");
+    if (hyphenPos>0) {
+        String meetingId = topicId.substring(0,hyphenPos);
+        String agendaId = topicId.substring(hyphenPos+1);
+        MeetingRecord meet = ngw.findMeeting(meetingId);
+        AgendaItem ai = meet.findAgendaItem(agendaId);
+        emailContext = new EmailContext(meet, ai);
+        meetingTitle = meet.getName();
+        agendaItem = ai.getSubject();
+    }
+    else {
+        TopicRecord topic = ngw.getNote(topicId);
+        JSONObject topicInfo = topic.getJSONWithComments(ar, ngw);
+        originalTopic = topicInfo.getString("html");
+        subscribers = topicInfo.getJSONArray("subscribers");
+        specialAccess = AccessControl.getAccessTopicParams(ngw, topic)
+                    + "&emailId=" + URLEncoder.encode(emailId, "UTF-8");
+        emailContext = new EmailContext(topic);
+        topicSubject = topic.getSubject();
+    }
+    String goToUrl = ar.baseURL + emailContext.getEmailURL(ar, ngw);
+    String originalSubject = emailContext.emailSubject();
+    for (CommentRecord comm : emailContext.getPeerComments()) {
+        comments.put(comm.getHtmlJSON(ar));
+    }
 
 
 %>
@@ -71,7 +102,6 @@ Required parameters:
 
 var app = angular.module('myApp', ['ui.bootstrap', 'ui.tinymce', 'ngSanitize']);
 app.controller('myCtrl', function($scope, $http, $modal) {
-    $scope.topicInfo = <%topicInfo.write(out,2,4);%>;
     $scope.focusId = <%=commentId%>;
     $scope.focusComment = {};
     $scope.otherComments = [];
@@ -87,11 +117,22 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.newComment = {html:"",state:11,user:"<%ar.writeJS(emailId);%>"};
     $scope.newComment.time = $scope.nowTime;
     $scope.specialAccess = "<%ar.writeJS(specialAccess);%>";
+    $scope.comments = <%comments.write(out,2,4);%>;
+    $scope.subscribers = <%subscribers.write(out,2,4);%>;
+    $scope.originalTopic = "<%ar.writeJS(originalTopic);%>";
+    $scope.originalSubject = "<%ar.writeJS(originalSubject);%>";
+    $scope.meetingTitle = "<%ar.writeJS(meetingTitle);%>";
+    $scope.topicSubject = "<%ar.writeJS(topicSubject);%>";
+    $scope.agendaItem = "<%ar.writeJS(agendaItem);%>";
+    $scope.topicId = "<%ar.writeJS(topicId);%>";
+    
+    
+    
 
     $scope.distributeComments = function() {
         var newCounts = {};
         var allOthers = [];
-        $scope.topicInfo.comments.forEach( function(cmt) {
+        $scope.comments.forEach( function(cmt) {
             if (cmt.time == $scope.focusId) {
                 $scope.focusComment = cmt;
             }
@@ -108,7 +149,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 newCounts[cmt.userName] = 1;
             }
             var isSub = false;
-            $scope.topicInfo.subscribers.forEach( function(sub) {
+            $scope.subscribers.forEach( function(sub) {
                 if ($scope.emailId.toLowerCase() == sub.uid.toLowerCase()) {
                     isSub = true;
                 }
@@ -145,20 +186,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         $scope.saveIt();
     }
     $scope.goToDiscussion = function() {
-        var url = "../../noteZoom"+$scope.topicInfo.id+".htm";
-        window.location = url;
+        window.location = "<%ar.writeJS(goToUrl);%>";
     }
 
     $scope.changeSubscription = function(onOff) {
-        var url = "../../topicSubscribe.json?nid="+$scope.topicInfo.id + "&" + $scope.specialAccess
+        var url = "../../topicSubscribe.json?nid="+$scope.topicId + "&" + $scope.specialAccess
         if (!onOff) {
-            url = "../../topicUnsubscribe.json?nid="+$scope.topicInfo.id + "&" + $scope.specialAccess
+            url = "../../topicUnsubscribe.json?nid="+$scope.topicId + "&" + $scope.specialAccess
         }
         console.log("SENDING:", url);
         $http.get(url)
         .success( function(data) {
             console.log("GOT BACK:", data);
-            $scope.topicInfo = data;
+            $scope.subscribers = data.subscribers;
             $scope.distributeComments();
         } )
         .error( function(data, status, headers, config) {
@@ -195,20 +235,28 @@ function reloadIfLoggedIn() {
         <div class="page-name">
             <h1 id="mainPageTitle" ng-click="infoOpen=!infoOpen"
                 title="This is the title of the discussion topic that all these topics are attached to">
-                {{topicInfo.subject}} <i class="fa fa-caret-square-o-down"></i>
+                {{originalSubject}} <i class="fa fa-caret-square-o-down"></i>
             </h1>
         </div>
 
         <table ng-show="infoOpen" class="table">
-        <tr>
+        <tr ng-show="topicSubject">
             <td>Discussion Topic</td>
-            <td>{{topicInfo.subject}}</td>
+            <td>{{topicSubject}}</td>
         </tr>
-        <tr>
+        <tr ng-show="meetingTitle">
+            <td>Meeting</td>
+            <td>{{meetingTitle}}</td>
+        </tr>
+        <tr ng-show="agendaItem">
+            <td>Agenda Item</td>
+            <td>{{agendaItem}}</td>
+        </tr>
+        <tr ng-show="topicSubject">
             <td>Subscribers</td>
-            <td><span ng-repeat="sub in topicInfo.subscribers">{{sub.name}}, </span></td>
+            <td><span ng-repeat="sub in subscribers">{{sub.name}}, </span></td>
         </tr>
-        <tr>
+        <tr ng-show="topicSubject">
             <td>Your Participation</td>
             <td>
                 <button ng-click="changeSubscription(false)" ng-show="isSubscriber"
@@ -224,7 +272,7 @@ function reloadIfLoggedIn() {
         </tr>
         <tr>
             <td>Count</td>
-            <td>{{topicInfo.comments.length}} comments</td>
+            <td>{{comments.length}} comments</td>
         </tr>
         <tr>
             <td>Contributors</td>
@@ -291,13 +339,18 @@ function reloadIfLoggedIn() {
 
         <div class="comment-outer">
           <div class="comment-inner">
-            <div ng-bind-html="topicInfo.html"></div>
+            <div ng-bind-html="originalTopic"></div>
           </div>
         </div>
 
 
     </div>
   </div>
+  
+  
+  <pre>
+  
+  </pre>
 </body>
 </html>
 

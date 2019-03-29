@@ -34,10 +34,11 @@ import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
-public abstract class AttachmentRecord extends CommentContainer implements EmailContext {
+public class AttachmentRecord extends CommentContainer {
     private static String ATTACHMENT_ATTB_RLINK = "rlink";
     private static String ATTACHMENT_ATTB_RCTIME = "rctime";
     public static String ATTACHMENT_ATTB_RLMTIME = "rlmtime";
@@ -208,7 +209,25 @@ public abstract class AttachmentRecord extends CommentContainer implements Email
         return name.equalsIgnoreCase(dName);
     }
 
-    public abstract void updateActualFile(String oldName, String newName) throws Exception;
+    public void updateActualFile(String oldName, String newName) throws Exception
+    {
+        if (container==null) {
+            throw new Exception("ProjectAttachment record has not be innitialized correctly, there is no container setting.");
+        }
+        File folder = container.containingFolder;
+        File docFile = new File(folder, oldName);
+        File newFile = new File(folder, newName);
+        if (docFile.exists()) {
+            //this will fail if the file already exists.
+            docFile.renameTo(newFile);
+        }
+        else {
+            //it is possible that user is 'fixing' the project by changing the name of an attachment
+            //record to the name of an existing file.  IF this is the case, there may have been a
+            //record of an "extra" file.  This will eliminate that.
+            container.removeExtrasByName(newName);
+        }
+    }
 
     public String getLicensedAccessURL(AuthRequest ar, NGPage ngp, String licenseId)
             throws Exception {
@@ -361,11 +380,29 @@ public abstract class AttachmentRecord extends CommentContainer implements Email
     // ////////////////////// VERSIONING STUFF ////////////
 
     /**
-     * Get a list of all the versions of this attachment that exist. The
-     * container is needed so that each attachment can calculate its own name
-     * properly.
-     */
-    public abstract List<AttachmentVersion> getVersions(NGContainer ngc) throws Exception;
+    * Get a list of all the versions of this attachment that exist.
+    * The container is needed so that each attachment can caluculate
+    * its own name properly.
+    */
+    public List<AttachmentVersion> getVersions(NGContainer ngc)
+        throws Exception {
+        if (!(ngc instanceof NGWorkspace)) {
+            throw new Exception("Problem: ProjectAttachment should only belong to NGProject, "
+                    +"but somehow got a different kind of container.");
+        }
+
+        File projectFolder = ((NGWorkspace)ngc).containingFolder;
+        if (projectFolder==null) {
+            throw new Exception("NGProject container has no containing folder????");
+        }
+
+        List<AttachmentVersion> list =
+            AttachmentVersionProject.getProjectVersions(projectFolder, getNiceName(), getId());
+
+        sortVersions(list);
+
+        return list;
+    }
 
     /**
      * Just get the last version. This is the one the user is most often
@@ -440,7 +477,23 @@ public abstract class AttachmentRecord extends CommentContainer implements Email
      *
      * Returns null if versioning system does not have working copy.
      */
-    public abstract AttachmentVersion getWorkingCopy(NGContainer ngc) throws Exception;
+    public AttachmentVersion getWorkingCopy(NGContainer ngc) throws Exception {
+        AttachmentVersion highest = getHighestCommittedVersion(ngc);
+        int ver = 0;
+        if (highest!=null) {
+            ver = highest.getNumber();
+        }
+        File projectFolder = ((NGWorkspace)ngc).containingFolder;
+        String attachName = getDisplayName();
+        for (File testFile : projectFolder.listFiles())
+        {
+            String testName = testFile.getName();
+            if (attachName.equalsIgnoreCase(testName)) {
+                return new AttachmentVersionProject(testFile, ver+1, true, true);
+            }
+        }
+        return null;
+    }
 
     public AttachmentVersion getHighestCommittedVersion(NGContainer ngc) throws Exception {
         List<AttachmentVersion> list = getVersions(ngc);
@@ -458,7 +511,37 @@ public abstract class AttachmentRecord extends CommentContainer implements Email
     /**
      * Takes the working copy, and make a new internal, backed up copy.
      */
-    public abstract  void commitWorkingCopy(NGContainer ngc) throws Exception;
+    public void commitWorkingCopy(NGContainer ngc) throws Exception {
+        File projectFolder = ((NGWorkspace)ngc).containingFolder;
+        if (!projectFolder.exists()) {
+            throw new Exception("Strange, this workspace's folder does not exist.  "
+                    + "Something must be wrong: "+projectFolder);
+        }
+        File cogFolder = new File(projectFolder,".cog");
+        if (!cogFolder.exists()) {
+            //this might be the first thing in the COG folder
+            cogFolder.mkdirs();
+        }
+        if (!cogFolder.exists()) {
+            throw new Exception("Unable to create the COG folder: "+cogFolder);
+        }
+        AttachmentVersion workCopy = getWorkingCopy(ngc);
+        String attachmentId = getId();
+        String fileExtension = getFileExtension();
+        File tempCogFile = File.createTempFile("~newP_"+attachmentId, fileExtension, cogFolder);
+        File workFile = workCopy.getLocalFile();
+        AttachmentVersionProject.copyFileContents(workFile, tempCogFile);
+
+        //rename the special copy to have the right version number
+        String specialVerFileName = "att"+attachmentId+"-"+Integer.toString(workCopy.getNumber())
+                +fileExtension;
+        File specialVerFile = new File(cogFolder, specialVerFileName);
+        if (!tempCogFile.renameTo(specialVerFile)) {
+            throw new NGException("nugen.exception.unable.to.rename.temp.file",
+                new Object[]{tempCogFile,specialVerFile});
+        }
+    }
+
 
     /**
      * Pass the version list in to find out whether this attachment is
@@ -501,8 +584,34 @@ public abstract class AttachmentRecord extends CommentContainer implements Email
         return streamNewVersion(ngc, contents, ar.getBestUserId(), ar.nowTime);
     }
 
-    public abstract AttachmentVersion streamNewVersion(NGContainer ngc, InputStream contents,
-            String userId, long timeStamp) throws Exception;
+    /**
+    * Provide an input stream to the contents of the new version, and this method will
+    * copy the contents into here, and then create a new version for that file, and
+    * return the AttachmentVersion object that represents that new version.
+    */
+    public AttachmentVersion streamNewVersion(NGContainer ngc, InputStream contents,
+            String userId, long timeStamp) throws Exception {
+
+        if (!(ngc instanceof NGWorkspace)) {
+            throw new Exception("Problem: ProjectAttachment should only belong to NGProject, but somehow got a different kind of container.");
+        }
+        File projectFolder = ((NGWorkspace)ngc).containingFolder;
+        if (projectFolder==null) {
+            throw new Exception("NGProject container has no containing folder????");
+        }
+
+        String displayName = getNiceName();
+        AttachmentVersion av = AttachmentVersionProject.getNewProjectVersion(projectFolder,
+                 displayName, getId(), contents);
+
+        //update the record
+        setVersion(av.getNumber());
+        setStorageFileName(av.getLocalFile().getName());
+        setModifiedDate(timeStamp);
+        setModifiedBy(userId);
+
+        return av;
+    }
 
     public static void sortVersions(List<AttachmentVersion> list) {
         Collections.sort(list, new AttachmentVersionComparator());
@@ -1145,14 +1254,58 @@ public abstract class AttachmentRecord extends CommentContainer implements Email
             av.purgeLocalFile();
         }
     }
+    
+    
 
+    public String emailSubject() throws Exception {
+        return "Attachment: "+getDisplayName();
+    }
+
+    public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
+        OptOutAddr.appendUsersFromRole(ngw, "Members", sendTo);
+    }
+
+
+    public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
+        return ar.getResourceURL(ngw,  "docinfo"+this.getId()+".htm");
+    }
+
+
+    public String getUnsubURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
+        //don't know how to go straight into reply mode, so just go to the meeting
+        return getEmailURL(ar, ngw) + "#cmt"+commentId;
+    }
+
+
+    public String selfDescription() throws Exception {
+        return "(Attachment) "+getDisplayName();
+    }
+
+
+    public void markTimestamp(long newTime) throws Exception {
+        // does not care about timestamp
+    }
+
+
+    public void extendNotifyList(List<AddressListEntry> addressList) throws Exception {
+        //there is no subscribers for document attachments
+    }
+    
+    //This is a callback from container to set the specific fields
+    public void addContainerFields(CommentRecord cr) {
+        cr.containerType = CommentRecord.CONTAINER_TYPE_TOPIC;
+        cr.containerID = this.getId();
+    }
+    
+    
     public void gatherUnsentScheduledNotification(NGWorkspace ngw,
             ArrayList<ScheduledNotification> resList) throws Exception {
         //only look for comments when the email for the note (topic) has been sent
         //avoids problem of comment getting sent before the topic comes out of draft
         for (CommentRecord cr : getComments()) {
-            cr.gatherUnsentScheduledNotification(ngw, this, resList);
+            cr.gatherUnsentScheduledNotification(ngw, new EmailContext(this), resList);
         }
     }
+    
 
 }

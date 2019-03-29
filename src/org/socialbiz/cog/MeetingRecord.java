@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
-public class MeetingRecord extends DOMFace implements EmailContext {
+public class MeetingRecord extends DOMFace {
 
     public static final int MEETING_TYPE_CIRCLE = 1;
     public static final int MEETING_TYPE_OPERATIONAL = 2;
@@ -1058,17 +1058,12 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     /**
      * Needed for the EmailContext interface x
      */
-    public String emailSubject() throws Exception {
-        return getName();
-    }
+
     public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
         return ar.getResourceURL(ngw,  "meetingFull.htm?id="+this.getId()) 
                 + "&" + AccessControl.getAccessMeetParams(ngw, this);
     }
-    public String getReplyURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
-        //don't know how to go straight into reply mode, so just go to the meeting
-        return getEmailURL(ar, ngw) + "#cmt"+commentId;
-    }
+
     public String getUnsubURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
         //don't know how to go straight into unsub mode, so just go to the meeting
         return getEmailURL(ar, ngw) + "#cmt"+commentId;
@@ -1079,7 +1074,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
     public void markTimestamp(long newTime) throws Exception {
         //the meeting does not care about the timestamp that an comment is emailed.
     }
-    @Override
+
     public void extendNotifyList(List<AddressListEntry> addressList) throws Exception {
         //there is no subscribers for meetings
     }
@@ -1096,7 +1091,7 @@ public class MeetingRecord extends DOMFace implements EmailContext {
             resList.add(sn);
         }
         for (AgendaItem ai : this.getSortedAgendaItems()) {
-            ai.gatherUnsentScheduledNotification(ngp, this, resList);
+            ai.gatherUnsentScheduledNotification(ngp, new EmailContext(this,ai), resList);
         }
     }
 
