@@ -169,6 +169,20 @@ public class SearchManager {
                     }
                     iWriter.addDocument(doc);
                 }
+                
+                for (DecisionRecord dec : ngp.getDecisions()) {
+                    Document doc = new Document();
+                    doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
+                    doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                    doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
+                    doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
+                    doc.add(new Field("DECISIONID", Integer.toString(dec.getNumber()), TextField.TYPE_STORED));
+                    doc.add(new Field("LASTMODIFIEDTIME", Long.toString(dec.getTimestamp()), TextField.TYPE_STORED));
+                    
+                    doc.add(new Field("BODY", dec.getDecision(), TextField.TYPE_STORED));
+                    iWriter.addDocument(doc);
+                }
             }
         }
         System.out.println("SearchManager - finished building index: "+(System.currentTimeMillis()-startTime)+" ms");
@@ -205,6 +219,7 @@ public class SearchManager {
             String siteKey = hitDoc.get("SITEKEY");
             String noteId = hitDoc.get("NOTEID");
             String meetId = hitDoc.get("MEETID");
+            String decId = hitDoc.get("DECISIONID");
             String linkAddr = null;
             String noteSubject = null;
 
@@ -232,7 +247,7 @@ public class SearchManager {
                 linkAddr = ar.getDefaultURL(ngp);
                 noteSubject = "Workspace: "+ngp.getFullName();
             }
-            if (noteId!=null && noteId.length()==4) {
+            else if (noteId!=null && noteId.length()==4) {
                 TopicRecord note = ngp.getNoteOrFail(noteId);
 
                 if (note.getVisibility()==SectionDef.PUBLIC_ACCESS) {
@@ -250,7 +265,7 @@ public class SearchManager {
                 noteSubject = note.getSubject();
                 linkAddr = ar.getResourceURL(ngp, note);
             }
-            if (meetId!=null && meetId.length()==4) {
+            else if (meetId!=null && meetId.length()==4) {
                 if (!isLoggedIn) {
                     continue;   //don't include this result if not logged in
                 }
@@ -264,6 +279,21 @@ public class SearchManager {
 
                 noteSubject = meet.getName();
                 linkAddr = ar.getResourceURL(ngp, "meetingFull.htm?id="+meetId);
+            }
+            else if (decId!=null) {
+                if (!isLoggedIn) {
+                    continue;   //don't include this result if not logged in
+                }
+                else if (ngp.primaryOrSecondaryPermission(up)) {
+                    //OK no problem, user is a member or admin
+                }
+                else {
+                    continue; //no access to non members
+                }
+                //DecisionRecord dec = ngp.findDecisionOrFail(DOMFace.safeConvertInt(decId));
+
+                noteSubject = "Decision "+decId;
+                linkAddr = ar.getResourceURL(ngp, "decisionList.htm#DEC"+decId);
             }
 
 
