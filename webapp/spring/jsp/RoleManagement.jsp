@@ -389,6 +389,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                   <li role="presentation"><a role="menuitem" 
                       ng-click="goNomination(role)">
                       <span class="fa fa-flag-o"></span> Role Elections </a></li>
+                  <li role="presentation"><a role="menuitem" tabindex="-1"
+                      href="MultiInvite.htm?role={{role.name}}">Multi-Person Invite</a></li>
                   <li role="presentation" class="divider"></li>
                   <li role="presentation"><a role="menuitem" 
                       ng-click="deleteRole(role)">

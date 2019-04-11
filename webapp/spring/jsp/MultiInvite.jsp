@@ -6,6 +6,7 @@
 
     String pageId      = ar.reqParam("pageId");
     String siteId      = ar.reqParam("siteId");
+    String roleName    = ar.defParam("role", "Members");
     
     //page must work for both workspaces and for sites
     boolean isSite = ("$".equals(pageId));
@@ -36,7 +37,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Multi-Person Invite");
     $scope.allRoles  = <%allRoles.write(out,2,2);%>;
-    $scope.newRole = "Members";
+    $scope.newRole = "<%ar.writeJS(roleName);%>"
     $scope.invitations = [];
     $scope.message = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
                     +" participate in the workspace for '<%ar.writeHtml(ngc.getFullName());%>'."
