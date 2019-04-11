@@ -59,7 +59,7 @@ import com.purplehillsbooks.streams.MemFile;
 
 @Controller
 public class MeetingControler extends BaseController {
-    
+
     public static MeetingNotesCache meetingCache = new MeetingNotesCache();
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingFull.htm", method = RequestMethod.GET)
@@ -153,7 +153,7 @@ public class MeetingControler extends BaseController {
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }
     }
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/MeetPrint.htm", method = RequestMethod.GET)
     public void MeetPrint(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -163,7 +163,7 @@ public class MeetingControler extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             NGBook site = ngw.getSite();
-            
+
             String id = ar.reqParam("id");
             MeetingRecord meet = ngw.findMeeting(id);
             String template = ar.reqParam("tem");
@@ -175,7 +175,7 @@ public class MeetingControler extends BaseController {
                 showJSPMembers(ar, siteId, pageId, "MeetingHtml");
                 return;
             }
-            
+
             JSONObject meetingJSON = meet.getFullJSON(ar, ngw);
             Hashtable<String, File> templates = site.allMeetingTemplates(ar);
             File templateFile = templates.get(template);
@@ -183,7 +183,7 @@ public class MeetingControler extends BaseController {
                 templateFile = templates.get("FlatDetailAgenda.chtml");
             }
             ar.invokeJSP("/spring/jsp/PrintHeaders.jsp");
-            org.socialbiz.cog.mail.ChunkTemplate.streamIt(ar.w, templateFile,   meetingJSON, ar.getUserProfile().getCalendar() );         
+            org.socialbiz.cog.mail.ChunkTemplate.streamIt(ar.w, templateFile,   meetingJSON, ar.getUserProfile().getCalendar() );
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
@@ -196,13 +196,13 @@ public class MeetingControler extends BaseController {
             throws Exception {
 
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);         
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             String id = ar.reqParam("id");
             if (!meetingCache.canAcccessMeeting(siteId, pageId, ar, id)) {
                 showJSPMembers(ar, siteId, pageId, "MeetingMinutes");
                 return;
             }
-            
+
             registerRequiredProject(ar, siteId, pageId);
 
             ar.setParam("id", id);
@@ -220,18 +220,19 @@ public class MeetingControler extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             //NOTE: you do NOT need to be logged in to get the calendar file
             //It is important to allow anyone to receive these links in an email
-            //and not be logged in, and still be able to get the calendar on 
+            //and not be logged in, and still be able to get the calendar on
             //their calendar.  So allow this information to ANYONE who has a link.
-            
+
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             MeetingRecord meet = ngw.findMeeting(meetId);
-            
+
+            //buffer this in case there is an exception we can report it cleanly
             MemFile mf = new MemFile();
-            
+
             meet.streamICSFile(ar, mf.getWriter(), ngw);
 
             ar.resp.setContentType("text/calendar");
@@ -239,11 +240,12 @@ public class MeetingControler extends BaseController {
             ar.flush();
 
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+            Exception ee = new Exception("Unable to create the ICS calendar file for meeting "+meetId, ex);
+            streamException(ee, ar);
         }
     }
 
-    
+
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/cloneMeeting.htm", method = RequestMethod.GET)
@@ -404,7 +406,7 @@ public class MeetingControler extends BaseController {
               if (!AccessControl.canAccessMeeting(ar, ngw, meeting)) {
                   throw new Exception("Not able to access meeting "+id);
               }
-              
+
               JSONObject meetingInfo = getPostedObject(ar);
 
               meeting.updateFromJSON(meetingInfo, ar);
@@ -437,7 +439,7 @@ public class MeetingControler extends BaseController {
               streamException(ee, ar);
           }
       }
-      
+
 
       @RequestMapping(value = "/{siteId}/{pageId}/proposedTimes.json", method = RequestMethod.POST)
       public void meetingTimes(@PathVariable String siteId,@PathVariable String pageId,
@@ -467,7 +469,7 @@ public class MeetingControler extends BaseController {
               streamException(ee, ar);
           }
       }
-      
+
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingRead.json", method = RequestMethod.GET)
       public void meetingRead(@PathVariable String siteId,@PathVariable String pageId,
@@ -475,7 +477,7 @@ public class MeetingControler extends BaseController {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
               String id = ar.reqParam("id");
-              
+
               JSONObject jo = meetingCache.getOrCacheFull(siteId, pageId, ar, id);
               sendJson(ar, jo);
           }catch(Exception ex){
@@ -484,14 +486,14 @@ public class MeetingControler extends BaseController {
           }
       }
 
-      
+
       @RequestMapping(value = "/{siteId}/{pageId}/getMeetingNotes.json", method = RequestMethod.GET)
       public void getMeetingNotes(@PathVariable String siteId,@PathVariable String pageId,
               HttpServletRequest request, HttpServletResponse response) {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
               String id = ar.reqParam("id");
-              
+
               JSONObject jo = meetingCache.getOrCacheNotes(siteId, pageId, ar, id);
 
               sendJson(ar, jo);
@@ -508,12 +510,12 @@ public class MeetingControler extends BaseController {
               String id = ar.reqParam("id");
               JSONObject meetingInfo = getPostedObject(ar);
               if (!meetingInfo.has("minutes") || meetingInfo.getJSONArray("minutes").length()==0) {
-                  //this is the case that you are not actually updating anything, so just return 
+                  //this is the case that you are not actually updating anything, so just return
                   //the cached notes.
                   sendJson(ar, meetingCache.getOrCacheNotes(siteId, pageId, ar, id));
                   return;
               }
-              
+
               NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
               ar.setPageAccessLevels(ngw);
               MeetingRecord meeting = ngw.findMeeting(id);
@@ -530,8 +532,8 @@ public class MeetingControler extends BaseController {
               streamException(ee, ar);
           }
       }
-      
-      
+
+
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingDelete.json", method = RequestMethod.POST)
       public void meetingDelete(@PathVariable String siteId,@PathVariable String pageId,
@@ -781,17 +783,17 @@ public class MeetingControler extends BaseController {
           AuthRequest ar = AuthRequest.getOrCreate(request, response);
           try{
               JSONObject timeZoneRequest = getPostedObject(ar);
-              
+
               Date sourceDate = new Date(timeZoneRequest.getLong("date"));
               String template = "MMM dd, YYYY  HH:mm";
               if (timeZoneRequest.has("template")) {
                   template = timeZoneRequest.getString("template");
               }
-              
+
               SimpleDateFormat sdf = new SimpleDateFormat(template);
-              
+
               HashSet<String> allZones = new HashSet<String>();
-              
+
               if (timeZoneRequest.has("zones")) {
                   JSONArray zones = timeZoneRequest.getJSONArray("zones");
                   for (int i=0; i<zones.length(); i++) {

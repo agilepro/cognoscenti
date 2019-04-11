@@ -104,10 +104,10 @@ public class MeetingRecord extends DOMFace {
         setAttribute("targetRole", newVal);
     }
     public List<String> getParticipants() {
-        return this.getVector("participants");        
+        return this.getVector("participants");
     }
-    
-    
+
+
     public void appendTargetEmails(List<OptOutAddr> sendTo, NGWorkspace ngw) throws Exception {
         List<String> partUsers = this.getVector("participants");
         if (partUsers.size()>0) {
@@ -191,9 +191,9 @@ public class MeetingRecord extends DOMFace {
     }
 
     /**
-     * If the meeting is in running state, and if the specified person is 
+     * If the meeting is in running state, and if the specified person is
      * not in the attendee list, this will add them.
-     * 
+     *
      * Returns true if it actually made a change, false if not
      * @param uRef
      */
@@ -236,7 +236,7 @@ public class MeetingRecord extends DOMFace {
         }
     }
 
-   
+
     /**
      * Gives all the agenda items sequential increasing numbers
      */
@@ -254,9 +254,9 @@ public class MeetingRecord extends DOMFace {
             }
         }
     }
-    
+
     /**
-     * 
+     *
      */
     private void verifyTargetRole(NGWorkspace ngw) throws Exception {
         String target = this.getTargetRole();
@@ -265,7 +265,7 @@ public class MeetingRecord extends DOMFace {
             //ok, role exists, return
             return;
         }
-        
+
         //specified role does not exist
         //so set it to 'Members'
         ngr = ngw.getRole("Members");
@@ -273,14 +273,14 @@ public class MeetingRecord extends DOMFace {
             this.setTargetRole("Members");
             return;
         }
-        
+
         //oops, not even members exists.
         //set to the first role
         for (NGRole ngr2 : ngw.getAllRoles()) {
             this.setTargetRole(ngr2.getName());
             return;
         }
-        
+
         //oh no, there are no roles at all.  Give up
         throw new Exception("Workspace ("+ngw.getFullName()+") does not appear to have any roles and at least one is required to have a meeting.");
     }
@@ -344,15 +344,15 @@ public class MeetingRecord extends DOMFace {
             ai.stopTimer();
         }
     }
-    
-    
+
+
     /**
      * This is used to set particular aspects of the meeting time, without having to save
-     * (and potentialy overwrite) another person's settings, allowing people to be settings 
+     * (and potentialy overwrite) another person's settings, allowing people to be settings
      * times simultaneously.
-     * 
-     * Send in 
-     * 
+     *
+     * Send in
+     *
      * {
      *     "action":    "SetValue",
      *     "isCurrent": true/false,
@@ -360,9 +360,9 @@ public class MeetingRecord extends DOMFace {
      *     "user":      "george.washington@whitehouse.gov",
      *     "value":     3
      * }
-     * 
-     * or 
-     * 
+     *
+     * or
+     *
      * {
      *     "action":    "AddTime",
      *     "isCurrent": true/false,
@@ -379,7 +379,7 @@ public class MeetingRecord extends DOMFace {
      *     "time":      15432432534,
      *     "newTime":   15432888888
      * }
-     * 
+     *
      */
     public void actOnProposedTime(JSONObject cmdInput) throws Exception {
         String action = cmdInput.getString("action");
@@ -419,7 +419,7 @@ public class MeetingRecord extends DOMFace {
             throw new Exception("actOnProposedTime does not understand the command: "+action);
         }
     }
-    
+
     private MeetingProposeTime findProposedTime(String fieldName, long timeValue) throws Exception {
         List<MeetingProposeTime> timeSlot = getChildren(fieldName, MeetingProposeTime.class);
         for (MeetingProposeTime oneSlot : timeSlot) {
@@ -447,8 +447,8 @@ public class MeetingRecord extends DOMFace {
         return null;
     }
 
-    
-    
+
+
     /**
      * A vary small object suitable for notification event lists
      */
@@ -535,7 +535,7 @@ public class MeetingRecord extends DOMFace {
             timeSlotArray.put(oneSlot.getJSON());
         }
         meetingInfo.put("futureSlots", timeSlotArray);
-        
+
         //we need to know the id of the minutes of the previous meeting
         //if they exist.  Look it up every time.
         String previousMeetingId = getScalar("previousMeeting");
@@ -568,7 +568,7 @@ public class MeetingRecord extends DOMFace {
             setState(input.getInt("state"));
         }
         if (input.has("reminderSent")) {
-            //the only reason the UI might want to clear this to cause the 
+            //the only reason the UI might want to clear this to cause the
             //reminder to be sent again
             setReminderSent(input.getLong("reminderSent"));
         }
@@ -578,7 +578,7 @@ public class MeetingRecord extends DOMFace {
             if (newTime!=oldTime) {
                 setStartTime(newTime);
                 hasSetMeetingInfo = true;
-                
+
                 //if the meeting time changes, then clear out the reminder sent
                 //time to cause it to be sent again (if already sent).
                 setReminderSent(0);
@@ -632,7 +632,7 @@ public class MeetingRecord extends DOMFace {
         if (input.has("attended_remove")) {
             this.removeVectorValue("attended", input.getString("attended_remove"));
         }
-        
+
         if (input.has("participants")) {
             this.setVector("participants", AddressListEntry.uidListfromJSONArray(input.getJSONArray("participants")));
         }
@@ -644,7 +644,7 @@ public class MeetingRecord extends DOMFace {
             this.removeVectorValue("participant", input.getString("participant_remove"));
         }
         */
-        
+
         if (input.has("timeSlots")) {
             this.removeAllNamedChild("timeSlots");
             JSONArray timeSlotArray = input.getJSONArray("timeSlots");
@@ -793,7 +793,7 @@ public class MeetingRecord extends DOMFace {
         }
         return Calendar.getInstance();
     }
-    
+
     public String generateMinutes(AuthRequest ar, NGPage ngp) throws Exception {
         Calendar cal = getOwnerCalendar();
 
@@ -878,22 +878,22 @@ public class MeetingRecord extends DOMFace {
                         sb.append("]");
                     }
                 }
-                
+
                 String realMinutes = ai.getScalar("minutes");
                 if (realMinutes!=null && realMinutes.length()>0) {
                     sb.append("\n\n''Minutes:''\n\n");
                     sb.append(realMinutes);
                 }
-                
+
                 for (CommentRecord cr : ai.getComments()) {
                     int cType = cr.getCommentType();
-                    if (cType == CommentRecord.COMMENT_TYPE_MINUTES || 
-                            cType == CommentRecord.COMMENT_TYPE_SIMPLE|| 
-                            cType == CommentRecord.COMMENT_TYPE_PROPOSAL|| 
+                    if (cType == CommentRecord.COMMENT_TYPE_MINUTES ||
+                            cType == CommentRecord.COMMENT_TYPE_SIMPLE||
+                            cType == CommentRecord.COMMENT_TYPE_PROPOSAL||
                             cType == CommentRecord.COMMENT_TYPE_REQUEST) {
                         sb.append("\n\n''"+cr.getTypeName()+":''\n\n");
                         sb.append(cr.getContent());
-                        if (cType == CommentRecord.COMMENT_TYPE_PROPOSAL|| 
+                        if (cType == CommentRecord.COMMENT_TYPE_PROPOSAL||
                                 cType == CommentRecord.COMMENT_TYPE_REQUEST) {
                             for (ResponseRecord rr : cr.getResponses()) {
                                 AddressListEntry ale = new AddressListEntry(rr.getUserId());
@@ -940,7 +940,7 @@ public class MeetingRecord extends DOMFace {
                 }
                 long includeCommentRangeStart = getStartTime() - 3L*24*60*60*1000;
                 long includeCommentRangeEnd = getStartTime() + 3L*24*60*60*1000;
-                
+
                 for (CommentRecord cr : linkedTopic.getCommentTimeFrame(includeCommentRangeStart, includeCommentRangeEnd)) {
                     if (cr.getCommentType() == CommentRecord.COMMENT_TYPE_MINUTES) {
                         sb.append("\n\n''Minutes:''\n\n");
@@ -960,7 +960,7 @@ public class MeetingRecord extends DOMFace {
             //TODO: make a non-persistent version of EmailGenerator -- no real reason to save this
             EmailGenerator emg = ngw.createEmailGenerator();
             emg.setSubject("Reminder for meeting: "+this.getName());
-            
+
             List<String> partUsers = this.getVector("participants");
             if (partUsers.size()>0) {
                 //put the participants into the "also to" field
@@ -976,9 +976,9 @@ public class MeetingRecord extends DOMFace {
                 names.add(tRole);
                 emg.setRoleNames(names);
             }
-            
-            
-            
+
+
+
             emg.setMeetingId(getId());
             String meetingOwner = getOwner();
             if (meetingOwner==null || meetingOwner.length()==0) {
@@ -1003,8 +1003,8 @@ public class MeetingRecord extends DOMFace {
     /*
      * Sorts all of the not-proposed items first, in numerical order,
      * then all the proposed ones, in numerical order.
-     * 
-     * An item should typically start as "proposed" and then be 
+     *
+     * An item should typically start as "proposed" and then be
      * be moved to a not-proposed (accepted) position
      */
     static class AgendaItemPositionComparator implements Comparator<AgendaItem> {
@@ -1060,7 +1060,7 @@ public class MeetingRecord extends DOMFace {
      */
 
     public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
-        return ar.getResourceURL(ngw,  "meetingFull.htm?id="+this.getId()) 
+        return ar.getResourceURL(ngw,  "meetingFull.htm?id="+this.getId())
                 + "&" + AccessControl.getAccessMeetParams(ngw, this);
     }
 
@@ -1097,36 +1097,36 @@ public class MeetingRecord extends DOMFace {
 
 /**
  * This is a pain getting this right.  The meeting might be scheduled in the future
- * or in the past.  (the latter is not likely but possible). 
- *  
- * You can set different settings for how much before the meeting to send the 
+ * or in the past.  (the latter is not likely but possible).
+ *
+ * You can set different settings for how much before the meeting to send the
  * announcement.  Even if the meeting is in the future, the announcement time
  * can be in the future or in the past.
- * 
+ *
  * Regardless of the announcement time, the announcement email might have already
  * been sent.
- * 
+ *
  * The meeting time might have been changed, and in that case a new announcement
  * should be sent, regardless of whether sent previously or not.
- * 
+ *
  * Meeting might be in draft mode, and so don't send any announcement until
  * it changes to Plan mode.
  * ONLY send if it Plan more.  Don't send in running or completed.
- * 
+ *
  * Here are the facts we have to work with:  meeting time, reminder minutes, state,
  * and actual send time.
- * 
+ *
  * The meeting time and reminder minutes combine to form reminderPlanTime.
  * There is a reminderSent which is the actual time sent.
- * 
+ *
  * When the meeting time changes, you should send the notification again, regardless
  * of whether sent or not, regardless of whether this is in the future or the past.
  * When the meeting time changes, clear the sent flag, and clear the sent time.
- * 
+ *
  * Then, every polling cycle, check whether it is time to send or not, depending
- * on expected send time and state.  If planning and expected time is in past, and 
+ * on expected send time and state.  If planning and expected time is in past, and
  * have not already been sent, then send it.
- * 
+ *
  * When email sent, set the reminderSent time, so that it is sent only once.
  * The only thing that clears reminder sent is changing the meeting time.
  *
@@ -1144,7 +1144,7 @@ public class MeetingRecord extends DOMFace {
             if (meet.getState() != MeetingRecord.MEETING_STATE_PLANNING) {
                 return false;
             }
-            
+
             long reminderTime = timeToSend();
             long reminderSent = meet.getReminderSent();
             //the reminder has not been sent AFTER the time to send,
@@ -1188,8 +1188,8 @@ public class MeetingRecord extends DOMFace {
 
     }
 
-    
-    
+
+
     public JSONObject getMeetingNotes() throws Exception {
         JSONObject jo = new JSONObject();
         JSONArray ja = new JSONArray();
@@ -1208,7 +1208,7 @@ public class MeetingRecord extends DOMFace {
         jo.put("minutes", ja);
         return jo;
     }
-    
+
     public void updateMeetingNotes(JSONObject input) throws Exception {
         JSONArray ja = input.getJSONArray("minutes");
         for (int i=0; i<ja.length(); i++) {
@@ -1220,19 +1220,19 @@ public class MeetingRecord extends DOMFace {
             ai.mergeMinutes(oldMins, newMins);
         }
     }
-    
-    
-    
+
+
+
     public static String formatDate(long dateTime, Calendar cal, String format, String nullValue) {
         if (dateTime<=0) {
             return (nullValue);
         }
         SimpleDateFormat sdfFull = new SimpleDateFormat(format);
         sdfFull.setCalendar(cal);
-        
+
         return sdfFull.format(new Date(dateTime));
     }
-    
+
     public void streamICSFile(AuthRequest ar, Writer w, NGWorkspace ngw) throws Exception {
         AddressListEntry ale = new AddressListEntry(getOwner());
         w.write("BEGIN:VCALENDAR\n");
@@ -1249,7 +1249,8 @@ public class MeetingRecord extends DOMFace {
                 getMeetingDescription();
         w.write("DESCRIPTION:"+specialEncode(descriptionHtml)+"\n");
         w.write("END:VEVENT\n");
-        w.write("END:VCALENDAR\n");        
+        w.write("END:VCALENDAR\n");
+        w.flush();
     }
     private String getSpecialICSFormat(long date) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
@@ -1271,5 +1272,5 @@ public class MeetingRecord extends DOMFace {
             }
         }
         return sb.toString();
-    }    
+    }
 }
