@@ -434,6 +434,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         //save is manual
     }
     $scope.openAttachDocument = function () {
+        
+        if ($scope.emailInfo.id=="~new~") {
+            alert("Please 'Save & Preview' this email generator in order to change attached documents");
+            return;
+        }
 
         var attachModalInstance = $modal.open({
             animation: true,
@@ -441,11 +446,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             controller: 'AttachDocumentCtrl',
             size: 'lg',
             resolve: {
-                docList: function () {
-                    return JSON.parse(JSON.stringify($scope.emailInfo.docList));
-                },
-                attachmentList: function() {
-                    return $scope.attachmentList;
+                containingQueryParams: function() {
+                    return "email="+$scope.emailInfo.id;
                 },
                 docSpaceURL: function() {
                     return "<%ar.writeJS(docSpaceURL);%>";

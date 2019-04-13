@@ -35,6 +35,7 @@ import org.socialbiz.cog.AttachmentVersion;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.CommentRecord;
 import org.socialbiz.cog.DOMFace;
+import org.socialbiz.cog.EmailGenerator;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.MeetingRecord;
@@ -619,6 +620,8 @@ public class ProjectDocsController extends BaseController {
      * attachedDocs.json?meet=333&ai=4444
      * attachedDocs.json?note=5555
      * attachedDocs.json?cmt=5342342342
+     * attachedDocs.json?goal=6262
+     * attachedDocs.json?email=5342342342
      *
      * {
      *   "list": [
@@ -640,6 +643,7 @@ public class ProjectDocsController extends BaseController {
             String noteId = request.getParameter("note");
             String cmtId  = request.getParameter("cmt");
             String goalId  = request.getParameter("goal");
+            String emailId  = request.getParameter("email");
 
 
             if ("POST".equalsIgnoreCase(request.getMethod())) {
@@ -676,8 +680,13 @@ public class ProjectDocsController extends BaseController {
                     gr.setDocLinks(newDocs);
                     docList = gr.getDocLinks();
                 }
+                else if (emailId!=null) {
+                    EmailGenerator eg = ngw.getEmailGeneratorOrFail(emailId);
+                    eg.setAttachments(newDocs);
+                    docList = eg.getAttachments();
+                }
                 else {
-                    throw new Exception("attachedDocs.json requires a meet or note parameter on this URL");
+                    throw new Exception("attachedDocs.json requires a meet, note, cmt, goal, or email parameter on this POST URL");
                 }
                 ngw.save();
             }
@@ -700,8 +709,12 @@ public class ProjectDocsController extends BaseController {
                     GoalRecord gr = ngw.getGoalOrFail(goalId);
                     docList = gr.getDocLinks();
                 }
+                else if (emailId!=null) {
+                    EmailGenerator eg = ngw.getEmailGeneratorOrFail(emailId);
+                    docList = eg.getAttachments();
+                }
                 else {
-                    throw new Exception("attachedDocs.json requires a meet or note parameter on this URL");
+                    throw new Exception("attachedDocs.json requires a meet, note, cmt, goal, or email parameter on this GET URL");
                 }
             }
             else {
