@@ -134,6 +134,10 @@ app.controller('myCtrl', function($scope, $http) {
       </div>   
     </td>
   </tr>
+  <tr ng-show="emailMsg.AttachmentFiles && emailMsg.AttachmentFiles.length>0">
+    <td>Attachments</td>
+    <td><div ng-repeat="att in emailMsg.AttachmentFiles">{{att}}</div></td>
+  </tr>
 </table>
 
 </div>

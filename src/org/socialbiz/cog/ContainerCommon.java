@@ -171,11 +171,12 @@ public abstract class ContainerCommon extends NGContainer
     }
 
 
+    /**
+     * Can use either the short ID or the Universal ID
+     */
     public AttachmentRecord findAttachmentByID(String id) throws Exception {
-        for (AttachmentRecord att : getAllAttachments())
-        {
-            if (id.equals(att.getId()))
-            {
+        for (AttachmentRecord att : getAllAttachments()) {
+            if (id.equals(att.getId()) || id.equals(att.getUniversalId())) {
                 return att;
             }
         }

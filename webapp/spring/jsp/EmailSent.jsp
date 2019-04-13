@@ -69,7 +69,7 @@ app.controller('myCtrl', function($scope, $http) {
         }
         var query = {
             offset: newPos,
-            batch: 5,
+            batch: 20,
             searchValue: $scope.filter
         };
         var postdata = angular.toJson(query);
@@ -135,8 +135,8 @@ app.controller('myCtrl', function($scope, $http) {
         <div>
             Filter: <input ng-model="filter">
             <button ng-click="fetchEmailRecords(0)" class="btn btn-default btn-raised">Refresh</button>
-            <button ng-click="fetchEmailRecords(-5)" class="btn btn-default btn-raised">Previous</button>
-            <button ng-click="fetchEmailRecords(5)" class="btn btn-default btn-raised">Next</button>
+            <button ng-click="fetchEmailRecords(-20)" class="btn btn-default btn-raised">Previous</button>
+            <button ng-click="fetchEmailRecords(20)" class="btn btn-default btn-raised">Next</button>
         </div>
         <div style="height:20px;"></div>
         <table class="table" width="100%">

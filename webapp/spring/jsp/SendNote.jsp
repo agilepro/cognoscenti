@@ -257,6 +257,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     }
     $scope.getRenderedEmail();
     $scope.sendEmail = function() {
+        if ($scope.emailInfo.alsoTo.length==0) {
+            alert("Specify who to send email to before pressing 'Send' button");
+            return;
+        }
         $scope.emailInfo.sendIt = true;
         $scope.emailInfo.scheduleIt = false;
         $scope.saveEmail();
@@ -574,8 +578,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             <label class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <div class="form-inline">
-                    <span class="form-control" ng-click="emailInfo.includeBody=!emailInfo.includeBody">
-                        <input type="checkbox" ng-model="emailInfo.includeBody"/>  Include Files as Attachments
+                    <span class="form-control">
+                        <input type="checkbox" ng-model="emailInfo.attachFiles"/>  Include Files as Attachments
                     </span>
                 </div>
             </div>

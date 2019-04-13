@@ -295,18 +295,12 @@ public class EmailGenerator extends DOMFace {
         ArrayList<File> attachments = new ArrayList<File>();
         if (getAttachFiles()) {
             for (String attId : getAttachments()) {
-                File path = ngp.getAttachmentPathOrNull(attId);
-                if (path!=null) {
-                    attachments.add(path);
-                }
+                attachDocFromId(attachments, attId, ngp);
             }
             if (meeting!=null) {
                 for (AgendaItem ai : meeting.getSortedAgendaItems()) {
                     for (String docId : ai.getDocList()) {
-                        File path = ngp.getAttachmentPathOrNull(docId);
-                        if (path!=null) {
-                            attachments.add(path);
-                        }
+                        attachDocFromId(attachments, docId, ngp);
                     }
                 }
             }
@@ -333,6 +327,17 @@ public class EmailGenerator extends DOMFace {
         mailFile.createEmailWithAttachments(new AddressListEntry(getOwner()), ooa.getEmail(), subject, entireBody, attachments);
     }
 
+    
+    private void attachDocFromId(ArrayList<File> attachments, String attId, NGPage ngp) throws Exception {
+        File path = ngp.getAttachmentPathOrNull(attId);
+        if (path==null) {
+            System.out.println("constructEmailRecordOneUser: attachment id "+attId
+                    +" can not be found for email: "+this.getSubject());  
+            return;
+        }
+        attachments.add(path);
+    }
+    
     private MeetingRecord getMeetingIfPresent(NGWorkspace ngp) throws Exception {
         String meetId = getMeetingId();
         if (meetId==null || meetId.length()==0) {

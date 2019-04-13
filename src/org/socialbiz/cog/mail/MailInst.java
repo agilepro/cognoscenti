@@ -337,18 +337,23 @@ public class MailInst extends JSONWrapper {
     private void attachFiles(Multipart mp) throws Exception {
         List<File> attachids = getAttachmentFiles();
         for (File path : attachids) {
-
-            if (path.exists()) {
-                MemFile thisContent = new MemFile();
-                thisContent.fillWithInputStream(new FileInputStream(path));
-
-                MimeBodyPart pat = new MimeBodyPart();
-                MemFileDataSource mfds = new MemFileDataSource(thisContent, path.toString(),
-                                MimeTypes.getMimeType(path.getName()));
-                pat.setDataHandler(new DataHandler(mfds));
-                pat.setFileName(path.getName());
-                mp.addBodyPart(pat);
+            if (!path.exists()) {
+                //There are several reasons why a file might not exist.  It might have been
+                //deleted after the email was compose.  Since email at this level is 
+                //a background activity, we should not FAIL, just ignore it.
+                System.out.println("MailInst: can not attach because file does not exist: "+path);
+                continue;
             }
+            
+            MemFile thisContent = new MemFile();
+            thisContent.fillWithInputStream(new FileInputStream(path));
+
+            MimeBodyPart pat = new MimeBodyPart();
+            MemFileDataSource mfds = new MemFileDataSource(thisContent, path.toString(),
+                            MimeTypes.getMimeType(path.getName()));
+            pat.setDataHandler(new DataHandler(mfds));
+            pat.setFileName(path.getName());
+            mp.addBodyPart(pat);
         }
     }
 
