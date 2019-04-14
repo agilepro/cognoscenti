@@ -14,6 +14,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
     }
     
     $scope.isNew=isNew;
+    $scope.editMode="main";
 
     $scope.colors = ["salmon","khaki","beige","lightgreen","orange","bisque","tomato","aqua","orchid",
                      "peachpuff","powderblue","lightskyblue","white"];

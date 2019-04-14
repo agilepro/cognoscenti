@@ -14,14 +14,19 @@
 </style>
 <div class="modal-header qqTabHeader">
   <div class="qqTabBand">
-    <span ng-class="'qqTabSelected'">
+    <span ng-click="editMode='main'" 
+          ng-class="editMode=='main'?'qqTabSelected':'qqTabUnselected'">
         <span ng-hide="isNew">Edit Players for Role: {{roleInfo.name}}</span>
         <span ng-show="isNew">Create Role</span>
+    </span>
+    <span ng-click="editMode='expert'" ng-hide="isNew"
+          ng-class="editMode=='expert'?'qqTabSelected':'qqTabUnselected'">
+        <span>Advanced</span>
     </span>
   </div>
 </div>
 <div class="modal-body">
-    <table ng-hide="isNew" class="spaceyTable">
+    <table ng-hide="isNew || editMode=='expert'" class="spaceyTable">
         <tr>
             <td ><label>Color:</label></td>
             <td>
@@ -73,6 +78,29 @@
                  <span ng-show="roleInfo.responsibilities.length==0">
                      <i>No responsibilities have been set for this role.</i></span>
              </td>
+        </tr>
+        <tr>
+            <td ></td>
+            <td colspan="2">
+                <div style="float: right;">
+                    <button ng-click="cancel()" class="btn btn-default btn-raised">Close</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table ng-hide="isNew || editMode=='main'" class="spaceyTable">
+        <tr>
+            <td ><label>Email:</label></td>
+            <td>
+                <div ng-repeat="player in roleInfo.players">
+                    {{player.uid}}
+                </div>
+            </td>
+            <td >
+                <div ng-repeat="player in roleInfo.players">
+                    {{player.name}}
+                </div>
+            </td>
         </tr>
         <tr>
              <td >Linked to:</td>

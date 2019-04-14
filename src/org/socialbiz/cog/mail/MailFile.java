@@ -336,7 +336,7 @@ public class MailFile extends JSONWrapper {
         @Override
         public int compare(MailInst arg0, MailInst arg1) {
             try {
-                return (int) (arg1.getCreateDate() - arg0.getCreateDate());
+                return (int) (arg1.getCreateDate()/1000 - arg0.getCreateDate()/1000);
             }
             catch (Exception e) {
                 return 0;
