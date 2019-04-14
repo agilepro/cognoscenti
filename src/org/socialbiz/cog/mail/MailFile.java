@@ -23,6 +23,8 @@ package org.socialbiz.cog.mail;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.mail.Message;
@@ -179,6 +181,8 @@ public class MailFile extends JSONWrapper {
         for (int i=0; i<last; i++) {
             ret.add(new MailInst(msgs.getJSONObject(i)));
         }
+
+        Collections.sort(ret, new MailComparitor());
         return ret;
     }
     void addMessage(MailInst mail) throws Exception {
@@ -191,8 +195,6 @@ public class MailFile extends JSONWrapper {
         msgs.put(jo);
         return new MailInst(jo);
     }
-
-
 
 
     public MailInst createEmailWithAttachments(
@@ -324,75 +326,24 @@ public class MailFile extends JSONWrapper {
     }
 
 
-    /**
-     * @return a JSONArray with all the messages represented as JSON objects
-     *         while also assuring that each message has a unique create date
-     *         since some existing files might not have unique create date
-     *
-    public JSONArray getAllJSON() throws Exception {
-        //this is a test to make sure that sent data and from is unique
-        Hashtable<Long,MailInst>checker = new Hashtable<Long,MailInst>();
-
-        JSONArray emailList = new JSONArray();
-        for (MailInst mi : getAllMessages() ) {
-            long testVal = new Long(mi.getCreateDate());
-            Long testObj = new Long(testVal);
-            if (checker.contains(testObj)) {
-                while (checker.contains(testObj)) {
-                    testObj = new Long(++testVal);
-                }
-                mi.setCreateDate(testVal);
-            }
-            checker.put(testObj, mi);
-
-            emailList.put(mi.getJSON());
-        }
-        return emailList;
-    }
-    */
-
-    /**
-     * @return a JSONArray with all the messages represented as JSON objects
-     *         while also assuring that each message has a unique create date
-     *         since some existing files might not have unique create date
-     *
-    public JSONArray getAllListableJSON(int offset, int batch) throws Exception {
-        //this is a test to make sure that sent data and from is unique
-        Hashtable<Long,MailInst>checker = new Hashtable<Long,MailInst>();
-
-        JSONArray emailList = new JSONArray();
-
-        List<MailInst> list = getAllMessages();
-
-        if (offset>=list.size()) {
-            return emailList;
-        }
-
-        int end = offset + batch;
-        if (end>list.size()) {
-            end = list.size();
-        }
-
-        for (int i = offset; i<end; i++) {
-            MailInst mi = list.get(i);
-            long testVal = mi.getCreateDate();
-            Long testObj = new Long(testVal);
-            if (checker.contains(testObj)) {
-                while (checker.contains(testObj)) {
-                    testObj = new Long(++testVal);
-                }
-                mi.setCreateDate(testVal);
-            }
-            checker.put(testObj, mi);
-
-            emailList.put(mi.getListableJSON());
-        }
-        return emailList;
-    }
-    */
-
     public void storeMessage(Message message) throws Exception {
         MailInst emailRec = this.createMessage();
         emailRec.setFromMessage(message);
     }
+    
+    private class MailComparitor implements Comparator<MailInst> {
+
+        @Override
+        public int compare(MailInst arg0, MailInst arg1) {
+            try {
+                return (int) (arg1.getCreateDate() - arg0.getCreateDate());
+            }
+            catch (Exception e) {
+                return 0;
+            }
+        }
+        
+    }
+
+    
 }
