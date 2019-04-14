@@ -97,7 +97,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             //cancel action - nothing really to do
         });
     };
-
+    $scope.setTimeZone = function(newTimeZone) {
+        var newProfile = {};
+        newProfile.key = $scope.userInfo.key;
+        newProfile.timeZone = newTimeZone;
+        $scope.updateServer(newProfile);
+    }
+    $scope.updateServer = function(newProfile) {
+        console.log("UPDATE PROFILE WITH", newProfile);
+        var postURL = "updateProfile.json";
+        $http.post(postURL, JSON.stringify(newProfile))
+        .success( function(data) {
+            $scope.userInfo = data;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
     
 });
 </script>
@@ -111,6 +127,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 }
 .firstcol {
     width:130px;
+}
+.thinnerGuide {
+    margin:2px;
+    width:400px;
 }
 </style>
 
@@ -143,7 +163,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
       </span>
     </div>
 
-    <table class="spacey">
+    <table class="spacey table">
         <tr ng-show="userInfo.disabled">
             <td class="firstcol">Status:</td>
             <td><span style="color:red">DISABLED</span></td>
@@ -151,25 +171,64 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <tr>
             <td class="firstcol">Full Name:</td>
             <td>{{userInfo.name}}</td>
+            <td ng-hide="helpFullName">
+                <button class="btn" ng-click="helpFullName=!helpFullName">?</button>
+            </td>
+            <td ng-show="helpFullName" ng-click="helpFullName=!helpFullName">
+              <div class="guideVocal thinnerGuide">
+                The full name is what other people will see you as when you do things in Weaver.
+                You should include both first and last name, because in Weaver you will
+                be working with many people, some who know you, and some who don't.
+                It is better to include a complete name if possible.
+              </div>
+            </td>
         </tr>
         <tr>
             <td class="firstcol">Icon:</td>
             <td> 
                 <img src="<%ar.writeHtml(photoSrc);%>" width="50" height="50"/>
             </td>
+            <td ng-hide="helpIcon">
+                <button class="btn" ng-click="helpIcon=!helpIcon">?</button>
+            </td>
+            <td ng-show="helpIcon" ng-click="helpIcon=!helpIcon">
+              <div class="guideVocal thinnerGuide">
+                The icon is an image of you that is used in lists of users.
+                By default you will be given a letter of the alphabet.
+                In Update Settings you can upload an image of yourself.
+              </div>
+            </td>
         </tr>
 
         <tr>
             <td class="firstcol">Description:</td>
             <td>{{userInfo.description}}</td>
+            <td ng-hide="helpDescription">
+                <button class="btn" ng-click="helpDescription=!helpDescription">?</button>
+            </td>
+            <td ng-show="helpDescription" ng-click="helpDescription=!helpDescription">
+              <div class="guideVocal thinnerGuide">
+                Describe yourself for others to get to know you.
+              </div>
+            </td>
         </tr>
 <% //above this is public, below this only for people logged in
 if (ar.isLoggedIn()) { %>
-        <tr><td style="height:10px"></td></tr>
         <tr>
             <td class="firstcol">Email Ids:</td>
             <td>
                 <div ng-repeat="email in userInfo.ids">{{email}}<br/></div>
+            </td>
+            <td ng-hide="helpEmail">
+                <button class="btn" ng-click="helpEmail=!helpEmail">?</button>
+            </td>
+            <td ng-show="helpEmail" ng-click="helpEmail=!helpEmail">
+              <div class="guideVocal thinnerGuide">
+                You can input as many email addresses as you want to use. 
+                When you change email addresses, just ADD the new address here, but leave the old one in the list.                
+                Weaver will always send email to the preferred email.
+                If you have been working in Weaver under one email address, the history items will be tagged with that address, so you will want to leave that associated with your account here so that you are still associated with those items.
+              </div>
             </td>
         </tr>
 <%if (viewingSelf){ %>
@@ -190,6 +249,8 @@ if (ar.isLoggedIn()) { %>
                 <button class="btn btn-warning btn-raised" ng-click="addingEmail=false">Cancel</button>
                 </div>
             </td>
+            <td></td>
+            <td></td>
         </tr>
 <%} %>
         <tr>
@@ -197,24 +258,62 @@ if (ar.isLoggedIn()) { %>
             <td>{{userInfo.timeZone}} 
                 
             </td>
+            <td ng-hide="helpTimeZone">
+                <button class="btn" ng-click="helpTimeZone=!helpTimeZone">?</button>
+            </td>
+            <td ng-show="helpTimeZone" ng-click="helpTimeZone=!helpTimeZone">
+              <div class="guideVocal thinnerGuide">
+                The time zone setting is used when sending email so that you see the right date and time appropriate to your normal location.  <br/>
+                All dates and times displayed in the browser will be in the timezone of that browser computer.  For email, however, we don't know what the timezone of the place where the email will be delivered, so you need to set it here.
+              </div>
+            </td>
         </tr>
+<%if (viewingSelf){ %>
         <tr ng-show="browserZone!=userInfo.timeZone">
             <td></td>
             <td>
-                <span  style="color:red">Note, your browser is set to '{{browserZone}}' -- is above setting correct?</span>
+                <div  style="color:red">Note, your browser is set to '{{browserZone}}' -- is above setting correct?</div>
+                <div><button class="btn btn-default btn-raised" ng-click="setTimeZone(browserZone)">Set Time Zone to {{browserZone}}</button></div>
             </td>
+            <td></td>
+            <td></td>
         </tr>
+<% } %>
         <tr>
             <td class="firstcol">Last Login:</td>
             <td><%SectionUtil.nicePrintTime(ar.w, uProf.getLastLogin(), ar.nowTime); %> as <% ar.writeHtml(uProf.getLastLoginId()); %> </td>
+            <td ng-hide="helpLastLogin">
+                <button class="btn" ng-click="helpLastLogin=!helpLastLogin">?</button>
+            </td>
+            <td ng-show="helpLastLogin" ng-click="helpLastLogin=!helpLastLogin">
+              <div class="guideVocal thinnerGuide">
+                This just lets you know when you last logged in as a security measure to be aware if maybe someone else is logging in as you, and to let others know the last time you were active in the system.
+              </div>
+            </td>
         </tr>
         <tr>
             <td class="firstcol">Notify Period:</td>
             <td>{{userInfo.notifyPeriod}} days</td>
+            <td ng-hide="helpNotifyPeriod">
+                <button class="btn" ng-click="helpNotifyPeriod=!helpNotifyPeriod">?</button>
+            </td>
+            <td ng-show="helpNotifyPeriod" ng-click="helpNotifyPeriod=!helpNotifyPeriod">
+              <div class="guideVocal thinnerGuide">
+                If you sign up for change notifications for a workspace, this setting will determine whether you get an email every day, every week, or every month.
+              </div>
+            </td>
         </tr>
         <tr>
             <td class="firstcol">User Key:</td>
             <td>{{userInfo.key}}</td>
+            <td ng-hide="helpKey">
+                <button class="btn" ng-click="helpKey=!helpKey">?</button>
+            </td>
+            <td ng-show="helpKey" ng-click="helpKey=!helpKey">
+              <div class="guideVocal thinnerGuide">
+                This is the internal unique identifier of this user.
+              </div>
+            </td>
         </tr>
     </table>
 <%if (viewingSelf){ %>

@@ -103,6 +103,38 @@ myApp.controller('myCtrl', function($scope, $http) {
         newProfile.preferred = $scope.newEmail;
         $scope.updateServer(newProfile);
     }
+    $scope.filteredTimeZones = function() {
+        if (!$scope.tzFilter) {
+            return $scope.timeZoneList.slice(0,8);
+        }
+        var rez = [];
+        var filterList = parseLCList($scope.tzFilter);
+        console.log("filterList:", filterList);
+        $scope.timeZoneList.forEach( function(item) {
+            var found = true;
+            var lcItem = item.toLowerCase();
+            filterList.forEach( function(filterTerm) {
+                if (lcItem.indexOf(filterTerm)<0) {
+                    found = false;
+                }
+            });
+            if (found) {
+                rez.push(item);
+            }
+        });
+        if (rez.length>8) {
+            rez = rez.slice(0,8);
+        }
+        console.log("Filtered RTZ:", rez);
+        return rez;
+    }
+    $scope.selectTimeZone = function(newTimeZone) {
+        $scope.profile.timeZone = newTimeZone;
+        var newProfile = {};
+        newProfile.key = $scope.profile.key;
+        newProfile.timeZone = newTimeZone;
+        $scope.updateServer(newProfile);
+    }
 });
 
 </script>
@@ -195,14 +227,14 @@ myApp.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr>
                 <td class="firstcol"></td>
-                <td colspan="2"><input type="button" class="btn btn-primary btn-raised" value="Upload Photo"
+                <td colspan="2"><input type="button" class="btn-sm btn-primary btn-raised" value="Upload Photo"
                     onclick="javascript:uploadUserPhoto();"/></td>
             </tr>
         </table>
     </form>
     <hr/>
 
-    <table class="spacey">
+    <table class="spacey table">
         <tr>
             <td class="firstcol">Full Name:</td>
             <td><input type="text" class="form-control" ng-model="profile.name" /></td>
@@ -220,14 +252,23 @@ myApp.controller('myCtrl', function($scope, $http) {
             </td>
         </tr>
         <tr>
-            <td class="firstcol">Time Zone:</td>
-            <td>
-                <select ng-model="profile.timeZone" ng-options="item for item in timeZoneList"></select>
-            </td>
-        </tr>
-        <tr>
             <td class="firstcol"></td>
             <td colspan="2"><button class="btn btn-primary btn-raised" ng-click="updatePersonal()">Update Personal Details</button></td>
+        </tr>
+        <tr>
+            <td class="firstcol">Time Zone:</td>
+            <td>
+                <div class="form-inline">
+                    Currently set to: <b>{{profile.timeZone}}</b>
+                </div>
+                <div class="form-inline">
+                    Filter: <input ng-model="tzFilter" class="form-control" style="width:200px"/>
+                    Enter a few letters of the time zone you need.
+                </div>
+                <div ng-repeat="item in filteredTimeZones()">
+                    <b>{{item}}</b> <button ng-click="selectTimeZone(item)" class="btn btn-sm btn-default btn-raised">Select</button> 
+                </div>
+            </td>
         </tr>
     </table>
     <table>

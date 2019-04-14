@@ -53,6 +53,9 @@ function standardTinyMCEOptions() {
 //this function splits them, trims, and lowercases them
 function parseLCList(str) {
     var res = [];
+    if (!str) {
+        return res;
+    }
     str.split(" ").forEach( function(item) {
         var x = item.toLowerCase().trim();
         if (x.length>0) {
