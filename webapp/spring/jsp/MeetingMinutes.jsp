@@ -67,6 +67,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     var templateCacheDefeater = "?"+new Date().getTime();
     $scope.loaded = false;
     $scope.meetId = "<%ar.writeJS(meetId);%>";
+    $scope.visitors = [];
     $scope.allMinutes = [];
     $scope.allTitles = [];
     $scope.allHtml = [];
@@ -103,6 +104,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.setMinutesData = function(data) {
         $scope.timerCorrection = data.serverTime - new Date().getTime();
         var newTitles = [];
+        $scope.visitors = data.visitors;
         data.minutes.forEach( function(newItem) {
             existing = null;
             $scope.allMinutes.forEach( function(found) {
@@ -499,6 +501,10 @@ function setInputSelection(el, startOffset, endOffset) {
         Note: if you are experiencing an error getting or saving data, then this page
         may be out of date from the server.  You should refresh the page to make sure
         you are up to date with the server.
+      </div>
+      <div style="margin:20px">
+          <b>Current Visitors: </b>
+          <span ng-repeat="vuser in visitors">{{vuser.name}}, </span>
       </div>
 
       <div ng-show="loaded && !showError">

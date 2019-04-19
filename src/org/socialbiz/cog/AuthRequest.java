@@ -514,6 +514,7 @@ public class AuthRequest
         //record the fact that workspace was visited in this session
         if (newNgp instanceof NGWorkspace) {
             ngsession.addVisited((NGWorkspace)newNgp, nowTime);
+            recordVisit(((NGWorkspace) newNgp).getSiteKey(), ((NGWorkspace) newNgp).getKey());
         }
         setPageAccessLevelsWithoutVisit(newNgp);
     }
@@ -1024,8 +1025,8 @@ public class AuthRequest
     /**
     * Return the complete URL that got us here, including query parameters
     * so we can redirect back as necessary.
-    * 
-    * Made so it does not throw exceptions so that this can be used in 
+    *
+    * Made so it does not throw exceptions so that this can be used in
     * exception handlers easily.
     */
     public String getCompleteURL() {
@@ -1429,7 +1430,7 @@ public class AuthRequest
             throw new NGException("nugen.exception.unable.to.invoke.jsp", new Object[]{JSPName}, e);
         }
         finally {
-            nestingCount--;            
+            nestingCount--;
         }
     }
 
@@ -1753,4 +1754,14 @@ public class AuthRequest
      public ErrorLog getLogForDate(long date) throws Exception {
          return ErrorLog.getLogForDate(date, cog);
      }
+
+     public void recordVisit(String site, String workspace) {
+         if (this.user!=null) {
+             cog.recordVisit(user.getKey(), site, workspace, nowTime);
+         }
+     }
+     public List<String> whoIsVisiting(String site, String workspace) {
+         return cog.whoIsVisiting(site, workspace);
+     }
+
 }

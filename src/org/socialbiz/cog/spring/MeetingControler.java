@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AccessControl;
+import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AgendaItem;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AuthRequest;
@@ -430,6 +431,7 @@ public class MeetingControler extends BaseController {
               }
 
               JSONObject repo = meetingCache.updateCacheFull(ngw, ar, id);
+              addVisitors(ar, repo, siteId, pageId);
               saveAndReleaseLock(ngw, ar, "Updated Meeting");
               //this is so that clients can calculate the offset for their particular clock.
               repo.put("serverTime", System.currentTimeMillis());
@@ -438,6 +440,15 @@ public class MeetingControler extends BaseController {
               Exception ee = new Exception("Unable to update meeting information.", ex);
               streamException(ee, ar);
           }
+      }
+
+      private void addVisitors(AuthRequest ar, JSONObject repo, String siteId, String pageId) throws Exception {
+          JSONArray visitors = new JSONArray();
+          for (String userKey : ar.whoIsVisiting(siteId, pageId)) {
+              AddressListEntry ale = new AddressListEntry(userKey);
+              visitors.put(ale.getJSON());
+          }
+          repo.put("visitors", visitors);
       }
 
 
@@ -479,6 +490,7 @@ public class MeetingControler extends BaseController {
               String id = ar.reqParam("id");
 
               JSONObject jo = meetingCache.getOrCacheFull(siteId, pageId, ar, id);
+              addVisitors(ar, jo, siteId, pageId);
               sendJson(ar, jo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to access meeting information.", ex);
@@ -495,7 +507,7 @@ public class MeetingControler extends BaseController {
               String id = ar.reqParam("id");
 
               JSONObject jo = meetingCache.getOrCacheNotes(siteId, pageId, ar, id);
-
+              addVisitors(ar, jo, siteId, pageId);
               sendJson(ar, jo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to access meeting notes.", ex);

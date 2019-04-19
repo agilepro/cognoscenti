@@ -50,10 +50,13 @@ public class Cognoscenti {
     private Hashtable<String, NGPageIndex> keyToWorkspace;
     private Hashtable<String, NGPageIndex> upstreamToContainer;
 
+    //tracking who is online at the moment.
+    private List<Visitation> visitationList = new ArrayList<Visitation>();
+
     // there may be a number of pages that have unsent email, and so this is a
     // list of keys, but there can be extras in this list without problem
     public List<String> projectsWithEmailToSend = new ArrayList<String>();
-    
+
     SearchManager searchManager = null;
     private long searchIndexBuildtime = 0;
 
@@ -352,9 +355,9 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         return ngpi;
     }
-    
-    
-    
+
+
+
     /**
      * Combined key is   "site|workspace"
      * That is, the site key, a vertical bar, and the workspace key
@@ -364,11 +367,11 @@ System.out.println("Weaver Server Object == Start the Server");
         if (ngpi != null) {
             return ngpi;
         }
-        
+
         //did not find it correctly, but maybe this is a legacy link with just the project key?
         //we can handle that for the time being.   BUT REMOVE THIS LATER!
         return lookForWSBySimpleKeyOnly(combinedKey);
-        
+
         //return null;
     }
     public NGPageIndex getWSByCombinedKeyOrFail(String combinedKey) throws Exception {
@@ -378,12 +381,12 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         return ngpi;
     }
-    
+
     /**
      * Note, the simply workspace key is NOT UNIQUE.
-     * This will work only as long as it is, otherwise you might get the 
+     * This will work only as long as it is, otherwise you might get the
      * wrong key.   This method is meant only as a temporary solution
-     * to allow people with old lists of just the workspace, to 
+     * to allow people with old lists of just the workspace, to
      * migrate to the combined keys.
      */
     public NGPageIndex lookForWSBySimpleKeyOnly(String nonUniqueSimpleKey) {
@@ -394,8 +397,8 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         return null;
     }
-    
-    
+
+
     /**
      * Finding pages by name means that you might find more than one so you get
      * a vector back, which might be empty, it might have one or it might have
@@ -439,7 +442,7 @@ System.out.println("Weaver Server Object == Start the Server");
         return ngpi.getWorkspace();
     }
 
-    
+
     public List<NGPageIndex> getAllSites() {
         ArrayList<NGPageIndex> res = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : allContainers) {
@@ -449,7 +452,7 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         return res;
     }
-    
+
 
 
 
@@ -479,8 +482,8 @@ System.out.println("Weaver Server Object == Start the Server");
         return ngpi.getSite();
     }
 
-    
-    
+
+
     /**
      * Returns a vector of NGPageIndex objects which represent projects which
      * are all part of a single site. Should be called get all projects in site
@@ -616,11 +619,11 @@ System.out.println("Weaver Server Object == Start the Server");
     }
 
     /**
-     * Sept 2017 change this algorithm.  the sites must be children of the 
-     * library file folders pased in, and only direct children.  
-     * 
+     * Sept 2017 change this algorithm.  the sites must be children of the
+     * library file folders pased in, and only direct children.
+     *
      * Then the workspaces can only be the direct chidlren of sites.
-     * 
+     *
      * A workspace found in a site is automatically associated with that site.
      *
      * @param folder
@@ -686,7 +689,7 @@ System.out.println("Weaver Server Object == Start the Server");
         allContainers.add(bIndex);
         keyToSites.put(key, bIndex);
     }
-    
+
     public void eliminateIndexForSite(NGBook site) {
         String key = site.getKey();
         NGPageIndex foundPage = keyToSites.get(key);
@@ -696,11 +699,11 @@ System.out.println("Weaver Server Object == Start the Server");
             keyToSites.remove(foundPage.containerKey);
         }
     }
-    
+
     public void makeIndexForWorkspace(NGWorkspace ngw) throws Exception {
         String key = ngw.getKey();
         String workspaceKey = ngw.getSiteKey() + "|" + key;
-        
+
         // clean up old index entries using old name
         NGPageIndex foundPage = keyToWorkspace.get(workspaceKey);
         if (foundPage != null) {
@@ -732,7 +735,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public void eliminateIndexForWorkspace(NGWorkspace ngw) {
         String key = ngw.getKey();
         String workspaceKey = ngw.getSiteKey() + "|" + key;
-        
+
         // clean up old index entries using old name
         NGPageIndex foundPage = keyToWorkspace.get(workspaceKey);
         if (foundPage != null) {
@@ -741,7 +744,7 @@ System.out.println("Weaver Server Object == Start the Server");
             keyToWorkspace.remove(workspaceKey);
         }
     }
-    
+
     /**
      * Get the first page that has email that still needs to be sent Returns
      * null if there are not any
@@ -760,7 +763,7 @@ System.out.println("Weaver Server Object == Start the Server");
     public void removePageFromEmailToSend(String key) {
         projectsWithEmailToSend.remove(key);
     }
-    
+
     public void reinitializeServer(ServletConfig config) {
         clearAllStaticVariables();
         initializer = null;
@@ -769,7 +772,7 @@ System.out.println("Weaver Server Object == Start the Server");
         initializingNow = false;
         startTheServer(config);
     }
-    
+
     public synchronized List<SearchResultRecord> performSearch(AuthRequest ar,
             String queryStr, String relationship, String siteId) throws Exception {
         if (searchManager==null) {
@@ -782,5 +785,12 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         return searchManager.performSearch(ar, queryStr, relationship, siteId);
     }
-    
+
+    public synchronized void recordVisit(String userKey, String site, String workspace, long timestamp) {
+        visitationList = Visitation.markVisit(visitationList, userKey, site, workspace, timestamp);
+    }
+    public List<String> whoIsVisiting(String site, String workspace) {
+        return Visitation.getCurrentUsers(visitationList, site, workspace);
+    }
+
 }
