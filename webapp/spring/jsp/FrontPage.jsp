@@ -459,7 +459,7 @@ a {
           <div class="panel-heading headingfont">
               <div style="float:left">Planned Meetings</div>
               <div style="float:right" title="Go to a list of all meetings in the workspace">
-                  <a href="meetingList.htm">
+                  <a href="MeetingList.htm">
                       <i class="fa fa-gavel"></i></a></div>
               <div style="clear:both"></div>
           </div>

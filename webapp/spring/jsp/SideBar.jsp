@@ -18,7 +18,7 @@
 
     <li><a href="frontPage.htm" title="Get the main overview of the workspace and recent changes">
         Front Page</a></li>
-    <li><a href="meetingList.htm" title="List and manage all the meetings in this workspace">
+    <li><a href="MeetingList.htm" title="List and manage all the meetings in this workspace">
         Meetings</a></li>
     <li><a href="notesList.htm" title="List and manage the discussions in the workspace.">
         Topics</a></li>

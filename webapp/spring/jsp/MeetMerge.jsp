@@ -108,20 +108,33 @@
     <div class="upRightOptions rightDivContent">    
       <span class="dropdown">
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
-        Templates: <span class="caret"></span></button>
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+        <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Lists all the meetings"
+              href="MeetingList.htm" >Meeting List</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Opens or closes all of the agenda items for the meeting"
+              href="meetingFull.htm?id=<%=id%>" >Edit Meeting</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Opens or closes all of the agenda items for the meeting"
+              href="MeetPrint.htm?id=<%=id%>&tem=<% ar.writeHtml(templateFile.getName()); %>" >Print It</a></li>
+        </ul>
+      </span>
+    </div>
+    
+    <div class="upRightOptions rightDivContent"  style="right:150px">    
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" title="Choose the layout to display with">
+        <span class="fa fa-diamond"></span>&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
         <% for (File temName: allTemplates) { %>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Opens or closes all of the agenda items for the meeting"
-              href="MeetMerge.htm?id=<%=id%>&tem=<% ar.writeHtml(temName.getName()); %>" ><% ar.writeHtml(conditionFileName(temName.getName())); %></a></li>
+              href="MeetMerge.htm?id=<%=id%>&tem=<% ar.writeHtml(temName.getName()); %>" >
+                  <span class="fa fa-diamond"></span>&nbsp;
+                  <% ar.writeHtml(conditionFileName(temName.getName())); %></a></li>
         <% } %>
-        <li role="presentation" class="divider"></li>
-        <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Opens or closes all of the agenda items for the meeting"
-              href="MeetPrint.htm?id=<%=id%>&tem=<% ar.writeHtml(templateFile.getName()); %>" >Print It</a></li>
-        <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Opens or closes all of the agenda items for the meeting"
-              href="meetingFull.htm?id=<%=id%>" >Return to Meeting</a></li>
         </ul>
       </span>
     </div>    

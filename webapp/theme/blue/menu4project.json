@@ -61,12 +61,12 @@
       {
         "level":1,
         "name": "Meetings",
-        "href": "meetingList.htm",
+        "href": "MeetingList.htm",
         "ref": "ddsubmenu3",
         "subs": [
             {
               "name": "Meeting List",
-              "href": "meetingList.htm"
+              "href": "MeetingList.htm"
             },
             {
               "name": "Agenda Item Backlog",

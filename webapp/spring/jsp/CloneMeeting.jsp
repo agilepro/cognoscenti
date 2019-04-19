@@ -153,7 +153,7 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
-            window.location = "meetingList.htm";
+            window.location = "MeetingList.htm";
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);

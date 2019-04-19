@@ -257,6 +257,7 @@ public class MeetingControler extends BaseController {
         showJSPMembers(ar, siteId, pageId, "CloneMeeting");
     }
 
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/meeting.htm", method = RequestMethod.GET)
     public void meeting(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -264,6 +265,7 @@ public class MeetingControler extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "Meeting");
     }
+    */
 
     @RequestMapping(value = "/{siteId}/{pageId}/agendaBacklog.htm", method = RequestMethod.GET)
     public void agendaBacklog(@PathVariable String siteId,@PathVariable String pageId,
@@ -281,7 +283,7 @@ public class MeetingControler extends BaseController {
         showJSPMembers(ar, siteId, pageId, "AgendaItem");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/meetingList.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/MeetingList.htm", method = RequestMethod.GET)
     public void meetingList(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {

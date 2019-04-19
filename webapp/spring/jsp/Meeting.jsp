@@ -185,7 +185,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem"
               title="Return back to the list of all meetings in the workspace"
-              href="meetingList.htm">List All Meetings</a></li>
+              href="MeetingList.htm">List All Meetings</a></li>
         </ul>
       </span>
 

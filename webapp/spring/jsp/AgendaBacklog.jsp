@@ -101,7 +101,7 @@ app.controller('myCtrl', function($scope, $http) {
               href="#" ng-click="showInput=!showInput">Add Agenda Item</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem"
-              href="meetingList.htm">List All Meetings</a></li>
+              href="MeetingList.htm">List All Meetings</a></li>
         </ul>
       </span>
     </div>

@@ -313,7 +313,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
               href="meetingHtml.htm?id={{meeting.id}}">Show Flat Display</a></li>
           <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
-              href="MeetMerge.htm?id={{meeting.id}}&tem=FlatDetailAgenda.chtml">Show Meeting Templates</a></li>
+              href="MeetMerge.htm?id={{meeting.id}}&tem=FlatDetailAgenda.chtml">Show Meeting Layouts</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem"
               title="Generate the meeting minutes from the agenda items and put in a discussion topic"
@@ -327,7 +327,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
               href="cloneMeeting.htm?id={{meeting.id}}">Clone Meeting</a></li>
           <li role="presentation"><a role="menuitem"
               title="Return back to the list of all meetings in the workspace"
-              href="meetingList.htm">List All Meetings</a></li>
+              href="MeetingList.htm">List All Meetings</a></li>
         </ul>
       </span>
 
