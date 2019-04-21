@@ -498,7 +498,7 @@ public class ProjectDocsController extends BaseController {
             String meetingId = topicId.substring(0,hyphenPos);
             String agendaId = topicId.substring(hyphenPos+1);
             MeetingRecord meet = ngp.findMeeting(meetingId);
-            AgendaItem ai = meet.findAgendaItem(agendaId);
+            meet.findAgendaItem(agendaId);
             boolean canAccessMeet  = AccessControl.canAccessMeeting(ar, ngp, meet);
             if (!canAccessMeet) {
                 ar.assertMember("must have permission to make a reply");

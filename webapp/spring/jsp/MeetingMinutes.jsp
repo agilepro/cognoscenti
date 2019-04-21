@@ -50,6 +50,8 @@ Required parameters:
     <!-- Weaver specific tweaks -->
     <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
     <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce.min.js'></script>
+    <script src='<%=ar.baseURL%>jscript/tinymce/tinymce-ng.js'></script>
     <script src="<%=ar.baseURL%>jscript/textAngular-sanitize.min.js"></script>
     <script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
     
@@ -57,12 +59,17 @@ Required parameters:
     <script src="<%=ar.baseURL%>jscript/ng-tags-input.js"></script>
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
     
+	<!-- Date and Time Picker -->
+    <link rel="stylesheet" href="<%=ar.retPath%>bits/angularjs-datetime-picker.css" />
+    <script src="<%=ar.retPath%>bits/angularjs-datetime-picker.js"></script>
+    <script src="<%=ar.retPath%>bits/moment.js"></script>
+    <script>  moment().format(); </script>
     
     
     
 <script type="text/javascript">
 
-var app = angular.module('myApp', ['ui.bootstrap', 'ngSanitize','ngTagsInput']);
+var app = angular.module('myApp', ['ui.bootstrap', 'ngSanitize','ngTagsInput','angularjs-datetime-picker','ui.tinymce']);
 app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     var templateCacheDefeater = "?"+new Date().getTime();
     $scope.loaded = false;
@@ -74,6 +81,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.isEditing = -1;
     $scope.selectedMinutes = {};
     $scope.enableClick = true;
+    $scope.allLabels = <%allLabels.write(out,2,2);%>;
     
     //setting isUpdating to true prevents a second overlapping update
     $scope.isUpdating = false;
@@ -346,7 +354,50 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.enableClick = true;  
         }    
     }
-    
+
+    $scope.openDecisionEditor = function (item) {
+
+        var newDecision = {
+            html: "",
+            labelMap: {},
+            sourceId: $scope.meetId,
+            sourceType: 7
+        };
+
+        var decisionModalInstance = $modal.open({
+            animation: false,
+            templateUrl: "<%=ar.retPath%>templates/DecisionModal.html"+templateCacheDefeater,
+            controller: 'DecisionModalCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                decision: function () {
+                    return JSON.parse(JSON.stringify(newDecision));
+                },
+                allLabels: function() {
+                    return $scope.allLabels;
+                }
+            }
+        });
+
+        decisionModalInstance.result
+        .then(function (newDecision) {
+            newDecision.num="~new~";
+            newDecision.sourceType = 7;
+            newDecision.universalid="~new~";
+            var postURL = "updateDecision.json?did=~new~";
+            var postData = angular.toJson(newDecision);
+            $http.post(postURL, postData)
+            .success( function(data) {
+                
+            })
+            .error( function(data, status, headers, config) {
+                $scope.reportError(data);
+            });
+        }, function () {
+            //cancel action - nothing really to do
+        });
+    };    
     // Start the clock timer
     $interval($scope.calcTimes, 1000);
 });
@@ -530,6 +581,8 @@ function setInputSelection(el, startOffset, endOffset) {
                 <textarea ng-model="min.new" class="form-control" style="width:100%;height:200px"></textarea>
                 <button class="btn btn-default btn-raised" ng-click="openAttachAction(min)">Add Action Item</button>
                 <button class="btn btn-default btn-raised" ng-click="openAddDocument(min)">Add Document</button>
+                <button class="btn btn-default btn-raised" ng-click="openDecisionEditor(min)">Add Decision</button>
+                
                 <button class="btn btn-primary btn-raised" style="float:right" ng-click="closeEditor()">Close</button>
             </div>
             <div class="panel-body" ng-hide="min.isEditing" ng-click="startEditing(min)">
@@ -558,6 +611,7 @@ function setInputSelection(el, startOffset, endOffset) {
 <script src="../../../jscript/AllPeople.js"></script>
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 
 
 

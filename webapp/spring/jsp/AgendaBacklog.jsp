@@ -149,7 +149,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             <tr ng-repeat="rec in meeting.agenda">
                 <td >
-                    {{rec.position}}. <b><a href="agendaItem.htm?id={{meeting.id}}&aid={{rec.id}}">{{rec.subject}}</a></b>
+                    {{rec.position}}. <b>{{rec.subject}}</b>
                     </td>
                 <td>{{rec.desc}}</td>
                 <td>{{rec.duration}}</td>

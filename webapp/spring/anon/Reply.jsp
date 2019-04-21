@@ -107,7 +107,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.otherComments = [];
     $scope.nowTime = new Date().getTime();
     $scope.tinymceOptions = standardTinyMCEOptions();
-    $scope.tinymceOptions.height = 400;
+    $scope.tinymceOptions.height = 250;
     $scope.isLoggedIn = <%=ar.isLoggedIn()%>;
     $scope.sentAlready = false;
     $scope.userCounts = {};
@@ -234,8 +234,10 @@ function reloadIfLoggedIn() {
 
         <div class="page-name">
             <h1 id="mainPageTitle" ng-click="infoOpen=!infoOpen"
-                title="This is the title of the discussion topic that all these topics are attached to">
-                {{originalSubject}} <i class="fa fa-caret-square-o-down"></i>
+                title="Click to open more details about the topic or meeting agenda item">
+                {{originalSubject}} 
+                   <i class="fa fa-caret-square-o-down" ng-hide="infoOpen"></i>
+                   <i class="fa fa-caret-square-o-up" ng-show="infoOpen"></i>
             </h1>
         </div>
 
@@ -298,7 +300,7 @@ function reloadIfLoggedIn() {
             <td><span ng-hide="isLoggedIn" style="color:lightgray">You will need to log in to access the discussion</span></td>
             </tr></table>
             <div ui-tinymce="tinymceOptions" ng-model="newComment.html"
-                 class="leafContent" style="min-height:160px;" id="theOnlyEditor"></div>
+                 class="leafContent" style="max-height:250px;" id="theOnlyEditor"></div>
         </div>
         <div ng-show="sentAlready">
             <table class="spacey"><tr>
@@ -316,7 +318,7 @@ function reloadIfLoggedIn() {
         </div>
 
         <div ng_show="focusId>0">
-            <h2>You are replying to:</h2>
+            <h4>You are replying to:</h4>
 
             <div class="comment-outer">
               <div>{{focusComment.userName}} - {{focusComment.time|date:'MMM dd, yyyy - HH:mm'}}</div>
@@ -326,7 +328,7 @@ function reloadIfLoggedIn() {
             </div>
         </div>
 
-        <h2>Other Comments:</h2>
+        <h4>Other Comments:</h4>
 
         <div ng-repeat="cmt in otherComments" class="comment-outer">
           <div>{{cmt.userName}} - {{cmt.time|date:'MMM dd, yyyy - HH:mm'}}</div>
@@ -335,7 +337,7 @@ function reloadIfLoggedIn() {
           </div>
         </div>
 
-        <h2>Original Topic:</h2>
+        <h4>Original Topic:</h4>
 
         <div class="comment-outer">
           <div class="comment-inner">

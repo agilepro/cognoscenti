@@ -324,7 +324,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Make a copy of this meeting for a new timeslot"
-              href="cloneMeeting.htm?id={{meeting.id}}">Clone Meeting</a></li>
+              href="CloneMeeting.htm?id={{meeting.id}}">Clone Meeting</a></li>
           <li role="presentation"><a role="menuitem"
               title="Return back to the list of all meetings in the workspace"
               href="MeetingList.htm">List All Meetings</a></li>

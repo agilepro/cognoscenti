@@ -274,9 +274,8 @@ function GetFirstHundredNoHtml(input) {
                           </label>
                         </div>
                       </td>
-                      <td><b><a href="agendaItem.htm?id={{meeting.id}}&aid={{rec.id}}">{{rec.subject}}</a>
-                              <span ng-show="rec.topicLink">(Linked Topic)
-                              </span>
+                      <td><b>{{rec.subject}}
+                              <span ng-show="rec.topicLink">(Linked Topic)</span>
                           </b>
                           </td>
                       <td style="line-height: 1.3;">{{trimDesc(rec)}}</td>

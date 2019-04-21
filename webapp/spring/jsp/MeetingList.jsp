@@ -146,7 +146,7 @@ app.controller('myCtrl', function($scope, $http) {
     }
     
     $scope.createMeeting = function() {
-        window.location = "cloneMeeting.htm";
+        window.location = "CloneMeeting.htm";
     }
 });
 </script>
@@ -165,7 +165,7 @@ app.controller('myCtrl', function($scope, $http) {
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Create a new meeting record"
-              href="cloneMeeting.htm" ><i class="fa fa-plus"></i>New Meeting</a></li>
+              href="CloneMeeting.htm" ><i class="fa fa-plus"></i>New Meeting</a></li>
           
         </ul>
       </span>
@@ -186,7 +186,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <span class="fa fa-edit"></span>
                 </button>
               </a>
-              <a role="menuitem" tabindex="-1" title="Clone Meeting" href="cloneMeeting.htm?id={{rec.id}}">
+              <a role="menuitem" tabindex="-1" title="Clone Meeting" href="CloneMeeting.htm?id={{rec.id}}">
                 <button type="button" name="clone" class='btn btn-default'>
                     <span class="fa fa-clone"></span>
                 </button>
