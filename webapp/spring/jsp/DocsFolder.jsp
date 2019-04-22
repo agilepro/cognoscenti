@@ -300,7 +300,7 @@ app.controller('myCtrl', function($scope, $http) {
           <li role="presentation"><a role="menuitem" tabindex="-1" href="docsAdd.htm?folder={{folderPathList()}}">
               <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a>
           </li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="sendNote.htm">
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="SendNote.htm">
               <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> Send Email</a>
           </li>
           <li role="presentation"><a role="menuitem" href="SyncAttachment.htm">
@@ -378,7 +378,7 @@ app.controller('myCtrl', function($scope, $http) {
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" ng-click="deleteDoc(rec)">Delete <i class="fa fa-trash"></i> Document</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="sendNote.htm?att={{rec.id}}">Send Document By Email</a></li>
+                      <a role="menuitem" tabindex="-1" href="SendNote.htm?att={{rec.id}}">Send Document By Email</a></li>
                 </ul>
               </div>
             </td>

@@ -367,6 +367,7 @@ public class EmailGenerator extends DOMFace {
             }
         }
 
+        String meetingString = "";
         String meetId = getMeetingId();
         MeetingRecord meeting = null;
         if (meetId!=null && meetId.length()>0) {
@@ -376,14 +377,26 @@ public class EmailGenerator extends DOMFace {
 	                for (String docId : ai.getDocList()) {
 	                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(docId);
 	                    attachList.add(aRec);
-	                    //if (getAttachFiles()) {
-	                    //    attachIds.add(aRec.getId());
-	                    //}
 	                }
 	            }
+	            
+                List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngp);
+                String meetingLayout = this.getScalar("meetingLayout");
+                File meetingLayoutFile = allLayouts.get(0);
+                if (meetingLayout!=null) {
+                    for (File aLayout : allLayouts) {
+                        if (aLayout.getName().equals(meetingLayout)) {
+                            meetingLayoutFile = aLayout;
+                        }
+                    }
+                }
+                MemFile meetingOutput = new MemFile();
+                ChunkTemplate.streamIt(meetingOutput.getWriter(), meetingLayoutFile, meeting.getFullJSON(ar, ngp), ooa.getCalendar());
+                meetingString = meetingOutput.toString();
             }
         }
-
+        
+     
 
         AuthRequest clone = new AuthDummy(originalSender, bodyChunk.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
@@ -395,7 +408,7 @@ public class EmailGenerator extends DOMFace {
 
         writeNoteAttachmentEmailBody2(clone, ooa, data);
         clone.flush();
-        ret[1] = bodyChunk.toString();
+        ret[1] = bodyChunk.toString() + meetingString;
         
         ret[0] = ChunkTemplate.stringIt(getSubject(), data, ooa.getCalendar());
         
@@ -589,6 +602,7 @@ public class EmailGenerator extends DOMFace {
         this.extractVectorString(obj, "tasksLabels");
         this.extractAttributeBool(obj, "tasksFuture");
         this.extractAttributeBool(obj, "tasksCompleted");
+        this.extractScalarString(obj, "meetingLayout");
         return obj;
     }
 
@@ -645,6 +659,7 @@ public class EmailGenerator extends DOMFace {
         this.updateVectorString("tasksLabels", obj);
         this.updateAttributeBool("tasksFuture", obj);
         this.updateAttributeBool("tasksCompleted", obj);
+        this.updateScalarString("meetingLayout", obj);
     }
 
     public void gatherUnsentScheduledNotification(NGWorkspace ngw, ArrayList<ScheduledNotification> resList) throws Exception {

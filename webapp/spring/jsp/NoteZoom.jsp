@@ -751,7 +751,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     $scope.sendDocByEmail = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="sendNote.htm?att="+doc.id;
+        window.location="SendNote.htm?att="+doc.id;
     }
     $scope.downloadDocument = function(docId) {
         var doc = $scope.getFullDoc(docId);
@@ -945,7 +945,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">Generate PDF</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="sendNote.htm?noteId={{noteInfo.id}}">Send Topic By Email</a></li>
+              href="SendNote.htm?noteId={{noteInfo.id}}">Send Topic By Email</a></li>
           <li role="presentation" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="changeSubscription(true)">Subscribe to this Topic</a></li>
           <li role="presentation" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"

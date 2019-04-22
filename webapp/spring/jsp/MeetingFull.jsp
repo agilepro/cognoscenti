@@ -304,7 +304,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
               href="#" ng-click="createAgendaItem()" >Propose Agenda Item</a></li>
           <li role="presentation"><a role="menuitem"
               title="Compose an email messsage about this meeting and send it"
-              href="sendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
+              href="SendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
           <li role="presentation"><a role="menuitem"
               title="Open the editor for the minutes of the meeting"
               ng-click="openEditor()">Edit Meeting Notes</a></li>

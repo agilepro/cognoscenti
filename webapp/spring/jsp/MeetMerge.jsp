@@ -7,7 +7,6 @@
 %><%@page import="org.socialbiz.cog.mail.ChunkTemplate"
 %><%@page import="com.purplehillsbooks.json.JSONException"
 %><%@page import="java.util.HashSet"
-%><%@page import="java.util.ArrayList"
 %><%
 
     String pageId = ar.reqParam("pageId");
@@ -64,39 +63,20 @@
     }
     
     
-    File parentPath = ngw.getContainingFolder();
-    File siteFolder = parentPath.getParentFile();
-    File siteCogFolder = new File(siteFolder, ".cog");
-    File siteMeetsFolder = new File(siteCogFolder, "meets");
+    List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngw);
     
-    File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("meets");
-    ArrayList<File> allTemplates = new ArrayList<File>();
-    Hashtable<String, File> used = new Hashtable<String, File>();
-    
-    File[] children = siteMeetsFolder.listFiles();
-    if (children!=null) {
-        for (File tempName: children) {
-            allTemplates.add(tempName);
-            used.put(tempName.getName(), tempName);
+    String layoutName = ar.defParam("tem", allLayouts.get(0).getName());
+    if (!layoutName.endsWith("chtml")) {
+        throw new JSONException("Meeting layoutName must end with 'chtml'.  Do you have the right file name? {0}", layoutName);
+    }
+    File layoutFile = null;
+    for (File tf : allLayouts) {
+        if (layoutName.equals(tf.getName())) {
+            layoutFile = tf;
         }
     }
-    children = templateFolder.listFiles();
-    if (children!=null) {
-        for (File tempName: children) {
-            if (!used.contains(tempName.getName())) {
-                allTemplates.add(tempName);
-                used.put(tempName.getName(), tempName);
-            }
-        }
-    }
-    
-    String template = ar.defParam("tem", "FlatDetailAgenda.chtml");
-    if (!template.endsWith("chtml")) {
-        throw new JSONException("Meeting template must end with 'chtml'.  Do you have the right file name? {0}", template);
-    }
-    File templateFile = used.get(template);
-    if (templateFile==null) {
-        templateFile = allTemplates.get(0);
+    if (layoutFile==null) {
+        layoutFile = allLayouts.get(0);
     }
     
     
@@ -118,7 +98,7 @@
               href="meetingFull.htm?id=<%=id%>" >Edit Meeting</a></li>
         <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Opens or closes all of the agenda items for the meeting"
-              href="MeetPrint.htm?id=<%=id%>&tem=<% ar.writeHtml(templateFile.getName()); %>" >Print It</a></li>
+              href="MeetPrint.htm?id=<%=id%>&tem=<% ar.writeHtml(layoutFile.getName()); %>" >Print It</a></li>
         </ul>
       </span>
     </div>
@@ -128,7 +108,7 @@
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" title="Choose the layout to display with">
         <span class="fa fa-diamond"></span>&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-        <% for (File temName: allTemplates) { %>
+        <% for (File temName: allLayouts) { %>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Opens or closes all of the agenda items for the meeting"
               href="MeetMerge.htm?id=<%=id%>&tem=<% ar.writeHtml(temName.getName()); %>" >
@@ -141,7 +121,7 @@
     <div class="well">
     <%
     
-    ChunkTemplate.streamIt(ar.w, templateFile,   meetingJSON, ar.getUserProfile().getCalendar() );         
+    ChunkTemplate.streamIt(ar.w, layoutFile,   meetingJSON, ar.getUserProfile().getCalendar() );         
     
 %>
     </div>

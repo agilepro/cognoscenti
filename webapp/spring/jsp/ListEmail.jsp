@@ -148,7 +148,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
               Email Sent</a>
           </li>
           <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" href="sendNote.htm">
+          <li role="presentation"><a role="menuitem" href="SendNote.htm">
               Create Email</a>
           </li>
         </ul>
@@ -187,7 +187,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
                     </ul>
                   </span>
             </td>
-            <td><a href="sendNote.htm?id={{rec.id}}">{{rec.subject}}</a></td>
+            <td><a href="SendNote.htm?id={{rec.id}}">{{rec.subject}}</a></td>
             <td>{{stateName(rec.state)}}</td>
             <td ng-show="rec.state<=1">
               <a role="menuitem" tabindex="-1" title="Delete Email" href="#" ng-click="deleteEmail(rec)">

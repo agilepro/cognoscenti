@@ -125,7 +125,7 @@ app.controller('myCtrl', function($scope, $http) {
               Email Sent</a>
           </li>
           <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" href="sendNote.htm">
+          <li role="presentation"><a role="menuitem" href="SendNote.htm">
               Create Email</a>
           </li>
         </ul>

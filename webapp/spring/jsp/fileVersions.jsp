@@ -121,7 +121,7 @@ app.controller('myCtrl', function($scope, $http) {
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="fileVersions.htm?aid={{attachInfo.id}}">List Versions</a></li>
           <li role="presentation"><a role="menuitem"
-              href="sendNote.htm?att={{attachInfo.id}}">Send Document by Email</a></li>
+              href="SendNote.htm?att={{attachInfo.id}}">Send Document by Email</a></li>
         </ul>
       </span>
     </div>

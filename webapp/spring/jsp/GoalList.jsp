@@ -367,7 +367,7 @@ function addvalue() {
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a style="color:lightgrey">Action Items View</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="statusList.htm">Status List View</a></li>
+              href="GoalStatus.htm">Status List View</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="taskAreas.htm">Manage Task Areas</a></li>
         </ul>

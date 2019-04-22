@@ -87,11 +87,11 @@ public class ProjectGoalController extends BaseController {
 
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/statusList.htm", method = RequestMethod.GET)
-    public void statusList(@PathVariable String siteId, @PathVariable String pageId,
+    @RequestMapping(value = "/{siteId}/{pageId}/GoalStatus.htm", method = RequestMethod.GET)
+    public void goalStatus(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "StatusList");
+        showJSPMembers(ar, siteId, pageId, "GoalStatus");
     }
 
 

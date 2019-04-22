@@ -34,11 +34,17 @@ Optional Parameters:
 
     String pageId      = ar.reqParam("pageId");
     String siteId      = ar.reqParam("siteId");
+    String meetId      = ar.defParam("meet", null);
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     ar.assertMember("Must be a member to send email");
     UserProfile uProf = ar.getUserProfile();
     AddressListEntry uAle = new AddressListEntry(uProf);
+    List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngw);
+    JSONArray allLayoutNames = new JSONArray();
+    for (File aFile : allLayouts) {
+        allLayoutNames.put(aFile.getName());
+    }
 
     String eGenId      = ar.defParam("id", null);
     String selectedRole = "Members";
@@ -90,7 +96,6 @@ Optional Parameters:
         emailInfo.put("docList", docList);
 
 
-        String meetId      = ar.defParam("meet", null);
         if (meetId!=null && meetId.length()>0) {
             MeetingRecord mr = ngw.findMeeting(meetId);
             if (mr!=null) {
@@ -189,6 +194,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
+    $scope.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
@@ -202,6 +208,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 
     $scope.newEmailAddress = "";
     $scope.newAttachment = "";
+    
+    if (!$scope.emailInfo.meetingLayout) {
+        $scope.emailInfo.meetingLayout = $scope.allLayoutNames[0];
+    }
 
     $scope.saveEmail = function() {
         console.log("SAVE EMAIL");
@@ -221,7 +231,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             }
             if ($scope.isNew) {
                 console.log("OK, we need to navigate to thenew ID");
-                window.location = "sendNote.htm?id="+data.id;
+                window.location = "SendNote.htm?id="+data.id;
             }
             $scope.emailInfo = data;
             console.log("Got Email Object", data);
@@ -421,7 +431,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     }
     $scope.sendDocByEmail = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="sendNote.htm?att="+doc.id;
+        window.location="SendNote.htm?att="+doc.id;
     }
     $scope.downloadDocument = function(docId) {
         var doc = $scope.getFullDoc(docId);
@@ -585,12 +595,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             </div>
           </div>
           
-          <div class="form-group" ng-show="emailInfo.meetingInfo.name">
+          <div class="form-group form-inline" ng-show="emailInfo.meetingInfo.name">
             <hr/>
             <label class="col-md-2 control-label">Meeting</label>
             <div class="col-md-10">
               <span class="btn btn-sm btn-default btn-raised">{{emailInfo.meetingInfo.name}}</span>
-              Included into email
+              Layout: 
+              <select class="form-control"  ng-model="emailInfo.meetingLayout" ng-options="n for n in allLayoutNames"></select>
             </div>
           </div>
 

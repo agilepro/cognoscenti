@@ -111,7 +111,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="goalList.htm">Action Items View</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="statusList.htm">Status List View</a></li>
+              href="GoalStatus.htm">Status List View</a></li>
           <li role="presentation"><a style="color:lightgrey">Manage Task Areas</a></li>
         </ul>
       </span>

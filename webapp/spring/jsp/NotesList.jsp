@@ -333,7 +333,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
               Create New Topic</a>
           </li>
 
-          <li role="presentation"><a role="menuitem" href="sendNote.htm">
+          <li role="presentation"><a role="menuitem" href="SendNote.htm">
               <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" />
               Send Email</a>
           </li>
@@ -429,7 +429,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       <li role="presentation">
                           <a role="menuitem" tabindex="-1" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
                       <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="sendNote.htm?noteId={{rec.id}}">Send Email</a></li>
+                          <a role="menuitem" tabindex="-1" href="SendNote.htm?noteId={{rec.id}}">Send Email</a></li>
                       <li role="presentation" ng-hide="rec.deleted">
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
                       <li role="presentation" ng-show="rec.deleted">

@@ -24,7 +24,7 @@
         Topics</a></li>
     <li><a href="listAttachments.htm" title="List and access all the attached documents in the workspace.">
         Documents</a></li>
-    <li><a href="statusList.htm" title="List and update all the action items in the workspace, current and historical">
+    <li><a href="GoalStatus.htm" title="List and update all the action items in the workspace, current and historical">
         Action Items</a></li>
     <li><a href="decisionList.htm" title="Each workspace has a list of decisions that have been made over time.">
         Decisions</a></li>

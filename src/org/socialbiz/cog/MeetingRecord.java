@@ -1,5 +1,6 @@
 package org.socialbiz.cog;
 
+import java.io.File;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -1272,5 +1274,34 @@ public class MeetingRecord extends DOMFace {
             }
         }
         return sb.toString();
+    }
+    
+    public static List<File> getAllLayouts(AuthRequest ar, NGWorkspace ngw) {
+        File parentPath = ngw.getContainingFolder();
+        File siteFolder = parentPath.getParentFile();
+        File siteCogFolder = new File(siteFolder, ".cog");
+        File siteMeetsFolder = new File(siteCogFolder, "meets");
+        
+        File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("meets");
+        ArrayList<File> allTemplates = new ArrayList<File>();
+        Hashtable<String, File> used = new Hashtable<String, File>();
+        
+        File[] children = siteMeetsFolder.listFiles();
+        if (children!=null) {
+            for (File tempName: children) {
+                allTemplates.add(tempName);
+                used.put(tempName.getName(), tempName);
+            }
+        }
+        children = templateFolder.listFiles();
+        if (children!=null) {
+            for (File tempName: children) {
+                if (!used.contains(tempName.getName())) {
+                    allTemplates.add(tempName);
+                    used.put(tempName.getName(), tempName);
+                }
+            }
+        }
+        return allTemplates;
     }
 }

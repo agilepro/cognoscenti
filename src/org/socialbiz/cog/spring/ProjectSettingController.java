@@ -167,7 +167,7 @@ public class ProjectSettingController extends BaseController {
 
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/sendNote.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/SendNote.htm", method = RequestMethod.GET)
     public void sendNote(
             @PathVariable String pageId, @PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {

@@ -408,7 +408,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     $scope.sendDocByEmail = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="sendNote.htm?att="+doc.id;
+        window.location="SendNote.htm?att="+doc.id;
     }
     $scope.downloadDocument = function(docId) {
         var doc = $scope.getFullDoc(docId);
@@ -544,7 +544,7 @@ function addvalue() {
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="statusList.htm">List Action Items</a></li>
+              href="GoalStatus.htm">List Action Items</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="#" ng-click="startEdit('details')">Edit Details</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
