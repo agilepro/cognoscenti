@@ -22,6 +22,8 @@ package org.socialbiz.cog;
 
 import java.io.File;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.socialbiz.cog.mail.ChunkTemplate;
 import org.socialbiz.cog.mail.EmailSender;
@@ -34,7 +36,7 @@ import com.purplehillsbooks.streams.MemFile;
  */
 public class SiteRequest {
     JSONObject sr;
-    
+
     public SiteRequest(JSONObject jo) {
         sr = jo;
     }
@@ -73,7 +75,7 @@ public class SiteRequest {
     public void setRequestId(String requestId) throws Exception {
         sr.put("requestId", requestId);
     }
-    
+
     /*
      * This returns email id of the user who has requested site.
      */
@@ -105,7 +107,7 @@ public class SiteRequest {
         sr.put("modTime", time);
     }
 
-    
+
     public void sendSiteRequestEmail(AuthRequest ar) throws Exception {
         Cognoscenti cog = ar.getCogInstance();
         for (UserProfile up : cog.getUserManager().getAllSuperAdmins(ar)) {
@@ -113,20 +115,23 @@ public class SiteRequest {
             jo.put("req", this.getJSON());
             jo.put("baseURL", ar.baseURL);
             jo.put("admin", up.getJSON());
-            
+
             File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequest.chtml");
             MemFile body = new MemFile();
             Writer w = body.getWriter();
             ChunkTemplate.streamIt(w, templateFile, jo, up.getCalendar());
             w.flush();
 
-            EmailSender.generalMailToList(cog.getUserManager().getSuperAdminMailList(ar), new AddressListEntry(ar.getBestUserId()),
+            List<OptOutAddr> thisSuperUserAddressList = new ArrayList<OptOutAddr>();
+            thisSuperUserAddressList.add(new OptOutSuperAdmin(up.getAddressListEntry()));
+
+            EmailSender.generalMailToList(thisSuperUserAddressList, new AddressListEntry(ar.getBestUserId()),
                     "Site Approval for " + ar.getBestUserId(),
                     body.toString(), cog);
         }
     }
-    
-    
+
+
     public JSONObject getJSON() throws Exception {
         return sr;
     }

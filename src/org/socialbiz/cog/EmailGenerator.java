@@ -228,11 +228,11 @@ public class EmailGenerator extends DOMFace {
                 return ooa;
             }
         }
-        
+
         //didn't find them, then act as if they were directly added
         return new OptOutDirectAddress(new AddressListEntry(userId));
     }
-    
+
 
     public List<OptOutAddr> expandAddresses(AuthRequest ar, NGWorkspace ngp) throws Exception {
         List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
@@ -289,7 +289,7 @@ public class EmailGenerator extends DOMFace {
         String[] subjAndBody = generateEmailBody(ar, ngp, ooa);
         String subject = subjAndBody[0];
         String entireBody = subjAndBody[1];
-        
+
         MeetingRecord meeting = getMeetingIfPresent(ngp);
 
         ArrayList<File> attachments = new ArrayList<File>();
@@ -305,7 +305,7 @@ public class EmailGenerator extends DOMFace {
                 }
             }
         }
-        
+
         //always attach the ICS file whether they ask for it or not
         //but only if the meeting is scheduled for some time in the future
         if (meeting!=null && meeting.getStartTime()>System.currentTimeMillis()) {
@@ -323,21 +323,21 @@ public class EmailGenerator extends DOMFace {
             icsFileTmp.renameTo(icsFile);
             attachments.add(icsFile);
         }
-        
+
         mailFile.createEmailWithAttachments(new AddressListEntry(getOwner()), ooa.getEmail(), subject, entireBody, attachments);
     }
 
-    
+
     private void attachDocFromId(ArrayList<File> attachments, String attId, NGPage ngp) throws Exception {
         File path = ngp.getAttachmentPathOrNull(attId);
         if (path==null) {
             System.out.println("constructEmailRecordOneUser: attachment id "+attId
-                    +" can not be found for email: "+this.getSubject());  
+                    +" can not be found for email: "+this.getSubject());
             return;
         }
         attachments.add(path);
     }
-    
+
     private MeetingRecord getMeetingIfPresent(NGWorkspace ngp) throws Exception {
         String meetId = getMeetingId();
         if (meetId==null || meetId.length()==0) {
@@ -346,24 +346,21 @@ public class EmailGenerator extends DOMFace {
         MeetingRecord meeting = ngp.findMeetingOrNull(meetId);
         return meeting;
     }
-    
+
     public String[] generateEmailBody(AuthRequest ar, NGWorkspace ngp, OptOutAddr ooa) throws Exception {
-        
+
         String[] ret = new String[2];
 
         TopicRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
         MemFile bodyChunk = new MemFile();
         UserProfile originalSender = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
-        
+
         List<AttachmentRecord> attachList = getSelectedAttachments(ar, ngp);
-        //List<String> attachIds = new ArrayList<String>();
+
         for (String attId : getAttachments()) {
             AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(attId);
             if (aRec!=null) {
                 attachList.add(aRec);
-                //if (getAttachFiles()) {
-                //    attachIds.add(aRec.getId());
-                //}
             }
         }
 
@@ -379,7 +376,7 @@ public class EmailGenerator extends DOMFace {
 	                    attachList.add(aRec);
 	                }
 	            }
-	            
+
                 List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngp);
                 String meetingLayout = this.getScalar("meetingLayout");
                 File meetingLayoutFile = allLayouts.get(0);
@@ -395,23 +392,23 @@ public class EmailGenerator extends DOMFace {
                 meetingString = meetingOutput.toString();
             }
         }
-        
-     
+
+
 
         AuthRequest clone = new AuthDummy(originalSender, bodyChunk.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.setPageAccessLevels(ngp);
-        
-        JSONObject data = getJSONForTemplate(clone, ngp, noteRec, ooa.getAssignee(), getIntro(), 
+
+        JSONObject data = getJSONForTemplate(clone, ngp, noteRec, ooa.getAssignee(), getIntro(),
                 getIncludeBody(), attachList, meeting);
 
         writeNoteAttachmentEmailBody2(clone, ooa, data);
         clone.flush();
         ret[1] = bodyChunk.toString() + meetingString;
-        
+
         ret[0] = ChunkTemplate.stringIt(getSubject(), data, ooa.getCalendar());
-        
+
         return ret;
     }
 
@@ -466,12 +463,12 @@ public class EmailGenerator extends DOMFace {
                     + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8");
             data.put("noteUrl", licensedUrl);
             data.put("noteName", selectedNote.getSubject());
-            
-            
+
+
             JSONObject noteObj = selectedNote.getJSONWithHtml(ar, ngp);
             noteObj.put("noteUrl", licensedUrl);
             AttachmentRecord.addEmailStyleAttList(noteObj, ar, ngp, selectedNote.getDocList());
-            
+
             data.put("note", noteObj);
             if (includeBody) {
                 data.put("includeTopic", "yes");
@@ -495,7 +492,7 @@ public class EmailGenerator extends DOMFace {
         if ("All".equals(tasksOption) || onlyAssigned) {
             List<String> labels = getVector("tasksLabels");
             String filter = getScalar("tasksFilter");
-            
+
             JSONArray goalArray = new JSONArray();
             for (GoalRecord aGoal : ngp.getAllGoals()) {
                 if (!GoalRecord.isActive(aGoal.getState())) {
@@ -525,24 +522,24 @@ public class EmailGenerator extends DOMFace {
                 if (missingLabel) {
                     continue;
                 }
-                
+
                 if (onlyAssigned) {
                     if (!aGoal.isAssignee(ale)) {
                         continue;
                     }
                 }
-                
+
                 JSONObject goalJson = aGoal.getJSON4Goal(ngp);
                 goalJson.put("url", workspaceBaseUrl + "task" + aGoal.getId() + ".htm");
                 goalArray.put(goalJson);
             }
             data.put("goals", goalArray);
         }
-    
+
         return data;
     }
 
-    private void writeNoteAttachmentEmailBody2(AuthRequest ar, 
+    private void writeNoteAttachmentEmailBody2(AuthRequest ar,
             OptOutAddr ooa, JSONObject data) throws Exception {
 
         data.put("optout", ooa.getUnsubscribeJSON(ar));

@@ -508,8 +508,51 @@ public class MeetingRecord extends DOMFace {
         verifyTargetRole(ngw);
         JSONObject meetingInfo = getListableJSON(ar);
         JSONArray aiArray = new JSONArray();
+        long scheduledTime = this.getStartTime();
         for (AgendaItem ai : getSortedAgendaItems()) {
-            aiArray.put(ai.getJSON(ar, ngw, this));
+            JSONObject aiObj = ai.getJSON(ar, ngw, this);
+
+            //calculate the scheduled start and end
+            aiObj.put("schedStart", scheduledTime);
+            scheduledTime = scheduledTime + (aiObj.getLong("duration")*60000);
+            aiObj.put("schedEnd", scheduledTime);
+
+            //add some additional details about the action items
+            JSONArray actionItems = aiObj.getJSONArray("actionItems");
+            JSONArray aiList = new JSONArray();
+            for (int j=0; j<actionItems.length(); j++) {
+                String guid = actionItems.getString(j);
+                GoalRecord gr = ngw.getGoalOrNull(guid);
+                if (gr!=null) {
+                    JSONObject oneAI = new JSONObject();
+                    oneAI.put("synopsis", gr.getSynopsis());
+                    oneAI.put("id", gr.getId());
+                    oneAI.put("state", gr.getState());
+                    oneAI.put("url", ar.baseURL + ar.getResourceURL(ngw, "task"+gr.getId()+".htm"));
+                    aiList.put(oneAI);
+                }
+            }
+            aiObj.put("aiList", aiList);
+
+            //add some details about the documents
+            JSONArray docList = aiObj.getJSONArray("docList");
+            JSONArray attList = new JSONArray();
+            for (int j=0; j<docList.length(); j++) {
+                String guid = docList.getString(j);
+                int pos = guid.lastIndexOf("@");
+                guid = guid.substring(pos+1);
+                AttachmentRecord arec = ngw.findAttachmentByID(guid);
+                if (arec!=null) {
+                    JSONObject oneAI = new JSONObject();
+                    oneAI.put("id", arec.getId());
+                    oneAI.put("name", arec.getNiceName());
+                    oneAI.put("url", ar.baseURL + ar.getResourceURL(ngw, "docinfo"+arec.getId()+".htm"));
+                    attList.put(oneAI);
+                }
+            }
+            aiObj.put("attList", attList);
+
+            aiArray.put(aiObj);
         }
         meetingInfo.put("agenda", aiArray);
         String mid = getMinutesId();
@@ -1275,17 +1318,17 @@ public class MeetingRecord extends DOMFace {
         }
         return sb.toString();
     }
-    
+
     public static List<File> getAllLayouts(AuthRequest ar, NGWorkspace ngw) {
         File parentPath = ngw.getContainingFolder();
         File siteFolder = parentPath.getParentFile();
         File siteCogFolder = new File(siteFolder, ".cog");
         File siteMeetsFolder = new File(siteCogFolder, "meets");
-        
+
         File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("meets");
         ArrayList<File> allTemplates = new ArrayList<File>();
         Hashtable<String, File> used = new Hashtable<String, File>();
-        
+
         File[] children = siteMeetsFolder.listFiles();
         if (children!=null) {
             for (File tempName: children) {
