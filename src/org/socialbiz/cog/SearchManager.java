@@ -119,6 +119,17 @@ public class SearchManager {
                         bodyStuff.append(goal.getSynopsis());
                         bodyStuff.append("\n");
                     }
+                    ProcessRecord process = ngp.getProcess();
+                    String s = process.getScalar("description");
+                    System.out.println("INDEXING: aim for "+ngp.getFullName()+" IS "+s);
+                    bodyStuff.append(s);   //a.k.a. "aim"
+                    bodyStuff.append("\n");
+                    bodyStuff.append(process.getScalar("mission"));
+                    bodyStuff.append("\n");
+                    bodyStuff.append(process.getScalar("vision"));
+                    bodyStuff.append("\n");
+                    bodyStuff.append(process.getScalar("domain"));
+                    bodyStuff.append("\n");
                     // put the name in a few times to increase those scores
                     bodyStuff.append(ngp.getFullName());
                     bodyStuff.append("\n");

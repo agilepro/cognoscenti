@@ -1740,7 +1740,6 @@ public abstract class NGPage extends ContainerCommon {
         workspaceConfigInfo.put("key", getKey());
         workspaceConfigInfo.put("site", getSiteKey());
         workspaceConfigInfo.put("goal", process.getSynopsis());
-        workspaceConfigInfo.put("purpose", process.getDescription());
         workspaceConfigInfo.put("parentKey", getParentKey());
         workspaceConfigInfo.put("frozen", isFrozen());
         workspaceConfigInfo.put("deleted", isDeleted());
@@ -1760,6 +1759,7 @@ public abstract class NGPage extends ContainerCommon {
         List<String> nameSet = getPageNames();
         workspaceConfigInfo.put("allNames", constructJSONArray(nameSet));
 
+        workspaceConfigInfo.put("purpose", process.getDescription());  //a.k.a. 'aim'
         process.extractScalarString(workspaceConfigInfo, "mission");
         process.extractScalarString(workspaceConfigInfo, "vision");
         process.extractScalarString(workspaceConfigInfo, "domain");
