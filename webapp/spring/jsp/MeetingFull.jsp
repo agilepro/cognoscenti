@@ -100,6 +100,12 @@
     
 
     MeetingRecord backlog = ngw.getAgendaItemBacklog();
+    
+    List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngw);
+    JSONArray allLayoutNames = new JSONArray();
+    for (File aFile : allLayouts) {
+        allLayoutNames.put(aFile.getName());
+    }
 
 /* PROTOTYPE
 
@@ -213,6 +219,7 @@ embeddedData.retPath   = "<%=ar.retPath%>";
 embeddedData.templateCacheDefeater   = "<%=templateCacheDefeater%>";
 embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
 embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
+embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
 
 </script>
 <script src="../../../spring/jsp/MeetingFull.js"></script>
@@ -304,7 +311,7 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
               href="#" ng-click="createAgendaItem()" >Propose Agenda Item</a></li>
           <li role="presentation"><a role="menuitem"
               title="Compose an email messsage about this meeting and send it"
-              href="SendNote.htm?meet={{meeting.id}}">Send Email about Meeting</a></li>
+              href="SendNote.htm?meet={{meeting.id}}&layout={{meeting.defaultLayout}}">Send Email about Meeting</a></li>
           <li role="presentation"><a role="menuitem"
               title="Open the editor for the minutes of the meeting"
               ng-click="openEditor()">Edit Meeting Notes</a></li>
@@ -476,6 +483,36 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
             </td>
           </tr>
           <tr>
+            <td>Default Layout:</td>
+            <td>
+              <i class="fa fa-edit" ng-click="editMeetingPart='defaultLayout'"></i>
+            </td>
+            <td ng-hide="'defaultLayout'==editMeetingPart">
+              {{meeting.defaultLayout}} <a href="MeetMerge.htm?id={{meeting.id}}&tem={{meeting.defaultLayout}}"><i class="fa fa-eye"></i></a>
+            </td>
+            <td ng-show="'defaultLayout'==editMeetingPart">
+              <div class="well form-inline form-group" style="max-width:400px">
+                <select class="form-control"  ng-model="meeting.defaultLayout" ng-options="n for n in allLayoutNames"></select>
+                <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Notify Layout:</td>
+            <td>
+              <i class="fa fa-edit" ng-click="editMeetingPart='notifyLayout'"></i>
+            </td>
+            <td ng-hide="'notifyLayout'==editMeetingPart">
+              {{meeting.notifyLayout}} <a href="MeetMerge.htm?id={{meeting.id}}&tem={{meeting.notifyLayout}}"><i class="fa fa-eye"></i></a>
+            </td>
+            <td ng-show="'notifyLayout'==editMeetingPart">
+              <div class="well form-inline form-group" style="max-width:400px">
+                <select class="form-control"  ng-model="meeting.notifyLayout" ng-options="n for n in allLayoutNames"></select>
+                <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
             <td>Target Role:</td>
             <td>
               <i class="fa fa-edit" ng-click="editMeetingPart='targetRole'"></i>
@@ -490,7 +527,6 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
                 <div class="well form-inline form-group" style="max-width:400px">
                     <select class="form-control" ng-model="meeting.targetRole" 
                             ng-options="value for value in allRoles" ng-change="checkRole()"></select>
-                    <br/>
                     <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
                 </div>
             </td>

@@ -35,6 +35,7 @@ Optional Parameters:
     String pageId      = ar.reqParam("pageId");
     String siteId      = ar.reqParam("siteId");
     String meetId      = ar.defParam("meet", null);
+    String layout      = ar.defParam("layout", null);
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     ar.assertMember("Must be a member to send email");
@@ -65,6 +66,10 @@ Optional Parameters:
         emailInfo.put("makeMembers", false);
         emailInfo.put("includeBody", false);
         emailInfo.put("scheduleTime", new Date().getTime());
+        
+        if (layout!=null) {
+            emailInfo.put("meetingLayout", layout);
+        }
 
         String mailSubject  = ar.defParam("subject", null);
         String noteId = ar.defParam("noteId", null);

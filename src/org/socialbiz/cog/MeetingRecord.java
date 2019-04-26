@@ -467,6 +467,8 @@ public class MeetingRecord extends DOMFace {
         extractAttributeLong  (meetingInfo, "reminderSent");
         extractScalarString   (meetingInfo, "owner");
         extractScalarString   (meetingInfo, "previousMeeting");
+        extractScalarString   (meetingInfo, "defaultLayout");
+        extractScalarString   (meetingInfo, "notifyLayout");
         extractAttributeString(meetingInfo, "minutesId");
         return meetingInfo;
     }
@@ -650,6 +652,10 @@ public class MeetingRecord extends DOMFace {
             hasSetMeetingInfo = true;
         }
         updateScalarString("previousMeeting", input);
+
+        updateScalarString   ("defaultLayout", input);
+        updateScalarString   ("notifyLayout", input);
+        
         if (input.has("owner")) {
             setOwner(input.getString("owner"));
         }

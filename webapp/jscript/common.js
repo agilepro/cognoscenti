@@ -170,3 +170,4 @@ function cleanUserList(userList) {
     });
     return cleanList;
 }
+

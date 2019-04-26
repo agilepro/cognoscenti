@@ -14,6 +14,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.attachmentList = [];
     $scope.allRoles = embeddedData.allRoles;
     $scope.allLabels = embeddedData.allLabels;
+    $scope.allLayoutNames = embeddedData.allLayoutNames;
     $scope.allTopics = [];
     $scope.backlogId = embeddedData.backlogId;
     $scope.timeFactor = "Minutes";

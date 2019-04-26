@@ -99,6 +99,9 @@
         <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Opens or closes all of the agenda items for the meeting"
               href="MeetPrint.htm?id=<%=id%>&tem=<% ar.writeHtml(layoutFile.getName()); %>" >Print It</a></li>
+        <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Opens or closes all of the agenda items for the meeting"
+              href="SendNote.htm?meet=<%=id%>&layout=<% ar.writeHtml(layoutFile.getName()); %>" >Email It</a></li>
         </ul>
       </span>
     </div>
@@ -137,7 +140,10 @@
 <script src="<%=ar.retPath%>templates/AttachTopicCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 <%!
-
+/**
+* convert XxxYyyZzz.chmtl 
+*    into Xxx Yyy Zzz
+*/
 public String conditionFileName(String fileName) {
     if (!fileName.endsWith("chtml")) {
         return fileName;
