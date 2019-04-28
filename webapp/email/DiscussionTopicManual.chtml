@@ -44,33 +44,13 @@
 
 {% endif %}
 
-<hr/>
-
 {% if ($meeting) %}
-<h2><a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a></h2>
-
-<p>
-Scheduled time: <b>{$meeting.startTime|date("MMM dd, YYYY  HH:mm '(ttt)' ")}</b>
-</p>
-
-<p>
-{$meeting.meetingInfo}
-</p>
-
-<p><b>Agenda</b></p>
-<ol>
-{% loop in $meeting.agenda as $item}
-<li>{$item.subject|onempty(No Name)|html}<br/>
-{$item.duration} minutes,
-{% loop in $item.presenters as $present %}{$present|onempty(No Name)|html}{% divider %}, {% onEmpty %}{% endloop %}
+<p><b>Meeting:</b> (click links to see meeting):
+<ul>
+<li><a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a><br/>
+{$meeting.startTime|date("MMM dd, YYYY  HH:mm '(ttt)' ")}
 </li>
-{% onEmpty %}
-<li><i>No agenda set up yet</i></li>
-{% endloop %}
-</ol>
 {% endif %}
-
-
 
 
 {% if ($goals) %}
