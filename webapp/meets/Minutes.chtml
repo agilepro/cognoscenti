@@ -30,12 +30,14 @@
 <table class="niceTable">
 {% loop in $agenda as $agItem counter=$i,1 %}
 {% if ($agItem.isSpacer != true) %}
+{% if ($agItem.proposed != true) %}
 <tr>
 <td><b>{$agItem.number}.</b></td>
 <td><div><b>{$agItem.subject|html}</b></div>
      <div>{$agItem.minutes}</div>
 </td>
 </tr>
+{% endif %}
 {% else %}
 <!-- not showing schedule breaks -->
 {% endif %}

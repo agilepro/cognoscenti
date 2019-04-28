@@ -215,7 +215,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     $scope.newAttachment = "";
     
     if (!$scope.emailInfo.meetingLayout) {
-        $scope.emailInfo.meetingLayout = $scope.allLayoutNames[0];
+        $scope.emailInfo.meetingLayout = "FullDetail.chtml";
     }
 
     $scope.saveEmail = function() {

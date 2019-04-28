@@ -65,7 +65,7 @@ public class MeetingNotesCache {
                 throw new Exception("Must be logged in to access meeting "+meetingId+".");
             }
             if (!canAccess(ar)) {
-                throw new Exception("User ("+ar.getBestUserId()+") is not a perticipant for meeting "+meetingId+" and can not access the meeting");
+                throw new Exception("User ("+ar.getBestUserId()+") is not a participant for meeting "+meetingId+" and can not access the meeting");
             }
         }
     }

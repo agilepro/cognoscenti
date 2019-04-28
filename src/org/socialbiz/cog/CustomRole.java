@@ -36,7 +36,7 @@ import com.purplehillsbooks.json.JSONObject;
 /**
 * A custom role is defined by the users on a project, but
 * defining a name, and associated users with it.
-* 
+*
 * TODO: This class was designed around the idea that a role might contain
 * other roles symbolically.  This has never really worked out ...
 * it is too complicated for people to handle.  Should remove
@@ -75,7 +75,7 @@ public class CustomRole extends DOMFace implements NGRole
      * Each role in a workspace can be linked to a role in the Site.
      * These will be synchronized.  When the workspace is read, it will
      * be refreshed from the linked role.  When the workspace is updated
-     * it will also update the linked role.  The Site become a common 
+     * it will also update the linked role.  The Site become a common
      * ground to exchange the list of people who constitute a role.
      */
     public String getLinkedRole()
@@ -86,7 +86,7 @@ public class CustomRole extends DOMFace implements NGRole
     {
         setAttribute("linkedRole", linkedRole);
     }
-    
+
 
 
     public List<AddressListEntry> getExpandedPlayers(NGContainer ngp) throws Exception
@@ -115,7 +115,7 @@ public class CustomRole extends DOMFace implements NGRole
         }
         return list;
     }
-    
+
     public void addPlayer(AddressListEntry newMember) throws Exception {
         RoleTerm term = getCurrentTerm();
         if (term==null) {
@@ -167,7 +167,7 @@ public class CustomRole extends DOMFace implements NGRole
             clearVector("member");
         }
         catch (Exception e) {
-            //i hate this, but clear was previously a method unlikely to 
+            //i hate this, but clear was previously a method unlikely to
             //throw exception.  Still unlikely, so I don't want to change
             //the signature for this.  So throw an undeclared exception.
             throw new RuntimeException("Unable to clear the role", e);
@@ -186,7 +186,7 @@ public class CustomRole extends DOMFace implements NGRole
     {
         return whichIDForUserOfAddressList(user, getDirectPlayers());
     }
-   
+
 
     public String getRequirements()
     {
@@ -214,30 +214,22 @@ public class CustomRole extends DOMFace implements NGRole
     }
 
 
-    public static boolean isPlayerOfAddressList(UserRef user, List<AddressListEntry> list)
-        throws Exception
-    {
-        if (user==null)
-        {
+    public static boolean isPlayerOfAddressList(UserRef user, List<AddressListEntry> list) throws Exception {
+        if (user==null) {
             throw new ProgramLogicError("isPlayerOfAddressList called with null user object.");
         }
-        for (AddressListEntry alr : list)
-        {
-            if (user.hasAnyId(alr.getInitialId()))
-            {
+        for (AddressListEntry alr : list) {
+            if (user.hasAnyId(alr.getInitialId())) {
                 return true;
             }
         }
         return false;
     }
-    static String whichIDForUserOfAddressList(UserRef uRef, List<AddressListEntry> list)
-        throws Exception
-    {
-        for (AddressListEntry alr : list)
-        {
+
+    static String whichIDForUserOfAddressList(UserRef uRef, List<AddressListEntry> list) throws Exception {
+        for (AddressListEntry alr : list) {
             String thisID = alr.getInitialId();
-            if (uRef.hasAnyId(thisID))
-            {
+            if (uRef.hasAnyId(thisID)) {
                 return thisID;
             }
         }
@@ -309,8 +301,8 @@ public class CustomRole extends DOMFace implements NGRole
         }
     }
 
-    
-    
+
+
     public List<AddressListEntry> getMatchedFragment(String frag)throws Exception {
         List<AddressListEntry> result = new ArrayList<AddressListEntry>();
         for (AddressListEntry ale : getDirectPlayers()) {
@@ -350,7 +342,7 @@ public class CustomRole extends DOMFace implements NGRole
         setVector("member", newPlayers);
         return true;
     }
-    
+
     public List<RoleTerm> getAllTerms() throws Exception {
         List<RoleTerm> list= this.getChildren("terms", RoleTerm.class);
         return list;
@@ -383,8 +375,8 @@ public class CustomRole extends DOMFace implements NGRole
                 continue;
             }
             if (uniquenessEnforcer.contains(uniqueId)) {
-                //each member should be in the set only once.  There was some cases where this 
-                //was somehow happening, maybe people changing name, or whatever, so always 
+                //each member should be in the set only once.  There was some cases where this
+                //was somehow happening, maybe people changing name, or whatever, so always
                 //enforce uniqueness in the output list.
                 continue;
             }
@@ -396,7 +388,7 @@ public class CustomRole extends DOMFace implements NGRole
         return jObj;
     }
     /**
-     * Includes all the current info, and 
+     * Includes all the current info, and
      * also the terms (historical) and data around
      * what has happened with the role in the past and future.
      */
@@ -404,21 +396,21 @@ public class CustomRole extends DOMFace implements NGRole
         JSONObject jObj = getJSON();
         jObj.put("perpetual", this.getAttributeBool("perpetual"));
         extractAttributeInt(jObj, "termLength");
-        
+
         List<RoleTerm> allTerms = getAllTerms();
         JSONArray termArray = new JSONArray();
         for (RoleTerm rt : allTerms) {
             termArray.put(rt.getJSON());
         }
         jObj.put("terms", termArray);
-        
+
         List<Responsibility> resplist= this.getChildren("responsibilities", Responsibility.class);
         JSONArray respArray = new JSONArray();
         for (Responsibility res : resplist) {
             respArray.put(res.getJSON());
         }
         jObj.put("responsibilities", respArray);
-        
+
         return jObj;
     }
     public void updateFromJSON(JSONObject roleInfo) throws Exception {

@@ -653,9 +653,9 @@ public class MeetingRecord extends DOMFace {
         }
         updateScalarString("previousMeeting", input);
 
-        updateScalarString   ("defaultLayout", input);
-        updateScalarString   ("notifyLayout", input);
-        
+        updateScalarString("defaultLayout", input);
+        updateScalarString("notifyLayout", input);
+
         if (input.has("owner")) {
             setOwner(input.getString("owner"));
         }

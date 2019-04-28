@@ -36,39 +36,40 @@
 
 <table class="niceTable">
 {% loop in $agenda as $agItem%}
+{% if ($agItem.proposed != true) %}
 {% if ($agItem.isSpacer != true) %}
+
 <tr>
 <td><b>{$agItem.number}.</b></td>
 <td><div><b>{$agItem.subject|html}</b></div>
      <div>{$agItem.minutes}</div>
 </td>
 </tr>
-{% else %}
-<!-- not showing schedule breaks -->
-{% endif %}
+
+
 
 <tr>
 <td></td>
 <td>
 
 <div style="padding:6px;">
-Attachments: 
 {% loop in $agItem.attList as $aDoc%}
-<span class="docPill"><a href="{$aDoc.url}">{$aDoc.name}</a></span>
+<span class="docPill">Doc: <a href="{$aDoc.url}">{$aDoc.name}</a></span>
 {% onEmpty %}
 {% endloop %}
 </div>
 
 <div style="padding:6px;">
-Action Items: 
 {% loop in $agItem.aiList as $aItem%}
-<span class="docPill"><a href="{$aItem.url}">{$aItem.synopsis}</a></span>
+<span class="docPill">Action: <a href="{$aItem.url}">{$aItem.synopsis}</a></span>
 {% onEmpty %}
 {% endloop %}
 </div>
 
 </td>
 </tr>
+{% endif %}
+{% endif %}
 {% onEmpty %}
 No agenda items specified for this meeting
 {% endloop %}
