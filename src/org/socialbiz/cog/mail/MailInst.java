@@ -189,7 +189,8 @@ public class MailInst extends JSONWrapper {
         }
 
         try {
-
+            addressee = getAddressee();
+            
             Authenticator authenticator = new MyAuthenticator(mailer.getProperties());
             Session mailSession = Session.getInstance(mailer.getProperties(), authenticator);
             mailSession.setDebug("true".equals(mailer.getProperty("mail.debug")));
@@ -197,7 +198,6 @@ public class MailInst extends JSONWrapper {
             transport = mailSession.getTransport();
             transport.connect();
 
-            addressee = getAddressee();
 
             MimeMessage message = new MimeMessage(mailSession);
             message.setSentDate(new Date(sendTime));

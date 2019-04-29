@@ -379,12 +379,13 @@ public class EmailGenerator extends DOMFace {
 
                 List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngp);
                 String meetingLayout = this.getScalar("meetingLayout");
-                File meetingLayoutFile = allLayouts.get(0);
                 if (meetingLayout!=null) {
-                    for (File aLayout : allLayouts) {
-                        if (aLayout.getName().equals(meetingLayout)) {
-                            meetingLayoutFile = aLayout;
-                        }
+                    meetingLayout = "FullDetail.chtml";
+                }
+                File meetingLayoutFile = allLayouts.get(0);
+                for (File aLayout : allLayouts) {
+                    if (aLayout.getName().equals(meetingLayout)) {
+                        meetingLayoutFile = aLayout;
                     }
                 }
                 MemFile meetingOutput = new MemFile();

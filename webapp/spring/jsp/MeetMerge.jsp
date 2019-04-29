@@ -65,7 +65,7 @@
     
     List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngw);
     
-    String layoutName = ar.defParam("tem", allLayouts.get(0).getName());
+    String layoutName = ar.defParam("tem", "FullDetail.chtml");
     if (!layoutName.endsWith("chtml")) {
         throw new JSONException("Meeting layoutName must end with 'chtml'.  Do you have the right file name? {0}", layoutName);
     }
@@ -76,7 +76,7 @@
         }
     }
     if (layoutFile==null) {
-        layoutFile = allLayouts.get(0);
+        throw new Exception("Could not find layout named ("+layoutName+")");
     }
     
     
