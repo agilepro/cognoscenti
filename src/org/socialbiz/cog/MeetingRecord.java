@@ -1353,4 +1353,18 @@ public class MeetingRecord extends DOMFace {
         }
         return allTemplates;
     }
+
+    public static File findMeetingLayout(AuthRequest ar, NGWorkspace ngw, String layoutName) {
+        File meetingLayoutFile = null;
+        for (File aLayout : getAllLayouts(ar,ngw)) {
+            if (aLayout.getName().equals(layoutName)) {
+                meetingLayoutFile = aLayout;
+            }
+        }
+        if (meetingLayoutFile==null) {
+            //This one must always exist...
+            return findMeetingLayout(ar, ngw, "FullDetails.chtml");
+        }
+        return meetingLayoutFile;
+    }
 }

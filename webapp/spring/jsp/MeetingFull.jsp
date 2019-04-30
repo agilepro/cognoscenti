@@ -320,7 +320,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
               href="meetingHtml.htm?id={{meeting.id}}">Show Flat Display</a></li>
           <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
-              href="MeetMerge.htm?id={{meeting.id}}&tem=FlatDetailAgenda.chtml">Show Meeting Layouts</a></li>
+              href="MeetMerge.htm?id={{meeting.id}}&tem=FullDetail.chtml">Show Meeting Layouts</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem"
               title="Generate the meeting minutes from the agenda items and put in a discussion topic"

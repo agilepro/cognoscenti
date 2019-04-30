@@ -377,17 +377,8 @@ public class EmailGenerator extends DOMFace {
 	                }
 	            }
 
-                List<File> allLayouts = MeetingRecord.getAllLayouts(ar, ngp);
                 String meetingLayout = this.getScalar("meetingLayout");
-                if (meetingLayout!=null) {
-                    meetingLayout = "FullDetail.chtml";
-                }
-                File meetingLayoutFile = allLayouts.get(0);
-                for (File aLayout : allLayouts) {
-                    if (aLayout.getName().equals(meetingLayout)) {
-                        meetingLayoutFile = aLayout;
-                    }
-                }
+                File meetingLayoutFile = MeetingRecord.findMeetingLayout(ar,  ngp,  meetingLayout);
                 MemFile meetingOutput = new MemFile();
                 ChunkTemplate.streamIt(meetingOutput.getWriter(), meetingLayoutFile, meeting.getFullJSON(ar, ngp), ooa.getCalendar());
                 meetingString = meetingOutput.toString();

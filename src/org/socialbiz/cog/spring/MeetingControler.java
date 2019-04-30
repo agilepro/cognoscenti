@@ -181,7 +181,7 @@ public class MeetingControler extends BaseController {
             Hashtable<String, File> templates = site.allMeetingTemplates(ar);
             File templateFile = templates.get(template);
             if (templateFile == null) {
-                templateFile = templates.get("FlatDetailAgenda.chtml");
+                templateFile = templates.get("FullDetail.chtml");
             }
             ar.invokeJSP("/spring/jsp/PrintHeaders.jsp");
             org.socialbiz.cog.mail.ChunkTemplate.streamIt(ar.w, templateFile,   meetingJSON, ar.getUserProfile().getCalendar() );
