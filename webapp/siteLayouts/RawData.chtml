@@ -1,0 +1,25 @@
+<html>
+<style>
+.emailbody {
+    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+    border-bottom: 2px solid skyblue;
+    padding:5px;
+    text-align: center;
+}
+
+.niceTable tr td { 
+    padding:8px;
+    vertical-align: top;    
+}
+.smallPrint {
+    font-size:-2;
+}
+</style>
+<body>
+<p>Just the raw data for a meeting to help develop more templates.</p>
+
+
+<pre>{$debugDump|html}</pre>
+
+
+</body></html>

@@ -150,6 +150,8 @@ app.controller('myCtrl', function($scope, $http) {
                           <li role="presentation">
                               <a href="oneSite.htm?siteKey={{rec.key}}">View Details</a></li>
                           <li role="presentation">
+                              <a href="SiteMerge.htm?site={{rec.key}}">See Layouts</a></li>
+                          <li role="presentation">
                               <a role="menuitem" ng-click="addAdmin(rec)">Add Yourself to Owners</a></li>
                           <li role="presentation">
                               <a role="menuitem" ng-click="garbageCollect(rec)">Garbage Collect</a></li>

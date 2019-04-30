@@ -132,7 +132,7 @@ public class MainTabsViewControler extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         if ("$".equals(pageId)) {
             //if this is a site instead of a workspace, display something else
-            response.sendRedirect("accountListProjects.htm");
+            response.sendRedirect("SiteWorkspaces.htm");
         }
         showJSPLoggedIn(ar, siteId, pageId, "../jsp/FrontPage");
     }

@@ -1,0 +1,46 @@
+<html>
+<style>
+
+.emailbody {
+    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+    border: 2px solid skyblue;
+    padding:10px;
+    border-radius:10px;
+}
+.niceTable tr td { 
+    padding:8px 
+}
+.smallPrint {
+    font-size:-2;
+}
+</style>
+<body>
+<div class="emailbody">
+<!--TEMPLATE FlatDetailAgenda.chtml-->
+<h1>Welcome to Weaver!</h1> 
+
+<p>Your site 
+{% loop in $site.names as $name %}
+'<b>{$name}</b>'
+{% endloop %}
+ is up and running</p>
+
+<p>As a new Weaver site owner we suggest that you visit the 
+<a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB">Weaver training channel</a> 
+and review the training video 
+<a href="https://www.youtube.com/watch?v=sSJPN5XRFsY&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB&t=38s&index=2">Weaver for First Time User</a> 
+and the video 
+<a href="https://www.youtube.com/watch?v=sSJPN5XRFsY&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB&t=38s&index=2">Adding Users to Weaver.</a> 
+</p>
+
+
+<p>You can access the site at any time using one of the following links.   We recommend you bookmark one of these links right away:</p>
+<ul>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the owner (you)</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
+</ul>
+
+<p>Go ahead and create a workspace if you have not already!</p>
+</div>
+</body></html>

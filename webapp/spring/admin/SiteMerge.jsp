@@ -1,0 +1,92 @@
+<%@page errorPage="/spring/jsp/error.jsp"
+%><%@ include file="/spring/jsp/include.jsp"
+%><%@page import="org.socialbiz.cog.MeetingRecord"
+%><%@page import="org.socialbiz.cog.LicenseForUser"
+%><%@page import="org.socialbiz.cog.AccessControl"
+%><%@page import="org.socialbiz.cog.MicroProfileMgr"
+%><%@page import="org.socialbiz.cog.mail.ChunkTemplate"
+%><%@page import="com.purplehillsbooks.json.JSONException"
+%><%@page import="java.util.HashSet"
+%><%
+
+    String siteId = ar.reqParam("siteId");
+    NGBook ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
+    ar.setPageAccessLevels(ngb);
+
+    List<File> allLayouts = NGBook.getAllLayouts(ar);
+
+    String layoutName = ar.defParam("layout", "SiteIntro1.chtml");
+    File layoutFile = NGBook.findSiteLayout(ar,layoutName);
+
+    JSONObject siteJSON = ngb.getConfigJSON();
+    JSONArray projList = new JSONArray();
+    for (NGPageIndex ngpi : ar.getCogInstance().getAllProjectsInSite(siteId)) {
+        if (!ngpi.isProject()) {
+            continue;
+        }
+        projList.put(ngpi.getJSON4List());
+    }
+    siteJSON.put("workspaces", projList);
+    JSONObject mergeable = new JSONObject();
+    mergeable.put("site", siteJSON);
+    mergeable.put("baseUrl", ar.baseURL);
+
+
+    %>
+    <script>    window.setMainPageTitle("Meeting Display"); </script>
+    <style>
+    .wellstyle {
+        background-color: #fff;
+        padding: 19px;
+        margin-bottom: 20px;
+        -webkit-box-shadow: 0 8px 17px 0 rgba(0,0,0,.2),0 6px 20px 0 rgba(0,0,0,.19);
+        box-shadow: 0 8px 17px 0 rgba(0,0,0,.2),0 6px 20px 0 rgba(0,0,0,.19);
+        border-radius: 2px;
+        border: 0;
+        max-width:650px;
+    }
+    </style>
+
+    <div class="upRightOptions" style="float:right;margin-right:100px">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" title="Choose the layout to display with">
+        <span class="fa fa-diamond"></span>&nbsp;<span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+        <% for (File temName: allLayouts) { %>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              title="Opens or closes all of the agenda items for the meeting"
+              href="SiteMerge.htm?site=<% ar.writeURLData(siteId); %>&layout=<% ar.writeURLData(temName.getName()); %>" >
+                  <span class="fa fa-diamond"></span>&nbsp;
+                  <% ar.writeHtml(conditionFileName(temName.getName())); %></a></li>
+        <% } %>
+        </ul>
+      </span>
+    </div>
+    <div style="clear:both;padding:5px"></div>
+    <div class="wellstyle">
+    <% ChunkTemplate.streamIt(ar.w, layoutFile,   mergeable, ar.getUserProfile().getCalendar() ); %>
+    </div>
+
+
+<%!
+/**
+* convert XxxYyyZzz.chmtl
+*    into Xxx Yyy Zzz
+*/
+public String conditionFileName(String fileName) {
+    if (!fileName.endsWith("chtml")) {
+        return fileName;
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append(fileName.charAt(0));
+    for (int i=1; i<fileName.length()-6; i++) {
+        char ch = fileName.charAt(i);
+        if (ch>='A' && ch<='Z') {
+            sb.append(' ');
+        }
+        sb.append(ch);
+    }
+    return sb.toString();
+}
+
+%>

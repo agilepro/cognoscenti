@@ -5,7 +5,7 @@
   <ul>
     <% if(isSiteHeader) { %>
     <li>
-      <a href="accountListProjects.htm" title="Lists all the workspaces that are in this site.">
+      <a href="SiteWorkspaces.htm" title="Lists all the workspaces that are in this site.">
           Workspaces in Site</a></li>
     <li>
       <a href="SiteAdmin.htm" title="View and adjust the main settings for the site.">

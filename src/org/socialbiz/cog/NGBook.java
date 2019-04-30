@@ -1241,5 +1241,40 @@ public class NGBook extends ContainerCommon {
         }
         return allTemplates;
     }
+    
+    
+    public static List<File> getAllLayouts(AuthRequest ar) {
 
+        File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("siteLayouts");
+        ArrayList<File> allTemplates = new ArrayList<File>();
+        Hashtable<String, File> used = new Hashtable<String, File>();
+
+        File[] children = templateFolder.listFiles();
+        if (children!=null) {
+            for (File tempName: children) {
+                if (!used.contains(tempName.getName())) {
+                    allTemplates.add(tempName);
+                    used.put(tempName.getName(), tempName);
+                }
+            }
+        }
+        return allTemplates;
+    }
+
+    public static File findSiteLayout(AuthRequest ar, String layoutName) {
+        File meetingLayoutFile = null;
+        for (File aLayout : getAllLayouts(ar)) {
+            if (aLayout.getName().equals(layoutName)) {
+                meetingLayoutFile = aLayout;
+            }
+        }
+        if (meetingLayoutFile==null) {
+            if ("SiteIntro1.chtml".equals(layoutName)) {
+                throw new RuntimeException("Required file SiteIntro1.chtml does not appear to be installed in the system.");
+            }
+            //This one must always exist...
+            return findSiteLayout(ar, "SiteIntro1.chtml");
+        }
+        return meetingLayoutFile;
+    }
 }

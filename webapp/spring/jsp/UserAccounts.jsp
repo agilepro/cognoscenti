@@ -98,7 +98,7 @@ app.controller('myCtrl', function($scope, $http) {
                 </tr>
                 <tr ng-repeat="rec in siteList">
                     <td>
-                        <a href="<%=ar.retPath%>t/{{rec.siteKey}}/$/accountListProjects.htm" title="navigate to the site">{{rec.siteName}}</a>
+                        <a href="<%=ar.retPath%>t/{{rec.siteKey}}/$/SiteWorkspaces.htm" title="navigate to the site">{{rec.siteName}}</a>
                     </td>
                     <td>{{rec.siteDesc}}</td>
                     <td>{{rec.numWorkspaces}}</td>
@@ -140,7 +140,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <tr ng-repeat="rec in requestList">
                         <td>
                             <span ng-show="rec.status=='Granted'">
-                                <a href="<%=ar.retPath%>t/{{rec.siteId}}/$/accountListProjects.htm">{{rec.siteName}}</a>
+                                <a href="<%=ar.retPath%>t/{{rec.siteId}}/$/SiteWorkspaces.htm">{{rec.siteName}}</a>
                             </span>
                             <span ng-hide="rec.status=='Granted'">{{rec.siteName}}</span>
                         </td>

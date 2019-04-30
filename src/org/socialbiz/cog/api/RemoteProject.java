@@ -92,7 +92,7 @@ public class RemoteProject
             int len = siteui.length();
             siteui = siteui.substring(0, len-1);
             int slashpos = siteui.lastIndexOf('/');
-            siteui = siteui.substring(0, slashpos) + "/$/accountListProjects.htm";
+            siteui = siteui.substring(0, slashpos) + "/$/SiteWorkspaces.htm";
         }
         return siteui;
     }

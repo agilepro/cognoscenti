@@ -278,7 +278,7 @@ myApp.controller('myCtrl', function($scope, $http) {
           </div>
           <div class="panel-body">
                <div ng-repeat="item in siteList | limitTo: 10" class="clipping">
-                   <a href="<%=ar.retPath%>t/{{item.key}}/$/accountListProjects.htm">
+                   <a href="<%=ar.retPath%>t/{{item.key}}/$/SiteWorkspaces.htm">
                    {{item.names[0]}}
                    </a>
                </div>

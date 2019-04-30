@@ -70,7 +70,7 @@ Required parameter:
                                     ar.write(ar.retPath);
                                     ar.write("v/");
                                     ar.write(accountDetails.getSiteId());
-                                    ar.write("/$/accountListProjects.htm\">");
+                                    ar.write("/$/SiteWorkspaces.htm\">");
                                     ar.writeHtml(accountDetails.getName());
                                     ar.write(" (click here to visit site)</a>");
                                 }

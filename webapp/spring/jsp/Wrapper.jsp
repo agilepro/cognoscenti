@@ -289,10 +289,10 @@ var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.tinymce','
         <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%=pageUserKey%>/userSettings.htm">
             User: <% ar.writeHtml(pageUserName); %></a></div></li>
       <% } else if(isSiteHeader) { %>
-      <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/accountListProjects.htm">
+      <li class="page-name"><div class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(accountKey);%>/$/SiteWorkspaces.htm">
             Site: '<%ar.writeHtml(mainSiteName);%>'</a></div></li>
       <% } else { %>
-        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/accountListProjects.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
+        <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/$/SiteWorkspaces.htm"><%ar.writeHtml(ngb.getFullName());%></a></li>
         <li class="link"><a href="<%=ar.retPath%>v/<%ar.writeURLData(ngb.getKey());%>/<%ar.writeURLData(ngp.getKey());%>/frontPage.htm">
             <%ar.writeHtml(ngp.getFullName());%></a>
                 <span style="color:gray">

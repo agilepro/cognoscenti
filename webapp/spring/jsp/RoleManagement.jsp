@@ -26,7 +26,7 @@
     
     String frontPageResource = "frontPage.htm";
     if ("$".equals(pageId)) {
-        frontPageResource = "accountListProjects.htm";
+        frontPageResource = "SiteWorkspaces.htm";
     }
 
     JSONArray allRoles = new JSONArray();
