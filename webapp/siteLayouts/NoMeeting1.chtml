@@ -1,0 +1,29 @@
+<html>
+<body>
+{% include styles %}
+<div class="emailbody">
+<!--TEMPLATE FlatDetailAgenda.chtml-->
+<h3>About Your Weaver Site: </h3>
+<ul><h1><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">{$site.names|get(0)}</a></h1></ul>
+
+<p>Congratulation on creating the workspace(s): 
+{% loop in $site.workspaces as $workspace %}
+<b><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/frontPage.htm">{$workspace.name}</a></b>
+{% endloop %}
+
+<p class="important">You haven't created any workspaces yet.</p>
+
+
+<p>The next step is to </p>
+
+
+<p>You can access the site at any time using one of the following links.   We recommend you bookmark one of these links right away:</p>
+<ul>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the owner (you)</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
+</ul>
+
+<div class="tm"></div>
+</div>
+</body></html>

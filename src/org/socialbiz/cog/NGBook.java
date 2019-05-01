@@ -1110,6 +1110,10 @@ public class NGBook extends ContainerCommon {
         saveStatsFile(siteStats);
         return siteStats;
     }
+    public JSONObject getStatsJSON(Cognoscenti cog) throws Exception {
+        WorkspaceStats ws = getRecentStats(cog);
+        return ws.getJSON();
+    }
 
     public WorkspaceStats getStatsFile() throws Exception {
         JSONObject jo = JSONObject.readFromFile(getStatsFilePath());
@@ -1241,8 +1245,8 @@ public class NGBook extends ContainerCommon {
         }
         return allTemplates;
     }
-    
-    
+
+
     public static List<File> getAllLayouts(AuthRequest ar) {
 
         File templateFolder = ar.getCogInstance().getConfig().getFileFromRoot("siteLayouts");

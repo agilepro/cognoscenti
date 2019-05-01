@@ -1,28 +1,12 @@
 <html>
-<style>
-
-.emailbody {
-    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
-    border: 2px solid skyblue;
-    padding:10px;
-    border-radius:10px;
-}
-.niceTable tr td { 
-    padding:8px 
-}
-.smallPrint {
-    font-size:-2;
-}
-</style>
 <body>
+{% include styles %}
 <div class="emailbody">
 <!--TEMPLATE FlatDetailAgenda.chtml-->
 <h1>Welcome to Weaver!</h1> 
 
 <p>Your site 
-{% loop in $site.names as $name %}
-'<b>{$name}</b>'
-{% endloop %}
+'<b>{$site.names|get(0)}</b>'
  is up and running</p>
 
 <p>As a new Weaver site owner we suggest that you visit the 
@@ -42,5 +26,8 @@ and the video
 </ul>
 
 <p>Go ahead and create a workspace if you have not already!</p>
+
+
+<div class="tm"></div>
 </div>
 </body></html>

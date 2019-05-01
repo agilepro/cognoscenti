@@ -1,0 +1,27 @@
+<html>
+<body>
+{% include styles %}
+<div class="emailbody">
+<!--TEMPLATE FlatDetailAgenda.chtml-->
+<h3>About Your Weaver Site: </h3>
+<ul><h1><a href="">{$site.names|get(0)}</a></h1></ul>
+
+<p class="important">You haven't created any workspaces yet.</p>
+
+
+<p>Workspaces are where people do the work.  
+Many people only need a single workspace, but you actually create as many workspaces as you want within one site.
+Go ahead and create a workspace now.
+Don't worry, you can create another later, or delete it, if you decide you need something different.</p>
+
+
+<p>You can access the site at any time using one of the following links.   We recommend you bookmark one of these links right away:</p>
+<ul>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the owner (you)</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
+</ul>
+
+<div class="tm"></div>
+</div>
+</body></html>

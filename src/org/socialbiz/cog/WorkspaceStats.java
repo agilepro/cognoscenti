@@ -25,18 +25,21 @@ public class WorkspaceStats {
     public NameCounter proposalsPerUser   = new NameCounter();
     public NameCounter responsesPerUser   = new NameCounter();
     public NameCounter unrespondedPerUser = new NameCounter();
+    public NameCounter anythingPerUser    = new NameCounter();
 
     public void gatherFromWorkspace(NGPage ngp) throws Exception {
 
         for (TopicRecord topic : ngp.getAllNotes()) {
             numTopics++;
             topicsPerUser.increment(topic.getOwner());
+            anythingPerUser.increment(topic.getOwner());
             countComments(topic.getComments());
         }
         for (AttachmentRecord doc : ngp.getAllAttachments()) {
             numDocs++;
             if (!doc.isDeleted()) {
                 docsPerUser.increment(doc.getModifiedBy());
+                anythingPerUser.increment(doc.getModifiedBy());
             }
             int version = doc.getVersion();
             for (AttachmentVersion ver : doc.getVersions(ngp)) {
@@ -54,6 +57,7 @@ public class WorkspaceStats {
             String owner = meet.getOwner();
             if (owner!=null && owner.length()>0) {
                 meetingsPerUser.increment(owner);
+                anythingPerUser.increment(owner);
             }
             for (AgendaItem ai : meet.getSortedAgendaItems()) {
                 countComments(ai.getComments());
@@ -66,24 +70,27 @@ public class WorkspaceStats {
 
     private void countComments(List<CommentRecord> comments) throws Exception {
         for (CommentRecord comm : comments) {
+            String ownerId = comm.getUser().getUniversalId();
             if (comm.getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE) {
                 numComments++;
-                commentsPerUser.increment(comm.getUser().getUniversalId());
+                commentsPerUser.increment(ownerId);
+                anythingPerUser.increment(ownerId);
             }
             else {
                 numProposals++;
-                proposalsPerUser.increment(comm.getUser().getUniversalId());
+                proposalsPerUser.increment(ownerId);
+                anythingPerUser.increment(ownerId);
             }
         }
     }
 
     public void addAllStats(WorkspaceStats other) {
-        
+
         //this is incremented to count the number of smaller collections that have
         //been aggregated into this statistics collection.  This is useful mainly
         //for sites which collect all the values from their workspaces.
         numWorkspaces++;
-        
+
         numTopics     += other.numTopics;
         numDocs       += other.numDocs;
         numMeetings   += other.numMeetings;
@@ -100,6 +107,7 @@ public class WorkspaceStats {
         proposalsPerUser.addAllCounts(other.proposalsPerUser);
         responsesPerUser.addAllCounts(other.responsesPerUser);
         unrespondedPerUser.addAllCounts(other.unrespondedPerUser);
+        anythingPerUser.addAllCounts(other.anythingPerUser);
     }
 
     public JSONObject getJSON() throws Exception {
@@ -113,6 +121,7 @@ public class WorkspaceStats {
         jo.put("sizeDocuments", sizeDocuments);
         jo.put("sizeArchives",  sizeArchives);
         jo.put("numWorkspaces",  numWorkspaces);
+        jo.put("numUsers",       anythingPerUser.size());
         jo.put("topicsPerUser",      topicsPerUser.getJSON());
         jo.put("docsPerUser",        docsPerUser.getJSON());
         jo.put("commentsPerUser",    commentsPerUser.getJSON());
@@ -120,6 +129,7 @@ public class WorkspaceStats {
         jo.put("proposalsPerUser",   proposalsPerUser.getJSON());
         jo.put("responsesPerUser",   responsesPerUser.getJSON());
         jo.put("unrespondedPerUser", unrespondedPerUser.getJSON());
+        jo.put("anythingPerUser",    anythingPerUser.getJSON());
         return jo;
     }
 
@@ -143,6 +153,10 @@ public class WorkspaceStats {
         res.proposalsPerUser.fromJSON(jo.getJSONObject("proposalsPerUser"));
         res.responsesPerUser.fromJSON(jo.getJSONObject("responsesPerUser"));
         res.unrespondedPerUser.fromJSON(jo.getJSONObject("unrespondedPerUser"));
+        if (jo.has("anythingPerUser")) {
+            //schema migration
+            res.anythingPerUser.fromJSON(jo.getJSONObject("anythingPerUser"));
+        }
         return res;
     }
 

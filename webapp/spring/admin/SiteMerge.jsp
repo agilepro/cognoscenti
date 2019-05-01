@@ -27,6 +27,7 @@
         projList.put(ngpi.getJSON4List());
     }
     siteJSON.put("workspaces", projList);
+    siteJSON.put("stats", ngb.getStatsJSON(ar.getCogInstance()));
     JSONObject mergeable = new JSONObject();
     mergeable.put("site", siteJSON);
     mergeable.put("baseUrl", ar.baseURL);
