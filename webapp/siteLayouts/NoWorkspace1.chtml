@@ -2,7 +2,7 @@
 <body>
 {% include styles %}
 <div class="emailbody">
-<!--TEMPLATE FlatDetailAgenda.chtml-->
+<!--TEMPLATE NoWorkspace1.chtml-->
 <h3>About Your Weaver Site: </h3>
 <ul><h1><a href="">{$site.names|get(0)}</a></h1></ul>
 

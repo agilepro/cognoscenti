@@ -2,7 +2,7 @@
 <body>
 {% include styles %}
 <div class="emailbody">
-<!--TEMPLATE FlatDetailAgenda.chtml-->
+<!--TEMPLATE NoWorkspace2.chtml-->
 <h3>About Your Weaver Site: </h3>
 <ul><h1><a href="">{$site.names|get(0)}</a></h1></ul>
 
@@ -11,7 +11,10 @@
 
 <p>Workspaces are where people do the work, and you can create as many as you want.</p> 
  
-<p>We have some videos that help explain: (need to create that video about creating a workspace)</p>
+<p>We have some videos that help explain how to do this.   Try watching 
+<a href="https://www.youtube.com/watch?v=KX13p4rnhb0&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB&index=2">Workspaces: How to Create in Weaver</a> 
+and at the same time familiarize yourself with other 
+<a href="https://www.youtube.com/watch?v=sSJPN5XRFsY&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB"> Weaver Training Videos</a>. </p>
 
 
 <p>You can access the site at any time using one of the following links.   We recommend you bookmark one of these links right away:</p>

@@ -2,22 +2,36 @@
 <body>
 {% include styles %}
 <div class="emailbody">
-<!--TEMPLATE FlatDetailAgenda.chtml-->
+<!--TEMPLATE NoMeeting1.chtml-->
 <h3>About Your Weaver Site: </h3>
 <ul><h1><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">{$site.names|get(0)}</a></h1></ul>
 
 <p>Congratulation on creating the workspace(s): 
 {% loop in $site.workspaces as $workspace %}
-<b><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/frontPage.htm">{$workspace.name}</a></b>
+<b><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/frontPage.htm">{$workspace.name}</a></b>;
 {% endloop %}
 
-<p class="important">You haven't created any workspaces yet.</p>
+<p class="important">You haven't created any meetings yet.</p>
 
 
-<p>The next step is to </p>
+<p>Hope you are enjoying using Weaver! 
+If you haven't already done so, we encourage you to revisit the 
+<a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB">Weaver training channel</a>. 
+There are several short videos that you might find useful in learning about the wide scope of Weaver features such as: 
+<a href="https://www.youtube.com/watch?v=4FIBRS_gl-c&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB&index=11">Agreeing on Meeting Time</a>
+ and 
+<a href="https://www.youtube.com/watch?v=YNBHsc99mws&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB&index=7">How to Prepare for a Meeting with Weaver</a>
+ and 
+<a href="https://www.youtube.com/watch?v=sf1spHsa_LI&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB&index=8">How to Run a Meeting with Weaver</a>. </p>
 
+<p>Use these links to get to the meeting list for your workspace(s):
+<ul>
+{% loop in $site.workspaces as $workspace %}
+<li><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/MeetingList.htm">{$workspace.name}</a></li>
+{% endloop %}
+</ul>
 
-<p>You can access the site at any time using one of the following links.   We recommend you bookmark one of these links right away:</p>
+<p>You can access the site at any time using one of the following links:</p>
 <ul>
 <li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
 <li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the owner (you)</li>

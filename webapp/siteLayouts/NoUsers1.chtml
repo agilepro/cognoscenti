@@ -1,0 +1,35 @@
+<html>
+<body>
+{% include styles %}
+<div class="emailbody">
+<!--TEMPLATE NoUsers1.chtml-->
+<h3>About Your Weaver Site: </h3>
+<ul><h1><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">{$site.names|get(0)}</a></h1></ul>
+
+<p>Congratulation on creating the workspace(s): 
+{% loop in $site.workspaces as $workspace %}
+<b><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/frontPage.htm">{$workspace.name}</a></b>
+{% endloop %}
+
+<p class="important">You haven't invited any other users yet.</p>
+
+
+<p>The next step is to invite some other people to your workspace.  If you haven't tried adding one or more other users yet, you might want to watch the Weaver training video <a href="https://www.youtube.com/watch?v=FEIR6JvF9q4">Inviting Users to your Workspace</a> and at the same time familiarize yourself with other <a href="https://www.youtube.com/watch?v=sSJPN5XRFsY&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB"> Weaver Training Videos</a>. </p>
+
+<p>Use these links to access the 'Roles' page for your workspace(s):
+<ul>
+{% loop in $site.workspaces as $workspace %}
+<li><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/roleManagement.htm">{$workspace.name}</a></li>
+{% endloop %}
+</ul>
+
+<p>You can access the site at any time using one of the following links:</p>
+<ul>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the owner (you)</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
+</ul>
+
+<div class="tm"></div>
+</div>
+</body></html>
