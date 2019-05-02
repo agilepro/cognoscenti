@@ -1362,11 +1362,11 @@ public class MeetingRecord extends DOMFace {
             }
         }
         if (meetingLayoutFile==null) {
-            if ("FullDetails.chtml".equals(layoutName)) {
-                throw new RuntimeException("Required file FullDetails.chtml does not appear to be installed in the system.");
+            if ("FullDetail.chtml".equals(layoutName)) {
+                throw new RuntimeException("Required file FullDetail.chtml does not appear to be installed in the system.");
             }
             //This one must always exist...
-            return findMeetingLayout(ar, ngw, "FullDetails.chtml");
+            return findMeetingLayout(ar, ngw, "FullDetail.chtml");
         }
         return meetingLayoutFile;
     }
