@@ -54,6 +54,7 @@ public class UserPage extends ContainerCommon
     private DOMFace profileRefs = null;
     private List<ProfileRef> profileList = null;
     private DOMFace agentRules = null;
+    private DOMFace siteMailList = null;
     private List<AgentRule> agentList = null;
 
 
@@ -679,6 +680,37 @@ public class UserPage extends ContainerCommon
         AgentRule found = findAgentRule(id);
         agentRules.removeChild(found);
     }
+    
+    
+    
+    
+    public List<SiteMailGenerator> getSiteMail() throws Exception {
+        DOMFace siteMailContainer = requireChild("SiteMailList", DOMFace.class);
+        List<SiteMailGenerator> siteMailList = siteMailContainer.getChildren("SiteMail", SiteMailGenerator.class);
+        return siteMailList;
+    }
+    public SiteMailGenerator createSiteMail() throws Exception {
+        DOMFace siteMailContainer = requireChild("SiteMailList", DOMFace.class);
+        SiteMailGenerator newOne = siteMailContainer.createChild("SiteMail", SiteMailGenerator.class);
+        newOne.setId(getUniqueOnPage());
+        return newOne;
+    }
+    public SiteMailGenerator findSiteMail(String id) throws Exception {
+        for (SiteMailGenerator ar : getSiteMail()) {
+            if (id.equals(ar.getId())) {
+                return ar;
+            }
+        }
+        return null;
+    }
+    public void deleteSiteMail(String id) throws Exception {
+        DOMFace siteMailContainer = requireChild("SiteMailList", DOMFace.class);
+        SiteMailGenerator found = findSiteMail(id);
+        siteMailContainer.removeChild(found);
+    }    
+    
+    
+    
 
     public void purgeDeletedAttachments() throws Exception {
         throw new JSONException("purgeDeletedAttachments should never be needed on User");

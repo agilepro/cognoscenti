@@ -60,8 +60,11 @@
     JSONArray recentWorkspaces = new JSONArray();
     List<RUElement> recent = ar.getSession().recentlyVisited;    
     for (RUElement rue : recent) {
+        if (rue.key.equals(pageId)) {
+            continue;  //skip adding this page into possible parents list
+        }
         JSONObject rujo = new JSONObject();
-        if (parentKey.equals(parentKey)) {
+        if (parentKey.equals(rue.key)) {
             foundInRecents = true;
         }
         rujo.put("siteKey", rue.siteKey);
@@ -163,6 +166,12 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.saveRecord(newData);
         $scope.isEditing = null;
     }
+    $scope.clearField = function(fieldName) {
+        var newData = {};
+        newData[fieldName] = "";
+        $scope.saveRecord(newData);
+        $scope.isEditing = null;
+    }
     $scope.saveProjectConfig = function() {
         $scope.saveRecord($scope.workspaceConfig);
     }
@@ -257,6 +266,14 @@ editBoxStyle {
     width:400px;
     height:150px;
 }
+.clicker {
+    background-color: #DDD;
+    color:white;
+    padding:8px;
+}
+.clicker:after {
+    content: "Click to Set Value"
+}
 </style>
 
 <!-- MAIN CONTENT SECTION START -->
@@ -289,11 +306,11 @@ editBoxStyle {
         <div>
             <table class="spaceyTable">
                 <tr >
-                    <td><label>Workspace Names:</label></td>
-                    <td ng-hide="editName" ng-click="editName=true">
+                    <td ng-click="setEdit('name')"><label>Workspace Names:</label></td>
+                    <td ng-hide="isEditing=='name'" ng-click="setEdit('name')">
                         <h1>{{workspaceConfig.allNames[0]}}</h1>
                     </td>
-                    <td class="form-inline form-group" ng-show="editName">
+                    <td class="form-inline form-group" ng-show="isEditing=='name'">
                         <div ng-repeat="name in workspaceConfig.allNames">
                             <a ng-click="deleteWorkspaceName(name)"
                                title="delete this name from workspace">
@@ -307,7 +324,7 @@ editBoxStyle {
                     </td>
                 </tr>
                 <tr>
-                    <td><label>Vision:</label></td>
+                    <td ng-click="setEdit('vision')"><label>Vision:</label></td>
                     <td ng-show="isEditing=='vision'">
                         <textarea class="form-control editBoxStyle" 
                               placeholder="Enter a vision statement for the circle working in this  workspace, if any" 
@@ -319,10 +336,11 @@ editBoxStyle {
                               </td>
                     <td ng-hide="isEditing=='vision'" ng-click="setEdit('vision')">
                         <div ng-bind-html="visionHtml"></div>
+                        <div ng-hide="visionHtml" class="clicker"></div>
                     </td>
                 </tr>
                 <tr>
-                    <td><label>Mission:</label></td>
+                    <td ng-click="setEdit('mission')"><label>Mission:</label></td>
                     <td ng-show="isEditing=='mission'">
                         <textarea class="form-control editBoxStyle" 
                               placeholder="Enter a mission statement for the circle working in this  workspace, if any" 
@@ -334,10 +352,11 @@ editBoxStyle {
                               </td>
                     <td ng-hide="isEditing=='mission'" ng-click="setEdit('mission')">
                         <div ng-bind-html="missionHtml"></div>
+                        <div ng-hide="missionHtml" class="clicker"></div>
                     </td>
                 </tr>
-                <tr>
-                    <td><label>Aim:</label></td>
+                <tr >
+                    <td  ng-click="setEdit('purpose')"><label>Aim:</label></td>
                     <td ng-show="isEditing=='purpose'">
                         <textarea class="form-control editBoxStyle" 
                               placeholder="Enter a public description of the work that will be done in this workspace, the aim of this workspace." 
@@ -349,10 +368,11 @@ editBoxStyle {
                               </td>
                     <td ng-hide="isEditing=='purpose'" ng-click="setEdit('purpose')">
                         <div ng-bind-html="purposeHtml"></div>
+                        <div ng-hide="purposeHtml" class="clicker"></div>
                     </td>
                 </tr>
                 <tr>
-                    <td><label>Domain:</label></td>
+                    <td ng-click="setEdit('domain')"><label>Domain:</label></td>
                     <td ng-show="isEditing=='domain'">
                         <textarea class="form-control editBoxStyle" 
                               placeholder="Enter a domain statement for the circle working in this  workspace, if any" 
@@ -364,10 +384,11 @@ editBoxStyle {
                               </td>
                     <td ng-hide="isEditing=='domain'" ng-click="setEdit('domain')">
                         <div ng-bind-html="domainHtml"></div>
+                        <div ng-hide="domainHtml" class="clicker"></div>
                     </td>
                 </tr>
                 <tr>
-                    <td valign="top"><label>Workspace Mode:</label></td>
+                    <td valign="top" ng-click="setEdit('frozen')"><label>Workspace Mode:</label></td>
                     <td  valign="top" ng-show="isEditing=='frozen'">
 
                         <button ng-click="workspaceConfig.frozen=true;saveOneField('frozen')" 
@@ -393,19 +414,21 @@ editBoxStyle {
                     </td>
                 </tr>
                 <tr>
-                    <td><label>Parent Circle:</label></td>
+                    <td ng-click="setEdit('parentKey')"><label>Parent Circle:</label></td>
                     <td ng-show="isEditing=='parentKey'">
                         <select ng-model="workspaceConfig.parentKey" class="form-control" style="width:400px">
-                            <option value="">(No Parent)</option>
-                            <option ng-repeat="ws in recentWorkspaces" value="{{ws.key}}">{{ws.displayName}}</option>
+                            <option ng-repeat="ws in recentWorkspaces" value="{{ws.key}}">{{ws.displayName}} ({{ws.key}})</option>
                             </select>
                         <button ng-click="saveOneField('parentKey')" class="btn btn-primary btn-raised">
                             Save</button>
+                        <button ng-click="clearField('parentKey')" class="btn btn-primary btn-raised">
+                            Clear It</button>
                         <button ng-click="saveOneField('frozen')" class="btn btn-raised">
                             Cancel</button>
                     </td>
                     <td ng-hide="isEditing=='parentKey'" ng-click="setEdit('parentKey')">
-                        {{workspaceConfig.parentKey}}
+                        <div>{{workspaceConfig.parentKey}}</div>
+                        <div ng-hide="workspaceConfig.parentKey" class="clicker"></div>
                     </td>
                 </tr>
 <% if (showExperimental) { %>

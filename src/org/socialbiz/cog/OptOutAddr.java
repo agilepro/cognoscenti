@@ -242,6 +242,11 @@ public class OptOutAddr {
             throw new Exception("Unable to append users from the role ("+roleName+") in workspace ("+ngw.getFullName()+")",e);
         }
     }
+    public static void appendUsersFromSiteRole(NGRole role, NGBook ngb, List<OptOutAddr> collector) throws Exception {
+        for (AddressListEntry ale : role.getExpandedPlayers(ngb)) {
+            OptOutAddr ooa = new OptOutRolePlayer(ale, ngb.getKey(), "$",  role.getName());
+        }
+    }    
 
 
     /**

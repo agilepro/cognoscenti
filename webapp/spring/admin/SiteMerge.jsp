@@ -47,10 +47,29 @@
         max-width:650px;
     }
     </style>
+<script>
+var app = angular.module('myApp');
+app.controller('myCtrl', function($scope, $http) {
 
-    <div class="upRightOptions" style="float:right;margin-right:100px">
+    $scope.showError = false;
+    $scope.errorMsg = "";
+    $scope.errorTrace = "";
+    $scope.showTrace = false;
+    $scope.reportError = function(serverErr) {
+        errorPanelHandler($scope, serverErr);
+    };
+    $scope.sendIt = function() {
+        alert("EMail sending not implemented yet");
+    }
+
+});
+
+</script>
+<div ng-app="myApp" ng-controller="myCtrl">
+    <div class="form-horizontal">
       <span class="dropdown">
-        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" title="Choose the layout to display with">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu2" data-toggle="dropdown" 
+                title="Choose the layout to display with">
         <span class="fa fa-diamond"></span>&nbsp;<span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
         <% for (File temName: allLayouts) { %>
@@ -62,13 +81,14 @@
         <% } %>
         </ul>
       </span>
-    </div>
+    <button class="btn btn-primary" ng-click="sendIt()">Send It Now</button>
     <div style="clear:both;padding:5px"></div>
+    </div>
     <div class="wellstyle">
     <% ChunkTemplate.streamIt(ar.w, layoutFile,   mergeable, ar.getUserProfile().getCalendar() ); %>
     </div>
 
-
+</div>
 <%!
 /**
 * convert XxxYyyZzz.chmtl
