@@ -1083,16 +1083,16 @@ public class TopicRecord extends CommentContainer {
      }
 
      public void gatherUnsentScheduledNotification(NGWorkspace ngw,
-             ArrayList<ScheduledNotification> resList) throws Exception {
+             ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
          ScheduledNotification sn = new NScheduledNotification(ngw, this);
-         if (sn.needsSending()) {
+         if (sn.needsSendingBefore(timeout)) {
              resList.add(sn);
          }
          else {
              //only look for comments when the email for the note (topic) has been sent
              //avoids problem of comment getting sent before the topic comes out of draft
              for (CommentRecord cr : getComments()) {
-                 cr.gatherUnsentScheduledNotification(ngw, new EmailContext(this), resList);
+                 cr.gatherUnsentScheduledNotification(ngw, new EmailContext(this), resList, timeout);
              }
          }
      }
@@ -1106,18 +1106,40 @@ public class TopicRecord extends CommentContainer {
              ngw  = _ngp;
              note = _note;
          }
-         public boolean needsSending() throws Exception {
-             return !note.getEmailSent() && !note.isDraftNote() && !note.getAttributeBool("suppressEmail");
+         @Override
+         public boolean needsSendingBefore(long timeout) throws Exception {
+             if (note.getEmailSent()) {
+                 return false;
+             }
+             if (note.isDraftNote()) {
+                 return false;
+             }
+             if (note.getAttributeBool("suppressEmail")) {
+                 return false;
+             }
+             return true;
          }
 
-         public long timeToSend() throws Exception {
+         @Override
+         public long futureTimeToSend() throws Exception {
+             if (note.getEmailSent()) {
+                 return -1;
+             }
+             if (note.isDraftNote()) {
+                 return -1;
+             }
+             if (note.getAttributeBool("suppressEmail")) {
+                 return -1;
+             }
              return getLastEdited()+1000;
          }
 
+         @Override
          public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
              note.topicEmailRecord(ar,ngw, mailFile);
          }
 
+         @Override
          public String selfDescription() throws Exception {
              return "(Note) "+note.getSubject();
          }

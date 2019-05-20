@@ -651,7 +651,7 @@ public class EmailGenerator extends DOMFace {
         this.updateScalarString("meetingLayout", obj);
     }
 
-    public void gatherUnsentScheduledNotification(NGWorkspace ngw, ArrayList<ScheduledNotification> resList) throws Exception {
+    public void gatherUnsentScheduledNotification(NGWorkspace ngw, ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         if (getState()==EG_STATE_SCHEDULED) {
             EGScheduledNotification sn = new EGScheduledNotification(ngw, this);
             resList.add(sn);
@@ -667,18 +667,28 @@ public class EmailGenerator extends DOMFace {
             ngw  = _ngp;
             eg = _eg;
         }
-        public boolean needsSending() throws Exception {
-            return eg.getState()!=EG_STATE_SENT;
+        @Override
+        public boolean needsSendingBefore(long timeout) throws Exception {
+            if (eg.getState()==EG_STATE_SENT) {
+                return false;
+            }
+            return (eg.getScheduleTime()<timeout);
         }
-
-        public long timeToSend() throws Exception {
+        @Override
+        public long futureTimeToSend() throws Exception {
+            if (eg.getState()==EG_STATE_SENT) {
+                return -1;
+            }
             return eg.getScheduleTime();
         }
+        
 
+        @Override
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             eg.constructEmailRecords(ar, ngw, mailFile);
         }
 
+        @Override
         public String selfDescription() throws Exception {
             return "(Email Generator) "+eg.getSubject();
         }

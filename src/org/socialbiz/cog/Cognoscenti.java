@@ -221,8 +221,8 @@ System.out.println("Weaver Server Object == Start the Server");
             userCacheMgr = new UserCacheMgr(this);
 
             NGPageIndex.initAllStaticVars();
-            initIndexOfContainers();
             MicroProfileMgr.loadMicroProfilesInMemory(this);
+            initIndexOfContainers();
             if (backgroundTimer!=null) {
                 EmailSender.initSender(backgroundTimer, this);
                 //SendEmailTimerTask.initEmailSender(backgroundTimer, this);

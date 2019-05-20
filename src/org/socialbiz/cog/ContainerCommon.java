@@ -834,13 +834,6 @@ public abstract class ContainerCommon extends NGContainer
     }
 
     /**
-     * default container behavior is to return a date for next year some time.
-     */
-    public long nextActionDue() throws Exception {
-        return System.currentTimeMillis() + 31000000000L;
-    }
-
-    /**
     * Pages have a set of licenses
     */
     public List<License> getLicenses() throws Exception {

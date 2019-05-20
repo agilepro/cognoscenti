@@ -237,7 +237,8 @@ public class ResponseRecord extends DOMFace
             cr   = _cr;
             rr   = _rr;
         }
-        public boolean needsSending() throws Exception {
+        @Override
+        public boolean needsSendingBefore(long timeout) throws Exception {
             //return !rr.getEmailSent();
             //
             //April 2017 changed to never send email to reduce flood.
@@ -246,14 +247,17 @@ public class ResponseRecord extends DOMFace
             return false;
         }
 
-        public long timeToSend() throws Exception {
-            return cr.getTime()+1000;
+        @Override
+        public long futureTimeToSend() throws Exception {
+            return -1;
         }
 
+        @Override
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             rr.responseEmailRecord(ar,ngw,noteOrMeet,cr,mailFile);
         }
 
+        @Override
         public String selfDescription() throws Exception {
             return "(Response) "+rr.getUserId()+" on "+noteOrMeet.selfDescription();
         }

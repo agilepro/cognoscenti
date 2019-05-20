@@ -132,10 +132,12 @@ public class RoleInvitation extends JSONWrapper {
         }
     }
 
-    public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList) throws Exception {
+    public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         if ("New".equals(this.getStatus())) {
             RIScheduledNotification sn = new RIScheduledNotification(this);
-            resList.add(sn);
+            if (sn.needsSendingBefore(timeout)) {
+                resList.add(sn);
+            }
         }
     }
 
@@ -146,14 +148,20 @@ public class RoleInvitation extends JSONWrapper {
         public RIScheduledNotification( RoleInvitation _ri) {
             ri = _ri;
         }
-        public boolean needsSending() throws Exception {
+        @Override
+        public boolean needsSendingBefore(long timeout) throws Exception {
             return ("New".equals(ri.getStatus()));
         }
 
-        public long timeToSend() throws Exception {
-            return System.currentTimeMillis()-1000;   //one second ago
+        @Override
+        public long futureTimeToSend() throws Exception {
+            if (!"New".equals(ri.getStatus())) {
+                return -1;
+            }
+            return System.currentTimeMillis()-100000;   //one hundred seconds ago
         }
 
+        @Override
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             if ("New".equals(ri.getStatus())) {
                 System.out.println("ROLE INVITATION: "+new Date()+" to "+ri.getEmail()+" sending.");
@@ -161,6 +169,7 @@ public class RoleInvitation extends JSONWrapper {
             }
         }
 
+        @Override
         public String selfDescription() throws Exception {
             return "Role Invitation to "+ri.getEmail();
         }

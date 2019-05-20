@@ -5,12 +5,17 @@ import org.socialbiz.cog.AuthRequest;
 public interface ScheduledNotification {
 
     /**
-     * @return true when there is something to send.
+     * @return true when there is something to send before the timeout
      *         return false if there is no need to send anything more
      */
-    public boolean needsSending() throws Exception;
+    public boolean needsSendingBefore(long timeout) throws Exception;
 
-    public long timeToSend() throws Exception;
+    /**
+     * If something still needs sending, then return the date that 
+     * it should be sent.    
+     * If nothing to send return -1;
+     */
+    public long futureTimeToSend() throws Exception;
 
     /**
      * The method sendIt is passed a mailFile so that the called code can add an

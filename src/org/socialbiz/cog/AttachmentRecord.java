@@ -1299,11 +1299,11 @@ public class AttachmentRecord extends CommentContainer {
     
     
     public void gatherUnsentScheduledNotification(NGWorkspace ngw,
-            ArrayList<ScheduledNotification> resList) throws Exception {
+            ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         //only look for comments when the email for the note (topic) has been sent
         //avoids problem of comment getting sent before the topic comes out of draft
         for (CommentRecord cr : getComments()) {
-            cr.gatherUnsentScheduledNotification(ngw, new EmailContext(this), resList);
+            cr.gatherUnsentScheduledNotification(ngw, new EmailContext(this), resList, timeout);
         }
     }
     

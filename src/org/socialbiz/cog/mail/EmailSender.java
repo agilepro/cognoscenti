@@ -37,6 +37,7 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.EmailRecord;
+import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
@@ -232,36 +233,33 @@ public class EmailSender extends TimerTask {
             //that reads the email archive.
             MailFile emailArchive = MailFile.readOrCreate(emailArchiveFile, 3);
 
-            try {
-                //now open the page and generate all the email messages, remember this
-                //locks the file blocking all other threads, so be quick
-                NGWorkspace ngw = ngpi.getWorkspace();
-                ar.ngp = ngw;
-
-                //first, move all the email messages that have been stored in the project from foreground events.
-                MailConversions.moveEmails(ngw, emailArchive, cog);
-
-                ngpi.nextScheduledAction = ngw.nextActionDue();
-                ngw.saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime, 
-                        "Processing handleAllOverdueScheduledEvents", cog);
-                NGPageIndex.clearLocksHeldByThisThread();
-                emailArchive.save();
-            }
-            catch (Exception e) {
-                throw new JSONException("Problem with email file: {0}", e, emailArchiveFile);
-            }
 
             if (ngpi.isProject()){
-                //now open the page and generate all the email messages, remember this
-                //locks the file blocking all other threads, so be quick
                 NGWorkspace ngw = ngpi.getWorkspace();
                 ar.ngp = ngw;
+                
+                try {
+                    //first, move all the email messages that have been stored in the project from foreground events.
+                    if (MailConversions.moveEmails(ngw, emailArchive, cog)) {
 
+                        ngpi.nextScheduledAction = ngw.nextActionDue();
+                        ngw.saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime, 
+                                "Processing handleAllOverdueScheduledEvents", cog);
+                        NGPageIndex.clearLocksHeldByThisThread();
+                        emailArchive.save();
+                    }
+                }
+                catch (Exception e) {
+                    throw new JSONException("Problem with email file: {0}", e, emailArchiveFile);
+                }
+
+                //now open the page and generate all the email messages, remember this
+                //locks the file blocking all other threads, so be quick
                 ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
-                ngw.gatherUnsentScheduledNotification(resList);
+                ngw.gatherUnsentScheduledNotification(resList, nowTime);
 
                 for (ScheduledNotification sn : resList) {
-                    if (sn.timeToSend()<=nowTime) {
+                    if (sn.needsSendingBefore(nowTime)) {
                         sn.sendIt(ar, emailArchive);
                     }
                 }
@@ -272,6 +270,24 @@ public class EmailSender extends TimerTask {
 
                 //now we can go an actually send the email in the mailArchive
                 emailArchive.save();
+            }
+            else {
+                //on the site the only thing currently is the SiteMail messages
+                System.out.println("Now checkin on Site: "+ngpi.containerName);
+                NGBook site = ngpi.getSite();
+                ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
+                site.gatherUnsentScheduledNotification(resList, nowTime);
+                for (ScheduledNotification sn : resList) {
+                    System.out.println("  Site: "+ngpi.containerName+" notification: "+sn.selfDescription());
+                    if (sn.needsSendingBefore(nowTime)) {
+                        System.out.println("  Site: "+ngpi.containerName+" has email due: "+sn.selfDescription());
+                        sn.sendIt(ar, emailArchive);
+                    }
+                }
+
+                ngpi.nextScheduledAction = site.nextActionDue();
+                site.save(); //save all the changes from the removal of email and scheduling of events
+                NGPageIndex.clearLocksHeldByThisThread();
             }
 
 
@@ -288,10 +304,10 @@ public class EmailSender extends TimerTask {
     private ArrayList<NGPageIndex> listOverdueContainers(long cutoffTime) throws Exception {
         ArrayList<NGPageIndex> ret = new ArrayList<NGPageIndex>();
         for (NGPageIndex ngpi : cog.getAllContainers()) {
-            if (!ngpi.isProject() || ngpi.isDeleted) {
+            if (ngpi.isDeleted) {
                 continue;
             }
-            if (ngpi.nextScheduledAction>0 && ngpi.nextScheduledAction<cutoffTime) {
+            if (ngpi.nextScheduledAction>0 && ngpi.nextScheduledAction<=cutoffTime) {
                 ret.add(ngpi);
             }
         }

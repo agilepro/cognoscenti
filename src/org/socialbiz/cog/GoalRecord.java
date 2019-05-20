@@ -1285,7 +1285,8 @@ public class GoalRecord extends BaseRecord {
         return sb.toString();
     }    
 
-    public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList) throws Exception {
+    public void gatherUnsentScheduledNotification(NGWorkspace ngp, 
+            ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         //don't send email if there is no assignee.  Wait till there is an assignee
         if (needSendEmail()) {
             resList.add(new GScheduledNotification(ngp, this));
@@ -1300,26 +1301,33 @@ public class GoalRecord extends BaseRecord {
             ngp  = _ngp;
             goal = _goal;
         }
-        public boolean needsSending() throws Exception {
-            return goal.needSendEmail();
+        @Override
+        public boolean needsSendingBefore(long timeout) throws Exception {
+            if (!goal.needSendEmail()) {
+                return false;
+            }
+            if (getEmailSendTime()>timeout) {
+                return false;
+            }
+            return true;
+        }
+        @Override
+        public long futureTimeToSend() throws Exception {
+            if (!goal.needSendEmail()) {
+                return -1;
+            }
+            return getEmailSendTime();
         }
 
-        public long timeToSend() throws Exception {
-            if (needsSending()) {
-                return getEmailSendTime();
-            }
-            else {
-                return 0;
-            }
-        }
-
+        @Override
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             goal.goalEmailRecord(ar, ngp, mailFile);
-            if (needsSending()) {
+            if (goal.needSendEmail()) {
                 System.out.println("ERROR: for some reason it did not get move to the mailFile?");
             }
         }
 
+        @Override
         public String selfDescription() throws Exception {
             return "(ActionItem) "+getSynopsis();
         }

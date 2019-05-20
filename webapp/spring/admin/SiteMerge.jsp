@@ -4,6 +4,7 @@
 %><%@page import="org.socialbiz.cog.LicenseForUser"
 %><%@page import="org.socialbiz.cog.AccessControl"
 %><%@page import="org.socialbiz.cog.MicroProfileMgr"
+%><%@page import="org.socialbiz.cog.SiteMailGenerator"
 %><%@page import="org.socialbiz.cog.mail.ChunkTemplate"
 %><%@page import="com.purplehillsbooks.json.JSONException"
 %><%@page import="java.util.HashSet"
@@ -31,10 +32,13 @@
     JSONObject mergeable = new JSONObject();
     mergeable.put("site", siteJSON);
     mergeable.put("baseUrl", ar.baseURL);
-
+    
+    JSONArray pastSendings = new JSONArray();
+    for (SiteMailGenerator smg : ngb.getAllSiteMail()) {
+        pastSendings.put(smg.getJSON());
+    }
 
     %>
-    <script>    window.setMainPageTitle("Meeting Display"); </script>
     <style>
     .wellstyle {
         background-color: #fff;
@@ -50,16 +54,36 @@
 <script>
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
+    
+    $scope.pastSendings = <% pastSendings.write(out,2,4);%>;
+    $scope.selectedLayout  = "<% ar.writeJS(layoutName);%>";
+    $scope.data = <% mergeable.write(out,2,4);%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
     $scope.showTrace = false;
     $scope.reportError = function(serverErr) {
-        errorPanelHandler($scope, serverErr);
+        console.log("ERROR", serverErr)
+        //errorPanelHandler($scope, serverErr);
     };
     $scope.sendIt = function() {
-        alert("EMail sending not implemented yet");
+        var site = $scope.data.site;
+        var postObj = {};
+        postObj.id = "~new~";
+        postObj.layout = $scope.selectedLayout;
+        postObj.subject = "Mail about your Weaver Site: "+site.names[0];
+        var postData = angular.toJson(postObj);
+        var postURL = "<% ar.writeJS(ar.baseURL); %>t/"+site.key+"/$/SiteMail.json";
+        console.log("POST to: ",postURL)
+        $scope.showError=false;
+        $http.post(postURL, postData)
+        .success( function(data) {
+            $scope.pastSendings.push(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
     }
 
 });
@@ -88,6 +112,13 @@ app.controller('myCtrl', function($scope, $http) {
     <% ChunkTemplate.streamIt(ar.w, layoutFile,   mergeable, ar.getUserProfile().getCalendar() ); %>
     </div>
 
+    <table class="table">
+    <tr ng-repeat="mail in pastSendings">
+        <td>{{mail.layout}}</td>
+        <td>{{mail.subject}}</td>
+        <td>{{mail.sendDate | date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}</td>
+    </tr>
+    </table>
 </div>
 <%!
 /**

@@ -8,12 +8,12 @@ import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.NGContainer;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
 
 public class MailConversions {
 
+    /*
     public static void moveEmails(NGPage ngp, File projectfolder, Cognoscenti cog) throws Exception {
         File folder = ngp.getFilePath().getParentFile();
         File emailFilePath = new File(folder, "mailArchive.json");
@@ -24,9 +24,16 @@ public class MailConversions {
         newArchive.save();
         ngp.save();
     }
+    */
 
-    public static void moveEmails(NGContainer ngp, MailFile newArchive, Cognoscenti cog) throws Exception {
+    /**
+     * returns TRUE if some email was converted, false if not
+     */
+    public static boolean moveEmails(NGContainer ngp, MailFile newArchive, Cognoscenti cog) throws Exception {
         List<EmailRecord> allEmail = ngp.getAllEmail();
+        if (allEmail.size()==0) {
+            return false;
+        }
         for (EmailRecord er : allEmail) {
             String fullFromAddress = er.getFromAddress();
             AddressListEntry fromAle = AddressListEntry.parseCombinedAddress(fullFromAddress);
@@ -57,8 +64,8 @@ public class MailConversions {
                 inst.setAttachmentFiles(attachments);
             }
         }
-
         ngp.clearAllEmail();
+        return true;
     }
 
 }

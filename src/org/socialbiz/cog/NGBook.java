@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
+import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
@@ -1189,12 +1190,14 @@ public class NGBook extends ContainerCommon {
     }
 
     /**
-     * the only thing you send from a Site is role request emails.
+     * the only thing you send from a Site is role request emails
+     * and SiteMail.
      */
     @Override
     public long nextActionDue() throws Exception {
         //initialize to some time next year
-        long nextTime = System.currentTimeMillis() + 31000000000L;
+        long nextYear = System.currentTimeMillis() + 31000000000L;
+        long nextTime = nextYear;
         for (EmailRecord er : getAllEmail()) {
             if (er.statusReadyToSend()) {
                 //there is no scheduled time for sending email .. it just is scheduled
@@ -1205,6 +1208,15 @@ public class NGBook extends ContainerCommon {
                     System.out.println("Workspace has email that needs to be collected");
                     nextTime = reminderTime;
                 }
+            }
+        }
+        ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
+        this.gatherUnsentScheduledNotification(resList, nextYear);
+
+        for (ScheduledNotification sn : resList) {
+            if (sn.futureTimeToSend()<nextTime) {
+                //site mail is ready to go now
+                nextTime = sn.futureTimeToSend();
             }
         }
         return nextTime;
@@ -1281,4 +1293,58 @@ public class NGBook extends ContainerCommon {
         }
         return meetingLayoutFile;
     }
+    
+    public List<SiteMailGenerator> getAllSiteMail() throws Exception {
+        List<SiteMailGenerator> requestList = new ArrayList<SiteMailGenerator>();
+        DOMFace rolelist = this.requireChild("SiteMail", DOMFace.class);
+        List<SiteMailGenerator> children = rolelist.getChildren("mailGen", SiteMailGenerator.class);
+        for (SiteMailGenerator rrr : children) {
+            requestList.add(rrr);
+        }
+        return requestList;
+    }
+    public SiteMailGenerator createSiteMail() throws Exception {
+        DOMFace rolelist = this.requireChild("SiteMail", DOMFace.class);
+        SiteMailGenerator newMailGen = rolelist.createChild("mailGen", SiteMailGenerator.class);
+        return newMailGen;
+    }
+    public SiteMailGenerator getOrCreateSiteMail(String searchId) throws Exception {
+        for (SiteMailGenerator smg : getAllSiteMail()){
+            if (searchId.equals(smg.getId())) {
+                return smg;
+            }
+        }
+        SiteMailGenerator s2 = createSiteMail();
+        s2.setId(searchId);
+        return s2;
+    }
+    public SiteMailGenerator getSiteMailOrFail(String searchId) throws Exception {
+        for (SiteMailGenerator smg : getAllSiteMail()){
+            if (searchId.equals(smg.getId())) {
+                return smg;
+            }
+        }
+        throw new Exception("Unable to find a Site Mail Generator with id: "+searchId);
+    }
+    public void deleteSiteMail(String searchId) throws Exception {
+        DOMFace rolelist = this.requireChild("SiteMail", DOMFace.class);
+        List<SiteMailGenerator> children = rolelist.getChildren("mailGen", SiteMailGenerator.class);
+        SiteMailGenerator foundOne = null;
+        for (SiteMailGenerator rrr : children) {
+            if (searchId.equals(rrr.getId())) {
+                foundOne = rrr;
+            }
+        }
+        if (foundOne != null) {
+            rolelist.removeChild(foundOne);
+        }
+    }
+
+    public void gatherUnsentScheduledNotification(ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
+        for (SiteMailGenerator smg : getAllSiteMail()) {
+            smg.gatherUnsentScheduledNotification(this, resList, timeout);
+        }
+    }
+    
+    
 }

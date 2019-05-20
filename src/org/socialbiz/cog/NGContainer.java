@@ -251,6 +251,8 @@ public abstract class NGContainer extends DOMFile
     /**
      * figure out when the next background event is scheduled
      */
-    public abstract long nextActionDue() throws Exception;
+    public long nextActionDue() throws Exception {
+        throw new Exception("nextActionDue not implemented");
+    }
 
  }

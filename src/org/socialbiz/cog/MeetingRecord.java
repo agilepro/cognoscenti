@@ -1130,19 +1130,13 @@ public class MeetingRecord extends DOMFace {
         //there is no subscribers for meetings
     }
 
-    public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList) throws Exception {
+    public void gatherUnsentScheduledNotification(NGWorkspace ngp, ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         MScheduledNotification sn = new MScheduledNotification(ngp, this);
-        if (sn.needsSending()) {
-
-            //DEBUG -- what are meeting notifications being sent multiple times!
-            if (sn.timeToSend()<System.currentTimeMillis()) {
-                System.out.println("TimeToSend:  "+new Date(sn.timeToSend())+",  ACTUALLY SENT: "+new Date(getReminderAdvance())+" for MEETING: "+getName());
-            }
-
+        if (sn.needsSendingBefore(timeout)) {
             resList.add(sn);
         }
         for (AgendaItem ai : this.getSortedAgendaItems()) {
-            ai.gatherUnsentScheduledNotification(ngp, new EmailContext(this,ai), resList);
+            ai.gatherUnsentScheduledNotification(ngp, new EmailContext(this,ai), resList, timeout);
         }
     }
 
@@ -1190,49 +1184,77 @@ public class MeetingRecord extends DOMFace {
             ngw  = _ngp;
             meet = _meet;
         }
-        public boolean needsSending() throws Exception {
+        @Override
+        public boolean needsSendingBefore(long timeout) throws Exception {
             //only send email while in planning state
             if (meet.getState() != MeetingRecord.MEETING_STATE_PLANNING) {
                 return false;
             }
 
-            long reminderTime = timeToSend();
+            long reminderTime = futureTimeToSend();
+            if (reminderTime>timeout) {
+                //not yet time to send the reminder
+                return false;
+            }
+            
+            //so it is time to send, check if it has
             long reminderSent = meet.getReminderSent();
-            //the reminder has not been sent AFTER the time to send,
-            //then it still needs to be sent.
-            return (reminderTime>0 && reminderSent < reminderTime);
+            
+            //If reminder was sent after the reminder time, then all OK
+            if (reminderSent >= reminderTime) {
+                return false;
+            }
+            
+            //If the reminder was never sent, or
+            //reminder was sent BEFORE the time to send,
+            //then it still needs to be sent again, because meeting rescheduled
+            return true;
         }
 
-        public long timeToSend() throws Exception {
+        @Override
+        public long futureTimeToSend() throws Exception {
             if (meet.getState() != MeetingRecord.MEETING_STATE_PLANNING) {
                 return -1;
             }
+
             int delta = meet.getReminderAdvance();
             if (delta<=0) {
                 return -1;
             }
             long meetStart = meet.getStartTime();
-            return meetStart - (delta * 60000);
+            long reminderTime =  meetStart - (delta * 60000);
+            
+            //so it is time to send, check if it has
+            long reminderSent = meet.getReminderSent();
+            
+            //If reminder was sent after the reminder time, then all OK
+            if (reminderSent >= reminderTime) {
+                return -1;
+            }
+            
+            return reminderTime;
         }
 
+        @Override
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             if (meet.getState() != MeetingRecord.MEETING_STATE_PLANNING) {
                 throw new Exception("Attempting to send email reminder when not in planning state.  State="+meet.getState());
             }
 
-            if (timeToSend() > ar.nowTime) {
+            if (!needsSendingBefore(ar.nowTime)) {
                 throw new Exception("MEETING NOTIFICATION BUG:  Request to send when TimeToSend ("
-                     +new Date(timeToSend())+") is still in the future!");
+                     +new Date(futureTimeToSend())+") is still in the future!");
             }
 
-            System.out.println("SENDING MEETING NOTICE: "+new Date()+" with SENDTIME: "+new Date(timeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
+            System.out.println("SENDING MEETING NOTICE: "+new Date()+" with SENDTIME: "+new Date(futureTimeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
             meet.sendReminderEmail(ar, ngw, mailFile);
              //test to see that all the logic is right
-            if (needsSending()) {
-                System.out.println("STRANGE: the meeting was just sent, but it does not think so. SENDTIME: "+new Date(timeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
+            if (needsSendingBefore(ar.nowTime)) {
+                System.out.println("STRANGE: the meeting was just sent, but it does not think so. SENDTIME: "+new Date(futureTimeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
             }
         }
 
+        @Override
         public String selfDescription() throws Exception {
             return meet.selfDescription();
         }

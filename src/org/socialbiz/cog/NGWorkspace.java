@@ -387,7 +387,8 @@ public class NGWorkspace extends NGPage {
     @Override
     public long nextActionDue() throws Exception {
         //initialize to some time next year
-        long nextTime = System.currentTimeMillis() + 31000000000L;
+        long yearFromNow = System.currentTimeMillis() + 31000000000L;
+        long nextTime = yearFromNow;
         for (EmailRecord er : getAllEmail()) {
             if (er.statusReadyToSend()) {
                 //there is no scheduled time for sending email .. it just is scheduled
@@ -402,12 +403,12 @@ public class NGWorkspace extends NGPage {
         }
 
         ArrayList<ScheduledNotification> resList = new ArrayList<ScheduledNotification>();
-        gatherUnsentScheduledNotification(resList);
+        gatherUnsentScheduledNotification(resList, yearFromNow);
 
         ScheduledNotification first = null;
         //Now scan all the standard scheduled notifications
         for (ScheduledNotification sn : resList) {
-            long timeToAct = sn.timeToSend();
+            long timeToAct = sn.futureTimeToSend();
             if (timeToAct < nextTime) {
                 nextTime = timeToAct;
                 first = sn;
@@ -415,30 +416,30 @@ public class NGWorkspace extends NGPage {
         }
         if (first!=null) {
             System.out.println("Found the next event to be: ("+first.selfDescription()+") to be sent at (" 
-                     +new Date(first.timeToSend())+")");
+                     +new Date(first.futureTimeToSend())+")");
         }
         return nextTime;
     }
 
 
-    public void gatherUnsentScheduledNotification(ArrayList<ScheduledNotification> resList) throws Exception {
+    public void gatherUnsentScheduledNotification(ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         for (MeetingRecord meeting : getMeetings()) {
-            meeting.gatherUnsentScheduledNotification(this, resList);
+            meeting.gatherUnsentScheduledNotification(this, resList, timeout);
         }
         for (TopicRecord note : this.getAllNotes()) {
-            note.gatherUnsentScheduledNotification(this, resList);
+            note.gatherUnsentScheduledNotification(this, resList, timeout);
         }
         for (EmailGenerator eg : getAllEmailGenerators()) {
-            eg.gatherUnsentScheduledNotification(this, resList);
+            eg.gatherUnsentScheduledNotification(this, resList, timeout);
         }
         for (GoalRecord goal : getAllGoals()) {
-            goal.gatherUnsentScheduledNotification(this, resList);
+            goal.gatherUnsentScheduledNotification(this, resList, timeout);
         }
         for (AttachmentRecord attach : this.getAllAttachments()) {
-            attach.gatherUnsentScheduledNotification(this, resList);
+            attach.gatherUnsentScheduledNotification(this, resList, timeout);
         }
         for (RoleInvitation ri : getInvitations()) {
-            ri.gatherUnsentScheduledNotification(this, resList);
+            ri.gatherUnsentScheduledNotification(this, resList, timeout);
         }
     }
 

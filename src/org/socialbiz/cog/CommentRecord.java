@@ -367,7 +367,12 @@ public class CommentRecord extends DOMFace {
             //if this was created before Feb 24, 2016, then don't send any email
             return false;
         }
-        return !getEmailSent();
+        if (getEmailSent()) {
+            return false;
+        }
+        //so we have something to send, but is it time yet?
+        //comments don't have a future time for sending, so eventhing immediate
+        return true;
     }
 
     public boolean getEmailSent() {
@@ -414,7 +419,10 @@ public class CommentRecord extends DOMFace {
             setCloseEmailSent(true);
             return false;
         }
-        return !getCloseEmailSent();
+        if (getCloseEmailSent()) {
+            return false;
+        }
+        return true;
     }
 
     public boolean getCloseEmailSent() {
@@ -771,9 +779,9 @@ public class CommentRecord extends DOMFace {
 
 
     public void gatherUnsentScheduledNotification(NGWorkspace ngw, EmailContext noteOrMeet,
-            ArrayList<ScheduledNotification> resList) throws Exception {
+            ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         ScheduledNotification sn = new CRScheduledNotification(ngw, noteOrMeet, this);
-        if (sn.needsSending()) {
+        if (sn.needsSendingBefore(timeout)) {
             resList.add(sn);
         }
         else if (getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
@@ -783,7 +791,7 @@ public class CommentRecord extends DOMFace {
             //there can be responses only if this is a "poll" type comment (a proposal)
             for (ResponseRecord rr : getResponses()) {
                 ScheduledNotification snr = rr.getScheduledNotification(ngw, noteOrMeet, this);
-                if (snr.needsSending()) {
+                if (snr.needsSendingBefore(timeout)) {
                     resList.add(snr);
                 }
             }
@@ -791,7 +799,7 @@ public class CommentRecord extends DOMFace {
             String resend = getResendMessage();
             if (resend!=null && resend.length()>0) {
                 CRResendNotification crrn = new CRResendNotification(ngw, noteOrMeet, this);
-                if (crrn.needsSending()) {
+                if (crrn.needsSendingBefore(timeout)) {
                     resList.add(crrn);
                 }
             }
@@ -809,7 +817,9 @@ public class CommentRecord extends DOMFace {
             noteOrMeet = _noteOrMeet;
             cr   = _cr;
         }
-        public boolean needsSending() throws Exception {
+        
+        @Override
+        public boolean needsSendingBefore(long timeout) throws Exception {
             if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT) {
                 //draft records do not get email sent
                 return false;
@@ -821,29 +831,44 @@ public class CommentRecord extends DOMFace {
             if (cr.getSuppressEmail()) {
                 return false;
             }
-            if (cr.getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE) {
+            if (cr.needCreateEmailSent()) {
                 //simple comments are created but not closed
-                return cr.needCreateEmailSent();
+                return true;
             }
-            if (cr.getState()==CommentRecord.COMMENT_STATE_CLOSED) {
-                return cr.needCloseEmailSent();
+            if (cr.needCloseEmailSent()) {
+                return true;
             }
-            else {
-                return cr.needCreateEmailSent();
-            }
+            return false;
         }
 
-        public long timeToSend() throws Exception {
+        @Override
+        public long futureTimeToSend() throws Exception {
+            if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT) {
+                //draft records do not get email sent
+                return -1;
+            }
+            if (cr.getCommentType()==CommentRecord.COMMENT_TYPE_MINUTES) {
+                //minutes don't have email sent not ever so mark sent
+                return -1;
+            }
             if (cr.getSuppressEmail()) {
                 return -1;
             }
-            return cr.getTime()+1000;
+            if (cr.needCreateEmailSent()) {
+                return cr.getPostTime();
+            }
+            if (cr.needCloseEmailSent()) {
+                return cr.getPostTime();
+            }
+            return -1;
         }
-
+        
+        @Override
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             cr.commentEmailRecord(ar,ngw,noteOrMeet,mailFile);
         }
 
+        @Override
         public String selfDescription() throws Exception {
             return "("+cr.getTypeName()+") "+cr.getUser().getName()+" on "+noteOrMeet.selfDescription();
         }
@@ -860,25 +885,40 @@ public class CommentRecord extends DOMFace {
             noteOrMeet = _noteOrMeet;
             cr   = _cr;
         }
-        public boolean needsSending() throws Exception {
+        @Override
+        public boolean needsSendingBefore(long timeout) throws Exception {
             if (cr.getSuppressEmail()) {
                 return false;
             }
             String resend = getResendMessage();
             return (resend!=null && resend.length()>0);
         }
-
-        public long timeToSend() throws Exception {
+        @Override
+        public long futureTimeToSend() throws Exception {
+            if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT) {
+                //draft records do not get email sent
+                return -1;
+            }
+            if (cr.getCommentType()==CommentRecord.COMMENT_TYPE_MINUTES) {
+                //minutes don't have email sent not ever so mark sent
+                return -1;
+            }
             if (cr.getSuppressEmail()) {
                 return -1;
             }
-            return cr.getTime();
+            String resend = getResendMessage();
+            if (resend!=null && resend.length()>0) {
+                return cr.getPostTime();
+            }
+            return -1;
         }
 
+        @Override
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             cr.commentResendRecord(ar,ngw,noteOrMeet,mailFile);
         }
 
+        @Override
         public String selfDescription() throws Exception {
             return "(Comment-Resend) "+cr.getUser().getName()+" on "+noteOrMeet.selfDescription();
         }

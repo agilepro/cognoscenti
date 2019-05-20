@@ -245,6 +245,7 @@ public class OptOutAddr {
     public static void appendUsersFromSiteRole(NGRole role, NGBook ngb, List<OptOutAddr> collector) throws Exception {
         for (AddressListEntry ale : role.getExpandedPlayers(ngb)) {
             OptOutAddr ooa = new OptOutRolePlayer(ale, ngb.getKey(), "$",  role.getName());
+            collector.add(ooa);
         }
     }    
 

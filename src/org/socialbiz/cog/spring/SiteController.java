@@ -30,9 +30,11 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.CustomRole;
 import org.socialbiz.cog.HistoricActions;
+import org.socialbiz.cog.IdGenerator;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
+import org.socialbiz.cog.SiteMailGenerator;
 import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
 import org.socialbiz.cog.UserProfile;
@@ -496,6 +498,47 @@ public class SiteController extends BaseController {
         }
     }
     
-    
+    @RequestMapping(value = "/{siteId}/$/SiteMail.json", method = RequestMethod.POST)
+    public void siteMail(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String id = "";
+        try{
+            ar.assertSuperAdmin("Site Mail can be scheduled only by super administrators");
+            NGPageIndex ngpi = ar.getCogInstance().getSiteByKey(siteId);
+            NGBook ngb = ngpi.getSite();
+            ar.setPageAccessLevels(ngb);
+            JSONObject eGenInfo = getPostedObject(ar);
+
+            id = eGenInfo.getString("id");
+            SiteMailGenerator eGen = null;
+            if ("~new~".equals(id)) {
+                eGen = ngb.createSiteMail();
+                eGen.setId(IdGenerator.generateKey());
+                eGen.setState(SiteMailGenerator.SM_STATE_SCHEDULED);
+            }
+            else {
+                eGen = ngb.getSiteMailOrFail(id);
+            }
+
+            //this is a non persistent flag in the body ... could be a URL parameter
+            boolean deleteIt = eGenInfo.optBoolean("deleteIt");
+            if (deleteIt) {
+                ngb.deleteSiteMail(eGen.getId());
+            }
+            else {
+                eGen.updateFromJSON(eGenInfo);
+            }
+
+            ngpi.nextScheduledAction = ngb.nextActionDue();
+            ngb.saveFile(ar, "Updated Email Generator "+eGen.getId());
+            JSONObject repo = eGen.getJSON();
+            sendJson(ar, repo);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to update Email Generator "+id, ex);
+            streamException(ee, ar);
+        }
+    }
     
 }
