@@ -37,6 +37,21 @@
     for (SiteMailGenerator smg : ngb.getAllSiteMail()) {
         pastSendings.put(smg.getJSON());
     }
+    
+    List<AddressListEntry> collector = new ArrayList<AddressListEntry>();
+    NGRole prime = ngb.getPrimaryRole();
+    for (AddressListEntry ale : prime.getExpandedPlayers(ngb)) {
+        AddressListEntry.addIfNotPresent(collector, ale);
+    }
+    NGRole second = ngb.getSecondaryRole();
+    for (AddressListEntry ale : second.getExpandedPlayers(ngb)) {
+        AddressListEntry.addIfNotPresent(collector, ale);
+    }
+    JSONArray affected = new JSONArray();
+    for (AddressListEntry ale : collector) {
+        affected.put( ale.getJSON() );
+    }
+    
 
     %>
     <style>
@@ -58,6 +73,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.pastSendings = <% pastSendings.write(out,2,4);%>;
     $scope.selectedLayout  = "<% ar.writeJS(layoutName);%>";
     $scope.data = <% mergeable.write(out,2,4);%>;
+    $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    $scope.addressees = <% affected.write(out,2,4); %>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -106,6 +123,7 @@ app.controller('myCtrl', function($scope, $http) {
         </ul>
       </span>
     <button class="btn btn-primary" ng-click="sendIt()">Send It Now</button>
+    <span><b><% ar.writeHtml(layoutName); %></b></span>
     <div style="clear:both;padding:5px"></div>
     </div>
     <div class="wellstyle">
@@ -113,10 +131,19 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
     <table class="table">
+    <tr>
+    <td>Owners / Executives</td>
+    <td>
+        <div ng-repeat="addr in addressees">{{addr.name}}</div>
+    </td>
+    </tr>
+    </table>
+
+    <table class="table">
     <tr ng-repeat="mail in pastSendings">
         <td>{{mail.layout}}</td>
         <td>{{mail.subject}}</td>
-        <td>{{mail.sendDate | date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}</td>
+        <td>{{mail.sendDate | date:"dd-MMM-yyyy   HH:mm"}} ({{browserZone}})</td>
     </tr>
     </table>
 </div>
