@@ -778,12 +778,6 @@ public abstract class ContainerCommon extends NGContainer
         return requestRecord;
     }
 
-    public String getThemePath()
-    {
-        //this is the default theme when nothing else overrides it
-        return "theme/blue/";
-    }
-
     public String getContainerUniversalId() {
         //TODO: get rid of this static method use
         return Cognoscenti.getServerGlobalId() + "@" + getKey();

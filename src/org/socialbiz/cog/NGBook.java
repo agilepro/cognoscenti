@@ -291,30 +291,6 @@ public class NGBook extends ContainerCommon {
         return key;
     }
 
-    public String getStyleSheet() {
-        String ss = getScalar("styleSheet");
-        if (ss == null) {
-            return "PageViewer.css";
-        }
-        return ss;
-    }
-
-    public void setStyleSheet(String newName) {
-        setScalar("styleSheet", newName.trim());
-    }
-
-    public String getLogo() {
-        String ss = getScalar("logo");
-        if (ss == null) {
-            return "logo.gif";
-        }
-        return ss;
-    }
-
-    public void setLogo(String newName) {
-        setScalar("logo", newName.trim());
-    }
-
     public String getDescription() {
         String ss = getScalar("description");
         if (ss == null) {
@@ -375,8 +351,6 @@ public class NGBook extends ContainerCommon {
         List<String> nameSet = new ArrayList<String>();
         nameSet.add(name);
         newSite.setContainerNames(nameSet);
-        newSite.setStyleSheet("PageViewer.css");
-        newSite.setLogo("logo.gif");
 
         registerSite(newSite);
         return newSite;
@@ -724,55 +698,7 @@ public class NGBook extends ContainerCommon {
      }
 
 
-    /**
-    * Different sites can have different style sheets (themes)
-    * The theme name must a a simple folder name (alpha, numbers,
-    * underline, dash, only things that are allowed in a folder name.
-    *
-    * In the intalled directory there is a folder called "theme"
-    * and the available themes are the names of the folders under
-    * that one.
-    */
-    public String getThemeName() {
-        String path = getThemePath();
-        return path.substring(6, path.length()-1);
-    }
-    public void setThemeName(String newName)  {
-        setThemePath("theme/"+newName+"/");
-    }
 
-    /**
-     * Returns a list of theme names which are the same as the folder
-     * that the theme resides in.  This list of names are the only
-     * valid theme names that can be used.  Using a different name
-     * is risky.
-     */
-    public static List<String> getAllThemes(Cognoscenti cog) {
-        List<String> ret = new ArrayList<String>();
-        File themeRoot = cog.getConfig().getFileFromRoot("theme");
-        for (File child : themeRoot.listFiles()) {
-            ret.add(child.getName());
-        }
-        return ret;
-    }
-
-
-
-    /**
-     * Different sites can have different style sheets (themes)
-     */
-    @Override
-    public String getThemePath() {
-        String val = siteInfoRec.getThemePath();
-        if (val == null || val.length() == 0) {
-            return "theme/blue/";
-        }
-        return val;
-    }
-
-    public void setThemePath(String newName) {
-        siteInfoRec.setThemePath(newName);
-    }
 
     /**
      * This is the path to a folder (on disk) that new projects should be
@@ -1142,7 +1068,6 @@ public class NGBook extends ContainerCommon {
         jo.put("names", constructJSONArray(getContainerNames()));
         jo.put("rootFolder", this.getSiteRootFolder());
         this.extractScalarString(jo, "description");
-        jo.put("theme", getThemeName());
         jo.put("showExperimental", getShowExperimental());
         jo.put("changed", getLastModifyTime());
         siteInfoRec.extractAttributeBool(jo, "isDeleted");
@@ -1168,9 +1093,6 @@ public class NGBook extends ContainerCommon {
 
     public void updateConfigJSON(JSONObject jo) throws Exception {
         this.updateScalarString("description", jo);
-        if (jo.has("theme")) {
-            setThemeName( jo.getString("theme"));
-        }
         if (jo.has("names")) {
             setContainerNames( constructVector(jo.getJSONArray("names")));
         }

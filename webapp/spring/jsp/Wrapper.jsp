@@ -24,7 +24,7 @@
     if (slashPos>=0) {
         title = title.substring(slashPos+1);
     }
-    String themePath = ar.getThemePath();
+
     Cognoscenti cog = ar.getCogInstance();
 
 

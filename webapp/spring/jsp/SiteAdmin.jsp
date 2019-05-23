@@ -13,10 +13,6 @@
 
     WorkspaceStats wStats = ngb.getRecentStats(ar.getCogInstance());
 
-    JSONArray allThemes = new JSONArray();
-    for(String themeName : ngb.getAllThemes(ar.getCogInstance())) {
-        allThemes.put(themeName);
-    }
  
 %> 
 
@@ -26,7 +22,6 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Site Administration");
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
-    $scope.allThemes = <%allThemes.write(out,2,4);%>;
     $scope.newName = $scope.siteInfo.names[0];
     $scope.colorList = $scope.siteInfo.labelColors.join(",");
 

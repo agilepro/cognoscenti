@@ -1445,17 +1445,6 @@ public abstract class NGPage extends ContainerCommon {
         pageInfo.setWorkspaceMailId(id);
     }
 
-    /**
-    * Different workspaces can have different style sheets (themes)
-    */
-    @Override
-    public String getThemePath()
-    {
-        if (prjSite!=null) {
-            return prjSite.getThemePath();
-        }
-        return "theme/blue/";
-    }
 
     public void scanForNewFiles() throws Exception {
         // nothing in this class, this is overridden in the subclass NGProj

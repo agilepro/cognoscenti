@@ -79,10 +79,7 @@ public class TestBuildSite implements TestSet {
         testString("getKey should return same key as set", testSite.getKey(), siteKey);
 
         //default value testing
-        testString("getStyleSheet default should be empty string", testSite.getStyleSheet(), "PageViewer.css");
-        testString("getLogo default should be empty string", testSite.getLogo(), "logo.gif");
         testString("getDescription default should be empty string", testSite.getDescription(), "");
-        testString("getThemePath default", testSite.getDescription(), "");
 
         testStringArray("getContainerNames default", testSite.getContainerNames(), siteName+"|");
         testLong("getLastModifyTime default should be zero", testSite.getLastModifyTime(), 0);
@@ -108,10 +105,7 @@ public class TestBuildSite implements TestSet {
         testString("getKey should return same key as set", testSite.getKey(), siteKey);
 
         //default value testing
-        testString("getStyleSheet default should be empty string", testSite.getStyleSheet(), "PageViewer.css");
-        testString("getLogo default should be empty string", testSite.getLogo(), "logo.gif");
         testString("getDescription default should be empty string", testSite.getDescription(), "");
-        testString("getThemePath default", testSite.getDescription(), "");
 
         testStringArray("getContainerNames default", testSite.getContainerNames(), siteName+"|");
         testLong("getLastModifyTime default should be zero", testSite.getLastModifyTime(), 0);

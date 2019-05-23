@@ -1697,17 +1697,6 @@ public class AuthRequest
     }
 
 
-    /**
-    * Different users/projects/sites can have different style sheets (themes)
-    */
-    public String getThemePath()
-    {
-        if (ngp!=null) {
-            return ngp.getThemePath();
-        }
-        //this is the default when no project context found
-        return "theme/blue/";
-    }
 
     //it removes whitespace from string and filters extended ASCII letters (above 127) too.
     public static String removeWhiteSpace(String str){

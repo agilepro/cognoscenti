@@ -110,20 +110,4 @@ public class SiteInfoRecord extends DOMFace {
         return getAttribute("deleteUser");
     }
 
-    /**
-     * Different sites can have different style sheets (themes) This is the path
-     * to the folder that holds the theme files
-     */
-    public String getThemePath() {
-        return getScalar("theme");
-    }
-
-    public void setThemePath(String newName) {
-        setScalar("theme", newName);
-    }
-
-    public static String themeImg(String theme) {
-        return "theme/" + theme + "/themeIcon.gif";
-    }
-
 }

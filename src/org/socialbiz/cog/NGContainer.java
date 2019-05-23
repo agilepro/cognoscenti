@@ -214,11 +214,6 @@ public abstract class NGContainer extends DOMFile
 
     public abstract boolean isAlreadyRequested(String roleName, String requestedBy) throws Exception;
 
-    /**
-    * each container can have a different "theme" color set, etc.
-    * default is "theme/blue/"
-    */
-    public abstract String getThemePath();
 
     public abstract void saveFile(AuthRequest ar, String comment) throws Exception;
     public abstract void saveWithoutAuthenticatedUser(String modUser, long modTime, String comment, Cognoscenti cog)throws Exception;

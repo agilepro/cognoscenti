@@ -143,17 +143,6 @@ public class ResourceBook implements NGResource
             throw new Exception("There is no scalar name of a site any more, so attempt to set it should probably do something else.");
         }
 
-        String logo = DOMUtils.textValueOfChild(element_book, "logo", true);
-        if(logo != null && logo.length() > 0)
-        {
-            ngb.setLogo(logo);
-        }
-
-        String style = DOMUtils.textValueOfChild(element_book, "stylesheet", true);
-        if(style != null && style.length() > 0)
-        {
-            ngb.setStyleSheet(style);
-        }
 
         String descr = DOMUtils.textValueOfChild(element_book, "description", true);
         if(descr != null && descr.length() > 0)
@@ -206,13 +195,6 @@ public class ResourceBook implements NGResource
             DOMUtils.createChildElement(
                 loutdoc, element_book, "description", ngb.getDescription());
 
-            //Adding stylesheet element
-            DOMUtils.createChildElement(
-                loutdoc, element_book, "stylesheet", ngb.getStyleSheet());
-
-            //Adding logo element
-            DOMUtils.createChildElement(
-                loutdoc, element_book, "logo", ngb.getLogo());
 
         }
     }
