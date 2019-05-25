@@ -508,10 +508,10 @@ editBoxStyle {
 
                     //Now scan all the comments on all the topics
                     int ii = 0;
-                    ngw.gatherUnsentScheduledNotification(allUnsent);
+                    ngw.gatherUnsentScheduledNotification(allUnsent, ar.nowTime);
                     for (ScheduledNotification sn : allUnsent) {
                         if (sn!=null) {
-                            long timeToAct = sn.timeToSend();
+                            long timeToAct = sn.futureTimeToSend();
                             ar.write("<li>"+ (++ii)+": ");
                             ar.writeHtml( (new Date(timeToAct)).toString() );
                             ar.write(", ");
