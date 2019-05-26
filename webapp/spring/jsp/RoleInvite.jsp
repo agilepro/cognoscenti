@@ -42,6 +42,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.newEmail = "";
     $scope.newName = "";
     $scope.newRole = "Members";
+    $scope.addressing = true;    
     
     $scope.message = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
                     +" participate in the workspace for '<%ar.writeHtml(ngc.getFullName());%>'."
@@ -106,8 +107,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         obj.status = "New";
         obj.timestamp = new Date().getTime();
         updateInvite(obj);
-        //$scope.invitations.push(obj);
-        //$scope.invitations.sort( function(a,b) {return b.timestamp - a.timestamp} );
+        $scope.addressing = false;
         $scope.newName = "";
         $scope.newEmail = "";
     }
@@ -170,29 +170,35 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
     
   <div class="well" style="max-width:500px;margin-bottom:50px">
-    <div>
-    <p><i>Add people to the project by entering their email address and name.</i></p>
-    </div>
-    <div class="form-group">
-        <label>Email Address</label>
-        <input class="form-control" ng-model="newEmail"/>
-    </div>
-    <div class="form-group">
-        <label>Full Name</label>
-        <input class="form-control" ng-model="newName"/>
-    </div>
-    <div class="form-group">
-        <label>Role</label>
-        <select class="form-control" ng-model="newRole"
-                ng-options="r for r in allRoles"></select>
-    </div>
-    <div class="form-group">
-        <label>Message</label>
-        <textarea class="form-control" style="height:200px" ng-model="message"></textarea>
-    </div>
-    <div>
-        <button ng-click="inviteOne()" class="btn btn-sm btn-primary btn-raised"/>Invite</button>
-    </div>
+      <div ng-show="addressing">
+        <div>
+        <p><i>Add people to the project by entering their email address and name.</i></p>
+        </div>
+        <div class="form-group">
+            <label>Email Address</label>
+            <input class="form-control" ng-model="newEmail"/>
+        </div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input class="form-control" ng-model="newName"/>
+        </div>
+        <div class="form-group">
+            <label>Role</label>
+            <select class="form-control" ng-model="newRole"
+                    ng-options="r for r in allRoles"></select>
+        </div>
+        <div class="form-group">
+            <label>Message</label>
+            <textarea class="form-control" style="height:200px" ng-model="message"></textarea>
+        </div>
+        <div>
+            <button ng-click="inviteOne()" class="btn btn-sm btn-primary btn-raised"/>Invite</button>
+            <button ng-click="addressing=false" class="btn btn-sm btn-raised"/>Close</button>
+        </div>
+      </div>
+      <div ng-hide="addressing">
+        <button ng-click="addressing=true" class="btn btn-sm btn-primary btn-raised"/>Open to Invite Another</button>
+      </div>
   </div>  
   
   <h2>Previously Invited</h2>

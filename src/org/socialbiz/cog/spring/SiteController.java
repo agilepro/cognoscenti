@@ -531,7 +531,8 @@ public class SiteController extends BaseController {
             }
 
             ngpi.nextScheduledAction = ngb.nextActionDue();
-            ngb.saveFile(ar, "Updated Email Generator "+eGen.getId());
+            //save, but don't update the recently changed date, site mail does not represent real site activity
+            ngb.save();   
             JSONObject repo = eGen.getJSON();
             sendJson(ar, repo);
         }

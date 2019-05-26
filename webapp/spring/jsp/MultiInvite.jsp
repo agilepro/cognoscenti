@@ -47,6 +47,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.emailList = "";
     $scope.results = [];
     $scope.retAddr = "<%=ar.baseURL%><%=ar.getResourceURL(ngc, "frontPage.htm")%>";
+    $scope.addressing = true;
 
     function getAllInvites() {
         var postURL = "invitations.json";
@@ -106,6 +107,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     
     $scope.blastIt = function() {
+        $scope.addressing = false;
         list = parseList($scope.emailList);
         console.log("LIST", list);
         list.forEach( function(item) {
@@ -176,7 +178,7 @@ function parseList(inText) {
     <p><i>Add people to the project by clicking on selecting a role, entering a list of email addresses, and a message to send to each as an invitation.</i></p>
 
     <div class="well">
-    <table class="spacey">
+    <table class="spacey" ng-show="addressing">
     
     <tr>
         <td>Role:</td>
@@ -194,18 +196,25 @@ function parseList(inText) {
     </tr>
     <tr>
         <td></td>
-        <td><button class="btn btn-primary btn-raised" ng-click="blastIt()">Send Invitations</button></td>
+        <td>
+            <button class="btn btn-primary btn-raised" ng-click="blastIt()" ng-show="emailList">Send Invitations</button>
+            <button class="btn btn-raised" ng-click="addressing=false">Close</button>
+        </td>
     </tr>
     <tr ng-show="results.length>0">
         <td></td>
         <td><div ng-repeat="res in results track by $index">Sent to: <b>{{res}}</b></div></td>
     </tr>
     </table>
+    <div  ng-hide="addressing">
+       <button class="btn btn-primary btn-raised" ng-click="addressing=true">Open to Send More</button>
     </div>
+    </div>
+    
 
-  <h2>Previously Invited</h2>
+  <h2>Invited - to see latest status: <button class="btn btn-default btn-raised" ng-click="refresh()">Refresh List</button></h2>
   
-    <table class="spacey">
+    <table class="table spacey">
     <tr><th>Email</th><th>Name</th><th>Status</th><th>Date</th><th>Visited</th></tr>
     <tr ng-repeat="invite in invitations" title="This form only displays the invited people, go to 'Invite Users' to re-invite a person"
         ng-click="reset(invite)">
@@ -218,7 +227,6 @@ function parseList(inText) {
 
     </table>
 
-    <div><button class="btn btn-default btn-raised" ng-click="refresh()">Refresh List</button></div>
     
     
 </div>
