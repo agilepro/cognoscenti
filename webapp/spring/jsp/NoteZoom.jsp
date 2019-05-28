@@ -209,9 +209,10 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.updateComment(cmt);
     }
     $scope.closeComment = function(itemNotUsed, cmt) {
-        cmt.state = 13;
         if (cmt.commentType>1) {
-            $scope.openOutcomeEditor(cmt);
+            if (cmt.state!=13) {
+                $scope.openOutcomeEditor(cmt);
+            }
         }
         else {
             $scope.updateComment(cmt);
@@ -646,7 +647,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             var cleanCmt = {};
             cleanCmt.time = cmt.time;
             cleanCmt.outcome = returnedCmt.outcome;
-            cleanCmt.state = returnedCmt.state;
+            cleanCmt.state = 13;    //close
             cleanCmt.commentType = returnedCmt.commentType;
             $scope.updateComment(cleanCmt);
         }, function () {

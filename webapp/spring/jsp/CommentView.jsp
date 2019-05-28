@@ -126,7 +126,10 @@
               <img src="<%=ar.retPath%>assets/images/iconFile.png"> {{getFullDoc(docId).name}} 
           </span>
       </div>
-      <div class="leafContent comment-inner" ng-show="cmt.state==13 && (cmt.commentType==2 || cmt.commentType==3)">
+      <div class="leafContent comment-inner" 
+           ng-show="(cmt.commentType==2 || cmt.commentType==3)" 
+           ng-click="closeComment(item, cmt)"
+           title="closing outcome of the round/proposal">
         <div ng-bind-html="cmt.outcome"></div>
       </div>
       <div ng-show="cmt.replies.length>0 && cmt.commentType>1">

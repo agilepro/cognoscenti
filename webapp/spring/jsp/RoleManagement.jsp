@@ -346,15 +346,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="roleManagement.htm">Manage Roles</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="RoleInvite.htm">Invite Users</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="MultiInvite.htm">Multi-Person Invite</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="roleManagement.htm">
+              <span class="fa fa-group"></span> Manage Roles</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="RoleInvite.htm">
+              <span class="fa fa-phone"></span> Invite Users</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="MultiInvite.htm">
+              <span class="fa fa-phone"></span> Multi-Person Invite</a></li>
           <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              ng-click="openRoleModal(null)">Create New Role</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1" ng-click="openRoleModal(null)">
+              <span class="fa fa-plus-square"></span> Create New Role</a></li>
         </ul>
       </span>
     </div>
@@ -390,7 +390,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                       ng-click="goNomination(role)">
                       <span class="fa fa-flag-o"></span> Role Elections </a></li>
                   <li role="presentation"><a role="menuitem" tabindex="-1"
-                      href="MultiInvite.htm?role={{role.name}}">Multi-Person Invite</a></li>
+                      href="MultiInvite.htm?role={{role.name}}">
+                      <span class="fa fa-phone"></span>Multi-Person Invite</a></li>
                   <li role="presentation" class="divider"></li>
                   <li role="presentation"><a role="menuitem" 
                       ng-click="deleteRole(role)">
