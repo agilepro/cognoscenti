@@ -474,15 +474,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     $scope.startSend = function() {
         $scope.addressMode = true;
-        $scope.allLabels.forEach( function(item) {
-            if (item.name=="Members") {
-                var listCopy = [];
-                item.players.forEach( function(player) {
-                    listCopy.push(player)
-                });
-                $scope.noteInfo.subscribers = listCopy;
-            }
-        });
     }
     $scope.updatePlayers = function() {
         $scope.noteInfo.subscribers = cleanUserList($scope.noteInfo.subscribers);

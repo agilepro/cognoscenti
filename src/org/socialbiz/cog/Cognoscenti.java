@@ -499,12 +499,6 @@ System.out.println("Weaver Server Object == Start the Server");
                 // only consider if the project is in the site we look for
                 continue;
             }
-            /*
-            if (ngpi.isDeleted) {
-                // ignore deleted projects
-                continue;
-            }
-            */
             ret.add(ngpi);
         }
         return ret;
@@ -610,6 +604,8 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         System.out.println("Concluded SCAN for all pages in system.");
     }
+    
+
 
     private void reportUnparseableFile(File badFile, Exception eig) {
         AuthRequest dummy = AuthDummy.serverBackgroundRequest();
@@ -690,14 +686,28 @@ System.out.println("Weaver Server Object == Start the Server");
         keyToSites.put(key, bIndex);
     }
 
-    public void eliminateIndexForSite(NGBook site) {
+    /**
+     * When a site is physically removed from the disk, this method must be 
+     * called to make it disappear from the running index in memory.
+     */
+    public void eliminateIndexForSite(NGBook site) throws Exception {
         String key = site.getKey();
         NGPageIndex foundPage = keyToSites.get(key);
         if (foundPage != null) {
-            foundPage.unlinkAll();
-            allContainers.remove(foundPage);
-            keyToSites.remove(foundPage.containerKey);
+            keyToSites.remove(key);
         }
+        ArrayList<NGPageIndex> cleanList = new ArrayList<NGPageIndex>();
+        for (NGPageIndex ngpi : allContainers) {
+            if (ngpi.containerKey.equals(key)) {
+                foundPage.unlinkAll();
+                System.out.println("Site removed from index: "+key);
+            }
+            else {
+                cleanList.add(ngpi);
+            }
+        }
+        allContainers = cleanList;
+        NGBook.unregisterSite(key);
     }
 
     public void makeIndexForWorkspace(NGWorkspace ngw) throws Exception {

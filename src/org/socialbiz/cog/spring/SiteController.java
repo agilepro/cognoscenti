@@ -183,6 +183,7 @@ public class SiteController extends BaseController {
             throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response); 
+        String siteKey = "???";
         try{
             ar.assertLoggedIn("Must be logged to garbage collect a site.");
             if(!ar.isSuperAdmin()){
@@ -192,7 +193,7 @@ public class SiteController extends BaseController {
             if (!incoming.has("key")) {
                 throw new Exception("Must specify 'key' of the site you want to take ownership of");
             }
-            String siteKey = incoming.getString("key");
+            siteKey = incoming.getString("key");
             Cognoscenti cog = ar.getCogInstance();
             NGBook site = cog.getSiteById(siteKey);
             if (site==null) {
@@ -215,7 +216,7 @@ public class SiteController extends BaseController {
                 deleteRecursive(siteFolder);
             }
             else {
-                
+                throw new Exception("Site '"+siteKey+"' must be deleted before it can be garbage collected");
             }
             
             
@@ -225,7 +226,7 @@ public class SiteController extends BaseController {
             jo.put("status", "success");
             sendJson(ar, jo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to garbage collect the site.", ex);
+            Exception ee = new Exception("Unable to garbage collect the site "+siteKey, ex);
             streamException(ee, ar);
         }
     }

@@ -843,7 +843,7 @@ public class UserProfile implements UserRef
 
     public List<NGBook> findAllMemberSites() throws Exception {
         List<NGBook> memberOfSites=new ArrayList<NGBook>();
-        for (NGBook aBook : NGBook.getAllSites()){
+        for (NGBook aBook : NGBook.getAllSites()) {
             if (aBook.primaryOrSecondaryPermission(this)) {
                 memberOfSites.add(aBook);
             }

@@ -1245,6 +1245,9 @@ public abstract class NGPage extends ContainerCommon {
         String localId = getUniqueOnPage();
         note.setId( localId );
         note.setUniversalId(getContainerUniversalId() + "@" + localId);
+        NGRole subscribers = note.getSubscriberRole();
+        NGRole workspaceMembers = this.getPrimaryRole();
+        subscribers.addPlayersIfNotPresent(workspaceMembers.getExpandedPlayers(this));
         return note;
     }
 

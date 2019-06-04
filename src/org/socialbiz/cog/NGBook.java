@@ -281,8 +281,10 @@ public class NGBook extends ContainerCommon {
             throw new Exception("Can not unregister a site when the NGBook class has not completed initialization.  (keyToSite is null)");
         }
         NGBook fSite = keyToSite.get(siteKey);
-        allSites.remove(fSite);
-        keyToSite.remove(siteKey);
+        if (fSite!=null) {
+            allSites.remove(fSite);
+            keyToSite.remove(siteKey);
+        }
     }
 
 
@@ -1026,15 +1028,19 @@ public class NGBook extends ContainerCommon {
             return getStatsFile();
         }
 
+        System.out.println("SCANNING STATS: for site: "+this.key);
         //we should figure out how to do this at a time when all the
         //projects are being scanned for some other purpose....
         WorkspaceStats siteStats = new WorkspaceStats();
         for (NGPageIndex ngpi : cog.getAllProjectsInSite(this.getKey())) {
             NGPage ngp = ngpi.getWorkspace();
+            System.out.println("SCANNING STATS: looking at workspace: "+ngp.getFullName());
             siteStats.gatherFromWorkspace(ngp);
             siteStats.numWorkspaces++;
+            System.out.println("SCANNING STATS: finished "+siteStats.numWorkspaces+": "+ngp.getFullName());
         }
         saveStatsFile(siteStats);
+        System.out.println("SCANNING STATS: done: "+this.key);
         return siteStats;
     }
     public JSONObject getStatsJSON(Cognoscenti cog) throws Exception {
