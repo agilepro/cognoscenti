@@ -6,20 +6,23 @@
 <h3>About Your Weaver Site: </h3>
 <ul><h1><a href="">{$site.names|get(0)}</a></h1></ul>
 
-<p class="important">You haven't created any workspaces yet.</p>
+<p class="important">
+We notice that you’ve had Weaver for a while and haven’t created any workspaces. 
+We encourage you TO EXPERIMENT WITH WEAVER!
+</p>
 
 
 <p>Workspaces are where people do the work, and you can create as many as you want.</p> 
  
-<p>We have some videos that help explain how to do this.   Try watching 
+<p>Need some hints on how to start?  Try watching the video: 
 <a href="https://www.youtube.com/watch?v=KX13p4rnhb0&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB&index=2">Workspaces: How to Create in Weaver</a> 
 and at the same time familiarize yourself with other 
 <a href="https://www.youtube.com/watch?v=sSJPN5XRFsY&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB"> Weaver Training Videos</a>. </p>
 
 
-<p>You can access the site at any time using one of the following links.   We recommend you bookmark one of these links right away:</p>
+<p>You can access your site at any time using one of the following links.   We recommend you bookmark one of these links right away:</p>
 <ul>
-<li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - go to this link to create your first workspace. Click on Options (in the upper right corner of your screen) and select Create a Workspace.</li>
 <li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the owner (you)</li>
 <li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
 </ul>

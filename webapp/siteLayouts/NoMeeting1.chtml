@@ -9,12 +9,15 @@
 <p>Congratulation on creating the workspace(s): 
 {% loop in $site.workspaces as $workspace %}
 <b><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/frontPage.htm">{$workspace.name}</a></b>;
+{% onEmpty %}
+(Actually this site does not have any workspaces.)
 {% endloop %}
+Hope you are enjoying using Weaver! </p>
 
-<p class="important">You haven't created any meetings yet.</p>
+<p class="important">We encourage you to create your first Weaver meeting.</p>
 
 
-<p>Hope you are enjoying using Weaver! 
+<p>
 If you haven't already done so, we encourage you to revisit the 
 <a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB">Weaver training channel</a>. 
 There are several short videos that you might find useful in learning about the wide scope of Weaver features such as: 
@@ -28,6 +31,7 @@ There are several short videos that you might find useful in learning about the 
 <ul>
 {% loop in $site.workspaces as $workspace %}
 <li><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/MeetingList.htm">{$workspace.name}</a></li>
+{% onEmpty %}
 {% endloop %}
 </ul>
 

@@ -9,17 +9,21 @@
 <p>Congratulation on creating the workspace(s): 
 {% loop in $site.workspaces as $workspace %}
 <b><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/frontPage.htm">{$workspace.name}</a></b>
+{% onEmpty %}
+(Actually this site does not have any workspaces.)
 {% endloop %}
 
-<p class="important">You haven't invited any other users yet.</p>
+<p class="important">We encourage you now to invite some users to your workspace.</p>
 
 
-<p>The next step is to invite some other people to your workspace.  If you haven't tried adding one or more other users yet, you might want to watch the Weaver training video <a href="https://www.youtube.com/watch?v=FEIR6JvF9q4">Inviting Users to your Workspace</a> and at the same time familiarize yourself with other <a href="https://www.youtube.com/watch?v=sSJPN5XRFsY&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB"> Weaver Training Videos</a>. </p>
+<p>Inviting actual users is your next step in understanding Weaver's many benefits.   You might want to watch the Weaver training video <a href="https://www.youtube.com/watch?v=FEIR6JvF9q4">Inviting Users to your Workspace</a> and at the same time familiarize yourself with other <a href="https://www.youtube.com/watch?v=sSJPN5XRFsY&list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB"> Weaver Training Videos</a>. </p>
 
 <p>Use these links to access the 'Roles' page for your workspace(s):
 <ul>
 {% loop in $site.workspaces as $workspace %}
 <li><a href="{$baseUrl}v/{$site.key}/{$workspace.pageKey}/roleManagement.htm">{$workspace.name}</a></li>
+{% onEmpty %}
+(no workspaces)
 {% endloop %}
 </ul>
 

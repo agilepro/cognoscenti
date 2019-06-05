@@ -2,7 +2,7 @@
 <body>
 {% include styles %}
 <div class="emailbody">
-<!--TEMPLATE FlatDetailAgenda.chtml-->
+<!--TEMPLATE SiteIntro1.chtml-->
 <h1>Welcome to Weaver!</h1> 
 
 <p>Your site 
@@ -18,10 +18,11 @@ and the video
 </p>
 
 
-<p>You can access the site at any time using one of the following links.   We recommend you bookmark one of these links right away:</p>
+<p>You can access the site at any time using one of the following links.   
+We recommend you take a moment now to explore these links:</p>
 <ul>
 <li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
-<li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the owner (you)</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the site owner (you)</li>
 <li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
 </ul>
 
