@@ -7,7 +7,7 @@
 
 <p>Your site 
 '<b>{$site.names|get(0)}</b>'
- is up and running</p>
+ is up and running.</p>
 
 <p>As a new Weaver site owner we suggest that you visit the 
 <a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB">Weaver training channel</a> 
