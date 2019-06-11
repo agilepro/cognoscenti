@@ -233,6 +233,7 @@ public class EmergencyConfigServlet extends javax.servlet.http.HttpServlet {
         paramTest(jo,cog, "baseURL");
         paramTest(jo,cog, "localConnections");
         pathTest(jo, cog, "libFolder");
+        pathTest(jo, cog, "userFolder");
 
         return new TemplateJSONRetriever(jo);
     }
