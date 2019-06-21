@@ -60,6 +60,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     window.MY_SCOPE = $scope;
     $scope.attachmentList = <% attachArray.write(out, 2,2); %>;
     $scope.allLabels      = <% allLabels.write(out, 2,2); %>;
+    $scope.filter = "";
     
     $scope.driveFiles = [];
     $scope.parentStack = [];
@@ -161,6 +162,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.setLogin = function(boolVal) {
         $scope.loggedIn = boolVal;
     }
+    $scope.filterFiles = function() {
+        var selected = [];
+        var lcFilter = $scope.filter.toLowerCase();
+        $scope.driveFiles.forEach( function(item) {
+            if (item.title.toLowerCase().indexOf(lcFilter)>=0) {
+                selected.push(item);
+            }
+         });
+         return selected;
+    }
     $scope.drillDown = function(gfile) {
         if ($scope.isFolder(gfile)) {
             $scope.parentStack.push(FOLDER_ID);
@@ -242,7 +253,16 @@ function onSuccessFunc(user) {
             ng-hide="parentStack.length==0" ng-click="popUp()">
                 <i class="fa  fa-arrow-circle-up"></i></button>
 </td>
+<td >
+  <div class="well form-inline">
+    <label for="filter"> Filter </label>
+    <input type="text" ng-model="filter" class="form-control">
+  </div>
+</td>
+<td>
+</td> 
 </tr></table>
+
 
     
     <table class="table">
@@ -254,7 +274,7 @@ function onSuccessFunc(user) {
                 <i class="fa  fa-arrow-circle-up"></i></button>
     </td>
     </tr>
-    <tr ng-repeat="gfile in driveFiles">
+    <tr ng-repeat="gfile in filterFiles()">
     <td style="width:50px;"><img src="{{gfile.iconLink}}"></td>
     <td>{{gfile.title}}</td>
     <td style="width:50px;">

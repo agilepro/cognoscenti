@@ -136,6 +136,9 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     }
 
 
+    $scope.cancel = function() {
+        $modalInstance.dismiss('cancel');
+    }
     $scope.save = function() {
 		saveComment("N");
     }

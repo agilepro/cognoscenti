@@ -159,34 +159,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.role.terms.push(term);
         $scope.updateRole($scope.role);
     }
-    $scope.openTermModal = function (term) {
-        var isNew = false;
-        if (!term) {   
-            term = {};
-            isNew = true;
-        }
-        var modalInstance = $modal.open({
-            animation: false,
-            templateUrl: '<%=ar.retPath%>templates/TermModal.html<%=templateCacheDefeater%>',
-            controller: 'TermModal',
-            size: 'lg',
-            backdrop: "static",
-            resolve: {
-                term: function () {
-                    return JSON.parse(JSON.stringify(term));
-                },
-                isNew: function() {return isNew;},
-                parentScope: function() { return $scope; }
-            }
-        });
 
-        modalInstance.result.then(function (message) {
-            //what to do when closing the role modal?
-        }, function () {
-            //cancel action - nothing really to do
-        });
-        
-    };
 });
 
 </script>
