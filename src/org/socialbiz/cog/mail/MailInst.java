@@ -61,6 +61,15 @@ public class MailInst extends JSONWrapper {
     public void setStatus(String val) throws Exception {
         kernel.put("Status", val);
     }
+    public int getFailCount() throws Exception {
+        if (!kernel.has("FailCount")) {
+            return 0;
+        }
+        return kernel.getInt("FailCount");
+    }
+    public void incrementFailCount() throws Exception {
+        kernel.put("FailCount", getFailCount()+1);
+    }
 
     public long getLastSentDate() throws Exception {
         return kernel.getLong("LastSentDate");
@@ -68,6 +77,17 @@ public class MailInst extends JSONWrapper {
     public void setLastSentDate(long val) throws Exception {
         kernel.put("LastSentDate", val);
     }
+    public long getSMTPCallDuration() throws Exception {
+        if (!kernel.has("SMTPCallDuration")) {
+            return 0;
+        }
+        return kernel.getLong("SMTPCallDuration");
+    }
+    public void setSMTPCallDuration(long val) throws Exception {
+        kernel.put("SMTPCallDuration", val);
+    }
+
+
     public long getCreateDate() throws Exception {
         return kernel.getLong("CreateDate");
     }
@@ -179,29 +199,26 @@ public class MailInst extends JSONWrapper {
      *         (false) if it can't sent the message
      *
      */
-    public boolean sendPreparedMessageImmediately(Mailer mailer) {
+    public boolean sendPreparedMessageImmediately(Properties mailProps) {
 
-        long sendTime = MailFile.getUniqueTime();
+        long sendStart = MailFile.getUniqueTime();
         Transport transport = null;
         String addressee = "UNSPECIFIED";
 
-        if ("true".equals(mailer.getProperty("traceProperties"))) {
-            mailer.dumpPropertiesToLog();
-        }
 
         try {
             addressee = getAddressee();
 
-            Authenticator authenticator = new MyAuthenticator(mailer.getProperties());
-            Session mailSession = Session.getInstance(mailer.getProperties(), authenticator);
-            mailSession.setDebug("true".equals(mailer.getProperty("mail.debug")));
+            Authenticator authenticator = new MyAuthenticator(mailProps);
+            Session mailSession = Session.getInstance(mailProps, authenticator);
+            mailSession.setDebug("true".equals(mailProps.getProperty("mail.debug")));
 
             transport = mailSession.getTransport();
             transport.connect();
 
 
             MimeMessage message = new MimeMessage(mailSession);
-            message.setSentDate(new Date(sendTime));
+            message.setSentDate(new Date(sendStart));
 
             //The FROM of the message gets put into the reply-to field
             //so replies go to the person who started the message.
@@ -216,7 +233,7 @@ public class MailInst extends JSONWrapper {
             }
 
             //Always use a fixed from address to avoid being tagged as a spammer
-            String stdFromAddress = mailer.getProperty("mail.smtp.from");
+            String stdFromAddress = mailProps.getProperty("mail.smtp.from");
             message.setFrom(makeAddress("\u2379 "+fromName, stdFromAddress)[0]);
 
             String encodedSubjectLine = MimeUtility.encodeText(getSubject(), "utf-8", "B");
@@ -251,15 +268,20 @@ public class MailInst extends JSONWrapper {
             System.out.println("MAILINST: Sent email to "+addressee+": "+getSubject());
 
             setStatus(EmailRecord.SENT);
-            setLastSentDate(sendTime);
+            setLastSentDate(sendStart);
+            setSMTPCallDuration(System.currentTimeMillis()-sendStart);
             return true;
-        } catch (Exception me) {
+      } catch (Exception me) {
             try {
-                String context = "Failed ("+SectionUtil.currentTimeString()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): ";
+                String context = "Email Send Failed ("+SectionUtil.currentTimeString()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): ";
                 setExceptionMessage(me, context);
-                setLastSentDate(sendTime);
+                setLastSentDate(sendStart);
                 JSONException.traceException(System.out, me, context);
-                setStatus(EmailRecord.FAILED);
+                incrementFailCount();
+                if (getFailCount()>3) {
+                    setStatus(EmailRecord.FAILED);
+                }
+                setSMTPCallDuration(System.currentTimeMillis()-sendStart);
             }
             catch (Exception eee) {
                 System.out.println("EXCEPTION within EXCEPTION: "+eee+" @ "+SectionUtil.currentTimeString());

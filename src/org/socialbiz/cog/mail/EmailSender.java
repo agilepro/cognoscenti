@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Properties;
@@ -118,6 +117,10 @@ public class EmailSender extends TimerTask {
         // these values.   we always generate UTF-8 html
         props.put("mail.contenttype", "text/html;charset=UTF-8");
         emailProperties = props;
+
+        if ("true".equals(emailProperties.getProperty("traceProperties"))) {
+            dumpPropertiesToLog();
+        }
     }
 
     /**
@@ -134,8 +137,7 @@ public class EmailSender extends TimerTask {
         globalMailArchive = new File(userFolder, "GlobalEmailArchive.json");
 
         // apparently a timer task can not be reused by a Timer, or in another
-        // Timer.  You have to create them every time you schedule them???
-        // TODO: no reason to make these static then
+        // Timer.  You have to create them every time you schedule them.
         EmailSender singletonSender = new EmailSender(cog);
 
 
@@ -147,6 +149,20 @@ public class EmailSender extends TimerTask {
         // and every 30 seconds after that.
         timer.scheduleAtFixedRate(singletonSender, 30000, TWICE_PER_MINUTE);
     }
+
+    public static void dumpPropertiesToLog() {
+        System.out.println("%%%%%%% EMAIL PROPERTY FILE %%%%%%");
+        for (String key : emailProperties.stringPropertyNames()) {
+            if (key.contains("password")) {
+                System.out.println("    - "+key+" = ********");
+            }
+            else {
+                System.out.println("    - "+key+" = "+emailProperties.getProperty(key));
+            }
+        }
+        System.out.println("");
+    }
+
 
     static long runCount = 0;
     static long totalTime = 0;
@@ -163,11 +179,12 @@ public class EmailSender extends TimerTask {
 
         // make sure that this method doesn't throw any exception
         try {
-            System.out.println("EmailSender run: "+SectionUtil.getDateAndTime(startTime));
+            System.out.println("EmailSender start: "+SectionUtil.getDateAndTime(startTime));
             NGPageIndex.assertNoLocksOnThread();
             checkAndSendDailyDigest(ar);
             handleGlobalEmail();
             handleAllOverdueScheduledEvents(ar);
+            System.out.println("EmailSender completed: "+SectionUtil.getDateAndTime(startTime));
         } catch (Exception e) {
             Exception failure = new Exception("EmailSender-TimerTask failed in run method.", e);
             JSONException.traceException(System.out, failure, "EmailSender-TimerTask failed in run method.");
@@ -197,9 +214,8 @@ public class EmailSender extends TimerTask {
     private void handleGlobalEmail() {
         synchronized(globalMailArchive) {
             try {
-                Mailer mailer = new Mailer(cog.getConfig().getFile("EmailNotification.properties"));
                 MailFile globalArchive = MailFile.readOrCreate(globalMailArchive, 1);
-                globalArchive.sendAllMail(mailer);
+                globalArchive.sendAllMail(emailProperties);
                 globalArchive.save();
             }
             catch (Exception e) {
@@ -210,12 +226,11 @@ public class EmailSender extends TimerTask {
 
     private void handleAllOverdueScheduledEvents(AuthRequest ar) throws Exception{
         NGPageIndex.assertNoLocksOnThread();
-        Mailer mailer = new Mailer(cog.getConfig().getFile("EmailNotification.properties"));
 
         //default delay is 0 minutes AFTER the scheduled time.  This delay is to allow people who
         //create something a few minutes to edit before it is sent.
         int delayTime = 0;
-        String delayStr = mailer.getProperty("automated.email.delay");
+        String delayStr = emailProperties.getProperty("automated.email.delay");
         if (delayStr!=null) {
             //delay time config parameter is in minutes
             delayTime = DOMFace.safeConvertInt(delayStr)*1000*60;
@@ -293,7 +308,7 @@ public class EmailSender extends TimerTask {
 
 
             //now we can go an actually send the email in the mailArchive
-            emailArchive.sendAllMail(mailer);
+            emailArchive.sendAllMail(emailProperties);
 
             Thread.sleep(200);  //just small delay to avoid saturation
         }
@@ -392,7 +407,6 @@ public class EmailSender extends TimerTask {
         // Good enough for now.
         Calendar cal = new GregorianCalendar(tomorrow.get(Calendar.YEAR),
                 tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE),
-                // TODO: Change it back to 3 AM after testing
                 3, // 3 AM
                 0 // zero minutes.
         );

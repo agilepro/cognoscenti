@@ -3,7 +3,6 @@ package org.socialbiz.cog.mail;
 import java.io.File;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.socialbiz.cog.AccessControl;

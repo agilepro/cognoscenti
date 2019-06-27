@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Properties;
 
 import javax.mail.Message;
 
@@ -277,13 +278,13 @@ public class MailFile extends JSONWrapper {
         return createEmailRecord( ooa.getAssignee(), addressee, subject, body);
     }
 
-    public void sendAllMail(Mailer mailer) throws Exception {
+    public void sendAllMail(Properties mailProps) throws Exception {
 
         List<MailInst> allEmail = getAllMessages();
 
         for (MailInst inst : allEmail) {
             if (MailInst.READY_TO_GO.equals(inst.getStatus())) {
-                inst.sendPreparedMessageImmediately(mailer);
+                inst.sendPreparedMessageImmediately(mailProps);
                 save();
             }
         }
@@ -330,7 +331,7 @@ public class MailFile extends JSONWrapper {
         MailInst emailRec = this.createMessage();
         emailRec.setFromMessage(message);
     }
-    
+
     private class MailComparitor implements Comparator<MailInst> {
 
         @Override
@@ -342,8 +343,8 @@ public class MailFile extends JSONWrapper {
                 return 0;
             }
         }
-        
+
     }
 
-    
+
 }
