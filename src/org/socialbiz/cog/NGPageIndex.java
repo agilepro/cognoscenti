@@ -490,7 +490,7 @@ public class NGPageIndex {
         }
         catch (IllegalStateException e) {
             // Lock is already available
-            System.out.println(new Date().toString() + " " + ctid + ": clearLock cid: "
+            System.out.println(SectionUtil.currentTimeString() + " " + ctid + ": clearLock cid: "
                     + this.containerKey + " lock is available nothing to clear");
         }
     }
@@ -532,7 +532,7 @@ public class NGPageIndex {
             Exception e = new Exception("program logic error: Thread tid="+thisThread+" is holding a lock when it should not.  "
                     +"Method that is controlling locks must only be called when no locks are being held.  "
                     +"Clear all locks and all references to locked objects before calling this method.");
-            System.out.println("\n\n~~~~~~ THREAD LOCK VIOLATION ~~~~~~~"+new Date());
+            System.out.println("\n\n~~~~~~ THREAD LOCK VIOLATION ~~~~~~~"+SectionUtil.currentTimeString());
             PrintStream ps = new PrintStream(System.out);
             JSONException.traceException(ps, e, "THREAD LOCK VIOLATION");
             System.out.println("~~~~~~ THIS IS PROGRAM LOGIC ERROR ~~~~~~~\n\n");

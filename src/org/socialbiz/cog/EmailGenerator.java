@@ -211,7 +211,7 @@ public class EmailGenerator extends DOMFace {
         long aboutFifteenMinutesAgo = ar.nowTime - 15 * 60000;
         if (getScheduleTime()<aboutFifteenMinutesAgo) {
             throw new JSONException("To schedule the email for sending, the schedule time has to be in the future.  Schedule time currently set to: {0}",
-                new Date(getScheduleTime()));
+                SectionUtil.getNicePrintDate(getScheduleTime()));
         }
         setState(EG_STATE_SCHEDULED);
     }
@@ -681,7 +681,7 @@ public class EmailGenerator extends DOMFace {
             }
             return eg.getScheduleTime();
         }
-        
+
 
         @Override
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {

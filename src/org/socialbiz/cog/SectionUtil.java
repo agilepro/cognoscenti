@@ -412,11 +412,31 @@ public class SectionUtil
     }
 
 
-    public static String getNicePrintDate(long timestamp) throws Exception {
-        StringWriter out = new StringWriter(20);
-        nicePrintDate(out, timestamp, null);
-        return out.toString();
+    /**
+     * This method is needed in lots of logging and exception handling
+     * places and I really don't want this throwing exceptions.
+     * This is such a rudimentary problem is it unlikely to cause
+     * a problem, so I am violating the normal rules, catching an exception
+     * and just returning it as a value instead of actually throwing an
+     * exception.
+     */
+    public static String getNicePrintDate(long timestamp) {
+        try {
+            StringWriter out = new StringWriter(20);
+            nicePrintDate(out, timestamp, null);
+            return out.toString();
+        }
+        catch (Exception e) {
+            //exception to the normal rule ... the ability to convert a
+            //date to a string is needed in many many places without the
+            //bother of catching exceptions, so this is a compromise.
+            return "[DATE ERROR: "+e.toString()+"]";
+        }
     }
+    public static String currentTimeString() {
+        return getNicePrintDate(System.currentTimeMillis());
+    }
+
     public static String getNicePrintDate(long timestamp, String timeZone) throws Exception {
         StringWriter out = new StringWriter(20);
         nicePrintDate(out, timestamp, timeZone);

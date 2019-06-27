@@ -54,7 +54,7 @@ public class DailyDigest {
     public static void sendDailyDigest(AuthRequest arx, Cognoscenti cog) throws Exception {
         MemFile debugStuff = new MemFile();
         Writer debugWriter = debugStuff.getWriter();
-        System.out.println("DAILYDIGEST: called at "+new Date());
+        System.out.println("DAILYDIGEST: called at "+SectionUtil.currentTimeString());
         JSONObject logFile = new JSONObject();
         JSONArray logEntries = new JSONArray();
         logFile.put("events", logEntries);
@@ -90,7 +90,7 @@ public class DailyDigest {
                 userObject.put("key",  up.getKey());
                 userObject.put("name",  up.getName());
                 userObject.put("email",  up.getUniversalId());
-                
+
                 if (up.getDisabled()) {
                     userObject.put("conclusion", "Disabled");
                     //skip all disabled users
@@ -120,7 +120,7 @@ public class DailyDigest {
 
             //save all the times that we set on the user profiles
             cog.getUserManager().saveUserProfiles();
-            
+
 
 
         } catch (Exception e) {
@@ -225,7 +225,7 @@ public class DailyDigest {
                     //ignore any workspaces in deleted or moved sites.
                     continue;
                 }
-                
+
                 List<HistoryRecord> histRecs = ngp.getHistoryRange(
                         historyStartTime, processingStartTime);
                 if (histRecs.size() == 0) {
@@ -268,7 +268,7 @@ public class DailyDigest {
                     NGPageIndex ngci = clone.getCogInstance().getWSByCombinedKey(noteKey);
 
                     // users might have items on the notification list that don't exist, because
-                    // they signed up for notification, and then the project was deleted.  
+                    // they signed up for notification, and then the project was deleted.
                     //Or because it was moved and we don't know the new name.
                     if (ngci != null) {
                         //apparently it is possible for people to get a 'Site' in their

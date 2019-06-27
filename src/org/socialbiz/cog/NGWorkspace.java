@@ -59,11 +59,11 @@ public class NGWorkspace extends NGPage {
 
     private File        jsonFilePath;
     private JSONObject  workspaceJSON;
-    
+
 
     public NGWorkspace(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc, site);
-        
+
         System.out.println("READING workspace: "+theFile);
 
         jsonFilePath = new File(theFile.getParent(), "WorkspaceInfo.json");
@@ -74,8 +74,8 @@ public class NGWorkspace extends NGPage {
             workspaceJSON = new JSONObject();
         }
         removeOldInvitations();
-        
-        
+
+
         String name = theFile.getName();
         if (!name.equals("ProjInfo.xml")) {
             if (name.endsWith(".sp")) {
@@ -90,7 +90,7 @@ public class NGWorkspace extends NGPage {
                         +" and don't know what to do with that.");
             }
         }
-        
+
         File cogFolder = theFile.getParentFile();
         if (!cogFolder.getName().equalsIgnoreCase(".cog")) {
             throw new Exception("Something is wrong with the data folder structure.  "
@@ -99,7 +99,7 @@ public class NGWorkspace extends NGPage {
                     +"it was in a folder named "+cogFolder.getName());
         }
         containingFolder = cogFolder.getParentFile();
-        
+
         String realName = containingFolder.getName();
         String key = this.getKey();
         if (!key.equals(realName)) {
@@ -111,8 +111,8 @@ public class NGWorkspace extends NGPage {
         //upgrade all the note, document, and task records
         cleanUpTaskUniversalId();
     }
-    
-    
+
+
     /**
      * Need to inject the saving of the JSON file at this point
      * to assure that both XML and JSON get saved.
@@ -120,7 +120,7 @@ public class NGWorkspace extends NGPage {
     @Override
     public void save() throws Exception {
         super.save();
-        
+
         workspaceJSON.writeToFile(jsonFilePath);
         //store into the cache.  Something might be copying things in memory,
         //and this assures that the cache matches the latest written version.
@@ -135,7 +135,7 @@ public class NGWorkspace extends NGPage {
         System.out.println("     file save ("+getFullName()+") tid="+Thread.currentThread().getId()+" time="+(System.currentTimeMillis()%10000));
     }
 
-    
+
 
     @Override
     protected void migrateKeyValue(File theFile) throws Exception {
@@ -206,19 +206,19 @@ public class NGWorkspace extends NGPage {
                 File siteFolder = workFolder.getParentFile();
                 String siteKey = siteFolder.getName();
                 NGBook theSite = NGBook.readSiteByKey(siteKey);
-             
+
                 Document newDoc;
                 InputStream is = new FileInputStream(theFile);
                 newDoc = DOMUtils.convertInputStreamToDocument(is, false, false);
                 is.close();
                 newWorkspace = new NGWorkspace(theFile, newDoc, theSite);
-                
+
                 if (!siteKey.equals(newWorkspace.getSiteKey())) {
                     System.out.println("Site ("+siteKey+") != ("+newWorkspace.getSiteKey()+") FIXING UP workspace "+theFile);
                     newWorkspace.setSiteKey(siteKey);
                     System.out.println("    NOW ("+newWorkspace.getSiteKey()+")");
                 }
-                
+
                 String workspaceKey = workFolder.getName();
                 if (!workspaceKey.equals(newWorkspace.getKey())) {
                     System.out.println("Workspace ("+workspaceKey+") != ("+newWorkspace.getKey()+") FIXING UP workspace "+theFile);
@@ -226,7 +226,7 @@ public class NGWorkspace extends NGPage {
                 }
             }
 
-            //store into the cache.  
+            //store into the cache.
             pageCache.store(fullFilePath, newWorkspace);
             return newWorkspace;
         }
@@ -415,8 +415,8 @@ public class NGWorkspace extends NGPage {
             }
         }
         if (first!=null) {
-            System.out.println("Found the next event to be: ("+first.selfDescription()+") to be sent at (" 
-                     +new Date(first.futureTimeToSend())+")");
+            System.out.println("Found the next event to be: ("+first.selfDescription()+") to be sent at ("
+                     +SectionUtil.getNicePrintDate(first.futureTimeToSend())+")");
         }
         return nextTime;
     }
@@ -443,7 +443,7 @@ public class NGWorkspace extends NGPage {
         }
     }
 
-    
+
 
     /**
     * schema migration ...
@@ -506,7 +506,7 @@ public class NGWorkspace extends NGPage {
 
 
     ///////////////////////// SharePortRecord //////////////////
-    
+
     public List<SharePortRecord> getSharePorts() throws Exception {
         if (!workspaceJSON.has("sharePorts")) {
             workspaceJSON.put("sharePorts", new JSONArray());
@@ -551,7 +551,7 @@ public class NGWorkspace extends NGPage {
 
 
     ///////////////////////// TaskArea //////////////////
-    
+
     public List<TaskArea> getTaskAreas() throws Exception {
         if (!workspaceJSON.has("taskAreas")) {
             workspaceJSON.put("taskAreas", new JSONArray());
@@ -592,10 +592,10 @@ public class NGWorkspace extends NGPage {
         throw new Exception("Could not find a task area with the id="+id);
     }
 
-    
-    
+
+
     ///////////////////////// Invitations //////////////////
-    
+
     public List<RoleInvitation> getInvitations() throws Exception {
         if (!workspaceJSON.has("roleInvitations")) {
             workspaceJSON.put("roleInvitations", new JSONArray());
@@ -636,9 +636,9 @@ public class NGWorkspace extends NGPage {
         invites.put(newInvite);
         return new RoleInvitation(newInvite);
     }
-    
+
     /**
-     * When users are invited, and the invitation send, then 
+     * When users are invited, and the invitation send, then
      * we mark the invitation as "joined" when they actually
      * visit the workspace in question.
      */
@@ -649,7 +649,7 @@ public class NGWorkspace extends NGPage {
                 if (!ri.isJoined()) {
                     ri.markJoined();
                     needSave = true;
-                    
+
                     //if the user has entered a name for themselves
                     //copy it into the invite so that there is less confusion
                     //even though this is temporary
@@ -664,7 +664,7 @@ public class NGWorkspace extends NGPage {
             this.save();
         }
     }
-    
+
     /*
     public void sendInvitations() throws Exception {
         for (RoleInvitation ri : getInvitations()) {
@@ -674,7 +674,7 @@ public class NGWorkspace extends NGPage {
         }
     }
     */
-    
+
     public CommentRecord getCommentOrNull(long cid) throws Exception {
         for (TopicRecord note : this.getAllNotes()) {
             for (CommentRecord comm : note.getComments()) {
@@ -714,5 +714,5 @@ public class NGWorkspace extends NGPage {
         }
         return com;
     }
-    
+
 }

@@ -97,11 +97,11 @@ public class EmailListener extends TimerTask{
 
      static long lastRunTime = 0;
      static Exception lastException = null;
-     
+
      //this is the minimum pause since last time.   This pause is bigger when it gets
      //an error.   45 seconds if no error,   5 min if error is coming.
      static long minPause = 45000;
-     
+
      public void run() {
          // When you computer goes to sleep for a while and wakes up, the Java
          // system will send you all the events to make up for all the events it
@@ -114,7 +114,7 @@ public class EmailListener extends TimerTask{
              return;
          }
          lastRunTime = nowTime;
-         
+
          // make sure that this method doesn't throw any exception
          try
          {
@@ -142,7 +142,7 @@ public class EmailListener extends TimerTask{
 
              //now really attempt to read the email.  Errors after this point recorded in file
              handlePOP3Folder();
-             
+
              //if you make it here, then no exception thrown, so clear out any cache that is there
              //and make the delay to be 45 seconds.
              lastException = null;
@@ -150,7 +150,7 @@ public class EmailListener extends TimerTask{
          }
          catch(Exception e) {
              if (exceptionsAreEqual(lastException, e)) {
-                 System.out.println("EMAIL LISTENER PROBLEM: same failure. "+new Date());
+                 System.out.println("EMAIL LISTENER PROBLEM: same failure. "+SectionUtil.currentTimeString());
                  //make the delay 5 minutes before trying again
                  minPause = 300000;
                  return;
@@ -168,8 +168,8 @@ public class EmailListener extends TimerTask{
              }
          }
      }
-     
-     
+
+
     public boolean exceptionsAreEqual(Exception e1, Exception e2) {
         Throwable t1 = e1;
         Throwable t2 = e2;
@@ -334,7 +334,7 @@ public class EmailListener extends TimerTask{
             throw new NGException("nugen.exception.could.not.process.email", new Object[]{message.getSubject()},e);
         }
     }
-    
+
     private void storeInboundMsg(Message message) throws Exception {
         File userFolder = ar.getCogInstance().getConfig().getUserFolderOrFail();
         File inboundMailPath = new File(userFolder, "inboundMail.json");
@@ -503,7 +503,7 @@ public class EmailListener extends TimerTask{
             throw new NGException("nugen.exception.cant.handle.email.att", new Object[]{message},e);
         }
     }
-    
+
 
     /**
      * RELEASES LOCK:  this must NOT be called from within a project workspace code

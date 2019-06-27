@@ -65,7 +65,7 @@ public class ResponseRecord extends DOMFace
         //sending because there are a lot of old records that have never been marked
         //as being sent.   Need to set them as being sent so they are not sent now.
         if (getTime() < TopicRecord.ONE_WEEK_AGO) {
-            System.out.println("ResponseRecord Migration: will never send email due "+new Date(getTime()));
+            System.out.println("ResponseRecord Migration: will never send email due "+SectionUtil.getNicePrintDate(getTime()));
             setEmailSent(true);
             return true;
         }
@@ -147,16 +147,16 @@ public class ResponseRecord extends DOMFace
                 detailMsg = "Quick round response";
 
         }
-        
-        
-        
+
+
+
 
         MemFile body = new MemFile();
         AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
-        
-        
+
+
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
         data.put("parentURL", ar.baseURL + noteOrMeet.getEmailURL(clone, ngw));
@@ -188,7 +188,7 @@ public class ResponseRecord extends DOMFace
 
         ChunkTemplate.streamIt(clone.w, templateFile, data, ooa.getCalendar());
         clone.flush();
-        
+
         String bodyStr = body.toString();
         String emailSubject =  noteOrMeet.emailSubject()+": "+detailMsg;
         mailFile.createEmailRecord(commenterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, bodyStr);
@@ -242,7 +242,7 @@ public class ResponseRecord extends DOMFace
             //return !rr.getEmailSent();
             //
             //April 2017 changed to never send email to reduce flood.
-            //however if we get a nicer notification system, it might be nice to 
+            //however if we get a nicer notification system, it might be nice to
             //at least notify the users.
             return false;
         }

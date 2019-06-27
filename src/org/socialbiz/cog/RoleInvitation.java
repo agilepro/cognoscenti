@@ -164,7 +164,7 @@ public class RoleInvitation extends JSONWrapper {
         @Override
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             if ("New".equals(ri.getStatus())) {
-                System.out.println("ROLE INVITATION: "+new Date()+" to "+ri.getEmail()+" sending.");
+                System.out.println("ROLE INVITATION: "+SectionUtil.currentTimeString()+" to "+ri.getEmail()+" sending.");
                 ri.sendEmail(ar);
             }
         }

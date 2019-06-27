@@ -1196,15 +1196,15 @@ public class MeetingRecord extends DOMFace {
                 //not yet time to send the reminder
                 return false;
             }
-            
+
             //so it is time to send, check if it has
             long reminderSent = meet.getReminderSent();
-            
+
             //If reminder was sent after the reminder time, then all OK
             if (reminderSent >= reminderTime) {
                 return false;
             }
-            
+
             //If the reminder was never sent, or
             //reminder was sent BEFORE the time to send,
             //then it still needs to be sent again, because meeting rescheduled
@@ -1223,15 +1223,15 @@ public class MeetingRecord extends DOMFace {
             }
             long meetStart = meet.getStartTime();
             long reminderTime =  meetStart - (delta * 60000);
-            
+
             //so it is time to send, check if it has
             long reminderSent = meet.getReminderSent();
-            
+
             //If reminder was sent after the reminder time, then all OK
             if (reminderSent >= reminderTime) {
                 return -1;
             }
-            
+
             return reminderTime;
         }
 
@@ -1243,14 +1243,18 @@ public class MeetingRecord extends DOMFace {
 
             if (!needsSendingBefore(ar.nowTime)) {
                 throw new Exception("MEETING NOTIFICATION BUG:  Request to send when TimeToSend ("
-                     +new Date(futureTimeToSend())+") is still in the future!");
+                     +SectionUtil.getNicePrintDate(futureTimeToSend())+") is still in the future!");
             }
 
-            System.out.println("SENDING MEETING NOTICE: "+new Date()+" with SENDTIME: "+new Date(futureTimeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
+            System.out.println("SENDING MEETING NOTICE: "+SectionUtil.currentTimeString()+" with SENDTIME: "
+                    +SectionUtil.getNicePrintDate(futureTimeToSend())+" and MEETTIME: "
+                    +SectionUtil.getNicePrintDate(meet.getStartTime()));
             meet.sendReminderEmail(ar, ngw, mailFile);
              //test to see that all the logic is right
             if (needsSendingBefore(ar.nowTime)) {
-                System.out.println("STRANGE: the meeting was just sent, but it does not think so. SENDTIME: "+new Date(futureTimeToSend())+" and MEETTIME: "+new Date(meet.getStartTime()));
+                System.out.println("STRANGE: the meeting was just sent, but it does not think so. SENDTIME: "
+                        +SectionUtil.getNicePrintDate(futureTimeToSend())+" and MEETTIME: "
+                        +SectionUtil.getNicePrintDate(meet.getStartTime()));
             }
         }
 

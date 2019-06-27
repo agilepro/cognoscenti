@@ -147,7 +147,7 @@ public class EmailSender extends TimerTask {
         // and every 30 seconds after that.
         timer.scheduleAtFixedRate(singletonSender, 30000, TWICE_PER_MINUTE);
     }
-    
+
     static long runCount = 0;
     static long totalTime = 0;
 
@@ -178,14 +178,15 @@ public class EmailSender extends TimerTask {
             NGPageIndex.clearLocksHeldByThisThread();
         }
         long duration = System.currentTimeMillis() - startTime;
-        
+
         //suppress the number of trace statements to one per hour.
         runCount++;
         totalTime += duration;
         if (runCount>119) {
         	//this should be about 1 per hour
         	long avg = totalTime / runCount;
-        	System.out.println("EmailSender: completed 120 scans.  Average processing time "+avg+"ms at "+new Date());
+        	System.out.println("EmailSender: completed 120 scans.  Average processing time "+avg+"ms at "
+        	    +SectionUtil.getNicePrintDate(System.currentTimeMillis()));
         	runCount = 0;
         	totalTime = 0;
         }
@@ -212,14 +213,14 @@ public class EmailSender extends TimerTask {
         Mailer mailer = new Mailer(cog.getConfig().getFile("EmailNotification.properties"));
 
         //default delay is 0 minutes AFTER the scheduled time.  This delay is to allow people who
-        //create something a few minutes to edit before it is sent.  
+        //create something a few minutes to edit before it is sent.
         int delayTime = 0;
         String delayStr = mailer.getProperty("automated.email.delay");
         if (delayStr!=null) {
             //delay time config parameter is in minutes
             delayTime = DOMFace.safeConvertInt(delayStr)*1000*60;
         }
-        
+
         long nowTime = ar.nowTime;
         List<NGPageIndex> allOverdue = listOverdueContainers(nowTime-delayTime);
         int iCount = 0;
@@ -237,13 +238,13 @@ public class EmailSender extends TimerTask {
             if (ngpi.isProject()){
                 NGWorkspace ngw = ngpi.getWorkspace();
                 ar.ngp = ngw;
-                
+
                 try {
                     //first, move all the email messages that have been stored in the project from foreground events.
                     if (MailConversions.moveEmails(ngw, emailArchive, cog)) {
 
                         ngpi.nextScheduledAction = ngw.nextActionDue();
-                        ngw.saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime, 
+                        ngw.saveWithoutAuthenticatedUser(ar.getBestUserId(), ar.nowTime,
                                 "Processing handleAllOverdueScheduledEvents", cog);
                         NGPageIndex.clearLocksHeldByThisThread();
                         emailArchive.save();
@@ -297,7 +298,8 @@ public class EmailSender extends TimerTask {
             Thread.sleep(200);  //just small delay to avoid saturation
         }
         if (iCount>0) {
-            System.out.println("BACKGROUND: Processed "+iCount+" background events at "+(new Date()));
+            System.out.println("BACKGROUND: Processed "+iCount+" background events at "
+                +SectionUtil.currentTimeString());
         }
     }
 
@@ -528,7 +530,7 @@ public class EmailSender extends TimerTask {
             catch (Exception e) {
                 throw new Exception("Failure while composing an email message for the global archive", e);
             }
-        }        
+        }
     }
 
 

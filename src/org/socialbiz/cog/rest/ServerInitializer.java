@@ -26,6 +26,7 @@ import java.util.TimerTask;
 
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.SectionUtil;
 
 import com.purplehillsbooks.json.JSONException;
 
@@ -178,7 +179,7 @@ public class ServerInitializer extends TimerTask {
             return;
         }
 
-        System.out.println("COG SERVER INIT - Starting state ("+getServerStateString()+") at "+new Date());
+        System.out.println("COG SERVER INIT - Starting state ("+getServerStateString()+") at "+SectionUtil.currentTimeString());
         //only if it is in FAILED state, it should attempt to reinitialize everything.
         //Init fails if any init method throws an exception
 

@@ -94,7 +94,7 @@ public class ErrorLog extends DOMFile {
         errorLogDetails.setModTime(System.currentTimeMillis());
         return errorLogDetails;
     }
-    
+
     private int logsError(UserProfile up,String msg,Throwable ex, String errorURL,
             long nowTime, Cognoscenti cog) throws Exception {
 
@@ -152,7 +152,7 @@ public class ErrorLog extends DOMFile {
             //redundantly included in the system out as well
             //maybe someday this will not be necessary???
             System.out.println("\nLOGGED EXCEPTION: t="+Thread.currentThread().getId()
-                     +", start="+ new Date(nowTime) + ", now=" + new Date());
+                     +", start="+ SectionUtil.getNicePrintDate(nowTime) + ", now=" + SectionUtil.currentTimeString());
             JSONException.traceException(System.out, ex, msg);
 
             return logsError(userProfile, msg, ex, errorURL, nowTime, cog);

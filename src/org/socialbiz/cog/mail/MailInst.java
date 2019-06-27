@@ -25,6 +25,7 @@ import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.EmailRecord;
 import org.socialbiz.cog.MemFileDataSource;
 import org.socialbiz.cog.MimeTypes;
+import org.socialbiz.cog.SectionUtil;
 
 import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONException;
@@ -190,7 +191,7 @@ public class MailInst extends JSONWrapper {
 
         try {
             addressee = getAddressee();
-            
+
             Authenticator authenticator = new MyAuthenticator(mailer.getProperties());
             Session mailSession = Session.getInstance(mailer.getProperties(), authenticator);
             mailSession.setDebug("true".equals(mailer.getProperty("mail.debug")));
@@ -254,14 +255,14 @@ public class MailInst extends JSONWrapper {
             return true;
         } catch (Exception me) {
             try {
-                String context = "Failed ("+new Date()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): ";
+                String context = "Failed ("+SectionUtil.currentTimeString()+") while sending a simple message ("+getSubject()+") to ("+addressee+"): ";
                 setExceptionMessage(me, context);
                 setLastSentDate(sendTime);
                 JSONException.traceException(System.out, me, context);
                 setStatus(EmailRecord.FAILED);
             }
             catch (Exception eee) {
-                System.out.println("EXCEPTION within EXCEPTION: "+eee);
+                System.out.println("EXCEPTION within EXCEPTION: "+eee+" @ "+SectionUtil.currentTimeString());
                 JSONException.traceException(System.out, eee, "EXCEPTION within EXCEPTION");
             }
             return false;
@@ -339,12 +340,12 @@ public class MailInst extends JSONWrapper {
         for (File path : attachids) {
             if (!path.exists()) {
                 //There are several reasons why a file might not exist.  It might have been
-                //deleted after the email was compose.  Since email at this level is 
+                //deleted after the email was compose.  Since email at this level is
                 //a background activity, we should not FAIL, just ignore it.
                 System.out.println("MailInst: can not attach because file does not exist: "+path);
                 continue;
             }
-            
+
             MemFile thisContent = new MemFile();
             thisContent.fillWithInputStream(new FileInputStream(path));
 

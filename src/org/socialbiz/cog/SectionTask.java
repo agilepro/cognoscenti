@@ -43,38 +43,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
         return "Process";
     }
 
-/*
-    public static void plugInDurationCalcScript(Writer out)
-        throws Exception
-    {
-        out.write("\n<script type=\"text/javascript\"> ");
-        out.write("\n    function calculateTaskEndDate(){ ");
-        out.write("\n        if (document.taskForm.startDate.value == \"0/0/0000\") { ");
-        out.write("\n            return; ");
-        out.write("\n        } ");
-        out.write("\n        var date = DateAdd(document.taskForm.startDate.value, 'D', parseInt(document.taskForm.duration.value)); ");
-        out.write("\n        document.taskForm.endDate.value = (parseInt(date.getMonth()) +1) + \"/\" + date.getDate() + \"/\" +  date.getFullYear(); ");
-        out.write("\n    }         ");
-        out.write("\n ");
-        out.write("\n    function calculateDuration(){ ");
-        out.write("\n        if (document.taskForm.startDate.value == \"0/0/0000\") { ");
-        out.write("\n            return; ");
-        out.write("\n        } ");
-        out.write("\n        var duration = DaysInBetweenDates(new Date(document.taskForm.startDate.value), new Date(document.taskForm.endDate.value)); ");
-        out.write("\n        document.taskForm.duration.value = duration; ");
-        out.write("\n    } ");
-        out.write("\n    function defaultDate(){ ");
-        out.write("\n        var d = new Date();");
-        out.write("\n        d.setHours(\"13\");");
-        out.write("\n        d.setMinutes(\"0\");");
-        out.write("\n        d.setSeconds(\"0\");");
-        out.write("\n        d.setMilliSeconds(\"0\");");
-        out.write("\n        return d;");
-        out.write("\n    }         ");
-        out.write("\n</script> ");
-    }
-*/
-    
+
     public static List<GoalRecord> getAllTasks(NGSection sec)
             throws Exception
     {
