@@ -278,16 +278,20 @@ public class MailFile extends JSONWrapper {
         return createEmailRecord( ooa.getAssignee(), addressee, subject, body);
     }
 
-    public void sendAllMail(Properties mailProps) throws Exception {
+    public boolean sendAllMail(Properties mailProps) throws Exception {
 
         List<MailInst> allEmail = getAllMessages();
+        boolean allSentOK = true;
 
         for (MailInst inst : allEmail) {
             if (MailInst.READY_TO_GO.equals(inst.getStatus())) {
-                inst.sendPreparedMessageImmediately(mailProps);
+                if (!inst.sendPreparedMessageImmediately(mailProps)) {
+                    allSentOK=false;
+                }
                 save();
             }
         }
+        return allSentOK;
     }
 
     /**

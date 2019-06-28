@@ -308,7 +308,13 @@ public class EmailSender extends TimerTask {
 
 
             //now we can go an actually send the email in the mailArchive
-            emailArchive.sendAllMail(emailProperties);
+            if (!emailArchive.sendAllMail(emailProperties)) {
+                //mark project as needing to try again in 5 minutes.
+                long nextCycle = System.currentTimeMillis()+300000;
+                if (ngpi.nextScheduledAction>nextCycle) {
+                    ngpi.nextScheduledAction = nextCycle;
+                }
+            }
 
             Thread.sleep(200);  //just small delay to avoid saturation
         }

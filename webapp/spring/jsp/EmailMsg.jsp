@@ -113,7 +113,9 @@ app.controller('myCtrl', function($scope, $http) {
   </tr>
   <tr ng-show="emailMsg.exception">
     <td>Error</td>
-    <td><div ng-repeat="ee in emailMsg.exception.split('\n')">{{ee}}</div></td>
+    <td><div>Failed {{emailMsg.FailCount}} times</div>
+        <div>{{emailMsg.exception.error.context}}</div>
+        <div ng-repeat="ee in emailMsg.exception.error.details">{{ee.message}}</div></td>
   </tr>
   <tr>
     <td>Created</td>
