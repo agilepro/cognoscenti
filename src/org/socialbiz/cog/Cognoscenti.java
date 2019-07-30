@@ -604,7 +604,7 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         System.out.println("Concluded SCAN for all pages in system.");
     }
-    
+
 
 
     private void reportUnparseableFile(File badFile, Exception eig) {
@@ -687,7 +687,7 @@ System.out.println("Weaver Server Object == Start the Server");
     }
 
     /**
-     * When a site is physically removed from the disk, this method must be 
+     * When a site is physically removed from the disk, this method must be
      * called to make it disappear from the running index in memory.
      */
     public void eliminateIndexForSite(NGBook site) throws Exception {
@@ -801,6 +801,46 @@ System.out.println("Weaver Server Object == Start the Server");
     }
     public List<String> whoIsVisiting(String site, String workspace) {
         return Visitation.getCurrentUsers(visitationList, site, workspace);
+    }
+
+
+    public NGPageIndex getParentWorkspace(NGPageIndex child) throws Exception {
+        if (!child.isProject()) {
+            throw new Exception("You can only get a parent of a workspace, but this is not workspace: "+child.containerKey);
+        }
+        String searchKey = child.parentKey;
+        if (searchKey == null || searchKey.length()==0) {
+            return null;
+        }
+        String siteKey = child.wsSiteKey;
+        if (siteKey == null || siteKey.length()==0) {
+            throw new Exception("Can not get parent of a workspace is not in a site: "+child.containerKey);
+        }
+        if (searchKey != null && searchKey.length()>0) {
+            for (NGPageIndex ngpi : this.allContainers) {
+                if (ngpi.containerKey.equals(searchKey) && siteKey.equals(ngpi.wsSiteKey)) {
+                    return ngpi;
+                }
+            }
+        }
+        return null;
+    }
+    public List<NGPageIndex> getChildWorkspaces(NGPageIndex parent) throws Exception {
+        if (!parent.isProject()) {
+            throw new Exception("You can only get children of a workspace, but this is not workspace: "+parent.containerKey);
+        }
+        List<NGPageIndex> res = new ArrayList<NGPageIndex>();
+        String searchKey = parent.containerKey;
+        String siteKey = parent.wsSiteKey;
+        if (siteKey == null || siteKey.length()==0) {
+            throw new Exception("Can not get children of a workspace that is not in a site: "+parent.containerKey);
+        }
+        for (NGPageIndex ngpi : this.allContainers) {
+            if (searchKey.equals(ngpi.parentKey) && siteKey.equals(ngpi.wsSiteKey)) {
+                res.add(ngpi);
+            }
+        }
+        return res;
     }
 
 }

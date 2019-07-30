@@ -19,6 +19,9 @@ Required parameters:
     Cognoscenti cog = ar.getCogInstance();
 
     NGPageIndex parentIndex = cog.getWSByCombinedKey(ngp.getParentKey());
+    if (parentIndex != null && !siteId.equals(parentIndex.wsSiteKey)) {
+        parentIndex = null;
+    }
     if (parentIndex!=null) {
         throw new Exception("this is quite strange ... this page is not supposed to have a parent.");
     }
@@ -31,7 +34,15 @@ Required parameters:
         if (!siteKey.equals(ngpi.wsSiteKey)) {
             continue;
         }
-        if (ngpi.parentKey==null || ngpi.parentKey.length()==0) {
+        NGPageIndex childParent = null;
+        if (ngpi.parentKey!=null) {
+            childParent = cog.getWSByCombinedKey(ngpi.parentKey);
+            if (childParent != null && !siteId.equals(childParent.wsSiteKey)) {
+                childParent = null;
+            }
+        }
+            
+        if (childParent == null) {
             JSONObject jo = new JSONObject();
             jo.put("name", ngpi.containerName);
             jo.put("key",  ngpi.containerKey);

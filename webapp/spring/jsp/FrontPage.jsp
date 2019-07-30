@@ -12,7 +12,8 @@ Required parameters:
 
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
-    NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+    NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId);
+    NGWorkspace ngp = ngpi.getWorkspace();
     ar.setPageAccessLevels(ngp);
     NGBook site = ngp.getSite();
     Cognoscenti cog = ar.getCogInstance();
@@ -35,10 +36,7 @@ Required parameters:
     thisCircle.put("site", ngp.getSiteKey());
 
     JSONObject parent = new JSONObject();
-    NGPageIndex parentIndex = cog.getWSByCombinedKey(ngp.getParentKey());
-    if (parentIndex==null) {
-        parentIndex = ar.getCogInstance().lookForWSBySimpleKeyOnly(ngp.getParentKey());
-    }
+    NGPageIndex parentIndex = cog.getParentWorkspace(ngpi);
     if (parentIndex==null) {
         parent.put("name", "");
         parent.put("site", "");
@@ -51,17 +49,15 @@ Required parameters:
     }
 
     JSONArray children = new JSONArray();
-    for (NGPageIndex ngpi : cog.getAllContainers()) {
-        if (!ngpi.isProject()) {
+    for (NGPageIndex child : cog.getChildWorkspaces(ngpi)) {
+        if (!child.isProject()) {
             continue;
         }
-        if (pageId.equals(ngpi.parentKey)) {
-            JSONObject jo = new JSONObject();
-            jo.put("name", ngpi.containerName);
-            jo.put("key",  ngpi.containerKey);
-            jo.put("site", ngpi.wsSiteKey);
-            children.put(jo);
-        }
+        JSONObject jo = new JSONObject();
+        jo.put("name", child.containerName);
+        jo.put("key",  child.containerKey);
+        jo.put("site", child.wsSiteKey);
+        children.put(jo);
     }
 
     UserProfile uProf = ar.getUserProfile();
