@@ -276,8 +276,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     };
     
     $scope.calcAutSendTimes = function() {
+        $scope.meetingInPast = ($scope.meeting.startTime < new Date().getTime());
         $scope.reminderDate =  $scope.meeting.startTime - ($scope.meeting.reminderTime*60000);
-        console.log("reminder date", $scope.reminderDate);
         $scope.reminderNone = ($scope.meeting.reminderTime==0);
         $scope.reminderImmediate = !$scope.reminderNone && ($scope.reminderDate < new Date().getTime());
         $scope.reminderLater = !$scope.reminderNone && !$scope.reminderImmediate;
@@ -289,14 +289,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.calcAutSendTimes();
         if (!$scope.meeting.participants || $scope.meeting.participants.length==0) {
             $scope.allLabels.forEach( function(item) {
-                console.log("LOOKING: does "+item.name+" equal "+$scope.meeting.targetRole);
                 if (item.name==$scope.meeting.targetRole) {
                     var listCopy = [];
                     item.players.forEach( function(player) {
                         listCopy.push(player)
                     });
                     $scope.meeting.participants = listCopy;
-                    console.log("set participants from "+item.name+" to ",$scope.meeting.participants);
                 }
             });
         }
@@ -491,7 +489,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             if (readyToSave.id=="~new~") {
                 postURL = "agendaAdd.json?id="+$scope.meeting.id;
             }
-            console.log("Saving meeting: ", readyToSave);
             var postdata = angular.toJson(readyToSave);
             promise = $http.post(postURL, postdata);
         }
@@ -499,7 +496,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             promise = $http.get("meetingRead.json?id="+$scope.meetId);
         }
         promise.success( function(data) {
-            console.log("set meeting 1");
             setMeetingData(data);
         });
         promise.error( function(data, status, headers, config) {
@@ -514,10 +510,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
     function setMeetingData(data) {
         if (!data) {
-            console.log("ASKED to SET MEETING DATA but no meeting data passed");
             throw "ASKED to SET MEETING DATA but no meeting data passed";
         }
-        console.log("Received meeting data: ", data);
         if (!data.meetingInfo) {
             data.meetingInfo = "";
         }
@@ -561,7 +555,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.futureSlotResponders = calcResponders(data.futureSlots, AllPeople);
         determineRoleEqualsParticipants();
         if (isLinkToComment) {
-            console.log("Opening the page up");
             $scope.showAll();
             isLinkToComment = false;
         }
@@ -571,7 +564,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var roleName = $scope.meeting.targetRole;
         if (!roleName) {
             //nothing else to do
-            console.log("Meeting has no target Role");
             return;
         }
         var theRole = getMeetingRole();
@@ -603,7 +595,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.roleEqualsParticipants = true;
     }
     $scope.appendRolePlayers = function() {
-        console.log("----PARTICIPANTS", $scope.meeting.participants);
         var theRole = getMeetingRole();
         if (!theRole) {
             //name appears to be invalid
@@ -612,18 +603,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         for (var i=0; i<theRole.players.length; i++) {
             var rolePerson = theRole.players[i];
-            console.log("SEARCHING", rolePerson.uid);
             var found = false;
             for (var j=0; j<$scope.meeting.participants.length; j++) {
                 var participant = $scope.meeting.participants[j];
-                    console.log("  CHECKING", participant.uid);
                 if (participant.uid == rolePerson.uid) {
                     found = true;
-                    console.log("    FOUND", participant.uid);
                 }
             }
             if (!found) {
-                console.log("    ADDING", rolePerson.uid);
                 $scope.meeting.participants.push(rolePerson);
             }
         }
@@ -727,7 +714,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.refresh = function() {
         window.setTimeout( function() {$scope.refresh()}, 15000);
         if ($scope.meeting.state!=2) {
-            console.log("Meeting is in state: "+$scope.refreshStatus);
             $scope.refreshStatus = "No refresh because meeting is not being run";
             return;  //don't set of refresh unless in run mode
         }
@@ -1422,7 +1408,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 });
             });
         }
-        console.log("New COMMENT", newComment)
         $scope.openCommentEditor(item, newComment);
     }
 
@@ -1716,7 +1701,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.$watch(
         function(scope) { return scope.factoredTime },
         function(newValue, oldValue) {
-            console.log("Factored Time Change: "+newValue)
             if ($scope.timeFactor=="Days") {
                 $scope.meeting.reminderTime = $scope.factoredTime * 1440;
             }
@@ -1750,7 +1734,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var postdata = angular.toJson(obj);
         $http.post(postURL,postdata)
         .success( function(data) {
-            console.log("set meeting 2");
             setMeetingData(data);
         })
         .error( function(data, status, headers, config) {
@@ -1758,7 +1741,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     }
     $scope.addProposedVoter = function(fieldName, newVoter) {
-        console.log("Adding voter "+newVoter);
         var current = $scope.meeting[fieldName];
         if (newVoter) {
             current.forEach( function(slot) {
@@ -1769,14 +1751,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
     }
     $scope.removeVoter = function(fieldName, oldVoter) {
-        console.log("Removing voter "+oldVoter);
         var isCurrent = ("timeSlots" == fieldName);
         var obj = {action:"RemoveUser", isCurrent: isCurrent, user: oldVoter};
         var postURL = "proposedTimes.json?id="+$scope.meeting.id;
         var postdata = angular.toJson(obj);
         $http.post(postURL,postdata)
         .success( function(data) {
-            console.log("set meeting 3");
             setMeetingData(data);
         })
         .error( function(data, status, headers, config) {
@@ -1784,9 +1764,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     }
     $scope.removeTime = function(fieldName,time) {
-        console.log("meeting", $scope.meeting);
-        console.log("meeting[fieldName]", $scope.meeting[fieldName]);
-        console.log("meeting[fieldName].people", $scope.meeting[fieldName].people);
         var hasSetting = false;
         if ($scope.meeting[fieldName]) {
             $scope.meeting[fieldName].forEach( function(aTime) {
@@ -1809,7 +1786,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var postdata = angular.toJson(obj);
         $http.post(postURL,postdata)
         .success( function(data) {
-            console.log("set meeting 4");
             setMeetingData(data);
         })
         .error( function(data, status, headers, config) {
@@ -1823,7 +1799,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var postdata = angular.toJson(obj);
         $http.post(postURL,postdata)
         .success( function(data) {
-            console.log("set meeting 5");
             setMeetingData(data);
         })
         .error( function(data, status, headers, config) {
@@ -1873,7 +1848,6 @@ function calcResponders(slots, AllPeople) {
     res.sort( function(a,b) {
         return a.name.localeCompare(b.name);
     });
-    console.log("CALCRESPONDERS", res);
     return res;
 }
 

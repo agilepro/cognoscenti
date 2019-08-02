@@ -357,28 +357,36 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
               <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
           </tags-input>
       </div>
-      <div class="spacydiv" style="color:red;background-color:yellow" ng-show="calcAutSendTimes() && reminderImmediate">
-          <span class="dropdown" >Warning: meeting time is so soon that the email reminder message will be send immediately.</span>
+      <div class="spacydiv" ng-show="meetingInPast">
+          <b>Warning:</b> 
+          <span class="dropdown" style="color:white;background-color:red">This meeting is scheduled for a time in the past!</span>
+      </div>
+      <div class="spacydiv" >
+          <b>Announcement:</b> 
+          <input type="checkbox" ng-model="sendMailNow"> <span class="dropdown">Send email announcement now.</span>
+      </div>
+      <div class="spacydiv" ng-show="calcAutSendTimes() && reminderImmediate">
+          <b>Reminder:</b> 
+          <span class="dropdown" style="color:red;background-color:yellow" >Warning: meeting time is so soon that the email reminder message will be send immediately.</span>
       </div>
       <div class="spacydiv"  ng-show="reminderLater">
+          <b>Reminder:</b> 
           <span class="dropdown">Automatic email reminder message scheduled for {{reminderDate|date: "yyyy-MM-dd HH:mm"}}.</span>
       </div>
       <div class="spacydiv"  ng-show="reminderNone">
+          <b>Reminder:</b> 
           <span class="dropdown">No automatic email reminder message will be sent.</span>
-      </div>
-      <div class="spacydiv" >
-          <input type="checkbox" ng-model="sendMailNow"> <span class="dropdown">Send email announcement now.</span>
       </div>
       <div>
       <span class="dropdown" ng-hide="sendMailNow">
           <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(false)"
                   title="Post this topic but don't send any email">
-          Post Without Email </button>
+          Post Without Announcement </button>
       </span>
       <span class="dropdown" ng-show="sendMailNow">
           <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(true)"
                   title="Post this topic and send email">
-          Post &amp; Prepare Email </button>
+          Post &amp; Prepare Announcement </button>
       </span>
       <span class="dropdown">
           <button class="btn btn-default btn-warning btn-raised" type="button" ng-click="addressMode = false"
