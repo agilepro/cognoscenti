@@ -274,8 +274,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         return "Trouble";
     };
+    
+    $scope.calcAutSendTimes = function() {
+        $scope.reminderDate =  $scope.meeting.startTime - ($scope.meeting.reminderTime*60000);
+        console.log("reminder date", $scope.reminderDate);
+        $scope.reminderNone = ($scope.meeting.reminderTime==0);
+        $scope.reminderImmediate = !$scope.reminderNone && ($scope.reminderDate < new Date().getTime());
+        $scope.reminderLater = !$scope.reminderNone && !$scope.reminderImmediate;
+        return true;
+    }
+    
     $scope.startSend = function() {
         $scope.addressMode = true;
+        $scope.calcAutSendTimes();
         if (!$scope.meeting.participants || $scope.meeting.participants.length==0) {
             $scope.allLabels.forEach( function(item) {
                 console.log("LOOKING: does "+item.name+" equal "+$scope.meeting.targetRole);
