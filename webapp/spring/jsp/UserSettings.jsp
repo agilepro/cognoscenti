@@ -59,7 +59,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             alert("User <% ar.writeHtml(runningUser.getName()); %> is not allowed to edit the profile for <% ar.writeHtml(uProf.getName()); %>");
             return;
         }
-        window.location = "editUserProfile.htm";
+        window.location = "UserProfileEdit.htm";
     }
     $scope.requestEmail = function() {
         var url="addEmailAddress.htm?newEmail="+encodeURIComponent($scope.newEmail);

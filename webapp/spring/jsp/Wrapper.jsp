@@ -189,7 +189,7 @@
 
     %>
 
-<!-- BEGIN Wrapper.jsp Layout-->
+<!-- BEGIN Wrapper.jsp Layout wrapping <%=templateName%> -->
 <html>
 <head>
     <link rel="shortcut icon" href="<%=ar.baseURL%>bits/favicon.ico" />

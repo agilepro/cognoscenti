@@ -287,11 +287,11 @@ public class UserController extends BaseController {
         streamJSPUserLogged2(request, response, userKey, "../jsp/UserAccounts");
     }
 
-    @RequestMapping(value = "/{userKey}/editUserProfile.htm")
+    @RequestMapping(value = "/{userKey}/UserProfileEdit.htm")
     public void changeUserProfile(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.setAttribute("userKey", userKey);
-        streamJSPUserLogged2(request, response, userKey, "../jsp/edituserprofile");
+        streamJSPUserLogged2(request, response, userKey, "../jsp/UserProfileEdit");
     }
 
     @RequestMapping(value = "/{userKey}/ViewRemoteTask.htm", method = RequestMethod.GET)
@@ -558,7 +558,7 @@ public class UserController extends BaseController {
 
             profile.setLastUpdated(ar.nowTime);
             ar.getCogInstance().getUserManager().saveUserProfiles();
-            redirectBrowser(ar,"editUserProfile.htm?u="+userKey);
+            redirectBrowser(ar,"UserProfileEdit.htm?u="+userKey);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.edit.userprofile", new Object[]{userKey} , ex);
         }
@@ -756,7 +756,7 @@ public class UserController extends BaseController {
             profile.setLastUpdated(ar.nowTime);
             ar.getCogInstance().getUserManager().saveUserProfiles();
 
-            redirectBrowser(ar,"editUserProfile.htm?u="+userKey);
+            redirectBrowser(ar,"UserProfileEdit.htm?u="+userKey);
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.upload.user.image.page",
                     new Object[]{userKey} , ex);
