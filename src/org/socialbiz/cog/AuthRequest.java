@@ -712,6 +712,9 @@ public class AuthRequest
             throw new ProgramLogicError("'assertAuthor' is being called, but no page has been associated with the AuthRequest object");
         }
         assertLoggedIn(opDescription);
+        if (isSuperAdmin()) {
+            return;
+        }
         if (!ngp.primaryOrSecondaryPermission(getUserProfile())) {
             throw new NGException("nugen.exception.login.with.admin.rights", new Object[]{opDescription});
         }
@@ -722,13 +725,17 @@ public class AuthRequest
             throw new ProgramLogicError("'assertMember' is being called, but no page has been associated with the AuthRequest object");
         }
 
+        assertLoggedIn(opDescription);
+
+        if (isSuperAdmin()) {
+            return;
+        }
+
         //it is possible that you are a honorary member, even if you are not logged in
         //so check that first
         if (ngsession.isHonoraryMember(ngp.getKey())) {
             return;
         }
-
-        assertLoggedIn(opDescription);
 
         //check the container rules on who can be a member
         if (!ngp.primaryOrSecondaryPermission(user)) {
@@ -759,6 +766,9 @@ public class AuthRequest
         {
             return false;
         }
+        if (isSuperAdmin()) {
+            return true;
+        }
         return (ngp.primaryOrSecondaryPermission(user));
     }
 
@@ -772,6 +782,9 @@ public class AuthRequest
         if (ngp==null)
         {
             return false;
+        }
+        if (isSuperAdmin()) {
+            return true;
         }
         return (ngp.secondaryPermission(user));
     }

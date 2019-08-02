@@ -31,6 +31,10 @@ public class MeetingNotesCache {
             if (user==null) {
                 return false;
             }
+            if (ar.isSuperAdmin()) {
+                //superadmin can access anything
+                return true;
+            }
             if (CustomRole.isPlayerOfAddressList(user, members)) {
                 return true;
             }

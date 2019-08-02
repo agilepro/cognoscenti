@@ -51,7 +51,7 @@ public class BaseController {
 
     static boolean indentJson = false;
     static int latencyMillis = 0;
-    
+
     /**
      * Call this from the initialization classes in order to configure how
      * the spring controller classes operate.
@@ -67,8 +67,8 @@ public class BaseController {
             latencyMillis = DOMFace.safeConvertInt(latencyStr);
         }
     }
-    
-    
+
+
     @ExceptionHandler(Exception.class)
     public void handleException(Exception ex, HttpServletRequest request,
             HttpServletResponse response) {
@@ -112,7 +112,7 @@ public class BaseController {
 
     //////////////////////// JSP Wrapping and Streaming ////////////////////////////
 
-    
+
     /**
      * This is a set of checks that results in different views depending on the state
      * of the user.  Particularly: must be logged in, must have a name, must have an email
@@ -145,7 +145,7 @@ public class BaseController {
         }
         return false;
     }
-    
+
     /**
      * This is a set of checks that results in different views depending on the state
      * of the user.  Particularly: must be logged in, must have a name, must have an email
@@ -158,6 +158,10 @@ public class BaseController {
         }
         if (ar.ngp==null) {
             throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGPage on the AuthRequest.");
+        }
+        if (ar.isSuperAdmin()) {
+            //super admin is automatically a member of every group, no need to check further
+            return false;
         }
         if(!ar.isMember()){
             ar.req.setAttribute("roleName", "Members");
@@ -195,9 +199,9 @@ public class BaseController {
         return false;
     }
 
-    
-    
-    
+
+
+
     protected static void streamJSP(AuthRequest ar, String jspName) throws Exception {
         //just to make sure there are no DOUBLE pages being sent
         if (ar.req.getAttribute("wrappedJSP")!=null) {
@@ -216,7 +220,7 @@ public class BaseController {
         streamJSP(ar, jspName);
     }
 
-    
+
     /**
      * This is useful for pages that work on Containers, both Projects and Sites
      */
@@ -231,8 +235,8 @@ public class BaseController {
         }
     }
 
-    
-    
+
+
     public static void showJSPAnonymous(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             registerSiteOrProject(ar, siteId, pageId);
@@ -276,7 +280,7 @@ public class BaseController {
         }
     }
 
-    
+
     public static void specialAnonJSP(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             ar.setParam("pageId", pageId);
@@ -287,7 +291,7 @@ public class BaseController {
             throw new Exception("Unable to prepare JSP view of anon/"+jspName+" for page ("+pageId+") in ("+siteId+")", ex);
         }
     }
-    
+
     public static void showJSPNotFrozen(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             NGContainer ngc = registerSiteOrProject(ar, siteId, pageId);
@@ -427,7 +431,7 @@ public class BaseController {
             //if a project was registered, it will be removed from the cache, causing the next
             //access to come from the previously saved disk file
             ar.rollbackChanges();
-            
+
             //let go of any locks you might have on any objects before entering the 3 second delay!
             NGPageIndex.clearLocksHeldByThisThread();
 
@@ -443,7 +447,7 @@ public class BaseController {
                 msgs.put(oneMsg);
                 runner = runner.getCause();
             }
-            
+
             //all exceptions are delayed by up to 5 seconds to avoid attempts to
             //mine for valid license numbers
             Thread.sleep(ar.ngsession.getErrorResponseDelay());
@@ -461,7 +465,7 @@ public class BaseController {
             System.out.println("DOUBLE EXCEPTION (BaseController) tid="+Thread.currentThread().getId()+", "+eeeee.toString());
         }
     }
-    
+
     /**
      * This is a testing tool.  It is simply a delay.  In normal production
      * operation this delay should be zero in order to respond as quickly as
@@ -488,10 +492,10 @@ public class BaseController {
      */
     protected static void sendJson(AuthRequest ar, JSONObject jo) throws Exception {
         releaseLock();
-        
+
         //this has no effect since getWriter has already been called
         ar.resp.setContentType("application/json");
-        
+
         jo.put("serverTime", System.currentTimeMillis());
         testLatencyDelay();
         if (indentJson) {
@@ -502,7 +506,7 @@ public class BaseController {
         }
         ar.flush();
     }
-    
+
     /**
      * Should probably NEVER be sending an array, but there are some cases where it
      * was done and so this method supports it while cleaning them out.
@@ -512,7 +516,7 @@ public class BaseController {
 
         //this has no effect since getWriter has already been called
         ar.resp.setContentType("application/json");
-        
+
         testLatencyDelay();
         if (indentJson) {
             jo.write(ar.w, 2, 2);
@@ -526,7 +530,7 @@ public class BaseController {
     protected static void saveAndReleaseLock(NGWorkspace ngw, AuthRequest ar, String msg) throws Exception {
         ngw.saveFile(ar, msg);
         NGPageIndex.clearLocksHeldByThisThread();
-    }    
+    }
 }
 
 

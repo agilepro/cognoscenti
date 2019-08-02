@@ -86,6 +86,10 @@
         </a>
       </li>  
       
+<%if(ar.isSuperAdmin()){ %>
+      <li style="padding:5px"><img src="<%=ar.retPath%>/bits/adminicon.png" style="max-height:50px;max-width:50px"></li>
+<% } %>      
+      
 <% if (loggedUser!=null) { %>      
       <li class="dropdown">
             <a class="dropdown-toggle"
