@@ -510,13 +510,24 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 //TODO: review this need for uid to match
                 //this silly statement is needed to make updateDocFromJSON work....
                 newDocObj.put("universalid", att.getUniversalId());
+                att.setModifiedBy(ar.getBestUserId());
+                att.setModifiedDate(ar.nowTime);
             }
             att.updateDocFromJSON(newDocObj, ar);
-            String userUpdate = newDocObj.optString("modifieduser");
-            if (userUpdate==null) {
-                //TODO: for some reason this is not working, and user is not getting set
-                userUpdate = resDec.lic.getCreator();
+
+            String userUpdate = null;
+            if (ar.isLoggedIn()) {
+                userUpdate = ar.getBestUserId();
             }
+            else {
+                //this needed for license style - upstream and downstream transfers
+                userUpdate = newDocObj.optString("modifieduser");
+                if (userUpdate==null) {
+                    //TODO: for some reason this is not working, and user is not getting set
+                    userUpdate = resDec.lic.getCreator();
+                }                
+            }
+            
             long timeUpdate = newDocObj.optLong("modifiedtime");
             if (timeUpdate == 0) {
                 timeUpdate = ar.nowTime;

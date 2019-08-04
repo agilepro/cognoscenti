@@ -31,8 +31,9 @@ public class WorkspaceStats {
 
         for (TopicRecord topic : ngp.getAllNotes()) {
             numTopics++;
-            topicsPerUser.increment(topic.getOwner());
-            anythingPerUser.increment(topic.getOwner());
+            String uid = topic.getModUser().getUniversalId();
+            topicsPerUser.increment(uid);
+            anythingPerUser.increment(uid);
             countComments(topic.getComments());
         }
         for (AttachmentRecord doc : ngp.getAllAttachments()) {
@@ -65,6 +66,13 @@ public class WorkspaceStats {
         }
         for (@SuppressWarnings("unused") DecisionRecord dr : ngp.getDecisions()) {
             numDecisions++;
+        }
+        
+        //count all the users in all the roles
+        for (CustomRole cr : ngp.getAllRoles()) {
+            for (AddressListEntry ale: cr.getExpandedPlayers(ngp)) {
+                anythingPerUser.increment(ale.getEmail());
+            }
         }
     }
 

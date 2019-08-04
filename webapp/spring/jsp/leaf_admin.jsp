@@ -593,6 +593,10 @@ editBoxStyle {
                    <td>Unresponded:</td>
                    <td><% outputStatTable(ar, wStats.unrespondedPerUser, "Unresponded"); %></td>
                 </tr>
+                <tr>
+                   <td>All Users:</td>
+                   <td><% outputStatTable(ar, wStats.anythingPerUser, "All Users"); %></td>
+                </tr>
                 </table>
             </div>
 

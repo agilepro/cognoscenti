@@ -143,7 +143,8 @@ app.controller('myCtrl', function($scope, $http) {
     <tr ng-repeat="mail in pastSendings">
         <td>{{mail.layout}}</td>
         <td>{{mail.subject}}</td>
-        <td>{{mail.sendDate | date:"dd-MMM-yyyy   HH:mm"}} ({{browserZone}})</td>
+        <td ng-show="mail.sendDate>0">{{mail.sendDate | date:"dd-MMM-yyyy   HH:mm"}} ({{browserZone}})</td>
+        <td ng-hide="mail.sendDate>0">Not Sent Yet</td>
     </tr>
     </table>
 </div>
