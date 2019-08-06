@@ -207,6 +207,9 @@ public class AccessControl {
         //}
         //then, if user is logged in, and is a member, then can access
         if (ar.isLoggedIn()) {
+            if (ar.isSuperAdmin()) {
+                return true;
+            }
             UserProfile user = ar.getUserProfile();
             if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
                 return true;
