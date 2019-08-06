@@ -1724,6 +1724,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.refreshMeetingPromise(); 
 
     $scope.openEditor = function() {
+        if ($scope.meeting.state < 1) {
+            alert("Post the meeting before entering any minutes / notes.");
+            return;
+        }
+        if ($scope.meeting.state != 2) {
+            if (confirm("Meeting is not running.   Set meeting into Run mode before taking notes?")) {
+                $scope.changeMeetingState(2);
+            }
+        }
         window.open('meetingMinutes.htm?id='+$scope.meeting.id);
     }
     
