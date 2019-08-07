@@ -477,7 +477,7 @@ public class UserProfile implements UserRef
      * Make a link to this to provide information about the person
      */
     public String getLinkUrl() throws Exception {
-        return "v/FindPerson.htm?uid="+URLEncoder.encode(getUniversalId(), "UTF-8");
+        return "v/FindPerson.htm?uid="+URLEncoder.encode(getKey(), "UTF-8");
     }
 
     /**
@@ -512,7 +512,7 @@ public class UserProfile implements UserRef
         if (cleanName.length()>28) {
             cleanName = cleanName.substring(0,28);
         }
-        String olink = "v/FindPerson.htm?uid="+URLEncoder.encode(getUniversalId(), "UTF-8");
+        String olink = "v/FindPerson.htm?uid="+URLEncoder.encode(getKey(), "UTF-8");
         if (makeItALink) {
             ar.write("<a href=\"");
             ar.write(ar.retPath);

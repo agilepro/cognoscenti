@@ -559,14 +559,9 @@ public class CommentRecord extends DOMFace {
         data.put("comment", this.getHtmlJSON(clone));
         data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngp));
         data.put("wsName", ngp.getFullName());
-        if (ownerProfile!=null) {
-            data.put("userURL", ar.baseURL + "v/"+ownerProfile.getKey()+"/userSettings.htm");
-            data.put("userName", ownerProfile.getName());
-        }
-        else {
-            data.put("userURL", ar.baseURL + "v/FindPerson.htm?uid="+owner.getUniversalId());
-            data.put("userName", owner.getUniversalId());
-        }
+        data.put("userURL", ar.baseURL + owner.getLinkUrl());
+        data.put("userName", owner.getName());
+        
         data.put("opType", opType);
         data.put("cmtType", cmtType);
         data.put("isClosed", isClosed);

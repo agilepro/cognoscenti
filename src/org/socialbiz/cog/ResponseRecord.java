@@ -168,15 +168,9 @@ public class ResponseRecord extends DOMFace
         data.put("wsURL", ar.baseURL + clone.getDefaultURL(ngw));
         data.put("isProposal", isProposal);
         data.put("wsName", ngw.getFullName());
-        if (ownerProfile!=null) {
-            data.put("userURL", ar.baseURL + "v/"+ownerProfile.getKey()+"/userSettings.htm");
-            data.put("userName", ownerProfile.getName());
-        }
-        else {
-            data.put("userURL", ar.baseURL + "v/FindPerson.htm?uid="+owner.getUniversalId());
-            data.put("userName", owner.getUniversalId());
-        }
-        //data.put("cmtType", cmtType);
+        data.put("userURL", ar.baseURL + owner.getLinkUrl());
+        data.put("userName", owner.getName());
+        
         data.put("outcomeHtml", cr.getOutcomeHtml(clone));
         data.put("optout", ooa.getUnsubscribeJSON(clone));
 

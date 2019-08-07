@@ -20,6 +20,7 @@
 
 package org.socialbiz.cog;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -283,14 +284,11 @@ public class AddressListEntry implements UserRef
 
 
 
-    public void writeURLEncodedID(AuthRequest ar) throws Exception
-    {
-        if (user!=null)
-        {
+    public void writeURLEncodedID(AuthRequest ar) throws Exception {
+        if (user!=null) {
             ar.write(user.getKey());
         }
-        else
-        {
+        else {
             ar.writeURLData(rawAddress);
         }
     }
@@ -325,6 +323,20 @@ public class AddressListEntry implements UserRef
         MicroProfileRecord.writeSpecificLink(ar, SectionUtil.cleanName(getName()),
                 rawAddress,  makeItALink);
     }
+
+    /**
+     * Make a link to this to provide information about the person
+     */
+    public String getLinkUrl() throws Exception {
+        if (user!=null) {
+            return "v/FindPerson.htm?uid="+URLEncoder.encode(user.getKey(), "UTF-8");
+        }
+        else {
+            return "v/FindPerson.htm?uid="+URLEncoder.encode(rawAddress, "UTF-8");
+        }
+
+    }
+
 
 
     public boolean isRoleRef() {
@@ -581,6 +593,10 @@ public class AddressListEntry implements UserRef
         if (user!=null) {
             jObj.put("key", user.getKey());
         }
+        else {
+            //if this is a bare email address, use the email as the key
+            jObj.put("key", getUniversalId());
+        }
         return jObj;
     }
 
@@ -616,7 +632,7 @@ public class AddressListEntry implements UserRef
         return array;
     }
 
-    public static void addIfNotPresent(List<AddressListEntry> addressList, 
+    public static void addIfNotPresent(List<AddressListEntry> addressList,
             AddressListEntry newMember) throws Exception {
         for (AddressListEntry one : addressList) {
             if (one.equals(newMember)) {
@@ -625,6 +641,6 @@ public class AddressListEntry implements UserRef
         }
         addressList.add(newMember);
     }
-    
-    
+
+
 }

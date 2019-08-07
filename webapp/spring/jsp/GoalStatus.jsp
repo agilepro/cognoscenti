@@ -699,7 +699,7 @@ function addvalue() {
             <td colspan="2" ng-click="openTaskAreaEditor(area)">{{area.name}}&nbsp;</td>
             <td colspan="2">
                 <div ng-repeat="ass in area.assignees">
-                  <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass.uid}}">{{ass.name}}</a>
+                  <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass.key}}">{{ass.name}}</a>
                 </div>
             </td>
             <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going">

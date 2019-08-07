@@ -174,7 +174,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.visitPlayer = function(player) {
-        window.location = "<%=ar.retPath%>v/FindPerson.htm?uid="+player.uid;
+        window.location = "<%=ar.retPath%>v/FindPerson.htm?uid="+player.key;
     }
     $scope.deleteRole = function(role) {
         var key = role.name;
@@ -222,7 +222,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.navigateToUser = function(player) {
-        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.uid);
+        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
     }
     
     $scope.openInviteSender = function (player) {

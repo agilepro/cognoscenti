@@ -1357,7 +1357,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
     }
     $scope.navigateToUser = function(player) {
-        window.location=embeddedData.retPath+"v/FindPerson.htm?uid="+encodeURIComponent(player.uid);
+        window.location=embeddedData.retPath+"v/FindPerson.htm?uid="+encodeURIComponent(player.key);
     }
 
     $scope.allowCommentEmail = function() {
