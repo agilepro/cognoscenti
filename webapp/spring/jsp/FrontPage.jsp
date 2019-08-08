@@ -18,7 +18,6 @@ Required parameters:
     NGBook site = ngp.getSite();
     Cognoscenti cog = ar.getCogInstance();
     boolean isMember = ar.isMember();
-    //UserProfile uProf = ar.getUserProfile();
     
     //set 'forceTemplateRefresh' in config file to 'true' to get this
     String templateCacheDefeater = "";
@@ -205,6 +204,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.myActions  = <%myActions.write(out,2,4);%>;
     $scope.purpose = "<%ar.writeJS(ngp.getProcess().getDescription());%>";
     $scope.isWatching = <%=isWatching%>;
+    $scope.isMember = <%=isMember%>;
     $scope.filter = "";
     
     if (!$scope.purpose) {
@@ -425,8 +425,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 a {
 	color:black;
 }
+.spacytable tr td {
+    padding:2px;
+}
 </style>
-
 <!-- MAIN CONTENT SECTION START -->
 <div ng-app="myApp" ng-controller="myCtrl">
 
@@ -434,7 +436,7 @@ a {
 
 <!-- COLUMN 1 -->
       <div class="col-md-4 col-sm-12">
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="isMember">
           <div class="panel-heading headingfont">
               <div style="float:left">Recent Updates</div>
               <div style="float:right" title="Access the detailed history of events in this workspace">
@@ -449,9 +451,17 @@ a {
           </div>
         </div>
 
+        <div class="panel panel-default" ng-hide="isMember">
+          <div class="panel-heading headingfont">
+              <div style="float:left">Access</div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body">
+            You are not a member of this workspace
+          </div>
+        </div>
 
-
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="isMember">
           <div class="panel-heading headingfont">
               <div style="float:left">Planned Meetings</div>
               <div style="float:right" title="Go to a list of all meetings in the workspace">
@@ -469,7 +479,7 @@ a {
 
 
 
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="isMember">
           <div class="panel-heading headingfont">
               <div style="float:left">Your Action Items</div>
               <div style="float:right" title="Access the list of all action items">
@@ -486,7 +496,7 @@ a {
 
 
 
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="isMember">
           <div class="panel-heading headingfont">
               <div style="float:left">Recent History</div>
               <div style="float:right" title="Access the detailed history of events in this workspace">
@@ -579,7 +589,7 @@ a {
         </div>
         
         
-        <div class="panel panel-default">
+        <div class="panel panel-default" ng-show="isMember">
           <div class="panel-heading headingfont">
               <div style="float:left">Your Roles</div>
               <div style="float:right" title="View and manage the roles in this workspace">
@@ -602,12 +612,8 @@ a {
             </div>
           </div>
         </div>
-<style>
-.spacytable tr td {
-    padding:2px;
-}
-</style>
-        <div class="panel panel-default">
+
+        <div class="panel panel-default" ng-show="isMember">
           <div class="panel-heading headingfont">
               <div style="float:left">Members</div>
               <div style="float:right" title="View and manage the roles in this workspace">
