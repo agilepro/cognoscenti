@@ -102,6 +102,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.canUpdate = <%=canUpdate%>;
     $scope.history = <%history.write(out,2,4);%>;
     $scope.allGoals = <%allGoals.write(out,2,4);%>;
+    $scope.siteInfo = <%ngb.getConfigJSON().write(out,2,4);%>;
     $scope.addressMode = false;
 
     $scope.tinymceOptions = standardTinyMCEOptions();
@@ -561,7 +562,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 docSpaceURL: function() {
                     return $scope.docSpaceURL;
                 },
-                parentScope: function() { return $scope; }
+                parentScope: function() { return $scope; },
+                siteId: function() {return $scope.siteInfo.key}
             }
         });
 
@@ -900,7 +902,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 	$scope.promiseAutosave = $interval($scope.autosave, 15000);
 
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteInfo.key);
     }
 
 });

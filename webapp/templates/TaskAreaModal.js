@@ -1,9 +1,10 @@
 console.log("loaded the TaskAreaCtrl");
 
-app.controller('TaskAreaCtrl', function ($scope, $modalInstance, $http, id, AllPeople) {
+app.controller('TaskAreaCtrl', function ($scope, $modalInstance, $http, id, AllPeople, siteId) {
 
     console.log("loaded the TaskArea Model");
 
+    $scope.siteId = siteId;
     $scope.taskArea = {"name":"", "id": id};
     
     $scope.geTaskArea = function() {
@@ -56,7 +57,7 @@ app.controller('TaskAreaCtrl', function ($scope, $modalInstance, $http, id, AllP
     };
 
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteId);
     }
 
 });

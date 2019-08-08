@@ -33,7 +33,7 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Invite Members");
     $scope.allRoles  = <%allRoles.write(out,2,2);%>;
     
@@ -129,7 +129,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 
 </script>
-<script src="../../../jscript/AllPeople.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
@@ -220,6 +219,5 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 
 </div>
-<script src="<%=ar.retPath%>templates/RoleModalCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/InviteModal.js"></script>
 

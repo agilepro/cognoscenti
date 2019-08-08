@@ -138,7 +138,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         return res;
     }
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteInfo.key);
     }
 
 });

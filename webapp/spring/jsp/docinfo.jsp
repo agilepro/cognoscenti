@@ -218,7 +218,10 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 docSpaceURL: function() {
                     return $scope.docSpaceURL;
                 },
-                parentScope: function() { return $scope; }
+                parentScope: function() { return $scope; },
+                siteId: function () {
+                  return $scope.siteInfo.key;
+                }
             }
         });
 

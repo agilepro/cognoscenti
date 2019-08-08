@@ -230,6 +230,5 @@ function parseList(inText) {
     
     
 </div>
-<script src="<%=ar.retPath%>templates/RoleModalCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/InviteModal.js"></script>
 

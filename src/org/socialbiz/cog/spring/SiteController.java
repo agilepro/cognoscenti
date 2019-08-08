@@ -26,6 +26,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.CustomRole;
@@ -46,6 +47,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 @Controller
@@ -542,5 +544,32 @@ public class SiteController extends BaseController {
             streamException(ee, ar);
         }
     }
+
+    @RequestMapping(value = "/{siteId}/$/SitePeople.json", method = RequestMethod.GET)
+    public void AllPeople(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        AuthRequest ar = null;
+        try{
+            ar = AuthRequest.getOrCreate(request, response);
+            if (!ar.isLoggedIn()) {
+                throw new Exception("Must be logged in to get users");
+            }
+            JSONArray peopleList = new JSONArray();
+            List<AddressListEntry> userList = ar.getCogInstance().getUserManager().getAllPossibleUsers();
+            for (AddressListEntry ale : userList) {
+                JSONObject person = ale.getJSON();
+                peopleList.put(person);
+            }
+            JSONObject result = new JSONObject();
+            result.put("people", peopleList);
+            sendJson(ar, result);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to generate people information.", ex);
+            streamException(ee, ar);
+        }
+    }
+    
     
 }

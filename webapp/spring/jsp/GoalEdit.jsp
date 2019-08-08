@@ -133,6 +133,7 @@ Required parameters:
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Action Item Details");
+    $scope.siteId = "<%ar.writeJS(siteId);%>";
     $scope.goalInfo  = <%goalInfo.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
@@ -192,7 +193,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $scope.copyTagsToRecord();
     });    
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.goalInfo.siteKey);
     }
     $scope.toggleSelectedPerson = function(tag) {
         $scope.selectedPersonShow = !$scope.selectedPersonShow;
@@ -500,6 +501,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             },
             startMode: function () {
               return startMode;
+            },
+            siteId: function () {
+              return $scope.siteId;
             }
           }
         });

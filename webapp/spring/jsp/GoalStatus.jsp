@@ -359,7 +359,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.getPeople = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteInfo.key);
     }
 
     $scope.createNewGoal = function() {
@@ -442,9 +442,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.showUser = function(tag) {
         //alert("gotcha:" + tag.name);
     }
-    $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
-    }
 
     $scope.setProspects = function(goal, newVal, $event) {
         goal.prospects = newVal;
@@ -477,6 +474,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             },
             startMode: function () {
               return startMode;
+            },
+            siteId: function () {
+              return $scope.siteInfo.key;
             }
           }
         });
@@ -571,7 +571,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             resolve: {
                 id: function () {
                     return ta.id;
-                }
+                },
+                siteId: function() {return $scope.siteInfo.key}
             }
         });
 

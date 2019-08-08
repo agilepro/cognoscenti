@@ -34,6 +34,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Nominate Role: "+$scope.role.name);
     $scope.termKey = "<%ar.writeJS(termKey);%>";
     $scope.thisUser = "<%ar.writeJS(ar.getBestUserId());%>";
+    $scope.siteId = "<%ar.writeJS(siteId);%>";
     $scope.comment = "";
     $scope.setComment = function(newComm) {
         $scope.comment = newComm;
@@ -113,7 +114,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
     
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteId);
     }
     
     $scope.getDays = function(term) {

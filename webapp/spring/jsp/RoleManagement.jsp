@@ -274,7 +274,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     return JSON.parse(JSON.stringify(role));
                 },
                 isNew: function() {return isNew;},
-                parentScope: function() { return $scope; }
+                parentScope: function() { return $scope; },
+                siteId: function() {return $scope.siteInfo.key}
             }
         });
 

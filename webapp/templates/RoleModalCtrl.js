@@ -1,5 +1,7 @@
 
-app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, roleInfo, isNew, parentScope, AllPeople, $http) {
+app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, roleInfo, isNew, parentScope, AllPeople, $http, siteId) {
+
+    $scope.siteId = siteId;
 
     // initial comment object
     $scope.roleInfo = roleInfo;
@@ -20,7 +22,7 @@ app.controller('RoleModalCtrl', function ($scope, $modalInstance, $interval, rol
                      "peachpuff","powderblue","lightskyblue","white"];
     
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteId);
     }
     $scope.getCurrentTerm = function() {
         $scope.currentTerm = null;

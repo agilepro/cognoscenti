@@ -29,7 +29,7 @@
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
+app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.role = <%role.write(out,2,4);%>;
     $scope.showInput = false;
 
@@ -163,7 +163,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 });
 
 </script>
-<script src="../../../jscript/AllPeople.js"></script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
 

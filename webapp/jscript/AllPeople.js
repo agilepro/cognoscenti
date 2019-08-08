@@ -10,40 +10,45 @@ app.service('AllPeople', function($http) {
     //a list, disable any additional fetching until the page is refreshed.
     var refreshDisabled = false;
     
-    AllPeople.findFullName = function (key) {
+    AllPeople.getSiteObject = function(site) {
+        if (!site) {
+            throw "Need to specify a tenant";
+        }
         if (!AllPeople.allPersonList) {
             AllPeople.getPeopleOutOfStorage();
         }
-        AllPeople.refreshListIfNeeded();
+        if (!AllPeople.allPersonBySite[site]) {
+            AllPeople.allPersonBySite[site] = {people:[],validTime:0};
+        }
+        AllPeople.refreshListIfNeeded(site);
+        return AllPeople.allPersonBySite[site];
+    }
+    
+    AllPeople.findFullName = function (key, site) {
+        var siteObj = AllPeople.getSiteObject(site);
         var fullName = key;
-        AllPeople.allPersonList.people.forEach(  function(item) {
+        siteObj.people.forEach(  function(item) {
             if (item.uid == key) {
                 fullName = item.name;
             }
         });
         return fullName;
     }
-    AllPeople.findUserKey = function (key) {
-        if (!AllPeople.allPersonList) {
-            AllPeople.getPeopleOutOfStorage();
-        }
-        AllPeople.refreshListIfNeeded();
+    AllPeople.findUserKey = function (key, site) {
+        var siteObj = AllPeople.getSiteObject(site);
         var thisKey = key;
-        AllPeople.allPersonList.people.forEach(  function(item) {
+        siteObj.people.forEach(  function(item) {
             if (item.uid == key) {
                 thisKey = item.key;
             }
         });
         return thisKey;
     }
-    AllPeople.findMatchingPeople = function(query) {
-        if (!AllPeople.allPersonList) {
-            AllPeople.getPeopleOutOfStorage();
-        }
-        AllPeople.refreshListIfNeeded();
+    AllPeople.findMatchingPeople = function(query, site) {
+        var siteObj = AllPeople.getSiteObject(site);
         var res = [];
         var q = query.toLowerCase();
-        AllPeople.allPersonList.people.forEach( function(person) {
+        siteObj.people.forEach( function(person) {
             if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
                 return;
             }
@@ -51,14 +56,11 @@ app.service('AllPeople', function($http) {
         });
         return res;
     }
-    AllPeople.findPerson = function(query) {
-        if (!AllPeople.allPersonList) {
-            AllPeople.getPeopleOutOfStorage();
-        }
-        AllPeople.refreshListIfNeeded();
+    AllPeople.findPerson = function(query, site) {
+        var siteObj = AllPeople.getSiteObject(site);
         var res = null;
         var q = query.toLowerCase();
-        AllPeople.allPersonList.people.forEach( function(person) {
+        siteObj.people.forEach( function(person) {
             if (person.name.toLowerCase().indexOf(q)<0 && person.uid.toLowerCase().indexOf(q)<0) {
                 return;
             }
@@ -66,13 +68,10 @@ app.service('AllPeople', function($http) {
         });
         return res;
     }
-    AllPeople.refreshCache = function() {
-        AllPeople.allPersonList = {people:[],validTime:0};
-        AllPeople.refreshListIfNeeded();
-    }
-    AllPeople.findUserFromID = function(email) {
+    AllPeople.findUserFromID = function(email, site) {
+        var siteObj = AllPeople.getSiteObject(site);
         var res = {};
-        AllPeople.allPersonList.people.forEach(  function(item) {
+        siteObj.people.forEach(  function(item) {
             if (item.uid == email || item.key == email) {
                 res = item;
             }
@@ -86,10 +85,13 @@ app.service('AllPeople', function($http) {
         res.image = AllPeople.imageName(res);
         return res;
     }
-    AllPeople.findUsersFromID = function(emailList) {
+    AllPeople.findUsersFromID = function(emailList, site) {
+        if (!site) {
+            throw "Need to specify a tenant";
+        }
         var res = [];
         emailList.forEach( function(email) {
-            res.push(AllPeople.findUserFromID(email));
+            res.push(AllPeople.findUserFromID(email, site));
         });
         return res;
     }
@@ -109,52 +111,53 @@ app.service('AllPeople', function($http) {
     }
     
     
-    AllPeople.refreshListIfNeeded = function () {
+    AllPeople.refreshListIfNeeded = function(site) {
         if (refreshDisabled) {
             return;
         }
         var curTime = new Date().getTime();
-        if (AllPeople.allPersonList.validTime>curTime) {
+        if (!AllPeople.allPersonBySite[site]) {
+            AllPeople.allPersonBySite[site] = {people:[],validTime:0};
+        }
+        var siteObj = AllPeople.allPersonBySite[site]
+        if (siteObj.validTime>curTime) {
             return;
         }
-        if (fetchedAt>curTime-10000) {
-            return;
+        AllPeople.refreshCache(site);
+    }
+    AllPeople.refreshCache = function(site) {        
+        if (!site) {
+            throw "Need to specify a tenant";
         }
-        fetchedAt = curTime;
+        //$http.get("../../"+site+"/$/SitePeople.json")
         $http.get("../../AllPeople.json")
         .success( function(data) {
-            AllPeople.allPersonList = data;
-            AllPeople.allPersonList.validTime = new Date().getTime() + 3600000;
-            sessionStorage.setItem('allPersonList', JSON.stringify(AllPeople.allPersonList));
-            console.log("AllPeople retrieved, count = "+AllPeople.allPersonList.people.length
-                        +", valid until ="+new Date(AllPeople.allPersonList.validTime));
+            data.validTime = new Date().getTime() + 3600000;
+            AllPeople.allPersonBySite[site] = data;
+            sessionStorage.setItem('allPersonBySite', JSON.stringify(AllPeople.allPersonBySite));
+            console.log("allPersonBySite["+site+"] retrieved, count = "+data.people.length
+                        +", valid until ="+new Date(data.validTime));
         })
         .error( function(data) {
             //we got an error and the most common error is because user logged out.
             //this prevents the continued polling after logging out.
             refreshDisabled = true;
-            console.log("AllPeople FAILURE: ", data);
+            console.log("allPersonBySite["+site+"] FAILURE: ", data);
         });
     }
     AllPeople.getPeopleOutOfStorage = function () {
-        var allPersonStr = sessionStorage.getItem('allPersonList');
+        var allPersonStr = sessionStorage.getItem('allPersonBySite');
         if (allPersonStr) {
-            AllPeople.allPersonList = JSON.parse(allPersonStr);
+            AllPeople.allPersonBySite = JSON.parse(allPersonStr);
         }
         else {
-            AllPeople.allPersonList = {people:[],validTime:0};
-            sessionStorage.setItem('allPersonList', JSON.stringify(AllPeople.allPersonList));
+            if (!AllPeople.allPersonBySite) {
+                AllPeople.allPersonBySite = {};
+            }
+            sessionStorage.setItem('allPersonBySite', JSON.stringify(AllPeople.allPersonBySite));
         }
     }
     
     AllPeople.getPeopleOutOfStorage();
-    if (!AllPeople.allPersonList.people) {
-        console.log("STRANGE: allPersonList object was corrupted somehow");
-        AllPeople.allPersonList.people = [];
-        AllPeople.allPersonList.validTime = 0;
-    }
-    AllPeople.refreshListIfNeeded();
-    console.log("AllPeople service is running, cache = "+AllPeople.allPersonList.people.length 
-              +", valid until ="+new Date(AllPeople.allPersonList.validTime));
     
 });

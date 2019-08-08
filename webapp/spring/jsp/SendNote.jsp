@@ -195,6 +195,7 @@ Optional Parameters:
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     window.setMainPageTitle("Compose Email");
+    $scope.siteId = "<%ar.writeJS(siteId);%>";
     $scope.isNew = <%=(eGenId==null)%>;
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
@@ -408,7 +409,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         //Could not get this called from the input-tags control
         //when new tag created.  I don't know why.
         $scope.cleanUpAlsoTo();
-        var people = AllPeople.findMatchingPeople(query);
+        var people = AllPeople.findMatchingPeople(query, $scope.siteId);
         return people;
     }
     

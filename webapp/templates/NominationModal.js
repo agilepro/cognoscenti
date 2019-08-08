@@ -1,5 +1,5 @@
 
-app.controller('NominationModal', function ($scope, $modalInstance, $interval, nomination, isNew, parentScope, AllPeople, $http) {
+app.controller('NominationModal', function ($scope, $modalInstance, $interval, nomination, isNew, parentScope, $http) {
 
     // initial comment object
     $scope.nom = nomination;

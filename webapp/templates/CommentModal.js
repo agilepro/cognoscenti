@@ -1,6 +1,9 @@
 
-app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $interval, cmt, parentScope, AllPeople, attachmentList, docSpaceURL, $http) {
+app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $interval, cmt, parentScope, 
+               AllPeople, attachmentList, docSpaceURL, $http, siteId) {
 
+
+    $scope.siteId = siteId;
     // initial comment object
     setComment(cmt);
     
@@ -223,7 +226,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
     }
     
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteId);
     }
     $scope.itemHasDoc = function(doc) {
         var res = false;

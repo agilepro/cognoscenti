@@ -84,6 +84,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
+    $scope.siteId = "<%ar.writeJS(siteId);%>";
     $scope.filter = "";
     $scope.filterMap = {};
     $scope.showActive = true;
@@ -253,7 +254,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     }
 
     $scope.getPeople = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteId);
     }
 
     $scope.updatePlayers = function() {
@@ -336,9 +337,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     }
     $scope.showUser = function(tag) {
         //alert("gotcha:" + tag.name);
-    }
-    $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
     }
 
 
@@ -430,7 +428,7 @@ function addvalue() {
                       replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
                       on-tag-added="updatePlayers()" 
                       on-tag-removed="updatePlayers()">
-                      <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+                      <auto-complete source="getPeople($query)" min-length="1"></auto-complete>
                   </tags-input>
                 </td>
             </tr>

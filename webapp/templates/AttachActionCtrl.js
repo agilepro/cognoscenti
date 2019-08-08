@@ -1,5 +1,6 @@
-app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, containingQueryParams, AllPeople) {
+app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, containingQueryParams, AllPeople, siteId) {
 
+    $scope.siteId = siteId;
     $scope.allActions = [];
     $scope.selectedActions = [];
     $scope.newGoal = {};
@@ -94,7 +95,7 @@ app.controller('AttachActionCtrl', function($scope, $modalInstance, $http, conta
         return false;
     };
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteId);
     }
     
     $scope.createActionItem = function(item) {

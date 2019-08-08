@@ -1,5 +1,6 @@
-app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPeople, $http) {
+app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPeople, $http, siteId) {
 
+    $scope.siteId = siteId;
     $scope.agendaItem = agendaItem;
     $scope.descriptMode=false;
     $scope.tinymceOptions = standardTinyMCEOptions();
@@ -19,7 +20,7 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
         $modalInstance.dismiss('cancel');
     };
     $scope.getPeople = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteId);
     }
     $scope.selectedTab = "Settings";
     $scope.tabStyle = function(which) {

@@ -39,6 +39,7 @@ Required parameters:
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
     window.setMainPageTitle("Task Areas & Work Groupings");
+    $scope.siteId = "<%ar.writeJS(siteId);%>";
     $scope.loaded = false;
     $scope.allTaskAreas  = [];
 
@@ -78,7 +79,8 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
             resolve: {
                 id: function () {
                     return ta.id;
-                }
+                },
+                siteId: function() {return $scope.siteId}
             }
         });
 

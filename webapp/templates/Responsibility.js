@@ -1,5 +1,5 @@
 
-app.controller('Responsibility', function ($scope, $modalInstance, $interval, responsibility, isNew, parentScope, AllPeople, $http) {
+app.controller('Responsibility', function ($scope, $modalInstance, $interval, responsibility, isNew, parentScope, $http) {
 
     // initial comment object
     $scope.resp = responsibility;

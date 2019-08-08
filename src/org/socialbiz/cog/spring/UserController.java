@@ -330,33 +330,6 @@ public class UserController extends BaseController {
 
 
 
-    @RequestMapping(value = "/AllPeople.json", method = RequestMethod.GET)
-    public void AllPeople(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-
-        AuthRequest ar = null;
-        try{
-            ar = AuthRequest.getOrCreate(request, response);
-            if (!ar.isLoggedIn()) {
-                throw new Exception("Must be logged in to get users");
-            }
-            JSONArray peopleList = new JSONArray();
-            List<AddressListEntry> userList = ar.getCogInstance().getUserManager().getAllPossibleUsers();
-            for (AddressListEntry ale : userList) {
-                JSONObject person = ale.getJSON();
-                peopleList.put(person);
-            }
-            JSONObject result = new JSONObject();
-            result.put("people", peopleList);
-            sendJson(ar, result);
-        }
-        catch(Exception ex){
-            Exception ee = new Exception("Unable to generate people information.", ex);
-            streamException(ee, ar);
-        }
-    }
-
-
     @RequestMapping(value = "/{userKey}/RemoteProfileAction.form", method = RequestMethod.POST)
     public void RemoteProfileAction(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)

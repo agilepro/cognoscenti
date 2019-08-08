@@ -311,7 +311,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
     }
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteInfo.key);
     }
     
 
@@ -551,13 +551,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         data.futureSlots.sort(function(a,b) {
             return a.proposedTime - b.proposedTime;
         });
-        $scope.timeSlotResponders = calcResponders(data.timeSlots, AllPeople);
-        $scope.futureSlotResponders = calcResponders(data.futureSlots, AllPeople);
+        $scope.timeSlotResponders = calcResponders(data.timeSlots, AllPeople, $scope.siteInfo.key);
+        $scope.futureSlotResponders = calcResponders(data.futureSlots, AllPeople, $scope.siteInfo.key);
         determineRoleEqualsParticipants();
         if (isLinkToComment) {
             $scope.showAll();
             isLinkToComment = false;
         }
+        $scope.calcAttended();
     }
     function determineRoleEqualsParticipants() {
         $scope.roleEqualsParticipants = false;
@@ -636,7 +637,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
 
     $scope.getPeople = function(query) {
-        var res = AllPeople.findMatchingPeople(query);
+        var res = AllPeople.findMatchingPeople(query, $scope.siteInfo.key);
         return res;
     }
 
@@ -1110,11 +1111,14 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     }
     $scope.getAttended = function() {
-        var check = {};
+        return $scope.attendedCache;
+    }
+    
+    $scope.calcAttended = function() {
         var res = [];
         if ($scope.meeting.attended) {
             $scope.meeting.attended.forEach( function(trial) {
-                var trialPerson = AllPeople.findPerson(trial);
+                var trialPerson = AllPeople.findPerson(trial, $scope.siteInfo.key);
                 if (!trialPerson || !trialPerson.uid) {
                     return;
                 }
@@ -1129,7 +1133,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 }
             });
         }
-        return res;
+        $scope.attendedCache = res;
     }
 
     $scope.saveSituation = function() {
@@ -1176,6 +1180,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             },
             startMode: function () {
               return start;
+            },
+            siteId: function () {
+              return $scope.siteInfo.key;
             }
           }
         });
@@ -1388,7 +1395,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         newComment.isNew = true;
         newComment.user = SLAP.loginInfo.userId;
         newComment.userName = SLAP.loginInfo.userName;
-        newComment.userKey = AllPeople.findUserKey(SLAP.loginInfo.userId);
+        newComment.userKey = AllPeople.findUserKey(SLAP.loginInfo.userId, $scope.siteInfo.key);
         if (replyTo) {
             newComment.replyTo = replyTo;
         }
@@ -1413,10 +1420,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
     $scope.openCommentEditor = function (item, cmt) {
         $scope.commentItemBeingEdited = item;
-
         var modalInstance = $modal.open({
             animation: true,
-            templateUrl: embeddedData.retPath+"templates/CommentModal.html"+templateCacheDefeater,
+            templateUrl: embeddedData.retPath+"templates/CommentModal.html"+templateCacheDefeater+"?sss",
             controller: 'CommentModalCtrl',
             size: 'lg',
             backdrop: "static",
@@ -1430,7 +1436,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 docSpaceURL: function() {
                     return $scope.docSpaceURL;
                 },
-                parentScope: function() { return $scope; }
+                parentScope: function() { return $scope; },
+                siteId: function() {return $scope.siteInfo.key}
             }
         });
 
@@ -1630,6 +1637,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             resolve: {
                 containingQueryParams: function() {
                     return "meet="+$scope.meetId+"&ai="+item.id;
+                },
+                siteId: function () {
+                  return $scope.siteInfo.key;
                 }
             }
         });
@@ -1655,6 +1665,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             resolve: {
                 agendaItem: function () {
                     return JSON.parse(JSON.stringify(agendaItem));
+                },
+                siteId: function () {
+                  return $scope.siteInfo.key;
                 }
             }
         });
@@ -1840,19 +1853,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     
 });
 
-function calcResponders(slots, AllPeople) {
+function calcResponders(slots, AllPeople, siteId) {
     var res = [];
     var checker = [];
     slots.forEach( function(oneTime) {
         Object.keys(oneTime.people).forEach( function(email) {
             if (checker.indexOf(email)<0) {
-                res.push(AllPeople.findUserFromID(email));
+                res.push(AllPeople.findUserFromID(email, siteId));
                 checker.push(email);
             }
         });
     });
     if (checker.indexOf(embeddedData.userId)<0) {
-        res.push(AllPeople.findUserFromID(embeddedData.userId));
+        res.push(AllPeople.findUserFromID(embeddedData.userId, siteId));
     }
     res.sort( function(a,b) {
         return a.name.localeCompare(b.name);

@@ -1,5 +1,7 @@
-app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAreaList, allLabels, startMode, $http, AllPeople) {
+app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAreaList, allLabels, startMode, $http, AllPeople, siteId) {
     $scope.nowTime = new Date().getTime();
+    $scope.siteId = siteId;
+    console.log("SITE: ", siteId)
     $scope.goalId = goal.id;
     $scope.goal = {assignTo:[],state:2,startdate:0,enddate:0,duedate:0,labelMap:{}};
     $scope.taskAreaList = [];
@@ -79,7 +81,7 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
         });
     };
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query);
+        return AllPeople.findMatchingPeople(query, $scope.siteId);
     }
     $scope.setWaitUntil = function() {
         if ($scope.waitProxy<$scope.nowTime) {
