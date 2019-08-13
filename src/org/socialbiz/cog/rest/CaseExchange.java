@@ -25,26 +25,26 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.License;
-import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UtilityMethods;
 import org.w3c.dom.Document;
 
 public class CaseExchange {
     AuthRequest ar;
-    NGPage ngp;
+    NGWorkspace ngp;
     License license;
     boolean isAdmin = false;
     boolean isMember = false;
 
-    public static void sendCaseFormat(AuthRequest _ar, NGPage _ngp) throws Exception {
+    public static void sendCaseFormat(AuthRequest _ar, NGWorkspace _ngp) throws Exception {
 
         CaseExchange pe = new CaseExchange(_ar, _ngp);
         pe.generateResponse();
 
     }
 
-    private CaseExchange(AuthRequest _ar, NGPage _ngp) {
+    private CaseExchange(AuthRequest _ar, NGWorkspace _ngp) {
         ar = _ar;
         ngp = _ngp;
     }

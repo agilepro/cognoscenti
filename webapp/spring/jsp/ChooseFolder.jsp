@@ -3,7 +3,7 @@
 %><%/*
 Required parameter:
 
-    1. p        : This is the id of a Workspace and used to retrieve NGPage.
+    1. p        : This is the id of a Workspace and used to retrieve NGWorkspace.
     2. folderId : This is connection id which is used to get Connection details.
     3. path     : This is folder path while browsing file inside repository through a connection
     4. aid      : This is the attachment id through which we get details about attachment
@@ -25,7 +25,7 @@ Required parameter:
         if (ngpi==null) {
             throw new Exception("Old JSP unable to find page for "+p);
         }
-        NGPage page = ngpi.getWorkspace();
+        NGWorkspace page = ngpi.getWorkspace();
                 FolderAccessHelper fdh = new FolderAccessHelper(ar);
                 ResourceEntity ent = fdh.getRemoteResource(folderId, path, true);
 
@@ -126,7 +126,7 @@ Required parameter:
 
 
 <%@ include file="functions.jsp"%>
-<%!private void showHeader(AuthRequest ar, ResourceEntity ent, NGPage page, String folderId, String aid,String fndDefLoctn)
+<%!private void showHeader(AuthRequest ar, ResourceEntity ent, NGWorkspace page, String folderId, String aid,String fndDefLoctn)
         throws Exception {
 
         ConnectionType cType = ent.getConnection();

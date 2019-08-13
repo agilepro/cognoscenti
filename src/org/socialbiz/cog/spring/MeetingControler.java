@@ -41,7 +41,6 @@ import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.MeetingRecord;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.TopicRecord;
@@ -348,7 +347,7 @@ public class MeetingControler extends BaseController {
        * of the meeting.  Completed or skipped action items should NOT be dragged along.
        * They are no longer useful.
        */
-      private void removeCompletedActionItems(NGPage ngp, JSONObject meetingInfo) throws Exception {
+      private void removeCompletedActionItems(NGWorkspace ngp, JSONObject meetingInfo) throws Exception {
           if (!meetingInfo.has("agenda")) {
               return;
           }

@@ -10,7 +10,7 @@
     String siteId      = ar.reqParam("siteId");
     NGPageIndex ngpi = ar.getCogInstance().getWorkspaceBySiteAndKeyOrFail(siteId, pageId);
     ar.setPageAccessLevels(ngp);
-    NGPage ngp = ngpi.getWorkspace();
+    NGWorkspace ngp = ngpi.getWorkspace();
     NGBook ngb = ngp.getSite();
 
 

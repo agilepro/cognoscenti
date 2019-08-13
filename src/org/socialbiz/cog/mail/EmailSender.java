@@ -423,7 +423,7 @@ public class EmailSender extends TimerTask {
     }
 
     /**
-    * Stores an email message in the NGPage project workspace, that will LATER be moved to the
+    * Stores an email message in the NGWorkspace project workspace, that will LATER be moved to the
     * MailFile archive and sent.
     */
     public static void containerEmail(OptOutAddr ooa, NGContainer ngc,
@@ -450,7 +450,7 @@ public class EmailSender extends TimerTask {
 
 
     /**
-     * Stores an email message in the NGPage project workspace, that will LATER be moved to the
+     * Stores an email message in the NGWorkspace project workspace, that will LATER be moved to the
      * MailFile archive and sent.
      */
     private static void createEmailRecordInternal(NGContainer ngc, String from,

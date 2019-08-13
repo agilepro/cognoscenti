@@ -14,7 +14,6 @@ import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
@@ -214,7 +213,7 @@ public class DailyDigest {
                     //ignore any deleted workspaces
                     continue;
                 }
-                NGPage ngp = ngpi.getWorkspace();
+                NGWorkspace ngp = ngpi.getWorkspace();
                 if (ngp.isDeleted()) {
                     //ignore any deleted workspaces
                     continue;
@@ -634,7 +633,7 @@ public class DailyDigest {
             return noOfReminders;
         }
         int count = 0;
-        NGPage aPage = ngpi.getWorkspace();
+        NGWorkspace aPage = ngpi.getWorkspace();
 
         ReminderMgr rMgr = aPage.getReminderMgr();
         List<ReminderRecord> rVec = rMgr.getUserReminders(up);
@@ -727,7 +726,7 @@ public class DailyDigest {
 
 
     private static void writeReminderLink(AuthRequest ar, UserProfile up,
-            NGPage aPage, ReminderRecord reminder) throws Exception {
+            NGWorkspace aPage, ReminderRecord reminder) throws Exception {
         ar.write(ar.baseURL);
         ar.write("t/");
         ar.writeURLData(aPage.getSiteKey());
@@ -757,7 +756,7 @@ public class DailyDigest {
             if (!ngpi.isProject() || ngpi.isDeleted) {
                 continue;
             }
-            NGPage aPage = ngpi.getWorkspace();
+            NGWorkspace aPage = ngpi.getWorkspace();
             if (aPage.isDeleted() || aPage.isFrozen()) {
                 continue;
             }
@@ -799,7 +798,7 @@ public class DailyDigest {
         public NGPageIndex ngpi;
 
 
-        public ProjectGoal(GoalRecord aGoal, NGPage aPage, Cognoscenti cog) throws Exception {
+        public ProjectGoal(GoalRecord aGoal, NGWorkspace aPage, Cognoscenti cog) throws Exception {
             goal = aGoal;
             ngpi = cog.getWSBySiteAndKey(aPage.getSiteKey(), aPage.getKey());
         }

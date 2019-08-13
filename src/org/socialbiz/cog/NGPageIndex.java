@@ -41,7 +41,7 @@ import com.purplehillsbooks.json.JSONObject;
 /**
  * NGPageIndex is an index entry in an index of pages
  *
- * There exists a collection of NGPage objects (process leaves). This class
+ * There exists a collection of NGWorkspace objects (process leaves). This class
  * helps to form an index to those objects and to provide basic metadata about
  * those pages without having to have all pages (all leaves) in memory at the
  * same time. The index holds the page name, page key, references from that
@@ -53,7 +53,7 @@ import com.purplehillsbooks.json.JSONObject;
  * a list of forward links, we can scan through there and build a list of back
  * links.
  *
- * Forward links are found by using a method on NGPage to find all the outbound
+ * Forward links are found by using a method on NGWorkspace to find all the outbound
  * links. In this case, a link is string using wiki-link rules (can be a name
  * and link together separated by vertical bar). This can also include external
  * links, which are ignored by this index. Internal links are simply the name of
@@ -289,7 +289,7 @@ public class NGPageIndex {
      * collection can be done, and subsequently, the class will be
      * reinitialized.
      *
-     * NGPageIndex is the master, which calls NGBook and NGPage.
+     * NGPageIndex is the master, which calls NGBook and NGWorkspace.
      */
     public synchronized static void clearAllStaticVars() {
         blqSize = 10;
@@ -706,10 +706,10 @@ public class NGPageIndex {
      */
     private void initLinkTerms(NGContainer container) throws Exception {
         List<String> tmpRef = new ArrayList<String>();
-        if (container instanceof NGPage) {
+        if (container instanceof NGWorkspace) {
             // find the links in the page, right now only the Link type sections
 
-            ((NGPage) container).findLinks(tmpRef);
+            ((NGWorkspace) container).findLinks(tmpRef);
             Collections.sort(tmpRef);
         }
         // remove duplicate entries in the map
@@ -757,8 +757,8 @@ public class NGPageIndex {
      */
     private void initIndexForHashTags(NGContainer container) throws Exception {
         List<String> tagVals = new ArrayList<String>();
-        if (container instanceof NGPage) {
-            NGPage ngp = (NGPage) container;
+        if (container instanceof NGWorkspace) {
+            NGWorkspace ngp = (NGWorkspace) container;
             ngp.findTags(tagVals);
         }
         List<NGTerm> hashTagsTmp = new ArrayList<NGTerm>();

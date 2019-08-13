@@ -36,8 +36,8 @@ import org.socialbiz.cog.License;
 import org.socialbiz.cog.LicenseForUser;
 import org.socialbiz.cog.MimeTypes;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionWiki;
 import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UtilityMethods;
@@ -370,7 +370,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             String projectName = objIn.getString("projectName");
             String projectKey = SectionWiki.sanitize(projectName);
             projectKey = site.findUniqueKeyInSite(ar.getCogInstance(), projectKey);
-            NGPage ngp = site.createProjectByKey(ar, projectKey);
+            NGWorkspace ngp = site.createProjectByKey(ar, projectKey);
 
             License lr = ngp.createLicense(ar.getBestUserId(), "Admin",
                     ar.nowTime + 1000*60*60*24*365, false);
@@ -401,7 +401,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             return objIn;
         }
 
-        NGPage ngp = resDec.workspace;
+        NGWorkspace ngp = resDec.workspace;
         if (ngp == null) {
             throw new JSONException("Unable to find a workspace with the id {0}",resDec.projId);
         }
@@ -525,9 +525,9 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 if (userUpdate==null) {
                     //TODO: for some reason this is not working, and user is not getting set
                     userUpdate = resDec.lic.getCreator();
-                }                
+                }
             }
-            
+
             long timeUpdate = newDocObj.optLong("modifiedtime");
             if (timeUpdate == 0) {
                 timeUpdate = ar.nowTime;
@@ -621,7 +621,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
     private void getWorkspaceListing(AuthRequest ar, ResourceDecoder resDec) throws Exception {
         JSONObject root = new JSONObject();
 
-        NGPage ngp = resDec.workspace;
+        NGWorkspace ngp = resDec.workspace;
         if (ngp==null) {
             //this is probably unnecessary, having hit an exception earlier, but just begin sure
             throw new JSONException("Something is wrong, can not find a site object.");

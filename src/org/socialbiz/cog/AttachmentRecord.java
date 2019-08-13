@@ -229,7 +229,7 @@ public class AttachmentRecord extends CommentContainer {
         }
     }
 
-    public String getLicensedAccessURL(AuthRequest ar, NGPage ngp, String licenseId)
+    public String getLicensedAccessURL(AuthRequest ar, NGWorkspace ngp, String licenseId)
             throws Exception {
         String relativeLink = "a/" + SectionUtil.encodeURLData(getNiceName());
         LicensedURL attPath = new LicensedURL(ar.baseURL + ar.getResourceURL(ngp, relativeLink),
@@ -246,18 +246,18 @@ public class AttachmentRecord extends CommentContainer {
     }
 
     /**
-     * There are three types of attachment: 
-     * 
+     * There are three types of attachment:
+     *
      * FILE: this is a local path into the
-     *    attachments repository 
+     *    attachments repository
      * URL: this is a URL to an external web addressable
-     *    content store 
-     * EXTERN: this is also a URL which is launched in a 
-     *    separate window, but it migh also have a local copy. 
+     *    content store
+     * EXTERN: this is also a URL which is launched in a
+     *    separate window, but it migh also have a local copy.
      * EXTRA: this file appeared in the project folder (all by
-     *    itself) but not yet tracked 
+     *    itself) but not yet tracked
      * GONE: this file is missing from the folder,
-     *    might have been deleted by user 
+     *    might have been deleted by user
      * DEFER: deprecated, not supported any more
      * except legacy
      */
@@ -320,7 +320,7 @@ public class AttachmentRecord extends CommentContainer {
         return val;
     }
 
-    public void createHistory(AuthRequest ar, NGPage ngp, int event, String comment)
+    public void createHistory(AuthRequest ar, NGWorkspace ngp, int event, String comment)
             throws Exception {
         HistoryRecord.createHistoryRecord(ngp, getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
                 getModifiedDate(), event, ar, comment);
@@ -910,10 +910,10 @@ public class AttachmentRecord extends CommentContainer {
         if (container==null) {
             throw new ProgramLogicError("call to getLabels must be made AFTER the container is set.");
         }
-        if (!(container instanceof NGPage)) {
+        if (!(container instanceof NGWorkspace)) {
             throw new ProgramLogicError("Container must be a Workspace style container.");
         }
-        NGPage ngp = container;
+        NGWorkspace ngp = container;
         List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
             NGLabel aLabel = ngp.getLabelRecordOrNull(name);
@@ -971,7 +971,7 @@ public class AttachmentRecord extends CommentContainer {
      * Returns all the meetinsg that have agenda items that are linked to this document
      * attachment.  Should this return agenda items, as well?
      */
-    public List<MeetingRecord> getLinkedMeetings(NGPage ngc) throws Exception {
+    public List<MeetingRecord> getLinkedMeetings(NGWorkspace ngc) throws Exception {
         ArrayList<MeetingRecord> allMeetings = new ArrayList<MeetingRecord>();
         String nid = this.getUniversalId();
         for (MeetingRecord meet : ngc.getMeetings()) {
@@ -997,7 +997,7 @@ public class AttachmentRecord extends CommentContainer {
     }
 
 
-    public List<TopicRecord> getLinkedTopics(NGPage ngc) throws Exception {
+    public List<TopicRecord> getLinkedTopics(NGWorkspace ngc) throws Exception {
         ArrayList<TopicRecord> allTopics = new ArrayList<TopicRecord>();
         String nid = this.getUniversalId();
         for (TopicRecord topic : ngc.getAllNotes()) {
@@ -1014,7 +1014,7 @@ public class AttachmentRecord extends CommentContainer {
         return allTopics;
     }
 
-    public List<GoalRecord> getLinkedGoals(NGPage ngc) throws Exception {
+    public List<GoalRecord> getLinkedGoals(NGWorkspace ngc) throws Exception {
         ArrayList<GoalRecord> allGoals = new ArrayList<GoalRecord>();
         String nid = this.getUniversalId();
         for (GoalRecord goal : ngc.getAllGoals()) {
@@ -1045,7 +1045,7 @@ public class AttachmentRecord extends CommentContainer {
     }
 
 
-    public static boolean addEmailStyleAttList(JSONObject jo, AuthRequest ar, NGPage ngp, List<String> docUIDs) throws Exception {
+    public static boolean addEmailStyleAttList(JSONObject jo, AuthRequest ar, NGWorkspace ngp, List<String> docUIDs) throws Exception {
         JSONArray attachInfo = new JSONArray();
         for (String docUID : docUIDs) {
             AttachmentRecord att = ngp.findAttachmentByUidOrNull(docUID);
@@ -1064,7 +1064,7 @@ public class AttachmentRecord extends CommentContainer {
         return true;
     }
 
-    public JSONObject getMinJSON(NGPage ngp) throws Exception {
+    public JSONObject getMinJSON(NGWorkspace ngp) throws Exception {
         JSONObject thisDoc = new JSONObject();
         String univ = getUniversalId();
         thisDoc.put("universalid",  univ);
@@ -1090,7 +1090,7 @@ public class AttachmentRecord extends CommentContainer {
         return thisDoc;
     }
 
-    public JSONObject getJSON4Doc(AuthRequest ar, NGPage ngp) throws Exception {
+    public JSONObject getJSON4Doc(AuthRequest ar, NGWorkspace ngp) throws Exception {
         JSONObject thisDoc = getMinJSON(ngp);
 
         JSONArray allCommentss = new JSONArray();
@@ -1102,7 +1102,7 @@ public class AttachmentRecord extends CommentContainer {
     }
 
 
-    private boolean updateFromJSON(JSONObject docInfo, NGPage ngp, AuthRequest ar) throws Exception {
+    private boolean updateFromJSON(JSONObject docInfo, NGWorkspace ngp, AuthRequest ar) throws Exception {
         boolean changed = false;
 
         if (docInfo.has("description")) {
@@ -1158,7 +1158,7 @@ public class AttachmentRecord extends CommentContainer {
 
 
 
-    public JSONObject getJSON4Doc(NGPage ngp, AuthRequest ar, String urlRoot, License license) throws Exception {
+    public JSONObject getJSON4Doc(NGWorkspace ngp, AuthRequest ar, String urlRoot, License license) throws Exception {
         JSONObject thisDoc = getJSON4Doc(ar, ngp);
         String contentUrl = urlRoot + "doc" + getId() + "/"
                     + URLEncoder.encode(getNiceName(), "UTF-8") + "?lic="+ license.getId();
@@ -1254,8 +1254,8 @@ public class AttachmentRecord extends CommentContainer {
             av.purgeLocalFile();
         }
     }
-    
-    
+
+
 
     public String emailSubject() throws Exception {
         return "Attachment: "+getDisplayName();
@@ -1290,14 +1290,14 @@ public class AttachmentRecord extends CommentContainer {
     public void extendNotifyList(List<AddressListEntry> addressList) throws Exception {
         //there is no subscribers for document attachments
     }
-    
+
     //This is a callback from container to set the specific fields
     public void addContainerFields(CommentRecord cr) {
         cr.containerType = CommentRecord.CONTAINER_TYPE_TOPIC;
         cr.containerID = this.getId();
     }
-    
-    
+
+
     public void gatherUnsentScheduledNotification(NGWorkspace ngw,
             ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         //only look for comments when the email for the note (topic) has been sent
@@ -1306,6 +1306,6 @@ public class AttachmentRecord extends CommentContainer {
             cr.gatherUnsentScheduledNotification(ngw, new EmailContext(this), resList, timeout);
         }
     }
-    
+
 
 }

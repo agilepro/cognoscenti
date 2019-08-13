@@ -153,7 +153,7 @@ public class MeetingRecord extends DOMFace {
         }
         return null;
     }
-    public AgendaItem createAgendaItem(NGPage ngp) throws Exception {
+    public AgendaItem createAgendaItem(NGWorkspace ngp) throws Exception {
         AgendaItem ai = createChildWithID("agenda", AgendaItem.class, "id", ngp.getUniqueOnPage());
         ai.meetingId = this.getId();
         ai.setPosition(99999);   //position it at the end
@@ -787,7 +787,7 @@ public class MeetingRecord extends DOMFace {
         return getName() + " @ " + formatDate(getStartTime(), cal, "HH:mm z 'on' dd-MMM-yyyy", "(to be determined)");
     }
 
-    public String generateWikiRep(AuthRequest ar, NGPage ngp) throws Exception {
+    public String generateWikiRep(AuthRequest ar, NGWorkspace ngp) throws Exception {
         StringBuilder sb = new StringBuilder();
         Calendar cal = getOwnerCalendar();
 
@@ -845,7 +845,7 @@ public class MeetingRecord extends DOMFace {
         return Calendar.getInstance();
     }
 
-    public String generateMinutes(AuthRequest ar, NGPage ngp) throws Exception {
+    public String generateMinutes(AuthRequest ar, NGWorkspace ngp) throws Exception {
         Calendar cal = getOwnerCalendar();
 
         StringBuilder sb = new StringBuilder();

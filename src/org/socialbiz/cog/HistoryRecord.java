@@ -362,7 +362,7 @@ public class HistoryRecord extends DOMFace
     /**
     * deprecated: remove this method when there is a chance.
     */
-    public static HistoryRecord createHistoryRecord(NGPage ngp,
+    public static HistoryRecord createHistoryRecord(NGWorkspace ngp,
         String context, int contextType, int eventType,
         AuthRequest ar, String comments) throws Exception
     {
@@ -381,21 +381,21 @@ public class HistoryRecord extends DOMFace
      * @return
      * @throws Exception
      */
-    public static HistoryRecord createHistoryRecord(NGContainer ngc,
+    public static HistoryRecord createHistoryRecord(NGWorkspace ngc,
         String objectID, int contextType, long contextVersion, int eventType,
         AuthRequest ar, String comments) throws Exception
     {
-        //there are certain situations where the editor is doing automatic saves, and creating the same 
+        //there are certain situations where the editor is doing automatic saves, and creating the same
         //history item over and over.  This suppresses all the duplicate history records, but looking
         //at the last history.  If it is the same, then it simply updates the timestamp, and retains
         //that, without creating a new history item.
         HistoryRecord hr = ngc.getLatestHistory();
-        if (hr!=null && hr.getContextType() == contextType && hr.getContext().equals(objectID) && 
+        if (hr!=null && hr.getContextType() == contextType && hr.getContext().equals(objectID) &&
                 hr.getEventType() == eventType) {
             hr.setTimeStamp(ar.nowTime);
             return hr;
         }
-                
+
         hr = ngc.createNewHistory();
         hr.setContext(objectID);
         hr.setContextType(contextType);
@@ -411,7 +411,7 @@ public class HistoryRecord extends DOMFace
      * Creates a history record appropriate for the entire container
      * without referring to any part within the container.
      */
-    public static HistoryRecord createContainerHistoryRecord(NGContainer ngc,
+    public static HistoryRecord createContainerHistoryRecord(NGWorkspace ngc,
             int eventType, AuthRequest ar, String comments) throws Exception
     {
         return createHistoryRecord(ngc, "",  HistoryRecord.CONTEXT_TYPE_CONTAINER,
@@ -421,7 +421,7 @@ public class HistoryRecord extends DOMFace
     /**
      * Creates a history record appropriate for a change to a topic.
      */
-    public static HistoryRecord createNoteHistoryRecord(NGContainer ngc,
+    public static HistoryRecord createNoteHistoryRecord(NGWorkspace ngc,
             TopicRecord note, int eventType, AuthRequest ar, String comments) throws Exception
     {
         return createHistoryRecord(ngc, note.getId(),  HistoryRecord.CONTEXT_TYPE_LEAFLET,
@@ -432,7 +432,7 @@ public class HistoryRecord extends DOMFace
     /**
      * Creates a history record appropriate for a change to a attachment.
      */
-    public static HistoryRecord createAttHistoryRecord(NGContainer ngc,
+    public static HistoryRecord createAttHistoryRecord(NGWorkspace ngc,
             AttachmentRecord att, int eventType, AuthRequest ar, String comments) throws Exception
     {
         return createHistoryRecord(ngc, att.getId(),  HistoryRecord.CONTEXT_TYPE_DOCUMENT,
@@ -807,7 +807,7 @@ history.task.subtask.add    113
     }
 
 
-    public void writeLocalizedHistoryMessage(NGContainer ngc, AuthRequest ar) throws Exception {
+    public void writeLocalizedHistoryMessage(NGWorkspace ngp, AuthRequest ar) throws Exception {
         /*
          * Previously, we used a way where the object type and the action type were combined to a
          * key which then brought up a record from the messages bundle.  However, this didn't
@@ -815,9 +815,6 @@ history.task.subtask.add    113
          *
          * Instead we compose the message simply from the object type name, and the action name.
          */
-
-        //TODO: put this in the interface
-        NGPage ngp = (NGPage) ngc;
 
         ar.writeHtml(getContextTypeName(getContextType()));
         ar.write(" <a href=\"");
@@ -839,7 +836,7 @@ history.task.subtask.add    113
         }
     }
 
-    public JSONObject getJSON(NGPage ngp, AuthRequest ar) throws Exception {
+    public JSONObject getJSON(NGWorkspace ngp, AuthRequest ar) throws Exception {
         AddressListEntry ale = new AddressListEntry(getResponsible());
         JSONObject jo = new JSONObject();
         jo.put("ctxType", getContextTypeName(getContextType()));
@@ -861,7 +858,7 @@ history.task.subtask.add    113
         return jo;
     }
 
-    public String lookUpObjectName(NGPage ngp) throws Exception {
+    public String lookUpObjectName(NGWorkspace ngp) throws Exception {
         int contextType = getContextType();
         String objectKey = getContext();
         if (contextType == HistoryRecord.CONTEXT_TYPE_PROCESS) {
@@ -913,7 +910,7 @@ history.task.subtask.add    113
         return "Unknown";
     }
 
-    public String lookUpURL(AuthRequest ar, NGPage ngp) throws Exception {
+    public String lookUpURL(AuthRequest ar, NGWorkspace ngp) throws Exception {
         return lookUpResourceURL(ar, ngp, getContextType(), getContext());
     }
 
@@ -921,7 +918,7 @@ history.task.subtask.add    113
      * Get a 'standard' URL for accessing object based on their type and ID.
      * Only work on a single project workspace.
      */
-    public static String lookUpResourceURL(AuthRequest ar, NGPage ngp,
+    public static String lookUpResourceURL(AuthRequest ar, NGWorkspace ngp,
             int contextType, String contextKey) throws Exception {
 
         //always encode to avoid problems with injection

@@ -120,7 +120,7 @@ It does NOT produce any output by itself.
     }
 
 
-    public String getProjectRootURL(AuthRequest ar, NGPage ngp) {
+    public String getProjectRootURL(AuthRequest ar, NGWorkspace ngp) {
         NGBook site = ngp.getSite();
         String pageRootURL = ar.retPath + "t/"+site.getKey()+"/"+ngp.getKey()+"/";
         return pageRootURL;

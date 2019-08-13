@@ -83,18 +83,18 @@ public class HistoricActions {
 
     private void siteResolutionEmail(AddressListEntry owner, SiteRequest siteRequest) throws Exception {
         if (!owner.isWellFormed()) {
-        	//no email is sent if there is no email address of the owner, or any other 
+        	//no email is sent if there is no email address of the owner, or any other
         	//problem with the owner user profile.
         	return;
         }
         OptOutIndividualRequest ooir = new OptOutIndividualRequest(owner);
-        
+
         JSONObject jo = new JSONObject();
         jo.put("req", siteRequest.getJSON());
         jo.put("owner", owner.getJSON());
         jo.put("admin", ar.getUserProfile().getJSON());
         jo.put("baseURL", ar.baseURL);
-        
+
         File templateFile = cog.getConfig().getFileFromRoot("email/SiteRequestStatus.chtml");
         MemFile body = new MemFile();
         Writer w = body.getWriter();
@@ -132,8 +132,10 @@ public class HistoricActions {
         if (sendEmail) {
             sendInviteEmail(ngc,  ale.getEmail(), role.getName() );
         }
-        HistoryRecord.createHistoryRecord(ngc, ale.getUniversalId(), HistoryRecord.CONTEXT_TYPE_PERMISSIONS,
+        if (ngc instanceof NGWorkspace) {
+            HistoryRecord.createHistoryRecord((NGWorkspace)ngc, ale.getUniversalId(), HistoryRecord.CONTEXT_TYPE_PERMISSIONS,
                 0, HistoryRecord.EVENT_PLAYER_ADDED, ar, role.getName());
+        }
     }
 
     private void sendInviteEmail(NGContainer container, String emailId, String role) throws Exception {
@@ -170,16 +172,16 @@ public class HistoricActions {
 
 
         clone.flush();
-        
+
         File templateFile = cog.getConfig().getFileFromRoot("email/Invite.chtml");
-        
+
         JSONObject data = new JSONObject();
         data.put("requesting", requestingUser.getJSON());
         data.put("roleName", role);
         data.put("wsURL", clone.baseURL + clone.getDefaultURL(container));
         data.put("wsName", container.getFullName());
         data.put("optout", ooa.getUnsubscribeJSON(ar));
-        
+
 
         EmailSender.containerEmail(ooa, container, "Added to " + role
                 + " role of " + container.getFullName(), templateFile, data,

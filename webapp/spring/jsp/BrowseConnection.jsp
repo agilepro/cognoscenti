@@ -4,7 +4,7 @@
 /*
 Required parameter:
 
-    1. p        : This is the id of a Workspace and used to retrieve NGPage.
+    1. p        : This is the id of a Workspace and used to retrieve NGWorkspace.
     2. folderId : This is connection id which is used to get Connection details.
     3. path     : This is folder path while browsing file inside repository through a connection
 
@@ -54,7 +54,7 @@ Required parameter:
         if (ngpi==null) {
             throw new Exception("Old JSP unable to find page for "+p);
         }
-        NGPage page = ngpi.getWorkspace();
+        NGWorkspace page = ngpi.getWorkspace();
         String go = ar.getCompleteURL();
         FolderAccessHelper fdh = new FolderAccessHelper(ar);
         ResourceEntity ent = fdh.getRemoteResource(folderId, path, true);
@@ -188,7 +188,7 @@ Required parameter:
         return dname;
     }
 
-    public boolean checkAttachedFiles(AuthRequest ar, UserPage up, ResourceEntity remoteFile, NGPage ngp)throws Exception{
+    public boolean checkAttachedFiles(AuthRequest ar, UserPage up, ResourceEntity remoteFile, NGWorkspace ngp)throws Exception{
         String userPKey = ar.getUserProfile().getKey();
         String rlink = userPKey + "@" + remoteFile.getSymbol();
         String fileFullPath = remoteFile.getFullPath();
@@ -212,7 +212,7 @@ Required parameter:
     }
 
 
-    private void showHeader(AuthRequest ar, ResourceEntity ent, NGPage page)throws Exception {
+    private void showHeader(AuthRequest ar, ResourceEntity ent, NGWorkspace page)throws Exception {
 
         String symbol = ent.getSymbol();
         String path = ent.getPath();

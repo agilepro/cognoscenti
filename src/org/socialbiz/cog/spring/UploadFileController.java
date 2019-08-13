@@ -29,7 +29,6 @@ import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.HistoryRecord;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.ReminderMgr;
 import org.socialbiz.cog.ReminderRecord;
@@ -262,7 +261,7 @@ public class UploadFileController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp =  registerRequiredProject(ar, siteId, pageId);
 
             if (checkLoginMemberFrozen(ar, ngp)) {
                 return;
@@ -281,7 +280,7 @@ public class UploadFileController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp =  registerRequiredProject(ar, siteId, pageId);
 
             if (checkLoginMemberFrozen(ar, ngp)) {
                 return;
@@ -302,7 +301,7 @@ public class UploadFileController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp =  registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp =  registerRequiredProject(ar, siteId, pageId);
 
             if (checkLoginMemberFrozen(ar, ngp)) {
                 return;
@@ -317,7 +316,7 @@ public class UploadFileController extends BaseController {
         }
     }
 
- 
+
 
     @RequestMapping(value = "/{siteId}/{pageId}/remoteAttachmentAction.form", method = RequestMethod.POST)
     protected void remoteAttachmentAction(@PathVariable String siteId,
@@ -447,7 +446,7 @@ public class UploadFileController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
 
             if(checkLoginMemberFrozen(ar, ngp)){
                 return;
@@ -515,7 +514,7 @@ public class UploadFileController extends BaseController {
             if(attachment == null){
                 throw new NGException("nugen.exception.no.attachment.found", new Object[]{aid, ngw.getFullName()});
             }
-            
+
             if(isEditMode.equals("true")){
                 attachment.setEditMode(ar);
             }

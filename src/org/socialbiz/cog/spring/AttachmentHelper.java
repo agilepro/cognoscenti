@@ -27,7 +27,6 @@ import java.io.FileOutputStream;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.HistoryRecord;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionAttachments;
 import org.socialbiz.cog.UserPage;
@@ -70,7 +69,7 @@ public class AttachmentHelper {
         attachment.setModifiedDate(ar.nowTime);
         attachment.setType("FILE");
         attachment.setVersion(1);
-        
+
         //if the existing document is marked deleted, you want to clear
         //that now that a new version has appeared.  Otherwise the new
         //uploaded document remains deleted.
@@ -286,13 +285,13 @@ public class AttachmentHelper {
         ngp.saveFile(ar, "Updatd remote attachments");
     }
 
-    public static void unlinkDocFromRepository(AuthRequest ar, String aid, NGPage ngp) throws Exception{
+    public static void unlinkDocFromRepository(AuthRequest ar, String aid, NGWorkspace ngp) throws Exception{
         AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
         attachment.setRemoteCombo(null);
         ngp.saveFile(ar, "Unlinked attachment from repository");
     }
 
-    public static void linkToRemoteFile( AuthRequest ar, NGPage ngp, String aid,
+    public static void linkToRemoteFile( AuthRequest ar, NGWorkspace ngp, String aid,
                 ResourceEntity remoteFile) throws Exception {
         AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
         if (remoteFile!=null) {

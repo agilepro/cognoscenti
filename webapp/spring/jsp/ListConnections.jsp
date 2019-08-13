@@ -4,7 +4,7 @@
 /*
 Required parameter:
 
-    1. pageId         : This is the id of a Workspace and used to retrieve NGPage.
+    1. pageId         : This is the id of a Workspace and used to retrieve NGWorkspace.
     2. aid            : This is attachment id which is used to check if it is not null then
                         you are pushing it to repository and if null then you are browsing connection
                         to attach the document.
@@ -43,7 +43,7 @@ Required parameter:
     throws Exception {
         try {
             UserPage uPage = ar.getUserPage();
-            NGPage page = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
+            NGWorkspace page = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
 
             ar.write("<div class=\"generalArea\">");
             ar.write("\n<div class=\"pageHeading\">");

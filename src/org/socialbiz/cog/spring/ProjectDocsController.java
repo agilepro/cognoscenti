@@ -40,7 +40,6 @@ import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.MeetingRecord;
 import org.socialbiz.cog.MimeTypes;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionAttachments;
@@ -280,7 +279,7 @@ public class ProjectDocsController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.getCogInstance().getSiteByIdOrFail(siteId);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
 
             //this constructs and outputs the PDF file to the output stream
             WikiToPDF.handlePDFRequest(ar, ngp);
@@ -491,8 +490,8 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String commentId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGPage ngp = registerRequiredProject(ar, siteId, pageId);
-        
+        NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
+
         int hyphenPos = topicId.indexOf("-");
         if (hyphenPos>0) {
             String meetingId = topicId.substring(0,hyphenPos);
@@ -524,7 +523,7 @@ public class ProjectDocsController extends BaseController {
             @PathVariable String commentId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+        NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
         ngp.getNoteOrFail(topicId);
         //normally the permission comes from a license in the URL for anonymous access
         //boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
@@ -584,7 +583,7 @@ public class ProjectDocsController extends BaseController {
             if (up==null) {
                 throw new Exception("something wrong, user profile is null");
             }
-            
+
             ngw.saveFile(ar, "saving comment using special reply");
 
             repo.write(ar.w, 2, 2);

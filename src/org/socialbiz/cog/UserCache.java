@@ -44,7 +44,7 @@ public class UserCache {
             if (!ngpi.isProject() || ngpi.isDeleted) {
                 continue;
             }
-            NGPage aPage = ngpi.getWorkspace();
+            NGWorkspace aPage = ngpi.getWorkspace();
             if (aPage.isDeleted() || aPage.isFrozen()) {
                 continue;
             }
@@ -53,7 +53,7 @@ public class UserCache {
                 //ignore any workspaces in deleted, frozen, or moved sites.
                 continue;
             }
-            
+
             for (GoalRecord gr : aPage.getAllGoals()) {
 
                 if (gr.isPassive()) {
@@ -89,7 +89,7 @@ public class UserCache {
                 }
 
                 //if the meeting is still planned to be run
-                if (meet.getState() == MeetingRecord.MEETING_STATE_PLANNING 
+                if (meet.getState() == MeetingRecord.MEETING_STATE_PLANNING
                         || meet.getState() == MeetingRecord.MEETING_STATE_RUNNING) {
                     //now determine if the user is asked to attend this meeting
                     NGRole targetRole = aPage.getRole(meet.getTargetRole());
@@ -110,7 +110,7 @@ public class UserCache {
     }
 
     private void addPollIfNoResponse(JSONArray proposalList, JSONArray openRounds, CommentRecord cr,
-            UserProfile up, NGPage aPage, String targetRoleName, String address, long nowTime) throws Exception {
+            UserProfile up, NGWorkspace aPage, String targetRoleName, String address, long nowTime) throws Exception {
 
         //Draft comments/proposals/etc should not ever create an alert for notification
         //Closed ones should not either.  The only state we are worried about is OPEN
@@ -143,7 +143,7 @@ public class UserCache {
         }
     }
 
-    private void addRecordToList(JSONArray list, CommentRecord cr, NGPage aPage, String address) throws Exception {
+    private void addRecordToList(JSONArray list, CommentRecord cr, NGWorkspace aPage, String address) throws Exception {
         JSONObject jo = cr.getJSON();
         String prop = cr.getContent();
         if (prop.length()>100) {
@@ -160,7 +160,7 @@ public class UserCache {
     }
 
 
-    private void addMeetingToList(JSONArray list, MeetingRecord meet, NGPage aPage, String address) throws Exception {
+    private void addMeetingToList(JSONArray list, MeetingRecord meet, NGWorkspace aPage, String address) throws Exception {
         JSONObject jo = meet.getMinimalJSON();
         jo.put("workspaceKey", aPage.getKey());
         jo.put("workspaceName", aPage.getFullName());
@@ -214,7 +214,7 @@ public class UserCache {
     public JSONObject getAsJSON() {
         return cacheObj;
     }
-    
+
     public String genEmailAddressAttempt(String email) throws Exception {
         JSONArray allAttempts = cacheObj.requireJSONArray("emailAddAttempts");
         String token = IdGenerator.generateDoubleKey();
@@ -249,5 +249,5 @@ public class UserCache {
         save();
         return foundIt;
     }
-    
+
 }

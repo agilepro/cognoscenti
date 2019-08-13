@@ -261,7 +261,7 @@ public class ReminderRecord extends DOMFace
         return sendNotification;
     }
 
-    public void createHistory(AuthRequest ar, NGPage ngp, int event,
+    public void createHistory(AuthRequest ar, NGWorkspace ngp, int event,
         String comment) throws Exception
     {
         HistoryRecord.createHistoryRecord(ngp,getId(),
@@ -326,7 +326,7 @@ public class ReminderRecord extends DOMFace
         data.put("fileDesc",  getFileDesc());
         return data;
     }
-    
+
     public static void reminderEmail(AuthRequest ar, String pageId,String reminderId,
             String emailto, NGWorkspace ngw) throws Exception {
 
@@ -337,14 +337,14 @@ public class ReminderRecord extends DOMFace
         List<AddressListEntry> addressList = AddressListEntry.parseEmailList(emailto);
         for (AddressListEntry ale : addressList) {
             OptOutAddr ooa = new OptOutAddr(ale);
-            
+
             JSONObject data = rRec.getReminderEmailData(ar, ngw);
-            
+
             File templateFile = cog.getConfig().getFileFromRoot("email/Reminder.chtml");
-            
+
             EmailSender.containerEmail(ooa, ngw, subject, templateFile, data, null, new ArrayList<String>(), cog);
         }
-        if (ngw instanceof NGPage) {
+        if (ngw instanceof NGWorkspace) {
             HistoryRecord.createHistoryRecord(ngw, reminderId,
                     HistoryRecord.CONTEXT_TYPE_DOCUMENT, ar.nowTime,
                     HistoryRecord.EVENT_DOC_UPDATED, ar, "Reminder Emailed to "

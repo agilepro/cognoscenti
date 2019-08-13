@@ -72,7 +72,7 @@ public class TopicRecord extends CommentContainer {
         }
 
         //convert to using discussion phase instead of older deleted indicator
-        //NGPage schema 101 -> 102 migration
+        //NGWorkspace schema 101 -> 102 migration
         String currentPhase = getDiscussionPhase();
         if (currentPhase==null || currentPhase.length()==0) {
             //by default everything is freeform, unless deleted or possibly draft
@@ -719,7 +719,7 @@ public class TopicRecord extends CommentContainer {
        * get the labels on a document -- only labels valid in the project,
        * and no duplicates
        */
-      public List<NGLabel> getLabels(NGPage ngp) throws Exception {
+      public List<NGLabel> getLabels(NGWorkspace ngp) throws Exception {
           List<NGLabel> res = new ArrayList<NGLabel>();
           for (String name : getVector("labels")) {
               NGLabel aLabel = ngp.getLabelRecordOrNull(name);
@@ -787,7 +787,7 @@ public class TopicRecord extends CommentContainer {
           setAttributeBool("emailSent", newVal);
       }
 
-      public List<HistoryRecord> getNoteHistory(NGPage ngc) throws Exception {
+      public List<HistoryRecord> getNoteHistory(NGWorkspace ngc) throws Exception {
           ArrayList<HistoryRecord> histRecs = new ArrayList<HistoryRecord>();
           String nid = this.getId();
           for (HistoryRecord hist : ngc.getAllHistory()) {
@@ -799,7 +799,7 @@ public class TopicRecord extends CommentContainer {
           return histRecs;
       }
 
-      public List<MeetingRecord> getLinkedMeetings(NGPage ngc) throws Exception {
+      public List<MeetingRecord> getLinkedMeetings(NGWorkspace ngc) throws Exception {
           ArrayList<MeetingRecord> allMeetings = new ArrayList<MeetingRecord>();
           String nid = this.getId();
           String uid = this.getUniversalId();
@@ -823,11 +823,11 @@ public class TopicRecord extends CommentContainer {
       public NGRole getSubscriberRole() throws Exception {
           return requireChild("subscriberRole", CustomRole.class);
       }
-      
+
 
       public void topicEmailRecord(AuthRequest ar, NGWorkspace ngw, MailFile mailFile) throws Exception {
           List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
-          
+
           //The user interface will initialize the subscribers to the members of the target role
           //and will allow editing of those subscribers just before sending the first time
           //so email to the subscribers.
@@ -864,7 +864,7 @@ public class TopicRecord extends CommentContainer {
 
           JSONObject data = new JSONObject();
           data.put("baseURL", ar.baseURL);
-          data.put("topicURL", ar.baseURL + ar.getResourceURL(ngp, this) 
+          data.put("topicURL", ar.baseURL + ar.getResourceURL(ngp, this)
                    + "?" + AccessControl.getAccessTopicParams(ngp, this)
                    + "&emailId=" +URLEncoder.encode(ooa.getEmail(), "UTF-8"));
           data.put("topic", this.getJSONWithHtml(ar, ngp));
@@ -875,7 +875,7 @@ public class TopicRecord extends CommentContainer {
           String replyUrl = ar.baseURL + emailContext.getReplyURL(ar,ngp, 0)
                   + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8");
           data.put("replyURL", replyUrl);
-          
+
           AttachmentRecord.addEmailStyleAttList(data, ar, ngp, getDocList());
 
           File emailFolder = cog.getConfig().getFileFromRoot("email");
@@ -892,7 +892,7 @@ public class TopicRecord extends CommentContainer {
 /////////////////////////// JSON ///////////////////////////////
 
 
-      public JSONObject getJSON(NGPage ngp) throws Exception {
+      public JSONObject getJSON(NGWorkspace ngp) throws Exception {
           JSONObject thisNote = new JSONObject();
           thisNote.put("id", getId());
           thisNote.put("subject",   getSubject());
@@ -907,7 +907,7 @@ public class TopicRecord extends CommentContainer {
           thisNote.put("docList",   constructJSONArray(getDocList()));
           thisNote.put("actionList", constructJSONArray(getActionList()));
           extractAttributeBool(thisNote, "suppressEmail");
-          
+
           JSONObject labelMap = new JSONObject();
           for (NGLabel lRec : getLabels(ngp) ) {
               labelMap.put(lRec.getName(), true);
@@ -941,12 +941,12 @@ public class TopicRecord extends CommentContainer {
          return noteData;
      }
 
-     public JSONObject getJSONWithWiki(NGPage ngp) throws Exception {
+     public JSONObject getJSONWithWiki(NGWorkspace ngp) throws Exception {
          JSONObject noteData = getJSON(ngp);
          noteData.put("wiki", getWiki());
          return noteData;
      }
-     public JSONObject getJSON4Note(String urlRoot, boolean withData, License license, NGPage ngp) throws Exception {
+     public JSONObject getJSON4Note(String urlRoot, boolean withData, License license, NGWorkspace ngp) throws Exception {
          JSONObject thisNote = null;
          if (withData) {
              thisNote = getJSONWithWiki(ngp);
@@ -965,7 +965,7 @@ public class TopicRecord extends CommentContainer {
          String universalid = noteObj.getString("universalid");
          if (!universalid.equals(getUniversalId())) {
              //just checking, this should never happen
-             throw new JSONException("Error trying to update the record for a note with UID ({0}) with post from topic with UID ({1})", 
+             throw new JSONException("Error trying to update the record for a note with UID ({0}) with post from topic with UID ({1})",
                      getUniversalId(), universalid);
          }
          if (noteObj.has("subject")) {
@@ -1016,7 +1016,7 @@ public class TopicRecord extends CommentContainer {
          if (noteObj.has("labelMap")) {
              JSONObject labelMap = noteObj.getJSONObject("labelMap");
              List<NGLabel> selectedLabels = new ArrayList<NGLabel>();
-             for (NGLabel stdLabel : ((NGPage)ar.ngp).getAllLabels()) {
+             for (NGLabel stdLabel : ((NGWorkspace)ar.ngp).getAllLabels()) {
                  String labelName = stdLabel.getName();
                  if (labelMap.optBoolean(labelName)) {
                      selectedLabels.add(stdLabel);
@@ -1052,7 +1052,7 @@ public class TopicRecord extends CommentContainer {
 
          //simplistic for now ... if you update anything, you get added to the subscribers
          subRole.addPlayerIfNotPresent(ar.getUserProfile().getAddressListEntry());
-         
+
      }
      public void updateHtmlFromJSON(AuthRequest ar, JSONObject noteObj) throws Exception {
          if (noteObj.has("html")) {
@@ -1067,12 +1067,12 @@ public class TopicRecord extends CommentContainer {
 
 
      public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
-         return ar.getResourceURL(ngw,  "noteZoom"+this.getId()+".htm?") 
+         return ar.getResourceURL(ngw,  "noteZoom"+this.getId()+".htm?")
                  + AccessControl.getAccessTopicParams(ngw, this);
      }
 
      public String getUnsubURL(AuthRequest ar, NGWorkspace ngw, long commentId) throws Exception {
-         return ar.getResourceURL(ngw,  "unsub/"+this.getId()+"/"+commentId+".htm?") 
+         return ar.getResourceURL(ngw,  "unsub/"+this.getId()+"/"+commentId+".htm?")
                  + AccessControl.getAccessTopicParams(ngw, this);
      }
 

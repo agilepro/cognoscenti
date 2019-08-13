@@ -46,7 +46,7 @@
 %><%@page import="java.util.Properties"
 %><%@page import="java.util.StringTokenizer"
 %><%@page import="java.util.Vector"
-%><%!private NGPage ngp = null;
+%><%!private NGWorkspace ngp = null;
     private NGBook ngb = null;
 
 
@@ -124,7 +124,7 @@
      * the index to disable this, and leave it only open and without controls
      * for opening or zooming.
      */
-    public void displayOldLeaflet(AuthRequest ar, NGPage ngp, TopicRecord cr, int i) throws Exception {
+    public void displayOldLeaflet(AuthRequest ar, NGWorkspace ngp, TopicRecord cr, int i) throws Exception {
         UserProfile uProf = ar.getUserProfile();
         boolean canEdit = false;
         UserRef lastModifiedBy = cr.getModUser();
@@ -304,7 +304,7 @@
     }
 
 
-    public String redirectToViewLevel(AuthRequest ar, NGPage ngp, int viewLevel)
+    public String redirectToViewLevel(AuthRequest ar, NGWorkspace ngp, int viewLevel)
         throws Exception
     {
         if (viewLevel==SectionDef.MEMBER_ACCESS)
@@ -421,7 +421,7 @@
 
 
 
-    public static void writeInviteEmail(AuthRequest ar, NGPage ngp, NGRole ngr, UserRef ale)
+    public static void writeInviteEmail(AuthRequest ar, NGWorkspace ngp, NGRole ngr, UserRef ale)
         throws Exception
     {
         String pageURL    = ar.retPath + ar.getResourceURL(ngp, "");
@@ -662,7 +662,7 @@
     }
 
 
-    private String composeFromAddress(NGPage ngp) throws Exception
+    private String composeFromAddress(NGWorkspace ngp) throws Exception
     {
         StringBuilder sb = new StringBuilder("^");
         String baseName = ngp.getFullName();

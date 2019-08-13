@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AuthRequest;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserPage;
@@ -57,7 +56,7 @@ public class RemoteLinkController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
             if(!ar.isLoggedIn()){
                 sendRedirectToLogin(ar);
                 return;
@@ -136,7 +135,7 @@ public class RemoteLinkController extends BaseController {
             request.setAttribute("siteId", siteId);
             request.setAttribute("pageId", pageId);
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
             if(!ar.isLoggedIn()){
                 sendRedirectToLogin(ar);
                 return;
@@ -442,7 +441,7 @@ public class RemoteLinkController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.must.be.login.to.perform.action");
-            NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace nGPage = registerRequiredProject(ar, siteId, pageId);
             if(nGPage.isFrozen()){
                 throw new NGException("nugen.project.freezed.msg",null);
             }
@@ -536,7 +535,7 @@ public class RemoteLinkController extends BaseController {
             HttpServletResponse response) throws Exception {
         try{
             AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.push.doc.to.repository");
-            NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace nGPage = registerRequiredProject(ar, siteId, pageId);
             if(nGPage.isFrozen()){
                 throw new NGException("nugen.project.freezed.msg",null);
             }
@@ -690,7 +689,7 @@ public class RemoteLinkController extends BaseController {
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         AuthRequest ar = getLoggedInAuthRequest(request, response, "message.must.be.login.to.perform.action");
-        NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
+        NGWorkspace nGPage = registerRequiredProject(ar, siteId, pageId);
         String aid = ar.reqParam("aid");
         String path = ar.reqParam("path");
         try{

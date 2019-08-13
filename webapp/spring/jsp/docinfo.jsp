@@ -7,7 +7,7 @@
 %><%/*
 Required parameters:
 
-    1. pageId : This is the id of a workspace and here it is used to retrieve NGPage (Workspace's Details).
+    1. pageId : This is the id of a workspace and here it is used to retrieve NGWorkspace (Workspace's Details).
     2. aid : This is document/attachment id which is used to get information of the attachment being downloaded.
 
 */

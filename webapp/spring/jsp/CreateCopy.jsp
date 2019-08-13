@@ -4,7 +4,7 @@
 %><%/*
 Required parameter:
 
-    1. pageId   : This is the id of a Workspace and used to retrieve NGPage.
+    1. pageId   : This is the id of a Workspace and used to retrieve NGWorkspace.
     2. aid      : This parameter is attachment id used here to get the detail of an attachment.
 */
 

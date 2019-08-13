@@ -272,7 +272,7 @@ Optional Parameters:
 
 <%!
 
-    private void displayHeader(AuthRequest ar, ResourceEntity ent, NGPage page)throws Exception {
+    private void displayHeader(AuthRequest ar, ResourceEntity ent, NGWorkspace page)throws Exception {
 
         ConnectionType cType = ent.getConnection();
         String  cSetID = cType.getConnectionId();

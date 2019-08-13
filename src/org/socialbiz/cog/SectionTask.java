@@ -169,7 +169,7 @@ public class SectionTask extends SectionUtil implements SectionFormat
         }
     }
 
-    public static boolean canEditTask(NGPage ngp, AuthRequest ar, String taskId) throws Exception
+    public static boolean canEditTask(NGWorkspace ngp, AuthRequest ar, String taskId) throws Exception
     {
         boolean edit = false;
 

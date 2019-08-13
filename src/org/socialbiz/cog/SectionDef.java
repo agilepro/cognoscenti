@@ -142,7 +142,7 @@ public class SectionDef
         allFormats.add(canonWiki);
         allFormats.add(canonLink);
 
-        // Please see NGPage.createPage() to add the default sections to the newly created page.
+        // Please see NGWorkspace.createPage() to add the default sections to the newly created page.
     }
 
     public String getTypeName()

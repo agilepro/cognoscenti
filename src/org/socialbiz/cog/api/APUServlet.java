@@ -26,8 +26,8 @@ import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.License;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.UserProfile;
 
 import com.purplehillsbooks.json.JSONArray;
@@ -199,7 +199,7 @@ public class APUServlet extends javax.servlet.http.HttpServlet {
             if (!ngpi.isProject() || ngpi.isDeleted) {
                 continue;
             }
-            NGPage aPage = ngpi.getWorkspace();
+            NGWorkspace aPage = ngpi.getWorkspace();
             if (aPage.isDeleted() || aPage.isFrozen()) {
                 continue;
             }

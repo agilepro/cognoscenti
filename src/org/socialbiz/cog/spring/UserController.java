@@ -49,7 +49,6 @@ import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.MicroProfileMgr;
 import org.socialbiz.cog.NGContainer;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
@@ -471,7 +470,7 @@ public class UserController extends BaseController {
             ar.assertLoggedIn("Unable to set to watch this page.");
 
             String p = ar.reqParam("pageId");
-            NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
+            NGWorkspace ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
             ar.setPageAccessLevels(ngp);
 
             UserProfile uProf = ar.getUserProfile();
@@ -547,17 +546,17 @@ public class UserController extends BaseController {
             UserManager userManager = cog.getUserManager();
             UserProfile userBeingEdited = userManager.findUserByAnyIdOrFail(userKey);
             UserProfile userEditing = ar.getUserProfile();
-            
+
             if (!userEditing.getKey().equals(userBeingEdited.getKey())) {
                 if (!ar.isSuperAdmin()) {
                     throw new Exception("User "+userEditing.getName()+" is not allowed to edit the profile of user "+userBeingEdited.getName());
                 }
             }
-            
+
             JSONObject newUserSettings = this.getPostedObject(ar);
             userBeingEdited.updateFromJSON(newUserSettings);
             UserManager.writeUserProfilesToFile();
-            
+
             JSONObject userObj = userBeingEdited.getFullJSON();
             sendJson(ar, userObj);
         }
@@ -566,8 +565,8 @@ public class UserController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
-    
+
+
     @RequestMapping(value = "/approveOrRejectRoleRequest.ajax", method = RequestMethod.POST)
     public void approveOrRejectRoleRequest(HttpServletRequest request, HttpServletResponse response)
     throws Exception {
@@ -578,7 +577,7 @@ public class UserController extends BaseController {
             UserProfile uProf = ar.getUserProfile();
 
             String p = ar.reqParam("pageId");
-            NGPage project = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
+            NGWorkspace project = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
             ar.setPageAccessLevels(project);
 
             RoleRequestRecord roleRequestRecord = null;
@@ -933,7 +932,7 @@ public class UserController extends BaseController {
             String mn       = ar.reqParam("mn");
             String containerId = ar.reqParam( "containerId" );
 
-            NGPage page = ar.getCogInstance().getWSByCombinedKeyOrFail( containerId ).getWorkspace();
+            NGWorkspace page = ar.getCogInstance().getWSByCombinedKeyOrFail( containerId ).getWorkspace();
             Cognoscenti cog = ar.getCogInstance();
             cog.getSiteByIdOrFail(page.getSite().getKey());
 
@@ -1470,7 +1469,7 @@ public class UserController extends BaseController {
         return array;
     }
 
-    private static void removeFromRole(NGPage ngp, AddressListEntry ale, String[] stopRolePlayer) throws Exception {
+    private static void removeFromRole(NGWorkspace ngp, AddressListEntry ale, String[] stopRolePlayer) throws Exception {
         if(stopRolePlayer != null && stopRolePlayer.length > 0){
             NGRole role = null;
             for (String roleName : stopRolePlayer) {
@@ -1528,7 +1527,7 @@ public class UserController extends BaseController {
         }
     }
 
-    
+
     @RequestMapping(value="/{userKey}/addEmailAddress.htm", method = RequestMethod.GET)
     public void addEmailAddress(
             HttpServletRequest request,
@@ -1539,22 +1538,22 @@ public class UserController extends BaseController {
         try{
             ar.assertLoggedIn("must be logged in to add an email address");
             Cognoscenti cog = ar.getCogInstance();
-            
+
             String newEmail = ar.reqParam("newEmail");
             UserProfile user = ar.getUserProfile();
             UserCacheMgr cacheMgr = cog.getUserCacheMgr();
             UserCache uCache = cacheMgr.getCache(user.getKey());
             String token = uCache.genEmailAddressAttempt(newEmail);
-            
+
             File templateFile = cog.getConfig().getFileFromRoot("email/ConfirmEmail.chtml");
             OptOutAddr ooa = new OptOutAddr(user.getAddressListEntry());
             String confirmAddress = "v/" + userKey + "/confirmEmailAddress.htm?token=" + token;
-            
+
             JSONObject mailData = user.getJSON();
             mailData.put("url", ar.baseURL + confirmAddress);
-            mailData.put("newEmail", newEmail); 
-            mailData.put("token", token); 
-            
+            mailData.put("newEmail", newEmail);
+            mailData.put("token", token);
+
             MailInst mi = EmailSender.createEmailFromTemplate(ooa, newEmail, "Confirm your email address", templateFile, mailData);
             sendJson(ar, mi.getJSON());
 
@@ -1562,8 +1561,8 @@ public class UserController extends BaseController {
             streamException(ex,ar);
         }
     }
-    
-    
+
+
     @RequestMapping(value="/{userKey}/confirmEmailAddress.htm", method = RequestMethod.GET)
     public void confirmEmailAddress(
             HttpServletRequest request,
@@ -1574,8 +1573,8 @@ public class UserController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             Cognoscenti cog = ar.getCogInstance();
             UserProfile user = cog.getUserManager().findUserByAnyIdOrFail(userKey);
-            
-            
+
+
             String token = ar.reqParam("token");
             UserCacheMgr cacheMgr = cog.getUserCacheMgr();
             UserCache uCache = cacheMgr.getCache(user.getKey());
@@ -1588,8 +1587,8 @@ public class UserController extends BaseController {
             throw new Exception("Email address not added to profile", ex);
         }
     }
-    
-    
+
+
     @RequestMapping(value="/{userKey}/sendEmail", method = RequestMethod.POST)
     public void sendEmail(
             HttpServletRequest request,
@@ -1601,19 +1600,19 @@ public class UserController extends BaseController {
             Cognoscenti cog = ar.getCogInstance();
             UserProfile user = cog.getUserManager().findUserByAnyIdOrFail(userKey);
             JSONObject postObject = this.getPostedObject(ar);
-            
+
             AddressListEntry ale = new AddressListEntry(ar.getBestUserId());
             OptOutAddr ooa = new OptOutAddr(ale);
             postObject.put("from", ale.getJSON());
-            
+
             AddressListEntry ale2 = new AddressListEntry(user.getPreferredEmail());
             postObject.put("to", ale2.getJSON());
-            
+
             postObject.put("baseURL", ar.baseURL);
             postObject.put("optout", ooa.getUnsubscribeJSON(ar));
-            
+
             File templateFile = ar.getCogInstance().getConfig().getFileFromRoot("email/DirectEmail.chtml");
-            
+
             MailInst mi = EmailSender.createEmailFromTemplate( ooa, user.getPreferredEmail(),
                     postObject.getString("subject"), templateFile, postObject);
 
@@ -1622,7 +1621,7 @@ public class UserController extends BaseController {
             streamException(ex,ar);
         }
     }
-    
+
 
 
 }

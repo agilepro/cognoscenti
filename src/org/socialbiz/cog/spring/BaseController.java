@@ -32,7 +32,6 @@ import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGContainer;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.UserProfile;
@@ -157,7 +156,7 @@ public class BaseController {
             return true;
         }
         if (ar.ngp==null) {
-            throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGPage on the AuthRequest.");
+            throw new Exception("Program Logic Error: the method checkLoginMember was called BEFORE setting the NGWorkspace on the AuthRequest.");
         }
         if (ar.isSuperAdmin()) {
             //super admin is automatically a member of every group, no need to check further
@@ -189,8 +188,8 @@ public class BaseController {
             return true;
         }
         boolean frozen = ngc.isFrozen();
-        if (!frozen && (ngc instanceof NGPage)) {
-            frozen = ((NGPage)ngc).getSite().isFrozen();
+        if (!frozen && (ngc instanceof NGWorkspace)) {
+            frozen = ((NGWorkspace)ngc).getSite().isFrozen();
         }
         if (frozen) {
             streamJSP(ar, "WarningFrozen");

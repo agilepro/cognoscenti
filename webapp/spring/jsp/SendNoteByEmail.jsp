@@ -4,7 +4,7 @@
 %><%/*
 Required parameters:
 
-    1. p    : This is the id of a Workspace and used to retrieve NGPage.
+    1. p    : This is the id of a Workspace and used to retrieve NGWorkspace.
     2. oid  : This is Leaflet id which is used to retieve Leaflet information which is being send
               by email (TopicRecord object).
 

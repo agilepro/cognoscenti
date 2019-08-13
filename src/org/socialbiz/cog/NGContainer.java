@@ -23,12 +23,11 @@ package org.socialbiz.cog;
 import java.io.File;
 import java.util.List;
 
-import org.socialbiz.cog.dms.ResourceEntity;
 import org.w3c.dom.Document;
 
 /**
 * NGCommonFile is a set of methods that are are needed
-* on the three main file types: NGPage, NGBook, and UserPage
+* on the three main file types: NGWorkspace, NGBook, and UserPage
 */
 public abstract class NGContainer extends DOMFile
 {
@@ -59,12 +58,6 @@ public abstract class NGContainer extends DOMFile
 
 
 
-    /**
-     * This is effectively the "empty trashcan" operation.  Documents that
-     * have been marked as deleted will actually, finally, be deleted with
-     * this operation.
-     */
-    public abstract void purgeDeletedAttachments() throws Exception;
 
     /**
     * Returns the ResourceEntity that represents the remote folder that files
@@ -80,17 +73,17 @@ public abstract class NGContainer extends DOMFile
     * When browsing for a place to store a document, the browsing should start at
     * this location.
     */
-    public abstract ResourceEntity getDefRemoteFolder() throws Exception;
+    //public abstract ResourceEntity getDefRemoteFolder() throws Exception;
     /**
     * Construct a valid ResourceEntity that points to a folder to set this.
     * Pass a null to clear the setting
     */
-    public abstract void setDefRemoteFolder(ResourceEntity loc) throws Exception;
+    //public abstract void setDefRemoteFolder(ResourceEntity loc) throws Exception;
 
 
     /**
     * A role is a collection of user reference objects with a name, description
-    * and some other metadata.  Roles can exist on projects (NGPage), sites (NGBook)
+    * and some other metadata.  Roles can exist on projects (NGWorkspace), sites (NGBook)
     * or user profiles (UserPage).  In this last case, the role object holds what
     * might better be called a "Relationship".
     *
@@ -123,19 +116,6 @@ public abstract class NGContainer extends DOMFile
     public abstract RoleRequestRecord createRoleRequest(String roleName, String requestedBy,long modifiedDate, String modifiedBy, String requestDescription) throws Exception;
 
 
-    public abstract List<HistoryRecord> getAllHistory() throws Exception;
-    public abstract List<HistoryRecord> getHistoryRange(long startTime, long endTime) throws Exception;
-
-    /**
-    * Pass a context type (Topic, Action Item, Document, etc) and a old context id, and all the
-    * history for that resource will be copied to the current container for a new context id.
-    * The history records are left in the old container.
-    * The history records in the new page will have the new ID.
-    */
-    public abstract void copyHistoryForResource(NGContainer ngc, int contextType, String oldID, String newID) throws Exception;
-
-    public abstract HistoryRecord createNewHistory() throws Exception;
-    public abstract HistoryRecord getLatestHistory() throws Exception;
 
 
     ////////////// Other container bookkeeping methods ////////////////////

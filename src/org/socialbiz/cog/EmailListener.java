@@ -25,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Timer;
@@ -354,7 +353,7 @@ public class EmailListener extends TimerTask{
         try{
             Address[] recipientAdrs= message.getAllRecipients();
             String pageKey =  getProjectKey(recipientAdrs[0].toString(), subject);
-            NGPage ngp = ar.getCogInstance().getWorkspaceBySiteAndKeyOrFail(pageKey);
+            NGWorkspace ngp = ar.getCogInstance().getWorkspaceBySiteAndKeyOrFail(pageKey);
 
             TopicRecord note = ngp.createNote();
 
@@ -476,7 +475,7 @@ public class EmailListener extends TimerTask{
         return out.getBuffer();
     }
 
-    private void handleEmailAttachments(NGPage ngp, Message message) throws Exception {
+    private void handleEmailAttachments(NGWorkspace ngp, Message message) throws Exception {
         try{
             Address[] fromAdrs = message.getFrom();
             String fromAdd = getFromAddress(fromAdrs[0].toString());
@@ -508,7 +507,7 @@ public class EmailListener extends TimerTask{
     /**
      * RELEASES LOCK:  this must NOT be called from within a project workspace code
     *
-    private void createDocumentRecord(NGPage ngp,InputStream is,String fileName,String fromAdd) throws Exception {
+    private void createDocumentRecord(NGWorkspace ngp,InputStream is,String fileName,String fromAdd) throws Exception {
         NGPageIndex.assertNoLocksOnThread();
         try{
             ar.assertNotFrozen(ngp);

@@ -33,7 +33,6 @@ import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.IdGenerator;
 import org.socialbiz.cog.License;
 import org.socialbiz.cog.LicensedURL;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGSection;
 import org.socialbiz.cog.NGWorkspace;
@@ -122,7 +121,7 @@ public class ResourceSection  implements NGResource
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
         }
-        NGPage ngp = ngpi.getWorkspace();
+        NGWorkspace ngp = ngpi.getWorkspace();
         lar.setPageAccessLevels(ngp);
 
         NGSection ngs = ngp.getSection(lname);
@@ -156,7 +155,7 @@ public class ResourceSection  implements NGResource
     public void createSection() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = lrp.getPageMustExist();
+        NGWorkspace ngp = lrp.getPageMustExist();
         lar.setPageAccessLevels(ngp);
         lar.assertAdmin("Must be an admin of the page in order to add a new section");
         if(lname != null && lname.length()>0
@@ -184,7 +183,7 @@ public class ResourceSection  implements NGResource
     public void deleteSection() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = lrp.getPageMustExist();
+        NGWorkspace ngp = lrp.getPageMustExist();
         lar.setPageAccessLevels(ngp);
         lar.assertAdmin("Must be an admin of the page in order to remove a  section");
         ngp.removeSection(lname);
@@ -204,7 +203,7 @@ public class ResourceSection  implements NGResource
     public void updateSection() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = lrp.getPageMustExist();
+        NGWorkspace ngp = lrp.getPageMustExist();
         lar.setPageAccessLevels(ngp);
         if(!lar.isMember())
         {
@@ -230,7 +229,7 @@ public class ResourceSection  implements NGResource
     public void loadData() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = lrp.getPageMustExist();
+        NGWorkspace ngp = lrp.getPageMustExist();
         lar.setPageAccessLevels(ngp);
 
         NGSection ngs = ngp.getSectionOrFail(lname);
@@ -257,7 +256,7 @@ public class ResourceSection  implements NGResource
     public void updateData() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = lrp.getPageMustExist();
+        NGWorkspace ngp = lrp.getPageMustExist();
         NGSection ngs = ngp.getSection(lname);
         if(ngs == null){
             lrstatus.setStatusCode(404);
@@ -299,7 +298,7 @@ public class ResourceSection  implements NGResource
     public void deleteData() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = lrp.getPageMustExist();
+        NGWorkspace ngp = lrp.getPageMustExist();
         lar.setPageAccessLevels(ngp);
 
         String cmsg = "";
@@ -335,7 +334,7 @@ public class ResourceSection  implements NGResource
 
     private void loadDataContent(NGSection ngs, Element element_section, String dataIds) throws Exception
     {
-        NGPage ngp = ngs.parent;
+        NGWorkspace ngp = ngs.parent;
 
         //TODO: eliminate this since there are no more variable sections
          if(ngs.getName().equals("Description")
@@ -375,7 +374,7 @@ public class ResourceSection  implements NGResource
         }
     }
 
-    private void updateDataContent(NGPage ngp, NGSection ngs, Element element_section) throws Exception
+    private void updateDataContent(NGWorkspace ngp, NGSection ngs, Element element_section) throws Exception
     {
 
         //TODO: change this to use the SectionDefinition/SectionFormat
@@ -404,13 +403,13 @@ public class ResourceSection  implements NGResource
         }
     }
 
-    private void deleteAttachments(NGPage ngp) throws Exception {
+    private void deleteAttachments(NGWorkspace ngp) throws Exception {
         lar.assertAdmin("");
         NGSection ngs = ngp.getSectionOrFail(lname);
         List<String> attchList = UtilityMethods.splitString(lid,',');
         SectionAttachments.removeAttachments(lar, ngs, attchList);
     }
-    private void deleteTasks(NGPage ngp) throws Exception {
+    private void deleteTasks(NGWorkspace ngp) throws Exception {
         lar.assertAdmin("");
         NGSection ngs = ngp.getSectionOrFail(lname);
         SectionTask taskForm = (SectionTask) ngs.getFormat();
@@ -419,7 +418,7 @@ public class ResourceSection  implements NGResource
             taskForm.removeTask(oneTask, ngs);
         }
     }
-    private void deleteNotes(NGPage ngp) throws Exception {
+    private void deleteNotes(NGWorkspace ngp) throws Exception {
         NGSection ngs = ngp.getSectionOrFail(lname);
         List<String> cmtList = UtilityMethods.splitString(lid,',');
         for(String oneCmt : cmtList) {
@@ -432,7 +431,7 @@ public class ResourceSection  implements NGResource
 
     public void loadSubprocess() throws Exception {
     }
-    
+
     public void loadTaskList(String filter) throws Exception {
         ltype = NGResource.TYPE_XML;
         TaskHelper th = new TaskHelper(lar.getBestUserId(), lserverURL);
@@ -458,7 +457,7 @@ public class ResourceSection  implements NGResource
         {
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
         }
-        NGPage ngp = ngpi.getWorkspace();
+        NGWorkspace ngp = ngpi.getWorkspace();
         lar.setPageAccessLevels(ngp);
 
         String schema = lserverURL + NGResource.SCHEMA_SECTION_HISTORY;
@@ -522,10 +521,10 @@ public class ResourceSection  implements NGResource
             sec_attchment.setAttribute("id", id);
 
             //TODO: temporary just get the very first license in the list ... do better later
-            NGPage ngp = (NGPage)ngw;
+            NGWorkspace ngp = (NGWorkspace)ngw;
             License lr = ngp.getLicenses().get(0);
 
-            String permaLink = arec.getLicensedAccessURL(lar, (NGPage)ngw, lr.getId());
+            String permaLink = arec.getLicensedAccessURL(lar, (NGWorkspace)ngw, lr.getId());
             DOMUtils.createChildElement(loutdoc, sec_attchment, "address", permaLink);
 
             DOMUtils.createChildElement(loutdoc, sec_attchment, "universalid", arec.getUniversalId());
@@ -579,7 +578,7 @@ public class ResourceSection  implements NGResource
             NGPageIndex foundPI = ar.getCogInstance().getWSByCombinedKeyOrFail(linkAddr);
             if (foundPI!=null && foundPI.isProject())
             {
-                NGPage ngp = foundPI.getWorkspace();
+                NGWorkspace ngp = foundPI.getWorkspace();
                 linkAddr = lserverURL + "p/" + ngp.getKey() + "/leaf.xml";
             }
         }
@@ -613,7 +612,7 @@ public class ResourceSection  implements NGResource
         }
     }
 
-    public static void loadTaskSection(Document loutdoc, NGPage ngp, Element element_sec,
+    public static void loadTaskSection(Document loutdoc, NGWorkspace ngp, Element element_sec,
         AuthRequest au, String lserverURL)throws Exception
     {
         ProcessRecord process = ngp.getProcess();
@@ -692,7 +691,7 @@ public class ResourceSection  implements NGResource
         return schema_name;
     }
 
-    public static void updateWikiSection(NGPage ngp, NGSection ngs,
+    public static void updateWikiSection(NGWorkspace ngp, NGSection ngs,
         Element secInput, AuthRequest ar) throws Exception
     {
         Element element_content = findElement(secInput, "content");
@@ -703,7 +702,7 @@ public class ResourceSection  implements NGResource
         }
     }
 
-    public static void updateAttachmentSection(NGPage ngp, NGSection ngs,
+    public static void updateAttachmentSection(NGWorkspace ngp, NGSection ngs,
         Element secInput, AuthRequest ar) throws Exception
     {
         Element element_attachments = findElement(secInput, "attachments");
@@ -744,7 +743,7 @@ public class ResourceSection  implements NGResource
         ngs.setLastModify(ar);
     }
 
-    public static String updateTaskSection(NGPage ngp, NGSection ngs,
+    public static String updateTaskSection(NGWorkspace ngp, NGSection ngs,
         Element secInput, AuthRequest ar) throws Exception
     {
         String newids = "";
@@ -898,7 +897,7 @@ public class ResourceSection  implements NGResource
         return newids;
     }
 
-    public static void updateCommentSection(NGPage ngp, NGSection ngs,
+    public static void updateCommentSection(NGWorkspace ngp, NGSection ngs,
         Element secInput, AuthRequest ar) throws Exception
     {
         Element element_cmts = findElement(secInput, "comments");
@@ -939,7 +938,7 @@ public class ResourceSection  implements NGResource
     }
 
 
-    public static void updateLinkSection(NGPage ngp, NGSection ngs,
+    public static void updateLinkSection(NGWorkspace ngp, NGSection ngs,
         Element secInput) throws Exception
     {
         String linkText = "";
@@ -1043,7 +1042,7 @@ public class ResourceSection  implements NGResource
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
         }
-        NGPage ngp = ngpi.getWorkspace();
+        NGWorkspace ngp = ngpi.getWorkspace();
         lar.setPageAccessLevels(ngp);
 
         TaskHelper th = new TaskHelper(lar.getBestUserId(), lserverURL);

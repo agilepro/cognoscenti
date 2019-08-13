@@ -4,7 +4,7 @@
 /*
 Required parameters:
 
-    1. pageId : This is the id of a Workspace and here it is used to retrieve NGPage.
+    1. pageId : This is the id of a Workspace and here it is used to retrieve NGWorkspace.
 
 */
 

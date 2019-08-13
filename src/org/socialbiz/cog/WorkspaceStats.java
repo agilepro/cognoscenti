@@ -27,7 +27,7 @@ public class WorkspaceStats {
     public NameCounter unrespondedPerUser = new NameCounter();
     public NameCounter anythingPerUser    = new NameCounter();
 
-    public void gatherFromWorkspace(NGPage ngp) throws Exception {
+    public void gatherFromWorkspace(NGWorkspace ngp) throws Exception {
 
         for (TopicRecord topic : ngp.getAllNotes()) {
             numTopics++;
@@ -67,7 +67,7 @@ public class WorkspaceStats {
         for (@SuppressWarnings("unused") DecisionRecord dr : ngp.getDecisions()) {
             numDecisions++;
         }
-        
+
         //count all the users in all the roles
         for (CustomRole cr : ngp.getAllRoles()) {
             for (AddressListEntry ale: cr.getExpandedPlayers(ngp)) {

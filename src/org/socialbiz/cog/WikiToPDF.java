@@ -65,7 +65,7 @@ public class WikiToPDF
     private PDPage pdpage;
     private PDPageContentStream contentStream;
     private String printTime;
-    
+
     float xPos = 200f;
     float yPos = 800f;
     float lineRemainder = 0f;
@@ -85,7 +85,7 @@ public class WikiToPDF
     private boolean includeComments;
     private boolean includeRoles;
     private boolean includeActionItems;
-    
+
     boolean isNewPage;
 
 
@@ -171,7 +171,7 @@ public class WikiToPDF
     * decodes the request parameters and then causes the PDF generation
     * try not to use this if possible.
     */
-    public static void handlePDFRequest(AuthRequest ar, NGPage ngp) throws Exception{
+    public static void handlePDFRequest(AuthRequest ar, NGWorkspace ngp) throws Exception{
         ar.setPageAccessLevels(ngp);
 
 
@@ -182,12 +182,12 @@ public class WikiToPDF
 
 
 
-    public void writeWikiAsPDF(NGPage ngp, AuthRequest ar)  throws Exception {
+    public void writeWikiAsPDF(NGWorkspace ngp, AuthRequest ar)  throws Exception {
 
         Vector<TopicRecord> memberNotes = new Vector<TopicRecord>();
 
         String[] publicNoteIDs = ar.req.getParameterValues("publicNotes");
-        
+
         if (publicNoteIDs==null) {
             publicNoteIDs = new String[0];
         }
@@ -198,7 +198,7 @@ public class WikiToPDF
                 memberNotes.add(lrt);
             }
         }
-        
+
         includeDecisions = (ar.req.getParameter("decisions")!=null);
         includeAttachments = (ar.req.getParameter("attachments")!=null);
         includeComments = (ar.req.getParameter("comments")!=null);
@@ -207,10 +207,10 @@ public class WikiToPDF
 
         int totalNotes = memberNotes.size();
         pddoc = new PDDocument();
-        
+
         //set up the print time for use in the footer
         printTime = convertDate(ar.nowTime);
-        
+
 
         if (totalNotes>1 || includeDecisions || includeAttachments) {
             writeTOCPage(ngp, memberNotes);
@@ -223,7 +223,7 @@ public class WikiToPDF
                 writeNoteToPDF(ngp, lr, noteCount);
             }
         }
-        
+
         if (includeDecisions) {
             writeDecisionsToPDF(ngp);
         }
@@ -248,7 +248,7 @@ public class WikiToPDF
     }
 
 
-    private void writeTOCPage(NGPage ngp, 
+    private void writeTOCPage(NGWorkspace ngp,
             Vector<TopicRecord> memberNoteList)  throws Exception {
         headerText = "Topic report generated from Weaver";
 
@@ -283,25 +283,25 @@ public class WikiToPDF
             newLine();
             setH2Font();
             newLine();
-            writeWrappedLine("Decisions"); 
+            writeWrappedLine("Decisions");
         }
         if (includeAttachments) {
             newLine();
             setH2Font();
             newLine();
-            writeWrappedLine("Attached Documents");        
+            writeWrappedLine("Attached Documents");
         }
         if (includeActionItems) {
             newLine();
             setH2Font();
             newLine();
-            writeWrappedLine("Action Items");        
+            writeWrappedLine("Action Items");
         }
         if (includeRoles) {
             newLine();
             setH2Font();
             newLine();
-            writeWrappedLine("Roles");        
+            writeWrappedLine("Roles");
         }
         endPage();
     }
@@ -312,7 +312,7 @@ public class WikiToPDF
     * it to HTML, outputting that to the AuthRequest that was
     * passed in when the object was constructed.
     */
-    public void writeNoteToPDF(NGPage ngp, TopicRecord note, int noteNum) throws Exception
+    public void writeNoteToPDF(NGWorkspace ngp, TopicRecord note, int noteNum) throws Exception
     {
         NGBook book = ngp.getSite();
 
@@ -363,19 +363,19 @@ public class WikiToPDF
             }
         }
     }
-    
+
     private void writeWikiData(String wiki) throws Exception {
         LineIterator li = new LineIterator(wiki);
         while (li.moreLines())
         {
             String thisLine = li.nextLine();
             formatText(thisLine);
-        }        
+        }
         terminate();
     }
 
-    
-    private void pageTop(NGPage ngp, String title) throws Exception {
+
+    private void pageTop(NGWorkspace ngp, String title) throws Exception {
         NGBook book = ngp.getSite();
         headerText = title;
         if(!isNewPage){
@@ -395,13 +395,13 @@ public class WikiToPDF
 
         box(LEFT_MARGIN-2, TOP_MARGIN+2, RIGHT_MARGIN+2, (int) yPos-3);
     }
-    
+
     /**
     * Takes all the decisions and makes a page(s) with them listed.
     */
-    public void writeDecisionsToPDF(NGPage ngp) throws Exception {
+    public void writeDecisionsToPDF(NGWorkspace ngp) throws Exception {
         pageTop(ngp, "Decision List");
-        
+
         for (DecisionRecord dr : ngp.getDecisions()) {
             currentLineSize = 30;
             newLine();
@@ -411,11 +411,11 @@ public class WikiToPDF
             newLine();
             writeWikiData(dr.getDecision());
         }
-    }    
+    }
 
-    public void writeAttachmentListToPDF(NGPage ngp) throws Exception {
+    public void writeAttachmentListToPDF(NGWorkspace ngp) throws Exception {
         pageTop(ngp, "Attachment Documents");
-        
+
         int count = 0;
         for (AttachmentRecord att : ngp.getAllAttachments()) {
             count++;
@@ -426,11 +426,11 @@ public class WikiToPDF
             currentLineSize = 12;
             writeWikiData(att.getDescription());
         }
-    }        
+    }
 
-    public void writeActionItemsToPDF(NGPage ngp) throws Exception {
+    public void writeActionItemsToPDF(NGWorkspace ngp) throws Exception {
         pageTop(ngp, "Action Items");
-        
+
         int count = 0;
         for (GoalRecord actionItem : ngp.getAllGoals()) {
             count++;
@@ -446,7 +446,7 @@ public class WikiToPDF
             for (AddressListEntry ale : actionItem.getAssigneeRole().getDirectPlayers()) {
                 sb.append("* "+ale.getName()+"\n \n");
             }
-            
+
             long date = actionItem.getDueDate();
             if (date>100) {
                 sb.append("Due: "+convertDate(date)+", ");
@@ -460,15 +460,15 @@ public class WikiToPDF
                 sb.append("Completed: "+convertDate(date)+", ");
             }
             sb.append("\n\n");
-            
+
             writeWikiData(sb.toString());
             makeHorizontalRule();
         }
-    }            
+    }
 
-    public void writeRolesToPDF(NGPage ngp) throws Exception {
+    public void writeRolesToPDF(NGWorkspace ngp) throws Exception {
         pageTop(ngp, "Roles");
-        
+
         int count = 0;
         for (CustomRole role : ngp.getAllRoles()) {
             count++;
@@ -485,11 +485,11 @@ public class WikiToPDF
             for (AddressListEntry ale : role.getDirectPlayers()) {
                 sb.append("* "+ale.getName()+"\n \n");
             }
-            
+
             writeWikiData(sb.toString());
             makeHorizontalRule();
         }
-    }        
+    }
 
     private void setH1Font()
     {
@@ -876,7 +876,7 @@ public class WikiToPDF
         if (majorState != BULLET) {
             terminate();
             majorState = BULLET;
-        } 
+        }
         else {
             //nothing needed at end of bullet line
         }
@@ -973,12 +973,12 @@ public class WikiToPDF
                     continue;
                 }
                 break;
-            case 'บ':
+            case 'ยบ':
                 if (line.length() > pos + 1) {
                     char escape = line.charAt(pos + 1);
-                    if (escape == '[' || escape == '\'' || escape == '_'  || escape == 'บ') {
+                    if (escape == '[' || escape == '\'' || escape == '_'  || escape == 'ยบ') {
                         //only these characters can be escaped at this time
-                        //if one of these, eliminate the บ, and output the following character without interpretation
+                        //if one of these, eliminate the ยบ, and output the following character without interpretation
                         ch = escape;
                         pos++;
                     }
@@ -1148,17 +1148,17 @@ public class WikiToPDF
         List<PDAnnotationLink> annotations = pdpage.getAnnotations();
         annotations.add(txtLink);
     }
-    
+
 
     private String convertDateAndTime(long dateVal) throws Exception  {
         StringWriter out = new StringWriter(20);
         SectionUtil.nicePrintDateAndTime(out, dateVal);
-        return out.toString();        
+        return out.toString();
     }
     private String convertDate(long dateVal) throws Exception  {
         StringWriter out = new StringWriter(20);
         SectionUtil.nicePrintDate(out, dateVal, null);
-        return out.toString();        
+        return out.toString();
     }
 
 }

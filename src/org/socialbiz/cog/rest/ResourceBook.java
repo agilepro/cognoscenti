@@ -28,8 +28,8 @@ import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.UtilityMethods;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -299,7 +299,7 @@ public class ResourceBook implements NGResource
             {
                 continue;
             }
-            NGPage ngp = ngpi.getWorkspace();
+            NGWorkspace ngp = ngpi.getWorkspace();
             String key = ngp.getKey();
             Object obj  = pageList.put(key, key);
             if(obj != null){

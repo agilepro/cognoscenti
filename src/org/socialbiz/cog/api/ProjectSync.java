@@ -35,7 +35,7 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.LicenseForUser;
-import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionDef;
 import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UtilityMethods;
@@ -48,14 +48,14 @@ import com.purplehillsbooks.json.JSONObject;
 * supports comparing a local and remote project
 */
 public class ProjectSync {
-    NGPage local;
+    NGWorkspace local;
     RemoteProject remote;
     AuthRequest ar;
     String licenseID;
 
     ArrayList<SyncStatus> statii;
 
-    public ProjectSync(NGPage _local, RemoteProject _remote, AuthRequest _ar, String _licenseID) throws Exception {
+    public ProjectSync(NGWorkspace _local, RemoteProject _remote, AuthRequest _ar, String _licenseID) throws Exception {
 
         local     = _local;
         remote    = _remote;
@@ -140,7 +140,7 @@ public class ProjectSync {
                 retval.nameRemote = att2.getString("name");
                 retval.timeRemote = att2.getLong("modifiedtime");
                 if (retval.timeRemote==0) {
-                    throw new JSONException("Something is wrong with information about remote document ({0}) (id={1}) because the timestamp is zero", 
+                    throw new JSONException("Something is wrong with information about remote document ({0}) (id={1}) because the timestamp is zero",
                             retval.nameRemote, retval.idRemote);
                 }
                 retval.urlRemote = att2.getString("content");

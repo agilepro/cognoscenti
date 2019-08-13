@@ -530,7 +530,7 @@ public class AuthRequest
      */
     public void rollbackChanges() {
         if (ngp!=null) {
-            NGPage.removeCachedPage(ngp.getFilePath().toString());
+            NGWorkspace.removeCachedPage(ngp.getFilePath().toString());
             ngp = null;
         }
         NGPageIndex.clearLocksHeldByThisThread();
@@ -1296,7 +1296,7 @@ public class AuthRequest
         if (ngp==null)
         {
             throw new RuntimeException("makeHonoraryMember can not be called "
-                                      +"until after the NGPage is set");
+                                      +"until after the NGWorkspace is set");
         }
         ngsession.addHonoraryMember(ngp.getKey());
     }
@@ -1376,8 +1376,8 @@ public class AuthRequest
         {
             return "p/"+ngc.getKey()+"/"+resource;
         }
-        if(ngc instanceof NGPage){
-            NGBook ngb = ((NGPage)ngc).getSite();
+        if(ngc instanceof NGWorkspace){
+            NGBook ngb = ((NGWorkspace)ngc).getSite();
             return "t/" + URLEncoder.encode(ngb.getKey(), "UTF-8")+"/"
                         + ngc.getKey()+"/"+resource;
         }
@@ -1386,8 +1386,8 @@ public class AuthRequest
     }
 
     public String getDefaultURL(NGContainer ngc) throws Exception {
-        if(ngc instanceof NGPage){
-            return "t/" + URLEncoder.encode(((NGPage) ngc).getSiteKey(), "UTF-8")+"/"
+        if(ngc instanceof NGWorkspace){
+            return "t/" + URLEncoder.encode(((NGWorkspace) ngc).getSiteKey(), "UTF-8")+"/"
                         + ngc.getKey()+"/frontPage.htm";
         }
 

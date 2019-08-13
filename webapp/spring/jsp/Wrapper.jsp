@@ -135,7 +135,7 @@
     if (ngp!=null) {
         ar.setPageAccessLevels(ngp);
         pageTitle = ngp.getFullName();
-        if(ngp instanceof NGPage) {
+        if(ngp instanceof NGWorkspace) {
             ngb = ((NGWorkspace)ngp).getSite();
             showExperimental = ngb.getShowExperimental();
             if (loggedUser!=null) {

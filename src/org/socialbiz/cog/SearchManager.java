@@ -54,14 +54,14 @@ public class SearchManager {
 
     public synchronized void initializeIndex() throws Exception {
         analyzer = new StandardAnalyzer(Version.LUCENE_42);
-        
+
         File directoryFolder = new File(cog.getConfig().getUserFolderOrFail(), ".search");
 
         //directory = new RAMDirectory();
         if (directory==null) {
             directory = FSDirectory.open(directoryFolder);
         }
-        
+
         long startTime = System.currentTimeMillis();
         System.out.println("SearchManager - starting to build the internal index.");
 
@@ -69,7 +69,7 @@ public class SearchManager {
 
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42, analyzer);
         IndexWriter iWriter = new IndexWriter(directory, config);
-        
+
         //get rid of all the existing files.   Make sure that search methods
         //are synchronized so you don't have any searches  while updating the index.
         iWriter.deleteAll();
@@ -83,7 +83,7 @@ public class SearchManager {
                     //skip all deleted workspaces
                     continue;
                 }
-                
+
                 NGBook site = ngp.getSite();
                 if (site.isDeleted()) {
                     //skip all deleted sites
@@ -93,8 +93,8 @@ public class SearchManager {
                     //skip all moved sites
                     continue;
                 }
-                
-                
+
+
                 String projectKey = ngp.getKey();
                 String siteKey = ngp.getSiteKey();
                 String projectName = ngp.getFullName();
@@ -151,7 +151,7 @@ public class SearchManager {
                     doc.add(new Field("NOTESUBJ", note.getSubject(), TextField.TYPE_STORED));
                     doc.add(new Field("LASTMODIFIEDTIME", Long.toString(note.getLastEdited()), TextField.TYPE_STORED));
                     doc.add(new Field("LASTMODIFIEDUSER", note.getModUser().getName(), TextField.TYPE_STORED));
-                    
+
                     //first add the subject, then add the text of the note, then all the comments
                     doc.add(new Field("BODY", note.getSubject(), TextField.TYPE_STORED));
                     doc.add(new Field("BODY", note.getWiki(), TextField.TYPE_STORED));
@@ -170,7 +170,7 @@ public class SearchManager {
                     doc.add(new Field("MEETID", meet.getId(), TextField.TYPE_STORED));
                     doc.add(new Field("MEETNAME", meet.getName(), TextField.TYPE_STORED));
                     doc.add(new Field("LASTMODIFIEDTIME", Long.toString(meet.getStartTime()), TextField.TYPE_STORED));
-                    
+
                     doc.add(new Field("BODY", meet.getName(), TextField.TYPE_STORED));
                     doc.add(new Field("BODY", meet.generateWikiRep(ar, ngp), TextField.TYPE_STORED));
                     for (AgendaItem ai : meet.getSortedAgendaItems()) {
@@ -180,7 +180,7 @@ public class SearchManager {
                     }
                     iWriter.addDocument(doc);
                 }
-                
+
                 for (DecisionRecord dec : ngp.getDecisions()) {
                     Document doc = new Document();
                     doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
@@ -190,7 +190,7 @@ public class SearchManager {
                     doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
                     doc.add(new Field("DECISIONID", Integer.toString(dec.getNumber()), TextField.TYPE_STORED));
                     doc.add(new Field("LASTMODIFIEDTIME", Long.toString(dec.getTimestamp()), TextField.TYPE_STORED));
-                    
+
                     doc.add(new Field("BODY", dec.getDecision(), TextField.TYPE_STORED));
                     iWriter.addDocument(doc);
                 }
@@ -234,7 +234,7 @@ public class SearchManager {
             String linkAddr = null;
             String noteSubject = null;
 
-            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteKey, key).getWorkspace();
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteKey, key).getWorkspace();
 
             //if restricted to one site, check that site first and skip if not matching
             if (siteId!=null) {

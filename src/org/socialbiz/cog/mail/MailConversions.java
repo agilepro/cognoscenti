@@ -13,19 +13,6 @@ import org.socialbiz.cog.OptOutAddr;
 
 public class MailConversions {
 
-    /*
-    public static void moveEmails(NGPage ngp, File projectfolder, Cognoscenti cog) throws Exception {
-        File folder = ngp.getFilePath().getParentFile();
-        File emailFilePath = new File(folder, "mailArchive.json");
-
-        MailFile newArchive = MailFile.readOrCreate(emailFilePath, 3);
-        moveEmails(ngp, newArchive, cog);
-
-        newArchive.save();
-        ngp.save();
-    }
-    */
-
     /**
      * returns TRUE if some email was converted, false if not
      */

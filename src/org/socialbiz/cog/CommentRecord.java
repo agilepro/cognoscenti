@@ -31,7 +31,7 @@ public class CommentRecord extends DOMFace {
     public static final char CONTAINER_TYPE_MEETING = 'M';
     public static final char CONTAINER_TYPE_TOPIC = 'T';
     public static final char CONTAINER_TYPE_ATTACHMENT = 'A';
-    
+
     public char containerType = '?';
     public String containerID = "";
 
@@ -120,9 +120,9 @@ public class CommentRecord extends DOMFace {
         }
         setAttribute("user", newVal.getUniversalId());
     }
-    
+
     /**
-     * A comment can have a list of users to be notified, and in effect added to the list of 
+     * A comment can have a list of users to be notified, and in effect added to the list of
      * people who are notified about a topic or meeting agenda item.
      */
     public NGRole getNotifyRole() throws Exception {
@@ -301,7 +301,7 @@ public class CommentRecord extends DOMFace {
         setAttributeBool("suppressEmail", replyVal);
     }
 
-    
+
     /**
      * NewPhase is applicable only when the comment is indicating
      * a phase change in a conversation.  It represents the phase
@@ -445,18 +445,18 @@ public class CommentRecord extends DOMFace {
     	try {
 	        List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
 	        boolean excludeSelf = getAttributeBool("excludeSelf");
-	        
+
 	        List<AddressListEntry> notifyList = getNotifyRole().getDirectPlayers();
 	        noteOrMeet.extendNotifyList(notifyList);  //so it can remember it
 	        noteOrMeet.appendTargetEmails(sendTo, ngw);
-	
+
 	        //add the commenter in case missing from the target role
 	        AddressListEntry commenter = getUser();
 	        if (!excludeSelf) {
 	            OptOutAddr.appendOneDirectUser(commenter, sendTo);
 	        }
 	        OptOutAddr.appendUsers(notifyList, sendTo); //in case the container does not remember it
-	
+
 	        UserProfile commenterProfile = commenter.getUserProfile();
 	        if (commenterProfile==null) {
 	            System.out.println("DATA PROBLEM: comment "+this.getTime()+" came from a person without a profile ("+getUser().getEmail()+") ignoring.");
@@ -464,7 +464,7 @@ public class CommentRecord extends DOMFace {
 	            setCloseEmailSent(true);
 	            return;
 	        }
-	
+
 	        for (OptOutAddr ooa : sendTo) {
 	            if (this.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
 	                UserProfile toProfile = UserManager.getStaticUserManager().lookupUserByAnyId(ooa.getEmail());
@@ -477,11 +477,11 @@ public class CommentRecord extends DOMFace {
 	                    //skip sending email if the user said to exclude themselves
 	                    continue;
 	                }
-	            }	            
-	            
+	            }
+
 	            constructEmailRecordOneUser(ar, ngw, noteOrMeet, ooa, commenterProfile, mailFile);
 	        }
-	
+
 	        if (getState()==CommentRecord.COMMENT_STATE_CLOSED) {
 	            //if sending the close email, also mark the other email as sent
 	            setCloseEmailSent(true);
@@ -535,7 +535,7 @@ public class CommentRecord extends DOMFace {
         AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
         clone.setNewUI(true);
         clone.retPath = ar.baseURL;
-        
+
         //this is needed for the HTML conversion.
         if (ngp==null) {
             throw new Exception("constructEmailRecordOneUser requires NGP non null");
@@ -548,7 +548,6 @@ public class CommentRecord extends DOMFace {
         }
         String cmtType = commentTypeName();
         AddressListEntry owner = getUser();
-        UserProfile ownerProfile = owner.getUserProfile();
 
         JSONObject data = new JSONObject();
         data.put("baseURL", ar.baseURL);
@@ -561,13 +560,13 @@ public class CommentRecord extends DOMFace {
         data.put("wsName", ngp.getFullName());
         data.put("userURL", ar.baseURL + owner.getLinkUrl());
         data.put("userName", owner.getName());
-        
+
         data.put("opType", opType);
         data.put("cmtType", cmtType);
         data.put("isClosed", isClosed);
         data.put("outcomeHtml", this.getOutcomeHtml(clone));
         data.put("optout", ooa.getUnsubscribeJSON(clone));
-        
+
         data.put("replyUrl", ar.baseURL + noteOrMeet.getReplyURL(ar,ngp,this.getTime())
                 + "&emailId=" + URLEncoder.encode(ooa.getEmail(), "UTF-8"));
         data.put("unsubUrl", ar.baseURL + noteOrMeet.getUnsubURL(ar,ngp,this.getTime())
@@ -700,7 +699,7 @@ public class CommentRecord extends DOMFace {
         }
         updateAttributeBool("suppressEmail", input);
         updateAttributeBool("excludeSelf", input);
-        
+
 
         //A simple comment should never be "open", only draft or closed, so assure that here
         if (getCommentType()==COMMENT_TYPE_SIMPLE  &&
@@ -741,7 +740,7 @@ public class CommentRecord extends DOMFace {
             noteOrMeet = _noteOrMeet;
             cr   = _cr;
         }
-        
+
         @Override
         public boolean needsSendingBefore(long timeout) throws Exception {
             if (cr.getState()==CommentRecord.COMMENT_STATE_DRAFT) {
@@ -786,7 +785,7 @@ public class CommentRecord extends DOMFace {
             }
             return -1;
         }
-        
+
         @Override
         public void sendIt(AuthRequest ar, MailFile mailFile) throws Exception {
             cr.commentEmailRecord(ar,ngw,noteOrMeet,mailFile);

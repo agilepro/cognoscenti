@@ -11,7 +11,7 @@
 /*
 Required parameters:
 
-    1. pageId  : This is the id of a Workspace and used to retrieve NGPage.
+    1. pageId  : This is the id of a Workspace and used to retrieve NGWorkspace.
 
 Optional Parameters:
 
@@ -253,6 +253,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         var postObj = {id: $scope.emailInfo.id, toUser: $scope.recipient.uid};
         var postdata = angular.toJson(postObj);
         $scope.showError=false;
+        console.log("getRenderedEmail: calling ", postURL, postObj);
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.renderedEmail = $sce.trustAsHtml(data.html);

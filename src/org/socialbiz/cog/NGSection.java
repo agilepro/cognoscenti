@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 public class NGSection extends DOMFace
 {
 
-    public NGPage parent = null;
+    public NGWorkspace parent = null;
     public SectionDef def = null;
 
     public NGSection(Document d, Element e, DOMFace p)
@@ -49,7 +49,7 @@ public class NGSection extends DOMFace
             throw new ProgramLogicError("someone created a section object, but passed null for page object");
         }
 
-        parent = (NGPage) p;
+        parent = (NGWorkspace) p;
 
         String sectionName = getAttribute("name");
         if (sectionName==null || sectionName.length()==0)

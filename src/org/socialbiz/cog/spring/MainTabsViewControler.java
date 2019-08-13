@@ -31,7 +31,6 @@ import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SearchResultRecord;
@@ -50,7 +49,7 @@ import com.purplehillsbooks.json.JSONObject;
 
 @Controller
 public class MainTabsViewControler extends BaseController {
-    
+
     public static MeetingNotesCache meetingCache = new MeetingNotesCache();
 
 
@@ -154,7 +153,7 @@ public class MainTabsViewControler extends BaseController {
            AuthRequest ar = AuthRequest.getOrCreate(request, response);
            boolean reallyLoggedIn = ar.isLoggedIn();
            request.setAttribute("topicId", lid);
-           NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+           NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
            TopicRecord note = ngp.getNoteOrFail(lid);
            boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
            if (reallyLoggedIn && canAccessNote) {
@@ -289,7 +288,7 @@ public class MainTabsViewControler extends BaseController {
              ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
-             
+
              boolean isAutoSave = noteInfo.has("saveMode") && "autosave".equals(noteInfo.getString("saveMode"));
 
              TopicRecord note = null;
@@ -507,7 +506,7 @@ public class MainTabsViewControler extends BaseController {
              HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
-             NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
              ar.setPageAccessLevels(ngp);
              String nid = ar.reqParam("nid");
              TopicRecord note = ngp.getNoteOrFail(nid);
@@ -554,7 +553,7 @@ public class MainTabsViewControler extends BaseController {
             String mn = ar.reqParam("mn");
             String go = ar.defParam("go", ar.baseURL);
 
-            NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
+            NGWorkspace ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
             String expectedMn = ngp.emailDependentMagicNumber(email);
             if (!expectedMn.equals(mn)) {
                 throw new Exception("Something is wrong, improper request for email address "+email);
@@ -660,7 +659,7 @@ public class MainTabsViewControler extends BaseController {
          try {
              ar.assertLoggedIn("Must be logged in to create a topic.");
              String p = ar.reqParam("p");
-             NGPage ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
+             NGWorkspace ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
              ar.setPageAccessLevels(ngp);
 
              String oid = ar.reqParam("oid");

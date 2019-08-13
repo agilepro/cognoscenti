@@ -6,7 +6,7 @@
 Required parameter:
 
     1. path     : This is the path of selected folder of repository.
-    2. pageId   : This is the id of a Workspace and used to retrieve NGPage.
+    2. pageId   : This is the id of a Workspace and used to retrieve NGWorkspace.
     3. aid      : This is the attachment document id throgh which we get the
                   details about the document to be stored in repository.
     4. folderId : This is the connection id through which we get details about connection.

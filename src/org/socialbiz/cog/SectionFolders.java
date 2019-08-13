@@ -46,7 +46,7 @@ public class SectionFolders extends SectionUtil implements SectionFormat {
     }
 
 
-    public void deleteFolder(AuthRequest ar, NGPage ngp, NGSection section,
+    public void deleteFolder(AuthRequest ar, NGWorkspace ngp, NGSection section,
             String folderId) throws Exception {
 
         throw new ProgramLogicError("Method Not implemented");
@@ -69,17 +69,18 @@ public class SectionFolders extends SectionUtil implements SectionFormat {
     /**
      * This is a method to find a file, and output the file as a stream of bytes
      * to the request output stream.
-     */
-    public static void serveUpFile(AuthRequest ar, NGPage ngp, String fileId)
+     *
+    public static void serveUpFile(AuthRequest ar, NGWorkspace ngp, String fileId)
             throws Exception {
 
         throw new ProgramLogicError("Method Not implemented");
 
     }
 
-    public void displaySubFolder(AuthRequest ar, NGPage ngp, NGSection section,
+    public void displaySubFolder(AuthRequest ar, NGWorkspace ngp, NGSection section,
             String folderId) throws Exception {
         throw new ProgramLogicError("Method Not implemented");
     }
+    */
 
 }

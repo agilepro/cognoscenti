@@ -12,7 +12,7 @@ app.service('AllPeople', function($http) {
     
     AllPeople.getSiteObject = function(site) {
         if (!site) {
-            throw "Need to specify a tenant";
+            throw "AllPeople.getSiteObject %% Need to specify a tenant";
         }
         if (!AllPeople.allPersonList) {
             AllPeople.getPeopleOutOfStorage();
@@ -87,7 +87,7 @@ app.service('AllPeople', function($http) {
     }
     AllPeople.findUsersFromID = function(emailList, site) {
         if (!site) {
-            throw "Need to specify a tenant";
+            throw "AllPeople.findUsersFromID %% Need to specify a tenant";
         }
         var res = [];
         emailList.forEach( function(email) {
@@ -127,10 +127,10 @@ app.service('AllPeople', function($http) {
     }
     AllPeople.refreshCache = function(site) {        
         if (!site) {
-            throw "Need to specify a tenant";
+            throw "AllPeople.refreshCache %% Need to specify a tenant";
         }
-        //$http.get("../../"+site+"/$/SitePeople.json")
-        $http.get("../../AllPeople.json")
+        $http.get("../../"+site+"/$/SitePeople.json")
+        //$http.get("../../AllPeople.json")
         .success( function(data) {
             data.validTime = new Date().getTime() + 3600000;
             AllPeople.allPersonBySite[site] = data;

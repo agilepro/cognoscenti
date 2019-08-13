@@ -130,7 +130,7 @@ public class FileRecord extends DOMFace
         return val;
     }
 
-    public void createHistory(AuthRequest ar, NGPage ngp, int event,
+    public void createHistory(AuthRequest ar, NGWorkspace ngp, int event,
             String comment) throws Exception {
         HistoryRecord.createHistoryRecord(ngp, getId(),
                 HistoryRecord.CONTEXT_TYPE_DOCUMENT, getModifiedDate(), event,

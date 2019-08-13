@@ -59,20 +59,20 @@ import javax.swing.text.html.parser.ParserDelegator;
  * fly so that there is no need to process the entire existing knowledge base.
  * As each note is edited, the new version will be saved with the escapes.
  *
- * EC will be บ (masculine ordinal indicator) because this is quite uncommonly
+ * EC will be ? (masculine ordinal indicator) because this is quite uncommonly
  * used, and almost certainly is not used in any of our existing documentation.
  *
  *     WIKI FORMAT         HTML
- *        บ_                 _
- *        บ'                 '
- *        บ[                 [
- *        บบ                 บ
+ *        ?                _
+ *        ?'               '
+ *        ?[               [
+ *        ??               ?
  *
  * If the EC is seen in the wiki format followed by anything else, it is
  * technically an error (not allowed) but will be handled by simply outputting
  * the exact same sequence and NOT suppressing the EC:
  *
- *        บ?                บ?
+ *        ยบ?                ยบ?
  *
  * MIGRATION: because we have a lot of wiki-format information that does
  * not have the EC escapes, how is this migrated?
@@ -244,8 +244,8 @@ class HTMLParser extends HTMLEditorKit.ParserCallback {
         //otherwise cause possible styling errors
         for (int i=0; i<input.length(); i++) {
             char ch = input.charAt(i);
-            if (ch=='[' || ch=='_' || ch=='\'' || ch=='บ') {
-                dest.append('บ');
+            if (ch=='[' || ch=='_' || ch=='\'' || ch=='ยบ') {
+                dest.append('ยบ');
             }
             dest.append( ch );
         }

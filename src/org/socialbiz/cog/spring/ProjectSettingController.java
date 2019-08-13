@@ -37,7 +37,6 @@ import org.socialbiz.cog.LabelRecord;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGContainer;
 import org.socialbiz.cog.NGLabel;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.OptOutAddr;
@@ -494,14 +493,14 @@ public class ProjectSettingController extends BaseController {
                 CustomRole role = ngc.getRoleOrFail(roleName);
                 String priorLinkedRole = role.getLinkedRole();
                 role.updateFromJSON(roleInfo);
-                if (ngc instanceof NGPage) {
+                if (ngc instanceof NGWorkspace) {
                     //if there is a linked role on the site, then use the same
                     //posted information to update that
                     String linkedRole = role.getLinkedRole();
                     System.out.println("ROLE: "+roleName+", LinkedRole: "+linkedRole);
                     if (linkedRole!=null && linkedRole.length()>0) {
                         String actualName = "~"+linkedRole;
-                        site = ((NGPage)ngc).getSite();
+                        site = ((NGWorkspace)ngc).getSite();
                         CustomRole siteRole = site.getRole(actualName);
                         boolean wasCreated = false;
                         if (siteRole==null) {
@@ -688,7 +687,7 @@ public class ProjectSettingController extends BaseController {
             sendJson(ar, repo);
         }
         catch(Exception ex){
-            Exception ee = new Exception("Unable to update Email Generator "+id, ex);
+            Exception ee = new Exception("Unable to render the email message "+id, ex);
             streamException(ee, ar);
         }
     }
@@ -700,7 +699,7 @@ public class ProjectSettingController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String op = "";
         try{
-            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to modify labels.");
             op = ar.reqParam("op");

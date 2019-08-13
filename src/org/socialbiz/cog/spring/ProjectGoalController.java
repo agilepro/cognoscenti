@@ -34,7 +34,6 @@ import org.socialbiz.cog.DecisionRecord;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.LicensedURL;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
@@ -101,9 +100,9 @@ public class ProjectGoalController extends BaseController {
      * 2. if logged in, are you a member of the workspace
      *    people assigned to a task are considered members while the task is open
      * 3. do you have a magic number for the task in order access it anonymously.
-     * 
+     *
      * Situations:
-     * 
+     *
      * 1. login-yes, member-yes, magic number-NA
      * 2. login-no,  member-NA,  magic number-no, show the login error page
      * 3. login-no,  member-NA,  magic number-yes, show the special anon page
@@ -118,7 +117,7 @@ public class ProjectGoalController extends BaseController {
     {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
 
             GoalRecord goal = ngp.getGoalOrFail(taskId);
             if(goal.isPassive()) {
@@ -165,7 +164,7 @@ public class ProjectGoalController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
             ar.assertLoggedIn("Must be logged in to create a task.");
 
             // call a method for creating new task
@@ -209,7 +208,7 @@ public class ProjectGoalController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
             ar.assertLoggedIn("Must be logged in to manipulate tasks.");
 
             //TODO: taskId should really be parentTaskId
@@ -234,7 +233,7 @@ public class ProjectGoalController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGPage nGPage = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace nGPage = registerRequiredProject(ar, siteId, pageId);
             ar.assertLoggedIn("Must be logged in to open a sub task");
 
             request.setAttribute("realRequestURL", ar.getRequestURL());
@@ -247,7 +246,7 @@ public class ProjectGoalController extends BaseController {
     }
 
     //TODO: is this still used?
-    private void taskActionUpdate(AuthRequest ar, NGPage ngp, String parentTaskId)
+    private void taskActionUpdate(AuthRequest ar, NGWorkspace ngp, String parentTaskId)
             throws Exception
     {
        // final boolean updateTask =  true;
@@ -304,7 +303,7 @@ public class ProjectGoalController extends BaseController {
     }
 
 
-    private void taskActionCreate(AuthRequest ar, NGPage ngp,
+    private void taskActionCreate(AuthRequest ar, NGWorkspace ngp,
             HttpServletRequest request, String parentTaskId)
             throws Exception
     {
@@ -397,7 +396,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = null;
         try{
             ar = AuthRequest.getOrCreate(request, response);
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
             ar.assertLoggedIn("Can't edit a work item.");
             ar.assertMember("Must be a member of a workspace to update tasks.");
 
@@ -448,7 +447,7 @@ public class ProjectGoalController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Must be logged in to reassign task.");
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
             ar.assertMember("Must be a member of a workspace to reassign tasks.");
             ar.assertNotFrozen(ngp);
 
@@ -501,7 +500,7 @@ public class ProjectGoalController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             ar.assertLoggedIn("Must be logged in to update task.");
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
             String go = ar.reqParam("go");
 
             taskActionUpdate(ar, ngp, taskId);
@@ -524,7 +523,7 @@ public class ProjectGoalController extends BaseController {
             //note: this form is for people NOT logged in!
             //ukey specifies user, and mntask verifies they have a proper link to the action item
 
-            NGPage ngp = registerRequiredProject(ar, siteId, pageId);
+            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
             String taskId = ar.reqParam("taskId");
             String mntask = ar.reqParam("mntask");
             String ukey = ar.reqParam("ukey");
@@ -613,7 +612,7 @@ public class ProjectGoalController extends BaseController {
 
         for (NGPageIndex ngpi : ar.getCogInstance().getAllProjectsInSite(siteId)) {
             if (ngpi.containerKey.equals(projectID)) {
-                NGPage page = ngpi.getWorkspace();
+                NGWorkspace page = ngpi.getWorkspace();
                 ar.setPageAccessLevels(page);
                 ProcessRecord process = page.getProcess();
                 LicensedURL thisProcessUrl = process.getWfxmlLink(ar);
@@ -631,7 +630,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String gid = "";
         try{
-            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to see a action item.");
             gid = ar.reqParam("gid");
@@ -652,7 +651,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String gid = "";
         try{
-            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertNotFrozen(ngp);
             gid = ar.reqParam("gid");
@@ -730,7 +729,7 @@ public class ProjectGoalController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to create a action item.");
             ar.assertNotFrozen(ngp);
@@ -776,7 +775,7 @@ public class ProjectGoalController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             String gid = ar.reqParam("gid");
             GoalRecord gr = ngp.getGoalOrFail(gid);
@@ -802,7 +801,7 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String did = "";
         try{
-            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertMember("Must be a member to update a decision.");
             ar.assertNotFrozen(ngp);
@@ -841,8 +840,8 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
-    
-    
+
+
     @RequestMapping(value = "/{siteId}/{pageId}/taskAreas.htm", method = RequestMethod.GET)
     public void taskArea(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
@@ -869,7 +868,7 @@ public class ProjectGoalController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/taskArea{id}.htm", method = RequestMethod.GET)
-    public void onePortHTML(@PathVariable String siteId, 
+    public void onePortHTML(@PathVariable String siteId,
             @PathVariable String pageId,
             @PathVariable String id,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -880,7 +879,7 @@ public class ProjectGoalController extends BaseController {
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/taskArea{id}.json")
-    public void onePortJSON(@PathVariable String siteId, 
+    public void onePortJSON(@PathVariable String siteId,
             @PathVariable String pageId,
             @PathVariable String id,
             HttpServletRequest request, HttpServletResponse response) {
@@ -923,14 +922,14 @@ public class ProjectGoalController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             //NOTE: you do NOT need to be logged in to get the calendar file
             //It is important to allow anyone to receive these links in an email
-            //and not be logged in, and still be able to get the calendar on 
+            //and not be logged in, and still be able to get the calendar on
             //their calendar.  So allow this information to ANYONE who has a link.
-            
+
             NGWorkspace ngw = registerRequiredProject(ar, siteId, pageId);
             GoalRecord goal = ngw.getGoalOrFail(actId);
-            
+
             MemFile mf = new MemFile();
-            
+
             goal.streamICSFile(ar, mf.getWriter(), ngw);
 
             ar.resp.setContentType("text/calendar");
@@ -941,10 +940,10 @@ public class ProjectGoalController extends BaseController {
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }
     }
-    
-    
+
+
     ////////////////////// Process linkage with BPM //////////////////
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/ProcessApps.htm", method = RequestMethod.GET)
     public void processApps(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
@@ -979,5 +978,5 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "RulesList");
     }
-    
+
 }

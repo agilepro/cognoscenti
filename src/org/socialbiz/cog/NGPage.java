@@ -28,6 +28,9 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.socialbiz.cog.dms.ConnectionSettings;
+import org.socialbiz.cog.dms.ConnectionType;
+import org.socialbiz.cog.dms.ResourceEntity;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.util.StringCounter;
@@ -64,6 +67,9 @@ public abstract class NGPage extends ContainerCommon {
     private NGBook prjSite;
     protected List<String> existingIds = null;
 
+    DOMFace noteParent;
+    DOMFace attachParent;
+    DOMFace historyParent;
 
     //Least Recently Used Cache .... keep copies of the last ten
     //page objects in memory for reuse
@@ -89,10 +95,14 @@ public abstract class NGPage extends ContainerCommon {
         pageInfo.setSiteKey(site.getKey());
 
         NGSection mAtt = getRequiredSection("Attachments");
-        SectionAttachments.assureSchemaMigration(mAtt, this);
+        SectionAttachments.assureSchemaMigration(mAtt, (NGWorkspace)this);
+
 
         getRequiredSection("Comments");
         getRequiredSection("Folders");
+        noteParent   = getRequiredSection("Comments");
+        attachParent = getRequiredSection("Attachments");
+        historyParent = getProcess().requireChild("history", DOMFace.class);
 
         //forces the Tasks section, and also the process initialization
         //guarantees the initialization of pageProcess member variable
@@ -880,7 +890,7 @@ public abstract class NGPage extends ContainerCommon {
     public JSONArray getJSONGoals() throws Exception {
         JSONArray val = new JSONArray();
         for (GoalRecord goal : getAllGoals()) {
-            val.put(goal.getJSON4Goal(this));
+            val.put(goal.getJSON4Goal((NGWorkspace)this));
         }
         return val;
     }
@@ -935,20 +945,20 @@ public abstract class NGPage extends ContainerCommon {
             if (doc.isDeleted()) {
                 continue;
             }
-            val.put(doc.getJSON4Doc(ar, this));
+            val.put(doc.getJSON4Doc(ar, (NGWorkspace)this));
         }
         return val;
     }
 
 
-    @Override
+
     public List<HistoryRecord> getAllHistory()
         throws Exception
     {
         return getProcess().getAllHistory();
     }
 
-    @Override
+
     public HistoryRecord createNewHistory()
         throws Exception
     {
@@ -971,7 +981,7 @@ public abstract class NGPage extends ContainerCommon {
         DOMUtils.setSchemAttribute(doc.getDocumentElement(), schema);
         Element processEle = doc.getDocumentElement();
         String processurl = ar.baseURL + "p/" + getKey() + "/process.wfxml";
-        process.fillInWfxmlProcess(doc, processEle, this, processurl);
+        process.fillInWfxmlProcess(doc, processEle, (NGWorkspace)this, processurl);
         DOMUtils.writeDom(doc, ar.w);
     }
 
@@ -1272,21 +1282,6 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-    /**
-    * Used by ContainerCommon to provide methods for this class
-    */
-    @Override
-    protected DOMFace getAttachmentParent() throws Exception {
-        return getRequiredSection("Attachments");
-    }
-
-    /**
-    * Used by ContainerCommon to provide methods for this class
-    */
-    @Override
-    protected DOMFace getNoteParent() throws Exception {
-        return getRequiredSection("Comments");
-    }
 
     /**
     * Used by ContainerCommon to provide methods for this class
@@ -1299,13 +1294,6 @@ public abstract class NGPage extends ContainerCommon {
         return pageInfo.requireChild("roleList", DOMFace.class);
     }
 
-    /**
-    * Used by ContainerCommon to provide methods for this class
-    */
-    @Override
-    protected DOMFace getHistoryParent() throws Exception {
-        return getProcess().requireChild("history", DOMFace.class);
-    }
 
     /**
     * Used by ContainerCommon to provide methods for this class
@@ -1793,6 +1781,297 @@ public abstract class NGPage extends ContainerCommon {
         process.updateScalarString("mission", newConfig);
         process.updateScalarString("vision", newConfig);
         process.updateScalarString("domain", newConfig);
+    }
+
+
+
+    public abstract List<AttachmentRecord> getAllAttachments() throws Exception;
+
+    /**
+     * This determines the subset of all the documents that a particular user
+     * can access, either because the document is public, because the user is
+     * a Member or Owner, or because they are in a role that has access.
+     */
+    public List<AttachmentRecord> getAccessibleAttachments(UserProfile up) throws Exception {
+        List<NGRole> rolesPlayed = findRolesOfPlayer(up);
+        List<AttachmentRecord> aList = new ArrayList<AttachmentRecord>();
+        for(AttachmentRecord attachment : getAllAttachments()) {
+            if (attachment.isDeleted()) {
+                continue;
+            }
+            if (attachment.isPublic()) {
+                aList.add(attachment);
+                continue;
+            }
+            if (up==null) {
+                continue;
+            }
+            if (primaryOrSecondaryPermission(up)) {
+                aList.add(attachment);
+                continue;
+            }
+            for (NGRole ngr : rolesPlayed) {
+                if (attachment.roleCanAccess(ngr.getName())) {
+                    aList.add(attachment);
+                    break;
+                }
+            }
+        }
+        return aList;
+    }
+
+
+    /**
+     * Can use either the short ID or the Universal ID
+     */
+    public AttachmentRecord findAttachmentByID(String id) throws Exception {
+        for (AttachmentRecord att : getAllAttachments()) {
+            if (id.equals(att.getId()) || id.equals(att.getUniversalId())) {
+                return att;
+            }
+        }
+        return null;
+    }
+
+    public AttachmentRecord findAttachmentByIDOrFail(String id) throws Exception {
+
+        AttachmentRecord ret =  findAttachmentByID( id );
+
+        if (ret==null)
+        {
+            throw new NGException("nugen.exception.unable.to.locate.att.with.id", new Object[]{id, getFullName()});
+        }
+        return ret;
+    }
+
+    public AttachmentRecord findAttachmentByName(String name) throws Exception {
+        for (AttachmentRecord att : getAllAttachments()) {
+            if (att.equivalentName( name )) {
+                return att;
+            }
+        }
+        return null;
+    }
+    public AttachmentRecord findAttachmentByUidOrNull(String universalId) throws Exception {
+        for (AttachmentRecord att : getAllAttachments()) {
+            if (universalId.equals(att.getUniversalId())) {
+                return att;
+            }
+        }
+        return null;
+    }
+    public AttachmentRecord findAttachmentByNameOrFail(String name) throws Exception {
+
+        AttachmentRecord ret =  findAttachmentByName( name );
+
+        if (ret==null)
+        {
+            throw new NGException("nugen.exception.unable.to.locate.att.with.name", new Object[]{name, getFullName()});
+        }
+        return ret;
+    }
+
+    public abstract AttachmentRecord createAttachment() throws Exception;
+    /* {
+        AttachmentRecord attach = attachParent.createChild("attachment", AttachmentRecord.class);
+        String newId = getUniqueOnPage();
+        attach.setId(newId);
+        attach.setContainer(this);
+
+        //this is the default, but it might be overridden in case of sync from another workspace
+        attach.setUniversalId( getContainerUniversalId() + "@" + newId );
+        return attach;
+    }*/
+
+    public void deleteAttachment(String id,AuthRequest ar) throws Exception {
+        AttachmentRecord att = findAttachmentByIDOrFail( id );
+        att.setDeleted( ar );
+    }
+
+
+    public void unDeleteAttachment(String id) throws Exception {
+        AttachmentRecord att = findAttachmentByIDOrFail( id );
+        att.clearDeleted();
+    }
+
+    public void eraseAttachmentRecord(String id) throws Exception {
+        AttachmentRecord att = findAttachmentByIDOrFail( id );
+        attachParent.removeChild(att);
+    }
+
+
+
+    /**
+     * This is effectively the "empty trashcan" operation.  Documents that
+     * have been marked as deleted will actually, finally, be deleted with
+     * this operation.
+     */
+    public void purgeDeletedAttachments() throws Exception {
+        List<AttachmentRecord> cleanList = new ArrayList<AttachmentRecord>();
+        for (AttachmentRecord ar : getAllAttachments()) {
+            if (!ar.isDeleted()) {
+                //don't purge or do anything to non-deleted attachments
+                continue;
+            }
+            ar.purgeAllVersions(this);
+            cleanList.add(ar);
+        }
+        for (AttachmentRecord ar : cleanList) {
+            eraseAttachmentRecord(ar.getId());
+        }
+    }
+
+
+    public File getAttachmentPathOrNull(String oneId) throws Exception {
+
+        AttachmentRecord attach = this.findAttachmentByID(oneId);
+        if (attach==null) {
+            //attachments might get removed in the mean time, just ignore them
+            //throw new Exception("getAttachmentPathFromContainer was called with an invalid ID?: "+oneId);
+            return null;
+        }
+        AttachmentVersion aVer = attach.getLatestVersion(this);
+        if (aVer==null) {
+            //throw new Exception("Apparently there are no file versions of ID: "+oneId);
+            return null;
+        }
+        return(aVer.getLocalFile());
+    }
+
+    /**
+    * Returns the ResourceEntity that represents the remote folder that files
+    * can be stored in.  Returns null if not set.
+    */
+    public ResourceEntity getDefRemoteFolder() throws Exception {
+        String userKey = getDefUserKey();
+        String connId = getDefFolderId();
+        String fullPath = getDefLocation();
+        if (userKey==null || userKey.length()==0 || connId==null || connId.length()==0 ||
+            fullPath==null || fullPath.length()==0 ) {
+            return null;
+        }
+        UserPage uPage = UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
+        ConnectionSettings defCSet = uPage.getConnectionSettingsOrNull(connId);
+        if (defCSet==null) {
+            //if ID is invalid, treat it like it does not exist
+            return null;
+        }
+        ConnectionType cType = defCSet.getConnectionOrFail();
+        return cType.getResource(fullPath);
+    }
+    /**
+    * Pass a null to clear the setting
+    */
+    public void setDefRemoteFolder(ResourceEntity loc) throws Exception {
+        if (loc==null) {
+            setDefUserKey(null);
+            setDefFolderId(null);
+            setDefLocation(null);
+            return;
+        }
+
+        ConnectionType cType = loc.getConnection();
+        setDefUserKey(cType.getOwnerKey());
+        setDefFolderId(loc.getFolderId());
+        setDefLocation(loc.getFullPath());
+    }
+
+
+    public String getDefLocation() throws Exception {
+        return attachParent.getAttribute("defaultRepository");
+    }
+
+    public void setDefLocation(String loc) throws Exception {
+        attachParent.setAttribute("defaultRepository", loc);
+    }
+
+    public String getDefFolderId() throws Exception {
+        return attachParent.getAttribute("defaultFolderId");
+    }
+
+    public void setDefFolderId(String folderId) throws Exception {
+        attachParent.setAttribute("defaultFolderId", folderId);
+    }
+
+    public String getDefUserKey() throws Exception {
+        return attachParent.getAttribute("defaultUserKey");
+    }
+
+    public void setDefUserKey(String userKey) throws Exception {
+        attachParent.setAttribute("defaultUserKey", userKey);
+    }
+
+    //////////////////// HISTORY ///////////////////////
+
+
+    public List<HistoryRecord>  getHistoryForResource(int contextType, String id) throws Exception {
+        List<HistoryRecord> allHist = historyParent.getChildren("event", HistoryRecord.class);
+        List<HistoryRecord> newHist = new ArrayList<HistoryRecord>();
+        for (HistoryRecord hr : allHist) {
+            if (contextType != hr.getContextType()) {
+                continue;
+            }
+            if (!id.equals(hr.getContext())) {
+                continue;
+            }
+            newHist.add(hr);
+        }
+        HistoryRecord.sortByTimeStamp(newHist);
+        return newHist;
+    }
+
+
+    public List<HistoryRecord> getHistoryRange(long startTime, long endTime)
+            throws Exception
+    {
+        List<HistoryRecord> allHist = historyParent.getChildren("event", HistoryRecord.class);
+        List<HistoryRecord> newHist = new ArrayList<HistoryRecord>();
+        for (HistoryRecord hr : allHist)
+        {
+            long eventTime = hr.getTimeStamp();
+            if (eventTime > startTime && eventTime <= endTime)
+            {
+                newHist.add(hr);
+            }
+        }
+        HistoryRecord.sortByTimeStamp(newHist);
+        return newHist;
+    }
+
+    /**
+    * Pass a context type (Topic, Action Item, Document, etc) and a old context id, and all the
+    * history for that resource will be copied to the current container for a new context id.
+    * The history records are left in the old container.
+    * The history records in the new page will have the new ID.
+    */
+    public void copyHistoryForResource(NGPage ngc, int contextType, String oldID, String newID) throws Exception
+    {
+        for (HistoryRecord oldHist : ngc.getAllHistory())
+        {
+            int histContextType = oldHist.getContextType();
+            if (histContextType!=contextType) {
+                continue;
+            }
+            String contextId = oldHist.getContext();
+            if (!oldID.equals(contextId)) {
+                continue;
+            }
+
+            HistoryRecord newHist = createNewHistory();
+            newHist.copyFrom(oldHist);
+            newHist.setContext(newID);
+        }
+    }
+
+
+
+
+    public HistoryRecord getLatestHistory() throws Exception {
+        List<HistoryRecord> allSortedHist = getAllHistory();
+        if (allSortedHist.size()==0) {
+            return null;
+        }
+        return allSortedHist.get(0);
     }
 
 

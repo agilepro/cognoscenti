@@ -25,8 +25,8 @@ import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.License;
 import org.socialbiz.cog.LicenseForUser;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.TopicRecord;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
@@ -39,7 +39,7 @@ public class ResourceDecoder {
     public String siteId;
     public NGBook site;
     public String projId;
-    public NGPage workspace;
+    public NGWorkspace workspace;
 
     public boolean isSwagger;
     public boolean isSite;
@@ -208,7 +208,7 @@ public class ResourceDecoder {
     public List<NGRole> getLicensedRoles() throws Exception {
         List<NGRole> licensedRoles = new ArrayList<NGRole>();
         String restrictRole = lic.getRole();
-        
+
         if (site==null) {
             throw new Exception("Program Logic Error: getLicensedRoles called before site is known");
         }

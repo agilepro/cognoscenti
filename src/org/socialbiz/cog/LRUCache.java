@@ -95,7 +95,7 @@ public class LRUCache
      * next access to a page will be from reading the file on the disk.
      */
     public synchronized void unstore(String id) {
-        NGPage o = hash.get(id);
+        NGWorkspace o = hash.get(id);
         if (o!=null) {
             listOfPages.remove(o);
             hash.remove(id);

@@ -88,10 +88,8 @@ public class NGBook extends ContainerCommon {
         }
         System.out.println("Cached site (" + key + ") from : " + theFile);
 
-        requireChild("notes", DOMFace.class);
-        requireChild("attachments", DOMFace.class);
+
         requireChild("process", DOMFace.class);
-        requireChild("history", DOMFace.class);
 
         executiveRole = getRequiredRole("Executives");
         ownerRole = getRequiredRole("Owners");
@@ -452,11 +450,7 @@ public class NGBook extends ContainerCommon {
      * duplication any id found here.
      */
     public void findIDs(List<String> v) throws Exception {
-        // shouldn't be any attachments. But count them if there are any
-        List<AttachmentRecord> attachments = getAllAttachments();
-        for (AttachmentRecord att : attachments) {
-            v.add(att.getId());
-        }
+        // no objects with IDs
     }
 
     @Override
@@ -522,24 +516,10 @@ public class NGBook extends ContainerCommon {
         return ownerRole;
     }
 
-    @Override
-    protected DOMFace getAttachmentParent() throws Exception {
-        return requireChild("attachments", DOMFace.class);
-    }
-
-    @Override
-    protected DOMFace getNoteParent() throws Exception {
-        return requireChild("notes", DOMFace.class);
-    }
 
     @Override
     protected DOMFace getRoleParent() throws Exception {
         return requireChild("roleList", DOMFace.class);
-    }
-
-    @Override
-    protected DOMFace getHistoryParent() throws Exception {
-        return requireChild("history", DOMFace.class);
     }
 
     @Override
@@ -610,22 +590,6 @@ public class NGBook extends ContainerCommon {
     }
 
     @Override
-    public List<HistoryRecord> getAllHistory() throws Exception {
-        DOMFace historyContainer = requireChild("history", DOMFace.class);
-        List<HistoryRecord> vect = historyContainer.getChildren("event", HistoryRecord.class);
-        HistoryRecord.sortByTimeStamp(vect);
-        return vect;
-    }
-
-    @Override
-    public HistoryRecord createNewHistory() throws Exception {
-        DOMFace historyContainer = requireChild("history", DOMFace.class);
-        HistoryRecord newHist = historyContainer.createChild("event", HistoryRecord.class);
-        newHist.setId(getUniqueOnPage());
-        return newHist;
-    }
-
-    @Override
     public void writeDocumentLink(AuthRequest ar, String documentId, int len) throws Exception {
         throw new Exception("writeDocumentLink should no longer be used on an Site");
     }
@@ -635,57 +599,6 @@ public class NGBook extends ContainerCommon {
         throw new Exception("writeReminderLink should no longer be used on an Site");
     }
 
-    /**
-     * overridden in Site to make sure these are never needed
-     */
-    @Override
-    public List<AttachmentRecord> getAllAttachments() throws Exception {
-        throw new Exception("getAllAttachments should never be needed on Site");
-    }
-
-    @Override
-    public AttachmentRecord findAttachmentByID(String id) throws Exception {
-        throw new Exception("findAttachmentByID should never be needed on Site");
-    }
-
-    @Override
-    public AttachmentRecord findAttachmentByIDOrFail(String id) throws Exception {
-        throw new Exception("findAttachmentByIDOrFail should never be needed on Site");
-    }
-
-    @Override
-    public AttachmentRecord findAttachmentByName(String name) throws Exception {
-        throw new Exception("findAttachmentByName should never be needed on Site");
-    }
-
-    @Override
-    public AttachmentRecord findAttachmentByNameOrFail(String name) throws Exception {
-        throw new Exception("findAttachmentByNameOrFail should never be needed on Site");
-    }
-
-    @Override
-    public AttachmentRecord createAttachment() throws Exception {
-        throw new Exception("createAttachment should never be needed on Site");
-    }
-
-    @Override
-    public void deleteAttachment(String id, AuthRequest ar) throws Exception {
-        throw new Exception("deleteAttachment should never be needed on Site");
-    }
-
-    @Override
-    public void unDeleteAttachment(String id) throws Exception {
-        throw new Exception("unDeleteAttachment should never be needed on Site");
-    }
-
-    @Override
-    public void eraseAttachmentRecord(String id) throws Exception {
-        throw new Exception("eraseAttachmentRecord should never be needed on Site");
-    }
-    @Override
-    public void purgeDeletedAttachments() throws Exception {
-        throw new Exception("purgeDeletedAttachments should never be needed on Site");
-    }
 
     @Override
     public void writeTaskLink(AuthRequest ar, String taskId, int len) throws Exception {
@@ -736,7 +649,7 @@ public class NGBook extends ContainerCommon {
      *
      * 1) if a preferred location has been set, then a new folder in that will
      * be created, and the project NGProj placed within that. 2) if no preferred
-     * location, then a regular NGPage will be created in datapath folder.
+     * location, then a regular NGWorkspace will be created in datapath folder.
      *
      * Note: p is NOT the name of the file, but the sanitized key. The returned
      * name should have the .sp suffix on it.
@@ -877,7 +790,7 @@ public class NGBook extends ContainerCommon {
     }
 
     /**
-     * NGPage object is created in memory, and can be manipulated in memory, but
+     * NGBook object is created in memory, and can be manipulated in memory, but
      * be sure to call "savePage" before finished otherwise nothing is created
      * on disk.
      */
@@ -902,7 +815,7 @@ public class NGBook extends ContainerCommon {
         return createProjectAtPath(up, newFilePath, sanitizedKey, nowTime, cog);
     }
 
-    public NGPage createProjectAtPath(AuthRequest ar, File newFilePath, String newKey)
+    public NGWorkspace createProjectAtPath(AuthRequest ar, File newFilePath, String newKey)
             throws Exception {
         assertPermissionToCreateProject(ar);
         UserProfile up = ar.getUserProfile();
@@ -1033,7 +946,7 @@ public class NGBook extends ContainerCommon {
         //projects are being scanned for some other purpose....
         WorkspaceStats siteStats = new WorkspaceStats();
         for (NGPageIndex ngpi : cog.getAllProjectsInSite(this.getKey())) {
-            NGPage ngp = ngpi.getWorkspace();
+            NGWorkspace ngp = ngpi.getWorkspace();
             System.out.println("SCANNING STATS: looking at workspace: "+ngp.getFullName());
             siteStats.gatherFromWorkspace(ngp);
             siteStats.numWorkspaces++;
@@ -1221,7 +1134,7 @@ public class NGBook extends ContainerCommon {
         }
         return meetingLayoutFile;
     }
-    
+
     public List<SiteMailGenerator> getAllSiteMail() throws Exception {
         List<SiteMailGenerator> requestList = new ArrayList<SiteMailGenerator>();
         DOMFace rolelist = this.requireChild("SiteMail", DOMFace.class);
@@ -1273,6 +1186,6 @@ public class NGBook extends ContainerCommon {
             smg.gatherUnsentScheduledNotification(this, resList, timeout);
         }
     }
-    
-    
+
+
 }

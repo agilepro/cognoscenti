@@ -105,9 +105,9 @@
             </fileset>
         </path>
 
-        <javac debug="on" includeAntRuntime="false" nowarn="true"
+        <javac debug="on" includeAntRuntime="false" encoding="utf-8"
                srcdir="${source.dir.src}" destdir="${target.dir}/jartemp"
-               target="1.6" source="1.6"
+               target="1.7" source="1.7"
                includes="org/socialbiz/cog/util/*.java,org/socialbiz/cog/*.java,org/socialbiz/cog/exception/*.java,org/socialbiz/cog/capture/*.java">
             <classpath refid="build.classpathJar" />
         </javac>
@@ -123,9 +123,9 @@
                 dir="${target.dir}/weaver/WEB-INF/lib"
                 includes="**/*.class" />
 
-        <javac debug="on" includeAntRuntime="false" nowarn="true"
+        <javac debug="on" includeAntRuntime="false" encoding="utf-8"
                srcdir="${source.dir.src}" destdir="${target.dir}/weaver/WEB-INF/classes"
-               target="1.6" source="1.6"
+               target="1.7" source="1.7"
                includes="org/socialbiz/cog/rest/*.java,org/socialbiz/cog/spring/*.java,org/socialbiz/cog/test/*.java,org/socialbiz/cog/api/*.java,org/socialbiz/cog/mail/*.java,org/socialbiz/cog/capture/*.java">
             <classpath refid="build.classpath" />
         </javac>
@@ -150,7 +150,7 @@
 
         <javadoc
                sourcepath="${source.dir.src}" destdir="${target.dir}/cogDoc"
-               source="1.6"
+               source="1.7"
                sourcefiles="org/socialbiz/cog/rest/*.java,org/socialbiz/cog/spring/*.java,org/socialbiz/cog/test/*.java,org/socialbiz/cog/api/*.java">
             <classpath refid="build.classpath" />
         </javadoc>

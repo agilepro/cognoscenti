@@ -3,7 +3,6 @@
 %><%@page import="org.socialbiz.cog.License"
 %><%@page import="org.socialbiz.cog.LicenseForProcess"
 %><%@page import="org.socialbiz.cog.NGBook"
-%><%@page import="org.socialbiz.cog.NGPage"
 %><%@page import="org.socialbiz.cog.NGPageIndex"
 %><%@page import="org.socialbiz.cog.ReminderMgr"
 %><%@page import="org.socialbiz.cog.ReminderRecord"
@@ -16,7 +15,7 @@
 /*
 Required parameter:
 
-    1. p   : This is the id of a Workspace and used to retrieve NGPage.
+    1. p   : This is the id of a Workspace and used to retrieve NGWorkspace.
     2. rid : This is reminder id used here to get detail of reminder i.e. ReminderRecord.
 
 */

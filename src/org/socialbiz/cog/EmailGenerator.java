@@ -26,7 +26,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.socialbiz.cog.mail.ChunkTemplate;
@@ -328,7 +327,7 @@ public class EmailGenerator extends DOMFace {
     }
 
 
-    private void attachDocFromId(ArrayList<File> attachments, String attId, NGPage ngp) throws Exception {
+    private void attachDocFromId(ArrayList<File> attachments, String attId, NGWorkspace ngp) throws Exception {
         File path = ngp.getAttachmentPathOrNull(attId);
         if (path==null) {
             System.out.println("constructEmailRecordOneUser: attachment id "+attId

@@ -4,7 +4,7 @@
 %><%/*
 Required parameter:
 
-    1. pageId   : This is the id of a Workspace and used to retrieve NGPage.
+    1. pageId   : This is the id of a Workspace and used to retrieve NGWorkspace.
     2. rid      : This is reminder id used here to get detail of reminder i.e. ReminderRecord.
 
 Optional Parameter:

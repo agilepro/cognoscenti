@@ -46,7 +46,7 @@ Required parameters:
 
     String accessUrl = remoteGoal.getProjectAccessURL();
     boolean isLocal = accessUrl.startsWith(ar.baseURL);
-    NGPage localProject = null;
+    NGWorkspace localProject = null;
     if (isLocal) {
         int siteBegin = accessUrl.indexOf("/", ar.baseURL.length())+1;
         int projBegin = accessUrl.indexOf("/", siteBegin)+1;

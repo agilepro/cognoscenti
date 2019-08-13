@@ -57,7 +57,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
     * with older versions of the schema.
     *
     */
-    public static void assureSchemaMigration(NGSection sec, NGPage ngp) throws Exception
+    public static void assureSchemaMigration(NGSection sec, NGWorkspace ngp) throws Exception
     {
         //attachments are directly in the section element.  Earlier there was an 'attachments'
         //element, and attachments were in that.  Clean that up.
@@ -205,17 +205,6 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             v.add(att.getAttribute("id"));
         }
     }
-
-    /**
-    * This is a method to find a file, and output the file as a
-    * stream of bytes to the request output stream.
-    public static void serveUpFile(AuthRequest ar, NGPage ngp, String fileName)
-        throws Exception
-    {
-        serveUpFileNewUI(ar, ngp, fileName, -1);
-    }
-    */
-
 
     /**
     * This is a method to find a file, and output the file as a

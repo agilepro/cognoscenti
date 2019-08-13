@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGWorkspace;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,7 +41,7 @@ public class AdminController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Must be an admin to change workspace info.");
             JSONObject newConfig = getPostedObject(ar);
@@ -61,7 +60,7 @@ public class AdminController extends BaseController {
         }
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/updateWorkspaceName.json", method = RequestMethod.POST)
     public void updateWorkspaceName(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -71,7 +70,7 @@ public class AdminController extends BaseController {
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Must be an admin to change workspace info.");
             JSONObject newData = getPostedObject(ar);
-            
+
             String newName = newData.getString("newName");
             ngp.setNewName(newName);
 
@@ -91,11 +90,11 @@ public class AdminController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            NGPage ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
             ar.setPageAccessLevels(ngp);
             ar.assertAdmin("Must be an admin to change workspace info.");
             JSONObject newData = getPostedObject(ar);
-            
+
             String oldName = newData.getString("oldName");
             ngp.deleteOldName(oldName);
 
@@ -110,7 +109,7 @@ public class AdminController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
+
 
     @RequestMapping(value = "/{siteId}/$/updateSiteInfo.json", method = RequestMethod.POST)
     public void updateSiteInfo(@PathVariable String siteId,

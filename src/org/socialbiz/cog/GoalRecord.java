@@ -63,7 +63,7 @@ public class GoalRecord extends BaseRecord {
         NGContainer ngp = ar.ngp;
         if (ngp == null) {
             throw new ProgramLogicError(
-                    "the NGPage must be loaded into the AuthRequest for getWfxmlLink to work");
+                    "the NGWorkspace must be loaded into the AuthRequest for getWfxmlLink to work");
         }
         return new LicensedURL(ar.baseURL + "p/" + ngp.getKey()
                 + "/s/Tasks/id/" + getId() + "/data.xml", ngp.getKey()
@@ -168,7 +168,7 @@ public class GoalRecord extends BaseRecord {
         NGWorkspace ngw = getProject();
         if (ngw == null) {
             throw new ProgramLogicError(
-                    "handleStateChangeEvent needs a NGPage parameter");
+                    "handleStateChangeEvent needs a NGWorkspace parameter");
         }
 
         List<GoalRecord> goalList = ngw.getAllGoals();
@@ -468,7 +468,7 @@ public class GoalRecord extends BaseRecord {
         }
     }
 
-    public List<HistoryRecord> getTaskHistory(NGContainer ngc) throws Exception {
+    public List<HistoryRecord> getTaskHistory(NGWorkspace ngc) throws Exception {
         List<HistoryRecord> list = new ArrayList<HistoryRecord>();
         String myid = getId();
         for (HistoryRecord history : ngc.getAllHistory()) {
@@ -481,7 +481,7 @@ public class GoalRecord extends BaseRecord {
         return list;
     }
 
-    public List<HistoryRecord> getTaskHistoryRange(NGContainer ngc,
+    public List<HistoryRecord> getTaskHistoryRange(NGWorkspace ngc,
             long startTime, long endTime) throws Exception {
         List<HistoryRecord> list = new ArrayList<HistoryRecord>();
         String myid = getId();
@@ -861,7 +861,7 @@ public class GoalRecord extends BaseRecord {
      * get the labels on a document -- only labels valid in the project,
      * and no duplicates
      */
-    public List<NGLabel> getLabels(NGPage ngp) throws Exception {
+    public List<NGLabel> getLabels(NGWorkspace ngp) throws Exception {
         List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
             NGLabel aLabel = ngp.getLabelRecordOrNull(name);
@@ -899,10 +899,10 @@ public class GoalRecord extends BaseRecord {
     public List<String> getDocLinks() {
         return getVector("docLinks");
     }
-    
 
 
-    public JSONObject getJSON4Goal(NGPage ngp) throws Exception {
+
+    public JSONObject getJSON4Goal(NGWorkspace ngp) throws Exception {
         JSONObject thisGoal = new JSONObject();
         thisGoal.put("universalid", getUniversalId());
         thisGoal.put("id", getId());
@@ -949,14 +949,14 @@ public class GoalRecord extends BaseRecord {
         }
         thisGoal.put("labelMap",  labelMap);
         thisGoal.put("docLinks",  constructJSONArray(getDocLinks()));
-        
+
         extractScalarString(thisGoal, "checklist");
         extractAttributeLong(thisGoal, "waitUntil");
         extractVectorString(thisGoal, "waitFor");
-        
+
         return thisGoal;
     }
-    public JSONObject getJSON4Goal(NGPage ngp, String baseURL, License license) throws Exception {
+    public JSONObject getJSON4Goal(NGWorkspace ngp, String baseURL, License license) throws Exception {
         if (license==null) {
             throw new Exception("getJSON4Goal needs a license object");
         }
@@ -980,7 +980,7 @@ public class GoalRecord extends BaseRecord {
     //TODO: looks like this can be used either to update from an upstream representation
     //or a JSON from the UI, but the behavior should probably be a little different.
     //probably need two separate functions for that.
-    public void updateGoalFromJSON(JSONObject goalObj, NGPage ngp, AuthRequest ar) throws Exception {
+    public void updateGoalFromJSON(JSONObject goalObj, NGWorkspace ngp, AuthRequest ar) throws Exception {
         String universalid = goalObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen
@@ -1222,8 +1222,8 @@ public class GoalRecord extends BaseRecord {
             //if it is not finished and past due date, then say that
             overdueStr = " Overdue!";
         }
-        
-        ArrayList<File> attachments = new ArrayList<File>();        
+
+        ArrayList<File> attachments = new ArrayList<File>();
         if (this.getDueDate()>0) {
             File projectFolder = ngp.getContainingFolder();
             File cogFolder = new File(projectFolder, ".cog");
@@ -1243,7 +1243,7 @@ public class GoalRecord extends BaseRecord {
         String emailSubject = "Action Item: "+getSynopsis()+" ("+stateNameStr+") "+overdueStr;
         mailFile.createEmailRecord(requesterProfile.getAddressListEntry(), ooa.getEmail(), emailSubject, body.toString());
     }
-    
+
     public void streamICSFile(AuthRequest ar, Writer w, NGWorkspace ngw) throws Exception {
         UserProfile creatorUser = UserManager.getStaticUserManager().lookupUserByAnyId(getCreator());
         w.write("BEGIN:VCALENDAR\n");
@@ -1283,9 +1283,9 @@ public class GoalRecord extends BaseRecord {
             }
         }
         return sb.toString();
-    }    
+    }
 
-    public void gatherUnsentScheduledNotification(NGWorkspace ngp, 
+    public void gatherUnsentScheduledNotification(NGWorkspace ngp,
             ArrayList<ScheduledNotification> resList, long timeout) throws Exception {
         //don't send email if there is no assignee.  Wait till there is an assignee
         if (needSendEmail()) {

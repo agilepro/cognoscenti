@@ -92,7 +92,7 @@ public class ProcessRecord extends BaseRecord
         NGContainer ngp = ar.ngp;
         if (ngp==null)
         {
-            throw new ProgramLogicError("the NGPage must be loaded into the AuthRequest for getWfxmlLink to work");
+            throw new ProgramLogicError("the NGWorkspace must be loaded into the AuthRequest for getWfxmlLink to work");
         }
         return new LicensedURL(
             ar.baseURL + "p/" + ngp.getKey() + "/process.xml",
@@ -181,7 +181,7 @@ public class ProcessRecord extends BaseRecord
     }
 
 
-    public void fillInWfxmlProcess(Document doc, Element processEle, NGPage ngp, String processurl)
+    public void fillInWfxmlProcess(Document doc, Element processEle, NGWorkspace ngp, String processurl)
         throws Exception
     {
         if (doc == null || processEle == null) {

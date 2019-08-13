@@ -34,7 +34,6 @@ import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.LicensedURL;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.ProcessRecord;
@@ -87,14 +86,14 @@ public class CreateProjectController extends BaseController {
             if (template!=null && template.length()>0) {
                 templateWorkspace = ar.getCogInstance().getWSByCombinedKeyOrFail(template).getWorkspace();
             }
-            
+
             //now actually create it
             NGWorkspace newWorkspace = createWorkspace(uProf, site, workspaceName, upstream, nowTime, ar.getCogInstance());
-            
+
             //set the purpose / description
             String purpose     = newConfig.optString("purpose", "");
             newWorkspace.setPurpose(purpose);
-            
+
             //do the members if any specified
             JSONArray members  = newConfig.optJSONArray("members");
             if (members!=null) {
@@ -120,8 +119,8 @@ public class CreateProjectController extends BaseController {
         }
     }
 
-    
-    
+
+
 
     @RequestMapping(value = "/{siteId}/$/createClone.form", method = RequestMethod.POST)
     public void createClone(@PathVariable String siteId, HttpServletRequest request,
@@ -169,7 +168,7 @@ public class CreateProjectController extends BaseController {
             String parentTaskId=goUrl.substring(goUrl.lastIndexOf("=")+1,goUrl.length());
             String parentProcessUrl=ar.reqParam("parentProcessUrl");
 
-            NGPage subProcess= createTemplateProject(ar,siteId);
+            NGWorkspace subProcess= createTemplateProject(ar,siteId);
             linkSubProcessToTask(ar,subProcess,parentTaskId,parentProcessUrl);
 
             response.sendRedirect(goUrl);
@@ -265,7 +264,7 @@ public class CreateProjectController extends BaseController {
                 NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
                 newWorkspace = createWorkspace(owner, site, projectName, upstream, ar.nowTime, ar.getCogInstance());
                 if (templateKey!=null && templateKey.length()>0) {
-                    NGPage template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(templateKey).getWorkspace();
+                    NGWorkspace template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(templateKey).getWorkspace();
                     newWorkspace.injectTemplate(ar, template_ngp);
                 }
                 if (upstream!=null && upstream.length()>0) {
@@ -284,12 +283,12 @@ public class CreateProjectController extends BaseController {
 
 
     /**
-     * Takes a nice display name and turns it into a 
+     * Takes a nice display name and turns it into a
      * nice URL value.
-     * 
+     *
      * The input:  "My favorite, usual Hangout!"
      * produces:   "my-favorite-usual-hangout"
-     * 
+     *
      * All the letters are lower cased.
      * Only A-Z is supported with numerals
      * any gaps of other characters of any kind replaced with hyphen
@@ -331,7 +330,7 @@ public class CreateProjectController extends BaseController {
 
 
     /**
-     * Creates a workspace, but does not save it.   
+     * Creates a workspace, but does not save it.
      * Caller must save the workspace ... otherwise bad things could happen.
      */
     private static NGWorkspace createWorkspace(UserProfile uProf, NGBook site, String workspaceName,
@@ -377,11 +376,11 @@ public class CreateProjectController extends BaseController {
             String projectName = ar.reqParam("projectname").trim();
             String upstream    = ar.defParam("upstream", null);
             NGWorkspace newWorkspace = createWorkspace(uProf, site, projectName, upstream, nowTime, ar.getCogInstance());
-            ar.setPageAccessLevels(newWorkspace);            
-            
+            ar.setPageAccessLevels(newWorkspace);
+
             String templateName = ar.defParam("templateName", null);
             if (templateName!=null && templateName.length()>0) {
-                NGPage template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(templateName).getWorkspace();
+                NGWorkspace template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(templateName).getWorkspace();
                 newWorkspace.injectTemplate(ar, template_ngp);
             }
             newWorkspace.saveContent(ar, "workspace created from template: "+templateName);
@@ -392,7 +391,7 @@ public class CreateProjectController extends BaseController {
         }
     }
 
-    private static void linkSubProcessToTask(AuthRequest ar, NGPage subProject, String goalId,
+    private static void linkSubProcessToTask(AuthRequest ar, NGWorkspace subProject, String goalId,
             String parentProcessUrl) throws Exception {
 
         int beginOfPageKey = parentProcessUrl.indexOf("/p/") + 3;
@@ -416,7 +415,7 @@ public class CreateProjectController extends BaseController {
 
             // this is the subprocess address to link to
             String subProcessURL = thisUrl.getCombinedRepresentation();
-            NGPage parentProject = ar.getCogInstance().getWSByCombinedKeyOrFail(projectKey).getWorkspace();
+            NGWorkspace parentProject = ar.getCogInstance().getWSByCombinedKeyOrFail(projectKey).getWorkspace();
 
             GoalRecord goal = parentProject.getGoalOrFail(goalId);
             goal.setSub(subProcessURL);
@@ -424,7 +423,7 @@ public class CreateProjectController extends BaseController {
             parentProject.saveFile(ar, "Linked with Subprocess");
         }
     }
-    
+
     @RequestMapping(value = "/NewSiteApplication.htm", method = RequestMethod.GET)
     public void NewSiteApplication(HttpServletRequest request, HttpServletResponse response)
            throws Exception {
@@ -446,5 +445,5 @@ public class CreateProjectController extends BaseController {
        }catch(Exception ex){
            throw new Exception("Unable to display the requested info", ex);
        }
-   }    
+   }
 }

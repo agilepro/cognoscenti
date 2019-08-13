@@ -54,7 +54,6 @@ public class UserPage extends ContainerCommon
     private DOMFace profileRefs = null;
     private List<ProfileRef> profileList = null;
     private DOMFace agentRules = null;
-    private DOMFace siteMailList = null;
     private List<AgentRule> agentList = null;
 
 
@@ -141,31 +140,13 @@ public class UserPage extends ContainerCommon
     }
 
 
-
-
-
-    protected DOMFace getAttachmentParent() throws Exception {
-        return requireChild("attachments", DOMFace.class);
-    }
-
-    protected DOMFace getNoteParent() throws Exception {
-        return requireChild("notes", DOMFace.class);
-    }
-
     protected DOMFace getRoleParent() throws Exception {
         return requireChild("roleList", DOMFace.class);
-    }
-
-    protected DOMFace getHistoryParent() throws Exception {
-        return requireChild("history", DOMFace.class);
     }
 
     protected DOMFace getInfoParent() throws Exception {
         return requireChild("pageInfo", DOMFace.class);
     }
-
-
-
 
 
     public NGRole getPrimaryRole() throws Exception {
@@ -680,10 +661,10 @@ public class UserPage extends ContainerCommon
         AgentRule found = findAgentRule(id);
         agentRules.removeChild(found);
     }
-    
-    
-    
-    
+
+
+
+
     public List<SiteMailGenerator> getSiteMail() throws Exception {
         DOMFace siteMailContainer = requireChild("SiteMailList", DOMFace.class);
         List<SiteMailGenerator> siteMailList = siteMailContainer.getChildren("SiteMail", SiteMailGenerator.class);
@@ -707,25 +688,7 @@ public class UserPage extends ContainerCommon
         DOMFace siteMailContainer = requireChild("SiteMailList", DOMFace.class);
         SiteMailGenerator found = findSiteMail(id);
         siteMailContainer.removeChild(found);
-    }    
-    
-    
-    
-
-    public void purgeDeletedAttachments() throws Exception {
-        throw new JSONException("purgeDeletedAttachments should never be needed on User");
     }
-    
-    @Override
-    public List<AttachmentRecord> getAllAttachments() throws Exception {
-        throw new JSONException("getAllAttachments should never be needed on User Page");
-    }
-    @Override
-    public AttachmentRecord createAttachment() throws Exception {
-        throw new JSONException("createAttachment should never be needed on User Page");
-    }
-
-
 
 
     // operation get task list.

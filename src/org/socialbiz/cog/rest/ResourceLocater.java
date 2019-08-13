@@ -34,8 +34,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.GoalRecord;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SectionTask;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -666,7 +666,7 @@ public class ResourceLocater
         }
 
         NGResource newRs = null;
-        NGPage ngp = ngpi.getWorkspace();
+        NGWorkspace ngp = ngpi.getWorkspace();
         ar.setPageAccessLevels(ngp);
 
         String relayid = token2.substring(5);

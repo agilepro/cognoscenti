@@ -353,7 +353,7 @@ public class MailInst extends JSONWrapper {
     }
 
     /**
-     * Note that this method needs to work without accessing the NGPage object
+     * Note that this method needs to work without accessing the NGWorkspace object
      * directly.  We must use only the EmailRecord object alone, by using
      * the attachment contents inside the object.
      */

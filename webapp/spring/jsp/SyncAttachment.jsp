@@ -223,7 +223,7 @@ if (ps!=null) {
            <table id="pagelist">
                <tbody>
                <%
-               countRows = attachmentDisplay(ar, (NGPage) ngp);
+               countRows = attachmentDisplay(ar, (NGWorkspace) ngp);
                %>
                </tbody>
            </table>
@@ -241,7 +241,7 @@ if (ps!=null) {
 
 <%!
 
-public int attachmentDisplay(AuthRequest ar, NGPage ngp) throws Exception
+public int attachmentDisplay(AuthRequest ar, NGWorkspace ngp) throws Exception
 {
     int countRows = 0;
     ngp.scanForNewFiles();
@@ -260,7 +260,7 @@ public int attachmentDisplay(AuthRequest ar, NGPage ngp) throws Exception
 
         String id = attachment.getId();
         String displayName = attachment.getNiceNameTruncated(48);
-        NGPage page = ngp;
+        NGWorkspace page = ngp;
         AttachmentRecord attch = page.findAttachmentByID(id);
 
         ar.write("\n<tr>");

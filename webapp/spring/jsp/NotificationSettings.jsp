@@ -28,7 +28,7 @@
     List<NGPageIndex> projectsUserIsPartOf = ar.getCogInstance().getProjectsUserIsPartOf(uProf);
     NGPageIndex.sortInverseChronological(projectsUserIsPartOf);
     for(NGPageIndex ngpi : projectsUserIsPartOf){
-        NGPage ngp = ngpi.getWorkspace();
+        NGWorkspace ngp = ngpi.getWorkspace();
         NGBook ngb = ngp.getSite();
         for (NGRole ngr : ngp.getAllRoles()) {
             if (ngr.isExpandedPlayer(uProf,ngp)) {

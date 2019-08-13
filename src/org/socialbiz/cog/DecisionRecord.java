@@ -87,7 +87,7 @@ public class DecisionRecord extends DOMFace {
         setAttributeLong("sourceCmt", newVal);
     }
 
-    public String getSourceUrl(AuthRequest ar, NGPage ngp) throws Exception {
+    public String getSourceUrl(AuthRequest ar, NGWorkspace ngp) throws Exception {
         return HistoryRecord.lookUpResourceURL(ar, ngp, getSourceType(), getSourceId())
                 + "#cmt" + getSourceCmt();
     }
@@ -114,7 +114,7 @@ public class DecisionRecord extends DOMFace {
      * get the labels on a document -- only labels valid in the project,
      * and no duplicates
      */
-    public List<NGLabel> getLabels(NGPage ngp) throws Exception {
+    public List<NGLabel> getLabels(NGWorkspace ngp) throws Exception {
         List<NGLabel> res = new ArrayList<NGLabel>();
         for (String name : getVector("labels")) {
             NGLabel aLabel = ngp.getLabelRecordOrNull(name);
@@ -142,7 +142,7 @@ public class DecisionRecord extends DOMFace {
     }
 
 
-    public JSONObject getJSON4Decision(NGPage ngp, AuthRequest ar) throws Exception {
+    public JSONObject getJSON4Decision(NGWorkspace ngp, AuthRequest ar) throws Exception {
         JSONObject thisDecision = new JSONObject();
         thisDecision.put("universalid", getUniversalId());
         thisDecision.put("num", getNumber());
@@ -161,7 +161,7 @@ public class DecisionRecord extends DOMFace {
         return thisDecision;
     }
 
-    public void updateDecisionFromJSON(JSONObject decisionObj, NGPage ngp, AuthRequest ar) throws Exception {
+    public void updateDecisionFromJSON(JSONObject decisionObj, NGWorkspace ngp, AuthRequest ar) throws Exception {
         String universalid = decisionObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {
             //just checking, this should never happen

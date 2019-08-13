@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
-import org.socialbiz.cog.HistoryRecord;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.UserPage;
 
@@ -69,27 +68,22 @@ public class NGWebUtils {
 
     public static void updateUserContactAndSaveUserPage(AuthRequest ar,
             String op, String emailIds) throws Exception {
-        int eventType = 0;
         UserPage up = ar.getUserPage();
         if (emailIds.length() > 0) {
             if (op.equals("Remove")) {
                 NGRole role = up.getContactsRole();
                 AddressListEntry ale = AddressListEntry
                         .newEntryFromStorage(emailIds);
-                eventType = HistoryRecord.EVENT_PLAYER_REMOVED;
                 role.removePlayer(ale);
                 up.saveFile(ar, "removed user " + emailIds + " from role "
                         + role.getName());
             } else if (op.equals("Add")) {
-                eventType = HistoryRecord.EVENT_PLAYER_ADDED;
 
                 List<AddressListEntry> contactList = AddressListEntry
                         .parseEmailList(emailIds);
                 NGWebUtils.addMembersInContacts(ar, contactList);
             }
         }
-        HistoryRecord.createHistoryRecord(up, "Updating contacts",
-                HistoryRecord.CONTEXT_TYPE_ROLE, 0, eventType, ar, "");
     }
 
 }

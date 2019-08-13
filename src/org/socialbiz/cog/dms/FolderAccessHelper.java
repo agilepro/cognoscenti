@@ -34,7 +34,7 @@ import org.socialbiz.cog.AttachmentVersion;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.MimeTypes;
-import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -252,24 +252,9 @@ public class FolderAccessHelper {
         child.createFolder();
     }
 
-     /*
-    private void createFolders(ResourceEntity folderToCreate)
-            throws Exception{
-
-        ResourceEntity parent = folderToCreate.getParent();
-        parent.fillInDetails(false);
-
-        //recursively fill in the details
-        if (!parent.exists()) {
-            createFolders(parent);
-        }
-
-        folderToCreate.createFolder();
-    }
-    */
 
     public void attachDocument(ResourceEntity remoteFile,
-            NGPage ngp,        String description,   String dName,
+            NGWorkspace ngp,        String description,   String dName,
             String visibility, String readonly) throws Exception{
 
         if (!remoteFile.isFilled()) {
@@ -300,7 +285,7 @@ public class FolderAccessHelper {
         is.close();
     }
 
-    public void uploadAttachment(NGPage ngp, String laid)throws Exception{
+    public void uploadAttachment(NGWorkspace ngp, String laid)throws Exception{
         AttachmentRecord att = ngp.findAttachmentByID(laid);
         if (att==null)
         {
@@ -328,7 +313,7 @@ public class FolderAccessHelper {
 
     }
 
-    public void refreshAttachmentFromRemote(NGPage ngp, String laid)throws Exception
+    public void refreshAttachmentFromRemote(NGWorkspace ngp, String laid)throws Exception
     {
         AttachmentRecord att = ngp.findAttachmentByID(laid);
         if (att==null)
@@ -521,7 +506,7 @@ public class FolderAccessHelper {
     /**
     * @deprecated, use copyAttachmentToRemote instead
     */
-    public boolean createCopyInRepository(String userkey, NGPage ngp, String aid,
+    public boolean createCopyInRepository(String userkey, NGWorkspace ngp, String aid,
             String path, String folderId, boolean isOverwrite) throws Exception {
 
         UserPage up = ar.getCogInstance().getUserManager().findOrCreateUserPage(userkey);
@@ -531,7 +516,7 @@ public class FolderAccessHelper {
     }
 
 
-    public boolean copyAttachmentToRemote(NGPage ngp, String aid, ResourceEntity targetFile, boolean isOverwrite) throws Exception {
+    public boolean copyAttachmentToRemote(NGWorkspace ngp, String aid, ResourceEntity targetFile, boolean isOverwrite) throws Exception {
 
         throw new Exception("copyAttachmentToRemote needs to be updated to handle attachements in the workspace in sites.");
 

@@ -13,16 +13,16 @@
     String requestMsg = "";
     long latestDate = 0;
     NGBook site;
-    if (!(ngc instanceof NGPage)) {
+    if (!(ngc instanceof NGWorkspace)) {
         site = (NGBook)ngc;
     }
     else {
-        site = ((NGPage)ngc).getSite();
+        site = ((NGWorkspace)ngc).getSite();
     }
     
     String purpose = "";
-    if (ngc instanceof NGPage) {
-        purpose = ((NGPage)ngc).getProcess().getDescription();
+    if (ngc instanceof NGWorkspace) {
+        purpose = ((NGWorkspace)ngc).getProcess().getDescription();
     }
     String objectName = ar.reqParam("objectName");
     String roleName = ar.reqParam("roleName");

@@ -1,6 +1,5 @@
 <%@page import="org.socialbiz.cog.NGRole"
 %><%@ include file="/spring/jsp/include.jsp"
-%><%@page import="org.socialbiz.cog.NGPage"
 %><%@page import="org.socialbiz.cog.UserProfile"
 %><%
     /*

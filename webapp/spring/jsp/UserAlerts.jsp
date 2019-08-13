@@ -7,7 +7,6 @@
 %><%@page import="org.socialbiz.cog.mail.DailyDigest"
 %><%@page import="org.socialbiz.cog.GoalRecord"
 %><%@page import="org.socialbiz.cog.NGBook"
-%><%@page import="org.socialbiz.cog.NGPage"
 %><%@page import="org.socialbiz.cog.mail.DailyDigest"
 %><%@page import="org.socialbiz.cog.NGPageIndex"
 %><%@page import="org.socialbiz.cog.SectionUtil"

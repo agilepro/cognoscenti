@@ -34,8 +34,8 @@ import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.GoalRecord;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.SectionUtil;
 import org.socialbiz.cog.UserManager;
@@ -284,7 +284,7 @@ public class DataFeedServlet extends HttpServlet {
             if (!ngpi.isProject()) {
                 continue;
             }
-            NGPage aPage = ngpi.getWorkspace();
+            NGWorkspace aPage = ngpi.getWorkspace();
             String pageKey = aPage.getKey();
 
             for (GoalRecord gr : aPage.getAllGoals()) {

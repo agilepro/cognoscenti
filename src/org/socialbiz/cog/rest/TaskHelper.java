@@ -31,8 +31,8 @@ import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.NGContainer;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.RemoteGoal;
 import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.UtilityMethods;
@@ -50,7 +50,7 @@ public class TaskHelper
     private String lserverURL;
     private AddressListEntry ale = null;
 
-    private Hashtable<GoalRecord,NGPage> pageMap = new Hashtable<GoalRecord,NGPage>();
+    private Hashtable<GoalRecord,NGWorkspace> pageMap = new Hashtable<GoalRecord,NGWorkspace>();
     private List<GoalRecord> allTask = new ArrayList<GoalRecord>();
     private List<GoalRecord> activeTask = new ArrayList<GoalRecord>();
     private List<GoalRecord> completedTask = new ArrayList<GoalRecord>();
@@ -95,7 +95,7 @@ public class TaskHelper
 
         for (GoalRecord tr : taskList) {
             Element actEle = DOMUtils.createChildElement(doc, element_activities, "activity");
-            NGPage ngp = pageMap.get(tr);
+            NGWorkspace ngp = pageMap.get(tr);
             String processurl = lserverURL + "p/" + ngp.getKey() + "/process.xml";
             tr.fillInWfxmlActivity(doc, actEle, processurl);
         }
@@ -121,14 +121,14 @@ public class TaskHelper
             //only includes tasks from projects at this point
             if (ngpi.isProject())
             {
-                NGPage aProject = ngpi.getWorkspace();
+                NGWorkspace aProject = ngpi.getWorkspace();
                 registerGoalsAssignedToUser(aProject, ale);
             }
         }
         isFilled = true;
     }
 
-    private void registerGoalsAssignedToUser(NGPage aProject, AddressListEntry forAssignee) throws Exception {
+    private void registerGoalsAssignedToUser(NGWorkspace aProject, AddressListEntry forAssignee) throws Exception {
         if (forAssignee==null) {
             throw new Exception("Program Logic Error: null assignee parameter in registerGoalsAssignedToUser");
         }
@@ -139,7 +139,7 @@ public class TaskHelper
         }
     }
 
-    private void registerAllGoalsOnPage(NGPage aProject) throws Exception {
+    private void registerAllGoalsOnPage(NGWorkspace aProject) throws Exception {
         for(GoalRecord gr : aProject.getAllGoals()) {
             registerGoal(aProject, gr);
         }
@@ -150,7 +150,7 @@ public class TaskHelper
      * Includes an action item record into the registry of action items that are being
      * tracked by this TaskHelper object.
      */
-    private void registerGoal(NGPage aProject, GoalRecord gr) throws Exception {
+    private void registerGoal(NGWorkspace aProject, GoalRecord gr) throws Exception {
         pageMap.put(gr, aProject);
         allTask.add(gr);
         int state = gr.getState();
@@ -173,7 +173,7 @@ public class TaskHelper
     * loads the action items from the specified project, and then, given a list of task ids, it
     * generate an XML dom tree from the tasks specifically mentioned by ID.
     */
-    public void generateXPDLTaskInfo(NGPage ngp, Document doc, Element element_activities, String dataIds)
+    public void generateXPDLTaskInfo(NGWorkspace ngp, Document doc, Element element_activities, String dataIds)
             throws Exception {
         List<String> idList = null;
         if (dataIds!= null) {
@@ -247,7 +247,7 @@ public class TaskHelper
             int state = existingTask.getState();
             if (state == BaseRecord.STATE_OFFERED ||
                 state == BaseRecord.STATE_ACCEPTED)  {
-                NGPage proj = pageMap.get(existingTask);
+                NGWorkspace proj = pageMap.get(existingTask);
                 RemoteGoal ref = uPage.findOrCreateTask( proj.getKey(), existingTask.getId() );
                 ref.touchFlag = true;
                 ref.syncFromTask(existingTask);

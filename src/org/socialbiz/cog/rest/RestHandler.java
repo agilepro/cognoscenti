@@ -22,7 +22,7 @@ package org.socialbiz.cog.rest;
 
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.exception.ProgramLogicError;
 
 /**
@@ -36,7 +36,7 @@ public class RestHandler {
     String projectId;
     String resource;
     NGBook prjSite;
-    NGPage ngp;
+    NGWorkspace ngp;
 
     /**
      * This servlet handles REST style requests for XML content

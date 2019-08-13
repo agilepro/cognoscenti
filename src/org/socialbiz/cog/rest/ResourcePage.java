@@ -29,7 +29,6 @@ import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.IdGenerator;
 import org.socialbiz.cog.License;
 import org.socialbiz.cog.NGBook;
-import org.socialbiz.cog.NGPage;
 import org.socialbiz.cog.NGPageIndex;
 import org.socialbiz.cog.NGSection;
 import org.socialbiz.cog.NGWorkspace;
@@ -81,7 +80,7 @@ public class ResourcePage implements NGResource
         return lfile;
     }
 
-    public NGPage getPageMustExist() throws Exception
+    public NGWorkspace getPageMustExist() throws Exception
     {
         if (lid==null || lid.length()==0) {
             lrstatus.setStatusCode(500);
@@ -99,7 +98,7 @@ public class ResourcePage implements NGResource
             lrstatus.setStatusCode(404);
             throw new NGException("nugen.exception.project.not.found",new Object[]{lid});
         }
-        NGPage ngp = ngpi.getWorkspace();
+        NGWorkspace ngp = ngpi.getWorkspace();
         if (ngp==null)
         {
             lrstatus.setStatusCode(404);
@@ -119,7 +118,7 @@ public class ResourcePage implements NGResource
     }
 
 
-    public NGPage getPageIfExist()
+    public NGWorkspace getPageIfExist()
         throws Exception
     {
         NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKeyOrFail(lid);
@@ -127,7 +126,7 @@ public class ResourcePage implements NGResource
         {
             return null;
         }
-        NGPage ngp = ngpi.getWorkspace();
+        NGWorkspace ngp = ngpi.getWorkspace();
         return ngp;
     }
 
@@ -233,7 +232,7 @@ public class ResourcePage implements NGResource
     public void loadContent() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = getPageMustExist();
+        NGWorkspace ngp = getPageMustExist();
 
         String schema = lserverURL + NGResource.SCHEMA_PAGE;
         loutdoc = DOMUtils.createDocument("page");
@@ -309,7 +308,7 @@ public class ResourcePage implements NGResource
     public void loadSectionForNotes(Document loutdoc, NGSection ngs, Element element_sec,
         AuthRequest au, String lserverURL)throws Exception
     {
-        NGPage ngc = ngs.parent;
+        NGWorkspace ngc = ngs.parent;
         Element element_comments = DOMUtils.createChildElement(loutdoc, element_sec, "comments");
         for (TopicRecord note : ngc.getAllNotes()) {
 
@@ -369,7 +368,7 @@ public class ResourcePage implements NGResource
     public void loadUserList() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = getPageMustExist();
+        NGWorkspace ngp = getPageMustExist();
 
         List<AddressListEntry> allUsers = ngp.getPrimaryRole().getExpandedPlayers(ngp);
 
@@ -400,7 +399,7 @@ public class ResourcePage implements NGResource
 
     public void updateuser() throws Exception
     {
-        NGPage ngp = getPageMustExist();
+        NGWorkspace ngp = getPageMustExist();
 
         Element element_userlist = lindoc.getDocumentElement();
         for (Element element_user : DOMUtils.getChildElementsList(element_userlist)) {
@@ -464,7 +463,7 @@ public class ResourcePage implements NGResource
     public void loadProcess() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = getPageMustExist();
+        NGWorkspace ngp = getPageMustExist();
 
         String schema = lserverURL + NGResource.SCHEMA_PAGE;
 
@@ -479,7 +478,7 @@ public class ResourcePage implements NGResource
     public void loadActivity(String activtyId) throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = getPageMustExist();
+        NGWorkspace ngp = getPageMustExist();
 
         TaskHelper th = new TaskHelper(ar.getBestUserId(), lserverURL);
         String schema = lserverURL + NGResource.SCHEMA_TASKLIST;
@@ -527,7 +526,7 @@ public class ResourcePage implements NGResource
 
     public void loadLicense() throws Exception {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = getPageMustExist();
+        NGWorkspace ngp = getPageMustExist();
 
         ar.assertMember("");
         String schema = lserverURL + NGResource.SCHEMA_PAGE;
@@ -566,7 +565,7 @@ public class ResourcePage implements NGResource
     {
         String newids = "";
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = getPageMustExist();
+        NGWorkspace ngp = getPageMustExist();
 
         ar.assertMember("");
 
@@ -608,7 +607,7 @@ public class ResourcePage implements NGResource
 
     public void deleteLicense()throws Exception {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = getPageMustExist();
+        NGWorkspace ngp = getPageMustExist();
 
         ar.assertMember("");
 
@@ -640,7 +639,7 @@ public class ResourcePage implements NGResource
     public void updateLicense() throws Exception
     {
         ltype = NGResource.TYPE_XML;
-        NGPage ngp = getPageMustExist();
+        NGWorkspace ngp = getPageMustExist();
 
         ar.assertMember("");
         String newids = "";

@@ -326,12 +326,12 @@ public class WikiConverter
                     continue;
                 }
                 break;
-            case 'บ':
+            case 'ยบ':
                 if (line.length() > pos + 1) {
                     char escape = line.charAt(pos + 1);
-                    if (escape == '[' || escape == '\'' || escape == '_'  || escape == 'บ') {
+                    if (escape == '[' || escape == '\'' || escape == '_'  || escape == 'ยบ') {
                         //only these characters can be escaped at this time
-                        //if one of these, eliminate the บ, and output the following character without interpretation
+                        //if one of these, eliminate the ยบ, and output the following character without interpretation
                         ch = escape;
                         pos++;
                     }

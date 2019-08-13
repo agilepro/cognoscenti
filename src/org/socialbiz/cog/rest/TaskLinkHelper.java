@@ -29,7 +29,7 @@ import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.DOMUtils;
 import org.socialbiz.cog.License;
 import org.socialbiz.cog.NGContainer;
-import org.socialbiz.cog.NGPage;
+import org.socialbiz.cog.NGWorkspace;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -48,7 +48,7 @@ public class TaskLinkHelper
     Document activityDoc;
     Document licenseDoc;
 
-    public TaskLinkHelper(AuthRequest ar, NGPage ngp,String combinedURL) throws Exception
+    public TaskLinkHelper(AuthRequest ar, NGWorkspace ngp,String combinedURL) throws Exception
     {
         parseLicenceURL(combinedURL);
         subPageUrl = getSubPageUrl(ar,ngp);
@@ -207,7 +207,7 @@ public class TaskLinkHelper
         return subpageurl;
     }
 
-    public String getSubPageLicense(AuthRequest ar, NGPage ngp) throws Exception
+    public String getSubPageLicense(AuthRequest ar, NGWorkspace ngp) throws Exception
     {
         String subLicense = null;
         List<License> v  = ngp.getLicenses();

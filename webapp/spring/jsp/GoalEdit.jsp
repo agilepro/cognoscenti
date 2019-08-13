@@ -9,7 +9,7 @@
 /*
 Required parameters:
 
-    1. pageId   : This is the id of an Workspace and here it is used to retrieve NGPage.
+    1. pageId   : This is the id of an Workspace and here it is used to retrieve NGWorkspace.
     3. taskId   : This parameter is id of a task and here it is used to get current task detail (GoalRecord)
                   and to pass current task id value when submitted.
 
