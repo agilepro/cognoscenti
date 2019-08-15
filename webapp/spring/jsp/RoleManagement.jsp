@@ -57,6 +57,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
     $scope.showInput = false;
+    AllPeople.refreshCache($scope.siteInfo.key);
 
     $scope.inviteMsg = "Hello,\n\nYou have been asked by '<%ar.writeHtml(uProf.getName());%>' to"
                     +" participate in a role of the project '<%ar.writeHtml(ngc.getFullName());%>'."

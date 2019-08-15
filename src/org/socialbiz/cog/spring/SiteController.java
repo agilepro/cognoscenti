@@ -547,7 +547,7 @@ public class SiteController extends BaseController {
 
     @RequestMapping(value = "/{siteId}/$/SitePeople.json", method = RequestMethod.GET)
     public void AllPeople(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+            HttpServletResponse response, @PathVariable String siteId) throws Exception {
 
         AuthRequest ar = null;
         try{
@@ -555,8 +555,11 @@ public class SiteController extends BaseController {
             if (!ar.isLoggedIn()) {
                 throw new Exception("Must be logged in to get users");
             }
+            
+            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
+            
             JSONArray peopleList = new JSONArray();
-            List<AddressListEntry> userList = ar.getCogInstance().getUserManager().getAllPossibleUsers();
+            List<AddressListEntry> userList = site.getSiteUsersList(ar.getCogInstance());
             for (AddressListEntry ale : userList) {
                 JSONObject person = ale.getJSON();
                 peopleList.put(person);

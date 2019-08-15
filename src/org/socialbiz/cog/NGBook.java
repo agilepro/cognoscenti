@@ -22,8 +22,10 @@ package org.socialbiz.cog;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
@@ -51,6 +53,8 @@ public class NGBook extends ContainerCommon {
     private final SiteInfoRecord siteInfoRec;
     private final NGRole executiveRole;
     private final NGRole ownerRole;
+    
+    private List<AddressListEntry> siteUsers;
 
     //this is the file system folder where projects should be created
     //or null indicates to create projects in the data folder.
@@ -1187,5 +1191,29 @@ public class NGBook extends ContainerCommon {
         }
     }
 
+    
+    public List<AddressListEntry> getSiteUsersList(Cognoscenti cog) throws Exception {
+        if (siteUsers!=null) {
+            return siteUsers;
+        }
+        
+        List<AddressListEntry> temp = new ArrayList<AddressListEntry>();
+        WorkspaceStats ws = getRecentStats(cog);
+        List<String> userids = ws.anythingPerUser.getSortedKeys();
+        Set<String> alreadyUsed = new HashSet<String>();
+        for (String id : userids) {
+            if (!id.isEmpty()) {
+                AddressListEntry ale = new AddressListEntry(id);
+                String correctId = ale.getUniversalId();
+                //eliminate duplicates due to synonymous email ids
+                if (!alreadyUsed.contains(correctId)) {
+                    temp.add(ale);
+                    alreadyUsed.add(correctId);
+                }
+            }
+        }
+        siteUsers =  temp;
+        return temp;
+    }
 
 }

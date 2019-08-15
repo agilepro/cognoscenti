@@ -129,9 +129,11 @@ app.service('AllPeople', function($http) {
         if (!site) {
             throw "AllPeople.refreshCache %% Need to specify a tenant";
         }
-        $http.get("../../"+site+"/$/SitePeople.json")
+        var url = "../../"+site+"/$/SitePeople.json";
+        $http.get(url)
         //$http.get("../../AllPeople.json")
         .success( function(data) {
+            console.log("Read people from", url, data);
             data.validTime = new Date().getTime() + 3600000;
             AllPeople.allPersonBySite[site] = data;
             sessionStorage.setItem('allPersonBySite', JSON.stringify(AllPeople.allPersonBySite));
