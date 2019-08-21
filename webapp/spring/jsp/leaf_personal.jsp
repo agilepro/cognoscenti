@@ -61,7 +61,9 @@ app.controller('myCtrl', function($scope, $http) {
         $http.post(postURL ,postdata)
         .success( function(data) {
             console.log("RESPONSE", data);
-            $scope.pSettings = data;
+            if (data.wsSettings) {
+                $scope.pSettings = data.wsSettings;
+            }
             if ("SetEmailMute" == op) {
                 $scope.isMute = true;
             }
@@ -186,7 +188,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <td><b>Last Reviewed:</b></td>
                 <td>
                     <span class="btn">{{pSettings.reviewTime | date}}</span>
-                    <button class="btn " ng-click="userOp('SetReviewTime')">Reset Review Time</button>
+                    <button class="btn " ng-click="userOp('SetReviewTime')">Update Review Time</button>
                 </td>
                 <td ng-hide="openReview">
                     <button class="btn" ng-click="openReview=true">?</button>
@@ -194,11 +196,11 @@ app.controller('myCtrl', function($scope, $http) {
                 <td ng-show="openReview" ng-click="openReview=false" >
                   <div class="guideVocal">
                     If you are watching this workspace, you can also keep track of 
-                    the last time you reviewed the workspace.
-                    Every time you review the workspace, you can mark it as having been 
-                    reviewed at the current date and time.
+                    the last time you reviewed the workspace.<br/><br/>
+                    Every time you review the workspace, you can <b>update</b> the review time 
+                    to the current date and time.
                   </div>
-                </td>
+                </td> 
             </tr>            <tr>
                 <td><b>Template:</b></td>
                 <td>

@@ -283,7 +283,8 @@ public class ProjectSettingController extends BaseController {
                 throw new Exception("Unable to understand the operation "+op);
             }
 
-            JSONObject repo = up.getWorkspaceSettings(siteWorkspaceCombo);
+            JSONObject repo = new JSONObject();
+            repo.put("wsSettings", up.getWorkspaceSettings(siteWorkspaceCombo));
             sendJson(ar, repo);
         }
         catch(Exception ex){

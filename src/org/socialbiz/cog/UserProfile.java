@@ -38,7 +38,7 @@ import com.purplehillsbooks.json.JSONObject;
 public class UserProfile implements UserRef
 {
     public static String defaultTimeZone = "America/Los_Angeles";
-    
+
     private String userKey = "";
     private String name = "";
     private String description;
@@ -63,12 +63,12 @@ public class UserProfile implements UserRef
         userKey = IdGenerator.generateKey();
         ids = new ArrayList<String>();
         ids.add(guid);
-         
+
         //make sure that this profile has a license token
         getLicenseToken();
     }
-    
-    
+
+
     public UserProfile(UserProfileXML upXML) throws Exception {
         userKey = upXML.getKey();
 
@@ -76,17 +76,17 @@ public class UserProfile implements UserRef
         if (userKey == null || userKey.length() == 0)  {
             userKey = IdGenerator.generateKey();
         }
-        
+
         name = upXML.getName();
         description = upXML.getDescription();
         image = upXML.getImage();
         licenseToken = upXML.getLicenseToken();
-        
+
         lastLogin   = upXML.getLastLogin();
         lastLoginId = upXML.getLastLoginId();
         lastUpdated = upXML.getLastUpdated();
         notifyTime = upXML.getNotificationTime();
-        
+
         accessCode = upXML.getAccessCode();
         accessCodeModTime = upXML.getAccessCodeModTime();
         notifyPeriod = upXML.getNotificationPeriod();
@@ -96,11 +96,11 @@ public class UserProfile implements UserRef
         //watchList = upXML.getWatchList();
         //notificationList = upXML.getNotificationList();
         //templateList = upXML.getTemplateList();
-        
+
         //make sure that this profile has a license token
         getLicenseToken();
     }
-    
+
     /*
     private static List<WatchRecord> convertWatchList(JSONArray ja)  throws Exception {
         List<WatchRecord> watchList = new Vector<WatchRecord>();
@@ -110,46 +110,46 @@ public class UserProfile implements UserRef
         return watchList;
     }
 */
-    
-    
+
+
     public UserProfile(JSONObject fullJO) throws Exception {
-        
+
         if (fullJO.has("key"))  {
             userKey = fullJO.getString("key");
         }
         else {
             userKey = IdGenerator.generateKey();
         }
-        
+
         ids       = DOMFace.constructVector(fullJO.getJSONArray("ids"));
-        
+
         image         = fullJO.optString("image", null);
-        
+
         licenseToken  = fullJO.getString("licenseToken");
-        
+
         lastLogin     = fullJO.optLong("lastLogin",0);
         lastLoginId   = fullJO.optString("lastLoginId",null);
         lastUpdated   = fullJO.optLong("lastUpdated",0);
         notifyTime    = fullJO.optLong("notifyTime",0);
         accessCode    = fullJO.optString("accessCode",null);
         accessCodeModTime = fullJO.optLong("accessCodeModTime",0);
- 
+
         if (fullJO.has("wsSettings")) {
             wsSettings = fullJO.getJSONObject("wsSettings");
         }
-        
+
         if (!fullJO.has("wsSettings")) {
             convertOldWSSettings(fullJO);
         }
-        wsSettings = fullJO.getJSONObject("wsSettings");        
-        
+        wsSettings = fullJO.getJSONObject("wsSettings");
+
         updateFromJSON(fullJO);
-        
+
         //make sure that this profile has a license token
         getLicenseToken();
     }
-    
-    
+
+
     /**
      * The purpose of this is to search for references to workspaces
      * that only have the workspace key, and replace them with references
@@ -161,9 +161,16 @@ public class UserProfile implements UserRef
             if (oldKey.indexOf("|")<0) {
                 checkList.add(oldKey);
             }
-        }        
+            else {
+                NGPageIndex ws = cog.getWSByCombinedKey(oldKey);
+                if (ws==null) {
+                    checkList.add(oldKey);
+                }
+            }
+        }
         for (String oldKey : checkList) {
             if (oldKey.indexOf("|")<0) {
+                //looks like this is an old key, correct it
                 JSONObject jo = wsSettings.getJSONObject(oldKey);
                 wsSettings.remove(oldKey);
                 NGPageIndex ws = cog.lookForWSBySimpleKeyOnly(oldKey);
@@ -171,26 +178,50 @@ public class UserProfile implements UserRef
                     wsSettings.put(ws.wsSiteKey+"|"+ws.containerKey, jo);
                 }
             }
+            else {
+                //if we can't find a workspace with this key, remove it
+                NGPageIndex ws = cog.getWSByCombinedKey(oldKey);
+                if (ws==null) {
+                    wsSettings.remove(oldKey);
+                }
+            }
+        }
+
+        //now clear up the entries
+        for (String currentKey : wsSettings.keySet()) {
+            JSONObject jo = wsSettings.getJSONObject(currentKey);
+            if (jo.has("serverTime")) {
+                jo.remove("serverTime");
+            }
+            if (jo.has("isNotify") && !jo.getBoolean("isNotify")) {
+                jo.remove("isNotify");
+            }
+            if (jo.has("isTemplate") && !jo.getBoolean("isTemplate")) {
+                jo.remove("isTemplate");
+            }
+            if (jo.has("isWatching") && !jo.getBoolean("isWatching")) {
+                jo.remove("isWatching");
+            }
         }
     }
-    
-    
-    
+
+
+
     /**
      * This is a schema migration used to be:
-     * 
+     *
      * "notifyList": ["ws", "ws"],
      * "templateList": ["ws", "ws"],
      * "watchList": [ {
      *    "key": "ws",
      *    "lastSeen": 1453902246029
      *  }]
-     *  
-     *  Many of these were "bare" workspace ids and need to be 
+     *
+     *  Many of these were "bare" workspace ids and need to be
      *  converted to site|ws combo ids
-     *  
+     *
      *  result is a single association:
-     *  
+     *
      *  wsSettings: {
      *     "ws": {
      *        notify: true,
@@ -199,16 +230,16 @@ public class UserProfile implements UserRef
      *        reviewTime: 1453902246029
      *      }
      *  }
-     *  
+     *
      * @param fullJO
      */
     private void convertOldWSSettings(JSONObject fullJO) throws Exception {
-        
+
         if (fullJO.has("wsSettings")) {
             throw new Exception("program logic error: convertOldWSSettings should be called only on objects with wsSettings");
         }
         wsSettings = new JSONObject();
-        
+
         JSONArray watchList = fullJO.getJSONArray("watchList");
         for (int i=0; i<watchList.length(); i++) {
             JSONObject oneWatch = watchList.getJSONObject(i);
@@ -231,13 +262,13 @@ public class UserProfile implements UserRef
             JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
             settingObj.put("isTemplate", true);
         }
-        
+
         fullJO.remove("watchList");
         fullJO.remove("notifyList");
         fullJO.remove("templateList");
         fullJO.put("wsSettings", wsSettings);
     }
-    
+
     private JSONObject assureSettingsRelaxed(String siteWorkspaceCombo) throws Exception {
         if (wsSettings.has(siteWorkspaceCombo)) {
             return wsSettings.getJSONObject(siteWorkspaceCombo);
@@ -246,7 +277,7 @@ public class UserProfile implements UserRef
         wsSettings.put(siteWorkspaceCombo,settingObj);
         return settingObj;
     }
-    
+
     private JSONObject assureSettings(String siteWorkspaceCombo) throws Exception {
         if (siteWorkspaceCombo.indexOf("|")<0) {
             throw new Exception("User profile workspace settings requires a combined key of the form: (site) | (workspace)");
@@ -258,8 +289,8 @@ public class UserProfile implements UserRef
         wsSettings.put(siteWorkspaceCombo,settingObj);
         return settingObj;
     }
-    
-    
+
+
     /*
     private void transferAllValues(UserProfileXML upXML) throws Exception {
         upXML.setKey(userKey);
@@ -267,11 +298,11 @@ public class UserProfile implements UserRef
         upXML.setDescription(description);
         upXML.setImage(image);
         upXML.setLicenseToken(licenseToken);
-        
+
         upXML.setLastLogin(lastLogin, lastLoginId);
         upXML.setLastUpdated(lastUpdated);
         upXML.setNotificationTime(notifyTime);
-        
+
         upXML.setAccessCode(accessCode);
         upXML.setAccessCodeModTime(accessCodeModTime);
         upXML.setNotificationPeriod(notifyPeriod);
@@ -289,11 +320,11 @@ public class UserProfile implements UserRef
         for (String temper : templateList) {
             upXML.addTemplate(temper);
         }
-        
+
     }
     */
 
-    
+
     public List<String> getAllIds() {
         List<String> retVal = new ArrayList<String> ();
         for (String anId : ids) {
@@ -653,8 +684,8 @@ public class UserProfile implements UserRef
     }
 
 
-    
-    
+
+
     //////////////////// PERSONAL WORKSPACE SETTINGS /////////////////
 
     public boolean isWatch(String siteWorkspaceCombo)  throws Exception  {
@@ -712,7 +743,7 @@ public class UserProfile implements UserRef
         setting.put("isWatching", true);
         setting.put("reviewTime", reviewTime);
     }
-    
+
     /**
     * Create a watch on a page.
     * if none exists at this time.
@@ -731,7 +762,7 @@ public class UserProfile implements UserRef
     */
     public void clearWatch(String siteWorkspaceCombo)  throws Exception {
         JSONObject setting = assureSettings(siteWorkspaceCombo);
-        setting.put("isWatching", false);
+        setting.remove("isWatching");
     }
 
 
@@ -774,7 +805,7 @@ public class UserProfile implements UserRef
       */
     public void clearNotification(String siteWorkspaceCombo) throws Exception {
         JSONObject setting = assureSettings(siteWorkspaceCombo);
-        setting.put("isNotify", false);
+        setting.remove("isNotify");
     }
 
 
@@ -803,11 +834,11 @@ public class UserProfile implements UserRef
         }
         return false;
     }
-    
-    
+
+
     public void removeTemplateRecord(String siteWorkspaceCombo) throws Exception {
         JSONObject setting = assureSettings(siteWorkspaceCombo);
-        setting.put("isTemplate", false);
+        setting.remove("isTemplate");
     }
 
     /**
@@ -862,7 +893,7 @@ public class UserProfile implements UserRef
     * returns a properly formatted SMTP user name with email
     * address together as one string.
     */
-    
+
     /*
     public String getEmailWithName() {
         StringBuilder sb = new StringBuilder();
@@ -906,7 +937,7 @@ public class UserProfile implements UserRef
             return;
         }
         char uidLetter = Character.toLowerCase(this.getUniversalId().charAt(0));
-        
+
         File defaultFile =  new File(imageFolder, "fake-"+uidLetter+".jpg");
         if (!defaultFile.exists()) {
             throw new Exception("The default user image file is missing!: "+defaultFile);
@@ -939,7 +970,7 @@ public class UserProfile implements UserRef
         accessCode = newAccessCode;
         accessCodeModTime = System.currentTimeMillis();
     }
-    
+
     public String getAccessCode()throws Exception
     {
         long max_days = 1;
@@ -963,7 +994,7 @@ public class UserProfile implements UserRef
         }
         return memberOfSites;
     }
-    
+
     public String getTimeZone() {
         return timeZone;
     }
@@ -986,9 +1017,9 @@ public class UserProfile implements UserRef
         jObj.put("notifyPeriod",getNotificationPeriod());
         jObj.put("preferred",   getPreferredEmail());
         jObj.put("timeZone",    timeZone);
-        
+
         jObj.put("image",       this.getImage());
-        
+
         {
             JSONArray idArray = new JSONArray();
             for (String id : ids) {
@@ -1020,10 +1051,10 @@ public class UserProfile implements UserRef
             jObj.put("templateList", tempArray);
         }
         */
-        
+
         return jObj;
     }
-    
+
     /**
      * This should be used only for saving to a local file, never sending to a client.
      */
@@ -1035,7 +1066,7 @@ public class UserProfile implements UserRef
         jObj.put("accessCodeModTime",  accessCodeModTime);
         return jObj;
     }
-    
+
 
     public void updateFromJSON(JSONObject input) throws Exception {
         if (input.has("removeId")) {
@@ -1067,12 +1098,12 @@ public class UserProfile implements UserRef
         if (input.has("timeZone")) {
             timeZone = input.getString("timeZone");
         }
-        
+
     }
-    
+
     /**
-     * Each user specifies a time zone.   
-     * @return the Calendar object for the time zone specified by the user 
+     * Each user specifies a time zone.
+     * @return the Calendar object for the time zone specified by the user
      *         or the default time zone (from the server) if the user has
      *         not specified a time zone.
      */
@@ -1085,32 +1116,32 @@ public class UserProfile implements UserRef
         TimeZone tz = TimeZone.getTimeZone(tzid);
         return Calendar.getInstance(tz);
     }
-    
-    
+
+
     /**
-     * This use can and has indicated that they want to receive email that is 
+     * This use can and has indicated that they want to receive email that is
      * FROM the person who initiated the action.   If FALSE, then all email
      * sent to this person should be from the global Weaver email address.
-     * 
-     * Some users have spam filters that remove email without telling them 
+     *
+     * Some users have spam filters that remove email without telling them
      * that the email has been removed.  Sometimes the email servers between
-     * the sender and the receiver will check to see if the sending email 
-     * server is capable of actually sending to the user mentioned in the 
+     * the sender and the receiver will check to see if the sending email
+     * server is capable of actually sending to the user mentioned in the
      * from address.  Thus when Weaver sends an email address from a particular
-     * user such as alix@example.com and Weaver itself is not at example.com, 
+     * user such as alix@example.com and Weaver itself is not at example.com,
      * those email messages can be filtered out.   This depends on a user
      * by user basis as to whether they can receive these or not.
-     * 
-     * So this flag allows us to track users who have indicated that they would 
+     *
+     * So this flag allows us to track users who have indicated that they would
      * like the from address of the REAL user.
-     * 
+     *
      * Initial implementation: return false until we track people opting in.
      */
     public boolean canAcceptRealUserFromAddress() {
         return false;
     }
-    
-    
+
+
     // someday this can be rewritten to store as a record for all the settings
     // for a given workspace together instead of in four separate lists.
     public JSONObject getWorkspaceSettings(String siteWorkspaceCombo) throws Exception {

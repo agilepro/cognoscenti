@@ -289,10 +289,14 @@ holder.ondrop = function (e) {
         alert("Oh.  It looks like you are using a browser that does not support the dropping of files.  Currently we have no other solution than using Mozilla or Chrome or the latest IE for uploading files.");
         return;
     }
+    console.log("Got newFiles", newFiles);
+    if (newFiles.length==0) {
+        console.log("Strange, got a drop, but no files included");
+    }
 
     this.className = 'nicenice';
     var scope = window.MY_SCOPE;
-    scope.fileName = newFiles[0].name;
+    //scope.fileName = newFiles[0].name;
 
     for (var i=0; i<newFiles.length; i++) {
         var newProgress = {};
