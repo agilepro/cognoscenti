@@ -239,32 +239,36 @@ public class ProjectSettingController extends BaseController {
             ar.assertLoggedIn("Must be logged in to set personal settings.");
             JSONObject personalInfo = getPostedObject(ar);
             UserProfile up = ar.getUserProfile();
-
+            String siteWorkspaceCombo = ngw.getSiteKey()+"|"+ngw.getKey();
 
             op = personalInfo.getString("op");
             UserManager userManager = ar.getCogInstance().getUserManager();
             if ("SetWatch".equals(op)) {
-                up.setWatch(pageId, ar.nowTime);
+                up.setWatch(siteWorkspaceCombo);
+                userManager.saveUserProfiles();
+            }
+            else if ("SetReviewTime".equals(op)) {
+                up.setReviewTime(siteWorkspaceCombo, ar.nowTime);
                 userManager.saveUserProfiles();
             }
             else if ("ClearWatch".equals(op)) {
-                up.clearWatch(pageId);
+                up.clearWatch(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
             }
             else if ("SetTemplate".equals(op)) {
-                up.setProjectAsTemplate(siteId, pageId);
+                up.setProjectAsTemplate(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
             }
             else if ("ClearTemplate".equals(op)) {
-                up.removeTemplateRecord(pageId);
+                up.removeTemplateRecord(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
             }
             else if ("SetNotify".equals(op)) {
-                up.setNotification(pageId);
+                up.setNotification(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
             }
             else if ("ClearNotify".equals(op)) {
-                up.clearNotification(pageId);
+                up.clearNotification(siteWorkspaceCombo);
                 userManager.saveUserProfiles();
             }
             else if ("SetEmailMute".equals(op)) {
@@ -279,9 +283,7 @@ public class ProjectSettingController extends BaseController {
                 throw new Exception("Unable to understand the operation "+op);
             }
 
-            JSONObject repo = new JSONObject();
-            repo.put("op",  op);
-            repo.put("success",  true);
+            JSONObject repo = up.getWorkspaceSettings(siteWorkspaceCombo);
             sendJson(ar, repo);
         }
         catch(Exception ex){

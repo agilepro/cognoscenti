@@ -88,7 +88,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td width="50px"></td>
             <td width="200px">Workspace</td>
             <td width="100px">Changed</td>
-            <td width="100px">Visited</td>
+            <td width="100px">Last Review</td>
             <td width="100px">Site</td>
         </tr>
         <tr ng-repeat="rec in getRows()">

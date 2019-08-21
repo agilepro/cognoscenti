@@ -183,7 +183,7 @@ Required parameters:
         }
     }
     
-    boolean isWatching = uProf.isWatch(pageId);
+    boolean isWatching = uProf.isWatch(siteId+"|"+pageId);
 
 %>
 

@@ -39,7 +39,7 @@ public class UserProfile implements UserRef
 {
     public static String defaultTimeZone = "America/Los_Angeles";
     
-    private String key = "";
+    private String userKey = "";
     private String name = "";
     private String description;
     private String image;
@@ -53,30 +53,28 @@ public class UserProfile implements UserRef
     private int    notifyPeriod;
     private boolean disabled;
     private List<String> ids = null;
-    private List<WatchRecord> watchList = null;
-    private List<String> notificationList = null;
-    private List<String> templateList = null;
+    //private List<WatchRecord> watchList = null;
+    //private List<String> notificationList = null;
+    //private List<String> templateList = null;
     private String timeZone = "America/Los_Angeles";
+    JSONObject wsSettings;
 
     public UserProfile(String guid) throws Exception {
-        key = IdGenerator.generateKey();
+        userKey = IdGenerator.generateKey();
         ids = new ArrayList<String>();
         ids.add(guid);
-        watchList = new ArrayList<WatchRecord>();
-        notificationList = new ArrayList<String>();
-        templateList = new ArrayList<String>();
-        
+         
         //make sure that this profile has a license token
         getLicenseToken();
     }
     
     
     public UserProfile(UserProfileXML upXML) throws Exception {
-        key = upXML.getKey();
+        userKey = upXML.getKey();
 
         //consistency check here
-        if (key == null || key.length() == 0)  {
-            key = IdGenerator.generateKey();
+        if (userKey == null || userKey.length() == 0)  {
+            userKey = IdGenerator.generateKey();
         }
         
         name = upXML.getName();
@@ -95,14 +93,15 @@ public class UserProfile implements UserRef
         disabled   = upXML.getDisabled();
         ids        = upXML.getIdList();
 
-        watchList = upXML.getWatchList();
-        notificationList = upXML.getNotificationList();
-        templateList = upXML.getTemplateList();
+        //watchList = upXML.getWatchList();
+        //notificationList = upXML.getNotificationList();
+        //templateList = upXML.getTemplateList();
         
         //make sure that this profile has a license token
         getLicenseToken();
     }
     
+    /*
     private static List<WatchRecord> convertWatchList(JSONArray ja)  throws Exception {
         List<WatchRecord> watchList = new Vector<WatchRecord>();
         for (int j=0; j<ja.length(); j++) {
@@ -110,16 +109,16 @@ public class UserProfile implements UserRef
         }
         return watchList;
     }
-
+*/
     
     
     public UserProfile(JSONObject fullJO) throws Exception {
         
         if (fullJO.has("key"))  {
-            key = fullJO.getString("key");
+            userKey = fullJO.getString("key");
         }
         else {
-            key = IdGenerator.generateKey();
+            userKey = IdGenerator.generateKey();
         }
         
         ids       = DOMFace.constructVector(fullJO.getJSONArray("ids"));
@@ -134,12 +133,16 @@ public class UserProfile implements UserRef
         notifyTime    = fullJO.optLong("notifyTime",0);
         accessCode    = fullJO.optString("accessCode",null);
         accessCodeModTime = fullJO.optLong("accessCodeModTime",0);
-       
-        watchList = convertWatchList(fullJO.getJSONArray("watchList"));
-
-        notificationList = DOMFace.constructVector(fullJO.getJSONArray("notifyList"));
-        templateList = DOMFace.constructVector(fullJO.getJSONArray("templateList"));
-
+ 
+        if (fullJO.has("wsSettings")) {
+            wsSettings = fullJO.getJSONObject("wsSettings");
+        }
+        
+        if (!fullJO.has("wsSettings")) {
+            convertOldWSSettings(fullJO);
+        }
+        wsSettings = fullJO.getJSONObject("wsSettings");        
+        
         updateFromJSON(fullJO);
         
         //make sure that this profile has a license token
@@ -147,8 +150,119 @@ public class UserProfile implements UserRef
     }
     
     
-    public void transferAllValues(UserProfileXML upXML) throws Exception {
-        upXML.setKey(key);
+    /**
+     * The purpose of this is to search for references to workspaces
+     * that only have the workspace key, and replace them with references
+     * with the site key and the workspace key.
+     */
+    public void assureSiteAndWorkspace(Cognoscenti cog) throws Exception {
+        List<String> checkList = new ArrayList<String>();
+        for (String oldKey : wsSettings.keySet()) {
+            if (oldKey.indexOf("|")<0) {
+                checkList.add(oldKey);
+            }
+        }        
+        for (String oldKey : checkList) {
+            if (oldKey.indexOf("|")<0) {
+                JSONObject jo = wsSettings.getJSONObject(oldKey);
+                wsSettings.remove(oldKey);
+                NGPageIndex ws = cog.lookForWSBySimpleKeyOnly(oldKey);
+                if (ws!=null) {
+                    wsSettings.put(ws.wsSiteKey+"|"+ws.containerKey, jo);
+                }
+            }
+        }
+    }
+    
+    
+    
+    /**
+     * This is a schema migration used to be:
+     * 
+     * "notifyList": ["ws", "ws"],
+     * "templateList": ["ws", "ws"],
+     * "watchList": [ {
+     *    "key": "ws",
+     *    "lastSeen": 1453902246029
+     *  }]
+     *  
+     *  Many of these were "bare" workspace ids and need to be 
+     *  converted to site|ws combo ids
+     *  
+     *  result is a single association:
+     *  
+     *  wsSettings: {
+     *     "ws": {
+     *        notify: true,
+     *        template: true,
+     *        watch: true,
+     *        reviewTime: 1453902246029
+     *      }
+     *  }
+     *  
+     * @param fullJO
+     */
+    private void convertOldWSSettings(JSONObject fullJO) throws Exception {
+        
+        if (fullJO.has("wsSettings")) {
+            throw new Exception("program logic error: convertOldWSSettings should be called only on objects with wsSettings");
+        }
+        wsSettings = new JSONObject();
+        
+        JSONArray watchList = fullJO.getJSONArray("watchList");
+        for (int i=0; i<watchList.length(); i++) {
+            JSONObject oneWatch = watchList.getJSONObject(i);
+            String siteWorkspaceCombo = oneWatch.getString("key");
+            JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
+            settingObj.put("isWatching", true);
+            if (oneWatch.has("lastSeen")) {
+                settingObj.put("reviewTime", oneWatch.getLong("lastSeen"));
+            }
+        }
+        JSONArray notifyList = fullJO.getJSONArray("notifyList");
+        for (int i=0; i<notifyList.length(); i++) {
+            String siteWorkspaceCombo = notifyList.getString(i);
+            JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
+            settingObj.put("isNotify", true);
+        }
+        JSONArray templateList = fullJO.getJSONArray("templateList");
+        for (int i=0; i<templateList.length(); i++) {
+            String siteWorkspaceCombo = templateList.getString(i);
+            JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
+            settingObj.put("isTemplate", true);
+        }
+        
+        fullJO.remove("watchList");
+        fullJO.remove("notifyList");
+        fullJO.remove("templateList");
+        fullJO.put("wsSettings", wsSettings);
+    }
+    
+    private JSONObject assureSettingsRelaxed(String siteWorkspaceCombo) throws Exception {
+        if (wsSettings.has(siteWorkspaceCombo)) {
+            return wsSettings.getJSONObject(siteWorkspaceCombo);
+        }
+        JSONObject settingObj =  new JSONObject();
+        wsSettings.put(siteWorkspaceCombo,settingObj);
+        return settingObj;
+    }
+    
+    private JSONObject assureSettings(String siteWorkspaceCombo) throws Exception {
+        if (siteWorkspaceCombo.indexOf("|")<0) {
+            throw new Exception("User profile workspace settings requires a combined key of the form: (site) | (workspace)");
+        }
+        if (wsSettings.has(siteWorkspaceCombo)) {
+            return wsSettings.getJSONObject(siteWorkspaceCombo);
+        }
+        JSONObject settingObj =  new JSONObject();
+        wsSettings.put(siteWorkspaceCombo,settingObj);
+        return settingObj;
+    }
+    
+    
+    /*
+    private void transferAllValues(UserProfileXML upXML) throws Exception {
+        upXML.setKey(userKey);
         upXML.setName(name);
         upXML.setDescription(description);
         upXML.setImage(image);
@@ -175,7 +289,9 @@ public class UserProfile implements UserRef
         for (String temper : templateList) {
             upXML.addTemplate(temper);
         }
+        
     }
+    */
 
     
     public List<String> getAllIds() {
@@ -193,7 +309,7 @@ public class UserProfile implements UserRef
     * sure why it would ever need to be set.
     */
     public void setKey(String nkey) {
-        key = nkey;
+        userKey = nkey;
     }
 
     /**
@@ -204,7 +320,7 @@ public class UserProfile implements UserRef
     * server.
     */
     public String getKey() {
-        return key;
+        return userKey;
     }
 
     public void setName(String newName) {
@@ -402,7 +518,7 @@ public class UserProfile implements UserRef
         //exactly like someone else's email address.  If someone purposefully tries
         //to name themselves as someone else key, they will be chosen only
         //if there is nobody else with that email address.
-        if (testId.equalsIgnoreCase(key)) {
+        if (testId.equalsIgnoreCase(userKey)) {
             return true;
         }
 
@@ -528,13 +644,23 @@ public class UserProfile implements UserRef
         }
     }
 
+    public void setDisabled(boolean val) {
+        disabled = val;
+    }
+
+    public boolean getDisabled() {
+        return disabled;
+    }
 
 
-    public boolean isWatch(String pageKey)  throws Exception  {
-        for (WatchRecord sr : getWatchList())  {
-            if (pageKey.equals(sr.pageKey)) {
-                return true;
-            }
+    
+    
+    //////////////////// PERSONAL WORKSPACE SETTINGS /////////////////
+
+    public boolean isWatch(String siteWorkspaceCombo)  throws Exception  {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        if (setting.has("isWatching")) {
+            return setting.getBoolean("isWatching");
         }
         return false;
     }
@@ -545,11 +671,10 @@ public class UserProfile implements UserRef
     * time that the page was last seen, otherwise returns
     * zero if the user does not have a subscription.
     */
-    public long watchTime(String pageKey) throws Exception {
-        for (WatchRecord wr : watchList) {
-            if (pageKey.equals(wr.pageKey)) {
-                return wr.lastSeen;
-            }
+    public long watchTime(String siteWorkspaceCombo) throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        if (setting.has("reviewTime")) {
+            return setting.getLong("reviewTime");
         }
         return 0;
     }
@@ -559,6 +684,13 @@ public class UserProfile implements UserRef
     * Do not modify this vector externally, just read only.
     */
     public List<WatchRecord> getWatchList()  throws Exception {
+        List<WatchRecord> watchList = new ArrayList<WatchRecord>();
+        for(String siteWorkspaceCombo : wsSettings.keySet()) {
+            JSONObject setting = wsSettings.getJSONObject(siteWorkspaceCombo);
+            if (setting.has("isWatching") && setting.getBoolean("isWatching")) {
+                watchList.add(new WatchRecord(siteWorkspaceCombo, setting.getLong("reviewTime")));
+            }
+        }
         return watchList;
     }
 
@@ -570,47 +702,59 @@ public class UserProfile implements UserRef
     * The long value is the time of "last seen" which will be
     * used to determine if the page has changed since that time.
     */
-    public void setWatch(String pageKey, long now) throws Exception {
-        for (WatchRecord sr : watchList) {
-            if (pageKey.equals(sr.pageKey)) {
-                sr.lastSeen = now;
-                return;
-            }
-        }
-        watchList.add(new WatchRecord(pageKey, now));
+    public void setWatch(String siteWorkspaceCombo) throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        setting.put("isWatching", true);
     }
 
+    public void setReviewTime(String siteWorkspaceCombo, long reviewTime) throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        setting.put("isWatching", true);
+        setting.put("reviewTime", reviewTime);
+    }
+    
     /**
     * Create a watch on a page.
     * if none exists at this time.
     */
-    public void assureWatch(String pageKey) throws Exception {
-        if (!isWatch(pageKey)) {
-            setWatch( pageKey, System.currentTimeMillis());
+    public void assureWatch(String siteWorkspaceCombo) throws Exception {
+        if (siteWorkspaceCombo.indexOf("|")<0) {
+            throw new Exception("assureWatch requires a combined key of the form: (site) | (workspace)");
+        }
+        if (!isWatch(siteWorkspaceCombo)) {
+            setReviewTime( siteWorkspaceCombo, System.currentTimeMillis());
         }
     }
 
     /**
     * Get rid of any watch of the specified page -- if there is any.
     */
-    public void clearWatch(String pageKey)  throws Exception {
-        watchList.clear();
+    public void clearWatch(String siteWorkspaceCombo)  throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        setting.put("isWatching", false);
     }
 
 
     /**
      * Get rid of any notification of the specified page.
      */
-    public void clearAllNotifications() throws Exception {
-        notificationList.clear();
-    }
+    //public void clearAllNotifications() throws Exception {
+    //    notificationList.clear();
+    //}
 
     /**
      * Returns a vector of keys of pages in the notify list.
      * Do not modify this vector externally, just read only.
      */
      public List<String> getNotificationList() throws Exception {
-         return notificationList;
+         List<String> notifyList = new ArrayList<String>();
+         for(String siteWorkspaceCombo : wsSettings.keySet()) {
+             JSONObject setting = wsSettings.getJSONObject(siteWorkspaceCombo);
+             if (setting.has("isNotify") && setting.getBoolean("isNotify")) {
+                 notifyList.add(siteWorkspaceCombo);
+             }
+         }
+         return notifyList;
      }
 
 
@@ -620,77 +764,50 @@ public class UserProfile implements UserRef
      * The long value is the time of "last seen" which will be
      * used to determine if the page has changed since that time.
      */
-    public void setNotification(String pageKey)
-        throws Exception
-    {
-        for (String sr : notificationList) {
-            if (pageKey.equals(sr)) {
-                //already have a record for this page
-                return;
-            }
-        }
-        notificationList.add(pageKey);
+    public void setNotification(String siteWorkspaceCombo) throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        setting.put("isNotify", true);
     }
 
      /**
       * Get rid of any notification of the specified page.
       */
-    public void clearNotification(String pageKey) throws Exception {
-        ArrayList<String> cache = new ArrayList<String>();
-        for (String noteItem : notificationList) {
-            if (!pageKey.equals(noteItem)) {
-                cache.add(noteItem);
-            }
-        }
-        notificationList = cache;
+    public void clearNotification(String siteWorkspaceCombo) throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        setting.put("isNotify", false);
     }
 
 
-    public boolean isNotifiedForProject(String pageKey) throws Exception {
-        for (String sr : notificationList) {
-            if (pageKey.equals(sr)) {
-                return true;
-            }
+    public boolean isNotifiedForProject(String siteWorkspaceCombo) throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        if (setting.has("isNotify")) {
+            return setting.getBoolean("isNotify");
         }
         return false;
     }
 
-    public void setDisabled(boolean val) {
-        disabled = val;
+
+    //public List<String> getTemplateList() throws Exception {
+    //    return templateList;
+    //}
+
+    public void setProjectAsTemplate(String siteWorkspaceCombo) throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        setting.put("isTemplate", true);
     }
 
-    public boolean getDisabled() {
-        return disabled;
-    }
-
-
-    public List<String> getTemplateList() throws Exception {
-        return templateList;
-    }
-
-    public void setProjectAsTemplate(String siteKey, String pageKey) throws Exception {
-        templateList.add(siteKey + "|" + pageKey);
-    }
-
-    public boolean isTemplate(String siteKey, String pageKey) throws Exception {
-        String combined = siteKey + "|" + pageKey;
-        for (String templatePageKey : templateList) {
-            if (templatePageKey.equals(combined)) {
-                return true;
-            }
+    public boolean isTemplate(String siteWorkspaceCombo) throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        if (setting.has("isTemplate")) {
+            return setting.getBoolean("isTemplate");
         }
         return false;
     }
     
     
-    public void removeTemplateRecord(String pageKey) throws Exception {
-        ArrayList<String> cache = new ArrayList<String>();
-        for (String templatePageKey : templateList) {
-            if (!pageKey.equalsIgnoreCase(templatePageKey)) {
-                cache.add(templatePageKey);
-            }
-        }
-        templateList = cache;
+    public void removeTemplateRecord(String siteWorkspaceCombo) throws Exception {
+        JSONObject setting = assureSettings(siteWorkspaceCombo);
+        setting.put("isTemplate", false);
     }
 
     /**
@@ -700,18 +817,14 @@ public class UserProfile implements UserRef
      */
     public Vector<NGPageIndex> getValidTemplates(Cognoscenti cog) throws Exception {
         Vector<NGPageIndex> templates = new Vector<NGPageIndex>();
-        for(String pageKey : templateList) {
-            int pos = pageKey.indexOf("|");
-            if (pos<=0) {
-                //silently ignore old or invalid key values
-                continue;
-            }
-            String key = pageKey.substring(0, pos);
-            String siteKey = pageKey.substring(pos+1);
-            NGPageIndex ngpi = cog.getWSBySiteAndKey(siteKey, key);
-            if (ngpi!=null) {
-                //silently ignore templates that no longer exist
-                templates.add(ngpi);
+        for(String siteWorkspaceCombo : wsSettings.keySet()) {
+            JSONObject setting = wsSettings.getJSONObject(siteWorkspaceCombo);
+            if (setting.has("isTemplate") && setting.getBoolean("isTemplate")) {
+                NGPageIndex ngpi = cog.getWSByCombinedKey(siteWorkspaceCombo);
+                if (ngpi!=null) {
+                    //silently ignore templates that no longer exist
+                    templates.add(ngpi);
+                }
             }
         }
         NGPageIndex.sortInverseChronological(templates);
@@ -838,7 +951,7 @@ public class UserProfile implements UserRef
     }
 
     public UserPage getUserPage() throws Exception {
-        return UserManager.getStaticUserManager().findOrCreateUserPage(key);
+        return UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
     }
 
     public List<NGBook> findAllMemberSites() throws Exception {
@@ -883,6 +996,8 @@ public class UserProfile implements UserRef
             }
             jObj.put("ids", idArray);
         }
+        jObj.put("wsSettings", wsSettings);
+        /*
         {
             JSONArray watchArray = new JSONArray();
             for (WatchRecord watch : getWatchList()) {
@@ -904,6 +1019,8 @@ public class UserProfile implements UserRef
             }
             jObj.put("templateList", tempArray);
         }
+        */
+        
         return jObj;
     }
     
@@ -994,4 +1111,10 @@ public class UserProfile implements UserRef
     }
     
     
+    // someday this can be rewritten to store as a record for all the settings
+    // for a given workspace together instead of in four separate lists.
+    public JSONObject getWorkspaceSettings(String siteWorkspaceCombo) throws Exception {
+        JSONObject res = this.assureSettings(siteWorkspaceCombo);
+        return res;
+    }
 }

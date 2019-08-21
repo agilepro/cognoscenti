@@ -21,8 +21,6 @@
 package org.socialbiz.cog;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -97,11 +95,14 @@ public class UserManager
         
         jsonFileName = new File(userFolder, "UserProfs.json");
         if(!jsonFileName.exists()) {
-            File xmlFileName = new File(userFolder, "UserProfiles.xml");
+            throw new Exception("File for "+jsonFileName+" is MISSING.   Create an empty file in order to run Weaver server.");
+
+            /*File xmlFileName = new File(userFolder, "UserProfiles.xml");
             convertXMLtoJSON(xmlFileName);
             if(!jsonFileName.exists()) {
                 throw new Exception("Conversion of user profiles to JSON format failed somehow.");
             }
+            */
         }
         
         //clear out any left over evidence of an earlier initialization
@@ -193,9 +194,17 @@ public class UserManager
         allUsers = readUsers;
     }
     
+    
+    public void assureSiteAndWorkspace(Cognoscenti cog) throws Exception {
+        for (UserProfile user : allUsers) {
+            user.assureSiteAndWorkspace(cog);
+        }
+    }
+    
+    
     /**
      * This will be retired some day...
-     */
+     *
     private void convertXMLtoJSON(File xmlFileName) throws Exception  {
         if(!xmlFileName.exists()) {
             throw new JSONException("Can't find the new or the old user profiles. ({0}) giving up.", xmlFileName);
@@ -230,6 +239,7 @@ public class UserManager
         
         this.saveUserProfiles();
     }
+    */
 
 
     public static synchronized void writeUserProfilesToFile() throws Exception {

@@ -35,10 +35,11 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Workspace Personal Settings");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
-    $scope.isWatching = <%=uProf.isWatch(pageId)%>;
-    $scope.watchTime  = <%=uProf.watchTime(pageId)%>;
-    $scope.isTemplate = <%=uProf.isTemplate(siteId,pageId)%>;
-    $scope.isNotify   = <%=uProf.isNotifiedForProject(pageId)%>;
+    $scope.pSettings = {};
+    $scope.pSettings.isWatching = <%=uProf.isWatch(siteId+"|"+pageId)%>;
+    $scope.pSettings.reviewTime = <%=uProf.watchTime(siteId+"|"+pageId)%>;
+    $scope.pSettings.isTemplate = <%=uProf.isTemplate(siteId+"|"+pageId)%>;
+    $scope.pSettings.isNotify   = <%=uProf.isNotifiedForProject(siteId+"|"+pageId)%>;
     $scope.isMute     = <%=ngp.getMuteRole().isPlayer(uProf)%>;
     $scope.roleList   = <%roleList.write(out,2,4);%>;
     
@@ -55,28 +56,13 @@ app.controller('myCtrl', function($scope, $http) {
         data.op = op;
         var postURL = "personalUpdate.json";
         var postdata = angular.toJson(data);
+        console.log("POST", postURL, data);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
-            if ("SetWatch" == op) {
-                $scope.isWatching = true;
-            }
-            else if ("ClearWatch" == op) {
-                $scope.isWatching = false;
-            }
-            else if ("SetTemplate" == op) {
-                $scope.isTemplate = true;
-            }
-            else if ("ClearTemplate" == op) {
-                $scope.isTemplate = false;
-            }
-            else if ("SetNotify" == op) {
-                $scope.isNotify = true;
-            }
-            else if ("ClearNotify" == op) {
-                $scope.isNotify = false;
-            }
-            else if ("SetEmailMute" == op) {
+            console.log("RESPONSE", data);
+            $scope.pSettings = data;
+            if ("SetEmailMute" == op) {
                 $scope.isMute = true;
             }
             else if ("ClearEmailMute" == op) {
@@ -172,17 +158,16 @@ app.controller('myCtrl', function($scope, $http) {
             <tr>
                 <td><b>Watch workspace:</b></td>
                 <td>
-                    <button ng-show="isWatching" class="btn " ng-click="userOp('ClearWatch')"><i class="fa  fa-check-square-o"></i> Watch List</button>
-                    <button ng-show="isWatching" class="btn " ng-click="userOp('SetWatch')">Reset Watch Time</button>
-                    <button ng-hide="isWatching" class="btn " ng-click="userOp('SetWatch')"><i class="fa  fa-square-o"></i> Watch List</button>
+                    <button ng-show="pSettings.isWatching" class="btn " ng-click="userOp('ClearWatch')"><i class="fa  fa-check-square-o"></i> Watch List</button>
+                    <button ng-hide="pSettings.isWatching" class="btn " ng-click="userOp('SetWatch')"><i class="fa  fa-square-o"></i> Watch List</button>
                 </td>
                 <td ng-hide="openWatch">
                     <button class="btn" ng-click="openWatch=!openWatch">?</button>
                 </td>
                 <td ng-show="openWatch" ng-click="openWatch=!openWatch" >
                   <div class="guideVocal">
-                    <span ng-hide="isWatching"><b>You are not watching this workspace</b></span>
-                    <span ng-show="isWatching"><b>You are watching this workspace</b></span>
+                    <span ng-hide="pSettings.isWatching"><b>You are not watching this workspace</b></span>
+                    <span ng-show="pSettings.isWatching"><b>You are watching this workspace</b></span>
                     <br/>
                     <br/>
                     Watching a workspace means simply that that workspace name
@@ -191,22 +176,42 @@ app.controller('myCtrl', function($scope, $http) {
                     You can add and remove workspaces from the list at any time with immediate effect.  
                     Performing some operations in the workspace (such as creating a discussion topic) 
                     will automatically add the workspace to your watched list.
+                    <br/>
+                    Every time you review the workspace, you can mark it as having been 
+                    reviewed at the current date and time.
                   </div>
                 </td>
             </tr>
-            <tr>
+            <tr ng-show="pSettings.isWatching">
+                <td><b>Last Reviewed:</b></td>
+                <td>
+                    <span class="btn">{{pSettings.reviewTime | date}}</span>
+                    <button class="btn " ng-click="userOp('SetReviewTime')">Reset Review Time</button>
+                </td>
+                <td ng-hide="openReview">
+                    <button class="btn" ng-click="openReview=true">?</button>
+                </td>
+                <td ng-show="openReview" ng-click="openReview=false" >
+                  <div class="guideVocal">
+                    If you are watching this workspace, you can also keep track of 
+                    the last time you reviewed the workspace.
+                    Every time you review the workspace, you can mark it as having been 
+                    reviewed at the current date and time.
+                  </div>
+                </td>
+            </tr>            <tr>
                 <td><b>Template:</b></td>
                 <td>
-                    <button ng-show="isTemplate" class="btn" ng-click="userOp('ClearTemplate')"><i class="fa  fa-check-square-o"></i> Template</button>
-                    <button ng-hide="isTemplate" class="btn" ng-click="userOp('SetTemplate')"><i class="fa  fa-square-o"></i> Template</button>
+                    <button ng-show="pSettings.isTemplate" class="btn" ng-click="userOp('ClearTemplate')"><i class="fa  fa-check-square-o"></i> Template</button>
+                    <button ng-hide="pSettings.isTemplate" class="btn" ng-click="userOp('SetTemplate')"><i class="fa  fa-square-o"></i> Template</button>
                 </td>
                 <td ng-hide="openTemplate">
                     <button class="btn" ng-click="openTemplate=!openTemplate">?</button>
                 </td>
                 <td ng-show="openTemplate" ng-click="openTemplate=!openTemplate">
                   <div class="guideVocal">
-                    <span ng-hide="isTemplate"><b>This workspace is not one of your templates</b></span>
-                    <span ng-show="isTemplate"><b>This workspace is one of your templates</b></span>
+                    <span ng-hide="pSettings.isTemplate"><b>This workspace is not one of your templates</b></span>
+                    <span ng-show="pSettings.isTemplate"><b>This workspace is one of your templates</b></span>
                     <br/>
                     <br/>
                     A template workspace is used at the time that you create a new workspace, 
@@ -220,9 +225,9 @@ app.controller('myCtrl', function($scope, $http) {
             <tr>
                 <td><b>Digest:</b></td>
                 <td>
-                    <button ng-show="isNotify" class="btn" ng-click="userOp('ClearNotify')"><i class="fa  fa-check-square-o"></i>
+                    <button ng-show="pSettings.isNotify" class="btn" ng-click="userOp('ClearNotify')"><i class="fa  fa-check-square-o"></i>
                     Receive Digest</button>
-                    <button ng-hide="isNotify" class="btn" ng-click="userOp('SetNotify')"><i class="fa  fa-square-o"></i> 
+                    <button ng-hide="pSettings.isNotify" class="btn" ng-click="userOp('SetNotify')"><i class="fa  fa-square-o"></i> 
                     Receive Digest</button>
                 </td>
                 <td ng-hide="openNotify">
@@ -230,8 +235,8 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
                 <td ng-show="openNotify" ng-click="openNotify=!openNotify">
                   <div class="guideVocal">
-                    <span ng-hide="isNotify"><b>You are not receiving the digest for this workspace</b></span>
-                    <span ng-show="isNotify"><b>You are receiving the digest for this workspace</b></span>
+                    <span ng-hide="pSettings.isNotify"><b>You are not receiving the digest for this workspace</b></span>
+                    <span ng-show="pSettings.isNotify"><b>You are receiving the digest for this workspace</b></span>
                     <br/>
                     <br/>
                     If you request to receive the digest of changes, then a summary of the changes to this workspace will

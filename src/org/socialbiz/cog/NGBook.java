@@ -853,7 +853,7 @@ public class NGBook extends ContainerCommon {
         // so it is easy for them to find later.
         // Only do this if creating directly, and not through API
         if (up != null) {
-            up.setWatch(newWorkspace.getKey(), nowTime);
+            up.setWatch(newWorkspace.getKey());
             cog.getUserManager().saveUserProfiles();
         }
 

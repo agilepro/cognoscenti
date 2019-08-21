@@ -459,7 +459,7 @@ public class UserController extends BaseController {
     }
 
 
-
+/*
     @RequestMapping(value = "/markAsTemplate.ajax", method = RequestMethod.POST)
     public void markAsTemplate(HttpServletRequest request, HttpServletResponse response)
     throws Exception {
@@ -477,7 +477,7 @@ public class UserController extends BaseController {
             String action = ar.reqParam("action");
             if ("MarkAsTemplate".equals(action))
             {
-                uProf.setProjectAsTemplate(ngp.getSiteKey(), ngp.getKey());
+                uProf.setProjectAsTemplate(ngp.getSiteKey()+"|"+ngp.getKey());
             }
             else if ("removeTemplate".equals(action))
             {
@@ -500,6 +500,7 @@ public class UserController extends BaseController {
             streamException(ex,ar);
         }
     }
+*/
 
     @RequestMapping(value = "/{userKey}/EditUserProfileAction.form", method = RequestMethod.POST)
     public void updateUserProfile(HttpServletRequest request, HttpServletResponse response,

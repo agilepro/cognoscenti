@@ -228,6 +228,9 @@ System.out.println("Weaver Server Object == Start the Server");
                 //SendEmailTimerTask.initEmailSender(backgroundTimer, this);
                 EmailListener.initListener(backgroundTimer);
             }
+            
+            //make sure that all the workspace references include a site
+            userManager.assureSiteAndWorkspace(this);
 
             FolderAccessHelper.initLocalConnections(this);
             FolderAccessHelper.initCVSConnections(this);
