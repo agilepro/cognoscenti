@@ -4,7 +4,7 @@
 %><%@page import="org.socialbiz.cog.WorkspaceStats"
 %><%@page import="org.socialbiz.cog.util.NameCounter"
 %><%@ include file="/spring/jsp/include.jsp"
-%><% 
+%><%
 
     ar.assertLoggedIn("");
     String accountId = ar.reqParam("siteId");
@@ -13,13 +13,40 @@
 
     WorkspaceStats wStats = ngb.getRecentStats(ar.getCogInstance());
 
- 
-%> 
+/*
+{
+  "serverTime": 1566429309440,
+  "siteId": "anaxaman",
+  "stats": {
+    "anythingPerUser": {
+      "kswenson@us.fujitsu.com": 7
+    },
+    "commentsPerUser": {},
+    "docsPerUser": {},
+    "meetingsPerUser": {},
+    "numComments": 0,
+    "numDecisions": 0,
+    "numDocs": 0,
+    "numMeetings": 0,
+    "numProposals": 0,
+    "numTopics": 0,
+    "numUsers": 1,
+    "numWorkspaces": 1,
+    "proposalsPerUser": {},
+    "responsesPerUser": {},
+    "sizeArchives": 0,
+    "sizeDocuments": 0,
+    "topicsPerUser": {},
+    "unrespondedPerUser": {}
+  }
+}
+*/
+%>
 
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, AllPeople) {
     window.setMainPageTitle("Site Statistics");
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.newName = $scope.siteInfo.names[0];
@@ -31,38 +58,46 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
-    
-    $scope.removeName = function(oldName) {
-        $scope.siteInfo.names = $scope.siteInfo.names.filter( function(item) {
-            return (item!=oldName);
-        });
-    }
-    $scope.addName = function(newName) {
-        $scope.removeName(newName);
-        $scope.siteInfo.names.splice(0, 0, newName);
-    }
-    
-    $scope.saveSiteInfo = function() {
-        if ($scope.siteInfo.names.length===0) {
-            alert("Site must have at least one name at all times.  Please add a name.");
-            return;
-        }
-        var postURL = "updateSiteInfo.json";
-        var postdata = angular.toJson($scope.siteInfo);
+
+    $scope.getStats = function() {
+        var getURL = "SiteStatistics.json";
         $scope.showError=false;
-        $http.post(postURL, postdata)
+        $http.get(getURL)
         .success( function(data) {
-            $scope.siteInfo = data;
+            $scope.stats = data.stats;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
     };
+    $scope.recalcStats = function() {
+        var getURL = "SiteStatistics.json?recalc=yes";
+        $scope.showError=false;
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.stats = data.stats;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    };
+    $scope.findFullName = function(key) {
+        return AllPeople.findFullName(key, $scope.siteInfo.key);
+    }
+    $scope.findUserKey = function(key) {
+        return AllPeople.findUserKey(key, $scope.siteInfo.key);
+    }
+
+    $scope.getStats();
 
 });
 
 </script>
-
+<style>
+.spacey tr td {
+    padding: 4px;
+}
+</style>
 <div ng-app="myApp" ng-controller="myCtrl">
 
 <%@include file="ErrorPanel.jsp"%>
@@ -72,14 +107,16 @@ app.controller('myCtrl', function($scope, $http) {
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" 
+          <li role="presentation"><a role="menuitem"
               href="SiteAdmin.htm">Site Admin</a></li>
-          <li role="presentation"><a role="menuitem" 
+          <li role="presentation"><a role="menuitem"
               href="roleRequest.htm">Role Requests</a></li>
-          <li role="presentation"><a role="menuitem" 
+          <li role="presentation"><a role="menuitem"
               href="SiteUsers.htm">User Migration</a></li>
-          <li role="presentation"><a role="menuitem" 
+          <li role="presentation"><a role="menuitem"
               href="SiteStats.htm">Site Statistics</a></li>
+          <li role="presentation"><a role="menuitem"
+              ng-click="recalcStats()">Recalculate</a></li>
         </ul>
       </span>
     </div>
@@ -89,83 +126,128 @@ app.controller('myCtrl', function($scope, $http) {
         <table class="table">
         <tr>
            <td>Number of Topics:</td>
-           <td><%=wStats.numTopics%></td>
+           <td>{{stats.numTopics}}</td>
         </tr>
         <tr>
            <td>Number of Meetings:</td>
-           <td><%=wStats.numMeetings%></td>
+           <td>{{stats.numMeetings}}</td>
         </tr>
         <tr>
            <td>Number of Decisions:</td>
-           <td><%=wStats.numDecisions%></td>
+           <td>{{stats.numDecisions}}</td>
         </tr>
         <tr>
            <td>Number of Comments:</td>
-           <td><%=wStats.numComments%></td>
+           <td>{{stats.numComments}}</td>
         </tr>
         <tr>
            <td>Number of Proposals:</td>
-           <td><%=wStats.numProposals%></td>
+           <td>{{stats.numProposals}}</td>
         </tr>
         <tr>
            <td>Number of Documents:</td>
-           <td><%=wStats.numDocs%></td>
+           <td>{{stats.numDocs}}</td>
         </tr>
         <tr>
            <td>Size of Documents:</td>
-           <td>{{<%=wStats.sizeDocuments%>|number}}</td>
+           <td>{{stats.sizeDocuments|number}}</td>
         </tr>
         <tr>
            <td>Number of Old Versions:</td>
-           <td>{{<%=wStats.sizeArchives%>|number}}</td>
+           <td>{{stats.sizeArchives|number}}</td>
         </tr>
         <tr>
            <td>Topics:</td>
-           <td><% outputStatTable(ar, wStats.topicsPerUser, "Topics"); %></td>
+           <td>
+               <table class="spacey">
+                 <tr ng-repeat="(key, value) in stats.topicsPerUser">
+                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
+                   <td>{{value}}</td>
+                 </tr>
+               </table>
+           </td>
+        </tr>
         </tr>
         <tr>
            <td>Documents:</td>
-           <td><% outputStatTable(ar, wStats.docsPerUser, "Documents"); %></td>
+           <td>
+               <table class="spacey">
+                 <tr ng-repeat="(key, value) in stats.docsPerUser">
+                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
+                   <td>{{value}}</td>
+                 </tr>
+               </table>
+           </td>
+        </tr>
         </tr>
         <tr>
            <td>Comments:</td>
-           <td><% outputStatTable(ar, wStats.commentsPerUser, "Comments"); %></td>
+           <td>
+               <table class="spacey">
+                 <tr ng-repeat="(key, value) in stats.commentsPerUser">
+                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
+                   <td>{{value}}</td>
+                 </tr>
+               </table>
+           </td>
         </tr>
         <tr>
            <td>Meetings:</td>
-           <td><% outputStatTable(ar, wStats.meetingsPerUser, "Meetings"); %></td>
+           <td>
+               <table class="spacey">
+                 <tr ng-repeat="(key, value) in stats.meetingsPerUser">
+                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
+                   <td>{{value}}</td>
+                 </tr>
+               </table>
+           </td>
         </tr>
         <tr>
            <td>Proposals:</td>
-           <td><% outputStatTable(ar, wStats.proposalsPerUser, "Proposals"); %></td>
+           <td>
+               <table class="spacey">
+                 <tr ng-repeat="(key, value) in stats.proposalsPerUser">
+                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
+                   <td>{{value}}</td>
+                 </tr>
+               </table>
+           </td>
         </tr>
         <tr>
            <td>Responses:</td>
-           <td><% outputStatTable(ar, wStats.responsesPerUser, "Responses"); %></td>
+           <td>
+               <table class="spacey">
+                 <tr ng-repeat="(key, value) in stats.responsesPerUser">
+                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
+                   <td>{{value}}</td>
+                 </tr>
+               </table>
+           </td>
         </tr>
         <tr>
            <td>Unresponded:</td>
-           <td><% outputStatTable(ar, wStats.unrespondedPerUser, "Unresponded"); %></td>
+           <td>
+               <table class="spacey">
+                 <tr ng-repeat="(key, value) in stats.unrespondedPerUser">
+                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>:
+                   <td>{{value}}</td>
+                 </tr>
+               </table>
+           </td>
         </tr>
         <tr>
            <td>All Users:</td>
-           <td><% outputStatTable(ar, wStats.anythingPerUser, "All Users"); %></td>
+           <td>
+               <table class="spacey">
+                 <tr ng-repeat="(key, value) in stats.anythingPerUser">
+                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>: </td>
+                   <td>{{value}}</td>
+                 </tr>
+               </table>
+           </td>
         </tr>
         </table>
     </div>
 </div>
 
-<%!
-    private void outputStatTable(AuthRequest ar, NameCounter counter, String group) throws Exception  {
-        ar.write("\n<table>");
-        List<String> keys = counter.getSortedKeys();
-        for (String key : keys) {
-            ar.write("\n  <tr><td style=\"text-align:right;\">");
-            ar.writeHtml(key);
-            ar.write(" </td><td>: ");
-            ar.write(counter.get(key).toString());
-            ar.write("</td></tr>");
-        }
-        ar.write("\n</table>");
-    }
-%>
+<script src="../../../jscript/AllPeople.js"></script>

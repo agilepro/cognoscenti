@@ -53,7 +53,7 @@ public class NGBook extends ContainerCommon {
     private final SiteInfoRecord siteInfoRec;
     private final NGRole executiveRole;
     private final NGRole ownerRole;
-    
+
     private List<AddressListEntry> siteUsers;
 
     //this is the file system folder where projects should be created
@@ -944,6 +944,14 @@ public class NGBook extends ContainerCommon {
         if (timeStamp>recentEnough) {
             return getStatsFile();
         }
+        return recalculateStats(cog);
+    }
+
+    /**
+     * Forces the recalculation of the site states and puts the result
+     * in the cache.
+     */
+    public WorkspaceStats recalculateStats(Cognoscenti cog) throws Exception {
 
         System.out.println("SCANNING STATS: for site: "+this.key);
         //we should figure out how to do this at a time when all the
@@ -1191,12 +1199,12 @@ public class NGBook extends ContainerCommon {
         }
     }
 
-    
+
     public List<AddressListEntry> getSiteUsersList(Cognoscenti cog) throws Exception {
         if (siteUsers!=null) {
             return siteUsers;
         }
-        
+
         List<AddressListEntry> temp = new ArrayList<AddressListEntry>();
         WorkspaceStats ws = getRecentStats(cog);
         List<String> userids = ws.anythingPerUser.getSortedKeys();

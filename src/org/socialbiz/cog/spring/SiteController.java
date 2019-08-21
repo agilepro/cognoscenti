@@ -39,6 +39,7 @@ import org.socialbiz.cog.SiteMailGenerator;
 import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
 import org.socialbiz.cog.UserProfile;
+import org.socialbiz.cog.WorkspaceStats;
 import org.socialbiz.cog.exception.NGException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,14 +49,15 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 @Controller
 public class SiteController extends BaseController {
 
-    
+
     ////////////////////// MAIN VIEWS ///////////////////////
-    
+
     @RequestMapping(value = "/{siteId}/$/SiteAdmin.htm", method = RequestMethod.GET)
     public void SiteAdmin(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
@@ -68,7 +70,7 @@ public class SiteController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPLoggedIn(ar,siteId,null,"SiteStats");
     }
-    
+
     @RequestMapping(value = "/{userKey}/requestAccount.htm", method = RequestMethod.GET)
     public void requestSite(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -124,7 +126,7 @@ public class SiteController extends BaseController {
         }
     }
 
-    
+
     @RequestMapping(value = "/siteRequest.json", method = RequestMethod.POST)
     public void siteRequest(HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -134,22 +136,22 @@ public class SiteController extends BaseController {
             SiteRequest newSiteRequest = SiteReqFile.createNewSiteRequest(incoming, ar);
 
             newSiteRequest.sendSiteRequestEmail(ar);
-            
+
             sendJson(ar, newSiteRequest.getJSON());
         } catch(Exception ex){
             Exception ee = new Exception("Unable to a request a site", ex);
             streamException(ee, ar);
         }
     }
-    
-    
+
+
     @RequestMapping(value = "/su/takeOwnershipSite.json", method = RequestMethod.POST)
     public void takeOwnershipSite(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        AuthRequest ar = AuthRequest.getOrCreate(request, response); 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
-            
+
             ar.assertLoggedIn("Must be logged in to take ownership of a site.");
             if(!ar.isSuperAdmin()){
                 throw new Exception("Must be super admin in to take ownership of a site.");
@@ -171,7 +173,7 @@ public class SiteController extends BaseController {
                 throw new Exception("Failure to add to owners role this user: "+uProf.getUniversalId());
             }
             site.saveFile(ar, "adding super admin to site owners");
-            
+
             JSONObject jo = site.getConfigJSON();
             sendJson(ar, jo);
         }catch(Exception ex){
@@ -184,7 +186,7 @@ public class SiteController extends BaseController {
     public void garbageCollect(HttpServletRequest request, HttpServletResponse response)
             throws Exception {
 
-        AuthRequest ar = AuthRequest.getOrCreate(request, response); 
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
         String siteKey = "???";
         try{
             ar.assertLoggedIn("Must be logged to garbage collect a site.");
@@ -220,8 +222,8 @@ public class SiteController extends BaseController {
             else {
                 throw new Exception("Site '"+siteKey+"' must be deleted before it can be garbage collected");
             }
-            
-            
+
+
             JSONObject jo = new JSONObject();
             jo.put("key", siteKey);
             jo.put("op", operation);
@@ -232,7 +234,7 @@ public class SiteController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
+
     private void deleteRecursive(File f) throws Exception {
         try {
             if (f.isDirectory()) {
@@ -243,7 +245,7 @@ public class SiteController extends BaseController {
             if (!f.delete()) {
                 throw new Exception("Delete command returned false for file: " + f);
             }
-        } 
+        }
         catch (Exception e) {
             throw new Exception("Failed to delete the folder: " + f, e);
         }
@@ -281,7 +283,7 @@ public class SiteController extends BaseController {
             else{
                 throw new Exception("Unrecognized action '"+action+"' in acceptOrDeny.form");
             }
-            
+
             //if we made any changes save them
             siteReqFile.save();
 
@@ -333,7 +335,7 @@ public class SiteController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, null, "accountCreateProject");
     }
-    
+
     @RequestMapping(value = "/{siteId}/$/accountCloneProject.htm", method = RequestMethod.GET)
     public void accountCloneProject(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
@@ -458,7 +460,7 @@ public class SiteController extends BaseController {
         redirectBrowser(ar, "SiteWorkspaces.htm");
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/$/replaceUsers.json", method = RequestMethod.POST)
     public void getGoalHistory(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -491,7 +493,7 @@ public class SiteController extends BaseController {
                 count += found;
                 NGPageIndex.clearLocksHeldByThisThread();
             }
-                    
+
             JSONObject jo = new JSONObject();
             jo.put("updated", count);
             sendJson(ar, jo);
@@ -500,7 +502,7 @@ public class SiteController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
+
     @RequestMapping(value = "/{siteId}/$/SiteMail.json", method = RequestMethod.POST)
     public void siteMail(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -535,7 +537,7 @@ public class SiteController extends BaseController {
 
             ngpi.nextScheduledAction = ngb.nextActionDue();
             //save, but don't update the recently changed date, site mail does not represent real site activity
-            ngb.save();   
+            ngb.save();
             JSONObject repo = eGen.getJSON();
             sendJson(ar, repo);
         }
@@ -555,9 +557,9 @@ public class SiteController extends BaseController {
             if (!ar.isLoggedIn()) {
                 throw new Exception("Must be logged in to get users");
             }
-            
+
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
-            
+
             JSONArray peopleList = new JSONArray();
             List<AddressListEntry> userList = site.getSiteUsersList(ar.getCogInstance());
             for (AddressListEntry ale : userList) {
@@ -573,6 +575,35 @@ public class SiteController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
-    
+
+
+    @RequestMapping(value = "/{siteId}/$/SiteStatistics.json", method = RequestMethod.GET)
+    public void SiteStatistics(HttpServletRequest request,
+            HttpServletResponse response, @PathVariable String siteId) throws Exception {
+
+        AuthRequest ar = null;
+        try{
+            ar = AuthRequest.getOrCreate(request, response);
+            if (!ar.isLoggedIn()) {
+                throw new Exception("Must be logged in to get users");
+            }
+            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
+
+            String recalc = ar.defParam("recalc", null);
+            if (recalc!=null) {
+                site.recalculateStats(ar.getCogInstance());
+            }
+            WorkspaceStats ws = site.getRecentStats(ar.getCogInstance());
+
+            JSONObject result = new JSONObject();
+            result.put("siteId",  siteId);
+            result.put("stats", ws.getJSON());
+            sendJson(ar, result);
+        }
+        catch(Exception ex){
+            Exception ee = new JSONException("Unable to generate get site statistics for {0}", ex, siteId);
+            streamException(ee, ar);
+        }
+    }
+
 }
