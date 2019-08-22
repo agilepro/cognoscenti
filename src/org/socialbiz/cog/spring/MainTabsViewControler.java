@@ -553,8 +553,8 @@ public class MainTabsViewControler extends BaseController {
             String mn = ar.reqParam("mn");
             String go = ar.defParam("go", ar.baseURL);
 
-            NGWorkspace ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
-            String expectedMn = ngp.emailDependentMagicNumber(email);
+            NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
+            String expectedMn = ngw.emailDependentMagicNumber(email);
             if (!expectedMn.equals(mn)) {
                 throw new Exception("Something is wrong, improper request for email address "+email);
             }
@@ -562,8 +562,9 @@ public class MainTabsViewControler extends BaseController {
             String cmd = ar.reqParam("cmd");
             if ("Remove Me".equals(cmd)) {
                 String role = ar.reqParam("role");
-                NGRole specRole = ngp.getRoleOrFail(role);
+                NGRole specRole = ngw.getRoleOrFail(role);
                 specRole.removePlayer(new AddressListEntry(email));
+                ngw.getSite().flushUserCache();
             }
             else {
                 throw new Exception("emailAdjustmentActionForm does not understand the cmd "+cmd);
@@ -589,11 +590,12 @@ public class MainTabsViewControler extends BaseController {
         try{
             ar.assertLoggedIn("Must be logged in modify role settings");
             String p = ar.reqParam("p");
-            NGWorkspace ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
+            NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
             String role = ar.reqParam("role");
-            NGRole specRole = ngp.getRoleOrFail(role);
+            NGRole specRole = ngw.getRoleOrFail(role);
             specRole.removePlayer(ar.getUserProfile().getAddressListEntry());
-            saveAndReleaseLock(ngp, ar, "user removed themself from role "+role);
+            ngw.getSite().flushUserCache();
+            saveAndReleaseLock(ngw, ar, "user removed themself from role "+role);
 
             JSONObject results = new JSONObject();
             results.put("result", "ok");

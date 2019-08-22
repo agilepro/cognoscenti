@@ -300,8 +300,8 @@ public class ProjectSettingController extends BaseController {
         String op = "Unknown";
         String roleId= "Unknown";
         try{
-            NGWorkspace ngc = (NGWorkspace) registerSiteOrProject(ar, siteId, pageId );
-            ar.setPageAccessLevels(ngc);
+            NGWorkspace ngw = (NGWorkspace) registerSiteOrProject(ar, siteId, pageId );
+            ar.setPageAccessLevels(ngw);
             ar.assertLoggedIn("Must be logged in to manipuate roles.");
             JSONObject personalInfo = getPostedObject(ar);
             UserProfile up = ar.getUserProfile();
@@ -309,9 +309,9 @@ public class ProjectSettingController extends BaseController {
             op = personalInfo.getString("op");
             roleId = personalInfo.getString("roleId");
 
-            NGRole role = ngc.getRoleOrFail(roleId);
+            NGRole role = ngw.getRoleOrFail(roleId);
             AddressListEntry ale = up.getAddressListEntry();
-            RoleRequestRecord rrr = ngc.getRoleRequestRecord(role.getName(),up.getUniversalId());
+            RoleRequestRecord rrr = ngw.getRoleRequestRecord(role.getName(),up.getUniversalId());
 
 
             if ("Join".equals(op)) {
@@ -323,13 +323,13 @@ public class ProjectSettingController extends BaseController {
                     if (personalInfo.has("desc")) {
                         requestDesc = personalInfo.getString("desc");
                     }
-                    rrr = ngc.createRoleRequest(roleId, up.getUniversalId(), ar.nowTime, up.getUniversalId(), requestDesc);
+                    rrr = ngw.createRoleRequest(roleId, up.getUniversalId(), ar.nowTime, up.getUniversalId(), requestDesc);
 
-                    NGRole adminRole = ngc.getSecondaryRole();
+                    NGRole adminRole = ngw.getSecondaryRole();
                     boolean hasSpecialPermission = adminRole.isPlayer(ale);
 
-                    if (!hasSpecialPermission && ngc instanceof NGWorkspace)  {
-                        NGRole executiveRole = ((NGWorkspace)ngc).getSite().getRole("Executives");//getSecondaryRole();
+                    if (!hasSpecialPermission && ngw instanceof NGWorkspace)  {
+                        NGRole executiveRole = ((NGWorkspace)ngw).getSite().getRole("Executives");//getSecondaryRole();
                         hasSpecialPermission = executiveRole.isPlayer(ale);
                     }
 
@@ -339,10 +339,10 @@ public class ProjectSettingController extends BaseController {
 
                     if(hasSpecialPermission || noAdmin ) {
                         rrr.setState("Approved");
-                        ngc.addPlayerToRole(roleId,up.getUniversalId());
+                        ngw.addPlayerToRole(roleId,up.getUniversalId());
                     }
                     else{
-                        sendRoleRequestEmail(ar,rrr,ngc);
+                        sendRoleRequestEmail(ar,rrr,ngw);
                     }
                 }
             }
@@ -359,12 +359,13 @@ public class ProjectSettingController extends BaseController {
                 throw new Exception("Unable to understand the operation "+op);
             }
 
-            ngc.saveFile(ar, "Updated role "+roleId);
+            ngw.getSite().flushUserCache();  //calculate the users again
+            ngw.saveFile(ar, "Updated role "+roleId);
             JSONObject repo = new JSONObject();
             repo.put("op",  op);
             repo.put("success",  true);
             repo.put("player", role.isPlayer(up));
-            RoleRequestRecord rrr2 = ngc.getRoleRequestRecord(role.getName(),up.getUniversalId());
+            RoleRequestRecord rrr2 = ngw.getRoleRequestRecord(role.getName(),up.getUniversalId());
             repo.put("reqPending", (rrr2!=null && !rrr2.isCompleted()));
             sendJson(ar, repo);
         }
@@ -497,6 +498,9 @@ public class ProjectSettingController extends BaseController {
                 String priorLinkedRole = role.getLinkedRole();
                 role.updateFromJSON(roleInfo);
                 if (ngc instanceof NGWorkspace) {
+
+                    ((NGWorkspace)ngc).getSite().flushUserCache();  //calculate the users again
+
                     //if there is a linked role on the site, then use the same
                     //posted information to update that
                     String linkedRole = role.getLinkedRole();

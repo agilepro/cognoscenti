@@ -71,6 +71,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         });
     };
     $scope.recalcStats = function() {
+        AllPeople.refreshCache($scope.siteInfo.key);
         var getURL = "SiteStatistics.json?recalc=yes";
         $scope.showError=false;
         $http.get(getURL)
@@ -125,6 +126,14 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     <div class="generalContent">
         <table class="table">
         <tr>
+           <td>Number of Workspaces:</td>
+           <td>{{stats.numWorkspaces}}</td>
+        </tr>
+        <tr>
+           <td>Number of Users:</td>
+           <td>{{stats.numUsers}}</td>
+        </tr>
+        <tr>
            <td>Number of Topics:</td>
            <td>{{stats.numTopics}}</td>
         </tr>
@@ -150,11 +159,11 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         </tr>
         <tr>
            <td>Size of Documents:</td>
-           <td>{{stats.sizeDocuments|number}}</td>
+           <td>{{stats.sizeDocuments|number}} bytes</td>
         </tr>
         <tr>
-           <td>Number of Old Versions:</td>
-           <td>{{stats.sizeArchives|number}}</td>
+           <td>Size of Old Versions:</td>
+           <td>{{stats.sizeArchives|number}} bytes</td>
         </tr>
         <tr>
            <td>Topics:</td>
@@ -240,8 +249,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
            <td>
                <table class="spacey">
                  <tr ng-repeat="(key, value) in stats.anythingPerUser">
-                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a>: </td>
-                   <td>{{value}}</td>
+                   <td><a href="../../FindPerson.htm?uid={{findUserKey(key)}}">{{findFullName(key)}}</a> </td>
                  </tr>
                </table>
            </td>

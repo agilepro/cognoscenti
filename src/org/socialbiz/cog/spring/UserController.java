@@ -459,49 +459,6 @@ public class UserController extends BaseController {
     }
 
 
-/*
-    @RequestMapping(value = "/markAsTemplate.ajax", method = RequestMethod.POST)
-    public void markAsTemplate(HttpServletRequest request, HttpServletResponse response)
-    throws Exception {
-
-        AuthRequest ar = null;
-        try{
-            ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Unable to set to watch this page.");
-
-            String p = ar.reqParam("pageId");
-            NGWorkspace ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(p).getWorkspace();
-            ar.setPageAccessLevels(ngp);
-
-            UserProfile uProf = ar.getUserProfile();
-            String action = ar.reqParam("action");
-            if ("MarkAsTemplate".equals(action))
-            {
-                uProf.setProjectAsTemplate(ngp.getSiteKey()+"|"+ngp.getKey());
-            }
-            else if ("removeTemplate".equals(action))
-            {
-                uProf.removeTemplateRecord(ngp.getKey());
-            }
-            else if ("stopusingastemplate".equals(action))
-            {
-                uProf.clearWatch(ngp.getKey());
-            }
-            else
-            {
-                throw new NGException("nugen.exceptionhandling.system.not.understand.action",new Object[]{action});
-            }
-            JSONObject paramMap = new JSONObject();
-            paramMap.put("msgType" , "success");
-            paramMap.put("action", action);
-            sendJson(ar, paramMap);
-        }
-        catch(Exception ex){
-            streamException(ex,ar);
-        }
-    }
-*/
-
     @RequestMapping(value = "/{userKey}/EditUserProfileAction.form", method = RequestMethod.POST)
     public void updateUserProfile(HttpServletRequest request, HttpServletResponse response,
             @PathVariable String userKey)
@@ -1477,6 +1434,7 @@ public class UserController extends BaseController {
                 role = ngp.getRoleOrFail(roleName);
                 role.removePlayer(ale);
             }
+            ngp.getSite().flushUserCache();
         }
     }
 

@@ -55,6 +55,8 @@ public class NGBook extends ContainerCommon {
     private final NGRole ownerRole;
 
     private List<AddressListEntry> siteUsers;
+    private boolean forceNewStatistics = false;
+
 
     //this is the file system folder where projects should be created
     //or null indicates to create projects in the data folder.
@@ -938,11 +940,13 @@ public class NGBook extends ContainerCommon {
     }
 
     public WorkspaceStats getRecentStats(Cognoscenti cog) throws Exception {
-        File statsFile = getStatsFilePath();
-        long timeStamp = statsFile.lastModified();
-        long recentEnough = System.currentTimeMillis() - 24L*60*60*1000;
-        if (timeStamp>recentEnough) {
-            return getStatsFile();
+        if (!this.forceNewStatistics) {
+            File statsFile = getStatsFilePath();
+            long timeStamp = statsFile.lastModified();
+            long recentEnough = System.currentTimeMillis() - 24L*60*60*1000;
+            if (timeStamp>recentEnough) {
+                return getStatsFile();
+            }
         }
         return recalculateStats(cog);
     }
@@ -959,13 +963,10 @@ public class NGBook extends ContainerCommon {
         WorkspaceStats siteStats = new WorkspaceStats();
         for (NGPageIndex ngpi : cog.getAllProjectsInSite(this.getKey())) {
             NGWorkspace ngp = ngpi.getWorkspace();
-            System.out.println("SCANNING STATS: looking at workspace: "+ngp.getFullName());
             siteStats.gatherFromWorkspace(ngp);
             siteStats.numWorkspaces++;
-            System.out.println("SCANNING STATS: finished "+siteStats.numWorkspaces+": "+ngp.getFullName());
         }
         saveStatsFile(siteStats);
-        System.out.println("SCANNING STATS: done: "+this.key);
         return siteStats;
     }
     public JSONObject getStatsJSON(Cognoscenti cog) throws Exception {
@@ -1222,6 +1223,10 @@ public class NGBook extends ContainerCommon {
         }
         siteUsers =  temp;
         return temp;
+    }
+    public void flushUserCache() throws Exception {
+        siteUsers = null;
+        forceNewStatistics = true;
     }
 
 }

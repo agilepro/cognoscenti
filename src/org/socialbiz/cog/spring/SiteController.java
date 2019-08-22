@@ -591,7 +591,7 @@ public class SiteController extends BaseController {
 
             String recalc = ar.defParam("recalc", null);
             if (recalc!=null) {
-                site.recalculateStats(ar.getCogInstance());
+                site.flushUserCache();
             }
             WorkspaceStats ws = site.getRecentStats(ar.getCogInstance());
 
