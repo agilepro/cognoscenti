@@ -107,6 +107,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.showCompleted = false;
     $scope.showRecent = true;
     $scope.showChecklists = true;
+    $scope.showDescription = true;
     $scope.isCreating = false;
     $scope.newGoal = {assignList:[],id:"~new~",labelMap:{}};
 
@@ -130,6 +131,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         var src = [];
         $scope.allGoals.forEach( function(item) {
+            item.html = convertMarkdownToHtml(item.description);
             if (areaId!=null && areaId.length>0) {
                 if (areaId==item.taskArea) {
                     src.push(item);
@@ -583,7 +585,24 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
     };
     
-    
+    $scope.imageName = function(player) {
+        if (player.key) {
+            if (player.key.indexOf("@")<0) {
+                return player.key+".jpg";
+            }
+        }
+        var lc = player.uid.toLowerCase();
+        var ch = lc.charAt(0);
+        var i =1;
+        while(i<lc.length && (ch<'a'||ch>'z')) {
+            ch = lc.charAt(i); i++;
+        }
+        return "fake-"+ch+".jpg";
+    }
+    $scope.navigateToUser = function(player) {
+        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
+    }
+
 });
 
 function addvalue() {
@@ -653,6 +672,8 @@ function addvalue() {
         </span>
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showChecklists">
             Show Checklists</span>
+        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showDescription">
+            Show Description</span>
     </div>
 
 
@@ -699,8 +720,21 @@ function addvalue() {
           <tr class="headerRow">
             <td colspan="2" ng-click="openTaskAreaEditor(area)">{{area.name}}&nbsp;</td>
             <td colspan="2">
-                <div ng-repeat="ass in area.assignees">
-                  <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass.key}}">{{ass.name}}</a>
+                <div ng-repeat="person in area.assignees">
+                  <span class="dropdown">
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(person)}}" 
+                         style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                          {{person.name}}<br/>{{person.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(person)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                  </span>
                 </div>
             </td>
             <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going">
@@ -763,18 +797,32 @@ function addvalue() {
             </td>
             <td  style="max-width:300px"  ng-click="openModalActionItem(rec, 'details')"
                title="The synopsis (name) and description of the action item.">
-              <span style="cursor: pointer;" ng-click="rec.show=!rec.show">{{rec.synopsis}} ~ {{rec.description}}</span>
+              <div style="cursor: pointer;" ><b>{{rec.synopsis}}</b></span>
               <span ng-repeat="label in getGoalLabels(rec)">
                 <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
                   {{label.name}}
                 </button>
               </span>
+              </div>
+              <div ng-show="showDescription" ng-bind-html="rec.html"></div>
             </td>
-            <td title="People assigned to complete this action item."  
-                ng-click="openModalActionItem(rec, 'assignee')">
+            <td title="People assigned to complete this action item." style="width:70px">
               <div>
-                <div ng-repeat="ass in rec.assignees">
-                  <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass}}">{{getName(ass)}}</a>
+                <div ng-repeat="person in rec.assignTo">
+                  <span class="dropdown">
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(person)}}" 
+                         style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                          {{person.name}}<br/>{{person.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(person)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                  </span>
                 </div>
               </div>
             </td>
@@ -845,4 +893,5 @@ function addvalue() {
 
 <script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/TaskAreaModal.js"></script>
+<script src="<%=ar.baseURL%>jscript/MarkdownToHtml.js"></script>
 
