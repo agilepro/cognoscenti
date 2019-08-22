@@ -71,12 +71,14 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         });
     };
     $scope.recalcStats = function() {
-        AllPeople.refreshCache($scope.siteInfo.key);
+        console.log("recalcStats");
         var getURL = "SiteStatistics.json?recalc=yes";
         $scope.showError=false;
         $http.get(getURL)
         .success( function(data) {
             $scope.stats = data.stats;
+            AllPeople.refreshCache($scope.siteInfo.key);
+        
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);

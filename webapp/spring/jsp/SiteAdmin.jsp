@@ -67,6 +67,8 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     };
+    
+
 
 });
 

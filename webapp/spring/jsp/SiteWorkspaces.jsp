@@ -94,6 +94,23 @@ app.controller('myCtrl', function($scope, $http) {
     }
     
     $scope.sortItems();
+    
+    $scope.garbageCollect = function() {
+        if (!confirm("Do you really want to delete the workspaces marked for deletion?")) {
+            return;
+        }
+        var postURL = "GarbageCollect.json";
+        $http.get(postURL)
+        .success( function(data) {
+            console.log("Garbage Results", data);
+            alert("Success.  REFRESHING the page");
+            window.location.reload();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+
 });
 
 </script>
@@ -111,6 +128,9 @@ app.controller('myCtrl', function($scope, $http) {
               href="accountCreateProject.htm" >Create New Workspace</a></li>
           <li role="presentation" ng-show="showExperimental"><a role="menuitem"
               href="accountCloneProject.htm" >Clone Remote Workspace</a></li>
+          <li role="presentation" class="divider"></li>
+          <li role="presentation"><a role="menuitem" 
+              ng-click="garbageCollect()">Garbage Collect</a></li>
         </ul>
       </span>
     </div>

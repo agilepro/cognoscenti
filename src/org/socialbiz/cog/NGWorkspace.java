@@ -30,6 +30,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
@@ -713,5 +714,32 @@ public class NGWorkspace extends NGPage {
         }
         return com;
     }
+
+    public JSONObject actuallyGarbageCollect(Cognoscenti cog) throws Exception {
+
+        JSONObject results = new JSONObject();
+        results.put("workspaceID", this.getKey());
+        results.put("workspaceName", this.getFullName());
+        results.put("state", this.getAccessStateStr());
+
+        int state = this.getAccessState();
+        if (state == ACCESS_STATE_DELETED) {
+            //delete everything
+            File cogFolder = this.associatedFile.getParentFile();
+            File workspaceFolder = cogFolder.getParentFile();
+
+            cog.eliminateIndexForWorkspace(this);
+
+            FileUtils.deleteDirectory(workspaceFolder);
+            results.put("action", "folder for workapce is completed deleted");
+            return results;
+        }
+
+        //check for documents to delete garbage collect
+        //not implemented yet
+        return results;
+
+    }
+
 
 }

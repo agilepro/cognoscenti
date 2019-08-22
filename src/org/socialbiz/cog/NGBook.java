@@ -1229,4 +1229,24 @@ public class NGBook extends ContainerCommon {
         forceNewStatistics = true;
     }
 
+
+    public JSONObject actuallyGarbageCollect(Cognoscenti cog) throws Exception {
+
+        JSONArray ja = new JSONArray();
+        JSONObject jo = new JSONObject();
+        jo.put("list",  ja);
+        for (NGPageIndex ngpi : cog.getDeletedContainers()) {
+            if (!ngpi.isProject()) {
+                continue;
+            }
+            if (!ngpi.wsSiteKey.equals(this.key)) {
+                continue;
+            }
+            NGWorkspace ngw = ngpi.getWorkspace();
+            ja.put(ngw.actuallyGarbageCollect(cog));
+
+        }
+        return jo;
+    }
+
 }

@@ -601,7 +601,27 @@ public class SiteController extends BaseController {
             sendJson(ar, result);
         }
         catch(Exception ex){
-            Exception ee = new JSONException("Unable to generate get site statistics for {0}", ex, siteId);
+            Exception ee = new JSONException("Unable to generate site statistics for {0}", ex, siteId);
+            streamException(ee, ar);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/$/GarbageCollect.json", method = RequestMethod.GET)
+    public void GarbageCollect(HttpServletRequest request,
+            HttpServletResponse response, @PathVariable String siteId) throws Exception {
+
+        AuthRequest ar = null;
+        try{
+            ar = AuthRequest.getOrCreate(request, response);
+            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
+            ar.setPageAccessLevels(site);
+            ar.assertAdmin("Must be admin to garbage collect items");
+
+            JSONObject result = site.actuallyGarbageCollect(ar.getCogInstance());
+            sendJson(ar, result);
+        }
+        catch(Exception ex){
+            Exception ee = new JSONException("Unable to garbage collect for site '{0}'", ex, siteId);
             streamException(ee, ar);
         }
     }
