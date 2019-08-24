@@ -63,7 +63,6 @@ public class PDFUtil {
     float yShift = 0f;
 
     float previousSubLineWidth = 0.0f;
-    int notesIndex = 0;
 
     PDFont nbfont = PDType1Font.HELVETICA_BOLD;
     PDFont font = PDType1Font.TIMES_ROMAN;
@@ -94,7 +93,7 @@ public class PDFUtil {
         wrappedListOfLink = new ArrayList<String>();
     }
 
-    private void setCusrosrPosition(float nxShift, float nyShift)throws Exception{
+    private void setCursorPosition(float nxShift, float nyShift)throws Exception{
         xShift = nxShift;
         yShift = nyShift;
         xPos = xPos + xShift;
@@ -168,24 +167,23 @@ public class PDFUtil {
         contentStream.setFont(nbfont, h1_font_size );
 
         contentStream.drawString(projectName);
-        setCusrosrPosition(-160 ,-40);
+        setCursorPosition(-160 ,-40);
 
         if(publicNoteList != null && publicNoteList.size() > 0){
             contentStream.setFont( nbfont, h1_font_size );
             contentStream.drawString("Public Topics : ");
-            setCusrosrPosition(0,-30);
+            setCursorPosition(0,-30);
             writeInPDF(ar, publicNotes);
         }
 
         if(memberNoteList != null && memberNoteList.size() > 0){
-            notesIndex = 0;
             if(!isNewPage){
                 yPos = 0;
                 setPage();
             }
             contentStream.setFont( nbfont, h1_font_size );
             contentStream.drawString("Member Topics : ");
-            setCusrosrPosition(0,-30);
+            setCursorPosition(0,-30);
             writeInPDF(ar, memberNotes);
         }
 
@@ -204,7 +202,7 @@ public class PDFUtil {
     }
 
     private void writeInPDF(AuthRequest ar, List<TopicRecord> notes) throws Exception, IOException {
-
+        int notesIndex = 0;
         for (TopicRecord lr : notes) {
             String data = lr.getWiki();
 
@@ -218,7 +216,7 @@ public class PDFUtil {
             }
             String lastEditor = lr.getModUser().getName();
             String editTime = SectionUtil.getNicePrintTime(lr.getLastEdited(),  ar.nowTime).trim();
-            setCusrosrPosition(10,-5);
+            setCursorPosition(10,-5);
             contentStream.setFont( nbfont, h2_font_size );
             String noteHeader =  String.valueOf(notesIndex+1) + ".  " + subject;
             contentStream.drawString(noteHeader);
@@ -227,7 +225,7 @@ public class PDFUtil {
 
             addUserLinkAnnotation(xPos, yPos, 11, lastEditor, editTime);
 
-            setCusrosrPosition(20,-25);
+            setCursorPosition(20,-25);
             contentStream.endText();
             contentStream.drawLine(xPos-20, yPos+20, 590, yPos+20);
             contentStream.beginText();
@@ -242,10 +240,10 @@ public class PDFUtil {
                     previousSubLineWidth = 0;
                     parseAndWriteLine(thisLine);
                     startWithBullet = false;
-                    setCusrosrPosition(0,-14);
+                    setCursorPosition(0,-14);
                 }
             }
-            setCusrosrPosition(-30,-20);
+            setCursorPosition(-30,-20);
             notesIndex++;
         }
     }
@@ -266,7 +264,7 @@ public class PDFUtil {
             if(line.length() > 3){
                 line = line.substring(3).trim();
                 contentStream.setFont(bfont, h1_font_size);
-                setCusrosrPosition(0,-2);
+                setCursorPosition(0,-2);
                 writeRest(line);
                 contentStream.setFont( font, font_size );
                 return;
@@ -275,7 +273,7 @@ public class PDFUtil {
             if(line.length() > 2){
                 line = line.substring(2).trim();
                 contentStream.setFont(bfont, h2_font_size);
-                setCusrosrPosition(0,-2);
+                setCursorPosition(0,-2);
                 writeRest(line);
                 contentStream.setFont( font, font_size );
                 return;
@@ -284,37 +282,37 @@ public class PDFUtil {
             if(line.length() > 1){
                 line = line.substring(1).trim();
                 contentStream.setFont(bfont, h3_font_size);
-                setCusrosrPosition(0,-2);
+                setCursorPosition(0,-2);
                 writeRest(line);
                 contentStream.setFont( font, font_size );
                 return;
             }
         } else if (line.startsWith("***")) {
             if(line.length() > 3){
-                setCusrosrPosition(60,0);
+                setCursorPosition(60,0);
 
                 contentStream.setFont(nbfont, h1_font_size);
                 writeString(".");
                 contentStream.setFont( font, font_size );
                 line = line.substring(3).trim();
                 writeRest(line);
-                setCusrosrPosition(-60,0);
+                setCursorPosition(-60,0);
                 return;
             }
         } else if (line.startsWith("**")) {
             if(line.length() > 2){
-                setCusrosrPosition(40,0);
+                setCursorPosition(40,0);
                 contentStream.setFont(nbfont, h1_font_size);
                 writeString(". ");
                 contentStream.setFont( font, font_size );
                 line = line.substring(2).trim();
                 writeRest(line);
-                setCusrosrPosition(-40, 0);
+                setCursorPosition(-40, 0);
                 return;
             }
         } else if (line.startsWith("*")) {
             if(line.length() > 1){
-                setCusrosrPosition(20,0);
+                setCursorPosition(20,0);
                 startWithBullet = true;
                 contentStream.setFont(nbfont, h1_font_size);
                 if(previousSubLineWidth > 0){
@@ -327,7 +325,7 @@ public class PDFUtil {
                 contentStream.setFont( font, font_size );
                 line = line.substring(1);
                 writeRest(line);
-                setCusrosrPosition(-20, 0);
+                setCursorPosition(-20, 0);
                 return;
             }
         } else if (line.startsWith(":")) {
@@ -341,7 +339,7 @@ public class PDFUtil {
             contentStream.beginText();
             contentStream.moveTextPositionByAmount( xPos, yPos );
             contentStream.setStrokingColor(Color.black);
-            setCusrosrPosition(0,-15);
+            setCursorPosition(0,-15);
         }else{
             writeRest(line);
         }
@@ -478,7 +476,7 @@ public class PDFUtil {
             contentStream.drawString(wrappedText);
             wrappedListOfLink.add(wrappedText);
 
-            setCusrosrPosition(0,-14);
+            setCursorPosition(0,-14);
             restLineWidth = 120;
             previousSubLineWidth = 0;
             return wrappedAndWriteString(nLine);
@@ -499,7 +497,7 @@ public class PDFUtil {
             String wrappedText = trancatedText.substring(0, wrappedIndex);
             contentStream.drawString(wrappedText);
             nLine = line.substring(wrappedIndex);
-            setCusrosrPosition(0,-12);
+            setCursorPosition(0,-12);
             writeString(nLine);
         }
     }
@@ -580,7 +578,7 @@ public class PDFUtil {
         if(userId.length() == 0){
             alignFromRight -= 80;
         }
-        setCusrosrPosition(alignFromRight,0);
+        setCursorPosition(alignFromRight,0);
 
         writeRest("    Last edited by ");
         contentStream.setNonStrokingColor(Color.blue);
@@ -597,7 +595,7 @@ public class PDFUtil {
 
         createLink(x+alignFromRight+((font.getStringWidth( "    Last edited by " )/1000) * 10f), yPos-2, textWidth, 11, link);
 
-        setCusrosrPosition(-alignFromRight,0);
+        setCursorPosition(-alignFromRight,0);
 
     }
 

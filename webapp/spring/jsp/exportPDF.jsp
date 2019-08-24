@@ -110,6 +110,12 @@ app.controller('myCtrl', function($scope, $http) {
             </thead>
             <%
                 for(TopicRecord noteRec:ngp.getAllNotes()){
+                    if (noteRec.isDeleted()) {
+                        continue;
+                    }
+                    if (noteRec.isDraftNote()) {
+                        continue;
+                    }
             %>
             <tr>
                 <td>

@@ -272,11 +272,14 @@ public class WikiToPDF
             writeWrappedLine("Discussion Topics: ");
             for (TopicRecord note : memberNoteList) {
                 noteCount++;
-                setH2Font();
+                setPFont();
+                indent=0;
                 newLine();
-                writeWrappedLine(Integer.toString(noteCount)+": "+note.getSubject());
+                indent=15;
+                writeWrappedLine(Integer.toString(noteCount)+". "+note.getSubject());
             }
         }
+        indent=0;
 
         newLine();
         if (includeDecisions) {
@@ -348,18 +351,24 @@ public class WikiToPDF
                 if (cr.getState() == CommentRecord.COMMENT_STATE_DRAFT) {
                     continue;
                 }
+                String content = cr.getContent();
+                if (content.length()==0) {
+                    continue;
+                }
                 long date = cr.getPostTime();
                 if (date<100) {
                     date = cr.getTime();
                 }
                 String dateStr = convertDateAndTime(date);
                 makeHorizontalRule();
-                setH3Font();
-                newLine();
-                writeWrappedLine(dateStr+" from "+cr.getUser().getName());
                 setPFont();
                 newLine();
-                writeWikiData(cr.getContent());
+                writeWrappedLine("From:  "+cr.getUser().getName());
+                newLine();
+                writeWrappedLine("Date: " + dateStr);
+                setPFont();
+                newLine();
+                writeWikiData(content);
             }
         }
     }
@@ -497,7 +506,7 @@ public class WikiToPDF
         isItalic = false;
         currentFamily = helvetica;
         currentFont = currentFamily.getFont(isBold, isItalic);
-        currentLineSize = 16;
+        currentLineSize = 18;
     }
 
     private void setH2Font()
@@ -506,7 +515,7 @@ public class WikiToPDF
         isItalic = false;
         currentFamily = helvetica;
         currentFont = currentFamily.getFont(isBold, isItalic);
-        currentLineSize = 14;
+        currentLineSize = 16;
     }
 
     private void setH3Font()
@@ -515,7 +524,7 @@ public class WikiToPDF
         isItalic = false;
         currentFamily = helvetica;
         currentFont = currentFamily.getFont(isBold, isItalic);
-        currentLineSize = 12;
+        currentLineSize = 14;
     }
 
     private void setPFont()
@@ -524,7 +533,7 @@ public class WikiToPDF
         isItalic = false;
         currentFamily = times;
         currentFont = currentFamily.getFont(isBold, isItalic);
-        currentLineSize = 10;
+        currentLineSize = 12;
     }
 
     private void setPREFont()
@@ -533,7 +542,7 @@ public class WikiToPDF
         isItalic = false;
         currentFamily = courier;
         currentFont = currentFamily.getFont(isBold, isItalic);
-        currentLineSize = 10;
+        currentLineSize = 12;
     }
 
 

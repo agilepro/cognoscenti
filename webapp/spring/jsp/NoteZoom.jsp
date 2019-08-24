@@ -937,7 +937,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           <li role="presentation"><a role="menuitem" tabindex="-1"
               ng-click="startEdit()" target="_blank">Edit This Topic</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">Generate PDF</a></li>
+              href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}&comments=true">PDF with Comments</a></li>
+          <li role="presentation"><a role="menuitem" tabindex="-1"
+              href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">PDF without Comments</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="SendNote.htm?noteId={{noteInfo.id}}">Send Topic By Email</a></li>
           <li role="presentation" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
