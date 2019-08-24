@@ -61,6 +61,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
 
     $scope.getStats = function() {
         var getURL = "SiteStatistics.json";
+        console.log("Getting Site Statistics");
         $scope.showError=false;
         $http.get(getURL)
         .success( function(data) {
@@ -77,7 +78,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         $http.get(getURL)
         .success( function(data) {
             $scope.stats = data.stats;
-            AllPeople.refreshCache($scope.siteInfo.key);
+            AllPeople.clearCache($scope.siteInfo.key);
         
         })
         .error( function(data, status, headers, config) {

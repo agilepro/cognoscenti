@@ -4,6 +4,7 @@ app.service('AllPeople', function($http) {
     //get around the JavaScript problems with 'this'
     var AllPeople = this;
     var fetchedAt = 0;
+    var pendingRefresh = false;
     
     //There is a problem with pages continually asking for new user lists after the 
     //page has been logged out, so as soon as the first error is encountered fetching
@@ -20,8 +21,8 @@ app.service('AllPeople', function($http) {
         if (!AllPeople.allPersonBySite[site]) {
             AllPeople.allPersonBySite[site] = {people:[],validTime:0};
         }
-        AllPeople.refreshListIfNeeded(site);
-        return AllPeople.allPersonBySite[site];
+        var siteObj = AllPeople.allPersonBySite[site];
+        return siteObj;
     }
     
     AllPeople.findFullName = function (key, site) {
@@ -116,19 +117,22 @@ app.service('AllPeople', function($http) {
             return;
         }
         var curTime = new Date().getTime();
-        if (!AllPeople.allPersonBySite[site]) {
-            AllPeople.allPersonBySite[site] = {people:[],validTime:0};
-        }
-        var siteObj = AllPeople.allPersonBySite[site]
-        if (siteObj.validTime>curTime) {
+        var siteObj = AllPeople.getSiteObject(site);
+        if (siteObj.validTime>curTime || siteObj.pendingRefresh) {
             return;
         }
-        AllPeople.refreshCache(site);
+        AllPeople.internalRefreshCache(site, siteObj);
     }
-    AllPeople.refreshCache = function(site) {        
-        if (!site) {
-            throw "AllPeople.refreshCache %% Need to specify a tenant";
+    AllPeople.clearCache = function(site) { 
+        var siteObj = AllPeople.getSiteObject(site);
+        siteObj.validTime = 0;
+        AllPeople.internalRefreshCache(site, siteObj);
+    }    
+    AllPeople.internalRefreshCache = function(site, siteObj) {        
+        if (siteObj.pendingRefresh || refreshDisabled) {
+            return;
         }
+        siteObj.pendingRefresh = true;
         var url = "../../"+site+"/$/SitePeople.json";
         $http.get(url)
         //$http.get("../../AllPeople.json")
