@@ -542,8 +542,11 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </td>
             <td ng-hide="'targetRole'==editMeetingPart">
               <a href="roleManagement.htm">{{meeting.targetRole}}</a>
-              <span ng-hide="roleEqualsParticipants" style="color:red">
+              <span ng-hide="roleEqualsParticipants || meeting.state<=0" style="color:red">
                   . . . includes people who are not meeting participants!
+              </span>
+              <span ng-hide="meeting.state>0" style="color:red">
+                  (Role is consulted at the time you POST the meeting)
               </span>
             </td>
             <td ng-show="'targetRole'==editMeetingPart">

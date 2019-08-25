@@ -140,6 +140,8 @@ app.controller('myCtrl', function($scope, $http) {
         newMeeting.reminderTime = $scope.meeting.reminderTime;
         newMeeting.startTime = $scope.meeting.startTime;
         newMeeting.targetRole = $scope.meeting.targetRole;
+        newMeeting.defaultLayout = $scope.meeting.defaultLayout;
+        newMeeting.notifyLayout = $scope.meeting.notifyLayout;
         newMeeting.agenda = [];
         $scope.meeting.agenda.forEach( function(agendaItem) {
             if (agendaItem.selected) {
