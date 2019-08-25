@@ -601,6 +601,13 @@ public abstract class NGPage extends ContainerCommon {
     public void setKey(String newKey) {
         pageInfo.setKey(newKey);
     }
+    /**
+     * The combined key contains both the site key and the workspace key
+     * @return
+     */
+    public String getCombinedKey() {
+        return this.prjSite.getKey() + "|" + pageInfo.getKey();
+    }
 
     /**
      * Returns the current full name of this page

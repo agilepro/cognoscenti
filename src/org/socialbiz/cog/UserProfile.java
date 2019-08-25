@@ -280,7 +280,7 @@ public class UserProfile implements UserRef
 
     private JSONObject assureSettings(String siteWorkspaceCombo) throws Exception {
         if (siteWorkspaceCombo.indexOf("|")<0) {
-            throw new Exception("User profile workspace settings requires a combined key of the form: (site) | (workspace)");
+            throw new Exception("User profile workspace settings requires a combined key of the form: (site) | (workspace), got: "+siteWorkspaceCombo);
         }
         if (wsSettings.has(siteWorkspaceCombo)) {
             return wsSettings.getJSONObject(siteWorkspaceCombo);
@@ -719,7 +719,7 @@ public class UserProfile implements UserRef
         for(String siteWorkspaceCombo : wsSettings.keySet()) {
             JSONObject setting = wsSettings.getJSONObject(siteWorkspaceCombo);
             if (setting.has("isWatching") && setting.getBoolean("isWatching")) {
-                watchList.add(new WatchRecord(siteWorkspaceCombo, setting.getLong("reviewTime")));
+                watchList.add(new WatchRecord(siteWorkspaceCombo, setting.optLong("reviewTime", 0)));
             }
         }
         return watchList;

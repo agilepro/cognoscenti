@@ -31,7 +31,8 @@ public class WorkspaceStats {
 
         for (TopicRecord topic : ngp.getAllNotes()) {
             numTopics++;
-            String uid = topic.getModUser().getUniversalId();
+            AddressListEntry modUser = topic.getModUser();
+            String uid = modUser.getUniversalId();
             topicsPerUser.increment(uid);
             anythingPerUser.increment(uid);
             countComments(topic.getComments());
@@ -39,8 +40,10 @@ public class WorkspaceStats {
         for (AttachmentRecord doc : ngp.getAllAttachments()) {
             numDocs++;
             if (!doc.isDeleted()) {
-                docsPerUser.increment(doc.getModifiedBy());
-                anythingPerUser.increment(doc.getModifiedBy());
+                AddressListEntry modUser = new AddressListEntry(doc.getModifiedBy());
+                String uid = modUser.getUniversalId();
+                docsPerUser.increment(uid);
+                anythingPerUser.increment(uid);
             }
             int version = doc.getVersion();
             for (AttachmentVersion ver : doc.getVersions(ngp)) {
@@ -55,7 +58,8 @@ public class WorkspaceStats {
         }
         for (MeetingRecord meet : ngp.getMeetings()) {
             numMeetings++;
-            String owner = meet.getOwner();
+            AddressListEntry modUser = new AddressListEntry(meet.getOwner());
+            String owner = modUser.getUniversalId();
             if (owner!=null && owner.length()>0) {
                 meetingsPerUser.increment(owner);
                 anythingPerUser.increment(owner);
@@ -71,7 +75,7 @@ public class WorkspaceStats {
         //count all the users in all the roles
         for (CustomRole cr : ngp.getAllRoles()) {
             for (AddressListEntry ale: cr.getExpandedPlayers(ngp)) {
-                anythingPerUser.increment(ale.getEmail());
+                anythingPerUser.increment(ale.getUniversalId());
             }
         }
     }

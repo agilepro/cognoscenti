@@ -546,7 +546,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
                   . . . includes people who are not meeting participants!
               </span>
               <span ng-hide="meeting.state>0" style="color:red">
-                  (Role is consulted at the time you POST the meeting)
+                  (This role is consulted at the time you POST the meeting)
               </span>
             </td>
             <td ng-show="'targetRole'==editMeetingPart">

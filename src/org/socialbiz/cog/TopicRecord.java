@@ -160,7 +160,7 @@ public class TopicRecord extends CommentContainer {
         setScalar("created", Long.toString(newCreated));
     }
 
-    public UserRef getModUser() {
+    public AddressListEntry getModUser() {
          String userId = getScalar("modifiedby");
          return new AddressListEntry(userId);
     }
