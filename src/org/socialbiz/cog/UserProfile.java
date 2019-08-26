@@ -53,9 +53,6 @@ public class UserProfile implements UserRef
     private int    notifyPeriod;
     private boolean disabled;
     private List<String> ids = null;
-    //private List<WatchRecord> watchList = null;
-    //private List<String> notificationList = null;
-    //private List<String> templateList = null;
     private String timeZone = "America/Los_Angeles";
     JSONObject wsSettings;
 
@@ -240,32 +237,38 @@ public class UserProfile implements UserRef
         }
         wsSettings = new JSONObject();
 
-        JSONArray watchList = fullJO.getJSONArray("watchList");
-        for (int i=0; i<watchList.length(); i++) {
-            JSONObject oneWatch = watchList.getJSONObject(i);
-            String siteWorkspaceCombo = oneWatch.getString("key");
-            JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
-            settingObj.put("isWatching", true);
-            if (oneWatch.has("lastSeen")) {
-                settingObj.put("reviewTime", oneWatch.getLong("lastSeen"));
+        if (fullJO.has("watchList")) {
+            JSONArray watchList = fullJO.getJSONArray("watchList");
+            for (int i=0; i<watchList.length(); i++) {
+                JSONObject oneWatch = watchList.getJSONObject(i);
+                String siteWorkspaceCombo = oneWatch.getString("key");
+                JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
+                settingObj.put("isWatching", true);
+                if (oneWatch.has("lastSeen")) {
+                    settingObj.put("reviewTime", oneWatch.getLong("lastSeen"));
+                }
             }
+            fullJO.remove("watchList");
         }
-        JSONArray notifyList = fullJO.getJSONArray("notifyList");
-        for (int i=0; i<notifyList.length(); i++) {
-            String siteWorkspaceCombo = notifyList.getString(i);
-            JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
-            settingObj.put("isNotify", true);
+        if (fullJO.has("notifyList")) {
+            JSONArray notifyList = fullJO.getJSONArray("notifyList");
+            for (int i=0; i<notifyList.length(); i++) {
+                String siteWorkspaceCombo = notifyList.getString(i);
+                JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
+                settingObj.put("isNotify", true);
+            }
+            fullJO.remove("notifyList");
         }
-        JSONArray templateList = fullJO.getJSONArray("templateList");
-        for (int i=0; i<templateList.length(); i++) {
-            String siteWorkspaceCombo = templateList.getString(i);
-            JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
-            settingObj.put("isTemplate", true);
+        if (fullJO.has("templateList")) {
+            JSONArray templateList = fullJO.getJSONArray("templateList");
+            for (int i=0; i<templateList.length(); i++) {
+                String siteWorkspaceCombo = templateList.getString(i);
+                JSONObject settingObj = assureSettingsRelaxed(siteWorkspaceCombo);
+                settingObj.put("isTemplate", true);
+            }
+            fullJO.remove("templateList");
         }
 
-        fullJO.remove("watchList");
-        fullJO.remove("notifyList");
-        fullJO.remove("templateList");
         fullJO.put("wsSettings", wsSettings);
     }
 
@@ -291,38 +294,6 @@ public class UserProfile implements UserRef
     }
 
 
-    /*
-    private void transferAllValues(UserProfileXML upXML) throws Exception {
-        upXML.setKey(userKey);
-        upXML.setName(name);
-        upXML.setDescription(description);
-        upXML.setImage(image);
-        upXML.setLicenseToken(licenseToken);
-
-        upXML.setLastLogin(lastLogin, lastLoginId);
-        upXML.setLastUpdated(lastUpdated);
-        upXML.setNotificationTime(notifyTime);
-
-        upXML.setAccessCode(accessCode);
-        upXML.setAccessCodeModTime(accessCodeModTime);
-        upXML.setNotificationPeriod(notifyPeriod);
-        upXML.setDisabled(disabled);
-        for (String oneId : ids) {
-            upXML.addId(oneId);
-        }
-
-        for (WatchRecord wr : watchList) {
-            upXML.addWatch(wr.pageKey, wr.lastSeen);
-        }
-        for (String note : notificationList) {
-            upXML.addNotification(note);
-        }
-        for (String temper : templateList) {
-            upXML.addTemplate(temper);
-        }
-
-    }
-    */
 
 
     public List<String> getAllIds() {
@@ -1028,30 +999,6 @@ public class UserProfile implements UserRef
             jObj.put("ids", idArray);
         }
         jObj.put("wsSettings", wsSettings);
-        /*
-        {
-            JSONArray watchArray = new JSONArray();
-            for (WatchRecord watch : getWatchList()) {
-                watchArray.put(watch.getJSON());
-            }
-            jObj.put("watchList", watchArray);
-        }
-        {
-            JSONArray notifyArray = new JSONArray();
-            for (String note : notificationList) {
-                notifyArray.put(note);
-            }
-            jObj.put("notifyList", notifyArray);
-        }
-        {
-            JSONArray tempArray = new JSONArray();
-            for (String temp : getTemplateList()) {
-                tempArray.put(temp);
-            }
-            jObj.put("templateList", tempArray);
-        }
-        */
-
         return jObj;
     }
 
