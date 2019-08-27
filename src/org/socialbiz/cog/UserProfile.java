@@ -54,7 +54,7 @@ public class UserProfile implements UserRef
     private boolean disabled;
     private List<String> ids = null;
     private String timeZone = "America/Los_Angeles";
-    JSONObject wsSettings;
+    private JSONObject wsSettings = new JSONObject();
 
     public UserProfile(String guid) throws Exception {
         userKey = IdGenerator.generateKey();
@@ -66,47 +66,6 @@ public class UserProfile implements UserRef
     }
 
 
-    public UserProfile(UserProfileXML upXML) throws Exception {
-        userKey = upXML.getKey();
-
-        //consistency check here
-        if (userKey == null || userKey.length() == 0)  {
-            userKey = IdGenerator.generateKey();
-        }
-
-        name = upXML.getName();
-        description = upXML.getDescription();
-        image = upXML.getImage();
-        licenseToken = upXML.getLicenseToken();
-
-        lastLogin   = upXML.getLastLogin();
-        lastLoginId = upXML.getLastLoginId();
-        lastUpdated = upXML.getLastUpdated();
-        notifyTime = upXML.getNotificationTime();
-
-        accessCode = upXML.getAccessCode();
-        accessCodeModTime = upXML.getAccessCodeModTime();
-        notifyPeriod = upXML.getNotificationPeriod();
-        disabled   = upXML.getDisabled();
-        ids        = upXML.getIdList();
-
-        //watchList = upXML.getWatchList();
-        //notificationList = upXML.getNotificationList();
-        //templateList = upXML.getTemplateList();
-
-        //make sure that this profile has a license token
-        getLicenseToken();
-    }
-
-    /*
-    private static List<WatchRecord> convertWatchList(JSONArray ja)  throws Exception {
-        List<WatchRecord> watchList = new Vector<WatchRecord>();
-        for (int j=0; j<ja.length(); j++) {
-            watchList.add(new WatchRecord(ja.getJSONObject(j)));
-        }
-        return watchList;
-    }
-*/
 
 
     public UserProfile(JSONObject fullJO) throws Exception {
@@ -738,13 +697,6 @@ public class UserProfile implements UserRef
 
 
     /**
-     * Get rid of any notification of the specified page.
-     */
-    //public void clearAllNotifications() throws Exception {
-    //    notificationList.clear();
-    //}
-
-    /**
      * Returns a vector of keys of pages in the notify list.
      * Do not modify this vector externally, just read only.
      */
@@ -787,11 +739,6 @@ public class UserProfile implements UserRef
         }
         return false;
     }
-
-
-    //public List<String> getTemplateList() throws Exception {
-    //    return templateList;
-    //}
 
     public void setProjectAsTemplate(String siteWorkspaceCombo) throws Exception {
         JSONObject setting = assureSettings(siteWorkspaceCombo);
@@ -859,31 +806,6 @@ public class UserProfile implements UserRef
         }
         ids = newList;
     }
-
-    /**
-    * returns a properly formatted SMTP user name with email
-    * address together as one string.
-    */
-
-    /*
-    public String getEmailWithName() {
-        StringBuilder sb = new StringBuilder();
-
-        String baseName = getName();
-        int last = baseName.length();
-        for (int i=0; i<last; i++) {
-            char ch = baseName.charAt(i);
-            if ( (ch>='0' && ch<='9') || (ch>='A' && ch<='Z') || (ch>='a' && ch<='z') || (ch==' ')) {
-                sb.append(ch);
-            }
-        }
-
-        sb.append(" <");
-        sb.append(getPreferredEmail());
-        sb.append(">");
-        return sb.toString();
-    }
-*/
 
 
 
