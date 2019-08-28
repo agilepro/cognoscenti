@@ -685,7 +685,7 @@ public abstract class NGPage extends ContainerCommon {
     }
 
     public void findTags(List<String> v) throws Exception {
-        for (TopicRecord note : getAllNotes()) {
+        for (TopicRecord note : getAllDiscussionTopics()) {
             note.findTags(v);
         }
     }
@@ -1037,7 +1037,7 @@ public abstract class NGPage extends ContainerCommon {
 
         //these added to be sure.  There is no harm in
         //being redundant.
-        for (TopicRecord note : getAllNotes()) {
+        for (TopicRecord note : getAllDiscussionTopics()) {
             existingIds.add(note.getId());
         }
         for (AttachmentRecord att : getAllAttachments()) {
@@ -1178,7 +1178,7 @@ public abstract class NGPage extends ContainerCommon {
 
     ///////////////// NOTES //////////////////////
 
-    public List<TopicRecord> getAllNotes() throws Exception {
+    public List<TopicRecord> getAllDiscussionTopics() throws Exception {
         return noteParent.getChildren("note", TopicRecord.class);
     }
 
@@ -1186,7 +1186,7 @@ public abstract class NGPage extends ContainerCommon {
     throws Exception {
         List<TopicRecord> list=new ArrayList<TopicRecord>();
         if (ar.isLoggedIn()) {
-            List<TopicRecord> fullList = getAllNotes();
+            List<TopicRecord> fullList = getAllDiscussionTopics();
             UserProfile thisUserId = ar.getUserProfile();
             for (TopicRecord note : fullList) {
                 if (!note.isDeleted() && note.isDraftNote() && note.getModUser().equals(thisUserId)) {
@@ -1198,8 +1198,8 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-    public TopicRecord getNote(String topicId) throws Exception {
-        for (TopicRecord lr : getAllNotes()) {
+    public TopicRecord getDiscussionTopic(String topicId) throws Exception {
+        for (TopicRecord lr : getAllDiscussionTopics()) {
             if (topicId.equals(lr.getId())) {
                 return lr;
             }
@@ -1209,7 +1209,7 @@ public abstract class NGPage extends ContainerCommon {
 
 
     public TopicRecord getNoteOrFail(String noteId) throws Exception {
-        TopicRecord ret =  getNote(noteId);
+        TopicRecord ret =  getDiscussionTopic(noteId);
         if (ret==null) {
             throw new NGException("nugen.exception.unable.to.locate.note.with.id", new Object[]{noteId, getFullName()});
         }
@@ -1220,7 +1220,7 @@ public abstract class NGPage extends ContainerCommon {
         if (universalId==null) {
             return null;
         }
-        for (TopicRecord lr : getAllNotes()) {
+        for (TopicRecord lr : getAllDiscussionTopics()) {
             if (universalId.equals(lr.getUniversalId())) {
                 return lr;
             }
@@ -1231,13 +1231,13 @@ public abstract class NGPage extends ContainerCommon {
 
     /** mark deleted, don't actually deleting the Topic. */
     public void deleteNote(String id,AuthRequest ar) throws Exception {
-        TopicRecord ei = getNote( id );
+        TopicRecord ei = getDiscussionTopic( id );
 
         ei.setTrashPhase( ar );
     }
 
     public void unDeleteNote(String id,AuthRequest ar) throws Exception {
-        TopicRecord ei = getNote( id );
+        TopicRecord ei = getDiscussionTopic( id );
         ei.clearTrashPhase(ar);
     }
 
@@ -1246,7 +1246,7 @@ public abstract class NGPage extends ContainerCommon {
     public List<TopicRecord> getDeletedNotes(AuthRequest ar)
     throws Exception {
         List<TopicRecord> list=new ArrayList<TopicRecord>();
-        List<TopicRecord> fullList = getAllNotes();
+        List<TopicRecord> fullList = getAllDiscussionTopics();
 
         for (TopicRecord note : fullList) {
             if (note.isDeleted()) {
@@ -1386,7 +1386,7 @@ public abstract class NGPage extends ContainerCommon {
 
     @Override
     public void writeNoteLink(AuthRequest ar,String noteId, int len) throws Exception{
-        TopicRecord note = getNote( noteId );
+        TopicRecord note = getDiscussionTopic( noteId );
         if(note==null){
             if ("x".equals(noteId))
             {

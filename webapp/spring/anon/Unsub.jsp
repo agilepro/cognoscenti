@@ -23,7 +23,7 @@ Required parameters:
         emailId = ar.getBestUserId();
     }
 
-    TopicRecord topic = ngw.getNote(topicId);
+    TopicRecord topic = ngw.getDiscussionTopic(topicId);
     
     JSONObject topicInfo = topic.getJSONWithComments(ar, ngw);
     

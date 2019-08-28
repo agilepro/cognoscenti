@@ -68,7 +68,7 @@ public class UserCache {
 
                 actionItemList.put(gr.getJSON4Goal(aPage));
             }
-            for (TopicRecord aNote : aPage.getAllNotes()) {
+            for (TopicRecord aNote : aPage.getAllDiscussionTopics()) {
                 String address = "noteZoom"+aNote.getId()+".htm";
                 for (CommentRecord cr : aNote.getComments()) {
                     addPollIfNoResponse(proposalList, openRounds, cr, up, aPage, aNote.getTargetRole(), address, nowTime);

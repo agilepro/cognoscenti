@@ -164,7 +164,7 @@ public class NGWorkspace extends NGPage {
             this.getAllGoals();
             this.getAllHistory();
             this.getAllLabels();
-            for (TopicRecord note : this.getAllNotes()) {
+            for (TopicRecord note : this.getAllDiscussionTopics()) {
                 for (CommentRecord comm : note.getComments()) {
                     //schema migration from before 101
                     comm.schemaMigration(fromLevel, toLevel);
@@ -181,7 +181,7 @@ public class NGWorkspace extends NGPage {
             }
         }
         if (fromLevel<102) {
-            for (@SuppressWarnings("unused") TopicRecord nr : this.getAllNotes()) {
+            for (@SuppressWarnings("unused") TopicRecord nr : this.getAllDiscussionTopics()) {
                 //just run the constructor
             }
         }
@@ -426,7 +426,7 @@ public class NGWorkspace extends NGPage {
         for (MeetingRecord meeting : getMeetings()) {
             meeting.gatherUnsentScheduledNotification(this, resList, timeout);
         }
-        for (TopicRecord note : this.getAllNotes()) {
+        for (TopicRecord note : this.getAllDiscussionTopics()) {
             note.gatherUnsentScheduledNotification(this, resList, timeout);
         }
         for (EmailGenerator eg : getAllEmailGenerators()) {
@@ -486,7 +486,7 @@ public class NGWorkspace extends NGPage {
     private void cleanUpNoteAndDocUniversalId() throws Exception {
         //schema migration ...
         //make sure that all topics have universal ids.
-        for (TopicRecord lr : getAllNotes()) {
+        for (TopicRecord lr : getAllDiscussionTopics()) {
             String uid = lr.getUniversalId();
             if (uid==null || uid.length()==0) {
                 uid = getContainerUniversalId() + "@" + lr.getId();
@@ -665,18 +665,9 @@ public class NGWorkspace extends NGPage {
         }
     }
 
-    /*
-    public void sendInvitations() throws Exception {
-        for (RoleInvitation ri : getInvitations()) {
-            if ("New".equals(ri.getStatus())) {
-                ri.sendEmail(ar);
-            }
-        }
-    }
-    */
 
     public CommentRecord getCommentOrNull(long cid) throws Exception {
-        for (TopicRecord note : this.getAllNotes()) {
+        for (TopicRecord note : this.getAllDiscussionTopics()) {
             for (CommentRecord comm : note.getComments()) {
                 if (comm.getTime()==cid) {
                     comm.containerType = CommentRecord.CONTAINER_TYPE_TOPIC;
@@ -732,7 +723,37 @@ public class NGWorkspace extends NGPage {
 
             FileUtils.deleteDirectory(workspaceFolder);
             results.put("action", "folder for workapce is completed deleted");
-            return results;
+        }
+        else {
+            boolean didClean = false;
+            List<String> oldIds = new ArrayList<String>();
+            for (TopicRecord tr : this.getAllDiscussionTopics()) {
+                if (tr.isDeleted()) {
+                    oldIds.add(tr.getId());
+                }
+            }
+            for (String oldId: oldIds) {
+                noteParent.removeChildrenByNameAttrVal("note", "id", oldId);
+                didClean = true;
+            }
+            List<AttachmentRecord> deletedOnes = new ArrayList<AttachmentRecord>();
+            for (AttachmentRecord ar : this.getAllAttachments()) {
+                if (ar.isDeleted()) {
+                    deletedOnes.add(ar);
+                }
+            }
+            for (AttachmentRecord att : deletedOnes) {
+                att.purgeAllVersions(this);
+                attachParent.removeChild(att);
+                didClean = true;
+            }
+            if (didClean) {
+                this.save();
+                results.put("action", "removed some topics or documents");
+            }
+            else {
+                results.put("action", "no change required");
+            }
         }
 
         //check for documents to delete garbage collect

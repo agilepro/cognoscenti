@@ -140,7 +140,7 @@ public class SearchManager {
 
 
 
-                for (TopicRecord note : ngp.getAllNotes()) {
+                for (TopicRecord note : ngp.getAllDiscussionTopics()) {
                     Document doc = new Document();
                     doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
                     doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));

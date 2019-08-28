@@ -593,7 +593,7 @@ public class MeetingRecord extends DOMFace {
                 String minutesID = prevMeet.getMinutesId();
                 if (minutesID!=null && minutesID.length()>0) {
                     //check that the minutes really exist
-                    TopicRecord tr = ngw.getNote(minutesID);
+                    TopicRecord tr = ngw.getDiscussionTopic(minutesID);
                     if (tr!=null) {
                         meetingInfo.put("previousMinutes", minutesID);
                     }

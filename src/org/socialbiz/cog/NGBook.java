@@ -1244,7 +1244,10 @@ public class NGBook extends ContainerCommon {
             }
             NGWorkspace ngw = ngpi.getWorkspace();
             ja.put(ngw.actuallyGarbageCollect(cog));
-
+        }
+        for (NGPageIndex ngpi : cog.getAllProjectsInSite(this.getKey())) {
+            NGWorkspace ngw = ngpi.getWorkspace();
+            ja.put(ngw.actuallyGarbageCollect(cog));
         }
         return jo;
     }

@@ -908,7 +908,7 @@ public class ResourceSection  implements NGResource
                 String subject = DOMUtils.textValueOfChild(element_cmt, "subject", true);
                 String data = DOMUtils.textValueOfChild(element_cmt, "content", true);
 
-                TopicRecord note = ngp.getNote(id);
+                TopicRecord note = ngp.getDiscussionTopic(id);
                 if(note == null)
                 {
                     addLeaflet(ar, ngs, subject, data);

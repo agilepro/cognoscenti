@@ -149,7 +149,7 @@ public class PDFUtil {
         if(ar.req.getParameterValues("publicNotes")!= null){
             publicNoteList = Arrays.asList(ar.req.getParameterValues("publicNotes"));
             for (String noteId : publicNoteList) {
-                publicNotes.add(ngp.getNote(noteId));
+                publicNotes.add(ngp.getDiscussionTopic(noteId));
             }
         }
 
@@ -157,7 +157,7 @@ public class PDFUtil {
         if(ar.isLoggedIn() && ar.req.getParameterValues("memberNotes") != null ){
             memberNoteList = Arrays.asList(ar.req.getParameterValues("memberNotes"));
             for (String noteId : memberNoteList) {
-                memberNotes.add(ngp.getNote(noteId));
+                memberNotes.add(ngp.getDiscussionTopic(noteId));
             }
         }
 

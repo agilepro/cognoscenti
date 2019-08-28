@@ -880,7 +880,7 @@ history.task.subtask.add    113
             }
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
-            TopicRecord nr = ngp.getNote(objectKey);
+            TopicRecord nr = ngp.getDiscussionTopic(objectKey);
             if (nr!=null) {
                 return nr.getSubject();
             }

@@ -59,7 +59,7 @@ Required parameters:
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_LEAFLET) {
             url = ar.getResourceURL(ngp, "noteZoom"+objectKey+".htm");
-            TopicRecord nr = ngp.getNote(objectKey);
+            TopicRecord nr = ngp.getDiscussionTopic(objectKey);
             if (nr!=null) {
                 objName = nr.getSubject();
             }

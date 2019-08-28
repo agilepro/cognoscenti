@@ -46,7 +46,7 @@ Required parameters:
         agendaItem = ai.getSubject();
     }
     else {
-        TopicRecord topic = ngw.getNote(topicId);
+        TopicRecord topic = ngw.getDiscussionTopic(topicId);
         JSONObject topicInfo = topic.getJSONWithComments(ar, ngw);
         originalTopic = topicInfo.getString("html");
         subscribers = topicInfo.getJSONArray("subscribers");

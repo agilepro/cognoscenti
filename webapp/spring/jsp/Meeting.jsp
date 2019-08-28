@@ -73,7 +73,7 @@
     }
 
     JSONArray allTopics = new JSONArray();
-    for (TopicRecord aNote : ngw.getAllNotes()) {
+    for (TopicRecord aNote : ngw.getAllDiscussionTopics()) {
         allTopics.put(aNote.getJSON(ngw));
     }
 

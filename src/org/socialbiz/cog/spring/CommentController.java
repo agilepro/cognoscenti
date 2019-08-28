@@ -134,7 +134,7 @@ public class CommentController extends BaseController {
             
         }
         else if ("T".equals(containerType)) {
-            TopicRecord tr = ngw.getNote(containerID);
+            TopicRecord tr = ngw.getDiscussionTopic(containerID);
             cr = tr.addComment(ar);
         }
         else if ("A".equals(containerType)) {

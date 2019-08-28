@@ -310,7 +310,7 @@ public class ResourcePage implements NGResource
     {
         NGWorkspace ngc = ngs.parent;
         Element element_comments = DOMUtils.createChildElement(loutdoc, element_sec, "comments");
-        for (TopicRecord note : ngc.getAllNotes()) {
+        for (TopicRecord note : ngc.getAllDiscussionTopics()) {
 
             if (note.isDraftNote()) {
                 //never communicate drafts

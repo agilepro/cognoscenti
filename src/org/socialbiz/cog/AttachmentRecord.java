@@ -1000,7 +1000,7 @@ public class AttachmentRecord extends CommentContainer {
     public List<TopicRecord> getLinkedTopics(NGWorkspace ngc) throws Exception {
         ArrayList<TopicRecord> allTopics = new ArrayList<TopicRecord>();
         String nid = this.getUniversalId();
-        for (TopicRecord topic : ngc.getAllNotes()) {
+        for (TopicRecord topic : ngc.getAllDiscussionTopics()) {
             boolean found = false;
             for (String docId : topic.getDocList()) {
                 if (nid.equals(docId)) {
@@ -1250,6 +1250,10 @@ public class AttachmentRecord extends CommentContainer {
      * the documents are really, truly deleted.
      */
     public void purgeAllVersions(NGContainer ngc) throws Exception {
+        AttachmentVersion workCopy = getWorkingCopy(ngc);
+        if (workCopy!=null) {
+            workCopy.purgeLocalFile();
+        }
         for (AttachmentVersion av : getVersions(ngc)) {
             av.purgeLocalFile();
         }

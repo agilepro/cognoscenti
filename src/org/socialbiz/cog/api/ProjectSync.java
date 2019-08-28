@@ -158,7 +158,7 @@ public class ProjectSync {
 
         ArrayList<String> noteIds = new ArrayList<String>();
 
-        List<TopicRecord> allNotes = local.getAllNotes();
+        List<TopicRecord> allNotes = local.getAllDiscussionTopics();
         for (TopicRecord note : allNotes) {
             if (note.getVisibility()>SectionDef.MEMBER_ACCESS) {
                 continue;
@@ -469,7 +469,7 @@ public class ProjectSync {
             TopicRecord note;
             int historyEvent = 0;
             if (noteStat.isLocal) {
-                note = local.getNote(noteStat.idLocal);
+                note = local.getDiscussionTopic(noteStat.idLocal);
                 historyEvent = HistoryRecord.EVENT_TYPE_MODIFIED;
             }
             else {

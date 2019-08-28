@@ -109,7 +109,7 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             </thead>
             <%
-                for(TopicRecord noteRec:ngp.getAllNotes()){
+                for(TopicRecord noteRec:ngp.getAllDiscussionTopics()){
                     if (noteRec.isDeleted()) {
                         continue;
                     }

@@ -241,7 +241,7 @@ public class MainTabsViewControler extends BaseController {
              ar.setPageAccessLevels(ngw);
              boolean isMember = ar.isMember();
 
-             List<TopicRecord> aList = ngw.getAllNotes();
+             List<TopicRecord> aList = ngw.getAllDiscussionTopics();
 
              JSONArray notes = new JSONArray();
              for (TopicRecord aNote : aList) {
@@ -299,7 +299,7 @@ public class MainTabsViewControler extends BaseController {
                  eventType = HistoryRecord.EVENT_TYPE_CREATED;
              }
              else {
-                 note = ngw.getNote(nid);
+                 note = ngw.getDiscussionTopic(nid);
              }
 
              note.updateNoteFromJSON(noteInfo, ar);
@@ -335,7 +335,7 @@ public class MainTabsViewControler extends BaseController {
              boolean isMember = ar.isMember();
 
              JSONArray allTopics = new JSONArray();
-             for (TopicRecord aNote : ngw.getAllNotes()) {
+             for (TopicRecord aNote : ngw.getAllDiscussionTopics()) {
                  if (!isMember && !aNote.isPublic()) {
                      //skip non public if not member
                      continue;
@@ -366,7 +366,7 @@ public class MainTabsViewControler extends BaseController {
              ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
              JSONObject noteInfo = getPostedObject(ar);
-             TopicRecord note = ngw.getNote(nid);
+             TopicRecord note = ngw.getDiscussionTopic(nid);
 
              if (noteInfo.has("comments")) {
                  JSONArray commentsToUpdate = noteInfo.getJSONArray("comments");
@@ -403,7 +403,7 @@ public class MainTabsViewControler extends BaseController {
              ar.setPageAccessLevels(ngw);
              ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
-             TopicRecord topic = ngw.getNote(nid);
+             TopicRecord topic = ngw.getDiscussionTopic(nid);
              boolean canAccessTopic  = AccessControl.canAccessTopic(ar, ngw, topic);
              if (!canAccessTopic) {
                  ar.assertMember("must have permission to subscribe to a topic");
@@ -440,7 +440,7 @@ public class MainTabsViewControler extends BaseController {
              ar.setPageAccessLevels(ngw);
              ar.assertNotFrozen(ngw);
              nid = ar.reqParam("nid");
-             TopicRecord topic = ngw.getNote(nid);
+             TopicRecord topic = ngw.getDiscussionTopic(nid);
              boolean canAccessTopic  = AccessControl.canAccessTopic(ar, ngw, topic);
              if (!canAccessTopic) {
                  //well ... the idea is that anyone can UNSUBSCRIBE.

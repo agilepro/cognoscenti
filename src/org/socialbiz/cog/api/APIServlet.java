@@ -678,7 +678,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         root.put("docs", docs);
 
         JSONArray notes = new JSONArray();
-        for (TopicRecord note : resDec.workspace.getAllNotes()) {
+        for (TopicRecord note : resDec.workspace.getAllDiscussionTopics()) {
             if (!resDec.canAccessNote(note)) {
                 continue;
             }

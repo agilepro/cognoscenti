@@ -106,7 +106,7 @@ public class CaseExchange {
 
     private void generateNotes(DOMFace rootEle) throws Exception {
         DOMFace allNotes = rootEle.createChild("notes", DOMFace.class);
-        for (TopicRecord lr : ngp.getAllNotes()) {
+        for (TopicRecord lr : ngp.getAllDiscussionTopics()) {
 
             if (lr.getVisibility() == 1) {
                 // public note, so everyone can get it

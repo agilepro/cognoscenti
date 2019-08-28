@@ -29,12 +29,11 @@ public class WorkspaceStats {
 
     public void gatherFromWorkspace(NGWorkspace ngp) throws Exception {
 
-        for (TopicRecord topic : ngp.getAllNotes()) {
+        for (TopicRecord topic : ngp.getAllDiscussionTopics()) {
             numTopics++;
             AddressListEntry modUser = topic.getModUser();
             String uid = modUser.getUniversalId();
             topicsPerUser.increment(uid);
-            anythingPerUser.increment(uid);
             countComments(topic.getComments());
         }
         for (AttachmentRecord doc : ngp.getAllAttachments()) {
@@ -43,7 +42,6 @@ public class WorkspaceStats {
                 AddressListEntry modUser = new AddressListEntry(doc.getModifiedBy());
                 String uid = modUser.getUniversalId();
                 docsPerUser.increment(uid);
-                anythingPerUser.increment(uid);
             }
             int version = doc.getVersion();
             for (AttachmentVersion ver : doc.getVersions(ngp)) {
@@ -62,7 +60,6 @@ public class WorkspaceStats {
             String owner = modUser.getUniversalId();
             if (owner!=null && owner.length()>0) {
                 meetingsPerUser.increment(owner);
-                anythingPerUser.increment(owner);
             }
             for (AgendaItem ai : meet.getSortedAgendaItems()) {
                 countComments(ai.getComments());
@@ -71,12 +68,23 @@ public class WorkspaceStats {
         for (@SuppressWarnings("unused") DecisionRecord dr : ngp.getDecisions()) {
             numDecisions++;
         }
-
-        //count all the users in all the roles
-        for (CustomRole cr : ngp.getAllRoles()) {
-            for (AddressListEntry ale: cr.getExpandedPlayers(ngp)) {
+        
+        //count assignees of all active action items as members
+        for (GoalRecord gr : ngp.getAllGoals()) {
+            if (GoalRecord.isFinal(gr.getState())) {
+                continue;
+            }
+            for (AddressListEntry ale: gr.getAssigneeRole().getExpandedPlayers(ngp)) {
                 anythingPerUser.increment(ale.getUniversalId());
             }
+        }
+
+        //count all the users in all the primary and secondary roles
+        for (AddressListEntry ale: ngp.getPrimaryRole().getExpandedPlayers(ngp)) {
+            anythingPerUser.increment(ale.getUniversalId());
+        }
+        for (AddressListEntry ale: ngp.getSecondaryRole().getExpandedPlayers(ngp)) {
+            anythingPerUser.increment(ale.getUniversalId());
         }
     }
 
@@ -86,12 +94,10 @@ public class WorkspaceStats {
             if (comm.getCommentType()==CommentRecord.COMMENT_TYPE_SIMPLE) {
                 numComments++;
                 commentsPerUser.increment(ownerId);
-                anythingPerUser.increment(ownerId);
             }
             else {
                 numProposals++;
                 proposalsPerUser.increment(ownerId);
-                anythingPerUser.increment(ownerId);
             }
         }
     }

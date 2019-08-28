@@ -10,7 +10,7 @@
     ar.setPageAccessLevels(ngw);
 
     JSONArray allLabels = ngw.getJSONLabels();
-    TopicRecord topic = ngw.getNote(topicId);
+    TopicRecord topic = ngw.getDiscussionTopic(topicId);
     JSONObject topicObject = topic.getJSONWithHtml(ar, ngw);
         
 %>

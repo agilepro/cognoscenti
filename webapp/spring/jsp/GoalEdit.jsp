@@ -64,7 +64,7 @@ Required parameters:
 
     JSONArray linkedTopics = new JSONArray();
     String goalUniversalId = currentTaskRecord.getUniversalId();
-    for (TopicRecord aNote : ngp.getAllNotes()) {
+    for (TopicRecord aNote : ngp.getAllDiscussionTopics()) {
         for (String linkedAction : aNote.getActionList()) {
             if (linkedAction.equals(goalUniversalId)) {
                 linkedTopics.put(aNote.getJSON(ngp));

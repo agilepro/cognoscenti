@@ -193,7 +193,7 @@ public class WikiToPDF
         }
 
         for (String noteId : publicNoteIDs) {
-            TopicRecord lrt = ngp.getNote(noteId);
+            TopicRecord lrt = ngp.getDiscussionTopic(noteId);
             if (lrt!=null) {
                 memberNotes.add(lrt);
             }
