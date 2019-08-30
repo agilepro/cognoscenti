@@ -78,7 +78,7 @@ Required parameters:
             if(responsible!=null) {
                 String personImage = responsible.getImage();
                 if (personImage!=null && personImage.length() > 0) {
-                    imagePath = "users/"+personImage;
+                    imagePath = "icon/"+personImage;
                 }
             }
             String objectKey = hist.getContext();
@@ -627,7 +627,7 @@ a {
               <td>
                   <span class="dropdown">
                     <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(person)}}" 
+                    <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(person)}}" 
                          style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">

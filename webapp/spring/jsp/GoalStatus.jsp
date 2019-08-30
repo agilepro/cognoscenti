@@ -723,7 +723,7 @@ function addvalue() {
                 <div ng-repeat="person in area.assignees">
                   <span class="dropdown">
                     <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(person)}}" 
+                    <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(person)}}" 
                          style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -811,7 +811,7 @@ function addvalue() {
                 <div ng-repeat="person in rec.assignTo">
                   <span class="dropdown">
                     <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(person)}}" 
+                    <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(person)}}" 
                          style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">

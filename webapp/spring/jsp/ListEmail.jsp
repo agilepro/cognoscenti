@@ -171,7 +171,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
             <td>
                   <span class="dropdown">
                     <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(rec.fromUser)}}" 
+                    <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(rec.fromUser)}}" 
                          style="width:32px;height:32px" title="{{rec.fromUser.name}} - {{rec.fromUser.uid}}">
                     </span>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">

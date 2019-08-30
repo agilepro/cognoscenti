@@ -466,7 +466,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       <td>
                         <span class="dropdown">
                             <span id="menu1" data-toggle="dropdown">
-                            <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(rec.modUser)}}" 
+                            <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(rec.modUser)}}" 
                                  style="width:32px;height:32px" title="{{rec.modUser.name}} - {{rec.modUser.uid}}">
                             </span>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
@@ -495,7 +495,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                         <span ng-repeat="person in rec.subscribers">
                           <span class="dropdown">
                             <span id="menu1" data-toggle="dropdown">
-                            <img class="img-circle" src="<%=ar.retPath%>users/{{imageName(person)}}" 
+                            <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(person)}}" 
                                  style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
                             </span>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">

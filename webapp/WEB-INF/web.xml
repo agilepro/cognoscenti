@@ -79,6 +79,7 @@
         <servlet-name>apuServlet</servlet-name>
         <url-pattern>/apu/*</url-pattern>
     </servlet-mapping>
+
     <servlet>
         <servlet-name>authServlet</servlet-name>
         <servlet-class>org.socialbiz.cog.api.LightweightAuthServlet</servlet-class>
@@ -88,6 +89,14 @@
         <url-pattern>/auth/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>iconServlet</servlet-name>
+        <servlet-class>org.socialbiz.cog.api.IconServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>iconServlet</servlet-name>
+        <url-pattern>/icon/*</url-pattern>
+    </servlet-mapping>
 
 
     <servlet-mapping>

@@ -1051,7 +1051,7 @@ function updateVal(){
                     </tr>
                     <tr ng-repeat="rec in allHist">
                         <td class="projectStreamIcons"  style="padding:10px;">
-                            <img class="img-circle" src="<%=ar.retPath%>users/{{rec.responsible.image}}"
+                            <img class="img-circle" src="<%=ar.retPath%>icon/{{rec.responsible.image}}"
                                  alt="" width="50" height="50" /></td>
                         <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
                             {{rec.time|date}} -

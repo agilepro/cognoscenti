@@ -11,6 +11,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.socialbiz.cog.api.IconServlet;
 import org.socialbiz.cog.api.LightweightAuthServlet;
 import org.socialbiz.cog.dms.FolderAccessHelper;
 import org.socialbiz.cog.exception.NGException;
@@ -228,7 +229,7 @@ System.out.println("Weaver Server Object == Start the Server");
                 //SendEmailTimerTask.initEmailSender(backgroundTimer, this);
                 EmailListener.initListener(backgroundTimer);
             }
-            
+
             //make sure that all the workspace references include a site
             userManager.assureSiteAndWorkspace(this);
 
@@ -236,6 +237,8 @@ System.out.println("Weaver Server Object == Start the Server");
             FolderAccessHelper.initCVSConnections(this);
             serverId = theConfig.getServerGlobalId();
             LightweightAuthServlet.init(theConfig.getProperty("identityProvider"));
+
+            IconServlet.init(theConfig);
 
             BaseController.initBaseController(this);
             isInitialized = true;

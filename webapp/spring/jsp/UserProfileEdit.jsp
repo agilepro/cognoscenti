@@ -34,7 +34,7 @@
     String photoSource = ar.retPath+"assets/photoThumbnail.gif";
     String imagePath = uProf.getImage();
     if(imagePath!=null && imagePath.length() > 0){
-        photoSource = ar.retPath+"users/"+imagePath;
+        photoSource = ar.retPath+"icon/"+imagePath;
     }
     Object errMsg = session.getAttribute("error-msg");
     

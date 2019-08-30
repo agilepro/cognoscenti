@@ -25,7 +25,7 @@ Required parameters:
         if(responsible!=null) {
             String imgPath = responsible.getImage();
             if (imgPath!=null && imgPath.length() > 0) {
-                imagePath = "users/"+imgPath;
+                imagePath = "icon/"+imgPath;
             }
         }
         String objectKey = hist.getContext();
