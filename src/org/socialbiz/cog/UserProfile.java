@@ -810,10 +810,7 @@ public class UserProfile implements UserRef
 
 
     public String getImage() {
-        return image;
-    }
-    public void setImage(String newImage) {
-        image = newImage;
+        return (this.getKey()+".jpg").toLowerCase();
     }
 
     /**

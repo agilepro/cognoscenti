@@ -71,6 +71,7 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 import org.socialbiz.cog.mail.EmailSender;
 import org.socialbiz.cog.mail.MailInst;
+import org.socialbiz.cog.util.Thumbnail;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,13 +95,6 @@ public class UserController extends BaseController {
     }
 
 
-    protected UserProfile getUserToDisplay(AuthRequest ar, String userKey) throws Exception {
-        if ("$".equals(userKey) && ar.isLoggedIn()) {
-            return ar.getUserProfile();
-        }
-        return UserManager.getUserProfileOrFail(userKey);
-    }
-
     public void streamJSPUserLoggedIn(AuthRequest ar, String userKey, String jspName) throws Exception {
         try {
             if(!ar.isLoggedIn()){
@@ -108,7 +102,7 @@ public class UserController extends BaseController {
                 streamJSP(ar, "Warning");
                 return;
             }
-            UserProfile up = getUserToDisplay(ar, userKey);
+            UserProfile up = UserManager.getUserProfileOrFail(userKey);
             ar.req.setAttribute("userProfile", up);
             ar.req.setAttribute("userKey", up.getKey());
             streamJSP(ar, jspName);
@@ -265,7 +259,7 @@ public class UserController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if (ar.isLoggedIn()) {
                 //only check if the user logged in, because the display will fail on that case
-                UserProfile userBeingViewed = getUserToDisplay(ar, userKey);
+                UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
                 UserPage uPage = userBeingViewed.getUserPage();
                 String agentId = ar.reqParam("id");
                 AgentRule agent = uPage.findAgentRule(agentId);
@@ -298,7 +292,7 @@ public class UserController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         if(ar.isLoggedIn()){
-            UserProfile userBeingViewed = getUserToDisplay(ar, userKey);
+            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
             UserPage uPage = userBeingViewed.getUserPage();
             String accessUrl = ar.reqParam("url");
             RemoteGoal rg =  uPage.findRemoteGoal(accessUrl);
@@ -341,7 +335,7 @@ public class UserController extends BaseController {
             String address = ar.reqParam("address");
             String go = ar.reqParam("go");
             String act = ar.reqParam("act");
-            UserProfile userBeingViewed = getUserToDisplay(ar, userKey);
+            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
             UserPage uPage = userBeingViewed.getUserPage();
             if ("Create".equals(act)) {
                 ProfileRef pr = uPage.findOrCreateProfileRef(address);
@@ -371,7 +365,7 @@ public class UserController extends BaseController {
             }
             String address = ar.reqParam("address");
             String act = ar.reqParam("act");
-            UserProfile userBeingViewed = getUserToDisplay(ar, userKey);
+            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
             UserPage uPage = userBeingViewed.getUserPage();
             if ("Create".equals(act)) {
                 ProfileRef pr = uPage.createProfileRefOrFail(address);
@@ -401,7 +395,7 @@ public class UserController extends BaseController {
         try{
             ar.assertLoggedIn("Must be logged in to look up agents.");
 
-            UserProfile userBeingViewed = getUserToDisplay(ar, userKey);
+            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
             UserPage uPage = userBeingViewed.getUserPage();
 
             String aid = ar.reqParam("aid");
@@ -611,14 +605,6 @@ public class UserController extends BaseController {
         }
     }
 
-    private File getUserImageFolder(HttpServletRequest request) {
-        String path=request.getSession().getServletContext().getRealPath("/");
-        File file_users = new File(path, "users");
-        if(!file_users.exists()){
-            file_users.mkdir();
-        }
-        return file_users;
-    }
 
 
     @RequestMapping(value = "/{userKey}/uploadImage.form", method = RequestMethod.POST)
@@ -636,26 +622,42 @@ public class UserController extends BaseController {
                 throw new NGException("nugen.exceptionhandling.file.size.exceeded",new Object[]{"500000000"});
             }
 
-            UserProfile profile = getUserToDisplay(ar, userKey);
+            UserProfile profile = UserManager.getUserProfileOrFail(userKey);
 
             String uploadedFileName = fileInPost.getOriginalFilename();
             if (uploadedFileName == null || uploadedFileName.length()==0) {
                 throw new NGException("nugen.exceptionhandling.filename.empty",null);
             }
             int dotPos = uploadedFileName.lastIndexOf(".");
-            String fileExtension = uploadedFileName.substring(dotPos);
+            String fileExtension = uploadedFileName.substring(dotPos).toLowerCase();
+            if (!".jpg".equals(fileExtension)) {
+                throw new Exception("You must upload a JPG file, got: "+uploadedFileName);
+            }
 
-            File userImageFolder = getUserImageFolder(request);
+
+            File userImageFolder = ar.getCogInstance().getConfig().getUserFolderOrFail();
             String newImageName = profile.getKey()+fileExtension;
+            newImageName = newImageName.toLowerCase();
             File newUserImage = new File(userImageFolder, newImageName);
-            File userImageTmpFile = new File(userImageFolder, newImageName+".~TMP");
+            File userImageTmpFile = new File(userImageFolder, newImageName+".~TMP"+System.currentTimeMillis());
+
+            File userImageTmpFile2 = new File(userImageFolder, newImageName+".~TMP2"+System.currentTimeMillis());
+
             //clean out any tmp file that might be left around
             if (userImageTmpFile.exists()) {
                 userImageTmpFile.delete();
             }
+            if (userImageTmpFile2.exists()) {
+                userImageTmpFile2.delete();
+            }
 
             //write the image content to the temp file
-            AttachmentHelper.saveToFileAH(fileInPost, userImageTmpFile);
+            AttachmentHelper.saveToFileAH(fileInPost, userImageTmpFile2);
+
+            Thumbnail.makeSquareFile(userImageTmpFile2,userImageTmpFile,100);
+
+            userImageTmpFile2.delete();
+
 
             String oldImageName = profile.getImage();
             if (oldImageName!=null) {
@@ -682,7 +684,6 @@ public class UserController extends BaseController {
             }
 
             //set the new name into the profile and save it
-            profile.setImage(newImageName);
             profile.setLastUpdated(ar.nowTime);
             ar.getCogInstance().getUserManager().saveUserProfiles();
 
@@ -1117,7 +1118,7 @@ public class UserController extends BaseController {
             String userKey = ar.defParam("userKey", null);
 
             if(userKey != null){
-                UserProfile userProfile = getUserToDisplay(ar, userKey);
+                UserProfile userProfile = UserManager.getUserProfileOrFail(userKey);
                 String accessCode = ar.defParam("accessCode", null);
                 if(userProfile != null && userProfile.getAccessCode().equals(accessCode)){
                     ar.setSpecialSessionAccess("Notifications:"+userKey);
@@ -1146,7 +1147,7 @@ public class UserController extends BaseController {
 
             NGWorkspace ngw = ar.getCogInstance().getWSByCombinedKeyOrFail(pageId).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            UserProfile up = getUserToDisplay(ar, userKey);
+            UserProfile up = UserManager.getUserProfileOrFail(userKey);
 
             String sendDigest = ar.defParam("sendDigest", null);
             if(sendDigest != null && "never".equals(sendDigest)){
@@ -1216,7 +1217,7 @@ public class UserController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if(ar.isLoggedIn()){
-                UserProfile uProf = getUserToDisplay(ar, userKey);
+                UserProfile uProf = UserManager.getUserProfileOrFail(userKey);
                 UserProfile loggedInUser = ar.getUserProfile();
 
                 String userName = loggedInUser.getName();
