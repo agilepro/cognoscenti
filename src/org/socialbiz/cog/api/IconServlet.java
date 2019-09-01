@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.ConfigFile;
+import org.socialbiz.cog.UserManager;
+import org.socialbiz.cog.UserProfile;
 
 import com.purplehillsbooks.streams.StreamHelper;
 
@@ -43,9 +45,9 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+        String path = req.getRequestURI();
         try {
             //resp.setContentType(arg0);
-            String path = req.getRequestURI();
             int pos = path.indexOf("/icon/");
             if (pos<0) {
                 throw new Exception("path does not have 'icon'");
@@ -53,7 +55,24 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
             String fileName = path.substring(pos+6);
             File imgFile = new File(userFolder, fileName);
             if (!imgFile.exists()) {
+                //new scheme is to put all the icon files in lower case but a link
+                //might have it differently
+                imgFile = new File(userFolder, fileName.toLowerCase());
+            }
+            if (!imgFile.exists()) {
                 imgFile = new File(defaultFolder, fileName);
+            }
+            if (!imgFile.exists()) {
+                int atPos = fileName.indexOf("@");
+                if (atPos<0 && fileName.length()>12) {
+                    String userKey = fileName.substring(0,9).toUpperCase();
+                    UserProfile user = UserManager.getUserProfileByKey(userKey);
+                    if (user!=null) {
+                        String userName = user.getName();
+                        String firstChar = userName.substring(0,1).toLowerCase();
+                        imgFile = new File(defaultFolder, "fake-"+firstChar+".jpg");
+                    }
+                }
             }
             if (!imgFile.exists()) {
                 String firstChar = fileName.substring(0,1).toLowerCase();
@@ -65,6 +84,7 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
             StreamHelper.copyFileToOutput(imgFile, resp.getOutputStream());
         }
         catch (Exception e) {
+            System.out.println("ERROR serving up the icon file: "+path);
             e.printStackTrace();
         }
     }
