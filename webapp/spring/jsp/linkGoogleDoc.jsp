@@ -178,6 +178,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             FOLDER_ID = gfile.id;
             $scope.driveFiles = [];
             $scope.getFiles();
+            // clear filter probably does not apply inside the folder
+            $scope.filter = "";
         }
     }
     $scope.popUp = function(gfile) {
