@@ -33,6 +33,7 @@ import org.socialbiz.cog.mail.ScheduledNotification;
 import org.w3c.dom.Document;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -653,52 +654,36 @@ public class NGBook extends ContainerCommon {
      * Given a new project with a key 'p', this will return the File for the new
      * project file (which does not exist yet). There are two methods:
      *
-     * 1) if a preferred location has been set, then a new folder in that will
-     * be created, and the project NGProj placed within that. 2) if no preferred
-     * location, then a regular NGWorkspace will be created in datapath folder.
-     *
-     * Note: p is NOT the name of the file, but the sanitized key. The returned
-     * name should have the .sp suffix on it.
+     * a new workspace folder is created in the site folder, as long as one does not already exist.
      */
-    private File getNewProjectPath(String p) throws Exception {
+    private File newWorkspaceFolderOrFail(String workspaceKey) throws Exception {
         File rootFolder = getSiteRootFolder();
         if (rootFolder == null) {
-            // No site root, this is an OLDSTYLE site in the data path
-            throw new Exception("old style datapath projects no longer supported.  Need a Site Root folder.");
+            throw new Exception("Site Root folder is missing from configuration");
         }
-        return createNewUniqueNameFolder(rootFolder, p);
-
-    }
-
-    /**
-     * Will create a new folder to put the project into based on the key
-     */
-    private File createNewUniqueNameFolder(File prefLoc, String key) throws Exception {
-
-        File newFolder = new File(prefLoc, key);
-
-        int count = 0;
-        while (newFolder.exists()) {
-            count++;
-            newFolder = new File(prefLoc, key + "-" + count);
+        File newFolder = new File(rootFolder, workspaceKey);
+        if (newFolder.exists()) {
+            throw new JSONException("Can not create workspace, that name that already exists: {0}", newFolder);
         }
 
         File cogFolder = new File(newFolder, ".cog");
         cogFolder.mkdirs();
         File newProjFile = new File(cogFolder, "ProjInfo.xml");
         return newProjFile;
+
     }
+
 
     /**
      * Confirm that this is a good unique key, or extend the passed value until
      * is is good by adding hyphen and a number on the end.
      */
-    public String findUniqueKeyInSite(Cognoscenti cog, String key) throws Exception {
+    public String genUniqueWSKeyInSite(Cognoscenti cog, String workspaceKey) throws Exception {
 
         // if it is already unique, use that. This tests ALL sites currently
         // loaded, but might consider a site-specific test when there is a
         // site specific search for a project.
-        NGPageIndex ngpi = cog.getSiteByKey(key);
+        NGPageIndex ngpi = cog.getWSBySiteAndKey(this.key, workspaceKey);
         if (ngpi == null) {
             return key;
         }
@@ -706,23 +691,21 @@ public class NGBook extends ContainerCommon {
         // NOPE, there is a container already with that key, so we have to find
         // another one. If there is already a numeral on the end, strip it off
         // so that the new numeral will most likely be one more that that, but
-        // only
-        // for single digit numerals after a hyphen. Not worth dealling with
-        // more elaborate
-        // than that
-        if (key.length() > 6) {
-            if (key.charAt(key.length() - 2) == '-') {
-                char lastChar = key.charAt(key.length() - 1);
+        // only for single digit numerals after a hyphen. Not worth dealing with
+        // more elaborate than that
+        if (workspaceKey.length() > 6) {
+            if (workspaceKey.charAt(key.length() - 2) == '-') {
+                char lastChar = workspaceKey.charAt(workspaceKey.length() - 1);
                 if (lastChar >= '0' && lastChar <= '9') {
-                    key = key.substring(0, key.length() - 2);
+                    workspaceKey = workspaceKey.substring(0, workspaceKey.length() - 2);
                 }
             }
         }
 
         int testNum = 1;
         while (true) {
-            String testKey = key + "-" + Integer.toString(testNum);
-            ngpi = cog.getSiteByKey(testKey);
+            String testKey = workspaceKey + "-" + Integer.toString(testNum);
+            ngpi = cog.getWSBySiteAndKey(this.key, testKey);
             if (ngpi == null) {
                 return testKey;
             }
@@ -800,12 +783,8 @@ public class NGBook extends ContainerCommon {
      * be sure to call "savePage" before finished otherwise nothing is created
      * on disk.
      */
-    public NGWorkspace createProjectByKey(AuthRequest ar, String key) throws Exception {
+    public NGWorkspace createWorkspaceByKey(AuthRequest ar, String key) throws Exception {
         assertPermissionToCreateProject(ar);
-        return createProjectByKey(ar.getUserProfile(), key, ar.nowTime, ar.getCogInstance());
-    }
-
-    public NGWorkspace createProjectByKey(UserProfile up, String key, long nowTime, Cognoscenti cog) throws Exception {
         if (key.indexOf('/') >= 0) {
             throw new ProgramLogicError(
                     "Expecting a key value, but got something with a slash in it: " + key);
@@ -817,16 +796,18 @@ public class NGBook extends ContainerCommon {
 
         // get the sanitized form, just in case
         String sanitizedKey = SectionUtil.sanitize(key);
-        File newFilePath = getNewProjectPath(sanitizedKey);
-        return createProjectAtPath(up, newFilePath, sanitizedKey, nowTime, cog);
+        File newFilePath = newWorkspaceFolderOrFail(sanitizedKey);
+        return createProjectAtPath(ar.getUserProfile(), newFilePath, sanitizedKey, ar.nowTime, ar.getCogInstance());
     }
 
+    /*
     public NGWorkspace createProjectAtPath(AuthRequest ar, File newFilePath, String newKey)
             throws Exception {
         assertPermissionToCreateProject(ar);
         UserProfile up = ar.getUserProfile();
         return createProjectAtPath(up, newFilePath, newKey, ar.nowTime, ar.getCogInstance());
     }
+    */
 
 
     public NGWorkspace createProjectAtPath(UserProfile up, File newFilePath, String newKey, long nowTime, Cognoscenti cog)

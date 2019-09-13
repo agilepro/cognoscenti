@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AgentRule;
+import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.BaseRecord;
 import org.socialbiz.cog.Cognoscenti;
@@ -51,6 +52,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.purplehillsbooks.json.JSONArray;
+import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 /**
@@ -75,8 +77,6 @@ public class CreateProjectController extends BaseController {
             }
 
             JSONObject newConfig = getPostedObject(ar);
-            UserProfile uProf  = ar.getUserProfile();
-            long nowTime       = ar.nowTime;
             String workspaceName = newConfig.getString("newName");
             String upstream    = newConfig.optString("upstream", null);
 
@@ -88,7 +88,7 @@ public class CreateProjectController extends BaseController {
             }
 
             //now actually create it
-            NGWorkspace newWorkspace = createWorkspace(uProf, site, workspaceName, upstream, nowTime, ar.getCogInstance());
+            NGWorkspace newWorkspace = createWorkspace(ar, site, workspaceName, upstream);
 
             //set the purpose / description
             String purpose     = newConfig.optString("purpose", "");
@@ -114,7 +114,7 @@ public class CreateProjectController extends BaseController {
             JSONObject repo = newWorkspace.getConfigJSON();
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to a workspace.", ex);
+            Exception ee = new JSONException("Unable to create workspace in Site: {0}", ex, siteId);
             streamException(ee, ar);
         }
     }
@@ -140,14 +140,14 @@ public class CreateProjectController extends BaseController {
 
             NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
 
-            NGWorkspace project = createWorkspace(ar.getUserProfile(), site, remoteName+"(clone)", upstream, ar.nowTime, ar.getCogInstance());
+            NGWorkspace project = createWorkspace(ar, site, remoteName+"(clone)", upstream);
             ar.setPageAccessLevels(project);
             project.saveFile(ar, "Created new cloned project");
 
             response.sendRedirect(ar.retPath+"t/"+siteId+"/"+project.getKey()+"/SyncAttachment.htm");
 
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.create.project.from.template", new Object[]{siteId} , ex);
+            throw new JSONException("Unable to clone workspace in site: {0}", ex, siteId);
         }
     }
 
@@ -260,9 +260,13 @@ public class CreateProjectController extends BaseController {
                 String siteId = rule.getSiteKey();
                 String templateKey = rule.getTemplate();
                 String projectName = rg.getProjectName() + " (clone)";
+
                 UserProfile owner = userManager.findUserByAnyIdOrFail(rule.getOwner());
+
+                AuthRequest dummy = new AuthDummy(owner, ar.w, ar.getCogInstance());
+
                 NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
-                newWorkspace = createWorkspace(owner, site, projectName, upstream, ar.nowTime, ar.getCogInstance());
+                newWorkspace = createWorkspace(dummy, site, projectName, upstream);
                 if (templateKey!=null && templateKey.length()>0) {
                     NGWorkspace template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(templateKey).getWorkspace();
                     newWorkspace.injectTemplate(ar, template_ngp);
@@ -333,8 +337,9 @@ public class CreateProjectController extends BaseController {
      * Creates a workspace, but does not save it.
      * Caller must save the workspace ... otherwise bad things could happen.
      */
-    private static NGWorkspace createWorkspace(UserProfile uProf, NGBook site, String workspaceName,
-        String upstream, long nowTime, Cognoscenti cog) throws Exception {
+    private static NGWorkspace createWorkspace(AuthRequest ar, NGBook site, String workspaceName,
+            String upstream) throws Exception {
+        UserProfile uProf = ar.getUserProfile();
         if (!site.primaryOrSecondaryPermission(uProf)) {
             throw new NGException("nugen.exception.not.member.of.account",
                     new Object[]{site.getFullName()});
@@ -345,7 +350,11 @@ public class CreateProjectController extends BaseController {
         if (pageKey.length()>30) {
             pageKey = pageKey.substring(0,30);
         }
-        newWorkspace = site.createProjectByKey(uProf, pageKey, nowTime, cog);
+
+        //look for an alternate key if the easy one is not available
+        pageKey = site.genUniqueWSKeyInSite(ar.getCogInstance(), pageKey);
+
+        newWorkspace = site.createWorkspaceByKey(ar, pageKey);
         List<String> nameSet = new ArrayList<String>();
         nameSet.add(workspaceName);
         newWorkspace.setPageNames(nameSet);
@@ -357,7 +366,7 @@ public class CreateProjectController extends BaseController {
 
         newWorkspace.setSite(site);
 
-        cog.makeIndexForWorkspace(newWorkspace);
+        ar.getCogInstance().makeIndexForWorkspace(newWorkspace);
 
         return newWorkspace;
     }
@@ -371,11 +380,9 @@ public class CreateProjectController extends BaseController {
                         new Object[] { site.getFullName() });
             }
 
-            UserProfile uProf = ar.getUserProfile();
-            long nowTime       = ar.nowTime;
             String projectName = ar.reqParam("projectname").trim();
             String upstream    = ar.defParam("upstream", null);
-            NGWorkspace newWorkspace = createWorkspace(uProf, site, projectName, upstream, nowTime, ar.getCogInstance());
+            NGWorkspace newWorkspace = createWorkspace(ar, site, projectName, upstream);
             ar.setPageAccessLevels(newWorkspace);
 
             String templateName = ar.defParam("templateName", null);

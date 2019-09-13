@@ -152,7 +152,7 @@ public class ResourcePage implements NGResource
 
         //TODO: surely we can do better than a purely random ID
         String pageAddress = IdGenerator.generateKey();
-        NGWorkspace newWorkspace = ngb.createProjectByKey(ar, pageAddress);
+        NGWorkspace newWorkspace = ngb.createWorkspaceByKey(ar, pageAddress);
 
         String name = DOMUtils.textValueOfChild(element_page, "name", true);
         String abbreviation = DOMUtils.textValueOfChild(element_page, "abbreviation", true);

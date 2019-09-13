@@ -17,8 +17,6 @@
 package org.socialbiz.cog.api;
 
 import java.io.File;
-import java.io.FileInputStream;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
