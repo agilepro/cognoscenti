@@ -281,8 +281,6 @@ myApp.controller('myCtrl', function($scope, $http) {
                     title="This is where all email notifications from Weaver will be sent">Preferred</span>
                 <span class="btn btn-sm btn-primary btn-raised" ng-hide="email==profile.preferred"
                     ng-click="makePreferred(email)">Make Preferred</span>
-                <span class="btn btn-sm btn-default btn-raised" ng-hide="email==profile.preferred"
-                    ng-click="deleteEmail(email)">Delete</span>
             </td>
         </tr>
     </table>

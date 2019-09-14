@@ -224,10 +224,11 @@ if (ar.isLoggedIn()) { %>
             </td>
             <td ng-show="helpEmail" ng-click="helpEmail=!helpEmail">
               <div class="guideVocal thinnerGuide">
-                You can input as many email addresses as you want to use. 
-                When you change email addresses, just ADD the new address here, but leave the old one in the list.                
-                Weaver will always send email to the preferred email.
-                If you have been working in Weaver under one email address, the history items will be tagged with that address, so you will want to leave that associated with your account here so that you are still associated with those items.
+                <div>You can associate as many email addresses as you want. 
+                Email is only sent to the first email in the list, known as the preferred email address.  The other addresses are used only to identify artifacts you created when logged in as that email address.</div>
+                <br/>
+                <div>If you need to change the email address that you log in as, just ADD the new address here, but LEAVE the old one in the list.
+                If you used to work in Weaver with an old email address, the history items will be tagged with that old address, so you need to leave that old address in this list so they are associated with you.</div>
               </div>
             </td>
         </tr>
