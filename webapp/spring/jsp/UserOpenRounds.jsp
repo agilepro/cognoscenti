@@ -13,6 +13,7 @@
     JSONArray proposalList = userCache.getOpenRounds();
 
 
+    JSONObject userCacheJSON = userCache.getAsJSON();
     UserProfile  operatingUser =ar.getUserProfile();
     if (operatingUser==null) {
         //this should never happen, and if it does it is not the users fault
@@ -34,6 +35,9 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.proposalList.sort( function(a,b) {
         return a.dueDate-b.dueDate;
     });
+    
+    $scope.userCache   = <%userCacheJSON.write(out,2,4);%>;
+    
     $scope.filterVal = "";
     $scope.filterPast = false;
     $scope.filterCurrent = true;
@@ -87,6 +91,7 @@ app.controller('myCtrl', function($scope, $http) {
             return "";
         }
     }
+    console.log("UserCache Data", $scope.userCache);
 
 });
 
@@ -98,8 +103,38 @@ app.controller('myCtrl', function($scope, $http) {
 <%@include file="ErrorPanel.jsp"%>
 
         <div class="generalSettings">
+            <h3>Draft Topics</h3>
 
-            <table class="gridTable2" width="100%">
+            <table class="table" width="100%">
+            <tr class="gridTableHeader">
+                <td width="16px"></td>
+                <td width="300px">Draft Topic</td>
+                <td width="100px">Workspace</td>
+                <td width="100px">Created By</td>
+                <td width="100px">Modified</td>
+            </tr>
+            <tr ng-repeat="rec in userCache.draftTopics">
+                <td></td>
+                <td >
+                    <a href="../../t/{{rec.siteKey}}/{{rec.workspaceKey}}/noteZoom{{rec.id}}.htm">{{rec.subject}}</a>
+                </td>
+                <td>
+                    <a href="../../t/{{rec.siteKey}}/{{rec.workspaceKey}}/frontPage.htm">{{rec.workspaceName}}</a>
+                </td>
+                <td>
+                    {{rec.modUser.name}}
+                </td>
+                <td >
+                    {{rec.modTime|date}}
+                </td>
+            </tr>
+            </table>
+        </div>
+
+        <div class="generalSettings">
+            <h3>Uncompleted Proposals and Rounds</h3>
+
+            <table class="table" width="100%">
             <tr class="gridTableHeader">
                 <td width="16px"></td>
                 <td width="300px">Proposal</td>
@@ -125,7 +160,6 @@ app.controller('myCtrl', function($scope, $http) {
             </tr>
             </table>
         </div>
-
 
 
         <div><i>Note: this list is updated when the email is sent.  Email is usually delayed 5 minutes.</i></div>

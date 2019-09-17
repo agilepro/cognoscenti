@@ -42,7 +42,6 @@ public class UserProfile implements UserRef
     private String userKey = "";
     private String name = "";
     private String description;
-    private String image;
     private String licenseToken;
     private long   lastLogin;
     private String lastLoginId;
@@ -78,8 +77,6 @@ public class UserProfile implements UserRef
         }
 
         ids       = DOMFace.constructVector(fullJO.getJSONArray("ids"));
-
-        image         = fullJO.optString("image", null);
 
         licenseToken  = fullJO.getString("licenseToken");
 

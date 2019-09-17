@@ -39,6 +39,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Profile Settings");
     $scope.userInfo = <%userInfo.write(out,2,4);%>;
+    $scope.providerUrl = SLAP.loginConfig.providerUrl;
 
     $scope.editAgent=false;
     $scope.newAgent = {};
@@ -320,6 +321,10 @@ if (ar.isLoggedIn()) { %>
 <%if (viewingSelf){ %>
     <hr/>
     <table class="spacey">
+        <tr>
+            <td class="firstcol">Password:</td>
+            <td><a href="{{providerUrl}}" target="_blank">Click Here to Change Password</a></td>
+        </tr>
         <tr>
             <td class="firstcol">Remote URL:</td>
             <td><a href="<%=remoteProfileURL%>"><%=remoteProfileURL%></a></td>

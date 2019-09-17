@@ -832,7 +832,7 @@ public abstract class NGPage extends ContainerCommon {
     * then we have some assurance that nothing accidental was
     * included in the page.  Perhaps we can test the DOM and see
     * if things are nested correctly ... in the future.
-    */
+    *
     public void testRender(AuthRequest ar)
         throws Exception
     {
@@ -866,6 +866,7 @@ public abstract class NGPage extends ContainerCommon {
             }
         }
     }
+    */
 
 
     //a page always has a process, so if asked for, and we can't find
@@ -1443,16 +1444,17 @@ public abstract class NGPage extends ContainerCommon {
         pageInfo.setWorkspaceMailId(id);
     }
 
-
-    public void scanForNewFiles() throws Exception {
+/*
+    private void scanForNewFiles() throws Exception {
         // nothing in this class, this is overridden in the subclass NGProj
         // to look for new file that appeared in the workspace folder
     }
 
-    public void removeExtrasByName(String name) throws Exception {
+    private void removeExtrasByName(String name) throws Exception {
         // no extras in this class, this is overridden in the subclass NGProj
         // in order to clean up file in the folder that should not be there.
     }
+*/
 
     /**
      * Find all the tasks on this page, and assign them new, arbitrary
@@ -1878,17 +1880,6 @@ public abstract class NGPage extends ContainerCommon {
         return ret;
     }
 
-    public abstract AttachmentRecord createAttachment() throws Exception;
-    /* {
-        AttachmentRecord attach = attachParent.createChild("attachment", AttachmentRecord.class);
-        String newId = getUniqueOnPage();
-        attach.setId(newId);
-        attach.setContainer(this);
-
-        //this is the default, but it might be overridden in case of sync from another workspace
-        attach.setUniversalId( getContainerUniversalId() + "@" + newId );
-        return attach;
-    }*/
 
     public void deleteAttachment(String id,AuthRequest ar) throws Exception {
         AttachmentRecord att = findAttachmentByIDOrFail( id );

@@ -37,6 +37,7 @@ public class UserCache {
         JSONArray proposalList = new JSONArray();
         JSONArray openRounds = new JSONArray();
         JSONArray futureMeetings = new JSONArray();
+        JSONArray draftTopics = new JSONArray();
 
         UserProfile up = UserManager.getUserProfileByKey(userKey);
 
@@ -44,17 +45,17 @@ public class UserCache {
             if (!ngpi.isProject() || ngpi.isDeleted) {
                 continue;
             }
-            NGWorkspace aPage = ngpi.getWorkspace();
-            if (aPage.isDeleted() || aPage.isFrozen()) {
+            NGWorkspace ngw = ngpi.getWorkspace();
+            if (ngw.isDeleted() || ngw.isFrozen()) {
                 continue;
             }
-            NGBook site = aPage.getSite();
+            NGBook site = ngw.getSite();
             if (site.isDeleted() || site.isMoved() || site.isFrozen()) {
                 //ignore any workspaces in deleted, frozen, or moved sites.
                 continue;
             }
 
-            for (GoalRecord gr : aPage.getAllGoals()) {
+            for (GoalRecord gr : ngw.getAllGoals()) {
 
                 if (gr.isPassive()) {
                     //ignore tasks that are from other servers.  They will be identified and tracked on
@@ -66,15 +67,28 @@ public class UserCache {
                     continue;
                 }
 
-                actionItemList.put(gr.getJSON4Goal(aPage));
+                actionItemList.put(gr.getJSON4Goal(ngw));
             }
-            for (TopicRecord aNote : aPage.getAllDiscussionTopics()) {
-                String address = "noteZoom"+aNote.getId()+".htm";
-                for (CommentRecord cr : aNote.getComments()) {
-                    addPollIfNoResponse(proposalList, openRounds, cr, up, aPage, aNote.getTargetRole(), address, nowTime);
+            for (TopicRecord aTopic : ngw.getAllDiscussionTopics()) {
+                String address = "noteZoom"+aTopic.getId()+".htm";
+
+                //if this note is a draft and if owned by this user or recently
+                //modified by this user then
+                //include in the draft note list
+                if (aTopic.isDraftNote() &&
+                        (up.hasAnyId(aTopic.getModUser().getUniversalId()) ||  up.hasAnyId(aTopic.getOwner()))) {
+                    JSONObject topicJSON = aTopic.getJSON(ngw);
+                    topicJSON.put("workspaceKey", ngw.getKey());
+                    topicJSON.put("siteKey", ngw.getSiteKey());
+                    topicJSON.put("workspaceName", ngw.getFullName());
+                    draftTopics.put(topicJSON);
+                }
+
+                for (CommentRecord cr : aTopic.getComments()) {
+                    addPollIfNoResponse(proposalList, openRounds, cr, up, ngw, aTopic.getTargetRole(), address, nowTime);
                 }
             }
-            for (MeetingRecord meet : aPage.getMeetings()) {
+            for (MeetingRecord meet : ngw.getMeetings()) {
 
                 if (meet.isBacklogContainer()) {
                     //don't ever get anything from the backlog container
@@ -84,7 +98,7 @@ public class UserCache {
                 String address = "meetingFull.htm?id="+meet.getId();
                 for (AgendaItem ai : meet.getSortedAgendaItems()) {
                     for (CommentRecord cr : ai.getComments()) {
-                        addPollIfNoResponse(proposalList, openRounds, cr, up, aPage, meet.getTargetRole(), address, nowTime);
+                        addPollIfNoResponse(proposalList, openRounds, cr, up, ngw, meet.getTargetRole(), address, nowTime);
                     }
                 }
 
@@ -92,9 +106,9 @@ public class UserCache {
                 if (meet.getState() == MeetingRecord.MEETING_STATE_PLANNING
                         || meet.getState() == MeetingRecord.MEETING_STATE_RUNNING) {
                     //now determine if the user is asked to attend this meeting
-                    NGRole targetRole = aPage.getRole(meet.getTargetRole());
+                    NGRole targetRole = ngw.getRole(meet.getTargetRole());
                     if (targetRole!=null && targetRole.isPlayer(up)) {
-                        addMeetingToList(futureMeetings, meet, aPage, address);
+                        addMeetingToList(futureMeetings, meet, ngw, address);
                     }
                 }
             }
@@ -107,6 +121,7 @@ public class UserCache {
         cacheObj.put("proposals", proposalList);
         cacheObj.put("openRounds", openRounds);
         cacheObj.put("futureMeetings", futureMeetings);
+        cacheObj.put("draftTopics", draftTopics);
     }
 
     private void addPollIfNoResponse(JSONArray proposalList, JSONArray openRounds, CommentRecord cr,

@@ -35,6 +35,8 @@ Required parameters:
     JSONArray proposals = userCache.getProposals();
     JSONArray openRounds = userCache.getOpenRounds();
     JSONArray futureMeetings = userCache.getFutureMeetings();
+    
+    JSONObject userCacheJSON = userCache.getAsJSON();
 
     List<WatchRecord> watchList = loggedUser.getWatchList();
 
@@ -81,6 +83,8 @@ myApp.controller('myCtrl', function($scope, $http) {
     $scope.wList       = <%wList.write(out,2,4);%>;
     $scope.siteList    = <%siteList.write(out,2,4);%>;
     $scope.loggedUser  = <% loggedUser.getJSON().write(out,2,4);%>;
+    
+    $scope.userCache   = <%userCacheJSON.write(out,2,4);%>;
 
     $scope.openActionItems.sort( function(a,b) {
         return a.duedate-b.duedate;
@@ -98,7 +102,7 @@ myApp.controller('myCtrl', function($scope, $http) {
         }
         return str;
     }
-
+    console.log("UserCache Data", $scope.userCache);
 });
 </script>
 

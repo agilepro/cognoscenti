@@ -132,6 +132,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             $scope.notes = data;
             $scope.sortNotes();
             $scope.initialFetchDone = true;
+            console.log("Topics", $scope.notes);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
