@@ -103,11 +103,19 @@ public class UserCache {
                 }
 
                 //if the meeting is still planned to be run
-                if (meet.getState() == MeetingRecord.MEETING_STATE_PLANNING
-                        || meet.getState() == MeetingRecord.MEETING_STATE_RUNNING) {
+                if (meet.getState() != MeetingRecord.MEETING_STATE_COMPLETED) {
                     //now determine if the user is asked to attend this meeting
+                    boolean mightAttend = false;
                     NGRole targetRole = ngw.getRole(meet.getTargetRole());
-                    if (targetRole!=null && targetRole.isPlayer(up)) {
+                    for (String part : meet.getParticipants()) {
+                        if (up.hasAnyId(part)) {
+                            mightAttend = true;
+                        }
+                    }
+                    if (!mightAttend && targetRole!=null && targetRole.isPlayer(up)) {
+                        mightAttend = true;
+                    }
+                    if (mightAttend) {
                         addMeetingToList(futureMeetings, meet, ngw, address);
                     }
                 }

@@ -37,6 +37,15 @@ public class MeetingRecord extends DOMFace {
 
         //new "number" field added, and this initializes it
         renumberItems();
+
+        String defaultLayout = getScalar("defaultLayout");
+        if (defaultLayout==null || defaultLayout.length()==0) {
+            setScalar("defaultLayout", "MinutesDetails.chtml");
+        }
+        String notifyLayout = getScalar("notifyLayout");
+        if (notifyLayout==null || notifyLayout.length()==0) {
+            setScalar("notifyLayout", "AgendaDetail.chtml");
+        }
     }
 
 

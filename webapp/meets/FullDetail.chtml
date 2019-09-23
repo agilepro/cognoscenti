@@ -12,11 +12,14 @@
 .smallPrint {
     font-size:-2;
 }
+.tablePortable tr td {
+    vertical-align: top;
+}
 </style>
 <body>
 <div >
-<!--TEMPLATE FlatDetailAgenda.chtml-->
-<table class="table">
+<!--TEMPLATE FullDetail.chtml-->
+<table class="table tablePortable">
 <tr style="background-color:lightskyblue">
 <td colspan="2"><h1>{$name|html}</h1></td>
 </tr>
@@ -30,12 +33,6 @@
 <td style="width:100px">Description:</td><td>{$meetingInfo}</td>
 </tr>
 <tr>
-<td style="width:100px">State:</td><td>{$state}</td>
-</tr>
-<tr>
-<td style="width:100px">Target Role:</td><td>{$targetRole}</td>
-</tr>
-<tr>
 <td style="width:100px">Participants:</td>
     <td>
     {% loop in $participants as $part %}
@@ -44,6 +41,12 @@
     <i>(none specified)</i>
     {% endloop %}
     </td>
+</tr>
+<tr>
+<td style="width:100px">State:</td><td>{$state}</td>
+</tr>
+<tr>
+<td style="width:100px">Target Role:</td><td>{$targetRole}</td>
 </tr>
 
 </table>

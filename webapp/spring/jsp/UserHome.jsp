@@ -243,6 +243,25 @@ myApp.controller('myCtrl', function($scope, $http) {
                </div>
           </div>
        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">
+              <div style="float:left"><span translate>Unposted Draft Topics</span></div>
+              <div style="float:right">
+                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm">
+                      <i class="fa fa-list"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body">
+               <div ng-repeat="item in userCache.draftTopics | limitTo: 10" class="clipping">
+                 <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/noteZoom{{item.id}}.htm">{{fixNull(item.subject)}}</a>
+               </div>
+               <div ng-show="userCache.draftTopics.length>10">
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/userOpenRounds.htm" 
+                     class="btn btn-sm btn-default btn-raised" translate>See all...</a>
+               </div>
+          </div>
+       </div>
     </div>
 
 
