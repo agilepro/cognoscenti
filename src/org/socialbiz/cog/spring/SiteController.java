@@ -108,7 +108,7 @@ public class SiteController extends BaseController {
             if(action.equals( "Submit" )){
 
                 JSONObject reqObj = new JSONObject();
-                reqObj.put("siteId", ar.reqParam("accountID"));
+                reqObj.put("siteId", ar.reqParam("accountID").toLowerCase());
                 reqObj.put("siteName", ar.reqParam("accountName"));
                 reqObj.put("purpose", ar.defParam("accountDesc",""));
                 reqObj.put("requester", ar.getBestUserId());

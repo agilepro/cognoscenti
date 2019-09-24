@@ -160,10 +160,12 @@ public class SiteReqFile {
 
         Cognoscenti cog = ar.getCogInstance();
 
-        String siteId      = newSiteReq.getString("siteId");
+        String siteId      = newSiteReq.getString("siteId").toLowerCase();
         String siteName    = newSiteReq.getString("siteName");
-        //String purpose     = newSiteReq.getString("purpose");
-        //String requester   = newSiteReq.getString("requester");
+        
+        //need to assure this is lower case so that the folder is created
+        //lower case.  On Linux this makes a difference.
+        newSiteReq.put("siteId", siteId);
 
 
         // first, lets see if there is a site already with that ID
