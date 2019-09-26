@@ -200,6 +200,8 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             ResourceDecoder resDec = new ResourceDecoder(ar);
 
             if (resDec.isTempDoc) {
+                //don't want to hold any locks during the upload.
+                NGPageIndex.clearLocksHeldByThisThread();
                 receiveTemp(ar, resDec);
                 System.out.println("    PUT: file written: "+resDec.tempName);
                 JSONObject result = new JSONObject();
