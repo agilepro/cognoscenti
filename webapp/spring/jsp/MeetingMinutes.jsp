@@ -14,6 +14,7 @@ Required parameters:
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
+    NGBook site = ngw.getSite();
 
     JSONArray allLabels = ngw.getJSONLabels();
         
@@ -82,6 +83,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.selectedMinutes = {};
     $scope.enableClick = true;
     $scope.allLabels = <%allLabels.write(out,2,2);%>;
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
     
     //setting isUpdating to true prevents a second overlapping update
     $scope.isUpdating = false;
@@ -328,6 +330,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             resolve: {
                 containingQueryParams: function() {
                     return "meet="+$scope.meetId+"&ai="+item.id;
+                },
+                siteId: function () {
+                  return $scope.siteInfo.key;
                 }
             }
         });

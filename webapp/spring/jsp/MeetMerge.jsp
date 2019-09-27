@@ -70,7 +70,16 @@
     
     
     %>
-    <script>    window.setMainPageTitle("Meeting Display"); </script>
+    <script>
+    window.setMainPageTitle("Meeting Display"); 
+
+    var app = angular.module('myApp');    
+    app.controller('myCtrl', function($scope, $http, $modal) {
+        //no real function here
+    });
+     </script>
+     
+  <div ng-app="myApp" ng-controller="myCtrl">
     
     <div class="upRightOptions rightDivContent">    
       <span class="dropdown">
@@ -115,6 +124,7 @@
     
 %>
     </div>
+  </div>
 
 
 

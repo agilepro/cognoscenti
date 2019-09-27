@@ -685,7 +685,7 @@ public class NGBook extends ContainerCommon {
         // site specific search for a project.
         NGPageIndex ngpi = cog.getWSBySiteAndKey(this.key, workspaceKey);
         if (ngpi == null) {
-            return key;
+            return workspaceKey;
         }
 
         // NOPE, there is a container already with that key, so we have to find
@@ -783,31 +783,23 @@ public class NGBook extends ContainerCommon {
      * be sure to call "savePage" before finished otherwise nothing is created
      * on disk.
      */
-    public NGWorkspace createWorkspaceByKey(AuthRequest ar, String key) throws Exception {
+    public NGWorkspace createWorkspaceByKey(AuthRequest ar, String workspaceKey) throws Exception {
         assertPermissionToCreateProject(ar);
-        if (key.indexOf('/') >= 0) {
+        if (workspaceKey.indexOf('/') >= 0) {
             throw new ProgramLogicError(
-                    "Expecting a key value, but got something with a slash in it: " + key);
+                    "Expecting a key value, but got something with a slash in it: " + workspaceKey);
         }
-        if (key.endsWith(".sp")) {
+        if (workspaceKey.endsWith(".sp")) {
             throw new ProgramLogicError(
-                    "this has changed, and the key should no longer end with .sp: " + key);
+                    "this has changed, and the key should no longer end with .sp: " + workspaceKey);
         }
 
         // get the sanitized form, just in case
-        String sanitizedKey = SectionUtil.sanitize(key);
+        String sanitizedKey = SectionUtil.sanitize(workspaceKey);
         File newFilePath = newWorkspaceFolderOrFail(sanitizedKey);
         return createProjectAtPath(ar.getUserProfile(), newFilePath, sanitizedKey, ar.nowTime, ar.getCogInstance());
     }
 
-    /*
-    public NGWorkspace createProjectAtPath(AuthRequest ar, File newFilePath, String newKey)
-            throws Exception {
-        assertPermissionToCreateProject(ar);
-        UserProfile up = ar.getUserProfile();
-        return createProjectAtPath(up, newFilePath, newKey, ar.nowTime, ar.getCogInstance());
-    }
-    */
 
 
     public NGWorkspace createProjectAtPath(UserProfile up, File newFilePath, String newKey, long nowTime, Cognoscenti cog)

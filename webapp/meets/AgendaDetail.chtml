@@ -41,14 +41,29 @@
 <td style="width:50px">{$agItem.number}.</td>
 <td >{$agItem.subject|html}<br/>
      <i>({$agItem.duration} minutes)</i>
+
+</td>
+<td style="width:150px">{$agItem.schedStart|date("HH:mm")} to {$agItem.schedEnd|date("HH:mm")}</td>
+</tr>
+
+
+
+{% if ($agItem.presenterList.length > 0) %}
+<tr>
+<td></td>
+<td>
+Presenters: 
 {% loop in $agItem.presenterList as $presenter counter=$i,1 %}
-,    {$presenter.name}
+{$presenter.name}
 {% onEmpty %}
 (No presenter specified)
 {% endloop %}
 </td>
-<td style="width:150px">{$agItem.schedStart|date("HH:mm")} to {$agItem.schedEnd|date("HH:mm")}</td>
 </tr>
+{% endif %}
+
+
+
 <tr>
 <td></td>
 <td colspan="2">{$agItem.desc}</td>

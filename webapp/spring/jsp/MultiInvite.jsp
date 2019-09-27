@@ -175,17 +175,13 @@ function parseList(inText) {
     }
     </style>
     
-    <p><i>Add people to the project by clicking on selecting a role, entering a list of email addresses, and a message to send to each as an invitation.</i></p>
+    <p><i>Add people (by email address) to a role of the project by entering a list of email addresses, a message, and a role.  Each email address will receive an invitation.</i></p>
 
     <div class="well">
     <table class="spacey" ng-show="addressing">
     
     <tr>
-        <td>Role:</td>
-        <td><select class="form-control" ng-model="newRole" ng-options="value for value in allRoles"></select></td>
-    </tr>
-    <tr>
-        <td>Addresses:</td>
+        <td>Email Addresses:</td>
         <td><textarea class="form-control" ng-model="emailList" style="height:150px;"
              placeholder="Enter list of email addresses on separate lines or separated by commas"></textarea></td>
     </tr>
@@ -193,6 +189,10 @@ function parseList(inText) {
         <td>Message:</td>
         <td><textarea class="form-control" ng-model="message" style="height:150px;"
             placeholder="Enter a message to send to all invited people"></textarea></td>
+    </tr>
+    <tr>
+        <td>Add to Role:</td>
+        <td><select class="form-control" ng-model="newRole" ng-options="value for value in allRoles"></select></td>
     </tr>
     <tr>
         <td></td>

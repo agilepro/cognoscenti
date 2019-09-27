@@ -345,7 +345,6 @@ public class CreateProjectController extends BaseController {
                     new Object[]{site.getFullName()});
         }
 
-        NGWorkspace newWorkspace = null;
         String pageKey = makeGoodSearchableName(workspaceName);
         if (pageKey.length()>30) {
             pageKey = pageKey.substring(0,30);
@@ -354,7 +353,7 @@ public class CreateProjectController extends BaseController {
         //look for an alternate key if the easy one is not available
         pageKey = site.genUniqueWSKeyInSite(ar.getCogInstance(), pageKey);
 
-        newWorkspace = site.createWorkspaceByKey(ar, pageKey);
+        NGWorkspace newWorkspace = site.createWorkspaceByKey(ar, pageKey);
         List<String> nameSet = new ArrayList<String>();
         nameSet.add(workspaceName);
         newWorkspace.setPageNames(nameSet);

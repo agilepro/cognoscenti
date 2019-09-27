@@ -521,6 +521,7 @@ public class MeetingControler extends BaseController {
               }
               meeting.updateMeetingNotes(meetingInfo);
               JSONObject repo = meetingCache.updateCacheNotes(ngw, ar, id);
+              addVisitors(ar, repo, siteId, pageId);
               saveAndReleaseLock(ngw, ar, "Updated Meeting Notes");
               sendJson(ar, repo);
           }catch(Exception ex){
