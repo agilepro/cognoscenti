@@ -150,7 +150,8 @@ public abstract class CommentContainer extends DOMFace {
 
                 //if you add a comment, then you also get this project on your watch list
                 UserProfile uProf = ar.getUserProfile();
-                uProf.assureWatch(ar.ngp.getKey());
+                NGWorkspace ngw = (NGWorkspace) ar.ngp;
+                uProf.assureWatch(ngw.getCombinedKey());
             }
             else if (oneComment.has("deleteMe")) {
                 //a special flag in the comment indicates it should be removed
