@@ -171,7 +171,7 @@ public class SiteReqFile {
         // first, lets see if there is a site already with that ID
         NGContainer site = cog.getSiteById(siteId);
         if (site != null) {
-            throw new JSONException("Sorry, there already exists an site with that ID ({0}).  Please try again with a different ID.",
+            throw new JSONException("Sorry, there already exists a site with that ID ({0}).  Please try again with a different ID.",
                     siteId);
         }
 
@@ -182,11 +182,9 @@ public class SiteReqFile {
             throw new JSONException("SiteId parameter can not be null in createNewSiteRequest");
         }
         if (siteId.length() < 4 || siteId.length() > 8) {
-            throw new JSONException("AccountId must be four to eight charcters/numbers long.  Received ({0})", siteId);
+            throw new JSONException("SiteId must be four to eight charcters/numbers long.  Received ({0})", siteId);
         }
 
-        // to avoid file system problems all ids need to be lower case.
-        siteId = siteId.toLowerCase();
         for (int i = 0; i < siteId.length(); i++) {
             char ch = siteId.charAt(i);
             if (ch < '0' || (ch > '9' && ch < 'a') || ch > 'z') {
@@ -194,8 +192,6 @@ public class SiteReqFile {
                         siteId);
             }
         }
-
-
 
         //actually update the file
         SiteReqFile siteReqFile = new SiteReqFile(cog);

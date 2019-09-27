@@ -268,42 +268,38 @@ public abstract class ContainerCommon extends NGContainer
         {
             String desc = roleName+" of the workspace "+getFullName();
             String elegibility = "";
-            if ("Executives".equals(roleName))
-            {
+            if ("Executives".equals(roleName)) {
                 desc = "The role 'Executives' contains a list of people who are assigned to the site "
                 +"as a whole, and are automatically members of every workspace in that site.  ";
             }
-            else if ("Members".equals(roleName))
-            {
+            else if ("Executives".equals(roleName)) {
+                desc = "The role 'Owners' contains a list of people who can modify the properties of the site properties.";
+            }
+            else if ("Members".equals(roleName)) {
                 desc = "Members of a project can see and edit any of the content in the workspace.  "
                        +"Members can create, edit, and delete topics, can upload, download, and delete documents."
                        +"Members can approve other people to become members or other roles.";
             }
-            else if ("Administrators".equals(roleName))
-            {
+            else if ("Administrators".equals(roleName)) {
                 desc = "Administrators have all the rights that Members have, but have additional ability "
                        +"to manage the structure of the workspace, to add/remove roles, and to exercise greater "
                        +"control over a workspace, such as renaming and deleting a workspace.";
             }
-            else if ("Notify".equals(roleName))
-            {
+            else if ("Notify".equals(roleName)) {
                 desc = "People who are not members, but who receive email notifications anyway.";
             }
-            else if ("Facilitator".equals(roleName))
-            {
+            else if ("Facilitator".equals(roleName)) {
                 desc = "Selected by the circle members to lead circle meetings. Moves agenda forward, "
                         +"keeps everyone focused on the aim. Helps prepare the meeting agenda.";
                 elegibility = "Good judgement. Integrity. Listens and empathizes effectively. Can hold "
                         +"the big picture of an issue. Articulate. Both a sense of humor and able to be firm.";
             }
-            else if ("Circle Administrator".equals(roleName))
-            {
+            else if ("Circle Administrator".equals(roleName)) {
                 desc = "Personally handles or oversees: circle meeting venue, creating agendas, taking "
                         +"minutes in collaboration with facilitator, and keeping the records organized.";
                 elegibility = "Familiar with electronic media. Organized. Articulate. Reliable. Takes initiative.";
             }
-            else if ("Operations Leader".equals(roleName))
-            {
+            else if ("Operations Leader".equals(roleName)) {
                 desc = "Outside of circle meetings, guides the day-to-day operations by directing, "
                         +"coordinating, and conveying news, ideas, suggestions, needs, requests. "
                         +"Selected to role by higher (more abstract) circle. ";
@@ -311,8 +307,7 @@ public abstract class ContainerCommon extends NGContainer
                         +"Takes initiative. Can both hold the big picture and pay attention to details. "
                         +"Both a sense of humor and able to be firm";
             }
-            else if ("Representative".equals(roleName))
-            {
+            else if ("Representative".equals(roleName)) {
                 desc = "Outside of circle meetings, guides the day-to-day operations by directing, "
                         +"coordinating, and conveying news, ideas, suggestions, needs, requests. "
                         +"Selected to role by higher (more abstract) circle.";
@@ -320,8 +315,7 @@ public abstract class ContainerCommon extends NGContainer
                         +"Takes initiative. Can both hold the big picture and pay attention to details. "
                         +"Both a sense of humor and able to be firm.";
             }
-            else if ("External Expert".equals(roleName))
-            {
+            else if ("External Expert".equals(roleName)) {
                 desc = "Person from outside the company who has expertise about the company�s environment, "
                         +"eg, regulatory, economic, social, technical, or ecology. Able to provide information "
                         +"and feedback not available inside the company and to inform or influence key "
@@ -329,11 +323,6 @@ public abstract class ContainerCommon extends NGContainer
                 elegibility = "Expertise in and well-connected to a field important to the company. "
                         +"Experienced. Able to think rationally at the most abstract level of the company�s work. "
                         +"Well-prepared. Forward thinking.";
-            }
-            else
-            {
-                //I don't know of any other required roles, if so, we should have a
-                //better description than this.
             }
             role = createRole(roleName, desc);
             role.setRequirements(elegibility);
