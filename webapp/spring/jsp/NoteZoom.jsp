@@ -806,6 +806,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             resolve: {
                 containingQueryParams: function() {
                     return "note="+$scope.noteInfo.id;
+                },
+                siteId: function () {
+                  return $scope.siteInfo.key;
                 }
             }
         });

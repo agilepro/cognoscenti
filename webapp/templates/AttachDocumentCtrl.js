@@ -1,10 +1,10 @@
 app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, containingQueryParams, 
                docSpaceURL) {
     window.MY_SCOPE = $scope;
-    $scope.attachmentList = [];
+    $scope.docsList = [];
     $scope.docSpaceURL = docSpaceURL;
     $scope.containingQueryParams = containingQueryParams;
-    $scope.docList = [];
+    $scope.attachedDocs = [];
     $scope.realDocumentFilter = "";
     $scope.uploadMode = false;
     $scope.fileProgress = [];
@@ -14,7 +14,13 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
         $scope.showError=false;
         $http.get(getURL)
         .success( function(data) {
-            $scope.attachmentList = data.docs;
+            var undeleted = [];
+            data.docs.forEach( function(item) {
+                if (!item.deleted) {
+                    undeleted.push(item);
+                }
+            });
+            $scope.docsList = undeleted;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -23,7 +29,7 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
         var getURL = "attachedDocs.json?"+containingQueryParams;
         $http.get(getURL)
         .success( function(data) {
-            $scope.docList = data.list;
+            $scope.attachedDocs = data.list;
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -35,7 +41,7 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
     
     $scope.saveDocumentList = function() {
         var getURL = "attachedDocs.json?"+containingQueryParams;
-        var newData = {list: $scope.docList};
+        var newData = {list: $scope.attachedDocs};
         return $http.post(getURL, JSON.stringify(newData));
     }
     
@@ -43,7 +49,7 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
     
     $scope.filterDocs = function() {
         var filterlc = $scope.realDocumentFilter.toLowerCase();
-        var rez =  $scope.attachmentList.filter( function(oneDoc) {
+        var rez =  $scope.docsList.filter( function(oneDoc) {
             return (filterlc.length==0
                 || oneDoc.name.toLowerCase().indexOf(filterlc)>=0
                 || oneDoc.description.toLowerCase().indexOf(filterlc)>=0);
@@ -55,7 +61,7 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
     }
     $scope.itemHasDoc = function(doc) {
         var res = false;
-        var found = $scope.docList.forEach( function(docid) {
+        var found = $scope.attachedDocs.forEach( function(docid) {
             if (docid == doc.universalid) {
                 res = true;
             }
@@ -63,17 +69,17 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
         return res;
     }
     $scope.itemDocs = function() {
-        return $scope.attachmentList.filter( function(oneDoc) {
+        return $scope.docsList.filter( function(oneDoc) {
             return $scope.itemHasDoc(oneDoc);
         });
     }
     $scope.addDocToItem = function(doc) {
         if (!$scope.itemHasDoc(doc)) {
-            $scope.docList.push(doc.universalid);
+            $scope.attachedDocs.push(doc.universalid);
         }
     }
     $scope.removeDocFromItem = function(doc) {
-        $scope.docList = $scope.docList.filter( function(docid) {
+        $scope.attachedDocs = $scope.attachedDocs.filter( function(docid) {
             return (docid != doc.universalid);
         });
     }
@@ -81,8 +87,8 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
     $scope.ok = function () {
         $scope.saveDocumentList()
         .success( function(data) {
-            $scope.docList = data.list;
-            $modalInstance.close($scope.docList);
+            $scope.attachedDocs = data.list;
+            $modalInstance.close($scope.attachedDocs);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -202,8 +208,8 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
             oneProgress.status = "DONE";
             oneProgress.done = true;
             oneProgress.doc = data;
-            $scope.docList.push(data.doc.universalid);
-            $scope.attachmentList.push(data.doc);
+            $scope.attachedDocs.push(data.doc.universalid);
+            $scope.docsList.push(data.doc);
             $scope.switchBackIfDone();
         })
         .error( function(data, status, headers, config) {
