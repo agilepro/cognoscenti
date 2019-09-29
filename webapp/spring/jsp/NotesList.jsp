@@ -316,6 +316,17 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
     }
+    $scope.sendNoteByMail = function(note) {
+        if ("Draft" == note.discussionPhase) {
+            alert("Before sending by email you need to POST the note (possibly sending email at that time)");
+            return;
+        }
+        if ("Trash" == note.discussionPhase) {
+            alert("This topic has been deleted (in Trash).  Undelete it before sending by email.");
+            return;
+        }
+        window.location = "SendNote.htm?noteId="+note.id;
+    }
 
 });
 
@@ -430,7 +441,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                       <li role="presentation">
                           <a role="menuitem" tabindex="-1" href="noteZoom{{rec.id}}.htm">Full Details</a></li>
                       <li role="presentation">
-                          <a role="menuitem" tabindex="-1" href="SendNote.htm?noteId={{rec.id}}">Send Email</a></li>
+                          <a role="menuitem" tabindex="-1" ng-click="sendNoteByMail(rec)">Send Email</a></li>
                       <li role="presentation" ng-hide="rec.deleted">
                           <a role="menuitem" tabindex="-1" ng-click="toggleNoteDel(rec)">Trash <i class="fa fa-trash"></i> Topic</a></li>
                       <li role="presentation" ng-show="rec.deleted">

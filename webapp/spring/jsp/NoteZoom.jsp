@@ -907,6 +907,18 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query, $scope.siteInfo.key);
     }
+    
+    $scope.sendNoteByMail = function() {
+        if ("Draft" == $scope.noteInfo.discussionPhase) {
+            alert("Before sending by email you need to POST the note (possibly sending email at that time)");
+            return;
+        }
+        if ("Trash" == $scope.noteInfo.discussionPhase) {
+            alert("This topic has been deleted (in Trash).  Undelete it before sending by email.");
+            return;
+        }
+        window.location = "SendNote.htm?noteId="+$scope.noteInfo.id;
+    }
 
 });
 
@@ -944,7 +956,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="pdf/note{{noteInfo.id}}.pdf?publicNotes={{noteInfo.id}}">PDF without Comments</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="SendNote.htm?noteId={{noteInfo.id}}">Send Topic By Email</a></li>
+              ng-click="sendNoteByMail()">Send Topic By Email</a></li>
           <li role="presentation" ng-hide="isSubscriber"><a role="menuitem" tabindex="-1"
               ng-click="changeSubscription(true)">Subscribe to this Topic</a></li>
           <li role="presentation" ng-show="isSubscriber"><a role="menuitem" tabindex="-1"
