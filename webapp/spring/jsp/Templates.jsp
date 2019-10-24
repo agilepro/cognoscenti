@@ -2,18 +2,11 @@
 %><%@include file="/spring/jsp/include.jsp"
 %><%
     UserProfile uProf =(UserProfile)request.getAttribute("userProfile");
-    List<String> tmpList = uProf.getTemplateList();
+    Vector<NGPageIndex> tmpList = uProf.getValidTemplates(ar.getCogInstance());
     boolean noneFound = tmpList.size()==0;
 
     JSONArray projList = new JSONArray();
-    for (String pageKey : tmpList) {
-        NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKey(pageKey);
-        if (ngpi==null) {
-            ngpi = ar.getCogInstance().lookForWSBySimpleKeyOnly(pageKey);
-        }
-        if (ngpi==null) {
-            continue;
-        }
+    for (NGPageIndex ngpi : tmpList) {
         JSONObject wObj = ngpi.getJSON4List();
         projList.put(wObj);
     }
