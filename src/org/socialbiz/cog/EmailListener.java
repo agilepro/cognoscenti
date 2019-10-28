@@ -174,7 +174,13 @@ public class EmailListener extends TimerTask{
         Throwable t2 = e2;
         while (t1!=null && t2!=null) {
             String m1 = t1.getMessage();
+            if (m1==null) {
+                m1="~";
+            }
             String m2 = t2.getMessage();
+            if (m2==null) {
+                m2="~";
+            }
             if (!m1.equals(m2)) {
                 return false;
             }
