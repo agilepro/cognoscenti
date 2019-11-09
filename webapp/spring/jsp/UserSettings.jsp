@@ -280,6 +280,18 @@ if (ar.isLoggedIn()) { %>
             <td></td>
             <td></td>
         </tr>
+
+    <%if (ar.isSuperAdmin()){ %>
+        <tr >
+            <td>Super Admin</td>
+            <td style="background-color:yellow">
+                You are a Super Admin
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+    <% } %>
+
 <% } %>
         <tr>
             <td class="firstcol">Last Login:</td>
