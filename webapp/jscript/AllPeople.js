@@ -15,13 +15,16 @@ app.service('AllPeople', function($http) {
         if (!site) {
             throw "AllPeople.getSiteObject %% Need to specify a tenant";
         }
-        if (!AllPeople.allPersonList) {
+        if (!AllPeople.allPersonBySite) {
             AllPeople.getPeopleOutOfStorage();
         }
         if (!AllPeople.allPersonBySite[site]) {
             AllPeople.allPersonBySite[site] = {people:[],validTime:0};
         }
         var siteObj = AllPeople.allPersonBySite[site];
+        if (siteObj.validTime<new Date().getTime() && !siteObj.pendingRefresh) {
+            AllPeople.internalRefreshCache(site, siteObj);
+        }
         return siteObj;
     }
     

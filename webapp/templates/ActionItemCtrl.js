@@ -81,7 +81,9 @@ app.controller('ActionItemCtrl', function ($scope, $modalInstance, goal, taskAre
         });
     };
     $scope.loadPersonList = function(query) {
-        return AllPeople.findMatchingPeople(query, $scope.siteId);
+        let xxx = AllPeople.findMatchingPeople(query, $scope.siteId);
+        console.log("Searching for people: "+query, xxx);
+        return xxx;
     }
     $scope.setWaitUntil = function() {
         if ($scope.waitProxy<$scope.nowTime) {
