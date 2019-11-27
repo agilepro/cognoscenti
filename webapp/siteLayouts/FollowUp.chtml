@@ -1,0 +1,41 @@
+<html>
+<body>
+{% include styles %}
+<div class="emailbody">
+<!--TEMPLATE SiteIntro1.chtml-->
+<h1>Hello!</h1> 
+
+<p>We see that you have been using your Weaver site 
+'<b>{$site.names|get(0)}</b>'
+and things seem to be progressing.</p>
+
+<p>We like to follow up with new users to interview them. 
+We'd like know how you are using it. 
+It would really help us to make Weaver better if we 
+could understand what you like about it, 
+as well as any improvements you'd like to see. 
+</p>
+
+<p>Can we schedule a half-hour phone interview with you? 
+Please email to us at <b>Weaver@purplehillsbooks.com</b> 
+and <b>Johnabuck@gmail.com</b> to 
+let us know a couple of times that might work in your schedule.
+</p>
+
+<p>Looking forward to meeting with you,</p>
+
+Keith Swenson &amp; John Buck
+
+<hr/>
+<p>Links to access your site:</p>
+<ul>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the site owner (you)</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
+</ul>
+
+
+
+<div class="tm"></div>
+</div>
+</body></html>
