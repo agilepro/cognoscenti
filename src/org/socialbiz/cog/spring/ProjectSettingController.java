@@ -799,7 +799,11 @@ public class ProjectSettingController extends BaseController {
             JSONObject posted = this.getPostedObject(ar);
 
             String email = posted.getString("email");
-            AddressListEntry ale = new AddressListEntry(email);
+
+            //we don't know what the user will enter for the email address
+            //but if they do enter a combined address, this will help handle it
+            //a bit better.   If it is a pure email address that will work as well
+            AddressListEntry ale = AddressListEntry.parseCombinedAddress(email);
 
             //check that the role exists to avoid getting invitations for non existent roles.
             boolean found = false;
