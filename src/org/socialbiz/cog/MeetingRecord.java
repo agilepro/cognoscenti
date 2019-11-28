@@ -1331,8 +1331,10 @@ public class MeetingRecord extends DOMFace {
         w.write("DTSTART:"+getSpecialICSFormat(getStartTime())+"\n");
         w.write("DTEND:"+getSpecialICSFormat(getStartTime()+(getDuration()*60*1000))+"\n");
         w.write("SUMMARY:"+getName()+"\n");
-        String descriptionHtml = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingDescription());
-                getMeetingDescription();
+        String descriptionHtml = "This appointment is for a Meeting organized in Weaver.\n"
+                +"Find more information about the meeting in the following links.\n"
+                +"Meeting: "+ar.baseURL+getEmailURL(ar, ngw)
+                +"\nWorkspace: "+ar.baseURL+ar.getResourceURL(ngw, "frontPage.htm");
         w.write("DESCRIPTION:"+specialEncode(descriptionHtml)+"\n");
         w.write("END:VEVENT\n");
         w.write("END:VCALENDAR\n");
