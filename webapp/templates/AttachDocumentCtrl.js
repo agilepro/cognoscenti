@@ -130,6 +130,7 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
             newProgress.done = false;
             $scope.fileProgress.push(newProgress);
         }
+        $scope.selectedTab='Upload';
         $scope.$apply();
     }
     $scope.greenOnDrag = function() {

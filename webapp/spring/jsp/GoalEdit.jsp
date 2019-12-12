@@ -94,6 +94,7 @@ Required parameters:
         taskAreaList.put(ta.getMinJSON());
     }
     taskAreaList.put(new JSONObject().put("name", "Unspecified"));
+    
 
 /*** PROTOTYPE
 
@@ -143,6 +144,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.taskAreaList = <%taskAreaList.write(out,2,4);%>;
+    $scope.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>";
 
     $scope.newPerson = "";
     $scope.selectedPersonShow = false;
@@ -376,6 +378,20 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             }
         });
         return res;
+    }
+
+    $scope.refreshDocumentList = function() {
+        console.log("Should refresh the workspace document list");
+        /*
+        var getURL = "??workspacedocs??.json";
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.attachedDocs = data.list;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+        */
     }
     $scope.getDocs = function() {
         return $scope.attachmentList.filter( function(oneDoc) {

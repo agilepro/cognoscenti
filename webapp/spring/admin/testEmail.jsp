@@ -86,4 +86,4 @@ app.controller('myCtrl', function($scope, $http) {
 
 </div>
 
-
+<%@include file="ErrorPanel.jsp"%>
