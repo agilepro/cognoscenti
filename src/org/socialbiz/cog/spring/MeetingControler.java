@@ -26,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
@@ -465,6 +466,31 @@ public class MeetingControler extends BaseController {
           }
       }
 
+
+      @RequestMapping(value = "/{siteId}/{pageId}/meetingList.json", method = RequestMethod.GET)
+      public void meetingListB(@PathVariable String siteId,@PathVariable String pageId,
+              HttpServletRequest request, HttpServletResponse response) {
+          AuthRequest ar = AuthRequest.getOrCreate(request, response);
+          try{
+              NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+              ar.setPageAccessLevels(ngw);
+              JSONObject jo = new JSONObject();
+              JSONArray meetings = new JSONArray();
+              List<MeetingRecord> allMeets = ngw.getMeetings();
+              MeetingRecord.sortChrono(allMeets);
+              for (MeetingRecord oneRef : allMeets) {
+                  if (!oneRef.isBacklogContainer()) {
+                      meetings.put(oneRef.getListableJSON(ar));
+                  }
+              }
+              jo.put("meetings", meetings);
+              sendJson(ar, jo);
+          }
+          catch(Exception ex){
+              Exception ee = new Exception("Unable to access meeting list.", ex);
+              streamException(ee, ar);
+          }
+      }
 
       @RequestMapping(value = "/{siteId}/{pageId}/meetingRead.json", method = RequestMethod.GET)
       public void meetingRead(@PathVariable String siteId,@PathVariable String pageId,

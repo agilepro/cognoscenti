@@ -7,28 +7,28 @@
 
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
+    String localId = ar.baseURL + "t/"+siteId+"/"+pageId+"/";
+    String siteInfoURL = ar.baseURL + "t/"+siteId+"/$/siteInfo.json";
+    
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     NGBook site = ngp.getSite();
 
-    JSONArray meetings = new JSONArray();
-    List<MeetingRecord> allMeets = ngp.getMeetings();
-    MeetingRecord.sortChrono(allMeets);
-    for (MeetingRecord oneRef : allMeets) {
-        if (!oneRef.isBacklogContainer()) {
-            meetings.put(oneRef.getListableJSON(ar));
-        }
-    }
-
 %>
 
+<script src="../../../jscript/AllPeople.js"></script>
+
 <script type="text/javascript">
+WCACHE.putObj("<%ar.writeJS(siteInfoURL);%>", <%site.getConfigJSON().write(out,2,4);%>, <%=System.currentTimeMillis()%>);
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Meetings");
-    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
-    $scope.meetings = <%meetings.write(out,2,4);%>;
+    $scope.siteProxy = getSiteProxy("<%ar.writeJS(ar.baseURL);%>", "<%ar.writeJS(siteId);%>");
+    $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>");
+    $scope.siteInfo = WCACHE.getObj("<%ar.writeJS(siteInfoURL);%>");
+    $scope.meetings = [];
+    $scope.wsProxy.getMeetingList(data => $scope.meetings = data.meetings);
     $scope.newMeeting = {
         name:"",
         duration:60,
@@ -39,7 +39,7 @@ app.controller('myCtrl', function($scope, $http) {
         reminderTime:60
     };
     $scope.isInAttendance = false;
-
+    
     var n = new Date().getTimezoneOffset();
     var tzNeg = n<0;
     if (tzNeg) {
@@ -84,6 +84,9 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.reportError = function(serverErr) {
         errorPanelHandler($scope, serverErr);
     };
+    $scope.wsProxy.failure = $scope.reportError;
+
+
 
     $scope.deleteRow = function(row) {
         if (row.state > 0) {
@@ -105,6 +108,7 @@ app.controller('myCtrl', function($scope, $http) {
                 }
             }
             $scope.meetings = newSet;
+            WCACHE.putObj(localKey+"meetingList.json", newSet, new Date().getTime());
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -208,7 +212,6 @@ app.controller('myCtrl', function($scope, $http) {
     </table>
     
     <button class="btn btn-primary btn-raised" ng-click="createMeeting()"><i class="fa fa-plus"></i> Create New Meeting</button>
-
     <div class="guideVocal" ng-show="meetings.length==0" style="margin-top:80px">
     You have no meetings in this workspace yet.<br/>
     <br/>

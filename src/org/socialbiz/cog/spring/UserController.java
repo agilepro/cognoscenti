@@ -1243,10 +1243,7 @@ public class UserController extends BaseController {
                     }
                 }
 
-                request.setAttribute("ngpage",null);
                 request.setAttribute("userName",userName);
-                request.setAttribute("flag","true");
-                request.setAttribute("retPath",ar.retPath);
             }
             streamJSPUserLogged2(request, response, userKey, "../jsp/UserSettings");
         }catch(Exception ex){
@@ -1288,10 +1285,7 @@ public class UserController extends BaseController {
                     }
                 }
 
-                request.setAttribute("ngpage",ngp);
                 request.setAttribute("userName",userName);
-                request.setAttribute("flag","true");
-                request.setAttribute("retPath",ar.retPath);
             }
             streamJSPUserLogged2(request, response, userKey, "../jsp/UserContacts");
         }catch(Exception ex){
@@ -1330,8 +1324,6 @@ public class UserController extends BaseController {
                 }
 
                 request.setAttribute("userName",userName);
-                request.setAttribute("flag","true");
-                request.setAttribute("retPath",ar.retPath);
             }
             streamJSPUserLogged2(request, response, userKey, "../jsp/UserConnections");
         }

@@ -601,6 +601,45 @@ editBoxStyle {
             </div>
 
     </div>
+    
+    <div>
+
+       <h3>Data API</h3>
+       
+       
+       <ul>
+       
+       <li><a target="dataWindow" href="taskAreas.json">taskAreas.json</a></li>
+       <li><a target="dataWindow" href="allActionsList.json">allActionsList.json</a></li>
+       <li><a target="dataWindow" href="docsList.json">docsList.json</a></li>
+       <li><a target="dataWindow" href="topicList.json">topicList.json</a></li>
+       <li><a target="dataWindow" href="meetingList.json">meetingList.json</a></li>
+      
+       <li><a target="dataWindow" href="invitations.json">invitations.json</a></li>
+       <li><a target="dataWindow" href="getNoteHistory.json?nid={{sampleTopic}}">getNoteHistory.json?nid={{sampleTopic}}"</a></li>
+       <li><a target="dataWindow" href="sharePorts.json">sharePorts.json</a></li>
+       <li><a target="dataWindow" href="../$/SiteStatistics.json">../$/SiteStatistics.json</a></li>
+       <li>Sample Goal: <input ng-model="sampleGoal"/></li>
+       <li><a target="dataWindow" href="getGoalHistory.json?gid={{sampleGoal}}">getGoalHistory.json?gid={{sampleGoal}}</a></li>
+       <li><a target="dataWindow" href="fetchGoal.json?gid={{sampleGoal}}">fetchGoal.json?gid={{sampleGoal}}</a></li>
+       <li><a target="dataWindow" href="ActionItem{{sampleGoal}}Due.ics">ActionItem{{sampleGoal}}Due.ics</a></li>
+       <li>Sample Meeting: <input ng-model="sampleMeet"/></li>
+       <li><a target="dataWindow" href="getMeetingNotes.json?id={{sampleMeet}}">getMeetingNotes.json?id={{sampleMeet}}</a></li>
+       <li><a target="dataWindow" href="meetingRead.json?id={{sampleMeet}}">meetingRead.json?id={{sampleMeet}}</a></li>
+       <li><a target="dataWindow" href="attachedActions.json?meet={{sampleMeet}}">attachedActions.json?meet={{sampleMeet}}</a></li>
+       <li><a target="dataWindow" href="attachedDocs.json?meet={{sampleMeet}}">attachedDocs.json?meet={{sampleMeet}}</a></li>
+       <li>Sample Role: <input ng-model="sampleRole"/></li>
+       <li><a target="dataWindow" href="isRolePlayer.json?role={{sampleRole}}">isRolePlayer.json?role={{sampleRole}}</a></li>
+       <li>Sample Topic: <input ng-model="sampleTopic"/></li>
+       <li><a target="dataWindow" href="attachedActions.json?note={{sampleTopic}}">attachedActions.json?note={{sampleTopic}}</a></li>
+       <li><a target="dataWindow" href="attachedDocs.json?note={{sampleTopic}}">attachedDocs.json?note={{sampleTopic}}</a></li>
+       <li>Sample Comment: <input ng-model="sampleComment"/></li>
+       <li><a target="dataWindow" href="info/comment?cid={{sampleComment}}">info/comment?cid={{sampleComment}}</a></li>
+       <li>Sample SharePort: <input ng-model="sampleSharePort"/></li>
+       <li><a target="dataWindow" href="share/{{sampleSharePort}}.json">share/{{sampleSharePort}}.json</a></li>
+       </ul>
+
+    </div>    
 </div>
 
 <%!
@@ -633,3 +672,5 @@ editBoxStyle {
 
 
 %>
+
+

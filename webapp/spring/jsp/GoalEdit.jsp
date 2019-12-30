@@ -381,7 +381,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.refreshDocumentList = function() {
-        console.log("Should refresh the workspace document list");
+        alert("PLE: Should refresh the workspace document list");
         /*
         var getURL = "??workspacedocs??.json";
         $http.get(getURL)

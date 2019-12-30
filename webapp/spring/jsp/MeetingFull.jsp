@@ -211,6 +211,8 @@
 }
 </style>
 
+<script src="../../../jscript/AllPeople.js"></script>
+
 <script>
 var embeddedData = {};
 embeddedData.pageId    = "<%ar.writeJS(pageId);%>";
@@ -231,7 +233,6 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
 </script>
 <script src="../../../spring/jsp/MeetingFull.js"></script>
 
-<script src="../../../jscript/AllPeople.js"></script>
 
 <style>
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {

@@ -1,3 +1,78 @@
+WCACHE = {
+    getObj: function(key) {
+        let box = this.getBox(key);
+        console.log("GETTING "+key, box.value);
+        return box.value;
+    },
+    getAge: function(key) {
+        let box = this.getBox(key);
+        return box.time;
+    },
+    putObj: function(key, newValue, timestamp) {
+        let box = this.getBox(key);
+        if (timestamp > box.time) {
+            box.time = timestamp;
+            box.value = newValue;
+            console.log("SETTING "+key, box.value);
+            localStorage.setItem("WCACHE"+key, JSON.stringify(box));
+        }
+    },
+    getBox: function(key) {
+        try {
+            let boxStr = localStorage.getItem("WCACHE"+key);
+            if (boxStr) {
+                box = JSON.parse(boxStr);
+                return box;
+            }
+        }
+        catch (e) {
+            //ignore parsing errors
+        } 
+        return {time: 0,value: {}};
+    }
+};
+
+
+
+function getSiteProxy(newBaseUrl, newSiteId) {
+    return {
+        baseUrl: newBaseUrl,
+        siteId: newSiteId,
+        getWorkspaceProxy: function(wsId) {
+            return getWorkspaceProxy(this.baseUrl, this.siteId, wsId);
+        }
+    }
+}
+
+function getWorkspaceProxy(newBaseUrl, newSiteId, newWorkspaceId) {
+    return {
+        baseUrl: newBaseUrl,
+        siteId: newSiteId,
+        wsId: newWorkspaceId,
+        failure: function(data) {console.log("FAILURE", data)},
+        apiCall: function(address, success) {
+            let url = this.baseUrl + "t/" +this.siteId+ "/" +this.wsId+ "/" + address;
+            let cache = WCACHE.getObj(url);
+            if (cache) {
+                success(cache);
+            };
+            SLAP.getJSON(url, function(data) {WCACHE.putObj(url, data, new Date().getTime()); success(data);}, this.failure);
+        },
+        getMeetingList: function(success) {
+            this.apiCall("meetingList.json", success);
+        },
+        getTaskAreas: function(success) {
+            this.apiCall("taskAreas.json", success);
+        },
+        getTopics: function(success) {
+            this.apiCall("topicList.json", success);
+        },
+        getMeeting: function(id, success) {
+            this.apiCall("meetingRead.json?id="+id, success);
+        }
+    }
+}
+
 var app = angular.module('myApp');
 app.service('AllPeople', function($http) {
     

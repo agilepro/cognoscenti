@@ -65,9 +65,6 @@ import com.purplehillsbooks.streams.MemFile;
 public class ProjectGoalController extends BaseController {
 
     public static final String CREATE_TASK = "Create Task";
-    public static final String BOOK_ATT = "book";
-    public static final String PROCESS_HTML = "projectActiveTasks.htm";
-    public static final String PROJECT_TASKS="Workspace Action Items";
     public static final String SUCCESS_LOCAL = "success_local";
     public static final String SUCCESS_REMOTE = "success_remote";
     public static final String REMOTE_PROJECT = "Remote_project";
@@ -158,26 +155,6 @@ public class ProjectGoalController extends BaseController {
     ////////////////////////// FORM SUBMISSIONS //////////////////////////////
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/CreateTask.form", method = RequestMethod.POST)
-    public void createTask(@PathVariable String siteId, @PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
-            ar.assertLoggedIn("Must be logged in to create a task.");
-
-            // call a method for creating new task
-            taskActionCreate(ar, ngp, request, null);
-
-            String assignto= ar.defParam("assignto", "");
-            NGWebUtils.updateUserContactAndSaveUserPage(ar, "Add",assignto);
-
-            redirectBrowser(ar,PROCESS_HTML);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.create.task", new Object[]{pageId,siteId} , ex);
-        }
-    }
 
     public static String parseEmailId(String assigneTo) throws Exception {
 
@@ -388,57 +365,6 @@ public class ProjectGoalController extends BaseController {
     }
 
 
-
-    @RequestMapping(value = "/{siteId}/{pageId}/updateTaskStatus.ajax", method = RequestMethod.POST)
-    public void updateTaskStatus(@PathVariable String siteId, @PathVariable String pageId,@RequestParam String pId,
-                HttpServletRequest request, HttpServletResponse response) throws Exception
-    {
-        AuthRequest ar = null;
-        try{
-            ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
-            ar.assertLoggedIn("Can't edit a work item.");
-            ar.assertMember("Must be a member of a workspace to update tasks.");
-
-            String id = ar.reqParam("id");
-            GoalRecord task = ngp.getGoalOrFail(id);
-            String index=ar.reqParam("index");
-            int eventType = HistoryRecord.EVENT_TYPE_MODIFIED;
-            String comments = "";
-            String action = ar.reqParam("action");
-            if (action.equals("Start Offer")) {
-                task.setStateAndAct(BaseRecord.STATE_OFFERED, ar);
-                eventType = HistoryRecord.EVENT_TYPE_STATE_CHANGE_STARTED;
-            } else if (action.equals("Mark Accepted") || action.equals("Accept Activity")) {
-                task.setStateAndAct(BaseRecord.STATE_ACCEPTED, ar);
-                eventType = HistoryRecord.EVENT_TYPE_STATE_CHANGE_ACCEPTED;
-            } else if (action.equals("Complete Activity")) {
-                task.setStateAndAct(BaseRecord.STATE_COMPLETE, ar);
-                eventType = HistoryRecord.EVENT_TYPE_STATE_CHANGE_COMPLETE;
-            } else if (action.equals("Update Status")) {
-                String newStatus = ar.defParam("status", null);
-                task.setStatus(newStatus);
-            } else {
-                throw new NGException("nugen.exceptionhandling.did.not.understand.option", new Object[]{action});
-            }
-
-            task.setModifiedDate(ar.nowTime);
-            task.setModifiedBy(ar.getBestUserId());
-            HistoryRecord.createHistoryRecord(ngp, task.getId(),
-                    HistoryRecord.CONTEXT_TYPE_TASK, eventType, ar, comments);
-
-            ngp.saveFile(ar, "Edit Work Item");
-
-            JSONObject jo = new JSONObject();
-            jo.put("msgType", "success");
-            jo.put("taskId", task.getId());
-            jo.put("index", index);
-            jo.put("taskState", String.valueOf(task.getState()));
-            sendJson(ar, jo);
-        }catch (Exception ex) {
-            streamException(ex,ar);
-        }
-    }
 
     @RequestMapping(value = "/{siteId}/{pageId}/reassignTaskSubmit.form", method = RequestMethod.POST)
     public void reassignTask(@PathVariable String siteId,

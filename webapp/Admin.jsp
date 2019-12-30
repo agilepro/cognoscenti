@@ -12,6 +12,7 @@
 %><%@page import="org.socialbiz.cog.SuperAdminLogFile"
 %><%@page import="org.socialbiz.cog.rest.NGLeafServlet"
 %><%@page import="org.socialbiz.cog.rest.ServerInitializer"
+%><%@page import="org.socialbiz.cog.NGWorkspace"
 %><%
 
     AuthRequest ar = AuthRequest.getOrCreate(request, response, out);
