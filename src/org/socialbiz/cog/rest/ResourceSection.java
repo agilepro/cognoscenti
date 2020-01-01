@@ -735,7 +735,7 @@ public class ResourceSection  implements NGResource
                 arecord.setDescription(comment);
             }
             if(resource != null && resource.length() > 0) {
-                arecord.setStorageFileName(resource);
+                arecord.setURLValue(resource);
             }
             arecord.setModifiedBy(ar.getBestUserId());
             arecord.setModifiedDate(ar.nowTime);

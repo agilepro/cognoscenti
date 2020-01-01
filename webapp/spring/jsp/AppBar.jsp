@@ -87,7 +87,9 @@
       </li>  
       
 <%if(ar.isSuperAdmin()){ %>
-      <li style="padding:5px"><img src="<%=ar.retPath%>/bits/adminicon.png" style="max-height:50px;max-width:50px"></li>
+      <li style="padding:5px" onclick="window.location = '<%=userRelPath%>../su/emailListnerSettings.htm'">
+          <img src="<%=ar.retPath%>/bits/adminicon.png" style="max-height:50px;max-width:50px">
+          </li>
 <% } %>      
       
 <% if (loggedUser!=null) { %>      

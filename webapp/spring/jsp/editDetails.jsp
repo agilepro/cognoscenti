@@ -378,7 +378,7 @@ app.controller('myCtrl', function($scope, $http) {
         <tr>
             <td class="firstColumn">Storage Name:</td>
             <td>
-            <% ar.writeHtml(attachment.getStorageFileName()); %>
+            <% ar.writeHtml(attachment.getURLValue()); %>
             </td>
         </tr>
         <tr>

@@ -69,6 +69,9 @@ function getWorkspaceProxy(newBaseUrl, newSiteId, newWorkspaceId) {
         },
         getMeeting: function(id, success) {
             this.apiCall("meetingRead.json?id="+id, success);
+        },
+        getAllActionItems: function(success) {
+            this.apiCall("allActionsList.json", success);
         }
     }
 }

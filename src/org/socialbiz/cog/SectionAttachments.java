@@ -163,7 +163,7 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
         {
             SectionUtil.writeTextWithLB(attachment.getId() , out);
             SectionUtil.writeTextWithLB(attachment.getNiceName() , out);
-            SectionUtil.writeTextWithLB(attachment.getStorageFileName() , out);
+            SectionUtil.writeTextWithLB(attachment.getURLValue() , out);
             SectionUtil.writeTextWithLB(attachment.getType() , out);
             SectionUtil.writeTextWithLB(attachment.getModifiedBy() , out);
             SectionUtil.writeTextWithLB(Long.toString(attachment.getModifiedDate()) , out);
@@ -265,10 +265,6 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
             throws Exception {
         try {
             AttachmentRecord att = null;
-            //we find the attachment BY NAME in the requested url,
-            //but the actual file is specified in getStorageFileName from that attachment record
-            //first, look to see if there is a public attachments section
-            //if so, these attachments can be accessed without logging in
             att = ngp.findAttachmentByNameOrFail(fileName);
 
             if (!att.hasContents()) {

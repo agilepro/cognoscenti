@@ -29,6 +29,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.siteInfo = WCACHE.getObj("<%ar.writeJS(siteInfoURL);%>");
     $scope.meetings = [];
     $scope.wsProxy.getMeetingList(data => $scope.meetings = data.meetings);
+    
     $scope.newMeeting = {
         name:"",
         duration:60,

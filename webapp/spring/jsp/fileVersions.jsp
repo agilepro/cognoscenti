@@ -24,7 +24,7 @@
         verObj.put("size", aVer.getLocalFile().length());
         verObj.put("modified", aVer.isModified());
         if ("URL".equals(attachment.getType())) {
-            verObj.put("link", attachment.getStorageFileName());
+            verObj.put("link", attachment.getURLValue());
         }
         else {
             verObj.put("link", "a/" + SectionUtil.encodeURLData(attachment.getNiceName())+"?version="+aVer.getNumber());

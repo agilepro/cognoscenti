@@ -74,7 +74,7 @@ public class AttachmentRecord extends CommentContainer {
         setDescription(other.getDescription());
         setPublic(other.isPublic());
         setType(other.getType());
-        setStorageFileName(other.getStorageFileName());
+        setURLValue(other.getURLValue());
     }
 
     public String getId() {
@@ -237,11 +237,23 @@ public class AttachmentRecord extends CommentContainer {
         return attPath.getCombinedRepresentation();
     }
 
-    public String getStorageFileName() {
+    /**
+     * confusingly named originally getStorageName
+     * For LINK: 
+     *     This holds the URL.
+     * For an uploaded file:  
+     *     this contains the original name that the file
+     *     was uploaded as, but after that it has no meaning.   If you change the name
+     *     of an attachment, then the name field is changed, and the actual file name
+     *     is changed, but this field remains the original name.
+     *     The REAL name is the NAME.  do not use this field for uploaded file.
+     * @return
+     */
+    public String getURLValue() {
         return checkAndReturnAttributeValue("file");
     }
 
-    public void setStorageFileName(String newURI) {
+    public void setURLValue(String newURI) {
         setAttribute("file", newURI);
     }
 
@@ -606,7 +618,7 @@ public class AttachmentRecord extends CommentContainer {
 
         //update the record
         setVersion(av.getNumber());
-        setStorageFileName(av.getLocalFile().getName());
+        setURLValue("N/A");
         setModifiedDate(timeStamp);
         setModifiedBy(userId);
 
@@ -1082,7 +1094,7 @@ public class AttachmentRecord extends CommentContainer {
         }
         thisDoc.put("labelMap",      labelMap);
         if ("URL".equals(getType())) {
-            thisDoc.put("url",          getStorageFileName());
+            thisDoc.put("url",          getURLValue());
         }
         thisDoc.put("public",       isPublic());
         thisDoc.put("upstream",     isUpstream());
@@ -1142,7 +1154,7 @@ public class AttachmentRecord extends CommentContainer {
 
         if (docInfo.has("url")) {
             if ("URL".equals(getType())) {
-                setStorageFileName(docInfo.getString("url"));
+                setURLValue(docInfo.getString("url"));
                 changed = true;
             }
         }

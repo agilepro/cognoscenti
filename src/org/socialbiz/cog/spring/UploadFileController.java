@@ -245,7 +245,7 @@ public class UploadFileController extends BaseController {
             HistoryRecord.createHistoryRecord(ngw, attachment.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
                     ar.nowTime, HistoryRecord.EVENT_DOC_ADDED, ar, "Created Link URL");
 
-            attachment.setStorageFileName(taskUrl);
+            attachment.setURLValue(taskUrl);
             ngw.saveFile(ar, "Created Link URL");
 
             response.sendRedirect("listAttachments.htm");

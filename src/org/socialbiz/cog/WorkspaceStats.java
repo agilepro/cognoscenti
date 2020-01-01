@@ -1,5 +1,6 @@
 package org.socialbiz.cog;
 
+import java.io.File;
 import java.util.List;
 
 import org.socialbiz.cog.util.NameCounter;
@@ -79,12 +80,25 @@ public class WorkspaceStats {
             }
         }
 
-        //count all the users in all the primary and secondary roles
-        for (AddressListEntry ale: ngp.getPrimaryRole().getExpandedPlayers(ngp)) {
-            anythingPerUser.increment(ale.getUniversalId());
+        //count all the users in all roles
+        for (CustomRole role : ngp.getAllRoles()) {
+            for (AddressListEntry ale: role.getExpandedPlayers(ngp)) {
+                anythingPerUser.increment(ale.getUniversalId());
+            }
         }
-        for (AddressListEntry ale: ngp.getSecondaryRole().getExpandedPlayers(ngp)) {
-            anythingPerUser.increment(ale.getUniversalId());
+        
+        //now, let's clean out any old temp documents polluting the space left by a broken upload
+        File containingFolder = ngp.containingFolder;
+        long beforeYesterday = System.currentTimeMillis() - 24L*60*60*1000;
+        for (File child : containingFolder.listFiles()) {
+            if (child.getName().startsWith("~tmp~")) {
+                if (child.lastModified() < beforeYesterday) {
+                    //here is a file that begins with ~tmp~ that was created more than 24 hours ago
+                    //so clearly it is abandoned.   A tmp file should never site for more than a few
+                    //minutes, and anything 24 hours old is junk
+                    child.delete();
+                }
+            }
         }
     }
 

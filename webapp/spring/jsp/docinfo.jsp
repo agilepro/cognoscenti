@@ -55,7 +55,7 @@ Required parameters:
     String relativeLink = "a/"+accessName+"?version="+attachment.getVersion();
     String permaLink = ar.getResourceURL(ngp, relativeLink);
     if("URL".equals(attachment.getType())){
-        permaLink = attachment.getStorageFileName();
+        permaLink = attachment.getURLValue();
     }
 
 //TODO: this terminology is 'getEditModeUser' is really about 'maintainers' of a document.
