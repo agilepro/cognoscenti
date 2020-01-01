@@ -1344,7 +1344,6 @@ public class AuthRequest
             return "t/" + URLEncoder.encode(ngb.getKey(), "UTF-8")+"/"
                         + ngc.getKey()+"/"+resource;
         }
-        // TODO Make it for book
         return  "t/" + URLEncoder.encode(ngc.getKey(), "UTF-8")+"/$/"+resource;
     }
 

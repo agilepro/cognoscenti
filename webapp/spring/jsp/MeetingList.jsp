@@ -25,11 +25,14 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Meetings");
     $scope.siteProxy = getSiteProxy("<%ar.writeJS(ar.baseURL);%>", "<%ar.writeJS(siteId);%>");
-    $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>");
+    $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>", $scope);
     $scope.siteInfo = WCACHE.getObj("<%ar.writeJS(siteInfoURL);%>");
     $scope.meetings = [];
-    $scope.wsProxy.getMeetingList(data => $scope.meetings = data.meetings);
+    $scope.wsProxy.getMeetingList(data => {$scope.meetings = data.meetings; console.log("GOT IT", $scope.meetings)});
     
+    $scope.getMeetings = function() {
+        return $scope.meetings;
+    }
     $scope.newMeeting = {
         name:"",
         duration:60,

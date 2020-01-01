@@ -88,6 +88,7 @@ SLAP.getJSON = function(url, passedFunction, errorFunction) {
                 passedFunction(JSON.parse(xhr.responseText));
             }
             catch (e) {
+                console.log("SLAP.getJSON error", e);
                 alert("Got an exception ("+e+") while trying to handle: "+url);
             }
         }

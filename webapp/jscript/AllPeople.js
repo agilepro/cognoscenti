@@ -38,17 +38,18 @@ function getSiteProxy(newBaseUrl, newSiteId) {
     return {
         baseUrl: newBaseUrl,
         siteId: newSiteId,
-        getWorkspaceProxy: function(wsId) {
-            return getWorkspaceProxy(this.baseUrl, this.siteId, wsId);
+        getWorkspaceProxy: function(wsId, scope) {
+            return getWorkspaceProxy(this.baseUrl, this.siteId, wsId, scope);
         }
     }
 }
 
-function getWorkspaceProxy(newBaseUrl, newSiteId, newWorkspaceId) {
+function getWorkspaceProxy(newBaseUrl, newSiteId, newWorkspaceId, scope) {
     return {
         baseUrl: newBaseUrl,
         siteId: newSiteId,
         wsId: newWorkspaceId,
+        scope: scope,
         failure: function(data) {console.log("FAILURE", data)},
         apiCall: function(address, success) {
             let url = this.baseUrl + "t/" +this.siteId+ "/" +this.wsId+ "/" + address;
@@ -56,7 +57,9 @@ function getWorkspaceProxy(newBaseUrl, newSiteId, newWorkspaceId) {
             if (cache) {
                 success(cache);
             };
-            SLAP.getJSON(url, function(data) {WCACHE.putObj(url, data, new Date().getTime()); success(data);}, this.failure);
+            var scope = this.scope;
+            SLAP.getJSON(url, function(data) {success(data); WCACHE.putObj(url, data, new Date().getTime()); scope.$apply()}, this.failure);
+            //SLAP.getJSON(url, success, this.failure);
         },
         getMeetingList: function(success) {
             this.apiCall("meetingList.json", success);

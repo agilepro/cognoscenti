@@ -96,7 +96,7 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Discussion Topics");
     $scope.siteProxy = getSiteProxy("<%ar.writeJS(ar.baseURL);%>", "<%ar.writeJS(siteId);%>");
-    $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>");
+    $scope.wsProxy = $scope.siteProxy.getWorkspaceProxy("<%ar.writeJS(pageId);%>", $scope);
     
     $scope.siteInfo = <%siteInfo.write(out,2,4);%>;
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
