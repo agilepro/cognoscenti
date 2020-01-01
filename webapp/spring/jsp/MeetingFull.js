@@ -1654,7 +1654,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     };
 
-    $scope.openAgenda = function (agendaItem) {
+    $scope.openAgenda = function (agendaItem, display) {
+        
+        var displayMode = 'Settings';
+        if (display) {
+            displayMode = 'Description';
+        }
 
         var agendaModalInstance = $modal.open({
             animation: true,
@@ -1668,6 +1673,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 },
                 siteId: function () {
                   return $scope.siteInfo.key;
+                },
+                displayMode: function() {
+                    return displayMode;
                 }
             }
         });

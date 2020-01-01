@@ -1038,7 +1038,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </div>
             <div>
                 <i ng-click="openAgenda(item)">
-                {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
+                <i class="fa fa-edit"></i> {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
             </div>
           </div>
         </td>
@@ -1046,7 +1046,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
 
                           <!--  AGENDA BODY -->
       <tr ng-show="showItemMap[item.id]">
-        <td style="width:100%">
+        <td style="width:100%" ng-click="openAgenda(item, 'Description')">
            <button ng-show="item.lockUser.uid && item.lockUser.uid.length>0" class="btn btn-sm" style="background-color:lightyellow;margin-left:20px;">
                {{item.lockUser.name}} is editing.
            </button>

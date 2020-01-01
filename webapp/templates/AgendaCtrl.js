@@ -1,4 +1,4 @@
-app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPeople, $http, siteId) {
+app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPeople, $http, siteId, displayMode) {
 
     $scope.siteId = siteId;
     $scope.agendaItem = agendaItem;
@@ -22,7 +22,7 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
     $scope.getPeople = function(query) {
         return AllPeople.findMatchingPeople(query, $scope.siteId);
     }
-    $scope.selectedTab = "Settings";
+    $scope.selectedTab = displayMode;
     $scope.tabStyle = function(which) {
         var sss = {
             "border":"2px solid #F0D7F7",
