@@ -16,8 +16,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.results = [];
     $scope.query = {
         searchFilter: "<% ar.writeJS(searchText); %>",
-        searchSite: "all",
-        searchProject: "all"
+        searchSite: "one",
+        searchProject: "one"
     }
 
     $scope.showError = false;
@@ -33,7 +33,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.doSearch = function() {
         if (!$scope.query.searchFilter) {
-            console.log("Nothing specified to search for")
+            console.log("Type something in to search for")
             return;
         }
         $scope.actualSearch = $scope.query.searchFilter;
@@ -90,7 +90,8 @@ app.controller('myCtrl', function($scope, $http) {
             <td style="width:20px;"></td>
             <td>
               <div class="form-inline form-group" style="margin:0px">
-                  <select ng-model="query.searchProject" class="form-control" style="width:150px;">>
+                  <select ng-model="query.searchProject" class="form-control" style="width:150px;">
+                      <option value="one">This Workspace</option>
                       <option value="all">All Workspaces</option>
                       <option value="member">Member Workspaces</option>
                       <option value="owner">Owned Workspaces</option>

@@ -203,14 +203,15 @@ public class SearchManager {
 
 
     public synchronized List<SearchResultRecord> performSearch(AuthRequest ar,
-                String queryStr, String relationship, String siteId) throws Exception {
+                String queryStr, String relationship, String siteId, String workspaceId) throws Exception {
 
         long startTime = System.currentTimeMillis();
         System.out.println("SearchManager - actually performing a search for "+queryStr);
         List<SearchResultRecord> vec = new ArrayList<SearchResultRecord>();
 
-        boolean onlyOwner = ("owner".equals(relationship));
+        boolean onlyOwner  = ("owner".equals(relationship));
         boolean onlyMember = ("member".equals(relationship));
+        boolean onlyOne    = ("one".equals(relationship));
 
         DirectoryReader ireader = DirectoryReader.open(directory);
         IndexSearcher isearcher = new IndexSearcher(ireader);
@@ -234,14 +235,21 @@ public class SearchManager {
             String linkAddr = null;
             String noteSubject = null;
 
-            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteKey, key).getWorkspace();
-
             //if restricted to one site, check that site first and skip if not matching
             if (siteId!=null) {
-                if (!siteId.equals(ngp.getSiteKey())) {
+                if (!siteId.equals(siteKey)) {
                     continue;
                 }
             }
+            //if restricted to one workspace, check that first as well
+            if (onlyOne && workspaceId!=null) {
+                if (!workspaceId.equals(key)) {
+                    continue;
+                }
+            }            
+            
+            NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteKey, key).getWorkspace();
+
             if (onlyOwner) {
                 if (!ngp.secondaryPermission(up)) {
                     continue;

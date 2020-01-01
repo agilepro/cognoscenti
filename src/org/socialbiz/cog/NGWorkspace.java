@@ -344,8 +344,6 @@ public class NGWorkspace extends NGPage {
     public void assureLaunchingPad(AuthRequest ar) throws Exception {
         File launchFile = new File(containingFolder, ".cogProjectView.htm");
         if (!launchFile.exists()) {
-            boolean previousUI = ar.isNewUI();
-            ar.setNewUI(true);
             OutputStream os = new FileOutputStream(launchFile);
             Writer w = new OutputStreamWriter(os, "UTF-8");
             w.write("<html><body><script>document.location = \"");
@@ -354,7 +352,6 @@ public class NGWorkspace extends NGPage {
             w.write("\";</script></body></html>");
             w.flush();
             w.close();
-            ar.setNewUI(previousUI);
         }
     }
 

@@ -1346,16 +1346,12 @@ public class UserController extends BaseController {
             JSONObject query = getPostedObject(ar);
 
             String searchText    = query.getString("searchFilter");
-            String searchSite    = query.getString("searchSite");
+            // query.getString("searchSite") is not used because for a user there is no current site
             String searchProject = query.getString("searchProject");
-
-            if ("all".equals(searchSite)) {
-                searchSite = null;
-            }
 
             List<SearchResultRecord> searchResults = null;
             if (searchText.length()>0) {
-                searchResults = ar.getCogInstance().performSearch(ar, searchText, searchProject, searchSite);
+                searchResults = ar.getCogInstance().performSearch(ar, searchText, searchProject, null, null);
             }
             else {
                 searchResults = new ArrayList<SearchResultRecord>();
@@ -1437,7 +1433,6 @@ public class UserController extends BaseController {
         Cognoscenti cog = ar.getCogInstance();
         MemFile bodyWriter = new MemFile();
         AuthRequest clone = new AuthDummy(ar.getUserProfile(), bodyWriter.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         OptOutAddr ooa = new OptOutIndividualRequest(new AddressListEntry(
                 addressee));

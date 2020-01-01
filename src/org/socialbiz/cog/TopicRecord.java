@@ -859,7 +859,6 @@ public class TopicRecord extends CommentContainer {
           }
           MemFile body = new MemFile();
           AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
-          clone.setNewUI(true);
           clone.retPath = ar.baseURL;
 
           JSONObject data = new JSONObject();

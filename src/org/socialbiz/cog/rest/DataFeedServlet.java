@@ -88,11 +88,6 @@ public class DataFeedServlet extends HttpServlet {
     }
 
     private void handleAllRequests(AuthRequest ar) throws Exception {
-        String isNewUI = ar.defParam("isNewUI", "");
-        if ("yes".equalsIgnoreCase(isNewUI)) {
-            ar.setNewUI(true);
-        }
-
         if (!ar.isLoggedIn()) {
             throw new NGException("nugen.exception.cant.perform.search", null);
         }
@@ -258,10 +253,7 @@ public class DataFeedServlet extends HttpServlet {
             String searchText) throws Exception {
         String pf = ar.defParam("pf", "all");
         String u = ar.defParam("u", "old");
-        if ("new".equals(u)) {
-            ar.setNewUI(true);
-        }
-        return ar.getCogInstance().performSearch(ar, searchText, pf, null);
+        return ar.getCogInstance().performSearch(ar, searchText, pf, null, null);
     }
 
     // operation get task list.

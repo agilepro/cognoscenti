@@ -1188,7 +1188,6 @@ public class GoalRecord extends BaseRecord {
 
         MemFile body = new MemFile();
         AuthRequest clone = new AuthDummy(requesterProfile, body.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
         clone.retPath = ar.baseURL;
 
         data.put("baseURL", ar.baseURL);

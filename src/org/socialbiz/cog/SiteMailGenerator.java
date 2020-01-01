@@ -178,7 +178,6 @@ public class SiteMailGenerator extends DOMFace {
         UserProfile originalSender = ar.getUserProfile();
 
         AuthRequest clone = new AuthDummy(originalSender, bodyChunk.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.setPageAccessLevels(ngb);
 

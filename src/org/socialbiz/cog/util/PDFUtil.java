@@ -554,7 +554,6 @@ public class PDFUtil {
 
         MemFile linkData = new MemFile();
         AuthRequest clone = new AuthDummy(ar.getUserProfile(), linkData.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         UserProfile.writeLink(clone, userId);
         clone.flush();

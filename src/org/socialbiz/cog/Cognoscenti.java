@@ -790,7 +790,7 @@ System.out.println("Weaver Server Object == Start the Server");
     }
 
     public synchronized List<SearchResultRecord> performSearch(AuthRequest ar,
-            String queryStr, String relationship, String siteId) throws Exception {
+            String queryStr, String relationship, String siteId, String workspaceId) throws Exception {
         if (searchManager==null) {
             searchManager = new SearchManager(this);
         }
@@ -799,7 +799,7 @@ System.out.println("Weaver Server Object == Start the Server");
             searchManager.initializeIndex();
             searchIndexBuildtime = System.currentTimeMillis();
         }
-        return searchManager.performSearch(ar, queryStr, relationship, siteId);
+        return searchManager.performSearch(ar, queryStr, relationship, siteId, workspaceId);
     }
 
     public synchronized void recordVisit(String userKey, String site, String workspace, long timestamp) {

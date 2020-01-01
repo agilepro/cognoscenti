@@ -167,7 +167,6 @@ public class HistoricActions {
         AddressListEntry ale = AddressListEntry.parseCombinedAddress(emailId);
         OptOutAddr ooa = new OptOutAddr(ale);
 
-        clone.setNewUI(true);
         clone.retPath = ar.baseURL;
 
 

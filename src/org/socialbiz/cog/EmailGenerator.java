@@ -387,7 +387,6 @@ public class EmailGenerator extends DOMFace {
 
 
         AuthRequest clone = new AuthDummy(originalSender, bodyChunk.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
         clone.retPath = ar.baseURL;
         clone.setPageAccessLevels(ngp);
 

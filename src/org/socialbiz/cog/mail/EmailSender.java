@@ -175,7 +175,6 @@ public class EmailSender extends TimerTask {
         AuthRequest ar = AuthDummy.serverBackgroundRequest();
         long startTime = System.currentTimeMillis();
         ar.nowTime = startTime;
-        ar.setNewUI(true);
 
         // make sure that this method doesn't throw any exception
         try {

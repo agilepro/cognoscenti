@@ -164,7 +164,6 @@ public class AuthRequest
 
     Properties props = null;
 
-    private boolean newUI = true;
     private boolean generateStatic = false;
 
     /**
@@ -349,8 +348,6 @@ public class AuthRequest
             {
                 throw new RuntimeException("Hmmmmmmm, no servlet path???");
             }
-
-            determineNewUI();
 
             if(baseURL == null || baseURL.length() == 0){
                 baseURL = req.getContextPath() + "/" ;
@@ -1329,39 +1326,9 @@ public class AuthRequest
         return superAdmin.contains(key);
     }
 
-    /**
-    * Figure out whether this request is for a new UI page, or an
-    * old UI page.  If the first element of the path is greater
-    * than one character, and if it is not the name of a jsp file
-    * then it is a new UI request.
-    */
-    private void determineNewUI() {
-        List<String> path = getParsedPath();
-        if (path.size() > 0) {
-            String firstToken = path.get(0);
-            if(firstToken.equals("t") || firstToken.equals("v")) {
-                newUI = true;
-            }
-        }
-    }
-
-    public void setNewUI(boolean b)
-    {
-        newUI = b;
-    }
-
-    public boolean isNewUI()
-    {
-        return newUI;
-    }
-
     public String getResourceURL(NGPageIndex ngpi, String resource)
         throws Exception
     {
-        if (!newUI)
-        {
-            return "p/"+ngpi.containerKey+"/"+resource;
-        }
         if(!ngpi.isProject()){
             return "t/" + ngpi.containerKey+"/$/"+resource;
         }
@@ -1372,10 +1339,6 @@ public class AuthRequest
     public String getResourceURL(NGContainer ngc, String resource)
         throws Exception
     {
-        if (!newUI)
-        {
-            return "p/"+ngc.getKey()+"/"+resource;
-        }
         if(ngc instanceof NGWorkspace){
             NGBook ngb = ((NGWorkspace)ngc).getSite();
             return "t/" + URLEncoder.encode(ngb.getKey(), "UTF-8")+"/"

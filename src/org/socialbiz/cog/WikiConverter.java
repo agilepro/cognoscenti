@@ -508,7 +508,7 @@ public class WikiConverter
                 specialGraphic = "createicon.gif";
                 titleValue = "Workspace does not exist";
 
-                if (ar.isNewUI() && ar.isLoggedIn()) {
+                if (ar.isLoggedIn()) {
                     linkAddr = "javascript:brokenLink(" + isImage + ",'"
                             + linkName + "','" + linkAddr + "')";
                 } else {

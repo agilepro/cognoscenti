@@ -86,7 +86,6 @@ public class AuthDummy extends AuthRequest
     public AuthDummy(UserProfile up, Writer w, Cognoscenti cog) {
         super(w, cog);
         user = up;
-        setNewUI(true);
     }
 
     public NGSession getSession()

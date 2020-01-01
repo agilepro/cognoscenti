@@ -22,7 +22,6 @@ package org.socialbiz.cog;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.socialbiz.cog.mail.ChunkTemplate;
@@ -153,7 +152,6 @@ public class ResponseRecord extends DOMFace
 
         MemFile body = new MemFile();
         AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
         clone.retPath = ar.baseURL;
 
 

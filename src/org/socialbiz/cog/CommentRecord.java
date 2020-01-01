@@ -533,7 +533,6 @@ public class CommentRecord extends DOMFace {
 
         MemFile body = new MemFile();
         AuthRequest clone = new AuthDummy(commenterProfile, body.getWriter(), ar.getCogInstance());
-        clone.setNewUI(true);
         clone.retPath = ar.baseURL;
 
         //this is needed for the HTML conversion.

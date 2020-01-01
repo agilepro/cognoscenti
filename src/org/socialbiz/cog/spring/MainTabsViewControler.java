@@ -635,7 +635,7 @@ public class MainTabsViewControler extends BaseController {
 
             List<SearchResultRecord> searchResults = null;
             if (searchText.length()>0) {
-                searchResults = ar.getCogInstance().performSearch(ar, searchText, searchProject, siteId);
+                searchResults = ar.getCogInstance().performSearch(ar, searchText, searchProject, siteId, pageId);
             }
             else {
                 searchResults = new ArrayList<SearchResultRecord>();
