@@ -13,8 +13,8 @@
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-            <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
-              <a role="menuitem" ng-click="openCommentEditor(item,cmt)">Edit Your {{commentTypeName(cmt)}}</a></li>
+            <li role="presentation">
+              <a role="menuitem" ng-click="openCommentEditor(item,cmt)">Edit {{commentTypeName(cmt)}}</a></li>
             <li role="presentation" ng-show="cmt.commentType==2 || cmt.commentType==3">
               <a role="menuitem" ng-click="openResponseEditor(cmt, '<%ar.writeJS(currentUser);%>')">
                 Create/Edit Response:</a></li>
@@ -22,7 +22,7 @@
               <a role="menuitem" ng-click="postComment(item, cmt)">Post Your {{commentTypeName(cmt)}}</a></li>
             <li role="presentation" ng-show="cmt.user=='<%ar.writeJS(currentUser);%>'">
               <a role="menuitem" ng-click="deleteComment(item, cmt)">
-              Delete Your {{commentTypeName(cmt)}}</a></li>
+              Delete {{commentTypeName(cmt)}}</a></li>
             <li role="presentation" ng-show="cmt.state==12">
               <a role="menuitem" ng-click="closeComment(item, cmt)">Close {{commentTypeName(cmt)}}</a></li>
             <li role="presentation" ng-show="cmt.commentType==1">
