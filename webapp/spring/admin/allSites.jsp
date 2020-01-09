@@ -16,6 +16,9 @@
         WorkspaceStats stats = site.getRecentStats(ar.getCogInstance());
         jo.put("numWorkspaces", stats.numWorkspaces);
         jo.put("numTopics", stats.numTopics);
+        jo.put("numUsers", stats.anythingPerUser.size());
+        jo.put("numMeets", stats.numMeetings);
+        jo.put("numDocs", stats.numDocs);
         allRequests.put(jo);
         
         for (AddressListEntry ale : site.getPrimaryRole().getExpandedPlayers(site)) {
@@ -138,6 +141,9 @@ app.controller('myCtrl', function($scope, $http) {
                     <th >Owners</th>
                     <th >WS</th>
                     <th >Topics</th>
+                    <th >Users</th>
+                    <th >Meetings</th>
+                    <th >Docs</th>
                 </tr>
             </thead>
             <tbody>
@@ -169,6 +175,9 @@ app.controller('myCtrl', function($scope, $http) {
                     <td><div ng-repeat="owner in rec.owners">{{owner.name}}</div></td>
                     <td>{{rec.numWorkspaces}}</td>
                     <td>{{rec.numTopics}}</td>
+                    <td>{{rec.numUsers}}</td>
+                    <td>{{rec.numMeets}}</td>
+                    <td>{{rec.numDocs}}</td>
                 </tr>
             </tbody>
         </table>
