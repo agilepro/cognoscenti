@@ -914,97 +914,60 @@ public class MeetingRecord extends DOMFace {
                 sb.append(ainotes);
             }
 
-            TopicRecord linkedTopic = ngp.getNoteByUidOrNull(ai.getTopicLink());
-            if (linkedTopic==null) {
-                for (String actionItemId : ai.getActionItems()) {
-                    GoalRecord gr = ngp.getGoalOrNull(actionItemId);
-                    if (gr!=null) {
-                        sb.append("\n\n* Action Item: [");
-                        sb.append(gr.getSynopsis());
-                        sb.append("|");
-                        sb.append(ar.baseURL);
-                        sb.append(ar.getResourceURL(ngp, "task"+gr.getId()+".htm"));
-                        sb.append("]");
-                    }
-                }
-                for (String doc : ai.getDocList()) {
-                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(doc);
-                    if (aRec!=null) {
-                        sb.append("\n\n* Attachment: [");
-                        sb.append(aRec.getNiceName());
-                        sb.append("|");
-                        sb.append(ar.baseURL);
-                        sb.append(ar.getResourceURL(ngp, "docinfo"+aRec.getId()+".htm"));
-                        sb.append("]");
-                    }
-                }
-
-                String realMinutes = ai.getScalar("minutes");
-                if (realMinutes!=null && realMinutes.length()>0) {
-                    sb.append("\n\n''Minutes:''\n\n");
-                    sb.append(realMinutes);
-                }
-
-                for (CommentRecord cr : ai.getComments()) {
-                    int cType = cr.getCommentType();
-                    if (cType == CommentRecord.COMMENT_TYPE_MINUTES ||
-                            cType == CommentRecord.COMMENT_TYPE_SIMPLE||
-                            cType == CommentRecord.COMMENT_TYPE_PROPOSAL||
-                            cType == CommentRecord.COMMENT_TYPE_REQUEST) {
-                        sb.append("\n\n''"+cr.getTypeName()+":''\n\n");
-                        sb.append(cr.getContent());
-                        if (cType == CommentRecord.COMMENT_TYPE_PROPOSAL||
-                                cType == CommentRecord.COMMENT_TYPE_REQUEST) {
-                            for (ResponseRecord rr : cr.getResponses()) {
-                                AddressListEntry ale = new AddressListEntry(rr.getUserId());
-                                sb.append("\n\n");
-                                sb.append(ale.getName());
-                                if (cType == CommentRecord.COMMENT_TYPE_PROPOSAL) {
-                                    sb.append(" responded with __");
-                                    sb.append(rr.getChoice());
-                                    sb.append("__:");
-                                }
-                                else {
-                                    sb.append(" says:");
-                                }
-                                sb.append("\n\n");
-                                sb.append(rr.getContent());
-                            }
-                        }
-                    }
+            for (String actionItemId : ai.getActionItems()) {
+                GoalRecord gr = ngp.getGoalOrNull(actionItemId);
+                if (gr!=null) {
+                    sb.append("\n\n* Action Item: [");
+                    sb.append(gr.getSynopsis());
+                    sb.append("|");
+                    sb.append(ar.baseURL);
+                    sb.append(ar.getResourceURL(ngp, "task"+gr.getId()+".htm"));
+                    sb.append("]");
                 }
             }
-            else {
-
-                for (String actionItemId : linkedTopic.getActionList()) {
-                    GoalRecord gr = ngp.getGoalOrNull(actionItemId);
-                    if (gr!=null) {
-                        sb.append("\n\n* Action Item: [");
-                        sb.append(gr.getSynopsis());
-                        sb.append("|");
-                        sb.append(ar.baseURL);
-                        sb.append(ar.getResourceURL(ngp, "task"+gr.getId()+".htm"));
-                        sb.append("]");
-                    }
+            for (String doc : ai.getDocList()) {
+                AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(doc);
+                if (aRec!=null) {
+                    sb.append("\n\n* Attachment: [");
+                    sb.append(aRec.getNiceName());
+                    sb.append("|");
+                    sb.append(ar.baseURL);
+                    sb.append(ar.getResourceURL(ngp, "docinfo"+aRec.getId()+".htm"));
+                    sb.append("]");
                 }
-                for (String doc : linkedTopic.getDocList()) {
-                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(doc);
-                    if (aRec!=null) {
-                        sb.append("\n\n* Attachment: [");
-                        sb.append(aRec.getNiceName());
-                        sb.append("|");
-                        sb.append(ar.baseURL);
-                        sb.append(ar.getResourceURL(ngp, "docinfo"+aRec.getId()+".htm"));
-                        sb.append("]");
-                    }
-                }
-                long includeCommentRangeStart = getStartTime() - 3L*24*60*60*1000;
-                long includeCommentRangeEnd = getStartTime() + 3L*24*60*60*1000;
+            }
 
-                for (CommentRecord cr : linkedTopic.getCommentTimeFrame(includeCommentRangeStart, includeCommentRangeEnd)) {
-                    if (cr.getCommentType() == CommentRecord.COMMENT_TYPE_MINUTES) {
-                        sb.append("\n\n''Minutes:''\n\n");
-                        sb.append(cr.getContent());
+            String realMinutes = ai.getScalar("minutes");
+            if (realMinutes!=null && realMinutes.length()>0) {
+                sb.append("\n\n''Minutes:''\n\n");
+                sb.append(realMinutes);
+            }
+
+            for (CommentRecord cr : ai.getComments()) {
+                int cType = cr.getCommentType();
+                if (cType == CommentRecord.COMMENT_TYPE_MINUTES ||
+                        cType == CommentRecord.COMMENT_TYPE_SIMPLE||
+                        cType == CommentRecord.COMMENT_TYPE_PROPOSAL||
+                        cType == CommentRecord.COMMENT_TYPE_REQUEST) {
+                    sb.append("\n\n''"+cr.getTypeName()+":''\n\n");
+                    sb.append(cr.getContent());
+                    if (cType == CommentRecord.COMMENT_TYPE_PROPOSAL||
+                            cType == CommentRecord.COMMENT_TYPE_REQUEST) {
+                        for (ResponseRecord rr : cr.getResponses()) {
+                            AddressListEntry ale = new AddressListEntry(rr.getUserId());
+                            sb.append("\n\n");
+                            sb.append(ale.getName());
+                            if (cType == CommentRecord.COMMENT_TYPE_PROPOSAL) {
+                                sb.append(" responded with __");
+                                sb.append(rr.getChoice());
+                                sb.append("__:");
+                            }
+                            else {
+                                sb.append(" says:");
+                            }
+                            sb.append("\n\n");
+                            sb.append(rr.getContent());
+                        }
                     }
                 }
             }
@@ -1071,7 +1034,6 @@ public class MeetingRecord extends DOMFace {
 
         @Override
         public int compare(AgendaItem arg0, AgendaItem arg1) {
-            //this syntax allowed in JAva 7 and later
             if (arg0.isProposed()==arg1.isProposed()) {
                 return Integer.compare(arg0.getPosition(), arg1.getPosition());
             }
@@ -1081,11 +1043,7 @@ public class MeetingRecord extends DOMFace {
             else {
                 return -1;
             }
-
-            //this for before Java 7
-            //return Integer.valueOf(arg0.getPosition()).compareTo(Integer.valueOf(arg1.getPosition()));
         }
-
     }
 
 
@@ -1103,10 +1061,6 @@ public class MeetingRecord extends DOMFace {
                 if (st1<=0) {
                     st1 = System.currentTimeMillis();
                 }
-                //this syntax allowed in JAva 7 and later
-                //return 0 - Integer.compare(arg0.getPosition(), arg1.getPosition());
-
-                //this for before Java 7
                 return 0 - Long.valueOf(st0).compareTo(Long.valueOf(st1));
             }
             catch (Exception e) {

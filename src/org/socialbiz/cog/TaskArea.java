@@ -21,6 +21,8 @@
 package org.socialbiz.cog;
 
 import org.socialbiz.cog.mail.JSONWrapper;
+
+import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 public class TaskArea extends JSONWrapper {
@@ -39,6 +41,24 @@ public class TaskArea extends JSONWrapper {
     }
     public void setId(String newId) throws Exception {
         kernel.put("id", newId);
+    }
+    
+    /**
+     * looks for one name, and replaces them with another name
+     */
+    public void replaceAssignee(String sourceUser, String destUser) throws Exception {
+    	JSONArray assignees = kernel.getJSONArray("assignees");
+    	JSONArray newOnes = new JSONArray();
+    	for (int i=0; i<assignees.length(); i++) {
+    		String oneName = assignees.getString(i);
+    		if (sourceUser.equalsIgnoreCase(oneName)) {
+    			newOnes.put(destUser);
+    		}
+    		else {
+    			newOnes.put(oneName);
+    		}
+    	}
+    	kernel.put("assignees", newOnes);
     }
 
     public JSONObject getMinJSON() throws Exception {

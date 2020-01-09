@@ -48,6 +48,7 @@ public class FolderAccessHelper {
 
     AuthRequest ar;
 
+    @Deprecated 
     public FolderAccessHelper(AuthRequest ar)throws Exception
     {
         if(ar == null)
@@ -58,6 +59,7 @@ public class FolderAccessHelper {
     }
 
 
+    @Deprecated 
     public static void initLocalConnections(Cognoscenti cog){
         loaclConnections = new ArrayList<LocalFolderConfig>();
         String lclConn = cog.getConfig().getProperty("localConnections");
@@ -83,6 +85,7 @@ public class FolderAccessHelper {
         }
 
     }
+    @Deprecated 
     public static void initCVSConnections(Cognoscenti cog){
         cvsConnections = new ArrayList<CVSConfig>();
         String cvsConn = cog.getConfig().getProperty("cvsConnections");
@@ -123,6 +126,7 @@ public class FolderAccessHelper {
     * Either creates or updates a "resource connection" for a given user
     * creates a connection if the id is "CREATE"
     */
+    @Deprecated 
     public static ConnectionSettings updateConnection(AuthRequest ar) throws Exception
     {
         UserPage up = ar.getUserPage();
@@ -141,6 +145,7 @@ public class FolderAccessHelper {
         return cSet;
     }
 
+    @Deprecated 
     public static void updateSettingsFromRequest(AuthRequest ar, UserPage up, ConnectionSettings cSet) throws Exception
     {
         String displayName = ar.reqParam(ConnectionType.FORM_FIELD_NAME);
@@ -177,6 +182,7 @@ public class FolderAccessHelper {
     }
 
 
+    @Deprecated 
     public static void deleteConnection(AuthRequest ar, String fid)throws Exception
     {
         UserPage up = ar.getUserPage();
@@ -187,6 +193,7 @@ public class FolderAccessHelper {
 
 
 
+    @Deprecated 
     public void createNewFolderFile(String symbol,
                 String fileName, UploadFiles ufs)throws Exception {
         UserPage up = ar.getUserPage();
@@ -201,6 +208,7 @@ public class FolderAccessHelper {
         tempFile.delete();
     }
 
+    @Deprecated 
     public void deleteFolder(String symbol)throws Exception
     {
         UserPage up = ar.getUserPage();
@@ -209,25 +217,9 @@ public class FolderAccessHelper {
     }
 
 
-    /**
-    * @deprecated use getRemoteResource instead
-    */
-     public ResourceEntity getResourceEntity(String symbol, boolean expand) throws Exception {
-         try {
-             String id = symbol;
-             String rpath = "";
-             int indx = symbol.indexOf('/');
-             if (indx > 0) {
-                 id = symbol.substring(0, indx);
-                 rpath = symbol.substring(indx);
-             }
-             return getRemoteResource(id, rpath, expand);
-         }
-         catch (Exception e) {
-             throw new NGException("nugen.exception.unable.to.get.resource", new Object[]{symbol}, e);
-         }
-     }
 
+
+    @Deprecated 
     public ResourceEntity getRemoteResource(String id, String rpath, boolean expand) throws Exception
     {
         if (rpath==null) {

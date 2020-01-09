@@ -236,7 +236,6 @@ public class AgendaItem extends CommentContainer {
      * full JSON representation including all comments, etc.
      */
     public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw, MeetingRecord meet) throws Exception {
-        TopicRecord linkedTopic = ngw.getNoteByUidOrNull(getTopicLink());
         
         JSONObject aiInfo = new JSONObject();
         aiInfo.put("id",        getId());
@@ -263,21 +262,9 @@ public class AgendaItem extends CommentContainer {
         }
         aiInfo.put("presenterList", presenterList);
         
-        /*
-        if (linkedTopic!=null) {
-            long includeCommentRangeStart = meet.getStartTime() - 7L*24*60*60*1000;
-            long includeCommentRangeEnd = meet.getStartTime() + 7L*24*60*60*1000;
-            aiInfo.put("actionItems", constructJSONArray(linkedTopic.getActionList()));
-            aiInfo.put("docList", constructJSONArray(linkedTopic.getDocList()));
-            linkedTopic.addJSONComments(ar, aiInfo, includeCommentRangeStart, includeCommentRangeEnd);
-        }
-        else 
-        */
-        {
-            aiInfo.put("actionItems", constructJSONArray(getActionItems()));
-            aiInfo.put("docList", constructJSONArray(getDocList()));
-            addJSONComments(ar, aiInfo);
-        }
+        aiInfo.put("actionItems", constructJSONArray(getActionItems()));
+        aiInfo.put("docList", constructJSONArray(getDocList()));
+        addJSONComments(ar, aiInfo);
 
         AddressListEntry locker = getLockUser();
         if (locker!=null) {
@@ -295,8 +282,6 @@ public class AgendaItem extends CommentContainer {
 
 
     public void updateFromJSON(AuthRequest ar, JSONObject input, NGWorkspace ngw) throws Exception {
-        TopicRecord linkedTopic = ngw.getNoteByUidOrNull(getTopicLink());
-        
         if (input.has("subject")) {
             setSubject(input.getString("subject"));
         }
@@ -326,30 +311,12 @@ public class AgendaItem extends CommentContainer {
             setTopicLink(topicLink);
         }
         
-        /*
-        if (linkedTopic!=null) {
-            //Comments, Goals, and Attachments come from the linked item, if an item
-            //is linked, as well as Decisions (when implemented).
-            linkedTopic.updateCommentsFromJSON(input, ar);
-            if (input.has("actionItems")) {
-                //note: this sets the ENTIRE list, and so you must not have selected
-                //from the original list of action items.
-                linkedTopic.setActionList(constructVector(input.getJSONArray("actionItems")));
-            }
-            if (input.has("docList")) {
-                linkedTopic.setDocList(constructVector(input.getJSONArray("docList")));
-            }
+        updateCommentsFromJSON(input, ar);
+        if (input.has("actionItems")) {
+            setActionItems(constructVector(input.getJSONArray("actionItems")));
         }
-        else
-        */
-        {
-            updateCommentsFromJSON(input, ar);
-            if (input.has("actionItems")) {
-                setActionItems(constructVector(input.getJSONArray("actionItems")));
-            }
-            if (input.has("docList")) {
-                setDocList(constructVector(input.getJSONArray("docList")));
-            }
+        if (input.has("docList")) {
+            setDocList(constructVector(input.getJSONArray("docList")));
         }
 
         if (input.has("presenters")) {

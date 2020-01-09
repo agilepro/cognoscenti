@@ -20,11 +20,7 @@
 
 package org.socialbiz.cog;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -1698,22 +1694,6 @@ public abstract class NGPage extends ContainerCommon {
         for (NGRole role : this.getAllRoles()) {
             role.countIdentifiersInRole(sc);
         }
-    }
-
-    public int replaceUserAcrossWorkspace(String sourceUser, String destUser) throws Exception {
-        int count = 0;
-        for (GoalRecord goal : this.getAllGoals()) {
-            NGRole assignee = goal.getAssigneeRole();
-            if (assignee.replaceId(sourceUser, destUser)) {
-                count++;
-            }
-        }
-        for (NGRole role : this.getAllRoles()) {
-            if (role.replaceId(sourceUser, destUser)) {
-                count++;
-            }
-        }
-        return count;
     }
 
     public String getPurpose() throws Exception {

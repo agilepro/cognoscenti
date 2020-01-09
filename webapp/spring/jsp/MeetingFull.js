@@ -1631,11 +1631,26 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         .then(function (selectedActionItems) {
             item.actionItems = selectedActionItems;
             //no need to save...
-            $scope.refreshMeetingPromise();
+            $scope.refreshAllGoals();
+            
         }, function () {
             //cancel action - nothing really to do
         });
     };
+
+    $scope.refreshAllGoals = function() {
+        var getURL = "allActionsList.json";
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.allGoals = data.list;
+            $scope.refreshMeetingPromise();
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+
+
 
     $scope.openAgenda = function (agendaItem, display) {
         

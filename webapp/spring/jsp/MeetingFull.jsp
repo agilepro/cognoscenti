@@ -203,7 +203,7 @@
     background-color:#EFE;
 }
 .invisibleButton {
-    color: #ddd;
+    color: #fff;
 }
 .invisibleButton:hover {
     color: black;
@@ -1037,10 +1037,10 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </div>
             <div>
                 <i ng-click="openAgenda(item)">
-                <i class="fa fa-edit"></i> {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
+                <i class="fa fa-edit invisibleButton"></i> {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
             </div>
           </div>
-        </td>
+        </td> 
       </tr>
 
                           <!--  AGENDA BODY -->
