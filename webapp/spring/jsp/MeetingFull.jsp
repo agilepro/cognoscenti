@@ -950,7 +950,6 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
                     <span ng-show="item.proposed" >--</span>
                     <span ng-hide="item.proposed" >{{item.number}}.</span>
                     
-                    <i ng-show="item.topicLink" class="fa fa-lightbulb-o"></i>
                     {{item.subject}} </span>  &nbsp;
 <%if (isLoggedIn) { %>
                 <span class="dropdown">

@@ -263,6 +263,7 @@ public class AgendaItem extends CommentContainer {
         }
         aiInfo.put("presenterList", presenterList);
         
+        /*
         if (linkedTopic!=null) {
             long includeCommentRangeStart = meet.getStartTime() - 7L*24*60*60*1000;
             long includeCommentRangeEnd = meet.getStartTime() + 7L*24*60*60*1000;
@@ -270,7 +271,9 @@ public class AgendaItem extends CommentContainer {
             aiInfo.put("docList", constructJSONArray(linkedTopic.getDocList()));
             linkedTopic.addJSONComments(ar, aiInfo, includeCommentRangeStart, includeCommentRangeEnd);
         }
-        else {
+        else 
+        */
+        {
             aiInfo.put("actionItems", constructJSONArray(getActionItems()));
             aiInfo.put("docList", constructJSONArray(getDocList()));
             addJSONComments(ar, aiInfo);
@@ -323,6 +326,7 @@ public class AgendaItem extends CommentContainer {
             setTopicLink(topicLink);
         }
         
+        /*
         if (linkedTopic!=null) {
             //Comments, Goals, and Attachments come from the linked item, if an item
             //is linked, as well as Decisions (when implemented).
@@ -336,7 +340,9 @@ public class AgendaItem extends CommentContainer {
                 linkedTopic.setDocList(constructVector(input.getJSONArray("docList")));
             }
         }
-        else {
+        else
+        */
+        {
             updateCommentsFromJSON(input, ar);
             if (input.has("actionItems")) {
                 setActionItems(constructVector(input.getJSONArray("actionItems")));

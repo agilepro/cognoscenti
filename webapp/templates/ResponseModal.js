@@ -49,7 +49,7 @@ app.controller('ModalResponseCtrl', function ($scope, $modalInstance, cmtId, res
             }
         });
         if (!$scope.response.choice) {
-            $scope.response.choice = cmt.choices[0];
+            $scope.response.choice = newComment.choices[0];
         }
     }
         

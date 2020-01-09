@@ -1372,18 +1372,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
 
     $scope.openCommentCreator = function(item, type, replyTo, defaultBody) {
-        if (item.topicLink) {
-            var timeDiff = (new Date()).getTime() - $scope.meeting.startTime;
-            var sevenDays = 7*24*60*60*1000;
-            if (timeDiff > sevenDays) {
-                alert("This meeting happened to long ago to comment on it today.  In a meeting we only show 7 days of comments after the meeting, and it has been more than 7 days, so any comment you make now will not show here.  If you wish to comment on the topic, navigate to the discussion topic itself, and comment there.");
-                return;
-            }
-            if (timeDiff < 0-sevenDays) {
-                alert("This meeting is too far in the future to comment on it today.  In a meeting we only show 7 days of comments before the meeting, and it is scheduled more than 7 days from now, so any comment you make now will not show here.  If you wish to comment on the topic, navigate to the discussion topic itself, and comment there.");
-                return;
-            }
-        }
         
         var newComment = {};
         newComment.time = -1;
@@ -1615,11 +1603,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         attachModalInstance.result
         .then(function (selectedTopic, topicName) {
             item.topicLink = selectedTopic;
-            $scope.allTopics.forEach( function(oneTopic) {
-                if (selectedTopic == oneTopic.universalid) {
-                    item.subject = oneTopic.subject;
-                }
-            });
             $scope.saveAgendaItem(item);
         }, function () {
             //cancel action - nothing really to do

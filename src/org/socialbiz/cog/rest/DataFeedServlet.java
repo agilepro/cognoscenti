@@ -252,7 +252,6 @@ public class DataFeedServlet extends HttpServlet {
     public static List<SearchResultRecord> performLuceneSearchOperation(AuthRequest ar,
             String searchText) throws Exception {
         String pf = ar.defParam("pf", "all");
-        String u = ar.defParam("u", "old");
         return ar.getCogInstance().performSearch(ar, searchText, pf, null, null);
     }
 
