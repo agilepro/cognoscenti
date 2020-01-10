@@ -125,21 +125,35 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             if (!existing) {
                 $scope.allMinutes.push(newItem);
                 existing = newItem;
+                existing.old = newItem.new;
             }
             else if (newItem.new == existing.lastSave) {
                 //if you get back what you sent to the server
-                //then ignore it and don't update what the user is typing.
-                //because nothing new from server
-                console.log("avoided disturbing user.");
+                //then ignore it and don't update at all
+                //whether user typing or not
+                existing.old = existing.lastSave;
+                existing.needsMerge = false;
             } 
             else if (newItem.new != existing.new) {
                 //unfortunately, there are edits from someone else to 
                 //merge in causing some loss from of current typing.
                 console.log("merging new version from server.",newItem,existing);
-                existing.new = Textmerger.get().merge(existing.lastSave, existing.new,                 newItem.new);
+                if (existing.isEditing) {
+                    console.log("The item being edited has changed ... deferring merging");
+                    existing.needsMerge = true;
+                    existing.old = existing.lastSave;
+                }
+                else {
+                    existing.new = Textmerger.get().merge(existing.lastSave, existing.new, newItem.new);
+                    existing.old = newItem.new;
+                    existing.needsMerge = false;
+                }
+            }
+            else {
+                existing.old = newItem.new;
+                existing.needsMerge = false;
             }
             existing.lastSave = null;
-            existing.old = newItem.new;
             existing.timerRunning = newItem.timerRunning;
             existing.timerStart = newItem.timerStart;
             existing.timerElapsed = newItem.timerElapsed;
@@ -279,16 +293,28 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.timerTotal = totalTotal;
     }
     function closeAllEditors() {
+        $scope.autosave();
         $scope.allMinutes.forEach( function(min) {
             min.isEditing = false;
+            min.needsMerge = false;
             min.html = convertMarkdownToHtml(min.new);
         });
+    }
+    
+    $scope.editStyle = function(item) {
+        if (item.needsMerge) {
+            return {"background-color":"orange"};
+        }
+        else {
+            return {"background-color":"lightyellow"};
+        }
     }
     
     $scope.startEditing = function(min) {
         if (!$scope.enableClick) {
             return;
         }
+        $scope.autosave();        
         closeAllEditors();
         min.isEditing = true;        
     }
@@ -345,10 +371,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
     };
     $scope.closeEditor = function() {
-        $scope.allMinutes.forEach( function(min) {
-            min.isEditing = false;
-            min.html = convertMarkdownToHtml(min.new);
-        });
+        closeAllEditors();
     }
     $scope.editMode = function(mode) {
         closeAllEditors();
@@ -566,8 +589,8 @@ function setInputSelection(el, startOffset, endOffset) {
       <div ng-show="loaded && !showError">
 
         <div class="panel panel-default" ng-repeat="min in allMinutes">
-            <div class="panel-heading">{{min.pos}}. {{min.title}}
-                <span style="font-size:70%">
+            <div class="panel-heading" >{{min.pos}}. {{min.title}}
+                <span style="font-size:70%" ng-hide="min.needsMerge">
                     <span ng-hide="min.timerRunning" style="padding:5px">
                         <button ng-click="startAgendaRunning(min)"><i class="fa fa-clock-o"></i> Start</button>
                         Elapsed: {{min.timerTotal| minutes}}
@@ -580,9 +603,13 @@ function setInputSelection(el, startOffset, endOffset) {
                         <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
                     </span>
                 </span>
+                <span style="font-size:70%" ng-show="min.needsMerge">
+                    <button ng-click="closeEditor()" style="background-color:red;color:white">
+                        <i class="fa fa-exclamation-triangle"></i> Merge Changes from Others</button>
+                </span>
                 <button ng-click="saveMinutes(min)" style="font-size:70%" ng-hide="min.new==min.old">Save</button>
             </div>
-            <div class="panel-body" ng-show="min.isEditing"  style="background-color:lightyellow">
+            <div class="panel-body" ng-show="min.isEditing"  ng-style="editStyle(min)">
                 <textarea ng-model="min.new" class="form-control" style="width:100%;height:200px"></textarea>
                 <button class="btn btn-default btn-raised" ng-click="openAttachAction(min)">Add Action Item</button>
                 <button class="btn btn-default btn-raised" ng-click="openAddDocument(min)">Add Document</button>
