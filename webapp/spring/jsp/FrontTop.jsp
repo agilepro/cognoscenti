@@ -18,20 +18,14 @@ Required parameters:
     NGBook ngb = ngp.getSite();
     Cognoscenti cog = ar.getCogInstance();
 
-    NGPageIndex parentIndex = cog.getWSByCombinedKey(ngp.getParentKey());
-    if (parentIndex != null && !siteId.equals(parentIndex.wsSiteKey)) {
-        parentIndex = null;
-    }
-    if (parentIndex!=null) {
-        throw new Exception("this is quite strange ... this page is not supposed to have a parent.");
-    }
-
     int[] point = new int[2];
     point[0] = 180;
     point[1] = 120;
     
     JSONArray container = new JSONArray();
-    List<NGPageIndex> allContainers = new ArrayList<NGPageIndex>();
+    List<NGPageIndex> projectsInSite = new ArrayList<NGPageIndex>();
+    HashSet<String> allKeys = new HashSet<String>();
+    
     for (NGPageIndex ngpi : cog.getAllContainers()) {
         if (!ngpi.isProject()) {
             continue;
@@ -39,9 +33,20 @@ Required parameters:
         if (!siteKey.equals(ngpi.wsSiteKey)) {
             continue;
         }
-        allContainers.add(ngpi);
+        allKeys.add(ngpi.containerKey);
+        projectsInSite.add(ngpi);
     }
-    layoutRoot(allContainers, point, container, cog);
+    boolean hasNull = false;
+    for (NGPageIndex ngpi : projectsInSite) {
+        if (ngpi.parentKey==null) {
+            hasNull = true;
+        }
+        else if (!allKeys.contains(ngpi.parentKey)) {
+            ngpi.parentKey = null;
+            hasNull = true;
+        }
+    }
+    layoutRoot(projectsInSite, point, container, cog);
 
     UserProfile uProf = ar.getUserProfile();
 
@@ -99,7 +104,7 @@ public void layout( List<NGPageIndex> allContainers, int point[], String parent,
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Top Level Workspaces");
+    window.setMainPageTitle("Site Map for <%ar.writeJS(ngb.getFullName());%>");
     $scope.children   = <%container.write(out,2,4);%>;
     $scope.filter = "";
 
@@ -118,29 +123,13 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.maxLength = 800;
     $scope.maxWidth = 1200;
 
-    $scope.layoutChildren = function() {
-        console.log("laying out children");
-        var len = $scope.children.length;
-        if (len==0) {
-            return;
-        }
-        var minx = 70;
-        var yPos = 50;
-        var pos = 0;
-        while (pos < len) {
-            console.log("pos", pos, len);
-            $scope.children[pos].x = minx;
-            $scope.children[pos].y = yPos;
-            yPos += 70;
-            $scope.maxLength = yPos+70;
-            pos++;
-        }
-    }
-//    $scope.layoutChildren();
     $scope.maxLength = 350;
     $scope.children.forEach( function(item) {
         if (item.y+50 > $scope.maxLength) {
             $scope.maxLength = item.y+50;
+        }
+        if (item.x+100 > $scope.maxWidth) {
+            $scope.maxWidth = item.x+100;
         }
     });
     
@@ -200,6 +189,17 @@ app.controller('myCtrl', function($scope, $http) {
       }
     </style>
 
+    <% if (!hasNull) { %>
+    <div class="guideVocal">
+    <p><b>Note</b> there is no workspace in this site that has an empty parent to serve as the root of the tree.   
+    The workspaces appear to be linked into a infinite circle. </p>
+    <p>Choose a workspace to be the root workspace, and clear the parent workspace setting, so that
+    you can have a tree of workspaces.</p>
+    </div>
+    
+    <% } %>
+
+
     <div style="width:1200px;vertial-align:top;">
        <div class="tripleColumn leafContent">
            <svg height="{{maxLength}}px" width="{{maxWidth}}px">
@@ -216,14 +216,15 @@ app.controller('myCtrl', function($scope, $http) {
                <g ng-repeat="child in children">
                    <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}"  ng-click="ellipse(child)"
                        rx="60" ry="30" style="fill:white;stroke:purple;stroke-width:2;cursor:pointer;" ></ellipse>
-                   <foreignObject ng-attr-x="{{child.x-55}}" ng-attr-y="{{child.y-15}}" width="110" height="60">
+                   <foreignObject ng-attr-x="{{child.x-55}}" ng-attr-y="{{child.y-20}}" width="110" height="60">
                        <div xmlns="http://www.w3.org/1999/xhtml" style="height:60px;vertical-align:middle;text-align:center;cursor:pointer;"
                            ng-click="ellipse(child)">{{child.name}}</div>
                    </foreignObject>
                </g>
            </svg>
        </div>
-    </td>
+    </div>
+    
 
 
 </div>
