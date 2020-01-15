@@ -26,7 +26,12 @@ Required parameters:
         throw new Exception("this is quite strange ... this page is not supposed to have a parent.");
     }
 
-    JSONArray children = new JSONArray();
+    int[] point = new int[2];
+    point[0] = 180;
+    point[1] = 120;
+    
+    JSONArray container = new JSONArray();
+    List<NGPageIndex> allContainers = new ArrayList<NGPageIndex>();
     for (NGPageIndex ngpi : cog.getAllContainers()) {
         if (!ngpi.isProject()) {
             continue;
@@ -34,24 +39,59 @@ Required parameters:
         if (!siteKey.equals(ngpi.wsSiteKey)) {
             continue;
         }
-        NGPageIndex childParent = null;
-        if (ngpi.parentKey!=null) {
-            childParent = cog.getWSByCombinedKey(ngpi.parentKey);
-            if (childParent != null && !siteId.equals(childParent.wsSiteKey)) {
-                childParent = null;
-            }
-        }
-            
-        if (childParent == null) {
+        allContainers.add(ngpi);
+    }
+    layoutRoot(allContainers, point, container, cog);
+
+    UserProfile uProf = ar.getUserProfile();
+
+%>
+<%!
+
+public void layoutRoot( List<NGPageIndex> allContainers, int point[], JSONArray container, Cognoscenti cog) throws Exception  {
+    for (NGPageIndex ngpi : allContainers) {
+        if (ngpi.parentKey == null || ngpi.parentKey.length()==0) {
             JSONObject jo = new JSONObject();
             jo.put("name", ngpi.containerName);
             jo.put("key",  ngpi.containerKey);
             jo.put("site", ngpi.wsSiteKey);
-            children.put(jo);
+            jo.put("x", point[0]);
+            jo.put("y", point[1]);
+            jo.put("parx", 50);
+            jo.put("pary", 50);
+            container.put(jo);
+            layout(allContainers, point, ngpi.containerKey, container);
+            point[1] = point[1]+70;
         }
     }
-
-    UserProfile uProf = ar.getUserProfile();
+}
+public void layout( List<NGPageIndex> allContainers, int point[], String parent, JSONArray container) throws Exception {
+    int parx = point[0];
+    int pary = point[1];
+    point[0] = point[0] + 130;
+    point[1] = point[1] + 70;
+    for (NGPageIndex ngpi : allContainers) {
+        if (ngpi.parentKey==null) {
+            continue;
+        }
+        if (!parent.equals(ngpi.parentKey)) {
+            continue;
+        }
+        JSONObject jo = new JSONObject();
+        jo.put("name", ngpi.containerName);
+        jo.put("key",  ngpi.containerKey);
+        jo.put("site", ngpi.wsSiteKey);
+        jo.put("x", point[0]);
+        jo.put("y", point[1]);
+        jo.put("parx", parx);
+        jo.put("pary", pary);
+        container.put(jo);
+        layout(allContainers, point, ngpi.containerKey, container);
+        point[1] = point[1]+70;
+    }
+    point[0] = point[0] - 130;
+    point[1] = point[1] - 70;
+}
 
 %>
 
@@ -60,7 +100,7 @@ Required parameters:
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Top Level Workspaces");
-    $scope.children   = <%children.write(out,2,4);%>;
+    $scope.children   = <%container.write(out,2,4);%>;
     $scope.filter = "";
 
     $scope.showInput = false;
@@ -75,74 +115,28 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.processTemplate = function(hist) {
         return hist.template;
     }
+    $scope.maxLength = 800;
+    $scope.maxWidth = 1200;
 
     $scope.layoutChildren = function() {
-        var yPos = 265;
+        console.log("laying out children");
         var len = $scope.children.length;
         if (len==0) {
             return;
         }
-        if (len==1) {
-            $scope.children[0].x = 175;
-            $scope.children[0].y = yPos;
-            return;
-        }
-
         var minx = 70;
-        if (len<6) {
-            var xwidth = 210;
-            var disp = xwidth / ($scope.children.length-1);
-            for (var i=0; i<len; i++) {
-                $scope.children[i].x = minx + (disp*i);
-                $scope.children[i].y = yPos + (i%2 * 10*len);
-            }
-            return;
-        }
-        
-        var amtLeft = len;
+        var yPos = 50;
         var pos = 0;
-        while (len-pos >= 5) {
+        while (pos < len) {
+            console.log("pos", pos, len);
             $scope.children[pos].x = minx;
             $scope.children[pos].y = yPos;
-            pos++;
-            $scope.children[pos].x = minx+105;
-            $scope.children[pos].y = yPos;            
-            pos++;
-            $scope.children[pos].x = minx+210;
-            $scope.children[pos].y = yPos;
-            pos++;
-            yPos += 50;
-            $scope.children[pos].x = minx+52;
-            $scope.children[pos].y = yPos;
-            pos++;
-            $scope.children[pos].x = minx+157;
-            $scope.children[pos].y = yPos;
-            pos++;
-            yPos += 50;
-        }
-        if (len-pos >= 1) {
-            $scope.children[pos].x = minx;
-            $scope.children[pos].y = yPos;
-            pos++;
-        }
-        if (len-pos >= 1) {
-            $scope.children[pos].x = minx+105;
-            $scope.children[pos].y = yPos;
-            pos++;
-        }
-        if (len-pos >= 1) {
-            $scope.children[pos].x = minx+210;
-            $scope.children[pos].y = yPos;
-            pos++;
-        }
-        yPos += 50;
-        if (len-pos >= 1) {
-            $scope.children[pos].x = minx+52;
-            $scope.children[pos].y = yPos;
+            yPos += 70;
+            $scope.maxLength = yPos+70;
             pos++;
         }
     }
-    $scope.layoutChildren();
+//    $scope.layoutChildren();
     $scope.maxLength = 350;
     $scope.children.forEach( function(item) {
         if (item.y+50 > $scope.maxLength) {
@@ -206,23 +200,18 @@ app.controller('myCtrl', function($scope, $http) {
       }
     </style>
 
-    <table><tr style="vertical-align:top;">
-    <td style="width:350px;vertial-align:top;">
+    <div style="width:1200px;vertial-align:top;">
        <div class="tripleColumn leafContent">
-       </div>
-    </td>
-    <td style="width:350px;vertial-align:top;">
-       <div class="tripleColumn leafContent">
-           <svg height="{{maxLength}}px" width="350px">
-                <ellipse cx="179" cy="179" rx="21" ry="20" ng-click="ellipse(thisCircle)"
+           <svg height="{{maxLength}}px" width="{{maxWidth}}px">
+                <ellipse cx="50" cy="50" rx="21" ry="20" ng-click="ellipse(thisCircle)"
                     style="fill:gray;stroke:gray" ></ellipse>
                <g ng-repeat="child in children">
                    <ellipse ng-attr-cx="{{child.x+4}}" ng-attr-cy="{{child.y+4}}"  ng-click="ellipse(child)"
                        rx="60" ry="30" style="fill:gray;stroke:gray" ></ellipse>
-                   <line ng-attr-x1="{{child.x+2}}" ng-attr-y1="{{child.y}}" x2="177" y2="175" style="stroke:purple;stroke-width:2" ></line>
-                   <line ng-attr-x1="{{child.x-2}}" ng-attr-y1="{{child.y}}" x2="173" y2="175" style="stroke:purple;stroke-width:2" ></line>
+                   <line ng-attr-x1="{{child.x-100}}" ng-attr-y1="{{child.y-50}}" x2="{{child.parx}}" y2="{{child.pary}}" style="stroke:purple;stroke-width:3" ></line>
+                   <line ng-attr-x1="{{child.x}}" ng-attr-y1="{{child.y}}" x2="{{child.x-100}}" y2="{{child.y-50}}" style="stroke:purple;stroke-width:3" ></line>
                </g>
-               <ellipse cx="175" cy="175" rx="21" ry="20"
+               <ellipse cx="50" cy="50" rx="21" ry="20"
                     style="fill:#F0D7F7;stroke:purple;stroke-width:2;cursor:pointer" ></ellipse>
                <g ng-repeat="child in children">
                    <ellipse ng-attr-cx="{{child.x}}" ng-attr-cy="{{child.y}}"  ng-click="ellipse(child)"
@@ -235,11 +224,6 @@ app.controller('myCtrl', function($scope, $http) {
            </svg>
        </div>
     </td>
-    <td style="width:350px;vertial-align:top;">
-       <div class="tripleColumn leafContent">
-       </div>
-    </td>
-    </tr></table>
 
 
 </div>
