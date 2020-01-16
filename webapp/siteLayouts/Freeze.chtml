@@ -1,0 +1,33 @@
+<html>
+<body>
+{% include styles %}
+<div class="emailbody">
+<!--TEMPLATE SiteIntro1.chtml-->
+<h1>Welcome to Weaver!</h1> 
+
+<p>More than 6 months ago you created
+'<b>{$site.names|get(0)}</b>'.</p>
+
+<p>At this point, you do not appear to be using your site. We are therefore freezing it. You will be able to retrieve records from it, but you will not be able to add new information. If you wish to reactivate your site, we'll be very happy to restore it as an active site. We'll also be glad to answer any questions. </p>
+
+
+<p>To contact us, please email to us at <b>Weaver@purplehillsbooks.com</b> and <b>Johnabuck@gmail.com</b>.</p>
+
+<p>If you do not contact us, we will delete your site approximately six months after the date of this note.</p>
+
+<p>Regards,</p>
+
+<p>The Weaver Systems Team </p>
+
+
+<p>Links to access your sites:</p>
+<ul>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteWorkspaces.htm">Workspaces</a> - a list of all workspaces in the site</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/SiteAdmin.htm">Site Admin</a> - the configuration options for the site owner (you)</li>
+<li><a href="{$baseUrl}v/{$site.key}/$/roleManagement.htm">Roles</a> - the roles (user groups) for the entire site</li>
+</ul>
+
+
+<div class="tm"></div>
+</div>
+</body></html>
