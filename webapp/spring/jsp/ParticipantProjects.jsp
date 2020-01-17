@@ -92,7 +92,7 @@ app.controller('myCtrl', function($scope, $http) {
               </div>
             </td>
             <td class="repositoryName">
-                <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/notesList.htm">
+                <a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/NotesList.htm">
                    {{rec.name}}
                        <span ng-show="rec.isDeleted" style="color:grey"> (DELETED)</span>
                        <span ng-show="rec.frozen" style="color:grey"> (FROZEN)</span>

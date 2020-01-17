@@ -444,23 +444,6 @@ public class SiteController extends BaseController {
 
 
 
-
-    @RequestMapping(value = "/{siteId}/$/public.htm", method = RequestMethod.GET)
-    public void sitePublic(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        redirectBrowser(ar, "SiteWorkspaces.htm");
-    }
-    @RequestMapping(value = "/{siteId}/$/member.htm", method = RequestMethod.GET)
-    public void member(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        redirectBrowser(ar, "SiteWorkspaces.htm");
-    }
-
-
     @RequestMapping(value = "/{siteId}/$/replaceUsers.json", method = RequestMethod.POST)
     public void getGoalHistory(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) {

@@ -54,51 +54,19 @@ public class MainTabsViewControler extends BaseController {
 
 
     //////////////////////////////// REDIRECTS ///////////////////////////////////
-
+/*
     @RequestMapping(value = "/{siteId}/{pageId}/projectHome.htm", method = RequestMethod.GET)
     public void projectHome(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
         response.sendRedirect("frontPage.htm");
     }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/public.htm", method = RequestMethod.GET)
-    public void publicssssss(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("frontPage.htm");
-    }
-    @RequestMapping(value = "/{siteId}/{pageId}/member.htm", method = RequestMethod.GET)
-    public void member(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("frontPage.htm");
-    }
-    @RequestMapping(value = "/{siteId}/{pageId}/deletedNotes.htm", method = RequestMethod.GET)
-    public void deletedNotes(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("frontPage.htm");
-    }
-    @RequestMapping(value = "/{siteId}/{pageId}/draftNotes.htm", method = RequestMethod.GET)
-    public void draftNotes(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("frontPage.htm");
-    }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/process.htm", method = RequestMethod.GET)
-    public void showProcessTab(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("frontPage.htm");
-    }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/projectActiveTasks.htm", method = RequestMethod.GET)
-    public void projectActiveTasks(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.sendRedirect("frontPage.htm");
-    }
+*/
 
 
 
     /////////////////////////// MAIN VIEWS //////////////////////////////////////////
 
-    @RequestMapping(value = "/{siteId}/{pageId}/notesList.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/NotesList.htm", method = RequestMethod.GET)
     public void notesList(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -107,16 +75,7 @@ public class MainTabsViewControler extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/automaticLinks.htm", method = RequestMethod.GET)
-    public void automaticLinks(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-           throws Exception {
-
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "AutomaticLinks");
-    }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/frontTop.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/FrontTop.htm", method = RequestMethod.GET)
     public void frontTop(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {

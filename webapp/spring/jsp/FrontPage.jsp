@@ -339,7 +339,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/frontPage.htm";
     }
     $scope.topLevel = function(workspace) {
-        window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/frontTop.htm";
+        window.location = "<%=ar.retPath%>t/"+workspace.site+"/"+workspace.key+"/FrontTop.htm";
     }
     $scope.imageName = function(player) {
         if (player.key) {

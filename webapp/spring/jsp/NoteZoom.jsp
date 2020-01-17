@@ -948,7 +948,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="notesList.htm">List Topics</a></li>
+              href="NotesList.htm">List Topics</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               ng-click="startEdit()" target="_blank">Edit This Topic</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"

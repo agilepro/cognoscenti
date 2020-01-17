@@ -207,7 +207,7 @@ Required parameters:
                         if(!isLocal && localProject!=null){
                     %>
                         <table WIDTH="600"><tr><td>
-                            <form action="<%=ar.retPath%><%=ar.getResourceURL(localProject, "projectActiveTasks.htm")%>" method="get">
+                            <form action="<%=ar.retPath%><%=ar.getResourceURL(localProject, "frontPage.htm")%>" method="get">
                                 <input type="submit" value="Access Local Clone" class="btn btn-primary btn-raised" />
                             </form>
                         </td>
@@ -220,7 +220,7 @@ Required parameters:
                         else if (isLocal && localProject!=null) {
                     %>
                             <div>
-                            This workspace is on this local host: <a href="<%=ar.retPath%><%=ar.getResourceURL(localProject,"projectActiveTasks.htm")%>">
+                            This workspace is on this local host: <a href="<%=ar.retPath%><%=ar.getResourceURL(localProject,"frontPage.htm")%>">
                                 <%ar.writeHtml(localProject.getFullName());%></a><br/>
                                 <%ar.writeHtml(remoteGoal.getAccessURL());%><br/>
                                 <%ar.writeHtml(ar.baseURL);%>

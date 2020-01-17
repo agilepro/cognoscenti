@@ -304,25 +304,6 @@
     }
 
 
-    public String redirectToViewLevel(AuthRequest ar, NGWorkspace ngp, int viewLevel)
-        throws Exception
-    {
-        if (viewLevel==SectionDef.MEMBER_ACCESS)
-        {
-            return ar.getResourceURL(ngp,"member.htm");
-        }
-        if (viewLevel==SectionDef.ADMIN_ACCESS)
-        {
-            return  ar.getResourceURL(ngp,"admin.htm");
-        }
-        if (viewLevel==SectionDef.PRIVATE_ACCESS)
-        {
-            return ar.getResourceURL(ngp,"private.htm");
-        }
-        return ar.getResourceURL(ngp,"public.htm");
-    }
-
-
     public static int writeOutUsers(AuthRequest ar, List<AddressListEntry> users, int level,
             String label, int limit, String b)  throws Exception
     {

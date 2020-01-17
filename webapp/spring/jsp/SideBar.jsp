@@ -4,14 +4,13 @@
 <nav class="navbar navbar-default navbar-fixed-side sidebar navbar-responsive-collapse" role="navigation">
   <ul>
     <% if(isSiteHeader) { %>
-    <li>
-      <a href="SiteWorkspaces.htm" title="Lists all the workspaces that are in this site.">
+    <li><a href="FrontTop.htm" title="Graphical map of all workspaces in the site.">
+          Site Map</a></li>
+    <li><a href="SiteWorkspaces.htm" title="Lists all the workspaces that are in this site.">
           Workspaces in Site</a></li>
-    <li>
-      <a href="SiteAdmin.htm" title="View and adjust the main settings for the site.">
+    <li><a href="SiteAdmin.htm" title="View and adjust the main settings for the site.">
           Site Admin</a></li>
-    <li>
-      <a href="roleManagement.htm" title="Role define who can do what within this site.">
+    <li><a href="roleManagement.htm" title="Role define who can do what within this site.">
           Roles</a></li>
 
     <% } else if(!isUserHeader) { %>
