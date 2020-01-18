@@ -1507,7 +1507,11 @@ public class AuthRequest
         }
 
         //create a log file name based on the current time.
-        logFile = cog.getConfig().getFile("Reqs_"+nowTimeString+".log");
+        File logFolder = new File(cog.getConfig().getUserFolderOrFail(),"logs");
+        if (!logFolder.exists()) {
+        	logFolder.mkdirs();
+        }
+        logFile = new File(logFolder,"Reqs_"+nowTimeString+".log");
         logFile.createNewFile();
 
         //set to re-create in one day time if necessary
