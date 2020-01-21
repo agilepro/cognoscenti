@@ -123,7 +123,8 @@ public class AdminController extends BaseController {
 
             site.updateConfigJSON(newConfig);
 
-            site.saveContent(ar, "Updating workspace settings");
+            //save changes but DONT change the date.   These kinds of meta-changes don't qualify as modifications.
+            site.save();
             JSONObject repo = site.getConfigJSON();
             sendJson(ar, repo);
         }catch(Exception ex){
