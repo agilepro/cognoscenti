@@ -19,7 +19,7 @@
         Front Page</a></li>
     <li><a href="MeetingList.htm" title="List and manage all the meetings in this workspace">
         Meetings</a></li>
-    <li><a href="notesList.htm" title="List and manage the discussions in the workspace.">
+    <li><a href="NotesList.htm" title="List and manage the discussions in the workspace.">
         Topics</a></li>
     <li><a href="listAttachments.htm" title="List and access all the attached documents in the workspace.">
         Documents</a></li>
