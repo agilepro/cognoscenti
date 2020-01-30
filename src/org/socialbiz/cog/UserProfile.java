@@ -20,7 +20,6 @@
 
 package org.socialbiz.cog;
 
-import java.io.File;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,7 +31,6 @@ import org.socialbiz.cog.exception.NGException;
 import org.socialbiz.cog.exception.ProgramLogicError;
 
 import com.purplehillsbooks.json.JSONArray;
-import com.purplehillsbooks.json.JSONException;
 import com.purplehillsbooks.json.JSONObject;
 
 public class UserProfile implements UserRef
@@ -809,30 +807,6 @@ public class UserProfile implements UserRef
     public String getImage() {
         return (this.getKey()+".jpg").toLowerCase();
     }
-
-    /**
-     * Check to see if the user has an image.  If so, leave it there,
-     * if not, then copy one of the default images for this user.
-     */
-    public void assureImage(Cognoscenti cog) throws Exception {
-        File imageFolder = cog.getConfig().getFileFromRoot("users");
-        if (!imageFolder.exists()) {
-            throw new JSONException("Can't find the user folder!: {0}", imageFolder);
-        }
-        File imageFile = new File(imageFolder, getKey()+".jpg");
-        if (imageFile.exists()) {
-            return;
-        }
-        char uidLetter = Character.toLowerCase(this.getUniversalId().charAt(0));
-
-        File defaultFile =  new File(imageFolder, "fake-"+uidLetter+".jpg");
-        if (!defaultFile.exists()) {
-            throw new Exception("The default user image file is missing!: "+defaultFile);
-        }
-        UtilityMethods.copyFileContents(defaultFile, imageFile);
-        System.out.println("Created a default image file for user "+getKey()+" from: "+defaultFile);
-    }
-
 
     /*
     * The purpose of this function is to be able to find all the users with

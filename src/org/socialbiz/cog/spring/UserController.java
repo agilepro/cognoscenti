@@ -1229,8 +1229,6 @@ public class UserController extends BaseController {
                     userName = userName.substring(0,28);
                 }
 
-                uProf.assureImage(ar.getCogInstance());
-
                 String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
                 String bookForNewProject = ar.defParam( "bookKey", null );
 
