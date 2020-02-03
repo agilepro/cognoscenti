@@ -559,6 +559,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             isLinkToComment = false;
         }
         $scope.calcAttended();
+        if (!$scope.selectedItem && data.agenda && data.agenda.length>0) {
+            $scope.selectedItem = data.agenda[0];
+        }
     }
     function determineRoleEqualsParticipants() {
         $scope.roleEqualsParticipants = false;
@@ -1002,6 +1005,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     
     
     $scope.extractPeopleSituation = function() {
+        console.log("extractPeopleSituation called");
         if (Array.isArray) {
             if (!Array.isArray($scope.allLabels)) {
                 console.log("allLabels is NOT an array");
@@ -1856,6 +1860,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             $scope.roleWarningMessage = "Unable to read role information about "+$scope.meeting.targetRole;
         });
     }
+    $scope.statusButtonClass = function(state) {
+        if (state==$scope.displayMode) {
+            return "btn btn-primary btn-raised";
+        }
+        else {
+            return "btn btn-default btn-raised";
+        }
+    }
+    $scope.setSelectedItem = function(item) {
+        $scope.selectedItem = item;
+    }
     
 });
 
@@ -1882,7 +1897,10 @@ function calcResponders(slots, AllPeople, siteId) {
 app.filter('minutes', function() {
 
   return function(input) {
-      var neg = "";
+    if (!input) {
+        return "";
+    }
+    var neg = "";
     if (input<0) {
         neg = "-";
         input = 0-input;

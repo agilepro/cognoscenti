@@ -32,12 +32,6 @@
     JSONArray allRoles = new JSONArray();
 
     for (CustomRole aRole : ngc.getAllRoles()) {
-        for (AddressListEntry ale: aRole.getDirectPlayers()) {
-            UserProfile uP2 = ale.getUserProfile();
-            if (uP2!=null) {
-                uP2.assureImage(ar.getCogInstance());
-            }
-        }
         allRoles.put(aRole.getJSONDetail());
     }
 
