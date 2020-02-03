@@ -342,7 +342,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
               ng-click="openEditor()">Edit Meeting Notes</a></li>
           <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
-              href="meetingHtml.htm?id={{meeting.id}}">Show Flat Display</a></li>
+              href="meetingFull.htm?id={{meeting.id}}">Show OLD Display</a></li>
           <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
               href="MeetMerge.htm?id={{meeting.id}}&tem=FullDetail.chtml">Show Meeting Layouts</a></li>
@@ -399,7 +399,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
         <td>----&gt;</td>
         <td class="{{meeting.state==2 ? buttonSpacerOn : buttonSpacerOff}}">
             <span class="btn btn-default btn-raised" style="{{meetingStateStyle(2)}}" 
-                              ng-click="changeMeetingState(2)">Running</span></td>
+                  ng-click="changeMeetingState(2)">Running</span></td>
         <td>----&gt;</td>
         <td class="{{meeting.state==3 ? buttonSpacerOn : buttonSpacerOff}}">
             <span class="btn btn-default btn-raised" style="{{meetingStateStyle(3)}}" 
@@ -462,56 +462,42 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
           <p>Meeting is in running mode and will allow updates normally done during the meeting.</p>
       <table class="table">
         <tr>
-          <td></td>
-          <td>Planned Time</td>
-          <td></td>
-          <td>Elapsed</td>
-          <td>Remaining</td>
+          <th></th>
+          <th>Planned Time</th>
+          <th></th>
+          <th>Elapsed</th>
+          <th></th>
+          <th>Remaining</th>
         </tr>
         <tr ng-repeat="item in getAgendaItems()">
           <td>
-                <span ng-show="item.proposed" >--</span>
-                <span ng-hide="item.proposed" >{{item.number}}.</span>
+                <span ng-show="item.proposed  || item.isSpacer" >--</span>
+                <span ng-hide="item.proposed  || item.isSpacer" >{{item.number}}.</span>
 
                 {{item.subject}} 
           </td>
-          <td>
-                <span ng-hide="item.timerRunning" style="padding:5px">
-                    {{item.duration| minutes}}
+          <td ng-style="timerStyleComplete(item)">
+                {{item.duration| minutes}}
+          </td>
+          <td ng-style="timerStyleComplete(item)">
+                <span ng-hide="item.timerRunning">
+                    <button ng-click="agendaStartButton(item)"><i class="fa fa-clock-o"></i> Start</button>
                 </span>
-                <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
-                    {{item.duration| minutes}}
+                <span ng-show="item.timerRunning">
+                    <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
                 </span>
           </td>
-          <td>
-                <span>
-                    <span ng-hide="item.timerRunning" style="padding:5px">
-                        <button ng-click="agendaStartButton(item)"><i class="fa fa-clock-o"></i> Start</button>
-                    </span>
-                    <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
-                        <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
-                    </span>
-                </span>
+          <td ng-style="timerStyleComplete(item)">
+                {{item.timerTotal| minutes}}
           </td>
           <td>
-                <span>
-                    <span ng-hide="item.timerRunning" style="padding:5px">
-                        {{item.timerTotal| minutes}}
-                    </span>
-                    <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
-                        {{item.timerTotal| minutes}}
-                    </span>
-                </span>
+              <!--button ng-click="setItemTime(item,'incr')">+1</button-->
+              <!--button ng-click="setItemTime(item,'decr')">-1</button-->
+              <!--button ng-click="setItemTime(item,'ceil')">Round Up</button-->
+              <!--button ng-click="setItemTime(item,'floor')">Round Down</button-->
           </td>
           <td>
-                <span>
-                    <span ng-hide="item.timerRunning" style="padding:5px">
-                        {{item.duration - item.timerTotal| minutes}}
-                    </span>
-                    <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
-                        {{item.duration - item.timerTotal| minutes}}
-                    </span>
-                </span>
+                {{item.duration - item.timerTotal| minutes}}
           </td>
         </tr>
       </table>
@@ -563,7 +549,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
           <col width="20px">
           <col width="*">
           <tr>
-            <td>Name:</td>
+            <td ng-click="editMeetingPart='name'">Name:</td>
             <td class="invisibleButton" ng-click="editMeetingPart='name'">
               <i class="fa fa-edit"></i>
             </td>
@@ -578,7 +564,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </td>
           </tr>
           <tr>
-            <td>Scheduled Time:</td>
+            <td ng-click="editMeetingPart='startTime'">Scheduled Time:</td>
             <td class="invisibleButton" ng-click="editMeetingPart='startTime'">
               <i class="fa fa-edit"></i>
             </td>
@@ -608,7 +594,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </td>
           </tr>
           <tr>
-            <td>Duration:</td>
+            <td ng-click="editMeetingPart='duration'">Duration:</td>
             <td class="invisibleButton" ng-click="editMeetingPart='duration'">
               <i class="fa fa-edit"></i>
             </td>
@@ -625,7 +611,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </td>
           </tr>
           <tr>
-            <td>Reminder:</td>
+            <td ng-click="editMeetingPart='reminderTime'">Reminder:</td>
             <td class="invisibleButton" ng-click="editMeetingPart='reminderTime'">
               <i class="fa fa-edit" ng-click="editMeetingPart='reminderTime'"></i>
             </td>
@@ -654,7 +640,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </td>
           </tr>
           <tr>
-            <td>Agenda Layout:</td>
+            <td ng-click="editMeetingPart='notifyLayout'">Agenda Layout:</td>
             <td class="invisibleButton" ng-click="editMeetingPart='notifyLayout'">
               <i class="fa fa-edit"></i>
             </td>
@@ -669,7 +655,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </td>
           </tr>
           <tr>
-            <td>Minutes Layout:</td>
+            <td ng-click="editMeetingPart='defaultLayout'">Minutes Layout:</td>
             <td class="invisibleButton" ng-click="editMeetingPart='defaultLayout'">
               <i class="fa fa-edit"></i>
             </td>
@@ -684,7 +670,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </td>
           </tr>
           <tr>
-            <td>Target Role:</td>
+            <td ng-click="editMeetingPart='targetRole'">Target Role:</td>
             <td class="invisibleButton" ng-click="editMeetingPart='targetRole'">
               <i class="fa fa-edit"></i>
             </td>
@@ -706,7 +692,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </td>
           </tr>
           <tr>
-            <td>Participants:</td>
+            <td ng-click="editMeetingPart='participants'">Participants:</td>
             <td class="invisibleButton" ng-click="editMeetingPart='participants'">
               <i class="fa fa-edit"></i>
             </td>
@@ -749,7 +735,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </td>
           </tr>
           <tr>
-            <td>Description:</td>
+            <td ng-click="editMeetingDesc=true">Description:</td>
             <td class="invisibleButton" ng-click="editMeetingDesc=true">
               <i class="fa fa-edit"></i>
             </td>
@@ -1041,25 +1027,31 @@ yyy
 <div ng-show="displayMode=='Items'">
 
 <table width="100%"><tr>
-<td style="width:150px;border-right:2px black solid;vertical-align: top;">
+<td style="width:150px;border-right:4px black solid;vertical-align: top;">
 <div ng-repeat="item in getAgendaItems()">
     <div ng-class="item.position==selectedItem.position?'agendaTitleSelected':'agendaTitle'" ng-click="setSelectedItem(item)">
-        <span ng-show="item.proposed" >--</span>
-        <span ng-show="!item.proposed && item.isSpacer" >--.</span>
+        <span ng-show="item.proposed || item.isSpacer" >--.</span>
         <span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}.</span>
         {{item.subject}} 
     </div>
 </div>
+<%if (isLoggedIn) { %>
+    <hr/>
+    <div style="margin:20px;" ng-show="meeting.state<3">
+        <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">+ New</button>
+    </div>
+
+<% } %>
 </td>
-<td>
+<td ng-repeat="item in [selectedItem]" style="vertical-align: top;">
     <table class="table">
     <col width="150">
     <tr>
-      <td>Number:</td>
+      <td></td>
       <td>
-          <span ng-show="!selectedItem.isSpacer">{{selectedItem.number}}</span>
-          <span ng-show="selectedItem.isSpacer">BREAK TIME</span>
-          &nbsp;
+          <button ng-click="toggleSpacer(selectedItem)" class="btn btn-primary btn-raised">
+              <i class="fa fa-check-circle" ng-show="selectedItem.isSpacer"></i> 
+              <i class="fa fa-circle-o" ng-hide="selectedItem.isSpacer"></i> Break Time</button>
           <button ng-click="moveItem(selectedItem,-1)" class="btn btn-primary btn-raised">
               <i class="fa fa-arrow-up"></i>Move Up</a></li></button>
           <button ng-click="moveItem(selectedItem,1)" class="btn btn-primary btn-raised">
@@ -1070,11 +1062,11 @@ yyy
       <td>Subject:</td>
       <td>{{selectedItem.subject}}</td>
     </tr>
-    <tr  ng-click="openAgenda(selectedItem)">
+    <tr  ng-click="openAgenda(selectedItem)" ng-hide="selectedItem.isSpacer">
       <td>Description:</td>
       <td><div ng-bind-html="selectedItem.desc"></div></td>
     </tr>
-    <tr  ng-click="openAgenda(selectedItem)">
+    <tr  ng-click="openAgenda(selectedItem)" ng-hide="selectedItem.isSpacer">
       <td>Presenter:</td>
       <td><div ng-repeat="pres in selectedItem.presenterList">{{pres.name}}</div></td>
     </tr>
@@ -1086,7 +1078,7 @@ yyy
       <td>Actual:</td>
       <td>{{selectedItem.timerTotal|minutes}}</td>
     </tr>
-    <tr ng-click="openAttachTopics(selectedItem)">
+    <tr ng-click="openAttachTopics(selectedItem)" ng-hide="selectedItem.isSpacer">
       <td>Topic:</td>
       <td>
           <span ng-repeat="topic in itemTopics(selectedItem)" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
@@ -1095,13 +1087,13 @@ yyy
           </span>
       </td>
     </tr>
-    <tr>
-      <td>Attachments:</td>
-              <td><span ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
+    <tr ng-hide="selectedItem.isSpacer">
+      <td ng-click="openAttachDocument(selectedItem)">Attachments:</td>
+              <td><div ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
                   <span class="dropdown" title="Access this attachment">
                       <button class="attachDocButton" id="menu1" data-toggle="dropdown">
                       <img src="<%=ar.retPath%>assets/images/iconFile.png"> 
-                      {{getFullDoc(docid).name |limitTo:15}}</button>
+                      </button>
                       <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
                         <li role="presentation" style="background-color:lightgrey">
                             <a role="menuitem" 
@@ -1124,7 +1116,8 @@ yyy
                             ng-click="unattachDocFromItem(selectedItem, docid)">Un-attach</a></li>
                       </ul>
                   </span>
-              </span>
+                  {{getFullDoc(docid).name}}
+              </div>
 <%if (isLoggedIn) { %>
               <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument(selectedItem)"
                   title="Attach a document">
@@ -1132,13 +1125,14 @@ yyy
 <% } %>
            </td>
         </tr>
-    <tr>
-      <td>Action Items:</td>
-      <td><span ng-repeat="goal in itemGoals(selectedItem)">
-          <button class="attachDocButton" id="menu1" data-toggle="dropdown">
-          {{goal.synopsis}}
-          </button>
-          </span>
+    <tr ng-hide="selectedItem.isSpacer">
+      <td ng-click="openAttachAction(selectedItem)">Action Items:</td>
+      <td><div ng-repeat="goal in itemGoals(selectedItem)">
+          <div>
+            <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif">
+            {{goal.synopsis}}
+          </div>
+          </div>
 <%if (isLoggedIn) { %>
               <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachAction(selectedItem)"
                   title="Attach an action item">
@@ -1146,342 +1140,56 @@ yyy
 <% } %>
       </td>
     </tr>
-    <tr ng-click="toggleReady(selectedItem)">
+    <tr ng-click="toggleReady(selectedItem)"  ng-hide="selectedItem.isSpacer">
       <td>Ready:</td>
       <td>
         <span ng-hide="selectedItem.readyToGo" >
             <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
                  title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
                  style="width:24px;height=24px">
+                 Not ready yet.
         </span>
         <span ng-show="selectedItem.readyToGo"  >
             <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
                  title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
                  style="width:24px;height=24px">
+                 Ready to go.
         </span>
       </td>
     </tr>
-    </table>
-               
-
-</td>
-</tr></table>
-
-
-
-<div ng-repeat="item in getAgendaItems()">
-    <div class="agendaItemBlank" ng-show="item.isSpacer">
-      <div style="padding:5px;">
-        <div style="width:100%">
-                <span class="blankTitle" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
-                    {{item.subject}} </span>  &nbsp;
-<%if (isLoggedIn) { %>
-                <span class="dropdown">
-                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
-                        data-toggle="dropdown"> <span class="caret"></span> </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="openAgenda(item)">
-                          <i class="fa fa-cogs"></i>
-                          Edit Agenda Item</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i> Move Up</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i> Move Down</a></li>
-                    </ul>
-                </span>
-<% } %>
-                <span>
-                    <i>({{item.duration}} minutes) {{item.schedule | date: 'HH:mm'}}
-                      - {{item.scheduleEnd | date: 'HH:mm'}} </i>
-                </span>
-        </div>
-      </div>
-    </div>
-    <div class="agendaItemFull"  ng-hide="item.isSpacer">
-    <table style="width:100%">
-
-                          <!--  AGENDA HEADER -->
-      <tr>
-        <td style="width:100%">
-          <div style="padding:5px;">
-            <div style="width:100%">
-                <span ng-class="item.position==selectedItem.position?'agendaTitleSelected':'agendaTitle'" 
-                      ng-click="showItemMap[item.id]=!showItemMap[item.id]">
-                    <span ng-show="item.proposed" >--</span>
-                    <span ng-hide="item.proposed" >{{item.number}}.</span>
-                    
-                    {{item.subject}} </span>  &nbsp;
-<%if (isLoggedIn) { %>
-                <span class="dropdown">
-                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
-                        data-toggle="dropdown"> <span class="caret"></span> </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="showItemMap[item.id]=!showItemMap[item.id]">
-                          <i class="fa fa-sort"></i>
-                          <span>Open / Close</span>
-                          </a></li>
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="openAgenda(item)">
-                          <i class="fa fa-edit"></i>
-                          Edit Agenda Item</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="openAttachDocument(item)"><i class="fa fa-book"></i>
-                             Docs Add/Remove</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="openAttachAction(item)"><i class="fa fa-flag"></i>
-                             Action Items Add/Remove</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="openAttachTopics(item)"><i class="fa fa-lightbulb-o"></i>
-                              <span ng-hide="item.topicLink">Set</span>
-                              <span ng-show="item.topicLink">Change</span>
-                              Discussion Topic</a></li>
-                      <li role="presentation">
-                          <a role="menuitem" ng-click="toggleReady(item)"><i class="fa fa-thumbs-o-up"></i>
-                             Toggle Ready Flag</a></li>
-                      <li role="presentation" >
-                          <a role="menuitem" ng-click="toggleProposed(item)"><i class="fa fa-thumbs-o-up"></i>
-                             Toggle Accepted/Proposed</a></li>
-                      <li role="presentation" ng-hide="item.proposed">
-                          <a role="menuitem" ng-click="moveItem(item,-1)"><i class="fa fa-arrow-up"></i>
-                             Move Up</a></li>
-                      <li role="presentation" ng-hide="item.proposed">
-                          <a role="menuitem" ng-click="moveItem(item,1)"><i class="fa fa-arrow-down"></i>
-                             Move Down</a></li>
-                       <li role="presentation">
-                          <a role="menuitem" ng-click="moveItemToBacklog(item)"><i class="fa fa-trash"></i>
-                              Remove Item</a></li>
-
-                   </ul>
-                </span>
-                <span ng-show="item.proposed" style="background-color:yellow;padding:3px;cursor:pointer" ng-click="toggleProposed(item)">Proposed</span>
-                <span ng-show="meeting.state==2">
-                    <span ng-hide="item.timerRunning" style="padding:5px">
-                        <button ng-click="agendaStartButton(item)"><i class="fa fa-clock-o"></i> Start</button>
-                        Elapsed: {{item.timerTotal| minutes}}
-                        Remaining: {{item.duration - item.timerTotal| minutes}}
-                    </span>
-                    <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
-                        <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
-                        Elapsed: {{item.timerTotal| minutes}}
-                        Remaining: {{item.duration - item.timerTotal| minutes}}
-                    </span>
-                </span>
-                <span ng-show="meeting.state>2">
-                    <span ng-show="item.timerTotal>0" style="padding:5px">
-                        Duration: {{item.timerTotal| minutes}}
-                    </span>
-                </span>
-                <span style="float:right" ng-hide="item.readyToGo || isCompleted() || item.proposed" >
-                    <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
-                         ng-click="toggleReady(item)"
-                         title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
-                         style="width:24px;height=24px;float:right">
-                </span>
-                <span style="float:right" ng-show="item.readyToGo && !isCompleted() && !item.proposed"  >
-                    <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
-                         ng-click="toggleReady(item)"
-                         title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
-                         style="width:24px;height=24px">
-                </span>
-                <span style="float:right;margin-right:10px" ng-show="!isCompleted() && !item.proposed"  ng-click="moveItem(item,-1)" title="Move agenda item up if possible">
-                    <i class="fa fa-arrow-up"></i>
-                </span>
-                <span style="float:right;margin-right:10px" ng-show="!isCompleted() && !item.proposed"  ng-click="moveItem(item,1)" title="Move agenda item down if possible">
-                    <i class="fa fa-arrow-down"></i>
-                </span>
-                <span style="float:right;margin-right:10px" ng-show="item.proposed"  ng-click="toggleProposed(item)" title="Accept this proposed agenda item">
-                   ACCEPT</i>
-                </span>
-<% } %>
-            </div>
-            <div>
-                <i ng-click="openAgenda(item)">
-                <i class="fa fa-edit invisibleButton"></i> {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
-            </div>
-          </div>
-        </td> 
-      </tr>
-
-                          <!--  AGENDA BODY -->
-      <tr ng-show="showItemMap[item.id]">
-        <td style="width:100%" ng-click="openAgenda(item, 'Description')">
-           <button ng-show="item.lockUser.uid && item.lockUser.uid.length>0" class="btn btn-sm" style="background-color:lightyellow;margin-left:20px;">
-               {{item.lockUser.name}} is editing.
-           </button>
-           <div class="leafContent">
-             <div ng-bind-html="item.desc"></div>
-           </div>
-        </td>
-      </tr>
-
-                          <!--  AGENDA ATTACHMENTS -->
-      <tr ng-show="showItemMap[item.id] && itemTopics(item).length>0" >
+      <tr ng-hide="selectedItem.isSpacer">
+        <td style="width:50px;vertical-align:top;padding:15px;">Notes/Minutes:</td>
         <td>
-           <div style="margin:10px;">
-              <b>Discussion Topic: </b>
-              <span ng-repeat="topic in itemTopics(item)" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                   ng-click="navigateToTopic(item.topicLink)">
-                    <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
-              </span>
-           </div>
+          <div class="comment-inner" ng-bind-html="selectedItem.minutes"></div>
         </td>
       </tr>
-      <tr ng-show="showItemMap[item.id]">
-        <td>
-           <table style="margin:10px;"><tr>
-              <td><b>Attachments: </b></td>
-              <td><span ng-repeat="docid in item.docList track by $index" style="vertical-align: top">
-                  <span class="dropdown" title="Access this attachment">
-                      <button class="attachDocButton" id="menu1" data-toggle="dropdown">
-                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> 
-                      {{getFullDoc(docid).name |limitTo:15}}</button>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
-                        <li role="presentation" style="background-color:lightgrey">
-                            <a role="menuitem" 
-                            title="This is the full name of the document"
-                            ng-click="navigateToDoc(docid)">{{getFullDoc(docid).name}}</a></li>
-                        <li role="presentation"><a role="menuitem" 
-                            title="Use DRAFT to set the meeting without any notifications going out"
-                            ng-click="navigateToDoc(docid)">Access Document</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use PLAN to allow everyone to get prepared for the meeting"
-                            ng-click="downloadDocument(docid)">Download File</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="navigateToDocDetails(docid).htm">Document Details</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="sendDocByEmail(docid)">Send by Email</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="unattachDocFromItem(item, docid)">Un-attach</a></li>
-                      </ul>
-                  </span>
-              </span>
-<%if (isLoggedIn) { %>
-              <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument(item)"
-                  title="Attach a document">
-                  ADD </button>
-<% } %>
-           </td></tr></table>
-        </td>
-      </tr>
-
-
-                          <!--  AGENDA Action ITEMS -->
-      <tr ng-show="showItemMap[item.id]">
-        <td style="width:100%">
-           <div style="height:15px"></div>
-           <table class="table">
-           <tr>
-              <th></th>
-              <th></th>
-              <th>Synopsis</th>
-              <th>Assignee</th>
-              <th>Due</th>
-              <th title="Red-Yellow-Green assessment of status">R-Y-G</th>
-              <th>Status</th>
-           </tr>
-           <tr ng-repeat="goal in itemGoals(item)" style="margin-left:30px;">
-              <td>
-                  <span class="dropdown">
-                    <button class="dropdown-toggle specCaretBtn" type="button"  d="menu"
-                        data-toggle="dropdown"> <span class="caret"></span> </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
-                      <li role="presentation"><a role="menuitem"
-                          ng-click="openModalActionItem(item,goal)">Edit Quick</a></li>
-                      <li role="presentation"><a role="menuitem"
-                          href="task{{goal.id}}.htm">Edit Task</a></li>
-                      <li role="presentation" class="divider"></li>
-                      <li role="presentation"><a role="menuitem"
-                          ng-click="removeGoalFromItem(item, goal)">Remove Action Item</a></li>
-                    </ul>
-                  </span>
-              </td>
-              <td style="width:20px;">
-              <a href="task{{goal.id}}.htm" class="leafContent"   >
-                <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif">
-              </a>
-              </td>
-              <td style="max-width:300px;" ng-click="openModalActionItem(item,goal,'details')">
-              <b>{{goal.synopsis}}</b> ~ {{goal.description}}
-              </td>
-              <td ng-click="openModalActionItem(item,goal,'assignee')">
-              <span ng-repeat="person in goal.assignTo"> {{person.name}}<br/></span>
-              </td>
-              <td ng-click="openModalActionItem(item,goal)" style="width:100px;">
-              <span ng-show="goal.duedate>=0">{{goal.duedate|date}} </span>
-              </td>
-              <td style="width:120px;" title="Red-Yellow-Green assessment of status">
-                  <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"
-                       title="Red: In trouble" ng-click="changeGoalState(goal, 'bad')">
-                  <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="goal.prospects=='bad'"
-                       title="Red: In trouble" >
-                  <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="goal.prospects=='ok'"
-                       title="Yellow: Warning" ng-click="changeGoalState(goal, 'ok')">
-                  <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="goal.prospects=='ok'"
-                       title="Yellow: Warning" >
-                  <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="goal.prospects=='good'"
-                       title="Green: Good shape" ng-click="changeGoalState(goal, 'good')">
-                  <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="goal.prospects=='good'"
-                       title="Green: Good shape">
-              </td>
-              <td style="max-width:300px;" ng-click="openModalActionItem(item,goal)">
-                {{goal.status}}
-              </td>
-           </tr>
-           </table>
-        </td>
-      </tr>
-
-      </table>
-      </div>
-
-
-
-                          <!--  AGENDA comments -->
-      <table ng-show="showItemMap[item.id] && !item.isSpacer" >
-      <tr>
-        <td style="width:50px;vertical-align:top;padding:15px;"></td>
-        <td>
-          <div class="comment-outer" ng-show="item.minutes">
-            <div>Minutes</div>
-            <div class="comment-inner" ng-bind-html="item.minutes"></div>
-          </div>
-        </td>
-      </tr>
-      <tr ng-repeat="cmt in item.comments">
+      <tr ng-repeat="cmt in selectedItem.comments"  ng-hide="selectedItem.isSpacer">
 
           <%@ include file="/spring/jsp/CommentView.jsp"%>
 
       </tr>
 <%if (isLoggedIn) { %>
-      <tr>
+      <tr  ng-hide="selectedItem.isSpacer">
         <td></td>
         <td>
         <div style="margin:20px;">
-            <button ng-click="openCommentCreator(item, 1)" class="btn btn-default btn-raised">
+            <button ng-click="openCommentCreator(selectedItem, 1)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-comments-o"></i> Comment</button>
-            <button ng-click="openCommentCreator(item, 2)" class="btn btn-default btn-raised">
+            <button ng-click="openCommentCreator(selectedItem, 2)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-star-o"></i> Proposal</button>
-            <button ng-click="openCommentCreator(item, 3)" class="btn btn-default btn-raised">
+            <button ng-click="openCommentCreator(selectedItem, 3)" class="btn btn-default btn-raised">
                 Create New <i class="fa fa-question-circle"></i> Round</button>
         </div>
         </td>
       </tr>
 <% } %>
     </table>
-    </div>
+</td>
+</tr></table>
 
-<%if (isLoggedIn) { %>
-    <hr/>
-    <div style="margin:20px;" ng-show="meeting.state<3">
-        <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">Propose New Agenda Item</button>
-    </div>
 
-<% } %>
+
+
 
 
 </div>

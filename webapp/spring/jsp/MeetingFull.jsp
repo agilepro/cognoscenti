@@ -328,7 +328,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
               ng-click="openEditor()">Edit Meeting Notes</a></li>
           <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
-              href="meetingHtml.htm?id={{meeting.id}}">Show Flat Display</a></li>
+              href="meetingHtml.htm?id={{meeting.id}}">Show NEW Meeting Display</a></li>
           <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
               href="MeetMerge.htm?id={{meeting.id}}&tem=FullDetail.chtml">Show Meeting Layouts</a></li>

@@ -19,6 +19,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.backlogId = embeddedData.backlogId;
     $scope.timeFactor = "Minutes";
     $scope.factoredTime = 0;
+    $scope.displayMode='Agenda';
     
     $scope.userZone = embeddedData.userZone;
     $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -163,6 +164,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     }
     $scope.itemTopics = function(item) {
+        if (!item) {
+            return false;
+        }
         return $scope.allTopics.filter( function(oneTopic) {
             return item.topicLink == oneTopic.universalid;
         });
@@ -170,18 +174,20 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
     $scope.itemGoals = function(item) {
         var res = [];
-        for (var j=0; j<item.actionItems.length; j++) {
-            var aiId = item.actionItems[j];
-            for(var i=0; i<$scope.allGoals.length; i++) {
-                var oneGoal = $scope.allGoals[i];
-                if (oneGoal.universalid == aiId) {
-                    res.push(oneGoal);
+        if (item) {
+            for (var j=0; j<item.actionItems.length; j++) {
+                var aiId = item.actionItems[j];
+                for(var i=0; i<$scope.allGoals.length; i++) {
+                    var oneGoal = $scope.allGoals[i];
+                    if (oneGoal.universalid == aiId) {
+                        res.push(oneGoal);
+                    }
                 }
             }
+            res.sort( function(a,b) {
+                return a.duedate-b.duedate;
+            });
         }
-        res.sort( function(a,b) {
-            return a.duedate-b.duedate;
-        });
         return res;
     }
     $scope.filterGoals = function(actionItemFilter) {
@@ -356,8 +362,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
 
 
-    $scope.savePendingEdits = function() {
-        var parts = [];
+    $scope.savePendingEdits = function(parts) {
+        if (!parts) {
+            parts = [];
+        }
         if ($scope.editMeetingDesc) {
             parts.push('meetingInfo');
         }
@@ -380,6 +388,30 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.putGetMeetingInfo(saveRecord);
     }
     
+    $scope.setItemTime = function(item, op) {
+        var nowTime = new Date().getTime() + $scope.timerCorrection;
+        if (item.timerRunning) {
+            item.timerElapsed = nowTime - item.timerStart;
+            item.timerStart = nowTime;
+        }
+        if ("incr"==op) {
+            item.timerElapsed = item.timerElapsed+60000;
+        }
+        else if ("decr"==op) {
+            item.timerElapsed = item.timerElapsed-60000;
+        }
+        else if ("floor"==op) {
+            item.timerElapsed = Math.floor(item.timerElapsed/60000)*60000;
+        }
+        else if ("ceil"==op) {
+            item.timerElapsed = Math.ceil(item.timerElapsed/60000)*60000;
+        }
+        else {
+            return; //skip the save
+        }
+        console.log("elapsed time changed: ",item);
+        $scope.saveAgendaItem(item);
+    }
     $scope.calcTimes = function() {
         var totalTotal = 0;
         //get the time that it is on the server
@@ -398,6 +430,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         $scope.meeting.timerTotal = totalTotal;
     }
+    $scope.timerStyleComplete = function(item) {
+        if (!item.timerRunning) {
+            return {};
+        }
+        var style = {"background-color":"yellow", "color":"black"};
+        if (item.duration - item.timerTotal<0) {
+            style["background-color"] = "red";
+        }
+        return style;
+    }
+    
+    //don't know if we need this one any more....
     $scope.timerStyle = function(item) {
         var style = {"background-color":"yellow", "color":"black", "padding":"5px"};
         if (item.timerRemaining<0) {
@@ -418,11 +462,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             //nothing changed, so ignore this
             return;
         }
-        $scope.savePendingEdits();
         $scope.meeting.state = newState;
+        $scope.savePendingEdits(['state']);
         $scope.stopAgendaRunning();
-        $scope.savePartialMeeting(['state']);
     };
+    $scope.toggleSpacer = function(item) {
+        item.isSpacer = !item.isSpacer;
+        $scope.saveAgendaItemParts(item, ['isSpacer']);
+    };
+
     $scope.agendaStartButton = function(agendaItem) {
         startAgendaRunning(agendaItem);
     }
@@ -559,8 +607,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             isLinkToComment = false;
         }
         $scope.calcAttended();
-        if (!$scope.selectedItem && data.agenda && data.agenda.length>0) {
-            $scope.selectedItem = data.agenda[0];
+        if (!$scope.selectedItem) {
+            if (data.agenda && data.agenda.length>0) {
+                $scope.selectedItem = data.agenda[0];
+            }
+        }
+        else {
+            data.agenda.forEach( function(item) {
+                if (item.position == $scope.selectedItem.position) {
+                    $scope.selectedItem = item;
+                }
+            });
         }
     }
     function determineRoleEqualsParticipants() {
@@ -1212,11 +1269,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
     $scope.findComment = function(item, timeStamp) {
         var foundComment = null;
-        item.comments.forEach( function(item) {
-            if ( item.time == timeStamp ) {
-                foundComment = item;
-            }
-        });
+        if (item) {
+            item.comments.forEach( function(xitem) {
+                if ( xitem.time == timeStamp ) {
+                    foundComment = xitem;
+                }
+            });
+        }
+        else {
+            console.log("Null in findComment");
+        }
         return foundComment;
     }
     $scope.currentTime = (new Date()).getTime();
