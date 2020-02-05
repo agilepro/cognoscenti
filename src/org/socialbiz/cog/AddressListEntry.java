@@ -182,8 +182,8 @@ public class AddressListEntry implements UserRef
      * are any other consistency constraints we can set that here.
      */
     public boolean isWellFormed() {
-    	String email = getEmail();
-    	return (email!=null && email.length()>0);
+        String email = getEmail();
+        return (email!=null && email.length()>0);
     }
 
 

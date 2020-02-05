@@ -83,9 +83,9 @@ public class HistoricActions {
 
     private void siteResolutionEmail(AddressListEntry owner, SiteRequest siteRequest) throws Exception {
         if (!owner.isWellFormed()) {
-        	//no email is sent if there is no email address of the owner, or any other
-        	//problem with the owner user profile.
-        	return;
+            //no email is sent if there is no email address of the owner, or any other
+            //problem with the owner user profile.
+            return;
         }
         OptOutIndividualRequest ooir = new OptOutIndividualRequest(owner);
 

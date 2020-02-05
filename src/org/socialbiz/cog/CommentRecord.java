@@ -442,62 +442,62 @@ public class CommentRecord extends DOMFace {
 
 
     public void commentEmailRecord(AuthRequest ar, NGWorkspace ngw, EmailContext noteOrMeet, MailFile mailFile) throws Exception {
-    	try {
-	        List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
-	        boolean excludeSelf = getAttributeBool("excludeSelf");
+        try {
+            List<OptOutAddr> sendTo = new ArrayList<OptOutAddr>();
+            boolean excludeSelf = getAttributeBool("excludeSelf");
 
-	        List<AddressListEntry> notifyList = getNotifyRole().getDirectPlayers();
-	        noteOrMeet.extendNotifyList(notifyList);  //so it can remember it
-	        noteOrMeet.appendTargetEmails(sendTo, ngw);
+            List<AddressListEntry> notifyList = getNotifyRole().getDirectPlayers();
+            noteOrMeet.extendNotifyList(notifyList);  //so it can remember it
+            noteOrMeet.appendTargetEmails(sendTo, ngw);
 
-	        //add the commenter in case missing from the target role
-	        AddressListEntry commenter = getUser();
-	        if (!excludeSelf) {
-	            OptOutAddr.appendOneDirectUser(commenter, sendTo);
-	        }
-	        OptOutAddr.appendUsers(notifyList, sendTo); //in case the container does not remember it
+            //add the commenter in case missing from the target role
+            AddressListEntry commenter = getUser();
+            if (!excludeSelf) {
+                OptOutAddr.appendOneDirectUser(commenter, sendTo);
+            }
+            OptOutAddr.appendUsers(notifyList, sendTo); //in case the container does not remember it
 
-	        UserProfile commenterProfile = commenter.getUserProfile();
-	        if (commenterProfile==null) {
-	            System.out.println("DATA PROBLEM: comment "+this.getTime()+" came from a person without a profile ("+getUser().getEmail()+") ignoring.");
-	            setEmailSent(true);
-	            setCloseEmailSent(true);
-	            return;
-	        }
+            UserProfile commenterProfile = commenter.getUserProfile();
+            if (commenterProfile==null) {
+                System.out.println("DATA PROBLEM: comment "+this.getTime()+" came from a person without a profile ("+getUser().getEmail()+") ignoring.");
+                setEmailSent(true);
+                setCloseEmailSent(true);
+                return;
+            }
 
-	        for (OptOutAddr ooa : sendTo) {
-	            if (this.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
-	                UserProfile toProfile = UserManager.getStaticUserManager().lookupUserByAnyId(ooa.getEmail());
-	                if (toProfile!=null) {
-	                    ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
-	                }
-	            }
-	            if (excludeSelf) {
-	                if (commenter.equals(ooa.assignee)) {
-	                    //skip sending email if the user said to exclude themselves
-	                    continue;
-	                }
-	            }
+            for (OptOutAddr ooa : sendTo) {
+                if (this.getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE) {
+                    UserProfile toProfile = UserManager.getStaticUserManager().lookupUserByAnyId(ooa.getEmail());
+                    if (toProfile!=null) {
+                        ar.getCogInstance().getUserCacheMgr().needRecalc(toProfile);
+                    }
+                }
+                if (excludeSelf) {
+                    if (commenter.equals(ooa.assignee)) {
+                        //skip sending email if the user said to exclude themselves
+                        continue;
+                    }
+                }
 
-	            constructEmailRecordOneUser(ar, ngw, noteOrMeet, ooa, commenterProfile, mailFile);
-	        }
+                constructEmailRecordOneUser(ar, ngw, noteOrMeet, ooa, commenterProfile, mailFile);
+            }
 
-	        if (getState()==CommentRecord.COMMENT_STATE_CLOSED) {
-	            //if sending the close email, also mark the other email as sent
-	            setCloseEmailSent(true);
-	            setEmailSent(true);
-	        }
-	        else {
-	            setEmailSent(true);
-	        }
-	        setPostTime(ar.nowTime);
-	        noteOrMeet.markTimestamp(ar.nowTime);
-    	}
-    	catch (Exception e) {
-    		throw new Exception("Unable to compose email for comment #"+this.getTime()
-    				+" in "+noteOrMeet.selfDescription()
-    				+" in workspace "+ngw.getFullName(), e);
-    	}
+            if (getState()==CommentRecord.COMMENT_STATE_CLOSED) {
+                //if sending the close email, also mark the other email as sent
+                setCloseEmailSent(true);
+                setEmailSent(true);
+            }
+            else {
+                setEmailSent(true);
+            }
+            setPostTime(ar.nowTime);
+            noteOrMeet.markTimestamp(ar.nowTime);
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to compose email for comment #"+this.getTime()
+                    +" in "+noteOrMeet.selfDescription()
+                    +" in workspace "+ngw.getFullName(), e);
+        }
     }
 
 

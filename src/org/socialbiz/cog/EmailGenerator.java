@@ -238,7 +238,7 @@ public class EmailGenerator extends DOMFace {
         for (String address : getAlsoTo()) {
             AddressListEntry enteredAddress = AddressListEntry.parseCombinedAddress(address);
             if (enteredAddress.isWellFormed()) {
-	            OptOutAddr.appendOneUser(new OptOutDirectAddress(enteredAddress), sendTo);
+                OptOutAddr.appendOneUser(new OptOutDirectAddress(enteredAddress), sendTo);
             }
         }
         TopicRecord noteRec = ngp.getNoteByUidOrNull(getNoteId());
@@ -369,12 +369,12 @@ public class EmailGenerator extends DOMFace {
         if (meetId!=null && meetId.length()>0) {
             meeting = ngp.findMeetingOrNull(meetId);
             if (meeting!=null) {
-	            for (AgendaItem ai : meeting.getSortedAgendaItems()) {
-	                for (String docId : ai.getDocList()) {
-	                    AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(docId);
-	                    attachList.add(aRec);
-	                }
-	            }
+                for (AgendaItem ai : meeting.getSortedAgendaItems()) {
+                    for (String docId : ai.getDocList()) {
+                        AttachmentRecord aRec = ngp.findAttachmentByUidOrNull(docId);
+                        attachList.add(aRec);
+                    }
+                }
 
                 String meetingLayout = this.getScalar("meetingLayout");
                 File meetingLayoutFile = MeetingRecord.findMeetingLayout(ar,  ngp,  meetingLayout);
@@ -425,16 +425,16 @@ public class EmailGenerator extends DOMFace {
         UserProfile ownerProfile = UserManager.getStaticUserManager().lookupUserByAnyId(getOwner());
         if (ownerProfile!=null) {
             data.put("sender",  ownerProfile.getJSON());
-		}
-		else {
-			System.out.println("No Sender info set.  AuthRequest user ("+ar.getBestUserId()+") does not have a user profile for the email message");
-		}
+        }
+        else {
+            System.out.println("No Sender info set.  AuthRequest user ("+ar.getBestUserId()+") does not have a user profile for the email message");
+        }
 
         String workspaceBaseUrl = ar.baseURL + "t/" + ngp.getSiteKey() + "/" + ngp.getKey() + "/";
         data.put("workspaceName", ngp.getFullName());
         data.put("workspaceUrl", workspaceBaseUrl);
 
-		ar.ngp = ngp;
+        ar.ngp = ngp;
         data.put("introHtml", WikiConverterForWYSIWYG.makeHtmlString(ar, intro));
         JSONArray attachArray = new JSONArray();
         for (AttachmentRecord att : selAtt) {

@@ -1713,8 +1713,8 @@ public abstract class NGPage extends ContainerCommon {
         workspaceConfigInfo.put("frozen", isFrozen());
         workspaceConfigInfo.put("deleted", isDeleted());
         if (isDeleted()) {
-        	workspaceConfigInfo.put("deleteDate", getDeleteDate());
-        	workspaceConfigInfo.put("deleteUser", getDeleteUser());
+            workspaceConfigInfo.put("deleteDate", getDeleteDate());
+            workspaceConfigInfo.put("deleteUser", getDeleteUser());
         }
         workspaceConfigInfo.put("accessState", getAccessStateStr());
 

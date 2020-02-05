@@ -216,7 +216,7 @@ public class SiteMailGenerator extends DOMFace {
         //data.put("workspaceUrl", workspaceBaseUrl);
         //data.put("site", ngb.getJSON());
 
-		ar.ngp = ngb;
+        ar.ngp = ngb;
 
         return data;
     }

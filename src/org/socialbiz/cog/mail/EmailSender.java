@@ -199,12 +199,12 @@ public class EmailSender extends TimerTask {
         runCount++;
         totalTime += duration;
         if (runCount>119) {
-        	//this should be about 1 per hour
-        	long avg = totalTime / runCount;
-        	System.out.println("EmailSender: completed 120 scans.  Average processing time "+avg+"ms at "
-        	    +SectionUtil.getNicePrintDate(System.currentTimeMillis()));
-        	runCount = 0;
-        	totalTime = 0;
+            //this should be about 1 per hour
+            long avg = totalTime / runCount;
+            System.out.println("EmailSender: completed 120 scans.  Average processing time "+avg+"ms at "
+                +SectionUtil.getNicePrintDate(System.currentTimeMillis()));
+            runCount = 0;
+            totalTime = 0;
         }
     }
 

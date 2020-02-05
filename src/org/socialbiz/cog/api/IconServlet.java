@@ -44,13 +44,13 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
     
     public static void copyFileIfExists(File source, File dest) throws Exception {
         if (source.exists()) {
-        	StreamHelper.copyFileToFile(source, dest);
+            StreamHelper.copyFileToFile(source, dest);
         }
     }
     public static void moveFileIfExists(File source, File dest) throws Exception {
         if (source.exists()) {
-        	StreamHelper.copyFileToFile(source, dest);
-        	source.delete();
+            StreamHelper.copyFileToFile(source, dest);
+            source.delete();
         }
     }
     
@@ -72,10 +72,10 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
                 imgFile = new File(userFolder, fileName.toLowerCase());
             }
             if (!imgFile.exists()) {
-            	moveFileIfExists(new File(defaultFolder, fileName), imgFile);
+                moveFileIfExists(new File(defaultFolder, fileName), imgFile);
             }
             if (!imgFile.exists()) {
-            	//the path might be an email address, or a user key.   If not an email address, then look up user profile
+                //the path might be an email address, or a user key.   If not an email address, then look up user profile
                 int atPos = fileName.indexOf("@");
                 if (atPos<0 && fileName.length()>12) {
                     String userKey = fileName.substring(0,9).toUpperCase();

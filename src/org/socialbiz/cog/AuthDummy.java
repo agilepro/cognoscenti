@@ -54,7 +54,7 @@ public class AuthDummy extends AuthRequest
 
 
     public static void clearStaticVariables() {
-    	theDummy = null;
+        theDummy = null;
     }
 
     public static void initializeDummyRequest(Cognoscenti cog) throws Exception {

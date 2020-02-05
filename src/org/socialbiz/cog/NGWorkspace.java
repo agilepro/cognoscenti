@@ -559,7 +559,7 @@ public class NGWorkspace extends NGPage {
             }
         }
         for (TaskArea ta : this.getTaskAreas()) {
-        	ta.replaceAssignee(sourceUser, destUser);
+            ta.replaceAssignee(sourceUser, destUser);
         }
         return count;
     }
@@ -601,7 +601,7 @@ public class NGWorkspace extends NGPage {
         return null;
     }
     public TaskArea findTaskAreaOrFail(String id) throws Exception {
-    	TaskArea ta = findTaskAreaOrNull(id);
+        TaskArea ta = findTaskAreaOrNull(id);
         if (ta!=null) {
             return ta;
         }

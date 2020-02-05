@@ -52,9 +52,9 @@ public class OptOutAddr {
     public boolean fromRealUser = false;
 
     public OptOutAddr(AddressListEntry _assignee) {
-    	if (!_assignee.isWellFormed()) {
-    		throw new RuntimeException("Can't create an OptOutAddr object for a user without an email address: "+_assignee.getUniversalId());
-    	}
+        if (!_assignee.isWellFormed()) {
+            throw new RuntimeException("Can't create an OptOutAddr object for a user without an email address: "+_assignee.getUniversalId());
+        }
         assignee = _assignee;
         UserProfile up = assignee.getUserProfile();
         if (up!=null) {
@@ -202,25 +202,25 @@ public class OptOutAddr {
      */
     public static void appendUsersFromRole(NGWorkspace ngc, String roleName,
             List<OptOutAddr> collector) throws Exception {
-		try {
-			List<AddressListEntry> players = ngc.getRoleOrFail(roleName)
-					.getExpandedPlayers(ngc);
-			for (AddressListEntry ale : players) {
-				if (!ale.isWellFormed()) {
-					//do not include users who have partial user profiles and might
-					//cause problems with email sending
-					continue;
-				}
-			    String email = ale.getEmail();
-			    if (email!=null && email.length()>0) {
-    				OptOutAddr.appendOneUser(new OptOutRolePlayer(ale, ngc.getSiteKey(), ngc.getKey(), roleName),
-    						collector);
-			    }
-			}
-		}
-		catch (Exception e) {
-			throw new Exception("Unable to append users from the role ("+roleName+") in workspace ("+ngc.getFullName()+")",e);
-		}
+        try {
+            List<AddressListEntry> players = ngc.getRoleOrFail(roleName)
+                    .getExpandedPlayers(ngc);
+            for (AddressListEntry ale : players) {
+                if (!ale.isWellFormed()) {
+                    //do not include users who have partial user profiles and might
+                    //cause problems with email sending
+                    continue;
+                }
+                String email = ale.getEmail();
+                if (email!=null && email.length()>0) {
+                    OptOutAddr.appendOneUser(new OptOutRolePlayer(ale, ngc.getSiteKey(), ngc.getKey(), roleName),
+                            collector);
+                }
+            }
+        }
+        catch (Exception e) {
+            throw new Exception("Unable to append users from the role ("+roleName+") in workspace ("+ngc.getFullName()+")",e);
+        }
     }
     public static void appendUnmutedUsersFromRole(NGWorkspace ngw, String roleName,
             List<OptOutAddr> collector) throws Exception {
@@ -257,9 +257,9 @@ public class OptOutAddr {
     public static void appendUsers(List<AddressListEntry> members,
             List<OptOutAddr> collector) throws Exception {
         for (AddressListEntry ale : members) {
-        	if (ale.isWellFormed()) {
-        		appendOneUser(new OptOutDirectAddress(ale), collector);
-        	}
+            if (ale.isWellFormed()) {
+                appendOneUser(new OptOutDirectAddress(ale), collector);
+            }
         }
     }
     public static void appendUsersEmail(List<String> emailList,
@@ -288,9 +288,9 @@ public class OptOutAddr {
     }
     public static void appendOneDirectUser(AddressListEntry enteredAddress,
             List<OptOutAddr> collector) throws Exception {
-    	if (enteredAddress.isWellFormed()) {
-    		appendOneUser(new OptOutDirectAddress(enteredAddress), collector);
-    	}
+        if (enteredAddress.isWellFormed()) {
+            appendOneUser(new OptOutDirectAddress(enteredAddress), collector);
+        }
     }
     
     

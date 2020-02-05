@@ -1509,7 +1509,7 @@ public class AuthRequest
         //create a log file name based on the current time.
         File logFolder = new File(cog.getConfig().getUserFolderOrFail(),"logs");
         if (!logFolder.exists()) {
-        	logFolder.mkdirs();
+            logFolder.mkdirs();
         }
         logFile = new File(logFolder,"Reqs_"+nowTimeString+".log");
         logFile.createNewFile();

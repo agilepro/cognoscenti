@@ -95,7 +95,7 @@ public class EmailRecord extends DOMFace
             String email = assignee.getAttribute("email");
             AddressListEntry ale = AddressListEntry.parseCombinedAddress(email);
             if (!ale.isWellFormed()) {
-            	continue;
+                continue;
             }
             if ("Role".equals(ootype)) {
                 String containerID = assignee.getAttribute("containerID");

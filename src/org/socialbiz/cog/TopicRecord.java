@@ -139,10 +139,10 @@ public class TopicRecord extends CommentContainer {
         List<AddressListEntry> subscribers = subsRole.getDirectPlayers();
         if (subscribers.size()>0) {
             for (AddressListEntry ale : subscribers) {
-            	if (ale.isWellFormed()) {
-            		OptOutAddr ooa = new OptOutTopicSubscriber(ale, ngw.getSiteKey(), ngw.getKey(), this);
+                if (ale.isWellFormed()) {
+                    OptOutAddr ooa = new OptOutTopicSubscriber(ale, ngw.getSiteKey(), ngw.getKey(), this);
                     sendTo.add(ooa);
-            	}
+                }
             }
         }
         else {
