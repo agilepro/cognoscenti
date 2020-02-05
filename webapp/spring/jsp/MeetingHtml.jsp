@@ -9,6 +9,7 @@
 
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
+    String mode   = ar.defParam("mode", "Agenda");
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.assertLoggedIn("Meeting page designed for people logged in");
     ar.setPageAccessLevels(ngw);
@@ -246,6 +247,7 @@ embeddedData.templateCacheDefeater   = "<%=templateCacheDefeater%>";
 embeddedData.docSpaceURL = "<%ar.writeJS(docSpaceURL);%>"
 embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
+embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
 </script>
 <script src="../../../spring/jsp/MeetingFull.js"></script>
@@ -376,8 +378,10 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
 
 <div>
 
-<button ng-click="displayMode='Agenda'"   ng-class="statusButtonClass('Agenda')"  >Agenda</button>
-<button ng-click="displayMode='Minutes'"  ng-class="statusButtonClass('Minutes')" >Minutes</button>
+<button onclick="window.location.assign('meetingHtml.htm?id='+embeddedData.meetId+'&mode=Agenda')"   
+        ng-class="statusButtonClass('Agenda')"  >Agenda</button>
+<button onclick="window.location.assign('meetingHtml.htm?id='+embeddedData.meetId+'&mode=Minutes')" 
+        ng-class="statusButtonClass('Minutes')" >Minutes</button>
 <button ng-click="displayMode='Times'"    ng-class="statusButtonClass('Times')"   >Schedule</button>
 <button ng-click="displayMode='General'"  ng-class="statusButtonClass('General')" >General</button>
 <button ng-click="displayMode='Status'"   ng-class="statusButtonClass('Status')"  >Status</button>

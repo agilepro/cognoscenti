@@ -20,6 +20,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.timeFactor = "Minutes";
     $scope.factoredTime = 0;
     $scope.displayMode='Agenda';
+    if (embeddedData.mode) {
+        $scope.displayMode=embeddedData.mode;
+    }
     
     $scope.userZone = embeddedData.userZone;
     $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;

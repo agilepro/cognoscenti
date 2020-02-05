@@ -388,7 +388,7 @@ editBoxStyle {
                     </td>
                 </tr>
                 <tr>
-                    <td valign="top" ng-click="setEdit('frozen')"><label>Workspace Mode:</label></td>
+                    <td valign="top" ng-click="setEdit('frozen')"><label>Workspace State:</label></td>
                     <td  valign="top" ng-show="isEditing=='frozen'">
 
                         <button ng-click="workspaceConfig.frozen=true;saveOneField('frozen')" 
@@ -410,7 +410,7 @@ editBoxStyle {
                     <td  valign="top" ng-hide="isEditing=='frozen'" ng-click="setEdit('frozen')">
                         <span ng-show="workspaceConfig.deleted">Workspace is marked to be DELETED the next time the Site Administrator performs a 'Garbage Collect'</span>
                         <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN, it is viewable but can not be changed.</span>
-                        <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available.</span>
+                        <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available.  (Click here to freeze or delete).</span>
                     </td>
                 </tr>
                 <tr>
