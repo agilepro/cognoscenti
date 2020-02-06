@@ -1032,7 +1032,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.navigateToTopic = function(topicId) {
         var topicRecord = $scope.findTopicRecord(topicId);
         if (topicRecord) {
-            window.location="noteZoom"+topicRecord.id+".htm";
+            window.open("noteZoom"+topicRecord.id+".htm","_blank");
         }
         else {
             alert("Sorry, can't seem to find a discussion topic with the id: "+topicId);
@@ -1433,7 +1433,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
     }
     $scope.navigateToUser = function(player) {
-        window.location=embeddedData.retPath+"v/FindPerson.htm?uid="+encodeURIComponent(player.key);
+        window.open(embeddedData.retPath+"v/FindPerson.htm?uid="+encodeURIComponent(player.key),"_blank");
     }
 
     $scope.allowCommentEmail = function() {
@@ -1599,19 +1599,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
     $scope.navigateToDoc = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="docinfo"+doc.id+".htm";
+        window.open("docinfo"+doc.id+".htm","_blank");
     }
     $scope.navigateToDocDetails = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="editDetails"+doc.id+".htm";
+        window.open("editDetails"+doc.id+".htm","_blank");
     }
     $scope.sendDocByEmail = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="SendNote.htm?att="+doc.id;
+        window.open("SendNote.htm?att="+doc.id,"_blank");
     }
     $scope.downloadDocument = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.location="a/"+doc.name;
+        window.open("a/"+doc.name,"_blank");
     }
     $scope.unattachDocFromItem = function(item, docId) {
         var newList = [];

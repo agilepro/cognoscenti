@@ -1081,20 +1081,20 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
                             <a role="menuitem" 
                             title="This is the full name of the document"
                             ng-click="navigateToDoc(docid)">{{getFullDoc(docid).name}}</a></li>
-                        <li role="presentation"><a role="menuitem" 
-                            title="Use DRAFT to set the meeting without any notifications going out"
+                        <li role="presentation"><a role="menuitem" target="_blank"
+                            title="Visit the access page where you can download the document and see comments about it"
                             ng-click="navigateToDoc(docid)">Access Document</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use PLAN to allow everyone to get prepared for the meeting"
+                        <li role="presentation"><a role="menuitem" target="_blank"
+                            title="Directly download the document"
                             ng-click="downloadDocument(docid)">Download File</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
+                        <li role="presentation"><a role="menuitem" target="_blank"
+                            title="View the document details before accessing it"
                             ng-click="navigateToDocDetails(docid).htm">Document Details</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
+                        <li role="presentation"><a role="menuitem" target="_blank"
+                            title="create a new email with this document attached"
                             ng-click="sendDocByEmail(docid)">Send by Email</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
+                        <li role="presentation"><a role="menuitem" target="_blank"
+                            title="remove this document from this agenda item"
                             ng-click="unattachDocFromItem(item, docid)">Un-attach</a></li>
                       </ul>
                   </span>
