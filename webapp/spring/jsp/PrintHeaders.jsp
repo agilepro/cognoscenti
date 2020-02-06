@@ -14,10 +14,10 @@
     <link href="<%=ar.baseURL%>jscript/bootstrap.min.css" rel="stylesheet">
     <link href="<%=ar.baseURL%>jscript/ng-tags-input.css" rel="stylesheet">
 
-	<!-- INCLUDE web fonts -->
+    <!-- INCLUDE web fonts -->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-	<link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+    <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
     <!-- Weaver specific tweaks -->
     <link href="<%=ar.retPath%>bits/main.min.css" rel="styleSheet" type="text/css" media="screen" />
 

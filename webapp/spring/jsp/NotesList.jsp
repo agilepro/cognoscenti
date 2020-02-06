@@ -262,25 +262,25 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
 
         modalInstance.result.then(function (createdTopic) {
-			var newTopic = {}
+            var newTopic = {}
             newTopic.id = "~new~";
-			newTopic.html = createdTopic.html;
-			newTopic.subject = createdTopic.subject;
-			newTopic.discussionPhase = createdTopic.phase;
-			newTopic.modUser = {};
-			newTopic.modUser.uid = "<%ar.writeJS(currentUser);%>";
-			newTopic.modUser.name = "<%ar.writeJS(currentUserName);%>";
-			newTopic.modUser.key = "<%ar.writeJS(currentUserKey);%>";
-			var postURL = "noteHtmlUpdate.json?nid=~new~";
-			var postdata = angular.toJson(newTopic);
-			$scope.showError=false;
-			$http.post(postURL ,postdata)
-			.success( function(data) {
-				window.location = "noteZoom"+data.id+".htm";
-			})
-			.error( function(data, status, headers, config) {
-				$scope.reportError(data);
-			});
+            newTopic.html = createdTopic.html;
+            newTopic.subject = createdTopic.subject;
+            newTopic.discussionPhase = createdTopic.phase;
+            newTopic.modUser = {};
+            newTopic.modUser.uid = "<%ar.writeJS(currentUser);%>";
+            newTopic.modUser.name = "<%ar.writeJS(currentUserName);%>";
+            newTopic.modUser.key = "<%ar.writeJS(currentUserKey);%>";
+            var postURL = "noteHtmlUpdate.json?nid=~new~";
+            var postdata = angular.toJson(newTopic);
+            $scope.showError=false;
+            $http.post(postURL ,postdata)
+            .success( function(data) {
+                window.location = "noteZoom"+data.id+".htm";
+            })
+            .error( function(data, status, headers, config) {
+                $scope.reportError(data);
+            });
         }, function () {
             //cancel action - nothing really to do
         });
@@ -424,7 +424,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     <% if (isMember) { %>
         <div>
             <button class="btn btn-primary btn-raised" ng-click="openTopicCreator()">
-			    <i class="fa fa-plus"></i> Create New Topic
+                <i class="fa fa-plus"></i> Create New Topic
             </button>
         </div>
     <% } %>

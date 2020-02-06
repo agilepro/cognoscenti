@@ -78,9 +78,9 @@ tinyMCE.PluginManager.add('stylebuttons', function(editor, url) {
 
 function standardTinyMCEOptions() {
     return {
-		handle_event_callback: function (e) {
-		// put logic here for keypress 
-		},
+        handle_event_callback: function (e) {
+        // put logic here for keypress 
+        },
         plugins: "link,stylebuttons",
         inline: false,
         menubar: false,
@@ -89,7 +89,7 @@ function standardTinyMCEOptions() {
         toolbar: "style-p, style-h1, style-h2, style-h3, bullist, outdent, indent | bold, italic, link |  cut, copy, paste, undo, redo",
         target_list: false,
         link_title: false
-	};
+    };
 }
 
 var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','pascalprecht.translate']);

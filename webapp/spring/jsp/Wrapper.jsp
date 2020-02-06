@@ -224,14 +224,14 @@
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/bootstrap-material-design.min.css" media="screen">
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
 
-	<!-- INCLUDE web fonts -->
+    <!-- INCLUDE web fonts -->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-	  <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+      <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
     <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
 
-	<!-- Date and Time Picker -->
+    <!-- Date and Time Picker -->
     <link rel="stylesheet" href="<%=ar.retPath%>bits/angularjs-datetime-picker.css" />
     <script src="<%=ar.retPath%>bits/angularjs-datetime-picker.js"></script>
     <script src="<%=ar.retPath%>bits/moment.js"></script>

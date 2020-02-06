@@ -446,10 +446,10 @@ public class UserManager
     public Vector<OptOutAddr> getSuperAdminMailList(AuthRequest ar) throws Exception {
         Vector<OptOutAddr> sendTo = new Vector<OptOutAddr>();
         for (UserProfile superAdmin : getAllSuperAdmins(ar)) {
-        	AddressListEntry ale = new AddressListEntry(superAdmin.getPreferredEmail());
-        	if (ale.isWellFormed()) {
-        		sendTo.add(new OptOutSuperAdmin(ale));
-        	}
+            AddressListEntry ale = new AddressListEntry(superAdmin.getPreferredEmail());
+            if (ale.isWellFormed()) {
+                sendTo.add(new OptOutSuperAdmin(ale));
+            }
         }
         if (sendTo.size() == 0) {
             throw new NGException("nugen.exceptionhandling.account.no.super.admin", null);

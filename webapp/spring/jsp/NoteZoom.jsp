@@ -51,7 +51,7 @@ Required parameter:
     }
 
     JSONObject noteInfo = note.getJSONWithComments(ar, ngw);
-	JSONArray comments = noteInfo.getJSONArray("comments");
+    JSONArray comments = noteInfo.getJSONArray("comments");
     JSONArray attachmentList = ngw.getJSONAttachments(ar);
     JSONArray allLabels = ngw.getJSONLabels();
 
@@ -714,17 +714,17 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
     };
 
-	$scope.getObjDocs = function(noteInfo) {
-		var res = [];
-		$scope.attachmentList.forEach( function(docObj) {
-			$scope.noteInfo.docList.forEach( function(docId) {
-				if (docId == docObj.universalid) {
-					res.push(docObj);
-				}
-			})
-		})
-		return res;
-	}
+    $scope.getObjDocs = function(noteInfo) {
+        var res = [];
+        $scope.attachmentList.forEach( function(docObj) {
+            $scope.noteInfo.docList.forEach( function(docId) {
+                if (docId == docObj.universalid) {
+                    res.push(docObj);
+                }
+            })
+        })
+        return res;
+    }
 
     $scope.getFullDoc = function(docId) {
         var doc = {};
@@ -844,20 +844,20 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     };
 
     $scope.refreshFromServer = function() {
-		saveRecord = {};
-		saveRecord.saveMode = "autosave";
-		saveRecord.id = $scope.noteInfo.id;
-		saveRecord.universalid = $scope.noteInfo.universalid;
-		var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
-		var postdata = angular.toJson(saveRecord);
-		//does not really save antthing ... just get response
-		$http.post(postURL ,postdata)
-		.success( function(data) {
-			$scope.receiveTopicRecord(data);
-		})
-		.error( function(data) {
-			console.log("AUTOSAVE FAILED", data);
-		});
+        saveRecord = {};
+        saveRecord.saveMode = "autosave";
+        saveRecord.id = $scope.noteInfo.id;
+        saveRecord.universalid = $scope.noteInfo.universalid;
+        var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
+        var postdata = angular.toJson(saveRecord);
+        //does not really save antthing ... just get response
+        $http.post(postURL ,postdata)
+        .success( function(data) {
+            $scope.receiveTopicRecord(data);
+        })
+        .error( function(data) {
+            console.log("AUTOSAVE FAILED", data);
+        });
     }
 
 
@@ -874,14 +874,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
                 console.log("AUTOSAVE - skipped, nothing new to save");
                 //it IS idle so increase the idle counter, but after ten tried no change, go and fetch the latest
                 //this indicates that the user is not actively typing and might be OK to refresh the edit panel
-				if ($scope.autoIdleCount++ > 10) {
+                if ($scope.autoIdleCount++ > 10) {
                     $scope.autoIdleCount = 0;
-					$scope.refreshFromServer();
-				}
+                    $scope.refreshFromServer();
+                }
                 return;
             }
-			//it is NOT idle so mark it thus
-			$scope.autoIdleCount = 0;
+            //it is NOT idle so mark it thus
+            $scope.autoIdleCount = 0;
             $scope.lastAuto.html = $scope.noteInfo.html;
             $scope.lastAuto.subject = $scope.noteInfo.subject;
             saveRecord = {};
@@ -902,7 +902,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             });
         }
     }
-	$scope.promiseAutosave = $interval($scope.autosave, 15000);
+    $scope.promiseAutosave = $interval($scope.autosave, 15000);
 
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query, $scope.siteInfo.key);
@@ -1003,13 +1003,13 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </div>
 
     <div class="leafContent" ng-hide="isEditing">
-    	<div  ng-bind-html="noteInfo.html"></div>
+        <div  ng-bind-html="noteInfo.html"></div>
     </div>
 <%if (isLoggedIn) { %>
     <div class="leafContent" ng-show="isEditing">
         <input type="text" class="form-control" ng-model="noteInfo.subject">
         <div style="height:15px"></div>
-    	<div ui-tinymce="tinymceOptions" ng-model="noteInfo.html"></div>
+        <div ui-tinymce="tinymceOptions" ng-model="noteInfo.html"></div>
         <div style="height:15px"></div>
         <button class="btn btn-primary btn-raised" ng-click="saveEdit()">Close Editor</button>
     </div>

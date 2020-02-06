@@ -423,7 +423,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     white-space: nowrap
 }
 a {
-	color:black;
+    color:black;
 }
 .spacytable tr td {
     padding:2px;
