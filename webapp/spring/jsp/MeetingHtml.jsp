@@ -557,7 +557,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
             <td class="invisibleButton" ng-click="editMeetingPart='name'">
               <i class="fa fa-edit"></i>
             </td>
-            <td ng-hide="'name'==editMeetingPart">
+            <td ng-hide="'name'==editMeetingPart" ng-click="editMeetingPart='name'">
               <b>{{meeting.name}}</b>
             </td>
             <td ng-show="'name'==editMeetingPart">
@@ -572,7 +572,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
             <td class="invisibleButton" ng-click="editMeetingPart='startTime'">
               <i class="fa fa-edit"></i>
             </td>
-            <td ng-hide="'startTime'==editMeetingPart">
+            <td ng-hide="'startTime'==editMeetingPart" ng-click="editMeetingPart='startTime'">
               <div ng-show="meeting.startTime>0">
                 {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}&nbsp;
                 ({{browserZone}})
@@ -602,7 +602,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
             <td class="invisibleButton" ng-click="editMeetingPart='duration'">
               <i class="fa fa-edit"></i>
             </td>
-            <td ng-hide="'duration'==editMeetingPart">
+            <td ng-hide="'duration'==editMeetingPart" ng-click="editMeetingPart='duration'">
               {{meeting.duration}} Minutes ({{meeting.totalDuration}} currently allocated, 
               ending at: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}})
             </td>
@@ -617,9 +617,9 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <tr>
             <td ng-click="editMeetingPart='reminderTime'">Reminder:</td>
             <td class="invisibleButton" ng-click="editMeetingPart='reminderTime'">
-              <i class="fa fa-edit" ng-click="editMeetingPart='reminderTime'"></i>
+              <i class="fa fa-edit"></i>
             </td>
-            <td ng-hide="'reminderTime'==editMeetingPart">
+            <td ng-hide="'reminderTime'==editMeetingPart" ng-click="editMeetingPart='reminderTime'">
               {{factoredTime}} {{timeFactor}} before the meeting. 
                 <span ng-show="meeting.reminderSent<=0"> <i>Not sent.</i></span>
                 <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}</span>
@@ -648,8 +648,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
             <td class="invisibleButton" ng-click="editMeetingPart='notifyLayout'">
               <i class="fa fa-edit"></i>
             </td>
-            <td ng-hide="'notifyLayout'==editMeetingPart">
-              {{meeting.notifyLayout}} <a href="MeetMerge.htm?id={{meeting.id}}&tem={{meeting.notifyLayout}}"><i class="fa fa-eye"></i></a>
+            <td ng-hide="'notifyLayout'==editMeetingPart" ng-click="editMeetingPart='notifyLayout'">
+              {{meeting.notifyLayout}} 
             </td>
             <td ng-show="'notifyLayout'==editMeetingPart">
               <div class="well form-inline form-group" style="max-width:400px">
@@ -663,8 +663,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
             <td class="invisibleButton" ng-click="editMeetingPart='defaultLayout'">
               <i class="fa fa-edit"></i>
             </td>
-            <td ng-hide="'defaultLayout'==editMeetingPart">
-              {{meeting.defaultLayout}} <a href="MeetMerge.htm?id={{meeting.id}}&tem={{meeting.defaultLayout}}"><i class="fa fa-eye"></i></a>
+            <td ng-hide="'defaultLayout'==editMeetingPart" ng-click="editMeetingPart='defaultLayout'">
+              {{meeting.defaultLayout}} 
             </td>
             <td ng-show="'defaultLayout'==editMeetingPart">
               <div class="well form-inline form-group" style="max-width:400px">
@@ -678,7 +678,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
             <td class="invisibleButton" ng-click="editMeetingPart='targetRole'">
               <i class="fa fa-edit"></i>
             </td>
-            <td ng-hide="'targetRole'==editMeetingPart">
+            <td ng-hide="'targetRole'==editMeetingPart" ng-click="editMeetingPart='targetRole'">
               <a href="roleManagement.htm">{{meeting.targetRole}}</a>
               <span ng-hide="roleEqualsParticipants || meeting.state<=0" style="color:red">
                   . . . includes people who are not meeting participants!

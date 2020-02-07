@@ -108,6 +108,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.showRecent = true;
     $scope.showChecklists = true;
     $scope.showDescription = true;
+    $scope.mineOnly = false;
     $scope.isCreating = false;
     $scope.newGoal = {assignList:[],id:"~new~",labelMap:{}};
 
@@ -146,6 +147,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             var recentLine = (new Date()).getTime() - 7*24*60*60*1000;
             var res = [];
             src.forEach( function(rec) {
+                if ($scope.mineOnly) {
+                    var found = false;
+                    rec.assignees.forEach( function(ass) {
+                        if (ass == SLAP.loginInfo.userId) {
+                            found = true;
+                        }
+                    });
+                    if (!found) {
+                        return;
+                    }
+                }
                 if ($scope.showRecent && (rec.modifiedtime > recentLine || rec.startdate > recentLine || rec.enddate > recentLine)) {
                     res.push(rec);
                     return;
@@ -202,6 +214,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         var src = $scope.allGoals;
         var res = [];
         src.forEach( function(rec) {
+            if ($scope.mineOnly) {
+                var found = false;
+                rec.assignees.forEach( function(ass) {
+                    if (ass == SLAP.loginInfo.userId) {
+                        found = true;
+                    }
+                });
+                if (!found) {
+                    return;
+                }
+            }
             if (!$scope.showActive && rec.state>=2 && rec.state<=4) {
                 return;
             }
@@ -647,6 +670,8 @@ function addvalue() {
             Completed</span>
         <span style="vertical-align:middle;" ><input type="checkbox" ng-model="showRecent">
             Recent</span>
+        <span style="vertical-align:middle;" ><input type="checkbox" ng-model="mineOnly">
+            Only Mine</span>
         <span class="dropdown" ng-repeat="role in allLabelFilters()">
             <button class="labelButton" type="button" id="menu2"
                data-toggle="dropdown" style="background-color:{{role.color}};"

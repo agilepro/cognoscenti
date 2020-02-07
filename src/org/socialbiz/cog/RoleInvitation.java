@@ -21,7 +21,6 @@
 package org.socialbiz.cog;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.socialbiz.cog.api.LightweightAuthServlet;
 import org.socialbiz.cog.mail.JSONWrapper;
