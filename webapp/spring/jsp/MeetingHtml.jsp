@@ -326,12 +326,6 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Show who has responded about whether they will attend or not"
-              href="#" ng-click="toggleRollCall()" >Show Roll Call</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Show who has responded about whether they will attend or not"
-              href="#" ng-click="showTimeSlots=true" >Show Proposed Times</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Show who has responded about whether they will attend or not"
               href="#" ng-click="showFutureSlots=true" >Show Next Meeting Times</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Create a new agenda item at the bottom of the meeting"
@@ -954,76 +948,48 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <div ng-show="displayMode=='Attendance'">
 
 <!-- THIS IS THE ROLL CALL SECTION -->
-xxx
-    <div ng-repeat="sitch in mySitch" class="comment-outer" style="margin:40px"
-         title="Use this to let others know whether you expect to attend the meeting or not">
+
+    <div class="well" title="Use this to let others know whether you expect to attend the meeting or not">
       <div><h3 style="margin:5px"><% ar.writeHtml(currentUserName); %>, will you attend?</h3></div>
-      <div class="comment-inner">
-        <div class="form-inline form-group" style="margin:20px">
-            <select ng-model="sitch.attend" class="form-control">
+        <div class="form-inline form-group">
+            <select ng-model="mySitch.attend" class="form-control">
                 <option>Unknown</option>
                 <option>Yes</option>
                 <option>Maybe</option>
                 <option>No</option>
             </select>
             Details:
-            <input type="text" ng-model="sitch.situation" class="form-control" style="width:400px;">
+            <input type="text" ng-model="mySitch.situation" class="form-control" style="width:400px;"
+                   placeholder="Enter a clarification of whether you will attend">
             <button class="btn btn-primary btn-raised" ng-click="saveSituation()">Save</button>
         </div>
-
-      </div>
-    </div>
-
-
-yyy
-    <div class="comment-outer" style="margin:40px">
-      <div><h2 style="margin:5px">Attendance List</h2></div>
-      <div class="comment-inner">
-        <div class="form-inline form-group" style="margin:20px">
-           Attendees:
-           <button class="btn btn-sm" ng-repeat="person in getAttended()" style="margin:3px;"
-                   ng-click="removeAttendee(person)">{{person.name}}</button>
-        </div>
-        <div class="form-inline form-group" style="margin:20px">
-            <button class="btn btn-primary btn-raised" ng-click="addYouself()" 
-                    ng-hide="isInAttendees">Add Yourself</button> &nbsp;
-            Email Address: 
-            <input type="text" ng-model="newAttendee" class="form-control" 
-               placeholder="Enter email address" style="margin: 10px"
-               typeahead="person.uid as person.name for person in getPeople($viewValue) | limitTo:12">
-            <button class="btn btn-primary btn-raised" ng-click="addAttendee()"
-                    ng-show="newAttendee">
-               Add It </button>
-        </div>
-      </div>
     </div>
 
 
 
 
-    <div class="comment-outer" ng-show="showRollBox()" 
-         title="Shows what people have said about being able to attend the meeting.">
-      <div style="float:right" ng-click="toggleRollCall()"><i class="fa fa-close"></i></div>
-      <div>Roll Call</div>
+
+    <div style="max-width:800px">
       <table class="table">
       <tr>
           <th>Name</th>
-          <th style="width:20px;"></th>
-          <th>Attending</th>
+          <th>Attended</th>
+          <th>Expected</th>
           <th>Situation</th>
       </tr>
       <tr class="comment-inner" ng-repeat="pers in peopleStatus">
           <td>{{pers.name}}</td>
-          <td  style="width:20px;" class="invisibleButton">
-              <div ng-show="pers.uid=='<%ar.writeJS(currentUser);%>'" style="cursor:pointer;"
-              ng-click="toggleRollCall()">
-                  <i class="fa fa-edit"></i></div></td>
+          <td ng-click="toggleAttend(pers.uid)">
+            <span ng-show="didAttend(pers.uid)" style="color:green"><span class="fa fa-plus-circle"></span></span>
+            <span ng-hide="didAttend(pers.uid)" style="color:#eeeeee"><span class="fa fa-question-circle"></span></span>
+          </td>
           <td>{{pers.attend}}</td>
           <td>{{pers.situation}}</td>
       </tr>
       </table>
     </div>
-    
+
+
 </div>    
     
 

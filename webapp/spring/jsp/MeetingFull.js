@@ -8,7 +8,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.siteInfo = embeddedData.siteInfo;
     $scope.pageId = embeddedData.pageId;
     $scope.meetId = embeddedData.meetId;
-    $scope.meeting = {rollCall:[],agenda:[]};
+    $scope.meeting = {rollCall:[],agenda:[],participants:[]};
     $scope.previousMeeting = embeddedData.previousMeeting;
     $scope.allGoals = embeddedData.allGoals;
     $scope.attachmentList = [];
@@ -32,6 +32,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.timeSlotResponders = [];
     $scope.futureSlotResponders = [];
     $scope.newProposedTime = 0;
+    $scope.mySitch = {uid:embeddedData.userId,attend:"Unknown",situation: ""}
+    
     
     var templateCacheDefeater = embeddedData.templateCacheDefeater;
 
@@ -490,6 +492,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         for (var j=0; j<fieldList.length; j++) {
             saveRecord[fieldList[j]] = $scope.meeting[fieldList[j]];
         }
+        console.log("SAVING", saveRecord);
         $scope.putGetMeetingInfo(saveRecord);
         $scope.stopEditing();
     };
@@ -1039,7 +1042,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
     }
 
-    $scope.mySitch = [];
     
     function getMeetingRole() {
         var selRole = {players:[]};
@@ -1077,30 +1079,17 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         var selRole = getMeetingRole();
         var rez = [];
-        $scope.mySitch = [];
-        selRole.players.forEach( function(item) {
-            var current;
+        $scope.mySitch = {};
+        $scope.meeting.participants.forEach( function(item) {
+            var current = {uid:item.uid,name:item.name,key:item.key,attend: "Unknown",situation: ""};
             $scope.meeting.rollCall.forEach( function(rc) {
                 if (rc.uid === item.uid) {
-                    current = rc;
+                    current.attend = rc.attend;
+                    current.situation = rc.situation;
                 }
             });
-            if (current) {
-                current.name = item.name;
-                current.key = item.key;
-            }
-            else {
-                current =  {
-                    uid: item.uid,
-                    name: item.name,
-                    key: item.key,
-                    attend: "Unknown",
-                    situation: ""
-                };
-                $scope.meeting.rollCall.push(current);
-            }
-            if (item.uid === SLAP.loginInfo.userId) {
-                $scope.mySitch = [current];
+            if (item.uid === embeddedData.userId) {
+                $scope.mySitch = current;
             }
             rez.push(current);
         });
@@ -1119,9 +1108,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
     $scope.editAttendees = function() {
         return ($scope.meeting.state == 2);
-    }
-    $scope.toggleRollCall = function() {
-        $scope.showRollCall = !$scope.showRollCall;
     }
     $scope.isCompleted = function() {
         return ($scope.meeting.state >= 3);
@@ -1201,6 +1187,21 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
 
     $scope.saveSituation = function() {
+        var found = false;
+        $scope.meeting.rollCall.forEach( function(item) {
+            if (item.uid == embeddedData.userId) {
+                found = true;
+                item.attend = $scope.mySitch.attend;
+                item.situation = $scope.mySitch.situation;
+            }
+        });
+        if (!found) {
+            $scope.meeting.rollCall.push( {
+                uid: embeddedData.userId,
+                attend: $scope.mySitch.attend,
+                situation: $scope.mySitch.situation
+            });
+        }
         $scope.savePartialMeeting(['rollCall']);
         $scope.showRollCall = $scope.isRegistered();
     }
@@ -1935,6 +1936,34 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
     $scope.setSelectedItem = function(item) {
         $scope.selectedItem = item;
+    }
+    
+    $scope.didAttend = function(specId) {
+        var found = false;
+        $scope.meeting.attended.forEach( function(item) {
+            if (specId == item) {
+                found = true;
+            }
+        });
+        return found;
+    }
+    
+    $scope.toggleAttend = function(specId) {
+        console.log("Toggle Attend: "+specId);
+        var did = $scope.didAttend(specId);
+        if (did) {
+            var newArray = [];
+            $scope.meeting.attended.forEach( function(item) {
+                if (specId != item) {
+                    newArray.push(item);
+                }
+            });
+            $scope.meeting.attended = newArray;
+        }
+        else {
+            $scope.meeting.attended.push(specId);
+        }
+        $scope.savePartialMeeting(["attended"]);
     }
     
 });
