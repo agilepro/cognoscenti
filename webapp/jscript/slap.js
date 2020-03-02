@@ -35,12 +35,14 @@ SLAP.initLogin = function(config, info, statusCallback) {
     SLAP.loginConfig = config;
     SLAP.displayLoginStatus = statusCallback;
     SLAP.queryTheServer();
+    console.log("SLAP Initialized", SLAP.loginInfo);
     return SLAP.loginInfo;
 };
-
 SLAP.loginUserRedirect = function() {
-    window.location = SLAP.loginConfig.providerUrl + '?openid.mode=quick&go='
+    let newLoc = SLAP.loginConfig.providerUrl + '?openid.mode=quick&go='
         + encodeURIComponent(window.location);
+    //alert("Redirecting to: "+newLoc);
+    window.location = newLoc;
 };
 
 SLAP.logoutUser = function() {
@@ -63,6 +65,10 @@ SLAP.sendInvitationEmail = function(message, success, failure) {
 //interface methods above, implementation methods below
 
 SLAP.storeSession = function(data) {
+    //only store the data if it looks like the right kind of data
+    if (!data.userId) {
+        return;
+    }
     SLAP.loginInfo = data;
     sessionStorage.setItem("SSOFI_Logged_User", JSON.stringify(data));
 }
@@ -116,7 +122,7 @@ SLAP.postJSON = function(url, data, passedFunction, errorFunction) {
                 alert("Got an exception ("+e+") whille trying to handle: "+url);
             }
         }
-        else if (xhr.readyState == 4 && xhr.status == 200) {
+        else if (xhr.readyState == 4 && xhr.status != 200) {
             errorFunction(xhr.responseText);
         }
         else if (xhr.status == 0) {
@@ -207,7 +213,7 @@ SLAP.logOutServer = function() {
         console.log("Failure logging out.  Is server really at:\n "+pUrl);
     });
 }
-
+console.log("SLAP loaded");
 
 
 

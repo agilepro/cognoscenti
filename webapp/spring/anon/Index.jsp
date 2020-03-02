@@ -37,10 +37,10 @@
     <link rel="stylesheet" href="<%=ar.baseURL%>css/bootstrap-material-design/ripples.min.css" media="screen">
     <script src="<%=ar.baseURL%>jscript/common.js"></script>
 
-    <!-- INCLUDE web fonts -->
+	<!-- INCLUDE web fonts -->
     <link href="<%=ar.retPath%>assets/font-awesome/css/font-awesome.min.css" rel="stylesheet"
           data-semver="4.3.0" data-require="font-awesome@*" />
-      <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
+	  <link href="<%=ar.retPath%>assets/google/css/PT_Sans-Web.css" rel="stylesheet"/>
 
     <link href="<%=ar.retPath%>bits/fixed-sidebar.min.css" rel="styleSheet" type="text/css" media="screen" />
     <!-- Weaver specific tweaks -->
@@ -50,9 +50,9 @@
 <script>
 var app = angular.module('myApp', ['ui.bootstrap']);
 app.controller('myCtrl', function($scope, $http) {
-    
+
     $scope.login = function() {
-        window.location = "<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(ar.realRequestURL, "UTF-8")%>";
+        SLAP.loginUserRedirect();
     }
     $scope.createNewSite = function() {
         window.location = "NewSiteApplication.htm";
@@ -82,18 +82,18 @@ function reloadIfLoggedIn() {
 
 <body>
   <div class="bodyWrapper"  style="margin:50px">
-  
+
 <%@ include file="AnonNavBar.jsp" %>
 
 <div ng-app="myApp" ng-controller="myCtrl">
-  
+
     <div>
-        If you already have an account, please 
+        If you already have an account, please
         <button class="btn btn-primary btn-raised" ng-click="login()">
             Login
         </button>
     </div>
-  
+
     <hr/>
     <div class="mainQuote">
         <p>
@@ -101,28 +101,28 @@ function reloadIfLoggedIn() {
         </p>
     </div>
     <hr/>
-    
+
     <h1>What is Weaver?</h1>
     <p>
-        Weaver is a platform to help organizations large and small to reach their goals.  
+        Weaver is a platform to help organizations large and small to reach their goals.
         It helps you organize people to produce results.
         It helps you prepare for meetings, distribute information, collect input, run meetings,
         write minutes, and to clearly share decisions that are made.
     </p>
     <p>
-        Weaver is based on a proven methodology for helping people come together and reach agreement 
-        known as Dynamic Governance or Sociocracy.  This approach is an <i>inclusive</i> approach that 
+        Weaver is based on a proven methodology for helping people come together and reach agreement
+        known as Dynamic Governance or Sociocracy.  This approach is an <i>inclusive</i> approach that
         helps to assure that everyone's voice is heard, and everyone is involved in making the decisions.
         By keeping people involved in the decisions, you keep them involved in the follow through as well.
-        Whether you are running a community organization, a non-profit, a school group, a government agency, 
-        a small business or a large busines, Weaver you will give a greater ability to produce high 
+        Whether you are running a community organization, a non-profit, a school group, a government agency,
+        a small business or a large busines, Weaver you will give a greater ability to produce high
         quality results with a team.
     </p>
     <h1>How can you get Weaver?</h1>
     <p>
-        Weaver is free at the basic level, which includes meeting planning, document sharing, 
+        Weaver is free at the basic level, which includes meeting planning, document sharing,
         discussion lists, action / task lists, role based access, decision list, email notifications
-        and much more.        
+        and much more.
     </p>
     <p>
         With a few keystrokes you make a workspace which can be accessed from anywhere,
