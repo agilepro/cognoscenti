@@ -113,7 +113,8 @@
     String agendaLayout = meetingJSON.optString("notifyLayout", "FullDetail.chtml");
     File agendaLayoutFile = MeetingRecord.findMeetingLayout(ar,ngw,agendaLayout);        
     String minutesLayout = meetingJSON.optString("defaultLayout", "FullDetail.chtml");
-    File minutesLayoutFile = MeetingRecord.findMeetingLayout(ar,ngw,minutesLayout);        
+    File minutesLayoutFile = MeetingRecord.findMeetingLayout(ar,ngw,minutesLayout);
+    String mnm = AccessControl.getAccessMeetParams(ngw, mRec); 
 
 /* PROTOTYPE
 
@@ -1300,6 +1301,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     
 %>
     </div>
+    Public Link to this:  <a href="MeetPrint.htm?id=<%=meetId%>&tem=<%=agendaLayout%>&<%=mnm%>"><%ar.writeHtml(mRec.getName());%></a> 
+    (available to anonymous users)
 </div>
 <div ng-show="displayMode=='Minutes'">
     <div class="well">
@@ -1309,6 +1312,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     
 %>
     </div>
+    Public Link to this:  <a href="MeetPrint.htm?id=<%=meetId%>&tem=<%=minutesLayout%>&<%=mnm%>"><%ar.writeHtml(mRec.getName());%></a> 
+    (available to anonymous users)
 </div>
 
 
