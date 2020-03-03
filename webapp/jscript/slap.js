@@ -199,18 +199,21 @@ SLAP.logOutProvider = function() {
     var pUrl = SLAP.loginConfig.providerUrl + "?openid.mode=apiLogout";
     SLAP.storeSession({});
     SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
+        console.log("User logged out of SSOFI provider", data);
         SLAP.logOutServer();
     }, function(data) {
-        console.log("Failure logging out.  Is provider still at:\n "+pUrl);
+        console.log("Failure logging out of SSOFI.  Is provider still at:\n "+pUrl);
     });
 };
 
 SLAP.logOutServer = function() {
     var pUrl = SLAP.loginConfig.serverUrl + "auth/logout";
     SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
+        SLAP.loginInfo = data;
+        console.log("User logged out of Weaver server",data);
         SLAP.displayLoginStatus(SLAP.loginInfo);
     }, function(data) {
-        console.log("Failure logging out.  Is server really at:\n "+pUrl);
+        console.log("Failure logging out of Weaver.  Is server really at:\n "+pUrl);
     });
 }
 console.log("SLAP loaded");

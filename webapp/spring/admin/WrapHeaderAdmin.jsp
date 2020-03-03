@@ -78,6 +78,9 @@
     function changePage(dest) {
         window.location = dest;
     }
+    function logOutPage() {
+        SLAP.logOutProvider();
+    }
 
     var retPath ='<%=ar.retPath%>';
 </script>
@@ -114,7 +117,7 @@
             <li><a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
                 Log In</a></li>
 <% } else { %>
-            <li><a onclick='SLAP.logOutProvider();'>Log Out</a></li>
+            <li><a onclick='logOutPage()'>Log Out</a></li>
 <% } %>
             <li><a href="<%=userRelPath%>userSettings.htm">Profile</a></li>
             <li><a href="<%=userRelPath%>userAlerts.htm">Updates</a></li>

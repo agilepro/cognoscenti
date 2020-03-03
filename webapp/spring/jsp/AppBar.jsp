@@ -8,6 +8,9 @@
     function changePage(dest) {
         window.location = dest;
     }
+    function logOutPage() {
+        SLAP.logOutProvider();
+    }
 
     var retPath ='<%=ar.retPath%>';
     var headerType = '<%=headerTypeStr%>';
@@ -134,6 +137,14 @@
         
 <% } %>  
         
+<% if (loggedUser==null) { %>
+    <span class="navbar-brand">
+      <a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
+        <h1>Login</h1>
+      </a>
+    </span>
+    
+<% } else { %>    
         <!-- Drop Down User -->
         <li>
           <a class="dropdown-toggle"
@@ -147,10 +158,6 @@
             </span>
           </a>
           <ul class="dropdown-menu pull-right tighten">
-<% if (loggedUser==null) { %>
-            <li><a href="<%=ar.getSystemProperty("identityProvider")%>?openid.mode=quick&go=<%=URLEncoder.encode(currentPageURL, "UTF-8")%>">
-                Log In</a></li>
-<% } else { %>
             <li><a href="<%=userRelPath%>UserHome.htm">Home</a></li>
             <li><a href="<%=userRelPath%>userSettings.htm">Profile</a></li>
             <li><a href="<%=userRelPath%>userAlerts.htm">Updates</a></li>
@@ -161,7 +168,7 @@
             <li><a href="<%=userRelPath%>../su/emailListnerSettings.htm">Administration</a></li>
 <%} %>
             <li class="divider"></li>
-            <li><a onclick='SLAP.logOutProvider();'>Log Out</a></li>
+            <li><a onclick='logOutPage();'>Log Out</a></li>
 <% } %> 
           </ul>
         </li>

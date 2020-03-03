@@ -184,7 +184,16 @@ public class MeetingControler extends BaseController {
                 templateFile = templates.get("FullDetail.chtml");
             }
             ar.invokeJSP("/spring/jsp/PrintHeaders.jsp");
-            org.socialbiz.cog.mail.ChunkTemplate.streamIt(ar.w, templateFile,   meetingJSON, ar.getUserProfile().getCalendar() );
+            
+            UserProfile uProf = ar.getUserProfile();
+            if (uProf != null) {
+            	//if a user is logged in, stream with their calendar (timezone)
+            	org.socialbiz.cog.mail.ChunkTemplate.streamIt(ar.w, templateFile,   meetingJSON, uProf.getCalendar() );
+            }
+            else {
+            	//not logged in gets the system default calendar
+            	org.socialbiz.cog.mail.ChunkTemplate.streamIt(ar.w, templateFile,   meetingJSON, Calendar.getInstance() );
+            }
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);

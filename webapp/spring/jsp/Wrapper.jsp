@@ -326,7 +326,7 @@ var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.tinymce','
           }
           else if (knowWeAreLoggedIn && !info.verified) {
               //this encountered only when logging out
-              window.location.reload();
+              window.location.reload(true);
           }
           else if (info.haveNotCheckedYet) {
               y.innerHTML = 'Checking identity, please <a href="'
