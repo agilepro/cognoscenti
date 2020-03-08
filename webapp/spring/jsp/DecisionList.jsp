@@ -272,7 +272,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
   <div  id="searchresultdiv0">
     <div class="taskListArea">
       <table id="ActiveTask" style="min-width:800px">
-         <tr ng-repeat="rec in findDecisions()" id="node1503" class="ui-state-default"
+         <tr ng-repeat="rec in findDecisions()" id="node1503" class="ui-state-default" ng-dblclick="openDecisionEditor(rec)"
              style="background: linear-gradient(#EEE, white); margin: 5px;border-style:solid;border-color:#FFF;border-width:12px">
                 <td style="padding:3px;vertical-align:top;margin:5px;">
                   <div class="dropdown" style="padding:4px">

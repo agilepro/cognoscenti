@@ -285,8 +285,15 @@ public class AgendaItem extends CommentContainer {
         if (input.has("subject")) {
             setSubject(input.getString("subject"));
         }
-        if (input.has("duration")) {
-            setDuration(input.getLong("duration"));
+        updateAttributeLong("duration", input);
+        if (input.has("timerElapsed")) {
+            if (getAttributeBool("timerRunning")) {
+                //if the timer is running, the reset the basis for the current
+                //timer to be NOW so that the elapsed time starts with what 
+                //we just set it to.
+                setAttributeLong("timerStart", System.currentTimeMillis());
+            }
+            updateAttributeLong("timerElapsed", input);
         }
         if (input.has("desc")) {
             String html = input.getString("desc");

@@ -743,7 +743,7 @@ function addvalue() {
         </tr>
         <tbody ng-repeat="area in taskAreaList">
           <tr class="headerRow">
-            <td colspan="2" ng-click="openTaskAreaEditor(area)">{{area.name}}&nbsp;</td>
+            <td colspan="2" ng-dblclick="openTaskAreaEditor(area)">{{area.name}}&nbsp;</td>
             <td colspan="2">
                 <div ng-repeat="person in area.assignees">
                   <span class="dropdown">
@@ -778,7 +778,7 @@ function addvalue() {
                      title="Green: Good shape" class="stoplight">
               </span>
             </td>
-            <td ng-click="openTaskAreaEditor(area)" title="A written summary of the current status">{{area.status}}</td>
+            <td ng-dblclick="openTaskAreaEditor(area)" title="A written summary of the current status">{{area.status}}</td>
           </tr>
           <tr ng-repeat="rec in findGoalsInArea(area.id)" class="outlined">
             <td  style="width:70px">
@@ -820,7 +820,7 @@ function addvalue() {
                 <img ng-src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
             </div>
             </td>
-            <td  style="max-width:300px"  ng-click="openModalActionItem(rec, 'details')"
+            <td  style="max-width:300px"  ng-dblclick="openModalActionItem(rec, 'details')"
                title="The synopsis (name) and description of the action item.">
               <div style="cursor: pointer;" ><b>{{rec.synopsis}}</b></span>
               <span ng-repeat="label in getGoalLabels(rec)">
@@ -851,7 +851,7 @@ function addvalue() {
                 </div>
               </div>
             </td>
-            <td style="width:150px"  ng-click="openModalActionItem(rec, 'status')"
+            <td style="width:150px"  ng-dblclick="openModalActionItem(rec, 'status')"
                 title="Dates the action item was started, due, or completed">
               <div ng-show="rec.startdate>100" >
                 start: {{rec.startdate | date}}
@@ -867,7 +867,7 @@ function addvalue() {
               </div-->
             </td>
             <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going"
-                ng-click="openModalActionItem(rec, 'status')">
+                ng-dblclick="openModalActionItem(rec, 'status')">
               <span>
                 <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="rec.prospects=='bad'"
                      title="Red: In trouble" ng-click="setProspects(rec, 'bad', $event)" class="stoplight">
@@ -883,7 +883,7 @@ function addvalue() {
                      title="Green: Good shape" class="stoplight">
               </span>
             </td>
-            <td  style="max-width:300px"  ng-click="openModalActionItem(rec, 'status')"
+            <td  style="max-width:300px"  ng-dblclick="openModalActionItem(rec, 'status')"
                  title="A textual description of the current status of the action item.">
               <div>{{rec.status}} &nbsp;</div>
               <div ng-show="showChecklists" style="cursor:context-menu">

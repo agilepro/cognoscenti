@@ -272,7 +272,7 @@ editBoxStyle {
     padding:8px;
 }
 .clicker:after {
-    content: "Click to Set Value"
+    content: "Double-click to Set Value"
 }
 </style>
 
@@ -307,7 +307,7 @@ editBoxStyle {
             <table class="spaceyTable">
                 <tr >
                     <td ng-click="setEdit('name')"><label>Workspace Names:</label></td>
-                    <td ng-hide="isEditing=='name'" ng-click="setEdit('name')">
+                    <td ng-hide="isEditing=='name'" ng-dblclick="setEdit('name')">
                         <h1>{{workspaceConfig.allNames[0]}}</h1>
                     </td>
                     <td class="form-inline form-group" ng-show="isEditing=='name'">
@@ -334,7 +334,7 @@ editBoxStyle {
                               <button ng-click="saveOneField('frozen')" class="btn btn-raised">
                                   Cancel</button>
                               </td>
-                    <td ng-hide="isEditing=='vision'" ng-click="setEdit('vision')">
+                    <td ng-hide="isEditing=='vision'" ng-dblclick="setEdit('vision')">
                         <div ng-bind-html="visionHtml"></div>
                         <div ng-hide="visionHtml" class="clicker"></div>
                     </td>
@@ -350,7 +350,7 @@ editBoxStyle {
                               <button ng-click="saveOneField('frozen')" class="btn btn-raised">
                                   Cancel</button>
                               </td>
-                    <td ng-hide="isEditing=='mission'" ng-click="setEdit('mission')">
+                    <td ng-hide="isEditing=='mission'" ng-dblclick="setEdit('mission')">
                         <div ng-bind-html="missionHtml"></div>
                         <div ng-hide="missionHtml" class="clicker"></div>
                     </td>
@@ -366,7 +366,7 @@ editBoxStyle {
                               <button ng-click="saveOneField('frozen')" class="btn btn-raised">
                                   Cancel</button>
                               </td>
-                    <td ng-hide="isEditing=='purpose'" ng-click="setEdit('purpose')">
+                    <td ng-hide="isEditing=='purpose'" ng-dblclick="setEdit('purpose')">
                         <div ng-bind-html="purposeHtml"></div>
                         <div ng-hide="purposeHtml" class="clicker"></div>
                     </td>
@@ -382,7 +382,7 @@ editBoxStyle {
                               <button ng-click="saveOneField('frozen')" class="btn btn-raised">
                                   Cancel</button>
                               </td>
-                    <td ng-hide="isEditing=='domain'" ng-click="setEdit('domain')">
+                    <td ng-hide="isEditing=='domain'" ng-dblclick="setEdit('domain')">
                         <div ng-bind-html="domainHtml"></div>
                         <div ng-hide="domainHtml" class="clicker"></div>
                     </td>
@@ -407,10 +407,10 @@ editBoxStyle {
                         <button ng-click="isEditing=null" class="btn btn-raised">
                             Cancel</button>
                     </td>
-                    <td  valign="top" ng-hide="isEditing=='frozen'" ng-click="setEdit('frozen')">
+                    <td  valign="top" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">
                         <span ng-show="workspaceConfig.deleted">Workspace is marked to be DELETED the next time the Site Administrator performs a 'Garbage Collect'</span>
                         <span ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">This workspace is FROZEN, it is viewable but can not be changed.</span>
-                        <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available.  (Click here to freeze or delete).</span>
+                        <span ng-show="!workspaceConfig.frozen && !workspaceConfig.deleted">Active and available.  (Double-click here to freeze or delete).</span>
                     </td>
                 </tr>
                 <tr>
@@ -426,7 +426,7 @@ editBoxStyle {
                         <button ng-click="saveOneField('frozen')" class="btn btn-raised">
                             Cancel</button>
                     </td>
-                    <td ng-hide="isEditing=='parentKey'" ng-click="setEdit('parentKey')">
+                    <td ng-hide="isEditing=='parentKey'" ng-dblclick="setEdit('parentKey')">
                         <div>{{workspaceConfig.parentKey}}</div>
                         <div ng-hide="workspaceConfig.parentKey" class="clicker"></div>
                     </td>

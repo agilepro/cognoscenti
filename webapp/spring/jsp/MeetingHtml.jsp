@@ -179,44 +179,8 @@
 %>
 
 <style>
-.meeting-icon {
-   cursor:pointer;
-   color:LightSteelBlue;
-}
-
-.comment-outer {
-    border: 1px solid lightgrey;
-    border-radius:8px;
-    padding:5px;
-    margin-top:15px;
-    background-color:#EEE;
-    cursor: pointer;
-}
-.comment-inner {
-    border: 1px solid lightgrey;
-    border-radius:6px;
-    padding:5px;
-    background-color:white;
-}
-.comment-state-draft {
-    background-color:yellow;
-}
-.comment-state-active {
-    background-color:#DEF;
-}
-.comment-state-complete {
-    background-color:#EEE;
-}
-.comment-phase-change {
-    border: 1px solid #DFD;
-    background-color:#EFE;
-}
-.invisibleButton {
-    color: #fff;
-}
-.invisibleButton:hover {
-    color: black;
-    background-color:#eee;
+.labelColumn:hover {
+    background-color:#ECB6F9;
 }
 
 .agendaItemFull {
@@ -250,6 +214,8 @@ embeddedData.siteInfo = <%site.getConfigJSON().write(out,2,2);%>;
 embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
 embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
+
+
 </script>
 <script src="../../../spring/jsp/MeetingFull.js"></script>
 
@@ -265,13 +231,11 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 }
 .agendaTitle {
     font-size: 130%;
-    font-weight: bold;
     padding:5px;
     cursor:pointer;
 }
 .agendaTitleSelected {
     font-size: 130%;
-    font-weight: bold;
     padding:5px;
     cursor:pointer;
     color:white;
@@ -279,7 +243,6 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 }
 .agendaTitle:hover {
     font-size: 130%;
-    font-weight: bold;
     padding:5px;
     cursor:pointer;
     color:black;
@@ -325,12 +288,6 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Show who has responded about whether they will attend or not"
-              href="#" ng-click="showFutureSlots=true" >Show Next Meeting Times</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              title="Create a new agenda item at the bottom of the meeting"
-              href="#" ng-click="createAgendaItem()" >Propose Agenda Item</a></li>
           <li role="presentation"><a role="menuitem"
               title="Compose an email messsage about this meeting and send it"
               href="SendNote.htm?meet={{meeting.id}}&layout={{meeting.defaultLayout}}">Send Email about Meeting</a></li>
@@ -343,13 +300,6 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <li role="presentation"><a role="menuitem"
               title="Display the meeting as a HTML page that can be copied into an editor"
               href="MeetMerge.htm?id={{meeting.id}}&tem=FullDetail.chtml">Show Meeting Layouts</a></li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation"><a role="menuitem"
-              title="Generate the meeting minutes from the agenda items and put in a discussion topic"
-              ng-click="createMinutes()">Generate Minutes</a></li>
-          <li role="presentation" ng-show="meeting.minutesId"><a role="menuitem"
-              title="Navigate to the discussion topic that holds the minutes for this meeting"
-              href="noteZoom{{meeting.minutesLocalId}}.htm">View Minutes</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
               title="Make a copy of this meeting for a new timeslot"
@@ -373,454 +323,20 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
 <div>
 
-<button onclick="window.location.assign('meetingHtml.htm?id='+embeddedData.meetId+'&mode=Agenda')"   
-        ng-class="statusButtonClass('Agenda')"  >Agenda</button>
-<button onclick="window.location.assign('meetingHtml.htm?id='+embeddedData.meetId+'&mode=Minutes')" 
-        ng-class="statusButtonClass('Minutes')" >Minutes</button>
-<button ng-click="displayMode='Times'"    ng-class="statusButtonClass('Times')"   >Schedule</button>
-<button ng-click="displayMode='General'"  ng-class="statusButtonClass('General')" >General</button>
-<button ng-click="displayMode='Status'"   ng-class="statusButtonClass('Status')"  >Status</button>
-<button ng-click="displayMode='Attendance'" ng-class="statusButtonClass('Attendance')">Attendance</button>
-<button ng-click="displayMode='Items'"    ng-class="statusButtonClass('Items')"   >Items</button>
+<button ng-click="changeMeetingMode('Agenda')"   ng-class="statusButtonClass('Agenda')"  >Agenda</button>
+<button ng-click="changeMeetingMode('Minutes')"  ng-class="statusButtonClass('Minutes')" >Minutes</button>
+<button ng-click="changeMeetingMode('Times')"    ng-class="statusButtonClass('Times')"   >Schedule</button>
+<button ng-click="changeMeetingMode('General')"  ng-class="statusButtonClass('General')" >Settings</button>
+<button ng-click="changeMeetingMode('Status')"   ng-class="statusButtonClass('Status')"  >Status</button>
+<button ng-click="changeMeetingMode('Attendance')" ng-class="statusButtonClass('Attendance')">Attendance</button>
+<button ng-click="changeMeetingMode('Items')"    ng-class="statusButtonClass('Items')"   >Edit</button>
 </div>
 
-<div ng-show="displayMode=='Status'">
-    <div class="well" ng-cloak>
-        <table>
-        <tr>
-        <td class="{{meeting.state==0 ? buttonSpacerOn : buttonSpacerOff}}">
-            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(0)}}" 
-                  ng-click="changeMeetingState(0)">Draft</span></td>
-        <td>----&gt;</td>
-        <td class="{{meeting.state==1 ? buttonSpacerOn : buttonSpacerOff}}">
-            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(1)}}" 
-                  ng-click="changeMeetingState(1)">Planning</span></td>
-        <td>----&gt;</td>
-        <td class="{{meeting.state==2 ? buttonSpacerOn : buttonSpacerOff}}">
-            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(2)}}" 
-                  ng-click="changeMeetingState(2)">Running</span></td>
-        <td>----&gt;</td>
-        <td class="{{meeting.state==3 ? buttonSpacerOn : buttonSpacerOff}}">
-            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(3)}}" 
-                  ng-click="changeMeetingState(3)">Completed</span></td>
-        </tr>
-        </table>
-      <div ng-show="meeting.state<=0">
-          <p>Meeting is in draft mode and is hidden from the participants.
-             Advance the meeting to planning mode to let them know about it
-             before the meeting starts.</p>
-             
-          <h2>Confirm Meeting Participants:</h2>
-          <div>
-              <tags-input ng-model="meeting.participants" 
-                          placeholder="Enter users to send notification email to"
-                          display-property="name" key-property="uid"
-                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                          on-tag-added="updatePlayers()" 
-                          on-tag-removed="updatePlayers()">
-                  <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-              </tags-input>
-          </div>
-          <div class="spacydiv" ng-show="meetingInPast">
-              <b>Warning:</b> 
-              <span class="dropdown" style="color:white;background-color:red">This meeting is scheduled for a time in the past!</span>
-          </div>
-          <div class="spacydiv" >
-              <b>Announcement:</b> 
-              <input type="checkbox" ng-model="sendMailNow"> <span class="dropdown">Send email announcement now.</span>
-          </div>
-          <div class="spacydiv" ng-show="calcAutSendTimes() && reminderImmediate">
-              <b>Reminder:</b> 
-              <span class="dropdown" style="color:red;background-color:yellow" >Warning: meeting time is so soon that the email reminder message will be send immediately.</span>
-          </div>
-          <div class="spacydiv"  ng-show="reminderLater">
-              <b>Reminder:</b> 
-              <span class="dropdown">Automatic email reminder message scheduled for {{reminderDate|date: "yyyy-MM-dd HH:mm"}}.</span>
-          </div>
-          <div class="spacydiv"  ng-show="reminderNone">
-              <b>Reminder:</b> 
-              <span class="dropdown">No automatic email reminder message will be sent.</span>
-          </div>
-          <div>
-          <span class="dropdown" ng-hide="sendMailNow">
-              <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(false)"
-                      title="Post this topic but don't send any email">
-              Go To Planning </button>
-          </span>
-          <span class="dropdown" ng-show="sendMailNow">
-              <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(true)"
-                      title="Post this topic and send email">
-              Prepare Announcement &amp; Go To Planning</button>
-          </span>
-          </div>
-      </div>
-      <div ng-show="meeting.state==1">
-          <p>Meeting is in planning mode until the time that the meeting starts.</p>
-      </div>
-      <div ng-show="meeting.state==2">
-          <p>Meeting is in running mode and will allow updates normally done during the meeting.</p>
-      <table class="table">
-        <tr>
-          <th></th>
-          <th>Planned Time</th>
-          <th></th>
-          <th>Elapsed</th>
-          <th></th>
-          <th>Remaining</th>
-        </tr>
-        <tr ng-repeat="item in getAgendaItems()">
-          <td>
-                <span ng-show="item.proposed  || item.isSpacer" >--</span>
-                <span ng-hide="item.proposed  || item.isSpacer" >{{item.number}}.</span>
 
-                {{item.subject}} 
-          </td>
-          <td ng-style="timerStyleComplete(item)">
-                {{item.duration| minutes}}
-          </td>
-          <td ng-style="timerStyleComplete(item)">
-                <span ng-hide="item.timerRunning">
-                    <button ng-click="agendaStartButton(item)"><i class="fa fa-clock-o"></i> Start</button>
-                </span>
-                <span ng-show="item.timerRunning">
-                    <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
-                </span>
-          </td>
-          <td ng-style="timerStyleComplete(item)">
-                {{item.timerTotal| minutes}}
-          </td>
-          <td>
-              <!--button ng-click="setItemTime(item,'incr')">+1</button-->
-              <!--button ng-click="setItemTime(item,'decr')">-1</button-->
-              <!--button ng-click="setItemTime(item,'ceil')">Round Up</button-->
-              <!--button ng-click="setItemTime(item,'floor')">Round Down</button-->
-          </td>
-          <td>
-                {{item.duration - item.timerTotal| minutes}}
-          </td>
-        </tr>
-      </table>
 
-      </div>
-      <div ng-show="meeting.state>=3">
-          <p>Meeting is completed and no more updates are expected.</p>
-      <table class="table">
-        <tr>
-          <td></td>
-          <td>Planned Time</td>
-          <td>Used Time</td>
-        </tr>
-        <tr ng-repeat="item in getAgendaItems()">
-          <td>
-                <span ng-show="item.proposed" >--</span>
-                <span ng-hide="item.proposed" >{{item.number}}.</span>
+<!-- ============================================================================================== -->
 
-                {{item.subject}} 
-          </td>
-          <td>
-                <span ng-hide="item.timerRunning" style="padding:5px">
-                    {{item.duration| minutes}}
-                </span>
-                <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
-                    {{item.duration| minutes}}
-                </span>
-          </td>
-          <td>
-                <span ng-hide="item.timerRunning" style="padding:5px">
-                    {{item.timerTotal| minutes}}
-                </span>
-                <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
-                    {{item.timerTotal| minutes}}
-                </span>
-          </td>
-        </tr>
-      </table>
-    </div>
-    </div>
 
-</div>
-
-<div ng-show="displayMode=='General'">
-
-      <div ng-hide="editMeetingDesc">
-        <table class="table">
-          <col width="130px">
-          <col width="20px">
-          <col width="*">
-          <tr>
-            <td ng-click="editMeetingPart='name'">Name:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='name'">
-              <i class="fa fa-edit"></i>
-            </td>
-            <td ng-hide="'name'==editMeetingPart" ng-click="editMeetingPart='name'">
-              <b>{{meeting.name}}</b>
-            </td>
-            <td ng-show="'name'==editMeetingPart">
-                <div class="well form-horizontal form-group" style="max-width:400px">
-                    <input ng-model="meeting.name"  class="form-control">
-                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-                </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='startTime'">Scheduled Time:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='startTime'">
-              <i class="fa fa-edit"></i>
-            </td>
-            <td ng-hide="'startTime'==editMeetingPart" ng-click="editMeetingPart='startTime'">
-              <div ng-show="meeting.startTime>0">
-                {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}&nbsp;
-                ({{browserZone}})
-                <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
-                  <i class="fa fa-calendar"></i></a> &nbsp; 
-                <span ng-click="getTimeZoneList()"><i class="fa fa-eye"></i> Timezones</span><br/>
-                <span ng-repeat="val in allDates">{{val}}<br/></span>
-              </div>
-              <div ng-hide="meeting.startTime>0">
-                <i>( To Be Determined )</i>
-              </div>
-            </td>
-            <td ng-show="'startTime'==editMeetingPart">
-                <div class="well" style="max-width:400px">
-                    <span datetime-picker ng-model="meeting.startTime"
-                          class="form-control">
-                      {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
-                    </span>
-                    <span>&nbsp; ({{browserZone}})</span><br/>
-                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-                    <button class="btn btn-warning btn-raised" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button>
-                </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='duration'">Duration:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='duration'">
-              <i class="fa fa-edit"></i>
-            </td>
-            <td ng-hide="'duration'==editMeetingPart" ng-click="editMeetingPart='duration'">
-              {{meeting.duration}} Minutes ({{meeting.totalDuration}} currently allocated, 
-              ending at: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}})
-            </td>
-            <td ng-show="'duration'==editMeetingPart" >
-                <div class="well form-inline form-group" style="max-width:400px">
-                    <input ng-model="meeting.duration" style="width:60px;"  class="form-control" >
-                    Minutes ({{meeting.totalDuration}} currently allocated)<br/>
-                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-                </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='reminderTime'">Reminder:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='reminderTime'">
-              <i class="fa fa-edit"></i>
-            </td>
-            <td ng-hide="'reminderTime'==editMeetingPart" ng-click="editMeetingPart='reminderTime'">
-              {{factoredTime}} {{timeFactor}} before the meeting. 
-                <span ng-show="meeting.reminderSent<=0"> <i>Not sent.</i></span>
-                <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}</span>
-            </td>
-            <td ng-show="'reminderTime'==editMeetingPart">
-                <div class="well form-inline form-group" style="max-width:600px">
-                    <input ng-model="factoredTime" style="width:60px;"  class="form-control" >
-                    <select ng-model="timeFactor" class="form-control" ng-change="">
-                        <option>Minutes</option>
-                        <option>Days</option>
-                        </select>
-                    before the meeting, ({{meeting.reminderTime}} minutes)<br/>
-                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-                </div>
-            </td>
-          </tr>
-          <tr>
-            <td>Called By:</td>
-            <td></td>
-            <td>
-              {{meeting.owner}}
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='notifyLayout'">Agenda Layout:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='notifyLayout'">
-              <i class="fa fa-edit"></i>
-            </td>
-            <td ng-hide="'notifyLayout'==editMeetingPart" ng-click="editMeetingPart='notifyLayout'">
-              {{meeting.notifyLayout}} 
-            </td>
-            <td ng-show="'notifyLayout'==editMeetingPart">
-              <div class="well form-inline form-group" style="max-width:400px">
-                <select class="form-control"  ng-model="meeting.notifyLayout" ng-options="n for n in allLayoutNames"></select>
-                <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='defaultLayout'">Minutes Layout:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='defaultLayout'">
-              <i class="fa fa-edit"></i>
-            </td>
-            <td ng-hide="'defaultLayout'==editMeetingPart" ng-click="editMeetingPart='defaultLayout'">
-              {{meeting.defaultLayout}} 
-            </td>
-            <td ng-show="'defaultLayout'==editMeetingPart">
-              <div class="well form-inline form-group" style="max-width:400px">
-                <select class="form-control"  ng-model="meeting.defaultLayout" ng-options="n for n in allLayoutNames"></select>
-                <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='targetRole'">Target Role:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='targetRole'">
-              <i class="fa fa-edit"></i>
-            </td>
-            <td ng-hide="'targetRole'==editMeetingPart" ng-click="editMeetingPart='targetRole'">
-              <a href="roleManagement.htm">{{meeting.targetRole}}</a>
-              <span ng-hide="roleEqualsParticipants || meeting.state<=0" style="color:red">
-                  . . . includes people who are not meeting participants!
-              </span>
-              <span ng-hide="meeting.state>0" style="color:red">
-                  (This role is consulted at the time you POST the meeting)
-              </span>
-            </td>
-            <td ng-show="'targetRole'==editMeetingPart">
-                <div class="well form-inline form-group" style="max-width:400px">
-                    <select class="form-control" ng-model="meeting.targetRole" 
-                            ng-options="value for value in allRoles" ng-change="checkRole()"></select>
-                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-                </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingPart='participants'">Participants:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='participants'">
-              <i class="fa fa-edit"></i>
-            </td>
-            <td class="form-inline form-group" ng-hide="'participants'==editMeetingPart">
-                <span ng-repeat="player in meeting.participants" title="{{player.name}}"    
-                  style="text-align:center">
-                  <span class="dropdown" >
-                    <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" 
-                         ng-src="<%=ar.retPath%>icon/{{player.image}}" 
-                         style="width:32px;height:32px" 
-                         title="{{player.name}} - {{player.uid}}">
-                    </span>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" style="text-decoration: none;text-align:center">
-                          {{player.name}}<br/>{{player.uid}}</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="navigateToUser(player)">
-                          <span class="fa fa-user"></span> Visit Profile</a></li>
-                    </ul>
-                  </span>
-                </span>
-            </td>
-            <td class="form-inline form-group" ng-show="'participants'==editMeetingPart">
-              <div>
-                  <tags-input ng-model="meeting.participants" 
-                      placeholder="Enter users to send notification email to"
-                      display-property="name" key-property="uid"
-                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
-                      on-tag-added="updatePlayers()" 
-                      on-tag-removed="updatePlayers()">
-                      <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
-                  </tags-input>
-                  <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-                  <button class="btn btn-default btn-raised" ng-click="appendRolePlayers()" ng-hide="roleEqualsParticipants">
-                      Add Everyone from {{meeting.targetRole}}
-                  </button>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td ng-click="editMeetingDesc=true">Description:</td>
-            <td class="invisibleButton" ng-click="editMeetingDesc=true">
-              <i class="fa fa-edit"></i>
-            </td>
-            <td>
-              <div ng-bind-html="meeting.meetingInfo"></div>
-            </td>
-          </tr>
-          <tr ng-show="isCompleted()">
-            <td>Minutes:</td>
-            <td></td>
-            <td>
-                <div ng-show="minutesDraft && meeting.minutesId">
-                   Draft:
-                   <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;background-color:yellow;"
-                         title="Navigate to the discussion topic with the minutes for this meeting"
-                         ng-click="navigateToTopic(meeting.minutesLocalId)">
-                         View Minutes
-                   </span>
-                   <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                         title="if you are happy with the draft minutes as they are, use this to publish them to everyone"
-                         ng-click="postMinutes(meeting.minutesLocalId)">
-                         Post Minutes as they are
-                   </span>
-                </div>
-                <div ng-show="!minutesDraft && meeting.minutesId">
-                   Posted:
-                   <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                         ng-click="navigateToTopic(meeting.minutesLocalId)">
-                         View Minutes
-                   </span>
-                </div>
-                <div ng-hide="meeting.minutesId">
-                   <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                         title="Takes the minutes entires and comments and puts them into a single discussion topic document"
-                         ng-click="createMinutes()">
-                         Generate Minutes
-                   </span>
-                </div>
-            </td>
-          </tr>
-          <tr ng-show="previousMeeting.id">
-            <td>Previous Meeting:</td>
-            <td></td>
-            <td>
-              <a href="meetingFull.htm?id={{previousMeeting.id}}">
-                {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}</a> 
-                <span>&nbsp; ({{browserZone}})</span>
-            </td>
-          </tr>
-          <tr ng-show="previousMeeting.minutesId">
-            <td>Previous Minutes:</td>
-            <td></td>
-            <td>
-                <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                     ng-click="navigateToTopic(previousMeeting.minutesLocalId)"
-                     title="Navigate to the discussion topic that holds the minutes for the previous meeting">
-                     Previous Minutes
-                </span>
-            </td>
-          </tr>
-          <tr ng-show="isCompleted()">
-            <td>Attendees:</td>
-            <td></td>
-            <td>
-                <span ng-repeat="person in getAttended() track by $index">{{person.name}}, </span>
-            </td>
-          </tr>
-          <tr><td></td><td></td><td></td>
-          </tr>
-        </table>
-      </div>
-
-    <div ng-show="editMeetingDesc" style="width:100%">
-        <div class="well leafContent">
-            <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
-                 class="leafContent" style="min-height:200px;" ></div>
-            <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
-            <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
-        </div>
-    </div>
-
-</div>
-    
-<!-- Here is the voting for proposed time section -->
-    
-    
 <div ng-show="displayMode=='Times'">
 
 
@@ -946,11 +462,405 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     
 </div>
 
+<div ng-show="displayMode=='General'">
+
+      <div ng-hide="editMeetingDesc">
+        <table class="table">
+          <col width="130px">
+          <col width="*">
+          <tr>
+            <td ng-click="editMeetingPart='name'" class="labelColumn">Name:</td>
+            <td ng-hide="'name'==editMeetingPart" ng-dblclick="editMeetingPart='name'">
+              <b>{{meeting.name}}</b>
+            </td>
+            <td ng-show="'name'==editMeetingPart">
+                <div class="well form-horizontal form-group" style="max-width:400px">
+                    <input ng-model="meeting.name"  class="form-control">
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                </div>
+            </td>
+          </tr>
+          <tr>
+            <td ng-click="editMeetingPart='startTime'" class="labelColumn">Scheduled Time:</td>
+            <td ng-hide="'startTime'==editMeetingPart" ng-dblclick="editMeetingPart='startTime'">
+              <div ng-show="meeting.startTime>0">
+                {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}&nbsp;
+                ({{browserZone}})
+                <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
+                  <i class="fa fa-calendar"></i></a> &nbsp; 
+                <span ng-click="getTimeZoneList()"><i class="fa fa-eye"></i> Timezones</span><br/>
+                <span ng-repeat="val in allDates">{{val}}<br/></span>
+              </div>
+              <div ng-hide="meeting.startTime>0">
+                <i>( To Be Determined )</i>
+              </div>
+            </td>
+            <td ng-show="'startTime'==editMeetingPart">
+                <div class="well" style="max-width:400px">
+                    <span datetime-picker ng-model="meeting.startTime"
+                          class="form-control">
+                      {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
+                    </span>
+                    <span>&nbsp; ({{browserZone}})</span><br/>
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                    <button class="btn btn-warning btn-raised" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button>
+                </div>
+            </td>
+          </tr>
+          <tr>
+            <td ng-click="editMeetingPart='duration'" class="labelColumn">Duration:</td>
+            <td ng-hide="'duration'==editMeetingPart" ng-dblclick="editMeetingPart='duration'">
+              {{meeting.duration}} Minutes ({{meeting.totalDuration}} currently allocated, 
+              ending at: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}})
+            </td>
+            <td ng-show="'duration'==editMeetingPart" >
+                <div class="well form-inline form-group" style="max-width:400px">
+                    <input ng-model="meeting.duration" style="width:60px;"  class="form-control" >
+                    Minutes ({{meeting.totalDuration}} currently allocated)<br/>
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                </div>
+            </td>
+          </tr>
+          <tr>
+            <td ng-click="editMeetingPart='reminderTime'" class="labelColumn">Reminder:</td>
+            <td ng-hide="'reminderTime'==editMeetingPart" ng-dblclick="editMeetingPart='reminderTime'">
+              {{factoredTime}} {{timeFactor}} before the meeting. 
+                <span ng-show="meeting.reminderSent<=0"> <i>Not sent.</i></span>
+                <span ng-show="meeting.reminderSent>100"> Was sent {{meeting.reminderSent|date:'dd-MMM-yyyy H:mm'}}</span>
+            </td>
+            <td ng-show="'reminderTime'==editMeetingPart">
+                <div class="well form-inline form-group" style="max-width:600px">
+                    <input ng-model="factoredTime" style="width:60px;"  class="form-control" >
+                    <select ng-model="timeFactor" class="form-control" ng-change="">
+                        <option>Minutes</option>
+                        <option>Days</option>
+                        </select>
+                    before the meeting, ({{meeting.reminderTime}} minutes)<br/>
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Called By:</td>
+            <td>
+              {{meeting.owner}}
+            </td>
+          </tr>
+          <tr>
+            <td ng-click="editMeetingPart='notifyLayout'" class="labelColumn">Agenda Layout:</td>
+            <td ng-hide="'notifyLayout'==editMeetingPart" ng-dblclick="editMeetingPart='notifyLayout'">
+              {{meeting.notifyLayout}} 
+            </td>
+            <td ng-show="'notifyLayout'==editMeetingPart">
+              <div class="well form-inline form-group" style="max-width:400px">
+                <select class="form-control"  ng-model="meeting.notifyLayout" ng-options="n for n in allLayoutNames"></select>
+                <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td ng-click="editMeetingPart='defaultLayout'" class="labelColumn">Minutes Layout:</td>
+            <td ng-hide="'defaultLayout'==editMeetingPart" ng-dblclick="editMeetingPart='defaultLayout'">
+              {{meeting.defaultLayout}} 
+            </td>
+            <td ng-show="'defaultLayout'==editMeetingPart">
+              <div class="well form-inline form-group" style="max-width:400px">
+                <select class="form-control"  ng-model="meeting.defaultLayout" ng-options="n for n in allLayoutNames"></select>
+                <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td ng-click="editMeetingPart='targetRole'" class="labelColumn">Target Role:</td>
+            <td ng-hide="'targetRole'==editMeetingPart" ng-dblclick="editMeetingPart='targetRole'">
+              <a href="roleManagement.htm">{{meeting.targetRole}}</a>
+              <span ng-hide="roleEqualsParticipants || meeting.state<=0" style="color:red">
+                  . . . includes people who are not meeting participants!
+              </span>
+              <span ng-hide="meeting.state>0" style="color:red">
+                  (This role is consulted at the time you POST the meeting)
+              </span>
+            </td>
+            <td ng-show="'targetRole'==editMeetingPart">
+                <div class="well form-inline form-group" style="max-width:400px">
+                    <select class="form-control" ng-model="meeting.targetRole" 
+                            ng-options="value for value in allRoles" ng-change="checkRole()"></select>
+                    <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                </div>
+            </td>
+          </tr>
+          <tr>
+            <td ng-click="editMeetingPart='participants'" class="labelColumn">Participants:</td>
+            <td class="form-inline form-group" ng-hide="'participants'==editMeetingPart" ng-dblclick="editMeetingPart='participants'">
+                <span ng-repeat="player in meeting.participants" title="{{player.name}}"    
+                  style="text-align:center">
+                  <span class="dropdown" >
+                    <span id="menu1" data-toggle="dropdown">
+                    <img class="img-circle" 
+                         ng-src="<%=ar.retPath%>icon/{{player.image}}" 
+                         style="width:32px;height:32px" 
+                         title="{{player.name}} - {{player.uid}}">
+                    </span>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                          tabindex="-1" style="text-decoration: none;text-align:center">
+                          {{player.name}}<br/>{{player.uid}}</a></li>
+                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                          ng-click="navigateToUser(player)">
+                          <span class="fa fa-user"></span> Visit Profile</a></li>
+                    </ul>
+                  </span>
+                </span>
+            </td>
+            <td class="form-inline form-group" ng-show="'participants'==editMeetingPart">
+              <div>
+                  <tags-input ng-model="meeting.participants" 
+                      placeholder="Enter users to send notification email to"
+                      display-property="name" key-property="uid"
+                      replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                      on-tag-added="updatePlayers()" 
+                      on-tag-removed="updatePlayers()">
+                      <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+                  </tags-input>
+                  <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
+                  <button class="btn btn-default btn-raised" ng-click="appendRolePlayers()" ng-hide="roleEqualsParticipants">
+                      Add Everyone from {{meeting.targetRole}}
+                  </button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td ng-click="editMeetingDesc=true" class="labelColumn">Description:</td>
+            <td ng-dblclick="editMeetingDesc=true">
+              <div ng-bind-html="meeting.meetingInfo"></div>
+            </td>
+          </tr>
+          <tr ng-show="previousMeeting.id">
+            <td>Previous Meeting:</td>
+            <td>
+              <a href="meetingFull.htm?id={{previousMeeting.id}}">
+                {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}</a> 
+                <span>&nbsp; ({{browserZone}})</span>
+            </td>
+          </tr>
+          <tr ng-show="previousMeeting.minutesId">
+            <td>Previous Minutes:</td>
+            <td>
+                <span class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                     ng-click="navigateToTopic(previousMeeting.minutesLocalId)"
+                     title="Navigate to the discussion topic that holds the minutes for the previous meeting">
+                     Previous Minutes
+                </span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+    <div ng-show="editMeetingDesc" style="width:100%">
+        <div class="well leafContent">
+            <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
+                 class="leafContent" style="min-height:200px;" ></div>
+            <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
+            <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+<div ng-show="displayMode=='Status'">
+    <div class="well" ng-cloak>
+        <table>
+        <tr>
+        <td class="{{meeting.state==0 ? buttonSpacerOn : buttonSpacerOff}}">
+            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(0)}}" 
+                  ng-click="changeMeetingState(0)">Draft</span></td>
+        <td>----&gt;</td>
+        <td class="{{meeting.state==1 ? buttonSpacerOn : buttonSpacerOff}}">
+            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(1)}}" 
+                  ng-click="changeMeetingState(1)">Planning</span></td>
+        <td>----&gt;</td>
+        <td class="{{meeting.state==2 ? buttonSpacerOn : buttonSpacerOff}}">
+            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(2)}}" 
+                  ng-click="changeMeetingState(2)">Running</span></td>
+        <td>----&gt;</td>
+        <td class="{{meeting.state==3 ? buttonSpacerOn : buttonSpacerOff}}">
+            <span class="btn btn-default btn-raised" style="{{meetingStateStyle(3)}}" 
+                  ng-click="changeMeetingState(3)">Completed</span></td>
+        </tr>
+        </table>
+      <div ng-show="meeting.state<=0">
+          <p>Meeting is in draft mode and is hidden from the participants.
+             Advance the meeting to planning mode to let them know about it
+             before the meeting starts.</p>
+      </div>
+      <div ng-show="meeting.state<=0" class="well">
+          <h2>Confirm Meeting Participants:</h2>
+          <div>
+              <tags-input ng-model="meeting.participants" 
+                          placeholder="Enter users to send notification email to"
+                          display-property="name" key-property="uid"
+                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                          on-tag-added="updatePlayers()" 
+                          on-tag-removed="updatePlayers()">
+                  <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+              </tags-input>
+          </div>
+          <div class="spacydiv" ng-show="meetingInPast">
+              <b>Warning:</b> 
+              <span class="dropdown" style="color:white;background-color:red">This meeting is scheduled for a time in the past!</span>
+          </div>
+          <div class="spacydiv" >
+              <b>Announcement:</b> 
+              <input type="checkbox" ng-model="sendMailNow"> <span class="dropdown">Send email announcement now.</span>
+          </div>
+          <div class="spacydiv" ng-show="calcAutSendTimes() && reminderImmediate">
+              <b>Reminder:</b> 
+              <span class="dropdown" style="color:red;background-color:yellow" >Warning: meeting time is so soon that the email reminder message will be send immediately.</span>
+          </div>
+          <div class="spacydiv"  ng-show="reminderLater">
+              <b>Reminder:</b> 
+              <span class="dropdown">Automatic email reminder message scheduled for {{reminderDate|date: "yyyy-MM-dd HH:mm"}}.</span>
+          </div>
+          <div class="spacydiv"  ng-show="reminderNone">
+              <b>Reminder:</b> 
+              <span class="dropdown">No automatic email reminder message will be sent.</span>
+          </div>
+          <div>
+          <span class="dropdown" ng-hide="sendMailNow">
+              <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(false)"
+                      title="Post this topic but don't send any email">
+              Go To Planning </button>
+          </span>
+          <span class="dropdown" ng-show="sendMailNow">
+              <button class="btn btn-default btn-primary btn-raised" type="button" ng-click="postIt(true)"
+                      title="Post this topic and send email">
+              Prepare Announcement &amp; Go To Planning</button>
+          </span>
+          </div>
+      </div>
+      <div ng-show="meeting.state<=2">
+          <p ng-show="meeting.state==1">
+          Meeting is in planning mode until the time that the meeting starts.
+          </p>
+          <p ng-show="meeting.state==2">
+          Meeting is in running mode and will allow updates normally done during the meeting.
+          </p>
+      <table class="table">
+        <tr>
+          <th></th>
+          <th>Planned Duration</th>
+          <th></th>
+          <th>Actual Duration</th>
+          <th>Remaining</th>
+          <th></th>
+        </tr>
+        <tr ng-repeat="item in getAgendaItems()" ng-style="timerStyleComplete(item)"  >
+          <td  ng-dblclick="openAgenda(item)">
+                <span ng-show="item.proposed  || item.isSpacer" >--</span>
+                <span ng-hide="item.proposed  || item.isSpacer" >{{item.number}}.</span>
+
+                {{item.subject}} 
+          </td>
+          <td ng-dblclick="openAgenda(item)" >
+                {{item.duration| minutes}}
+          </td>
+          <td >
+                <span ng-hide="meeting.state!=2 || item.proposed || item.timerRunning">
+                    <button ng-click="agendaStartButton(item)"><i class="fa fa-clock-o"></i> Start</button>
+                </span>
+                <span ng-hide="meeting.state!=2 || item.proposed || !item.timerRunning">
+                    <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
+                </span>
+          </td>
+          <td ng-dblclick="openAgenda(item)">
+                <span ng-show="meeting.state==2">{{item.timerTotal| minutes}}</span>
+          </td>
+          <td ng-dblclick="openAgenda(item)" ng-style="timerStyleComplete(item)"  >
+                <span ng-show="meeting.state==2">{{item.duration - item.timerTotal| minutes}}</span>
+          </td>
+          <td ng-style="timerStyleComplete(item)" >
+            <span style="float:right" ng-hide="item.readyToGo || isCompleted() || item.proposed" >
+                <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
+                     ng-dblclick="toggleReady(item)"
+                     title="Indicates that the agenda item does NOT have all of the documents, presentations, and is full prepared for the meeting."
+                     style="width:24px;height=24px;float:right">
+            </span>
+            <span style="float:right" ng-show="item.readyToGo && !isCompleted() && !item.proposed"  >
+                <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
+                     ng-dblclick="toggleReady(item)"
+                     title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
+                     style="width:24px;height=24px">
+            </span>
+            <span style="float:right;margin-right:10px" ng-show="!isCompleted() && !item.proposed"  ng-click="moveItem(item,-1)" 
+                  title="Move agenda item up if possible">
+                <i class="fa fa-arrow-up"></i>
+            </span>
+            <span style="float:right;margin-right:10px" ng-show="!isCompleted() && !item.proposed"  ng-click="moveItem(item,1)" 
+                  title="Move agenda item down if possible">
+                <i class="fa fa-arrow-down"></i>
+            </span>
+            <span style="float:right;margin-right:10px" ng-show="item.proposed"  ng-click="toggleProposed(item)" 
+                  title="Accept this proposed agenda item">
+               ACCEPT</i>
+            </span>
+          </td>
+        </tr>
+      </table>
+      <div style="margin:20px;">
+        <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">+ New Agenda Item</button>
+      </div>
+
+      </div>
+      <div ng-show="meeting.state>=3">
+          <p>Meeting is completed and no more updates are expected.</p>
+      <table class="table">
+        <tr>
+          <td></td>
+          <td>Planned Time</td>
+          <td>Used Time</td>
+        </tr>
+        <tr ng-repeat="item in getAgendaItems()" ng-dblclick="openAgenda(item)" ng-style="timerStyleComplete(item)">
+          <td>
+                <span ng-show="item.proposed || item.isSpacer" >--</span>
+                <span ng-hide="item.proposed || item.isSpacer" >{{item.number}}.</span>
+
+                {{item.subject}} 
+          </td>
+          <td >
+                <span >
+                    {{item.duration| minutes}}
+                </span>
+          </td>
+          <td >
+                <span >
+                    {{item.timerTotal| minutes}}
+                </span>
+          </td>
+        </tr>
+      </table>
+    </div>
+    </div>
+
+</div>
+
+   
+<!-- Here is the voting for proposed time section -->
+    
+    
+
+
 <div ng-show="displayMode=='Attendance'">
 
 <!-- THIS IS THE ROLL CALL SECTION -->
 
-    <div class="well" title="Use this to let others know whether you expect to attend the meeting or not">
+    <div class="well" title="Use this to let others know whether you expect to attend the meeting or not" ng-show="meeting.state==1">
       <div><h3 style="margin:5px"><% ar.writeHtml(currentUserName); %>, will you attend?</h3></div>
         <div class="form-inline form-group">
             <select ng-model="mySitch.attend" class="form-control">
@@ -998,11 +908,12 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <div ng-show="displayMode=='Items'">
 
 <table width="100%"><tr>
-<td style="width:150px;border-right:4px black solid;vertical-align: top;">
+<td style="width:180px;border-right:4px black solid;vertical-align: top;">
 <div ng-repeat="item in getAgendaItems()">
     <div ng-class="item.position==selectedItem.position?'agendaTitleSelected':'agendaTitle'" ng-click="setSelectedItem(item)">
         <span ng-show="item.proposed || item.isSpacer" >--.</span>
         <span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}.</span>
+        <br/>
         {{item.subject}} 
     </div>
 </div>
@@ -1029,28 +940,42 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
               <i class="fa fa-arrow-down"></i>Move Down</a></li></button>
       </td>
     </tr>
-    <tr  ng-click="openAgenda(selectedItem)">
-      <td>Subject:</td>
+    <tr ng-dblclick="openAgenda(selectedItem)">
+      <td ng-click="openAgenda(selectedItem)" class="labelColumn">Subject:</td>
       <td>{{selectedItem.subject}}</td>
     </tr>
-    <tr  ng-click="openAgenda(selectedItem)" ng-hide="selectedItem.isSpacer">
-      <td>Description:</td>
+    <tr ng-hide="selectedItem.isSpacer">
+      <td class="labelColumn">Notes/Minutes:</td>
+      <td>
+        <div ng-bind-html="selectedItem.minutes"></div>
+      </td>
+    </tr>
+    <tr ng-dblclick="openAgenda(selectedItem,'Description')" ng-hide="selectedItem.isSpacer">
+      <td ng-click="openAgenda(selectedItem,'Description')" class="labelColumn">Description:</td>
       <td><div ng-bind-html="selectedItem.desc"></div></td>
     </tr>
-    <tr  ng-click="openAgenda(selectedItem)" ng-hide="selectedItem.isSpacer">
-      <td>Presenter:</td>
+    <tr  ng-dblclick="openAgenda(selectedItem)" ng-hide="selectedItem.isSpacer">
+      <td ng-click="openAgenda(selectedItem)" class="labelColumn">Presenter:</td>
       <td><div ng-repeat="pres in selectedItem.presenterList">{{pres.name}}</div></td>
     </tr>
-    <tr  ng-click="openAgenda(selectedItem)">
-      <td>Planned:</td>
+    <tr ng-dblclick="openAgenda(selectedItem)">
+      <td ng-click="openAgenda(selectedItem)" class="labelColumn">Planned:</td>
       <td>{{selectedItem.duration|minutes}}</td>
     </tr>
-    <tr  ng-click="openAgenda(selectedItem)">
-      <td>Actual:</td>
-      <td>{{selectedItem.timerTotal|minutes}}</td>
+    <tr ng-dblclick="openAgenda(selectedItem)">
+      <td ng-click="openAgenda(selectedItem)" class="labelColumn">Actual:</td>
+      <td ng-style="timerStyleComplete(item)">{{selectedItem.timerTotal|minutes}} &nbsp; &nbsp; 
+            <span ng-hide="item.timerRunning">
+                <button ng-click="agendaStartButton(item)"><i class="fa fa-clock-o"></i> Start</button>
+            </span>
+            <span ng-show="item.timerRunning">
+                <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
+            </span> &nbsp; &nbsp; 
+            <span> Remaining: {{item.duration - item.timerTotal| minutes}}</span>
+      </td>
     </tr>
-    <tr ng-click="openAttachTopics(selectedItem)" ng-hide="selectedItem.isSpacer">
-      <td>Topic:</td>
+    <tr ng-dblclick="openAttachTopics(selectedItem)" ng-hide="selectedItem.isSpacer">
+      <td ng-click="openAttachTopics(selectedItem)" class="labelColumn">Topic:</td>
       <td>
           <span ng-repeat="topic in itemTopics(selectedItem)" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
             ng-click="navigateToTopic(selectedItem.topicLink)">
@@ -1058,46 +983,24 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           </span>
       </td>
     </tr>
-    <tr ng-hide="selectedItem.isSpacer">
-      <td ng-click="openAttachDocument(selectedItem)">Attachments:</td>
-              <td><div ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
-                  <span class="dropdown" title="Access this attachment">
-                      <button class="attachDocButton" id="menu1" data-toggle="dropdown">
-                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> 
-                      </button>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
-                        <li role="presentation" style="background-color:lightgrey">
-                            <a role="menuitem" 
-                            title="This is the full name of the document"
-                            ng-click="navigateToDoc(docid)">{{getFullDoc(docid).name}}</a></li>
-                        <li role="presentation"><a role="menuitem" target="_blank"
-                            title="Visit the access page where you can download the document and see comments about it"
-                            ng-click="navigateToDoc(docid)">Access Document</a></li>
-                        <li role="presentation"><a role="menuitem" target="_blank"
-                            title="Directly download the document"
-                            ng-click="downloadDocument(docid)">Download File</a></li>
-                        <li role="presentation"><a role="menuitem" target="_blank"
-                            title="View the document details before accessing it"
-                            ng-click="navigateToDocDetails(docid).htm">Document Details</a></li>
-                        <li role="presentation"><a role="menuitem" target="_blank"
-                            title="create a new email with this document attached"
-                            ng-click="sendDocByEmail(docid)">Send by Email</a></li>
-                        <li role="presentation"><a role="menuitem" target="_blank"
-                            title="remove this document from this agenda item"
-                            ng-click="unattachDocFromItem(item, docid)">Un-attach</a></li>
-                      </ul>
-                  </span>
-                  {{getFullDoc(docid).name}}
-              </div>
+    <tr ng-hide="selectedItem.isSpacer" ng-dblclick="openAttachDocument(selectedItem)">
+      <td ng-click="openAttachDocument(selectedItem)" class="labelColumn">Attachments:</td>
+      <td><div ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
+          <span ng-click="navigateToDoc(docid)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+          <span ng-click="downloadDocument(docid)"><span class="fa fa-download"></span></span>
+          &nbsp;
+
+          {{getFullDoc(docid).name}}
+      </div>
 <%if (isLoggedIn) { %>
-              <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument(selectedItem)"
-                  title="Attach a document">
-                  ADD </button>
+      <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument(selectedItem)"
+          title="Attach a document">
+          ADD </button>
 <% } %>
-           </td>
-        </tr>
-    <tr ng-hide="selectedItem.isSpacer">
-      <td ng-click="openAttachAction(selectedItem)">Action Items:</td>
+       </td>
+    </tr>
+    <tr ng-hide="selectedItem.isSpacer" ng-dblclick="openAttachAction(selectedItem)">
+      <td ng-click="openAttachAction(selectedItem)" class="labelColumn">Action Items:</td>
       <td><div ng-repeat="goal in itemGoals(selectedItem)">
           <div>
             <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif">
@@ -1111,8 +1014,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <% } %>
       </td>
     </tr>
-    <tr ng-click="toggleReady(selectedItem)"  ng-hide="selectedItem.isSpacer">
-      <td>Ready:</td>
+    <tr ng-dblclick="selectedItem.readyToGo = ! selectedItem.readyToGo"  ng-hide="selectedItem.isSpacer">
+      <td class="labelColumn" ng-click="selectedItem.readyToGo = ! selectedItem.readyToGo">Ready:</td>
       <td>
         <span ng-hide="selectedItem.readyToGo" >
             <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
@@ -1124,16 +1027,10 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
             <img src="<%=ar.retPath%>assets/goalstate/agenda-ready-to-go.png"
                  title="Indicates that the agenda item has all of the documents, presentations, and is full prepared for the meeting."
                  style="width:24px;height=24px">
-                 Ready to go.
+                 Ready to go.  Presentation attached (if any).
         </span>
       </td>
     </tr>
-      <tr ng-hide="selectedItem.isSpacer">
-        <td style="width:50px;vertical-align:top;padding:15px;">Notes/Minutes:</td>
-        <td>
-          <div class="comment-inner" ng-bind-html="selectedItem.minutes"></div>
-        </td>
-      </tr>
       <tr ng-repeat="cmt in selectedItem.comments"  ng-hide="selectedItem.isSpacer">
 
           <%@ include file="/spring/jsp/CommentView.jsp"%>
@@ -1165,7 +1062,6 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
 </div>
             
-<hr/>
 
 
 <!-- Here is the voting for future meeting proposed time section -->
@@ -1292,28 +1188,44 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
 </div>
 
-
+<style>
+.emailbody {
+    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+    border-bottom: 2px solid skyblue;
+    padding:5px;
+    text-align: center;
+}
+.niceTable {
+    width: 100%;
+    max-width:800px;  
+}
+.niceTable tr td { 
+    padding:8px;
+    vertical-align: top;   
+}
+.smallPrint {
+    font-size:-2;
+}
+.docPill {
+    padding:3px;
+    background-color: #EEEEFF;
+    border: solid 1px gray;
+    border-radius:5px;
+    margin:5px;
+}
+</style>
 <div ng-show="displayMode=='Agenda'">
-    <div class="well">
-    <%
-    
-    ChunkTemplate.streamIt(ar.w, agendaLayoutFile,   meetingJSON, ar.getUserProfile().getCalendar() );         
-    
-%>
-    </div>
-    Public Link to this:  <a href="MeetPrint.htm?id=<%=meetId%>&tem=<%=agendaLayout%>&<%=mnm%>"><%ar.writeHtml(mRec.getName());%></a> 
+    Public Link to this:  <a href="MeetPrint.htm?id=<%=meetId%>&tem=<%=agendaLayout%>&<%=mnm%>"><%ar.writeHtml(mRec.getName());%> Agenda</a> 
     (available to anonymous users)
+    <div class="well" ng-bind-html="htmlAgenda">
+    </div>
 </div>
 <div ng-show="displayMode=='Minutes'">
-    <div class="well">
-    <%
-    
-    ChunkTemplate.streamIt(ar.w, minutesLayoutFile,   meetingJSON, ar.getUserProfile().getCalendar() );         
-    
-%>
-    </div>
-    Public Link to this:  <a href="MeetPrint.htm?id=<%=meetId%>&tem=<%=minutesLayout%>&<%=mnm%>"><%ar.writeHtml(mRec.getName());%></a> 
+    Public Link to this:  <a href="MeetPrint.htm?id=<%=meetId%>&tem=<%=minutesLayout%>&<%=mnm%>"><%ar.writeHtml(mRec.getName());%> Minutes</a> 
     (available to anonymous users)
+    <div class="well"> 
+    <div ng-bind-html="htmlMinutes"> </div>
+    </div>
 </div>
 
 

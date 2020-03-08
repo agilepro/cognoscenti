@@ -1002,7 +1002,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         {{noteInfo.subject}}
     </div>
 
-    <div class="leafContent" ng-hide="isEditing">
+    <div class="leafContent" ng-hide="isEditing" ng-dblclick="startEdit()">
         <div  ng-bind-html="noteInfo.html"></div>
     </div>
 <%if (isLoggedIn) { %>

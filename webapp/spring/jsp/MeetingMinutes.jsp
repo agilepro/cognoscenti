@@ -269,12 +269,23 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             $scope.reportError(data);
         });
     }
-    $scope.timerStyle = function(item) {
-        var style = {"background-color":"yellow", "color":"black", "padding":"5px"};
-        if (item.timerRemaining<0) {
-            style["background-color"] = "red";
+    $scope.timerStyleComplete = function(item) {
+        if (!item) {
+            return {};
         }
-        return style;
+        if (!item.timerRunning) {
+            if (item.proposed) {
+                return {"background-color":"#222222", "color":"white"};
+            }            
+            if (item.isSpacer) {
+                return {"background-color":"#bbbbbb"}
+            }
+            return {};
+        }
+        if (item.duration - item.timerTotal<0) {
+            return {"background-color":"red", "color":"black"};
+        }
+        return {"background-color":"lightgreen", "color":"black"};
     }
     $scope.calcTimes = function() {
         var totalTotal = 0;
@@ -597,7 +608,7 @@ function setInputSelection(el, startOffset, endOffset) {
                         Elapsed: {{min.timerTotal| minutes}}
                         Remaining: {{min.timerRemaining| minutes}}
                     </span>
-                    <span ng-show="min.timerRunning" ng-style="timerStyle(min)">
+                    <span ng-show="min.timerRunning" ng-style="timerStyleComplete(min)">
                         <span>Running</span>
                         Elapsed: {{min.timerTotal| minutes}}
                         Remaining: {{min.timerRemaining| minutes}}
@@ -618,8 +629,9 @@ function setInputSelection(el, startOffset, endOffset) {
                 
                 <button class="btn btn-primary btn-raised" style="float:right" ng-click="closeEditor()">Close</button>
             </div>
-            <div class="panel-body" ng-hide="min.isEditing" ng-click="startEditing(min)">
-                <div ng-bind-html="min.html" ></div>
+            <div class="panel-body" ng-hide="min.isEditing" ng-dblclick="startEditing(min)">
+                <div ng-bind-html="min.html"></div>
+                <div ng-hide="min.html" style="color:#bbb">Double click to start editing</div>
                 <div>&nbsp;</div>
             </div>
 

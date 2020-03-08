@@ -395,7 +395,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </ul>
               </div>
             </td>
-            <td ng-click="openRoleModal(role)">
+            <td ng-dblclick="openRoleModal(role)">
                 <div style="color:black;background-color:{{role.color}};padding:5px">
                     {{role.name}}</div>
             </td>
@@ -428,7 +428,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                   </span>
                 </span>
             </td>
-            <td  ng-click="openRoleModal(role)">
+            <td  ng-dblclick="openRoleModal(role)">
                 <div ng-show="role.description">
                     <b>Description:</b><br/>
                     {{role.description}}

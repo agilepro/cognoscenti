@@ -175,40 +175,6 @@
    color:LightSteelBlue;
 }
 
-.comment-outer {
-    border: 1px solid lightgrey;
-    border-radius:8px;
-    padding:5px;
-    margin-top:15px;
-    background-color:#EEE;
-    cursor: pointer;
-}
-.comment-inner {
-    border: 1px solid lightgrey;
-    border-radius:6px;
-    padding:5px;
-    background-color:white;
-}
-.comment-state-draft {
-    background-color:yellow;
-}
-.comment-state-active {
-    background-color:#DEF;
-}
-.comment-state-complete {
-    background-color:#EEE;
-}
-.comment-phase-change {
-    border: 1px solid #DFD;
-    background-color:#EFE;
-}
-.invisibleButton {
-    color: #fff;
-}
-.invisibleButton:hover {
-    color: black;
-    background-color:#eee;
-}
 </style>
 
 <script src="../../../jscript/AllPeople.js"></script>
@@ -424,7 +390,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
           <col width="*">
           <tr>
             <td>Name:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='name'">
+            <td ng-click="editMeetingPart='name'">
               <i class="fa fa-edit"></i>
             </td>
             <td ng-hide="'name'==editMeetingPart">
@@ -439,7 +405,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
           </tr>
           <tr>
             <td>Scheduled Time:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='startTime'">
+            <td ng-click="editMeetingPart='startTime'">
               <i class="fa fa-edit"></i>
             </td>
             <td ng-hide="'startTime'==editMeetingPart">
@@ -469,7 +435,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
           </tr>
           <tr>
             <td>Duration:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='duration'">
+            <td ng-click="editMeetingPart='duration'">
               <i class="fa fa-edit"></i>
             </td>
             <td ng-hide="'duration'==editMeetingPart">
@@ -486,7 +452,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
           </tr>
           <tr>
             <td>Reminder:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='reminderTime'">
+            <td ng-click="editMeetingPart='reminderTime'">
               <i class="fa fa-edit" ng-click="editMeetingPart='reminderTime'"></i>
             </td>
             <td ng-hide="'reminderTime'==editMeetingPart">
@@ -515,7 +481,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
           </tr>
           <tr>
             <td>Agenda Layout:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='notifyLayout'">
+            <td ng-click="editMeetingPart='notifyLayout'">
               <i class="fa fa-edit"></i>
             </td>
             <td ng-hide="'notifyLayout'==editMeetingPart">
@@ -530,7 +496,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
           </tr>
           <tr>
             <td>Minutes Layout:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='defaultLayout'">
+            <td ng-click="editMeetingPart='defaultLayout'">
               <i class="fa fa-edit"></i>
             </td>
             <td ng-hide="'defaultLayout'==editMeetingPart">
@@ -545,7 +511,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
           </tr>
           <tr>
             <td>Target Role:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='targetRole'">
+            <td ng-click="editMeetingPart='targetRole'">
               <i class="fa fa-edit"></i>
             </td>
             <td ng-hide="'targetRole'==editMeetingPart">
@@ -567,7 +533,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
           </tr>
           <tr>
             <td>Participants:</td>
-            <td class="invisibleButton" ng-click="editMeetingPart='participants'">
+            <td ng-click="editMeetingPart='participants'">
               <i class="fa fa-edit"></i>
             </td>
             <td class="form-inline form-group" ng-hide="'participants'==editMeetingPart">
@@ -610,7 +576,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
           </tr>
           <tr>
             <td>Description:</td>
-            <td class="invisibleButton" ng-click="editMeetingDesc=true">
+            <td ng-click="editMeetingDesc=true">
               <i class="fa fa-edit"></i>
             </td>
             <td>
@@ -823,25 +789,6 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
     
 <!-- THIS IS THE ROLL CALL SECTION -->
 
-    <div ng-repeat="sitch in mySitch" class="comment-outer" style="margin:40px" ng-show="showSelfRegister()"
-         title="Use this to let others know whether you expect to attend the meeting or not">
-      <div><h3 style="margin:5px"><% ar.writeHtml(currentUserName); %>, will you attend?</h3></div>
-      <div class="comment-inner">
-        <div class="form-inline form-group" style="margin:20px">
-            <select ng-model="sitch.attend" class="form-control">
-                <option>Unknown</option>
-                <option>Yes</option>
-                <option>Maybe</option>
-                <option>No</option>
-            </select>
-            Details:
-            <input type="text" ng-model="sitch.situation" class="form-control" style="width:400px;">
-            <button class="btn btn-primary btn-raised" ng-click="saveSituation()">Save</button>
-        </div>
-
-      </div>
-    </div>
-
 
     <div class="comment-outer" style="margin:40px" ng-show="editAttendees()">
       <div><h2 style="margin:5px">Attendance List</h2></div>
@@ -879,7 +826,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
       </tr>
       <tr class="comment-inner" ng-repeat="pers in peopleStatus">
           <td>{{pers.name}}</td>
-          <td  style="width:20px;" class="invisibleButton">
+          <td  style="width:20px;">
               <div ng-show="pers.uid=='<%ar.writeJS(currentUser);%>'" style="cursor:pointer;"
               ng-click="toggleRollCall()">
                   <i class="fa fa-edit"></i></div></td>
@@ -1001,7 +948,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
                         Elapsed: {{item.timerTotal| minutes}}
                         Remaining: {{item.duration - item.timerTotal| minutes}}
                     </span>
-                    <span ng-show="item.timerRunning" ng-style="timerStyle(item)">
+                    <span ng-show="item.timerRunning" ng-style="timerStyleComplete(item)">
                         <button ng-click="stopAgendaRunning()"><i class="fa fa-clock-o"></i> Stop</button>
                         Elapsed: {{item.timerTotal| minutes}}
                         Remaining: {{item.duration - item.timerTotal| minutes}}
@@ -1037,7 +984,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             </div>
             <div>
                 <i ng-click="openAgenda(item)">
-                <i class="fa fa-edit invisibleButton"></i> {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
+                <i class="fa fa-edit"></i> {{item.schedule | date: 'HH:mm'}} ({{item.duration}} minutes)<span ng-repeat="pres in item.presenterList">, {{pres.name}}</span></i>
             </div>
           </div>
         </td> 

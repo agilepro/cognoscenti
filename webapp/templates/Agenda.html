@@ -20,16 +20,23 @@
             <input ng-model="agendaItem.subject"  class="form-control" style="max-width:400px;"
                        placeholder="Enter Agenda Item Name"/>
         </div>
-        <div class="form-group">
-            <label for="labels">Duration: (minutes)</label>
-            <input ng-model="agendaItem.duration"  class="form-control" style="width:100px;"
-                       placeholder="Enter Agenda Item Name"/>
-        </div>
-        <div class="form-inline form-group" ng-hide="agendaItem.topicLink">
+        <div class="form-inline form-group">
                 <input type="checkbox"  ng-model="agendaItem.isSpacer"
                          class="form-control" style="width:50px;"/>
                 This is a break time
         </div>
+        <table><tr><td>
+        <div class="form-group">
+            <label for="labels">Planned Duration: (minutes)</label>
+            <input ng-model="agendaItem.duration"  class="form-control" style="width:100px;"/>
+        </div>
+        </td><td>&nbsp;
+        </td><td>
+        <div class="form-group">
+            <label for="labels">Actual Duration: (minutes)</label>
+            <input ng-model="agendaItem.previousElapsed"  class="form-control" style="width:100px;"/>
+        </div>
+        </td></tr></table>
       </div>
       <div class="col-sm-12 col-md-6">
        <div class="form-group">
@@ -40,7 +47,7 @@
                 <auto-complete source="getPeople($query)" min-length="1"></auto-complete>
             </tags-input>
         </div>
-        <div class="form-inline form-group" ng-hide="agendaItem.topicLink">
+        <div class="form-inline form-group">
                 <input type="checkbox"  ng-model="agendaItem.proposed"
                          class="form-control" style="width:50px;"/>
                 Proposed (Not Accepted Yet)

@@ -139,7 +139,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
         <td style="cursor:pointer" ng-click="openTaskAreaEditor(ta)" style="max-width:40px"
             title="Edit this task area">
           <span class="fa fa-edit"></span></td>
-        <td ng-click="openTaskAreaEditor(ta)" >{{ta.name}}</td>
+        <td ng-dblclick="openTaskAreaEditor(ta)" >{{ta.name}}</td>
         <td title="Click on person name to see their profile information">
             <div ng-repeat="ass in ta.assignees">
                 <a href="<%=ar.retPath%>v/FindPerson.htm?uid={{ass.key}}">{{ass.name}}</div>
@@ -160,7 +160,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
                  title="Green: Good shape" class="stoplight">
           </span>
         </td>
-        <td ng-click="openTaskAreaEditor(ta)" >{{ta.status}}</td>
+        <td ng-dblclick="openTaskAreaEditor(ta)" >{{ta.status}}</td>
       </tr>
     </table>
     

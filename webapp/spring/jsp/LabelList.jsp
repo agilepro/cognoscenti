@@ -191,7 +191,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <td style="width:80px;">Color</td>
                 <td style="width:100px;"></td>
             </tr>
-            <tr ng-repeat="label in labelList">
+            <tr ng-repeat="label in labelList" ng-dblclick="label.isEdit=true;label.editedName=label.name">
                 <td ng-show="label.isEdit || label.isNew">
                     <input type="text" ng-model="label.editedName" style="width:200px;"
                         placeholder="Enter Label Name" class="form-control">

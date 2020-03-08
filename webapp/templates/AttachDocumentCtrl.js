@@ -98,6 +98,16 @@ app.controller('AttachDocumentCtrl', function($scope, $http, $modalInstance, con
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
+    
+    $scope.unfinishedUpload = function() {
+        var res = false;
+        $scope.fileProgress.forEach( function(fp) {
+            if (!fp.done) {
+                res = true;
+            }
+        });
+        return res;
+    }
 
 
     /// FILE UPLOAD ///

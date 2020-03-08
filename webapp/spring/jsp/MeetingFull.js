@@ -23,6 +23,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     if (embeddedData.mode) {
         $scope.displayMode=embeddedData.mode;
     }
+    $scope.htmlAgenda = "";
+    $scope.htmlMinutes = "";
     
     $scope.userZone = embeddedData.userZone;
     $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -436,14 +438,22 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.meeting.timerTotal = totalTotal;
     }
     $scope.timerStyleComplete = function(item) {
-        if (!item.timerRunning) {
+        if (!item) {
             return {};
         }
-        var style = {"background-color":"yellow", "color":"black"};
-        if (item.duration - item.timerTotal<0) {
-            style["background-color"] = "red";
+        if (!item.timerRunning) {
+            if (item.proposed) {
+                return {"background-color":"#222222", "color":"white"};
+            }            
+            if (item.isSpacer) {
+                return {"background-color":"#bbbbbb"}
+            }
+            return {};
         }
-        return style;
+        if (item.duration - item.timerTotal<0) {
+            return {"background-color":"red", "color":"black"};
+        }
+        return {"background-color":"lightgreen", "color":"black"};
     }
     
     //don't know if we need this one any more....
@@ -625,6 +635,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 }
             });
         }
+        $scope.loadAgenda();
+        $scope.loadMinutes();
+        window.setMainPageTitle(meeting.name);
     }
     function determineRoleEqualsParticipants() {
         $scope.roleEqualsParticipants = false;
@@ -801,12 +814,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     window.setTimeout( function() {$scope.refresh()}, 30000);
 
     $scope.toggleReady = function(item) {
-        if (!item.readyToGo) {
-            var x = window.confirm( "Have you attached all presentations, \n and is the rest of the information \n about the agenda item up to date?  \nClick 'OK' when everything is ready.");
-            if (!x) {
-                return;
-            }
-        }
         item.readyToGo=!item.readyToGo
         $scope.saveAgendaItemParts(item, ['readyToGo']);
     }
@@ -1751,7 +1758,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         agendaModalInstance.result
         .then(function (changedAgendaItem) {
             $scope.saveAgendaItemParts(changedAgendaItem, 
-                ["subject", "desc","duration","isSpacer","presenters","proposed"]);
+                ["subject", "desc","duration","timerElapsed","isSpacer","presenters","proposed"]);
         }, function () {
             //cancel action - nothing really to do
         });
@@ -1965,7 +1972,36 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         $scope.savePartialMeeting(["attended"]);
     }
+    $scope.changeMeetingMode = function(newMode) {
+        $scope.displayMode=newMode;
+        let stateObj = {
+            foo: newMode
+        }
+        window.history.pushState(stateObj, newMode, 'meetingHtml.htm?id='+embeddedData.meetId+'&mode='+newMode);
+        console.log("LOCATION", window.location)
+    }
     
+    
+    $scope.loadAgenda = function() {
+        let getURL = "MeetPrint.htm?id="+$scope.meeting.id+"&tem="+$scope.meeting.notifyLayout;
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.htmlAgenda = data;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    $scope.loadMinutes = function() {
+        let getURL = "MeetPrint.htm?id="+$scope.meeting.id+"&tem="+$scope.meeting.defaultLayout;
+        $http.get(getURL)
+        .success( function(data) {
+            $scope.htmlMinutes = data;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
 });
 
 function calcResponders(slots, AllPeople, siteId) {

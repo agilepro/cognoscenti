@@ -471,31 +471,7 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
     }
 %>
 </table>
-<style>
-.comment-outer {
-    border: 1px solid lightgrey;
-    border-radius:8px;
-    padding:5px;
-    margin-top:15px;
-    background-color:#EEE
-}
-.comment-inner {
-    border: 1px solid lightgrey;
-    border-radius:6px;
-    padding:5px;
-    background-color:white;
-    margin:2px
-}
-.comment-state-draft {
-    background-color:yellow;
-}
-.comment-state-active {
-    background-color:#DEF;
-}
-comment-state-complete {
-    background-color:#EEE;
-}
-</style>
+
 
 <table >
   <tr ng-repeat="cmt in docInfo.comments">
