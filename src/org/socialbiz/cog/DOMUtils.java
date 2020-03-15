@@ -52,6 +52,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.purplehillsbooks.xml.Mel;
+
 /**
  * This class offers a number of helper functions for dealing with XML DOMS
  * By centralizing all XML specific functions here, we can maximize reuse.
@@ -258,39 +260,6 @@ public class DOMUtils {
 
 
     /////////////////// ALL CHILDREN  ///////////////////////
-
-    /**
-    * Silly method.
-    * As part of porting this from the old XML parser to DOM,
-    * use this simple method to get child Elements.
-    *  The old parser has a method for getting an Enumeration. That was used in
-    *  hundreds of places. This simple method is an easy replacement for that.
-    *
-    * @deprecated use getChildElementsList instead
-    *
-    * @param from - a Node/Element from which we want to get all the child elements
-    * @return an Enumeration of org.w3c.dom.Element objects
-    * or an empty Enumeration if there are no child elements
-    */
-
-    /*
-    public static Enumeration<Element> getChildElements(Element from)
-    {
-        if (from==null)
-        {
-            throw new RuntimeException("getChildElements must have a non null parameter 'from'");
-        }
-        List<Element> list = new ArrayList<Element>() ;
-        NodeList childNdList = from.getChildNodes();
-        for (int i = 0 ; i < childNdList.getLength(); i++) {
-            org.w3c.dom.Node n = childNdList.item(i) ;
-            if (n.getNodeType() != org.w3c.dom.Node.ELEMENT_NODE) {
-                continue ;
-            }
-            list.add((Element)n) ;
-        }
-        return list.elements() ;
-    }*/
 
    /**
    * Get an ordered list of all ELEMENTs that are children of a context Node
@@ -560,6 +529,7 @@ public class DOMUtils {
             return null;
         }
         Element newElem = doc.createElement(name);
+        textValue = Mel.assureValidXMLChars(textValue);
         newElem.appendChild(doc.createTextNode(textValue));
         parent.appendChild(newElem);
         return newElem;
@@ -579,6 +549,7 @@ public class DOMUtils {
     void
     addChildText( Document doc, Element parent, String textValue)
     {
+        textValue = Mel.assureValidXMLChars(textValue);
         parent.appendChild(doc.createTextNode(textValue));
     }
 
@@ -598,6 +569,7 @@ public class DOMUtils {
         Element newElem = doc.createElement(name);
 
         if (textValue != null) {
+            textValue = Mel.assureValidXMLChars(textValue);
             newElem.appendChild(doc.createTextNode(textValue));
         }
 

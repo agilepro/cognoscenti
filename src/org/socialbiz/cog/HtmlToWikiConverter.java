@@ -244,10 +244,21 @@ class HTMLParser extends HTMLEditorKit.ParserCallback {
         //otherwise cause possible styling errors
         for (int i=0; i<input.length(); i++) {
             char ch = input.charAt(i);
-            if (ch=='[' || ch=='_' || ch=='\'' || ch=='º') {
-                dest.append('º');
+            if (ch<32) {
+                if (ch==9 || ch==10 || ch==13) {
+                    //these are the only valid characters less than 32, strip out any others
+                    //this is critical because inclusion of these characters can cause the 
+                    //XML parsing to fail for the entire workspace
+                    dest.append( ch );
+                }
             }
-            dest.append( ch );
+            else if (ch=='[' || ch=='_' || ch=='\'' || ch=='º') {
+                dest.append('º');
+                dest.append( ch );
+            }
+            else {
+                dest.append( ch );
+            }
         }
     }
 
