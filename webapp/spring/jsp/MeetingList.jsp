@@ -181,34 +181,49 @@ app.controller('myCtrl', function($scope, $http) {
 
     <table class="table table-striped table-hover" width="100%">
         <tr class="gridTableHeader">
-            <th width="100px"></th>
+            <th width="100px">Actions</th>
+            <th width="50px">Agenda</th>
             <th width="200px">Meeting</th>
             <th width="200px">Date ({{0|date: "'GMT'Z"}})</th>
+            <th width="50px">Minutes</th>
             <th width="80px">State</th>
             <th width="80px">Duration</th>
         </tr>
         <tr ng-repeat="rec in meetings">
             <td class="actions">
-              <a role="menuitem" tabindex="-1" title="Edit Meeting" href="meetingFull.htm?id={{rec.id}}">
-                <button type="button" name="edit" class='btn btn-primary'>
-                    <span class="fa fa-edit"></span>
-                </button>
-              </a>
               <a role="menuitem" tabindex="-1" title="Clone Meeting" href="CloneMeeting.htm?id={{rec.id}}">
                 <button type="button" name="clone" class='btn btn-default'>
                     <span class="fa fa-clone"></span>
                 </button>
               </a>
-              <a role="menuitem" tabindex="-1" title="Delete Meeting" href="#" ng-click="deleteRow(rec)">
+              <a role="menuitem" tabindex="-1" title="Delete Meeting" href="#" ng-click=    "deleteRow(rec)">
                 <button type="button" name="delete" class='btn btn-warning'>
                     <span class="fa fa-trash"></span>
                 </button>
               </a>
             </td>
-            <td><b><a title="View Meeting" href="meetingFull.htm?id={{rec.id}}">{{rec.name}}</a></b></td>
+            <td class="actions"><a title="Meeting Agenda" 
+                 href="meetingHtml.htm?id={{rec.id}}&mode=Agenda">
+                <button type="button" name="edit" class='btn btn-primary'> 
+                    <span class="fa  fa-file-o"></span>
+                </button>
+              </a>
+            </td>
+            <td><b><a title="Meeting Agenda" 
+                 href="meetingHtml.htm?id={{rec.id}}&mode=General">
+                {{rec.name}}</a></b>
+            </td>
             <td>
                 <span ng-show="rec.startTime>0">{{rec.startTime|date: "dd-MMM-yyyy 'at' HH:mm"}}</span>
                 <span ng-show="rec.startTime<=0"><i>( To Be Determined )</i></span>
+            </td>
+            <td class="actions">
+              <a role="menuitem" tabindex="-1" title="Meeting Minutes" 
+                 href="meetingHtml.htm?id={{rec.id}}&mode=Minutes">
+                <button type="button" name="edit" class='btn btn-primary'>
+                    <span class="fa fa-file-text-o"></span>
+                </button>
+              </a>
             </td>
             <td style="{{meetingStateStyle(rec.state)}}">{{meetingStateName(rec.state)}}</td>
             <td>{{rec.duration}}</td>

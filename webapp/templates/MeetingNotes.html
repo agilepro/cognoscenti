@@ -1,0 +1,25 @@
+
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-class="'qqTabSelected'">
+    Edit Meeting Notes
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+  <div >
+    <div class="form-group" 
+         title="The status is text describing the current situation for all the actions in this area.">
+      <label for="labels">Status:</label>
+      <textarea ng-model="agendaData.new" class="form-control" style="height:250px;width:80%;color:brown"
+      placeholder="Enter meeting notes"></textarea>
+    </div>
+  </div>
+  
+  <div style="clear:both"></div>
+</div>
+<div class="modal-footer">
+    <button ng-hide="id=='~new~'" class="btn btn-primary btn-raised"
+        type="button" ng-click="ok()">Close</button>
+</div>
+

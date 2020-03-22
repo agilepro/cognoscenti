@@ -622,7 +622,7 @@ function setInputSelection(el, startOffset, endOffset) {
                 <button ng-click="saveMinutes(min)" style="font-size:70%" ng-hide="min.new==min.old">Save</button>
             </div>
             <div class="panel-body" ng-show="min.isEditing"  ng-style="editStyle(min)">
-                <textarea ng-model="min.new" class="form-control" style="width:100%;height:200px"></textarea>
+                <textarea ng-model="min.new" class="form-control" style="width:100%;height:200px;color:brown"></textarea>
                 <button class="btn btn-default btn-raised" ng-click="openAttachAction(min)">Add Action Item</button>
                 <button class="btn btn-default btn-raised" ng-click="openAddDocument(min)">Add Document</button>
                 <button class="btn btn-default btn-raised" ng-click="openDecisionEditor(min)">Add Decision</button>
