@@ -163,6 +163,10 @@ public class BaseController {
             return false;
         }
         if(!ar.isMember()){
+            if (ar.ngp instanceof NGBook) {
+                streamJSP(ar, "WarningSite");
+                return true;
+            }
             ar.req.setAttribute("roleName", "Members");
             streamJSP(ar, "WarningNotMember");
             return true;
