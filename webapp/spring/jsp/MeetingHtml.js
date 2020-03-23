@@ -30,9 +30,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
     $scope.showTimeSlots = false;
-    $scope.showFutureSlots = false;
     $scope.timeSlotResponders = [];
-    $scope.futureSlotResponders = [];
     $scope.newProposedTime = 0;
     $scope.mySitch = {uid:embeddedData.userId,attend:"Unknown",situation: ""}
     
@@ -643,11 +641,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         data.timeSlots.sort(function(a,b) {
             return a.proposedTime - b.proposedTime;
         });
-        data.futureSlots.sort(function(a,b) {
-            return a.proposedTime - b.proposedTime;
-        });
-        $scope.timeSlotResponders = calcResponders(data.timeSlots, AllPeople, $scope.siteInfo.key);
-        $scope.futureSlotResponders = calcResponders(data.futureSlots, AllPeople, $scope.siteInfo.key);
+        if (data.timeSlots && data.timeSlots.length>0) {  
+            $scope.newProposedTime = data.timeSlots[data.timeSlots.length-1].proposedTime;
+        }
+        else {
+            $scope.newProposedTime = new Date().getTime();
+        }
+        $scope.timeSlotResponders = calcResponders(data.participants, AllPeople, $scope.siteInfo.key);
         determineRoleEqualsParticipants();
         if (isLinkToComment) {
             $scope.showAll();
@@ -1870,10 +1870,20 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
     
     $scope.createTime = function(fieldName,newTime) {
-        var isCurrent = ("timeSlots" == fieldName);
-        var obj = {action:"AddTime", isCurrent: isCurrent, time: newTime};
+        //first, ignore new duplicate values
+        let found = false;
+        $scope.meeting.timeSlots.forEach( function(timeSlot) {
+            if (newTime == timeSlot.proposedTime) {
+                found=true;
+            }
+        });
+        if (found) {
+            return;
+        }
+        var obj = {action:"AddTime", isCurrent: true, time: newTime};
         var postURL = "proposedTimes.json?id="+$scope.meeting.id;
         var postdata = angular.toJson(obj);
+        $scope.showTimeAdder=false;
         $http.post(postURL,postdata)
         .success( function(data) {
             setMeetingData(data);
@@ -1892,8 +1902,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             });
         }
     }
-    $scope.removeVoter = function(fieldName, oldVoter) {
-        var isCurrent = ("timeSlots" == fieldName);
+    $scope.removeVoter = function(unusedparameter, oldVoter) {
         var obj = {action:"RemoveUser", isCurrent: isCurrent, user: oldVoter};
         var postURL = "proposedTimes.json?id="+$scope.meeting.id;
         var postdata = angular.toJson(obj);
@@ -1905,10 +1914,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             $scope.reportError(data);
         });
     }
-    $scope.removeTime = function(fieldName,time) {
+    $scope.removeTime = function(time) {
         var hasSetting = false;
-        if ($scope.meeting[fieldName]) {
-            $scope.meeting[fieldName].forEach( function(aTime) {
+        if ($scope.meeting.timeSlots) {
+            $scope.meeting.timeSlots.forEach( function(aTime) {
                 if (aTime.proposedTime == time) {
                     if (Object.keys(aTime.people).length > 0) {
                         hasSetting = true;
@@ -1922,8 +1931,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             }
         }
         
-        var isCurrent = ("timeSlots" == fieldName);
-        var obj = {action:"RemoveTime", isCurrent: isCurrent, time: time};
+        var obj = {action:"RemoveTime", isCurrent: true, time: time};
         var postURL = "proposedTimes.json?id="+$scope.meeting.id;
         var postdata = angular.toJson(obj);
         $http.post(postURL,postdata)
@@ -1934,9 +1942,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             $scope.reportError(data);
         });
     }
-    $scope.setVote = function(fieldName, time, resp, newVal) {
-        var isCurrent = ("timeSlots" == fieldName);
-        var obj = {action:"SetValue", isCurrent: isCurrent, time: time, user: resp, value:newVal};
+    $scope.setVote = function(unusedparameter, time, resp, newVal) {
+        var obj = {action:"SetValue", isCurrent: true, time: time, user: resp, value:newVal};
         var postURL = "proposedTimes.json?id="+$scope.meeting.id;
         var postdata = angular.toJson(obj);
         $http.post(postURL,postdata)
@@ -2072,13 +2079,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 function calcResponders(slots, AllPeople, siteId) {
     var res = [];
     var checker = [];
-    slots.forEach( function(oneTime) {
-        Object.keys(oneTime.people).forEach( function(email) {
-            if (checker.indexOf(email)<0) {
-                res.push(AllPeople.findUserFromID(email, siteId));
-                checker.push(email);
-            }
-        });
+    slots.forEach( function(person) {
+        if (checker.indexOf(person.uid)<0) {
+            res.push(AllPeople.findUserFromID(person.uid, siteId));
+            checker.push(person.uid);
+        }
     });
     if (checker.indexOf(embeddedData.userId)<0) {
         res.push(AllPeople.findUserFromID(embeddedData.userId, siteId));

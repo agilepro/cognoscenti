@@ -356,14 +356,16 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
       <button ng-hide="'startTime'==editMeetingPart" class="btn btn-primary btn-raised" 
           ng-click="editMeetingPart='startTime'">Edit Start Time</button>
       <div ng-show="'startTime'==editMeetingPart">
-        <div class="well" style="max-width:400px">
+        <div class="well" style="max-width:500px">
             <span datetime-picker ng-model="meeting.startTime"
                   class="form-control">
               {{meeting.startTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}
             </span>
             <span>&nbsp; ({{browserZone}})</span><br/>
-            <button class="btn btn-primary btn-raised" ng-click="savePendingEdits()">Save</button>
-            <button class="btn btn-warning btn-raised" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button>
+            <button class="btn btn-primary btn-raised" 
+                    ng-click="createTime('timeSlots', meeting.startTime);savePendingEdits()">Save</button>
+            <button class="btn btn-primary btn-raised" ng-click="meeting.startTime=0;savePendingEdits()">To Be Determined</button>
+            <button class="btn btn-warning btn-raised" ng-click="editMeetingPart=null">Cancel</button>
         </div>
       </div>
     </div>
@@ -406,7 +408,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
                 data-toggle="dropdown"> <span class="caret"></span> </button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu">
               <li role="presentation">
-                  <a role="menuitem" ng-click="removeTime('timeSlots',time.proposedTime)">
+                  <a role="menuitem" ng-click="removeTime(time.proposedTime)">
                   <i class="fa fa-times"></i>
                   Remove Proposed Time</a></li>
               <li role="presentation">
@@ -468,28 +470,21 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     </table>
     
     
-      <table class="spaceyTable"><tr>
-      <td>
-        <button ng-click="createTime('timeSlots', newProposedTime)" class="btn btn-primary btn-raised">Add Proposed Time</button>
-      </td>
-      <td>
-        <span datetime-picker ng-model="newProposedTime" class="form-control" style="display:inline">
+    <div ng-hide="showTimeAdder">
+        <button ng-click="showTimeAdder=true" 
+                class="btn btn-primary btn-raised">Add Proposed Time</button>
+    </div>
+
+    <div ng-show="showTimeAdder" class="well">
+        Choose a time: <span datetime-picker ng-model="newProposedTime" class="form-control" style="display:inline">
           {{newProposedTime|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}  
         </span> 
-          &nbsp; ({{browserZone}})
-      </td>
-      </tr><tr>
-      <td>
-        <button ng-click="addProposedVoter('timeSlots', newProposedVoter)" class="btn btn-primary btn-raised">Add Voter</button>
-      </td>
-      <td>
-        <input type="text" ng-model="newProposedVoter" class="form-control" 
-           placeholder="Enter email address"
-           typeahead="person.uid as person.name for person in getPeople($viewValue) | limitTo:12">
-      </td>
-      </tr></table>
-
-
+        and then <button ng-click="createTime('timeSlots', newProposedTime)" 
+                 class="btn btn-primary btn-raised">Add It</button>
+        &nbsp; ({{browserZone}}) &nbsp;
+        or <button ng-click="showTimeAdder=false" 
+                 class="btn btn-warning btn-raised">Cancel</button>
+    </div>
     
 </div>
 

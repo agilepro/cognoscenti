@@ -11,11 +11,13 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
     
     
     $scope.ok = function () {
+        $interval.cancel($scope.promiseAutosave);
         $scope.saveMinutes();
         $scope.readyToLeave = true;
     };
 
     $scope.cancel = function () {
+        $interval.cancel($scope.promiseAutosave);
         $modalInstance.dismiss('cancel');
     };
 
