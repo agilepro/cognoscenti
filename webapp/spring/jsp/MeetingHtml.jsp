@@ -320,8 +320,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <button ng-click="changeMeetingMode('Agenda')"   ng-class="statusButtonClass('Agenda')"  >Agenda</button>
 <button ng-click="changeMeetingMode('Minutes')"  ng-class="statusButtonClass('Minutes')" >Minutes</button>
 <button ng-click="changeMeetingMode('General')"  ng-class="statusButtonClass('General')" >Settings</button>
-<button ng-click="changeMeetingMode('Times')"    ng-class="statusButtonClass('Times')"   >Start Time</button>
 <button ng-click="changeMeetingMode('Attendance')" ng-class="statusButtonClass('Attendance')">Participants</button>
+<button ng-click="changeMeetingMode('Times')"    ng-class="statusButtonClass('Times')"   >Start Time</button>
 <button ng-click="changeMeetingMode('Status')"   ng-class="statusButtonClass('Status')"  >Overview</button>
 <button ng-click="changeMeetingMode('Items')"    ng-class="statusButtonClass('Items')"   >Edit</button>
 </div>
@@ -912,7 +912,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <table width="100%"><tr>
 <td style="width:180px;border-right:4px black solid;vertical-align: top;">
 <div ng-repeat="item in getAgendaItems()">
-    <div ng-style="itemTabStyleComplete(item)" ng-click="setSelectedItem(item)" ng-hide="item.proposed">
+    <div ng-style="itemTabStyleComplete(item)" ng-click="setSelectedItem(item)" ng-hide="item.proposed"
+         ng-dblclick="openAgenda(selectedItem)">
         <span ng-show="item.proposed" style="color:grey">Proposed</span>
         <span ng-show="item.isSpacer" style="color:grey">Break</span>
         <span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}.</span>
@@ -927,7 +928,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <div style="height:70px">&nbsp;</div>
 
 <div ng-repeat="item in getAgendaItems()">
-    <div ng-style="itemTabStyleComplete(item)" ng-click="setSelectedItem(item)" ng-show="item.proposed">
+    <div ng-style="itemTabStyleComplete(item)" ng-click="setSelectedItem(item)" ng-show="item.proposed"
+         ng-dblclick="openAgenda(selectedItem)">
         <span ng-show="item.proposed" style="color:grey">Proposed</span>
         <br/>
         {{item.subject}}
@@ -957,7 +959,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <button ng-click="moveItem(selectedItem,1)" class="btn btn-primary btn-raised"
                   ng-hide="selectedItem.proposed">
               <i class="fa fa-arrow-down"></i>Move Down</a></li></button>
-          <button ng-click="selectedItem.proposed=false" class="btn btn-primary btn-raised"
+          <button ng-click="toggleProposed(selectedItem)" class="btn btn-primary btn-raised"
                   ng-show="selectedItem.proposed">
               <i class="fa fa-check"></i>Accept Proposed Item</a></li></button>
       </td>
@@ -999,7 +1001,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     <tr ng-dblclick="openAgenda(selectedItem)" ng-show="item.proposed">
       <td ng-click="openAgenda(selectedItem)" class="labelColumn">Proposed:</td>
       <td ng-style="timerStyleComplete(item)">This item is proposed, and not accepted yet.  
-          <button ng-click="selectedItem.proposed=false" class="btn btn-primary btn-raised"
+          <button ng-click="toggleProposed(selectedItem)" class="btn btn-primary btn-raised"
                   ng-show="selectedItem.proposed">
               <i class="fa fa-check"></i> Accept Proposed Item</a></button>
       </td>
