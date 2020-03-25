@@ -429,20 +429,21 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         return doc;
     }
     $scope.navigateToDoc = function(docId) {
-        var doc = $scope.getFullDoc(docId);
-        window.location="docinfo"+doc.id+".htm";
+        window.location="docinfo"+docId+".htm";
     }
     $scope.navigateToDocDetails = function(docId) {
-        var doc = $scope.getFullDoc(docId);
-        window.location="editDetails"+doc.id+".htm";
+        window.location="editDetails"+docId+".htm";
     }
     $scope.sendDocByEmail = function(docId) {
-        var doc = $scope.getFullDoc(docId);
-        window.location="SendNote.htm?att="+doc.id;
+        window.location="SendNote.htm?att="+docId;
     }
-    $scope.downloadDocument = function(docId) {
-        var doc = $scope.getFullDoc(docId);
-        window.location="a/"+doc.name;
+    $scope.downloadDocument = function(doc) {
+        if (doc.attType=='URL') {
+             window.open(doc.url,"_blank");
+        }
+        else {
+            window.open("a/"+doc.name,"_blank");
+        }
     }
     $scope.unattachDocFromItem = function(docId) {
         var newList = [];
@@ -547,58 +548,40 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
           <div class="form-group">
             <label class="col-md-2 control-label" for="intro">Introduction</label>
             <div class="col-md-10">
-              <textarea id="intro" ng-model="emailInfo.intro" class="form-control" style="height:200px"
-                  title="Enter a message in Mark-Down format">
+              <textarea id="intro" ng-model="emailInfo.intro" class="form-control markDownEditor" 
+                  style="height:200px"
+                  title="Enter a message in Mark-Down format"
+                  placeholder="Enter a message in 'Mark-Down' format">
               </textarea>
             </div>
           </div>
-          
-          <div class="form-group">
-          <hr/>
-            <label class="col-md-2 control-label">Attachments</label>
+          <br/>
+          <div class="form-group" ng-dblclick="openAttachDocument()">
+            <label class="col-md-2 control-label" ng-click="openAttachDocument()">Attachments</label>
             <div class="col-md-10">
-              <span ng-repeat="docid in emailInfo.docList" style="vertical-align: top">
-                  <span class="dropdown" title="Access this attachment">
-                      <button class="attachDocButton" id="menu1" data-toggle="dropdown">
-                      <img src="<%=ar.retPath%>assets/images/iconFile.png"> 
-                      {{getFullDoc(docid).name | limitTo : 15}}</button>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
-                        <li role="presentation" style="background-color:lightgrey">
-                            <a role="menuitem" 
-                            title="This is the full name of the document"
-                            ng-click="navigateToDoc(docid)">{{getFullDoc(docid).name}}</a></li>
-                        <li role="presentation"><a role="menuitem" 
-                            title="Use DRAFT to set the meeting without any notifications going out"
-                            ng-click="navigateToDoc(docid)">Access Document</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use PLAN to allow everyone to get prepared for the meeting"
-                            ng-click="downloadDocument(docid)">Download File</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="navigateToDocDetails(docid).htm">Document Details</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="sendDocByEmail(docid)">Send by Email</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="unattachDocFromItem(docid)">Un-attach</a></li>
-                      </ul>
-                  </span>
-              </span>
-              <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
-                  title="Attach a document">
-                  ADD </button>
-              
+                <div ng-repeat="docid in emailInfo.docList" style="vertical-align: top">
+                  <div ng-repeat="fullDoc in [getFullDoc(docid)]">
+                      <span ng-click="navigateToDoc(docid)">
+                        <img src="<%=ar.retPath%>assets/images/iconFile.png" ng-show="fullDoc.attType=='FILE'">
+                        <img src="<%=ar.retPath%>assets/images/iconUrl.png" ng-show="fullDoc.attType=='URL'">
+                      </span> &nbsp;
+                      <span ng-click="downloadDocument(fullDoc)">
+                        <span class="fa fa-external-link" ng-show="fullDoc.attType=='URL'"></span>
+                        <span class="fa fa-download" ng-hide="fullDoc.attType=='URL'"></span>
+                      </span> &nbsp; 
+                      {{fullDoc.name}}
+                  </div>
+                </div>
             </div>
           </div>
-          <div class="form-group">
-            <label class="col-md-2 control-label"></label>
+          <div class="form-group" style="width:100%"
+               ng-click="emailInfo.attachFiles=!emailInfo.attachFiles" >
+            <label class="col-md-2 control-label">Type:</label>
             <div class="col-md-10">
-                <div class="form-inline">
-                    <span class="form-control">
-                        <input type="checkbox" ng-model="emailInfo.attachFiles"/>  Include Files as Attachments
-                    </span>
-                </div>
+              <div style="padding:10px;">
+                <input type="checkbox" ng-model="emailInfo.attachFiles"/>  
+                Include attachment data directly in the email (unsafe)
+              </div>
             </div>
           </div>
           

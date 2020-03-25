@@ -984,11 +984,11 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     </tr>
     <tr ng-dblclick="openAgenda(selectedItem)" ng-hide="item.proposed">
       <td ng-click="openAgenda(selectedItem)" class="labelColumn">Planned:</td>
-      <td>{{item.schedule | date: 'HH:mm'}} &nbsp; &nbsp; ({{selectedItem.duration|minutes}} minutes)</td>
+      <td>{{selectedItem.duration|minutes}} minutes</td>
     </tr>
     <tr ng-dblclick="openAgenda(selectedItem)"  ng-hide="item.proposed">
       <td ng-click="openAgenda(selectedItem)" class="labelColumn">Actual:</td>
-      <td ng-style="timerStyleComplete(item)">{{selectedItem.timerTotal|minutes}} &nbsp; &nbsp; 
+      <td ng-style="timerStyleComplete(item)">{{selectedItem.timerTotal|minutes}} minutes &nbsp; &nbsp; 
             <span ng-hide="item.timerRunning">
                 <button ng-click="agendaStartButton(item)"><i class="fa fa-clock-o"></i> Start</button>
             </span>
@@ -1019,11 +1019,17 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     <tr ng-hide="selectedItem.isSpacer" ng-dblclick="openAttachDocument(selectedItem)">
       <td ng-click="openAttachDocument(selectedItem)" class="labelColumn">Attachments:</td>
       <td><div ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
-          <span ng-click="navigateToDoc(docid)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
-          <span ng-click="downloadDocument(docid)"><span class="fa fa-download"></span></span>
-          &nbsp;
-
-          {{getFullDoc(docid).name}}
+          <div ng-repeat="fullDoc in [getFullDoc(docid)]">
+              <span ng-click="navigateToDoc(docid)">
+                <img src="<%=ar.retPath%>assets/images/iconFile.png" ng-show="fullDoc.attType=='FILE'">
+                <img src="<%=ar.retPath%>assets/images/iconUrl.png" ng-show="fullDoc.attType=='URL'">
+              </span> &nbsp;
+              <span ng-click="downloadDocument(fullDoc)">
+                <span class="fa fa-external-link" ng-show="fullDoc.attType=='URL'"></span>
+                <span class="fa fa-download" ng-hide="fullDoc.attType=='URL'"></span>
+              </span> &nbsp; 
+              {{fullDoc.name}}
+          </div>
       </div>
 <%if (isLoggedIn) { %>
       <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument(selectedItem)"

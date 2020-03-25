@@ -318,7 +318,7 @@ editBoxStyle {
                                <img src="<%=ar.retPath%>/assets/iconDelete.gif">
                             </a>
                         </div>
-                        <input type="text" class="form-control" style="width:300px;background-color:white" ng-model="newName"/>
+                        <input type="text" class="form-control" style="width:300px" ng-model="newName"/>
                         <button class="btn btn-primary btn-raised" ng-click="addWorkspaceName(newName)">Add Name</button>
                         <button class="btn btn-warning btn-raised" ng-click="editName=false">Cancel</button>
                     </td>
@@ -326,7 +326,7 @@ editBoxStyle {
                 <tr>
                     <td ng-click="setEdit('vision')"><label>Vision:</label></td>
                     <td ng-show="isEditing=='vision'">
-                        <textarea class="form-control editBoxStyle" 
+                        <textarea class="form-control editBoxStyle markDownEditor"
                               placeholder="Enter a vision statement for the circle working in this  workspace, if any" 
                               ng-model="workspaceConfig.vision" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('vision')" class="btn btn-primary btn-raised">
@@ -342,7 +342,7 @@ editBoxStyle {
                 <tr>
                     <td ng-click="setEdit('mission')"><label>Mission:</label></td>
                     <td ng-show="isEditing=='mission'">
-                        <textarea class="form-control editBoxStyle" 
+                        <textarea class="form-control editBoxStyle markDownEditor"
                               placeholder="Enter a mission statement for the circle working in this  workspace, if any" 
                               ng-model="workspaceConfig.mission" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('mission')" class="btn btn-primary btn-raised">
@@ -358,7 +358,7 @@ editBoxStyle {
                 <tr >
                     <td  ng-click="setEdit('purpose')"><label>Aim:</label></td>
                     <td ng-show="isEditing=='purpose'">
-                        <textarea class="form-control editBoxStyle" 
+                        <textarea class="form-control editBoxStyle markDownEditor"
                               placeholder="Enter a public description of the work that will be done in this workspace, the aim of this workspace." 
                               ng-model="workspaceConfig.purpose" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('purpose')" class="btn btn-primary btn-raised">
@@ -374,7 +374,7 @@ editBoxStyle {
                 <tr>
                     <td ng-click="setEdit('domain')"><label>Domain:</label></td>
                     <td ng-show="isEditing=='domain'">
-                        <textarea class="form-control editBoxStyle" 
+                        <textarea class="form-control editBoxStyle markDownEditor"
                               placeholder="Enter a domain statement for the circle working in this  workspace, if any" 
                               ng-model="workspaceConfig.domain" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('domain')" class="btn btn-primary btn-raised">

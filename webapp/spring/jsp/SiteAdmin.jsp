@@ -126,7 +126,7 @@ app.controller('myCtrl', function($scope, $http) {
             <tr>
                 <td>Site Description:</td>
                 <td>
-                    <textarea  class="form-control" rows="4" ng-model="siteInfo.description"
+                    <textarea  class="form-control markDownEditor" rows="4" ng-model="siteInfo.description"
                     title="The description appears in places where the user needs to know a little more about the purpose and background of the site itself."></textarea>
                 </td>
             </tr>

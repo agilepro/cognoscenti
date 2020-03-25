@@ -90,7 +90,7 @@
               </div>
               <div ng-hide="fp.done">
                  How is this document related to this workspace?:<br/>
-                 <textarea ng-model="fp.description" class="form-control"></textarea>
+                 <textarea ng-model="fp.description" class="form-control markDownEditor"></textarea>
               </div>
               <div style="padding:3px;" ng-hide="fp.done">
                   <div style="text-align:center">{{fp.status}}:  {{fp.loaded|number}} of {{fp.file.size|number}} bytes</div>

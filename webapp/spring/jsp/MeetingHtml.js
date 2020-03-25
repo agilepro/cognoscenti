@@ -1643,20 +1643,21 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         return doc;
     }
     $scope.navigateToDoc = function(docId) {
-        var doc = $scope.getFullDoc(docId);
-        window.open("docinfo"+doc.id+".htm","_blank");
+        window.open("docinfo"+docId+".htm","_blank");
     }
     $scope.navigateToDocDetails = function(docId) {
-        var doc = $scope.getFullDoc(docId);
-        window.open("editDetails"+doc.id+".htm","_blank");
+        window.open("editDetails"+docId+".htm","_blank");
     }
     $scope.sendDocByEmail = function(docId) {
-        var doc = $scope.getFullDoc(docId);
-        window.open("SendNote.htm?att="+doc.id,"_blank");
+        window.open("SendNote.htm?att="+docId,"_blank");
     }
-    $scope.downloadDocument = function(docId) {
-        var doc = $scope.getFullDoc(docId);
-        window.open("a/"+doc.name,"_blank");
+    $scope.downloadDocument = function(doc) {
+        if (doc.attType=='URL') {
+             window.open(doc.url,"_blank");
+        }
+        else {
+            window.open("a/"+doc.name,"_blank");
+        }
     }
     $scope.unattachDocFromItem = function(item, docId) {
         var newList = [];

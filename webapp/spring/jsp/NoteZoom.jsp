@@ -87,6 +87,9 @@ Required parameter:
     font-size: 100%;
     margin:20px 0;
 }
+.labelColumn:hover {
+    background-color:#ECB6F9;
+}
 </style>
 
 <script type="text/javascript">
@@ -187,10 +190,11 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     $scope.receiveTopicRecord = function(data) {
         $scope.noteInfo = data;
         var check = false;
-        data.subscribers.forEach( function(item) {
-            if (item.uid == "<%=ar.getBestUserId()%>") {
+        data.subscribers.forEach( function(person) {
+            if (person.uid == "<%=ar.getBestUserId()%>") {
                 check = true;
             }
+            person.image = AllPeople.imageName(person);
         });
         $scope.fixUpChoices();
         $scope.isSubscriber = check;
@@ -1015,12 +1019,15 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </div>
 <% } %>
 
-    <div style="color:lightgrey;font-style:italic">Last modified: {{noteInfo.modTime|date}}</div>
 
-    <div style="width:100%;margin-top:50px;"></div>
-    <div style="height:40px;margin-bottom:15px">
-        <div class="leftDivContent">
-          <span style="margin-left:20px">Labels:</span>
+<table class="table">
+<col style="width:150px">
+<tr>
+    <td>Last modified:</td><td>{{noteInfo.modTime|date}}</td>
+</tr>
+<tr>
+    <td>Labels:</td>
+    <td>
           <span class="dropdown" ng-repeat="role in allLabels">
             <button class="labelButton" type="button" id="menu2"
                data-toggle="dropdown" style="background-color:{{role.color}};"
@@ -1052,63 +1059,80 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
            </ul>
         </span>
         <% } %>
+    </td>
+</tr>
+<tr>
+    <td class="labelColumn" ng-click="openAttachDocument()">Attachments:</td>
+    <td ng-dblclick="openAttachDocument()">
+        <div ng-repeat="docid in noteInfo.docList" style="vertical-align: top">
+          <span ng-click="navigateToDoc(docid)"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>&nbsp;
+          <span ng-click="downloadDocument(docid)"><span class="fa fa-download"></span></span>&nbsp;
+          <span ng-click="sendDocByEmail(docid)"><span class="fa fa-envelope-o"></span></span>&nbsp;
+          
+          {{getFullDoc(docid).name}}
         </div>
-    </div>
-    <div>
-           <table style="margin:10px;"><tr>
-              <td><b>Attachments: </b></td>
-              <td ><span ng-repeat="docid in noteInfo.docList" style="vertical-align: top">
-                  <span class="dropdown" title="Access this attachment">
-                      <button class="attachDocButton" id="menu1" data-toggle="dropdown">
-                      <img src="<%=ar.retPath%>assets/images/iconFile.png">
-                      {{getFullDoc(docid).name | limitTo : 15}}</button>
-                      <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" style="cursor:pointer">
-                        <li role="presentation" style="background-color:lightgrey">
-                            <a role="menuitem"
-                            title="This is the full name of the document"
-                            ng-click="navigateToDoc(docid)">{{getFullDoc(docid).name}}</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use DRAFT to set the meeting without any notifications going out"
-                            ng-click="navigateToDoc(docid)">Access Document</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use PLAN to allow everyone to get prepared for the meeting"
-                            ng-click="downloadDocument(docid)">Download File</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="navigateToDocDetails(docid).htm">Document Details</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="sendDocByEmail(docid)">Send by Email</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="unattachDocFromItem(docid)">Un-attach</a></li>
-                      </ul>
-                  </span>
-              </span>
-<%if (isLoggedIn) { %>
-              <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
-                  title="Attach a document">
-                  ADD </button>
-<% } %>
-           </td></tr></table>
+    </td>
+</tr>
 
-
-    </div>
-
-    <div>
-      <span style="width:150px">Action Items:</span>
-      <span ng-repeat="act in getActions()" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-           ng-click="navigateToAction(act)">
-             <img ng-src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif"> {{act.synopsis}}
-      </span>
-<%if (isLoggedIn) { %>
-      <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachAction()"
-          title="Attach an Action Item">
-          <i class="fa  fa-plus"></i>/<i class="fa  fa-minus"></i> &nbsp; <i class="fa fa-flag"></i> Action Items </button>
-<% } %>
-    </div>
-
-    <div style="height:30px;"></div>
+<tr>
+    <td class="labelColumn" ng-click="openAttachAction()">Action Items:</td>
+    <td ng-dblclick="openAttachAction()">
+        <div ng-repeat="goal in getActions()">
+          <div>
+            <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif">
+            {{goal.synopsis}}
+          </div>
+          </div>
+        </div>
+    </td>
+</tr>
+<tr ng-hide="editMeetingPart=='subscribers'">
+    <td class="labelColumn" ng-click="editMeetingPart='subscribers'">Subscribers:</td>
+    <td ng-dblclick="editMeetingPart='subscribers'">
+        <span ng-repeat="player in noteInfo.subscribers" title="{{player.name}}"    
+          style="text-align:center">
+          <span class="dropdown" >
+            <span id="menu1" data-toggle="dropdown">
+              <img src="<%=ar.retPath%>icon/{{player.image}}" 
+                 style="width:32px;height:32px" 
+                 title="{{player.name}} - {{player.uid}}"
+                 class="img-circle" />
+            </span>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                  tabindex="-1" style="text-decoration: none;text-align:center">
+                  {{player.name}}<br/>{{player.uid}}</a></li>
+              <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                  ng-click="navigateToUser(player)">
+                  <span class="fa fa-user"></span> Visit Profile</a></li>
+            </ul>
+          </span>
+        </span>
+    </td>
+</tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
+</table>
+      <div class="well" ng-show="editMeetingPart=='subscribers'">
+          <h2>Adjust Subscribers:</h2>
+          <div>
+              <tags-input ng-model="noteInfo.subscribers" 
+                          placeholder="Enter users to send notification email to"
+                          display-property="name" key-property="uid"
+                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                          on-tag-added="updatePlayers()" 
+                          on-tag-removed="updatePlayers()">
+                  <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+              </tags-input>
+          </div>
+          <div>
+          <span class="dropdown">
+              <button class="btn btn-default btn-primary btn-raised" type="button" 
+                      ng-click="saveEdits(['subscribers']);editMeetingPart=null"
+                      title="Post this topic but don't send any email">
+              Save </button>
+          </span>
+          </div>
+      </div>
 
 
 <table>
@@ -1141,21 +1165,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </tr>
 
 </table>
-
-
-    <div style="margin:40px;" ng-hide="isEditing">
-      <span style="width:150px">Current subscribers:</span>
-      <span ng-repeat="user in noteInfo.subscribers" class="btn btn-sm btn-default btn-raised"  style="margin:4px;">
-              {{user.name}}
-      </span>
-      <span ng-hide="isSubscriber" ng-click="changeSubscription(true)" class="btn btn-sm btn-primary btn-raised"
-          title="subscribe yourself to this topic">
-          <i class="fa  fa-plus"></i> Subscribe</span>
-      <span ng-show="isSubscriber" ng-click="changeSubscription(false)" class="btn btn-sm btn-primary btn-raised"
-          title="unsubscribe yourself from this topic">
-          <i class="fa  fa-minus"></i> Unsubscribe</span>
-    </div>
-
 
 
 </div>

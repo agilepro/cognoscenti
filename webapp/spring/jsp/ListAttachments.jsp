@@ -9,6 +9,7 @@
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
+    ar.assertMember("Documents are available only to memebers");
     NGBook site = ngp.getSite();
     boolean isMember = ar.isMember();
 
@@ -24,12 +25,9 @@
 
     JSONArray allLabels = ngp.getJSONLabels();
     
-    String showLimitedMessage = "";
-    if (!ar.isLoggedIn()) {
-        showLimitedMessage = "You are not logged in.  You might see more documents if you log in and if you are a member of the workspace.";
-    }
-    else if (!isMember) {
-        showLimitedMessage = "You are not a member of this workspace.  You might see more documents if you were a member of the workspace.";
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
     }
 
 
@@ -50,17 +48,20 @@
 
 %>
 
-
+<script src="../../../jscript/AllPeople.js"></script>
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Documents");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
-    $scope.atts = <%attachments.write(out,2,4);%>;
+    $scope.atts = [];
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.filter = "";
     $scope.filterMap = {};
+    $scope.dataArrived = false;
+    $scope.showDeleted = false;
+    $scope.showDescription = false;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -70,7 +71,6 @@ app.controller('myCtrl', function($scope, $http) {
         errorPanelHandler($scope, serverErr);
     };
     
-    $scope.showLimitedMessage = "<% ar.writeJS(showLimitedMessage); %>";
 
     $scope.allLabels.sort( function(a,b) {
         if (a.name < b.name) {
@@ -93,8 +93,10 @@ app.controller('myCtrl', function($scope, $http) {
         var filterlist = parseLCList($scope.filter);
         var res = [];
         var last = $scope.atts.length;
-        for (var i=0; i<last; i++) {
-            var rec = $scope.atts[i];
+        $scope.atts.forEach( function(rec) {
+            if (rec.deleted && !$scope.showDeleted) {
+                return;
+            }
             var hasLabel = true;
             $scope.allLabelFilters().map( function(val) {
                 if (!rec.labelMap[val.name]) {
@@ -102,7 +104,7 @@ app.controller('myCtrl', function($scope, $http) {
                 }
             });
             if (!hasLabel) {
-                continue;
+                return;
             }
 
             if (containsOne(rec.name, filterlist)) {
@@ -111,26 +113,16 @@ app.controller('myCtrl', function($scope, $http) {
             else if (containsOne(rec.description, filterlist)) {
                 res.push(rec);
             }
-        }
+        });
         return res;
     }
-    $scope.removeEntry = function(searchId) {
-        var res = [];
-        $scope.atts.map( function(rec) {
-            if (searchId!=rec.id) {
-                res.push(rec);
-            }
-        });
-        $scope.atts = res;
-    }
-    $scope.deleteDoc = function(rec) {
-        rec.deleted = true;
+    $scope.toggleDelete = function(rec) {
+        rec.deleted = !rec.deleted;
         var postURL = "docsUpdate.json?did="+rec.id;
         var postdata = angular.toJson(rec);
         $scope.showError=false;
         $http.post(postURL, postdata)
         .success( function(data) {
-            $scope.removeEntry(rec.id);
             $scope.sortDocs();
         })
         .error( function(data, status, headers, config) {
@@ -166,6 +158,67 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return res;
     }
+    $scope.setDocumentData = function(data) {
+        console.log("GOT THIS", data);
+        $scope.timerCorrection = data.serverTime - new Date().getTime();
+        $scope.atts = data.docs;
+        $scope.sortDocs();
+        $scope.atts.forEach( function(rec) {
+            if (rec.description) {
+                rec.html = convertMarkdownToHtml(rec.description);
+            }
+        });
+        $scope.dataArrived = true;
+    }
+    $scope.getDocumentList = function() {
+        $scope.isUpdating = true;
+        var postURL = "docsList.json";
+        $http.get(postURL)
+        .success( function(data) {
+            $scope.setDocumentData(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+        
+    }
+    $scope.getDocumentList();
+    
+    $scope.downloadDocument = function(doc) {
+        if (doc.attType=='URL') {
+             window.open(doc.url,"_blank");
+        }
+        else {
+            window.open("a/"+doc.name,"_blank");
+        }
+    }
+    
+    $scope.openDocDialog = function (doc) {
+        
+        var docsDialogInstance = $modal.open({
+            animation: true,
+            templateUrl: "<%= ar.retPath%>templates/DocumentDetails.html<%=templateCacheDefeater%>",
+            controller: 'DocumentDetailsCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                docId: function () {
+                    return doc.id;
+                },
+                allLabels: function() {
+                    return $scope.allLabels;
+                }
+            }
+        });
+
+        docsDialogInstance.result
+        .then(function () {
+            $scope.getDocumentList();
+        }, function () {
+            $scope.getDocumentList();
+            //cancel action - nothing really to do
+        });
+    };
 
 });
 
@@ -244,7 +297,9 @@ app.controller('myCtrl', function($scope, $http) {
                      {{rolex.name}}</button>
              </li>
            </ul>
-        </span>
+        </span> &nbsp;
+        <span style="vertical-align:middle"><input type="checkbox" ng-model="showDeleted"> Deleted </span> &nbsp;
+        <span style="vertical-align:middle"><input type="checkbox" ng-model="showDescription"> Description </span>
     </div>
 
     <div style="height:20px;"></div>
@@ -261,11 +316,12 @@ app.controller('myCtrl', function($scope, $http) {
                 </ul>
               </div>
             </td>
-            <td width="80px"></td>
+            <td width="40px"></td>
+            <td width="40px"></td>
             <td width="420px">Name ~ Description</td>
             <td width="80px">Date</td>
         </tr>
-        <tr ng-repeat="rec in getRows()">
+        <tr ng-repeat="rec in getRows()" ng-dblclick="openDocDialog(rec)">
             <td>
               <div class="dropdown">
                 <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
@@ -281,7 +337,8 @@ app.controller('myCtrl', function($scope, $http) {
                       <a role="menuitem" tabindex="-1" href="fileVersions.htm?aid={{rec.id}}">List Versions</a></li>
                   <li role="presentation" class="divider"></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" ng-click="deleteDoc(rec)">Delete <i class="fa fa-trash"></i> Document</a></li>
+                      <a role="menuitem" tabindex="-1" ng-click="toggleDelete(rec)">
+                         <span ng-show="rec.deleted">Un-</span>Delete <i class="fa fa-trash"></i> Document</a></li>
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="SendNote.htm?att={{rec.id}}">Send By <i class="fa fa-envelope"></i> Email</a></li>
                 </ul>
@@ -289,33 +346,37 @@ app.controller('myCtrl', function($scope, $http) {
             </td>
             <td>
                 <a href="editDetails{{rec.id}}.htm">
-                    <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
                     <span ng-show="rec.upstream"><img src="<%=ar.retPath%>assets/images/iconUpstream.png"></span>
                     <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
                     <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
                 </a>
             </td>
             <td>
+              <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='URL'">
+                <span class="fa fa-external-link"></span></span>
+              <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='FILE'">
+                <span class="fa fa-download"></span></span>
+            </td>
+            <td>
+              <div>
                 <b><a href="docinfo{{rec.id}}.htm" title="{{rec.name}}">{{rec.name}}</a></b>
-                ~ {{rec.description}}
+                <span ng-show="rec.deleted" style="color:red"> (deleted) </span>
                 <span ng-repeat="label in getAllLabels(rec)">
                     <button class="labelButton" 
                         ng-click="toggleLabel(label)"
                         style="background-color:{{label.color}};">{{label.name}}
                     </button>
                 </span>
+              </div>
+              <div ng-show="showDescription && rec.description" ng-bind-html="rec.html">
+              </div>
             </td>
             <td>{{rec.modifiedtime|date}}</td>
-        </tr>
-        <tr ng-show="showLimitedMessage">
-            <td colspan="5">
-                <div class="guideVocal">{{showLimitedMessage}}</div>
-            </td>
         </tr>
     </table>
     
     
-    <div class="guideVocal" ng-show="atts.length==0" style="margin-top:80px">
+    <div class="guideVocal" ng-show="dataArrived && atts.length==0" style="margin-top:80px">
     You have no attached documents in this workspace yet.
     You can add them using a option from the pull-down in the upper right of this page.
     They can be uploaded from your workstation, or linked from the web.
@@ -325,5 +386,6 @@ app.controller('myCtrl', function($scope, $http) {
 </div>
 
 
+<script src="<%=ar.retPath%>templates/DocumentDetails.js"></script>
 
 

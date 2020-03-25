@@ -36,11 +36,22 @@ Required parameters:
     JSONArray openRounds = userCache.getOpenRounds();
     JSONArray futureMeetings = userCache.getFutureMeetings();
     
+    JSONArray accWSpaces = new JSONArray();
+    int count = 0;
+    for (NGPageIndex ngpi : cog.getProjectsUserIsPartOf(loggedUser)) {
+        accWSpaces.put(ngpi.getJSON4List());
+        if (count++ > 10) {
+            //we only need 10 to display
+            break;
+        }
+    }
+    
     JSONObject userCacheJSON = userCache.getAsJSON();
 
     List<WatchRecord> watchList = loggedUser.getWatchList();
 
     JSONArray wList = new JSONArray();
+    count = 0;
     for (WatchRecord wr : watchList) {
         String pageKey = wr.pageKey;
         NGPageIndex ngpi = ar.getCogInstance().getWSByCombinedKey(pageKey);
@@ -53,6 +64,10 @@ Required parameters:
         JSONObject wObj = ngpi.getJSON4List();
         wObj.put("visited", wr.lastSeen);
         wList.put(wObj);
+        if (count++ > 10) {
+            //we only need 10 to display
+            break;
+        }
     }
 
     JSONArray siteList = new JSONArray();
@@ -81,6 +96,8 @@ myApp.controller('myCtrl', function($scope, $http) {
     $scope.proposals   = <%proposals.write(out,2,4);%>;
 
     $scope.wList       = <%wList.write(out,2,4);%>;
+    $scope.accWSpaces  = <%accWSpaces.write(out,2,4);%>;
+    
     $scope.siteList    = <%siteList.write(out,2,4);%>;
     $scope.loggedUser  = <% loggedUser.getJSON().write(out,2,4);%>;
     
@@ -270,7 +287,7 @@ myApp.controller('myCtrl', function($scope, $http) {
 
         <div class="panel panel-default">
           <div class="panel-heading headingfont">
-              <div style="float:left"><span translate>Workspaces you Watch</span></div>
+              <div style="float:left"><span translate>Watched Workspaces</span></div>
               <div style="float:right">
                   <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm">
                       <i class="fa fa-list"></i></a></div>
@@ -289,6 +306,26 @@ myApp.controller('myCtrl', function($scope, $http) {
           </div>
         </div>
 
+        <div class="panel panel-default">
+          <div class="panel-heading headingfont">
+              <div style="float:left"><span translate>Accessible Workspaces</span></div>
+              <div style="float:right">
+                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm">
+                      <i class="fa fa-list"></i></a></div>
+              <div style="clear:both"></div>
+          </div>
+          <div class="panel-body">
+               <div ng-repeat="item in accWSpaces | limitTo: 10" class="clipping">
+                   <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.pageKey}}/frontPage.htm">
+                   {{item.name}}
+                   </a>
+               </div>
+               <div ng-show="wList.length>10">
+                 <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm" 
+                     class="btn btn-sm btn-default btn-raised" translate>See all...</a>
+               </div>
+          </div>
+        </div>
 
 
         <div class="panel panel-default">

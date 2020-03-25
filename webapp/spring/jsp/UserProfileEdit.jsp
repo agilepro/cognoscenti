@@ -242,7 +242,7 @@ myApp.controller('myCtrl', function($scope, $http) {
         </tr>
         <tr>
             <td class="firstcol">Description:</td>
-            <td><textarea rows="4" class="form-control" ng-model="profile.description"></textarea></td>
+            <td><textarea rows="4" class="form-control markDownEditor" ng-model="profile.description"></textarea></td>
         </tr>
         <tr>
             <td class="firstcol">Notify Period:</td>

@@ -182,7 +182,7 @@ Optional Parameters:
                     <tr>
                         <td class="gridTableColummHeader" valign="top">Also To:</td>
                         <td style="width:20px;"></td>
-                        <td><textarea class="textAreaGeneral" rows="2" id="emailto" name="emailto"><% if (emailto!=null) {ar.writeHtml(emailto);}%></textarea>
+                        <td><textarea class="textAreaGeneral markDownEditor" rows="2" id="emailto" name="emailto"><% if (emailto!=null) {ar.writeHtml(emailto);}%></textarea>
                         <br/><input type="checkbox" name="makeMember" value="makeMember"> Make above people members. </td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
@@ -190,7 +190,7 @@ Optional Parameters:
                         <td class="gridTableColummHeader" valign="top">Introduction:</td>
                         <td style="width:20px;"></td>
                         <td>
-                            <textarea class="textAreaGeneral" rows="6" name="note"><%ar.writeHtml(note);%></textarea>
+                            <textarea class="textAreaGeneral markDownEditor" rows="6" name="note"><%ar.writeHtml(note);%></textarea>
                         </td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>
