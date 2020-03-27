@@ -1,27 +1,6 @@
 <html>
 <style>
-.emailbody {
-    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
-    border-bottom: 2px solid skyblue;
-    padding:5px;
-    text-align: center;
-}
-.niceTable {
-    width: 100%;
-    max-width:800px;  
-}
-.niceTable tr td { 
-    padding:8px;
-    vertical-align: top;   
-}
-.smallPrint {
-    font-size:-2;
-}
-.agendaItem {
-    background-color: #CCE9F9;
-    font-size: 18px;
-    font-weight: 300;
-}
+{% include sharedStyles.css %}
 </style>
 <body>
 <div style="max-width:800px">
@@ -30,43 +9,42 @@
 <div class="emailbody" style="width:100%">
 <div class="h1" style="float:center">{$name|html}</div>
 <div style="float:center">{$startTime|date("MMM dd, YYYY -- HH:mm -- '(ttt)'")}</div>
-<div style="float:center"></div>
+&nbsp;
 </div>
+<div>&nbsp;</div>
+
+<div>{$meetingInfo}</div>
 
 <table class="niceTable">
 {% loop in $agenda as $agItem counter=$i,1 %}
 {% if ($agItem.isSpacer != true) %}
 {% if ($agItem.proposed != true) %}
 <tr class="agendaItem">
-<td style="width:50px">{$agItem.number}.</td>
-<td >{$agItem.subject|html}<br/>
+<td><div class="h3">{$agItem.number}.</div></td>
+<td><div class="h3">{$agItem.subject|html}</div>
      <i>({$agItem.duration} minutes)</i>
+     {% loop in $agItem.presenterList as $presenter %}
+     - {$presenter.name} &nbsp
+     {% onEmpty %}
+     {% endloop %}
 
 </td>
 <td style="width:150px">{$agItem.schedStart|date("HH:mm")} to {$agItem.schedEnd|date("HH:mm")}</td>
 </tr>
 
-
-
-{% if ($agItem.presenterList.length > 0) %}
 <tr>
-<td></td>
-<td>
-Presenters: 
-{% loop in $agItem.presenterList as $presenter counter=$i,1 %}
-{$presenter.name}
-{% onEmpty %}
-(No presenter specified)
-{% endloop %}
-</td>
-</tr>
-{% endif %}
-
-
-
-<tr>
-<td></td>
-<td colspan="2">{$agItem.desc}</td>
+  <td>
+  </td>
+  <td colspan="2">
+    <div>{$agItem.desc}</div>
+    <ul>
+    {% loop in $agItem.attList as $doc %}
+    <li><a href="{$doc.url}">{$doc.name|html}</a></li>
+    {% onEmpty %}
+    {% endloop %}
+    </ul>
+    
+  </td>
 </tr>
 {% endif %}
 {% else %}

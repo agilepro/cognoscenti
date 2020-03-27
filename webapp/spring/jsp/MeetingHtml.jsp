@@ -1125,32 +1125,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
 
 
-<style>
-.emailbody {
-    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
-    border-bottom: 2px solid skyblue;
-    padding:5px;
-    text-align: center;
-}
-.niceTable {
-    width: 100%;
-    max-width:800px;  
-}
-.niceTable tr td { 
-    padding:8px;
-    vertical-align: top;   
-}
-.smallPrint {
-    font-size:-2;
-}
-.docPill {
-    padding:3px;
-    background-color: #EEEEFF;
-    border: solid 1px gray;
-    border-radius:5px;
-    margin:5px;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="<%=ar.baseURL%>meets/sharedStyles.css.chtml"/>
+
 <div ng-show="displayMode=='Agenda'">
     Public Link to this:  <a href="MeetPrint.htm?id=<%=meetId%>&tem=<%=agendaLayout%>&<%=mnm%>"><%ar.writeHtml(mRec.getName());%> Agenda</a> 
     (available to anonymous users)

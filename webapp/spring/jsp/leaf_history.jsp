@@ -72,7 +72,7 @@ Required parameters:
             }
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
-            url = ar.getResourceURL(ngp, "meetingFull.htm?id="+objectKey);
+            url = ar.getResourceURL(ngp, "meetingHtml.htm?id="+objectKey);
             MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
             if (meet!=null) {
                 objName = meet.getName() + " @ " + SectionUtil.getNicePrintDate( meet.getStartTime() );

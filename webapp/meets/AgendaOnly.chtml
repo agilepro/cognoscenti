@@ -1,28 +1,12 @@
 <html>
 <style>
-.emailbody {
-    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
-    border-bottom: 2px solid skyblue;
-    padding:5px;
-    text-align: center;
-}
-.niceTable {
-    width: 100%;
-    max-width:800px;  
-}
-.niceTable tr td { 
-    padding:8px;
-    vertical-align: top;   
-}
-.smallPrint {
-    font-size:-2;
-}
+{% include sharedStyles.css %}
 </style>
 <body>
 <div style="max-width:800px">
 <!--TEMPLATE FlatDetailAgenda.chtml-->
 
-<div class="emailbody" style="width:100%">
+<div class="emailbody">
 <div class="h1" style="float:center">{$name|html}</div>
 <div style="float:center">{$startTime|date("MMM dd, YYYY -- HH:mm -- '(ttt)'")}</div>
 <div style="float:center"></div>
@@ -35,7 +19,11 @@
 <tr>
 <td style="width:50px"><b>{$agItem.number}.</b></td>
 <td><b>{$agItem.subject|html}</b><br/>
-     <i>({$agItem.duration} minutes)</i><br/>
+     <i>({$agItem.duration} minutes)</i> &nbsp; 
+     {% loop in $agItem.presenterList as $presenter %}
+     - {$presenter.name} &nbsp
+     {% onEmpty %}
+     {% endloop %}
 </td>
 <td style="width:150px">{$agItem.schedStart|date("HH:mm")} to {$agItem.schedEnd|date("HH:mm")}</td>
 </tr>

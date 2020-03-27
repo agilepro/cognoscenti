@@ -1,20 +1,6 @@
 <html>
 <style>
-.emailbody {
-    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
-    border: 2px solid skyblue;
-    padding:10px;
-    border-radius:10px;
-}
-.niceTable tr td { 
-    padding:8px 
-}
-.smallPrint {
-    font-size:-2;
-}
-.tablePortable tr td {
-    vertical-align: top;
-}
+{% include sharedStyles.css %}
 </style>
 <body>
 <div >
@@ -56,12 +42,11 @@
 {% loop in $agenda as $aggie %}
 {% if ($aggie.isSpacer != true) %}
 <tr style="background-color:lightskyblue">
-<td>{$aggie.number}.</td>
-<td colspan="2"><b>{$aggie.subject|html}</b></li>
+<td><h3>{$aggie.number}.</h3></td>
+<td colspan="2"><h3>{$aggie.subject|html}</h3></li>
 {% else %}
-<tr style="background-color:darkblue;color:white;">
-<td></td>
-<td colspan="2" style="padding:25px;"><b>{$aggie.subject|html}</b> - {$aggie.duration} Minutes</li>
+<tr style="background-color:#555;color:white;text-align:center">
+<td colspan="3" style="padding:25px;"><b>{$aggie.subject|html}</b> - {$aggie.duration} Minutes</li>
 {% endif %}
 
 </td>

@@ -620,7 +620,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
             <td>Previous Meeting:</td>
             <td></td>
             <td>
-              <a href="meetingFull.htm?id={{previousMeeting.id}}">
+              <a href="meetingHtml.htm?id={{previousMeeting.id}}">
                 {{previousMeeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}</a> 
                 <span>&nbsp; ({{browserZone}})</span>
             </td>
