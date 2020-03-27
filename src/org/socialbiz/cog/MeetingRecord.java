@@ -673,13 +673,19 @@ public class MeetingRecord extends DOMFace {
             JSONArray roleCall = input.getJSONArray("rollCall");
             for (int i=0; i<roleCall.length(); i++) {
                 JSONObject onePerson = roleCall.getJSONObject(i);
-                String personId = onePerson.getString("uid");
-                DOMFace found = getChildAttribute(personId, DOMFace.class, "uid");
-                if (found==null) {
-                    found = createChildWithID("rollCall", DOMFace.class, "uid", personId);
+                if (onePerson.has("uid")) {
+                    String personId = onePerson.getString("uid");
+                    DOMFace found = getChildAttribute(personId, DOMFace.class, "uid");
+                    if (found==null) {
+                        found = createChildWithID("rollCall", DOMFace.class, "uid", personId);
+                    }
+                    if (onePerson.has("attend")) {
+                        found.setScalar("attend", onePerson.getString("attend"));
+                    }
+                    if (onePerson.has("situation")) {
+                        found.setScalar("situation", onePerson.getString("situation"));
+                    }
                 }
-                found.setScalar("attend", onePerson.getString("attend"));
-                found.setScalar("situation", onePerson.getString("situation"));
             }
         }
 

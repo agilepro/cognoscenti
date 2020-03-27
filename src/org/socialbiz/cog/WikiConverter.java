@@ -36,6 +36,19 @@ import java.util.Vector;
  */
 public class WikiConverter
 {
+    final static int NOTHING      = 0;
+    final static int PARAGRAPH    = 1;
+    final static int BULLET       = 2;
+    final static int HEADER       = 3;
+    final static int PREFORMATTED = 4;
+
+    protected AuthRequest ar;
+    protected int majorState = 0;
+    protected int majorLevel = 0;
+    protected boolean isBold = false;
+    protected boolean isItalic = false;
+    protected String userKey;
+
 
 
     /**
@@ -82,19 +95,6 @@ public class WikiConverter
         terminate();
         ar.flush();
     }
-
-    final static int NOTHING      = 0;
-    final static int PARAGRAPH    = 1;
-    final static int BULLET       = 2;
-    final static int HEADER       = 3;
-    final static int PREFORMATTED = 4;
-
-    protected AuthRequest ar;
-    protected int majorState = 0;
-    protected int majorLevel = 0;
-    protected boolean isBold = false;
-    protected boolean isItalic = false;
-    protected String userKey;
 
     protected void formatText(String line) throws Exception
     {

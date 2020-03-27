@@ -40,10 +40,6 @@ Required parameters:
     int count = 0;
     for (NGPageIndex ngpi : cog.getProjectsUserIsPartOf(loggedUser)) {
         accWSpaces.put(ngpi.getJSON4List());
-        if (count++ > 10) {
-            //we only need 10 to display
-            break;
-        }
     }
     
     JSONObject userCacheJSON = userCache.getAsJSON();
@@ -64,10 +60,6 @@ Required parameters:
         JSONObject wObj = ngpi.getJSON4List();
         wObj.put("visited", wr.lastSeen);
         wList.put(wObj);
-        if (count++ > 10) {
-            //we only need 10 to display
-            break;
-        }
     }
 
     JSONArray siteList = new JSONArray();
@@ -110,6 +102,9 @@ myApp.controller('myCtrl', function($scope, $http) {
         return a.numWorkspaces-b.numWorkspaces;
     });
     $scope.wList.sort( function(a,b) {
+        return b.changed-a.changed;
+    });
+    $scope.accWSpaces.sort( function(a,b) {
         return b.changed-a.changed;
     });
     $scope.fixNull = function(str) {
@@ -310,7 +305,7 @@ myApp.controller('myCtrl', function($scope, $http) {
           <div class="panel-heading headingfont">
               <div style="float:left"><span translate>Accessible Workspaces</span></div>
               <div style="float:right">
-                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/watchedProjects.htm">
+                  <a href="<%=ar.retPath%>v/<%=loggedUser.getKey()%>/participantProjects.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>

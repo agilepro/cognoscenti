@@ -72,6 +72,10 @@ SLAP.storeSession = function(data) {
     SLAP.loginInfo = data;
     sessionStorage.setItem("SSOFI_Logged_User", JSON.stringify(data));
 }
+SLAP.clearSession = function() {
+    SLAP.loginInfo = {};
+    sessionStorage.setItem("SSOFI_Logged_User", "{}");
+}
 SLAP.retrieveSession = function() {
     var oldData = sessionStorage.getItem("SSOFI_Logged_User");
     if (oldData) {
@@ -197,7 +201,7 @@ SLAP.verifyToken = function() {
 
 SLAP.logOutProvider = function() {
     var pUrl = SLAP.loginConfig.providerUrl + "?openid.mode=apiLogout";
-    SLAP.storeSession({});
+    SLAP.clearSession();
     SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
         console.log("User logged out of SSOFI provider", data);
         SLAP.logOutServer();

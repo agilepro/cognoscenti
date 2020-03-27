@@ -134,7 +134,6 @@ public class WikiConverterForWYSIWYG extends WikiConverter
                     //didn't find a project with that name, so just link to hash which
                     //works out to be the current page
                     linkAddr="#";
-                    System.out.println("DEBUG HTML:  Wiki text has link to page that does not exist: "+linkText);
                 }
             }
         }

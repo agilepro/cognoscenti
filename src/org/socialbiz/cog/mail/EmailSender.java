@@ -172,39 +172,44 @@ public class EmailSender extends TimerTask {
     // The calling of this method has nothing to do with the email schedule /
     // frequency.
     public void run() {
-        AuthRequest ar = AuthDummy.serverBackgroundRequest();
-        long startTime = System.currentTimeMillis();
-        ar.nowTime = startTime;
-
-        // make sure that this method doesn't throw any exception
         try {
-            System.out.println("EmailSender start: "+SectionUtil.getDateAndTime(startTime));
-            NGPageIndex.assertNoLocksOnThread();
-            checkAndSendDailyDigest(ar);
-            handleGlobalEmail();
-            handleAllOverdueScheduledEvents(ar);
-            System.out.println("EmailSender completed: "+SectionUtil.getDateAndTime(startTime));
-        } catch (Exception e) {
-            Exception failure = new Exception("EmailSender-TimerTask failed in run method.", e);
-            JSONException.traceException(System.out, failure, "EmailSender-TimerTask failed in run method.");
-            threadLastCheckException = failure;
+            AuthRequest ar = AuthDummy.serverBackgroundRequest();
+            long startTime = System.currentTimeMillis();
+            ar.nowTime = startTime;
+    
+            // make sure that this method doesn't throw any exception
+            try {
+                System.out.println("EmailSender start: "+SectionUtil.getDateAndTime(startTime)+" tid="+Thread.currentThread().getId());
+                NGPageIndex.assertNoLocksOnThread();
+                checkAndSendDailyDigest(ar);
+                handleGlobalEmail();
+                handleAllOverdueScheduledEvents(ar);
+                System.out.println("EmailSender completed: "+SectionUtil.getDateAndTime(startTime));
+            } catch (Exception e) {
+                Exception failure = new Exception("EmailSender-TimerTask failed in run method.", e);
+                JSONException.traceException(System.out, failure, "EmailSender-TimerTask failed in run method.");
+                threadLastCheckException = failure;
+            }
+            finally {
+                //only call this when you are sure you are not holding on to any containers
+                NGPageIndex.clearLocksHeldByThisThread();
+            }
+            long duration = System.currentTimeMillis() - startTime;
+    
+            //suppress the number of trace statements to one per hour.
+            runCount++;
+            totalTime += duration;
+            if (runCount>119) {
+                //this should be about 1 per hour
+                long avg = totalTime / runCount;
+                System.out.println("EmailSender: completed 120 scans.  Average processing time "+avg+"ms at "
+                    +SectionUtil.getNicePrintDate(System.currentTimeMillis()));
+                runCount = 0;
+                totalTime = 0;
+            }
         }
-        finally {
-            //only call this when you are sure you are not holding on to any containers
-            NGPageIndex.clearLocksHeldByThisThread();
-        }
-        long duration = System.currentTimeMillis() - startTime;
-
-        //suppress the number of trace statements to one per hour.
-        runCount++;
-        totalTime += duration;
-        if (runCount>119) {
-            //this should be about 1 per hour
-            long avg = totalTime / runCount;
-            System.out.println("EmailSender: completed 120 scans.  Average processing time "+avg+"ms at "
-                +SectionUtil.getNicePrintDate(System.currentTimeMillis()));
-            runCount = 0;
-            totalTime = 0;
+        catch (Throwable t) {
+            JSONException.traceException(t, "EMAIL SENDER CRASH!");
         }
     }
 
