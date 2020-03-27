@@ -606,6 +606,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         if (!data.meetingInfo) {
             data.meetingInfo = "";
         }
+        if (!data.participants) {
+            data.participants = [];
+        }
+        if (data.participants.length==0) {
+            console.log("SITE", $scope.siteInfo);
+            data.participants.push(AllPeople.findPerson(data.owner, $scope.siteInfo.key))
+        }
         data.participants.forEach( function(item) {
             item.image = AllPeople.imageName(item);
         });

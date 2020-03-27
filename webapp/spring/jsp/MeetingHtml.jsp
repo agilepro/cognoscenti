@@ -192,6 +192,12 @@
     background-color:lightgray;
     margin-top:20px;
 }
+.doubleClickHint {
+    background-color:#eee;
+    color:#aaa;
+    padding:4px;
+    max-width:400px
+}
 </style>
 
 <script src="../../../jscript/AllPeople.js"></script>
@@ -1009,33 +1015,35 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     <tr ng-dblclick="openAttachTopics(selectedItem)" ng-hide="selectedItem.isSpacer">
       <td ng-click="openAttachTopics(selectedItem)" class="labelColumn">Topic:</td>
       <td>
-          <span ng-repeat="topic in itemTopics(selectedItem)" class="btn btn-sm btn-default btn-raised"  
+          <div ng-repeat="topic in itemTopics(selectedItem)" class="btn btn-sm btn-default btn-raised"  
                 style="margin:4px;max-width:200px;overflow: hidden"
             ng-click="navigateToTopic(selectedItem.topicLink)">
             <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
-          </span>
+          </div>
+          <div ng-hide="itemTopics(selectedItem).length>0" class="doubleClickHint">
+              Double-click to set or unset linked topic
+          </div>
       </td>
     </tr>
     <tr ng-hide="selectedItem.isSpacer" ng-dblclick="openAttachDocument(selectedItem)">
       <td ng-click="openAttachDocument(selectedItem)" class="labelColumn">Attachments:</td>
-      <td><div ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
-          <div ng-repeat="fullDoc in [getFullDoc(docid)]">
-              <span ng-click="navigateToDoc(docid)">
-                <img src="<%=ar.retPath%>assets/images/iconFile.png" ng-show="fullDoc.attType=='FILE'">
-                <img src="<%=ar.retPath%>assets/images/iconUrl.png" ng-show="fullDoc.attType=='URL'">
-              </span> &nbsp;
-              <span ng-click="downloadDocument(fullDoc)">
-                <span class="fa fa-external-link" ng-show="fullDoc.attType=='URL'"></span>
-                <span class="fa fa-download" ng-hide="fullDoc.attType=='URL'"></span>
-              </span> &nbsp; 
-              {{fullDoc.name}}
+      <td title="double-click to modify the attachments">
+          <div ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
+              <div ng-repeat="fullDoc in [getFullDoc(docid)]">
+                  <span ng-click="navigateToDoc(docid)">
+                    <img src="<%=ar.retPath%>assets/images/iconFile.png" ng-show="fullDoc.attType=='FILE'">
+                    <img src="<%=ar.retPath%>assets/images/iconUrl.png" ng-show="fullDoc.attType=='URL'">
+                  </span> &nbsp;
+                  <span ng-click="downloadDocument(fullDoc)">
+                    <span class="fa fa-external-link" ng-show="fullDoc.attType=='URL'"></span>
+                    <span class="fa fa-download" ng-hide="fullDoc.attType=='URL'"></span>
+                  </span> &nbsp; 
+                  {{fullDoc.name}}
+              </div>
           </div>
-      </div>
-<%if (isLoggedIn) { %>
-      <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument(selectedItem)"
-          title="Attach a document">
-          ADD </button>
-<% } %>
+          <div ng-hide="selectedItem.docList && selectedItem.docList.length>0" class="doubleClickHint">
+              Double-click to add / remove attachments
+          </div>
        </td>
     </tr>
     <tr ng-hide="selectedItem.isSpacer" ng-dblclick="openAttachAction(selectedItem)">
@@ -1046,11 +1054,9 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
             {{goal.synopsis}}
           </div>
           </div>
-<%if (isLoggedIn) { %>
-              <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachAction(selectedItem)"
-                  title="Attach an action item">
-                  ADD </button>
-<% } %>
+          <div ng-hide="itemGoals(selectedItem).length>0" class="doubleClickHint">
+              Double-click to add / remove action items
+          </div>
       </td>
     </tr>
     <tr ng-dblclick="selectedItem.readyToGo = ! selectedItem.readyToGo"  ng-hide="selectedItem.isSpacer">

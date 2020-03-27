@@ -495,6 +495,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 .spaceBefore {
     margin-top:20px;
 }
+.doubleClickHint {
+    background-color:#eee;
+    color:#aaa;
+    padding:4px;
+    max-width:400px
+}
+.labelColumn:hover {
+    color:black;
+}
 </style>
 
 <div ng-app="myApp" ng-controller="myCtrl">
@@ -557,7 +566,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
           </div>
           <br/>
           <div class="form-group" ng-dblclick="openAttachDocument()">
-            <label class="col-md-2 control-label" ng-click="openAttachDocument()">Attachments</label>
+            <label class="col-md-2 control-label labelColumn" ng-click="openAttachDocument()">Attachments</label>
             <div class="col-md-10">
                 <div ng-repeat="docid in emailInfo.docList" style="vertical-align: top">
                   <div ng-repeat="fullDoc in [getFullDoc(docid)]">
@@ -571,6 +580,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                       </span> &nbsp; 
                       {{fullDoc.name}}
                   </div>
+                </div>
+                <div ng-hide="emailInfo.docList && emailInfo.docList.length>0" class="doubleClickHint">
+                    Double-click to add / remove attachments
                 </div>
             </div>
           </div>

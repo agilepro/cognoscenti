@@ -90,6 +90,12 @@ Required parameter:
 .labelColumn:hover {
     background-color:#ECB6F9;
 }
+.doubleClickHint {
+    background-color:#eee;
+    color:#aaa;
+    padding:4px;
+    max-width:400px
+}
 </style>
 
 <script type="text/javascript">
@@ -1071,6 +1077,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
           
           {{getFullDoc(docid).name}}
         </div>
+        <div ng-hide="noteInfo.docList && noteInfo.docList.length>0" class="doubleClickHint">
+            Double-click to add / remove attachments
+        </div>
     </td>
 </tr>
 
@@ -1083,6 +1092,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             {{goal.synopsis}}
           </div>
           </div>
+        </div>
+        <div ng-hide="getActions().length>0" class="doubleClickHint">
+            Double-click to add / remove action items
         </div>
     </td>
 </tr>
