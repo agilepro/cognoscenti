@@ -72,7 +72,8 @@
       <div ng-show="cmt.state==11">
         Draft {{commentTypeName(cmt)}} needs posting to be seen by others
       </div>
-      <div class="leafContent comment-inner" ng-hide="cmt.meet || cmt.commentType==6">
+      <div class="leafContent comment-inner" ng-hide="cmt.meet || cmt.commentType==6"
+           ng-dblclick="openCommentEditor(item,cmt)">
         <div ng-bind-html="cmt.html"></div>
       </div>
       <div ng-show="cmt.meet" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"

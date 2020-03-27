@@ -90,12 +90,6 @@ Required parameter:
 .labelColumn:hover {
     background-color:#ECB6F9;
 }
-.doubleClickHint {
-    background-color:#eee;
-    color:#aaa;
-    padding:4px;
-    max-width:400px
-}
 </style>
 
 <script type="text/javascript">

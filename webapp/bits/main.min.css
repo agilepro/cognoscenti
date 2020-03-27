@@ -169,3 +169,9 @@ h3{
     background-color:ivory;
     color:brown
 }
+.doubleClickHint {
+    background-color:#eee;
+    color:#aaa;
+    padding:4px;
+    max-width:400px
+}

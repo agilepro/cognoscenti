@@ -495,12 +495,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 .spaceBefore {
     margin-top:20px;
 }
-.doubleClickHint {
-    background-color:#eee;
-    color:#aaa;
-    padding:4px;
-    max-width:400px
-}
 .labelColumn:hover {
     color:black;
 }

@@ -192,12 +192,6 @@
     background-color:lightgray;
     margin-top:20px;
 }
-.doubleClickHint {
-    background-color:#eee;
-    color:#aaa;
-    padding:4px;
-    max-width:400px
-}
 </style>
 
 <script src="../../../jscript/AllPeople.js"></script>
@@ -598,6 +592,9 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
             <td ng-click="editMeetingDesc=true" class="labelColumn">Description:</td>
             <td ng-dblclick="editMeetingDesc=true">
               <div ng-bind-html="meeting.meetingInfo"></div>
+              <div ng-hide="meeting.meetingInfo && meeting.meetingInfo.length>6" class="doubleClickHint">
+                  Double-click to edit description
+              </div>
             </td>
           </tr>
           <tr ng-show="previousMeeting.id">
@@ -951,7 +948,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <% } %>
 </td>
 <td ng-repeat="item in [selectedItem]" style="vertical-align: top;">
-    <table class="table">
+    <table class="table" ng-show="item">
     <col width="150">
     <tr>
       <td></td>
@@ -978,15 +975,27 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
       <td class="labelColumn" ng-click="openNotesDialog(selectedItem)">Notes/Minutes:</td>
       <td ng-dblclick="openNotesDialog(selectedItem)">
         <div ng-bind-html="selectedItem.minutes"></div>
+        <div ng-hide="selectedItem.minutes" class="doubleClickHint">
+            Double-click to edit notes
+        </div>
       </td>
     </tr>
     <tr ng-dblclick="openAgenda(selectedItem,'Description')" ng-hide="selectedItem.isSpacer">
       <td ng-click="openAgenda(selectedItem,'Description')" class="labelColumn">Description:</td>
-      <td><div ng-bind-html="selectedItem.desc"></div></td>
+      <td>
+        <div ng-bind-html="selectedItem.desc"></div>
+        <div ng-hide="selectedItem.desc && selectedItem.desc.length>10" class="doubleClickHint">
+            Double-click to description
+        </div>
+      </td>
     </tr>
     <tr  ng-dblclick="openAgenda(selectedItem)" ng-hide="selectedItem.isSpacer">
       <td ng-click="openAgenda(selectedItem)" class="labelColumn">Presenter:</td>
-      <td><div ng-repeat="pres in selectedItem.presenterList">{{pres.name}}</div></td>
+      <td><div ng-repeat="pres in selectedItem.presenterList">{{pres.name}}</div>
+        <div ng-hide="selectedItem.presenterList && selectedItem.presenterList.length>0" class="doubleClickHint">
+            Double-click to set presenter
+        </div>
+      </td>
     </tr>
     <tr ng-dblclick="openAgenda(selectedItem)" ng-hide="item.proposed">
       <td ng-click="openAgenda(selectedItem)" class="labelColumn">Planned:</td>
@@ -1097,6 +1106,11 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
       </tr>
 <% } %>
     </table>
+    <div ng-hind="item">
+        <div class="guideVocal">
+            Create an agenda item for the meeting use the "+ New" button on the left.
+        </div>
+    </div>
 </td>
 </tr></table>
 
