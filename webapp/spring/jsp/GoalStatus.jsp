@@ -142,56 +142,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 src.push(item);
             }
         });
-        for (var j=0; j<lcFilterList.length; j++) {
-            var lcfilter = lcFilterList[j];
-            var recentLine = (new Date()).getTime() - 7*24*60*60*1000;
-            var res = [];
-            src.forEach( function(rec) {
-                if ($scope.mineOnly) {
-                    var found = false;
-                    rec.assignees.forEach( function(ass) {
-                        if (ass == SLAP.loginInfo.userId) {
-                            found = true;
-                        }
-                    });
-                    if (!found) {
-                        return;
-                    }
-                }
-                if ($scope.showRecent && (rec.modifiedtime > recentLine || rec.startdate > recentLine || rec.enddate > recentLine)) {
-                    res.push(rec);
-                    return;
-                }
-                if (!$scope.showActive && rec.state>=2 && rec.state<=4) {
-                    return;
-                }
-                if (!$scope.showFuture && rec.state==1) {
-                    return;
-                }
-                if (!$scope.showCompleted && rec.state>=5) {
-                    return;
-                }
-                if ($scope.filter.length==0) {
-                    res.push(rec);
-                    return;
-                }
-                if (rec.synopsis.toLowerCase().indexOf(lcfilter)>=0) {
-                    res.push(rec);
-                    return;
-                }
-                if (rec.description.toLowerCase().indexOf(lcfilter)>=0) {
-                    res.push(rec);
-                    return;
-                }
-                for (var i=rec.assignees.length-1; i>=0; i--) {
-                    if (rec.assignees[i].toLowerCase().indexOf(lcfilter)>=0) {
-                        res.push(rec);
-                        return;
-                    }
-                }
-            });
-            src = res;
-        }
+        var res = [];
+        src.forEach( function(rec) {
+            if (goalMatchedFilter(rec, lcFilterList)) {
+                res.push(rec);
+            }
+        });
+        src = res;
         var allReqLabels = $scope.allLabelFilters();
         allReqLabels.forEach( function(label) {
             var requiredLabel = label.name;
@@ -205,6 +162,46 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         return src;
     };
+    
+    function goalMatchedFilter(rec, lcFilterList) {
+        var recentTime = (new Date()).getTime() - 7*24*60*60*1000;
+        if ($scope.mineOnly) {
+            var found = false;
+            rec.assignees.forEach( function(ass) {
+                if (ass == SLAP.loginInfo.userId) {
+                    found = true;
+                }
+            });
+            if (!found) {
+                return false;
+            }
+        }
+        let isRecent = ($scope.showRecent && (rec.modifiedtime > recentTime || rec.startdate > recentTime || rec.enddate > recentTime));
+        if (!isRecent && !$scope.showActive && rec.state>=2 && rec.state<=4) {
+            return false;
+        }
+        if (!isRecent && !$scope.showFuture && rec.state==1) {
+            return false;
+        }
+        if (!isRecent && !$scope.showCompleted && rec.state>=5) {
+            return false;
+        }
+        if ($scope.filter.length==0) {
+            return true;
+        }
+        if (containsOne(rec.synopsis.toLowerCase(),lcFilterList)) {
+            return true;
+        }
+        if (containsOne(rec.description.toLowerCase(),lcFilterList)) {
+            return true;
+        }
+        for (var i=rec.assignees.length-1; i>=0; i--) {
+            if (containsOne(rec.assignees[i].toLowerCase(),lcFilterList)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     $scope.findGoals = function() {
         var lcFilterList = parseLCList($scope.filter);
@@ -214,43 +211,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         var src = $scope.allGoals;
         var res = [];
         src.forEach( function(rec) {
-            if ($scope.mineOnly) {
-                var found = false;
-                rec.assignees.forEach( function(ass) {
-                    if (ass == SLAP.loginInfo.userId) {
-                        found = true;
-                    }
-                });
-                if (!found) {
-                    return;
-                }
-            }
-            if (!$scope.showActive && rec.state>=2 && rec.state<=4) {
-                return;
-            }
-            if (!$scope.showFuture && rec.state==1) {
-                return;
-            }
-            if (!$scope.showCompleted && rec.state>=5) {
-                return;
-            }
-            if ($scope.filter.length==0) {
+            if (goalMatchedFilter(rec, lcFilterList)) {
                 res.push(rec);
-                return;
-            }
-            if (containsOne(rec.synopsis,lcFilterList)) {
-                res.push(rec);
-                return;
-            }
-            if (containsOne(rec.description,lcFilterList)) {
-                res.push(rec);
-                return;
-            }
-            for (var i=rec.assignees.length-1; i>=0; i--) {
-                if (containsOne(rec.assignees[i],lcFilterList)) {
-                    res.push(rec);
-                    return;
-                }
             }
         });
         src = res;
@@ -268,7 +230,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return src;
     };    
     $scope.swapItems = function(item, amt) {
-        var list = $scope.findGoals();
+        let movingUp = (amt<0);
+        var list = $scope.findGoalsInArea(item.taskArea);
+        console.log("List is: ", list);
 
         var foundAt = -1;
         var index = -1;
@@ -280,13 +244,16 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         if (foundAt<0) {
             alert("Could not find the item in the current filtered list: "+item.synopsis);
+            return;
         }
         var otherPos = foundAt + amt;
         if (otherPos<0) {
-            alert("can't move up off the beginning of the list");
+            alert("can't move up off the beginning of the list or out of a task group "+item.taskArea);
+            return;
         }
         if (otherPos>=list.length) {
-            alert("can't move down off the end of the list");
+            alert("can't move down off the end of the list or out of a task group "+item.taskArea);
+            return;
         }
         var otherItem = list[otherPos];
         var otherRank = otherItem.rank;
@@ -507,13 +474,25 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
 
         modalInstance.result.then(function (modifiedGoal) {
+            let newList = [];
             $scope.allGoals.map( function(item) {
+                let found = false;
                 if (item.id == modifiedGoal.id) {
-                    item.duedate = modifiedGoal.duedate;
-                    item.status = modifiedGoal.status;
+                    newList.push(modifiedGoal);
+                    found = true;
+                }
+                else {
+                    newList.push(modifiedGoal);
+                }
+                if (!found) {
+                    newList.push(modifiedGoal);
                 }
             });
             $scope.saveGoal(modifiedGoal);
+            var lcFilterList = $scope.filter.toLowerCase().split(" ");
+            if (!goalMatchedFilter(modifiedGoal, lcFilterList)) {
+                alert("Note: the action item you created does not match your current filter criteria ("+$scope.filter+")\nand will not appear in the list.\nModify your filter to see it.")
+            }
         }, function () {
           //cancel action
         });
@@ -730,178 +709,175 @@ function addvalue() {
 }
 </style>
 
-    <div  id="searchresultdiv0">
-    <div>
-      <table style="width:100%">
-        <tr>
-           <th></th>
-           <th>Synopsis</th>
-           <th>Assigned</th>
-           <th title="Dates that the action was started, due, and completed">Dates</th>
-           <th title="Give a Red-Yellow-Green indication of how it is going"></th>
-           <th title="A written summary of the current status">Status</th>
-        </tr>
-        <tbody ng-repeat="area in taskAreaList">
-          <tr class="headerRow">
-            <td colspan="2" ng-dblclick="openTaskAreaEditor(area)">{{area.name}}&nbsp;</td>
-            <td colspan="2">
-                <div ng-repeat="person in area.assignees">
-                  <span class="dropdown">
-                    <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(person)}}" 
-                         style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
-                    </span>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
-                          {{person.name}}<br/>{{person.uid}}</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="navigateToUser(person)">
-                          <span class="fa fa-user"></span> Visit Profile</a></li>
-                    </ul>
-                  </span>
-                </div>
-            </td>
-            <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going">
-              <span>
-                <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="area.prospects=='bad'"
-                     title="Red: In trouble" ng-click="setProspectArea(area, 'bad', $event)" class="stoplight">
-                <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="area.prospects=='bad'"
-                     title="Red: In trouble" class="stoplight">
-                <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="area.prospects=='ok'"
-                     title="Yellow: Warning" ng-click="setProspectArea(area, 'ok', $event)" class="stoplight">
-                <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="area.prospects=='ok'"
-                     title="Yellow: Warning" class="stoplight">
-                <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="area.prospects=='good'"
-                     title="Green: Good shape" ng-click="setProspectArea(area, 'good', $event)" class="stoplight">
-                <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="area.prospects=='good'"
-                     title="Green: Good shape" class="stoplight">
-              </span>
-            </td>
-            <td ng-dblclick="openTaskAreaEditor(area)" title="A written summary of the current status">{{area.status}}</td>
-          </tr>
-          <tr ng-repeat="rec in findGoalsInArea(area.id)" class="outlined">
-            <td  style="width:70px">
-            <div style="float:left;margin:3px">
-              <div class="dropdown">
-                <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
-                    data-toggle="dropdown"> <span class="caret"></span> </button>
+  <table style="width:100%">
+    <tr>
+       <th></th>
+       <th>Synopsis</th>
+       <th>Assigned</th>
+       <th title="Dates that the action was started, due, and completed">Dates</th>
+       <th title="Give a Red-Yellow-Green indication of how it is going"></th>
+       <th title="A written summary of the current status">Status</th>
+    </tr>
+    <tbody ng-repeat="area in taskAreaList">
+      <tr class="headerRow">
+        <td colspan="2" ng-dblclick="openTaskAreaEditor(area)">{{area.name}}&nbsp;</td>
+        <td colspan="2">
+            <div ng-repeat="person in area.assignees">
+              <span class="dropdown">
+                <span id="menu1" data-toggle="dropdown">
+                <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(person)}}" 
+                     style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
+                </span>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                  <li role="presentation"><a role="menuitem"
-                      href="task{{rec.id}}.htm">Edit Action Item</a></li>
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="swapItems(rec, -1)">Move Up</a></li>
-                  <li role="presentation"><a role="menuitem"
-                      ng-click="swapItems(rec, 1)">Move Down</a></li>
-                  <li role="presentation" ng-show="rec.state<2">
-                      <a role="menuitem" ng-click="makeState(rec, 2)">
-                          <img src="<%=ar.retPath%>assets/goalstate/small2.gif" alt="accepted"  />
-                          Start & Offer
-                      </a>
-                  </li>
-
-                  <li role="presentation" ng-show="rec.state==2">
-                      <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 3)">
-                          <img src="<%=ar.retPath%>assets/goalstate/small3.gif" alt="accepted"  />
-                          Mark Accepted
-                      </a>
-                  </li>
-                  <li role="presentation" ng-show="rec.state!=5">
-                      <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 5)">
-                          <img src="<%=ar.retPath%>assets/goalstate/small5.gif" alt="completed"  />
-                          Mark Completed
-                      </a>
-                  </li>
+                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                      tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                      {{person.name}}<br/>{{person.uid}}</a></li>
+                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      ng-click="navigateToUser(person)">
+                      <span class="fa fa-user"></span> Visit Profile</a></li>
                 </ul>
-              </div>
-            </div>
-            <div style="float:left;margin:2px">
-              <a href="task{{rec.id}}.htm">
-                <img ng-src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
-            </div>
-            </td>
-            <td  style="max-width:300px"  ng-dblclick="openModalActionItem(rec, 'details')"
-               title="The synopsis (name) and description of the action item.">
-              <div style="cursor: pointer;" ><b>{{rec.synopsis}}</b></span>
-              <span ng-repeat="label in getGoalLabels(rec)">
-                <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
-                  {{label.name}}
-                </button>
               </span>
-              </div>
-              <div ng-show="showDescription" ng-bind-html="rec.html"></div>
-            </td>
-            <td title="People assigned to complete this action item." style="width:70px">
-              <div>
-                <div ng-repeat="person in rec.assignTo">
-                  <span class="dropdown">
-                    <span id="menu1" data-toggle="dropdown">
-                    <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(person)}}" 
-                         style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
-                    </span>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-                      <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
-                          tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
-                          {{person.name}}<br/>{{person.uid}}</a></li>
-                      <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
-                          ng-click="navigateToUser(person)">
-                          <span class="fa fa-user"></span> Visit Profile</a></li>
-                    </ul>
-                  </span>
-                </div>
-              </div>
-            </td>
-            <td style="width:150px"  ng-dblclick="openModalActionItem(rec, 'status')"
-                title="Dates the action item was started, due, or completed">
-              <div ng-show="rec.startdate>100" >
-                start: {{rec.startdate | date}}
-              </div>
-              <div ng-show="rec.duedate>100" >
-                due: {{rec.duedate | date}}
-              </div>
-              <div ng-show="rec.enddate>100" >
-                end: {{rec.enddate | date}}
-              </div>
-              <!--div ng-show="rec.modifiedtime>100" >
-                mod: {{rec.modifiedtime | date}}
-              </div-->
-            </td>
-            <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going"
-                ng-dblclick="openModalActionItem(rec, 'status')">
-              <span>
-                <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="rec.prospects=='bad'"
-                     title="Red: In trouble" ng-click="setProspects(rec, 'bad', $event)" class="stoplight">
-                <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="rec.prospects=='bad'"
-                     title="Red: In trouble" class="stoplight">
-                <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="rec.prospects=='ok'"
-                     title="Yellow: Warning" ng-click="setProspects(rec, 'ok', $event)" class="stoplight">
-                <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="rec.prospects=='ok'"
-                     title="Yellow: Warning" class="stoplight">
-                <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="rec.prospects=='good'"
-                     title="Green: Good shape" ng-click="setProspects(rec, 'good', $event)" class="stoplight">
-                <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="rec.prospects=='good'"
-                     title="Green: Good shape" class="stoplight">
+            </div>
+        </td>
+        <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going">
+          <span>
+            <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="area.prospects=='bad'"
+                 title="Red: In trouble" ng-click="setProspectArea(area, 'bad', $event)" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="area.prospects=='bad'"
+                 title="Red: In trouble" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="area.prospects=='ok'"
+                 title="Yellow: Warning" ng-click="setProspectArea(area, 'ok', $event)" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="area.prospects=='ok'"
+                 title="Yellow: Warning" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="area.prospects=='good'"
+                 title="Green: Good shape" ng-click="setProspectArea(area, 'good', $event)" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="area.prospects=='good'"
+                 title="Green: Good shape" class="stoplight">
+          </span>
+        </td>
+        <td ng-dblclick="openTaskAreaEditor(area)" title="A written summary of the current status">{{area.status}}</td>
+      </tr>
+      <tr ng-repeat="rec in findGoalsInArea(area.id)" class="outlined">
+        <td  style="width:70px">
+        <div style="float:left;margin:3px">
+          <div class="dropdown">
+            <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
+                data-toggle="dropdown"> <span class="caret"></span> </button>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+              <li role="presentation"><a role="menuitem"
+                  href="task{{rec.id}}.htm">Edit Action Item</a></li>
+              <li role="presentation"><a role="menuitem"
+                  ng-click="swapItems(rec, -1)">Move Up</a></li>
+              <li role="presentation"><a role="menuitem"
+                  ng-click="swapItems(rec, 1)">Move Down</a></li>
+              <li role="presentation" ng-show="rec.state<2">
+                  <a role="menuitem" ng-click="makeState(rec, 2)">
+                      <img src="<%=ar.retPath%>assets/goalstate/small2.gif" alt="accepted"  />
+                      Start & Offer
+                  </a>
+              </li>
+
+              <li role="presentation" ng-show="rec.state==2">
+                  <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 3)">
+                      <img src="<%=ar.retPath%>assets/goalstate/small3.gif" alt="accepted"  />
+                      Mark Accepted
+                  </a>
+              </li>
+              <li role="presentation" ng-show="rec.state!=5">
+                  <a role="menuitem" tabindex="-1" ng-click="makeState(rec, 5)">
+                      <img src="<%=ar.retPath%>assets/goalstate/small5.gif" alt="completed"  />
+                      Mark Completed
+                  </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div style="float:left;margin:2px">
+          <a href="task{{rec.id}}.htm">
+            <img ng-src="<%=ar.retPath%>assets/goalstate/small{{rec.state}}.gif" /></a>
+        </div>
+        </td>
+        <td  style="max-width:300px"  ng-dblclick="openModalActionItem(rec, 'details')"
+           title="The synopsis (name) and description of the action item.">
+          <div style="cursor: pointer;" ><b>{{rec.synopsis}}</b></span>
+          <span ng-repeat="label in getGoalLabels(rec)">
+            <button class="labelButton" style="background-color:{{label.color}};" ng-click="toggleLabel(label)">
+              {{label.name}}
+            </button>
+          </span>
+          </div>
+          <div ng-show="showDescription" ng-bind-html="rec.html"></div>
+        </td>
+        <td title="People assigned to complete this action item." style="width:70px">
+          <div>
+            <div ng-repeat="person in rec.assignTo">
+              <span class="dropdown">
+                <span id="menu1" data-toggle="dropdown">
+                <img class="img-circle" src="<%=ar.retPath%>icon/{{imageName(person)}}" 
+                     style="width:32px;height:32px" title="{{person.name}} - {{person.uid}}">
+                </span>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                  <li role="presentation" style="background-color:lightgrey"><a role="menuitem" 
+                      tabindex="-1" ng-click="" style="text-decoration: none;text-align:center">
+                      {{person.name}}<br/>{{person.uid}}</a></li>
+                  <li role="presentation" style="cursor:pointer"><a role="menuitem" tabindex="-1"
+                      ng-click="navigateToUser(person)">
+                      <span class="fa fa-user"></span> Visit Profile</a></li>
+                </ul>
               </span>
-            </td>
-            <td  style="max-width:300px"  ng-dblclick="openModalActionItem(rec, 'status')"
-                 title="A textual description of the current status of the action item.">
-              <div>{{rec.status}} &nbsp;</div>
-              <div ng-show="showChecklists" style="cursor:context-menu">
-                  <div ng-repeat="ci in rec.checkitems" >
-                    <span ng-click="toggleCheckItem($event,rec,ci.index)" style="cursor:pointer">
-                      <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
-                      <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
-                    &nbsp; 
-                    </span>
-                    {{ci.name}}
-                  </div>
+            </div>
+          </div>
+        </td>
+        <td style="width:150px"  ng-dblclick="openModalActionItem(rec, 'status')"
+            title="Dates the action item was started, due, or completed">
+          <div ng-show="rec.startdate>100" >
+            start: {{rec.startdate | date}}
+          </div>
+          <div ng-show="rec.duedate>100" >
+            due: {{rec.duedate | date}}
+          </div>
+          <div ng-show="rec.enddate>100" >
+            end: {{rec.enddate | date}}
+          </div>
+        </td>
+        <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going"
+            ng-dblclick="openModalActionItem(rec, 'status')">
+          <span>
+            <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="rec.prospects=='bad'"
+                 title="Red: In trouble" ng-click="setProspects(rec, 'bad', $event)" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/red_on.png"  ng-show="rec.prospects=='bad'"
+                 title="Red: In trouble" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/yellow_off.png" ng-hide="rec.prospects=='ok'"
+                 title="Yellow: Warning" ng-click="setProspects(rec, 'ok', $event)" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/yellow_on.png"  ng-show="rec.prospects=='ok'"
+                 title="Yellow: Warning" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/green_off.png" ng-hide="rec.prospects=='good'"
+                 title="Green: Good shape" ng-click="setProspects(rec, 'good', $event)" class="stoplight">
+            <img src="<%=ar.retPath%>assets/goalstate/green_on.png"  ng-show="rec.prospects=='good'"
+                 title="Green: Good shape" class="stoplight">
+          </span>
+        </td>
+        <td  style="max-width:300px"  ng-dblclick="openModalActionItem(rec, 'status')"
+             title="A textual description of the current status of the action item.">
+          <div>{{rec.status}} &nbsp;</div>
+          <div ng-show="showChecklists" style="cursor:context-menu">
+              <div ng-repeat="ci in rec.checkitems" >
+                <span ng-click="toggleCheckItem($event,rec,ci.index)" style="cursor:pointer">
+                  <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
+                  <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
+                &nbsp; 
+                </span>
+                {{ci.name}}
               </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <div class="guideVocal" ng-show="filter"> 
+     You are only displaying action items with "<b>{{filter}}</b>" in them.  Some items might be hidden.
+  </div>
     
 <br/>
 <br/>

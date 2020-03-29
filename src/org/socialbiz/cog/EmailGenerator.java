@@ -467,7 +467,7 @@ public class EmailGenerator extends DOMFace {
 
         if (meeting!=null) {
             JSONObject meetingObj = meeting.getFullJSON(ar, ngp);
-            meetingObj.put("meetingUrl", ar.retPath + ar.getResourceURL(ngp, "meetingFull.htm?id="+meeting.getId()
+            meetingObj.put("meetingUrl", ar.retPath + ar.getResourceURL(ngp, "meetingHtml.htm?id="+meeting.getId()
                     +"&"+AccessControl.getAccessMeetParams(ngp, meeting))
                     + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
             data.put("meeting", meetingObj);

@@ -66,6 +66,21 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
         });
     }
     
+    $scope.moveTaskArea = function(item, isDown) {
+        let postObject = {areaId: item.id, moveDown: isDown};
+        console.log("moveTaskArea", postObject);
+        var getURL = "moveTaskArea.json";
+        $http.post(getURL, angular.toJson(postObject))
+        .success( function(data) {
+            console.log("received TaskAreas", data);
+            $scope.allTaskAreas = data.taskAreas;
+            $scope.loaded = true;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    
     $scope.getTaskAreas();
 
     $scope.openTaskAreaEditor = function (ta) {
@@ -136,9 +151,12 @@ app.controller('myCtrl', function($scope, $http, AllPeople,  $modal) {
         <th>Status</th>
       </tr>
       <tr ng-repeat="ta in allTaskAreas">
-        <td style="cursor:pointer" ng-click="openTaskAreaEditor(ta)" style="max-width:40px"
+        <td style="cursor:pointer" style="max-width:40px"
             title="Edit this task area">
-          <span class="fa fa-edit"></span></td>
+          <span ng-click="openTaskAreaEditor(ta)" ><span class="fa fa-edit"></span></span> &nbsp;
+          <span ng-click="moveTaskArea(ta, false)" ><span class="fa fa-arrow-up"></span></span> &nbsp;
+          <span ng-click="moveTaskArea(ta, true)" ><span class="fa fa-arrow-down"></span></span> &nbsp;
+        </td>
         <td ng-dblclick="openTaskAreaEditor(ta)" >{{ta.name}}</td>
         <td title="Click on person name to see their profile information">
             <div ng-repeat="ass in ta.assignees">

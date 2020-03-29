@@ -807,57 +807,12 @@ public class AttachmentRecord extends CommentContainer {
         setAttribute("readonly", readonly);
     }
 
-    /**
-     * If isInEditMode() returns false, then the document is not in editing
-     * mode, or nobody is maintaining the document. We do not restrict other
-     * users to edit the document but we warn the user that "this document is
-     * editing/maintaining by other user and if you still upload document over
-     * it then your data may be lost".
-     */
-    public boolean isInEditMode() {
-        String isInEditMode = getAttribute("editMode");
-        if (isInEditMode == null) {
-            return false;
-        }
-        else {
-            return "true".equals(isInEditMode);
-        }
-    }
-
-    /**
-     * Set editModeDate to the date when user opts to become editor/ maintainer
-     * of the document Set editModeUser to the editor's (logged in) user key.
-     */
-    public void setEditMode(AuthRequest ar) {
-        setAttribute("editModeDate", Long.toString(ar.nowTime));
-        setAttribute("editModeUser", ar.getUserProfile().getKey());
-        setAttribute("editMode", "true");
-    }
-
-    public void clearEditMode() {
-        setAttribute("editModeDate", null);
-        setAttribute("editModeUser", null);
-        setAttribute("editMode", null);
-
-    }
-
-    /***
-     * We get the getEditModeDate to check from when the user is maintaining the
-     * attachment.
-     */
-    public long getEditModeDate() {
-        return getAttributeLong("editModeDate");
-    }
-
-    public String getEditModeUser() {
-        return getAttribute("editModeUser");
-    }
 
     /**
      * Tells whether there is a file behind this that can be served up
      */
     public boolean hasContents() {
-        // url is the oly type without contents
+        // url is the only type without contents
         return !("URL".equals(getType()));
     }
 

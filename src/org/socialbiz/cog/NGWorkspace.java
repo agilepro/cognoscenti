@@ -581,6 +581,39 @@ public class NGWorkspace extends NGPage {
         }
         return res;
     }
+    public void moveTaskArea(String id, boolean moveDown) throws Exception {
+        JSONArray ports = workspaceJSON.getJSONArray("taskAreas");
+        int index = -1;
+        for (int i=0; i<ports.length(); i++) {
+            if (id.equals(ports.getJSONObject(i).getString("id"))) {
+                index = i;
+            }
+        }
+        if (index<0) {
+            throw new Exception("Can not find any task area named "+id);
+        }
+        if (moveDown && index == ports.length()-1) {
+            return;  //nothing to do
+        }
+        if (!moveDown && index == 0) {
+            return;  //nothing to do
+        }
+        JSONArray newArray = new JSONArray();
+        JSONObject movedOne = ports.getJSONObject(index);
+        for (int i=0; i<ports.length(); i++) {
+            JSONObject thisOne = ports.getJSONObject(i);
+            if (!moveDown && i==index-1) {
+                newArray.put(movedOne);
+            }
+            if (i != index) {
+                newArray.put(thisOne);
+            }
+            if (moveDown && i==index+1) {
+                newArray.put(movedOne);
+            }
+        }  
+        workspaceJSON.put("taskAreas", newArray);
+    }
     public TaskArea createTaskArea() throws Exception {
         if (!workspaceJSON.has("taskAreas")) {
             workspaceJSON.put("taskAreas", new JSONArray());

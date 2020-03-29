@@ -38,8 +38,6 @@ Required parameters:
     AttachmentRecord attachment = ngp.findAttachmentByIDOrFail(aid);
     String version  = ar.defParam("version", null);
 
-    JSONObject docInfo = attachment.getJSON4Doc(ar, ngp);
-
     long fileSizeInt = attachment.getFileSize(ngp);
     String fileSize = String.format("%,d", fileSizeInt);
 
@@ -57,10 +55,6 @@ Required parameters:
     if("URL".equals(attachment.getType())){
         permaLink = attachment.getURLValue();
     }
-
-//TODO: this terminology is 'getEditModeUser' is really about 'maintainers' of a document.
-//should be reworked
-    String editUser = attachment.getEditModeUser();
 
     AddressListEntry ale = new AddressListEntry(attachment.getModifiedBy());
 
@@ -96,6 +90,25 @@ Required parameters:
 
     JSONArray allLabels = ngp.getJSONLabels();
     
+    List<HistoryRecord> histRecs = ngp.getHistoryForResource(HistoryRecord.CONTEXT_TYPE_DOCUMENT,aid);
+    JSONArray allHistory = new JSONArray();
+    for (HistoryRecord hist : histRecs) {
+        JSONObject jo = hist.getJSON(ngp, ar);
+        AddressListEntry ale2 = new AddressListEntry(hist.getResponsible());
+        jo.put("responsible", ale2.getJSON() );
+        UserProfile responsible = ale2.getUserProfile();
+        String imagePath = "assets/photoThumbnail.gif";
+        if(responsible!=null) {
+            String imgPath = responsible.getImage();
+            if (imgPath!=null && imgPath.length() > 0) {
+                imagePath = "icon/"+imgPath;
+            }
+        }
+        jo.put("imagePath",   imagePath );
+        allHistory.put(jo);
+    }
+    
+    
 %>
 
 <script type="text/javascript">
@@ -105,12 +118,14 @@ var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Access Document");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
-    $scope.docInfo = <%docInfo.write(out,2,4);%>;
+    $scope.docId   = <%=aid%>;
+    $scope.docInfo = {};
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
     $scope.linkedGoals = <%linkedGoals.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
+    $scope.history = <%allHistory.write(out,2,4);%>;
 
     $scope.myComment = "";
     $scope.canUpdate = <%=canAccessDoc%>;
@@ -310,6 +325,54 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         return res;
     }
+    
+    $scope.setDocumentData = function(data) {
+        $scope.timerCorrection = data.serverTime - new Date().getTime();
+        data.docs.forEach( function(rec) {
+            if (rec.id == $scope.docId) {
+                rec.html = convertMarkdownToHtml(rec.description);
+                $scope.docInfo = rec;
+            }
+        });
+        $scope.dataArrived = true;
+    }
+    $scope.getDocumentList = function() {
+        $scope.isUpdating = true;
+        var postURL = "docsList.json";
+        $http.get(postURL)
+        .success( function(data) {
+            $scope.setDocumentData(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    $scope.getDocumentList();
+    $scope.openDocDialog = function (doc) {
+        
+        var docsDialogInstance = $modal.open({
+            animation: true,
+            templateUrl: "<%= ar.retPath%>templates/DocumentDetails.html<%=templateCacheDefeater%>",
+            controller: 'DocumentDetailsCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                docId: function () {
+                    return doc.id;
+                },
+                allLabels: function() {
+                    return $scope.allLabels;
+                }
+            }
+        });
+
+        docsDialogInstance.result
+        .then(function () {
+            $scope.getDocumentList();
+        }, function () {
+            $scope.getDocumentList();
+        });
+    };
 
 });
 </script>
@@ -353,13 +416,12 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     </div>
 <% } %>    
 
-<hr/>
     <div style="clear:both"></div>
 
 
-    <table  class="spacey">
+    <table  class="table" ng-dblclick="openDocDialog(docInfo)">
         <tr>
-            <td class="firstcol">
+            <td class="firstcol labelColumn" ng-click="openDocDialog(docInfo)">
                 <span ng-show="'FILE'==docInfo.attType">Document Name:</span>
                 <span ng-show="'URL'==docInfo.attType">Link Name:</span>
             </td>
@@ -367,23 +429,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 <span ng-show="docInfo.deleted" style="color:red">
                     <i class="fa fa-trash"></i> (DELETED)
                 </span>
+                <span ng-repeat="role in assignedLabels()">
+                    <button class="labelButton" 
+                        type="button" id="menu2"
+                        style="background-color:{{role.color}};">
+                        {{role.name}}</button>
+                    </ul>
+                </span>
             </td>
         </tr>
         <tr>
-            <td class="firstcol">Description:</td>
+            <td class="firstcol labelColumn" ng-click="openDocDialog(docInfo)">Description:</td>
             <td>
-            <%ar.writeHtml(attachment.getDescription());%>
-            <span ng-repeat="role in assignedLabels()">
-                <button class="labelButton" 
-                    type="button" id="menu2"
-                    style="background-color:{{role.color}};">
-                    {{role.name}}</button>
-                </ul>
-            </span>
+            <div ng-bind-html="docInfo.html"></div>
             </td>
         </tr>
         <tr>
-            <td class="firstcol">
+            <td class="firstcol labelColumn" ng-click="openDocDialog(docInfo)">
             <%if("FILE".equals(attachment.getType())){ %> Uploaded by: <%}else if("URL".equals(attachment.getType())){ %>
             Attached by <%} %>
             </td>
@@ -391,59 +453,19 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             <% ale.writeLink(ar); %> on <% SectionUtil.nicePrintTime(ar, attachment.getModifiedDate(), ar.nowTime); %>
             </td>
         </tr>
-        <tr>
-            <td class="firstcol">Accessibility:</td>
-            <%if(!attachment.getReadOnlyType().equals("on")){ %>
-            <td>
-            <% ar.writeHtml(access);%>
-            </td>
-            <%}else{ %>
-            <td>
-            <% ar.writeHtml(access);%> and Read only Type</td>
-            <%} %>
-        </tr>
+
 <%if("FILE".equals(attachment.getType())){ %>
         <tr>
             <td class="firstcol">Version:</td>
             <td><%=attachment.getVersion()%>
              - Size: <%=fileSize%> bytes</td>
         </tr>
-        <tr>
-            <td class="firstcol">Maintained by:</td>
-            <td><% ar.writeHtml(editUser); %></td>
-        </tr>
 <%}%>
-        <tr>
-            <td class="firstcol">Linked Action Items:</td>
-            <td><span ng-repeat="act in linkedGoals" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                   ng-click="navigateToActionItem(act)">
-                   <img ng-src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif">  {{act.synopsis}}
-                </span>
-            </td>
-        </tr>
-        <tr>
-            <td class="firstcol">Linked Topics:</td>
-            <td><span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                   ng-click="navigateToTopic(topic)">
-                   <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
-                </span>
-            </td>
-        </tr>
-        <tr>
-            <td class="firstcol">Linked Meetings:</td>
-            <td><span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
-                   ng-click="navigateToMeeting(meet)">
-                   <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
-                </span>
-            </td>
-        </tr>
-    </table>
-    <table class="spacey">
-        <tr>
-            <td class="firstcol"></td>
 <%
 if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
 %>
+        <tr>
+            <td class="firstcol"></td>
             <td>
             <%if("FILE".equals(attachment.getType())){ %> 
                 <a href="<%=ar.retPath%><%ar.writeHtml(permaLink); %>"><img
@@ -469,8 +491,32 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
         </tr>
 <%
     }
-%>
-</table>
+%>        <tr>
+            <td class="firstcol">Linked Action Items:</td>
+            <td><span ng-repeat="act in linkedGoals" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                   ng-click="navigateToActionItem(act)">
+                   <img ng-src="<%=ar.retPath%>assets/goalstate/small{{act.state}}.gif">  {{act.synopsis}}
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol">Linked Topics:</td>
+            <td><span ng-repeat="topic in linkedTopics" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                   ng-click="navigateToTopic(topic)">
+                   <i class="fa fa-lightbulb-o" style="font-size:130%"></i> {{topic.subject}}
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td class="firstcol">Linked Meetings:</td>
+            <td><span ng-repeat="meet in linkedMeetings" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
+                   ng-click="navigateToMeeting(meet)">
+                   <i class="fa fa-gavel" style="font-size:130%"></i> {{meet.name}}
+                </span>
+            </td>
+        </tr>
+    </table>
+
 
 
 <table >
@@ -490,6 +536,28 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
     <i>You have to be logged in and a member of this workspace in order to create a comment</i>
   </div>
 
+    <h3>History</h3>
+    <table>
+
+        <tr ng-repeat="hist in history"  >
+            <td class="projectStreamIcons" style="padding-bottom:20px;">
+                <img class="img-circle" src="<%=ar.retPath%>{{hist.imagePath}}" alt="" width="50" height="50" />
+            </td>
+            <td class="projectStreamText" style="padding-bottom:10px;">
+                {{hist.time|date}} -
+                <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
+                <br/>
+                {{hist.ctxType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>"
+                was {{hist.event}}.
+                <br/>
+                <i>{{hist.comments}}</i>
+
+            </td>
+        </tr>
+
+    </table>
+
+
   <div>
     <span class="tipText">This web page is a secure and
       convenient way to send documents to others collaborating on projects.
@@ -507,4 +575,5 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
 <script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
+<script src="<%=ar.retPath%>templates/DocumentDetails.js"></script>
 

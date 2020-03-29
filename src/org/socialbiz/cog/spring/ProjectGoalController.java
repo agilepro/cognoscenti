@@ -775,7 +775,7 @@ public class ProjectGoalController extends BaseController {
         showJSPMembers(ar, siteId, pageId, "TaskAreas");
     }
     @RequestMapping(value = "/{siteId}/{pageId}/taskAreas.json", method = RequestMethod.GET)
-    public void sharePortsJSON(@PathVariable String siteId,@PathVariable String pageId,
+    public void taskAreasJSON(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
@@ -792,7 +792,32 @@ public class ProjectGoalController extends BaseController {
             streamException(ee, ar);
         }
     }
+    @RequestMapping(value = "/{siteId}/{pageId}/moveTaskArea.json", method = RequestMethod.POST)
+    public void moveTaskArea(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            JSONObject post = this.getPostedObject(ar);
+            String areaId = post.getString("areaId");
+            boolean moveDown = post.getBoolean("moveDown");
+            ngw.moveTaskArea(areaId, moveDown);
+            ngw.saveFile(ar, "changed the order of task areas");
 
+            JSONObject repo = new JSONObject();
+            JSONArray shareList = new JSONArray();
+            for (TaskArea ta : ngw.getTaskAreas()) {
+                shareList.put(ta.getMinJSON());
+            }
+            repo.put("taskAreas", shareList);
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to get change the order of task areas ", ex);
+            streamException(ee, ar);
+        }
+    }
+
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/taskArea{id}.htm", method = RequestMethod.GET)
     public void onePortHTML(@PathVariable String siteId,
             @PathVariable String pageId,
@@ -803,6 +828,7 @@ public class ProjectGoalController extends BaseController {
         ar.setParam("pageId", pageId);
         ar.invokeJSP("/spring/jsp/TaskArea.jsp");
     }
+    */
 
     @RequestMapping(value = "/{siteId}/{pageId}/taskArea{id}.json")
     public void onePortJSON(@PathVariable String siteId,

@@ -276,7 +276,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <%@include file="ErrorPanel.jsp"%>
 
 
-<%if (isLoggedIn) { %>
+
     <div class="upRightOptions rightDivContent">
       <span class="dropdown" ng-show="meeting.state<=0">
           <button class="btn btn-default btn-primary btn-raised"
@@ -313,7 +313,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
       </span>
 
     </div>
-<% } %>
+
 
 <div>
 
@@ -939,13 +939,12 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     </div>
 </div>
 
-<%if (isLoggedIn) { %>
+
     <hr/>
     <div style="margin:20px;" ng-show="meeting.state<3">
         <button ng-click="createAgendaItem()" class="btn btn-primary btn-raised">+ New</button>
     </div>
 
-<% } %>
 </td>
 <td ng-repeat="item in [selectedItem]" style="vertical-align: top;">
     <table class="table" ng-show="item">
@@ -1090,7 +1089,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <%@ include file="/spring/jsp/CommentView.jsp"%>
 
       </tr>
-<%if (isLoggedIn) { %>
+
       <tr  ng-hide="selectedItem.isSpacer">
         <td></td>
         <td>
@@ -1104,9 +1103,9 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
         </div>
         </td>
       </tr>
-<% } %>
+
     </table>
-    <div ng-hind="item">
+    <div ng-hide="item">
         <div class="guideVocal">
             Create an agenda item for the meeting use the "+ New" button on the left.
         </div>
