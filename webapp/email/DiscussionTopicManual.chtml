@@ -13,6 +13,14 @@
 {$introHtml}
 </div>
 
+{% if ($meeting) %}
+<p><b>Meeting:</b> (click links to see meeting):
+<ul>
+<li><a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a><br/>
+{$meeting.startTime|date("MMM dd, YYYY  HH:mm '(ttt)' ")}
+</li>
+{% endif %}
+
 
 {% if ($attach) %}
 
@@ -44,13 +52,6 @@
 
 {% endif %}
 
-{% if ($meeting) %}
-<p><b>Meeting:</b> (click links to see meeting):
-<ul>
-<li><a href="{$meeting.meetingUrl}">{$meeting.name|onempty(No Name)|html}</a><br/>
-{$meeting.startTime|date("MMM dd, YYYY  HH:mm '(ttt)' ")}
-</li>
-{% endif %}
 
 
 {% if ($goals) %}

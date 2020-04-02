@@ -599,6 +599,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.refreshMeetingPromise = function() {
         return $scope.putGetMeetingInfo(null);
     }
+    $scope.getImageName = function(item) {
+        return AllPeople.imageName(item);
+    }
     function setMeetingData(data) {
         if (!data) {
             throw "ASKED to SET MEETING DATA but no meeting data passed";
@@ -1257,10 +1260,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.showRollCall = $scope.isRegistered();
     }
 
-    $scope.moveItemToBacklog = function(item) {
-        var delId = item.id;
-        var postURL = "agendaMove.json?src="+$scope.meeting.id+"&dest="+$scope.backlogId;
-        var postdata = angular.toJson(item);
+    $scope.deleteItem = function(item) {
+        if (!confirm("Are you sure you want to delete agenda item: "+item.subject)) {
+            return;
+        }
+        var postObj = {"id": item.id};
+        var postURL = "agendaDelete.json?id="+$scope.meeting.id;
+        var postdata = angular.toJson(postObj);
         $scope.showError=false;
         $http.post(postURL,postdata)
         .success( function(data) {
@@ -1831,8 +1837,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.showError=false;
         var promise = $http.post("timeZoneList.json", postdata)
         promise.success( function(data) {
-            $scope.allDates = data.dates;
-            $scope.allDates.sort();
+            data.dates.sort();
+            let tmplst = [];
+            data.dates.forEach( function(item) {
+                let pos = item.indexOf("(");
+                let pre = item.substring(0,pos).trim();
+                let post = item.substring(pos);
+                tmplst.push( {"zone":post,"time":pre} );
+            });
+            $scope.allDates = tmplst;
         });
         promise.error( function(data, status, headers, config) {
             $scope.reportError(data);

@@ -278,12 +278,6 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
 
     <div class="upRightOptions rightDivContent">
-      <span class="dropdown" ng-show="meeting.state<=0">
-          <button class="btn btn-default btn-primary btn-raised"
-                  ng-click="startSend()"
-                  title="Post this meeting to allow others to start planning for it">
-          Post Meeting </button>
-      </span>
       <button class="btn btn-default btn-raised" type="button" id="menu1" data-toggle="dropdown" style="{{meetingStateStyle(meeting.state)}}" ng-click="displayMode='Status'">
           State: {{stateName()}}</button>
       <span class="dropdown">
@@ -334,27 +328,39 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <div ng-show="displayMode=='Times'">
 
     <div class="well">
-      <h3>Scheduled Time</h3>
-          
-      <table class="table">
+      <span class="h3">Scheduled Time</span>
+      <button ng-hide="'startTime'==editMeetingPart" 
+          ng-click="editMeetingPart='startTime'">Edit</button>
+    
+      <table class="table" ng-hide="'startTime'==editMeetingPart">
         <tr>
             <td>{{browserZone}}</td>
             <td>
               <div ng-show="meeting.startTime>0">
                 {{meeting.startTime|date: "dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm"}}&nbsp;
-                <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
-                  <i class="fa fa-calendar"></i></a> &nbsp; 
-                <button ng-click="getTimeZoneList()">Show Timezones</button><br/>
-                <span ng-repeat="val in allDates">{{val}}<br/></span>
               </div>
               <div ng-hide="meeting.startTime>0">
                 <i>( To Be Determined )</i>
               </div>
             </td>
+            <td>
+                <a href="meetingTime{{meeting.id}}.ics" title="Make a calendar entry for this meeting">
+                  <i class="fa fa-calendar"></i></a> &nbsp; 
+            </td>
         </tr>
+        <tr ng-hide="meeting.startTime<=0">
+          <td>
+             <button ng-click="getTimeZoneList()">Show Timezones</button><br/>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr ng-repeat="val in allDates">
+          <td>{{val.zone}}</td>
+          <td>{{val.time}}</td>
+          <td></td>
+       </tr>
       </table>
-      <button ng-hide="'startTime'==editMeetingPart" class="btn btn-primary btn-raised" 
-          ng-click="editMeetingPart='startTime'">Edit Start Time</button>
       <div ng-show="'startTime'==editMeetingPart">
         <div class="well" style="max-width:500px">
             <span datetime-picker ng-model="meeting.startTime"
@@ -684,10 +690,11 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
       <table class="table">
         <tr>
           <th></th>
+          <th>Presenter</th>
           <th>Start</th>
-          <th>Planned Duration</th>
+          <th>Planned<br/>Duration</th>
           <th></th>
-          <th>Actual Duration</th>
+          <th>Actual<br/>Duration</th>
           <th>Remaining</th>
           <th></th>
         </tr>
@@ -697,11 +704,19 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
                 <span ng-hide="item.isSpacer" >{{item.number}}.</span>
                 {{item.subject}} 
           </td>
+          <td ng-dblclick="openAgenda(item)">
+              <span ng-repeat="pres in item.presenterList">
+                <img class="img-circle" 
+                    src="<%=ar.retPath%>icon/{{getImageName(pres)}}" 
+                    style="width:32px;height:32px" 
+                    title="{{pres.name}} - {{pres.uid}}">
+              </span>
+          </td>
           <td ng-dblclick="openAgenda(item)" >
           <span>{{item.schedule | date: 'HH:mm'}} &nbsp;</span>
           </td>
           <td ng-dblclick="openAgenda(item)" >
-                {{item.duration| minutes}}
+                {{item.duration}}
           </td>
           <td >
                 <span ng-hide="meeting.state!=2 || item.proposed || item.timerRunning">
@@ -718,6 +733,10 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
                 <span ng-show="meeting.state==2">{{item.duration - item.timerTotal| minutes}}</span>
           </td>
           <td ng-style="timerStyleComplete(item)" >
+            <span style="float:right;margin-left:10px;color:red" ng-show="!isCompleted()"  ng-click="deleteItem(item)" 
+                  title="delete agenda item">
+                <i class="fa fa-trash"></i>
+            </span>
             <span style="float:right" ng-hide="item.readyToGo || isCompleted()" >
                 <img src="<%=ar.retPath%>assets/goalstate/agenda-not-ready.png"
                      ng-dblclick="toggleReady(item)"
@@ -741,6 +760,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           </td>
         </tr>
         <tr>
+            <td></td>
             <td></td>
             <td>{{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}}</td>
             <td></td>
@@ -772,6 +792,10 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <td ng-dblclick="openAgenda(item)"></td>
           <td ng-dblclick="openAgenda(item)"></td>
           <td ng-style="timerStyleComplete(item)" >
+            <span style="float:right;margin-left:10px;color:red" ng-show="!isCompleted()"  ng-click="deleteItem(item)" 
+                  title="delete agenda item">
+                <i class="fa fa-trash"></i>
+            </span>
             <span style="float:right;margin-right:10px" ng-click="toggleProposed(item)" 
                   title="Accept this proposed agenda item">
                ACCEPT</i>
@@ -788,9 +812,10 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <p>Meeting is completed and no more updates are expected.</p>
       <table class="table">
         <tr>
-          <td></td>
-          <td>Planned Time</td>
-          <td>Used Time</td>
+          <th></th>
+          <th>Presenter</th>
+          <th>Planned Duration</th>
+          <th>Actual Duration</th>
         </tr>
         <tr ng-repeat="item in getAgendaItems()" ng-dblclick="openAgenda(item)" ng-style="timerStyleComplete(item)">
           <td>
@@ -799,9 +824,17 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
                 {{item.subject}} 
           </td>
+          <td>
+              <span ng-repeat="pres in item.presenterList">
+                <img class="img-circle" 
+                    src="<%=ar.retPath%>icon/{{getImageName(pres)}}" 
+                    style="width:32px;height:32px" 
+                    title="{{pres.name}} - {{pres.uid}}">
+              </span>
+          </td>
           <td >
                 <span >
-                    {{item.duration| minutes}}
+                    {{item.duration}}
                 </span>
           </td>
           <td >
@@ -847,38 +880,16 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
 
     <div style="max-width:800px">
-      <table class="table">
-      <tr>
-          <th>Name</th>
-          <th>Attended</th>
-          <th>Expected</th>
-          <th>Situation</th>
-      </tr>
-      <tr class="comment-inner" ng-repeat="pers in meeting.participants">
-          <td>
-            <img class="img-circle" 
-                 ng-src="<%=ar.retPath%>icon/{{pers.image}}" 
-                 style="width:32px;height:32px" 
-                 title="{{pers.name}} - {{pers.uid}}"> &nbsp; 
-            {{pers.name}}
-          </td>
-          <td ng-click="toggleAttend(pers.uid)">
-            <span ng-show="didAttend(pers.uid)" style="color:green"><span class="fa fa-plus-circle"></span></span>
-            <span ng-hide="didAttend(pers.uid)" style="color:#eeeeee"><span class="fa fa-question-circle"></span></span>
-          </td>
-          <td>{{expectAttend[pers.uid]}}</td>
-          <td>{{expectSituation[pers.uid]}}</td>
-      </tr>
-      </table>
-      
-      <div ng-hide="editMeetingPart=='participants'">
-          <button class="btn btn-default btn-primary btn-raised" type="button" 
-                  ng-click="editMeetingPart='participants'"
-                  title="Post this topic but don't send any email">
-          Adjust Meeting Participants </button>
+      <div style="margin:10px;vertical-align:middle">
+          <span class="h2">Meeting Participants: </span> 
+          <span ng-hide="editMeetingPart=='participants'">
+              <button 
+                      ng-click="editMeetingPart='participants'"
+                      title="Post this topic but don't send any email">
+              Edit </button>
+          </span>
       </div>
       <div class="well" ng-show="editMeetingPart=='participants'">
-          <h2>Adjust Participants:</h2>
           <div>
               <tags-input ng-model="meeting.participants" 
                           placeholder="Enter users to send notification email to"
@@ -902,6 +913,30 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           </span>
           </div>
       </div>
+      <table class="table" ng-hide="editMeetingPart=='participants'">
+      <tr>
+          <th>Name</th>
+          <th>Attended</th>
+          <th>Expected</th>
+          <th>Situation</th>
+      </tr>
+      <tr class="comment-inner" ng-repeat="pers in timeSlotResponders">
+          <td>
+            <img class="img-circle" 
+                 ng-src="<%=ar.retPath%>icon/{{pers.image}}" 
+                 style="width:32px;height:32px" 
+                 title="{{pers.name}} - {{pers.uid}}"> &nbsp; 
+            {{pers.name}}
+          </td>
+          <td ng-click="toggleAttend(pers.uid)">
+            <span ng-show="didAttend(pers.uid)" style="color:green"><span class="fa fa-plus-circle"></span></span>
+            <span ng-hide="didAttend(pers.uid)" style="color:#eeeeee"><span class="fa fa-question-circle"></span></span>
+          </td>
+          <td>{{expectAttend[pers.uid]}}</td>
+          <td>{{expectSituation[pers.uid]}}</td>
+      </tr>
+      </table>
+      
       
     </div>
 
@@ -990,7 +1025,14 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     </tr>
     <tr  ng-dblclick="openAgenda(selectedItem)" ng-hide="selectedItem.isSpacer">
       <td ng-click="openAgenda(selectedItem)" class="labelColumn">Presenter:</td>
-      <td><div ng-repeat="pres in selectedItem.presenterList">{{pres.name}}</div>
+      <td>
+        <div ng-repeat="presenter in selectedItem.presenterList">
+            <img class="img-circle" 
+                src="<%=ar.retPath%>icon/{{getImageName(presenter)}}" 
+                style="width:32px;height:32px" 
+                title="{{presenter.name}} - {{presenter.uid}}"> &nbsp; 
+            {{presenter.name}}
+        </div>
         <div ng-hide="selectedItem.presenterList && selectedItem.presenterList.length>0" class="doubleClickHint">
             Double-click to set presenter
         </div>
@@ -1038,11 +1080,11 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
       <td title="double-click to modify the attachments">
           <div ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
               <div ng-repeat="fullDoc in [getFullDoc(docid)]">
-                  <span ng-click="navigateToDoc(docid)">
+                  <span ng-click="navigateToDoc(fullDoc.id)" title="access attachment">
                     <img src="<%=ar.retPath%>assets/images/iconFile.png" ng-show="fullDoc.attType=='FILE'">
                     <img src="<%=ar.retPath%>assets/images/iconUrl.png" ng-show="fullDoc.attType=='URL'">
                   </span> &nbsp;
-                  <span ng-click="downloadDocument(fullDoc)">
+                  <span ng-click="downloadDocument(fullDoc)" title="download attachment">
                     <span class="fa fa-external-link" ng-show="fullDoc.attType=='URL'"></span>
                     <span class="fa fa-download" ng-hide="fullDoc.attType=='URL'"></span>
                   </span> &nbsp; 
@@ -1056,11 +1098,13 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     </tr>
     <tr ng-hide="selectedItem.isSpacer" ng-dblclick="openAttachAction(selectedItem)">
       <td ng-click="openAttachAction(selectedItem)" class="labelColumn">Action Items:</td>
-      <td><div ng-repeat="goal in itemGoals(selectedItem)">
-          <div>
-            <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif">
-            {{goal.synopsis}}
-          </div>
+      <td title="double-click to modify the action items">
+          <div ng-repeat="goal in itemGoals(selectedItem)">
+              <div>
+                <a href="task{{goal.id}}.htm" title="access action item details" target="_blank">
+                   <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"></a> &nbsp;
+                {{goal.synopsis}}
+              </div>
           </div>
           <div ng-hide="itemGoals(selectedItem).length>0" class="doubleClickHint">
               Double-click to add / remove action items

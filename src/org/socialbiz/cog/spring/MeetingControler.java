@@ -125,6 +125,10 @@ public class MeetingControler extends BaseController {
                 showJSPMembers(ar, siteId, pageId, "MeetingHtml");
                 return;
             }
+            if(!ar.isLoggedIn()) {
+                specialAnonJSP(ar, siteId, pageId, "MeetingAnon.jsp");
+                return;
+            }
 
             streamJSP(ar, "MeetingHtml");
         }catch(Exception ex){
