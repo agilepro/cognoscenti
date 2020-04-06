@@ -600,7 +600,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         return $scope.putGetMeetingInfo(null);
     }
     $scope.getImageName = function(item) {
-        return AllPeople.imageName(item);
+        if (item) {
+            return AllPeople.imageName(item);
+        }
+        else {
+            return "fake-~.jpg";
+        }
     }
     function setMeetingData(data) {
         if (!data) {
@@ -614,10 +619,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         }
         if (data.participants.length==0) {
             console.log("SITE", $scope.siteInfo);
-            data.participants.push(AllPeople.findPerson(data.owner, $scope.siteInfo.key))
+            let person = AllPeople.findPerson(data.owner, $scope.siteInfo.key);
+            if (person) {
+                data.participants.push(person);
+            }
         }
+        
+        console.log("ITERATING", data);
         data.participants.forEach( function(item) {
-            item.image = AllPeople.imageName(item);
+            console.log("TRYING", item);
+            if (item) {
+                item.image = AllPeople.imageName(item);
+            }
         });
         var totalAgendaTime = 0;
         data.agenda.forEach( function(item) {
@@ -2102,12 +2115,18 @@ function calcResponders(slots, AllPeople, siteId) {
     var checker = [];
     slots.forEach( function(person) {
         if (checker.indexOf(person.uid)<0) {
-            res.push(AllPeople.findUserFromID(person.uid, siteId));
+            let onePerson = AllPeople.findUserFromID(person.uid, siteId);
+            if (onePerson && onePerson.uid) {
+               res.push(onePerson);
+            }
             checker.push(person.uid);
         }
     });
     if (checker.indexOf(embeddedData.userId)<0) {
-        res.push(AllPeople.findUserFromID(embeddedData.userId, siteId));
+        let onePerson = AllPeople.findUserFromID(embeddedData.userId, siteId);
+        if (onePerson && onePerson.uid) {
+           res.push(onePerson);
+        }
     }
     res.sort( function(a,b) {
         return a.name.localeCompare(b.name);

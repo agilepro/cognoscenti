@@ -181,6 +181,9 @@ app.service('AllPeople', function($http) {
         return res;
     }
     AllPeople.imageName = function(player) {
+        if (!player) {
+            return "fake-~.jpg";
+        }
         if (player.key) {
             return player.key+".jpg";
         }

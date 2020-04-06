@@ -507,6 +507,8 @@ public class MeetingRecord extends DOMFace {
         meetingInfo.put("rollCall",  rollCall);
 
         meetingInfo.put("attended", constructJSONArray(this.getVector("attended")));
+        meetingInfo.put("agendaUrl", ar.baseURL + ar.getResourceURL(ar.ngp, "MeetPrint.htm?id="+getId()+"&tem="+getScalar("notifyLayout")));
+        meetingInfo.put("minutesUrl", ar.baseURL + ar.getResourceURL(ar.ngp, "MeetPrint.htm?id="+getId()+"&tem="+getScalar("defaultLayout")));
         return meetingInfo;
     }
 
@@ -607,9 +609,16 @@ public class MeetingRecord extends DOMFace {
                         meetingInfo.put("previousMinutes", minutesID);
                     }
                 }
+                
+                meetingInfo.put("prevMeet", prevMeet.getListableJSON(ar));
             }
         }
         meetingInfo.put("participants", AddressListEntry.getJSONArrayFromIds(this.getVector("participants")));
+        
+        //general pieces of information in case not elsewhere
+        meetingInfo.put("baseUrl", ar.baseURL);
+        meetingInfo.put("workspaceUrl", ar.baseURL + ar.getResourceURL(ngw, ""));
+        
         return meetingInfo;
     }
 
@@ -875,7 +884,7 @@ public class MeetingRecord extends DOMFace {
         sb.append(getNameAndDate(cal));
         sb.append("|");
         sb.append(ar.baseURL);
-        sb.append(ar.getResourceURL(ngp, "meetingFull.htm?id="+getId()));
+        sb.append(ar.getResourceURL(ngp, "meetingHtml.htm?id="+getId()));
         sb.append("]");
 
         sb.append("\n\n!!!Agenda");
@@ -1080,7 +1089,7 @@ public class MeetingRecord extends DOMFace {
      */
 
     public String getEmailURL(AuthRequest ar, NGWorkspace ngw) throws Exception {
-        return ar.getResourceURL(ngw,  "meetingFull.htm?id="+this.getId())
+        return ar.getResourceURL(ngw,  "meetingHtml.htm?id="+this.getId())
                 + "&" + AccessControl.getAccessMeetParams(ngw, this);
     }
 

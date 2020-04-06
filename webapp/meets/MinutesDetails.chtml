@@ -13,6 +13,16 @@
 <div style="color:#888">{$meetingInfo}</div>
 
 <table class="niceTable">
+{% if ($prevMeet)}
+<tr>
+<td></td>
+<td><p>Previous Meeting: <b>{$prevMeet.name}</b> (
+  <a href="{$prevMeet.agendaUrl}">Agenda</a>,
+  <a href="{$prevMeet.minutesUrl}">Minutes</a>
+  ) {$prevMeet.startTime|date("MMM dd, YYYY")}
+</p></td>
+</tr>
+{% endif %}
 {% loop in $agenda as $agItem%}
 {% if ($agItem.proposed != true) %}
 {% if ($agItem.isSpacer != true) %}

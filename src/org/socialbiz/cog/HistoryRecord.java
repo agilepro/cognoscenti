@@ -943,7 +943,7 @@ history.task.subtask.add    113
             return ar.getResourceURL(ngp, "roleManagement.htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
-            return ar.getResourceURL(ngp, "meetingFull.htm?id=")+objectKey;
+            return ar.getResourceURL(ngp, "meetingHtml.htm?id=")+objectKey;
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
             return ar.getResourceURL(ngp, "decisionList.htm#DEC")+objectKey;

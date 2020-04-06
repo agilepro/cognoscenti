@@ -100,6 +100,19 @@ public class CommentRecord extends DOMFace {
     public void setContentHtml(AuthRequest ar, String newHtml) throws Exception {
         setContent(HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
     }
+    
+    public String getAllSearchableText() throws Exception {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getContent());
+        sb.append("\n\n");
+        for (ResponseRecord rr : getResponses()) {
+            sb.append(rr.getContent());
+            sb.append("\n\n");
+        }
+        sb.append(getScalar("outcome"));
+        sb.append("\n\n");
+        return sb.toString();
+    }
 
     /**
      * The 'outcome' is the result of a proposal, or a quick response round

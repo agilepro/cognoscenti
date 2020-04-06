@@ -95,7 +95,7 @@ public class UserCache {
                     continue;
                 }
 
-                String address = "meetingFull.htm?id="+meet.getId();
+                String address = "meetingHtml.htm?id="+meet.getId();
                 for (AgendaItem ai : meet.getSortedAgendaItems()) {
                     for (CommentRecord cr : ai.getComments()) {
                         addPollIfNoResponse(proposalList, openRounds, cr, up, ngw, meet.getTargetRole(), address, nowTime);

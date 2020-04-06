@@ -175,8 +175,10 @@ public class SearchManager {
                     doc.add(new Field("BODY", meet.generateWikiRep(ar, ngp), TextField.TYPE_STORED));
                     for (AgendaItem ai : meet.getSortedAgendaItems()) {
                         for (CommentRecord cr : ai.getComments()) {
-                            doc.add(new Field("BODY", cr.getContent(), TextField.TYPE_STORED));
+                            doc.add(new Field("BODY", cr.getAllSearchableText(), TextField.TYPE_STORED));
                         }
+                        doc.add(new Field("BODY", ai.getMeetingNotes(), TextField.TYPE_STORED));
+                        doc.add(new Field("BODY", ai.getDesc(), TextField.TYPE_STORED));
                     }
                     iWriter.addDocument(doc);
                 }
@@ -192,6 +194,23 @@ public class SearchManager {
                     doc.add(new Field("LASTMODIFIEDTIME", Long.toString(dec.getTimestamp()), TextField.TYPE_STORED));
 
                     doc.add(new Field("BODY", dec.getDecision(), TextField.TYPE_STORED));
+                    iWriter.addDocument(doc);
+                }
+                
+                for (AttachmentRecord att : ngp.getAllAttachments()) {
+                    if (att.isDeleted()) {
+                        continue; //skip deleted attachments
+                    }
+                    Document doc = new Document();
+                    doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
+                    doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
+                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                    doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
+                    doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
+                    doc.add(new Field("ATTACHMENTID", att.getId(), TextField.TYPE_STORED));
+                    doc.add(new Field("ATTACHTIME", Long.toString(att.getAttachTime()), TextField.TYPE_STORED));
+
+                    doc.add(new Field("BODY", att.getDescription(), TextField.TYPE_STORED));
                     iWriter.addDocument(doc);
                 }
             }
@@ -297,7 +316,7 @@ public class SearchManager {
                 MeetingRecord meet = ngp.findMeeting(meetId);
 
                 noteSubject = meet.getName();
-                linkAddr = ar.getResourceURL(ngp, "meetingFull.htm?id="+meetId);
+                linkAddr = ar.getResourceURL(ngp, "meetingHtml.htm?id="+meetId);
             }
             else if (decId!=null) {
                 if (!isLoggedIn) {
