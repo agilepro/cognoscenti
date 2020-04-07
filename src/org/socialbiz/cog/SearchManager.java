@@ -69,155 +69,159 @@ public class SearchManager {
 
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42, analyzer);
         IndexWriter iWriter = new IndexWriter(directory, config);
+        
+        try {
 
-        //get rid of all the existing files.   Make sure that search methods
-        //are synchronized so you don't have any searches  while updating the index.
-        iWriter.deleteAll();
+            //get rid of all the existing files.   Make sure that search methods
+            //are synchronized so you don't have any searches  while updating the index.
+            iWriter.deleteAll();
 
-        for (NGPageIndex ngpi : cog.getAllContainers()) {
+            for (NGPageIndex ngpi : cog.getAllContainers()) {
 
-            if (ngpi.isProject()) {
+                if (ngpi.isProject()) {
 
-                NGWorkspace ngp = ngpi.getWorkspace();
-                if (ngp.isDeleted()) {
-                    //skip all deleted workspaces
-                    continue;
-                }
+                    NGWorkspace ngp = ngpi.getWorkspace();
+                    if (ngp.isDeleted()) {
+                        //skip all deleted workspaces
+                        continue;
+                    }
 
-                NGBook site = ngp.getSite();
-                if (site.isDeleted()) {
-                    //skip all deleted sites
-                    continue;
-                }
-                if (site.isMoved()) {
-                    //skip all moved sites
-                    continue;
-                }
+                    NGBook site = ngp.getSite();
+                    if (site.isDeleted()) {
+                        //skip all deleted sites
+                        continue;
+                    }
+                    if (site.isMoved()) {
+                        //skip all moved sites
+                        continue;
+                    }
 
 
-                String projectKey = ngp.getKey();
-                String siteKey = ngp.getSiteKey();
-                String projectName = ngp.getFullName();
-                String accountName = ngp.getSite().getFullName();
+                    String projectKey = ngp.getKey();
+                    String siteKey = ngp.getSiteKey();
+                    String projectName = ngp.getFullName();
+                    String accountName = ngp.getSite().getFullName();
 
-                //add a record for the project as a whole
-                {
-                    Document doc = new Document();
-                    doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
-                    doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
-                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
-                    doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
-                    doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
-                    doc.add(new Field("NOTEID", "$", TextField.TYPE_STORED));
-                    doc.add(new Field("LASTMODIFIEDTIME", Long.toString(ngp.getLastModifyTime()), TextField.TYPE_STORED));
-                    doc.add(new Field("LASTMODIFIEDUSER", ngp.getLastModifyUser(), TextField.TYPE_STORED));
-                    StringBuilder bodyStuff = new StringBuilder();
-                    bodyStuff.append(ngp.getFullName());
-                    bodyStuff.append("\n");
-                    for (GoalRecord goal : ngp.getAllGoals()) {
-                        //put each goal in
-                        bodyStuff.append(goal.getSynopsis());
+                    //add a record for the project as a whole
+                    {
+                        Document doc = new Document();
+                        doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
+                        doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
+                        doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                        doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
+                        doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
+                        doc.add(new Field("NOTEID", "$", TextField.TYPE_STORED));
+                        doc.add(new Field("LASTMODIFIEDTIME", Long.toString(ngp.getLastModifyTime()), TextField.TYPE_STORED));
+                        doc.add(new Field("LASTMODIFIEDUSER", ngp.getLastModifyUser(), TextField.TYPE_STORED));
+                        StringBuilder bodyStuff = new StringBuilder();
+                        bodyStuff.append(ngp.getFullName());
                         bodyStuff.append("\n");
-                    }
-                    ProcessRecord process = ngp.getProcess();
-                    String s = process.getScalar("description");
-                    System.out.println("INDEXING: aim for "+ngp.getFullName()+" IS "+s);
-                    bodyStuff.append(s);   //a.k.a. "aim"
-                    bodyStuff.append("\n");
-                    bodyStuff.append(process.getScalar("mission"));
-                    bodyStuff.append("\n");
-                    bodyStuff.append(process.getScalar("vision"));
-                    bodyStuff.append("\n");
-                    bodyStuff.append(process.getScalar("domain"));
-                    bodyStuff.append("\n");
-                    // put the name in a few times to increase those scores
-                    bodyStuff.append(ngp.getFullName());
-                    bodyStuff.append("\n");
-                    bodyStuff.append(ngp.getFullName());
-                    doc.add(new Field("BODY", bodyStuff.toString(), TextField.TYPE_STORED));
-                    iWriter.addDocument(doc);
-                }
-
-
-
-                for (TopicRecord note : ngp.getAllDiscussionTopics()) {
-                    Document doc = new Document();
-                    doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
-                    doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
-                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
-                    doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
-                    doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
-                    doc.add(new Field("NOTEID", note.getId(), TextField.TYPE_STORED));
-                    doc.add(new Field("NOTESUBJ", note.getSubject(), TextField.TYPE_STORED));
-                    doc.add(new Field("LASTMODIFIEDTIME", Long.toString(note.getLastEdited()), TextField.TYPE_STORED));
-                    doc.add(new Field("LASTMODIFIEDUSER", note.getModUser().getName(), TextField.TYPE_STORED));
-
-                    //first add the subject, then add the text of the note, then all the comments
-                    doc.add(new Field("BODY", note.getSubject(), TextField.TYPE_STORED));
-                    doc.add(new Field("BODY", note.getWiki(), TextField.TYPE_STORED));
-                    for (CommentRecord cr : note.getComments()) {
-                        doc.add(new Field("BODY", cr.getContent(), TextField.TYPE_STORED));
-                    }
-                    iWriter.addDocument(doc);
-                }
-                for (MeetingRecord meet : ngp.getMeetings()) {
-                    Document doc = new Document();
-                    doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
-                    doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
-                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
-                    doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
-                    doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
-                    doc.add(new Field("MEETID", meet.getId(), TextField.TYPE_STORED));
-                    doc.add(new Field("MEETNAME", meet.getName(), TextField.TYPE_STORED));
-                    doc.add(new Field("LASTMODIFIEDTIME", Long.toString(meet.getStartTime()), TextField.TYPE_STORED));
-
-                    doc.add(new Field("BODY", meet.getName(), TextField.TYPE_STORED));
-                    doc.add(new Field("BODY", meet.generateWikiRep(ar, ngp), TextField.TYPE_STORED));
-                    for (AgendaItem ai : meet.getSortedAgendaItems()) {
-                        for (CommentRecord cr : ai.getComments()) {
-                            doc.add(new Field("BODY", cr.getAllSearchableText(), TextField.TYPE_STORED));
+                        for (GoalRecord goal : ngp.getAllGoals()) {
+                            //put each goal in
+                            bodyStuff.append(goal.getSynopsis());
+                            bodyStuff.append("\n");
                         }
-                        doc.add(new Field("BODY", ai.getMeetingNotes(), TextField.TYPE_STORED));
-                        doc.add(new Field("BODY", ai.getDesc(), TextField.TYPE_STORED));
+                        ProcessRecord process = ngp.getProcess();
+                        String s = process.getScalar("description");
+                        bodyStuff.append(s);   //a.k.a. "aim"
+                        bodyStuff.append("\n");
+                        bodyStuff.append(process.getScalar("mission"));
+                        bodyStuff.append("\n");
+                        bodyStuff.append(process.getScalar("vision"));
+                        bodyStuff.append("\n");
+                        bodyStuff.append(process.getScalar("domain"));
+                        bodyStuff.append("\n");
+                        // put the name in a few times to increase those scores
+                        bodyStuff.append(ngp.getFullName());
+                        bodyStuff.append("\n");
+                        bodyStuff.append(ngp.getFullName());
+                        doc.add(new Field("BODY", bodyStuff.toString(), TextField.TYPE_STORED));
+                        iWriter.addDocument(doc);
                     }
-                    iWriter.addDocument(doc);
-                }
 
-                for (DecisionRecord dec : ngp.getDecisions()) {
-                    Document doc = new Document();
-                    doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
-                    doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
-                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
-                    doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
-                    doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
-                    doc.add(new Field("DECISIONID", Integer.toString(dec.getNumber()), TextField.TYPE_STORED));
-                    doc.add(new Field("LASTMODIFIEDTIME", Long.toString(dec.getTimestamp()), TextField.TYPE_STORED));
 
-                    doc.add(new Field("BODY", dec.getDecision(), TextField.TYPE_STORED));
-                    iWriter.addDocument(doc);
-                }
-                
-                for (AttachmentRecord att : ngp.getAllAttachments()) {
-                    if (att.isDeleted()) {
-                        continue; //skip deleted attachments
+
+                    for (TopicRecord note : ngp.getAllDiscussionTopics()) {
+                        Document doc = new Document();
+                        doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
+                        doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
+                        doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                        doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
+                        doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
+                        doc.add(new Field("NOTEID", note.getId(), TextField.TYPE_STORED));
+                        doc.add(new Field("NOTESUBJ", note.getSubject(), TextField.TYPE_STORED));
+                        doc.add(new Field("LASTMODIFIEDTIME", Long.toString(note.getLastEdited()), TextField.TYPE_STORED));
+                        doc.add(new Field("LASTMODIFIEDUSER", note.getModUser().getName(), TextField.TYPE_STORED));
+
+                        //first add the subject, then add the text of the note, then all the comments
+                        doc.add(new Field("BODY", note.getSubject(), TextField.TYPE_STORED));
+                        doc.add(new Field("BODY", note.getWiki(), TextField.TYPE_STORED));
+                        for (CommentRecord cr : note.getComments()) {
+                            doc.add(new Field("BODY", cr.getContent(), TextField.TYPE_STORED));
+                        }
+                        iWriter.addDocument(doc);
                     }
-                    Document doc = new Document();
-                    doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
-                    doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
-                    doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
-                    doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
-                    doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
-                    doc.add(new Field("ATTACHMENTID", att.getId(), TextField.TYPE_STORED));
-                    doc.add(new Field("ATTACHTIME", Long.toString(att.getAttachTime()), TextField.TYPE_STORED));
+                    for (MeetingRecord meet : ngp.getMeetings()) {
+                        Document doc = new Document();
+                        doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
+                        doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
+                        doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                        doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
+                        doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
+                        doc.add(new Field("MEETID", meet.getId(), TextField.TYPE_STORED));
+                        doc.add(new Field("MEETNAME", meet.getName(), TextField.TYPE_STORED));
+                        doc.add(new Field("LASTMODIFIEDTIME", Long.toString(meet.getStartTime()), TextField.TYPE_STORED));
 
-                    doc.add(new Field("BODY", att.getDescription(), TextField.TYPE_STORED));
-                    iWriter.addDocument(doc);
+                        doc.add(new Field("BODY", meet.getName(), TextField.TYPE_STORED));
+                        doc.add(new Field("BODY", meet.generateWikiRep(ar, ngp), TextField.TYPE_STORED));
+                        for (AgendaItem ai : meet.getSortedAgendaItems()) {
+                            for (CommentRecord cr : ai.getComments()) {
+                                doc.add(new Field("BODY", cr.getAllSearchableText(), TextField.TYPE_STORED));
+                            }
+                            doc.add(new Field("BODY", ai.getMeetingNotes(), TextField.TYPE_STORED));
+                            doc.add(new Field("BODY", ai.getDesc(), TextField.TYPE_STORED));
+                        }
+                        iWriter.addDocument(doc);
+                    }
+
+                    for (DecisionRecord dec : ngp.getDecisions()) {
+                        Document doc = new Document();
+                        doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
+                        doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
+                        doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                        doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
+                        doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
+                        doc.add(new Field("DECISIONID", Integer.toString(dec.getNumber()), TextField.TYPE_STORED));
+                        doc.add(new Field("LASTMODIFIEDTIME", Long.toString(dec.getTimestamp()), TextField.TYPE_STORED));
+
+                        doc.add(new Field("BODY", dec.getDecision(), TextField.TYPE_STORED));
+                        iWriter.addDocument(doc);
+                    }
+                    
+                    for (AttachmentRecord att : ngp.getAllAttachments()) {
+                        if (att.isDeleted()) {
+                            continue; //skip deleted attachments
+                        }
+                        Document doc = new Document();
+                        doc.add(new Field("containerType", "Project", TextField.TYPE_STORED));
+                        doc.add(new Field("PAGEKEY", projectKey, TextField.TYPE_STORED));
+                        doc.add(new Field("SITEKEY", siteKey,    TextField.TYPE_STORED));
+                        doc.add(new Field("PAGENAME", projectName, TextField.TYPE_STORED));
+                        doc.add(new Field("ACCTNAME", accountName, TextField.TYPE_STORED));
+                        doc.add(new Field("ATTACHMENTID", att.getId(), TextField.TYPE_STORED));
+                        doc.add(new Field("ATTACHTIME", Long.toString(att.getAttachTime()), TextField.TYPE_STORED));
+
+                        doc.add(new Field("BODY", att.getDescription(), TextField.TYPE_STORED));
+                        iWriter.addDocument(doc);
+                    }
                 }
             }
+            System.out.println("SearchManager - finished building index: "+(System.currentTimeMillis()-startTime)+" ms");
+            iWriter.commit();
         }
-        System.out.println("SearchManager - finished building index: "+(System.currentTimeMillis()-startTime)+" ms");
-        iWriter.commit();
-        iWriter.close();
+        finally {
+            iWriter.close();
+        }
     }
 
 

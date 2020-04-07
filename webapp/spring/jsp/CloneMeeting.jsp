@@ -147,12 +147,15 @@ app.controller('myCtrl', function($scope, $http) {
             if (agendaItem.selected) {
                 var newAgenda = JSON.parse(JSON.stringify(agendaItem));
                 newAgenda.readyToGo = false;
+                newAgenda.timerElapsed = 0;
                 newAgenda.comments = [];
+                console.log("NEW AGENDA ITEM", newAgenda);
                 newMeeting.agenda.push(newAgenda);
             }
         });
         var postdata = angular.toJson(newMeeting);
         $scope.showError=false;
+        alert("Ready to submit???");
         $http.post(postURL ,postdata)
         .success( function(data) {
             window.location = "MeetingList.htm";
