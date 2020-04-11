@@ -414,7 +414,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         else {
             return; //skip the save
         }
-        console.log("elapsed time changed: ",item);
         $scope.saveAgendaItem(item);
     }
     $scope.calcTimes = function() {
@@ -590,7 +589,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             setMeetingData(data);
         });
         promise.error( function(data, status, headers, config) {
-            console.log("ERROROROROR", data);
+            console.log("Error", data);
             $scope.reportError(data);
         });
         $scope.showError=false;
@@ -618,16 +617,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             data.participants = [];
         }
         if (data.participants.length==0) {
-            console.log("SITE", $scope.siteInfo);
             let person = AllPeople.findPerson(data.owner, $scope.siteInfo.key);
             if (person) {
                 data.participants.push(person);
             }
         }
         
-        console.log("ITERATING", data);
         data.participants.forEach( function(item) {
-            console.log("TRYING", item);
             if (item) {
                 item.image = AllPeople.imageName(item);
             }
@@ -1128,10 +1124,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     
     
     $scope.extractPeopleSituation = function() {
-        console.log("extractPeopleSituation called");
         if (Array.isArray) {
             if (!Array.isArray($scope.allLabels)) {
-                console.log("allLabels is NOT an array");
                 return;
             }
         }
@@ -2034,7 +2028,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
     
     $scope.toggleAttend = function(specId) {
-        console.log("Toggle Attend: "+specId);
         var did = $scope.didAttend(specId);
         if (did) {
             var newArray = [];
@@ -2056,7 +2049,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             foo: newMode
         }
         window.history.pushState(stateObj, newMode, 'meetingHtml.htm?id='+embeddedData.meetId+'&mode='+newMode);
-        console.log("LOCATION", window.location)
     }
     
     

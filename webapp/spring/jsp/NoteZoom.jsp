@@ -484,9 +484,15 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         $scope.noteInfo.subscribers = cleanUserList($scope.noteInfo.subscribers);
     }    
     $scope.postIt = function(sendEmail) {
-        $scope.noteInfo.sendEmailNow = sendEmail;
+        //automatic sending has been defeated, but just 
+        //redirect to the manual sending to prepare the messsage
+        $scope.noteInfo.sendEmailNow = false;;
         $scope.setPhase("Freeform");
         $scope.addressMode = false;
+        console.log("Yes, posted now, but send email is: ", sendEmail);
+        if (sendEmail) {
+            $scope.sendNoteByMail();
+        }
     }
 
     $scope.changeSubscription = function(onOff) {
@@ -922,6 +928,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             return;
         }
         window.location = "SendNote.htm?noteId="+$scope.noteInfo.id;
+    }
+    $scope.navigateToUser = function(player) {
+        window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
     }
 
 });

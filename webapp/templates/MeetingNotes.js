@@ -1,5 +1,62 @@
 console.log("loaded the MeetingNotesCtrl");
 
+/*
+Agenda item data looks like this:
+{
+  "duration": 30,
+  "id": "6569",
+  "new": "This is the current value that I am typing.",
+  "pos": 1,
+  "timerElapsed": 0,
+  "timerRunning": false,
+  "timerStart": 0,
+  "title": "Review the Minutes from last meeting"
+}
+
+The "new" entry is being edited always.
+locally, in memory, we have another member which holds the value 
+from the server.
+
+
+  "old": "this is what I think is on the server",
+
+
+The old is there to compare with what we received so we know what we have changed
+and also:
+
+
+  "lastSave": "this is what I had when I last saved",
+  
+  
+TIME OF SAVE
+
+OLD: holds the last official version from server
+NEW: holds user changes
+Send the old and the new to the server.   
+The difference between these is what I have typed: MY_FIRST_CHANGES
+Store a copy of new into lastSave so that we know what has changed since the save: MY_LATER_CHANGES
+
+RESPONSE FROM SERVER
+
+Server returns a "new" value to client.
+The difference between received.new and lastSave is SERVER_CHANGES.
+The difference between client.new and lastSave is MY_LATER_CHANGES
+
+Merge the SERVER_CHANGES into new and update what you are working on
+Merge SERVER_CHANGES into old causes old == received.new
+
+So that the user is not interrupted, we DEFER the update from the server to the new.
+The update from the server is in the old and the difference is between old and lastSave.
+So at the time the user clicks "merge" it merges the difference between old and lastSave.
+Note that while deferred, you must not do another save.
+
+  
+
+*/
+
+
+
+
 app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $interval, meetId, agendaId, AllPeople) {
 
     console.log("loaded the MeetingNotesCtrl");
@@ -8,6 +65,8 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
     $scope.agendaId = agendaId;
     $scope.agendaData = null;
     $scope.readyToLeave = false;
+    $scope.isEditing = true;
+    $scope.autoMerge = false;
     
     
     $scope.ok = function () {
@@ -40,14 +99,16 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
             //strange, no information about the agenda item being edited
             return;
         }
-        if (!$scope.agendaData) {
+        if (!$scope.agendaData || !$scope.isEditing) {
             $scope.agendaData = newItem;
             oldItem = newItem;
             oldItem.old = newItem.new;
+            $scope.isEditing = true;
         }
         else if (newItem.new == oldItem.lastSave) {
             //if you get back what you sent to the server
-            //then ignore it and don't update at all
+            //then nothing has changed on the server, so you
+            //can ignore the update and don't update at all
             //whether user typing or not
             oldItem.old = oldItem.lastSave;
             oldItem.needsMerge = false;
@@ -55,9 +116,15 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
         else if (newItem.new != oldItem.new) {
             //unfortunately, there are edits from someone else to 
             //merge in causing some loss from of current typing.
-            console.log("merging new version from server.",newItem,oldItem);
-            oldItem.needsMerge = true;
-            oldItem.old = oldItem.lastSave;
+            if ($scope.autoMerge) {
+                console.log("merging new version from server.",newItem,oldItem);
+                oldItem.new = Textmerger.get().merge(oldItem.lastSave, oldItem.new, newItem.new);
+                oldItem.old = newItem.new;
+            }
+            else {
+                oldItem.needsMerge = true;
+                oldItem.old = oldItem.lastSave;
+            }
         }
         else {
             oldItem.old = newItem.new;
@@ -78,6 +145,7 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
         }
     }
     $scope.getMeetingNotes = function() {
+        console.log("GETTING notes");
         $scope.isUpdating = true;
         var postURL = "getMeetingNotes.json?id="+$scope.meetId;
         $http.get(postURL)
@@ -101,6 +169,7 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
         $scope.autosave();
     }
     $scope.autosave = function() {
+        console.log("AUTOSAVE");
         if ($scope.showError) {
             console.log("Autosave is turned off when there is an error.")
             return;
@@ -133,6 +202,17 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
     }
 	$scope.promiseAutosave = $interval($scope.autosave, 3000);
 
-
+    $scope.mergeNewData = function() {
+        $scope.isEditing = false;
+        $scope.autosave();
+    }
+    $scope.bodyStyle = function() {
+        if ($scope.agendaData && $scope.agendaData.needsMerge) {
+            return {"background-color":"orange"};
+        }
+        else {
+            return {"background-color":"white"};
+        }
+    }
 
 });

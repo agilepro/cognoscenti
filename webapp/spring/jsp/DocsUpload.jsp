@@ -218,7 +218,7 @@ app.controller('myCtrl', function($scope, $http) {
                        type="button" 
                        id="menu1" 
                        data-toggle="dropdown"
-                       title="Add Label"
+                       title="Add Label BEFORE you upload the file"
                        style="padding:5px 10px">
                        <i class="fa fa-plus"></i></button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="menu1" 
@@ -230,6 +230,7 @@ app.controller('myCtrl', function($scope, $http) {
                          </li>
                     </ul>
                 </span>
+                <span style="color:lightgray"> ( before you upload )</span>
             </td>
         </tr>
         <tr>

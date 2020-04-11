@@ -129,7 +129,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             }
             else if (newItem.new == existing.lastSave) {
                 //if you get back what you sent to the server
-                //then ignore it and don't update at all
+                //then nothing has changed on the server, so you
+                //can ignore the update and don't update at all
                 //whether user typing or not
                 existing.old = existing.lastSave;
                 existing.needsMerge = false;

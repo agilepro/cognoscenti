@@ -125,12 +125,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             }
         });
         var postdata = angular.toJson(role);
-        updateRoleList(role);
+        $scope.updateRoleList(role);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.cleanDuplicates(data);
-            updateRoleList(data);
+            $scope.updateRoleList(data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -144,7 +144,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $http.post(postURL,postdata)
         .success( function(data) {
             $scope.cleanDuplicates(data);
-            updateRoleList(data);
+            $scope.updateRoleList(data);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -306,12 +306,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             }
         });
         var postdata = angular.toJson(role);
-        updateRoleList(role);
+        $scope.updateRoleList(role);
         $scope.showError=false;
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.cleanDuplicates(data);
-            updateRoleList(data);
+            $scope.updateRoleList(data);
             var createdTerm = false;
             data.terms.forEach( function(aTerm) {
                 if (aTerm.termStart == proposeBegin) {

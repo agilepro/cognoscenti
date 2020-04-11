@@ -69,7 +69,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     }
 
     $scope.findNom = function() {
-        var res = {};
+        var res = {owner: $scope.thisUser};
         $scope.term.nominations.forEach( function(anom) {
             if (anom.owner == $scope.thisUser) {
                 res = anom;
@@ -350,7 +350,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         <div class="col-12">
             <div class="form-group" style="max-width:600px">
                 <label for="status">Nominator: (you)</label>
-                <input class="form-control" ng-model="nom.owner"/>
+                <input class="form-control" ng-model="nom.owner" disabled/>
             </div>
             <div class="form-group" style="max-width:600px">
                 <label for="status">Nominee:</label>
@@ -392,7 +392,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     </td>
                     <td ng-click="openNominationModal(nom)">{{nom.owner}}</td>
                     <td ng-click="openNominationModal(nom)">{{nom.nominee}}</td>
-                    <td ng-click="openNominationModal(nom)">{{nom.comment}}</td>
+                    <td ng-click="openNominationModal(nom)" style="max-width:400px">{{nom.comment}}</td>
                 </tr>
                 <tr ng-show="missingNomination()">
                     <td class="actions">

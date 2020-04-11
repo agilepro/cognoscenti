@@ -225,12 +225,22 @@ function reloadIfLoggedIn() {
 .spacey tr td {
     padding: 5px 10px;
 }
+.mainComment {
+    margin-top:10px;
+    color:gray;
+}
+.commentText {
+    color:black;
+    background-color:white;
+    margin-left:20px;
+    padding:3px;
+}
 </style>
 
 
 <%@ include file="AnonNavBar.jsp" %>
 
-    <div ng-app="myApp" ng-controller="myCtrl">
+    <div ng-app="myApp" ng-controller="myCtrl" style="max-width:800px">
 
         <div class="page-name">
             <h1 id="mainPageTitle" ng-click="infoOpen=!infoOpen"
@@ -330,9 +340,11 @@ function reloadIfLoggedIn() {
 
         <h4>Other Comments:</h4>
 
-        <div ng-repeat="cmt in otherComments" class="comment-outer">
-          <div>{{cmt.userName}} - {{cmt.time|date:'MMM dd, yyyy - HH:mm'}}</div>
-          <div class="comment-inner">
+        <div ng-repeat="cmt in otherComments" class="mainComment">
+          <div>{{cmt.time|date:'MMM dd, yyyy - HH:mm'}} - {{cmt.userName}} 
+              <span ng-show="cmt.newPhase"> <i class="fa fa-long-arrow-right"></i> {{cmt.newPhase}}</span>
+          </div>
+          <div class="commentText" ng-show="cmt.html">
             <div ng-bind-html="cmt.html"></div>
           </div>
         </div>

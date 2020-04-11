@@ -1005,15 +1005,6 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
       <td ng-click="openAgenda(selectedItem)" class="labelColumn">Subject:</td>
       <td ng-style="timerStyleComplete(item)">{{selectedItem.subject}}</td>
     </tr>
-    <tr ng-hide="selectedItem.isSpacer">
-      <td class="labelColumn" ng-click="openNotesDialog(selectedItem)">Notes/Minutes:</td>
-      <td ng-dblclick="openNotesDialog(selectedItem)">
-        <div ng-bind-html="selectedItem.minutes"></div>
-        <div ng-hide="selectedItem.minutes" class="doubleClickHint">
-            Double-click to edit notes
-        </div>
-      </td>
-    </tr>
     <tr ng-dblclick="openAgenda(selectedItem,'Description')" ng-hide="selectedItem.isSpacer">
       <td ng-click="openAgenda(selectedItem,'Description')" class="labelColumn">Description:</td>
       <td>
@@ -1035,6 +1026,15 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
         </div>
         <div ng-hide="selectedItem.presenterList && selectedItem.presenterList.length>0" class="doubleClickHint">
             Double-click to set presenter
+        </div>
+      </td>
+    </tr>
+    <tr ng-hide="selectedItem.isSpacer">
+      <td class="labelColumn" ng-click="openNotesDialog(selectedItem)">Notes/Minutes:</td>
+      <td ng-dblclick="openNotesDialog(selectedItem)">
+        <div ng-bind-html="selectedItem.minutes"></div>
+        <div ng-hide="selectedItem.minutes" class="doubleClickHint">
+            Double-click to edit notes
         </div>
       </td>
     </tr>
@@ -1217,3 +1217,5 @@ Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'H
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AgendaCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/MeetingNotes.js"></script>
+<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
+
