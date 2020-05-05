@@ -31,6 +31,7 @@
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.role = <%role.write(out,2,4);%>;
+    $scope.origRole = <%role.write(out,2,4);%>;
     window.setMainPageTitle("Nominate Role: "+$scope.role.name);
     $scope.termKey = "<%ar.writeJS(termKey);%>";
     $scope.thisUser = "<%ar.writeJS(ar.getBestUserId());%>";
@@ -51,9 +52,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         errorPanelHandler($scope, serverErr);
     };
 
-    $scope.findTerm = function() {
+    function findTerm(role) {
         var res = {};
-        $scope.role.terms.forEach( function(term) {
+        role.terms.forEach( function(term) {
             if (term.key == $scope.termKey) {
                 if (!term.nominations) {
                     term.nominations = [];
@@ -63,7 +64,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         });
         return res;
     }
-    $scope.term = $scope.findTerm();
+    $scope.term = findTerm($scope.role);
+    $scope.origTerm = findTerm($scope.origRole);
+    
     if (!$scope.term.state) {
         $scope.term.state = "Initial Check";
     }
@@ -128,16 +131,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         return diff;
     }
     $scope.getNominations = function() {
-        if (!$scope.isNominating()) {
-            return $scope.term.nominations;
-        }
-        var ret = [];
-        $scope.term.nominations.forEach( function(item) {
-            if (item.owner == $scope.thisUser) {
-                ret.push(item);
-            }
-        });
-        return ret;
+        return $scope.term.nominations;
     }
     $scope.missingNomination = function() {
         var ret = true;
@@ -214,7 +208,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.role = data;
-            $scope.term = $scope.findTerm();
+            $scope.origRole = JSON.parse(JSON.stringify(data));
+            $scope.term = findTerm($scope.role);
+            $scope.origTerm = findTerm($scope.origRole);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -253,13 +249,27 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             //cancel action - nothing really to do
         });
     };
+    
+    $scope.deleteNomination = function(nom) {
+        if (!confirm("Are you sure you want to delete the nomination made by "+nom.owner+"?")) {
+            return;
+        }
+        let newList = [];
+        $scope.term.nominations.forEach( function(item) {
+            if (item.owner != nom.owner) {
+                newList.push(item);
+            }
+        });
+        $scope.term.nominations = newList;
+        $scope.updateRole($scope.role);
+    } 
 
 });
 
 </script>
 <script src="../../../jscript/AllPeople.js"></script>
 
-<div ng-app="myApp" ng-controller="myCtrl">
+<div ng-app="myApp" ng-controller="myCtrl" style="max-width:1000px">
 
 <%@include file="ErrorPanel.jsp"%>
 
@@ -285,23 +295,15 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 
 
     <div class="row">
-        <div class="col-md-6 col-sm-12">
+        <div class="col-md-12 col-sm-12">
             <div class="form-group">
-                <label for="status">Term Start:</label>
+                <label for="status">Term:</label>
                 <span>
-                    {{term.termStart|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                    {{term.termStart|date:"dd-MMM-yyyy"}}  . . .   {{term.termEnd|date:"dd-MMM-yyyy"}}
                 </span> 
             </div>
         </div>
-        
-        <div class="col-md-6 col-sm-12">
-            <div class="form-group">
-                <label for="status">Term End:</label>
-                <span >
-                    {{term.termEnd|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
-                </span> 
-            </div>
-        </div>
+       
     </div>
     <div ng-show="term.state=='Initial Check'">
         <div class="guideVocal">
@@ -335,7 +337,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 {{ getDays(term) }} Days
             </span>
         </div>
-        <button class="btn btn-primary btn-raised" ng-click="save()">Save</button>
+        <button class="btn btn-primary btn-raised" ng-click="save()"
+                ng-hide="term.termEnd==origTerm.termEnd && term.termStart==origTerm.termStart">Save</button>
     </div>
     <div ng-show="term.state=='Nominating'">
         <div class="guideVocal">
@@ -347,21 +350,76 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             <button class="btn btn-primary" ng-click="updateState('Changing')">
                 Next <i class="fa fa-forward"></i></button>
         </div>
-        <div class="col-12">
-            <div class="form-group" style="max-width:600px">
-                <label for="status">Nominator: (you)</label>
-                <input class="form-control" ng-model="nom.owner" disabled/>
+       <div class="col-12">
+        
+            <div class="form-group" ng-show="showNominations()">
+                <label for="synopsis">Nominations:</label>
+                <table class="table">
+                <tr>
+                    <td></td>
+                    <td><label>Nominator</label></td>
+                    <td><label>Nominee</label></td>
+                    <td><label>Reason</label></td>
+                    <td></td>
+                </tr>
+                <tr ng-show="missingNomination()">
+                    <td class="actions">
+                        <button type="button" name="edit" class="btn btn-primary" 
+                                ng-click="openNominationModal()">
+                            <span class="fa fa-edit"></span>
+                        </button>
+                    </td>
+                    <td ng-click="openNominationModal()">{{thisUser}}</td>
+                    <td ng-click="openNominationModal()" colspan="2"> 
+                        <i>Click here to make a nomination</i></td>
+                    <td><button type="button" name="edit" class="btn btn-primary" 
+                                ng-click="deleteNomination(nom)">
+                            <span class="fa fa-trash"></span>
+                        </button></td>
+                </tr>
+                <tr ng-repeat="nom in getNominations()" ng-show="nom.owner==thisUser">
+                    <td class="actions">
+                        <button type="button" name="edit" class="btn btn-primary" 
+                                ng-click="openNominationModal(nom)">
+                            <span class="fa fa-edit"></span>
+                        </button>
+                    </td>
+                    <td ng-click="openNominationModal(nom)">{{nom.owner}}</td>
+                    <td ng-click="openNominationModal(nom)">{{nom.nominee}}</td>
+                    <td ng-click="openNominationModal(nom)" style="max-width:400px">{{nom.comment}}</td>
+                    <td class="actions"><button type="button" name="edit" class="btn btn-primary" 
+                                ng-click="deleteNomination(nom)">
+                            <span class="fa fa-trash"></span>
+                        </button></td>
+                </tr>
+                <tr ng-repeat="nom in getNominations()" ng-hide="nom.owner==thisUser">
+                    <td class="actions">
+                        <button type="button" name="edit" class="btn btn-primary" 
+                                ng-click="openNominationModal(nom)">
+                            <span class="fa fa-edit"></span>
+                        </button>
+                    </td>
+                    <td ng-click="openNominationModal(nom)">{{nom.owner}}</td>
+                    <td ng-click="openNominationModal(nom)"><i style="color:lightgray">hidden</i></td>
+                    <td ng-click="openNominationModal(nom)" style="max-width:400px;color:lightgray">
+                       <i>hidden</i></td>
+                    <td class="actions"><button type="button" name="edit" class="btn btn-primary" 
+                                ng-click="deleteNomination(nom)">
+                            <span class="fa fa-trash"></span>
+                        </button></td>
+                </tr>
+                <tr >
+                    <td class="actions"></td>
+                    <td ng-click="openNominationModal()"><button class="btn btn-sm btn-primary btn-raised">Add Nomination</button></td>
+                    <td ng-click="openNominationModal()" colspan="2"> </td>
+                </tr>
+                </table>
+                <div ng-show="term.nominations.length==0" class="guideVocal">
+                There are no nominations for this term at this time.
+                </div>
             </div>
-            <div class="form-group" style="max-width:600px">
-                <label for="status">Nominee:</label>
-                <input class="form-control" ng-model="nom.nominee"/>
-            </div>
-            <div class="form-group" style="max-width:600px">
-                <label for="status">Reason:</label>
-                <textarea class="form-control" ng-model="nom.comment"></textarea>
-            </div>
-            <button class="btn btn-primary btn-raised" ng-click="updateNomination(nom)">Save</button>
-        </div>
+            <hr/>
+        </div>        
     </div>
     <div ng-show="term.state=='Changing'">
         <div class="guideVocal">

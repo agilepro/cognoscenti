@@ -6,7 +6,7 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
     $scope.tinymceOptions = standardTinyMCEOptions();
     $scope.tinymceOptions.height = 250;
     
-    $scope.agendaItem.previousElapsed = $scope.agendaItem.timerElapsed / 60000;
+    $scope.agendaItem.previousElapsed = Math.floor($scope.agendaItem.timerElapsed / 60) / 1000;
     
     console.log("AgendaItem is: ", agendaItem);
 
@@ -15,7 +15,14 @@ app.controller('AgendaCtrl', function ($scope, $modalInstance, agendaItem, AllPe
             //spacers (breaks) can not be proposed
             agendaItem.proposed = false;
         }
-        $scope.agendaItem.timerElapsed = $scope.agendaItem.previousElapsed * 60000;
+        if (!$scope.agendaItem.timerRunning) {
+            $scope.agendaItem.timerElapsed = $scope.agendaItem.previousElapsed * 60000;
+        }
+        else {
+            $scope.agendaItem.timerElapsed = $scope.agendaItem.timerElapsed 
+                       + (new Date().getTime() - $scope.agendaItem.timerStart);
+            $scope.agendaItem.timerStart = new Date().getTime();
+        }
         $modalInstance.close($scope.agendaItem);
     };
 

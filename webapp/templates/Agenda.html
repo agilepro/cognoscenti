@@ -34,7 +34,10 @@
         </td><td>
         <div class="form-group">
             <label for="labels">Actual Duration: (minutes)</label>
-            <input ng-model="agendaItem.previousElapsed"  class="form-control" style="width:100px;"/>
+            <input ng-model="agendaItem.previousElapsed"  class="form-control" 
+                   style="width:100px;" ng-hide="agendaItem.timerRunning"/>
+            <span class="form-control" style="width:100px;color:lightgray" 
+                  ng-show="agendaItem.timerRunning">{{agendaItem.previousElapsed}}</span>
         </div>
         </td></tr></table>
       </div>
