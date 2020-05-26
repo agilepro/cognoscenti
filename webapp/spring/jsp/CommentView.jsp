@@ -64,8 +64,10 @@
             <i class="fa fa-star-o"></i> {{findComment(item,cmt.replyTo).userName}}</a>
           </span>
         </span>
-         <span ng-show="cmt.commentType==6" style="color:green">
-             <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase</span>
+        <span ng-show="cmt.includeInMinutes" style="color:gray"
+              ng-click="openCommentEditor(item,cmt)"> [+minutes] </span>
+        <span ng-show="cmt.commentType==6" style="color:green">
+            <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase</span>
         <span style="float:right;color:green;" title="Due {{cmt.dueDate|date:'medium'}}">{{calcDueDisplay(cmt)}}</span>
         <div style="clear:both"></div>
       </div>
@@ -89,7 +91,7 @@
           <td style="padding:5px;max-width:100px;overflow:hidden">
             <div ng-show="cmt.commentType==2">
               <b>{{resp.choice}}</b></div>
-            <div>{{resp.userName}}</div>
+            <div>{{resp.userName?resp.userName:resp.user}}</div>
           </td>
           <td>
             <span ng-show="cmt.state==12" ng-click="openResponseEditor(cmt, resp.user)" 

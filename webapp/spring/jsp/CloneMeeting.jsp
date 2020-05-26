@@ -32,7 +32,7 @@
     }
     else {
         MeetingRecord oneRef   = ngw.findMeeting(meetId);
-        meetingInfo = oneRef.getFullJSON(ar, ngw);
+        meetingInfo = oneRef.getFullJSON(ar, ngw, true);
         //make it for 7 days later
         proposedStartTime =  meetingInfo.getLong("startTime") + 7L*24L*3600000;
     }

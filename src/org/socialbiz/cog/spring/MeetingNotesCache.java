@@ -147,7 +147,7 @@ public class MeetingNotesCache {
         MeetingRecord meeting = ngw.findMeeting(meetingId);
         NoteHolder nh = new NoteHolder();
         nh.notesObject = meeting.getMeetingNotes();
-        nh.fullObject = meeting.getFullJSON(ar, ngw);
+        nh.fullObject = meeting.getFullJSON(ar, ngw, true);
         nh.targetRole = meeting.getTargetRole();
         nh.meetingId = meeting.getId();
         nh.siteKey = ngw.getSiteKey();

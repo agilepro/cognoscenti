@@ -48,7 +48,7 @@
     if (targetRole==null || targetRole.length()==0) {
         mRec.setTargetRole(ngw.getPrimaryRole().getName());
     }
-    JSONObject meetingInfo = mRec.getFullJSON(ar, ngw);
+    JSONObject meetingInfo = mRec.getFullJSON(ar, ngw, true);
     
     JSONObject previousMeeting = new JSONObject();
     if (meetingInfo.has("previousMeeting")) {

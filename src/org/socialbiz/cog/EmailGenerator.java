@@ -379,7 +379,7 @@ public class EmailGenerator extends DOMFace {
                 String meetingLayout = this.getScalar("meetingLayout");
                 File meetingLayoutFile = MeetingRecord.findMeetingLayout(ar,  ngp,  meetingLayout);
                 MemFile meetingOutput = new MemFile();
-                ChunkTemplate.streamIt(meetingOutput.getWriter(), meetingLayoutFile, meeting.getFullJSON(ar, ngp), ooa.getCalendar());
+                ChunkTemplate.streamIt(meetingOutput.getWriter(), meetingLayoutFile, meeting.getFullJSON(ar, ngp, false), ooa.getCalendar());
                 meetingString = meetingOutput.toString();
             }
         }
@@ -466,7 +466,7 @@ public class EmailGenerator extends DOMFace {
         }
 
         if (meeting!=null) {
-            JSONObject meetingObj = meeting.getFullJSON(ar, ngp);
+            JSONObject meetingObj = meeting.getFullJSON(ar, ngp, false);
             meetingObj.put("meetingUrl", ar.retPath + ar.getResourceURL(ngp, "meetingHtml.htm?id="+meeting.getId()
                     +"&"+AccessControl.getAccessMeetParams(ngp, meeting))
                     + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
@@ -580,7 +580,7 @@ public class EmailGenerator extends DOMFace {
         if (meetingId!=null && meetingId.length()>0) {
             MeetingRecord meet = ngw.findMeetingOrNull(meetingId);
             if (meet!=null) {
-                obj.put("meetingInfo", meet.getFullJSON(ar, ngw));
+                obj.put("meetingInfo", meet.getFullJSON(ar, ngw, false));
             }
         }
 

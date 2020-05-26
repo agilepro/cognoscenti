@@ -1285,12 +1285,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     };
 
 
+
     $scope.openModalActionItem = function (item, goal, start) {
         
         if (!start) {
             start = 'status';
         }
-
         var modalInstance = $modal.open({
           animation: false,
           templateUrl: embeddedData.retPath+"templates/ActionItem.html"+templateCacheDefeater,

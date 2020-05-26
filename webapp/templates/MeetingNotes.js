@@ -67,6 +67,7 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
     $scope.readyToLeave = false;
     $scope.isEditing = true;
     $scope.autoMerge = false;
+    $scope.editMode = "edit";
     
     
     $scope.ok = function () {
@@ -208,10 +209,10 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
     }
     $scope.bodyStyle = function() {
         if ($scope.agendaData && $scope.agendaData.needsMerge) {
-            return {"background-color":"orange"};
+            return {"background-color":"orange","min-height":"400px"};
         }
         else {
-            return {"background-color":"white"};
+            return {"background-color":"white","min-height":"400px"};
         }
     }
 

@@ -235,7 +235,7 @@ public class AgendaItem extends CommentContainer {
     /**
      * full JSON representation including all comments, etc.
      */
-    public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw, MeetingRecord meet) throws Exception {
+    public JSONObject getJSON(AuthRequest ar, NGWorkspace ngw, MeetingRecord meet, boolean allComments) throws Exception {
         
         JSONObject aiInfo = new JSONObject();
         aiInfo.put("id",        getId());
@@ -264,7 +264,7 @@ public class AgendaItem extends CommentContainer {
         
         aiInfo.put("actionItems", constructJSONArray(getActionItems()));
         aiInfo.put("docList", constructJSONArray(getDocList()));
-        addJSONComments(ar, aiInfo);
+        addJSONComments(ar, aiInfo, allComments);
 
         AddressListEntry locker = getLockUser();
         if (locker!=null) {

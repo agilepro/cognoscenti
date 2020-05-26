@@ -566,7 +566,7 @@ public class ProjectDocsController extends BaseController {
                     ar.assertMember("must have permission to make a reply");
                 }
                 ai.updateCommentsFromJSON(input, ar);
-                repo = ai.getJSON(ar, ngw, meet);
+                repo = ai.getJSON(ar, ngw, meet, true);
             }
             else {
                 TopicRecord note = ngw.getNoteOrFail(topicId);

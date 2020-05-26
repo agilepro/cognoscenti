@@ -50,7 +50,7 @@
     if (targetRole==null || targetRole.length()==0) {
         mRec.setTargetRole(ngw.getPrimaryRole().getName());
     }
-    JSONObject meetingInfo = mRec.getFullJSON(ar, ngw);
+    JSONObject meetingInfo = mRec.getFullJSON(ar, ngw, true);
     
     JSONObject previousMeeting = new JSONObject();
     if (meetingInfo.has("previousMeeting")) {
@@ -59,7 +59,7 @@
             MeetingRecord previous = ngw.findMeetingOrNull(previousId);
             if (previous!=null) {
                 previousMeeting = new JSONObject();
-                JSONObject temp = previous.getFullJSON(ar, ngw);
+                JSONObject temp = previous.getFullJSON(ar, ngw, true);
                 previousMeeting.put("startTime", temp.getLong("startTime"));
                 previousMeeting.put("id", temp.getString("id"));
                 previousMeeting.put("minutesId", temp.getString("minutesId"));
@@ -109,7 +109,7 @@
         allLayoutNames.put(aFile.getName());
     }
     
-    JSONObject meetingJSON = mRec.getFullJSON(ar, ngw);
+    JSONObject meetingJSON = mRec.getFullJSON(ar, ngw, true);
     String agendaLayout = meetingJSON.optString("notifyLayout", "FullDetail.chtml");
     File agendaLayoutFile = MeetingRecord.findMeetingLayout(ar,ngw,agendaLayout);        
     String minutesLayout = meetingJSON.optString("defaultLayout", "FullDetail.chtml");

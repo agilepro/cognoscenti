@@ -76,14 +76,30 @@ public abstract class CommentContainer extends DOMFace {
 
 
     public JSONArray getAllComments(AuthRequest ar) throws Exception {
-        JSONArray allCommentss = new JSONArray();
+        JSONArray allCmts = new JSONArray();
         for (CommentRecord cr : getComments()) {
-            allCommentss.put(cr.getHtmlJSON(ar));
+            allCmts.put(cr.getHtmlJSON(ar));
         }
-        return allCommentss;
+        return allCmts;
     }
-    public void addJSONComments(AuthRequest ar, JSONObject thisContainer) throws Exception {
-        thisContainer.put("comments",  getAllComments(ar));
+    public JSONArray getIncludedComments(AuthRequest ar) throws Exception {
+        JSONArray includedCmts = new JSONArray();
+        for (CommentRecord cr : getComments()) {
+            if (cr.getAttributeBool("includeInMinutes")) {
+                includedCmts.put(cr.getHtmlJSON(ar));
+            }
+        }
+        return includedCmts;
+    }
+    public void addJSONComments(AuthRequest ar, JSONObject thisContainer, boolean allComments) throws Exception {
+        if (allComments) {
+            thisContainer.put("comments",  getAllComments(ar));
+        }
+        else {
+            thisContainer.put("comments",  getIncludedComments(ar));
+            
+        }
+        
     }
 
     public List<CommentRecord> getCommentTimeFrame(long startTime, long endTime) throws Exception {

@@ -17,7 +17,7 @@
     String id = ar.reqParam("id");
     MeetingRecord meet = ngw.findMeeting(id);
 
-    JSONObject meetingJSON = meet.getFullJSON(ar, ngw);
+    JSONObject meetingJSON = meet.getFullJSON(ar, ngw, false);
     
  
     

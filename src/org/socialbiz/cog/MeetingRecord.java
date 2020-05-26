@@ -517,13 +517,13 @@ public class MeetingRecord extends DOMFace {
      * @return
      * @throws Exception
      */
-    public JSONObject getFullJSON(AuthRequest ar, NGWorkspace ngw) throws Exception {
+    public JSONObject getFullJSON(AuthRequest ar, NGWorkspace ngw, boolean allcomments) throws Exception {
         verifyTargetRole(ngw);
         JSONObject meetingInfo = getListableJSON(ar);
         JSONArray aiArray = new JSONArray();
         long scheduledTime = this.getStartTime();
         for (AgendaItem ai : getSortedAgendaItems()) {
-            JSONObject aiObj = ai.getJSON(ar, ngw, this);
+            JSONObject aiObj = ai.getJSON(ar, ngw, this, allcomments);
 
             //calculate the scheduled start and end
             aiObj.put("schedStart", scheduledTime);

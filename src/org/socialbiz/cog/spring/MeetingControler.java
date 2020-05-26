@@ -181,7 +181,8 @@ public class MeetingControler extends BaseController {
                 return;
             }
 
-            JSONObject meetingJSON = meet.getFullJSON(ar, ngw);
+            JSONObject meetingJSON = meet.getFullJSON(ar, ngw, false);
+            
             Hashtable<String, File> templates = site.allMeetingTemplates(ar);
             File templateFile = templates.get(template);
             if (templateFile == null) {
@@ -203,6 +204,7 @@ public class MeetingControler extends BaseController {
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
         }
     }
+    
 
     @RequestMapping(value = "/{siteId}/{pageId}/meetingMinutes.htm", method = RequestMethod.GET)
     public void meetingMinutes(@PathVariable String siteId,@PathVariable String pageId,
@@ -347,7 +349,7 @@ public class MeetingControler extends BaseController {
                       HistoryRecord.CONTEXT_TYPE_MEETING,
                       HistoryRecord.EVENT_TYPE_CREATED, ar, "");
               saveAndReleaseLock(ngw, ar, "Created new Meeting");
-              JSONObject repo = newMeeting.getFullJSON(ar, ngw);
+              JSONObject repo = newMeeting.getFullJSON(ar, ngw, true);
               sendJson(ar, repo);
           }catch(Exception ex){
               Exception ee = new Exception("Unable to create meeting.", ex);
@@ -621,7 +623,7 @@ public class MeetingControler extends BaseController {
               ai.updateFromJSON(ar, agendaInfo, ngw);
 
               meeting.renumberItems();
-              JSONObject repo = ai.getJSON(ar, ngw, meeting);
+              JSONObject repo = ai.getJSON(ar, ngw, meeting, true);
               meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Created new Agenda Item");
               sendJson(ar, repo);
@@ -689,7 +691,7 @@ public class MeetingControler extends BaseController {
               agendaInfo.put("position", 99999);
               ai.updateFromJSON(ar,agendaInfo, ngw);
               destMeeting.renumberItems();
-              JSONObject repo = ai.getJSON(ar, ngw, meeting);
+              JSONObject repo = ai.getJSON(ar, ngw, meeting, true);
               meetingCache.updateCacheNotes(ngw, ar, src);
               meetingCache.updateCacheNotes(ngw, ar, dest);
               saveAndReleaseLock(ngw, ar, "Move Agenda Item");
@@ -744,7 +746,7 @@ public class MeetingControler extends BaseController {
               //everything else updated here
               ai.updateFromJSON(ar, agendaInfo, ngw);
 
-              JSONObject repo = ai.getJSON(ar, ngw, meeting);
+              JSONObject repo = ai.getJSON(ar, ngw, meeting, true);
               meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Updated Agenda Item");
               sendJson(ar, repo);
@@ -799,7 +801,7 @@ public class MeetingControler extends BaseController {
                   }
               }
               nr.setLastEdited(ar.nowTime);
-              JSONObject repo = meeting.getFullJSON(ar, ngw);
+              JSONObject repo = meeting.getFullJSON(ar, ngw, false);
               meetingCache.updateCacheNotes(ngw, ar, id);
               saveAndReleaseLock(ngw, ar, "Created Topic for minutes of meeting.");
               sendJson(ar, repo);

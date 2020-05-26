@@ -44,6 +44,7 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         updateRec.notify = $scope.cmt.notify;
         updateRec.docList = $scope.cmt.docList;
         updateRec.excludeSelf = $scope.cmt.excludeSelf;
+        updateRec.includeInMinutes = $scope.cmt.includeInMinutes;
         updateRec.suppressEmail = $scope.cmt.suppressEmail;
         updateRec.state = $scope.cmt.state;
         updateRec.commentType = $scope.cmt.commentType;

@@ -624,7 +624,8 @@ public class CommentRecord extends DOMFace {
         commInfo.put("decision", getDecision());
         extractAttributeBool(commInfo, "suppressEmail");
         extractAttributeBool(commInfo, "excludeSelf");
-
+        extractAttributeBool(commInfo, "includeInMinutes");
+        
         //this is temporary
         commInfo.put("poll", getCommentType()>CommentRecord.COMMENT_TYPE_SIMPLE);
         return commInfo;
@@ -711,6 +712,7 @@ public class CommentRecord extends DOMFace {
         }
         updateAttributeBool("suppressEmail", input);
         updateAttributeBool("excludeSelf", input);
+        updateAttributeBool("includeInMinutes", input);
 
 
         //A simple comment should never be "open", only draft or closed, so assure that here

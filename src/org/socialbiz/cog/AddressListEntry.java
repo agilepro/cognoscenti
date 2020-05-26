@@ -267,7 +267,11 @@ public class AddressListEntry implements UserRef
     {
         if (user!=null)
         {
-            return user.getName();
+            String uName = user.getName();
+            if (uName==null || uName.length()==0) {
+                return rawAddress;
+            }
+            return uName;
         }
         MicroProfileRecord record = MicroProfileMgr.findMicroProfileById(rawAddress);
         if (record != null)

@@ -104,7 +104,7 @@ Optional Parameters:
         if (meetId!=null && meetId.length()>0) {
             MeetingRecord mr = ngw.findMeeting(meetId);
             if (mr!=null) {
-                emailInfo.put("meetingInfo", mr.getFullJSON(ar, ngw));
+                emailInfo.put("meetingInfo", mr.getFullJSON(ar, ngw, false));
                 if(mailSubject == null){
                     mailSubject = "Meeting: "+mr.getNameAndDate(mr.getOwnerCalendar());
                 }
