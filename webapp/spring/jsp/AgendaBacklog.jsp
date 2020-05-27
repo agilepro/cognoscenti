@@ -13,7 +13,7 @@
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     NGBook ngb = ngw.getSite();
-    JSONObject backlogInfo = ngw.getAgendaItemBacklog().getFullJSON(ar, ngw);
+    JSONObject backlogInfo = ngw.getAgendaItemBacklog().getFullJSON(ar, ngw, true);
 
 %>
 

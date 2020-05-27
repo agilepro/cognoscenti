@@ -57,7 +57,7 @@
             MeetingRecord previous = ngw.findMeetingOrNull(previousId);
             if (previous!=null) {
                 previousMeeting = new JSONObject();
-                JSONObject temp = previous.getFullJSON(ar, ngw);
+                JSONObject temp = previous.getFullJSON(ar, ngw, true);
                 previousMeeting.put("startTime", temp.getLong("startTime"));
                 previousMeeting.put("id", temp.getString("id"));
                 previousMeeting.put("minutesId", temp.getString("minutesId"));

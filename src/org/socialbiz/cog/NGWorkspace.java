@@ -64,8 +64,6 @@ public class NGWorkspace extends NGPage {
     public NGWorkspace(File theFile, Document newDoc, NGBook site) throws Exception {
         super(theFile, newDoc, site);
 
-        System.out.println("READING workspace: "+theFile);
-
         jsonFilePath = new File(theFile.getParent(), "WorkspaceInfo.json");
         if (jsonFilePath.exists()) {
             workspaceJSON = JSONObject.readFromFile(jsonFilePath);
@@ -363,12 +361,11 @@ public class NGWorkspace extends NGPage {
     public JSONArray getJSONEmailGenerators(AuthRequest ar) throws Exception {
         JSONArray val = new JSONArray();
         List<EmailGenerator> gg = getAllEmailGenerators();
-        int limit = 200;
+        long timeLimit = ar.nowTime - 366L * 24 * 3600000;
         for (EmailGenerator egen : gg) {
-            val.put(egen.getJSON(ar, this));
-            if (limit--<0) {
-                System.out.println("LIMIT: stopped including EmailGenerators at 200 out of "+gg.size());
-                break;
+            //only list email generators less than one year old
+            if (egen.getState()<EmailGenerator.EG_STATE_SENT || egen.getScheduleTime() > timeLimit) {
+                val.put(egen.getJSON(ar, this));
             }
         }
         return val;

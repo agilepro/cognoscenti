@@ -62,9 +62,9 @@ public class EmailGenerator extends DOMFace {
         setAttribute("id", newVal);
     }
 
-    public final int EG_STATE_DRAFT     = 1;
-    public final int EG_STATE_SCHEDULED = 2;
-    public final int EG_STATE_SENT      = 3;
+    public static final int EG_STATE_DRAFT     = 1;
+    public static final int EG_STATE_SCHEDULED = 2;
+    public static final int EG_STATE_SENT      = 3;
 
     public int getState() {
         return getAttributeInt("state");

@@ -18,14 +18,14 @@ Required parameters:
     String meetId          = ar.reqParam("id");
     String mnm             = ar.defParam("mnm", null);
     MeetingRecord meeting  = ngw.findMeeting(meetId);
-    JSONObject meetingObj = meeting.getFullJSON(ar, ngw);
+    JSONObject meetingObj = meeting.getFullJSON(ar, ngw, true);
     
     JSONArray timeSlots = meetingObj.getJSONArray("timeSlots");
     if (timeSlots.length()==0) {
         long startTime = meeting.getStartTime();
         if (startTime>0) {
             meeting.findOrCreateProposedTime("timeSlots", startTime);
-            meetingObj = meeting.getFullJSON(ar, ngw);
+            meetingObj = meeting.getFullJSON(ar, ngw, true);
         }
     }
     
