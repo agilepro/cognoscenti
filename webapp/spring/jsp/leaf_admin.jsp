@@ -35,8 +35,10 @@
     String parentKey = ngw.getParentKey();
     NGPageIndex parentIndex = cog.getWSByCombinedKey(parentKey);
     String parentName = "";
+    JSONArray parentWorkspace = new JSONArray();
     if (parentIndex!=null) {
         parentName = parentIndex.containerName;
+        parentWorkspace.put(parentIndex.getJSON4List());
     }
 
     JSONObject workspaceConfig = ngw.getConfigJSON();
@@ -55,29 +57,20 @@
 
     WorkspaceStats wStats = new WorkspaceStats();
     wStats.gatherFromWorkspace(ngw);
-    
+
     boolean foundInRecents = false;
+
+    int barPos = parentKey.indexOf("|");
+    if (barPos>=0) {
+        parentKey = parentKey.substring(barPos+1);
+    }
+    List<NGPageIndex> allWS = cog.getAllProjectsInSite(siteId);
     JSONArray recentWorkspaces = new JSONArray();
-    List<RUElement> recent = ar.getSession().recentlyVisited;    
-    for (RUElement rue : recent) {
-        if (rue.key.equals(pageId)) {
+    for (NGPageIndex sibling : allWS) {
+        if (sibling.containerKey.equals(pageId)) {
             continue;  //skip adding this page into possible parents list
         }
-        JSONObject rujo = new JSONObject();
-        if (parentKey.equals(rue.key)) {
-            foundInRecents = true;
-        }
-        rujo.put("siteKey", rue.siteKey);
-        rujo.put("key", rue.key);
-        rujo.put("displayName", rue.displayName);
-        recentWorkspaces.put(rujo);      
-    }  
-    if (!foundInRecents && parentIndex!=null) {
-        JSONObject includeParent = new JSONObject();
-        includeParent.put("siteKey", parentIndex.wsSiteKey);
-        includeParent.put("name", parentIndex.containerName);
-        includeParent.put("key", parentIndex.containerKey);
-        recentWorkspaces.put(includeParent);
+        recentWorkspaces.put(sibling.getJSON4List());
     }
 
     /*
@@ -98,11 +91,23 @@
       "upstream": ""
     }
     */
-    
+
 %>
 
 <fmt:setBundle basename="messages"/>
 <script type="text/javascript" language="JavaScript">
+
+tagsInputWorkspacePicker  ={
+    "placeholder":"Enter workspace name",
+    "display-property":"name",
+    "key-property":"comboKey",
+    "replace-spaces-with-dashes":"false",
+    "add-on-space":true,
+    "on-tag-added":"updatePlayers()",
+    "on-tag-removed":"updatePlayers()",
+    "maxTags":1,
+    "freeInput":false
+}
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
@@ -113,10 +118,13 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.editName = false;
     $scope.editInfo = false;
     $scope.foo = "<p>This <b>bold</b> statement.</p>"
-    
+
     $scope.allProjects = <%allProjects.write(out,2,4);%>;
     $scope.recentWorkspaces = <%recentWorkspaces.write(out,2,4);%>;
-       
+
+    //should only be one of these, but have to make it a list because
+    //of the tag-input component.  Only the first one counts
+    $scope.parentWorkspace = <%parentWorkspace.write(out,2,4);%>;
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -165,6 +173,15 @@ app.controller('myCtrl', function($scope, $http) {
         newData[fieldName] = $scope.workspaceConfig[fieldName];
         $scope.saveRecord(newData);
         $scope.isEditing = null;
+    }
+    $scope.saveParentKey = function() {
+        if ($scope.parentWorkspace && $scope.parentWorkspace.length>0) {
+            $scope.workspaceConfig.parentKey = $scope.parentWorkspace[0].pageKey;
+        }
+        else {
+            $scope.workspaceConfig.parentKey = "";
+        }
+        $scope.saveOneField(['parentKey']);
     }
     $scope.clearField = function(fieldName) {
         var newData = {};
@@ -241,6 +258,26 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     };
+
+    $scope.loadWorkspaceList = function(query) {
+        console.log("WORKSPACES: ", $scope.recentWorkspaces);
+        return $scope.recentWorkspaces;
+    };
+
+    $scope.cleanUpParent = function() {
+        var realParent = {};
+        $scope.parentWorkspace.forEach( function(item) {
+            realParent = item;
+        });
+        if (realParent.comboKey) {
+            $scope.workspaceConfig.parentKey = realParent.comboKey;
+            $scope.parentWorkspace = [realParent];
+        }
+        else {
+            $scope.workspaceConfig.parentKey = "";
+            $scope.parentWorkspace = [];
+        }
+    }
 
 });
 app.filter('escape', function() {
@@ -327,7 +364,7 @@ editBoxStyle {
                     <td ng-click="setEdit('vision')"><label>Vision:</label></td>
                     <td ng-show="isEditing=='vision'">
                         <textarea class="form-control editBoxStyle markDownEditor"
-                              placeholder="Enter a vision statement for the circle working in this  workspace, if any" 
+                              placeholder="Enter a vision statement for the circle working in this  workspace, if any"
                               ng-model="workspaceConfig.vision" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('vision')" class="btn btn-primary btn-raised">
                                   Save</button>
@@ -343,7 +380,7 @@ editBoxStyle {
                     <td ng-click="setEdit('mission')"><label>Mission:</label></td>
                     <td ng-show="isEditing=='mission'">
                         <textarea class="form-control editBoxStyle markDownEditor"
-                              placeholder="Enter a mission statement for the circle working in this  workspace, if any" 
+                              placeholder="Enter a mission statement for the circle working in this  workspace, if any"
                               ng-model="workspaceConfig.mission" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('mission')" class="btn btn-primary btn-raised">
                                   Save</button>
@@ -359,7 +396,7 @@ editBoxStyle {
                     <td  ng-click="setEdit('purpose')"><label>Aim:</label></td>
                     <td ng-show="isEditing=='purpose'">
                         <textarea class="form-control editBoxStyle markDownEditor"
-                              placeholder="Enter a public description of the work that will be done in this workspace, the aim of this workspace." 
+                              placeholder="Enter a public description of the work that will be done in this workspace, the aim of this workspace."
                               ng-model="workspaceConfig.purpose" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('purpose')" class="btn btn-primary btn-raised">
                                   Save</button>
@@ -375,7 +412,7 @@ editBoxStyle {
                     <td ng-click="setEdit('domain')"><label>Domain:</label></td>
                     <td ng-show="isEditing=='domain'">
                         <textarea class="form-control editBoxStyle markDownEditor"
-                              placeholder="Enter a domain statement for the circle working in this  workspace, if any" 
+                              placeholder="Enter a domain statement for the circle working in this  workspace, if any"
                               ng-model="workspaceConfig.domain" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('domain')" class="btn btn-primary btn-raised">
                                   Save</button>
@@ -391,17 +428,17 @@ editBoxStyle {
                     <td valign="top" ng-click="setEdit('frozen')"><label>Workspace State:</label></td>
                     <td  valign="top" ng-show="isEditing=='frozen'">
 
-                        <button ng-click="workspaceConfig.frozen=true;saveOneField('frozen')" 
+                        <button ng-click="workspaceConfig.frozen=true;saveOneField('frozen')"
                             class="btn btn-primary btn-raised" ng-hide="workspaceConfig.frozen">
                             Freeze Workspace</button>
-                        <button ng-click="workspaceConfig.frozen=false;saveOneField('frozen')" 
-                            class="btn btn-primary btn-raised" 
+                        <button ng-click="workspaceConfig.frozen=false;saveOneField('frozen')"
+                            class="btn btn-primary btn-raised"
                             ng-show="workspaceConfig.frozen && !workspaceConfig.deleted">
                             Unfreeze Workspace</button>
-                        <button ng-click="workspaceConfig.deleted=true;saveOneField('deleted')" 
+                        <button ng-click="workspaceConfig.deleted=true;saveOneField('deleted')"
                             class="btn btn-primary btn-raised" ng-hide="workspaceConfig.deleted">
                             Delete Workspace</button>
-                        <button ng-click="workspaceConfig.deleted=false;saveOneField('deleted')" 
+                        <button ng-click="workspaceConfig.deleted=false;saveOneField('deleted')"
                             class="btn btn-primary btn-raised" ng-show="workspaceConfig.deleted">
                             Undelete Workspace</button>
                         <button ng-click="isEditing=null" class="btn btn-raised">
@@ -414,76 +451,33 @@ editBoxStyle {
                     </td>
                 </tr>
                 <tr>
-                    <td ng-click="setEdit('parentKey')"><label>Parent Circle:</label></td>
+                    <td ng-click="setEdit('parentKey');backupParent=parentWorkspace"><label>Parent Circle:</label></td>
                     <td ng-show="isEditing=='parentKey'">
-                        <select ng-model="workspaceConfig.parentKey" class="form-control" style="width:400px">
-                            <option ng-repeat="ws in recentWorkspaces" value="{{ws.key}}">{{ws.displayName}} ({{ws.key}})</option>
-                            </select>
-                        <button ng-click="saveOneField('parentKey')" class="btn btn-primary btn-raised">
+                      <tags-input ng-model="parentWorkspace"
+                                  placeholder="Enter only one workspace name"
+                                  display-property="name"
+                                  key-property="comboKey"
+                                  replace-spaces-with-dashes="false" add-on-space="true"
+                                  on-tag-added="cleanUpParent($tag)"
+                                  on-tag-removed="cleanUpParent()"
+                                  max-tags="1"
+                                  add-on-blur="false"
+                                  allow-leftover-text="false">
+                          <auto-complete source="loadWorkspaceList($query)" min-length="1"></auto-complete>
+                      </tags-input>
+
+                        <button ng-click="saveParentKey()" class="btn btn-primary btn-raised">
                             Save</button>
-                        <button ng-click="clearField('parentKey')" class="btn btn-primary btn-raised">
-                            Clear It</button>
-                        <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                        <button ng-click="parentWorkspace=backupParent;cleanUpParent();isEditing==''" class="btn btn-raised">
                             Cancel</button>
                     </td>
-                    <td ng-hide="isEditing=='parentKey'" ng-dblclick="setEdit('parentKey')">
-                        <div>{{workspaceConfig.parentKey}}</div>
+                    <td ng-hide="isEditing=='parentKey'" ng-dblclick="setEdit('parentKey');backupParent=parentWorkspace">
+                        <div ng-repeat="ws in parentWorkspace">{{ws.name}}</div>
                         <div ng-hide="workspaceConfig.parentKey" class="clicker"></div>
                     </td>
                 </tr>
-<% if (showExperimental) { %>
-                <tr>
-                    <td ><label>Workspace Email id:</label></td>
-                    <td>
-                        <input type="text" class="form-control"
-                               name="projectMailId" ng-model="workspaceConfig.projectMail" />
-                    </td>
-                </tr>
-                <tr>
-                    <td><label>Upstream Clone:</label></td>
-                    <td>
-                        <input type="text" class="form-control" style="width:450px" id="upstream"
-                               name="upstream" ng-model="workspaceConfig.upstream" />
-                    </td>
-                </tr>
-<% } %>
             </table>
         </div>
-
-
-    <% if (showExperimental) { %>
-
-            <div class="generalContent">
-                <div class="generalSubHeading paddingTop">Copy From Template</div>
-                <table width="720px" class="spaceyTable">
-                  <form action="<%=ar.retPath%>CopyFromTemplate.jsp" method="post">
-                  <input type="hidden" name="go" value="<%ar.writeHtml(allTasksPage);%>"/>
-                  <input type="hidden" name="p" value="<%ar.writeHtml(pageId);%>"/>
-                    <tr>
-                        <td>Template:</td>
-                        <td style="width:20px;"></td>
-                        <td><select name="template" class="form-control" style="width:400px">
-                        <%
-                            for (NGPageIndex temp : templates) {
-                            %>
-                            <option name="template" value="<%ar.writeHtml(temp.containerKey);%>"><%
-                            ar.writeHtml(temp.containerName);
-                            %></option>
-                            <%
-                            }
-                        %>
-                        </select></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td style="width:20px;"></td>
-                        <td> <input type="submit" value="Copy From Template" class="btn btn-primary btn-raised"/> </td>
-                    </tr>
-                  </form>
-                </table>
-            </div>
-    <% } %>
-
 
 <hr/>
 <h1>Statistics</h1>
@@ -601,20 +595,20 @@ editBoxStyle {
             </div>
 
     </div>
-    
+
     <div>
 
        <h3>Data API</h3>
-       
-       
+
+
        <ul>
-       
+
        <li><a target="dataWindow" href="taskAreas.json">taskAreas.json</a></li>
        <li><a target="dataWindow" href="allActionsList.json">allActionsList.json</a></li>
        <li><a target="dataWindow" href="docsList.json">docsList.json</a></li>
        <li><a target="dataWindow" href="topicList.json">topicList.json</a></li>
        <li><a target="dataWindow" href="meetingList.json">meetingList.json</a></li>
-      
+
        <li><a target="dataWindow" href="invitations.json">invitations.json</a></li>
        <li><a target="dataWindow" href="getNoteHistory.json?nid={{sampleTopic}}">getNoteHistory.json?nid={{sampleTopic}}"</a></li>
        <li><a target="dataWindow" href="sharePorts.json">sharePorts.json</a></li>
@@ -639,7 +633,7 @@ editBoxStyle {
        <li><a target="dataWindow" href="share/{{sampleSharePort}}.json">share/{{sampleSharePort}}.json</a></li>
        </ul>
 
-    </div>    
+    </div>
 </div>
 
 <%!

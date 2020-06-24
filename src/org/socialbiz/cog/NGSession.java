@@ -100,7 +100,7 @@ public class NGSession
         if (ngp==null) {
             throw new ProgramLogicError("addVisited was called with a null parameter.  That should not happen");
         }
-        RUElement rue = new RUElement(ngp.getFullName(), ngp.getKey(), ngp.getSiteKey(),  currentTime);
+        RUElement rue = new RUElement(ngp,  currentTime);
         RUElement.addToRUVector(recentlyVisited, rue, currentTime, 12);
     }
 

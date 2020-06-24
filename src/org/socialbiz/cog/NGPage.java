@@ -1718,9 +1718,6 @@ public abstract class NGPage extends ContainerCommon {
         }
         workspaceConfigInfo.put("accessState", getAccessStateStr());
 
-        workspaceConfigInfo.put("upstream", getUpstreamLink());
-        workspaceConfigInfo.put("projectMail", getWorkspaceMailId());
-
         //read only information from the site
         workspaceConfigInfo.put("showExperimental", this.getSite().getShowExperimental());
 

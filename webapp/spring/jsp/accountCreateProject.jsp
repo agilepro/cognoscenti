@@ -53,11 +53,9 @@ Required parameter:
       "key": "darwin2",
       "parentKey": "",
       "parentName": "",
-      "projectMail": "",
       "purpose": "",
       "showExperimental": false,
-      "site": "goofoof",
-      "upstream": ""
+      "site": "goofoof"
     }
     */
 %>

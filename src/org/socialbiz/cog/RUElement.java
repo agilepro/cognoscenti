@@ -36,19 +36,22 @@ public final class RUElement
     public String displayName;
     public String siteKey;
     public String key;
+    public String combo;
 
-    public RUElement(String _DisplayName, String _key, String _siteKey, long _Timestamp) {
+    public RUElement(NGWorkspace ngw, long _Timestamp) {
         timestamp   = _Timestamp;
-        displayName = _DisplayName;
-        key         = _key;
-        siteKey     = _siteKey;
+        displayName = ngw.getFullName();
+        key         = ngw.getKey();
+        siteKey     = ngw.getSiteKey();
+        combo       = ngw.getCombinedKey();
     }
 
     public JSONObject getJSON() throws Exception {
         JSONObject rujo = new JSONObject();
-        rujo.put("siteKey", siteKey);
-        rujo.put("key", key);
-        rujo.put("displayName", displayName);
+        rujo.put("name",        displayName);
+        rujo.put("siteKey",     siteKey);
+        rujo.put("pageKey",     key);
+        rujo.put("comboKey",    combo);
         return rujo;
     }
 

@@ -151,6 +151,10 @@ public class NGPageIndex {
 
 
 
+    public String getCombinedKey() {
+        return wsSiteKey + "|" + containerKey;
+    }
+    
 
     /**
      * Returns the collection of all target pages that are linked FROM this
@@ -805,13 +809,14 @@ public class NGPageIndex {
     public JSONObject getJSON4List() throws Exception {
         JSONObject wObj = new JSONObject();
         wObj.put("changed", lastChange);
-        wObj.put("name", containerName);
+        wObj.put("name",    containerName);
         wObj.put("pageKey", containerKey);
         wObj.put("siteKey", wsSiteKey);
         wObj.put("parentKey", parentKey);
         wObj.put("isDeleted", isDeleted);
         wObj.put("frozen", isFrozen);
         wObj.put("isMoved", isMoved);
+        wObj.put("comboKey", getCombinedKey());
         return wObj;
     }
 

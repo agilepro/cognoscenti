@@ -464,7 +464,16 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             File folder = resDec.workspace.getContainingFolder();
             File tempFile = new File(folder, tempFileName);
             if (!tempFile.exists()) {
-                throw new JSONException("Attemped operation failed because the temporary file does not exist: {0}",tempFile);
+                //we had a problem where requests were getting here but the temp file did not exist
+                //but inspection showed the file to exist.  There might be a delay in uploading the 
+                //file due to caching delays.   This just waits for up to 4 seconds to see if the
+                //file appears in the file system after a delay.
+                int count = 0;
+                while (!tempFile.exists() && count++ < 20) {
+                    System.out.println("WAITING "+count+" FOR TEMPFILE: "+tempFile.toString());
+                    Thread.sleep(200);
+                }
+                throw new JSONException("Operation '{1}' failed because the temporary file does not exist: {0}", tempFile, op);
             }
 
             AttachmentRecord att;
@@ -531,7 +540,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             }
 
             long timeUpdate = newDocObj.optLong("modifiedtime");
-            if (timeUpdate == 0) {
+            if (timeUpdate <= 0) {
                 timeUpdate = ar.nowTime;
             }
 
@@ -741,6 +750,20 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
         UtilityMethods.streamToStream(is,fos);
         fos.flush();
         fos.close();
+        
+        //now wait to make sure it is actually there in the file system
+        if (!tempFile.exists()) {
+            //we had a problem where requests were getting here but the temp file did not exist
+            //but inspection showed the file to exist.  There might be a delay in uploading the 
+            //file due to caching delays.   This just waits for up to 4 seconds to see if the
+            //file appears in the file system after a delay.
+            int count = 0;
+            while (!tempFile.exists() && count++ < 20) {
+                System.out.println("WAITING "+count+" FOR PUT FILE: "+tempFile.toString());
+                Thread.sleep(200);
+            }
+            throw new JSONException("PUT temp file failed.  Can't see it in file system: {0}", tempFile);
+        }
     }
 
     private JSONObject getLicenseInfo(License lic) throws Exception {

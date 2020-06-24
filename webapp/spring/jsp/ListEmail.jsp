@@ -196,7 +196,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
                 </button>
               </a>
             </td>
-            <td ng-hide="rec.state<=1">{{bestDate(rec)|date:'M/d/yy H:mm'}}</td>
+            <td ng-hide="rec.state<=1">{{bestDate(rec)|date:'dd-MMM-yyyy H:mm'}}</td>
         </tr>
     </table>
 

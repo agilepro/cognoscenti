@@ -35,11 +35,37 @@
     {% onEmpty %}
     {% endloop %}
     </ul>
+    <ul>
+    {% loop in $agItem.aiList as $aItem %}
+    <li><a href="{$aItem.url}">{$aItem.synopsis|html}</a></li>
+    {% onEmpty %}
+    {% endloop %}
+    </ul>
 </td>
 </tr>
+
+{% loop in $agItem.comments as $cmnt %}
+<tr><td></td>
+<td>
+<hr>
+<div>{$cmnt.html}</div>
+<table>
+{% loop in $cmnt.responses as $response %}
+<tr>
+<td>{$response.userName}</td>
+<td>{$response.choice}</td>
+<td>{$response.html}</td>
+</tr>
+{% onEmpty %}
+{% endloop %}
+</table>
+<div>{$cmnt.outcome}</div>
+</td>
+</tr>
+{% onEmpty %}
+{% endloop %}
+
 {% endif %}
-{% else %}
-<!-- not showing schedule breaks -->
 {% endif %}
 {% onEmpty %}
 No agenda items specified for this meeting
