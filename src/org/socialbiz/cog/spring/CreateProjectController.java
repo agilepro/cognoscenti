@@ -27,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AddressListEntry;
-import org.socialbiz.cog.AgentRule;
 import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.BaseRecord;
@@ -42,7 +41,6 @@ import org.socialbiz.cog.RemoteGoal;
 import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.UserProfile;
-import org.socialbiz.cog.api.ProjectSync;
 import org.socialbiz.cog.api.RemoteProject;
 import org.socialbiz.cog.exception.NGException;
 import org.springframework.stereotype.Controller;
@@ -78,7 +76,6 @@ public class CreateProjectController extends BaseController {
 
             JSONObject newConfig = getPostedObject(ar);
             String workspaceName = newConfig.getString("newName");
-            String upstream    = newConfig.optString("upstream", null);
 
             //first, if given a template, check to make sure it exists else error before creating workspace
             String template    = newConfig.optString("template", null);
@@ -88,7 +85,7 @@ public class CreateProjectController extends BaseController {
             }
 
             //now actually create it
-            NGWorkspace newWorkspace = createWorkspace(ar, site, workspaceName, upstream);
+            NGWorkspace newWorkspace = createWorkspace(ar, site, workspaceName);
 
             //set the purpose / description
             String purpose     = newConfig.optString("purpose", "");
@@ -120,168 +117,6 @@ public class CreateProjectController extends BaseController {
     }
 
 
-
-
-    @RequestMapping(value = "/{siteId}/$/createClone.form", method = RequestMethod.POST)
-    public void createClone(@PathVariable String siteId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception
-    {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar);
-                return;
-            }
-
-            String upstream = ar.reqParam("upstream");
-            RemoteProject rp = new RemoteProject(upstream);
-
-            String remoteName = rp.getName();
-
-            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
-
-            NGWorkspace project = createWorkspace(ar, site, remoteName+"(clone)", upstream);
-            ar.setPageAccessLevels(project);
-            project.saveFile(ar, "Created new cloned project");
-
-            response.sendRedirect(ar.retPath+"t/"+siteId+"/"+project.getKey()+"/SyncAttachment.htm");
-
-        }catch(Exception ex){
-            throw new JSONException("Unable to clone workspace in site: {0}", ex, siteId);
-        }
-    }
-
-
-    @RequestMapping(value = "/{siteId}/{pageId}/createProjectFromTask.form", method = RequestMethod.POST)
-    public void createProjectFromTask(@PathVariable String siteId,String pageId,
-            ModelMap model, HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
-
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar);
-                return;
-            }
-            String goUrl = ar.reqParam("goUrl");
-            String parentTaskId=goUrl.substring(goUrl.lastIndexOf("=")+1,goUrl.length());
-            String parentProcessUrl=ar.reqParam("parentProcessUrl");
-
-            NGWorkspace subProcess= createTemplateProject(ar,siteId);
-            linkSubProcessToTask(ar,subProcess,parentTaskId,parentProcessUrl);
-
-            response.sendRedirect(goUrl);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.create.template.project", new Object[]{pageId,siteId} , ex);
-        }
-    }
-
-    @RequestMapping(value = "/{userId}/createProjectFromRemoteGoal.form", method = RequestMethod.POST)
-    public void createProjectFromRemoteGoal(@PathVariable String userId,
-            ModelMap model, HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
-
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar);
-                return;
-            }
-            String goUrl = ar.reqParam("goUrl");
-            String siteId=ar.reqParam("siteId");
-
-            NGWorkspace newWorkspace = createTemplateProject(ar,siteId);
-
-            if (goUrl==null) {
-                goUrl = ar.retPath+ar.getDefaultURL(newWorkspace);
-            }
-            response.sendRedirect(goUrl);
-        }catch(Exception ex){
-            throw new Exception("Failed to create project for user "+userId, ex);
-        }
-    }
-
-    @RequestMapping(value = "/{userId}/RunAgentsManually.form", method = RequestMethod.POST)
-    public void runAgentsManual(@PathVariable String userId,
-            ModelMap model, HttpServletRequest request,
-            HttpServletResponse response)
-    throws Exception {
-
-        try {
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar);
-                return;
-            }
-            NGWorkspace created = createProjectFromAgentRules(ar);
-            String goUrl = "Agents.htm";
-            if (created!=null){
-                goUrl = ar.baseURL + ar.getDefaultURL(created);
-            }
-            response.sendRedirect(goUrl);
-        }catch(Exception ex){
-            throw new Exception("Failed to create project for user "+userId, ex);
-        }
-    }
-
-    private NGWorkspace createProjectFromAgentRules(AuthRequest ar) throws Exception {
-        Cognoscenti cog = ar.getCogInstance();
-        UserManager userManager = cog.getUserManager();
-        UserProfile uProf = ar.getUserProfile();
-        UserPage uPage = uProf.getUserPage();
-
-        for (RemoteGoal rg : uPage.getRemoteGoals()) {
-            for (AgentRule rule : uPage.getAgentRules()) {
-                String subjExpr = rule.getSubjExpr();
-                String descExpr = rule.getDescExpr();
-                String subj = rg.getSynopsis();
-                String desc = rg.getDescription();
-                if (subjExpr!=null & subj!=null & subjExpr.length()>0) {
-                    if (!subj.contains(subjExpr)) {
-                        continue;
-                    }
-                }
-                if (descExpr!=null & desc!=null & descExpr.length()>0) {
-                    if (!desc.contains(descExpr)) {
-                        continue;
-                    }
-                }
-
-                String upstream = rg.getProjectAccessURL();
-                NGWorkspace newWorkspace = ar.getCogInstance().getWorkspaceByUpstreamLink(upstream);
-                if (newWorkspace!=null) {
-                    //looks like a clone already exists, so nothing more to do with this one
-                    continue;
-                }
-
-                //found one, now use it
-                String siteId = rule.getSiteKey();
-                String templateKey = rule.getTemplate();
-                String projectName = rg.getProjectName() + " (clone)";
-
-                UserProfile owner = userManager.findUserByAnyIdOrFail(rule.getOwner());
-
-                AuthRequest dummy = new AuthDummy(owner, ar.w, ar.getCogInstance());
-
-                NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
-                newWorkspace = createWorkspace(dummy, site, projectName, upstream);
-                if (templateKey!=null && templateKey.length()>0) {
-                    NGWorkspace template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(templateKey).getWorkspace();
-                    newWorkspace.injectTemplate(ar, template_ngp);
-                }
-                if (upstream!=null && upstream.length()>0) {
-                    RemoteProject remProj = new RemoteProject(upstream);
-                    ProjectSync ps = new ProjectSync(newWorkspace, remProj, ar, "xxx");
-                    ps.downloadAll();
-                }
-                newWorkspace.saveContent(ar, "Created by agent rule "+rule.getId());
-                return newWorkspace;
-            }
-        }
-        return null;
-    }
 
     ////////////////// HELPER FUNCTIONS /////////////////////////////////
 
@@ -337,8 +172,7 @@ public class CreateProjectController extends BaseController {
      * Creates a workspace, but does not save it.
      * Caller must save the workspace ... otherwise bad things could happen.
      */
-    private static NGWorkspace createWorkspace(AuthRequest ar, NGBook site, String workspaceName,
-            String upstream) throws Exception {
+    private static NGWorkspace createWorkspace(AuthRequest ar, NGBook site, String workspaceName) throws Exception {
         UserProfile uProf = ar.getUserProfile();
         if (!site.primaryOrSecondaryPermission(uProf)) {
             throw new NGException("nugen.exception.not.member.of.account",
@@ -358,11 +192,6 @@ public class CreateProjectController extends BaseController {
         nameSet.add(workspaceName);
         newWorkspace.setPageNames(nameSet);
 
-        //check for and set the upstream link
-        if (upstream!=null && upstream.length()>0) {
-            newWorkspace.setUpstreamLink(upstream);
-        }
-
         newWorkspace.setSite(site);
 
         ar.getCogInstance().makeIndexForWorkspace(newWorkspace);
@@ -380,8 +209,7 @@ public class CreateProjectController extends BaseController {
             }
 
             String projectName = ar.reqParam("projectname").trim();
-            String upstream    = ar.defParam("upstream", null);
-            NGWorkspace newWorkspace = createWorkspace(ar, site, projectName, upstream);
+            NGWorkspace newWorkspace = createWorkspace(ar, site, projectName);
             ar.setPageAccessLevels(newWorkspace);
 
             String templateName = ar.defParam("templateName", null);

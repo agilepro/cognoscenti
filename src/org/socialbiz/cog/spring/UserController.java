@@ -38,7 +38,6 @@ import jxl.Workbook;
 
 import org.socialbiz.cog.AccessControl;
 import org.socialbiz.cog.AddressListEntry;
-import org.socialbiz.cog.AgentRule;
 import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.BaseRecord;
@@ -240,39 +239,6 @@ public class UserController extends BaseController {
         streamJSPUserLogged2(request, response, userKey, "../jsp/RemoteProfiles");
     }
 
-    @RequestMapping(value = "/{userKey}/Agents.htm", method = RequestMethod.GET)
-    public void Agents(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "../jsp/Agents");
-    }
-
-    @RequestMapping(value = "/{userKey}/userRemoteTasks.htm", method = RequestMethod.GET)
-    public void consolidatedTasks(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        streamJSPUserLogged2(request, response, userKey, "../jsp/UserRemoteTasks");
-    }
-
-    @RequestMapping(value = "/{userKey}/EditAgent.htm", method = RequestMethod.GET)
-    public void EditAgent(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (ar.isLoggedIn()) {
-                //only check if the user logged in, because the display will fail on that case
-                UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-                UserPage uPage = userBeingViewed.getUserPage();
-                String agentId = ar.reqParam("id");
-                AgentRule agent = uPage.findAgentRule(agentId);
-                if (agent==null) {
-                    throw new Exception("Unable to find an agent with id="+agentId);
-                }
-            }
-            streamJSPUserLogged2(request, response, userKey, "../jsp/EditAgent");
-        }
-        catch(Exception ex){
-            throw new NGException("nugen.operation.fail.usertask.page", new Object[]{userKey} , ex);
-        }
-    }
 
     @RequestMapping(value = "/{userKey}/userAccounts.htm", method = RequestMethod.GET)
     public void loadUserAccounts(@PathVariable String userKey,
@@ -287,21 +253,6 @@ public class UserController extends BaseController {
         streamJSPUserLogged2(request, response, userKey, "../jsp/UserProfileEdit");
     }
 
-    @RequestMapping(value = "/{userKey}/ViewRemoteTask.htm", method = RequestMethod.GET)
-    public void ViewRemoteTask(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        if(ar.isLoggedIn()){
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-            UserPage uPage = userBeingViewed.getUserPage();
-            String accessUrl = ar.reqParam("url");
-            RemoteGoal rg =  uPage.findRemoteGoal(accessUrl);
-            if (rg==null) {
-                throw new Exception("unable to find a remote goal records with the url="+accessUrl);
-            }
-        }
-        streamJSPUserLoggedIn(ar, userKey, "ViewRemoteTask");
-    }
 
     /**
     * This lists the connections so that a user can select one when browsing
@@ -383,43 +334,6 @@ public class UserController extends BaseController {
             ar.flush();
         }catch(Exception ex){
             Exception ee = new Exception("Unable to get update from remote profile.", ex);
-            streamException(ee, ar);
-        }
-    }
-
-    @RequestMapping(value = "/{userKey}/AgentAction.json", method = RequestMethod.POST)
-    public void AgentAction(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        try{
-            ar.assertLoggedIn("Must be logged in to look up agents.");
-
-            UserProfile userBeingViewed = UserManager.getUserProfileOrFail(userKey);
-            UserPage uPage = userBeingViewed.getUserPage();
-
-            String aid = ar.reqParam("aid");
-            JSONObject agentInfo = getPostedObject(ar);
-
-            AgentRule agent = null;
-            if ("~new~".equals(aid)) {
-                agent = uPage.createAgentRule();
-            }
-            else {
-                agent = uPage.findAgentRule(aid);
-                if (agent==null) {
-                    throw new Exception("Unable to find an agent with id = "+aid);
-                }
-            }
-            agent.updateJSON(agentInfo);
-
-            uPage.save();
-
-            JSONObject repo = agent.getJSON();
-            repo.write(ar.w, 2, 2);
-            ar.flush();
-        }catch(Exception ex){
-            Exception ee = new Exception("Unable to update Agent for user.", ex);
             streamException(ee, ar);
         }
     }
@@ -1287,45 +1201,6 @@ public class UserController extends BaseController {
             }
             streamJSPUserLogged2(request, response, userKey, "../jsp/UserContacts");
         }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
-        }
-    }
-
-    @RequestMapping(value = "/{userKey}/userConnections.htm", method = RequestMethod.GET)
-    public void userConnections(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        try{
-
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-
-            if(ar.isLoggedIn()){
-                UserProfile loggedInUser = ar.getUserProfile();
-                String userName = loggedInUser.getName();
-
-                if (userName==null || userName.length()==0) {
-                    userName = loggedInUser.getKey();
-                }
-                if (userName.length()>28) {
-                    userName = userName.substring(0,28);
-                }
-
-                String isRequestingForNewProjectUsingLinks = ar.defParam( "projectName", null );
-                String bookForNewProject = ar.defParam( "bookKey", null );
-
-                if(isRequestingForNewProjectUsingLinks!=null && bookForNewProject!=null){
-                    List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
-                    if(foundPages.size()>0){
-                        NGPageIndex foundPage = foundPages.get( 0 );
-                        response.sendRedirect(ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
-                        return;
-                    }
-                }
-
-                request.setAttribute("userName",userName);
-            }
-            streamJSPUserLogged2(request, response, userKey, "../jsp/UserConnections");
-        }
-        catch(Exception ex){
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
         }
     }

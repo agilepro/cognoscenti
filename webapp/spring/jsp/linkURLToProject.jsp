@@ -71,7 +71,7 @@ app.controller('myCtrl', function($scope, $http) {
         $http.post(postURL, postdata)
         .success( function(data) {
             $scope.newLink = data;
-            window.location = "listAttachments.htm";
+            window.location = "DocsList.htm";
 
         })
         .error( function(data, status, headers, config) {

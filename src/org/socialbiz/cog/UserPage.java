@@ -54,7 +54,6 @@ public class UserPage extends ContainerCommon
     private DOMFace profileRefs = null;
     private List<ProfileRef> profileList = null;
     private DOMFace agentRules = null;
-    private List<AgentRule> agentList = null;
 
 
     public UserPage(File file, Document newDoc, String userKey)
@@ -131,9 +130,6 @@ public class UserPage extends ContainerCommon
             }
             for (ConnectionSettings cs : getAllConnectionSettings()) {
                 existingIds.add(cs.getId());
-            }
-            for (AgentRule ar : getAgentRules()) {
-                existingIds.add(ar.getId());
             }
         }
         return IdGenerator.generateFourDigit(existingIds);
@@ -629,39 +625,6 @@ public class UserPage extends ContainerCommon
             profileList.remove(found);
         }
     }
-
-
-    public List<AgentRule> getAgentRules() throws Exception {
-        if (agentRules==null) {
-            agentRules = requireChild("AgentRules", DOMFace.class);
-        }
-        if (agentList==null) {
-            agentList = agentRules.getChildren("AgentRule", AgentRule.class);
-        }
-        return agentList;
-    }
-    public AgentRule createAgentRule() throws Exception {
-        if (agentRules==null) {
-            agentRules = requireChild("AgentRules", DOMFace.class);
-        }
-        agentList=null;
-        AgentRule newOne = agentRules.createChild("AgentRule", AgentRule.class);
-        newOne.setId(getUniqueOnPage());
-        return newOne;
-    }
-    public AgentRule findAgentRule(String id) throws Exception {
-        for (AgentRule ar : getAgentRules()) {
-            if (id.equals(ar.getId())) {
-                return ar;
-            }
-        }
-        return null;
-    }
-    public void deleteAgentRule(String id) throws Exception {
-        AgentRule found = findAgentRule(id);
-        agentRules.removeChild(found);
-    }
-
 
 
 

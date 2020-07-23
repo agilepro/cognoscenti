@@ -666,14 +666,6 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-    public String getUpstreamLink() {
-        return pageInfo.getScalar("upstream");
-    }
-
-    public void setUpstreamLink(String uStrm) {
-        pageInfo.setScalar("upstream", uStrm);
-    }
-
     public void findLinks(List<String> v) throws Exception {
         for (NGSection sec : getAllSections()) {
             sec.findLinks(v);
@@ -1753,9 +1745,6 @@ public abstract class NGPage extends ContainerCommon {
             else {
                 setAccessState(ar, ACCESS_STATE_LIVE);
             }
-        }
-        if (newConfig.has("upstream")) {
-            setUpstreamLink(newConfig.getString("upstream"));
         }
         if (newConfig.has("projectMail")) {
             setWorkspaceMailId(newConfig.getString("projectMail"));

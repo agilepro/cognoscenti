@@ -169,8 +169,7 @@
         "name": "Contract 13-C-0113-Fujitsu.pdf",
         "public": false,
         "size": 409333,
-        "universalid": "CSWSLRBRG@sec-inline-xbrl@0056",
-        "upstream": true
+        "universalid": "CSWSLRBRG@sec-inline-xbrl@0056"
       },
 
 */
@@ -181,6 +180,7 @@
 <style>
 .labelColumn:hover {
     background-color:#ECB6F9;
+    cursor:pointer;
 }
 
 .agendaItemFull {
@@ -984,7 +984,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <td ng-repeat="item in [selectedItem]" style="vertical-align: top;">
     <table class="table" ng-show="item">
     <col width="150">
-    <tr>
+    <tr ng-show="meeting.state<=2">
       <td></td>
       <td>
           <button ng-click="toggleSpacer(selectedItem)" class="btn btn-primary btn-raised">
@@ -1003,7 +1003,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     </tr>
     <tr ng-dblclick="openAgenda(selectedItem)">
       <td ng-click="openAgenda(selectedItem)" class="labelColumn">Subject:</td>
-      <td ng-style="timerStyleComplete(item)">{{selectedItem.subject}}</td>
+      <td ng-style="timerStyleComplete(item)"><span class="h2">{{selectedItem.subject}}</span></td>
     </tr>
     <tr ng-dblclick="openAgenda(selectedItem,'Description')" ng-hide="selectedItem.isSpacer">
       <td ng-click="openAgenda(selectedItem,'Description')" class="labelColumn">Description:</td>

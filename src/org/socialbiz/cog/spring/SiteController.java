@@ -336,25 +336,6 @@ public class SiteController extends BaseController {
         showJSPMembers(ar, siteId, null, "accountCreateProject");
     }
 
-    @RequestMapping(value = "/{siteId}/$/accountCloneProject.htm", method = RequestMethod.GET)
-    public void accountCloneProject(@PathVariable String siteId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if(checkLogin(ar)){
-                return;
-            }
-            prepareSiteView(ar, siteId);
-            if (executiveCheckViews(ar)) {
-                return;
-            }
-
-            streamJSP(ar, "accountCloneProject");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.account.process.page", new Object[]{siteId} , ex);
-        }
-    }
 
     @RequestMapping(value = "/{siteId}/$/SiteUsers.htm", method = RequestMethod.GET)
     public void SiteUsers(@PathVariable String siteId,

@@ -971,7 +971,6 @@ public class TopicRecord extends CommentContainer {
              setSubject(noteObj.getString("subject"));
          }
          if (noteObj.has("modifieduser") && noteObj.has("modifiedtime")) {
-             //this is needed for the project upstream/downstream settings
              setLastEdited(noteObj.getLong("modTime"));
              setModUser(AddressListEntry.fromJSON(noteObj.getJSONObject("modUser")));
          }

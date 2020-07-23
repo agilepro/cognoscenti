@@ -977,9 +977,7 @@ public class GoalRecord extends BaseRecord {
         return thisGoal;
     }
 
-    //TODO: looks like this can be used either to update from an upstream representation
-    //or a JSON from the UI, but the behavior should probably be a little different.
-    //probably need two separate functions for that.
+    //TODO: looks like this can be used to update a JSON from the UI
     public void updateGoalFromJSON(JSONObject goalObj, NGWorkspace ngp, AuthRequest ar) throws Exception {
         String universalid = goalObj.getString("universalid");
         if (!universalid.equals(getUniversalId())) {

@@ -662,7 +662,6 @@ public class MainTabsViewControler extends BaseController {
                       HistoryRecord.CONTEXT_TYPE_TASK, HistoryRecord.EVENT_TYPE_CREATED, ar,
                       "action item synopsis: "+gr.getSynopsis());
 
-              //currently the update from JSON is designed for upstream sync.
               //There is a check that requires this to do the update.
               goalInfo.put("universalid", gr.getUniversalId());
               gr.updateGoalFromJSON(goalInfo, ngw, ar);

@@ -126,8 +126,6 @@ app.controller('myCtrl', function($scope, $http) {
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem"
               href="accountCreateProject.htm" >Create New Workspace</a></li>
-          <li role="presentation" ng-show="showExperimental"><a role="menuitem"
-              href="accountCloneProject.htm" >Clone Remote Workspace</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" 
               ng-click="garbageCollect()">Garbage Collect</a></li>

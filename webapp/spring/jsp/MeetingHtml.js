@@ -1666,7 +1666,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         window.open("docinfo"+docId+".htm","_blank");
     }
     $scope.navigateToDocDetails = function(docId) {
-        window.open("editDetails"+docId+".htm","_blank");
+        window.open("DocsDetails"+docId+".htm","_blank");
     }
     $scope.sendDocByEmail = function(docId) {
         window.open("SendNote.htm?att="+docId,"_blank");

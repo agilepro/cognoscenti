@@ -611,6 +611,9 @@ public class AttachmentRecord extends CommentContainer {
         if (projectFolder==null) {
             throw new Exception("NGProject container has no containing folder????");
         }
+        
+        //in case the attachment is deleted, undelete it for this new version
+        clearDeleted();
 
         String displayName = getNiceName();
         AttachmentVersion av = AttachmentVersionProject.getNewProjectVersion(projectFolder,
@@ -684,30 +687,6 @@ public class AttachmentRecord extends CommentContainer {
 
     public String getDeleteUser() {
         return getAttribute("deleteUser");
-    }
-
-    /**
-     * Specifies whether this document should be synchronized with the upstream
-     * project or not.  If 'true' then this document should be shared and
-     * synchronized upstream.  If 'false' then this project is NOT sharing this
-     * document with the upstream project.
-     */
-    public boolean isUpstream() {
-        return "true".equals(getAttribute("upstream"));
-    }
-    public void setUpstream(boolean bVal) {
-        if (bVal) {
-            setAttribute("upstream", "true");
-            if (!isUpstream()) {
-                throw new RuntimeException("tried to set upstream and it didn't work");
-            }
-        }
-        else {
-            setAttribute("upstream", null);
-            if (isUpstream()) {
-                throw new RuntimeException("Can't figure out why setting the attribute is not working");
-            }
-        }
     }
 
 
@@ -1052,7 +1031,6 @@ public class AttachmentRecord extends CommentContainer {
             thisDoc.put("url",          getURLValue());
         }
         thisDoc.put("public",       isPublic());
-        thisDoc.put("upstream",     isUpstream());
         thisDoc.put("purgeDate",    getPurgeDate());
         return thisDoc;
     }

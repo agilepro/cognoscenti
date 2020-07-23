@@ -62,11 +62,11 @@ import com.purplehillsbooks.json.JSONObject;
 public class ProjectDocsController extends BaseController {
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/listAttachments.htm", method = RequestMethod.GET)
-    public void listAttachments(@PathVariable String siteId,@PathVariable String pageId,
+    @RequestMapping(value = "/{siteId}/{pageId}/DocsList.htm", method = RequestMethod.GET)
+    public void docsList(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPMembers(ar, siteId, pageId, "ListAttachments");
+        BaseController.showJSPMembers(ar, siteId, pageId, "DocsList");
     }
 
 
@@ -77,15 +77,8 @@ public class ProjectDocsController extends BaseController {
         BaseController.showJSPMembers(ar, siteId, pageId, "DocsFolder");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/docsDeleted.htm", method = RequestMethod.GET)
-    public void showDeletedAttachments(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        BaseController.showJSPMembers(ar, siteId, pageId, "DocsDeleted");
-    }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/docsUpload.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/DocsUpload.htm", method = RequestMethod.GET)
     protected void docsUpload(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -96,7 +89,7 @@ public class ProjectDocsController extends BaseController {
     /**
      * Let the user decide how to add a document to the project
      */
-    @RequestMapping(value = "/{siteId}/{pageId}/docsAdd.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/DocsAdd.htm", method = RequestMethod.GET)
     protected void docsAdd(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -114,8 +107,8 @@ public class ProjectDocsController extends BaseController {
         BaseController.showJSPAnonymous(ar, siteId, pageId, "docinfo");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/editDetails{aid}.htm", method = RequestMethod.GET)
-    protected void editDetails(@PathVariable String siteId,
+    @RequestMapping(value = "/{siteId}/{pageId}/DocsDetails{aid}.htm", method = RequestMethod.GET)
+    protected void docsDetails(@PathVariable String siteId,
              @PathVariable String pageId, @PathVariable String aid,
              HttpServletRequest request,  HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -130,11 +123,11 @@ public class ProjectDocsController extends BaseController {
         }
 
         request.setAttribute("aid", aid);
-        BaseController.showJSPAnonymous(ar, siteId, pageId, "editDetails");
+        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsDetails");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/fileVersions.htm", method = RequestMethod.GET)
-    protected void fileVersions(@PathVariable String siteId,
+    @RequestMapping(value = "/{siteId}/{pageId}/DocsVersions.htm", method = RequestMethod.GET)
+    protected void docsVersions(@PathVariable String siteId,
              @PathVariable String pageId,
              HttpServletRequest request,  HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -149,10 +142,10 @@ public class ProjectDocsController extends BaseController {
         }
 
         request.setAttribute("aid", ar.reqParam("aid"));
-        BaseController.showJSPAnonymous(ar, siteId, pageId, "fileVersions");
+        BaseController.showJSPAnonymous(ar, siteId, pageId, "DocsVersions");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/docsRevise.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/DocsRevise.htm", method = RequestMethod.GET)
     protected void docsRevise(@PathVariable String siteId,
              @PathVariable String pageId,
              HttpServletRequest request,  HttpServletResponse response) throws Exception {
@@ -326,21 +319,6 @@ public class ProjectDocsController extends BaseController {
 
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/SyncAttachment.htm", method = RequestMethod.GET)
-    protected void syncAttachment(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            registerRequiredProject(ar, siteId, pageId);
-            showJSPMembers(ar, siteId, pageId, "SyncAttachment");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.sync.share.point.attachment.page",
-                    new Object[]{pageId,siteId} , ex);
-        }
-    }
-
-
     @RequestMapping(value = "/{siteId}/{pageId}/docsUpdate.json", method = RequestMethod.POST)
     public void docsUpdate(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -386,7 +364,7 @@ public class ProjectDocsController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/docsList.json", method = RequestMethod.GET)
-    public void docsList(@PathVariable String siteId,@PathVariable String pageId,
+    public void docsListJSON(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{

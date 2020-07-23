@@ -41,8 +41,7 @@
         "modifieduser": "rob.blake@trintech.com",
         "name": "FujitsuTrintech_SECInlineXBRLProject_CBE_HighlightUserStory_V3.docx",
         "size": 246419,
-        "universalid": "CSWSLRBRG@sec-inline-xbrl@8699",
-        "upstream": true
+        "universalid": "CSWSLRBRG@sec-inline-xbrl@8699"
       },
 */
 
@@ -236,17 +235,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
           <li role="presentation"><a role="menuitem" href="docsFolder.htm">
               Show Folders</a>
           </li>
-          <li role="presentation"><a role="menuitem" tabindex="-1" href="docsAdd.htm">
+          <li role="presentation"><a role="menuitem" tabindex="-1" href="DocsAdd.htm">
               <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a>
           </li>
           <li role="presentation"><a role="menuitem" tabindex="-1" href="SendNote.htm">
               <img src="<%= ar.retPath%>assets/images/iconEmailNote.gif" width="13" height="15" alt="" /> Send Email</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="SyncAttachment.htm">
-              <img src="<%= ar.retPath%>assets/iconSync.gif" width="13" height="15" alt="" /> Synchronize</a>
-          </li>
-          <li role="presentation"><a role="menuitem" href="docsDeleted.htm">
-              List Deleted Docs</a>
           </li>
           <li role="presentation"><a role="menuitem" href="sharePorts.htm">
               Share Ports</a>
@@ -312,7 +305,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                     data-toggle="dropdown"> <span class="caret"></span> </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="docsAdd.htm"> <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a></li>
+                      <a role="menuitem" tabindex="-1" href="DocsAdd.htm"> <img src="<%= ar.retPath%>assets/iconUpload.png" width="13" height="15" alt="" /> Add Document</a></li>
                 </ul>
               </div>
             </td>
@@ -330,11 +323,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="docinfo{{rec.id}}.htm">Access Document</a></li>
                   <li role="presentation" ng-show="rec.attType=='FILE'">
-                      <a role="menuitem" tabindex="-1" href="docsRevise.htm?aid={{rec.id}}">Upload Revised Document</a></li>
+                      <a role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Upload Revised Document</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="editDetails{{rec.id}}.htm">Edit Document Details</a></li>
+                      <a role="menuitem" tabindex="-1" href="DocsDetails{{rec.id}}.htm">Edit Document Details</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="fileVersions.htm?aid={{rec.id}}">List Versions</a></li>
+                      <a role="menuitem" tabindex="-1" href="DocsVersions.htm?aid={{rec.id}}">List Versions</a></li>
                   <li role="presentation" class="divider"></li>
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" ng-click="toggleDelete(rec)">
@@ -345,8 +338,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               </div>
             </td>
             <td>
-                <a href="editDetails{{rec.id}}.htm">
-                    <span ng-show="rec.upstream"><img src="<%=ar.retPath%>assets/images/iconUpstream.png"></span>
+                <a href="DocsDetails{{rec.id}}.htm">
                     <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
                     <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
                 </a>

@@ -160,8 +160,7 @@
         "name": "Contract 13-C-0113-Fujitsu.pdf",
         "public": false,
         "size": 409333,
-        "universalid": "CSWSLRBRG@sec-inline-xbrl@0056",
-        "upstream": true
+        "universalid": "CSWSLRBRG@sec-inline-xbrl@0056"
       },
 
 */

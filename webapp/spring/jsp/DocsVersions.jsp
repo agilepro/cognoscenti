@@ -62,8 +62,7 @@
       "name": "FujitsuTrintech_SECInlineXBRLProject_SelectiveValidation_V6ProposedFinal.docx",
       "public": false,
       "size": 57775,
-      "universalid": "JRNJXVMSG@sec-inline-xbrl@5214",
-      "upstream": true
+      "universalid": "JRNJXVMSG@sec-inline-xbrl@5214"
     };
     $scope.allVersions = [{
       "date": 1409250772993,
@@ -115,11 +114,11 @@ app.controller('myCtrl', function($scope, $http) {
           <li role="presentation"><a role="menuitem" tabindex="-1"
               href="docinfo{{attachInfo.id}}.htm" >Access Document</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="docsRevise.htm?aid={{attachInfo.id}}" >Upload New Version</a></li>
+              href="DocsRevise.htm?aid={{attachInfo.id}}" >Upload New Version</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="editDetails{{attachInfo.id}}.htm" >Edit Details</a></li>
+              href="DocsDetails{{attachInfo.id}}.htm" >Edit Details</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="fileVersions.htm?aid={{attachInfo.id}}">List Versions</a></li>
+              href="DocsVersions.htm?aid={{attachInfo.id}}">List Versions</a></li>
           <li role="presentation"><a role="menuitem"
               href="SendNote.htm?att={{attachInfo.id}}">Send Document by Email</a></li>
         </ul>

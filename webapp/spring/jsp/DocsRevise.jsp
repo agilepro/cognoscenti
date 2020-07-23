@@ -56,7 +56,7 @@ app.controller('myCtrl', function($scope, $http) {
     window.setMainPageTitle("Upload Revised Document");
     window.MY_SCOPE = $scope;
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
-    $scope.docInfo = <% docInfo.write(ar.w, 2,4); %>;
+    $scope.attachInfo = <% docInfo.write(ar.w, 2,4); %>;
     $scope.fileProgress = [];
 
     $scope.showError = false;
@@ -102,10 +102,10 @@ app.controller('myCtrl', function($scope, $http) {
         var op = {operation: "updateDoc"};
         op.tempFileName = oneProgress.tempFileName;
         op.doc = {};
-        op.doc.description = $scope.docInfo.description;
-        op.doc.name        = $scope.docInfo.name;
-        op.doc.id          = $scope.docInfo.id;
-        op.doc.universalid = $scope.docInfo.universalid;
+        op.doc.description = $scope.attachInfo.description;
+        op.doc.name        = $scope.attachInfo.name;
+        op.doc.id          = $scope.attachInfo.id;
+        op.doc.universalid = $scope.attachInfo.universalid;
         var postdata = JSON.stringify(op);
         $http.post(postURL, postdata)
         .success( function(data) {
@@ -130,9 +130,9 @@ app.controller('myCtrl', function($scope, $http) {
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="docsUpload.htm" >Clear</a></li>
+              href="DocsList.htm" >List Document</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="listAttachments.htm" >List Document</a></li>
+              href="DocsVersions.htm?aid={{attachInfo.id}}">List Versions</a></li>
         </ul>
       </span>
     </div>
@@ -144,7 +144,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <td class="gridTableColummHeader">Attachment:</td>
                     <td style="width:20px;"></td>
                     <td>
-                        {{docInfo.name}}
+                        {{attachInfo.name}}
                     </td>
                 </tr>
                 <tr><td style="height:10px"></td></tr>
@@ -152,7 +152,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <td class="gridTableColummHeader">Drop Here:</td>
                     <td style="width:20px;"></td>
                     <td>
-                        <div id="holder" class="nicenice">Drop "{{docInfo.name}}" File Here</div>
+                        <div id="holder" class="nicenice">Drop "{{attachInfo.name}}" File Here</div>
                     </td>
                 </tr>
                 <tr><td style="height:10px"></td></tr>
@@ -168,12 +168,12 @@ app.controller('myCtrl', function($scope, $http) {
                               {{fp.status}}</div>
                               <div style="clear:both;"></div>
                           </div>
-                          <div ng-show="fp.file.name!=docInfo.name">
-                              <span style="color:red;">Uploading as </span><b>{{docInfo.name}}</b>
+                          <div ng-show="fp.file.name!=attachInfo.name">
+                              <span style="color:red;">Uploading as </span><b>{{attachInfo.name}}</b>
                           </div>
                           <div ng-hide="fp.done">
                              Description:<br/>
-                             <textarea ng-model="docInfo.description" class="form-control"></textarea>
+                             <textarea ng-model="attachInfo.description" class="form-control"></textarea>
                           </div>
                           <div ng-hide="fp.done">
                               <button ng-click="startUpload(fp)" class="btn btn-primary btn-raised">Upload</button>

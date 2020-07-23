@@ -49,7 +49,6 @@ public class Cognoscenti {
     private List<NGPageIndex> allContainers;
     private Hashtable<String, NGPageIndex> keyToSites;
     private Hashtable<String, NGPageIndex> keyToWorkspace;
-    private Hashtable<String, NGPageIndex> upstreamToContainer;
 
     //tracking who is online at the moment.
     private List<Visitation> visitationList = new ArrayList<Visitation>();
@@ -179,7 +178,6 @@ System.out.println("Weaver Server Object == Start the Server");
         allContainers = null;
         keyToSites = null;
         keyToWorkspace = null;
-        upstreamToContainer = null;
         projectsWithEmailToSend = null;
     }
 
@@ -547,22 +545,6 @@ System.out.println("Weaver Server Object == Start the Server");
         return ret;
     }
 
-    public NGWorkspace getWorkspaceByUpstreamLink(String upstream) throws Exception {
-        if (upstream==null || upstream.length()==0) {
-            return null;
-        }
-        int lastSlash = upstream.lastIndexOf("/");
-        if (lastSlash<10) {
-            throw new Exception("upstream value was passed that does not look like a URL: "+upstream);
-        }
-        NGPageIndex ngpi = upstreamToContainer.get(upstream.substring(0,lastSlash+1));
-        if (ngpi != null) {
-            return ngpi.getWorkspace();
-        }
-        return null;
-    }
-
-
 
     private synchronized void initIndexOfContainers() throws Exception {
         if (allContainers == null) {
@@ -576,7 +558,6 @@ System.out.println("Weaver Server Object == Start the Server");
         NGTerm.initialize();
         keyToSites = new Hashtable<String, NGPageIndex>();
         keyToWorkspace = new Hashtable<String, NGPageIndex>();
-        upstreamToContainer = new Hashtable<String, NGPageIndex>();
         allContainers = new ArrayList<NGPageIndex>();
 
         //TODO: eliminate statics, put them as members of this Cognoscenti class!
@@ -734,13 +715,6 @@ System.out.println("Weaver Server Object == Start the Server");
         }
         allContainers.add(bIndex);
         keyToWorkspace.put(workspaceKey, bIndex);
-
-        //special upstream link handling
-        String upstream = ngw.getUpstreamLink();
-        if (upstream!=null && upstream.length()>0) {
-            int lastSlash = upstream.lastIndexOf("/");
-            upstreamToContainer.put(upstream.substring(0,lastSlash+1), bIndex);
-        }
 
         // look for email and remember if there is some
         if (ngw.countEmailToSend() > 0) {

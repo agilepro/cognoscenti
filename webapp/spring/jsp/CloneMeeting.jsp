@@ -155,7 +155,6 @@ app.controller('myCtrl', function($scope, $http) {
         });
         var postdata = angular.toJson(newMeeting);
         $scope.showError=false;
-        alert("Ready to submit???");
         $http.post(postURL ,postdata)
         .success( function(data) {
             window.location = "MeetingList.htm";

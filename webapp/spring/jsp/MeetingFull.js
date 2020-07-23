@@ -1611,7 +1611,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     }
     $scope.navigateToDocDetails = function(docId) {
         var doc = $scope.getFullDoc(docId);
-        window.open("editDetails"+doc.id+".htm","_blank");
+        window.open("DocsDetails"+doc.id+".htm","_blank");
     }
     $scope.sendDocByEmail = function(docId) {
         var doc = $scope.getFullDoc(docId);

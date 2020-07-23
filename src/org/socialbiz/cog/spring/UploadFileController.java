@@ -128,7 +128,7 @@ public class UploadFileController extends BaseController {
                 ngw.save();
             }
             if (go==null) {
-                response.sendRedirect("listAttachments.htm");
+                response.sendRedirect("DocsList.htm");
             }
             else {
                 response.sendRedirect(go);
@@ -248,7 +248,7 @@ public class UploadFileController extends BaseController {
             attachment.setURLValue(taskUrl);
             ngw.saveFile(ar, "Created Link URL");
 
-            response.sendRedirect("listAttachments.htm");
+            response.sendRedirect("DocsList.htm");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.create.link.url.to.project", new Object[]{pageId,siteId} , ex);
         }
@@ -434,38 +434,5 @@ public class UploadFileController extends BaseController {
                     new Object[]{pageId,siteId} , ex);
         }
      }
-
-
-
-
-    @RequestMapping(value = "/{siteId}/{pageId}/CreateCopy.htm", method = RequestMethod.GET)
-    protected void CreateCopy(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response,
-            @RequestParam(value = "fname", required = false) MultipartFile file)
-            throws Exception {
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
-
-            if(checkLoginMemberFrozen(ar, ngp)){
-                return;
-            }
-
-            String aid = ar.reqParam("aid");
-            AttachmentRecord attachment = ngp.findAttachmentByID(aid);
-
-            if (attachment == null) {
-                throw new NGException("nugen.exception.attachment.not.found" ,new Object[]{ aid});
-            }
-            request.setAttribute("aid", aid);
-            request.setAttribute("title",  ngp.getFullName());
-
-            showJSPMembers(ar, siteId, pageId, "CreateCopy");
-
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.create.copy.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
 
 }

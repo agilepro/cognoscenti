@@ -28,8 +28,6 @@
     String thisPage = ar.getResourceURL(ngw,"admin.htm");
     String allTasksPage = ar.getResourceURL(ngw,"projectAllTasks.htm");
 
-    String upstreamLink = ngw.getUpstreamLink();
-
     List<String> names = ngw.getContainerNames();
 
     String parentKey = ngw.getParentKey();
@@ -87,8 +85,7 @@
       "projectMail": "",
       "purpose": "",
       "showExperimental": false,
-      "site": "goofoof",
-      "upstream": ""
+      "site": "goofoof"
     }
     */
 

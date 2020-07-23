@@ -32,7 +32,6 @@ Required parameter:
         templateList.put(jo);
     }
 
-    String upstream = ar.defParam("upstream", "");
     String desc = ar.defParam("desc", "");
     String pname = ar.defParam("pname", "");
 
@@ -66,7 +65,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     window.setMainPageTitle("Create New Workspace");
     $scope.siteInfo = <% site.getConfigJSON().write(ar.w,2,4); %>;
     $scope.accountKey = "<%ar.writeJS(accountKey);%>";
-    $scope.upstream = "<%ar.writeJS(upstream);%>";
     $scope.pname = "<%ar.writeJS(pname);%>";
     $scope.templateList = <% templateList.write(ar.w,2,4); %>;
     $scope.selectedTemplate = "";
@@ -226,10 +224,6 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
                 ng-options="tmp.name for tmp in templateList">
                 <option value="">-- no template --</option>
         </select>
-    </div>
-    <div class="form-group" ng-show="siteInfo.showExperimental">
-        <label >Upstream Link</label>
-        <input class="form-control" style="width:368px" ng-model="newWorkspace.upstream"/>
     </div>
        
 </div>

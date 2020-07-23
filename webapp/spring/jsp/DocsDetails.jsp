@@ -8,7 +8,7 @@
 %><%@page import="org.socialbiz.cog.dms.ConnectionSettings"
 %><%
 
-    String go      = ar.defParam("go", "listAttachments.htm" );
+    String go      = ar.defParam("go", "DocsList.htm" );
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
@@ -51,8 +51,7 @@
       "modifieduser": "kswenson@us.fujitsu.com",
       "name": "Wines_of_Silicon_Valley.pdf",
       "size": 1149455,
-      "universalid": "EZIGICMWG@facility-1-wellness-circle@8170",
-      "upstream": false
+      "universalid": "EZIGICMWG@facility-1-wellness-circle@8170"
     };
 */
 %>
@@ -161,11 +160,11 @@ app.controller('myCtrl', function($scope, $http) {
           <li role="presentation"><a role="menuitem"
               href="docinfo{{docInfo.id}}.htm">Access Document</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="docsRevise.htm?aid={{docInfo.id}}" >Upload New Version</a></li>
+              href="DocsRevise.htm?aid={{docInfo.id}}" >Upload New Version</a></li>
           <li role="presentation"><a role="menuitem"
-              href="editDetails{{docInfo.id}}.htm">Edit Details</a></li>
+              href="DocsDetails{{docInfo.id}}.htm">Edit Details</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="fileVersions.htm?aid={{docInfo.id}}">List Versions</a></li>
+              href="DocsVersions.htm?aid={{docInfo.id}}">List Versions</a></li>
           <li role="presentation"><a role="menuitem"
               href="SendNote.htm?att={{docInfo.id}}">Send Document by Email</a></li>
         </ul>
@@ -293,14 +292,6 @@ app.controller('myCtrl', function($scope, $http) {
         <%
         }
         %>
-        <tr>
-            <td class="firstColumn">Synchronizing:</td>
-            <td  valign="top">
-            <input type="checkbox" name="visUpstream" value="UPS"
-                   <%if(attachment.isUpstream()){%> checked="checked" <%}%>/>
-            <img src="<%=ar.retPath %>assets/images/iconUpstream.png" /> Upstream Sync
-            </td>
-        </tr>
 
         <tr>
             <td class="firstColumn">Labels:</td>

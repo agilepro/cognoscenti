@@ -531,7 +531,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
                 userUpdate = ar.getBestUserId();
             }
             else {
-                //this needed for license style - upstream and downstream transfers
+                //this needed for license style
                 userUpdate = newDocObj.optString("modifieduser");
                 if (userUpdate==null) {
                     //TODO: for some reason this is not working, and user is not getting set

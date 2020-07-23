@@ -432,7 +432,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         window.location="docinfo"+docId+".htm";
     }
     $scope.navigateToDocDetails = function(docId) {
-        window.location="editDetails"+docId+".htm";
+        window.location="DocsDetails"+docId+".htm";
     }
     $scope.sendDocByEmail = function(docId) {
         window.location="SendNote.htm?att="+docId;

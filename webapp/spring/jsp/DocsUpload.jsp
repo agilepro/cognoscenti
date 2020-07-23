@@ -183,9 +183,9 @@ app.controller('myCtrl', function($scope, $http) {
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="docsUpload.htm" >Clear</a></li>
+              href="DocsUpload.htm" >Clear</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="listAttachments.htm" >List Document</a></li>
+              href="DocsList.htm" >List Document</a></li>
         </ul>
       </span>
     </div>

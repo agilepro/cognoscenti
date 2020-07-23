@@ -60,7 +60,7 @@ app.controller('myCtrl', function($scope, $http) {
     </tr>
     <tr style="height:50px;padding:15px">
         <td style="padding:15px">
-            <button class="btn btn-primary btn-raised" onClick="location.href='docsUpload.htm<%=folderPart%>'">Upload Files</button>
+            <button class="btn btn-primary btn-raised" onClick="location.href='DocsUpload.htm<%=folderPart%>'">Upload Files</button>
         </td>
         <td style="padding:15px">
             <p>Take files from your local disk, and using your browser upload them to the workspace.</p>
@@ -87,15 +87,6 @@ app.controller('myCtrl', function($scope, $http) {
             </p>
         </td>
     </tr>
-    <!--tr style="height:50px;padding:15px">
-        <td style="padding:15px">
-            <button class="btn btn-primary btn-raised" onClick="location.href='linkToRepository.htm<%=folderPart%>'">Attach from Repository</button>
-        </td>
-        <td style="padding:15px"><p>Cognoscenti can access a document repository, using WebDAV or other protocols,
-           to retrieve a document directly from there.   The advantage of this is that later, if the document is
-           changed, the updated document can be synchronized with that document repository.  Either specify the
-           address of that document, or browse the repository using your pre-configured connections.</p></td>
-    </tr-->
     </table>
 </div>
 <!-- end addDocument.jsp -->

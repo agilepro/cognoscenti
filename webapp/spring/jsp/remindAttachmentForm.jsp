@@ -37,7 +37,7 @@ Optional Parameter:
     if (rRec == null){
         throw new NGException("nugen.exception.attachment.not.found", new Object[]{rid});
     }
-    String sendemailReminder = ar.baseURL+"t/"+ngb.getKey()+"/"+ngp.getKey()+"/listAttachments.htm";
+    String sendemailReminder = ar.baseURL+"t/"+ngb.getKey()+"/"+ngp.getKey()+"/DocsList.htm";
 %>
 <script>
 var rid = '<%=rid%>';
