@@ -125,19 +125,21 @@ app.controller('myCtrl', function($scope, $http) {
       </span>
     </div>
 
-    <table class="spacey">
+    <table class="table">
         <thead>
             <tr>
                 <td>Version</td>
+                <td>Name</td>
                 <td>Modified Date</td>
                 <td>File Size</td>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="ver in allVersions">
+                <td>{{ver.num}}</td>
                 <td>
                     <a href="{{ver.link}}" title="Access the content of this version of the attachment">
-                    {{ver.num}}: {{attachInfo.name}}
+                    {{attachInfo.name}}
                     <span ng-show="ver.modified">(Modified)</span>
                     </a>
                 </td>
