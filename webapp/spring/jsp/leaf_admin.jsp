@@ -32,15 +32,12 @@
 
     String parentKey = ngw.getParentKey();
     NGPageIndex parentIndex = cog.getWSByCombinedKey(parentKey);
-    String parentName = "";
-    JSONArray parentWorkspace = new JSONArray();
+    JSONObject parentWorkspace = new JSONObject();
     if (parentIndex!=null) {
-        parentName = parentIndex.containerName;
-        parentWorkspace.put(parentIndex.getJSON4List());
+        parentWorkspace = parentIndex.getJSON4List();
     }
 
     JSONObject workspaceConfig = ngw.getConfigJSON();
-    workspaceConfig.put("parentName", parentName);
 
     JSONArray allProjects = new JSONArray();
     for (NGPageIndex ngpis : cog.getAllProjectsInSite(site.getKey())) {
@@ -81,7 +78,6 @@
       "goal": "",
       "key": "darwin2",
       "parentKey": "",
-      "parentName": "",
       "projectMail": "",
       "purpose": "",
       "showExperimental": false,
@@ -97,7 +93,7 @@
 tagsInputWorkspacePicker  ={
     "placeholder":"Enter workspace name",
     "display-property":"name",
-    "key-property":"comboKey",
+    "key-property":"pageKey",
     "replace-spaces-with-dashes":"false",
     "add-on-space":true,
     "on-tag-added":"updatePlayers()",
@@ -119,8 +115,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.allProjects = <%allProjects.write(out,2,4);%>;
     $scope.recentWorkspaces = <%recentWorkspaces.write(out,2,4);%>;
 
-    //should only be one of these, but have to make it a list because
-    //of the tag-input component.  Only the first one counts
+    //the object form of the parent workspace
     $scope.parentWorkspace = <%parentWorkspace.write(out,2,4);%>;
 
     $scope.showError = false;
@@ -171,13 +166,10 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.saveRecord(newData);
         $scope.isEditing = null;
     }
-    $scope.saveParentKey = function() {
-        if ($scope.parentWorkspace && $scope.parentWorkspace.length>0) {
-            $scope.workspaceConfig.parentKey = $scope.parentWorkspace[0].pageKey;
-        }
-        else {
-            $scope.workspaceConfig.parentKey = "";
-        }
+    $scope.saveParentKey = function(workspace) {
+        console.log("saving parent: ", workspace.pageKey);
+        $scope.workspaceConfig.parentKey = workspace.pageKey;
+        $scope.parentWorkspace = workspace;
         $scope.saveOneField(['parentKey']);
     }
     $scope.clearField = function(fieldName) {
@@ -262,17 +254,12 @@ app.controller('myCtrl', function($scope, $http) {
     };
 
     $scope.cleanUpParent = function() {
-        var realParent = {};
-        $scope.parentWorkspace.forEach( function(item) {
-            realParent = item;
-        });
-        if (realParent.comboKey) {
-            $scope.workspaceConfig.parentKey = realParent.comboKey;
-            $scope.parentWorkspace = [realParent];
+        var realParent = $scope.parentWorkspace;
+        if (realParent && realParent.pageKey) {
+            $scope.workspaceConfig.parentKey = realParent.pageKey;
         }
         else {
             $scope.workspaceConfig.parentKey = "";
-            $scope.parentWorkspace = [];
         }
     }
 
@@ -450,26 +437,15 @@ editBoxStyle {
                 <tr>
                     <td ng-click="setEdit('parentKey');backupParent=parentWorkspace"><label>Parent Circle:</label></td>
                     <td ng-show="isEditing=='parentKey'">
-                      <tags-input ng-model="parentWorkspace"
-                                  placeholder="Enter only one workspace name"
-                                  display-property="name"
-                                  key-property="comboKey"
-                                  replace-spaces-with-dashes="false" add-on-space="true"
-                                  on-tag-added="cleanUpParent($tag)"
-                                  on-tag-removed="cleanUpParent()"
-                                  max-tags="1"
-                                  add-on-blur="false"
-                                  allow-leftover-text="false">
-                          <auto-complete source="loadWorkspaceList($query)" min-length="1"></auto-complete>
-                      </tags-input>
+                      
+                        <button ng-repeat="ws in recentWorkspaces" ng-click="saveParentKey(ws)" class="btn btn-sm btn-raised">
+                            {{ws.name}}</button>
 
-                        <button ng-click="saveParentKey()" class="btn btn-primary btn-raised">
-                            Save</button>
-                        <button ng-click="parentWorkspace=backupParent;cleanUpParent();isEditing==''" class="btn btn-raised">
+                        <button ng-click="parentWorkspace=backupParent;cleanUpParent();isEditing==''" class="btn btn-warning btn-raised">
                             Cancel</button>
                     </td>
                     <td ng-hide="isEditing=='parentKey'" ng-dblclick="setEdit('parentKey');backupParent=parentWorkspace">
-                        <div ng-repeat="ws in parentWorkspace">{{ws.name}}</div>
+                        <div>{{parentWorkspace.name}}</div>
                         <div ng-hide="workspaceConfig.parentKey" class="clicker"></div>
                     </td>
                 </tr>
