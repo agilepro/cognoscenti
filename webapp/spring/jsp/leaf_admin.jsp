@@ -39,15 +39,12 @@
 
     JSONObject workspaceConfig = ngw.getConfigJSON();
 
-    JSONArray allProjects = new JSONArray();
+    JSONArray allWorkspaces = new JSONArray();
     for (NGPageIndex ngpis : cog.getAllProjectsInSite(site.getKey())) {
         if (ngpis.isDeleted) {
             continue;
         }
-        JSONObject pInfo = new JSONObject();
-        pInfo.put("name", ngpis.containerName);
-        pInfo.put("key", ngpis.containerKey);
-        allProjects.put(pInfo);
+        allWorkspaces.put(ngpis.getJSON4List());
     }
 
     WorkspaceStats wStats = new WorkspaceStats();
@@ -76,7 +73,7 @@
       "deleted": false,
       "frozen": false,
       "goal": "",
-      "key": "darwin2",
+      "pageKey": "darwin2",
       "parentKey": "",
       "projectMail": "",
       "purpose": "",
@@ -112,7 +109,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.editInfo = false;
     $scope.foo = "<p>This <b>bold</b> statement.</p>"
 
-    $scope.allProjects = <%allProjects.write(out,2,4);%>;
+    $scope.allWorkspaces = <%allWorkspaces.write(out,2,4);%>;
     $scope.recentWorkspaces = <%recentWorkspaces.write(out,2,4);%>;
 
     //the object form of the parent workspace
@@ -128,9 +125,9 @@ app.controller('myCtrl', function($scope, $http) {
     };
 
     $scope.lookUpName = function(prjKey) {
-        for (var i=0; i<$scope.allProjects.length; i++) {
-            if ($scope.allProjects[i].key==prjKey) {
-                return $scope.allProjects[i].name;
+        for (var i=0; i<$scope.allWorkspaces.length; i++) {
+            if ($scope.allWorkspaces[i].pageKey==prjKey) {
+                return $scope.allWorkspaces[i].name;
             }
         }
         return "(unknown)";

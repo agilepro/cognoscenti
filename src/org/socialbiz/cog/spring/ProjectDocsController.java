@@ -33,6 +33,7 @@ import org.socialbiz.cog.AgendaItem;
 import org.socialbiz.cog.AttachmentRecord;
 import org.socialbiz.cog.AttachmentVersion;
 import org.socialbiz.cog.AuthRequest;
+import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.CommentRecord;
 import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.EmailGenerator;
@@ -95,6 +96,28 @@ public class ProjectDocsController extends BaseController {
             HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         BaseController.showJSPNotFrozen(ar, siteId, pageId, "DocsAdd");
+    }
+
+    /**
+     * Let the user decide how to add a document to the project
+     */
+    @RequestMapping(value = "/{siteId}/{pageId}/WorkspaceCopyMove1.htm", method = RequestMethod.GET)
+    protected void WorkspaceCopyMove1(@PathVariable String siteId,
+            @PathVariable String pageId, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        BaseController.showJSPMembers(ar, siteId, pageId, "WorkspaceCopyMove1");
+    }
+
+    /**
+     * Let the user decide how to add a document to the project
+     */
+    @RequestMapping(value = "/{siteId}/{pageId}/WorkspaceCopyMove2.htm", method = RequestMethod.GET)
+    protected void WorkspaceCopyMove2(@PathVariable String siteId,
+            @PathVariable String pageId, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        BaseController.showJSPMembers(ar, siteId, pageId, "WorkspaceCopyMove2");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/docinfo{aid}.htm", method = RequestMethod.GET)
@@ -390,6 +413,52 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
+    
+    @RequestMapping(value = "/{siteId}/{pageId}/copyDocument.json", method = RequestMethod.POST)
+    public void copyAttachment(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            JSONObject postBody = this.getPostedObject(ar);
+            String fromCombo = postBody.getString("from");
+            String docId = postBody.getString("id");
+            
+            Cognoscenti cog = ar.getCogInstance();
+            NGWorkspace thisWS = cog.getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail( fromCombo ).getWorkspace();
+            
+            ar.setPageAccessLevels(thisWS);
+            ar.assertMember("You must be the member of the workspace you are copying to");
+            ar.setPageAccessLevels(fromWS);
+            ar.assertMember("You must be the member of the workspace you are copying from");
+            
+            AttachmentRecord oldDoc = fromWS.findAttachmentByID(docId);
+            if (oldDoc==null) {
+                throw new Exception("Unable to find a document with id="+docId);
+            }
+            
+            AttachmentRecord newCopy = thisWS.createAttachment();
+            newCopy.setDisplayName(oldDoc.getDisplayName());
+            newCopy.setDescription(oldDoc.getDescription());
+            newCopy.setUniversalId(oldDoc.getUniversalId());
+            
+            AttachmentVersion av = oldDoc.getLatestVersion(fromWS);
+            InputStream is = av.getInputStream();
+            
+            newCopy.streamNewVersion(ar, thisWS, is);
+            JSONObject repo = new JSONObject();
+            repo.put("created", newCopy.getJSON4Doc(ar, thisWS));
+            
+            is.close();
+            thisWS.saveFile(ar, "Document copied from workspace: "+fromWS.getFullName());
+
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to copy the attachment", ex);
+            streamException(ee, ar);
+        }
+    }
+    
 
     @RequestMapping(value = "/{siteId}/{pageId}/sharePorts.htm", method = RequestMethod.GET)
     public void sharePorts(@PathVariable String siteId,@PathVariable String pageId,

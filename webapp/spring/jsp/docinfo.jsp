@@ -318,6 +318,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 
     $scope.assignedLabels = function() {
         var res = [];
+        if (!$scope.docInfo || !$scope.docInfo.labelMap) {
+            return res;
+        }
         $scope.allLabels.forEach( function(item) {
             if ($scope.docInfo.labelMap[item.name]) {
                 res.push(item);

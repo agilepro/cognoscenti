@@ -87,6 +87,16 @@ app.controller('myCtrl', function($scope, $http) {
             </p>
         </td>
     </tr>
+    <tr style="height:50px;padding:15px">
+        <td style="padding:15px">
+            <button type="button" class="btn btn-primary btn-raised"
+                onClick="location.href='WorkspaceCopyMove1.htm'">Copy/Move from Workspace</button>
+        </td>
+        <td style="padding:15px">
+            <p>You can either copy or move documents, topics, action items, or meetings from another workspace to this one.
+            </p>
+        </td>
+    </tr>
     </table>
 </div>
 <!-- end addDocument.jsp -->
