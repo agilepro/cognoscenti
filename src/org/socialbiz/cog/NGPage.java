@@ -905,6 +905,15 @@ public abstract class NGPage extends ContainerCommon {
         return SectionTask.getTaskOrNull(sec, id);
     }
 
+    public GoalRecord findGoalBySynopsis(String synopsis) throws Exception {
+        for (GoalRecord goal : getAllGoals()) {
+            if (synopsis.equals(goal.getSynopsis())) {
+                return goal;
+            }
+        }
+        return null;
+    }
+    
     /**
     * Creates an action item in a workspace without any history about creating it
     */

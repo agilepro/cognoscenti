@@ -417,6 +417,17 @@ public class ProjectDocsController extends BaseController {
     @RequestMapping(value = "/{siteId}/{pageId}/copyDocument.json", method = RequestMethod.POST)
     public void copyAttachment(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
+        copyMoveDocument(siteId, pageId, false, request, response);
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/moveDocument.json", method = RequestMethod.POST)
+    public void moveDocument(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        copyMoveDocument(siteId, pageId, true, request, response);
+    }
+        
+    public void copyMoveDocument(String siteId, String pageId, boolean deleteOld,
+                HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
             JSONObject postBody = this.getPostedObject(ar);
@@ -436,25 +447,49 @@ public class ProjectDocsController extends BaseController {
             if (oldDoc==null) {
                 throw new Exception("Unable to find a document with id="+docId);
             }
-            
-            AttachmentRecord newCopy = thisWS.createAttachment();
-            newCopy.setDisplayName(oldDoc.getDisplayName());
+
+            String docName = oldDoc.getDisplayName();
+            AttachmentRecord newCopy = thisWS.findAttachmentByName(docName);
+            if (newCopy == null) {
+                newCopy = thisWS.createAttachment();
+                newCopy.setDisplayName(docName);
+            }
+            else {
+                if (newCopy.isDeleted()) {
+                    newCopy.clearDeleted();
+                }
+            }
             newCopy.setDescription(oldDoc.getDescription());
             newCopy.setUniversalId(oldDoc.getUniversalId());
+            String docType = oldDoc.getType();
+            newCopy.setType(docType);
             
-            AttachmentVersion av = oldDoc.getLatestVersion(fromWS);
-            InputStream is = av.getInputStream();
+            if ("FILE".equals(docType)) {
+                AttachmentVersion av = oldDoc.getLatestVersion(fromWS);
+                InputStream is = av.getInputStream();
+                newCopy.streamNewVersion(ar, thisWS, is);
+                is.close();
+            }
+            else if ("URL".equals(docType)) {
+                newCopy.setURLValue(oldDoc.getURLValue());
+            }
+            else {
+                throw new Exception("Don't understand how to move document '"+docName+"' type "+docType);
+            }
             
-            newCopy.streamNewVersion(ar, thisWS, is);
+            if (deleteOld) {
+                oldDoc.setDeleted(ar);
+                fromWS.saveFile(ar, "Document '"+docName+"' transferred to workspace: "+thisWS.getFullName());
+            }
+            
             JSONObject repo = new JSONObject();
             repo.put("created", newCopy.getJSON4Doc(ar, thisWS));
             
-            is.close();
-            thisWS.saveFile(ar, "Document copied from workspace: "+fromWS.getFullName());
+            thisWS.saveFile(ar, "Document '"+docName+"' copied from workspace: "+fromWS.getFullName());
 
             sendJson(ar, repo);
         }catch(Exception ex){
-            Exception ee = new Exception("Unable to copy the attachment", ex);
+            Exception ee = new Exception("Unable to copy/move the document", ex);
             streamException(ee, ar);
         }
     }

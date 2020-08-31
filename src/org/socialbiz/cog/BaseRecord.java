@@ -34,7 +34,6 @@ public class BaseRecord extends DOMFace
     public final static int STATE_WAITING   = 4;
     public final static int STATE_COMPLETE  = 5;
     public final static int STATE_SKIPPED   = 6;
-    public final static int STATE_REVIEW    = 7;    //Never used
     public final static int STATE_FROZEN    = 8;
     public final static int STATE_DELETED   = 9;
 
@@ -45,7 +44,6 @@ public class BaseRecord extends DOMFace
     private final static String STATE_WAITING_STR   = "Waiting";
     private final static String STATE_COMPLETE_STR  = "Completed";
     private final static String STATE_SKIPPED_STR   = "Skipped";
-    private final static String STATE_REVIEW_STR    = "Review";     //Never used
     private final static String STATE_FROZEN_STR    = "Frozen";
     private final static String STATE_DELETED_STR   = "Deleted";
     private final static String STATE_UNKNOWN_STR   = "Unknown";
@@ -209,8 +207,6 @@ public class BaseRecord extends DOMFace
                 return STATE_COMPLETE_STR;
             case STATE_SKIPPED:
                 return STATE_SKIPPED_STR;
-            case STATE_REVIEW:
-                return STATE_REVIEW_STR;
             case STATE_FROZEN:
                 return STATE_FROZEN_STR;
             case STATE_DELETED:
@@ -240,7 +236,6 @@ public class BaseRecord extends DOMFace
             case STATE_OFFERED:
             case STATE_ACCEPTED:
             case STATE_WAITING:
-            case STATE_REVIEW:
             case STATE_FROZEN:
             case STATE_ERROR:
                 return true;
@@ -252,7 +247,6 @@ public class BaseRecord extends DOMFace
         switch (state) {
             case STATE_ACCEPTED:
             case STATE_WAITING:
-            case STATE_REVIEW:
             case STATE_FROZEN:
             case STATE_ERROR:
                 return true;

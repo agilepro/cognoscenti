@@ -383,7 +383,6 @@ public class GoalRecord extends BaseRecord {
             return 0;
         case STATE_COMPLETE:
         case STATE_SKIPPED:
-        case STATE_REVIEW:
             return 100;
         default:
             // do nothing, use stored value

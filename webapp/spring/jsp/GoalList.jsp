@@ -11,6 +11,10 @@ Required parameters:
     1. pageId   : This is the id of a workspace and here it is used to retrieve NGWorkspace.
 
 */
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
 
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
@@ -18,6 +22,7 @@ Required parameters:
     ar.setPageAccessLevels(ngp);
     ar.assertMember("Must be a member to see meetings");
 
+    NGBook site = ngp.getSite();
     List<GoalRecord> allGoalsRaw = ngp.getAllGoals();
     JSONArray allGoals = new JSONArray();
     for (GoalRecord gr : allGoalsRaw) {
@@ -44,6 +49,12 @@ Required parameters:
     stateName.put("7", BaseRecord.stateName(7));
     stateName.put("8", BaseRecord.stateName(8));
     stateName.put("9", BaseRecord.stateName(9));
+
+    JSONArray taskAreaList = new JSONArray();
+    for (TaskArea ta : ngp.getTaskAreas()) {
+        taskAreaList.put(ta.getMinJSON());
+    }
+    taskAreaList.put(new JSONObject().put("name", "Unspecified"));
 
 /*** PROTOTYPE
 
@@ -79,12 +90,14 @@ Required parameters:
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http, AllPeople) {
+app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Action Items");
     $scope.allGoals  = <%allGoals.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.stateName = <%stateName.write(out,2,4);%>;
     $scope.siteId = "<%ar.writeJS(siteId);%>";
+    $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
+    $scope.taskAreaList = <%taskAreaList.write(out,2,4);%>;
     $scope.filter = "";
     $scope.filterMap = {};
     $scope.showActive = true;
@@ -338,6 +351,59 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
     $scope.showUser = function(tag) {
         //alert("gotcha:" + tag.name);
     }
+    
+    
+    $scope.openModalActionItem = function (goal, startMode) {
+
+        var modalInstance = $modal.open({
+          animation: false,
+          templateUrl: '<%=ar.retPath%>templates/ActionItem.html<%=templateCacheDefeater%>',
+          controller: 'ActionItemCtrl',
+          size: 'lg',
+          backdrop: "static",
+          resolve: {
+            goal: function () {
+              return goal;
+            },
+            taskAreaList: function () {
+              return $scope.taskAreaList;
+            },
+            allLabels: function () {
+              return $scope.allLabels;
+            },
+            startMode: function () {
+              return startMode;
+            },
+            siteId: function () {
+              return $scope.siteInfo.key;
+            }
+          }
+        });
+
+        modalInstance.result.then(function (modifiedGoal) {
+            let newList = [];
+            $scope.allGoals.map( function(item) {
+                let found = false;
+                if (item.id == modifiedGoal.id) {
+                    newList.push(modifiedGoal);
+                    found = true;
+                }
+                else {
+                    newList.push(modifiedGoal);
+                }
+                if (!found) {
+                    newList.push(modifiedGoal);
+                }
+            });
+            $scope.saveGoal(modifiedGoal);
+            var lcFilterList = $scope.filter.toLowerCase().split(" ");
+            if (!goalMatchedFilter(modifiedGoal, lcFilterList)) {
+                alert("Note: the action item you created does not match your current filter criteria ("+$scope.filter+")\nand will not appear in the list.\nModify your filter to see it.")
+            }
+        }, function () {
+          //cancel action
+        });
+    };
 
 
 });
@@ -479,7 +545,7 @@ function addvalue() {
                     data-toggle="dropdown"> <span class="caret"></span> </button>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation"><a role="menuitem"
-                      href="task{{rec.id}}.htm">Edit Action Item</a></li>
+                      ng-click="openModalActionItem(rec, 'details')">Edit Action Item</a></li>
                   <li role="presentation"><a role="menuitem"
                       ng-click="swapItems(rec, -1)">Move Up</a></li>
                   <li role="presentation"><a role="menuitem"
@@ -523,7 +589,8 @@ function addvalue() {
 
                 </div>
                 <div ng-show="rec.show" id="{{rec.id}}_1" style="max-width:800px;">
-                    <div class="taskOverview">Requested by:
+                    <div class="taskOverview" ng-dblclick="openModalActionItem(rec, 'details')">
+                        Requested by:
                          <span class="red" ng-repeat="ass in rec.requesters"><a href="{{getLink(ass)}}">{{getName(ass)}}</a>, </span>
                     </div>
                     <div class="taskStatus">Description: {{rec.description}}</div>
@@ -571,5 +638,6 @@ function addvalue() {
     
 </div>
 
+<script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 
 

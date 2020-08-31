@@ -480,6 +480,7 @@ public class DOMUtils {
         if (newValue==null)
         {
             removeAllNamedChild(parent, childName);
+            return;
         }
 
         if (child==null)

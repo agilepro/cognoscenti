@@ -43,7 +43,15 @@
     
     JSONArray allAttachments = fromWorkspaceObj.getJSONAttachments(ar);
    
-    
+    JSONArray allActionItems = new JSONArray();
+    for (GoalRecord goal : fromWorkspaceObj.getAllGoals()) {
+        int state = goal.getState();
+        if (state==GoalRecord.STATE_COMPLETE || state==GoalRecord.STATE_SKIPPED 
+            || state==GoalRecord.STATE_DELETED) {
+            continue;
+        }
+        allActionItems.put(goal.getJSON4Goal(fromWorkspaceObj));
+    }
 %>
 
 <script>
@@ -54,6 +62,8 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.fromWorkspace = <%fromWorkspace.write(out,2,4);%>;
     $scope.thisWorkspace = <%thisWorkspace.write(out,2,4);%>;
     $scope.allAttachments = <%allAttachments.write(out,2,4);%>;
+    $scope.allActionItems = <%allActionItems.write(out,2,4);%>;
+    
     
 
     $scope.findLabels = function() {
@@ -96,10 +106,45 @@ app.controller('myCtrl', function($scope, $http) {
                      +doc.name+"'\n into this workspace?")) {
             return;
         }
-        doc.hideThis = true;
+        let postURL = "moveDocument.json";
+        var postObj = {
+            "from": $scope.fromWorkspace.comboKey,
+            "id": doc.id
+        }
+        var postdata = angular.toJson(postObj);
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            console.log("SUCCESS");
+            doc.hideThis = true;
+        })
+        .error( function(data, status, headers, config) {
+            console.log("FAILURE", data);
+            $scope.reportError(data);
+        });
     }
-    $scope.rowStyle = function(doc) {
-        if (doc.hideThis) {
+    $scope.moveActionItem = function(goal) {
+        if (!confirm("Are you sure you want to permanently move action item \n'"
+                     +goal.synopsis+"'\n into this workspace?")) {
+            return;
+        }
+        let postURL = "moveActionItem.json";
+        var postObj = {
+            "from": $scope.fromWorkspace.comboKey,
+            "id": goal.id
+        }
+        var postdata = angular.toJson(postObj);
+        $http.post(postURL, postdata)
+        .success( function(data) {
+            console.log("SUCCESS");
+            goal.hideThis = true;
+        })
+        .error( function(data, status, headers, config) {
+            console.log("FAILURE", data);
+            $scope.reportError(data);
+        });
+    }
+    $scope.rowStyle = function(row) {
+        if (row.hideThis) {
             return {"background-color":"black","color":"grey"};
         }
         return {"background-color":"white"};
@@ -121,8 +166,8 @@ app.controller('myCtrl', function($scope, $http) {
 
     <h3>{{fromWorkspace.name}} <i class="fa fa-arrow-circle-o-right"></i> {{thisWorkspace.name}}</h3>
     <p>Select Artifacts to copy or move:</p>
+    <h3>Documents</h3>
     <table class="table">
-
     <tr>
        <th>Document Name</th>
        <th>Modified</th>
@@ -135,9 +180,29 @@ app.controller('myCtrl', function($scope, $http) {
        <td>{{doc.size|number}} bytes</td>
        <td ng-hide="doc.hideThis">
            <button class="btn btn-sm btn-raised" ng-click="copyDoc(doc)">Copy</button>
-           <!--button class="btn btn-sm btn-raised" ng-click="moveDoc(doc)">Move</button-->
+           <button class="btn btn-sm btn-raised" ng-click="moveDoc(doc)">Move</button>
        </td>
        <td ng-show="doc.hideThis">
+           
+       </td>
+    </tr>
+    <tr>
+        <td colspan="3" class="linkWizardHeading"></td>
+    </tr>
+    </table>
+    
+    <h3>Action Items</h3>
+    <table class="table">
+    <tr>
+       <th>Synopsis</th>
+       <th></th>
+    </tr>
+    <tr ng-repeat="goal in allActionItems" ng-style="rowStyle(goal)">
+       <td>{{goal.synopsis}}</td>
+       <td ng-hide="goal.hideThis">
+           <button class="btn btn-sm btn-raised" ng-click="moveActionItem(goal)">Move</button>
+       </td>
+       <td ng-show="goal.hideThis">
            
        </td>
     </tr>

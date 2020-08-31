@@ -29,6 +29,7 @@ import org.socialbiz.cog.AccessControl;
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.BaseRecord;
+import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.DOMFace;
 import org.socialbiz.cog.DecisionRecord;
 import org.socialbiz.cog.GoalRecord;
@@ -890,6 +891,59 @@ public class ProjectGoalController extends BaseController {
 
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.project.process.page", new Object[]{pageId,siteId} , ex);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/{pageId}/moveActionItem.json", method = RequestMethod.POST)
+    public void moveActionItem(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            JSONObject postBody = this.getPostedObject(ar);
+            String fromCombo = postBody.getString("from");
+            String goalId = postBody.getString("id");
+            
+            Cognoscenti cog = ar.getCogInstance();
+            NGWorkspace thisWS = cog.getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail( fromCombo ).getWorkspace();
+            
+            ar.setPageAccessLevels(thisWS);
+            ar.assertMember("You must be the member of the workspace you are copying to");
+            ar.setPageAccessLevels(fromWS);
+            ar.assertMember("You must be the member of the workspace you are copying from");
+            
+            GoalRecord oldGoal = fromWS.getGoalOrNull(goalId);
+            if (oldGoal==null) {
+                throw new Exception("Unable to find a action item with id="+goalId);
+            }
+
+            JSONObject goalJSON = oldGoal.getJSON4Goal(fromWS);
+            String synopsis = oldGoal.getSynopsis();
+            
+            GoalRecord newCopy = thisWS.findGoalBySynopsis(synopsis);
+            if (newCopy == null) {
+                newCopy = thisWS.createGoal(ar.getBestUserId());
+                newCopy.setSynopsis(synopsis);
+            }
+            goalJSON.put("id", newCopy.getId());
+            goalJSON.put("universalid", newCopy.getUniversalId());
+            newCopy.updateGoalFromJSON(goalJSON, thisWS, ar);
+            newCopy.setScalar("taskArea", null);
+
+            //get rid of the old copy
+            oldGoal.setState(GoalRecord.STATE_SKIPPED);
+            oldGoal.setDescription("This task was moved to another workspace: "+thisWS.getFullName());
+            fromWS.saveContent(ar, "Action Item moved to another workspace: "+thisWS.getFullName());
+            
+            JSONObject repo = new JSONObject();
+            repo.put("created", newCopy.getJSON4Goal(thisWS));
+            
+            thisWS.saveFile(ar, "Action Item '"+synopsis+"' copied from workspace: "+fromWS.getFullName());
+
+            sendJson(ar, repo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to move the action item", ex);
+            streamException(ee, ar);
         }
     }
 
