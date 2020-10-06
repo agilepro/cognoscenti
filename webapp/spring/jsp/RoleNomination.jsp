@@ -259,6 +259,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
             if (item.owner != nom.owner) {
                 newList.push(item);
             }
+            else {
+                newList.push({owner: nom.owner, "_DELETE_ME_": "_DELETE_ME_"})
+            }
         });
         $scope.term.nominations = newList;
         $scope.updateRole($scope.role);

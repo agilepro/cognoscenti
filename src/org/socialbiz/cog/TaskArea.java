@@ -26,7 +26,7 @@ import com.purplehillsbooks.json.JSONArray;
 import com.purplehillsbooks.json.JSONObject;
 
 public class TaskArea extends JSONWrapper {
-    
+
     public TaskArea(JSONObject jo) {
         super(jo);
     }
@@ -42,12 +42,16 @@ public class TaskArea extends JSONWrapper {
     public void setId(String newId) throws Exception {
         kernel.put("id", newId);
     }
-    
+
     /**
      * looks for one name, and replaces them with another name
      */
     public void replaceAssignee(String sourceUser, String destUser) throws Exception {
-        JSONArray assignees = kernel.getJSONArray("assignees");
+        JSONArray assignees = kernel.optJSONArray("assignees");
+        if (assignees==null) {
+            //if there are no assignees at all, then ignore this task area
+            return;
+        }
         JSONArray newOnes = new JSONArray();
         for (int i=0; i<assignees.length(); i++) {
             String oneName = assignees.getString(i);
