@@ -54,12 +54,14 @@ public class TaskArea extends JSONWrapper {
         }
         JSONArray newOnes = new JSONArray();
         for (int i=0; i<assignees.length(); i++) {
-            String oneName = assignees.getString(i);
+            JSONObject oneAss = assignees.getJSONObject(i);
+            String oneName = oneAss.getString("uid");
             if (sourceUser.equalsIgnoreCase(oneName)) {
-                newOnes.put(destUser);
+                AddressListEntry ale = new AddressListEntry(destUser);
+                newOnes.put(ale.getJSON());
             }
             else {
-                newOnes.put(oneName);
+                newOnes.put(oneAss);
             }
         }
         kernel.put("assignees", newOnes);

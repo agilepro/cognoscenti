@@ -543,22 +543,27 @@ public class NGWorkspace extends NGPage {
 
 
     public int replaceUserAcrossWorkspace(String sourceUser, String destUser) throws Exception {
-        int count = 0;
-        for (GoalRecord goal : this.getAllGoals()) {
-            NGRole assignee = goal.getAssigneeRole();
-            if (assignee.replaceId(sourceUser, destUser)) {
-                count++;
+        try {
+            int count = 0;
+            for (GoalRecord goal : this.getAllGoals()) {
+                NGRole assignee = goal.getAssigneeRole();
+                if (assignee.replaceId(sourceUser, destUser)) {
+                    count++;
+                }
             }
-        }
-        for (NGRole role : this.getAllRoles()) {
-            if (role.replaceId(sourceUser, destUser)) {
-                count++;
+            for (NGRole role : this.getAllRoles()) {
+                if (role.replaceId(sourceUser, destUser)) {
+                    count++;
+                }
             }
+            for (TaskArea ta : this.getTaskAreas()) {
+                ta.replaceAssignee(sourceUser, destUser);
+            }
+            return count;
         }
-        for (TaskArea ta : this.getTaskAreas()) {
-            ta.replaceAssignee(sourceUser, destUser);
+        catch (Exception e) {
+            throw new Exception("Unable to replace user ("+sourceUser+") in workspace: "+this.getKey(), e);
         }
-        return count;
     }
 
 
@@ -608,7 +613,7 @@ public class NGWorkspace extends NGPage {
             if (moveDown && i==index+1) {
                 newArray.put(movedOne);
             }
-        }  
+        }
         workspaceJSON.put("taskAreas", newArray);
     }
     public TaskArea createTaskArea() throws Exception {
