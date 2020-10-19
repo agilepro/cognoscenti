@@ -31,18 +31,18 @@ SLAP = {
 };
 
 SLAP.initLogin = function(config, info, statusCallback) {
-    SLAP.retrieveSession();
     SLAP.loginConfig = config;
+    SLAP.retrieveSession();
     SLAP.displayLoginStatus = statusCallback;
     SLAP.queryTheServer();
-    console.log("SLAP Initialized", SLAP.loginInfo);
     return SLAP.loginInfo;
 };
+
 SLAP.loginUserRedirect = function() {
-    let newLoc = SLAP.loginConfig.providerUrl + '?openid.mode=quick&go='
+    let pUrl = SLAP.loginConfig.providerUrl + '?openid.mode=quick&go='
         + encodeURIComponent(window.location);
-    //alert("Redirecting to: "+newLoc);
-    window.location = newLoc;
+    pUrl = SLAP.addSessionParameter(pUrl);
+    window.location = pUrl;
 };
 
 SLAP.logoutUser = function() {
@@ -65,16 +65,12 @@ SLAP.sendInvitationEmail = function(message, success, failure) {
 //interface methods above, implementation methods below
 
 SLAP.storeSession = function(data) {
-    //only store the data if it looks like the right kind of data
-    if (!data.userId) {
-        return;
+    //preserve the session info if needed
+    if (!data.ss && SLAP.loginInfo.ss) {
+        data.ss = SLAP.loginInfo.ss;
     }
     SLAP.loginInfo = data;
     sessionStorage.setItem("SSOFI_Logged_User", JSON.stringify(data));
-}
-SLAP.clearSession = function() {
-    SLAP.loginInfo = {};
-    sessionStorage.setItem("SSOFI_Logged_User", "{}");
 }
 SLAP.retrieveSession = function() {
     var oldData = sessionStorage.getItem("SSOFI_Logged_User");
@@ -86,9 +82,15 @@ SLAP.retrieveSession = function() {
             SLAP.loginInfo = {};
         }
     }
+    if (!SLAP.loginInfo.ss) {
+        //if there is no session id, go and get one, migration from earlier object.
+        SLAP.queryTheProvider();
+        console.log("FETCHED new SSOFI session id: ", SLAP.loginInfo);
+    }
 }
     
 SLAP.getJSON = function(url, passedFunction, errorFunction) {
+    console.log("SSOFI GET to: ", url); 
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.withCredentials = true;
@@ -98,7 +100,6 @@ SLAP.getJSON = function(url, passedFunction, errorFunction) {
                 passedFunction(JSON.parse(xhr.responseText));
             }
             catch (e) {
-                console.log("SLAP.getJSON error", e);
                 alert("Got an exception ("+e+") while trying to handle: "+url);
             }
         }
@@ -113,6 +114,7 @@ SLAP.getJSON = function(url, passedFunction, errorFunction) {
 };
 
 SLAP.postJSON = function(url, data, passedFunction, errorFunction) {
+    console.log("SSOFI POST to: ", url, data); 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
     xhr.withCredentials = true;
@@ -126,7 +128,7 @@ SLAP.postJSON = function(url, data, passedFunction, errorFunction) {
                 alert("Got an exception ("+e+") whille trying to handle: "+url);
             }
         }
-        else if (xhr.readyState == 4 && xhr.status != 200) {
+        else if (xhr.readyState == 4 && xhr.status == 200) {
             errorFunction(xhr.responseText);
         }
         else if (xhr.status == 0) {
@@ -135,6 +137,14 @@ SLAP.postJSON = function(url, data, passedFunction, errorFunction) {
     }
     xhr.send(JSON.stringify(data));
 };
+
+SLAP.addSessionParameter = function(url) {
+    if (SLAP.loginInfo.ss) {
+        return url+"&ss="+SLAP.loginInfo.ss;
+    }
+    console.log("NO SSOFI session found in stored record!", SLAP.loginInfo); 
+    return url;
+}
 
 SLAP.queryTheServer = function() {
     var pUrl = SLAP.loginConfig.serverUrl + "auth/query";
@@ -156,6 +166,7 @@ SLAP.queryTheServer = function() {
 
 SLAP.queryTheProvider = function() {
     var pUrl = SLAP.loginConfig.providerUrl + "?openid.mode=apiWho";
+    pUrl = SLAP.addSessionParameter(pUrl);
     SLAP.getJSON(pUrl, function(data) {
         SLAP.storeSession(data);
         SLAP.displayLoginStatus(data);
@@ -180,6 +191,7 @@ SLAP.requestChallenge = function() {
 
 SLAP.getToken = function() {
     var pUrl  = SLAP.loginConfig.providerUrl + "?openid.mode=apiGenerate";
+    pUrl = SLAP.addSessionParameter(pUrl);
     SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
         SLAP.storeSession(data);
         SLAP.displayLoginStatus(data);
@@ -201,26 +213,24 @@ SLAP.verifyToken = function() {
 
 SLAP.logOutProvider = function() {
     var pUrl = SLAP.loginConfig.providerUrl + "?openid.mode=apiLogout";
-    SLAP.clearSession();
+    pUrl = SLAP.addSessionParameter(pUrl);
+    SLAP.storeSession({});
     SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
-        console.log("User logged out of SSOFI provider", data);
         SLAP.logOutServer();
     }, function(data) {
-        console.log("Failure logging out of SSOFI.  Is provider still at:\n "+pUrl);
+        console.log("Failure logging out.  Is provider still at:\n "+pUrl);
     });
 };
 
 SLAP.logOutServer = function() {
     var pUrl = SLAP.loginConfig.serverUrl + "auth/logout";
     SLAP.postJSON(pUrl, SLAP.loginInfo, function(data) {
-        SLAP.loginInfo = data;
-        console.log("User logged out of Weaver server",data);
         SLAP.displayLoginStatus(SLAP.loginInfo);
     }, function(data) {
-        console.log("Failure logging out of Weaver.  Is server really at:\n "+pUrl);
+        console.log("Failure logging out.  Is server really at:\n "+pUrl);
     });
 }
-console.log("SLAP loaded");
+
 
 
 
