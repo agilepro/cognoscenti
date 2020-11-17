@@ -632,7 +632,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
           </div>
           <hr/>
           <!-- Form Control Schedule Time Begin -->
-          <div class="form-group" >
+          <!--div class="form-group" >
             <label class="col-md-2 control-label" for="scheduledTime">When?</label>
             <div class="col-md-10">
                 <div class="togglebutton col-md-4">
@@ -648,7 +648,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                 </span> 
               </span>
             </div>
-          </div>
+          </div-->
           <!-- status -->
           <div class="form-group">
             <label class="col-md-2 control-label">Status</label>

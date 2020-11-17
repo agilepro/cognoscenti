@@ -320,6 +320,7 @@ var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.tinymce','
 
       var knowWeAreLoggedIn = <%= ar.isLoggedIn() %>;
       function displayWelcomeMessage(info) {
+          //console.log("WELCOME:", knowWeAreLoggedIn, info)
           var y = document.getElementById("welcomeMessage");
           if (knowWeAreLoggedIn && info.verified) {
               //nothing to do in this case
@@ -333,7 +334,7 @@ var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','ui.tinymce','
                   +SLAP.loginConfig.providerUrl
                   +'&go='+window.location+'"><span class="btn btn-primary btn-raised">Login</span></a>';
           }
-          else if (!info.userName) {
+          else if (!info.userId) {
               y.innerHTML = 'Not logged in, please <a href="'
                   +SLAP.loginConfig.providerUrl
                   +'?openid.mode=quick&go='+window.location+'"><span class="btn btn-primary btn-raised">Login</span></a>';
