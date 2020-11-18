@@ -40,7 +40,7 @@ app.controller('myCtrl', function($scope, $http) {
 <div ng-app="myApp" ng-controller="myCtrl">
 
     <div class="guideVocal">
-        {{warningMessage}}
+        <div ng-bind-html="warningMessage"></div>
     </div>
     
     <div ng-show="notLoggedIn" style="margin:50px;max-width:600px">

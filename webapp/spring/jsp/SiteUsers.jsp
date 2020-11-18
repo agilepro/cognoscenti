@@ -5,17 +5,18 @@
 %><%
 
     ar.assertLoggedIn("");
-    String accountId = ar.reqParam("siteId");
-    NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(accountId);
+    String siteId = ar.reqParam("siteId");
+    NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
     String pageAddress = ar.getResourceURL(ngb,"personal.htm");
 
     JSONObject userMap = new JSONObject();
-    List<NGPageIndex> allWorkspaces = ar.getCogInstance().getAllProjectsInSite(accountId);
+    List<NGPageIndex> allWorkspaces = ar.getCogInstance().getAllProjectsInSite(siteId);
     for (NGPageIndex ngpi : allWorkspaces) {
         NGWorkspace ngw = ngpi.getWorkspace();
         for (CustomRole ngr : ngw.getAllRoles()) {
             for (AddressListEntry ale : ngr.getDirectPlayers()) {
                 String uid = ale.getUniversalId();
+                UserProfile user = ale.getUserProfile();
 
                 JSONObject userInfo = null;
                 JSONObject wsMap = null;
@@ -29,12 +30,19 @@
                     userMap.put(uid, userInfo);
                     wsMap = new JSONObject();
                     userInfo.put("wsMap", wsMap);
+                    if (user==null) {
+                        userInfo.put("info", ale.getJSON());
+                    }
+                    else {
+                        userInfo.put("info", user.getFullJSON());
+                    }
                     userInfo.put("count", 1);
                 }
                 String wsKey = ngw.getKey();
                 if (!wsMap.has(wsKey)) {
                     wsMap.put(wsKey, ngw.getFullName());
                 }
+                userInfo.put("wscount", wsMap.length());
             }
         }
     }
@@ -46,7 +54,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Site Users");
+    window.setMainPageTitle("List of Users in Site");
     $scope.userMap = <%userMap.write(out,2,4);%>;
     $scope.sourceUser = "";
     $scope.destUser = "";
@@ -79,7 +87,9 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.reportError(data);
         });
     }
-
+    $scope.addUser = function() {
+        window.location = "SiteUserInfo.htm?userKey="+$scope.newEmail;
+    }
 });
 app.filter('encode', function() {
   return window.encodeURIComponent;
@@ -101,7 +111,7 @@ app.filter('encode', function() {
           <li role="presentation"><a role="menuitem"
               href="roleRequest.htm">Role Requests</a></li>
           <li role="presentation"><a role="menuitem"
-              href="SiteUsers.htm">User Migration</a></li>
+              href="SiteUsers.htm">User List</a></li>
           <li role="presentation"><a role="menuitem"
               href="SiteStats.htm">Site Statistics</a></li>
         </ul>
@@ -112,31 +122,6 @@ app.filter('encode', function() {
 .paddedCell {
     padding:8px;
 }
-</style>
-
-    <div class="well">
-        <h1>User Migration</h1>
-
-        <table >
-          <tr>
-            <td class="paddedCell">Find This Email ID:</td>
-            <td class="paddedCell"><input ng-model="sourceUser" class="form-control"></td>
-          </tr>
-          <tr>
-            <td class="paddedCell">Replace With:</td>
-            <td class="paddedCell"><input ng-model="destUser" class="form-control"></td>
-          </tr>
-          <tr>
-            <td class="paddedCell"></td>
-            <td class="paddedCell">
-                <button ng-click="replaceUsers()" class="btn btn-primary btn-raised">Replace First With Second</button>
-                <input type="checkbox" ng-model="replaceConfirm"> Check here to confirm, there is no way to UNDO this change
-            </td>
-          </tr>
-        </table>
-    </div>
-
-<style>
 .workspaceButton {
     border: 2px solid white;
     border-radius: 6px;
@@ -149,15 +134,31 @@ app.filter('encode', function() {
     background-color: lightskyblue;
 }
 </style>
-<hr/>
+
+<div ng-hide="addUserPanel">
+  <button class="btn btn-raised" ng-click="addUserPanel=true">Add User</button>
+</div>
+<div class="well" ng-show="addUserPanel">
+   <input type="text" ng-model="newEmail" class="form-control"/>
+   <button class="btn btn-primary btn-raised" ng-click="addUser()">Create User With This Email</button>
+   <button class="btn btn-raised" ng-click="addUserPanel=false">Cancel</button>
+</div>
+
     <div>
-    <h1>List of users in workspaces</h1>
     <table class="table">
+      <tr>
+         <th>Primary Email</th>
+         <th>Name</th>
+         <th>Last Login</th>
+         <th>Objects</th>
+         <th>Workspaces</th>
+      </tr>
       <tr ng-repeat="(key, value) in userMap">
-         <td><a href="../../FindPerson.htm?uid={{key|encode}}">{{key}}</a></td>
+         <td><a href="SiteUserInfo.htm?siteId=<%=siteId%>&userKey={{value.info.key|encode}}">{{value.info.name}}</a></td>
+         <td>{{value.info.uid}}</td>
+         <td>{{value.info.lastLogin|date}}</td>
          <td>{{value.count}}</td>
-         <td><span ng-repeat="(wsKey,wsName) in value.wsMap">
-             <a href="../{{wsKey}}/frontPage.htm" class="workspaceButton">{{wsName}}</a>, </span></td>
+         <td>{{value.wscount}}</td>
       </tr>
     </table>
     </div>

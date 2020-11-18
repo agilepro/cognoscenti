@@ -72,6 +72,22 @@ app.controller('myCtrl', function($scope, $http) {
 
 <%@include file="ErrorPanel.jsp"%>
 
+    <div class="upRightOptions rightDivContent">
+      <span class="dropdown">
+        <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
+        Options: <span class="caret"></span></button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+          <li role="presentation"><a role="menuitem" 
+              href="SiteAdmin.htm">Site Admin</a></li>
+          <li role="presentation"><a role="menuitem" 
+              href="roleRequest.htm">Role Requests</a></li>
+          <li role="presentation"><a role="menuitem" 
+              href="SiteUsers.htm">User List</a></li>
+          <li role="presentation"><a role="menuitem" 
+              href="SiteStats.htm">Site Statistics</a></li>
+        </ul>
+      </span>
+    </div>
 
     <div class="generalArea">
         <div id="container" >

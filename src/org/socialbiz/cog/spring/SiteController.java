@@ -38,6 +38,7 @@ import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.SiteMailGenerator;
 import org.socialbiz.cog.SiteReqFile;
 import org.socialbiz.cog.SiteRequest;
+import org.socialbiz.cog.UserManager;
 import org.socialbiz.cog.UserProfile;
 import org.socialbiz.cog.WorkspaceStats;
 import org.socialbiz.cog.exception.NGException;
@@ -343,6 +344,10 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            showJSPMembers(ar,siteId,null,"SiteUsers");
+
+            /*
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
             if (checkLogin(ar)) {
                 return;
             }
@@ -352,8 +357,33 @@ public class SiteController extends BaseController {
             }
 
             streamJSP(ar, "SiteUsers");
+            */
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUsers.htm for site '"+siteId+"'", ex);
+        }
+    }
+    @RequestMapping(value = "/{siteId}/$/SiteUserInfo.htm", method = RequestMethod.GET)
+    public void SiteUserInfo(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        try{
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            showJSPMembers(ar,siteId,null,"SiteUserInfo");
+
+            /*
+            AuthRequest ar = AuthRequest.getOrCreate(request, response);
+            if (checkLogin(ar)) {
+                return;
+            }
+            prepareSiteView(ar, siteId);
+            if (executiveCheckViews(ar)) {
+                return;
+            }
+
+            streamJSP(ar, "SiteUserInfo");
+            */
+        }catch(Exception ex){
+            throw new Exception("Unable to handle SiteUserInfo.htm for site '"+siteId+"'", ex);
         }
     }
 
@@ -426,7 +456,7 @@ public class SiteController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/$/replaceUsers.json", method = RequestMethod.POST)
-    public void getGoalHistory(@PathVariable String siteId,
+    public void replaceUsers(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         try{
@@ -461,6 +491,105 @@ public class SiteController extends BaseController {
             JSONObject jo = new JSONObject();
             jo.put("updated", count);
             sendJson(ar, jo);
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to replace users in site ("+siteId+")", ex);
+            streamException(ee, ar);
+        }
+    }
+
+    @RequestMapping(value = "/{siteId}/$/assureUserProfile.json", method = RequestMethod.POST)
+    public void assureUserProfile(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGBook site = ar.getCogInstance().getSiteById(siteId);
+            ar.setPageAccessLevels(site);
+            ar.assertAdmin("Must be owner of a site to replace users.");
+
+            JSONObject incoming = getPostedObject(ar);
+            String userID = incoming.getString("uid");
+
+            UserManager um = UserManager.getStaticUserManager();
+            UserProfile user = um.lookupUserByAnyId(userID);
+
+            if (user==null) {
+            	user = um.createUserWithId(userID);
+            	String name = user.getName();
+            	if (name==null || name.length()==0) {
+            		user.setName(userID);
+            	}
+        		um.saveUserProfiles();
+            }
+
+            sendJson(ar, user.getFullJSON());
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to replace users in site ("+siteId+")", ex);
+            streamException(ee, ar);
+        }
+    }
+
+    /**
+     * This is the Site Administrator version of updating user settings
+     */
+    @RequestMapping(value = "/{siteId}/$/updateUserProfile.json", method = RequestMethod.POST)
+    public void updateUserProfile(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGBook site = ar.getCogInstance().getSiteById(siteId);
+            ar.setPageAccessLevels(site);
+            ar.assertAdmin("Must be owner of a site to replace users.");
+
+            JSONObject incoming = getPostedObject(ar);
+            String userId = incoming.getString("uid");
+
+            UserManager um = UserManager.getStaticUserManager();
+            UserProfile user = um.findUserByAnyIdOrFail(userId);
+
+            user.updateFromJSON(incoming);
+            um.saveUserProfiles();
+
+            sendJson(ar, user.getFullJSON());
+        }catch(Exception ex){
+            Exception ee = new Exception("Unable to replace users in site ("+siteId+")", ex);
+            streamException(ee, ar);
+        }
+    }
+    /**
+     * This is the Site Administrator version of adding user to role
+     */
+    @RequestMapping(value = "/{siteId}/$/manageUserRoles.json", method = RequestMethod.POST)
+    public void manageUserRoles(@PathVariable String siteId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        try{
+            NGBook site = ar.getCogInstance().getSiteById(siteId);
+            ar.setPageAccessLevels(site);
+            ar.assertAdmin("Must be owner of a site to replace users.");
+
+            JSONObject incoming = getPostedObject(ar);
+            String userId = incoming.getString("uid");
+            String workspace = incoming.getString("workspace");
+            String roleName = incoming.getString("role");
+            boolean add = incoming.getBoolean("add");
+
+            UserManager um = UserManager.getStaticUserManager();
+            UserProfile user = um.findUserByAnyIdOrFail(userId);
+
+            NGPageIndex ngpi = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, workspace);
+            NGWorkspace ngw = ngpi.getWorkspace();
+            CustomRole roleObj = ngw.getRole(roleName);
+
+            if (add) {
+            	roleObj.addPlayer(user.getAddressListEntry());
+            }
+            else {
+            	roleObj.removePlayer(user.getAddressListEntry());
+            }
+
+            ngw.save();
+
+            sendJson(ar, user.getFullJSON());
         }catch(Exception ex){
             Exception ee = new Exception("Unable to replace users in site ("+siteId+")", ex);
             streamException(ee, ar);
