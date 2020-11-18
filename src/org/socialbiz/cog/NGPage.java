@@ -913,7 +913,7 @@ public abstract class NGPage extends ContainerCommon {
         }
         return null;
     }
-    
+
     /**
     * Creates an action item in a workspace without any history about creating it
     */
@@ -1552,6 +1552,11 @@ public abstract class NGPage extends ContainerCommon {
                 "num", Integer.toString(max+1));
         dr.setUniversalId(this.getContainerUniversalId()+"@DEC"+max);
         return dr;
+    }
+    public void deleteDecision(int number) throws Exception {
+        DOMFace decisions = requireChild("decisions", DOMFace.class);
+        DecisionRecord dr = findDecisionOrNull(number);
+        decisions.removeChild(dr);
     }
     public DecisionRecord findDecisionOrNull(int number) throws Exception {
         for (DecisionRecord m : getDecisions()) {

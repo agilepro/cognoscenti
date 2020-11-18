@@ -14,6 +14,12 @@ app.controller('DecisionModalCtrl', function ($scope, $modalInstance, decision, 
     $scope.toggleLabel = function(val) {
         $scope.decision.labelMap[val.name] = !$scope.decision.labelMap[val.name];
     }
+    $scope.deleteDecision = function(val) {
+        $scope.decision.deleteMe = "deleteMe";
+    }
+    $scope.deleteCancel = function(val) {
+        $scope.decision.deleteMe = null;
+    }
 
     $scope.ok = function () {
         $modalInstance.close($scope.decision);

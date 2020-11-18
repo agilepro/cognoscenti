@@ -112,7 +112,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     }
 
     $scope.saveDecision = function(newRec) {
-
+        var isPreserved = (!newRec.deleteMe)
         var postURL = "updateDecision.json?did="+newRec.num;
         var postData = angular.toJson(newRec);
         $http.post(postURL, postData)
@@ -123,8 +123,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     newList.push(item);
                 }
             });
-            newList.push(data);
+            if (isPreserved) {
+                newList.push(data);
+            }
             $scope.allDecisions = newList;
+            //indow.location.reload(false);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);

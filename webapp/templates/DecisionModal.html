@@ -80,6 +80,11 @@
             <button class="btn btn-primary" ng-click="advanceReviewDate()">Advance by 1 year</button>
         </div>
       </div>
+      <div class="col-sm-12 col-md-6">
+        <button class="btn btn-primary btn-danger btn-raised" ng-click="deleteDecision()" ng-hide="decision.deleteMe">DELETE DECISION</button>
+        <p ng-show="decision.deleteMe">Click 'Save' to actually delete the decision</p>
+        <button class="btn btn-primary btn-warning btn-raised" ng-click="deleteCancel()" ng-show="decision.deleteMe">Cancel Delete</button>
+      </div>
 </div>
     <div style="clear:both"></div>
 <div class="modal-footer">

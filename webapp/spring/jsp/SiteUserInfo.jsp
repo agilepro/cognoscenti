@@ -1,13 +1,14 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="org.socialbiz.cog.License"
+%><%@page import="java.util.TimeZone"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%
 
     ar.assertLoggedIn("");
-    String accountId = ar.reqParam("siteId");
+    String siteId = ar.reqParam("siteId");
     String userKey = ar.reqParam("userKey");
-    NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(accountId);
+    NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
     String pageAddress = ar.getResourceURL(ngb,"personal.htm");
     
     
@@ -24,7 +25,7 @@
     
 
     JSONObject userMap = new JSONObject();
-    List<NGPageIndex> allWorkspaces = ar.getCogInstance().getAllProjectsInSite(accountId);
+    List<NGPageIndex> allWorkspaces = ar.getCogInstance().getAllProjectsInSite(siteId);
     for (NGPageIndex ngpi : allWorkspaces) {
         NGWorkspace ngw = ngpi.getWorkspace();
         JSONObject workspaceInfo = new JSONObject();
@@ -44,6 +45,10 @@
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
         templateCacheDefeater = "?t="+System.currentTimeMillis();
     }
+    JSONArray timeZoneList = new JSONArray();
+    for (String tz : TimeZone.getAvailableIDs()) {
+        timeZoneList.put(tz);
+    }
 
 
 %>
@@ -57,15 +62,13 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.hasProfile = <%=user!=null%>;
     $scope.userDetails = <%userDetails.write(out,2,4);%>;
     $scope.userMap = <%userMap.write(out,2,4);%>;
+    $scope.siteId = "<%=siteId%>";
     $scope.newEmail = "";
     $scope.admin = <%admin.write(out,2,4);%>;
     $scope.showws = {};
+    $scope.tzFilter = "";
+    $scope.timeZoneList = <%timeZoneList.write(out,2,4);%>;
     
-    $scope.inviteMsg = "Hello,\n\nYou have been asked by '"+$scope.admin.name+"' to"
-                    +" participate in a role of a Weaver project."
-                    +"\n\nThe links below will make registration quick and easy, and after that you will be able to"
-                    +" participate directly with the others through the site.";
-
     $scope.showError = false;
     $scope.errorMsg = "";
     $scope.errorTrace = "";
@@ -159,10 +162,29 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     $scope.openInviteSender = function (player) {
 
         var proposedMessage = {}
-        proposedMessage.msg = $scope.inviteMsg;
+        proposedMessage.return = "<%=ar.baseURL%>";
+        proposedMessage.msg = "Hello,\n\nYou have been asked by '"+$scope.admin.name+"' to"
+                    +" participate in a role of a Weaver project.\n";
+                    
+        Object.keys($scope.userMap).forEach( function(workspace) {
+            var inWorkspace = false;
+            Object.keys($scope.userMap[workspace].roles).forEach( function(role) {
+                if ($scope.userMap[workspace].roles[role]==true) {
+                    inWorkspace = true;
+                }
+            });
+            if (inWorkspace) {
+                proposedMessage.msg += "\n* " + $scope.userMap[workspace].name;
+                proposedMessage.return = "<%=ar.baseURL%>v/" + $scope.siteId + "/" + workspace + "/frontPage.htm";
+            }
+        });
+                    
+        proposedMessage.msg += 
+              "\n\nThe links below will make registration quick and easy, and after that you will be able to"
+             +" participate directly with the others through the site.";
         proposedMessage.userId = $scope.userInfo.uid;
         proposedMessage.name   = $scope.userInfo.name;
-        proposedMessage.return = "<%=ar.baseURL%><%=ar.getResourceURL(ngb, "frontPage.htm")%>";
+        
 
         var modalInstance = $modal.open({
             animation: false,
@@ -186,6 +208,35 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             //cancel action - nothing really to do
         });
     };
+    $scope.filteredTimeZones = function() {
+        if (!$scope.tzFilter) {
+            return $scope.timeZoneList.slice(0,8);
+        }
+        var rez = [];
+        var filterList = parseLCList($scope.tzFilter);
+        console.log("filterList:", filterList);
+        $scope.timeZoneList.forEach( function(item) {
+            var found = true;
+            var lcItem = item.toLowerCase();
+            filterList.forEach( function(filterTerm) {
+                if (lcItem.indexOf(filterTerm)<0) {
+                    found = false;
+                }
+            });
+            if (found) {
+                rez.push(item);
+            }
+        });
+        if (rez.length>8) {
+            rez = rez.slice(0,8);
+        }
+        console.log("Filtered RTZ:", rez);
+        return rez;
+    }
+    $scope.selectTimeZone = function(newTimeZone) {
+        $scope.userDetails.timeZone = newTimeZone;
+        $scope.updateUserProfile(["timeZone"]);
+    }
 
 });
 app.filter('encode', function() {
@@ -232,6 +283,15 @@ app.filter('encode', function() {
     cursor:pointer;
     font-weight: bold;
 }
+
+.workspaceButton {
+    border-radius: 6px;
+    background-color: lightgray;
+    padding: 0px;
+}
+.workspaceButton:hover {
+    background-color: lightskyblue;
+}
 </style>
 
     <table class="table" ng-hide="hasProfile">
@@ -253,7 +313,7 @@ app.filter('encode', function() {
     <table class="table" ng-show="hasProfile">
       <tr>
         <td class="labelColumn">Internal Key</td>
-        <td>{{userInfo.key}}</td>
+        <td><a href="../../{{userInfo.key}}/userSettings.htm">{{userInfo.key}}</a></td>
       </tr>
       <tr>
         <td class="labelColumn">Universal ID</td>
@@ -289,8 +349,22 @@ app.filter('encode', function() {
         <td ng-show="userDetails.lastLogin>100000">{{userDetails.lastLogin|date}}</td>
       </tr>
       <tr>
-        <td class="labelColumn">Time Zone</td>
-        <td>{{userDetails.timeZone}}</td>
+        <td class="labelColumn" ng-click="showTimeZonePanel=!showTimeZonePanel">Time Zone</td>
+        <td ng-hide="showTimeZonePanel">{{userDetails.timeZone}}</td>
+        <td ng-show="showTimeZonePanel">
+          <div class="well">
+            <div class="form-inline">
+                Currently set to: <b>{{userDetails.timeZone}}</b>
+            </div>
+            <div class="form-inline">
+                Filter: <input ng-model="tzFilter" class="form-control" style="width:200px"/>
+                Enter a few letters of the time zone you need.
+            </div>
+            <div ng-repeat="item in filteredTimeZones()">
+                <b>{{item}}</b> <button ng-click="selectTimeZone(item)" class="btn btn-sm btn-default btn-raised">Select</button> 
+            </div>
+          </div>
+        </td>
       </tr>
       <tr>
         <td class="labelColumn" ng-click="showInvitePanel=!showInvitePanel"></td>
@@ -315,11 +389,11 @@ app.filter('encode', function() {
           <td></td>
           <td>{{role}}</td>
           <td ><div ng-show="avail">
-              <button ng-click="manageUserRoles(key,role,false)" class="btn btn-sm btn-raised">
+              <button ng-click="manageUserRoles(key,role,false)" class="btn btn-sm btn-raised workspaceButton">
               Remove</button>
           </div></td>
           <td><div ng-hide="avail">
-              <button ng-click="manageUserRoles(key,role,true)" class="btn btn-sm btn-raised">
+              <button ng-click="manageUserRoles(key,role,true)" class="btn btn-sm btn-raised workspaceButton">
               Add</button>
           </div></td>
         </tr>        
@@ -328,59 +402,41 @@ app.filter('encode', function() {
     
     <h3>Remove</h3>    
     
-    <table class="table">
-      <tr>
-        <td class="labelColumn" ng-click="showRemovePanel=!showRemovePanel">Remove</td>
-        <td ng-hide="showRemovePanel">
-           <button class="btn btn-primary btn-raised" ng-click="showRemovePanel=true">Remove This User</button>
-        </td>
-        <td ng-show="showRemovePanel">
-            <div class="well">
-                <h3>Eliminate all References to this User</h3>
-                <table >
-                  <tr>
-                    <td class="paddedCell">Replace With:</td>
-                    <td class="paddedCell">
-                    <input ng-model="destUser" class="form-control" placeholder="Enter an email address">
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="paddedCell"></td>
-                    <td class="paddedCell">
-                        <input type="checkbox" ng-model="replaceConfirm">
-                        Check here to confirm, there is no way to UNDO this change
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="paddedCell"></td>
-                    <td class="paddedCell">
-                        <button ng-click="replaceUsers()" class="btn btn-primary btn-raised">
-                        Replace First With Second</button>
-                        <button class="btn btn-primary btn-raised" ng-click="showRemovePanel=false">
-                        Cancel</button>
-                    </td>
-                  </tr>
-                </table>
-            </div>
-        </td>
-      </tr>
-    </table>
 
+    <div ng-hide="showRemovePanel">
+        <button class="btn btn-raised" ng-click="showRemovePanel=true">Remove This User</button>
+    </div>
+    <div class="well" ng-show="showRemovePanel">
+        <h3>Eliminate all References to this User</h3>
+        <p>Existing objects owned or managed by this user need to be transferred to another.</p>
+        <table >
+          <tr>
+            <td class="paddedCell">Replace With:</td>
+            <td class="paddedCell">
+            <input ng-model="destUser" class="form-control" placeholder="Enter an email address">
+            </td>
+          </tr>
+          <tr>
+            <td class="paddedCell"></td>
+            <td class="paddedCell">
+                <input type="checkbox" ng-model="replaceConfirm">
+                Check here to confirm, there is no way to UNDO this change
+            </td>
+          </tr>
+          <tr>
+            <td class="paddedCell"></td>
+            <td class="paddedCell">
+                <button ng-click="replaceUsers()" class="btn btn-primary btn-raised">
+                Transfer All Responsibilities</button>
+                <button class="btn btn-raised" ng-click="showRemovePanel=false">
+                Cancel</button>
+            </td>
+          </tr>
+        </table>
+    </div>
 
+    <div style="height:400px"></div>
 
-<style>
-.workspaceButton {
-    border: 2px solid white;
-    border-radius: 6px;
-    background-color: lightgray;
-    padding: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-.workspaceButton:hover {
-    background-color: lightskyblue;
-}
-</style>
 
 </div>
 

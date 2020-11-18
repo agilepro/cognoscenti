@@ -743,6 +743,12 @@ public class ProjectGoalController extends BaseController {
                 dr.setTimestamp(ar.nowTime);
                 decisionInfo.put("timestamp", ar.nowTime);
                 eventType = HistoryRecord.EVENT_TYPE_CREATED;
+                dr.updateDecisionFromJSON(decisionInfo, ngp, ar);
+            }
+            else if (decisionInfo.has("deleteMe")) {
+                int didVal = DOMFace.safeConvertInt(did);
+                dr = ngp.findDecisionOrFail(didVal);
+                ngp.deleteDecision(didVal);
             }
             else {
                 int didVal = DOMFace.safeConvertInt(did);
@@ -750,8 +756,9 @@ public class ProjectGoalController extends BaseController {
                     throw new Exception("Don't understand the decision number: "+didVal);
                 }
                 dr = ngp.findDecisionOrFail(didVal);
+                dr.updateDecisionFromJSON(decisionInfo, ngp, ar);
             }
-            dr.updateDecisionFromJSON(decisionInfo, ngp, ar);
+
 
             //create the history record here.
             HistoryRecord.createHistoryRecord(ngp, Integer.toString(dr.getNumber()),
@@ -902,16 +909,16 @@ public class ProjectGoalController extends BaseController {
             JSONObject postBody = this.getPostedObject(ar);
             String fromCombo = postBody.getString("from");
             String goalId = postBody.getString("id");
-            
+
             Cognoscenti cog = ar.getCogInstance();
             NGWorkspace thisWS = cog.getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail( fromCombo ).getWorkspace();
-            
+
             ar.setPageAccessLevels(thisWS);
             ar.assertMember("You must be the member of the workspace you are copying to");
             ar.setPageAccessLevels(fromWS);
             ar.assertMember("You must be the member of the workspace you are copying from");
-            
+
             GoalRecord oldGoal = fromWS.getGoalOrNull(goalId);
             if (oldGoal==null) {
                 throw new Exception("Unable to find a action item with id="+goalId);
@@ -919,7 +926,7 @@ public class ProjectGoalController extends BaseController {
 
             JSONObject goalJSON = oldGoal.getJSON4Goal(fromWS);
             String synopsis = oldGoal.getSynopsis();
-            
+
             GoalRecord newCopy = thisWS.findGoalBySynopsis(synopsis);
             if (newCopy == null) {
                 newCopy = thisWS.createGoal(ar.getBestUserId());
@@ -934,10 +941,10 @@ public class ProjectGoalController extends BaseController {
             oldGoal.setState(GoalRecord.STATE_SKIPPED);
             oldGoal.setDescription("This task was moved to another workspace: "+thisWS.getFullName());
             fromWS.saveContent(ar, "Action Item moved to another workspace: "+thisWS.getFullName());
-            
+
             JSONObject repo = new JSONObject();
             repo.put("created", newCopy.getJSON4Goal(thisWS));
-            
+
             thisWS.saveFile(ar, "Action Item '"+synopsis+"' copied from workspace: "+fromWS.getFullName());
 
             sendJson(ar, repo);
