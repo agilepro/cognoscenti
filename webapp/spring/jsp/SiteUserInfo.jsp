@@ -321,10 +321,22 @@ app.filter('encode', function() {
       </tr>
       <tr>
         <td class="labelColumn" ng-click="showNamePanel=!showNamePanel">Name</td>
-        <td ng-hide="showNamePanel">{{userDetails.name}}</td>
+        <td ng-hide="showNamePanel" ng-dblclick="showNamePanel=true">{{userDetails.name}}</td>
         <td ng-show="showNamePanel">
            <input type="text" ng-model="userDetails.name" class="form-control"/>
-           <button class="btn btn-primary btn-raised" ng-click="updateUserProfile(['name'])">Set User Name</button>
+           <button class="btn btn-primary btn-raised" 
+                   ng-click="updateUserProfile(['name']);showNamePanel=false">
+                   Set User Name</button>
+        </td>
+      </tr>
+      <tr>
+        <td class="labelColumn" ng-click="showDescPanel=!showDescPanel">Description</td>
+        <td ng-hide="showDescPanel" ng-dblclick="showDescPanel=true">{{userDetails.description}}</td>
+        <td ng-show="showDescPanel">
+           <textarea ng-model="userDetails.description" class="form-control"></textarea>
+           <button class="btn btn-primary btn-raised" 
+                   ng-click="updateUserProfile(['description']);showDescPanel=false">
+                   Set User Description</button>
         </td>
       </tr>
       <tr>
@@ -344,13 +356,17 @@ app.filter('encode', function() {
         </td>
       </tr>
       <tr>
-        <td class="labelColumn">Last Access</td>
-        <td ng-hide="userDetails.lastLogin>100000">Has never logged in.</td>
-        <td ng-show="userDetails.lastLogin>100000">{{userDetails.lastLogin|date}}</td>
+        <td class="labelColumn" ng-click="showImagePanel=!showImagePanel">Image</td>
+        <td ng-hide="showImagePanel"  ng-dblclick="showImagePanel=true">
+            <img src=../../../icon/{{userDetails.image}}"/>
+        </td>
+        <td ng-show="showImagePanel">{{userDetails.image}}<br/>
+            <img src=../../../icon/{{userDetails.image}}"/>
+        </td>
       </tr>
       <tr>
         <td class="labelColumn" ng-click="showTimeZonePanel=!showTimeZonePanel">Time Zone</td>
-        <td ng-hide="showTimeZonePanel">{{userDetails.timeZone}}</td>
+        <td ng-hide="showTimeZonePanel" ng-dblclick="showTimeZonePanel=true">{{userDetails.timeZone}}</td>
         <td ng-show="showTimeZonePanel">
           <div class="well">
             <div class="form-inline">
@@ -365,6 +381,16 @@ app.filter('encode', function() {
             </div>
           </div>
         </td>
+      </tr>
+      <tr>
+        <td class="labelColumn">Last Access</td>
+        <td ng-hide="userDetails.lastLogin>100000">Has never logged in.</td>
+        <td ng-show="userDetails.lastLogin>100000">{{userDetails.lastLogin|date}} as '{{userDetails.lastLoginId}}'</td>
+      </tr>
+      <tr>
+        <td class="labelColumn">Disabled</td>
+        <td ng-hide="userInfo.disabled">User is NOT Disabled</td>
+        <td ng-show="userInfo.disabled" style="background-color:yellow">User is Disabled</td>
       </tr>
       <tr>
         <td class="labelColumn" ng-click="showInvitePanel=!showInvitePanel"></td>

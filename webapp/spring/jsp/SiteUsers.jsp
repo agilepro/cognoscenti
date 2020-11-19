@@ -147,8 +147,8 @@ app.filter('encode', function() {
     <div>
     <table class="table">
       <tr>
-         <th>Primary Email</th>
          <th>Name</th>
+         <th>Primary Email</th>
          <th>Last Login</th>
          <th>Objects</th>
          <th>Workspaces</th>

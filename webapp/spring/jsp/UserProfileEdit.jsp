@@ -164,30 +164,23 @@ myApp.controller('myCtrl', function($scope, $http) {
 
     var removeUserIdResult = {
         success: function(o) {
-                        var respText = o.responseText;
-                        var json = eval('(' + respText+')');
-                        if(json.msgType == "success"){
-                            //removeTD(json.modid);
-                            if(isOpenid){
-                                alert("Open Id has been deleted successfully.");
-                            }else{
-                                alert("Email Id has been deleted successfully.");
-                            }
-                            window.location.reload();
-                        }else{
-                            showErrorMessage("Result", json.msg , json.comments );
-                        }
+            var respText = o.responseText;
+            var json = eval('(' + respText+')');
+            if(json.msgType == "success"){
+                if(isOpenid){
+                    alert("Open Id has been deleted successfully.");
+                }else{
+                    alert("Email Id has been deleted successfully.");
+                }
+                window.location.reload();
+            }else{
+                showErrorMessage("Result", json.msg , json.comments );
+            }
          },
          failure: function(o) {
                     alert("deleteUserId.ajax Error:" +o.responseText);
          }
      }
-
-    function removeTD(removeVal)
-    {
-        var myTD=document.getElementById(removeVal);
-        myTD.parentNode.removeChild(myTD);
-    }
 
     function uploadUserPhoto(){
         if(document.getElementById('fname').value.length <1 ){
