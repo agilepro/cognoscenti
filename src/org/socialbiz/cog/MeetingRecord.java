@@ -609,16 +609,16 @@ public class MeetingRecord extends DOMFace {
                         meetingInfo.put("previousMinutes", minutesID);
                     }
                 }
-                
+
                 meetingInfo.put("prevMeet", prevMeet.getListableJSON(ar));
             }
         }
         meetingInfo.put("participants", AddressListEntry.getJSONArrayFromIds(this.getVector("participants")));
-        
+
         //general pieces of information in case not elsewhere
         meetingInfo.put("baseUrl", ar.baseURL);
         meetingInfo.put("workspaceUrl", ar.baseURL + ar.getResourceURL(ngw, ""));
-        
+
         return meetingInfo;
     }
 
@@ -711,14 +711,6 @@ public class MeetingRecord extends DOMFace {
         if (input.has("participants")) {
             this.setVector("participants", AddressListEntry.uidListfromJSONArray(input.getJSONArray("participants")));
         }
-        /*
-        if (input.has("participant_add")) {
-            this.addUniqueValue("participant", input.getString("participant_add"));
-        }
-        if (input.has("participant_remove")) {
-            this.removeVectorValue("participant", input.getString("participant_remove"));
-        }
-        */
 
         if (input.has("timeSlots")) {
             this.removeAllNamedChild("timeSlots");

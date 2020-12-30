@@ -6,7 +6,7 @@
 %><%@page import="org.socialbiz.cog.EmailGenerator"
 %><%@page import="org.socialbiz.cog.MeetingRecord"
 %><%!
-    String pageTitle="Send Topic By Mail";
+    String pageTitle="Compose EMail";
 %><%
 /*
 Required parameters:
@@ -36,6 +36,7 @@ Optional Parameters:
     String siteId      = ar.reqParam("siteId");
     String meetId      = ar.defParam("meet", null);
     String layout      = ar.defParam("layout", null);
+    String mailSubject  = ar.defParam("subject", null);
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngw);
     ar.assertMember("Must be a member to send email");
@@ -46,18 +47,40 @@ Optional Parameters:
     for (File aFile : allLayouts) {
         allLayoutNames.put(aFile.getName());
     }
+    
+    JSONObject meeting = new JSONObject();
+    JSONArray meetingParticipants = new JSONArray();
+    JSONArray meetingAttendees = new JSONArray();
+    JSONArray meetingNonAttendees = new JSONArray();
+    JSONArray meetingExpected = new JSONArray();
+    JSONArray meetingNotExpected = new JSONArray();
+    JSONArray meetingAssignment = new JSONArray();
 
     String eGenId      = ar.defParam("id", null);
     String selectedRole = "Members";
     JSONObject emailInfo = null;
+    String targetRole = null;
     if (eGenId!=null) {
         EmailGenerator eGen = ngw.getEmailGeneratorOrFail(eGenId);
         emailInfo = eGen.getJSON(ar, ngw);
+        meetId = eGen.getMeetingId();
+        boolean isMeeting = (meetId!=null && meetId.length()>0);
+        if (isMeeting) {
+            MeetingRecord mr = ngw.findMeeting(meetId);
+            if (mr!=null) {
+                emailInfo.put("meetingInfo", mr.getFullJSON(ar, ngw, false));
+                if(mailSubject == null){
+                    mailSubject = "Meeting: "+mr.getNameAndDate(mr.getOwnerCalendar());
+                }
+                emailInfo.put("alsoTo", AddressListEntry.getJSONArrayFromIds(mr.getParticipants()));
+                meeting = mr.getFullJSON(ar, ngw, false);
+            }
+        }
     }
     else {
-        String targetRole = null;
         emailInfo = new JSONObject();
         emailInfo.put("id", "~new~");
+        emailInfo.put("state", 1);
         emailInfo.put("intro", ar.defParam("intro",
                 "Sending this note to let you know about a recent update to this web page "
                 +"has information that is relevant to you.  Follow the link to see the most recent version."));
@@ -71,7 +94,6 @@ Optional Parameters:
             emailInfo.put("meetingLayout", layout);
         }
 
-        String mailSubject  = ar.defParam("subject", null);
         String noteId = ar.defParam("noteId", null);
 
         if (noteId!=null) {
@@ -100,8 +122,8 @@ Optional Parameters:
         }
         emailInfo.put("docList", docList);
 
-
-        if (meetId!=null && meetId.length()>0) {
+        boolean isMeeting = (meetId!=null && meetId.length()>0);
+        if (isMeeting) {
             MeetingRecord mr = ngw.findMeeting(meetId);
             if (mr!=null) {
                 emailInfo.put("meetingInfo", mr.getFullJSON(ar, ngw, false));
@@ -109,6 +131,7 @@ Optional Parameters:
                     mailSubject = "Meeting: "+mr.getNameAndDate(mr.getOwnerCalendar());
                 }
                 emailInfo.put("alsoTo", AddressListEntry.getJSONArrayFromIds(mr.getParticipants()));
+                meeting = mr.getFullJSON(ar, ngw, false);
             }
             targetRole = mr.getTargetRole();
         }
@@ -194,11 +217,11 @@ Optional Parameters:
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
-    window.setMainPageTitle("Compose Email");
     $scope.siteId = "<%ar.writeJS(siteId);%>";
     $scope.isNew = <%=(eGenId==null)%>;
     $scope.emailInfo = <%emailInfo.write(out,2,4);%>;
     $scope.allRoles = <%allRoles.write(out,2,4);%>;
+    $scope.meeting = <%meeting.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
     $scope.showError = false;
@@ -214,6 +237,13 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
 
     $scope.newEmailAddress = "";
     $scope.newAttachment = "";
+    
+    if ($scope.emailInfo.status==1) {
+        window.setMainPageTitle("Compose Email");
+    }
+    else {
+        window.setMainPageTitle("Sent Email");
+    }
     
     if (!$scope.emailInfo.meetingLayout) {
         $scope.emailInfo.meetingLayout = "FullDetail.chtml";
@@ -318,17 +348,57 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             $scope.emailInfo.roleNames = newSet;
         }
     }
-    $scope.addPlayers = function() {
-        console.log("addPlayers: ",$scope.selectedRole);
-        if (!$scope.selectedRole) {
+    $scope.addPlayers = function(role) {
+        console.log("addPlayers: ",role);
+        if (!role) {
             return;
         }
-        $scope.allRoles.forEach( function(role) {
-            if (role.name == $scope.selectedRole.name) {
-                role.players.forEach( function(player) {
-                    addToTo(player);
-                });
+        role.players.forEach( function(player) {
+            addToTo(player);
+        });
+    }
+    $scope.addMeetingInvitees = function(role) {
+        console.log("addMeetingInvitees: ",$scope.meeting.participants);
+        if (!$scope.meeting) {
+            return;
+        }
+        $scope.meeting.participants.forEach( function(player) {
+            addToTo(player);
+        });
+    }
+    $scope.addMeetingAttendees = function(role) {
+        console.log("addMeetingAttendees: ",$scope.meeting.attended);
+        if (!$scope.meeting) {
+            return;
+        }
+        $scope.meeting.attended.forEach( function(uid) {
+            addToTo(AllPeople.findUserFromID(uid, $scope.siteId));
+        });
+    }
+    $scope.addMeetingNoShows = function(role) {
+        console.log("addMeetingNoShows: ",$scope.meeting.attended);
+        if (!$scope.meeting) {
+            return;
+        }
+        $scope.meeting.participants.forEach( function(player) {
+            var found = false;
+            $scope.meeting.attended.forEach( function(uid) {
+                if (player.uid == uid) {
+                    found = true;
+                }
+            });
+            if (!found) {
+                addToTo(player);
             }
+        });
+    } 
+    $scope.addTopicSubscribers = function(role) {
+        console.log("addMeetingAttendees: ",$scope.meeting.attended);
+        if (!$scope.emailInfo.noteInfo || !$scope.emailInfo.noteInfo.subscribers) {
+            return;
+        }
+        $scope.emailInfo.noteInfo.subscribers.forEach( function(player) {
+            addToTo(player);
         });
     }
     
@@ -517,16 +587,59 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
       </span>
     </div>
 
-    <div>
+    <div ng-show="emailInfo.state==1">
       <form class="form-horizontal">
         <fieldset>
           <div class="form-group">
             <label class="col-md-2 control-label">Roles</label>
             <div class="col-md-10">
               <div class="form-inline">
-                <select ng-model="selectedRole" ng-options="role.name for role in allRoles" class="form-control"></select>
-                <button class="btn btn-primary btn-sm btn-raised" ng-click="addPlayers()" ng-show="selectedRole">
-                    <i class="fa fa-plus"></i> Add Players from {{selectedRole.name}} </button>
+                <button class="btn btn-default btn-sm btn-raised" ng-click="showAddressingOptions=!showAddressingOptions">
+                    <i class="fa fa-plus"></i>Click here to see addressing options</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" ng-show="showAddressingOptions">
+            <label class="col-md-2 control-label">Roles</label>
+            <div class="col-md-10 well">
+              <div class="col-md-5">
+                <h3>Roles</h3>
+                <div ng-repeat="role in allRoles" >
+                  <button class="btn btn-default btn-sm btn-raised" ng-click="addPlayers(role)">
+                    Add {{role.name}}</button>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div ng-show="meeting.participants">
+                    <h3>Meeting Participants</h3>
+                    <div>
+                    <button class="btn btn-default btn-sm btn-raised" ng-click="addMeetingInvitees()" 
+                      title="Add all the people invited to the meeting">
+                      Add Meeting Invitees</button>
+                    </div>
+                    <div>
+                    <button class="btn btn-default btn-sm btn-raised" ng-click="addMeetingAttendees()" 
+                      title="Add all the people who attended the meeting">
+                      Add Meeting Attendees</button>
+                    </div>
+                    <div>
+                    <button class="btn btn-default btn-sm btn-raised" ng-click="addMeetingNoShows()" 
+                      title="Add all the people invited but did not show up">
+                      Add Meeting No-shows</button>
+                    </div>
+                </div>
+                <div ng-show="emailInfo.noteInfo.subscribers">
+                    <h3>Topic Subscribers</h3>
+                    <button class="btn btn-default btn-sm btn-raised" ng-click="addTopicSubscribers()" 
+                      title="Add all the people invited to the meeting">
+                      Add All Subscribers</button>
+                </div>
+                <div>
+                    <h3>Clear</h3>
+                    <button class="btn btn-default btn-sm btn-raised" ng-click="emailInfo.alsoTo = []" 
+                      title="Add all the people invited to the meeting">
+                      Clear Addressees</button>
+                </div>
               </div>
             </div>
           </div>

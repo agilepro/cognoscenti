@@ -23,7 +23,6 @@ package org.socialbiz.cog.dms;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -48,7 +47,7 @@ public class FolderAccessHelper {
 
     AuthRequest ar;
 
-    @Deprecated 
+    @Deprecated
     public FolderAccessHelper(AuthRequest ar)throws Exception
     {
         if(ar == null)
@@ -59,7 +58,7 @@ public class FolderAccessHelper {
     }
 
 
-    @Deprecated 
+    @Deprecated
     public static void initLocalConnections(Cognoscenti cog){
         loaclConnections = new ArrayList<LocalFolderConfig>();
         String lclConn = cog.getConfig().getProperty("localConnections");
@@ -85,7 +84,7 @@ public class FolderAccessHelper {
         }
 
     }
-    @Deprecated 
+    @Deprecated
     public static void initCVSConnections(Cognoscenti cog){
         cvsConnections = new ArrayList<CVSConfig>();
         String cvsConn = cog.getConfig().getProperty("cvsConnections");
@@ -126,7 +125,7 @@ public class FolderAccessHelper {
     * Either creates or updates a "resource connection" for a given user
     * creates a connection if the id is "CREATE"
     */
-    @Deprecated 
+    @Deprecated
     public static ConnectionSettings updateConnection(AuthRequest ar) throws Exception
     {
         UserPage up = ar.getUserPage();
@@ -145,7 +144,7 @@ public class FolderAccessHelper {
         return cSet;
     }
 
-    @Deprecated 
+    @Deprecated
     public static void updateSettingsFromRequest(AuthRequest ar, UserPage up, ConnectionSettings cSet) throws Exception
     {
         String displayName = ar.reqParam(ConnectionType.FORM_FIELD_NAME);
@@ -182,7 +181,7 @@ public class FolderAccessHelper {
     }
 
 
-    @Deprecated 
+    @Deprecated
     public static void deleteConnection(AuthRequest ar, String fid)throws Exception
     {
         UserPage up = ar.getUserPage();
@@ -193,7 +192,7 @@ public class FolderAccessHelper {
 
 
 
-    @Deprecated 
+    @Deprecated
     public void createNewFolderFile(String symbol,
                 String fileName, UploadFiles ufs)throws Exception {
         UserPage up = ar.getUserPage();
@@ -208,7 +207,7 @@ public class FolderAccessHelper {
         tempFile.delete();
     }
 
-    @Deprecated 
+    @Deprecated
     public void deleteFolder(String symbol)throws Exception
     {
         UserPage up = ar.getUserPage();
@@ -219,7 +218,7 @@ public class FolderAccessHelper {
 
 
 
-    @Deprecated 
+    @Deprecated
     public ResourceEntity getRemoteResource(String id, String rpath, boolean expand) throws Exception
     {
         if (rpath==null) {
@@ -234,14 +233,6 @@ public class FolderAccessHelper {
         UserPage up = ar.getUserPage();
         ConnectionType cType = up.getConnectionOrFail(id);
         return cType.getResourceEntity(rpath, expand);
-    }
-
-     private void createRemotefolder(RemoteLinkCombo parent, String subFolderName)
-         throws Exception{
-
-        ResourceEntity parentEntity = parent.getResource();
-        ResourceEntity child = parentEntity.getChild(subFolderName);
-        child.createFolder();
     }
 
 
@@ -575,38 +566,16 @@ public class FolderAccessHelper {
         }
     }
 
-     /**
-      * @deprecated use createRemotefolder instead
-      */
-     public void createSubFolder(String userKey, String parenFolderId, String subFolderName)throws Exception{
-         String id = parenFolderId;
-         String rpath = "";
-         int indx = parenFolderId.indexOf('/');
-         if (indx > 0) {
-             id = parenFolderId.substring(0, indx);
-             rpath = parenFolderId.substring(indx);
-         }
-         createRemotefolder(new RemoteLinkCombo(userKey, id, rpath), subFolderName);
-     }
 
-    /**
-    * @deprecated, use the protocol specific methods for this.
-    */
-    public static String extendUrlPath(String baseURL, String elementToAdd) throws Exception
-    {
-        if (baseURL.endsWith("/")) {
-            return baseURL + URLEncoder.encode(elementToAdd, "UTF-8");
-        } else {
-            return baseURL + "/" + URLEncoder.encode(elementToAdd, "UTF-8");
-        }
-    }
     /**
     * @deprecated, not needed any more, use RemoteLinkCombo instead
     */
+    /*
     public String getFolderId(String rLink) throws Exception{
         RemoteLinkCombo rlc = RemoteLinkCombo.parseLink(rLink);
         return rlc.folderId;
     }
+    */
     /**
     * @deprecated, not needed any more, use RemoteLinkCombo instead
     */

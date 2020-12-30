@@ -310,8 +310,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               </div>
             </td>
             <td width="40px"></td>
-            <td width="40px"></td>
             <td width="420px">Name ~ Description</td>
+            <td width="40px"></td>
             <td width="80px">Date</td>
         </tr>
         <tr ng-repeat="rec in getRows()" ng-dblclick="openDocDialog(rec)">
@@ -338,12 +338,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               </div>
             </td>
             <td>
-                <a href="DocsDetails{{rec.id}}.htm">
-                    <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
-                    <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
-                </a>
-            </td>
-            <td>
               <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='URL'">
                 <span class="fa fa-external-link"></span></span>
               <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='FILE'">
@@ -362,6 +356,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               </div>
               <div ng-show="showDescription && rec.description" ng-bind-html="rec.html">
               </div>
+            </td>
+            <td>
+                <a href="DocsDetails{{rec.id}}.htm">
+                    <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+                    <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+                </a>
             </td>
             <td>{{rec.modifiedtime|date}}</td>
         </tr>

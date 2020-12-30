@@ -129,7 +129,8 @@ public class NGPageIndex {
     public static final int CONTAINER_TYPE_PROJECT = 4;
 
     private long lockedBy = 0;
-    public Exception lockedByAuditException = new Exception("Audit Lock Trail");
+    private long lockedTime = 0;
+    //private Exception lockedByAuditException = new Exception("Audit Lock Trail");
 
     private ArrayBlockingQueue<String> lockBlq;
 
@@ -144,7 +145,6 @@ public class NGPageIndex {
     public static Hashtable<String, ArrayBlockingQueue<String>> bsnList = new Hashtable<String, ArrayBlockingQueue<String>>();
 
     public static final long   PAGE_NTFX_WAIT = 10;
-    //public static final String UPDATE_LOCK_WAIT = "updateLockWait";
     public static final String LOCK_ID = "lock";
     public static final String NO_LOCK_ID = "nolock";
     private static HashMap<String, List<NGPageIndex>> lockMap = new HashMap<String, List<NGPageIndex>>();
@@ -154,7 +154,7 @@ public class NGPageIndex {
     public String getCombinedKey() {
         return wsSiteKey + "|" + containerKey;
     }
-    
+
 
     /**
      * Returns the collection of all target pages that are linked FROM this
@@ -444,20 +444,34 @@ public class NGPageIndex {
                 // unlocked at once at the end of the web request
                 return;
             }
-            if (lockedBy!=0) {
-                System.out.println("    WAIT: tid="+thisThread+" is about to wait for lock held by tid="+lockedBy+" now="+(System.currentTimeMillis()%10000));
+
+            boolean wasLocked = lockedBy!=0;
+            if (wasLocked) {
+                long lockAge = System.currentTimeMillis() - lockedTime;
+                System.out.println("    LOCKWAIT: tid="+thisThread+" spaceId="+containerKey+" held by tid="+lockedBy+" for age="+lockAge+"ms");
+                if (lockBlq.size()>0) {
+                    System.out.println("    LOCKTWIST: tid="+thisThread+" blocking queue is NOT EMPTY so not really locked!");
+                }
             }
 
-            String ctid = "tid:" + thisThread;
+            //pull the one item out of the blocking array so that other threads are blocked
+            //if they get here before this thread is done.
             String lockObj = lockBlq.poll(10, TimeUnit.SECONDS);
             if (lockObj == null) {
-                throw new Exception("tid="+thisThread+" failed after 10 seconds to set a lock for container ("+this.containerKey
-                         +"), Lock held by tid="+lockedBy,  lockedByAuditException);
+                //rusty lock feature.   Ignore any lock that is more than 10 seconds old
+                if (lockedBy!=0) {
+                    long lockAge = System.currentTimeMillis() - lockedTime;
+                    System.out.println("    LOCKSTEAL: tid="+thisThread+" grabbing lock from tid="+lockedBy+" age="+lockAge+"ms");
+                }
+            }
+            else if (wasLocked) {
+                System.out.println("    LOCKRCV: tid="+thisThread+" successfully got lock for spaceId="+containerKey);
             }
 
             lockedBy = thisThread;
-            lockedByAuditException = new Exception("Audit lock hold by " + ctid + " pageId: "
-                    + containerKey);
+            lockedTime = System.currentTimeMillis();
+            String ctid = "tid:" + thisThread;
+            //lockedByAuditException = new Exception("    LOCKED: tid="+thisThread+"  spaceId=" + containerKey);
             List<NGPageIndex> ngpiList = NGPageIndex.lockMap.get(ctid);
             if (ngpiList == null) {
                 ngpiList = new ArrayList<NGPageIndex>();
@@ -480,16 +494,27 @@ public class NGPageIndex {
         String ctid = "tid:" + thisThread;
         try {
             if (lockedBy != thisThread) {
-                // should probably throw an exception here ... but signature is
-                // not right
-                // and, not sure what we can do about it. Unlocking should
-                // continue.
-                System.out.println("LOCK ERROR - clear lock called when thread tid="+thisThread+" does not have lock!");
-                return;
+                // should probably throw an exception here ... but signature is not right
+                // and, not sure what we can do about it. Unlocking should continue.
+                long lockAge = System.currentTimeMillis() - lockedTime;
+                System.out.println("    LOCKVICTIM: tid="+thisThread+" had lock stolen "+lockAge+"ms ago!");
+                JSONException.traceException(new Exception("OFFENDING THREAD tried to hold lock too long"),
+                        "    LOCKVICTIM: tid="+thisThread+" had lock stolen "+lockAge+"ms ago!");
+                if (lockAge<10000) {
+                    //don't understand how this lock got taken from this thread, but since it is young
+                    //let it remain there.  Older locks get cleared out.
+                    return;
+                }
+
             }
             this.lockedBy = 0;
-            this.lockedByAuditException = null;
-            lockBlq.add(LOCK_ID);
+            //this.lockedByAuditException = null;
+            if (lockBlq.size()==0) {
+                //should be empty, but never add a second one to the queue, because then it could end up
+                //allowing multiple threads to have locks.  The blocking relies on the lock taker
+                //taking the one and only entry
+                lockBlq.add(LOCK_ID);
+            }
         }
         catch (IllegalStateException e) {
             // Lock is already available

@@ -88,7 +88,10 @@ app.controller('myCtrl', function($scope, $http) {
         });
     }
     $scope.addUser = function() {
-        window.location = "SiteUserInfo.htm?userKey="+$scope.newEmail;
+        window.location = "SiteUserInfo.htm?userKey="+encodeURIComponent($scope.newEmail);
+    }
+    $scope.visitUser = function(email) {
+        window.location = "SiteUserInfo.htm?userKey="+encodeURIComponent(email);
     }
 });
 app.filter('encode', function() {
@@ -119,19 +122,11 @@ app.filter('encode', function() {
     </div>
 
 <style>
-.paddedCell {
-    padding:8px;
+.table tr {
+    cursor:pointer;
 }
-.workspaceButton {
-    border: 2px solid white;
-    border-radius: 6px;
-    background-color: lightgray;
-    padding: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-.workspaceButton:hover {
-    background-color: lightskyblue;
+.table tr:hover{
+    background-color:#F7E0FF;;
 }
 </style>
 
@@ -153,8 +148,9 @@ app.filter('encode', function() {
          <th>Objects</th>
          <th>Workspaces</th>
       </tr>
-      <tr ng-repeat="(key, value) in userMap">
-         <td><a href="SiteUserInfo.htm?siteId=<%=siteId%>&userKey={{value.info.key|encode}}">{{value.info.name}}</a></td>
+      <tr ng-repeat="(key, value) in userMap" 
+          ng-click="visitUser(value.info.uid)">
+         <td>{{value.info.name}}</td>
          <td>{{value.info.uid}}</td>
          <td>{{value.info.lastLogin|date}}</td>
          <td>{{value.count}}</td>

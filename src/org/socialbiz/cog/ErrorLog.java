@@ -152,7 +152,11 @@ public class ErrorLog extends DOMFile {
             //redundantly included in the system out as well
             //maybe someday this will not be necessary???
             System.out.println("\nLOGGED EXCEPTION: t="+Thread.currentThread().getId()
-                     +", start="+ SectionUtil.getNicePrintDate(nowTime) + ", now=" + SectionUtil.currentTimeString());
+                     +", start="+ SectionUtil.getNiceTimestamp(nowTime) + ", now=" + SectionUtil.getNiceTimestamp(System.currentTimeMillis()));
+            if (msg==null || msg.length()==0) {
+                msg = "LOGGED EXCEPTION: t="+Thread.currentThread().getId()
+                        +", start="+ SectionUtil.getNiceTimestamp(nowTime) + ", now=" + SectionUtil.getNiceTimestamp(System.currentTimeMillis());
+            }
             JSONException.traceException(System.out, ex, msg);
 
             return logsError(userProfile, msg, ex, errorURL, nowTime, cog);

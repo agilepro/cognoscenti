@@ -35,7 +35,7 @@
      {% onEmpty %}
      {% endloop %}
 </td>
-<td style="width:150px">{$agItem.schedStart|date("HH:mm")} to {$agItem.schedEnd|date("HH:mm")}</td>
+<td style="width:150px">{$agItem.schedStart|date("HH:mm  'ttt'")} to {$agItem.schedEnd|date("HH:mm")}</td>
 </tr>
 {% endif %}
 {% else %}

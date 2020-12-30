@@ -433,6 +433,19 @@ public class SectionUtil
             return "[DATE ERROR: "+e.toString()+"]";
         }
     }
+    public static String getNiceTimestamp(long timestamp) {
+        try {
+            StringWriter out = new StringWriter(20);
+            nicePrintTimestamp(out, timestamp);
+            return out.toString();
+        }
+        catch (Exception e) {
+            //exception to the normal rule ... the ability to convert a
+            //date to a string is needed in many many places without the
+            //bother of catching exceptions, so this is a compromise.
+            return "[DATE ERROR: "+e.toString()+"]";
+        }
+    }
     public static String currentTimeString() {
         return getNicePrintDate(System.currentTimeMillis());
     }

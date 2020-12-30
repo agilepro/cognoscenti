@@ -94,7 +94,7 @@ app.service('AllPeople', function($http) {
     
     AllPeople.getSiteObject = function(site) {
         if (!site) {
-            throw "AllPeople.getSiteObject %% Need to specify a tenant";
+            throw "AllPeople.getSiteObject %% Need to specify a site";
         }
         if (!AllPeople.allPersonBySite) {
             AllPeople.getPeopleOutOfStorage();

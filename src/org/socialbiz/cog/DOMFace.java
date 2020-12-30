@@ -335,10 +335,11 @@ public class DOMFace
             throw new RuntimeException("Program logic error: a null member name"
                 +" was passed to addVectorValue.");
         }
+        AddressListEntry newUser = new AddressListEntry(value);
         List<Element> children = getNamedChildrenVector(memberName);
         for (Element child : children) {
             String childVal = DOMUtils.textValueOf(child, false);
-            if (childVal.equals(value)) {
+            if (newUser.hasAnyId(childVal)) {
                 //value is already there, so ignore this add
                 return;
             }
@@ -548,8 +549,8 @@ public class DOMFace
     * specific class or objects you want constructed, along with the
     * name of an attribute, and a value to set it to.  Class must have
     * a constructor with three parameters (like DOMFace).
-    * 
-    * @param elementName   the tag name in the XML 
+    *
+    * @param elementName   the tag name in the XML
     * @param childClass    the Java class of the child
     * @param idAttribute   the name of the attribute of the XML that holds the id
     * @param idValue       the value of the id that you are looking for
@@ -566,8 +567,8 @@ public class DOMFace
      * This will look for and find a child of a particular tag and class, with
      * and id of a specified value if it exists.  If it does not exist, it will
      * return null.
-     * 
-     * @param elementName   the tag name in the XML 
+     *
+     * @param elementName   the tag name in the XML
      * @param childClass    the Java class of the child
      * @param idAttribute   the name of the attribute of the XML that holds the id
      * @param idValue       the value of the id that you are looking for
@@ -582,13 +583,13 @@ public class DOMFace
         }
         return null;
     }
-    
+
     /**
      * This will look for and find a child of a particular tag and class, with
      * and id of a specified value if it exists.  If it does not exist, it will
      * create one.
-     * 
-     * @param elementName   the tag name in the XML 
+     *
+     * @param elementName   the tag name in the XML
      * @param childClass    the Java class of the child
      * @param idAttribute   the name of the attribute of the XML that holds the id
      * @param idValue       the value of the id that you are looking for
@@ -605,8 +606,8 @@ public class DOMFace
     /**
      * This will look for and remove a child of a particular tag and class, with
      * and id of a specified value if it exists.  If not found the call does nothing.
-     * 
-     * @param elementName   the tag name in the XML 
+     *
+     * @param elementName   the tag name in the XML
      * @param childClass    the Java class of the child
      * @param idAttribute   the name of the attribute of the XML that holds the id
      * @param idValue       the value of the id that you are looking for
@@ -620,9 +621,9 @@ public class DOMFace
             }
         }
     }
-    
-    
-    
+
+
+
     /**
     * Require child is used in places where you expect a single tag
     * and if it is no there, go ahead and create it.
@@ -713,9 +714,9 @@ public class DOMFace
 
     /**
      * Every DOMFace object can implement an update from JSON in order to receive JSON update
-     * from external.  There is no default behavior and instead it must be implemented on 
-     * each of the subclasses if need.  This is used by some of the base routines.  
-     * If one of those routines are used, but this is not implemented on that class, 
+     * from external.  There is no default behavior and instead it must be implemented on
+     * each of the subclasses if need.  This is used by some of the base routines.
+     * If one of those routines are used, but this is not implemented on that class,
      * then an exception will be thrown.
      */
     public void updateFromJSON(JSONObject foo) throws Exception {
@@ -724,14 +725,14 @@ public class DOMFace
     public JSONObject getJSON() throws Exception {
         throw new JSONException("getJSON method needs to be implemented on the class {0}", this.getClass().getName());
     }
-    
+
     // --------------------------------------------------------------------------
     // All of these convert between JSON representation and XML representation
     // but they keep the name of the item the same.
     // EXTRACT copies a value from the CML to the JSON.
     // UPDATE copies from the JSON to the XML if it exists.
     // --------------------------------------------------------------------------
-    
+
     public void extractScalarString(JSONObject dest, String fieldName) throws Exception {
         String val = getScalar(fieldName);
         if (val!=null) {
@@ -816,7 +817,7 @@ public class DOMFace
     }
     public boolean updateScalarInt(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
-            setScalarLong(fieldName, (long) srce.getInt(fieldName));
+            setScalarLong(fieldName, srce.getInt(fieldName));
             return true;
         }
         return false;
@@ -836,12 +837,12 @@ public class DOMFace
     }
     public boolean updateAttributeInt(String fieldName, JSONObject srce) throws Exception {
         if (srce.has(fieldName)) {
-            setAttributeLong(fieldName, (long) srce.getInt(fieldName));
+            setAttributeLong(fieldName, srce.getInt(fieldName));
             return true;
         }
         return false;
     }
-    
+
     public void extractAttributeBool(JSONObject dest, String fieldName) throws Exception {
         dest.put(fieldName, getAttributeBool(fieldName));
     }
@@ -852,8 +853,8 @@ public class DOMFace
         }
         return false;
     }
-    
-    
+
+
     /**
      * Given a set of children with a specific tag name that all have associated
      * Java classes that have getJSON implemented to generate the right representation
@@ -862,7 +863,7 @@ public class DOMFace
      * @param fieldName  the name of the array
      * @param childClass the Java class for the children
      */
-    public <T extends DOMFace> void extractCollection(JSONObject dest, String fieldName, 
+    public <T extends DOMFace> void extractCollection(JSONObject dest, String fieldName,
             Class<T> childClass) throws Exception {
         JSONArray array = new JSONArray();
         for (T inst : getChildren(fieldName, childClass)) {
@@ -870,37 +871,37 @@ public class DOMFace
         }
         dest.put(fieldName, array);
     }
-    
-    
+
+
     /**
      * This will take an object which has a member that is a JSONArray of objects
-     * and it will update all of the corresponding children.  The assumption is that 
+     * and it will update all of the corresponding children.  The assumption is that
      * the member name on the JSONObject is the same as the tag name of the children.
      * Each child has an id attribute, and the attribute name is the same in the JSON
      * and in the XML.
-     * 
+     *
      * This gives PATCH style semantics to collections.  You can update with a single
      * instance object in it, and it will either delete that child, create that child
-     * or update the child according to a key field value specified.  It is done in 
+     * or update the child according to a key field value specified.  It is done in
      * a type-safe class-safe way such that the Java can still ensure the consistency
      * of the child XML DOM objects.
-     * 
+     *
      * This will look at each JSONObject in the JSONArray specified by name, and look
      * for a corresponding child DOM element with the same tag name, and with an id
      * that matches.  It will then create, update or delete that child.
-     * 
-     * If the object in the array has a member "_DELETE_ME_" then the child will be 
+     *
+     * If the object in the array has a member "_DELETE_ME_" then the child will be
      * deleted instead of being updated.  If no matching child is found the delete
      * command is ignored.
-     * 
-     * If not a delete case, then it looks for the child.  If no child is found, 
+     *
+     * If not a delete case, then it looks for the child.  If no child is found,
      * one will be created.  Whether found or created the child will be updated
      * using JSONUpdate.
-     * 
+     *
      * @param parent the JSONObject that has a member which is a JSONArray
      * @param memberName the name of the member which is the JSONArray
      * @param childClass the Java class of the child objects
-     * @param idAttribute the name of the attribute that holds the id both 
+     * @param idAttribute the name of the attribute that holds the id both
      *                    in the JSON and in the child XML attribute.
      */
     public <T extends DOMFace> void updateCollection(JSONObject parent, String memberName,
@@ -924,7 +925,7 @@ public class DOMFace
                     boolean isDelete = instanceObj.has("_DELETE_ME_");
                     if (isDelete) {
                         removeChildWithID(memberName, childClass,  idAttribute, key);
-                    } 
+                    }
                     else {
                         T oneResp = findOrCreateChildWithID(memberName, childClass, idAttribute, key);
                         oneResp.updateFromJSON(instanceObj);
