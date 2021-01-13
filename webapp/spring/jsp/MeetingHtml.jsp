@@ -984,7 +984,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <td ng-repeat="item in [selectedItem]" style="vertical-align: top;">
     <table class="table" ng-show="item">
     <col width="150">
-    <tr ng-show="meeting.state<=2">
+    <tr ng-show="meeting.state<=1">
       <td></td>
       <td>
           <button ng-click="toggleSpacer(selectedItem)" class="btn btn-primary btn-raised">
@@ -1005,14 +1005,65 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
       <td ng-click="openAgenda(selectedItem)" class="labelColumn">Subject:</td>
       <td ng-style="timerStyleComplete(item)"><span class="h2">{{selectedItem.subject}}</span></td>
     </tr>
-    <tr ng-dblclick="openAgenda(selectedItem,'Description')" ng-hide="selectedItem.isSpacer">
-      <td ng-click="openAgenda(selectedItem,'Description')" class="labelColumn">Description:</td>
-      <td>
-        <div ng-bind-html="selectedItem.desc"></div>
-        <div ng-hide="selectedItem.desc && selectedItem.desc.length>10" class="doubleClickHint">
-            Double-click to description
+    <tr ng-hide="selectedItem.isSpacer">
+      <td class="labelColumn" ng-click="openNotesDialog(selectedItem)">Notes/Minutes:</td>
+      <td ng-dblclick="openNotesDialog(selectedItem)">
+        <div ng-bind-html="selectedItem.minutes"></div>
+        <div ng-hide="selectedItem.minutes" class="doubleClickHint">
+            Double-click to edit notes
         </div>
       </td>
+    </tr>
+    <tr ng-hide="selectedItem.isSpacer">
+      <td ng-click="openAttachAction(selectedItem)" class="labelColumn">Action Items:</td>
+      <td title="double-click to modify the action items">
+          <table class="table">
+          <tr ng-repeat="goal in itemGoals(selectedItem)">
+              <td>
+                <a href="task{{goal.id}}.htm" title="access action item details" target="_blank">
+                   <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"></a>
+              </td>
+              <td ng-dblclick="openModalActionItem(selectedItem, goal)">
+                {{goal.synopsis}}
+              </td>
+              <td ng-dblclick="openModalActionItem(selectedItem, goal)">
+                <div>{{goal.status}}</div>
+                <div ng-repeat="ci in goal.checkitems" >
+                  <span ng-click="toggleCheckItem($event, goal, ci.index)" style="cursor:pointer">
+                    <span ng-show="ci.checked"><i class="fa  fa-check-square-o"></i></span>
+                    <span ng-hide="ci.checked"><i class="fa  fa-square-o"></i></span>
+                  &nbsp; 
+                  </span>
+                  {{ci.name}}
+                </div>
+              </td>
+          </tr>
+          </table>
+          <div ng-hide="itemGoals(selectedItem).length>0" class="doubleClickHint">
+              Double-click to add / remove action items
+          </div>
+      </td>
+    </tr>
+    <tr ng-hide="selectedItem.isSpacer">
+      <td ng-click="openAttachDocument(selectedItem)" class="labelColumn">Attachments:</td>
+      <td title="double-click to modify the attachments">
+          <div ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
+              <div ng-repeat="fullDoc in [getFullDoc(docid)]">
+                  <span ng-click="navigateToDoc(fullDoc.id)" title="access attachment">
+                    <img src="<%=ar.retPath%>assets/images/iconFile.png" ng-show="fullDoc.attType=='FILE'">
+                    <img src="<%=ar.retPath%>assets/images/iconUrl.png" ng-show="fullDoc.attType=='URL'">
+                  </span> &nbsp;
+                  <span ng-click="downloadDocument(fullDoc)" title="download attachment">
+                    <span class="fa fa-external-link" ng-show="fullDoc.attType=='URL'"></span>
+                    <span class="fa fa-download" ng-hide="fullDoc.attType=='URL'"></span>
+                  </span> &nbsp; 
+                  {{fullDoc.name}}
+              </div>
+          </div>
+          <div ng-hide="selectedItem.docList && selectedItem.docList.length>0" class="doubleClickHint">
+              Double-click to add / remove attachments
+          </div>
+       </td>
     </tr>
     <tr  ng-dblclick="openAgenda(selectedItem)" ng-hide="selectedItem.isSpacer">
       <td ng-click="openAgenda(selectedItem)" class="labelColumn">Presenter:</td>
@@ -1029,12 +1080,12 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
         </div>
       </td>
     </tr>
-    <tr ng-hide="selectedItem.isSpacer">
-      <td class="labelColumn" ng-click="openNotesDialog(selectedItem)">Notes/Minutes:</td>
-      <td ng-dblclick="openNotesDialog(selectedItem)">
-        <div ng-bind-html="selectedItem.minutes"></div>
-        <div ng-hide="selectedItem.minutes" class="doubleClickHint">
-            Double-click to edit notes
+    <tr ng-dblclick="openAgenda(selectedItem,'Description')" ng-show="meeting.state<=1 && !selectedItem.isSpacer">
+      <td ng-click="openAgenda(selectedItem,'Description')" class="labelColumn">Description:</td>
+      <td>
+        <div ng-bind-html="selectedItem.desc"></div>
+        <div ng-hide="selectedItem.desc && selectedItem.desc.length>10" class="doubleClickHint">
+            Double-click to description
         </div>
       </td>
     </tr>
@@ -1072,42 +1123,6 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           </div>
           <div ng-hide="itemTopics(selectedItem).length>0" class="doubleClickHint">
               Double-click to set or unset linked topic
-          </div>
-      </td>
-    </tr>
-    <tr ng-hide="selectedItem.isSpacer" ng-dblclick="openAttachDocument(selectedItem)">
-      <td ng-click="openAttachDocument(selectedItem)" class="labelColumn">Attachments:</td>
-      <td title="double-click to modify the attachments">
-          <div ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
-              <div ng-repeat="fullDoc in [getFullDoc(docid)]">
-                  <span ng-click="navigateToDoc(fullDoc.id)" title="access attachment">
-                    <img src="<%=ar.retPath%>assets/images/iconFile.png" ng-show="fullDoc.attType=='FILE'">
-                    <img src="<%=ar.retPath%>assets/images/iconUrl.png" ng-show="fullDoc.attType=='URL'">
-                  </span> &nbsp;
-                  <span ng-click="downloadDocument(fullDoc)" title="download attachment">
-                    <span class="fa fa-external-link" ng-show="fullDoc.attType=='URL'"></span>
-                    <span class="fa fa-download" ng-hide="fullDoc.attType=='URL'"></span>
-                  </span> &nbsp; 
-                  {{fullDoc.name}}
-              </div>
-          </div>
-          <div ng-hide="selectedItem.docList && selectedItem.docList.length>0" class="doubleClickHint">
-              Double-click to add / remove attachments
-          </div>
-       </td>
-    </tr>
-    <tr ng-hide="selectedItem.isSpacer" ng-dblclick="openAttachAction(selectedItem)">
-      <td ng-click="openAttachAction(selectedItem)" class="labelColumn">Action Items:</td>
-      <td title="double-click to modify the action items">
-          <div ng-repeat="goal in itemGoals(selectedItem)">
-              <div>
-                <a href="task{{goal.id}}.htm" title="access action item details" target="_blank">
-                   <img ng-src="<%=ar.retPath%>assets/goalstate/small{{goal.state}}.gif"></a> &nbsp;
-                {{goal.synopsis}}
-              </div>
-          </div>
-          <div ng-hide="itemGoals(selectedItem).length>0" class="doubleClickHint">
-              Double-click to add / remove action items
           </div>
       </td>
     </tr>

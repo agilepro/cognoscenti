@@ -157,7 +157,14 @@ public class ErrorLog extends DOMFile {
                 msg = "LOGGED EXCEPTION: t="+Thread.currentThread().getId()
                         +", start="+ SectionUtil.getNiceTimestamp(nowTime) + ", now=" + SectionUtil.getNiceTimestamp(System.currentTimeMillis());
             }
-            JSONException.traceException(System.out, ex, msg);
+            if (JSONException.containsMessage(ex, "Must be logged in")) {
+                //suppress the logging of the entire stack trace just for not logged in.
+                System.out.println(msg);
+                System.out.println(JSONException.getFullMessage(ex));
+            }
+            else {
+                JSONException.traceException(System.out, ex, msg);
+            }
 
             return logsError(userProfile, msg, ex, errorURL, nowTime, cog);
         }

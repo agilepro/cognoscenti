@@ -111,6 +111,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     $scope.allWorkspaces = <%allWorkspaces.write(out,2,4);%>;
     $scope.recentWorkspaces = <%recentWorkspaces.write(out,2,4);%>;
+    $scope.parentFilter = "";
 
     //the object form of the parent workspace
     $scope.parentWorkspace = <%parentWorkspace.write(out,2,4);%>;
@@ -164,9 +165,9 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.isEditing = null;
     }
     $scope.saveParentKey = function(workspace) {
-        console.log("saving parent: ", workspace.pageKey);
         $scope.workspaceConfig.parentKey = workspace.pageKey;
         $scope.parentWorkspace = workspace;
+        $scope.parentFilter = "";
         $scope.saveOneField(['parentKey']);
     }
     $scope.clearField = function(fieldName) {
@@ -245,11 +246,6 @@ app.controller('myCtrl', function($scope, $http) {
         });
     };
 
-    $scope.loadWorkspaceList = function(query) {
-        console.log("WORKSPACES: ", $scope.recentWorkspaces);
-        return $scope.recentWorkspaces;
-    };
-
     $scope.cleanUpParent = function() {
         var realParent = $scope.parentWorkspace;
         if (realParent && realParent.pageKey) {
@@ -258,6 +254,23 @@ app.controller('myCtrl', function($scope, $http) {
         else {
             $scope.workspaceConfig.parentKey = "";
         }
+    }
+    
+    $scope.filterParents = function() {
+        var res = [];
+        if (!$scope.parentFilter) {
+            return $scope.recentWorkspaces;
+        }
+        var lcFilter = $scope.parentFilter.toLowerCase();
+        $scope.recentWorkspaces.forEach( function(item) {
+            if (item.name.toLowerCase().indexOf(lcFilter)>=0) {
+                res.push(item);
+            }
+            else if (item.pageKey.toLowerCase().indexOf(lcFilter)>=0) {
+                res.push(item);
+            }
+        });
+        return res;
     }
 
 });
@@ -349,7 +362,7 @@ editBoxStyle {
                               ng-model="workspaceConfig.vision" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('vision')" class="btn btn-primary btn-raised">
                                   Save</button>
-                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                              <button ng-click="saveOneField('frozen')" class="btn btn-warning btn-raised">
                                   Cancel</button>
                               </td>
                     <td ng-hide="isEditing=='vision'" ng-dblclick="setEdit('vision')">
@@ -365,7 +378,7 @@ editBoxStyle {
                               ng-model="workspaceConfig.mission" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('mission')" class="btn btn-primary btn-raised">
                                   Save</button>
-                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                              <button ng-click="saveOneField('frozen')" class="btn btn-warning btn-raised">
                                   Cancel</button>
                               </td>
                     <td ng-hide="isEditing=='mission'" ng-dblclick="setEdit('mission')">
@@ -381,7 +394,7 @@ editBoxStyle {
                               ng-model="workspaceConfig.purpose" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('purpose')" class="btn btn-primary btn-raised">
                                   Save</button>
-                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                              <button ng-click="saveOneField('frozen')" class="btn btn-warning btn-raised">
                                   Cancel</button>
                               </td>
                     <td ng-hide="isEditing=='purpose'" ng-dblclick="setEdit('purpose')">
@@ -397,7 +410,7 @@ editBoxStyle {
                               ng-model="workspaceConfig.domain" rows="14" cols="80"></textarea>
                               <button ng-click="saveOneField('domain')" class="btn btn-primary btn-raised">
                                   Save</button>
-                              <button ng-click="saveOneField('frozen')" class="btn btn-raised">
+                              <button ng-click="saveOneField('frozen')" class="btn btn-warning btn-raised">
                                   Cancel</button>
                               </td>
                     <td ng-hide="isEditing=='domain'" ng-dblclick="setEdit('domain')">
@@ -422,7 +435,7 @@ editBoxStyle {
                         <button ng-click="workspaceConfig.deleted=false;saveOneField('deleted')"
                             class="btn btn-primary btn-raised" ng-show="workspaceConfig.deleted">
                             Undelete Workspace</button>
-                        <button ng-click="isEditing=null" class="btn btn-raised">
+                        <button ng-click="isEditing=null" class="btn btn-warning btn-raised">
                             Cancel</button>
                     </td>
                     <td  valign="top" ng-hide="isEditing=='frozen'" ng-dblclick="setEdit('frozen')">
@@ -434,11 +447,20 @@ editBoxStyle {
                 <tr>
                     <td ng-click="setEdit('parentKey');backupParent=parentWorkspace"><label>Parent Circle:</label></td>
                     <td ng-show="isEditing=='parentKey'">
-                      
-                        <button ng-repeat="ws in recentWorkspaces" ng-click="saveParentKey(ws)" class="btn btn-sm btn-raised">
+                        <table>
+                            <tr>
+                            <td>Filter: </td>
+                            <td><input ng-model="parentFilter" class="form-control">{{parentFilter}}</td>
+                            </tr>
+                        </table>
+                        <button ng-repeat="ws in filterParents()" ng-click="saveParentKey(ws)" class="btn btn-sm btn-raised">
                             {{ws.name}}</button>
 
-                        <button ng-click="parentWorkspace=backupParent;cleanUpParent();isEditing==''" class="btn btn-warning btn-raised">
+                        <button ng-click="saveParentKey('')" 
+                                class="btn btn-primary btn-raised">
+                            Remove Parent</button>
+                        <button ng-click="parentWorkspace=backupParent;cleanUpParent();isEditing=''" 
+                                class="btn btn-warning btn-raised">
                             Cancel</button>
                     </td>
                     <td ng-hide="isEditing=='parentKey'" ng-dblclick="setEdit('parentKey');backupParent=parentWorkspace">

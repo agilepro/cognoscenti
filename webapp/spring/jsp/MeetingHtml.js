@@ -770,47 +770,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         return res;
     }
 
-    $scope.createActionItem = function(item) {
-        var postURL = "createActionItem.json?id="+$scope.meeting.id+"&aid="+item.id;
-        var newSynop = $scope.newGoal.synopsis;
-        if (newSynop == null || newSynop.length==0) {
-            alert("must enter a description of the action item");
-            return;
-        }
-        for(var i=0; i<$scope.allGoals.length; i++) {
-            var oneItem = $scope.allGoals[i];
-            if (oneItem.synposis == newSynop) {
-                item.actionItems.push(oneItem.universalid);
-                $scope.newGoal = {};
-                $scope.calcAllActions();
-                return;
-            }
-        }
-        $scope.newGoal.state=2;
-        $scope.newGoal.assignTo = [];
-        var player = $scope.newGoal.assignee;
-        if (typeof player == "string") {
-            var pos = player.lastIndexOf(" ");
-            var name = player.substring(0,pos).trim();
-            var uid = player.substring(pos).trim();
-            player = {name: name, uid: uid};
-        }
-
-        $scope.newGoal.assignTo.push(player);
-
-        var postdata = angular.toJson($scope.newGoal);
-        $scope.showError=false;
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            $scope.allGoals.push(data);
-            item.actionItems.push(data.universalid);
-            $scope.newGoal = {};
-        })
-        .error( function(data, status, headers, config) {
-            $scope.reportError(data);
-        });
-        $scope.stopEditing();
-    };
 
     $scope.replaceGoal = function(goal) {
         var newList = $scope.allGoals.filter( function(item) {
@@ -828,6 +787,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         objForUpdate.prospects = goal.prospects;  //first thing that could have been changed
         objForUpdate.duedate = goal.duedate;      //second thing that could have been changed
         objForUpdate.status = goal.status;        //third thing that could have been changed
+        objForUpdate.checklist = goal.checklist;        //fourth thing that could have been changed
         var postdata = angular.toJson(objForUpdate);
         $scope.showError=false;
         $scope.editGoalInfo=false;
@@ -835,6 +795,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $http.post(postURL, postdata)
         .success( function(data) {
             $scope.replaceGoal(data);
+            $scope.constructAllCheckItems();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -1317,17 +1278,64 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
 
         modalInstance.result.then(function (modifiedGoal) {
-            $scope.allGoals.map( function(item) {
+            $scope.allGoals.forEach( function(item) {
                 if (item.id == modifiedGoal.id) {
                     item.duedate = modifiedGoal.duedate;
                     item.status = modifiedGoal.status;
                 }
             });
             $scope.saveGoal(modifiedGoal);
+            
         }, function () {
           //cancel action
         });
     };
+
+    $scope.constructAllCheckItems = function() {
+        $scope.allGoals.forEach( function(actionItem) {
+            var list = [];
+            if (actionItem.checklist) {
+                var lines = actionItem.checklist.split("\n");
+                var idx = 0;
+                lines.forEach( function(item) {
+                    item = item.trim();
+                    if (item && item.length>0) {
+                        if (item.indexOf("x ")==0) {
+                            list.push( {name: item.substring(2), checked:true, index: idx} );
+                            idx++;
+                        }
+                        else {
+                            list.push( {name: item, checked:false, index: idx} );
+                            idx++;
+                        } 
+                    }
+                });
+            }
+            actionItem.checkitems = list;
+        });
+    }
+    $scope.toggleCheckItem = function($event, item, changeIndex) {
+        console.log("click", item);
+        item.checkitems.forEach( function(item) {
+            if (item.index==changeIndex) {
+                item.checked = !item.checked;
+            }
+        });
+        var newList = [];
+        item.checkitems.forEach( function(item) {
+            if (item.checked) {
+                newList.push("x " + item.name);
+            }
+            else {
+                newList.push(item.name);
+            }
+        });
+        item.checklist = newList.join("\n");
+        $scope.saveGoal(item);
+        $event.stopPropagation();
+    }
+
+    $scope.constructAllCheckItems();
 
     $scope.replyToComment = function(item,cmt) {
         item.newComment = {};
@@ -1779,6 +1787,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         .success( function(data) {
             $scope.allGoals = data.list;
             $scope.refreshMeetingPromise();
+            $scope.constructAllCheckItems();
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
