@@ -27,24 +27,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.socialbiz.cog.AddressListEntry;
-import org.socialbiz.cog.AuthDummy;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.BaseRecord;
-import org.socialbiz.cog.Cognoscenti;
 import org.socialbiz.cog.GoalRecord;
 import org.socialbiz.cog.LicensedURL;
 import org.socialbiz.cog.NGBook;
 import org.socialbiz.cog.NGRole;
 import org.socialbiz.cog.NGWorkspace;
 import org.socialbiz.cog.ProcessRecord;
-import org.socialbiz.cog.RemoteGoal;
-import org.socialbiz.cog.UserManager;
-import org.socialbiz.cog.UserPage;
 import org.socialbiz.cog.UserProfile;
-import org.socialbiz.cog.api.RemoteProject;
 import org.socialbiz.cog.exception.NGException;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -69,36 +62,41 @@ public class CreateProjectController extends BaseController {
         try{
             NGBook site = ar.getCogInstance().getSiteById(siteId);
             ar.setPageAccessLevels(site);
-            if (!site.primaryOrSecondaryPermission(ar.getUserProfile())) {
-                throw new NGException("nugen.exception.not.a.member.of.account",
-                        new Object[] { site.getFullName() });
-            }
+            ar.assertMember("Must be an executive of a site to create a new workspace");
 
             JSONObject newConfig = getPostedObject(ar);
             String workspaceName = newConfig.getString("newName");
 
             //first, if given a template, check to make sure it exists else error before creating workspace
-            String template    = newConfig.optString("template", null);
             NGWorkspace templateWorkspace = null;
-            if (template!=null && template.length()>0) {
-                templateWorkspace = ar.getCogInstance().getWSByCombinedKeyOrFail(template).getWorkspace();
+            if (newConfig.has("template")) {
+                String template    = newConfig.getString("template");
+                if (template.length()>0) {
+                    templateWorkspace = ar.getCogInstance().getWSByCombinedKeyOrFail(template).getWorkspace();
+                }
             }
 
             //now actually create it
             NGWorkspace newWorkspace = createWorkspace(ar, site, workspaceName);
 
             //set the purpose / description
-            String purpose     = newConfig.optString("purpose", "");
-            newWorkspace.setPurpose(purpose);
+            if (newConfig.has("purpose")) {
+                newWorkspace.setPurpose(newConfig.getString("purpose"));
+            }
+            if (newConfig.has("parent")) {
+                newWorkspace.setParentKey(newConfig.getString("parent"));
+            }
 
-            //do the members if any specified
-            JSONArray members  = newConfig.optJSONArray("members");
-            if (members!=null) {
-                NGRole memberRole = newWorkspace.getRole("Members");
-                for (int i=0; i<members.length(); i++) {
-                    JSONObject memberObj = members.getJSONObject(i);
-                    String memberAddress = memberObj.getString("uid");
-                    memberRole.addPlayerIfNotPresent(new AddressListEntry(memberAddress));
+            if (newConfig.has("members")) {
+                //do the members if any specified
+                JSONArray members  = newConfig.getJSONArray("members");
+                if (members!=null) {
+                    NGRole memberRole = newWorkspace.getRole("Members");
+                    for (int i=0; i<members.length(); i++) {
+                        JSONObject memberObj = members.getJSONObject(i);
+                        String memberAddress = memberObj.getString("uid");
+                        memberRole.addPlayerIfNotPresent(new AddressListEntry(memberAddress));
+                    }
                 }
             }
 

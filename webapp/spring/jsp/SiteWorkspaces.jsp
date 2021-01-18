@@ -152,6 +152,8 @@ app.controller('myCtrl', function($scope, $http) {
                 <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Workspace</a></li>
+                  <li role="presentation"><a role="menuitem"
+                      href="accountCreateProject.htm?parent={{rec.pageKey}}" >Create Child Workspace</a></li>
                 </ul>
               </div>
             </td>

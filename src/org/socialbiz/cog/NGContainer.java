@@ -23,6 +23,7 @@ package org.socialbiz.cog;
 import java.io.File;
 import java.util.List;
 
+import org.socialbiz.cog.exception.ProgramLogicError;
 import org.w3c.dom.Document;
 
 /**
@@ -139,20 +140,44 @@ public abstract class NGContainer extends DOMFile
     /**
     * Primary level permissions are for "participants" of the container.
     */
-    public abstract boolean primaryPermission(UserRef user) throws Exception;
+    public boolean primaryPermission(UserRef user) throws Exception {
+        if (user==null) {
+            throw new ProgramLogicError("primaryPermission called with null user object.");
+        }
+        return getPrimaryRole().isExpandedPlayer(user, this);
+    }
     public abstract NGRole getPrimaryRole() throws Exception;
 
     /*
     * If you are in the secondary role, you automatically get included in the primary
     * permissions.  This method checks both roles easily.
     */
-    public abstract boolean primaryOrSecondaryPermission(UserRef user) throws Exception;
+    public boolean primaryOrSecondaryPermission(UserRef user) throws Exception {
+        if (primaryPermission(user))
+        {
+            return true;
+        }
+        if (secondaryPermission(user))
+        {
+            return true;
+        }
+        if (this instanceof NGWorkspace)
+        {
+            throw new ProgramLogicError("NGWorkspace overrides this, so this should never happen");
+        }
+        return false;
+    }
 
     /**
     * Secondary level permissions are "owner" permissions for people who own
     * or are majorly responsible for the container.
     */
-    public abstract boolean secondaryPermission(UserRef user) throws Exception;
+    public boolean secondaryPermission(UserRef user) throws Exception {
+        if (user==null) {
+            throw new ProgramLogicError("secondaryPermission called with null user object.");
+        }
+        return getSecondaryRole().isExpandedPlayer(user, this);
+    }
     public abstract NGRole getSecondaryRole() throws Exception;
 
 

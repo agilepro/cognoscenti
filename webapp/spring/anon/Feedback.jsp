@@ -73,6 +73,10 @@ app.controller('myCtrl', function($scope, $http) {
            console.log("got error: ", data);
         });        
     }
+    
+    $scope.returnToPage = function() {
+        window.location.assign($scope.url);
+    }
 });
 </script>
 
@@ -140,6 +144,9 @@ td {
         </tr><tr>
           <td></td>
           <td><button ng-click="submitComment()" class="btn btn-primary btn-raised">Send Feedback</button></td>
+        </tr><tr>
+          <td></td>
+          <td><button ng-click="returnToPage()" class="btn btn-warning btn-raised">Return</button></td>
         </tr></table>
 
     </div>

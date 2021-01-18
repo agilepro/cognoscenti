@@ -117,43 +117,11 @@ public abstract class ContainerCommon extends NGContainer
     public abstract String getUniqueOnPage() throws Exception;
     protected abstract DOMFace getRoleParent() throws Exception;
     protected abstract DOMFace getInfoParent() throws Exception;
-    public abstract NGRole getPrimaryRole() throws Exception;
-    public abstract NGRole getSecondaryRole() throws Exception;
 
 
 
 
     //////////////////// ROLES ///////////////////////
-
-
-    public boolean primaryPermission(UserRef user) throws Exception {
-        if (user==null) {
-            throw new ProgramLogicError("primaryPermission called with null user object.");
-        }
-        return getPrimaryRole().isExpandedPlayer(user, this);
-    }
-    public boolean primaryOrSecondaryPermission(UserRef user) throws Exception {
-        if (primaryPermission(user))
-        {
-            return true;
-        }
-        if (secondaryPermission(user))
-        {
-            return true;
-        }
-        if (this instanceof NGWorkspace)
-        {
-            throw new ProgramLogicError("NGWorkspace overrides this, so this should never happen");
-        }
-        return false;
-    }
-
-    public boolean secondaryPermission(UserRef user) throws Exception {
-        if (user==null) {
-            throw new ProgramLogicError("secondaryPermission called with null user object.");
-        }
-        return getSecondaryRole().isExpandedPlayer(user, this);
-    }
 
 
 

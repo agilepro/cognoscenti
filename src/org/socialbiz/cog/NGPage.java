@@ -1745,7 +1745,13 @@ public abstract class NGPage extends ContainerCommon {
             process.setSynopsis(newConfig.getString("goal"));
         }
         if (newConfig.has("parentKey")) {
-            setParentKey(newConfig.getString("parentKey"));
+            String parentKey = newConfig.getString("parentKey");
+            if ("$delete$".equals(parentKey)) {
+                setParentKey(null);
+            }
+            else {
+                setParentKey(parentKey);
+            }
         }
         if (newConfig.has("deleted") || newConfig.has("frozen")) {
             boolean newDelete = newConfig.optBoolean("deleted", false);

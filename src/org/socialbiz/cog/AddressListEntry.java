@@ -199,15 +199,22 @@ public class AddressListEntry implements UserRef
     * Usually an email address, but not always.  Could be an openid if there is no user
     * profile associated with the initial address.  Or it could be the name of a role.
     */
-    public String getUniversalId()
-    {
-        if (user!=null)
-        {
+    public String getUniversalId() {
+        if (user!=null) {
             return user.getUniversalId();
         }
-        else
-        {
+        else {
             return rawAddress;
+        }
+    }
+
+    public String getKey() {
+        if (user!=null) {
+            return user.getKey();
+        }
+        else {
+            //if this is a bare email address, use the email as the key
+            return getUniversalId();
         }
     }
 

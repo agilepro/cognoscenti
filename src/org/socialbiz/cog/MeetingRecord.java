@@ -615,6 +615,36 @@ public class MeetingRecord extends DOMFace {
         }
         meetingInfo.put("participants", AddressListEntry.getJSONArrayFromIds(this.getVector("participants")));
 
+        //now work out the people map to consolidate all details of a person in one map
+        JSONObject peopleMap = new JSONObject();
+        for (String id : this.getVector("participants")) {
+            AddressListEntry ale = new AddressListEntry(id);
+            JSONObject personRecord = peopleMap.requireJSONObject(ale.getKey());
+            personRecord.put("isParticipant", true);
+        }
+        for (String id : this.getVector("attended")) {
+            AddressListEntry ale = new AddressListEntry(id);
+            JSONObject personRecord = peopleMap.requireJSONObject(ale.getKey());
+            personRecord.put("attended", true);
+        }
+        for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
+            AddressListEntry ale = new AddressListEntry(onePerson.getAttribute("uid"));
+            JSONObject personRecord = peopleMap.requireJSONObject(ale.getKey());
+
+            //whether they expect to attend or not
+            personRecord.put("expect", onePerson.getScalar("attend"));
+
+            // a comment about their situation
+            personRecord.put("situation", onePerson.getScalar("situation"));
+        }
+        for (String key : peopleMap.keySet()) {
+            AddressListEntry ale = new AddressListEntry(key);
+            JSONObject personRecord = peopleMap.requireJSONObject(key);
+            personRecord.put("uid", ale.getUniversalId());
+            personRecord.put("name", ale.getName());
+        }
+        meetingInfo.put("people", peopleMap);
+
         //general pieces of information in case not elsewhere
         meetingInfo.put("baseUrl", ar.baseURL);
         meetingInfo.put("workspaceUrl", ar.baseURL + ar.getResourceURL(ngw, ""));

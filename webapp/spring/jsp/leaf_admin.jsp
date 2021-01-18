@@ -164,6 +164,9 @@ app.controller('myCtrl', function($scope, $http) {
         $scope.saveRecord(newData);
         $scope.isEditing = null;
     }
+    $scope.deleteParentKey = function() {
+        $scope.saveParentKey({pageKey:"$delete$"})
+    }
     $scope.saveParentKey = function(workspace) {
         $scope.workspaceConfig.parentKey = workspace.pageKey;
         $scope.parentWorkspace = workspace;
@@ -327,6 +330,14 @@ editBoxStyle {
           <li role="presentation"><a role="menuitem" href="roleRequest.htm">
               Role Requests</a>
           </li>
+          <li role="presentation"><a role="menuitem" 
+              href="../$/accountCreateProject.htm?parent={{workspaceConfig.key}}">
+              Create Child Workspace</a>
+          </li>
+          <li role="presentation"><a role="menuitem" 
+              href="../$/accountCreateProject.htm?parent={{workspaceConfig.parentKey}}">
+              Create Sibling Workspace</a>
+          </li>
         </ul>
       </span>
     </div>
@@ -456,7 +467,7 @@ editBoxStyle {
                         <button ng-repeat="ws in filterParents()" ng-click="saveParentKey(ws)" class="btn btn-sm btn-raised">
                             {{ws.name}}</button>
 
-                        <button ng-click="saveParentKey('')" 
+                        <button ng-click="deleteParentKey()" 
                                 class="btn btn-primary btn-raised">
                             Remove Parent</button>
                         <button ng-click="parentWorkspace=backupParent;cleanUpParent();isEditing=''" 
