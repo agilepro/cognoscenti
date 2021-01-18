@@ -53,7 +53,7 @@ public class SuperAdminController extends BaseController {
          //NGWebUtils.srvContext = context;
      }
 
-     
+
      private static void streamAdminJSP(AuthRequest ar,
              String jspName) throws Exception {
 
@@ -68,8 +68,8 @@ public class SuperAdminController extends BaseController {
         ar.invokeJSP("/spring/admin/Wrapper.jsp");
     }
 
-    
-     
+
+
      @RequestMapping(value = "/su/errorLog.htm", method = RequestMethod.GET)
      public void errorLogPage(HttpServletRequest request,
              HttpServletResponse response)
@@ -206,7 +206,7 @@ public class SuperAdminController extends BaseController {
          }
      }
 
-     
+
      @RequestMapping(value = "/su/testEmailSend.json", method = RequestMethod.POST)
      public void testEmailSend(HttpServletRequest request, HttpServletResponse response) {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -214,7 +214,7 @@ public class SuperAdminController extends BaseController {
          try{
              ar.assertSuperAdmin("Must be a super admin to accept site requests.");
              JSONObject requestInfo = getPostedObject(ar);
-             
+
              String toAddress = requestInfo.getString("to");
              String from = requestInfo.getString("from");
              AddressListEntry fromAddress = new AddressListEntry(from);
@@ -231,10 +231,10 @@ public class SuperAdminController extends BaseController {
              streamException(ee, ar);
          }
      }
-     
-     
+
+
      @RequestMapping(value = "/su/submitComment", method = RequestMethod.POST)
-     public void submitComment(HttpServletRequest request, 
+     public void submitComment(HttpServletRequest request,
              HttpServletResponse response) throws Exception {
          AuthRequest ar = AuthRequest.getOrCreate(request, response);
          try{
@@ -246,6 +246,7 @@ public class SuperAdminController extends BaseController {
                  ErrorLog eLog = ErrorLog.getLogForDate(ar.nowTime, cog);
                  ErrorLogDetails det = eLog.createNewError(cog);
                  det.updateFromJSON(requestInfo);
+                 det.sendFeedbackEmail(ar);
                  result = det.getJSON();
                  eLog.save();
              }
@@ -260,8 +261,9 @@ public class SuperAdminController extends BaseController {
                      throw new Exception("For some reason looked for error "+errNo+" but got error "+det.getErrorNo());
                  }
                  det.updateFromJSON(requestInfo);
+                 det.sendFeedbackEmail(ar);
                  result = det.getJSON();
-                 eLog.save();                 
+                 eLog.save();
              }
              sendJson(ar, result);
          }catch(Exception ex){
@@ -270,9 +272,8 @@ public class SuperAdminController extends BaseController {
          }
      }
 
-     
-     
-     
+
+
      @RequestMapping(value = "/su/errorDetails{errorId}.htm", method = RequestMethod.GET)
      public void errorDetailsPage(@PathVariable String errorId,
              @RequestParam String searchByDate,HttpServletRequest request,
@@ -327,5 +328,5 @@ public class SuperAdminController extends BaseController {
          }
      }
 
-     
+
 }

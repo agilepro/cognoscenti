@@ -20,10 +20,18 @@
 
 package org.socialbiz.cog;
 
+import java.io.File;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.socialbiz.cog.mail.ChunkTemplate;
+import org.socialbiz.cog.mail.EmailSender;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.purplehillsbooks.json.JSONObject;
+import com.purplehillsbooks.streams.MemFile;
 
 
 public class ErrorLogDetails extends DOMFace {
@@ -45,7 +53,7 @@ public class ErrorLogDetails extends DOMFace {
     public void setModTime(long time) {
         setAttribute("modTime", Long.toString(time));
     }
-    
+
     public int getErrorNo() {
         return getAttributeInt("errorNo");
     }
@@ -59,21 +67,21 @@ public class ErrorLogDetails extends DOMFace {
     public void setFileName(String fileName) {
         setScalar("errorfileName", fileName);
     }
-    
+
     public String getErrorMessage() {
         return getScalar("errorMessage");
     }
     public void setErrorMessage(String errorMessage) {
         setScalar("errorMessage", errorMessage);
     }
-    
+
     public String getURI() {
         return getScalar("errorURI");
     }
     public void setURI(String URI) {
         setScalar("errorURI", URI);
     }
-    
+
     public String getErrorDetails() {
         return getScalar("errorDetails");
     }
@@ -88,9 +96,31 @@ public class ErrorLogDetails extends DOMFace {
         setScalar("userComments", comments);
     }
 
+    public void sendFeedbackEmail(AuthRequest ar) throws Exception {
+        Cognoscenti cog = ar.getCogInstance();
+        for (UserProfile up : cog.getUserManager().getAllSuperAdmins(ar)) {
+            JSONObject jo = new JSONObject();
+            jo.put("req", this.getJSON());
+            jo.put("baseURL", ar.baseURL);
+            jo.put("admin", up.getJSON());
+
+            File templateFile = cog.getConfig().getFileFromRoot("email/Feedback.chtml");
+            MemFile body = new MemFile();
+            Writer w = body.getWriter();
+            ChunkTemplate.streamIt(w, templateFile, jo, up.getCalendar());
+            w.flush();
+
+            List<OptOutAddr> thisSuperUserAddressList = new ArrayList<OptOutAddr>();
+            thisSuperUserAddressList.add(new OptOutSuperAdmin(up.getAddressListEntry()));
+
+            EmailSender.generalMailToList(thisSuperUserAddressList, new AddressListEntry(ar.getBestUserId()),
+                    "Weaver feedback from " + ar.getBestUserId(),
+                    body.toString(), cog);
+        }
+    }
 
 
-    
+
     public JSONObject getJSON() throws Exception {
         JSONObject jo = new JSONObject();
         jo.put("errNo",        this.getErrorNo());
