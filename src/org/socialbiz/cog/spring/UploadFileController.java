@@ -221,8 +221,6 @@ public class UploadFileController extends BaseController {
             NGWorkspace ngw =  registerRequiredProject(ar, siteId, pageId);
             ar.assertNotFrozen(ngw);
 
-            String visibility = ar.reqParam("visibility");
-
             String comment = ar.reqParam("comment");
             String taskUrl = ar.reqParam("taskUrl");
             String ftype = ar.reqParam("ftype");
@@ -240,7 +238,6 @@ public class UploadFileController extends BaseController {
             attachment.setModifiedBy(ar.getBestUserId());
             attachment.setModifiedDate(ar.nowTime);
             attachment.setType(ftype);
-            attachment.setPublic(visibility.equals("PUB"));
 
             HistoryRecord.createHistoryRecord(ngw, attachment.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
                     ar.nowTime, HistoryRecord.EVENT_DOC_ADDED, ar, "Created Link URL");

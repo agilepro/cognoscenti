@@ -252,7 +252,6 @@ public class FolderAccessHelper {
         attachment.setModifiedDate(ar.nowTime);
         attachment.setAttachTime(ar.nowTime);
         attachment.setType("FILE");
-        attachment.setPublic(visibility.equals("*PUB*"));
 
         RemoteLinkCombo rlc = new RemoteLinkCombo(ar.getUserProfile().getKey(), remoteFile);
         attachment.setRemoteCombo(rlc);

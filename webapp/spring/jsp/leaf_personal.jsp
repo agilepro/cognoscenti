@@ -187,7 +187,7 @@ app.controller('myCtrl', function($scope, $http) {
             <tr ng-show="pSettings.isWatching">
                 <td><b>Last Reviewed:</b></td>
                 <td>
-                    <span class="btn">{{pSettings.reviewTime | date}}</span>
+                    <span class="btn">{{pSettings.reviewTime|cdate}}</span>
                     <button class="btn " ng-click="userOp('SetReviewTime')">Update Review Date</button>
                 </td>
                 <td ng-hide="openReview">

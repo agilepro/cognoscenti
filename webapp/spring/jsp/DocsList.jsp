@@ -9,9 +9,10 @@
     String siteId = ar.reqParam("siteId");
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
-    ar.assertMember("Documents are available only to memebers");
+    ar.assertMember("Documents are available only to members");
     NGBook site = ngp.getSite();
     boolean isMember = ar.isMember();
+    String wsUrl = ar.baseURL + ar.getResourceURL(ngp, "");
 
     JSONArray attachments = new JSONArray();
 
@@ -61,6 +62,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     $scope.dataArrived = false;
     $scope.showDeleted = false;
     $scope.showDescription = false;
+    $scope.wsUrl = "<%= wsUrl %>";
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -206,6 +208,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 },
                 allLabels: function() {
                     return $scope.allLabels;
+                },
+                wsUrl: function() {
+                    return $scope.wsUrl;
                 }
             }
         });
@@ -325,7 +330,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                   <li role="presentation" ng-show="rec.attType=='FILE'">
                       <a role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Upload Revised Document</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="DocsDetails{{rec.id}}.htm">Edit Document Details</a></li>
+                      <a role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Edit Document Settings</a></li>
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="DocsVersions.htm?aid={{rec.id}}">List Versions</a></li>
                   <li role="presentation" class="divider"></li>
@@ -337,7 +342,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                 </ul>
               </div>
             </td>
-            <td>
+            <td style="text-align: center">
               <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='URL'">
                 <span class="fa fa-external-link"></span></span>
               <span ng-click="downloadDocument(rec)" ng-show="rec.attType=='FILE'">
@@ -357,13 +362,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
               <div ng-show="showDescription && rec.description" ng-bind-html="rec.html">
               </div>
             </td>
-            <td>
-                <a href="DocsDetails{{rec.id}}.htm">
-                    <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
-                    <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
-                </a>
+            <td style="text-align: center" ng-click="openDocDialog(rec)">
+                <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+                <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
             </td>
-            <td>{{rec.modifiedtime|date}}</td>
+            <td ng-click="openDocDialog(rec)">{{rec.modifiedtime|cdate}}</td>
         </tr>
     </table>
     

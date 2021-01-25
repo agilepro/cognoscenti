@@ -1097,7 +1097,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
               <span ng-repeat="person in goal.assignTo"> {{person.name}}<br/></span>
               </td>
               <td ng-click="openModalActionItem(item,goal)" style="width:100px;">
-              <span ng-show="goal.duedate>=0">{{goal.duedate|date}} </span>
+              <span ng-show="goal.duedate>=0">{{goal.duedate|cdate}} </span>
               </td>
               <td style="width:120px;" title="Red-Yellow-Green assessment of status">
                   <img src="<%=ar.retPath%>assets/goalstate/red_off.png" ng-hide="goal.prospects=='bad'"

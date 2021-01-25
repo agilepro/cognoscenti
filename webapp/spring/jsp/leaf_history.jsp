@@ -161,7 +161,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <img class="img-circle" src="<%=ar.retPath%>{{hist.imagePath}}" alt="" width="50" height="50" />
             </td>
             <td class="projectStreamText" style="padding-bottom:10px;">
-                {{hist.time|date}} -
+                {{hist.time|cdate}} -
                 <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
                 <br/>
                 {{hist.ctxType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>"

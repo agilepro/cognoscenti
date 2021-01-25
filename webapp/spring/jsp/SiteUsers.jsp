@@ -152,7 +152,7 @@ app.filter('encode', function() {
           ng-click="visitUser(value.info.uid)">
          <td>{{value.info.name}}</td>
          <td>{{value.info.uid}}</td>
-         <td>{{value.info.lastLogin|date}}</td>
+         <td>{{value.info.lastLogin|cdate}}</td>
          <td>{{value.count}}</td>
          <td>{{value.wscount}}</td>
       </tr>

@@ -176,7 +176,7 @@ app.controller('myCtrl', function($scope, $http) {
     </tr>
     <tr ng-repeat="doc in allAttachments" ng-style="rowStyle(doc)">
        <td>{{doc.name}}</td>
-       <td>{{doc.modifiedtime|date}}</td>
+       <td>{{doc.modifiedtime|cdate}}</td>
        <td>{{doc.size|number}} bytes</td>
        <td ng-hide="doc.hideThis">
            <button class="btn btn-sm btn-raised" ng-click="copyDoc(doc)">Copy</button>

@@ -393,7 +393,7 @@ app.controller('myCtrl', function($scope, $http) {
                     </button>
                 </span>
             </td>
-            <td>{{rec.modifiedtime|date}}</td>
+            <td>{{rec.modifiedtime|cdate}}</td>
         </tr>
     </table>
     

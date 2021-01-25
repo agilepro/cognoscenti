@@ -23,6 +23,7 @@ Required parameters:
     NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.setPageAccessLevels(ngp);
     NGBook site = ngp.getSite();
+    String wsUrl = ar.baseURL + ar.getResourceURL(ngp, "");
     UserProfile uProf = ar.getUserProfile();
     String currentUser = "";
     String currentUserName = "";
@@ -42,12 +43,6 @@ Required parameters:
     String fileSize = String.format("%,d", fileSizeInt);
 
     boolean canAccessDoc = AccessControl.canAccessDoc(ar, ngp, attachment);
-
-
-    String access = "Member Only";
-    if (attachment.isPublic()) {
-        access = "Public";
-    }
 
     String accessName = attachment.getNiceName();
     String relativeLink = "a/"+accessName+"?version="+attachment.getVersion();
@@ -119,13 +114,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
     window.setMainPageTitle("Access Document");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.docId   = <%=aid%>;
-    $scope.docInfo = {};
+    $scope.docInfo = <% attachment.getJSON4Doc(ar,ngp).write(out,2,4); %>;
     $scope.linkedMeetings = <%linkedMeetings.write(out,2,4);%>;
     $scope.linkedTopics = <%linkedTopics.write(out,2,4);%>;
     $scope.linkedGoals = <%linkedGoals.write(out,2,4);%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.history = <%allHistory.write(out,2,4);%>;
+    $scope.wsUrl = "<%= wsUrl %>";
 
     $scope.myComment = "";
     $scope.canUpdate = <%=canAccessDoc%>;
@@ -365,6 +361,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                 },
                 allLabels: function() {
                     return $scope.allLabels;
+                },
+                wsUrl: function() {
+                    return $scope.wsUrl;
                 }
             }
         });
@@ -449,23 +448,23 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </tr>
         <tr>
             <td class="firstcol labelColumn" ng-click="openDocDialog(docInfo)">
-            <%if("FILE".equals(attachment.getType())){ %> Uploaded by: <%}else if("URL".equals(attachment.getType())){ %>
-            Attached by <%} %>
+            <span ng-show="docInfo.attType=='FILE'">Uploaded by:</span>
+            <span ng-show="docInfo.attType=='URL'">Attached by:</span>
             </td>
             <td>
-            <% ale.writeLink(ar); %> on <% SectionUtil.nicePrintTime(ar, attachment.getModifiedDate(), ar.nowTime); %>
+            {{docInfo.modifieduser}} on {{docInfo.modifiedtime|cdate}}
             </td>
         </tr>
 
 <%if("FILE".equals(attachment.getType())){ %>
-        <tr>
+        <tr ng-show="docInfo.attType=='FILE'">
             <td class="firstcol">Version:</td>
             <td><%=attachment.getVersion()%>
              - Size: <%=fileSize%> bytes</td>
         </tr>
 <%}%>
 <%
-if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
+if (ar.isLoggedIn() || canAccessDoc) {
 %>
         <tr>
             <td class="firstcol"></td>
@@ -547,7 +546,7 @@ if (attachment.isPublic() || (ar.isLoggedIn() || canAccessDoc)) {
                 <img class="img-circle" src="<%=ar.retPath%>{{hist.imagePath}}" alt="" width="50" height="50" />
             </td>
             <td class="projectStreamText" style="padding-bottom:10px;">
-                {{hist.time|date}} -
+                {{hist.time|cdate}} -
                 <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
                 <br/>
                 {{hist.ctxType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>"

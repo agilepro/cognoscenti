@@ -248,7 +248,7 @@ app.controller('myCtrl', function($scope, $http) {
 
         <tr>
             <td class="firstColumn">Last Modified:</td>
-            <td> {{docInfo.modifiedtime|date}} &nbsp;&nbsp; by &nbsp;&nbsp; {{docInfo.modifieduser}} </td>
+            <td> {{docInfo.modifiedtime|cdate}} &nbsp;&nbsp; by &nbsp;&nbsp; {{docInfo.modifieduser}} </td>
         </tr>
         <%if(isFile)
         {
@@ -342,7 +342,7 @@ app.controller('myCtrl', function($scope, $http) {
                     <input ng-model="futureDays" type="text" class="form-control"/>
                     
                 </div>
-                {{docInfo.purgeDate|date}}
+                {{docInfo.purgeDate|cdate}}
             </td>
         </tr>
         <tr>

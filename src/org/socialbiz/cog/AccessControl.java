@@ -44,12 +44,8 @@ public class AccessControl {
     */
     public static boolean canAccessDoc(AuthRequest ar, NGWorkspace ngc, AttachmentRecord attachRec)
         throws Exception {
-        //first, anyone can access a public document
-        if (attachRec.isPublic()) {
-            return true;
-        }
 
-        //then, if user is logged in, and is a member, then can access
+        //if user is logged in, and is a member, then can access
         if (ar.isLoggedIn()) {
             UserProfile user = ar.getUserProfile();
             if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
@@ -73,7 +69,7 @@ public class AccessControl {
                 return true;
             }
         }
-        
+
         //now check to see if you have any special access to a MEETING that has attached
         //this document.  In that case you are allowed access as well!
         for (MeetingRecord meet : attachRec.getLinkedMeetings(ngc)) {
@@ -93,7 +89,7 @@ public class AccessControl {
                 return true;
             }
         }
-        
+
         //now check to see if you have any special access to a Action Item that has attached
         //this document.  In that case you are allowed access as well!
         for (GoalRecord goal : attachRec.getLinkedGoals(ngc)) {
@@ -103,7 +99,7 @@ public class AccessControl {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -159,7 +155,7 @@ public class AccessControl {
             if (user!=null && ngc.primaryOrSecondaryPermission(user)) {
                 return true;
             }
-            
+
             //also allow the assignee of an actoin item free access as well
             if (gr.isAssignee(user)) {
                 return true;
@@ -231,13 +227,13 @@ public class AccessControl {
                 return false;
             }
         }
-        
+
         //at this point, we have seen a magic number allowing access to this page
         //so set up the rest of the login credentials for one request
         ar.setSpecialSessionAccess(resourceId);
         return assureTemporaryProfile(ar);
     }
-    
+
     public static boolean assureTemporaryProfile(AuthRequest ar) throws Exception {
         if (ar.isLoggedIn()) {
             throw new Exception("PROGRAM LOGIC ERROR: assureTemporaryProfile should be called onl when NOT logged in.");
@@ -370,7 +366,7 @@ public class AccessControl {
             if (ar.isMember()) {
                 return true;
             }
-            
+
             //players of the target role are always allowed in as well
             NGRole targetRole = ngc.getRole(meet.getTargetRole());
             if (targetRole.isExpandedPlayer(user, ngc)) {
@@ -386,8 +382,8 @@ public class AccessControl {
                 }
             }
         }
-        
-        
+
+
         //then, check to see if there is any special condition in session
         String resourceId = "meet:"+meet.getId()+":"+ngc.getKey();
         if (ar.hasSpecialSessionAccess(resourceId)) {
@@ -414,5 +410,5 @@ public class AccessControl {
         return "mnm=" + encodedValue;
     }
 
-    
+
 }

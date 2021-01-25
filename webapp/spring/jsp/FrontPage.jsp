@@ -506,7 +506,7 @@ a {
           </div>
           <div class="panel-body clipping">
             <div ng-repeat="hist in topHistory"  class="clipping">
-              {{hist.time|date}} -
+              {{hist.time|cdate}} -
              <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
 
              {{hist.ctxType}} <a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>

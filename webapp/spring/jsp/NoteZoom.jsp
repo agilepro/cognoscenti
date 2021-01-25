@@ -1032,7 +1032,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <table class="table">
 <col style="width:150px">
 <tr>
-    <td>Last modified:</td><td>{{noteInfo.modTime|date}}</td>
+    <td>Last modified:</td><td>{{noteInfo.modTime|cdate}}</td>
 </tr>
 <tr>
     <td>Labels:</td>

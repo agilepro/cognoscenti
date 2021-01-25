@@ -113,7 +113,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         </td>
         <td>{{proc.idInst}}</td>
         <td><a href="{{proc.uiurl}}">{{proc.name}} <i class="fa fa-external-link"></i></a></td>
-        <td>{{proc.due | date}}</td>
+        <td>{{proc.due |cdate}}</td>
         <td>{{proc.state}}</td>
       </tr>
     </table>

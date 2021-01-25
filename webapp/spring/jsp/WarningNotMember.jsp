@@ -186,7 +186,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div ng-hide="enterMode || alternateEmailMode" class="warningBox">
             <div ng-show="isRequested">
-                 You requested membership on {{requestDate|date}} as {{oldRequestEmail}}.<br/>
+                 You requested membership on {{requestDate|cdate}} as {{oldRequestEmail}}.<br/>
                  The status of that request is: <b>{{requestState}}</b>.
             </div>
             <div ng-hide="isRequested">

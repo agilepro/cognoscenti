@@ -342,6 +342,29 @@ public class ProjectDocsController extends BaseController {
 
 
 
+    @RequestMapping(value = "/{siteId}/{pageId}/docInfo.json", method = RequestMethod.GET)
+    public void docInfo(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response) {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        String did = "";
+        try{
+            did = ar.reqParam("did");
+            NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
+            ar.setPageAccessLevels(ngw);
+            ar.assertMember("Must be a member to update a document information.");
+            ar.assertNotFrozen(ngw);
+            AttachmentRecord aDoc = ngw.findAttachmentByIDOrFail(did);
+
+            JSONObject repo = aDoc.getJSON4Doc(ar, ngw);
+            sendJson(ar, repo);
+        }
+        catch(Exception ex){
+            Exception ee = new Exception("Unable to update document "+did, ex);
+            streamException(ee, ar);
+        }
+    }
+
+
     @RequestMapping(value = "/{siteId}/{pageId}/docsUpdate.json", method = RequestMethod.POST)
     public void docsUpdate(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -393,14 +416,10 @@ public class ProjectDocsController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             ar.setPageAccessLevels(ngw);
-            boolean isMember = ar.isMember();
+            ar.assertMember("Must be a member of workspace to get the document list.");
 
             JSONArray attachmentList = new JSONArray();
             for (AttachmentRecord doc : ngw.getAllAttachments()) {
-                if (!isMember && !doc.isPublic()) {
-                    //skip non public documents if not a member
-                    continue;
-                }
                 attachmentList.put(doc.getJSON4Doc(ar, ngw));
             }
 
@@ -413,7 +432,7 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
-    
+
     @RequestMapping(value = "/{siteId}/{pageId}/copyDocument.json", method = RequestMethod.POST)
     public void copyAttachment(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) {
@@ -425,7 +444,7 @@ public class ProjectDocsController extends BaseController {
             HttpServletRequest request, HttpServletResponse response) {
         copyMoveDocument(siteId, pageId, true, request, response);
     }
-        
+
     public void copyMoveDocument(String siteId, String pageId, boolean deleteOld,
                 HttpServletRequest request, HttpServletResponse response) {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -433,16 +452,16 @@ public class ProjectDocsController extends BaseController {
             JSONObject postBody = this.getPostedObject(ar);
             String fromCombo = postBody.getString("from");
             String docId = postBody.getString("id");
-            
+
             Cognoscenti cog = ar.getCogInstance();
             NGWorkspace thisWS = cog.getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             NGWorkspace fromWS = cog.getWSByCombinedKeyOrFail( fromCombo ).getWorkspace();
-            
+
             ar.setPageAccessLevels(thisWS);
             ar.assertMember("You must be the member of the workspace you are copying to");
             ar.setPageAccessLevels(fromWS);
             ar.assertMember("You must be the member of the workspace you are copying from");
-            
+
             AttachmentRecord oldDoc = fromWS.findAttachmentByID(docId);
             if (oldDoc==null) {
                 throw new Exception("Unable to find a document with id="+docId);
@@ -463,7 +482,7 @@ public class ProjectDocsController extends BaseController {
             newCopy.setUniversalId(oldDoc.getUniversalId());
             String docType = oldDoc.getType();
             newCopy.setType(docType);
-            
+
             if ("FILE".equals(docType)) {
                 AttachmentVersion av = oldDoc.getLatestVersion(fromWS);
                 InputStream is = av.getInputStream();
@@ -476,15 +495,15 @@ public class ProjectDocsController extends BaseController {
             else {
                 throw new Exception("Don't understand how to move document '"+docName+"' type "+docType);
             }
-            
+
             if (deleteOld) {
                 oldDoc.setDeleted(ar);
                 fromWS.saveFile(ar, "Document '"+docName+"' transferred to workspace: "+thisWS.getFullName());
             }
-            
+
             JSONObject repo = new JSONObject();
             repo.put("created", newCopy.getJSON4Doc(ar, thisWS));
-            
+
             thisWS.saveFile(ar, "Document '"+docName+"' copied from workspace: "+fromWS.getFullName());
 
             sendJson(ar, repo);
@@ -493,7 +512,7 @@ public class ProjectDocsController extends BaseController {
             streamException(ee, ar);
         }
     }
-    
+
 
     @RequestMapping(value = "/{siteId}/{pageId}/sharePorts.htm", method = RequestMethod.GET)
     public void sharePorts(@PathVariable String siteId,@PathVariable String pageId,

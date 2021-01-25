@@ -1,35 +1,44 @@
 
 <div class="modal-header qqTabHeader">
   <div class="qqTabBand">
-    <span ng-class="'qqTabSelected'">
-    Edit Document Details
+    <span ng-click="editMode='details'"  
+          ng-class="editMode=='details'?'qqTabSelected':'qqTabUnselected'">
+      Document Settings
+    </span>
+    <span ng-click="editMode='mgmt'"  
+          ng-class="editMode=='mgmt'?'qqTabSelected':'qqTabUnselected'">
+      Management
     </span>
   </div>
 </div>
-<div class="modal-body">
-  <div>
+<div class="modal-body" style="min-height:300px">
+  <div ng-show="editMode=='details'">
     <div>
       <div class="col-sm-12 col-md-6">
         <div class="form-group">
-            <label for="synopsis">Type:</label>
+            <label for="synopsis">Name:</label>
+            <input ng-model="docInfo.name" class="form-control"     
+                placeholder="Enter name of the document"/>           
+        </div>
+        <div class="form-group">
+            <label for="synopsis">Description:</label>
+            <textarea ng-model="docInfo.description" class="form-control"  style="height:100px"  
+                placeholder="Enter description of the document"></textarea>          
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="synopsis">Type:</label> &nbsp;
             <span ng-show="docInfo.attType=='FILE'">File, &nbsp;  
                 <span ng-hide="docInfo.deleted">{{docInfo.size|number}} bytes</span>
                 <span ng-show="docInfo.deleted" style="color:red">Deleted</span>
             </span>
             <span ng-show="docInfo.attType=='URL'">URL</span>
         </div>
-        <div class="form-group">
-            <label for="synopsis">Name:</label>
-            <input ng-model="docInfo.name" class="form-control"     
-                placeholder="Enter name of the document"/>           
-        </div>
         <div class="form-group" ng-show="docInfo.attType=='URL'">
-            <label for="synopsis">URL:</label>
             <input ng-model="docInfo.url" class="form-control"     
                 placeholder="Enter url of the link"/>           
         </div>
-      </div>
-      <div class="col-sm-12 col-md-6">
         <div class="form-group">
             <label for="labels">Labels:</label>
             <span class="dropdown" ng-repeat="role in allLabels">
@@ -60,13 +69,55 @@
             </span>
         </div>
         <div class="form-group">
-            <label for="synopsis">Description:</label>
-            <textarea ng-model="docInfo.description" class="form-control"  style="height:100px"  
-                placeholder="Enter description of the document"></textarea>          
+            <label for="synopsis">Who:</label> &nbsp;
+            {{docInfo.modifieduser}}
+        </div>
+        <div class="form-group">
+            <label for="synopsis">When:</label> &nbsp;
+            {{docInfo.modifiedtime|cdate}}
+        </div>
+        <div class="form-group">
+            <label for="synopsis">Public Access Link:</label> &nbsp;
+            <a href="{{wsUrl}}docinfo{{docInfo.id}}.htm?{{docInfo.magicNumber}}">{{docInfo.name}}</a>
         </div>
       </div>
     </div>
     <div style="clear:both"></div>
+  </div>
+  <div ng-show="editMode=='mgmt'">
+      <div class="col-sm-12 col-md-6">
+        <label for="labels">Versions:</label>
+        <table class="table">
+          <tr>
+            <th>#</th>
+            <th> </th>
+            <th>Date</th>
+            <th style="text-align:right">Size</th>
+          </tr>
+          <tr ng-repeat="ver in docInfo.versions">
+            <td>{{ver.num}}</td>
+            <td><a href="{{ver.link}}"><span class="fa fa-download"></span></a></td>
+            <td>{{ver.date|cdate}}</td>
+            <td style="text-align:right">{{ver.size|number}}</td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+            <label for="synopsis">Purge Date:</label>
+            {{docInfo.purgeDate|cdate}}       
+        </div>
+        <div>
+            <button class="btn btn-primary btn-raised" ng-click="setPurge(0)">
+                Keep Indefinitely</button>
+            <button class="btn btn-primary btn-raised" ng-click="setPurge(30)">
+                Delete in 1 Month</button>
+            <button class="btn btn-primary btn-raised" ng-click="setPurge(120)">
+                Delete in 4 Months</button>
+            <button class="btn btn-primary btn-raised" ng-click="setPurge(360)">
+                Delete in 1 Year</button>
+        </div>
+      </div>
   </div>
 </div>
 <div class="modal-footer">

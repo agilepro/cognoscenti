@@ -209,8 +209,8 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         <td>{{invite.email}}</td>
         <td>{{invite.name}}</td>
         <td>{{invite.status}}</td>
-        <td>{{invite.timestamp | date}}</td>
-        <td>{{invite.joinTime | date}}</td>
+        <td>{{invite.timestamp |cdate}}</td>
+        <td>{{invite.joinTime |cdate}}</td>
     </tr>
 
     </table>

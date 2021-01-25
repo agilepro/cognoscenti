@@ -1,16 +1,18 @@
 console.log("loaded the DocumentDetailsCtrl");
 
-app.controller('DocumentDetailsCtrl', function ($scope, $modalInstance, $http, $interval, docId, AllPeople, allLabels) {
+app.controller('DocumentDetailsCtrl', function ($scope, $modalInstance, $http, $interval, docId, AllPeople, allLabels, wsUrl) {
 
     console.log("loaded the DocumentDetailsCtrl");
 
-    $scope.docId = docId;
-    $scope.docInfo = {};
+    $scope.docId     = docId;
+    $scope.docInfo   = {};
     $scope.allLabels = allLabels;
+    $scope.wsUrl     = wsUrl;
     $scope.reportError = function(data) {
         console.log("ERROR", data);
     }
     
+    $scope.editMode = "details";
     
     $scope.ok = function () {
         $scope.saveDoc();
@@ -38,6 +40,15 @@ app.controller('DocumentDetailsCtrl', function ($scope, $modalInstance, $http, $
     }
     $scope.toggleLabel = function(label) {
         $scope.docInfo.labelMap[label.name] = !$scope.docInfo.labelMap[label.name];
+    }
+    $scope.setPurge = function(days) {
+        console.log("SET PURGE", days);
+        if (!days || days==0) {
+            $scope.docInfo.purgeDate=0;
+        }
+        else {
+            $scope.docInfo.purgeDate=new Date().getTime() + days*24*60*60*1000;
+        }
     }
     
 
@@ -73,7 +84,4 @@ app.controller('DocumentDetailsCtrl', function ($scope, $modalInstance, $http, $
             $scope.reportError(data);
         });
     };
-    
-    
-
 });

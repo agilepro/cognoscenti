@@ -165,7 +165,7 @@ app.controller('myCtrl', function($scope, $http) {
                    <span ng-show="rec.isMoved" style="color:grey"> (MOVED)</span>
                 </a>
             </td>
-            <td>{{rec.changed|date}}</td>
+            <td>{{rec.changed|cdate}}</td>
             <td><a href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.parentKey}}/frontPage.htm">{{getWorkspaceName(rec.parentKey)}}</a></td>
         </tr>
     </table>

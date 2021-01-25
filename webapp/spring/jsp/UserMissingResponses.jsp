@@ -120,7 +120,7 @@ app.controller('myCtrl', function($scope, $http) {
                     {{rec.userName}}
                 </td>
                 <td>
-                    <span style="{{dueStyle(rec)}}">{{rec.dueDate|date}}</span>
+                    <span style="{{dueStyle(rec)}}">{{rec.dueDate|cdate}}</span>
                 </td>
             </tr>
             </table>

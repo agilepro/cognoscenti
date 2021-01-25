@@ -300,14 +300,14 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   <div class="leafContent" style="padding:0px">
                     <div id="{{rec.id}}_1" style="max-width:800px;width:100%;color:#88F;margin:2px;vertical-align:bottom;">
                         <div class="taskOverview">
-                            <i>{{rec.timestamp|date}}</i>
+                            <i>{{rec.timestamp|cdate}}</i>
                             <span ng-repeat="label in getGoalLabels(rec)">
                               <button class="labelButton" style="background-color:{{label.color}};color:black;" 
                                      ng-click="toggleLabel(label)">
                                   {{label.name}}
                               </button>
                             </span>
-                            <span ng-show="rec.reviewDate>10000" ng-style="reviewStyle(rec.reviewDate)">&nbsp; - &nbsp; Review By: {{rec.reviewDate|date}}</span>
+                            <span ng-show="rec.reviewDate>10000" ng-style="reviewStyle(rec.reviewDate)">&nbsp; - &nbsp; Review By: {{rec.reviewDate|cdate}}</span>
                         </div>
                     </div>
                     <div ng-click="rec.show=!rec.show" >

@@ -46,8 +46,8 @@
         <span ng-show="cmt.commentType==5" title="{{stateName(cmt)}} Minutes">
           <i class="fa fa-file-code-o" style="font-size:130%"></i></span>
                &nbsp; 
-        <span title="Created {{cmt.dueDate|date:'medium'}}"
-              ng-click="openCommentEditor(item,cmt)">{{cmt.time | date}}</span> -
+        <span title="Created {{cmt.dueDate|cdate}}"
+              ng-click="openCommentEditor(item,cmt)">{{cmt.time|cdate}}</span> -
         <a href="<%=ar.retPath%>v/{{cmt.userKey}}/userSettings.htm">
           <span class="red">{{cmt.userName}}</span>
         </a>
@@ -68,7 +68,7 @@
               ng-click="openCommentEditor(item,cmt)"> [+minutes] </span>
         <span ng-show="cmt.commentType==6" style="color:green">
             <i class="fa fa-arrow-right"></i> <b>{{showDiscussionPhase(cmt.newPhase)}}</b> Phase</span>
-        <span style="float:right;color:green;" title="Due {{cmt.dueDate|date:'medium'}}">{{calcDueDisplay(cmt)}}</span>
+        <span style="float:right;color:green;" title="Due {{cmt.dueDate|cdate}}">{{calcDueDisplay(cmt)}}</span>
         <div style="clear:both"></div>
       </div>
       <div ng-show="cmt.state==11">
@@ -80,7 +80,7 @@
       </div>
       <div ng-show="cmt.meet" class="btn btn-sm btn-default btn-raised"  style="margin:4px;"
            ng-click="navigateToMeeting(cmt.meet)">
-        <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}} @ {{cmt.meet.startTime | date}}
+        <i class="fa fa-gavel" style="font-size:130%"></i> {{cmt.meet.name}}, {{cmt.meet.startTime |cdate}}
       </div>
 
       <table style="min-width:500px;overflow:hidden" ng-show="cmt.commentType==2 || cmt.commentType==3">

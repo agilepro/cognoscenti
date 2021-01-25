@@ -202,7 +202,7 @@ myApp.controller('myCtrl', function($scope, $http) {
             <div  ng-repeat="item in futureMeetings | limitTo: 10"  class="clipping">
 
                  <a href="<%=ar.retPath%>t/{{item.siteKey}}/{{item.workspaceKey}}/{{item.address}}">
-                 {{item.name}} @ {{item.startTime|date}}</a>
+                 {{item.name}}, {{item.startTime|cdate}}</a>
             </div>
             <!-- should have a button here to get to all meetings -->
           </div>

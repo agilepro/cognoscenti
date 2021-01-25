@@ -257,6 +257,11 @@ app.controller('CommentModalCtrl', function ($scope, $modalInstance, $modal, $in
         window.location="docinfo"+doc.id+".htm";
     }
     $scope.openAttachDocument = function () {
+        
+        if (!$scope.cmt.time || $scope.cmt.time<=100000) {
+            alert("Save draft comment before you attempt to attach documents.");
+            return;
+        }
 
         var attachModalInstance = $modal.open({
             animation: true,

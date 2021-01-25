@@ -1794,10 +1794,6 @@ public abstract class NGPage extends ContainerCommon {
             if (attachment.isDeleted()) {
                 continue;
             }
-            if (attachment.isPublic()) {
-                aList.add(attachment);
-                continue;
-            }
             if (up==null) {
                 continue;
             }

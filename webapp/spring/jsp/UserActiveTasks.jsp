@@ -134,7 +134,7 @@ app.controller('myCtrl', function($scope, $http) {
                         {{rec.synopsis}}
                     </a> - {{rec.description | limitTo: 250}}
                 </td>
-                <td>{{bestDate(rec)|date}}</td>
+                <td>{{bestDate(rec)|cdate}}</td>
                 <td>
                     <a href="../../t/{{rec.siteKey}}/{{rec.projectKey}}/frontPage.htm">{{rec.projectname}}</a>
                 </td>

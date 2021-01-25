@@ -72,7 +72,6 @@ public class AttachmentRecord extends CommentContainer {
         setModifiedBy(other.getModifiedBy());
         setModifiedDate(other.getModifiedDate());
         setDescription(other.getDescription());
-        setPublic(other.isPublic());
         setType(other.getType());
         setURLValue(other.getURLValue());
     }
@@ -239,9 +238,9 @@ public class AttachmentRecord extends CommentContainer {
 
     /**
      * confusingly named originally getStorageName
-     * For LINK: 
+     * For LINK:
      *     This holds the URL.
-     * For an uploaded file:  
+     * For an uploaded file:
      *     this contains the original name that the file
      *     was uploaded as, but after that it has no meaning.   If you change the name
      *     of an attachment, then the name field is changed, and the actual file name
@@ -339,13 +338,9 @@ public class AttachmentRecord extends CommentContainer {
     }
 
     /**
-     * tells whether this attachment is a public attachment, or a member only
-     * attachment. Value are:
+     * Document no longer carry a public/private designator.
+     * All documents are private unless exposed by a port.
      *
-     * SectionDef.PUBLIC_ACCESS = 1; SectionDef.MEMBER_ACCESS = 2;
-     * SectionDef.ADMIN_ACCESS = 3; -- future expansion possibility
-     * SectionDef.PRIVATE_ACCESS = 4; -- future expansion possibility
-     */
     private int getVisibility() {
         return (int) safeConvertLong(getScalar("visibility"));
     }
@@ -361,6 +356,7 @@ public class AttachmentRecord extends CommentContainer {
         }
         setScalar("visibility", Integer.toString(viz));
     }
+
     public boolean isPublic() {
         return (getVisibility()==1);
     }
@@ -372,6 +368,7 @@ public class AttachmentRecord extends CommentContainer {
             setVisibility(SectionDef.MEMBER_ACCESS);
         }
     }
+    */
 
     public int getVersion() {
         return getAttributeInt("version");
@@ -409,7 +406,7 @@ public class AttachmentRecord extends CommentContainer {
         }
 
         List<AttachmentVersion> list =
-            AttachmentVersionProject.getProjectVersions(projectFolder, getNiceName(), getId());
+            AttachmentVersion.getProjectVersions(projectFolder, this);
 
         sortVersions(list);
 
@@ -501,7 +498,7 @@ public class AttachmentRecord extends CommentContainer {
         {
             String testName = testFile.getName();
             if (attachName.equalsIgnoreCase(testName)) {
-                return new AttachmentVersionProject(testFile, ver+1, true, true);
+                return new AttachmentVersion(this, testFile, ver+1, true, true);
             }
         }
         return null;
@@ -542,7 +539,7 @@ public class AttachmentRecord extends CommentContainer {
         String fileExtension = getFileExtension();
         File tempCogFile = File.createTempFile("~newP_"+attachmentId, fileExtension, cogFolder);
         File workFile = workCopy.getLocalFile();
-        AttachmentVersionProject.copyFileContents(workFile, tempCogFile);
+        AttachmentVersion.copyFileContents(workFile, tempCogFile);
 
         //rename the special copy to have the right version number
         String specialVerFileName = "att"+attachmentId+"-"+Integer.toString(workCopy.getNumber())
@@ -611,13 +608,12 @@ public class AttachmentRecord extends CommentContainer {
         if (projectFolder==null) {
             throw new Exception("NGProject container has no containing folder????");
         }
-        
+
         //in case the attachment is deleted, undelete it for this new version
         clearDeleted();
 
-        String displayName = getNiceName();
-        AttachmentVersion av = AttachmentVersionProject.getNewProjectVersion(projectFolder,
-                 displayName, getId(), contents);
+        AttachmentVersion av = AttachmentVersion.getNewProjectVersion(projectFolder,
+                this, contents);
 
         //update the record
         setVersion(av.getNumber());
@@ -1030,7 +1026,6 @@ public class AttachmentRecord extends CommentContainer {
         if ("URL".equals(getType())) {
             thisDoc.put("url",          getURLValue());
         }
-        thisDoc.put("public",       isPublic());
         thisDoc.put("purgeDate",    getPurgeDate());
         return thisDoc;
     }
@@ -1043,6 +1038,14 @@ public class AttachmentRecord extends CommentContainer {
             allCommentss.put(cr.getHtmlJSON(ar));
         }
         thisDoc.put("comments",  allCommentss);
+        thisDoc.put("magicNumber", AccessControl.getAccessDocParams(ngp, this));
+
+        JSONArray versions = new JSONArray();
+        for (AttachmentVersion av : getVersions(ngp)) {
+            versions.put(av.getJSON());
+        }
+        thisDoc.put("versions",  versions);
+
         return thisDoc;
     }
 
@@ -1054,13 +1057,6 @@ public class AttachmentRecord extends CommentContainer {
             String newDesc = docInfo.getString("description");
             if (!newDesc.equals(this.getDescription())) {
                 setDescription(newDesc);
-                changed = true;
-            }
-        }
-
-        if (docInfo.has("public")) {
-            if (isPublic() != docInfo.getBoolean("public")) {
-                setPublic(docInfo.getBoolean("public"));
                 changed = true;
             }
         }

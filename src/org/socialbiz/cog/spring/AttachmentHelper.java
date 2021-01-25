@@ -75,8 +75,6 @@ public class AttachmentHelper {
         //uploaded document remains deleted.
         attachment.clearDeleted();
 
-        attachment.setPublic(visibility != null && visibility.equals("*PUB*"));
-
         setDisplayName(ngc, attachment, assureExtension(desiredName, fileName));
         saveUploadedFile(ar, attachment, file);
         HistoryRecord.createHistoryRecord(ngc, attachment.getId(), HistoryRecord.CONTEXT_TYPE_DOCUMENT,
@@ -259,9 +257,6 @@ public class AttachmentHelper {
             attachment.setDescription(comment);
         }
 
-        if(visibility!=null){
-            attachment.setPublic(visibility.equals("PUB"));
-        }
         AttachmentHelper.setDisplayName(ngp, attachment, name);
 
         if((id!=null)&&(rpath != null)){

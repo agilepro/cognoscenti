@@ -146,7 +146,7 @@ app.controller('myCtrl', function($scope, $http) {
                         </td>
                         <td>{{rec.purpose}}</td>
                         <td>{{rec.status}}</td>
-                        <td>{{rec.modTime | date}}</td>
+                        <td>{{rec.modTime |cdate}}</td>
                     </tr>
                 </table>
             </div>

@@ -93,7 +93,20 @@ function standardTinyMCEOptions() {
 }
 
 var myApp = angular.module('myApp', ['ui.bootstrap','ngTagsInput','pascalprecht.translate']);
-// ,'angularjs-datetime-picker'
+
+myApp.filter('cdate', function() {
+  return function(x) {
+    if (!x || x<10000000) {
+        return "Not Set";
+    }
+    let diff = new Date().getTime() - x;
+    if (diff>860000000 || diff<-860000000) {
+        return moment(x).format("DD MMM YYYY");
+    }
+    return moment(x).format("DD MMM @ HH:mm");
+  };
+});
+
  </script>
 
 

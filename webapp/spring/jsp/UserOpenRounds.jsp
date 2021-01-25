@@ -125,7 +125,7 @@ app.controller('myCtrl', function($scope, $http) {
                     {{rec.modUser.name}}
                 </td>
                 <td >
-                    {{rec.modTime|date}}
+                    {{rec.modTime|cdate}}
                 </td>
             </tr>
             </table>
@@ -155,7 +155,7 @@ app.controller('myCtrl', function($scope, $http) {
                 </td>
                 <td >
                     <span ng-show="rec.state==11" style="background-color:yellow">DRAFT</span>
-                    <span ng-hide="rec.state==11" style="{{dueStyle(rec)}}">{{rec.dueDate|date}}</span>
+                    <span ng-hide="rec.state==11" style="{{dueStyle(rec)}}">{{rec.dueDate|cdate}}</span>
                 </td>
             </tr>
             </table>

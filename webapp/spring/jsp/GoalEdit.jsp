@@ -689,13 +689,13 @@ function addvalue() {
             <td >
                 <span ng-show="goalInfo.duedate>0">   
                     <b>Due:</b>   
-                    {{goalInfo.duedate|date}}   &nbsp; &nbsp; </span>
+                    {{goalInfo.duedate|cdate}}   &nbsp; &nbsp; </span>
                 <span ng-show="goalInfo.startdate>0" ng-click="startEdit('details')"> 
                     <b>Start:</b> 
-                    {{goalInfo.startdate|date}} &nbsp; &nbsp; </span>
+                    {{goalInfo.startdate|cdate}} &nbsp; &nbsp; </span>
                 <span ng-show="goalInfo.enddate>0" ng-click="startEdit('details')">
                     <b>End:</b>   
-                    {{goalInfo.enddate|date}}   &nbsp; &nbsp; </span>
+                    {{goalInfo.enddate|cdate}}   &nbsp; &nbsp; </span>
             </td>
         </tr>
         <tr><td></td>
@@ -875,7 +875,7 @@ function updateVal(){
                             <img class="img-circle" src="<%=ar.retPath%>icon/{{rec.responsible.image}}"
                                  alt="" width="50" height="50" /></td>
                         <td colspan="2"  class="projectStreamText"  style="padding:10px;max-width:600px;">
-                            {{rec.time|date}} -
+                            {{rec.time|cdate}} -
                             <a href="<%=ar.retPath%>v/{{rec.responsible.key}}/userSettings.htm" title="access the profile of this user, if one exists">
                                                                     <span class="red">{{rec.responsible.name}}</span>
                             </a>

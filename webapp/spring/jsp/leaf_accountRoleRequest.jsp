@@ -118,7 +118,7 @@ app.controller('myCtrl', function($scope, $http) {
                               </div>
                             </td>
                             <td>{{rec.roleName}}</td>
-                            <td>{{rec.modified|date}}</td>
+                            <td>{{rec.modified|cdate}}</td>
                             <td>{{rec.requestName}}</td>
                             <td>{{rec.description}}</td>
                             <td>{{rec.state}}</td>

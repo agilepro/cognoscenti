@@ -385,7 +385,7 @@ app.filter('encode', function() {
       <tr>
         <td class="labelColumn">Last Access</td>
         <td ng-hide="userDetails.lastLogin>100000">Has never logged in.</td>
-        <td ng-show="userDetails.lastLogin>100000">{{userDetails.lastLogin|date}} as '{{userDetails.lastLoginId}}'</td>
+        <td ng-show="userDetails.lastLogin>100000">{{userDetails.lastLogin|cdate}} as '{{userDetails.lastLoginId}}'</td>
       </tr>
       <tr>
         <td class="labelColumn">Disabled</td>

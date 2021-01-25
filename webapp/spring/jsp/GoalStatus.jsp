@@ -831,13 +831,13 @@ function addvalue() {
         <td style="width:150px"  ng-dblclick="openModalActionItem(rec, 'status')"
             title="Dates the action item was started, due, or completed">
           <div ng-show="rec.startdate>100" >
-            start: {{rec.startdate | date}}
+            start: {{rec.startdate | cdate}}
           </div>
           <div ng-show="rec.duedate>100" >
-            due: {{rec.duedate | date}}
+            due: {{rec.duedate | cdate}}
           </div>
           <div ng-show="rec.enddate>100" >
-            end: {{rec.enddate | date}}
+            end: {{rec.enddate | cdate}}
           </div>
         </td>
         <td style="width:72px;padding:0px;" title="Give a Red-Yellow-Green indication of how it is going"

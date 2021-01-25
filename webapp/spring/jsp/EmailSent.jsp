@@ -154,7 +154,7 @@ app.controller('myCtrl', function($scope, $http) {
                 <td><a href="emailMsg.htm?msg={{rec.CreateDate}}&f={{filter}}">{{rec.Subject}}</a></td>
                 <td>{{rec.Addressee}}</td>
                 <td>{{rec.Status}}</td>
-                <td>{{bestDate(rec) |date:'M/d/yy H:mm'}}</td>
+                <td>{{bestDate(rec) |cdate}}</td>
             </tr>
         </table>
 

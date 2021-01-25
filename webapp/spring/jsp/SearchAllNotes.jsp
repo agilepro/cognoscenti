@@ -125,7 +125,7 @@ app.controller('myCtrl', function($scope, $http) {
         <tr ng-repeat="row in results">
             <td>{{row.siteName}} / <a href="<%=ar.retPath%>{{row.projectLink}}">{{row.projectName}}</a></td>
             <td><a href="<%=ar.retPath%>{{row.noteLink}}">{{row.noteSubject}}</a></td>
-            <td>{{row.modTime | date}}</td>
+            <td>{{row.modTime |cdate}}</td>
         </tr>
         <tr ng-hide="hasResults">
            <td colspan="5">
@@ -133,7 +133,7 @@ app.controller('myCtrl', function($scope, $http) {
              Did not find any results for search string: {{actualSearch}}
            </div>
            <div class="guideVocal" ng-show="isSearching"> 
-             Searching for results for string: {{actualSearch}}
+             <img src="../../../assets/ajax-loading.gif"/> &nbsp; Searching for results for string: {{actualSearch}}
            </div>
            </td>
         </tr>

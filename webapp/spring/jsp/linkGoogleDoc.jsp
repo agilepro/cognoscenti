@@ -295,7 +295,7 @@ function onSuccessFunc(user) {
         <button ng-hide="isFolder(gfile)" class="" 
             ng-click="preview(gfile)"><i class="fa fa-eye"></i></button>
     </td>
-    <td style="width:100px;">{{gfile.modifiedDate | date}}</td>
+    <td style="width:100px;">{{gfile.modifiedDate|cdate}}</td>
     </tr>
     </table>
 

@@ -126,7 +126,7 @@ the group that runs the workspace.
   <div ng-repeat="prjrole in partProjects">
         <div class="col-xs-12 col-sm-6 col-md-3 padded">
             <b>{{prjrole.fullName}}</b><br/>
-            Updated: {{prjrole.updated|date}}
+            Updated: {{prjrole.updated|cdate}}
         </div>
         <div class="col-xs-12 col-sm-6 col-md-3 padded">
             <b>{{prjrole.role}}</b> <br/>

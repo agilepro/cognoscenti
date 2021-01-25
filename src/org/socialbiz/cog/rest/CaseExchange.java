@@ -79,11 +79,7 @@ public class CaseExchange {
         DOMFace allDocs = rootEle.createChild("documents", DOMFace.class);
         for (AttachmentRecord att : ngp.getAllAttachments()) {
 
-            // first check if this license has access
-            if (att.isPublic()) {
-                // public document, so everyone can get it
-            }
-            else if (isMember) {
+            if (isMember) {
                 // members can access everything
             }
             else if (att.roleCanAccess(license.getRole())) {

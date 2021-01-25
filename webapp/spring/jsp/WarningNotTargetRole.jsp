@@ -185,7 +185,7 @@ app.controller('myCtrl', function($scope, $http) {
         </div>
         <div ng-hide="enterMode" class="generalContent warningBox">
             <div ng-show="isRequested">
-                 You requested to join <%ar.writeHtml(roleName);%> on {{requestDate|date}}.<br/>
+                 You requested to join <%ar.writeHtml(roleName);%> on {{requestDate|cdate}}.<br/>
                  The status of that request is: <b>{{requestState}}</b>.
             </div>
             <div ng-hide="isRequested">

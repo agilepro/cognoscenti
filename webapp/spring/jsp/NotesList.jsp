@@ -452,7 +452,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                     <a href="noteZoom{{rec.id}}.htm" style="color:black;">
                         <b>{{rec.subject}}</b>
                         ({{rec.modUser.name}})
-                        {{rec.modTime|date}}
+                        {{rec.modTime|cdate}}
                     </a>
 
                     <span ng-repeat="label in getNoteLabels(rec)">
