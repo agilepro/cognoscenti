@@ -199,7 +199,6 @@
             SectionUtil.nicePrintTime(ar, cr.getEffectiveDate(), ar.nowTime);
             ar.write("</i>)");
         }
-        ar.write(" viz="+cr.isPublic());
         ar.write("\n</div></div>");
 
         ar.write("\n</div>");

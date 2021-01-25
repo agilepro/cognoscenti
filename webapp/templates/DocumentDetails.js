@@ -28,7 +28,6 @@ app.controller('DocumentDetailsCtrl', function ($scope, $modalInstance, $http, $
     }
 
     $scope.setDocumentData = function(data) {
-        console.log("RECEIVED", data);
         $scope.timerCorrection = data.serverTime - new Date().getTime();
         $scope.docInfo = data;
     }
@@ -42,7 +41,6 @@ app.controller('DocumentDetailsCtrl', function ($scope, $modalInstance, $http, $
         $scope.docInfo.labelMap[label.name] = !$scope.docInfo.labelMap[label.name];
     }
     $scope.setPurge = function(days) {
-        console.log("SET PURGE", days);
         if (!days || days==0) {
             $scope.docInfo.purgeDate=0;
         }

@@ -3,7 +3,7 @@
 %><%@page import="org.socialbiz.cog.NGRole"
 %><%@page import="org.socialbiz.cog.AccessControl"
 %><%@page import="org.socialbiz.cog.dms.RemoteLinkCombo"
-%><%@page import="org.socialbiz.cog.AttachmentVersion"
+%><%@page import="org.socialbiz.cog.AttachmentVersion" 
 %><%@page import="org.socialbiz.cog.dms.ConnectionType"
 %><%@page import="org.socialbiz.cog.dms.ConnectionSettings"
 %><%
@@ -29,7 +29,7 @@
     boolean isGone     = atype.equals("GONE");
     boolean isURL      = "URL".equals(atype);
     boolean isFile     = "FILE".equals(atype);
-    
+
     List<AttachmentVersion> vers = attachment.getVersions(ngp);
     boolean isGhost = vers.size()==0;
     boolean isModified = attachment.hasUncommittedChanges(vers);

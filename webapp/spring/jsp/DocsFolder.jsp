@@ -23,6 +23,10 @@
 
     JSONArray allLabels = ngp.getJSONLabels();
 
+    String templateCacheDefeater = "";
+    if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
+        templateCacheDefeater = "?t="+System.currentTimeMillis();
+    }
 
 /* DOC RECORD PROTOTYPE
     $scope.atts = [
@@ -81,10 +85,11 @@
    }
 </style>
 
+<script src="../../../jscript/AllPeople.js"></script>
 <script type="text/javascript">
 
 var app = angular.module('myApp');
-app.controller('myCtrl', function($scope, $http) {
+app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
     window.setMainPageTitle("Document Folders");
     $scope.atts = <%attachments.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
@@ -280,6 +285,61 @@ app.controller('myCtrl', function($scope, $http) {
         });
         return encodeURI(res);
     }
+    $scope.setDocumentData = function(data) {
+        console.log("GOT THIS", data);
+        $scope.timerCorrection = data.serverTime - new Date().getTime();
+        $scope.atts = data.docs;
+        $scope.sortDocs();
+        $scope.atts.forEach( function(rec) {
+            if (rec.description) {
+                rec.html = convertMarkdownToHtml(rec.description);
+            }
+        });
+        $scope.dataArrived = true;
+    }
+    $scope.getDocumentList = function() {
+        $scope.isUpdating = true;
+        var postURL = "docsList.json";
+        $http.get(postURL)
+        .success( function(data) {
+            $scope.setDocumentData(data);
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
+    }
+    $scope.getDocumentList();
+    
+    $scope.openDocDialog = function (doc) {
+        
+        var docsDialogInstance = $modal.open({
+            animation: true,
+            templateUrl: "<%= ar.retPath%>templates/DocumentDetails.html<%=templateCacheDefeater%>",
+            controller: 'DocumentDetailsCtrl',
+            size: 'lg',
+            backdrop: "static",
+            resolve: {
+                docId: function () {
+                    return doc.id;
+                },
+                allLabels: function() {
+                    return $scope.allLabels;
+                },
+                wsUrl: function() {
+                    return $scope.wsUrl;
+                }
+            }
+        });
+
+        docsDialogInstance.result
+        .then(function () {
+            $scope.getDocumentList();
+        }, function () {
+            $scope.getDocumentList();
+            //cancel action - nothing really to do
+        });
+    };
+    
 });
 
 </script>
@@ -336,7 +396,7 @@ app.controller('myCtrl', function($scope, $http) {
 
     </div>
 
-    <table class="gridTable2" width="100%">
+    <table class="table" width="100%">
         <tr class="gridTableHeader">
             <td width="50px">
               <div class="dropdown">
@@ -356,7 +416,7 @@ app.controller('myCtrl', function($scope, $http) {
             <td width="420px">Name ~ Description</td>
             <td width="80px">Date</td>
         </tr>
-        <tr ng-repeat="rec in getUnmarked()">
+        <tr ng-repeat="rec in getUnmarked()" ng-dblclick="openDocDialog(rec)">
             <td>
               <div class="dropdown">
                 <button class="dropdown-toggle specCaretBtn" type="button"  d="menu" 
@@ -367,7 +427,7 @@ app.controller('myCtrl', function($scope, $http) {
                   <li role="presentation" ng-show="rec.attType=='FILE'">
                       <a role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Upload Revised Document</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="DocsDetails{{rec.id}}.htm">Edit Document Details</a></li>
+                      <a role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Edit Document Settings</a></li>
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="DocsVersions.htm?aid={{rec.id}}">List Versions</a></li>
                   <li role="presentation" class="divider"></li>
@@ -379,13 +439,13 @@ app.controller('myCtrl', function($scope, $http) {
               </div>
             </td>
             <td>
-                <a href="DocsDetails{{rec.id}}.htm">
-                    <span ng-show="rec.deleted"><i class="fa fa-trash"></i></span>
-                    <span ng-show="rec.attType=='FILE'"><img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
-                    <span ng-show="rec.attType=='URL'"><img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
-                </a>
+                <span ng-show="rec.attType=='FILE'" ng-click="openDocDialog(rec)">
+                   <img src="<%=ar.retPath%>assets/images/iconFile.png"></span>
+                <span ng-show="rec.attType=='URL'" ng-click="openDocDialog(rec)">
+                   <img src="<%=ar.retPath%>assets/images/iconUrl.png"></span>
+                <span ng-show="rec.deleted" style="color:red"> <i class="fa fa-trash"></i></span>
             </td>
-            <td>
+            <td >
                 <b><a href="docinfo{{rec.id}}.htm" title="{{rec.name}}">{{rec.name}}</a></b>
                 ~ {{rec.description}}
                 <span ng-repeat="label in getAllLabels(rec)"><button class="labelButton"
@@ -407,5 +467,4 @@ app.controller('myCtrl', function($scope, $http) {
 </div>
 
 
-
-
+<script src="<%=ar.retPath%>templates/DocumentDetails.js"></script>
