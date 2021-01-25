@@ -62,6 +62,7 @@ Optional Parameters:
     String targetRole = null;
     if (eGenId!=null) {
         EmailGenerator eGen = ngw.getEmailGeneratorOrFail(eGenId);
+        List<AddressListEntry> allALEs = AddressListEntry.toAddressList( eGen.getAlsoTo() );
         emailInfo = eGen.getJSON(ar, ngw);
         meetId = eGen.getMeetingId();
         boolean isMeeting = (meetId!=null && meetId.length()>0);
@@ -72,7 +73,6 @@ Optional Parameters:
                 if(mailSubject == null){
                     mailSubject = "Meeting: "+mr.getNameAndDate(mr.getOwnerCalendar());
                 }
-                emailInfo.put("alsoTo", AddressListEntry.getJSONArrayFromIds(mr.getParticipants()));
                 meeting = mr.getFullJSON(ar, ngw, false);
             }
         }
@@ -250,7 +250,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     }
 
     $scope.saveEmail = function() {
-        console.log("SAVE EMAIL");
+        console.log("SAVE EMAIL", $scope.emailInfo);
         $scope.emailInfo.alsoTo.forEach(function(item) {
             if (!item.uid) {
                 item.uid = item.name;
@@ -266,7 +266,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
                 return;
             }
             if ($scope.isNew) {
-                console.log("OK, we need to navigate to thenew ID");
                 window.location = "SendNote.htm?id="+data.id;
             }
             $scope.emailInfo = data;
@@ -279,23 +278,19 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     }
     $scope.getRenderedEmail = function() {
         var postURL = "renderEmail.json";
-        console.log("recipient is NOW", $scope.recipient);
         var postObj = {id: $scope.emailInfo.id, toUser: $scope.recipient.uid};
         var postdata = angular.toJson(postObj);
         $scope.showError=false;
-        console.log("getRenderedEmail: calling ", postURL, postObj);
         $http.post(postURL ,postdata)
         .success( function(data) {
             $scope.renderedEmail = $sce.trustAsHtml(data.html);
             $scope.renderedSubject = data.subject;
-            console.log("got RENDER", data);
             if (data.addressees) {
                 var newRecList = [];
                 data.addressees.forEach( function(item) {
                     newRecList.push(item);
                 });
                 $scope.recipientList = newRecList;
-                console.log("Updated list to", $scope.recipientList);
             }
         })
         .error( function(data, status, headers, config) {
@@ -349,7 +344,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         }
     }
     $scope.addPlayers = function(role) {
-        console.log("addPlayers: ",role);
         if (!role) {
             return;
         }
@@ -358,7 +352,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         });
     }
     $scope.addMeetingInvitees = function(role) {
-        console.log("addMeetingInvitees: ",$scope.meeting.participants);
         if (!$scope.meeting) {
             return;
         }
@@ -367,7 +360,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         });
     }
     $scope.addMeetingAttendees = function(role) {
-        console.log("addMeetingAttendees: ",$scope.meeting.attended);
         if (!$scope.meeting) {
             return;
         }
@@ -376,7 +368,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         });
     }
     $scope.addMeetingNoShows = function(role) {
-        console.log("addMeetingNoShows: ",$scope.meeting.attended);
         if (!$scope.meeting) {
             return;
         }
@@ -393,7 +384,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         });
     } 
     $scope.addTopicSubscribers = function(role) {
-        console.log("addMeetingAttendees: ",$scope.meeting.attended);
         if (!$scope.emailInfo.noteInfo || !$scope.emailInfo.noteInfo.subscribers) {
             return;
         }
@@ -410,12 +400,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
             }
         });
         if (!found) {
-            console.log("Adding player: ",player);
             $scope.emailInfo.alsoTo.push({name: player.name, uid: player.uid});
-        }
-        else {
-            console.log("Ignorint player: ",player);
-            
         }
     }
     
