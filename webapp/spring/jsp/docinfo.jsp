@@ -351,7 +351,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         
         var docsDialogInstance = $modal.open({
             animation: true,
-            templateUrl: "<%= ar.retPath%>templates/DocumentDetails.html<%=templateCacheDefeater%>",
+            templateUrl: "<%= ar.retPath%>templates/DocumentDetail2.html<%=templateCacheDefeater%>",
             controller: 'DocumentDetailsCtrl',
             size: 'lg',
             backdrop: "static",
@@ -577,5 +577,5 @@ if (ar.isLoggedIn() || canAccessDoc) {
 <script src="<%=ar.retPath%>templates/OutcomeModal.js"></script>
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
-<script src="<%=ar.retPath%>templates/DocumentDetails.js"></script>
+<script src="<%=ar.retPath%>templates/DocumentDetail2.js"></script>
 

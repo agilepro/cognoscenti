@@ -314,7 +314,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
         
         var docsDialogInstance = $modal.open({
             animation: true,
-            templateUrl: "<%= ar.retPath%>templates/DocumentDetails.html<%=templateCacheDefeater%>",
+            templateUrl: "<%= ar.retPath%>templates/DocumentDetail2.html<%=templateCacheDefeater%>",
             controller: 'DocumentDetailsCtrl',
             size: 'lg',
             backdrop: "static",
@@ -467,4 +467,4 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
 </div>
 
 
-<script src="<%=ar.retPath%>templates/DocumentDetails.js"></script>
+<script src="<%=ar.retPath%>templates/DocumentDetail2.js"></script>

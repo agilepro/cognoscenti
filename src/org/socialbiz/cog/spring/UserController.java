@@ -56,7 +56,6 @@ import org.socialbiz.cog.OptOutIndividualRequest;
 import org.socialbiz.cog.ProfileRef;
 import org.socialbiz.cog.ReminderMgr;
 import org.socialbiz.cog.ReminderRecord;
-import org.socialbiz.cog.RemoteGoal;
 import org.socialbiz.cog.RoleRequestRecord;
 import org.socialbiz.cog.SearchResultRecord;
 import org.socialbiz.cog.UserCache;
