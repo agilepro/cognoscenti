@@ -100,7 +100,7 @@ app.controller('myCtrl', function($scope, $http) {
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Workspace</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/personal.htm">Stop Watching</a></li>
+                      <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/Personal.htm">Stop Watching</a></li>
                 </ul>
               </div>
             </td>

@@ -1325,7 +1325,7 @@ public class MeetingRecord extends DOMFace {
         String descriptionHtml = "This appointment is for a Meeting organized in Weaver.\n"
                 +"Find more information about the meeting in the following links.\n"
                 +"Meeting: "+ar.baseURL+getEmailURL(ar, ngw)
-                +"\nWorkspace: "+ar.baseURL+ar.getResourceURL(ngw, "frontPage.htm");
+                +"\nWorkspace: "+ar.baseURL+ar.getResourceURL(ngw, "FrontPage.htm");
         w.write("DESCRIPTION:"+specialEncode(descriptionHtml)+"\n");
         w.write("END:VEVENT\n");
         w.write("END:VCALENDAR\n");

@@ -60,7 +60,7 @@ if(memberOfSites.size()>0) {
 
                 <%
                 for (NGBook account : memberOfSites) {
-                    String accountLink =ar.baseURL+"t/"+account.getKey()+"/$/accountCreateProject.htm";
+                    String accountLink =ar.baseURL+"t/"+account.getKey()+"/$/SiteCreateWorkspace.htm";
                     %>
                     <tr>
                     <td class="acctListElem">

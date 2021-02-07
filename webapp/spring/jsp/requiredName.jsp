@@ -26,7 +26,7 @@
         many people using this server.  You can change this name later at any time.</td>
     </div>
     
-    <form action="<%= ar.retPath %>t/requiredName.form" method="post">
+    <form action="<%= ar.retPath %>t/RequiredName.form" method="post">
     <div class="reRow">
          <input type="hidden" name="go" value="<%= ar.getCompleteURL() %>">
          <input type="text" name="dName" class="form-control" size="50"> 

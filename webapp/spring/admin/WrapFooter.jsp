@@ -21,7 +21,7 @@ Optional Parameter:
                         if(pageId!=null&&pageId.length()>0){
                             far.write("p/");
                             far.writeURLData(pageId);
-                            far.write("/history.htm");
+                            far.write("/History.htm");
                         }else{
                             far.write("UserHome.jsp");
                         }

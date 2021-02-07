@@ -440,7 +440,7 @@ a {
           <div class="panel-heading headingfont">
               <div style="float:left">Recent Updates</div>
               <div style="float:right" title="Access the detailed history of events in this workspace">
-                  <a href="history.htm">
+                  <a href="History.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
@@ -500,7 +500,7 @@ a {
           <div class="panel-heading headingfont">
               <div style="float:left">Recent History</div>
               <div style="float:right" title="Access the detailed history of events in this workspace">
-                  <a href="history.htm">
+                  <a href="History.htm">
                       <i class="fa fa-list"></i></a></div>
               <div style="clear:both"></div>
           </div>
@@ -577,12 +577,12 @@ a {
           <div class="panel-heading headingfont">
               <div style="float:left">Aim of Workspace</div>
               <div style="float:right" title="View and manage the roles in this workspace">
-                  <a href="admin.htm">
+                  <a href="AdminSettings.htm">
                       <i class="fa fa-info-circle"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body" >
-              <a href="admin.htm">
+              <a href="AdminSettings.htm">
               <div ng-bind-html="purposeHtml"></div>
               </a>
           </div>

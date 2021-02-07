@@ -86,15 +86,15 @@ public class WikiConverterForWYSIWYG extends WikiConverter
         String linkText = linkContentText;
         String linkAddr = null;
         String titleValue = linkContentText;
-        
-        
+
+
 
         if (barPos >= 0) {
-            
+
             //We have both a link text, and a link address, so use them.
             linkText = linkContentText.substring(0,barPos).trim();
             linkAddr = linkContentText.substring(barPos+1).trim();
-            
+
             //if this has been shortened, it must be converted back to full length.
             //not really sure how this got shortened in the first place
             if (linkAddr.startsWith("http")) {
@@ -128,7 +128,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter
                 List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkText);
                 if (foundPages.size() >= 1) {
                     NGPageIndex foundPI = foundPages.get(0);
-                    linkAddr = ar.baseURL + ar.getResourceURL(foundPI, "frontPage.htm");
+                    linkAddr = ar.baseURL + ar.getResourceURL(foundPI, "FrontPage.htm");
                 }
                 else {
                     //didn't find a project with that name, so just link to hash which
@@ -144,7 +144,7 @@ public class WikiConverterForWYSIWYG extends WikiConverter
             target = "_blank";
             titleValue = "external link: "+titleValue;
         }
-        
+
         ar.write("<a href=\"");
         ar.write(linkAddr);
         ar.write("\" title=\"");

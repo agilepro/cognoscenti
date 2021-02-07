@@ -62,12 +62,12 @@ public class ProjectSettingController extends BaseController {
 
     //////////////////////// MAIN VIEWS ////////////////////////////
 
-    @RequestMapping(value = "/{siteId}/{pageId}/personal.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/Personal.htm", method = RequestMethod.GET)
     public void showPersonalTab(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPLoggedIn(ar,siteId,pageId, "leaf_personal");
+        showJSPLoggedIn(ar,siteId,pageId, "Personal");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/roleManagement.htm", method = RequestMethod.GET)
@@ -102,7 +102,7 @@ public class ProjectSettingController extends BaseController {
         showJSPMembers(ar, siteId, pageId, "RoleNomination");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/roleRequest.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/RoleRequest.htm", method = RequestMethod.GET)
     public void remindersTab(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -112,16 +112,21 @@ public class ProjectSettingController extends BaseController {
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/admin.htm", method = RequestMethod.GET)
+    public void redIndex(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)throws Exception {
+        response.sendRedirect("AdminSettings.htm");
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/AdminSettings.htm", method = RequestMethod.GET)
     public void showAdminTab(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         registerSiteOrProject(ar, siteId, pageId);
         if (ar.isAdmin()) {
-            streamJSP(ar, "leaf_admin");
+            streamJSP(ar, "AdminSettings");
         }
         else {
-            showJSPMembers(ar, siteId, pageId, "leaf_admin");
+            showJSPMembers(ar, siteId, pageId, "AdminSettings");
         }
     }
 
@@ -322,7 +327,7 @@ public class ProjectSettingController extends BaseController {
                     boolean hasSpecialPermission = adminRole.isPlayer(ale);
 
                     if (!hasSpecialPermission && ngw instanceof NGWorkspace)  {
-                        NGRole executiveRole = ((NGWorkspace)ngw).getSite().getRole("Executives");//getSecondaryRole();
+                        NGRole executiveRole = ngw.getSite().getRole("Executives");//getSecondaryRole();
                         hasSpecialPermission = executiveRole.isPlayer(ale);
                     }
 

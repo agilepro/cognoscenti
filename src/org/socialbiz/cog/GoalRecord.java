@@ -101,15 +101,15 @@ public class GoalRecord extends BaseRecord {
         // replaced by "public.htm"
         String sub = getSub();
         if (sub.endsWith("process.xml")) {
-            return sub.substring(0, sub.length() - 11) + "frontPage.htm";
+            return sub.substring(0, sub.length() - 11) + "FrontPage.htm";
         }
         if (sub.endsWith("process.wfxml")) {
-            return sub.substring(0, sub.length() - 13) + "frontPage.htm";
+            return sub.substring(0, sub.length() - 13) + "FrontPage.htm";
         }
 
         // now for "Task0000.wfxml"
         if (sub.endsWith(".wfxml")) {
-            return sub.substring(0, sub.length() - 14) + "frontPage.htm";
+            return sub.substring(0, sub.length() - 14) + "FrontPage.htm";
         }
         return sub;
     }
@@ -306,7 +306,7 @@ public class GoalRecord extends BaseRecord {
         actEle.setAttribute("id", getId());
         DOMUtils.createChildElement(doc, actEle, "processurl", processurl);
         DOMUtils.createChildElement(doc, actEle, "key", activityurl);
-        DOMUtils.createChildElement(doc, actEle, "display", "frontPage.htm");
+        DOMUtils.createChildElement(doc, actEle, "display", "FrontPage.htm");
         DOMUtils.createChildElement(doc, actEle, "synopsis", getSynopsis());
         DOMUtils.createChildElement(doc, actEle, "description",
                 getDescription());
@@ -579,7 +579,7 @@ public class GoalRecord extends BaseRecord {
     // /////////////// DEPRECATED METHODS ////////////////////
 
     public NGWorkspace getProject() {
-        return (NGWorkspace) ((NGSection) getParent()).parent;
+        return ((NGSection) getParent()).parent;
     }
 
     /**

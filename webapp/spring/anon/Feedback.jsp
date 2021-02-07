@@ -68,6 +68,7 @@ app.controller('myCtrl', function($scope, $http) {
             $scope.log_number = data.errNo;
             console.log("Set id to: ", $scope.log_number)
             $scope.showThanks = true;
+            $scope.returnToPage();
         })
         .error( function(data) {
            console.log("got error: ", data);

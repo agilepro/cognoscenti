@@ -114,7 +114,7 @@ public class RoleInvitation extends JSONWrapper {
                 +" after that you will be able to"
                 +" participate directly with the others through the site.";
         }
-        String returnUrl = ar.baseURL + ar.getResourceURL(ar.ngp, "frontPage.htm");
+        String returnUrl = ar.baseURL + ar.getResourceURL(ar.ngp, "FrontPage.htm");
 
         JSONObject jo = new JSONObject();
         jo.put("userId", kernel.getString("email"));

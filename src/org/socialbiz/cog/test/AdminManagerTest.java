@@ -31,7 +31,7 @@ public class AdminManagerTest extends BaseTest {
     public void testGetPageInfo() {
 
         //specify the form method and the form action
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/SomnathBook/Test4/admin.htm");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/SomnathBook/Test4/AdminSettings.htm");
         request.addParameter("pageId", "Test4");
     }
 

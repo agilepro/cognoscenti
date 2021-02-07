@@ -226,11 +226,11 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
 
             //this is the default resource
             if (resource.length()==0) {
-                resource = "frontPage.htm";
+                resource = "FrontPage.htm";
             }
             if (resource.equals("leaf.htm")) {
                 //legacy migration, old links to leaf.htm should be converted.
-                resource = "frontPage.htm";
+                resource = "FrontPage.htm";
             }
 
             // This code taks a request of the form xxx.htm

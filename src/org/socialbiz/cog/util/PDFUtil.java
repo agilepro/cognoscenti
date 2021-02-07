@@ -686,7 +686,7 @@ public class PDFUtil {
             List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(linkAddr);
             if (foundPages.size()==1) {
                 NGPageIndex foundPI = foundPages.get(0);
-                linkAddr = ar.retPath + ar.getResourceURL(foundPI, "frontPage.htm");
+                linkAddr = ar.retPath + ar.getResourceURL(foundPI, "FrontPage.htm");
                 if (!userSpecifiedName)
                 {
                     linkName = foundPI.containerName;   //use the best name for page

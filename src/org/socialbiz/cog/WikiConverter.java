@@ -491,7 +491,7 @@ public class WikiConverter
             if (foundPages.size() == 1) {
                 NGPageIndex foundPI = foundPages.get(0);
                 linkAddr = ar.baseURL
-                        + ar.getResourceURL(foundPI, "frontPage.htm");
+                        + ar.getResourceURL(foundPI, "FrontPage.htm");
                 if (!userSpecifiedName) {
                     linkName = foundPI.containerName; // use the best name for
                                                         // page
@@ -540,7 +540,7 @@ public class WikiConverter
                 ar.writeHtml(linkName);
                 ar.write("\"/>");
             }
-        } 
+        }
         else { // not an image
             if (pageExists) {
                 ar.write("<a href=\"");

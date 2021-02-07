@@ -125,7 +125,7 @@ app.controller('myCtrl', function($scope, $http) {
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem"
-              href="accountCreateProject.htm" >Create New Workspace</a></li>
+              href="SiteCreateWorkspace.htm" >Create New Workspace</a></li>
           <li role="presentation" class="divider"></li>
           <li role="presentation"><a role="menuitem" 
               ng-click="garbageCollect()">Garbage Collect</a></li>
@@ -153,7 +153,7 @@ app.controller('myCtrl', function($scope, $http) {
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="<%=ar.retPath%>t/{{rec.siteKey}}/{{rec.pageKey}}/frontPage.htm">Access Workspace</a></li>
                   <li role="presentation"><a role="menuitem"
-                      href="accountCreateProject.htm?parent={{rec.pageKey}}" >Create Child Workspace</a></li>
+                      href="SiteCreateWorkspace.htm?parent={{rec.pageKey}}" >Create Child Workspace</a></li>
                 </ul>
               </div>
             </td>
@@ -170,7 +170,7 @@ app.controller('myCtrl', function($scope, $http) {
         </tr>
     </table>
     
-    <a href="accountCreateProject.htm" >
+    <a href="SiteCreateWorkspace.htm" >
         <button class="btn btn-primary btn-raised"><i class="fa fa-plus"></i> Create Workspace</button>
     </a>
 

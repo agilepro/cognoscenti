@@ -1149,7 +1149,7 @@ public class UserController extends BaseController {
                     List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
                     if(foundPages.size()>0){
                         NGPageIndex foundPage = foundPages.get( 0 );
-                        response.sendRedirect(ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
+                        response.sendRedirect(ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/FrontPage.htm" );
                         return;
                     }
                 }
@@ -1191,7 +1191,7 @@ public class UserController extends BaseController {
                     List<NGPageIndex> foundPages = ar.getCogInstance().getPageIndexByName(isRequestingForNewProjectUsingLinks);
                     if(foundPages.size()>0){
                         NGPageIndex foundPage = foundPages.get( 0 );
-                        response.sendRedirect(ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/frontPage.htm" );
+                        response.sendRedirect(ar.retPath+"t/"+bookForNewProject+"/"+foundPage.containerKey+"/FrontPage.htm" );
                         return;
                     }
                 }

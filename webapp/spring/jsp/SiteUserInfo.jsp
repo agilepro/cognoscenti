@@ -9,7 +9,7 @@
     String siteId = ar.reqParam("siteId");
     String userKey = ar.reqParam("userKey");
     NGBook  ngb = ar.getCogInstance().getSiteByIdOrFail(siteId);
-    String pageAddress = ar.getResourceURL(ngb,"personal.htm");
+    String pageAddress = ar.getResourceURL(ngb,"Personal.htm");
     
     
     AddressListEntry ale = new AddressListEntry(userKey);
@@ -257,7 +257,7 @@ app.filter('encode', function() {
           <li role="presentation"><a role="menuitem"
               href="SiteAdmin.htm">Site Admin</a></li>
           <li role="presentation"><a role="menuitem"
-              href="roleRequest.htm">Role Requests</a></li>
+              href="SiteRoleRequest.htm">Role Requests</a></li>
           <li role="presentation"><a role="menuitem"
               href="SiteUsers.htm">User List</a></li>
           <li role="presentation"><a role="menuitem"

@@ -948,7 +948,7 @@ history.task.subtask.add    113
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
             return ar.getResourceURL(ngp, "decisionList.htm#DEC")+objectKey;
         }
-        return ar.getResourceURL(ngp, "frontPage.htm");
+        return ar.getResourceURL(ngp, "FrontPage.htm");
     }
 
 

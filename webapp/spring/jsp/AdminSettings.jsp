@@ -327,15 +327,15 @@ editBoxStyle {
           <li role="presentation"><a role="menuitem" href="emailSent.htm">
               Email Sent</a>
           </li>
-          <li role="presentation"><a role="menuitem" href="roleRequest.htm">
+          <li role="presentation"><a role="menuitem" href="RoleRequest.htm">
               Role Requests</a>
           </li>
           <li role="presentation"><a role="menuitem" 
-              href="../$/accountCreateProject.htm?parent={{workspaceConfig.key}}">
+              href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}">
               Create Child Workspace</a>
           </li>
           <li role="presentation"><a role="menuitem" 
-              href="../$/accountCreateProject.htm?parent={{workspaceConfig.parentKey}}">
+              href="../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}">
               Create Sibling Workspace</a>
           </li>
         </ul>

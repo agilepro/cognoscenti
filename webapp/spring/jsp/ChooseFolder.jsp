@@ -37,7 +37,7 @@ Required parameter:
                 if(fndDefLoctn.equals("true"))
                 {
             curntFolderLnk = projectLink
-                + "/admin.htm?selectedFolder="+URLEncoder.encode(ent.getSymbol(), "UTF-8")
+                + "/AdminSettings.htm?selectedFolder="+URLEncoder.encode(ent.getSymbol(), "UTF-8")
                 +"&encodingGuard=%E6%9D%B1%E4%BA%AC";
 
                 }else
@@ -82,7 +82,7 @@ Required parameter:
                 if(fndDefLoctn.equals("true"))
                 {
                     selectLink = projectLink
-                    + "/admin.htm?selectedFolder="+URLEncoder.encode(entity.getSymbol(), "UTF-8")
+                    + "/AdminSettings.htm?selectedFolder="+URLEncoder.encode(entity.getSymbol(), "UTF-8")
                     +"&encodingGuard=%E6%9D%B1%E4%BA%AC";
 
                     sfdLink = projectLink

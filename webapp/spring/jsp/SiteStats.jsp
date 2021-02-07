@@ -114,7 +114,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
           <li role="presentation"><a role="menuitem"
               href="SiteAdmin.htm">Site Admin</a></li>
           <li role="presentation"><a role="menuitem"
-              href="roleRequest.htm">Role Requests</a></li>
+              href="SiteRoleRequest.htm">Role Requests</a></li>
           <li role="presentation"><a role="menuitem"
               href="SiteUsers.htm">User List</a></li>
           <li role="presentation"><a role="menuitem"

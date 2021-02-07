@@ -1377,7 +1377,7 @@ public abstract class NGPage extends ContainerCommon {
         String nameOfLink = trimName(task.getSynopsis(), len);
 
         writePageUrl(ar);
-        ar.write("/frontPage.htm\">" );
+        ar.write("/FrontPage.htm\">" );
         ar.writeHtml(nameOfLink);
         ar.write( "</a>");
     }

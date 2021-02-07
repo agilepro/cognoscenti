@@ -54,13 +54,18 @@ public class MainTabsViewControler extends BaseController {
 
 
     //////////////////////////////// REDIRECTS ///////////////////////////////////
-/*
-    @RequestMapping(value = "/{siteId}/{pageId}/projectHome.htm", method = RequestMethod.GET)
-    public void projectHome(@PathVariable String siteId,@PathVariable String pageId,
+
+    @RequestMapping(value = "/{siteId}/{pageId}/frontPage.htm", method = RequestMethod.GET)
+    public void redFrontPage(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)throws Exception {
-        response.sendRedirect("frontPage.htm");
+        response.sendRedirect("FrontPage.htm");
     }
-*/
+    @RequestMapping(value = "/{siteId}/{pageId}/", method = RequestMethod.GET)
+    public void redIndex(@PathVariable String siteId,@PathVariable String pageId,
+            HttpServletRequest request, HttpServletResponse response)throws Exception {
+        response.sendRedirect("FrontPage.htm");
+    }
+
 
 
 
@@ -83,7 +88,7 @@ public class MainTabsViewControler extends BaseController {
         showJSPLoggedIn(ar, siteId, pageId, "FrontTop");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/frontPage.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/FrontPage.htm", method = RequestMethod.GET)
     public void frontPage(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -96,12 +101,12 @@ public class MainTabsViewControler extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/history.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/History.htm", method = RequestMethod.GET)
     public void showHistoryTab(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "leaf_history");
+        showJSPMembers(ar, siteId, pageId, "History");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/noteZoom{lid}.htm", method = RequestMethod.GET)
@@ -687,7 +692,7 @@ public class MainTabsViewControler extends BaseController {
       //and the user name is set with whatever is posted in.
       //Can only set the current logged in user name.
       //User session must be logged in (so you have a profile to set)
-      @RequestMapping(value = "/requiredName.form", method = RequestMethod.POST)
+      @RequestMapping(value = "/RequiredName.form", method = RequestMethod.POST)
       public void requireName_form(HttpServletRequest request, HttpServletResponse response)
           throws Exception {
 

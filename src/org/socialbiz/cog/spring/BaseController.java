@@ -124,7 +124,7 @@ public class BaseController {
             return true;
         }
         if (needsToSetName(ar)) {
-            streamJSP(ar, "requiredName");
+            streamJSP(ar, "RequiredName");
             return true;
         }
         return false;

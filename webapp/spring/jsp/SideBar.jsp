@@ -33,9 +33,9 @@
         Labels</a></li>
     <li><a href="roleManagement.htm" title="Manage the roles that define who is able to what in this workspace">
         Roles</a></li>
-    <li><a href="admin.htm" title="See and adjust all the settings for this workspace if you are in the administrator role">
+    <li><a href="AdminSettings.htm" title="See and adjust all the settings for this workspace if you are in the administrator role">
         Admin</a></li>
-    <li><a href="personal.htm" title="See your own settings that are unique to this workspace">
+    <li><a href="Personal.htm" title="See your own settings that are unique to this workspace">
         Personal</a></li>
         
     <li><a href="../../su/Feedback.htm?url=<% ar.writeHtml(ar.getCompleteURL()); %>" 

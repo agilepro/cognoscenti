@@ -82,7 +82,7 @@ public class SiteController extends BaseController {
                 return;
             }
             if (needsToSetName(ar)) {
-                streamJSP(ar, "requiredName");
+                streamJSP(ar, "RequiredName");
             }
             if (ar.getCogInstance().getUserManager().getAllSuperAdmins(ar).size()==0) {
                 showWarningView(ar, "nugen.missingSuperAdmin");
@@ -301,7 +301,7 @@ public class SiteController extends BaseController {
     * This displays the page of site requests that have been made by others
     * and their current status.  Thus, only current executives and owners should see this.
     */
-    @RequestMapping(value = "/{siteId}/$/roleRequest.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/$/SiteRoleRequest.htm", method = RequestMethod.GET)
     public void siteRoleRequest(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -314,7 +314,7 @@ public class SiteController extends BaseController {
             if (executiveCheckViews(ar)) {
                 return;
             }
-            streamJSP(ar, "leaf_accountRoleRequest");
+            streamJSP(ar, "SiteRoleRequest");
         }catch(Exception ex){
             throw new NGException("nugen.operation.fail.account.role.request.page", new Object[]{siteId} , ex);
         }
@@ -329,12 +329,12 @@ public class SiteController extends BaseController {
         showJSPLoggedIn(ar, siteId, null, "SiteWorkspaces");
     }
 
-    @RequestMapping(value = "/{siteId}/$/accountCreateProject.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/$/SiteCreateWorkspace.htm", method = RequestMethod.GET)
     public void accountCreateProject(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, null, "accountCreateProject");
+        showJSPMembers(ar, siteId, null, "SiteCreateWorkspace");
     }
 
 
@@ -345,19 +345,6 @@ public class SiteController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             showJSPMembers(ar,siteId,null,"SiteUsers");
-
-            /*
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
-                return;
-            }
-            prepareSiteView(ar, siteId);
-            if (executiveCheckViews(ar)) {
-                return;
-            }
-
-            streamJSP(ar, "SiteUsers");
-            */
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUsers.htm for site '"+siteId+"'", ex);
         }
@@ -369,19 +356,6 @@ public class SiteController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             showJSPMembers(ar,siteId,null,"SiteUserInfo");
-
-            /*
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
-                return;
-            }
-            prepareSiteView(ar, siteId);
-            if (executiveCheckViews(ar)) {
-                return;
-            }
-
-            streamJSP(ar, "SiteUserInfo");
-            */
         }catch(Exception ex){
             throw new Exception("Unable to handle SiteUserInfo.htm for site '"+siteId+"'", ex);
         }
@@ -392,7 +366,7 @@ public class SiteController extends BaseController {
     public ModelAndView showProjectSettingsTab(@PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
-        ModelAndView modelAndView = new ModelAndView(new RedirectView("personal.htm"));
+        ModelAndView modelAndView = new ModelAndView(new RedirectView("Personal.htm"));
         return modelAndView;
     }
 
