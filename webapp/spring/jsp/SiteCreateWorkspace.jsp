@@ -132,7 +132,7 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         $http.post(postURL, postdata)
         .success( function(data) {
             console.log("CREATED WORKSPACE: ", data);
-            var newws = "../"+data.key+"/roleManagement.htm";
+            var newws = "../"+data.key+"/RoleManagement.htm";
             window.location = newws;
         })
         .error( function(data, status, headers, config) {

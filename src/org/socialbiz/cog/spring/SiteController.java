@@ -420,7 +420,7 @@ public class SiteController extends BaseController {
             site.createRole(roleName,des);
             site.saveFile(ar, "Add New Role "+roleName+" to roleList");
 
-            return new ModelAndView(new RedirectView("roleManagement.htm"));
+            return new ModelAndView(new RedirectView("RoleManagement.htm"));
         } catch (Exception e) {
             throw new NGException("nugen.operation.fail.account.create.role",new Object[]{siteId}, e);
         }

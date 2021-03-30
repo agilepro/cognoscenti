@@ -514,7 +514,7 @@ embeddedData.allLayoutNames = <%allLayoutNames.write(out,2,4);%>;
               <i class="fa fa-edit"></i>
             </td>
             <td ng-hide="'targetRole'==editMeetingPart">
-              <a href="roleManagement.htm">{{meeting.targetRole}}</a>
+              <a href="RoleManagement.htm">{{meeting.targetRole}}</a>
               <span ng-hide="roleEqualsParticipants || meeting.state<=0" style="color:red">
                   . . . includes people who are not meeting participants!
               </span>

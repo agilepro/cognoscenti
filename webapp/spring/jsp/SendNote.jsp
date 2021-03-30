@@ -262,7 +262,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         $http.post(postURL ,postdata)
         .success( function(data) {
             if ($scope.emailInfo.sendIt == true || $scope.emailInfo.deleteIt == true) {
-                window.location = "listEmail.htm";
+                window.location = "EmailCreated.htm";
                 return;
             }
             if ($scope.isNew) {

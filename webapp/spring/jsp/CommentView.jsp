@@ -150,7 +150,7 @@
       </div>
       <div ng-show="cmt.decision">
         See Linked Decision: 
-        <a href="decisionList.htm#DEC{{cmt.decision}}"> 
+        <a href="DecisionList.htm#DEC{{cmt.decision}}"> 
           #{{cmt.decision}}</a>
       </div>
     </div>

@@ -65,7 +65,7 @@ Required parameters:
             }
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-            url = ar.getResourceURL(ngp, "roleManagement.htm");
+            url = ar.getResourceURL(ngp, "RoleManagement.htm");
             NGRole role = ngp.getRole(objectKey);
             if (role!=null) {
                 objName = role.getName();

@@ -1,52 +1,45 @@
 <!-- BEGIN SideBar.jsp -->
+<%!
+    public static JSONObject allMenu = new JSONObject();
+
+%>
+<%
+    File menuFile = ar.getCogInstance().getConfig().getFileFromRoot("MenuTree.json");
+    allMenu = JSONObject.readFromFile(menuFile);
+    
+    JSONArray fullMenu = new JSONArray();
+    String thisPageName = "MeetingList.htm";
+    
+    if(isSiteHeader) {
+        fullMenu.addAll(allMenu.getJSONArray("siteMode"));
+    }
+    else if(!isUserHeader) {
+        fullMenu.addAll(allMenu.getJSONArray("workMode"));
+    }
+    fullMenu.addAll(allMenu.getJSONArray("allModes"));
+    
+    
+%>
 
 <!-- Side Bar -->
 <nav class="navbar navbar-default navbar-fixed-side sidebar navbar-responsive-collapse" role="navigation">
   <ul>
-    <% if(isSiteHeader) { %>
-    <li><a href="FrontTop.htm" title="Graphical map of all workspaces in the site.">
-          Site Map</a></li>
-    <li><a href="SiteWorkspaces.htm" title="Lists all the workspaces that are in this site.">
-          Workspaces in Site</a></li>
-    <li><a href="SiteAdmin.htm" title="View and adjust the main settings for the site.">
-          Site Admin</a></li>
-    <li><a href="roleManagement.htm" title="Role define who can do what within this site.">
-          Roles</a></li>
-
-    <% } else if(!isUserHeader) { %>
-
-    <li><a href="frontPage.htm" title="Get the main overview of the workspace and recent changes">
-        Front Page</a></li>
-    <li><a href="MeetingList.htm" title="List and manage all the meetings in this workspace">
-        Meetings</a></li>
-    <li><a href="NotesList.htm" title="List and manage the discussions in the workspace.">
-        Topics</a></li>
-    <li><a href="DocsList.htm" title="List and access all the attached documents in the workspace.">
-        Documents</a></li>
-    <li><a href="GoalStatus.htm" title="List and update all the action items in the workspace, current and historical">
-        Action Items</a></li>
-    <li><a href="decisionList.htm" title="Each workspace has a list of decisions that have been made over time.">
-        Decisions</a></li>
-    <li><a href="listEmail.htm" title="Email that has been sent by anyone about this workspace.">
-        Email</a></li>
-    <li><a href="labelList.htm" title="Create labels to help categorize documents, discussions, and action items.">
-        Labels</a></li>
-    <li><a href="roleManagement.htm" title="Manage the roles that define who is able to what in this workspace">
-        Roles</a></li>
-    <li><a href="AdminSettings.htm" title="See and adjust all the settings for this workspace if you are in the administrator role">
-        Admin</a></li>
-    <li><a href="Personal.htm" title="See your own settings that are unique to this workspace">
-        Personal</a></li>
-        
-    <li><a href="../../su/Feedback.htm?url=<% ar.writeHtml(ar.getCompleteURL()); %>" 
-           title="Tells us what you think about this page or what happened when you used it.">
-        Feedback</a></li>
-    
+    <% for (JSONObject jo : fullMenu.getJSONObjectList()) { 
+        String menuAddress = jo.getString("addr"); %>
+    <li><a href="<%ar.writeHtml(menuAddress);%>" title="<%ar.writeHtml(jo.getString("help"));%>">
+          <%ar.writeHtml(jo.getString("name"));%></a>
+          <% if (menuAddress.equals(thisPageName) && jo.has("opts")) {
+              %><ul><%
+              for (JSONObject jo2 : jo.getJSONArray("opts").getJSONObjectList()) { %>
+                  <li><a href="<%ar.writeHtml(jo2.getString("addr"));%>" title="<%ar.writeHtml(jo2.getString("help"));%>">
+                      &gt; <%ar.writeHtml(jo2.getString("name"));%></a></li> <%
+              }       
+              %></ul><%
+          }
+          %>
+          </li>
     <% } %>
-    <li><a href="https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB" 
-           title="Lots of videos on YouTube to help you learn how to use Weaver."
-           target="Training">
-        Training <i class="fa fa-external-link"></i></a></li> 
+
   </ul>
 </nav>
 <!-- END SideBar.jsp -->

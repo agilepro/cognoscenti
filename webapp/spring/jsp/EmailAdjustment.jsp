@@ -89,7 +89,7 @@ Optional Parameters:
                     <tr>
                         <td class="gridTableColummHeader" valign="top"></td>
                         <td style="width:20px;"></td>
-                        <td><ul><li><a href="<%=ar.retPath%><%=ar.getResourceURL(ngp, "roleManagement.htm")%>" class="btn btn-default btn-raised">Add/Remove others from this role</a></li>
+                        <td><ul><li><a href="<%=ar.retPath%><%=ar.getResourceURL(ngp, "RoleManagement.htm")%>" class="btn btn-default btn-raised">Add/Remove others from this role</a></li>
                             <li><a href="<%=ar.retPath%>v/<%=ar.getUserProfile().getKey()%>/notificationSettings.htm" class="btn btn-default btn-raised">Visit your subscriptions page.</a></li></ul></td>
                     </tr>
                     <tr><td style="height:10px"></td></tr>

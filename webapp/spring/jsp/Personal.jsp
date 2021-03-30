@@ -149,7 +149,7 @@ app.controller('myCtrl', function($scope, $http) {
         Personal Settings
     </div>
 <div class="btn-toolbar primary-toolbar">
-  <a class="btn btn-default btn-raised" href="emailSent.htm?f=<%ar.writeURLData(uProf.getPreferredEmail());%>">
+  <a class="btn btn-default btn-raised" href="EmailSent.htm?f=<%ar.writeURLData(uProf.getPreferredEmail());%>">
     <i class="fa fa-list-alt material-icons"></i> View Emails</a>
 </div>
 

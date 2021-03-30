@@ -141,10 +141,10 @@ app.controller('myCtrl', function($scope, $http, AllPeople) {
         <button class="btn btn-default btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-          <li role="presentation"><a role="menuitem" href="listEmail.htm">
+          <li role="presentation"><a role="menuitem" href="EmailCreated.htm">
               Email Prepared</a>
           </li>
-          <li role="presentation"><a role="menuitem" href="emailSent.htm">
+          <li role="presentation"><a role="menuitem" href="EmailSent.htm">
               Email Sent</a>
           </li>
           <li role="presentation" class="divider"></li>

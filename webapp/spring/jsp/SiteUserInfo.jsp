@@ -407,7 +407,7 @@ app.filter('encode', function() {
       <tbody ng-repeat="(key,ws) in userMap">
         <tr class="workspacerow" ng-click="showws[key] = !showws[key]">
           <td colspan="4">{{ws.name}} &nbsp; ({{key}})
-             <div style="float:right"><a href="../{{key}}/roleManagement.htm">
+             <div style="float:right"><a href="../{{key}}/RoleManagement.htm">
                  <i class="fa fa-external-link-square"></i></div>
           </td>
         </tr>        

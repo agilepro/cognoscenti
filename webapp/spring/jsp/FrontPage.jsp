@@ -117,7 +117,7 @@ Required parameters:
                 }
             }
             else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-                url = ar.getResourceURL(ngp, "roleManagement.htm");
+                url = ar.getResourceURL(ngp, "RoleManagement.htm");
                 NGRole role = ngp.getRole(objectKey);
                 if (role!=null) {
                     objName = role.getName();
@@ -131,7 +131,7 @@ Required parameters:
                 }
             }
             else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
-                url = ar.getResourceURL(ngp, "decisionList.htm?id="+objectKey);
+                url = ar.getResourceURL(ngp, "DecisionList.htm?id="+objectKey);
                 MeetingRecord meet = ngp.findMeetingOrNull(objectKey);
             }
             JSONObject jObj = hist.getJSON(ngp,ar);
@@ -593,13 +593,13 @@ a {
           <div class="panel-heading headingfont">
               <div style="float:left">Your Roles</div>
               <div style="float:right" title="View and manage the roles in this workspace">
-                  <a href="roleManagement.htm">
+                  <a href="RoleManagement.htm">
                       <i class="fa fa-users"></i></a></div>
               <div style="clear:both"></div>
           </div>
           <div class="panel-body">
             <div ng-repeat="role in yourRoles">
-              <a href="roleManagement.htm">
+              <a href="RoleManagement.htm">
                   <span ng-show="role.player"><i class="fa fa-check-circle-o"></i></span>
                   <span ng-hide="role.player"><i class="fa fa-circle-o"></i></span>
                   {{role.name}}
@@ -617,7 +617,7 @@ a {
           <div class="panel-heading headingfont">
               <div style="float:left">Members</div>
               <div style="float:right" title="View and manage the roles in this workspace">
-                  <a href="roleManagement.htm">
+                  <a href="RoleManagement.htm">
                       <i class="fa fa-users"></i></a></div>
               <div style="clear:both"></div>
           </div>

@@ -1,0 +1,124 @@
+{
+  "userMode": [
+    {
+      "addr":"UserHome.htm",
+      "name":"User Home",
+      "help":"All User Specific Info.",
+      "opts": []
+    }
+  ],
+  "siteMode": [
+    {
+      "addr":"FrontTop.htm",
+      "name":"Site Map",
+      "help":"Graphical map of all workspaces in the site.",
+      "opts": []
+    },
+    {
+      "addr":"SiteWorkspaces.htm",
+      "name":"Workspaces in Site",
+      "help":"Lists all the workspaces that are in this site.",
+      "opts": []
+    },
+    {
+      "addr":"SiteAdmin.htm",
+      "name":"Site Admin",
+      "help":"View and adjust the main settings for the site.",
+      "opts": []
+    },
+    {
+      "addr":"RoleManagement.htm",
+      "name":"Roles",
+      "help":"Role define who can do what within this site.",
+      "opts": []
+    }
+  ],
+  "workMode": [
+    {
+      "addr":"FrontPage.htm",
+      "name":"Front Page",
+      "help":"Get the main overview of the workspace and recent changes",
+      "opts": []
+    },
+    {
+      "addr":"MeetingList.htm",
+      "name":"Meetings",
+      "help":"List and manage all the meetings in this workspace",
+      "opts": [
+        {
+          "addr":"CloneMeeting.htm",
+          "name":"+ New Meeting",
+          "help":"Create a new, empty meeting"
+        }
+      ]
+    },
+    {
+      "addr":"NotesList.htm",
+      "name":"Topics",
+      "help":"List and manage the discussions in the workspace.",
+      "opts": []
+    },
+    {
+      "addr":"DocsList.htm",
+      "name":"Documents",
+      "help":"List and access all the attached documents in the workspace.",
+      "opts": []
+    },
+    {
+      "addr":"GoalStatus.htm",
+      "name":"Action Items",
+      "help":"List and update all the action items in the workspace, current and historical",
+      "opts": []
+    },
+    {
+      "addr":"DecisionList.htm",
+      "name":"Decisions",
+      "help":"Each workspace has a list of decisions that have been made over time.",
+      "opts": []
+    },
+    {
+      "addr":"EmailCreated.htm",
+      "name":"Email",
+      "help":"Email that has been sent by anyone about this workspace.",
+      "opts": []
+    },
+    {
+      "addr":"LabelList.htm",
+      "name":"Labels",
+      "help":"Create labels to help categorize documents, discussions, and action items.",
+      "opts": []
+    },
+    {
+      "addr":"RoleManagement.htm",
+      "name":"Roles",
+      "help":"Manage the roles that define who is able to what in this workspace",
+      "opts": []
+    },
+    {
+      "addr":"AdminSettings.htm",
+      "name":"Admin",
+      "help":"See and adjust all the settings for this workspace if you are in the administrator role",
+      "opts": []
+    },
+    {
+      "addr":"Personal.htm",
+      "name":"Personal",
+      "help":"See your own settings that are unique to this workspace",
+      "opts": []
+    },
+    {
+      "addr":"../../su/Feedback.htm?url=",
+      "name":"Feedback",
+      "help":"Tells us what you think about this page or what happened when you used it.",
+      "opts": []
+    }
+  ],
+  "allModes": [
+    {
+      "addr":"https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB",
+      "name":"Training",
+      "help":"Lots of videos on YouTube to help you learn how to use Weaver.",
+      "opts": []
+    }
+  ]
+}

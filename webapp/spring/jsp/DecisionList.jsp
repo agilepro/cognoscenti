@@ -294,7 +294,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
                   </div>
                 </td>
                 <td style="padding:3px;vertical-align:top;;margin:5px;" id="DEC{{rec.num}}">
-                  <a href="decisionList.htm#DEC{{rec.num}}"><span style="font-size:200%;">{{rec.num}}</span></a>
+                  <a href="DecisionList.htm#DEC{{rec.num}}"><span style="font-size:200%;">{{rec.num}}</span></a>
                 </td>
                 <td style="padding:3px;vertical-align:top;;margin:5px;">
                   <div class="leafContent" style="padding:0px">

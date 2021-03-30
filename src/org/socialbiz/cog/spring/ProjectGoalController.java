@@ -144,7 +144,7 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/decisionList.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/DecisionList.htm", method = RequestMethod.GET)
     public void decisionList(@PathVariable String siteId, @PathVariable String pageId,
             HttpServletRequest request,   HttpServletResponse response)  throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);

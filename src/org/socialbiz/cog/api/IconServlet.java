@@ -17,6 +17,7 @@
 package org.socialbiz.cog.api;
 
 import java.io.File;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -41,7 +42,7 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
         defaultFolder = theConfig.getFileFromRoot("users");
     }
 
-    
+
     public static void copyFileIfExists(File source, File dest) throws Exception {
         if (source.exists()) {
             StreamHelper.copyFileToFile(source, dest);
@@ -53,8 +54,8 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
             source.delete();
         }
     }
-    
-    
+
+
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
         String path = req.getRequestURI();
@@ -82,7 +83,10 @@ public class IconServlet extends javax.servlet.http.HttpServlet {
                     UserProfile user = UserManager.getUserProfileByKey(userKey);
                     if (user!=null) {
                         String userName = user.getName();
-                        String firstChar = userName.substring(0,1).toLowerCase();
+                        String firstChar = "~";
+                        if (userName.length()>0) {
+                            firstChar = userName.substring(0,1).toLowerCase();
+                        }
                         copyFileIfExists(new File(defaultFolder, "fake-"+firstChar+".jpg"), imgFile);
                     }
                 }

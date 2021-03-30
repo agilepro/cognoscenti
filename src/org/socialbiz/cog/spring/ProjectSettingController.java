@@ -70,7 +70,7 @@ public class ProjectSettingController extends BaseController {
         showJSPLoggedIn(ar,siteId,pageId, "Personal");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/roleManagement.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/RoleManagement.htm", method = RequestMethod.GET)
     public void roleManagement(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
@@ -130,7 +130,7 @@ public class ProjectSettingController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/labelList.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/LabelList.htm", method = RequestMethod.GET)
     public void labelList(
             @PathVariable String pageId, @PathVariable String siteId,
             HttpServletRequest request, HttpServletResponse response)
@@ -139,14 +139,14 @@ public class ProjectSettingController extends BaseController {
         showJSPMembers(ar, siteId, pageId, "LabelList");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/listEmail.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/EmailCreated.htm", method = RequestMethod.GET)
     public void getEmailRecordsPage( @PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "ListEmail");
+        showJSPMembers(ar, siteId, pageId, "EmailCreated");
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/emailSent.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/{siteId}/{pageId}/EmailSent.htm", method = RequestMethod.GET)
     public void emailSent( @PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
@@ -210,7 +210,7 @@ public class ProjectSettingController extends BaseController {
             HttpServletRequest request, HttpServletResponse response)
             throws Exception {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        redirectBrowser(ar, "roleManagement.htm");
+        redirectBrowser(ar, "RoleManagement.htm");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/EditRole.htm", method = RequestMethod.GET)
@@ -219,7 +219,7 @@ public class ProjectSettingController extends BaseController {
             throws Exception {
 
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        redirectBrowser(ar, "roleManagement.htm");
+        redirectBrowser(ar, "RoleManagement.htm");
     }
 
 

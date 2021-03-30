@@ -69,7 +69,7 @@ public class SearchManager {
 
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_42, analyzer);
         IndexWriter iWriter = new IndexWriter(directory, config);
-        
+
         try {
 
             //get rid of all the existing files.   Make sure that search methods
@@ -197,7 +197,7 @@ public class SearchManager {
                         doc.add(new Field("BODY", dec.getDecision(), TextField.TYPE_STORED));
                         iWriter.addDocument(doc);
                     }
-                    
+
                     for (AttachmentRecord att : ngp.getAllAttachments()) {
                         if (att.isDeleted()) {
                             continue; //skip deleted attachments
@@ -269,8 +269,8 @@ public class SearchManager {
                 if (!workspaceId.equals(key)) {
                     continue;
                 }
-            }            
-            
+            }
+
             NGWorkspace ngp = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteKey, key).getWorkspace();
 
             if (onlyOwner) {
@@ -332,10 +332,9 @@ public class SearchManager {
                 else {
                     continue; //no access to non members
                 }
-                //DecisionRecord dec = ngp.findDecisionOrFail(DOMFace.safeConvertInt(decId));
 
                 noteSubject = "Decision "+decId;
-                linkAddr = ar.getResourceURL(ngp, "decisionList.htm#DEC"+decId);
+                linkAddr = ar.getResourceURL(ngp, "DecisionList.htm#DEC"+decId);
             }
 
 

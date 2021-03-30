@@ -940,13 +940,13 @@ history.task.subtask.add    113
             return ar.getResourceURL(ngp, "noteZoom"+objectKey+".htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_ROLE) {
-            return ar.getResourceURL(ngp, "roleManagement.htm");
+            return ar.getResourceURL(ngp, "RoleManagement.htm");
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_MEETING) {
             return ar.getResourceURL(ngp, "meetingHtml.htm?id=")+objectKey;
         }
         else if (contextType == HistoryRecord.CONTEXT_TYPE_DECISION) {
-            return ar.getResourceURL(ngp, "decisionList.htm#DEC")+objectKey;
+            return ar.getResourceURL(ngp, "DecisionList.htm#DEC")+objectKey;
         }
         return ar.getResourceURL(ngp, "FrontPage.htm");
     }

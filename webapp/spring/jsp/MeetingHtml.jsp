@@ -578,7 +578,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <tr>
             <td ng-click="editMeetingPart='targetRole'" class="labelColumn">Target Role:</td>
             <td ng-hide="'targetRole'==editMeetingPart" ng-dblclick="editMeetingPart='targetRole'">
-              <a href="roleManagement.htm">{{meeting.targetRole}}</a>
+              <a href="RoleManagement.htm">{{meeting.targetRole}}</a>
               <span ng-hide="roleEqualsParticipants || meeting.state<=0" style="color:red">
                   . . . includes people who are not meeting participants!
               </span>
