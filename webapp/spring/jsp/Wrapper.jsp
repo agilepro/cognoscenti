@@ -14,7 +14,7 @@
     //this is the most important setting .. it is the name of the JSP file
     //that is being wrapped with a standard header and a footer.
     String wrappedJSP = ar.reqParam("wrappedJSP");
-    String templateName = wrappedJSP+".jsp";
+    String templateName = wrappedJSP+".jsp"; 
     int slashPos = wrappedJSP.lastIndexOf("/");
 
 
@@ -274,7 +274,7 @@ myApp.filter('cdate', function() {
 
 
 </head>
-<body>
+<body ng-app="myApp" ng-controller="myCtrl">
   <div class="bodyWrapper">
 
 <!-- Begin AppBar -->

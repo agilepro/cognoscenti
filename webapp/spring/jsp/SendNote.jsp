@@ -242,7 +242,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
         window.setMainPageTitle("Compose Email");
     }
     else {
-        window.setMainPageTitle("Sent Email");
+        window.setMainPageTitle("Create Email");
     }
     
     if (!$scope.emailInfo.meetingLayout) {

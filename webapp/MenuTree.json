@@ -1,124 +1,262 @@
 {
   "userMode": [
     {
-      "addr":"UserHome.htm",
+      "href":"UserHome.htm",
       "name":"User Home",
-      "help":"All User Specific Info.",
-      "opts": []
+      "title":"All User Specific Info.",
+      "opts": [],
+      "useOpts": []
     }
   ],
   "siteMode": [
     {
-      "addr":"FrontTop.htm",
+      "href":"FrontTop.htm",
       "name":"Site Map",
-      "help":"Graphical map of all workspaces in the site.",
-      "opts": []
+      "title":"Graphical map of all workspaces in the site.",
+      "opts": [],
+      "useOpts": []
     },
     {
-      "addr":"SiteWorkspaces.htm",
+      "href":"SiteWorkspaces.htm",
       "name":"Workspaces in Site",
-      "help":"Lists all the workspaces that are in this site.",
-      "opts": []
+      "title":"Lists all the workspaces that are in this site.",
+      "opts": [],
+      "useOpts": []
     },
     {
-      "addr":"SiteAdmin.htm",
+      "href":"SiteAdmin.htm",
       "name":"Site Admin",
-      "help":"View and adjust the main settings for the site.",
-      "opts": []
+      "title":"View and adjust the main settings for the site.",
+      "opts": [],
+      "useOpts": []
     },
     {
-      "addr":"RoleManagement.htm",
+      "href":"RoleManagement.htm",
       "name":"Roles",
-      "help":"Role define who can do what within this site.",
-      "opts": []
+      "title":"Role define who can do what within this site.",
+      "opts": [],
+      "useOpts": []
     }
   ],
   "workMode": [
     {
-      "addr":"FrontPage.htm",
+      "href":"FrontPage.htm",
       "name":"Front Page",
-      "help":"Get the main overview of the workspace and recent changes",
-      "opts": []
+      "title":"Get the main overview of the workspace and recent changes",
+      "opts": [],
+      "useOpts": []
     },
     {
-      "addr":"MeetingList.htm",
+      "href":"MeetingList.htm",
       "name":"Meetings",
-      "help":"List and manage all the meetings in this workspace",
+      "title":"List and manage all the meetings in this workspace",
       "opts": [
         {
-          "addr":"CloneMeeting.htm",
-          "name":"+ New Meeting",
-          "help":"Create a new, empty meeting"
+          "href":"CloneMeeting.htm",
+          "name":"Create",
+          "title":"Create a new, empty meeting"
         }
-      ]
+      ],
+      "useOpts": ["MeetingList.jsp"]
     },
     {
-      "addr":"NotesList.htm",
+      "href":"NotesList.htm",
       "name":"Topics",
-      "help":"List and manage the discussions in the workspace.",
-      "opts": []
+      "title":"List and manage the discussions in the workspace.",
+      "opts": [
+        {
+          "ng-click":"openTopicCreator()",
+          "name":"Create",
+          "title":"Create a new discussion topic"
+        },
+        {
+          "href":"SendNote.htm",
+          "name":"Send Email",
+          "title":"Send an email about this discussion topic"
+        },
+        {
+          "href":"exportPDF.htm",
+          "name":"Create PDF",
+          "title":"Create a PDF of a topic or topics"
+        },
+        {
+          "href":"searchAllNotes.htm",
+          "name":"Search",
+          "title":"Search through all the topics"
+        }
+      ],
+      "useOpts": ["NotesList.jsp", "NoteZoom.jsp"]
     },
     {
-      "addr":"DocsList.htm",
+      "href":"DocsList.htm",
       "name":"Documents",
-      "help":"List and access all the attached documents in the workspace.",
-      "opts": []
+      "title":"List and access all the attached documents in the workspace.",
+      "opts": [
+        {
+          "href":"docsFolder.htm",
+          "name":"Folders",
+          "title":"Display documents grouped into folders"
+        },
+        {
+          "href":"DocsAdd.htm",
+          "name":"Add",
+          "title":"Upload or link documents to this workspace"
+        },
+        {
+          "href":"sharePorts.htm",
+          "name":"Share Ports",
+          "title":"Display documents grouped into folders"
+        },
+        {
+          "href":"SendNote.htm",
+          "name":"Send Email",
+          "title":"Send an email with documents on it"
+        }
+      ],
+      "useOpts": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"]
     },
     {
-      "addr":"GoalStatus.htm",
+      "href":"GoalStatus.htm",
       "name":"Action Items",
-      "help":"List and update all the action items in the workspace, current and historical",
-      "opts": []
+      "title":"List and update all the action items in the workspace, current and historical",
+      "opts": [
+        {
+          "ng-click":"openModalActionItem(newGoal,'details')",
+          "name":"Create",
+          "title":"Create a new action item"
+        },
+        {
+          "href":"goalList.htm",
+          "name":"Items View",
+          "title":"List the actions items in the simpler items view"
+        },
+        {
+          "href":"taskAreas.htm",
+          "name":"Task Areas",
+          "title":"Manage task areas"
+        }
+      ],
+      "useOpts": ["GoalStatus.jsp", "GoalList.jsp", "TaskAreas.jsp"]
     },
     {
-      "addr":"DecisionList.htm",
+      "href":"DecisionList.htm",
       "name":"Decisions",
-      "help":"Each workspace has a list of decisions that have been made over time.",
-      "opts": []
+      "title":"Each workspace has a list of decisions that have been made over time.",
+      "opts": [
+        {
+          "ng-click":"startCreating()",
+          "name":"Create",
+          "title":"Manage task areas"
+        }
+      ],
+      "useOpts": ["DecisionList.jsp"]
     },
     {
-      "addr":"EmailCreated.htm",
+      "href":"EmailCreated.htm",
       "name":"Email",
-      "help":"Email that has been sent by anyone about this workspace.",
-      "opts": []
+      "title":"Email that has been sent by anyone about this workspace.",
+      "opts": [
+        {
+          "href":"SendNote.htm",
+          "name":"Create",
+          "title":"Create a new email message to send"
+        },
+        {
+          "href":"EmailSent.htm",
+          "name":"Sent",
+          "title":"Create a new email message to send"
+        }
+      ],
+      "useOpts": ["EmailCreated.jsp", "EmailSent.jsp", "SendNote.jsp"]
     },
     {
-      "addr":"LabelList.htm",
-      "name":"Labels",
-      "help":"Create labels to help categorize documents, discussions, and action items.",
-      "opts": []
-    },
-    {
-      "addr":"RoleManagement.htm",
+      "href":"RoleManagement.htm",
       "name":"Roles",
-      "help":"Manage the roles that define who is able to what in this workspace",
-      "opts": []
+      "title":"Manage the roles that define who is able to what in this workspace",
+      "opts": [
+        {
+          "ng-click":"openRoleModal(null)",
+          "name":"Create",
+          "title":"Create a new role"
+        },
+        {
+          "href":"RoleInvite.htm",
+          "name":"Invite User",
+          "title":"Invite individual users to a role"
+        },
+        {
+          "href":"MultiInvite.htm",
+          "name":"Multi-Invite",
+          "title":"Invite multiple users to a role"
+        }
+      ],
+      "useOpts": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp"]
     },
     {
-      "addr":"AdminSettings.htm",
+      "href":"AdminSettings.htm",
       "name":"Admin",
-      "help":"See and adjust all the settings for this workspace if you are in the administrator role",
-      "opts": []
+      "title":"See and adjust all the settings for this workspace if you are in the administrator role",
+      "opts": [
+        {
+          "href":"RoleRequest.htm",
+          "name":"Role Requests",
+          "title":"Check on who has requested a position in a role"
+        },
+        {
+          "href":"LabelList.htm",
+          "name":"Labels",
+          "title":"Create labels to help categorize documents, discussions, and action items.",
+        },
+        {
+          "href":"../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}",
+          "name":"New Child",
+          "title":"Create a new workspace that is a child of this workspace"
+        },
+        {
+          "href":"../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}",
+          "name":"New Sibling",
+          "title":"Create a new workspace that is a sibling of this workspace"
+        }
+      ],
+      "useOpts": ["AdminSettings.jsp", "RoleRequest.jsp", "LabelList.jsp"]
     },
     {
-      "addr":"Personal.htm",
+      "href":"Personal.htm",
       "name":"Personal",
-      "help":"See your own settings that are unique to this workspace",
-      "opts": []
+      "title":"See your own settings that are unique to this workspace",
+      "opts": [
+        {
+          "href":"EmailSent.htm?f={{preferred}}",
+          "name":"View Email",
+          "title":"View the email messages sent to you or from you"
+        }
+      ],
+      "useOpts": ["Personal.jsp"]
     },
     {
-      "addr":"../../su/Feedback.htm?url=",
+      "href":"../../su/Feedback.htm?url=",
       "name":"Feedback",
-      "help":"Tells us what you think about this page or what happened when you used it.",
-      "opts": []
+      "title":"Tells us what you think about this page or what happened when you used it.",
+      "opts": [],
+      "useOpts": []
     }
   ],
   "allModes": [
     {
-      "addr":"https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB",
+      "href":"https://www.youtube.com/playlist?list=PL-y45TQ2Eb40eQWwH5NjyIjgepk_MonlB",
       "name":"Training",
-      "help":"Lots of videos on YouTube to help you learn how to use Weaver.",
-      "opts": []
+      "title":"Lots of videos on YouTube to help you learn how to use Weaver.",
+      "opts": [],
+      "useOpts": []
+    }
+  ],
+  "hidden": [
+    {
+      "href":"NoShow.htm",
+      "name":"No Show",
+      "title":"Lots of videos on YouTube to help you learn how to use Weaver.",
+      "opts": [],
+      "useOpts": []
     }
   ]
 }

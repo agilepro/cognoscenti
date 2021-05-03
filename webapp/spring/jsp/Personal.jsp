@@ -42,6 +42,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.pSettings.isNotify   = <%=uProf.isNotifiedForProject(siteId+"|"+pageId)%>;
     $scope.isMute     = <%=ngp.getMuteRole().isPlayer(uProf)%>;
     $scope.roleList   = <%roleList.write(out,2,4);%>;
+    $scope.preferred  = "<%=uProf.getPreferredEmail()%>"
     
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -149,7 +150,7 @@ app.controller('myCtrl', function($scope, $http) {
         Personal Settings
     </div>
 <div class="btn-toolbar primary-toolbar">
-  <a class="btn btn-default btn-raised" href="EmailSent.htm?f=<%ar.writeURLData(uProf.getPreferredEmail());%>">
+  <a class="btn btn-default btn-raised" href="EmailSent.htm?f={{preferred}}">
     <i class="fa fa-list-alt material-icons"></i> View Emails</a>
 </div>
 

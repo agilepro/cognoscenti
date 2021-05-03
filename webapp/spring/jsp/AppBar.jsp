@@ -64,6 +64,18 @@
     max-width:300px;
     background-color: white !important;
 }
+.sublist {
+    padding: 0px 5px !important;
+    background-color: white;
+    border: 5px #F0D7F7 solid;
+    color: black;
+}
+.sublist ul li {
+    padding: 2px;
+}
+.sublist ul li a {
+    color: black;
+}
 </style>
 <!-- #F0D7F7;  #F2EBF4 -->
 

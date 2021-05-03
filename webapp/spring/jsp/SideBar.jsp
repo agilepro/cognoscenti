@@ -1,14 +1,27 @@
 <!-- BEGIN SideBar.jsp -->
 <%!
     public static JSONObject allMenu = new JSONObject();
+    
+    public static boolean hasString(JSONObject cont, String fieldName, String value) throws Exception {
+        for (String test : cont.getJSONArray(fieldName).getStringList()) {
+            if (value.equals(test)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 %>
 <%
+    String thisPageName = "MeetingList.htm";
+    
+    
+    
+    
     File menuFile = ar.getCogInstance().getConfig().getFileFromRoot("MenuTree.json");
     allMenu = JSONObject.readFromFile(menuFile);
     
     JSONArray fullMenu = new JSONArray();
-    String thisPageName = "MeetingList.htm";
     
     if(isSiteHeader) {
         fullMenu.addAll(allMenu.getJSONArray("siteMode"));
@@ -24,23 +37,50 @@
 <!-- Side Bar -->
 <nav class="navbar navbar-default navbar-fixed-side sidebar navbar-responsive-collapse" role="navigation">
   <ul>
-    <% for (JSONObject jo : fullMenu.getJSONObjectList()) { 
-        String menuAddress = jo.getString("addr"); %>
-    <li><a href="<%ar.writeHtml(menuAddress);%>" title="<%ar.writeHtml(jo.getString("help"));%>">
-          <%ar.writeHtml(jo.getString("name"));%></a>
-          <% if (menuAddress.equals(thisPageName) && jo.has("opts")) {
-              %><ul><%
-              for (JSONObject jo2 : jo.getJSONArray("opts").getJSONObjectList()) { %>
-                  <li><a href="<%ar.writeHtml(jo2.getString("addr"));%>" title="<%ar.writeHtml(jo2.getString("help"));%>">
-                      &gt; <%ar.writeHtml(jo2.getString("name"));%></a></li> <%
-              }       
-              %></ul><%
-          }
-          %>
-          </li>
-    <% } %>
-
+    <% 
+    for (JSONObject jo : fullMenu.getJSONObjectList()) { 
+    %>
+      <li><a<%
+        if (jo.has("href")) {
+            %> href="<% ar.writeHtml(jo.getString("href")); %>"<%
+        }
+        if (jo.has("title")) {
+            %> title="<% ar.writeHtml(jo.getString("title")); %>"<%
+        }
+        if (jo.has("ng-click")) {
+            %> ng-click="<% ar.writeHtml(jo.getString("ng-click")); %>"<%
+        }
+        %>><% ar.writeHtml(jo.getString("name")); %></a><%
+        if (jo.has("opts")) {
+            boolean found = false;
+            if (jo.has("useOpts")) {
+                found = hasString(jo, "useOpts", templateName);
+            }
+            if (found) {
+            %>
+              <div class="sublist" style="color:black"><ul><%
+                for (JSONObject jo2 : jo.getJSONArray("opts").getJSONObjectList()) { 
+                    %>
+                      <li><a<%
+                    if (jo2.has("href")) {
+                        %> href="<% ar.writeHtml(jo2.getString("href")); %>"<%
+                    }
+                    if (jo2.has("title")) {
+                        %> title="<% ar.writeHtml(jo2.getString("title")); %>"<%
+                    }
+                    if (jo2.has("ng-click")) {
+                        %> ng-click="<% ar.writeHtml(jo2.getString("ng-click")); %>"<%
+                    }
+                    %>><% ar.writeHtml(jo2.getString("name")); %></a></li> <%
+                 }       
+            %></ul></div><%
+            }
+        }
+        %></li><% 
+    }
+    %>
   </ul>
+  <%= templateName%>
 </nav>
 <!-- END SideBar.jsp -->
 <% out.flush(); %>
