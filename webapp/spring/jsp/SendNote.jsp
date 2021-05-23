@@ -486,9 +486,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
     $scope.navigateToDoc = function(docId) {
         window.location="docinfo"+docId+".htm";
     }
-    $scope.navigateToDocDetails = function(docId) {
-        window.location="DocsDetails"+docId+".htm";
-    }
     $scope.sendDocByEmail = function(docId) {
         window.location="SendNote.htm?att="+docId;
     }

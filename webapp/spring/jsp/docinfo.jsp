@@ -406,11 +406,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
           <li role="presentation"><a role="menuitem"
               href="docinfo{{docInfo.id}}.htm">Access Document</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="DocsRevise.htm?aid={{docInfo.id}}" >Upload New Version</a></li>
-          <li role="presentation"><a role="menuitem"
-              href="DocsDetails{{docInfo.id}}.htm">Edit Details</a></li>
-          <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="DocsVersions.htm?aid={{docInfo.id}}">List Versions</a></li>
+              href="DocsRevise.htm?aid={{docInfo.id}}" >Versions</a></li>
           <li role="presentation"><a role="menuitem"
               href="SendNote.htm?att={{docInfo.id}}">Send Document by Email</a></li>
         </ul>

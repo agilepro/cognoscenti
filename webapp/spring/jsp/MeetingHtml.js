@@ -19,7 +19,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.backlogId = embeddedData.backlogId;
     $scope.timeFactor = "Minutes";
     $scope.factoredTime = 0;
-    $scope.displayMode='Agenda';
+    $scope.displayMode='Items';
     if (embeddedData.mode) {
         $scope.displayMode=embeddedData.mode;
     }
@@ -88,8 +88,8 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
     $scope.showTrace = false;
     $scope.reportError = function(serverErr) {
         console.log("Encountered problem: ",serverErr);
-        errorPanelHandler($scope, serverErr);
-        window.scrollTo(0, 0);
+        //errorPanelHandler($scope, serverErr);
+        //window.scrollTo(0, 0);
     };
 
     $scope.tinymceOptions = standardTinyMCEOptions();
@@ -1663,9 +1663,18 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
 
     $scope.getFullDoc = function(docId) {
         var doc = {};
-        $scope.attachmentList.filter( function(item) {
+        $scope.attachmentList.forEach( function(item) {
             if (item.universalid == docId) {
                 doc = item;
+            }
+        });
+        return doc;
+    }
+    $scope.getSelectedDocList = function(docId) {
+        var doc = [];
+        $scope.attachmentList.forEach( function(item) {
+            if (item.universalid == docId) {
+                doc.push(item);
             }
         });
         return doc;
@@ -1868,6 +1877,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     }
 
+
     $scope.$watch(
         function(scope) { return scope.factoredTime },
         function(newValue, oldValue) {
@@ -1890,6 +1900,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             }
         }
     );
+    
     
     $scope.refreshMeetingPromise(); 
 

@@ -332,6 +332,9 @@ myApp.filter('cdate', function() {
 
       var knowWeAreLoggedIn = <%= ar.isLoggedIn() %>;
       function displayWelcomeMessage(info) {
+          console.log('LOGGED IN', info);
+      }
+      function displayWelcomeMessagexx(info) {
           //console.log("WELCOME:", knowWeAreLoggedIn, info)
           var y = document.getElementById("welcomeMessage");
           if (knowWeAreLoggedIn && info.verified) {

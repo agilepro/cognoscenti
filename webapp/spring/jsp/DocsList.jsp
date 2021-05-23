@@ -53,7 +53,7 @@
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
-    window.setMainPageTitle("Documents");
+    window.setMainPageTitle("Document List");
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.atts = [];
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
@@ -328,11 +328,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="docinfo{{rec.id}}.htm">Access Document</a></li>
                   <li role="presentation" ng-show="rec.attType=='FILE'">
-                      <a role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Upload Revised Document</a></li>
+                      <a role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Versions</a></li>
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Edit Document Settings</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="DocsVersions.htm?aid={{rec.id}}">List Versions</a></li>
                   <li role="presentation" class="divider"></li>
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" ng-click="toggleDelete(rec)">

@@ -9,7 +9,7 @@
 
     String pageId = ar.reqParam("pageId");
     String siteId = ar.reqParam("siteId");
-    String mode   = ar.defParam("mode", "Agenda");
+    String mode   = ar.defParam("mode", "Items");
     NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail(siteId, pageId).getWorkspace();
     ar.assertLoggedIn("Meeting page designed for people logged in");
     ar.setPageAccessLevels(ngw);
@@ -271,7 +271,10 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 }
 </style>
 
-<div ng-app="myApp" ng-controller="myCtrl" ng-cloak>
+    
+<div ng-cloak>
+
+
 
 <%@include file="ErrorPanel.jsp"%>
 
@@ -849,7 +852,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
 </div>
 
-   
+
 <!-- Here is the voting for proposed time section -->
     
     
@@ -982,6 +985,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
 </td>
 <td ng-repeat="item in [selectedItem]" style="vertical-align: top;">
+
     <table class="table" ng-show="item">
     <col width="150">
     <tr ng-show="meeting.state<=1">
@@ -1048,7 +1052,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
       <td ng-click="openAttachDocument(selectedItem)" class="labelColumn">Attachments:</td>
       <td title="double-click to modify the attachments">
           <div ng-repeat="docid in selectedItem.docList track by $index" style="vertical-align: top">
-              <div ng-repeat="fullDoc in [getFullDoc(docid)]">
+              <div ng-repeat="fullDoc in getSelectedDocList(docid)"> 
                   <span ng-click="navigateToDoc(fullDoc.id)" title="access attachment">
                     <img src="<%=ar.retPath%>assets/images/iconFile.png" ng-show="fullDoc.attType=='FILE'">
                     <img src="<%=ar.retPath%>assets/images/iconUrl.png" ng-show="fullDoc.attType=='URL'">
@@ -1080,7 +1084,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
         </div>
       </td>
     </tr>
-    <tr ng-dblclick="openAgenda(selectedItem,'Description')" ng-show="meeting.state<=1 && !selectedItem.isSpacer">
+    <tr ng-dblclick="openAgenda(selectedItem,'Description')" ng-show="!selectedItem.isSpacer">
       <td ng-click="openAgenda(selectedItem,'Description')" class="labelColumn">Description:</td>
       <td>
         <div ng-bind-html="selectedItem.desc"></div>
@@ -1162,13 +1166,13 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
         </div>
         </td>
       </tr>
-
     </table>
     <div ng-hide="item">
         <div class="guideVocal">
             Create an agenda item for the meeting use the "+ New" button on the left.
         </div>
     </div>
+
 </td>
 </tr></table>
 
@@ -1178,7 +1182,6 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
 
 </div>
-            
 
 
 
@@ -1201,6 +1204,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
 
 
+
 <span>
 Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'HH:mm'}},
 </span> 
@@ -1219,8 +1223,9 @@ Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'H
     <br/>
     <br/>
     <br/>
-    
+
 </div>
+
 
 <script src="<%=ar.retPath%>templates/ActionItemCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/CommentModal.js"></script>

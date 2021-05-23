@@ -1,6 +1,7 @@
 <%@page errorPage="/spring/jsp/error.jsp"
 %><%@ include file="/spring/jsp/include.jsp"
 %><%@page import="org.socialbiz.cog.LicenseForUser"
+%><%@page import="org.socialbiz.cog.AttachmentVersion"
 %><%@ include file="functions.jsp"
 %><%
 
@@ -19,6 +20,39 @@
     LicenseForUser lfu = new LicenseForUser(ar.getUserProfile());
     String remoteProjectLink = ar.baseURL +  "api/" + site.getKey() + "/" + ngp.getKey()
                     + "/summary.json?lic="+lfu.getId();
+    List<AttachmentVersion>  versionList = attachRec.getVersions(ngp);
+    JSONArray allVersions = new JSONArray();
+    for(AttachmentVersion aVer : versionList){
+        JSONObject verObj = new JSONObject();
+        verObj.put("num", aVer.getNumber());
+        verObj.put("date", aVer.getCreatedDate());
+        verObj.put("size", aVer.getLocalFile().length());
+        verObj.put("modified", aVer.isModified());
+        if ("URL".equals(attachRec.getType())) {
+            verObj.put("link", attachRec.getURLValue());
+        }
+        else {
+            verObj.put("link", "a/" + SectionUtil.encodeURLData(attachRec.getNiceName())+"?version="+aVer.getNumber());
+        }
+        allVersions.put(verObj);
+    }
+    List<HistoryRecord> histRecs = ngp.getHistoryForResource(HistoryRecord.CONTEXT_TYPE_DOCUMENT,aid);
+    JSONArray allHistory = new JSONArray();
+    for (HistoryRecord hist : histRecs) {
+        JSONObject jo = hist.getJSON(ngp, ar);
+        AddressListEntry ale = new AddressListEntry(hist.getResponsible());
+        jo.put("responsible", ale.getJSON() );
+        UserProfile responsible = ale.getUserProfile();
+        String imagePath = "assets/photoThumbnail.gif";
+        if(responsible!=null) {
+            String imgPath = responsible.getImage();
+            if (imgPath!=null && imgPath.length() > 0) {
+                imagePath = "icon/"+imgPath;
+            }
+        }
+        jo.put("imagePath",   imagePath );
+        allHistory.put(jo);
+    }
 
 %>
 
@@ -53,11 +87,14 @@ div[dropzone] {
 
 var app = angular.module('myApp');
 app.controller('myCtrl', function($scope, $http) {
-    window.setMainPageTitle("Upload Revised Document");
+    window.setMainPageTitle("Document Versions");
     window.MY_SCOPE = $scope;
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.attachInfo = <% docInfo.write(ar.w, 2,4); %>;
+    $scope.allVersions = <%allVersions.write(out,2,4);%>;
+    $scope.history = <%allHistory.write(out,2,4);%>;
     $scope.fileProgress = [];
+    $scope.docId = "<%ar.writeHtml(aid);%>";
 
     $scope.showError = false;
     $scope.errorMsg = "";
@@ -130,29 +167,31 @@ app.controller('myCtrl', function($scope, $http) {
         Options: <span class="caret"></span></button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="DocsList.htm" >List Document</a></li>
+              href="DocsList.htm" >List Documents</a></li>
+          <li role="presentation"><a role="menuitem"
+              href="docinfo{{docId}}.htm">Access Document</a></li>
           <li role="presentation"><a role="menuitem" tabindex="-1"
-              href="DocsVersions.htm?aid={{attachInfo.id}}">List Versions</a></li>
+              href="DocsRevise.htm?aid={{docId}}" >Versions</a></li>
         </ul>
       </span>
     </div>
 
-    <div id="TheNewDocument">
+    <div id="TheNewDocument" class="well">
         <div>
             <table>
                 <tr>
-                    <td class="gridTableColummHeader">Attachment:</td>
+                    <td></td>
                     <td style="width:20px;"></td>
-                    <td>
-                        {{attachInfo.name}}
+                    <td style="width:600px;">
+                        Create a new version of {{attachInfo.name}}:
                     </td>
                 </tr>
                 <tr><td style="height:10px"></td></tr>
                 <tr>
                     <td class="gridTableColummHeader">Drop Here:</td>
                     <td style="width:20px;"></td>
-                    <td>
-                        <div id="holder" class="nicenice">Drop "{{attachInfo.name}}" File Here</div>
+                    <td style="width:600px;">
+                        <div id="holder" class="nicenice">Drop Revised File Here</div>
                     </td>
                 </tr>
                 <tr><td style="height:10px"></td></tr>
@@ -187,7 +226,50 @@ app.controller('myCtrl', function($scope, $http) {
     </div>
 
 
+    <table class="table">
+        <thead>
+            <tr>
+                <td>Version</td>
+                <td>Name</td>
+                <td>Modified Date</td>
+                <td>File Size</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="ver in allVersions">
+                <td>{{ver.num}}</td>
+                <td>
+                    <a href="{{ver.link}}" title="Access the content of this version of the attachment">
+                    {{attachInfo.name}}
+                    <span ng-show="ver.modified">(Modified)</span>
+                    </a>
+                </td>
+                <td>{{ver.date | cdate}}</td>
+                <td>{{ver.size | number}}</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3>History</h3>
+    <table>
 
+        <tr ng-repeat="hist in history"  >
+            <td class="projectStreamIcons" style="padding-bottom:20px;">
+                <img class="img-circle" src="<%=ar.retPath%>{{hist.imagePath}}" alt="" width="50" height="50" />
+            </td>
+            <td class="projectStreamText" style="padding-bottom:10px;">
+                {{hist.time|cdate}} -
+                <a href="<%=ar.retPath%>{{hist.respUrl}}"><span class="red">{{hist.respName}}</span></a>
+                <br/>
+                {{hist.ctxType}} "<a href="<%=ar.retPath%>{{hist.contextUrl}}">{{hist.ctxName}}</a>"
+                was {{hist.event}}.
+                <br/>
+                <i>{{hist.comments}}</i>
+
+            </td>
+        </tr>
+
+    </table>
 </div>
 <script>
 var holder = document.getElementById('holder');

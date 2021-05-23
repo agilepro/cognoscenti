@@ -425,11 +425,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople) {
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="docinfo{{rec.id}}.htm">Access Document</a></li>
                   <li role="presentation" ng-show="rec.attType=='FILE'">
-                      <a role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Upload Revised Document</a></li>
+                      <a role="menuitem" tabindex="-1" href="DocsRevise.htm?aid={{rec.id}}">Versions</a></li>
                   <li role="presentation">
-                      <a role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Edit Document Settings</a></li>
-                  <li role="presentation">
-                      <a role="menuitem" tabindex="-1" href="DocsVersions.htm?aid={{rec.id}}">List Versions</a></li>
+                      <a role="menuitem" tabindex="-1" ng-click="openDocDialog(rec)">Document Settings</a></li>
                   <li role="presentation" class="divider"></li>
                   <li role="presentation">
                       <a role="menuitem" tabindex="-1" ng-click="deleteDoc(rec)">Delete <i class="fa fa-trash"></i> Document</a></li>

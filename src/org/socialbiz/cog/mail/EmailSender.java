@@ -223,7 +223,14 @@ public class EmailSender extends TimerTask {
                 globalArchive.save();
             }
             catch (Exception e) {
-                JSONException.traceException(System.out, e, "FATAL ERROR HANDLING GLOBAL EMAIL");
+            	if (JSONException.containsMessage(e, "Couldn't connect to host")) {
+            		//avoid dumping the entire exception to the log file when
+            		//the problem is that the email server is down or not reachable
+            		System.out.println("EmailSender.handleGlobalEmail unable to connect to email server at "+emailProperties.getProperty("mail.smtp.host"));
+            	}
+            	else {
+            		JSONException.traceException(System.out, e, "FATAL ERROR EmailSender.handleGlobalEmail");
+            	}
             }
         }
     }

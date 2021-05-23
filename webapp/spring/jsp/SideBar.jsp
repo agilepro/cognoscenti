@@ -10,6 +10,17 @@
         }
         return false;
     }
+    public static JSONArray getOptions(JSONObject cont, String value) throws Exception {
+        JSONArray res = new JSONArray();
+        if (cont.has("opts")) {
+            for (JSONObject entry : cont.getJSONArray("opts").getJSONObjectList()) {
+                if (hasString(entry, "use", value)) {
+                    res.put(entry);
+                }
+            }
+        }
+        return res;
+    }
 
 %>
 <%
@@ -50,16 +61,16 @@
         if (jo.has("ng-click")) {
             %> ng-click="<% ar.writeHtml(jo.getString("ng-click")); %>"<%
         }
-        %>><% ar.writeHtml(jo.getString("name")); %></a><%
+        if (jo.has("external")) {
+            %> target="_blank"<%
+        }
+        %>><% ar.writeHtml(jo.getString("name")); if (jo.has("external")) {ar.write(" <i class=\"fa fa-external-link\"></i>");}%></a><%
         if (jo.has("opts")) {
-            boolean found = false;
-            if (jo.has("useOpts")) {
-                found = hasString(jo, "useOpts", templateName);
-            }
-            if (found) {
+            JSONArray options = getOptions(jo, templateName);
+            if (options.length()>0) {
             %>
               <div class="sublist" style="color:black"><ul><%
-                for (JSONObject jo2 : jo.getJSONArray("opts").getJSONObjectList()) { 
+                for (JSONObject jo2 : options.getJSONObjectList()) { 
                     %>
                       <li><a<%
                     if (jo2.has("href")) {
@@ -71,6 +82,9 @@
                     if (jo2.has("ng-click")) {
                         %> ng-click="<% ar.writeHtml(jo2.getString("ng-click")); %>"<%
                     }
+                    if (jo2.has("external")) {
+                        %> target="_blank"<%
+                    }
                     %>><% ar.writeHtml(jo2.getString("name")); %></a></li> <%
                  }       
             %></ul></div><%
@@ -80,7 +94,7 @@
     }
     %>
   </ul>
-  <%= templateName%>
+  <%if (true) {ar.write(templateName);} %>
 </nav>
 <!-- END SideBar.jsp -->
 <% out.flush(); %>

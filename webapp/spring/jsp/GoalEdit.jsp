@@ -772,10 +772,7 @@ function addvalue() {
                             ng-click="navigateToDoc(docid)">Access Document</a></li>
                         <li role="presentation"><a role="menuitem"
                             title="Use PLAN to allow everyone to get prepared for the meeting"
-                            ng-click="downloadDocument(docid)">Download File</a></li>
-                        <li role="presentation"><a role="menuitem"
-                            title="Use RUN while the meeting is actually in session"
-                            ng-click="navigateToDocDetails(docid).htm">Document Details</a></li>
+                            ng-click="downloadDocument(docid)">Download Document</a></li>
                         <li role="presentation"><a role="menuitem"
                             title="Use RUN while the meeting is actually in session"
                             ng-click="sendDocByEmail(docid)">Send by Email</a></li>

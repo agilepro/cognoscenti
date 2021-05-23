@@ -749,10 +749,6 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var doc = $scope.getFullDoc(docId);
         window.location="docinfo"+doc.id+".htm";
     }
-    $scope.navigateToDocDetails = function(docId) {
-        var doc = $scope.getFullDoc(docId);
-        window.location="DocsDetails"+doc.id+".htm";
-    }
     $scope.sendDocByEmail = function(docId) {
         var doc = $scope.getFullDoc(docId);
         window.location="SendNote.htm?att="+doc.id;
