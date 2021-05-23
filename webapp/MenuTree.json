@@ -52,9 +52,34 @@
       "title":"List and manage all the meetings in this workspace",
       "opts": [
         {
+          "use": ["MeetingList.jsp"],
           "href":"CloneMeeting.htm",
           "name":"Create",
           "title":"Create a new, empty meeting"
+        },
+        {
+          "use": ["MeetingHtml.jsp"],
+          "href":"MeetingList.htm",
+          "name":"List",
+          "title":"List all the meetings"
+        },
+        {
+          "use": ["MeetingHtml.jsp"],
+          "href":"SendNote.htm?meet={{meetId}}",
+          "name":"Send Email",
+          "title":"Send email about this particular meeting"
+        },
+        {
+          "use": ["MeetingHtml.jsp"],
+          "href":"CloneMeeting.htm?id={{meetId}}",
+          "name":"Clone",
+          "title":"Send email about this particular meeting"
+        },
+        {
+          "use": ["MeetingHtml.jsp"],
+          "href":"MeetMerge.htm?id={{meetId}}&tem=FullDetail.chtml",
+          "name":"Layouts",
+          "title":"Send email about this particular meeting"
         }
       ],
       "useOpts": ["MeetingList.jsp"]
@@ -65,21 +90,25 @@
       "title":"List and manage the discussions in the workspace.",
       "opts": [
         {
+          "use": ["NotesList.jsp"],
           "ng-click":"openTopicCreator()",
           "name":"Create",
           "title":"Create a new discussion topic"
         },
         {
+          "use": ["NoteZoom.jsp"],
           "href":"SendNote.htm",
           "name":"Send Email",
           "title":"Send an email about this discussion topic"
         },
         {
+          "use": ["NotesList.jsp", "NoteZoom.jsp"],
           "href":"exportPDF.htm",
           "name":"Create PDF",
           "title":"Create a PDF of a topic or topics"
         },
         {
+          "use": ["NotesList.jsp", "NoteZoom.jsp"],
           "href":"searchAllNotes.htm",
           "name":"Search",
           "title":"Search through all the topics"
@@ -93,24 +122,46 @@
       "title":"List and access all the attached documents in the workspace.",
       "opts": [
         {
-          "href":"docsFolder.htm",
-          "name":"Folders",
-          "title":"Display documents grouped into folders"
-        },
-        {
+          "use": ["DocsList.jsp", "DocsFolder.jsp", "SharePorts.jsp", "docinfo.jsp", "DocsRevise.jsp", "DocsAdd.jsp"],
           "href":"DocsAdd.htm",
           "name":"Add",
           "title":"Upload or link documents to this workspace"
         },
         {
-          "href":"sharePorts.htm",
-          "name":"Share Ports",
+          "use": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp", "DocsRevise.jsp", "docinfo.jsp"],
+          "href":"DocsList.htm",
+          "name":"List",
+          "title":"Display existing documents as a list"
+        },
+        {
+          "use": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"],
+          "href":"docsFolder.htm",
+          "name":"Folders",
           "title":"Display documents grouped into folders"
         },
         {
-          "href":"SendNote.htm",
+          "use": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"],
+          "href":"sharePorts.htm",
+          "name":"Share Ports",
+          "title":"Display share ports"
+        },
+        {
+          "use": ["docinfo.jsp", "DocsRevise.jsp"],
+          "href":"docinfo{{docId}}.htm",
+          "name":"Access",
+          "title":"Upload or link documents to this workspace"
+        },
+        {
+          "use": ["docinfo.jsp", "DocsRevise.jsp"],
+          "href":"DocsRevise.htm?aid={{docId}}",
+          "name":"Versions",
+          "title":"List and upload new versions of this document"
+        },
+        {
+          "use": ["docinfo.jsp", "DocsRevise.jsp"],
+          "href":"SendNote.htm?att={{docId}}",
           "name":"Send Email",
-          "title":"Send an email with documents on it"
+          "title":"List and upload new versions of this document"
         }
       ],
       "useOpts": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"]
@@ -121,16 +172,25 @@
       "title":"List and update all the action items in the workspace, current and historical",
       "opts": [
         {
+          "use": ["GoalStatus.jsp", "GoalList.jsp", "TaskAreas.jsp"],
           "ng-click":"openModalActionItem(newGoal,'details')",
           "name":"Create",
           "title":"Create a new action item"
         },
         {
+          "use": ["GoalStatus.jsp", "TaskAreas.jsp"],
           "href":"goalList.htm",
           "name":"Items View",
           "title":"List the actions items in the simpler items view"
         },
         {
+          "use": ["GoalList.jsp", "TaskAreas.jsp"],
+          "href":"GoalStatus.htm",
+          "name":"Status View",
+          "title":"List the actions items in the simpler items view"
+        },
+        {
+          "use": ["GoalStatus.jsp", "GoalList.jsp"],
           "href":"taskAreas.htm",
           "name":"Task Areas",
           "title":"Manage task areas"
@@ -144,6 +204,7 @@
       "title":"Each workspace has a list of decisions that have been made over time.",
       "opts": [
         {
+          "use": ["DecisionList.jsp"],
           "ng-click":"startCreating()",
           "name":"Create",
           "title":"Manage task areas"
@@ -157,11 +218,19 @@
       "title":"Email that has been sent by anyone about this workspace.",
       "opts": [
         {
+          "use": ["EmailCreated.jsp", "EmailSent.jsp"],
           "href":"SendNote.htm",
           "name":"Create",
           "title":"Create a new email message to send"
         },
         {
+          "use": ["SendNote.jsp", "EmailMsg.jsp"],
+          "href":"EmailCreated.htm",
+          "name":"List",
+          "title":"List messages already created"
+        },
+        {
+          "use": ["EmailCreated.jsp", "EmailSent.jsp", "SendNote.jsp"],
           "href":"EmailSent.htm",
           "name":"Sent",
           "title":"Create a new email message to send"
@@ -175,16 +244,25 @@
       "title":"Manage the roles that define who is able to what in this workspace",
       "opts": [
         {
+          "use": ["RoleManagement.jsp"],
           "ng-click":"openRoleModal(null)",
           "name":"Create",
           "title":"Create a new role"
         },
         {
+          "use": ["RoleInvite.jsp", "MultiInvite.jsp"],
+          "href":"RoleManagement.htm",
+          "name":"List",
+          "title":"List existing roles"
+        },
+        {
+          "use": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp"],
           "href":"RoleInvite.htm",
           "name":"Invite User",
           "title":"Invite individual users to a role"
         },
         {
+          "use": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp"],
           "href":"MultiInvite.htm",
           "name":"Multi-Invite",
           "title":"Invite multiple users to a role"
@@ -198,21 +276,25 @@
       "title":"See and adjust all the settings for this workspace if you are in the administrator role",
       "opts": [
         {
+          "use": ["AdminSettings.jsp", "RoleRequest.jsp", "LabelList.jsp"],
           "href":"RoleRequest.htm",
           "name":"Role Requests",
           "title":"Check on who has requested a position in a role"
         },
         {
+          "use": ["AdminSettings.jsp", "RoleRequest.jsp", "LabelList.jsp"],
           "href":"LabelList.htm",
           "name":"Labels",
           "title":"Create labels to help categorize documents, discussions, and action items.",
         },
         {
+          "use": ["AdminSettings.jsp", "RoleRequest.jsp", "LabelList.jsp"],
           "href":"../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}",
           "name":"New Child",
           "title":"Create a new workspace that is a child of this workspace"
         },
         {
+          "use": ["AdminSettings.jsp", "RoleRequest.jsp", "LabelList.jsp"],
           "href":"../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}",
           "name":"New Sibling",
           "title":"Create a new workspace that is a sibling of this workspace"
@@ -226,6 +308,7 @@
       "title":"See your own settings that are unique to this workspace",
       "opts": [
         {
+          "use": ["Personal.jsp"],
           "href":"EmailSent.htm?f={{preferred}}",
           "name":"View Email",
           "title":"View the email messages sent to you or from you"
@@ -247,6 +330,7 @@
       "name":"Training",
       "title":"Lots of videos on YouTube to help you learn how to use Weaver.",
       "opts": [],
+      "external": true,
       "useOpts": []
     }
   ],
