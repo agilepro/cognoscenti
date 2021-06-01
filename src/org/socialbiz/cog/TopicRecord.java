@@ -893,7 +893,7 @@ public class TopicRecord extends CommentContainer {
 
       public JSONObject getJSON(NGWorkspace ngp) throws Exception {
           JSONObject thisNote = new JSONObject();
-          thisNote.put("id", getId());
+          thisNote.put("id",        getId());
           thisNote.put("subject",   getSubject());
           thisNote.put("modTime",   getLastEdited());
           thisNote.put("modUser",   getModUser().getJSON());
@@ -922,7 +922,8 @@ public class TopicRecord extends CommentContainer {
      }
      public JSONObject getJSONWithHtml(AuthRequest ar, NGWorkspace ngw) throws Exception {
          JSONObject noteData = getJSON(ngw);
-         noteData.put("html", getNoteHtml(ar));
+         //noteData.put("html", getNoteHtml(ar));
+         noteData.put("wiki", getWiki());
          return noteData;
      }
      public JSONObject getJSONWithComments(AuthRequest ar, NGWorkspace ngw) throws Exception {
@@ -945,14 +946,9 @@ public class TopicRecord extends CommentContainer {
          noteData.put("wiki", getWiki());
          return noteData;
      }
-     public JSONObject getJSON4Note(String urlRoot, boolean withData, License license, NGWorkspace ngp) throws Exception {
-         JSONObject thisNote = null;
-         if (withData) {
-             thisNote = getJSONWithWiki(ngp);
-         }
-         else {
-             thisNote = getJSON(ngp);
-         }
+     
+     public JSONObject getJSON4Note(String urlRoot, License license, NGWorkspace ngp) throws Exception {
+         JSONObject thisNote = getJSON(ngp);
          String contentUrl = urlRoot + "note" + getId() + "/"
                      + SectionWiki.sanitize(getSubject()) + ".txt?lic="+license.getId();
          thisNote.put("content", contentUrl);
@@ -1038,6 +1034,9 @@ public class TopicRecord extends CommentContainer {
          else {
              updateAttributeBool("suppressEmail", noteObj);
          }
+         if (noteObj.has("wiki")) {
+             setWiki(noteObj.getString("wiki"));
+         }
          NGRole subRole = getSubscriberRole();
          if (noteObj.has("subscribers")) {
              subRole.clear();
@@ -1056,6 +1055,11 @@ public class TopicRecord extends CommentContainer {
          if (noteObj.has("html")) {
              setNoteFromHtml(ar, noteObj.getString("html"));
          }
+     }
+     
+     
+     public void mergeDoc(String oldMarkDown, String newMarkDown) {
+    	 mergeScalar("data", oldMarkDown, newMarkDown);
      }
 
 

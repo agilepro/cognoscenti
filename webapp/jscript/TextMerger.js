@@ -8,10 +8,12 @@
  *
  *     $merged_text = TextMerger.get().merge(original, my_altered_text, their_altered_text);
  *
- * Easy as that.
+ * Easy as that.  Here is an example:
  *
- * Usually TextMerger focusses on returning a text. But what happens if there
- * is any conflict? For example could both texts have replaced the same part
+ *     Textmerger.get().merge("A B C", "A B11 C", "A B C22") -> "A B11 C22"
+ *
+ * What about conflicts?  TextMerger returns its best guess. 
+ * A conflict happens when both texts have replaced the same part
  * of the original. In this case TextMerger examines the replacements and takes
  * only that replacement which is larger. For example
  *

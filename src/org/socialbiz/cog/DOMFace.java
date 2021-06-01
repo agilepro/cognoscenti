@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.socialbiz.cog.exception.NGException;
+import org.socialbiz.cog.util.ThreeWayMerge;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -177,6 +178,12 @@ public class DOMFace
     public void setScalarLong(String memberName, long value) {
         setScalar(memberName, Long.toString(value));
     }
+    public void mergeScalar(String key, String oldValue, String newValue) {
+        String curDoc = getScalar(key);
+        String result = ThreeWayMerge.mergeThem(curDoc, oldValue, newValue);
+        setScalar(key, result);
+    }
+    
 
     /**
     * Returns the entire contents of the element as a block of

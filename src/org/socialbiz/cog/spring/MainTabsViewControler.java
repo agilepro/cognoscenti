@@ -26,7 +26,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.socialbiz.cog.AccessControl;
 import org.socialbiz.cog.AddressListEntry;
 import org.socialbiz.cog.AuthRequest;
 import org.socialbiz.cog.GoalRecord;
@@ -71,15 +70,6 @@ public class MainTabsViewControler extends BaseController {
 
     /////////////////////////// MAIN VIEWS //////////////////////////////////////////
 
-    @RequestMapping(value = "/{siteId}/{pageId}/NotesList.htm", method = RequestMethod.GET)
-    public void notesList(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        showJSPMembers(ar, siteId, pageId, "NotesList");
-    }
-
-
     @RequestMapping(value = "/{siteId}/{pageId}/FrontTop.htm", method = RequestMethod.GET)
     public void frontTop(@PathVariable String siteId,@PathVariable String pageId,
             HttpServletRequest request, HttpServletResponse response)
@@ -108,32 +98,6 @@ public class MainTabsViewControler extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "History");
     }
-
-    @RequestMapping(value = "/{siteId}/{pageId}/noteZoom{lid}.htm", method = RequestMethod.GET)
-    public void displayOneLeaflet(@PathVariable String lid, @PathVariable String pageId,
-           @PathVariable String siteId, HttpServletRequest request, HttpServletResponse response)
-           throws Exception {
-       try{
-           AuthRequest ar = AuthRequest.getOrCreate(request, response);
-           boolean reallyLoggedIn = ar.isLoggedIn();
-           request.setAttribute("topicId", lid);
-           NGWorkspace ngp = registerRequiredProject(ar, siteId, pageId);
-           TopicRecord note = ngp.getNoteOrFail(lid);
-           boolean canAccessNote  = AccessControl.canAccessTopic(ar, ngp, note);
-           if (reallyLoggedIn && canAccessNote) {
-               showJSPMembers(ar, siteId, pageId, "NoteZoom");
-           }
-           else if (canAccessNote) {
-               //show to people not logged in, but with special key to access it
-               specialAnonJSP(ar, siteId, pageId, "Topic.jsp");
-           }
-           else {
-               showJSPMembers(ar, siteId, pageId, "NoteZoom");
-           }
-       }catch(Exception ex){
-           throw new NGException("nugen.operation.fail.project.zoom.note.page", new Object[]{lid,pageId,siteId} , ex);
-       }
-   }
 
     /**
      * This is a view that prompts the user to specify how they want the PDF to be produced.
@@ -196,50 +160,6 @@ public class MainTabsViewControler extends BaseController {
 
 
 
-     @RequestMapping(value = "/{siteId}/{pageId}/getTopics.json", method = RequestMethod.GET)
-     public void getTopics(@PathVariable String siteId,@PathVariable String pageId,
-             HttpServletRequest request, HttpServletResponse response) {
-         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         try{
-             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-             ar.setPageAccessLevels(ngw);
-             boolean isMember = ar.isMember();
-
-             List<TopicRecord> aList = ngw.getAllDiscussionTopics();
-
-             JSONArray notes = new JSONArray();
-             for (TopicRecord aNote : aList) {
-
-                 String discussionPhase = aNote.getDiscussionPhase();
-
-                 if (aNote.isPublic()) {
-                     notes.put( aNote.getJSON(ngw) );
-                 }
-                 else if (!ar.isLoggedIn()) {
-                     continue;
-                 }
-                 else if ("Draft".equals(discussionPhase)) {
-                     if (ar.getUserProfile().hasAnyId(aNote.getModUser().getUniversalId())) {
-                         notes.put( aNote.getJSON(ngw) );
-                     }
-                 }
-                 else if (isMember) {
-                     notes.put( aNote.getJSON(ngw) );
-                 }
-                 else {
-                     //run through all the roles here and see if any role
-                     //has access to the note
-                 }
-             }
-
-             sendJsonArray(ar, notes);
-         }catch(Exception ex){
-             Exception ee = new Exception("Unable to fetch the list of topics", ex);
-             streamException(ee, ar);
-         }
-     }
-
-
      @RequestMapping(value = "/{siteId}/{pageId}/noteHtmlUpdate.json", method = RequestMethod.POST)
      public void noteHtmlUpdate(@PathVariable String siteId,@PathVariable String pageId,
              HttpServletRequest request, HttpServletResponse response) {
@@ -288,181 +208,7 @@ public class MainTabsViewControler extends BaseController {
 
 
 
-     @RequestMapping(value = "/{siteId}/{pageId}/topicList.json", method = RequestMethod.GET)
-     public void topicList(@PathVariable String siteId,@PathVariable String pageId,
-             HttpServletRequest request, HttpServletResponse response) {
-         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         String nid = "";
-         try{
-             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-             ar.setPageAccessLevels(ngw);
-             boolean isMember = ar.isMember();
 
-             JSONArray allTopics = new JSONArray();
-             for (TopicRecord aNote : ngw.getAllDiscussionTopics()) {
-                 if (!isMember && !aNote.isPublic()) {
-                     //skip non public if not member
-                     continue;
-                 }
-                 allTopics.put(aNote.getJSON(ngw));
-             }
-
-             JSONObject repo = new JSONObject();
-             repo.put("topics", allTopics);
-             sendJson(ar, repo);
-         }catch(Exception ex){
-             Exception ee = new Exception("Unable to updated topic "+nid+" contents", ex);
-             streamException(ee, ar);
-         }
-     }
-
-
-
-     @RequestMapping(value = "/{siteId}/{pageId}/updateNote.json", method = RequestMethod.POST)
-     public void updateNote(@PathVariable String siteId,@PathVariable String pageId,
-             HttpServletRequest request, HttpServletResponse response) {
-         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         String nid = "";
-         try{
-             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-             ar.setPageAccessLevels(ngw);
-             ar.assertMember("Must be a member to update a topic contents.");
-             ar.assertNotFrozen(ngw);
-             nid = ar.reqParam("nid");
-             JSONObject noteInfo = getPostedObject(ar);
-             TopicRecord note = ngw.getDiscussionTopic(nid);
-
-             if (noteInfo.has("comments")) {
-                 JSONArray commentsToUpdate = noteInfo.getJSONArray("comments");
-                 int numCmts = commentsToUpdate.length();
-                 for (int i=0; i<numCmts; i++) {
-                     JSONObject aCmt = commentsToUpdate.getJSONObject(i);
-                     if (aCmt.getLong("time")<=0) {
-                         String comment = GetFirstHundredNoHtml(aCmt.getString("html"));
-                         HistoryRecord.createHistoryRecord(ngw, note.getId(),
-                                 HistoryRecord.CONTEXT_TYPE_LEAFLET,
-                                 HistoryRecord.EVENT_COMMENT_ADDED, ar, comment);
-                     }
-                 }
-             };
-
-             note.updateNoteFromJSON(noteInfo, ar);
-
-             JSONObject repo = note.getJSONWithComments(ar, ngw);
-             saveAndReleaseLock(ngw, ar, "Updated Topic Contents");
-             sendJson(ar, repo);
-         }catch(Exception ex){
-             Exception ee = new Exception("Unable to updated topic "+nid+" contents", ex);
-             streamException(ee, ar);
-         }
-     }
-
-     @RequestMapping(value = "/{siteId}/{pageId}/topicSubscribe.json", method = RequestMethod.GET)
-     public void topicSubscribe(@PathVariable String siteId,@PathVariable String pageId,
-             HttpServletRequest request, HttpServletResponse response) {
-         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         String nid = "";
-         try{
-             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-             ar.setPageAccessLevels(ngw);
-             ar.assertNotFrozen(ngw);
-             nid = ar.reqParam("nid");
-             TopicRecord topic = ngw.getDiscussionTopic(nid);
-             boolean canAccessTopic  = AccessControl.canAccessTopic(ar, ngw, topic);
-             if (!canAccessTopic) {
-                 ar.assertMember("must have permission to subscribe to a topic");
-             }
-             UserProfile up = ar.getUserProfile();
-             AddressListEntry ale;
-             if (up==null) {
-                 //if they are not logged in, but allowed, then they must have
-                 //and emailId parameter
-                 ale = new AddressListEntry(ar.reqParam("emailId"));
-             }
-             else {
-                 ale = up.getAddressListEntry();
-             }
-
-             topic.getSubscriberRole().addPlayer(ale);
-             JSONObject repo = topic.getJSONWithComments(ar, ngw);
-             ngw.save(); //just save flag, don't mark page as changed
-             sendJson(ar, repo);
-         }catch(Exception ex){
-             Exception ee = new Exception("Unable to subscribe to topic "+nid+" contents", ex);
-             streamException(ee, ar);
-         }
-     }
-
-
-     @RequestMapping(value = "/{siteId}/{pageId}/topicUnsubscribe.json", method = RequestMethod.GET)
-     public void topicUsubscribe(@PathVariable String siteId,@PathVariable String pageId,
-             HttpServletRequest request, HttpServletResponse response) {
-         AuthRequest ar = AuthRequest.getOrCreate(request, response);
-         String nid = "";
-         try{
-             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
-             ar.setPageAccessLevels(ngw);
-             ar.assertNotFrozen(ngw);
-             nid = ar.reqParam("nid");
-             TopicRecord topic = ngw.getDiscussionTopic(nid);
-             boolean canAccessTopic  = AccessControl.canAccessTopic(ar, ngw, topic);
-             if (!canAccessTopic) {
-                 //well ... the idea is that anyone can UNSUBSCRIBE.
-                 //this might be open to abuse, allowing people to unsubscribe others
-                 //but they will be resubscribed on the next comment ... so maybe
-                 //harmless?
-             }
-             UserProfile up = ar.getUserProfile();
-             AddressListEntry ale;
-             if (up==null) {
-                 //if they are not logged in, but allowed, then they must have
-                 //and emailId parameter
-                 ale = new AddressListEntry(ar.reqParam("emailId"));
-             }
-             else {
-                 ale = up.getAddressListEntry();
-             }
-
-             topic.getSubscriberRole().removePlayerCompletely(ale);
-             ngw.save(); //just save flag, don't mark page as changed
-             JSONObject repo = topic.getJSONWithComments(ar, ngw);
-             sendJson(ar, repo);
-         }catch(Exception ex){
-             Exception ee = new Exception("Unable to subscribe to topic "+nid+" contents", ex);
-             streamException(ee, ar);
-         }
-     }
-
-
-     /*
-      * Pull the first 100 character max from the string, but ignore anything
-      * that looks like an HTML tag, and anything inside those tags.
-      * Does not handle script tags or other expressions in attributes ... but there should not be any.
-      */
-     private String GetFirstHundredNoHtml(String input) {
-         int limit = 100;
-         boolean inTag = false;
-         StringBuilder res = new StringBuilder();
-         for (int i=0; i<input.length() && limit>0; i++) {
-             char ch = input.charAt(i);
-             if (inTag) {
-                 if ('>' == ch) {
-                     inTag=false;
-                 }
-                 //ignore all other characters while in the tag
-             }
-             else {
-                 if ('<' == ch) {
-                     inTag=true;
-                 }
-                 else {
-                     res.append(ch);
-                     limit--;
-                 }
-             }
-         }
-         return res.toString();
-     }
 
 
      @RequestMapping(value = "/{siteId}/{pageId}/getNoteHistory.json", method = RequestMethod.GET)

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.socialbiz.cog.mail.ScheduledNotification;
-import org.socialbiz.cog.util.ThreeWayMerge;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -226,9 +225,7 @@ public class AgendaItem extends CommentContainer {
     }
 
     public void mergeMinutes(String oldMins, String newMins) {
-        String curMinutes = getScalar("minutes");
-        String result = ThreeWayMerge.mergeThem(curMinutes, oldMins, newMins);
-        setScalar("minutes", result);
+        mergeScalar("minutes", oldMins, newMins);
     }
     
     

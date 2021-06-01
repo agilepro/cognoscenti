@@ -693,7 +693,7 @@ public class APIServlet extends javax.servlet.http.HttpServlet {
             if (!resDec.canAccessNote(note)) {
                 continue;
             }
-            notes.put(note.getJSON4Note(urlRoot, false, resDec.lic, resDec.workspace));
+            notes.put(note.getJSON4Note(urlRoot, resDec.lic, resDec.workspace));
         }
         root.put("notes", notes);
 

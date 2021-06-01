@@ -81,13 +81,13 @@ function terminate() {
     } else if (majorState == HEADER) {
         switch (majorLevel) {
         case 1:
-            res += "</h3>";
+            res += "</h3>\n";
             break;
         case 2:
-            res += "</h2>";
+            res += "</h2>\n";
             break;
         case 3:
-            res += "</h1>";
+            res += "</h1>\n";
             break;
         }
     }
@@ -114,7 +114,7 @@ function startBullet(line, level) {
         res += "<ul>\n";
         majorLevel++;
     }
-    res += "<li>\n";
+    res += "<li>";
     res += scanForStyle(line, level);
     return res;
 }
@@ -134,7 +134,7 @@ function startHeader(line, level) {
         res += "<h1>";
         break;
     }
-    res += scanForStyle(line, level);
+    res += scanForStyle(line, level).trim();
     return res;
 }
 
@@ -212,13 +212,13 @@ function scanForStyle(line, scanStart){
         res += ch;
         pos++;
     }
-    res += "\n";
+    //res += "\n";
     return res;
 }
 
 function startParagraph() {
     var res = terminate();
-    res += "<p>\n";
+    res += "<p>";
     majorState = PARAGRAPH;
     majorLevel = 0;
     return res;

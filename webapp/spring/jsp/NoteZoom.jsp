@@ -100,6 +100,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     window.setMainPageTitle("Discussion Topic");
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
+    $scope.topicId = <%=topicId%>;
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.canUpdate = <%=canUpdate%>;
@@ -126,43 +127,111 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     };
 
     $scope.fixUpChoices = function() {
-        $scope.noteInfo.comments.forEach( function(cmt) {
-            if (!cmt.choices || cmt.choices.length==0) {
-                cmt.choices = ["Consent", "Objection"];
-            }
-            if (cmt.choices[1]=="Object") {
-                cmt.choices[1]="Objection";
-            }
-        });
+        if ($scope.noteInfo.comments) {
+            $scope.noteInfo.comments.forEach( function(cmt) {
+                if (!cmt.choices || cmt.choices.length==0) {
+                    cmt.choices = ["Consent", "Objection"];
+                }
+                if (cmt.choices[1]=="Object") {
+                    cmt.choices[1]="Objection";
+                }
+            });
+        }
     }
-    $scope.fixUpChoices();
 
 
     $scope.myComment = "";
     $scope.myCommentType = 1;   //simple comment
     $scope.myReplyTo = 0;
 
+
+//When NOT editing, then the HTML is generated from the WIKI and displayed exactly
+//as it is, no complication.
+//
+//When editing, then
+//   wikiLastSave - contains the version of markdown that the editor started with
+//   wikiEditing  - contains the version of markdown that the user has just typed
+//   htmlEditing  - is the HTML version actually being edited in rich text editor
+//
+//When saving (or autosave) the above two versions are sent
+//When the response comes from the server 
+//
+//   $scope.noteInfo.wiki contains the last version received from the server
+//   data.wiki is the new version from the server and stored 
+//
+//$scope.changesToMerge indicates that $scope.noteInfo.wiki != wikiLastSave
+//because some new change has come from server and needs to be merged
+//
+//When requested by user, the Merge(noteInfo.wiki, lastSave, wikiEditing)--> wikiEditing
+//and then noteInfo.wiki --> lastSave.
+
+
     $scope.startEdit = function() {
         if ($scope.workspaceInfo.frozen) {
             alert("Sorry, this workspace is frozen by the administrator\nTopics can not be edited in a frozen workspace.");
             return;
         }
-        $scope.isEditing = true;
+        if ($scope.isEditing) {
+            //already editing so nothing to do
+            return;
+        }
+        
+        //fetch the newest, most up to date copy to start editing
+        var postURL = "getTopic.json?nid="+$scope.topicId;
+        console.log("GET (StartEdit):", postURL);
+        $scope.showError=false;
+        $http.get(postURL)
+        .success( function(data) {
+            $scope.receiveTopicRecord(data);
+            $scope.wikiLastSave = $scope.noteInfo.wiki;
+            $scope.wikiEditing = $scope.noteInfo.wiki;
+            $scope.htmlEditing = convertMarkdownToHtml($scope.noteInfo.wiki);
+            $scope.isEditing = true;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
     }
-    $scope.saveEdit = function() {
-        $scope.saveEdits(['html','subject']);
-        $scope.isEditing = false;
+    $scope.mergeUpdateDoc = function(changeEditing) {
+        $scope.wikiEditing = HTML2Markdown($scope.htmlEditing, {});
+        //give the user the cleaned up HTML immediately
+        //$scope.htmlEditing = convertMarkdownToHtml($scope.wikiEditing);
+        //$scope.saveEdits(['subject']);
+        
+        
+        var rec = {};
+        rec.old = $scope.wikiLastSave;
+        rec.new = $scope.wikiEditing;
+        
+        //if (rec.old == rec.new) {
+        //    console.log("NOT saving document because it has not changed);
+        //    return;
+        //}
+        
+        var postURL = "mergeTopicDoc.json?nid="+$scope.topicId;
+        console.log("POST (Merge):", postURL, rec);
+        $scope.showError=false;
+        $http.post(postURL, angular.toJson(rec))
+        .success( function(data) {
+            $scope.wikiLastSave = rec.new;
+            $scope.receiveTopicRecord(data);
+            $scope.isEditing = changeEditing;
+        })
+        .error( function(data, status, headers, config) {
+            $scope.reportError(data);
+        });
     }
     $scope.saveEdits = function(fields) {
-        var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
+        var postURL = "noteHtmlUpdate.json?nid="+$scope.topicId;
         var rec = {};
-        rec.id = $scope.noteInfo.id;
+        rec.id = $scope.topicId;
         rec.universalid = $scope.noteInfo.universalid;
         fields.forEach( function(fieldName) {
             rec[fieldName] = $scope.noteInfo[fieldName];
         });
         if ($scope.isEditing) {
-            rec.html = $scope.noteInfo.html;
+            //$scope.noteInfo.wiki = HTML2Markdown($scope.noteInfo.html, {});
+            //rec.wiki = $scope.noteInfo.wiki;
             rec.subject = $scope.noteInfo.subject;
         }
         var postdata = angular.toJson(rec);
@@ -174,28 +243,56 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
     };
     function refreshTopic() {
-        var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
-        var rec = {};
-        rec.id = $scope.noteInfo.id
-        rec.universalid = $scope.noteInfo.universalid;
-        var postdata = angular.toJson(rec);
+        var postURL = "getTopic.json?nid="+$scope.topicId;
+        console.log("GET:", postURL);
         $scope.showError=false;
-        $http.post(postURL, postdata)
+        $http.get(postURL)
         .success( $scope.receiveTopicRecord )
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
         });
     }
 
+    
+    $scope.mergeFromOthers = function() {
+        if ($scope.isEditing) {
+            $scope.wikiEditing = HTML2Markdown($scope.htmlEditing, {});
+            console.log("MERGE:", "("+$scope.wikiLastSave+")", "("+$scope.wikiEditing+")", "("+$scope.noteInfo.wiki+")");
+            $scope.wikiEditing = Textmerger.get().merge($scope.wikiLastSave, $scope.wikiEditing, $scope.noteInfo.wiki);
+            console.log("RESULT:", "("+$scope.wikiEditing+")");
+        }
+        else {
+            $scope.wikiEditing = $scope.noteInfo.wiki;
+        }
+        $scope.htmlEditing = convertMarkdownToHtml($scope.wikiEditing);
+        $scope.wikiLastSave = $scope.noteInfo.wiki;
+        $scope.changesToMerge = false;
+    }
+
     $scope.receiveTopicRecord = function(data) {
+        console.log("RECEIVE TOPIC:", data);
         $scope.noteInfo = data;
-        var check = false;
-        data.subscribers.forEach( function(person) {
-            if (person.uid == "<%=ar.getBestUserId()%>") {
-                check = true;
+        if (data.wiki) {
+            if ($scope.isEditing) {
+                if (data.wiki.trim() != $scope.wikiEditing.trim()) {
+                    $scope.changesToMerge = true;
+                    console.log("CHANGES TO MERGE: ", "("+data.wiki+")", "("+$scope.wikiEditing+")");
+                }
             }
-            person.image = AllPeople.imageName(person);
-        });
+            else {
+                //merge immediately if not editing
+                $scope.mergeFromOthers();
+            }
+        }
+        var check = false;
+        if (data.subscribers) {
+            data.subscribers.forEach( function(person) {
+                if (person.uid == "<%=ar.getBestUserId()%>") {
+                    check = true;
+                }
+                person.image = AllPeople.imageName(person);
+            });
+        }
         $scope.fixUpChoices();
         $scope.isSubscriber = check;
         $scope.refreshHistory();
@@ -225,7 +322,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     $scope.updateComment = function(cmt) {
         var saveRecord = {};
-        saveRecord.id = $scope.noteInfo.id;
+        saveRecord.id = $scope.topicId;
         saveRecord.universalid = $scope.noteInfo.universalid;
         saveRecord.comments = [];
         saveRecord.comments.push(cmt);
@@ -233,28 +330,24 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
     $scope.saveDocs = function() {
         var saveRecord = {};
-        saveRecord.id = $scope.noteInfo.id;
+        saveRecord.id = $scope.topicId;
         saveRecord.universalid = $scope.noteInfo.universalid;
         saveRecord.docList = $scope.noteInfo.docList;
         $scope.savePartial(saveRecord);
     }
     $scope.saveLabels = function() {
         var saveRecord = {};
-        saveRecord.id = $scope.noteInfo.id;
+        saveRecord.id = $scope.topicId;
         saveRecord.universalid = $scope.noteInfo.universalid;
         saveRecord.labelMap = $scope.noteInfo.labelMap;
         $scope.savePartial(saveRecord);
     }
 
     $scope.savePartial = function(recordToSave) {
-        if ($scope.isEditing) {
-            recordToSave.html = $scope.noteInfo.html;
-            recordToSave.subject = $scope.noteInfo.subject;
-        }
-        var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
+        var postURL = "noteHtmlUpdate.json?nid="+$scope.topicId;
         var postdata = angular.toJson(recordToSave);
         $scope.showError=false;
-        $http.post(postURL ,postdata)
+        $http.post(postURL, postdata)
         .success( function(data) {
             $scope.myComment = "";
             $scope.receiveTopicRecord(data);
@@ -270,17 +363,24 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
     $scope.itemHasAction = function(oneAct) {
         var res = false;
-        var found = $scope.noteInfo.actionList.forEach( function(actionId) {
-            if (actionId == oneAct.universalid) {
-                res = true;
-            }
-        });
+        if ($scope.noteInfo.actionList) {
+            $scope.noteInfo.actionList.forEach( function(actionId) {
+                if (actionId == oneAct.universalid) {
+                    res = true;
+                }
+            });
+        }
         return res;
     }
     $scope.getActions = function() {
-        return $scope.allGoals.filter( function(oneAct) {
-            return $scope.itemHasAction(oneAct);
-        });
+        if ($scope.allGoals) {
+            return $scope.allGoals.filter( function(oneAct) {
+                return $scope.itemHasAction(oneAct);
+            });
+        }
+        else {
+            return [];
+        }
     }
     $scope.navigateToMeeting = function(meet) {
         window.location="meetingHtml.htm?id="+meet.id;
@@ -330,22 +430,15 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 
     $scope.getComments = function() {
         var res = [];
-        $scope.noteInfo.comments.map( function(item) {
-            res.push(item);
-        });
+        if ($scope.noteInfo.comments) {
+            $scope.noteInfo.comments.forEach( function(item) {
+                res.push(item);
+            });
+        }
         res.sort( function(a,b) {
             return a.time - b.time;
         });
         return res;
-    }
-    $scope.findComment = function(itemNotUsed, timestamp) {
-        var selected = {};
-        $scope.noteInfo.comments.map( function(cmt) {
-            if (timestamp==cmt.time) {
-                selected = cmt;
-            }
-        });
-        return selected;
     }
 
     $scope.commentTypeName = function(cmt) {
@@ -361,7 +454,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         return "Comment";
     }
     $scope.refreshHistory = function() {
-        var postURL = "getNoteHistory.json?nid="+$scope.noteInfo.id;
+        var postURL = "getNoteHistory.json?nid="+$scope.topicId;
         $scope.showError=false;
         $http.get(postURL)
         .success( function(data) {
@@ -496,9 +589,9 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     }
 
     $scope.changeSubscription = function(onOff) {
-        var url = "topicSubscribe.json?nid="+$scope.noteInfo.id;
+        var url = "topicSubscribe.json?nid="+$scope.topicId;
         if (!onOff) {
-            url = "topicUnsubscribe.json?nid="+$scope.noteInfo.id;
+            url = "topicUnsubscribe.json?nid="+$scope.topicId;
         }
         $http.get(url)
         .success( $scope.receiveTopicRecord )
@@ -520,7 +613,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var newComment = {};
         newComment.time = -1;
         newComment.containerType = "T";
-        newComment.containerID = $scope.noteInfo.id;
+        newComment.containerID = $scope.topicId;
         newComment.dueDate = (new Date()).getTime() + (7*24*60*60*1000);
         newComment.commentType = type;
         newComment.state = 11;
@@ -697,7 +790,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         var newDecision = {
             html: cmt.html,
             labelMap: $scope.noteInfo.labelMap,
-            sourceId: $scope.noteInfo.id,
+            sourceId: $scope.topicId,
             sourceType: 4,
             sourceCmt: cmt.time
         };
@@ -781,7 +874,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             size: 'lg',
             resolve: {
                 containingQueryParams: function() {
-                    return "note="+$scope.noteInfo.id;
+                    return "note="+$scope.topicId;
                 },
                 docSpaceURL: function() {
                     return $scope.docSpaceURL;
@@ -811,7 +904,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             size: 'lg',
             resolve: {
                 containingQueryParams: function() {
-                    return "note="+$scope.noteInfo.id;
+                    return "note="+$scope.topicId;
                 },
                 siteId: function () {
                   return $scope.siteInfo.key;
@@ -849,25 +942,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
         });
     };
 
-    $scope.refreshFromServer = function() {
-        saveRecord = {};
-        saveRecord.saveMode = "autosave";
-        saveRecord.id = $scope.noteInfo.id;
-        saveRecord.universalid = $scope.noteInfo.universalid;
-        var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
-        var postdata = angular.toJson(saveRecord);
-        //does not really save antthing ... just get response
-        $http.post(postURL ,postdata)
-        .success( function(data) {
-            $scope.receiveTopicRecord(data);
-        })
-        .error( function(data) {
-            console.log("AUTOSAVE FAILED", data);
-        });
-    }
 
-
-    $scope.receiveTopicRecord($scope.noteInfo);
     $scope.autoIdleCount = 0;
 
     $scope.autosave = function() {
@@ -875,40 +950,45 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             if (!$scope.lastAuto) {
                 $scope.lastAuto = {};
             }
-            if ($scope.noteInfo.html==$scope.lastAuto.html &&
+            if (false && $scope.noteInfo.html==$scope.lastAuto.html &&
                             $scope.noteInfo.subject==$scope.lastAuto.subject) {
                 console.log("AUTOSAVE - skipped, nothing new to save");
                 //it IS idle so increase the idle counter, but after ten tried no change, go and fetch the latest
                 //this indicates that the user is not actively typing and might be OK to refresh the edit panel
                 if ($scope.autoIdleCount++ > 10) {
                     $scope.autoIdleCount = 0;
-                    $scope.refreshFromServer();
+                    refreshTopic();
                 }
                 return;
             }
+            $scope.mergeUpdateDoc(true);
+            
             //it is NOT idle so mark it thus
             $scope.autoIdleCount = 0;
             $scope.lastAuto.html = $scope.noteInfo.html;
             $scope.lastAuto.subject = $scope.noteInfo.subject;
             saveRecord = {};
             saveRecord.saveMode = "autosave";
-            saveRecord.html = $scope.noteInfo.html;
             saveRecord.subject = $scope.noteInfo.subject;
-            saveRecord.id = $scope.noteInfo.id;
+            saveRecord.id = $scope.topicId;
             saveRecord.universalid = $scope.noteInfo.universalid;
-            var postURL = "noteHtmlUpdate.json?nid="+$scope.noteInfo.id;
+            var postURL = "noteHtmlUpdate.json?nid="+$scope.topicId;
             var postdata = angular.toJson(saveRecord);
             //for autosave ... don't complain about errors
             $http.post(postURL ,postdata)
             .success( function(data) {
+                $scope.receiveTopicRecord(data);
                 console.log("AUTOSAVE succeeded at "+new Date());
             })
             .error( function(data) {
                 console.log("AUTOSAVE FAILED", data);
             });
         }
+        else {
+            refreshTopic();
+        }
     }
-    $scope.promiseAutosave = $interval($scope.autosave, 15000);
+    $scope.promiseAutosave = $interval($scope.autosave, 5000);
 
     $scope.loadPersonList = function(query) {
         return AllPeople.findMatchingPeople(query, $scope.siteInfo.key);
@@ -923,12 +1003,14 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
             alert("This topic has been deleted (in Trash).  Undelete it before sending by email.");
             return;
         }
-        window.location = "SendNote.htm?noteId="+$scope.noteInfo.id;
+        window.location = "SendNote.htm?noteId="+$scope.topicId;
     }
     $scope.navigateToUser = function(player) {
         window.location="<%=ar.retPath%>v/FindPerson.htm?uid="+encodeURIComponent(player.key);
     }
-
+    
+    //now actually get it
+    refreshTopic();
 });
 
 </script>
@@ -1012,18 +1094,19 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     </div>
 
     <div class="leafContent" ng-hide="isEditing" ng-dblclick="startEdit()">
-        <div  ng-bind-html="noteInfo.html"></div>
+        <div  ng-bind-html="htmlEditing"></div>
     </div>
 <%if (isLoggedIn) { %>
     <div class="leafContent" ng-show="isEditing">
         <input type="text" class="form-control" ng-model="noteInfo.subject">
         <div style="height:15px"></div>
-        <div ui-tinymce="tinymceOptions" ng-model="noteInfo.html"></div>
+        <div ui-tinymce="tinymceOptions" ng-model="htmlEditing"></div>
         <div style="height:15px"></div>
-        <button class="btn btn-primary btn-raised" ng-click="saveEdit()">Close Editor</button>
+        <button class="btn btn-primary btn-raised" ng-click="mergeUpdateDoc(false)">Close Editor</button>
+        <button ng-show="changesToMerge" class="btn btn-warning btn-raised" 
+            ng-click="mergeFromOthers()">Merge Edits from other Users</button>
     </div>
 <% } %>
-
 
 <table class="table">
 <col style="width:150px">
@@ -1187,5 +1270,8 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/Feedback.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
 
 <%out.flush();%>

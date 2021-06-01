@@ -439,9 +439,13 @@ public class EmailGenerator extends DOMFace {
         JSONArray attachArray = new JSONArray();
         for (AttachmentRecord att : selAtt) {
             JSONObject oneAtt = new JSONObject();
-            oneAtt.put("url", ar.baseURL + ar.getResourceURL(ngp, "docinfo" + att.getId() + ".htm?")
-                    + AccessControl.getAccessDocParams(ngp, att)
-                    + "&emailId=" + URLEncoder.encode(ale.getEmail(), "UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            sb.append(ar.baseURL);
+            sb.append(ar.getResourceURL(ngp, "docinfo" + att.getId() + ".htm?"));
+            sb.append(AccessControl.getAccessDocParams(ngp, att));
+            sb.append("&emailId=");
+            sb.append(URLEncoder.encode(ale.getEmail(), "UTF-8"));
+            oneAtt.put("url",  sb.toString());
             oneAtt.put("name", att.getNiceName());
             attachArray.put(oneAtt);
         }
