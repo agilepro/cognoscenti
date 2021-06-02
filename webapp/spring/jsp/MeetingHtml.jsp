@@ -25,6 +25,7 @@
     if ("true".equals(ar.getSystemProperty("forceTemplateRefresh"))) {
         templateCacheDefeater = "?t="+System.currentTimeMillis();
     }
+    templateCacheDefeater = "?t="+System.currentTimeMillis();
 
 
     if (!AccessControl.canAccessMeeting(ar, ngw, mRec)) {
@@ -132,7 +133,6 @@
           ],
           "duration": 14,
           "id": "1695",
-          "notes": "Randy says he is interested organization.",
           "position": 1,
           "subject": "Approve Advertising Plan"
         },
@@ -142,7 +142,6 @@
           "docList": [],
           "duration": 5,
           "id": "2695",
-          "notes": "",
           "position": 2,
           "subject": "Location of New Offices"
         }
@@ -600,8 +599,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <tr>
             <td ng-click="editMeetingDesc=true" class="labelColumn">Description:</td>
             <td ng-dblclick="editMeetingDesc=true">
-              <div ng-bind-html="meeting.meetingInfo"></div>
-              <div ng-hide="meeting.meetingInfo && meeting.meetingInfo.length>6" class="doubleClickHint">
+              <div ng-bind-html="meeting.descriptionHtml"></div>
+              <div ng-hide="meeting.descriptionHtml && meeting.descriptionHtml.length>3" class="doubleClickHint">
                   Double-click to edit description
               </div>
             </td>
@@ -629,7 +628,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 
     <div ng-show="editMeetingDesc" style="width:100%">
         <div class="well leafContent">
-            <div ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
+            <div ui-tinymce="tinymceOptions" ng-model="meeting.descriptionHtml"
                  class="leafContent" style="min-height:200px;" ></div>
             <button ng-click="savePendingEdits()" class="btn btn-primary btn-raised">Save</button>
             <button ng-click="revertAllEdits()" class="btn btn-warning btn-raised">Cancel</button>
@@ -1012,8 +1011,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     <tr ng-hide="selectedItem.isSpacer">
       <td class="labelColumn" ng-click="openNotesDialog(selectedItem)">Notes/Minutes:</td>
       <td ng-dblclick="openNotesDialog(selectedItem)">
-        <div ng-bind-html="selectedItem.minutes"></div>
-        <div ng-hide="selectedItem.minutes" class="doubleClickHint">
+        <div ng-bind-html="selectedItem.minutesHtml"></div>
+        <div ng-hide="selectedItem.minutesHtml" class="doubleClickHint">
             Double-click to edit notes
         </div>
       </td>
@@ -1237,5 +1236,7 @@ Anticipated end: {{meeting.startTime + (meeting.agendaDuration*60000) | date: 'H
 <script src="<%=ar.retPath%>templates/AttachActionCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/AgendaCtrl.js"></script>
 <script src="<%=ar.retPath%>templates/MeetingNotes.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
 <script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
 

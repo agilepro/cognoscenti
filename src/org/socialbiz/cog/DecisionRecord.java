@@ -52,12 +52,14 @@ public class DecisionRecord extends DOMFace {
     public void setDecision(String newVal) throws Exception {
         setScalar("decision", newVal);
     }
+    /*
     public String getContentHtml(AuthRequest ar)  throws Exception {
         return WikiConverterForWYSIWYG.makeHtmlString(ar, getDecision());
     }
     public void setContentHtml(AuthRequest ar, String newHtml) throws Exception {
         setDecision(HtmlToWikiConverter.htmlToWiki(ar.baseURL, newHtml));
     }
+    */
 
 
     public long getTimestamp() throws Exception {
@@ -151,8 +153,9 @@ public class DecisionRecord extends DOMFace {
         for (NGLabel lRec : getLabels(ngp) ) {
             labelMap.put(lRec.getName(), true);
         }
+        extractScalarString(thisDecision, "decision");
         thisDecision.put("labelMap",  labelMap);
-        thisDecision.put("html", getContentHtml(ar));
+        //thisDecision.put("html", getContentHtml(ar));
         thisDecision.put("sourceUrl", getSourceUrl(ar, ngp));
         extractAttributeString(thisDecision, "sourceId");
         extractAttributeInt(thisDecision, "sourceType");
@@ -168,9 +171,14 @@ public class DecisionRecord extends DOMFace {
             throw new Exception("Error trying to update the record for a decision with UID ("
                     +getUniversalId()+") with post from decision with UID ("+universalid+")");
         }
-        if (decisionObj.has("html")) {
-            setContentHtml(ar, decisionObj.getString("html"));
+        
+        // Two ways to update, either with a decisionMerge object which contains a new 
+        // and old value,  or by setting the decision value outright.
+        // Only on of these should be used generally.
+        if (!mergeIfPresent(decisionObj, "decision")) {
+        	updateAttributeString("decision", decisionObj);
         }
+
         updateAttributeLong("timestamp", decisionObj);
         if (decisionObj.has("labelMap")) {
             JSONObject labelMap = decisionObj.getJSONObject("labelMap");

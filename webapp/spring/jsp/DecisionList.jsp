@@ -45,7 +45,7 @@ Required parameters:
 
     $scope.allDecisions = [
       {
-        "html": "<p>\nThis is what we decided ...<\/p>\n",
+        "decision": "This is what we decided ...",    //markdown
         "labelMap": {},
         "num": 1,
         "timestamp": 0,
@@ -84,6 +84,15 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         errorPanelHandler($scope, serverErr);
     };
 
+    function receiveDecisions(newDecisionList) {
+        $scope.allDecisions = newDecisionList;
+        $scope.allDecisions.forEach( function(item) {
+            item.html = convertMarkdownToHtml(item.decision);
+        });
+        console.log("DECISION LIST:", $scope.allDecisions);
+    }
+    receiveDecisions($scope.allDecisions);
+
     $scope.findDecisions = function() {
         var filterlist = parseLCList($scope.filter);
         var src = $scope.allDecisions;
@@ -98,7 +107,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         });
         res = [];
         src.map( function(item) {
-            if (containsOne(item.html,filterlist)) {
+            if (containsOne(item.decision,filterlist)) {
                 res.push(item);
             }
         });
@@ -115,10 +124,11 @@ app.controller('myCtrl', function($scope, $http, $modal) {
         var isPreserved = (!newRec.deleteMe)
         var postURL = "updateDecision.json?did="+newRec.num;
         var postData = angular.toJson(newRec);
+        console.log("SAVE DECISION:", newRec);
         $http.post(postURL, postData)
         .success( function(data) {
             var newList = [];
-            $scope.allDecisions.map( function(item) {
+            $scope.allDecisions.forEach( function(item) {
                 if (item.num != data.num) {
                     newList.push(item);
                 }
@@ -126,8 +136,7 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             if (isPreserved) {
                 newList.push(data);
             }
-            $scope.allDecisions = newList;
-            //indow.location.reload(false);
+            receiveDecisions(newList);
         })
         .error( function(data, status, headers, config) {
             $scope.reportError(data);
@@ -338,6 +347,9 @@ app.controller('myCtrl', function($scope, $http, $modal) {
 </div>
 
 <script src="<%=ar.retPath%>templates/DecisionModal.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>
 
 
 

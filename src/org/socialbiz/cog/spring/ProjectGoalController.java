@@ -825,18 +825,7 @@ public class ProjectGoalController extends BaseController {
         }
     }
 
-    /*
-    @RequestMapping(value = "/{siteId}/{pageId}/taskArea{id}.htm", method = RequestMethod.GET)
-    public void onePortHTML(@PathVariable String siteId,
-            @PathVariable String pageId,
-            @PathVariable String id,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        ar.setParam("id", id);
-        ar.setParam("pageId", pageId);
-        ar.invokeJSP("/spring/jsp/TaskArea.jsp");
-    }
-    */
+
 
     @RequestMapping(value = "/{siteId}/{pageId}/taskArea{id}.json")
     public void onePortJSON(@PathVariable String siteId,

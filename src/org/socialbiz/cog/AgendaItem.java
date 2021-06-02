@@ -106,12 +106,14 @@ public class AgendaItem extends CommentContainer {
         setAttribute("topicLink", newVal);
     }
 
+/*
     public String getNotes()  throws Exception {
         return getScalar("notes");
     }
     public void setNotes(String newVal) throws Exception {
         setScalar("notes", newVal);
     }
+    */
 
     public int getStatus() {
         return getAttributeInt("status");
@@ -241,14 +243,17 @@ public class AgendaItem extends CommentContainer {
         aiInfo.put("status",    getStatus());
         aiInfo.put("topicLink", getTopicLink());
         aiInfo.put("readyToGo", getReadyToGo());
-        String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getDesc());
-        aiInfo.put("desc",      htmlVal);
+        aiInfo.put("description", getDesc());
+        
+        //REMOVE THIS soon, no HTML
+        //String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getDesc());
+        //aiInfo.put("desc",      htmlVal);
         aiInfo.put("position",  getPosition());
         aiInfo.put("number",    getNumber());
         aiInfo.put("isSpacer",  isSpacer());
-        htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getNotes());
-        aiInfo.put("notes",     htmlVal);
         aiInfo.put("presenters", constructJSONArray(getPresenters()));
+        //htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getNotes());
+        //aiInfo.put("notes",     htmlVal);
         
         //duplicated the presenters into a list of full person definitions.
         //ultimately get rid of the other.
@@ -272,8 +277,12 @@ public class AgendaItem extends CommentContainer {
         extractAttributeLong(aiInfo, "timerStart");
         extractAttributeLong(aiInfo, "timerElapsed");
         extractAttributeBool(aiInfo, "proposed");
-        String htmlMinutes = WikiConverterForWYSIWYG.makeHtmlString(ar, getScalar("minutes"));
-        aiInfo.put("minutes", htmlMinutes);
+        extractScalarString(aiInfo, "minutes");
+        
+        //retire this soon, no more HTML to the client
+        //String htmlMinutes = WikiConverterForWYSIWYG.makeHtmlString(ar, getScalar("minutes"));
+        //aiInfo.put("minutes", htmlMinutes);
+        
         return aiInfo;
     }
 
@@ -306,9 +315,14 @@ public class AgendaItem extends CommentContainer {
             setReadyToGo(input.getBoolean("readyToGo"));
         }
 
+        /*
         if (input.has("notes")) {
             String html = input.getString("notes");
             setNotes(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
+        }
+        */
+        if (input.has("minutesMerge")) {
+        	mergeScalarDelta("minutes", input.getJSONObject("minutesMerge"));
         }
         if (input.has("topicLink")) {
             String topicLink = input.getString("topicLink");

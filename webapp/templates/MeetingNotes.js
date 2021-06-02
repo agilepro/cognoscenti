@@ -57,7 +57,7 @@ Note that while deferred, you must not do another save.
 
 
 
-app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $interval, meetId, agendaId, AllPeople) {
+app.controller('MeetingNotesCtrlx', function ($scope, $modalInstance, $http, $interval, meetId, agendaId, AllPeople) {
 
     console.log("loaded the MeetingNotesCtrl");
 
@@ -68,7 +68,11 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
     $scope.isEditing = true;
     $scope.autoMerge = false;
     $scope.editMode = "edit";
+    $scope.agendaWiki = "";
+    $scope.agendaHtml = "";
     
+    $scope.tinymceOptions = standardTinyMCEOptions();
+    $scope.tinymceOptions.height = 300;
     
     $scope.ok = function () {
         $interval.cancel($scope.promiseAutosave);
@@ -105,6 +109,10 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
             oldItem = newItem;
             oldItem.old = newItem.new;
             $scope.isEditing = true;
+            if (newItem.new != $scope.agendaWiki) {
+                $scope.agendaWiki = newItem.new;
+                $scope.agendaHtml = convertMarkdownToHtml(newItem.new);
+            }
         }
         else if (newItem.new == oldItem.lastSave) {
             //if you get back what you sent to the server
@@ -113,6 +121,10 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
             //whether user typing or not
             oldItem.old = oldItem.lastSave;
             oldItem.needsMerge = false;
+            if (newItem.new != $scope.agendaWiki) {
+                $scope.agendaWiki = newItem.new;
+                $scope.agendaHtml = convertMarkdownToHtml(newItem.new);
+            }
         } 
         else if (newItem.new != oldItem.new) {
             //unfortunately, there are edits from someone else to 
@@ -121,6 +133,10 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
                 console.log("merging new version from server.",newItem,oldItem);
                 oldItem.new = Textmerger.get().merge(oldItem.lastSave, oldItem.new, newItem.new);
                 oldItem.old = newItem.new;
+                if (newItem.new != $scope.agendaWiki) {
+                    $scope.agendaWiki = newItem.new;
+                    $scope.agendaHtml = convertMarkdownToHtml(newItem.new);
+                }
             }
             else {
                 oldItem.needsMerge = true;
@@ -130,6 +146,10 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
         else {
             oldItem.old = newItem.new;
             oldItem.needsMerge = false;
+            if (newItem.new != $scope.agendaWiki) {
+                $scope.agendaWiki = newItem.new;
+                $scope.agendaHtml = convertMarkdownToHtml(newItem.new);
+            }
         }
         oldItem.lastSave = null;
         oldItem.timerRunning = newItem.timerRunning;
@@ -182,6 +202,8 @@ app.controller('MeetingNotesCtrl', function ($scope, $modalInstance, $http, $int
         $scope.isUpdating = true;
         var postURL = "updateMeetingNotes.json?id="+$scope.meetId;
         var postRecord = {minutes:[]};
+        $scope.agendaWiki = HTML2Markdown($scope.agendaHtml, {});
+        $scope.agendaData.new = $scope.agendaWiki;
         if ($scope.agendaData.new != $scope.agendaData.old) {
             postRecord.minutes.push( JSON.parse( JSON.stringify( $scope.agendaData )));
         }

@@ -488,8 +488,11 @@ public class MeetingRecord extends DOMFace {
      */
     public JSONObject getListableJSON(AuthRequest ar) throws Exception {
         JSONObject meetingInfo = getMinimalJSON();
-        String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingDescription());
-        meetingInfo.put("meetingInfo", htmlVal);
+        meetingInfo.put("description", getMeetingDescription());
+        
+        //REMOVE THIS sometime soon, no more HTML needed
+        //String htmlVal = WikiConverterForWYSIWYG.makeHtmlString(ar, getMeetingDescription());
+        //meetingInfo.put("meetingInfo", htmlVal);
 
         JSONArray rollCall = new JSONArray();
         for (DOMFace onePerson : getChildren("rollCall", DOMFace.class)){
@@ -694,11 +697,21 @@ public class MeetingRecord extends DOMFace {
             setReminderAdvance(input.getInt("reminderTime"));
             hasSetMeetingInfo = true;
         }
+        /*
         if (input.has("meetingInfo")) {
             String html = input.getString("meetingInfo");
             setMeetingInfo(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
             hasSetMeetingInfo = true;
         }
+        */
+        if (input.has("descriptionMerge")) {
+            JSONObject mergeObj = input.getJSONObject("descriptionMerge");
+            String lastSaveVal = mergeObj.getString("old");
+            String newVal = mergeObj.getString("new");
+            mergeScalar("meetingInfo", lastSaveVal, newVal);
+            hasSetMeetingInfo = true;
+        }
+        
         updateScalarString("previousMeeting", input);
 
         updateScalarString("defaultLayout", input);
@@ -943,6 +956,7 @@ public class MeetingRecord extends DOMFace {
 
             sb.append("\n\n"+ai.getDesc());
 
+            /*
             String ainotes = ai.getNotes();
 
             //TODO: I don't think notes are used any more
@@ -950,6 +964,7 @@ public class MeetingRecord extends DOMFace {
                 sb.append("\n\n''Notes:''\n\n");
                 sb.append(ainotes);
             }
+            */
 
             for (String actionItemId : ai.getActionItems()) {
                 GoalRecord gr = ngp.getGoalOrNull(actionItemId);

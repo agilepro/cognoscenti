@@ -241,14 +241,20 @@
                 else if ("apos" == entity) {
                     outTxt += "'";
                 }
-                else if ("ldquo" == entity) {
+                else if ("ldquo" == entity || "rdquo" == entity) {
                     outTxt += "\"";
                 }
-                else if ("rdquo" == entity) {
-                    outTxt += "\"";
-                }
-                else if ("mdash" == entity) {
+                else if ("mdash" == entity || "ndash" == entity || "hyphen" == entity) {
                     outTxt += "-";
+                }
+                else if ("rsquo" == entity) {
+                    outTxt += "'";
+                }
+                else if ("hellip" == entity) {
+                    outTxt += "...";
+                }
+                else if ("lsquo" == entity) {
+                    outTxt += "`";
                 }
                 else {
                     //this omits the ampersand and semicolon, but no idea what this is

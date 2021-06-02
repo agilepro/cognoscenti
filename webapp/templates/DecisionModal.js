@@ -1,6 +1,7 @@
 app.controller('DecisionModalCtrl', function ($scope, $modalInstance, decision, allLabels) {
 
     $scope.decision = decision;
+    $scope.htmlEditing = convertMarkdownToHtml(decision.decision);
     
     $scope.allLabels = allLabels;
     $scope.editMode='decision';
@@ -22,6 +23,11 @@ app.controller('DecisionModalCtrl', function ($scope, $modalInstance, decision, 
     }
 
     $scope.ok = function () {
+        var newMarkdown = HTML2Markdown($scope.htmlEditing, {});
+        if ($scope.decision.decision != newMarkdown) {
+            $scope.decision.decisionMerge = {old: $scope.decision.decision, new: newMarkdown};
+            delete $scope.decision.decision;
+        }
         $modalInstance.close($scope.decision);
     };
 

@@ -183,7 +183,18 @@ public class DOMFace
         String result = ThreeWayMerge.mergeThem(curDoc, oldValue, newValue);
         setScalar(key, result);
     }
-    
+    public void mergeScalarDelta(String key, JSONObject vals) throws Exception {
+        String curDoc = getScalar(key);
+        String result = ThreeWayMerge.mergeThem(curDoc, vals.optString("old",""),  vals.optString("new",""));
+        setScalar(key, result);
+    }
+    public boolean mergeIfPresent(JSONObject updateJSON, String key) throws Exception {
+    	if (updateJSON.has(key+"Merge")) {
+    		mergeScalarDelta(key, updateJSON.getJSONObject(key+"Merge"));
+    		return true;
+    	}
+    	return false;
+    }
 
     /**
     * Returns the entire contents of the element as a block of

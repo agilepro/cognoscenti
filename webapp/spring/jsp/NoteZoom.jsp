@@ -45,6 +45,7 @@ Required parameter:
 
     String topicId = ar.reqParam("topicId");
     TopicRecord note = ngw.getNoteOrFail(topicId);
+    int topicNumericId = DOMFace.safeConvertInt(topicId);
 
     if (!AccessControl.canAccessTopic(ar, ngw, note)) {
         throw new Exception("Program Logic Error: this view should only display when user can actually access the note.");
@@ -100,7 +101,7 @@ app.controller('myCtrl', function($scope, $http, $modal, $interval, AllPeople) {
     window.setMainPageTitle("Discussion Topic");
     $scope.workspaceInfo = <%workspaceInfo.write(out,2,4);%>;
     $scope.noteInfo = <%noteInfo.write(out,2,4);%>;
-    $scope.topicId = <%=topicId%>;
+    $scope.topicId = "<%=topicId%>";
     $scope.attachmentList = <%attachmentList.write(out,2,4);%>;
     $scope.allLabels = <%allLabels.write(out,2,4);%>;
     $scope.canUpdate = <%=canUpdate%>;

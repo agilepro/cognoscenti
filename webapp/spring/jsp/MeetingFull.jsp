@@ -123,7 +123,6 @@
           ],
           "duration": 14,
           "id": "1695",
-          "notes": "Randy says he is interested organization.",
           "position": 1,
           "subject": "Approve Advertising Plan"
         },
@@ -133,7 +132,6 @@
           "docList": [],
           "duration": 5,
           "id": "2695",
-          "notes": "",
           "position": 2,
           "subject": "Location of New Offices"
         }

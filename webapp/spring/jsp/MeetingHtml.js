@@ -372,7 +372,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             parts = [];
         }
         if ($scope.editMeetingDesc) {
-            parts.push('meetingInfo');
+            var newMarkdown = HTML2Markdown($scope.meeting.descriptionHtml, {});
+            if (newMarkdown != $scope.meeting.description) {
+                $scope.meeting.descriptionMerge = {old: $scope.meeting.description, new: newMarkdown};
+                parts.push('descriptionMerge');
+            }
         }
         if ($scope.editMeetingPart) {
             parts.push($scope.editMeetingPart);
@@ -610,9 +614,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         if (!data) {
             throw "ASKED to SET MEETING DATA but no meeting data passed";
         }
-        if (!data.meetingInfo) {
-            data.meetingInfo = "";
-        }
+        
+        //create HTML for description
+        data.descriptionHtml = convertMarkdownToHtml(data.description);
+        
         if (!data.participants) {
             data.participants = [];
         }
@@ -633,7 +638,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             if (!item.proposed) {
                 totalAgendaTime += item.duration;
             }
+            item.minutesHtml = convertMarkdownToHtml(item.minutes);
         });
+        console.log("AGENDA",data.agenda);
+        
         data.agendaDuration = totalAgendaTime;
         $scope.timerCorrection = data.serverTime - new Date().getTime();
         $scope.meeting = data;
@@ -685,6 +693,12 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 }
             });
         }
+        
+        data.agenda.forEach( function(item) {
+            //create HTML for description
+            item.desc = convertMarkdownToHtml(item.description);
+        });
+        
         $scope.loadAgenda();
         $scope.loadMinutes();
         window.setMainPageTitle($scope.meeting.name);
@@ -2098,7 +2112,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         var notesModalInstance = $modal.open({
             animation: true,
             templateUrl: embeddedData.retPath+"templates/MeetingNotes.html"+templateCacheDefeater,
-            controller: 'MeetingNotesCtrl',
+            controller: 'MeetingNotesCtrlx',
             size: 'lg',
             backdrop: "static",
             resolve: {

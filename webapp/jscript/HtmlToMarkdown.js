@@ -71,7 +71,6 @@ function HTML2Markdown(html, opts) {
     }
 
     function getListMarkdownPrefix() {
-        console.log("listTagStack:", listTagStack);
         var listPrefix = "";
         if(listTagStack) {
             for ( var i = 0; i < listTagStack.length; i++) {
