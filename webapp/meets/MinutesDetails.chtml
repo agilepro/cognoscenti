@@ -10,7 +10,7 @@
 <div>{$startTime|date("MMM dd, YYYY")}</div>
 <div class="emailbody"><div class="h1" style="float:center"></div></div>
 
-<div style="color:#888">{$meetingInfo}</div>
+<div style="color:#888">{$description|markdown}</div>
 
 <table class="niceTable">
 {% if ($prevMeet)}
@@ -30,8 +30,8 @@
 <tr>
 <td><div class="h3">{$agItem.number}.</div></td>
 <td><div class="h3">{$agItem.subject|html}</div>
-    <div style="color:#888">{$agItem.desc}</div>
-    <div>{$agItem.minutes}</div>
+    <div style="color:#888">{$agItem.description|markdown}</div>
+    <div>{$agItem.minutes|markdown}</div>
     <ul>
     {% loop in $agItem.attList as $doc %}
     <li><a href="{$doc.url}">{$doc.name|html}</a></li>

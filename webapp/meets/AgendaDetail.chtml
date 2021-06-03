@@ -13,7 +13,7 @@
 </div>
 <div>&nbsp;</div>
 
-<div>{$meetingInfo}</div>
+<div>{$description|markdown}</div>
 
 <table class="niceTable">
 {% if ($prevMeet)}
@@ -46,7 +46,7 @@
   <td>
   </td>
   <td colspan="2">
-    <div>{$agItem.desc}</div>
+    <div>{$agItem.description|markdown}</div>
     <ul>
     {% loop in $agItem.attList as $doc %}
     <li><a href="{$doc.url}">{$doc.name|html}</a></li>

@@ -83,7 +83,7 @@
     </tr>
     {% loop in $goals as $goal}
     <tr>
-        <td><a href="{$goal.url}">{$goal.synopsis}</a> ~ {$goal.description}</td>
+        <td><a href="{$goal.url}">{$goal.synopsis}</a> ~ {$goal.description|markdown}</td>
         <td>{% loop in $goal.assignTo as $ass}
             <span 
             {% if ($ass.uid == $optout.emailId)} style="color:red;font-weight:bold" {% endif %}

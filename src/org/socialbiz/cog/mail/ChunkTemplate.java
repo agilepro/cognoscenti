@@ -129,6 +129,7 @@ public class ChunkTemplate {
 
         //This allows {$myDate|date(YYYY-MM-dd)} style tokens in the file
         theme.registerFilter(new ChunkFilterDate(cal));
+        theme.registerFilter(new ChunkFilterMarkdown());
 
         Chunk c = theme.makeChunk(fileName);
         
@@ -137,7 +138,7 @@ public class ChunkTemplate {
     public static String streamToString(File templateFile, JSONObject data, Calendar cal) throws Exception {
         MemFile mf = new MemFile();
         Writer w = mf.getWriter();
-        streamIt(w,templateFile, data,cal);
+        streamIt(w,templateFile, data, cal);
         w.flush();
         return mf.toString();
     }

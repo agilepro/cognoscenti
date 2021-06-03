@@ -28,7 +28,7 @@
 <tr>
 <td><div class="h3">{$agItem.number}.</div></td>
 <td><div class="h3">{$agItem.subject|html}</div>
-    <div>{$agItem.minutes}</div>
+    <div>{$agItem.minutes|markdown}</div>
     <ul>
     {% loop in $agItem.attList as $doc %}
     <li><a href="{$doc.url}">{$doc.name|html}</a></li>

@@ -263,6 +263,7 @@ function HTML2Markdown(html, opts) {
                 case "table":
                 case "tr":
                 case "th":
+                case "tbody":
                     //ignore all the above
                     break;
                 default:
@@ -381,6 +382,7 @@ function HTML2Markdown(html, opts) {
                 case "tr":
                 case "td":
                 case "th":
+                case "tbody":
                     //ignore all the above
                     break;
                 default:

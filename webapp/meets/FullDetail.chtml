@@ -16,7 +16,7 @@
 <td style="width:100px">Duration:</td><td>{$duration} Minutes</td>
 </tr>
 <tr>
-<td style="width:100px">Description:</td><td>{$meetingInfo}</td>
+<td style="width:100px">Description:</td><td>{$description|markdown}</td>
 </tr>
 <tr>
 <td style="width:100px">Participants:</td>
@@ -62,7 +62,7 @@
 
     <tr>
     <td></td>
-    <td colspan="2">{$aggie.desc}</li>
+    <td colspan="2">{$aggie.description|markdown}</li>
     </td>
     </tr>
 

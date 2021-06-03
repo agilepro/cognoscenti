@@ -46,7 +46,7 @@ Action item has recently changed state or assignees:
 </tr>
 <tr>
     <td>Description:</td>
-    <td>{$actionItem.description}</td>
+    <td>{$actionItem.description|markdown}</td>
 </tr>
 <tr>
     <td>State:</td>
