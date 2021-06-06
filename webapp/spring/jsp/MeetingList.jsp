@@ -210,7 +210,7 @@ app.controller('myCtrl', function($scope, $http) {
               </a>
             </td>
             <td><b><a title="Meeting Agenda" 
-                 href="meetingHtml.htm?id={{rec.id}}&mode=General">
+                 href="meetingHtml.htm?id={{rec.id}}&mode=Items">
                 {{rec.name}}</a></b>
             </td>
             <td>
