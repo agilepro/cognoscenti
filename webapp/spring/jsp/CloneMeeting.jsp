@@ -62,6 +62,7 @@ app.controller('myCtrl', function($scope, $http) {
     $scope.siteInfo = <%site.getConfigJSON().write(out,2,4);%>;
     $scope.meeting = <%meetingInfo.write(out,2,4);%>;
     $scope.browserZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    $scope.meeting.descriptionHtml = convertMarkdownToHtml($scope.meeting.description);
 
     var n = new Date().getTimezoneOffset();
     var tzNeg = n<0;
@@ -108,7 +109,7 @@ app.controller('myCtrl', function($scope, $http) {
             alert("Please enter a name for the meeting");
             return;
         }
-        if (!$scope.meeting.meetingInfo) {
+        if (!$scope.meeting.descriptionHtml) {
             alert("Please a short description for the meeting");
             return;
         }
@@ -135,7 +136,7 @@ app.controller('myCtrl', function($scope, $http) {
         newMeeting.id = "~new~";
         newMeeting.duration = $scope.meeting.duration;
         newMeeting.previousMeeting = $scope.meeting.id;
-        newMeeting.meetingInfo = $scope.meeting.meetingInfo;
+        newMeeting.description = HTML2Markdown($scope.meeting.descriptionHtml, {});
         newMeeting.name = $scope.meeting.name;
         newMeeting.reminderTime = $scope.meeting.reminderTime;
         newMeeting.startTime = $scope.meeting.startTime;
@@ -165,8 +166,10 @@ app.controller('myCtrl', function($scope, $http) {
     };
 
     $scope.trimDesc = function(item) {
-        return GetFirstHundredNoHtml(item.desc);
-        //return item.desc;
+        if (item.description.length > 100) {
+            return item.description.substring(0,100);
+        }
+        return item.description;
     }
 });
 app.filter('sdate', function() {
@@ -254,7 +257,7 @@ function GetFirstHundredNoHtml(input) {
                   Description
                 </label>
                 <div class="col-md-10">
-                  <textarea ui-tinymce="tinymceOptions" ng-model="meeting.meetingInfo"
+                  <textarea ui-tinymce="tinymceOptions" ng-model="meeting.descriptionHtml"
                        class="leafContent form-control" style="min-height:200px;"></textarea>
                 </div>
             </div>
@@ -299,3 +302,7 @@ function GetFirstHundredNoHtml(input) {
     </div>
   </div>
 </div>
+
+<script src="<%=ar.retPath%>jscript/HtmlToMarkdown.js"></script>
+<script src="<%=ar.retPath%>jscript/HtmlParser.js"></script>
+<script src="<%=ar.baseURL%>jscript/TextMerger.js"></script>

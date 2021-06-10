@@ -560,8 +560,10 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             alert("Please enter agenda item name and subject before saving");
             agendaItem.subject = "Agenda Item "+(new Date()).getTime();
         }
-        fieldList.map( function(ele) {
-            itemCopy[ele] = agendaItem[ele];
+        fieldList.forEach( function(ele) {
+            if (agendaItem[ele]) {
+                itemCopy[ele] = agendaItem[ele];
+            }
         });
         $scope.saveAgendaItem(itemCopy);
     };
@@ -584,6 +586,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 postURL = "agendaAdd.json?id="+$scope.meeting.id;
             }
             var postdata = angular.toJson(readyToSave);
+            console.log("SAVE", postURL, readyToSave);
             promise = $http.post(postURL, postdata);
         }
         else {
@@ -639,8 +642,11 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 totalAgendaTime += item.duration;
             }
             item.minutesHtml = convertMarkdownToHtml(item.minutes);
+            item.descriptionHtml = convertMarkdownToHtml(item.description);
+            //make sure this is not appearing anywhere
+            item.desc = "N/A";
         });
-        console.log("AGENDA",data.agenda);
+        console.log("AGENDA after fixup",data.agenda);
         
         data.agendaDuration = totalAgendaTime;
         $scope.timerCorrection = data.serverTime - new Date().getTime();
@@ -693,11 +699,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
                 }
             });
         }
-        
-        data.agenda.forEach( function(item) {
-            //create HTML for description
-            item.desc = convertMarkdownToHtml(item.description);
-        });
         
         $scope.loadAgenda();
         $scope.loadMinutes();
@@ -1848,7 +1849,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         agendaModalInstance.result
         .then(function (changedAgendaItem) {
             $scope.saveAgendaItemParts(changedAgendaItem, 
-                ["subject", "desc","duration","timerElapsed","isSpacer","presenters","proposed"]);
+                ["subject", "descriptionMerge","duration","timerElapsed","isSpacer","presenters","proposed"]);
         }, function () {
             //cancel action - nothing really to do
         });

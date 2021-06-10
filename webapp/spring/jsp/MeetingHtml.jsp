@@ -126,7 +126,7 @@
             "BKLQHEHWG@clone-c-of-clone-4@8005",
             "HFCKCQHWG@clone-c-of-clone-4@0353"
           ],
-          "desc": "An autocracy vests power in one autocratic.",
+          "description": "An autocracy vests power in one autocratic.",
           "docList": [
             "VKSSSCSRG@sec-inline-xbrl@4841",
             "HGYDQWIWG@clone-c-of-clone-4@9358"
@@ -138,7 +138,7 @@
         },
         {
           "actionItems": [],
-          "desc": "Many new organizational support.",
+          "description": "Many new organizational support.",
           "docList": [],
           "duration": 5,
           "id": "2695",
@@ -1086,8 +1086,8 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
     <tr ng-dblclick="openAgenda(selectedItem,'Description')" ng-show="!selectedItem.isSpacer">
       <td ng-click="openAgenda(selectedItem,'Description')" class="labelColumn">Description:</td>
       <td>
-        <div ng-bind-html="selectedItem.desc"></div>
-        <div ng-hide="selectedItem.desc && selectedItem.desc.length>10" class="doubleClickHint">
+        <div ng-bind-html="selectedItem.descriptionHtml"></div>
+        <div ng-hide="selectedItem.descriptionHtml && selectedItem.descriptionHtml.length>3" class="doubleClickHint">
             Double-click to description
         </div>
       </td>

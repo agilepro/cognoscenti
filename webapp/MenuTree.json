@@ -59,12 +59,6 @@
         },
         {
           "use": ["MeetingHtml.jsp"],
-          "href":"MeetingList.htm",
-          "name":"List",
-          "title":"List all the meetings"
-        },
-        {
-          "use": ["MeetingHtml.jsp"],
           "href":"SendNote.htm?meet={{meetId}}",
           "name":"Send Email",
           "title":"Send email about this particular meeting"
@@ -128,12 +122,6 @@
           "title":"Upload or link documents to this workspace"
         },
         {
-          "use": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp", "DocsRevise.jsp", "docinfo.jsp"],
-          "href":"DocsList.htm",
-          "name":"List",
-          "title":"Display existing documents as a list"
-        },
-        {
           "use": ["DocsList.jsp", "DocsFolder.jsp", "DocsAdd.jsp", "SharePorts.jsp"],
           "href":"docsFolder.htm",
           "name":"Folders",
@@ -178,12 +166,6 @@
           "title":"Create a new action item"
         },
         {
-          "use": ["GoalStatus.jsp", "TaskAreas.jsp"],
-          "href":"goalList.htm",
-          "name":"Items View",
-          "title":"List the actions items in the simpler items view"
-        },
-        {
           "use": ["GoalList.jsp", "TaskAreas.jsp"],
           "href":"GoalStatus.htm",
           "name":"Status View",
@@ -224,12 +206,6 @@
           "title":"Create a new email message to send"
         },
         {
-          "use": ["SendNote.jsp", "EmailMsg.jsp"],
-          "href":"EmailCreated.htm",
-          "name":"List",
-          "title":"List messages already created"
-        },
-        {
           "use": ["EmailCreated.jsp", "EmailSent.jsp", "SendNote.jsp"],
           "href":"EmailSent.htm",
           "name":"Sent",
@@ -248,12 +224,6 @@
           "ng-click":"openRoleModal(null)",
           "name":"Create",
           "title":"Create a new role"
-        },
-        {
-          "use": ["RoleInvite.jsp", "MultiInvite.jsp"],
-          "href":"RoleManagement.htm",
-          "name":"List",
-          "title":"List existing roles"
         },
         {
           "use": ["RoleManagement.jsp", "RoleInvite.jsp", "MultiInvite.jsp"],

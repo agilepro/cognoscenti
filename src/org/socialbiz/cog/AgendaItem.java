@@ -301,9 +301,16 @@ public class AgendaItem extends CommentContainer {
             }
             updateAttributeLong("timerElapsed", input);
         }
-        if (input.has("desc")) {
-            String html = input.getString("desc");
-            setDesc(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
+        if (input.has("descriptionMerge")) {
+            JSONObject mergeObj = input.getJSONObject("descriptionMerge");
+            String lastSaveVal = mergeObj.getString("old");
+            String newVal = mergeObj.getString("new");
+            mergeScalar("desc", lastSaveVal, newVal);
+        }
+        else if (input.has("description")) {
+        	//if there is a descriptionMerge, then ignore any complete description,
+        	//only  one or the other
+            setDesc(input.getString("description"));
         }
         if (input.has("position")) {
             setPosition(input.getInt("position"));

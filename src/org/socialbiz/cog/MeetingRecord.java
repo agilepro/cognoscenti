@@ -697,13 +697,6 @@ public class MeetingRecord extends DOMFace {
             setReminderAdvance(input.getInt("reminderTime"));
             hasSetMeetingInfo = true;
         }
-        /*
-        if (input.has("meetingInfo")) {
-            String html = input.getString("meetingInfo");
-            setMeetingInfo(HtmlToWikiConverter.htmlToWiki(ar.baseURL, html));
-            hasSetMeetingInfo = true;
-        }
-        */
         if (input.has("descriptionMerge")) {
             JSONObject mergeObj = input.getJSONObject("descriptionMerge");
             String lastSaveVal = mergeObj.getString("old");
@@ -711,6 +704,14 @@ public class MeetingRecord extends DOMFace {
             mergeScalar("meetingInfo", lastSaveVal, newVal);
             hasSetMeetingInfo = true;
         }
+        else if (input.has("description")) {
+        	//if there is a descriptionMerge, then ignore any complete description,
+        	//only  one or the other
+            String markdown = input.getString("description");
+            setMeetingInfo(markdown);
+            hasSetMeetingInfo = true;
+        }
+        
         
         updateScalarString("previousMeeting", input);
 
