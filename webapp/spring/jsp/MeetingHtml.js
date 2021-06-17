@@ -479,7 +479,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         else {
             style["background-color"] = "lightgreen";
         }
-        if (item.position==$scope.selectedItem.position) {
+        if ($scope.selectedItem && item.position==$scope.selectedItem.position) {
             style.border = "4px solid black";
             style["border-right"] = "none"
         }
@@ -561,9 +561,9 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             agendaItem.subject = "Agenda Item "+(new Date()).getTime();
         }
         fieldList.forEach( function(ele) {
-            if (agendaItem[ele]) {
+            //if (agendaItem[ele]) {
                 itemCopy[ele] = agendaItem[ele];
-            }
+            //}
         });
         $scope.saveAgendaItem(itemCopy);
     };
@@ -695,6 +695,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         else {
             data.agenda.forEach( function(item) {
                 if (item.position == $scope.selectedItem.position) {
+                    console.log("SET SELECTED ITEM", "PROPOSED="+item.proposed, item);
                     $scope.selectedItem = item;
                 }
             });
@@ -844,6 +845,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.saveAgendaItemParts(item, ['readyToGo']);
     }
     $scope.toggleProposed = function(item) {
+        console.log("PROPOSED changed from: ", item.proposed)
         if (item.proposed) {
             item.proposed = false;
         }
@@ -851,6 +853,7 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             item.proposed = true;
         }
         $scope.saveAgendaItemParts(item, ['proposed']);
+        console.log("PROPOSED is NOW: ", item.proposed);
     }
 
     $scope.createMinutes = function() {

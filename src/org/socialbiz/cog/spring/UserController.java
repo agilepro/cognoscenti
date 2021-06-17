@@ -279,7 +279,7 @@ public class UserController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
+            if (warnNotLoggedIn(ar)) {
                 return;
             }
             String address = ar.reqParam("address");
@@ -1329,7 +1329,7 @@ public class UserController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
+            if (warnNotLoggedIn(ar)) {
                 return;
             }
             String userKey = ar.reqParam("uid");

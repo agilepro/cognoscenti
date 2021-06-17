@@ -185,7 +185,7 @@ public class TopicController extends BaseController {
             ar.setPageAccessLevels(ngw);
             nid = ar.reqParam("nid");
             JSONObject noteInfo = getPostedObject(ar);
-            String oldMarkDown = noteInfo.getString("old");
+            String oldMarkDown = noteInfo.optString("old", "");
             String newMarkDown = noteInfo.getString("new");
             
             TopicRecord topic = ngw.getNoteOrFail(nid);

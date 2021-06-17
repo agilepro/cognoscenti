@@ -118,7 +118,7 @@ public class BaseController {
      * address, and must be a member of the page, so the page has to be set as well.
      * @return a boolean: true means it produced a UI output, and false means it didnt
      */
-    protected static boolean checkLogin(AuthRequest ar) throws Exception {
+    protected static boolean warnNotLoggedIn(AuthRequest ar) throws Exception {
         if(!ar.isLoggedIn()){
             showWarningView(ar, "nugen.project.login.msg");
             return true;
@@ -133,7 +133,7 @@ public class BaseController {
     /**
      * If the site has been moved, display a page indicating this
      */
-    protected static boolean checkMoved(AuthRequest ar) throws Exception {
+    protected static boolean warnSiteMoved(AuthRequest ar) throws Exception {
         if (ar.ngp!=null && ar.ngp instanceof NGWorkspace) {
             NGWorkspace ngw = (NGWorkspace) ar.ngp;
             NGBook site = ngw.getSite();
@@ -151,8 +151,8 @@ public class BaseController {
      * address, and must be a member of the page, so the page has to be set as well.
      * @return a boolean: true means it produced a UI output, and false means it didnt
      */
-    protected static boolean checkLoginMember(AuthRequest ar) throws Exception {
-        if (checkLogin(ar)) {
+    protected static boolean warnNotMember(AuthRequest ar) throws Exception {
+        if (warnNotLoggedIn(ar)) {
             return true;
         }
         if (ar.ngp==null) {
@@ -175,7 +175,7 @@ public class BaseController {
             showWarningView(ar, "nugen.missingSuperAdmin");
             return true;
         }
-        if (checkMoved(ar)) {
+        if (warnSiteMoved(ar)) {
             return true;
         }
         return false;
@@ -187,8 +187,8 @@ public class BaseController {
      * case a frozen (or deleted) workspace should not prompt for that update.
      * @throws Exception
      */
-    protected static boolean checkLoginMemberFrozen(AuthRequest ar, NGContainer ngc) throws Exception {
-        if (checkLoginMember(ar)) {
+    protected static boolean warnFrozenOrNotMember(AuthRequest ar, NGContainer ngc) throws Exception {
+        if (warnNotMember(ar)) {
             return true;
         }
         boolean frozen = ngc.isFrozen();
@@ -217,7 +217,7 @@ public class BaseController {
     }
 
     protected static void streamJSPLoggedIn(AuthRequest ar, String jspName) throws Exception {
-        if (checkLogin(ar)){
+        if (warnNotLoggedIn(ar)){
             return;
         }
         streamJSP(ar, jspName);
@@ -243,7 +243,7 @@ public class BaseController {
     public static void showJSPAnonymous(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             registerSiteOrProject(ar, siteId, pageId);
-            if (checkMoved(ar)) {
+            if (warnSiteMoved(ar)) {
                 return;
             }
             streamJSP(ar, jspName);
@@ -256,10 +256,10 @@ public class BaseController {
     public static void showJSPLoggedIn(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             registerSiteOrProject(ar, siteId, pageId);
-            if (checkLogin(ar)){
+            if (warnNotLoggedIn(ar)){
                 return;
             }
-            if (checkMoved(ar)) {
+            if (warnSiteMoved(ar)) {
                 return;
             }
             streamJSP(ar, jspName);
@@ -273,7 +273,7 @@ public class BaseController {
     public static void showJSPMembers(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             registerSiteOrProject(ar, siteId, pageId);
-            if (checkLoginMember(ar)){
+            if (warnNotMember(ar)){
                 return;
             }
             streamJSP(ar, jspName);
@@ -298,7 +298,7 @@ public class BaseController {
     public static void showJSPNotFrozen(AuthRequest ar, String siteId, String pageId, String jspName) throws Exception {
         try{
             NGContainer ngc = registerSiteOrProject(ar, siteId, pageId);
-            if (checkLoginMemberFrozen(ar, ngc)){
+            if (warnFrozenOrNotMember(ar, ngc)){
                 return;
             }
             streamJSP(ar, jspName);
@@ -404,7 +404,7 @@ public class BaseController {
      * @return a boolean TRUE if UI output produced, FALSE if not.
      */
     protected boolean executiveCheckViews(AuthRequest ar) throws Exception {
-        if(checkLogin(ar)){
+        if(warnNotLoggedIn(ar)){
             return true;
         }
         if(!ar.isMember()){

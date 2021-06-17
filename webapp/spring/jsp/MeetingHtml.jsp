@@ -954,7 +954,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
 <div ng-repeat="item in getAgendaItems()">
     <div ng-style="itemTabStyleComplete(item)" ng-click="setSelectedItem(item)" ng-hide="item.proposed"
          ng-dblclick="openAgenda(selectedItem)">
-        <span ng-show="item.proposed" style="color:grey">Proposed</span>
+        <span ng-show="item.proposed" style="color:grey">SHOULD NEVER SHOW THIS</span>
         <span ng-show="item.isSpacer" style="color:grey">Break</span>
         <span ng-show="!item.proposed && !item.isSpacer" >{{item.number}}.</span>
         <span style="float:right" ng-hide="item.proposed">{{item.schedule | date: 'HH:mm'}} &nbsp;</span>
@@ -1002,6 +1002,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <button ng-click="toggleProposed(selectedItem)" class="btn btn-primary btn-raised"
                   ng-show="selectedItem.proposed">
               <i class="fa fa-check"></i>Accept Proposed Item</a></li></button>
+          Proposed: {{item.proposed}} Selected: {{selectedItem.proposed}}
       </td>
     </tr>
     <tr ng-dblclick="openAgenda(selectedItem)">
@@ -1114,6 +1115,7 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <button ng-click="toggleProposed(selectedItem)" class="btn btn-primary btn-raised"
                   ng-show="selectedItem.proposed">
               <i class="fa fa-check"></i> Accept Proposed Item</a></button>
+          Proposed: {{item.proposed}}
       </td>
     </tr>
     <tr ng-dblclick="openAttachTopics(selectedItem)" ng-hide="selectedItem.isSpacer">

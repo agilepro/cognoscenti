@@ -133,7 +133,7 @@ public class ProjectGoalController extends BaseController {
                 specialAnonJSP(ar, siteId, pageId, "ActionItem.jsp");
             }
             else{
-                if (checkLoginMember(ar)) {
+                if (warnNotMember(ar)) {
                     return;
                 }
                 streamJSP(ar, "GoalEdit");

@@ -699,7 +699,7 @@ public class MeetingRecord extends DOMFace {
         }
         if (input.has("descriptionMerge")) {
             JSONObject mergeObj = input.getJSONObject("descriptionMerge");
-            String lastSaveVal = mergeObj.getString("old");
+            String lastSaveVal = mergeObj.optString("old");
             String newVal = mergeObj.getString("new");
             mergeScalar("meetingInfo", lastSaveVal, newVal);
             hasSetMeetingInfo = true;
@@ -1307,7 +1307,7 @@ public class MeetingRecord extends DOMFace {
         for (int i=0; i<ja.length(); i++) {
             JSONObject oneAi = ja.getJSONObject(i);
             String id = oneAi.getString("id");
-            String oldMins = oneAi.getString("old");
+            String oldMins = oneAi.optString("old", "");
             String newMins = oneAi.getString("new");
             AgendaItem ai = this.findAgendaItem(id);
             ai.mergeMinutes(oldMins, newMins);

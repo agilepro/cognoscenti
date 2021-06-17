@@ -303,7 +303,7 @@ public class AgendaItem extends CommentContainer {
         }
         if (input.has("descriptionMerge")) {
             JSONObject mergeObj = input.getJSONObject("descriptionMerge");
-            String lastSaveVal = mergeObj.getString("old");
+            String lastSaveVal = mergeObj.optString("old", "");
             String newVal = mergeObj.getString("new");
             mergeScalar("desc", lastSaveVal, newVal);
         }

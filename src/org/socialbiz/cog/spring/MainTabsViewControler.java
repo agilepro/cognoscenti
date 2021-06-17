@@ -120,7 +120,7 @@ public class MainTabsViewControler extends BaseController {
 
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
+            if (warnNotLoggedIn(ar)) {
                 return;
             }
             registerSiteOrProject(ar, siteId, pageId);

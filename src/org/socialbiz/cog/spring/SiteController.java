@@ -78,7 +78,7 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
+            if (warnNotLoggedIn(ar)) {
                 return;
             }
             if (needsToSetName(ar)) {
@@ -257,7 +257,7 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
+            if (warnNotLoggedIn(ar)) {
                 return;
             }
             if(!ar.isSuperAdmin()){
@@ -307,7 +307,7 @@ public class SiteController extends BaseController {
             throws Exception {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
+            if (warnNotLoggedIn(ar)) {
                 return;
             }
             prepareSiteView(ar, siteId);
@@ -380,7 +380,7 @@ public class SiteController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
 
             String requestId = ar.reqParam("requestId");
-            if (checkLogin(ar)) {
+            if (warnNotLoggedIn(ar)) {
                 return null;
             }
             if(!ar.isSuperAdmin()){
@@ -406,7 +406,7 @@ public class SiteController extends BaseController {
     throws Exception {
         try {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            if (checkLogin(ar)) {
+            if (warnNotLoggedIn(ar)) {
                 return null;
             }
             NGBook site = prepareSiteView(ar, siteId);

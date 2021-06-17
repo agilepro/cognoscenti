@@ -246,31 +246,43 @@
       "title":"See and adjust all the settings for this workspace if you are in the administrator role",
       "opts": [
         {
-          "use": ["AdminSettings.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
           "href":"RoleRequest.htm",
           "name":"Role Requests",
           "title":"Check on who has requested a position in a role"
         },
         {
-          "use": ["AdminSettings.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
           "href":"LabelList.htm",
           "name":"Labels",
           "title":"Create labels to help categorize documents, discussions, and action items.",
         },
         {
-          "use": ["AdminSettings.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "href":"AdminStats.htm",
+          "name":"Statistics",
+          "title":"Statistics about the workspace"
+        },
+        {
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "href":"AdminAPI.htm",
+          "name":"API",
+          "title":"The REST API for the workspace"
+        },
+        {
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
           "href":"../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.key}}",
           "name":"New Child",
           "title":"Create a new workspace that is a child of this workspace"
         },
         {
-          "use": ["AdminSettings.jsp", "RoleRequest.jsp", "LabelList.jsp"],
+          "use": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"],
           "href":"../$/SiteCreateWorkspace.htm?parent={{workspaceConfig.parentKey}}",
           "name":"New Sibling",
           "title":"Create a new workspace that is a sibling of this workspace"
         }
       ],
-      "useOpts": ["AdminSettings.jsp", "RoleRequest.jsp", "LabelList.jsp"]
+      "useOpts": ["AdminSettings.jsp", "AdminStats.jsp", "AdminAPI.jsp", "RoleRequest.jsp", "LabelList.jsp"]
     },
     {
       "href":"Personal.htm",

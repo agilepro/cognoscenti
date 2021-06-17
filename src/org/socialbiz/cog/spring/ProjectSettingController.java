@@ -111,11 +111,6 @@ public class ProjectSettingController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/{siteId}/{pageId}/admin.htm", method = RequestMethod.GET)
-    public void redIndex(@PathVariable String siteId,@PathVariable String pageId,
-            HttpServletRequest request, HttpServletResponse response)throws Exception {
-        response.sendRedirect("AdminSettings.htm");
-    }
     @RequestMapping(value = "/{siteId}/{pageId}/AdminSettings.htm", method = RequestMethod.GET)
     public void showAdminTab(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
@@ -128,6 +123,22 @@ public class ProjectSettingController extends BaseController {
         else {
             showJSPMembers(ar, siteId, pageId, "AdminSettings");
         }
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/AdminStats.htm", method = RequestMethod.GET)
+    public void showAdminStats(@PathVariable String siteId,
+            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        registerSiteOrProject(ar, siteId, pageId);
+        showJSPMembers(ar, siteId, pageId, "AdminStats");
+    }
+    @RequestMapping(value = "/{siteId}/{pageId}/AdminAPI.htm", method = RequestMethod.GET)
+    public void showAdminAPI(@PathVariable String siteId,
+            @PathVariable String pageId, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        AuthRequest ar = AuthRequest.getOrCreate(request, response);
+        registerSiteOrProject(ar, siteId, pageId);
+        showJSPMembers(ar, siteId, pageId, "AdminAPI");
     }
 
     @RequestMapping(value = "/{siteId}/{pageId}/LabelList.htm", method = RequestMethod.GET)

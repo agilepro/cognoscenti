@@ -196,7 +196,7 @@ public class RemoteLinkController extends BaseController {
         try{
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             registerRequiredProject(ar, siteId, pageId);
-            if (checkLoginMember(ar)) {
+            if (warnNotMember(ar)) {
                 return;
             }
 

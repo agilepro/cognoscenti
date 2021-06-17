@@ -260,7 +260,7 @@ public class UploadFileController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngp =  registerRequiredProject(ar, siteId, pageId);
 
-            if (checkLoginMemberFrozen(ar, ngp)) {
+            if (warnFrozenOrNotMember(ar, ngp)) {
                 return;
             }
 
@@ -279,7 +279,7 @@ public class UploadFileController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngp =  registerRequiredProject(ar, siteId, pageId);
 
-            if (checkLoginMemberFrozen(ar, ngp)) {
+            if (warnFrozenOrNotMember(ar, ngp)) {
                 return;
             }
 
@@ -300,7 +300,7 @@ public class UploadFileController extends BaseController {
             AuthRequest ar = AuthRequest.getOrCreate(request, response);
             NGWorkspace ngp =  registerRequiredProject(ar, siteId, pageId);
 
-            if (checkLoginMemberFrozen(ar, ngp)) {
+            if (warnFrozenOrNotMember(ar, ngp)) {
                 return;
             }
 

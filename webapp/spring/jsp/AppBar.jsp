@@ -69,6 +69,9 @@
     background-color: white;
     border: 5px #F0D7F7 solid;
     color: black;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
 }
 .sublist ul li {
     padding: 2px;
