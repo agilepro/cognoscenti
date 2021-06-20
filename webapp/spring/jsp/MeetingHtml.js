@@ -646,7 +646,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             //make sure this is not appearing anywhere
             item.desc = "N/A";
         });
-        console.log("AGENDA after fixup",data.agenda);
         
         data.agendaDuration = totalAgendaTime;
         $scope.timerCorrection = data.serverTime - new Date().getTime();
@@ -695,7 +694,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         else {
             data.agenda.forEach( function(item) {
                 if (item.position == $scope.selectedItem.position) {
-                    console.log("SET SELECTED ITEM", "PROPOSED="+item.proposed, item);
                     $scope.selectedItem = item;
                 }
             });
@@ -845,7 +843,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         $scope.saveAgendaItemParts(item, ['readyToGo']);
     }
     $scope.toggleProposed = function(item) {
-        console.log("PROPOSED changed from: ", item.proposed)
         if (item.proposed) {
             item.proposed = false;
         }
@@ -853,7 +850,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
             item.proposed = true;
         }
         $scope.saveAgendaItemParts(item, ['proposed']);
-        console.log("PROPOSED is NOW: ", item.proposed);
     }
 
     $scope.createMinutes = function() {
@@ -1333,7 +1329,6 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $timeout) {
         });
     }
     $scope.toggleCheckItem = function($event, item, changeIndex) {
-        console.log("click", item);
         item.checkitems.forEach( function(item) {
             if (item.index==changeIndex) {
                 item.checked = !item.checked;

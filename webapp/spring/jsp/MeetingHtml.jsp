@@ -1002,7 +1002,6 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <button ng-click="toggleProposed(selectedItem)" class="btn btn-primary btn-raised"
                   ng-show="selectedItem.proposed">
               <i class="fa fa-check"></i>Accept Proposed Item</a></li></button>
-          Proposed: {{item.proposed}} Selected: {{selectedItem.proposed}}
       </td>
     </tr>
     <tr ng-dblclick="openAgenda(selectedItem)">
@@ -1115,7 +1114,6 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
           <button ng-click="toggleProposed(selectedItem)" class="btn btn-primary btn-raised"
                   ng-show="selectedItem.proposed">
               <i class="fa fa-check"></i> Accept Proposed Item</a></button>
-          Proposed: {{item.proposed}}
       </td>
     </tr>
     <tr ng-dblclick="openAttachTopics(selectedItem)" ng-hide="selectedItem.isSpacer">
