@@ -995,13 +995,16 @@ embeddedData.mode     = "<%ar.writeJS(mode);%>";
               <i class="fa fa-circle-o" ng-hide="selectedItem.isSpacer"></i> Break Time</button>
           <button ng-click="moveItem(selectedItem,-1)" class="btn btn-primary btn-raised"
                   ng-hide="selectedItem.proposed">
-              <i class="fa fa-arrow-up"></i>Move Up</a></li></button>
+              <i class="fa fa-arrow-up"></i> Move Up</a></li></button>
           <button ng-click="moveItem(selectedItem,1)" class="btn btn-primary btn-raised"
                   ng-hide="selectedItem.proposed">
-              <i class="fa fa-arrow-down"></i>Move Down</a></li></button>
+              <i class="fa fa-arrow-down"></i> Move Down</a></li></button>
           <button ng-click="toggleProposed(selectedItem)" class="btn btn-primary btn-raised"
                   ng-show="selectedItem.proposed">
-              <i class="fa fa-check"></i>Accept Proposed Item</a></li></button>
+              <i class="fa fa-check"></i> Accept Proposed Item</a></li></button>
+          <button ng-click="toggleProposed(selectedItem)" class="btn btn-primary btn-raised"
+                  ng-hide="selectedItem.proposed">
+              <i class="fa fa-reply"></i> Send to Backlog</a></li></button>
       </td>
     </tr>
     <tr ng-dblclick="openAgenda(selectedItem)">

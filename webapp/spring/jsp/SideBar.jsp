@@ -94,7 +94,7 @@
     }
     %>
   </ul>
-  <%if (true) {ar.write(templateName);} %>
+  <%if (false) {ar.write(templateName);} %>
 </nav>
 <!-- END SideBar.jsp -->
 <% out.flush(); %>
