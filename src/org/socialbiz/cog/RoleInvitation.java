@@ -90,6 +90,7 @@ public class RoleInvitation extends JSONWrapper {
         boolean changed = copyStringToKernel(input, "role");
         changed = copyStringToKernel(input, "name") || changed;
         changed = copyStringToKernel(input, "msg") || changed;
+        changed = copyStringToKernel(input, "ss") || changed;
         if (changed) {
             kernel.put("timestamp", System.currentTimeMillis());
         }
@@ -101,6 +102,10 @@ public class RoleInvitation extends JSONWrapper {
         if (!STATUS_NEW.equals(kernel.getString("status"))) {
             throw new Exception("Program Logic Error: send is being called when the invite is not in NEW status");
         }
+        if (!kernel.has("ss")) {
+        	throw new Exception("RoleInvitation.sendEmail requires a 'ss' field in the record to work.");
+        }
+        String ss = kernel.getString("ss");
 
         //var msg1 = {userId:item,msg:$scope.message,return:$scope.retAddr};
         String msg = null;
@@ -120,8 +125,9 @@ public class RoleInvitation extends JSONWrapper {
         jo.put("userId", kernel.getString("email"));
         jo.put("msg", msg);
         jo.put("return", returnUrl);
+        jo.put("ss", ss);
 
-        JSONObject res = LightweightAuthServlet.postToTrustedProvider("?openid.mode=apiSendInvite", jo);
+        JSONObject res = LightweightAuthServlet.postToTrustedProvider("?openid.mode=apiSendInvite&ss="+ss, jo);
         if (res.has("result") && "ok".equals(res.getString("result"))) {
             kernel.put("status", STATUS_INVITED);
         }

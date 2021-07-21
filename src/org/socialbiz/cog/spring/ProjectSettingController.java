@@ -806,6 +806,11 @@ public class ProjectSettingController extends BaseController {
         try{
             NGWorkspace ngw = ar.getCogInstance().getWSBySiteAndKeyOrFail( siteId, pageId ).getWorkspace();
             JSONObject posted = this.getPostedObject(ar);
+            
+            //posted object MUST have a ss field in it to work
+            if (!posted.has("ss")) {
+            	throw new Exception("Operation 'invitationUpdate.json' requires a 'ss' field in the posted object");
+            }
 
             String email = posted.getString("email");
 

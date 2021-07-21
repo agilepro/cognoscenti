@@ -12,10 +12,18 @@ loginConfig = {
     "serverUrl": (url to server auth api)
 }
 loginInfo = {
-    "msg": (last msg from server),
-    "userId": (current user email address),
-    "userName": (current user name),
-    "verified": (true if full logged into server)
+    "email": "kswenson@fujitsu.com",
+    "emailConfirmed": false,
+    "go": "http://bobcat/weaver/t/index.htm",
+    "isLDAP": false,
+    "isLocal": true,
+    "isLoggedIn": true,
+    "msg": "Logged In",
+    "presumedId": "kswenson@fujitsu.com",
+    "source": "UI:kswenson@fujitsu.com",
+    "ss": "SZBC-BE-INL-BD-OUH",
+    "userId": "kswenson@fujitsu.com",
+    "userName": "Keith 🥴 Swenson"
 }
 statusCallback is a function that takes loginInfo as a parameter.  Every time
 the login state is changed, this callback is called.

@@ -100,11 +100,16 @@ app.controller('myCtrl', function($scope, $http, $modal) {
             alert("Enter a email address before inviting this person");
             return;
         }
+        if (!SLAP.loginInfo.ss) {
+            alert("Are you logged in?  Seems to be a problem with your SSOFI session");
+            return;
+        }
         obj.name = $scope.newName;
         obj.email = $scope.newEmail;
         obj.role = $scope.newRole;
         obj.msg = $scope.message;
         obj.status = "New";
+        obj.ss = SLAP.loginInfo.ss;
         obj.timestamp = new Date().getTime();
         updateInvite(obj);
         $scope.addressing = false;

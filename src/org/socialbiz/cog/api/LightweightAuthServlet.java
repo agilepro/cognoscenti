@@ -233,6 +233,7 @@ public class LightweightAuthServlet extends javax.servlet.http.HttpServlet {
      */
     public static JSONObject postToRemote(URL url, JSONObject msg) throws Exception {
         try {
+        	System.out.println("SLAP: posted object to trusted provider: "+url);
             HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
             httpCon.setDoOutput(true);
             httpCon.setDoInput(true);
