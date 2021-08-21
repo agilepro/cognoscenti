@@ -32,7 +32,7 @@ blockquote small,
 .comment-author,
 .comment-reply-title small a:hover,
 .comment-reply-title small a:focus {
-    color: #000000
+    color: #39134C
 }
 
 blockquote,
@@ -153,7 +153,7 @@ code {
 }
 </style>
 <style type="text/css" id="custom-background-css">
-body.custom-background { background-color: #3e0656; }
+body.custom-background { background-color: #39134C; }
 </style>
 
 <link rel="icon" href="weaver-logo.png" sizes="32x32">
@@ -163,46 +163,47 @@ body.custom-background { background-color: #3e0656; }
 <style type="text/css" id="wp-custom-css">
 h1 {
     font-family: 'Roboto', sans-serif; 
-    font-size: 70px;
-    font-style: 900;
+    font-size: 75px;
+    font-style: italic;
     font-weight: 900;
     line-height: 1.3;
     letter-spacing: .9px;
     text-align: left;
-    color: #39134c;
+    color: #fff;
 }
 
 h2 {
     font-family: 'Roboto', sans-serif;
-    font-size: 70px;
-    font-style: italic;
-    font-weight: 700;
+    font-size: 65px;
+    font-style: normal;
+    font-weight: 300;
     line-height: 1.09;
     letter-spacing: .9px;
-    text-align: left;
-    color: #39134c;
+    /* text-align: left;*/
+    color: #fff;
 }
 h3 {
     font-family: 'Roboto', sans-serif;
     font-size: 50px;
-    letter-spacing: .5px;
-    text-align: left;
-    color: #39134c;
+    letter-spacing: 3px;
+    /*text-align: left;*/
+    color: #fff;
     font-style: normal;
-    font-weight: 700;
+    font-weight: 300;
 }
 
 
 h4 {
     font-family: 'Roboto', sans-serif;
-    font-size: 50px;
+    font-size: 30px;
     font-style: normal;
     font-weight: 300;
     line-height: 1.92;
     letter-spacing: 1.6px;
     text-align: left;
-    color: #000000;
+    color: #fff;
     text-transform: none;
+    margin-bottom: 0; /*added for home page*/
 }
 
 h5 {
@@ -213,12 +214,12 @@ h5 {
     line-height: 2.53;
     letter-spacing: .5px;
     text-align: left;
-    color: #000000;
+    color: #fff;
 }
 
 #content h2 {
-    color: #000000;
-    font-size: 17px;
+    color: #fff;
+    font-size: 65px;
         font-family: 'Roboto',  sans-serif;
         font-style: normal;
 }
@@ -230,11 +231,12 @@ h5 {
 
 .main-navigation {
     font-family: 'Roboto', sans-serif;
-    font-size: 24px;
+    font-size: 30px;
+    font-weight: bold; /*C added for updated menu*/
     line-height: 2.53;
     letter-spacing: 1.5px;
     text-align: left;
-    color: #000000;
+    color: #39134c;
 }
 
 .entry-title a:hover,
@@ -244,7 +246,7 @@ h5 {
 
 .page-links a:hover,
 .page-links a:focus {
-    background-color: #007acc;
+    background-color: #fff; 
     border-color: transparent;
     color: #ab37c8;
 }
@@ -264,7 +266,7 @@ p {
     line-height: 1.75;
     letter-spacing: 0.4px;
     text-align: left;
-    color: #000000;
+    color: #fff;
     padding: 0px 0px 0px 0px; 
     margin: 0px;
 }
@@ -282,14 +284,39 @@ h1 {
     padding: 0px 0px 0px 0px;
     margin: 0px 30px 0px 0px;
 }
+/* C added for home page */
+h4 {
+	margin-top: 5px;
+	margin-bottom: 5px;
+		
+} 
+.alighnleft h2 {
+    margin-left: 150px;
+}
+.features   {
+    display:grid;
+    grid-template-columns:350px 350px 500px;
+}
+.list-left ul li, .list-center ul li, .list-right ul li	{
+	font-size: 20px;
+	margin-left: 2em;
+}
+.list-left ul, .list-center ul, .list-right ul {
+	margin-top: .125em;
+}
+.right	{
+	float: right;
+	font-size: 30px;
+}
 
+/* end addins*/
 ul { 
     font-family: 'PT Sans', sans-serif;
-    font-size: 17px;
+    font-size: 21px;
     line-height: 1.55;
     letter-spacing: 0.4px;
     text-align: left;
-    color: #000000;
+    color: #39134C;
     padding-bottom: 0px; 
     margin: 0px;
     list-style: disc;
@@ -301,7 +328,7 @@ list-style: disc;
 margin-bottom: 6px;
 display: block;
 text-align: left;
-color: #000000;
+color: #fff;
 }
 
 ul li a:hover {
@@ -320,7 +347,7 @@ ul li a:hover {
             <div class="site-header-main">
                 <div class="site-branding">
                     <a href="index.html" class="custom-logo-link" rel="home" itemprop="url">
-                        <img src="index_files/cropped-weaver-logotype-1.png" class="custom-logo" alt="Circle Weaver" itemprop="logo" width="240" height="59"></a>
+                        <img src="index_files/cropped-weaver-logotype-1.png" class="custom-logo" alt="Circle Weaver" itemprop="logo" width="3220" height="110"></a>
                     <p class="site-title"><a href="index.html" rel="home">Circle Weaver</a></p>
                     <p class="site-description">Think Smarter Together!</p>
                 </div>
@@ -333,10 +360,16 @@ ul li a:hover {
                           <ul id="menu-primary" class="primary-menu">
                             <li id="menu-item-16" class="h4 menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-14 current_page_item menu-item-16">
                               <a title="home-page" href="index.html">Home</a></li>
-                            <li id="menu-item-12" class="h3 menu-item menu-item-type-post_type menu-item-object-page menu-item-12">
-                              <a href="contact.htm">Info</a></li>
-                            <li id="menu-item-12" class="h3 menu-item menu-item-type-post_type menu-item-object-page menu-item-12">
-                              <a href="https://s06.circleweaver.com/weaver/">Login</a></li>
+                            <li id="menu-item-12" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12">
+                              <a href="about.htm">About</a></li>
+                            <li id="menu-item-12" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12">
+                              <a href="donate.htm">Donate</a></li>
+                            <li id="menu-item-12" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12">
+                              <a href="policies.htm">Policies</a></li>
+                            <li id="menu-item-12" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12">
+                              <a href="contact.htm">Contact</a></li>
+                            <li id="menu-item-12" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-12">
+                               <a href="https://s06.circleweaver.com/weaver/">Login</a></li>
                           </ul>
                         </div>
                     </nav>
@@ -351,16 +384,29 @@ ul li a:hover {
         
 <article id="post-14" class="post-14 page type-page status-publish has-post-thumbnail hentry">
     <header class="entry-header">
-        <h1 class="entry-title">Welcome to Weaver</h1>  </header><!-- .entry-header -->
+        <h1 class="entry-title" style="width: 500px;">Collaborative Workspaces</h1>  </header><!-- .entry-header -->
 
     
-    <div class="post-thumbnail">
-        <img src="index_files/groupimage-ptsans-1200x515.png" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="weaver-group-people" srcset="groupimage-ptsans-1200x515.png 1200w, groupimage-ptsans-300x129.png 300w, groupimage-ptsans-768x330.png 768w, groupimage-ptsans-1024x440.png 1024w" sizes="(max-width: 709px) 85vw, (max-width: 909px) 67vw, (max-width: 1362px) 88vw, 1200px" width="1200" height="515">   </div><!-- .post-thumbnail -->
-
+    <!--Remove image with text embedded - adding text independent of images
+        <div class="post-thumbnail">
+        <img src="index_files/groupimage-ptsans-1200x515.png" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="weaver-group-people" srcset="groupimage-ptsans-1200x515.png 1200w, groupimage-ptsans-300x129.png 300w, groupimage-ptsans-768x330.png 768w, groupimage-ptsans-1024x440.png 1024w" sizes="(max-width: 709px) 85vw, (max-width: 909px) 67vw, (max-width: 1362px) 88vw, 1200px" width="1200" height="515">   </div>--><!-- .post-thumbnail -->
     
-    <div class="entry-content">
-        <p>&nbsp;</p>
-<h1><b>What Is Weaver?</b></h1>
+<div class="entry-content">
+     <div class="alignleft" style="width: 600px;">
+        <ul>
+            <li>- Organize better meetings</li>
+            <li>- Manage project workflow more efficiently</li>
+            <li>- Make stronger decisions together</li>
+        </ul>
+        <br>
+        <img src="index_files/weaver-laptopmock-e1525927510484.png">
+     </div>
+     <div class="alignright">
+         <h2 style="font-weight: 300;">think smarter<br><em>together</em></h2>
+         <h3>Experience the flow<br>when a team mind emerges</h3>
+     </div>
+
+<!--<h1><b>What Is Weaver?</b></h1>
 <h3>Weaver is freemium: no cost for basic Weaver features.</h3>
 <p>Eventually there will be a minimum cost for premium features – but 
 for now, everything is no cost. And, if you get Weaver now, you’ll be a 
@@ -369,28 +415,80 @@ FOUNDING USER, and we will never charge you for premium features.</p>
 <p>&nbsp;</p>
 <a class="maxbutton-1 maxbutton maxbutton-get-weaver-now" href="https://s06.circleweaver.com/weaver/t/NewSiteApplication.htm"><span class="mb-text">GET WEAVER NOW</span></a>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<div class="content-column one_half"><div style="padding-right:30px;"><p><img class="wp-image-68 alignnone" src="index_files/weaver-laptopmock-e1525927510484.png" alt="" width="600" height="360"></p></div></div>
-<div class="content-column one_half last_column"><h4><img class="alignnone wp-image-67" src="index_files/purple-bar-e1525927786903.jpg" alt="" width="320" height="7"><br>
-<span style="letter-spacing: 1.8px;">Creating a world in-touch<br>
-</span></h4>
-<p>Weaver is a responsive webapp that runs on laptops and mobile 
-devices. It helps you hold policy meetings and operations (tactical) 
-meetings in-person, online, and at different times (async) – (no more 
-long email strings)!! It supports meetings with action items, documents,
- large file transfers, meeting minutes, list of all decisions, agenda 
-backlog, roles and responsibilities, and organizational diagrams.</p>
-<h3></h3></div><div class="clear_column"></div>
-<div class="content-column one_half"><div style="padding-right:30px;"><p><img class="wp-image-69 size-medium aligncenter" src="index_files/marvin-meyer-571072-unsplash-300x300.jpg" alt="people-working-laptops" srcset="marvin-meyer-571072-unsplash-300x300.jpg 300w, marvin-meyer-571072-unsplash-150x150.jpg 150w, marvin-meyer-571072-unsplash-768x769.jpg 768w, marvin-meyer-571072-unsplash-1024x1024.jpg 1024w, marvin-meyer-571072-unsplash-1200x1201.jpg 1200w" sizes="(max-width: 300px) 85vw, 300px" width="300" height="300"></p></div></div>
-<div class="content-column one_half last_column"><div style="padding-right:50px;"><h4><img class="alignnone wp-image-67" style="color: #1a1a1a; font-family: Lato, 'Work Sans', sans-serif; font-size: 16px; font-weight: 400;" src="index_files/purple-bar-e1525927786903.jpg" alt="" width="320" height="7"><br>
-Who Is Weaver For?</h4>
-<p>— Businesses wanting fewer meetings; meetings with and agenda and 
-real value; meetings with professionalism and discipline that get things
- get done.</p>
-<p><span style="font-weight: 400;"><span style="font-weight: 400;">— 
-Organizations that want to relieve the pain and overwhelm of organizing,
- that want meetings which stay on topic and have coherent records.&nbsp;</span></span></p></div></div><div class="clear_column"></div>
-<h1>So How Does Weaver Work?</h1>
+<p>&nbsp;</p>-->
+<div class="clear_column"></div>
+
+<!--<div class="content-column one_half"><div style="padding-right:30px;"><p></p></div></div>-->
+<div class="content-column one_half last_column"><img class="alignnone wp-image-67" src="index_files/purple-bar-e1525927786903.jpg" alt="" width="320" height="7"><br>
+    <h4>
+        <span style="letter-spacing: 1.8px">Creating a world in-touch<br>
+        </span>
+    </h4>
+</div>
+<div class="clear_column"></div>
+	<p>Weaver is a responsive webapp that helps you hold policy  and operational meetings in-person, online, and always stay connected and on-task</p> 
+	<p><em>No more long email strings!</em> </p>
+	
+<div class="features">	
+<div class="item">
+	<h4>Get Organized</h4>
+	<span style="font-size: 1rem"></span>
+	<div class="list-left">
+        <ul>
+		    <li>Agendas</li>
+		    <li>Meeting Minutes</li>
+		    <li>Action Items</li>
+		    <li>Discussion Topics</li>
+		    <li>Documents</li>
+		    <li>Large File Transfers</li>
+		    <li>Decisions</li>
+		</ul>
+	</div>
+</div>
+	<div class="item">
+		<h4>Stay Organized</h4>
+		<div class="list-center">
+            <ul>
+			    <li>Agenda Backlogs</li>
+			    <li>Historic Minutes</li>
+			    <li>Completed Action Items</li>
+			    <li>Document Storage</li>
+			    <li>Review Decisions</li>
+		    </ul>
+        </div>
+	</div>
+	<div class="item">
+		<h4>Know Your Organization</h4>
+		<div class="list-right">
+				<ul>
+					<li>Mission, Vision, and Aim</li>
+					<li>Organizational Diagrams</li>
+					<li>Action Items</li>
+					<li>Roles and Responsibilities</li>
+				</ul>
+		</div>
+	</div>
+</div>
+<div class="clear_column"></div>
+<div class="content-column one_half">
+    <div style="margin-top:30px;">
+        <p><img class="wp-image-69 size-medium aligncenter" src="index_files/marvin-meyer-571072-unsplash-300x300.jpg" alt="people-working-laptops" srcset="marvin-meyer-571072-unsplash-300x300.jpg 300w, marvin-meyer-571072-unsplash-150x150.jpg 150w, marvin-meyer-571072-unsplash-768x769.jpg 768w, marvin-meyer-571072-unsplash-1024x1024.jpg 1024w, marvin-meyer-571072-unsplash-1200x1201.jpg 1200w" sizes="(max-width: 300px) 85vw, 300px" width="300" height="300">
+        </p>
+    </div>
+</div>
+<div class="content-column one_half last_column">
+    <img class="alignnone wp-image-67" style="color: #1a1a1a; font-family: Lato, 'Work Sans', sans-serif; font-size: 16px; font-weight: 400;" src="index_files/purple-bar-e1525927786903.jpg" alt="" width="320" height="7"><br>
+    <h4>Who Is Weaver For?</h4>
+    <ul>
+        <li>— Businesses wanting fewer meetings</li>
+	    <li>— Meetings with an agenda and real value</li>
+	    <li>— Meetings with professionalism and discipline that get things get done.</li>
+	    <li>— Organizations that want to relieve the pain and overwhelm of organizing,</li>
+    	<li>— Groups that want meetings which stay on topic and have coherent records.</li>
+    </ul>
+</div>
+<div class="clear_column"></div>
+<h4>So How Does Weaver Work?</h4>
 <h3><img class="alignnone wp-image-211 size-full" src="index_files/weaver-icons-purple-v4-1.png" alt="" srcset="weaver-icons-purple-v4-1.png 1920w, weaver-icons-purple-v4-1-300x129.png 300w, weaver-icons-purple-v4-1-768x330.png 768w, weaver-icons-purple-v4-1-1024x441.png 1024w, weaver-icons-purple-v4-1-1200x516.png 1200w" sizes="(max-width: 709px) 85vw, (max-width: 909px) 67vw, (max-width: 1362px) 62vw, 840px" width="1920" height="826"></h3>
 <h3>Lay out your structure:</h3>
 <ul>
