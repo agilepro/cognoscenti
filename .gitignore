@@ -3,3 +3,10 @@
 
 # Ignore Gradle build output directory
 build
+
+#eclipse crap
+bin
+.settings
+.project
+.classpath
+
