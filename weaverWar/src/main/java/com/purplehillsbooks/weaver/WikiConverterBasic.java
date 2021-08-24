@@ -38,7 +38,7 @@ public class WikiConverterBasic
     final static int HEADER       = 3;
     final static int PREFORMATTED = 4;
     
-    public final static char ESCAPE_CHAR = 'º';    
+    public final static char ESCAPE_CHAR = 'º';   
 
     private Writer out;
     private int majorState = 0;
@@ -298,7 +298,7 @@ public class WikiConverterBasic
                     char escape = line.charAt(pos + 1);
                     if (escape == '[' || escape == '\'' || escape == '_'  || escape == ESCAPE_CHAR) {
                         //only these characters can be escaped at this time
-                        //if one of these, eliminate the º, and output the following character without interpretation
+                        //if one of these, eliminate the ยบ, and output the following character without interpretation
                         ch = escape;
                         pos++;
                     }
