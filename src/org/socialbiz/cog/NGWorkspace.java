@@ -108,6 +108,19 @@ public class NGWorkspace extends NGPage {
 
         //upgrade all the note, document, and task records
         cleanUpTaskUniversalId();
+        
+        //get rid of old ics files that are piling up in directory
+        //oldest file should be today minus 30 days
+        long thirtyDaysAgo = System.currentTimeMillis() - 1000L*60*60*24*30;
+        for (File child : cogFolder.listFiles()) {
+            String fname = child.getName();
+            if (fname.endsWith(".ics") && child.lastModified()<thirtyDaysAgo) {
+                System.out.println("CLEANUP: deleting ICS created more than 30 days ago: "+child.getAbsolutePath());
+                if (!child.delete()) {
+                    System.out.println("     ARRRGH: unable to delete it!  "+child.getAbsolutePath());
+                }
+            }
+        }
     }
 
 
