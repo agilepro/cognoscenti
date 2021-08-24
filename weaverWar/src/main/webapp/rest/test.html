@@ -1,0 +1,198 @@
+<html>
+<head>
+<title>JAXWS RESTFul example</title>
+
+
+<script type="text/javascript" language="javascript">
+   var http_request = false;
+   function makePOSTRequest(method,url, openid, parameters) {
+      http_request = false;
+      if (window.XMLHttpRequest) { // Mozilla, Safari,...
+         http_request = new XMLHttpRequest();
+         if (http_request.overrideMimeType) {
+         	// set type accordingly to anticipated content type
+            http_request.overrideMimeType('text/xml');
+            //http_request.overrideMimeType('text/html');
+         }
+      } else if (window.ActiveXObject) { // IE
+         try {
+            http_request = new ActiveXObject("Msxml2.XMLHTTP");
+         } catch (e) {
+            try {
+               http_request = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (e) {}
+         }
+      }
+      if (!http_request) {
+         alert('Cannot create XMLHTTP instance');
+         return false;
+      }
+
+      http_request.onreadystatechange = alertContents;
+     // http_request.open(method, url, true);
+
+      if(method=='GET'){
+			http_request.open(method, url+parameters, true);
+			http_request.setRequestHeader("Content-type", "text/xml");
+			http_request.setRequestHeader("Content-length", parameters.length);
+            http_request.setRequestHeader("Authorization", openid);
+			http_request.setRequestHeader("Connection", "close");
+            //validateXMLString(parameters);
+			http_request.send(null);
+		}
+	   if(method=='POST')  {
+			http_request.open(method, url, true);
+			http_request.setRequestHeader("Content-type", "text/xml");
+			http_request.setRequestHeader("Content-length", parameters.length);
+            http_request.setRequestHeader("Authorization", openid);
+			http_request.setRequestHeader("Connection", "close");
+			http_request.send(parameters);
+		  }
+	   if(method=='PUT')  {
+			http_request.open(method, url, true);
+			http_request.setRequestHeader("Content-type", "text/xml");
+			http_request.setRequestHeader("Content-length", parameters.length);
+            http_request.setRequestHeader("Authorization", openid);
+			http_request.setRequestHeader("Connection", "close");
+			http_request.send(parameters);
+		  }
+
+      if(method=='DELETE'){
+			http_request.open(method, url+parameters, true);
+			http_request.setRequestHeader("Content-type", "text/xml");
+			http_request.setRequestHeader("Content-length", parameters.length);
+            http_request.setRequestHeader("Authorization", openid);
+			http_request.setRequestHeader("Connection", "close");
+			http_request.send(null);
+		}
+   }
+
+   function alertContents() {
+      if (http_request.readyState == 4) {
+         if (http_request.status == 200 || http_request.status==201) {
+            alert('Response received from server:\n'+http_request.responseText);
+            result = http_request.responseText;
+			 // Turn < and > into &lt; and &gt; (case matters)
+		    result = result.replace(/\<([^!])/g, '&lt;$1');
+		    result = result.replace(/([^-])\>/g, '$1&gt;');
+            document.getElementById('serverresponse').innerHTML = result;
+            document.myform.xmloutdata.value = http_request.responseText;
+         } else {
+            alert('There was a problem with the request.' +http_request.responseText +' '+http_request.status);
+			document.getElementById('serverresponse').innerHTML = http_request.responseText;
+            document.myform.xmloutdata.value = http_request.responseText;
+         }
+      }
+   }
+
+   function postTheForm() {
+      var pstr = document.myform.xmldata.value ;
+	  alert('Sending XML to server:\n'+pstr);
+      makePOSTRequest('POST',document.myform.endpointURL.value ,document.myform.openid.value, pstr);
+   }
+
+   function getTheForm() {
+      var pstr = encodeURI(document.myform.xmldata.value) ;
+	   alert('Sending XML to server:\n'+pstr);
+      makePOSTRequest('GET',document.myform.endpointURL.value ,document.myform.openid.value, pstr);
+   }
+
+   function putTheForm() {
+      var pstr = document.myform.xmldata.value ;
+	  alert('Sending XML to server:\n'+ pstr);
+      makePOSTRequest('PUT',document.myform.endpointURL.value ,document.myform.openid.value, pstr);
+   }
+
+   function deleteTheForm() {
+      var pstr = encodeURI(document.myform.xmldata.value) ;
+	  alert('Sending XML to server:\n'+pstr);
+      makePOSTRequest('DELETE',document.myform.endpointURL.value,document.myform.openid.value , pstr);
+   }
+
+function validateXMLString(txt)
+{
+  if(window.ActiveXObject){
+    try
+    {
+        xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+        xmlDoc.async="false";
+        xmlDoc.validateOnParse = true;
+        if (xmlDoc.loadXML(txt)) {
+            // document is valid
+        }
+        else {
+            // document is not valid check e.g.
+            alert(xmlDoc.parseError.reason);
+        }
+        return(xmlDoc);
+    }
+    catch(e)
+     {
+       alert(e.message);
+     }
+    }
+    else{
+        try //Firefox, Mozilla, Opera, etc.
+        {
+            parser=new DOMParser();
+            xmlDoc=parser.parseFromString(txt,"text/xml");
+            return(xmlDoc);
+        }
+        catch(e) {alert(e.message)}
+    }
+    return(null);
+}
+
+
+</script>
+</head>
+
+<body>
+
+
+<p>The form below can be used to send arbitary content to a URL using HTTP GET/POST/PUT/DELETE operations.<br>
+  The schemas understood by the endpoint can be found here <a href="xsd/Leaf.xsd">Leaf.xsd</a>
+</p>
+<form action="javascript:get(document.getElementById('myform'));" name="myform" id="myform">
+  <table width="100%"  border="0" cellpadding="0" cellspacing="0">
+    <tr>
+      <td><b>Endpoint URL</b></td>
+      <td colspan="3"><input name="endpointURL" type="text" value="http://localhost:8090/nugen/p/main/leaf.xml" size="100"></td>
+    </tr>
+    <tr>
+      <td><b>User opeId</b></td>
+      <td colspan="3"><input name="openid" type="text" value="http://user1.myopenid.com/" size="100"></td>
+    </tr>
+    <tr>
+      <td><b>XML to send</b> </td>
+      <td colspan="3"><textarea name="xmldata" cols="100" rows="26"></textarea></td>
+    </tr>
+    </table>
+   <table><tr>
+      <td><b>HTTP operation</b> </td>
+      <td><input type="button" name="getbutton" value="SEND via GET"  onclick="javascript:getTheForm();"></td>
+      <td><input type="button" name="postbutton" value="SEND via POST" onclick="javascript:postTheForm();"></td>
+      <td><input type="button" name="putbutton" value="SEND Via PUT" onclick="javascript:putTheForm();"></td>
+	  <td><input type="button" name="deletebutton" value="SEND via DELETE" onclick="javascript:deleteTheForm();"></td>
+    </tr>
+  </table>
+  <table>
+      <tr>
+      <td><b>XML Output</b> </td>
+      <td colspan="3"><textarea name="xmloutdata" cols="100" rows="26"></textarea></td>
+    </tr>
+  </table>
+</form>
+
+<h3><br>
+  <br>
+Server-Response:<br>
+</h3>
+<hr>
+<pre>
+<span name="serverresponse" id="serverresponse"></span>
+</pre>
+
+<hr>
+</body>
+</html>

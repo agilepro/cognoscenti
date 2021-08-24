@@ -1,0 +1,421 @@
+// Color Palette
+$clr-main-background:   #fafafa;
+$clr-primary-dark:      #39134c;
+$clr-logo-dark:         #672178;
+$clr-logo-light:        #ab37c8;
+$clr-background-light:  #d9d0de;
+$clr-background-dark:   #6290c3;
+$clr-border-light:      #d9d0de;
+$clr-font-dark:         #291720;
+$clr-font-light:        #2f243a;
+$clr-font-appbar-light: #fff;
+$clr-form-ctrl-background: #fafafa;
+
+// Font Family
+$ff-main:               'PT_Sans', Helvetica, sans-serif;
+
+// Font Sizes
+$fs-default:            11pt;
+$fs-appbar:             13pt;
+$fs-h1:                 17pt;
+$fs-h2:                 15pt;
+
+// screen sizes
+$break-big:             1199px;
+$break-medium:          991px;
+$break-small:           768px;
+
+// General
+body {
+  background-color: $clr-main-background;
+  color: $clr-font-dark;
+  font-family: $ff-main;
+  font-size: $fs-default;
+  padding-top: 60px;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: $ff-main;
+}
+
+img {
+  border:           0;
+  margin:           0;
+  padding:          0;
+}
+
+// App Bar
+.appbar {
+  border: 0;
+  margin-bottom: 0;
+  border-radius: 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 60px;
+
+  .navbar-toggle {
+    @media screen and (max-width: $break-small) {
+      position: absolute;
+      left: 8px;
+      top: 8px;
+    }
+
+    &:focus, &:hover {
+      background-color: $clr-primary-dark;
+    }
+  }
+
+  .navbar-brand {
+    padding: 10px;
+
+    @media screen and (max-width: $break-medium) {
+      padding-left: 10px;
+      height: 60px;
+      margin-left: 0;
+    }
+
+    @media screen and (max-width: $break-small) {
+      position: absolute;
+      left: 45px;
+      top: 0;
+    }
+
+    img {
+      float: left;
+      margin-right: 10px;
+    }
+
+    h1 {
+      color: $clr-main-background;
+      display: inline;
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  .search {
+    margin-top: 5px;
+    @media screen and (max-width: $break-small) {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: 55px;
+      z-index: 999;
+      padding: 0px 15px;
+      background-color: $clr-logo-light;
+    }
+    @media screen and (min-width: $break-small) {
+      display: block !important;
+    }
+    .navbar-form {
+      border: 0;
+      box-shadow: none;
+      @media screen and (max-width: $break-big) {
+        margin-top: 16px;
+      }
+    }
+  }
+
+  .appbar-nav {
+    float: right !important;
+    margin-right: -15px;
+  }
+
+  .navbar-nav {
+
+    @media screen and (max-width: $break-small) {
+      margin: 0;
+    }
+    .navbar-left {
+      @media screen and (max-width: $break-small) {
+        float: left;
+      }
+    }
+
+    .navbar-right {
+      @media screen and (max-width: $break-small) {
+        float: right;
+      }
+    }
+
+    li {
+      @media screen and (max-width: $break-small) {
+        float: left;
+      }
+      a {
+        color: $clr-font-appbar-light;
+        font-size: $fs-appbar;
+        padding-top: 20px;
+        padding-bottom: 20px;
+
+        &:hover {
+          background-color: $clr-logo-dark;
+          color: $clr-font-appbar-light;
+        }
+
+        .dropdown-toggle-label {
+          @media screen and (max-width: $break-medium) {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .dropdown-menu {
+      @media screen and (max-width: $break-small) {
+        position: absolute;
+        background-color: $clr-background-light;
+      }
+      li>a {
+        color: $clr-font-dark !important;
+        font-size: $fs-appbar;
+      }
+    }
+  }
+}
+
+// Side Bar
+.sidebar {
+  margin-bottom: 0;
+  background-color: $clr-logo-light !important;
+  border: 0;
+  @media screen and (max-width: $break-small) {
+    display: none;
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0px;
+  }
+
+  ul>li {
+    display: block;
+    padding: 10px;
+
+    &.active {
+      color: $clr-font-dark;
+      background-color: $clr-logo-dark;
+    }
+  }
+
+  ul>li>a {
+    color: $clr-font-appbar-light;
+  }
+}
+
+.title {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 15px;
+
+  .link {
+    display: inline;
+
+    &:after {
+      content: ' > ';
+    }
+  }
+
+  .page-name>h1 {
+    margin: 0px;
+  }
+}
+
+.main-content {
+  padding-top: 15px;
+
+  .generalHeading {
+    display: block;
+
+    div {
+      display: none;
+    }
+
+    .rightDivContent {
+      position: absolute;
+      right: 15px;
+      top: 0px;
+    }
+  }
+}
+
+// Content
+.primary-toolbar {
+  @media screen and (min-width: $break-small) {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+  }
+
+  i {
+    width: 16px;
+    height: 16px;
+  }
+  a {
+    padding: 8px 10px !important;
+    font-variant: normal;
+    text-transform: capitalize;
+  }
+}
+
+.panel {
+  .panel-heading {
+    font-size: $fs-h2;
+  }
+}
+
+.table {
+  .actions {
+    padding: 8px 0;
+  }
+  .actions>a {
+    display: block;
+    float: left;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  .actions>a>.btn, .actions>.btn {
+    margin: 0;
+    padding: 5px 10px;
+    display: inline;
+  }
+}
+
+// general elements
+
+.primary-fab {
+  position: fixed !important;
+  right: 15px;
+  bottom: 15px;
+}
+
+.role-label {
+  font-size: $fs-default;
+  color: $clr-font-dark;
+  font-weight: 500 !important;
+
+  .label {
+    font-size: $fs-default;
+    color: $clr-font-dark;
+    font-weight: 500 !important;
+  }
+
+  a {
+    background-color: $clr-background-light;
+    color: $clr-font-dark;
+    padding: 0.3em 0.6em;
+    margin-left: -0.3em;
+  }
+}
+
+.form-hide.ng-show-add, .form-hide.ng-show-remove {
+  transition: all 0.5s linear;
+}
+
+.guideVocal{
+  clear:both;
+  width:auto;
+  border-radius: 8px;
+  background-color: $clr-main-background;
+  background-image: url(./../assets/showTaskDetailDivBase.gif);
+  background-position:bottom left;
+  background-repeat:repeat-x;
+  border: 1px solid $clr-border-light;
+  margin-top: 30px;
+  font-family:Arial, Helvetica, Verdana, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #545454;
+  margin: 25px;
+  padding: 15px;
+}
+
+// Bootstrap Material Design Overrides
+
+.main-content {
+  form {
+    .form-group {
+      .form-control {
+        background-color: $clr-form-ctrl-background !important;
+        padding: 5px !important;
+      }
+    }
+  }
+}
+
+.modal-body {
+  .form-control {
+    background-color: $clr-form-ctrl-background !important;
+    padding: 5px !important;
+  }
+}
+
+.control-label {
+  font-size: $fs-default !important;
+  margin: 4px 0 0 0 !important;
+}
+
+.form-group {
+  margin: 6px 0 0 0;
+}
+// Tweaks
+
+.form-control {
+
+  .focused {
+    box-shadow: none !important;
+    -moz-box-shadow: none !important;
+  }
+
+  .tags {
+    border: 0;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    height: 30px;
+    background: none;
+    margin-top: -8px;
+    input {
+      background: none;
+    }
+
+  }
+}
+
+
+.helpIcon {
+  padding: 12px;
+  color: lightgray;
+  cursor: pointer;
+}
+
+
+.instruction {
+    color:lightblue;
+    font-size: 14px;
+}
+
+.labelButton {
+    margin:3px;
+    padding:1px 4px;
+    border: none;
+    border-radius:2px;
+    box-shadow: 2px 2px 5px #CCCCCC;
+    font-size: 10pt;
+    cursor: pointer;
+}
+
+.upRightOptions {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
+
+
+a, a:focus, a:hover {
+    color: #23527c;
+    text-decoration: underline;
+}

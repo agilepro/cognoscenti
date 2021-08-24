@@ -1,0 +1,33 @@
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+
+<body>
+<div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
+<!--TEMPLATE NewResponse.chtml-->
+<p>From: <a href="{$userURL}">{$userName|onempty(No Name)|html}</a> 
+Workspace: <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a>
+<br/>
+Response on topic <a href="{$commentURL}">{$parentName|onempty(No Name)|html}</a>
+</p>
+<hr/>
+
+{% if ($isProposal == "true") %}
+<p>Choice: <b>{$choice|html}</b></p>
+{% endif %}
+<div>
+{$response.html}
+</div>
+
+<hr/>
+In response to: 
+<div style="color:#A9A9A9">
+{$comment.html}
+</div>
+
+</div>
+
+{% include OptOut %}
+
+</body></html>

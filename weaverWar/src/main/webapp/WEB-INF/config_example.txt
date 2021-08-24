@@ -1,0 +1,65 @@
+#Configuration for Cognoscenti Server
+
+# Library Folder
+# This is the primary way of saving project information
+# in the Cognoscenti server.  Specify a list of lib folders (separated by
+# semicolon) and the server will search that folder tree for project files.
+# Each project is in its own folder.
+# Attachments are stored in the same folder with the project file
+# User can edit the attachment files directly, and re-synch later with project.
+libFolder=c:/opt/weaver_sites/
+
+
+# User folder
+# This is the location where the global user files will be stored.
+# Can be any local path, include the complete path to the folder.
+# Make sure that this folder exists before you start.
+userFolder=c:/opt/weaver_user/
+
+
+# baseURL
+# This is the public base URL address which the browser will
+# use to access this server.  Used for redirection of the browser.
+# This must use host names that the browser can access.
+# eg:   baseURL=http://myserver.example.com/cog/
+# baseURL=http://myserver.example.com/cog/
+
+# Identity Provider
+# This is the address of a SSOFI identity provider that supports
+# the Lightweight Authentication Protocol.  If this is set, then
+# it will be possible for JS clients to authenticate to the server
+# using this mechanism.  Note, the publicly available identity
+# provider (default setting) will work for most installations.
+# eg:   identityProvider=https://interstagebpm.com/eid/
+identityProvider=https://interstagebpm.com/eid/
+
+
+#specify the user ID that has administrator privilidges
+#Note that you have to run the server and create a user account first
+#and then reconfigure setting the ID of that user here.
+#superAdmin=AAABBBCCC
+
+#Force templates to be refreshed.  This works around a bug in the browsers
+#that certain templates loaded with JAvaScript are never refreshed.
+#This is needed only on development servers where you might be 
+#editing the templates directly, and want to see the change
+#for a production server, leave this off so it runs FASTER.
+#Set forceTemplateRefresh=true to enable the slow, always refresh mode.
+
+#For debugging, sometimes the browser caches the html templates
+#too long.  Set this to true to force the browser to reload the 
+#template everytime.  Do not set on production servers.
+#forceTemplateRefresh=true
+
+#Local Connections designate named paths on the server machine
+#to which a local connection can be made
+#A sequence of expressions surrounded by square brackets, within
+#each expression is a name=path
+#use only forward slashes, and end the path with a slash
+#localConnections=[iflow\=d\:/sandbox/iflow/][photos\=d\:/vacphoto/]
+
+#cvsConnections specifies a list of otential CVS root folders that
+#can be used to create a connection to CVS.  A list of triplet values in
+#square brackets.  [root=XXX,repository=YYY,sandbox=ZZZ]
+#cvsConnections=[root\=\:pserver\:uid\:pwd@10.124.230.110\:/pub/ftp/084all/cvs,repository\=iflow,sandbox\=d\:/sandbox/iflow/DOCS][root\=\:pserver\:uid\:pwd@133.164.97.10\:/space/cvs,repository\=ps/ProdMgmt,sandbox\=d\:/sandbox/ps/ProdMgmt]
+

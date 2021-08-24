@@ -1,0 +1,42 @@
+<html><body>
+<style>
+.emailbody {
+    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+    border: 2px solid skyblue;
+    padding:10px;
+    border-radius:10px;
+}
+.spacey tr td {
+    padding:5px;
+}}
+</style>
+<div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
+
+<p>This message was sent automatically from Weaver to keep you up to date on the status of your site request.</p>
+<table class="spacey">
+<tr><td>Purpose: &nbsp;</td>
+    <td>You requested a new site.</td></tr>
+<tr><td>Updated by: &nbsp;</td>
+    <td>
+        <a href="{$baseURL}v/FindPerson.htm?uid={$admin.uid}" title="access the profile of this user, if one exists">
+            <span>{$admin.name|html}</span>
+        </a>
+    </td></tr>
+<tr><td>Result: &nbsp;</td>
+    <td><b>{$req.status}</b></td></tr>
+<tr><td>Comment: &nbsp;</td>
+    <td>{$req.adminComment|html}</td></tr>
+<tr><td>Site Name: &nbsp;</td>
+    <td><a href="{$baseURL}t/{$req.siteId}/$/SiteAdmin.htm">{$req.siteName|html}</a></td></tr>
+<tr><td>Description: &nbsp;</td>
+    <td>{$req.purpose|html}</td></tr>
+<tr><td>Requested by: &nbsp; </td>
+    <td>
+        <a href="{$baseURL}v/FindPerson.htm?uid={$req.requester.uid}" title="access the profile of this user, if one exists">
+            <span class="red">{$req.requester|html}</span>
+        </a>
+    </td></tr>
+</table>
+</div>
+
+</body></html>

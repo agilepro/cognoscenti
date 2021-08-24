@@ -1,0 +1,168 @@
+<html>
+<body>
+<style>
+    .spaceyTable {
+        width:100%;
+    }
+    .spaceyTable tr td {
+        padding:10px;
+    }
+    .visibleBox {
+        border: 1px solid darkgray;
+        box-shadow: 1px 1px 1px 0 lightgray inset;
+    }
+</style>
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-click="editMode='main'" 
+          ng-class="editMode=='main'?'qqTabSelected':'qqTabUnselected'">
+        <span ng-hide="isNew">Edit Players for Role: {{roleInfo.name}}</span>
+        <span ng-show="isNew">Create Role</span>
+    </span>
+    <span ng-click="editMode='expert'" ng-hide="isNew"
+          ng-class="editMode=='expert'?'qqTabSelected':'qqTabUnselected'">
+        <span>Advanced</span>
+    </span>
+  </div>
+</div>
+<div class="modal-body">
+    <table ng-hide="isNew || editMode=='expert'" class="spaceyTable">
+        <tr>
+            <td ><label>Color:</label></td>
+            <td>
+                <div style="position:relative">
+                <button class="btn btn-default btn-raised dropdown dropdown-toggle" type="button"
+                        id="menu3"
+                    data-toggle="dropdown" style="background-color:{{roleInfo.color}};">
+                {{roleInfo.color}} <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu3">
+                    <li role="presentation" ng-repeat="color in colors">
+                        <a role="menuitem" style="background-color:{{color}};"
+                        ng-click="roleInfo.color=color;updatePlayers()">{{color}}</a></li>
+                </ul>
+                </div>
+            </td>
+            <td style="width:30px;"></td>
+        </tr>
+        <tr>
+            <td ><label>Players:</label></td>
+            <td colspan="2">
+              <tags-input ng-model="roleInfo.players" placeholder="Enter user name or id"
+                          display-property="name" key-property="uid" 
+                          replace-spaces-with-dashes="false" add-on-space="true" add-on-comma="true"
+                          on-tag-added="updatePlayers()" 
+                          on-tag-removed="updatePlayers()">
+                  <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+              </tags-input>
+            </td>
+        </tr>
+        <tr>
+             <td class="gridTableColummHeader">Description:</td>
+             <td colspan="2">{{roleInfo.description}}</td>
+        </tr>
+        <tr>
+             <td >Term:</td>
+             <td colspan="2">
+                 <span ng-show="currentTerm">
+                      {{currentTerm.termStart | date}} to {{currentTerm.termEnd | date}}.
+                      Nomination status is {{currentTerm.state}}</span>
+                 <span ng-hide="currentTerm">
+                     <i>No current term has been set for this role.  Role players are perpetual.</i></span>
+             </td>
+        </tr>
+        <tr>
+             <td >Responsibities:</td>
+             <td colspan="2">
+                 <span ng-repeat="resp in roleInfo.responsibilities">
+                      {{resp.text}}, </span>
+                 <span ng-show="roleInfo.responsibilities.length==0">
+                     <i>No responsibilities have been set for this role.</i></span>
+             </td>
+        </tr>
+        <tr>
+            <td ></td>
+            <td colspan="2">
+                <div style="float: right;">
+                    <button ng-click="cancel()" class="btn btn-default btn-raised">Close</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table ng-hide="isNew || editMode=='main'" class="spaceyTable">
+        <tr>
+            <td ><label>Email:</label></td>
+            <td>
+                <div ng-repeat="player in roleInfo.players">
+                    {{player.uid}}
+                </div>
+            </td>
+            <td >
+                <div ng-repeat="player in roleInfo.players">
+                    {{player.name}}
+                </div>
+            </td>
+        </tr>
+        <tr>
+             <td >Linked to:</td>
+             <td ng-show="roleInfo.linkedRole">
+                 {{roleInfo.linkedRole}}
+             </td>
+             <td ng-show="roleInfo.linkedRole">
+                 <button ng-click="unLink()" class="btn button-default btn-raised">Unlink</button>
+             </td>
+             <td ng-hide="roleInfo.linkedRole">
+                 <input ng-model="newLinkName" class="form-control" style="width:200px">
+             </td>
+             <td ng-hide="roleInfo.linkedRole">
+                 <button ng-click="makeLink()" class="btn button-default btn-raised">Make Link</button>
+             </td>
+        </tr>
+        <tr>
+            <td ></td>
+            <td colspan="2">
+                <div style="float: right;">
+                    <button ng-click="cancel()" class="btn btn-default btn-raised">Close</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table class="spaceyTable" ng-show="isNew">
+        <tr><td style="height:10px" colspan="3"></td></tr>
+        <tr>
+            <td class="gridTableColummHeader">Name:</td>
+            <td>
+               <input class="form-control" style="max-width:400px" ng-model="roleInfo.name">
+            </td>
+        </tr>
+        <tr>
+            <td ></td>
+            <td style="max-width:500px">
+               <span class="instruction">First create the role, then add member to it.  
+                  Role names can not be changed.  Copy a role to change its name.
+                  The name should be short and should use only letters and numbers.</scan>
+            </td>
+        </tr>
+        <tr>
+            <td >Copy From:</td>
+            <td>
+               <select class="form-control" style="max-width:400px" ng-model="roleToCopy"
+                       ng-options="role.name for role in allRoles">
+                   <option value="">-- choose to copy --</option>
+               </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="gridTableColummHeader"></td>
+            <td>
+                <button ng-click="cancel()" class="btn btn-default btn-raised">Cancel</button> &nbsp; &nbsp; 
+                <button ng-click="createAndClose()" class="btn btn-primary btn-raised">Create Role</button>
+            </td>
+        </tr>
+    </table>
+ 
+</div>
+<div class="modal-footer">
+    
+</div>
+</body>
+</html>

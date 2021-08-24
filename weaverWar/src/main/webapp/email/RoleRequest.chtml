@@ -1,0 +1,40 @@
+<html>
+<style>
+.emailbody {
+    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+    border: 2px solid skyblue;
+    padding:10px;
+    border-radius:10px;
+}
+.niceTable tr td { 
+    padding:8px 
+}
+.smallPrint {
+    margin:10px;
+    font-size:x-small;
+}
+</style>
+<body>
+<div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
+<!--TEMPLATE RoleRequest.chtml-->
+
+
+<p><a href="">{$requester.name|html}</a> has requested to join the role
+<b>'{$roleName}'</b> in the workspace '<a href="{$wsURL}">{$wsName|html}</a>'.   
+</p>
+
+<p>
+They said: <i>{$comment}</i>
+</p>
+<p><a href="{$resourceURL}">Click here to Accept/Deny</a></p>
+
+<p>You can accept or deny this request because you are either an 
+Administrator or Member of this workspace.   If you are not responsible for 
+approving/rejecting this request  you can safely ignore and delete this message.</p>
+
+</div>
+
+{% include OptOut %}
+
+
+</body></html>

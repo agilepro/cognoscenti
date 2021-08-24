@@ -1,0 +1,59 @@
+
+
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-class="'qqTabSelected'">
+    Attach Google Doc
+    </span>
+  </div>
+</div>
+<div class="modal-body"  style="min-height:300px" >
+
+  <div class="col-sm-12 col-md-6">
+    <div class="form-group">
+        <label for="synopsis">File Name:</label>
+        <input ng-model="docInfo.name" class="form-control" placeholder="Enter Desired Name"/>
+    </div>
+    <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea ng-model="docInfo.description" class="form-control" 
+           placeholder="How is this document important for this project/workspace?"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="description">URL:</label>
+        {{docInfo.url}}
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-6">
+    <div class="form-group">
+        <label for="description">Labels:</label>
+              <span class="dropdown" ng-repeat="role in allLabels">
+                <button class="btn btn-sm dropdown-toggle" type="button" id="menu2"
+                   data-toggle="dropdown" style="margin:2px;padding: 2px 5px;font-size: 11px;background-color:{{role.color}};"
+                   ng-show="hasLabel(role.name)">{{role.name}}</button>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                   <li role="presentation"><a role="menuitem" title="{{add}}"
+                      ng-click="toggleLabel(role)">Remove Role:<br/>{{role.name}}</a></li>
+                </ul>
+              </span>
+              <span>
+                 <span class="dropdown">
+                   <button class="btn btn-sm btn-primary btn-raised dropdown-toggle" type="button" id="menu1" data-toggle="dropdown"
+                   style="padding: 2px 5px;font-size: 11px;"> + </button>
+                   <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                     <li role="presentation" ng-repeat="rolex in allLabels">
+                         <button role="menuitem" tabindex="-1" href="#"  ng-click="toggleLabel(rolex)" class="btn btn-sm"
+                         ng-hide="hasLabel(rolex.name)" style="margin:2px;background-color:{{rolex.color}};">
+                             {{rolex.name}}</button></li>
+                   </ul>
+                 </span>
+              </span>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary btn-raised"
+        type="button" ng-click="ok()">Save</button>
+    <button class="btn btn-warning btn-raised" type="button" ng-click="cancel()">
+        Cancel</button>
+</div>

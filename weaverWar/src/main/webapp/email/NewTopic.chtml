@@ -1,0 +1,41 @@
+<html>
+<style>
+.emailbody {
+    font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+    border: 2px solid skyblue;
+    padding:10px;
+    border-radius:10px;
+}
+.smallPrint {
+    margin:10px;
+    font-size:x-small;
+}
+</style>
+<body>
+<div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
+<!--TEMPLATE NewTopic.chtml-->
+<p><b>New topic: </b><a href="{$topicURL}">{$topic.subject|onempty(No Name)|html}</a>
+in workspace <a href="{$wsURL}">{$wsName|onempty(No Name)|html}</a></p>
+
+{$topic.html}
+
+{% if($attList) %}
+<b>Attachments:</b><br/>
+<ul>
+{% loop in $attList as $doc %}
+<li><a href="{$doc.url}">{$doc.name}</a></li>
+{% endloop %}
+</ul>
+{% endif %}
+
+<div style="color:grey;font-weight:bold;">ACTION:  <span><a href="{$replyURL}">Make a Comment</a></span></div>
+
+</div>
+
+{% include OptOut %}
+
+<!--
+//{-dollar- debugDump}
+-->
+
+</body></html>

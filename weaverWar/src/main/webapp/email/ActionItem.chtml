@@ -1,0 +1,66 @@
+<html>
+<style>
+.emailbody {
+    font-family:Arial,Helvetica Neue,Helvetica,sans-serif; 
+    border: 2px solid skyblue;
+    padding:10px;
+    border-radius:10px;
+}
+.niceTable tr td { 
+    padding:8px 
+}
+.smallPrint {
+    font-size:-2;
+}
+</style>
+<body>
+<div style="font-family:Arial,Helvetica Neue,Helvetica,sans-serif;border: 2px solid skyblue;padding:10px;border-radius:10px;">
+<!--TEMPLATE NewTopic.htm-->
+<p>Workspace: <a href="{$wsURL}">{$wsName|onempty(Unnamed Workspace)|html}</a>
+&nbsp; Action Item: <a href="{$actionItemURL}">{$actionItem.synopsis}</a></p>
+<hr/>
+<p>
+{% if ($isFinal == true) %}
+Action item has been closed as <b>{$actionItem.state}</b>:
+{% elseif ($isFuture == true) %}
+Action item is marked to be done in the future: 
+{% elseif ($recipientIsAssignedTask == true) %}
+Action item is assigned to you:
+{% else %}
+Action item has recently changed state or assignees: 
+{% endif %}
+</p>
+
+<table class="niceTable">
+<tr>
+    <td>Synopsis:</td>
+    <td><a href="{$actionItemURL}">{$actionItem.synopsis|onempty(No Synopsis)|html}</a></td>
+</tr>
+<tr>
+    <td>Requested by:</td> 
+    <td>{% loop in $actionItem.requesters as user}{$user}{% divider %}, {% endloop %}</td>
+</tr>
+<tr>
+    <td>Assigned to:</td>
+    <td>{% loop in $actionItem.assignTo as user}{$user.name}{% divider %}, {% endloop %}</td>
+</tr>
+<tr>
+    <td>Description:</td>
+    <td>{$actionItem.description|markdown}</td>
+</tr>
+<tr>
+    <td>State:</td>
+    <td>{$stateName}</td>
+</tr>
+<tr>
+    <td>Due:</td>
+    <td>{$actionItem.duedate|date("MMM dd, YYYY")}</td>
+</tr>
+</table>
+
+</div>
+
+{% include OptOut %}
+
+
+</body></html>

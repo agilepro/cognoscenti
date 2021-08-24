@@ -1,0 +1,155 @@
+<html>
+<body>
+<style>
+    .ta-editor.form-control.myform2-height  {
+        height: 200px;
+        min-height: 200px;
+    }
+    .spacey tr td {
+        padding:8px;
+    }
+    .clipping {
+        overflow: hidden;
+        text-overflow: clip; 
+        border-bottom:1px solid #EEEEEE;
+        border:1px solid gray;
+        height:200px;
+    }
+</style>
+<div class="modal-header qqTabHeader">
+  <div class="qqTabBand">
+    <span ng-click="selectedTab='Update'" 
+          ng-class="selectedTab=='Update'?'qqTabSelected':'qqTabUnselected'">
+    {{getVerbHeader()}} {{commentTypeName()}}
+    </span>
+    <span ng-click="selectedTab='Settings'"  
+          ng-class="selectedTab=='Settings'?'qqTabSelected':'qqTabUnselected'">
+    {{commentTypeName()}} Settings
+    </span>
+    <span ng-click="selectedTab='Responders'"  
+          ng-class="selectedTab=='Responders'?'qqTabSelected':'qqTabUnselected'"
+          ng-show="cmt.commentType==2 || cmt.commentType==3">
+    Responders
+    </span>
+  </div>
+</div>
+<div class="modal-body" style="min-height:400px">
+    <div ng-show="selectedTab=='Update'">
+    	<div ui-tinymce="tinymceOptions" ng-model="cmt.html" 
+             class="leafContent" style="min-height:160px;" id="theOnlyEditor"></div>
+    </div>
+    <div ng-show="selectedTab=='Settings'">
+      <div class="form-group form-horizontal col-md-6">
+        <div class="form-group form-inline">
+          <label>Also Notify:</label>
+          <tags-input ng-model="cmt.notify" placeholder="Enter user name or id"
+                      display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+              <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+          </tags-input>
+        </div>
+        <div class="form-inline form-group">
+          <label>Attachments:</label>
+          <button class="btn btn-sm btn-primary btn-raised" ng-click="openAttachDocument()"
+              title="Attach a document">
+              <i class="fa  fa-plus"></i>/<i class="fa  fa-minus"></i> </button>
+          <div class="clipping">
+              <span ng-repeat="docid in cmt.docList" class="btn btn-sm btn-default btn-raised"  style="margin:4px;">
+                      <img src="../../../assets/images/iconFile.png"> {{getFullDoc(docid).name}}
+              </span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group form-horizontal col-md-6">
+        <table class="spacey">
+          <tr>
+             <td>Exclude:</td>
+             <td><input type="checkbox" ng-model="cmt.excludeSelf"/> Youself</td>
+          </tr>
+          <tr>
+             <td>Email:</td>
+             <td><select class="form-control" ng-model="cmt.suppressEmail">
+                      <option value="false">Send</option>
+                      <option value="true">Suppress</option>
+                  </select></td>
+          </tr>
+          <tr>
+             <td></td>
+             <td>
+                 <span ng-show="cmt.postTime>0">Email sent {{cmt.postTime|date: "dd-MMM-yyyy &nbsp; HH:mm"}}</span>
+                 <span ng-show="cmt.postTime<=0">Email not sent.</span>
+             </td>
+          </tr>
+          <tr>
+             <td>State:</td>
+             <td><select class="form-control" ng-model="cmt.state">
+                      <option value="11">Draft</option>
+                      <option value="12">Open</option>
+                      <option value="13">Closed</option>
+                  </select></td>
+          </tr>
+          <tr>
+             <td>Type:</td>
+             <td><select class="form-control" ng-model="cmt.commentType">
+                      <option value="1">Comment</option>
+                      <option value="2">Proposal</option>
+                      <option value="3">Round</option>
+                  </select></td>
+          </tr>
+          <tr>
+             <td>Due Date:</td>
+             <td>
+                <span datetime-picker ng-model="cmt.dueDate"  
+                    class="form-control" style="max-width:300px">
+                    {{cmt.dueDate|date:"dd-MMM-yyyy   '&nbsp; at &nbsp;'  HH:mm  '&nbsp;  GMT'Z"}}
+                </span> 
+              </td>
+          </tr>
+          <tr>
+             <td>Include:</td>
+             <td><input type="checkbox" ng-model="cmt.includeInMinutes"/> In Minutes</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div ng-show="selectedTab=='Responders'">
+    
+        <div class="form-group form-inline" ng-show="cmt.commentType==2 || cmt.commentType==3">
+          <label>Add Potential Responder:</label>
+          <tags-input ng-model="responders" placeholder="Enter user name or id"
+                      display-property="name" key-property="uid" on-tag-clicked="showUser($tag)">
+              <auto-complete source="loadPersonList($query)" min-length="1"></auto-complete>
+          </tags-input>
+          <div style="color:lightgrey">
+            You can add people here, but removing their name here will have no effect.
+          </div>
+        </div>
+        <div class="gideVocal" ng-show="cmt.commentType<2 || cmt.commentType>3">
+          A {{commentTypeName()}} does not have any responders.
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+	<div class="row">
+		<div class="col-md-4 text-left" id='status'>
+            <button ng-click="save()" class="btn btn-link" ng-disabled="((!unsaved) && (saveDisabled))" style="padding-left: 0" ng-show="autosaveEnabled">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                <span class="text-info">{{getStatusMassage()}}</span>
+            </button>
+
+		</div>
+		<div class="col-md-8 text-right">
+		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised" ng-show="cmt.state<=11">Save Draft</button>
+		  <button ng-click="saveAndClose()" class="btn btn-default btn-raised" ng-hide="cmt.state<=11">Save</button>
+		  <button ng-click="postIt(false)" class="btn btn-primary btn-raised" ng-show="cmt.state<=11">
+				Post without Email</button>
+		  <button ng-click="postIt(true)" class="btn btn-primary btn-raised" ng-show="cmt.state<=11 && allowCommentEmail">
+				Post with Email</button>
+          <button class="btn btn-warning btn-raised" ng-click="cancel()">Cancel</button>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+
+
+<script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
