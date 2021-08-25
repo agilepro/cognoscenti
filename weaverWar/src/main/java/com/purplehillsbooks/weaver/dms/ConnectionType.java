@@ -35,7 +35,6 @@ public interface ConnectionType {
 
     public static final String PTCL_SMB = "SMB";
     public static final String PTCL_WEBDAV = "WEBDAV";
-    public static final String PTCL_CVS = "CVS";
     public static final String PTCL_LOCAL = "LOCAL";
     public static final String PTCL_PUBLIC = "PUBLICWEB";
 

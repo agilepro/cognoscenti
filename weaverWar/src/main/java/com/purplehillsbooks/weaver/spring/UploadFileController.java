@@ -359,20 +359,6 @@ public class UploadFileController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/{siteId}/{pageId}/folderDisplay.htm", method = RequestMethod.GET)
-    protected void folderDisplay(@PathVariable String siteId,
-            @PathVariable String pageId, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar = getLoggedInAuthRequest(request, response, "message.can.not.display.repository.folder");
-            request.setAttribute("fid",ar.defParam("fid",null));
-            showJSPMembers(ar, siteId, pageId, "FolderDisplay");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.project.folder.page", new Object[]{pageId,siteId} , ex);
-        }
-    }
-
-
 
     @RequestMapping(value = "/unDeleteAttachment.ajax", method = RequestMethod.POST)
     protected void unDeleteAttachment( HttpServletRequest request,

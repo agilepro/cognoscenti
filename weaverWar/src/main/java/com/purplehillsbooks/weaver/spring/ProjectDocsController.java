@@ -255,6 +255,7 @@ public class ProjectDocsController extends BaseController {
         }
     }
 
+/*
     @RequestMapping(value="/{siteId}/{pageId}/f/{docId}.{ext}", method = RequestMethod.GET)
     public void loadRemoteDocument(
             @PathVariable String siteId,
@@ -277,6 +278,7 @@ public class ProjectDocsController extends BaseController {
             throw new NGException("nugen.operation.fail.project.download.document", new Object[]{pageId,siteId} , ex);
         }
     }
+*/
 
     /**
     * note that the docid in the path is not needed, but it will be different for

@@ -43,7 +43,6 @@ import com.purplehillsbooks.weaver.util.UploadFiles;
 public class FolderAccessHelper {
 
     private static List<LocalFolderConfig> loaclConnections = null;
-    private static List<CVSConfig> cvsConnections = null;
 
     AuthRequest ar;
 
@@ -84,136 +83,11 @@ public class FolderAccessHelper {
         }
 
     }
-    @Deprecated
-    public static void initCVSConnections(Cognoscenti cog){
-        cvsConnections = new ArrayList<CVSConfig>();
-        String cvsConn = cog.getConfig().getProperty("cvsConnections");
-        if(cvsConn == null){
-            return;
-        }
-        cvsConn = cvsConn.replace('[', ' ');
-        //TODO: get rid of StringTokenizer
-        StringTokenizer st = new StringTokenizer(cvsConn, "]");
-
-        while (st.hasMoreTokens()) {
-            String tok = st.nextToken();
-            //TODO: get rid of StringTokenizer
-            StringTokenizer cst = new StringTokenizer(tok, ",");
-            Properties cvsProp = new Properties();
-            while(cst.hasMoreTokens()){
-                String ctok = cst.nextToken();
-                int indx = ctok.indexOf('=');
-                if(indx > 0){
-                    String pkey = ctok.substring(0,indx).trim();
-                    String pvalue = ctok.substring(indx+1).trim();
-                    cvsProp.put(pkey, pvalue);
-                }
-            }
-
-            CVSConfig cvsConfig = new CVSConfig(
-                    cvsProp.getProperty("root"),
-                    cvsProp.getProperty("repository"),
-                    cvsProp.getProperty("sandbox"));
-            cvsConnections.add(cvsConfig);
-        }
-
-    }
 
 
 
-    /**
-    * Either creates or updates a "resource connection" for a given user
-    * creates a connection if the id is "CREATE"
-    */
-    @Deprecated
-    public static ConnectionSettings updateConnection(AuthRequest ar) throws Exception
-    {
-        UserPage up = ar.getUserPage();
-        String connectionId = ar.reqParam("fid");
-        ConnectionSettings cSet = null;
-        if ("CREATE".equals(connectionId))
-        {
-            cSet = up.createConnectionSettings();
-        }
-        else
-        {
-            cSet = up.getConnectionSettingsOrFail(connectionId);
-        }
-
-        updateSettingsFromRequest(ar, up, cSet);
-        return cSet;
-    }
-
-    @Deprecated
-    public static void updateSettingsFromRequest(AuthRequest ar, UserPage up, ConnectionSettings cSet) throws Exception
-    {
-        String displayName = ar.reqParam(ConnectionType.FORM_FIELD_NAME);
-        String ptc = ar.reqParam(ConnectionType.FORM_FIELD_PRTCL);
-        String serverpath = ar.reqParam(ConnectionType.FORM_FIELD_URL);
-        serverpath = constructValidUrl(serverpath, ptc, ar);
-        String uid = ar.defParam(ConnectionType.FORM_FIELD_UID,"").trim();
-        String pwd = ar.defParam(ConnectionType.FORM_FIELD_PWD,"").trim();
-
-        cSet.setDisplayName(displayName);
-        cSet.setProtocol(ptc);
-        cSet.setBaseAddress(serverpath);
-        cSet.setFolderUserId(uid);
-        if (pwd.length()>0)
-        {
-            //don't change the password if none given
-            cSet.setFolderPassword(pwd);
-        }
-
-        //Set Extended attribute for CVS protocol
-        if(ConnectionType.PTCL_CVS.equalsIgnoreCase(ptc)){
-            String rootModule = ar.reqParam("cvsroot").trim();
-            String module = ar.reqParam("cvsmodule").trim();
-            CVSConfig cvsConfig = getCVSConfig(rootModule);
-            cSet.setCVSRoot(cvsConfig.getRoot());
-            cSet.setCVSModule(module);
-        }else if(ConnectionType.PTCL_LOCAL.equalsIgnoreCase(ptc)){
-            String localRoot = ar.reqParam("localRoot");
-            cSet.setLocalRoot(localRoot);
-        }
-
-        cSet.setLastModified(ar.nowTime);
-        up.saveFile(ar, "requested to create folder " +  displayName);
-    }
 
 
-    @Deprecated
-    public static void deleteConnection(AuthRequest ar, String fid)throws Exception
-    {
-        UserPage up = ar.getUserPage();
-        ConnectionSettings cSet = up.getConnectionSettingsOrFail(fid);
-        cSet.setDeleted(true);
-        up.saveFile(ar, "requested to delete connection ");
-    }
-
-
-
-    @Deprecated
-    public void createNewFolderFile(String symbol,
-                String fileName, UploadFiles ufs)throws Exception {
-        UserPage up = ar.getUserPage();
-        ResourceEntity remoteFolder = up.getResourceFromSymbol(symbol);
-        ConnectionType cType = remoteFolder.getConnection();
-
-        UploadFile ulf = ufs.getFile(0);
-        File tempFile = File.createTempFile(fileName + "_temp",  ".tmp");
-        tempFile.delete();
-        ulf.saveToFile(tempFile);
-        cType.createNewFile(remoteFolder.getFullPath(), fileName, tempFile);
-        tempFile.delete();
-    }
-
-    @Deprecated
-    public void deleteFolder(String symbol)throws Exception
-    {
-        UserPage up = ar.getUserPage();
-        ResourceEntity remote = up.getResourceFromSymbol(symbol);
-        remote.deleteEntity();
-    }
 
 
 
@@ -377,26 +251,6 @@ public class FolderAccessHelper {
             if(validUrl.endsWith("/")){
                 validUrl = validUrl.substring(0, validUrl.length()-1);
             }
-        }else if(ConnectionType.PTCL_CVS.equals(ptcl)){
-            String rootModule = ar.reqParam("cvsroot").trim();
-            String module = ar.reqParam("cvsmodule").trim();
-            CVSConfig cvsConfig = getCVSConfig(rootModule);
-            String sandBox = cvsConfig.getSandbox();
-
-            if(!module.startsWith(rootModule)){
-                validUrl = sandBox;
-            }else if(module.indexOf("..")>0){
-                validUrl = sandBox;
-            }else if(module.length() > rootModule.length()){
-                validUrl = sandBox + module.substring(rootModule.length());
-            }else{
-                validUrl = sandBox;
-            }
-
-            if(validUrl.endsWith("/")){
-                validUrl = validUrl.substring(0, validUrl.length()-1);
-            }
-
         }
 
         return validUrl;
@@ -411,91 +265,11 @@ public class FolderAccessHelper {
         return loaclConnections;
     }
 
-    public static List<CVSConfig> getCVSConnections(){
-        if(cvsConnections == null) {
-            throw new RuntimeException("FolderAccessHelper is not initialized");
-        }
-        return cvsConnections;
-    }
-
-    private static CVSConfig getCVSConfig(String module)throws Exception{
-        List<CVSConfig> v = getCVSConnections();
-        for(int i=0; i<v.size(); i++){
-            String rmodule = v.get(i).getRepository();
-            if(rmodule.equals(module)){
-                return v.get(i);
-            }
-        }
-
-        throw new NGException("nugen.exception.cvs.config.error", new Object[]{module}) ;
-    }
 
 
-    public String getConnectionHealth(String folderId) throws Exception {
-        try
-        {
-            String id = folderId;
-            String rpath = "";
-            int indx = folderId.indexOf('/');
-            if (indx > 0) {
-                id = folderId.substring(0, indx);
-                rpath = folderId.substring(indx);
-            }
-            UserPage up = ar.getUserPage();
-            ConnectionType cType = up.getConnectionOrFail(id);
-            cType.getResourceEntity(rpath, true);
-            ConnectionSettings cSet = up.getConnectionSettingsOrNull(folderId);
-            if((cSet != null)&&(!cSet.isDeleted())){
-                return "Healthy";
-            }else{
-                String unheathyStr = "Unhealthy-Either Connection is deleted or there is some problem with the Connection settings.";
-                return unheathyStr;
-            }
-
-        }catch(Exception e){
-            return "Unhealthy-"+e.getMessage();
-        }
-    }
 
 
-    public Exception getRemoteAccessException(RemoteLinkCombo rlc) throws Exception
-    {
-        try
-        {
-            UserPage up = rlc.getUserPage();
-            ConnectionType cType = up.getConnectionOrFail(rlc.folderId);
-            cType.getResourceEntity(rlc.rpath, false);
-            return null;
-        }
-        catch (Exception e)
-        {
-            return e;
-        }
-    }
 
-    public void changePassword(String folderId) throws Exception {
-        String pwd = ar.defParam(ConnectionType.FORM_FIELD_PWD,"").trim();
-        UserPage up = ar.getUserPage();
-        ConnectionSettings cSet = up.getConnectionSettingsOrFail(folderId);
-        if (pwd.length()>0)
-        {
-            cSet.setFolderPassword(pwd);
-        }
-        up.saveFile(ar, "requested to update the the password of connection " +ar);
-    }
-
-
-    /**
-    * @deprecated, use copyAttachmentToRemote instead
-    */
-    public boolean createCopyInRepository(String userkey, NGWorkspace ngp, String aid,
-            String path, String folderId, boolean isOverwrite) throws Exception {
-
-        UserPage up = ar.getCogInstance().getUserManager().findOrCreateUserPage(userkey);
-        ResourceEntity re = up.getResource(folderId, path);
-
-        return copyAttachmentToRemote(ngp, aid, re, isOverwrite);
-    }
 
 
     public boolean copyAttachmentToRemote(NGWorkspace ngp, String aid, ResourceEntity targetFile, boolean isOverwrite) throws Exception {
@@ -504,77 +278,8 @@ public class FolderAccessHelper {
 
     }
 
-    public List<ConnectionSettings> getAvailableConnections(String resourceAddress)throws Exception {
-        UserPage up = ar.getUserPage();
-        List<ConnectionSettings> filteredConnectionSettingList = new ArrayList<ConnectionSettings>();
-        for(ConnectionSettings cSet : up.getAllConnectionSettings()){
-            if(!cSet.isDeleted()){
-
-                ConnectionType cType = up.getConnectionOrFail(cSet.getId());
-                if(cType.contains(resourceAddress)){
-                    filteredConnectionSettingList.add(cSet);
-                }
-            }
-        }
-        return filteredConnectionSettingList;
-    }
-
-    public void addFileInRepository(String folderId,
-            String fileName, byte[] fileContents) throws Exception {
-        String id = folderId;
-        String rpath = "/";
-        int indx = folderId.indexOf('/');
-        if (indx > 0) {
-            id = folderId.substring(0, indx);
-            rpath = folderId.substring(indx);
-        }
-        UserPage up = ar.getUserPage();
-        ConnectionType cType = up.getConnectionOrFail(id);
-        String path = cType.getFullPath(rpath);
-
-        String suffix = fileName + "_temp";
-        File tempFile = File.createTempFile(suffix,  ".tmp");
-        tempFile.delete();
-        saveToFileFAH(fileContents,tempFile);
-        cType.createNewFile(path, fileName, tempFile);
-        tempFile.delete();
-
-    }
-
-    private static void saveToFileFAH(byte[] fileContents, File destinationFile)
-    throws Exception {
-        if (destinationFile == null) {
-            throw new IllegalArgumentException(
-                "Can not save file.  Destination file must not be null.");
-        }
-
-        if (destinationFile.exists()) {
-            throw new NGException("nugen.exception.file.already.exist", new Object[]{destinationFile});
-        }
-        File folder = destinationFile.getParentFile();
-        if (!folder.exists()) {
-            throw new NGException("nugen.exception.file.already.exist",new Object[]{destinationFile});
-        }
-
-        try {
-            FileOutputStream fileOut = new FileOutputStream(destinationFile);
-            fileOut.write(fileContents);
-            fileOut.close();
-        } catch (Exception e) {
-            throw new NGException("nugen.exception.failed.to.save.file", new Object[]{destinationFile}, e);
-        }
-    }
 
 
-    /**
-    * @deprecated, not needed any more, use RemoteLinkCombo instead
-    */
-    /*
-    public String getFolderId(String rLink) throws Exception{
-        RemoteLinkCombo rlc = RemoteLinkCombo.parseLink(rLink);
-        return rlc.folderId;
-    }
-    */
     /**
     * @deprecated, not needed any more, use RemoteLinkCombo instead
     */

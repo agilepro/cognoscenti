@@ -46,12 +46,6 @@ public class SectionFolders extends SectionUtil implements SectionFormat {
     }
 
 
-    public void deleteFolder(AuthRequest ar, NGWorkspace ngp, NGSection section,
-            String folderId) throws Exception {
-
-        throw new ProgramLogicError("Method Not implemented");
-    }
-
     public void writePlainText(NGSection section, Writer out) throws Exception {
         //silently ignore this request ... no text to produce.
         //necessary for search function

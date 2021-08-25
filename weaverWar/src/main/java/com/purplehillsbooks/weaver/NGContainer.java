@@ -60,27 +60,6 @@ public abstract class NGContainer extends DOMFile
 
 
 
-    /**
-    * Returns the ResourceEntity that represents the remote folder that files
-    * can be stored in.  Returns null if not set.
-    *
-    * When attachments are made to the container, they might be linked to a document
-    * in a repository, or they might not.  If they are not, the members have the
-    * option of copying the document to a repository.  The defaultRepositoryLocation can be set
-    * so that documents stored this way tend get grouped in one place.
-    * While project documents are not forced to be backed up in this location,
-    * it is most convenient for the user if the simplest UI action is to store the
-    * document in the same place that all the other project documents are stored.
-    * When browsing for a place to store a document, the browsing should start at
-    * this location.
-    */
-    //public abstract ResourceEntity getDefRemoteFolder() throws Exception;
-    /**
-    * Construct a valid ResourceEntity that points to a folder to set this.
-    * Pass a null to clear the setting
-    */
-    //public abstract void setDefRemoteFolder(ResourceEntity loc) throws Exception;
-
 
     /**
     * A role is a collection of user reference objects with a name, description

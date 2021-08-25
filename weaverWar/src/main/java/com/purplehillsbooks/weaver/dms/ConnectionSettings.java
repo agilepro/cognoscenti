@@ -205,26 +205,6 @@ public class ConnectionSettings extends DOMFace {
         setAttribute("lmodified", Long.toString(lmodified));
     }
 
-    public String getExtendedAttribute(String name){
-        return getAttribute(name);
-    }
-
-    public void setCVSModule(String value){
-        setAttribute("cvsModule", value);
-    }
-
-    public void setCVSRoot(String value){
-        setAttribute("cvsRoot", value);
-    }
-
-    public String getCVSModule(){
-        return getAttribute("cvsModule");
-    }
-
-    public String getCVSRoot(){
-        return getAttribute("cvsRoot");
-    }
-
     public boolean isDeleted(){
         String isDeleted = getAttribute(ATT_IS_DELETED);
         if (isDeleted == null)
@@ -255,8 +235,6 @@ public class ConnectionSettings extends DOMFace {
             return new WebDavAccess(this);
         }else if(ConnectionType.PTCL_SMB.equals(ptcl)){
             return new SMBAccess(this);
-        }else if(ConnectionType.PTCL_CVS.equals(ptcl)){
-             return new CVSAccess(this, null);
         }else if(ConnectionType.PTCL_LOCAL.equals(ptcl)){
             return new LocalAccess(this);
         }else{

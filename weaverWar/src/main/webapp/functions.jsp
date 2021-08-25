@@ -18,7 +18,6 @@
 %><%@page import="com.purplehillsbooks.weaver.SectionAttachments"
 %><%@page import="com.purplehillsbooks.weaver.SectionForNotes"
 %><%@page import="com.purplehillsbooks.weaver.SectionDef"
-%><%@page import="com.purplehillsbooks.weaver.SectionFolders"
 %><%@page import="com.purplehillsbooks.weaver.SectionFormat"
 %><%@page import="com.purplehillsbooks.weaver.SectionTask"
 %><%@page import="com.purplehillsbooks.weaver.SectionUtil"
@@ -545,94 +544,10 @@
     }
 
 
-    private void displayHeader(AuthRequest ar, ResourceEntity ent, String pageId)throws Exception {
-        ar.write("Repository Folder: ");
-        String symbol = ent.getSymbol();
-        int indx = symbol.indexOf('/');
-        String relPath = symbol.substring(0, indx);
-        String folderId = symbol.substring(indx);
-
-        String fdname = ent.getDisplayName();
-        int indx2 = fdname.indexOf('/');
-        if (indx2 > 0) {
-            fdname = fdname.substring(0, indx2);
-        }
-
-        String dname = fdname;
-        String dlink = ar.retPath + "FolderDisplay.jsp?symbol="
-            + URLEncoder.encode(symbol, "UTF-8");
-
-        if(pageId != null){
-            dlink = dlink + "&p=" + URLEncoder.encode(pageId, "UTF-8");
-        }
-
-        ar.write("  <a href=\"");
-        ar.writeHtml(dlink);
-        ar.write("\">");
-        ar.writeHtml(dname);
-        ar.write("</a>");
-
-        if (folderId != null) {
-            //TODO: get rid of StringTokenizer
-            StringTokenizer st = new StringTokenizer(folderId, "/");
-            while (st.hasMoreTokens()) {
-                String tok = st.nextToken();
-                dlink = dlink + "/" + URLEncoder.encode(tok, "UTF-8");
-                ar.write("/");
-                ar.write("<a href=\"");
-                ar.writeHtml(dlink);
-                if (folderId.endsWith("/"))
-                    ar.writeHtml("/");
-                ar.write("\">" + tok + "</a>");
-            }
-        }
-
-    }
 
 
-         public void displayRepositoryList(AuthRequest ar, String pageId)
-                throws Exception {
-        try {
-            Writer out = ar.w;
 
-            UserPage uPage = ar.getUserPage();
-            ar.write("<table class=\"Design8\" width=\"98%\" id=\"folderTable\">");
-            ar.write("<col width=\"300\"/>");
-            ar.write("<col width=\"300\"/>");
-
-            for (ConnectionSettings cSet : uPage.getAllConnectionSettings()) {
-
-                ar.write("\n<tr>");
-                ar.write("\n  <td align=\"left\">");
-                ar.write("\n  <h3>");
-
-                String dname = getShortName(cSet.getDisplayName(), 38);
-
-                // note the slash for the root directory of the connection
-                String fdLink = ar.retPath + "FolderDisplay.jsp?symbol="
-                   + URLEncoder.encode(cSet.getId(), "UTF-8")
-                   + "/&p=" + URLEncoder.encode(pageId, "UTF-8");
-
-                ar.write("  <a href=\"");
-                ar.writeHtml(fdLink);
-                ar.write("\"");
-                writeTitleAttribute(ar, cSet.getDisplayName(), 38);
-                ar.write("><img allign=\"absbottom\" src=\"");
-                ar.write(ar.retPath);
-                ar.write("cfolder.gif");
-                ar.write("\">");
-                ar.writeHtml(dname);
-                ar.write("</a>");
-                ar.write("\n  </td>");
-                ar.write("\n</tr>");
-            }
-            ar.write("</table>");
-        } catch (Exception e) {
-            throw new Exception("Unable to display root folders for project "+pageId, e);
-        }
-
-    }
-
+ 
 
 
     //used by header and pages to redirect to new UI

@@ -337,38 +337,6 @@ public class AttachmentRecord extends CommentContainer {
                 getModifiedDate(), event, ar, comment);
     }
 
-    /**
-     * Document no longer carry a public/private designator.
-     * All documents are private unless exposed by a port.
-     *
-    private int getVisibility() {
-        return (int) safeConvertLong(getScalar("visibility"));
-    }
-
-    private void setVisibility(int viz) {
-        if (viz < SectionDef.PUBLIC_ACCESS) {
-            throw new RuntimeException("Visibility of an attachment can not be set to a value "
-                    + "less than one.  Attempt to set visibility to " + viz);
-        }
-        if (viz > SectionDef.MEMBER_ACCESS) {
-            throw new RuntimeException("Visibility of an attachment can not be set to a value "
-                    + "greater than two.  Attempt to set visibility to " + viz);
-        }
-        setScalar("visibility", Integer.toString(viz));
-    }
-
-    public boolean isPublic() {
-        return (getVisibility()==1);
-    }
-    public void setPublic(boolean pubval) {
-        if (pubval) {
-            setVisibility(SectionDef.PUBLIC_ACCESS);
-        }
-        else {
-            setVisibility(SectionDef.MEMBER_ACCESS);
-        }
-    }
-    */
 
     public int getVersion() {
         return getAttributeInt("version");

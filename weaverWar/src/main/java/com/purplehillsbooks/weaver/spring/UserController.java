@@ -253,16 +253,6 @@ public class UserController extends BaseController {
     }
 
 
-    /**
-    * This lists the connections so that a user can select one when browsing
-    * to attach a document.
-    */
-    @RequestMapping(value = "/{userKey}/ListConnections.htm", method = RequestMethod.GET)
-    public void folderDisplay(@PathVariable String userKey,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        AuthRequest ar = AuthRequest.getOrCreate(request, response);
-        streamJSPUserLoggedIn(ar, userKey, "ListConnections");
-    }
 
     @RequestMapping(value = "/{userKey}/searchAllNotes.htm")
     public void searchAllNotes(@PathVariable String userKey,
@@ -607,40 +597,7 @@ public class UserController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/deleteUserId.ajax", method = RequestMethod.POST)
-    public void deleteUserId(HttpServletRequest request, HttpServletResponse response)
-    throws Exception {
 
-        AuthRequest ar = null;
-        try{
-            ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("You need to login to perform this function.");
-
-            String action = ar.reqParam("action");
-            String u = ar.reqParam("u");
-            String modid = ar.reqParam("modid");
-
-            UserProfile profile = ar.getCogInstance().getUserManager().lookupUserByAnyId(u);
-
-            if (action.equals("removeId"))
-            {
-                String delconf = ar.defParam("delconf", null);
-                if (delconf==null || delconf.length()==0) {
-                    throw new NGException("message.user.profile.error", null);
-                }
-                profile.removeId(modid);
-                profile.setLastUpdated(ar.nowTime);
-                ar.getCogInstance().getUserManager().saveUserProfiles();
-
-                JSONObject paramMap = new JSONObject();
-                paramMap.put("msgType" , "success");
-                paramMap.put("modid", modid);
-                sendJson(ar, paramMap);
-            }
-        }catch(Exception ex){
-            streamException(ex,ar);
-        }
-    }
 
     @RequestMapping(value = "/{siteId}/{pageId}/approveOrRejectRoleReqThroughMail.htm", method = RequestMethod.GET)
     public void gotoApproveOrRejectRoleReqPage(
@@ -682,117 +639,10 @@ public class UserController extends BaseController {
     }
 
 
-    /**
-    * user key must be valid and must be logged in user
-    * must have a "path" parameter to say the path in the folder
-    * path ALWAYS starts with a slash.  Use just a slash to get root.
-    */
-    @RequestMapping(value = "/{userKey}/folder{folderId}.htm", method = RequestMethod.GET)
-    public void folderDisplay2(@PathVariable String userKey, @PathVariable String folderId,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        try{
-            request.setAttribute("folderId", folderId);
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Need to log in to see remote folder page.");
-            UserPage uPage = ar.getUserPage();
-            String path = ar.defParam("path", "/");
-
-            //test to see if things are working OK before going to the JSP level
-            uPage.getConnectionOrFail(folderId);
-            FolderAccessHelper fdh = new FolderAccessHelper(ar);
-            fdh.getRemoteResource(folderId, path, true);
-
-            request.setAttribute("path", path);
-
-            //this is deprecated ... remove soon
-            request.setAttribute("fid", folderId + path);
-            streamJSPUserLoggedIn(ar, userKey, "FolderDisplay");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.user.folder.page", new Object[]{userKey}, ex);
-        }
-    }
-
-    @RequestMapping(value = "/{userKey}/BrowseConnection{folderId}.htm", method = RequestMethod.GET)
-    public void folderDisplay5(@PathVariable String userKey,
-            @PathVariable String folderId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Need to log in to see page.");
-            UserPage uPage = ar.getUserPage();
-            uPage.getConnectionOrFail(folderId);
-
-            String path = ar.defParam("path", "/");
-
-            //verify that the resource path is properly formed
-            uPage.getResource(folderId, path);
-
-            String p = ar.reqParam("p");
-            ar.getCogInstance().getWSByCombinedKeyOrFail(p);
-            request.setAttribute("folderId", folderId);
-            request.setAttribute("path", path);
-            streamJSPUserLoggedIn(ar, userKey, "BrowseConnection");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.browse.connection.page", new Object[]{userKey}, ex);
-        }
-    }
 
 
-    @RequestMapping(value = "/{userKey}/fd{folderId}/show.htm", method = RequestMethod.GET)
-    public void folderDisplay3(@PathVariable String userKey, @PathVariable String folderId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
 
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Need to log in to see remote folder page.");
-            String path = "/";  //debug
-            request.setAttribute("fid", folderId + path);
-            streamJSPUserLogged2(request, response, userKey, "../jsp/FolderDisplay");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.page", new Object[]{userKey}, ex);
-        }
-    }
 
-    @RequestMapping(value = "/{userKey}/fd{folderId}/*/show.htm", method = RequestMethod.GET)
-    public void folderDisplay4(@PathVariable String userKey, @PathVariable String folderId,
-            HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
-
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Need to log in to see remote folder page.");
-            String path = "/";  //debug
-            request.setAttribute("fid", folderId + path);
-            streamJSPUserLogged2(request, response, userKey, "../jsp/FolderDisplay");
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.page", new Object[]{userKey}, ex);
-        }
-    }
-
-    @RequestMapping(value="/{userKey}/f{folderId}/remote.htm", method = RequestMethod.GET)
-    public void loadRemoteDocument(
-            @PathVariable String userKey,
-            @PathVariable String folderId,
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        try{
-            AuthRequest ar  = AuthRequest.getOrCreate(request, response);
-            if(!ar.isLoggedIn()){
-                sendRedirectToLogin(ar);
-                return;
-            }
-
-            String path = ar.reqParam("path");
-
-            FolderAccessHelper fah = new FolderAccessHelper(ar);
-            fah.serveUpRemoteFile(folderId+path);
-        }catch(Exception ex){
-            throw new NGException("nugen.operation.fail.page", new Object[]{userKey}, ex);
-        }
-    }
 
     @RequestMapping(value = "/addEmailToProfile.form", method = RequestMethod.POST)
     public void addEmailToProfile(HttpServletRequest request, HttpServletResponse response)

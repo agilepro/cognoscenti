@@ -1918,68 +1918,6 @@ public abstract class NGPage extends ContainerCommon {
         return(aVer.getLocalFile());
     }
 
-    /**
-    * Returns the ResourceEntity that represents the remote folder that files
-    * can be stored in.  Returns null if not set.
-    */
-    public ResourceEntity getDefRemoteFolder() throws Exception {
-        String userKey = getDefUserKey();
-        String connId = getDefFolderId();
-        String fullPath = getDefLocation();
-        if (userKey==null || userKey.length()==0 || connId==null || connId.length()==0 ||
-            fullPath==null || fullPath.length()==0 ) {
-            return null;
-        }
-        UserPage uPage = UserManager.getStaticUserManager().findOrCreateUserPage(userKey);
-        ConnectionSettings defCSet = uPage.getConnectionSettingsOrNull(connId);
-        if (defCSet==null) {
-            //if ID is invalid, treat it like it does not exist
-            return null;
-        }
-        ConnectionType cType = defCSet.getConnectionOrFail();
-        return cType.getResource(fullPath);
-    }
-    /**
-    * Pass a null to clear the setting
-    */
-    public void setDefRemoteFolder(ResourceEntity loc) throws Exception {
-        if (loc==null) {
-            setDefUserKey(null);
-            setDefFolderId(null);
-            setDefLocation(null);
-            return;
-        }
-
-        ConnectionType cType = loc.getConnection();
-        setDefUserKey(cType.getOwnerKey());
-        setDefFolderId(loc.getFolderId());
-        setDefLocation(loc.getFullPath());
-    }
-
-
-    public String getDefLocation() throws Exception {
-        return attachParent.getAttribute("defaultRepository");
-    }
-
-    public void setDefLocation(String loc) throws Exception {
-        attachParent.setAttribute("defaultRepository", loc);
-    }
-
-    public String getDefFolderId() throws Exception {
-        return attachParent.getAttribute("defaultFolderId");
-    }
-
-    public void setDefFolderId(String folderId) throws Exception {
-        attachParent.setAttribute("defaultFolderId", folderId);
-    }
-
-    public String getDefUserKey() throws Exception {
-        return attachParent.getAttribute("defaultUserKey");
-    }
-
-    public void setDefUserKey(String userKey) throws Exception {
-        attachParent.setAttribute("defaultUserKey", userKey);
-    }
 
     //////////////////// HISTORY ///////////////////////
 
