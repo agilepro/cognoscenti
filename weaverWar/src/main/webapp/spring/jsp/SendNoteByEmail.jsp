@@ -136,7 +136,6 @@ Optional Parameters:
                 <input type="hidden" name="encodingGuard" value="<%ar.writeHtml("\u6771\u4eac");%>"/>
                 <input type="hidden" name="p"       value="<%ar.writeHtml(p);%>"/>
                 <input type="hidden" name="oid"     value="<%ar.writeHtml(oid);%>"/>
-                <input type="hidden" name="go"      value="<%=ar.retPath%>t/closeWindow.htm"/>
                 <input type="hidden" name="toRole"/>
                 <!--<input type="hidden" name="anyErrors"     value=""/>-->
                 <div style="float:right">

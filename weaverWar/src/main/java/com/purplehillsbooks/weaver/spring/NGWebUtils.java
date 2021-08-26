@@ -41,7 +41,7 @@ public class NGWebUtils {
         return jsonMsg;
     }
 
-
+/*
     public static List<AddressListEntry> getExistingContacts(UserPage up)
             throws Exception {
         List<AddressListEntry> existingContacts = null;
@@ -53,37 +53,7 @@ public class NGWebUtils {
         }
         return existingContacts;
     }
+    */
 
-    public static void addMembersInContacts(AuthRequest ar,
-            List<AddressListEntry> contactList) throws Exception {
-        UserPage up = ar.getUserPage();
-        if (contactList != null) {
-            NGRole role = up.getContactsRole();
-            for (AddressListEntry ale : contactList) {
-                role.addPlayerIfNotPresent(ale);
-            }
-            up.saveFile(ar, "Added contacts");
-        }
-    }
-
-    public static void updateUserContactAndSaveUserPage(AuthRequest ar,
-            String op, String emailIds) throws Exception {
-        UserPage up = ar.getUserPage();
-        if (emailIds.length() > 0) {
-            if (op.equals("Remove")) {
-                NGRole role = up.getContactsRole();
-                AddressListEntry ale = AddressListEntry
-                        .newEntryFromStorage(emailIds);
-                role.removePlayer(ale);
-                up.saveFile(ar, "removed user " + emailIds + " from role "
-                        + role.getName());
-            } else if (op.equals("Add")) {
-
-                List<AddressListEntry> contactList = AddressListEntry
-                        .parseEmailList(emailIds);
-                NGWebUtils.addMembersInContacts(ar, contactList);
-            }
-        }
-    }
 
 }

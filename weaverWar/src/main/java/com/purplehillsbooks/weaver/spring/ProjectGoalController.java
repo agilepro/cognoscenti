@@ -42,6 +42,7 @@ import com.purplehillsbooks.weaver.ProcessRecord;
 import com.purplehillsbooks.weaver.SectionUtil;
 import com.purplehillsbooks.weaver.TaskArea;
 import com.purplehillsbooks.weaver.UserManager;
+import com.purplehillsbooks.weaver.UserPage;
 import com.purplehillsbooks.weaver.UserProfile;
 import com.purplehillsbooks.weaver.UtilityMethods;
 import com.purplehillsbooks.weaver.exception.NGException;
@@ -193,7 +194,7 @@ public class ProjectGoalController extends BaseController {
             taskActionCreate(ar, ngp, request, taskId);
 
             String assignto= ar.defParam("assignto", "");
-            NGWebUtils.updateUserContactAndSaveUserPage(ar, "Add",assignto);
+            updateUserContactAndSaveUserPage(ar, "Add",assignto);
 
             String go = ar.reqParam("go");
             ar.resp.sendRedirect(go);
@@ -401,7 +402,7 @@ public class ProjectGoalController extends BaseController {
             else{
                 goalRole.clear();
                 goalRole.addPlayer(new AddressListEntry(assignee));
-                NGWebUtils.updateUserContactAndSaveUserPage(ar, "Add" ,assignto);
+                updateUserContactAndSaveUserPage(ar, "Add" ,assignto);
             }
 
             task.setModifiedDate(ar.nowTime);
@@ -980,5 +981,36 @@ public class ProjectGoalController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         showJSPMembers(ar, siteId, pageId, "RulesList");
     }
+    
+    private static void addMembersInContacts(AuthRequest ar,
+            List<AddressListEntry> contactList) throws Exception {
+        UserPage up = ar.getUserPage();
+        if (contactList != null) {
+            NGRole role = up.getContactsRole();
+            for (AddressListEntry ale : contactList) {
+                role.addPlayerIfNotPresent(ale);
+            }
+            up.saveFile(ar, "Added contacts");
+        }
+    }
 
+    private static void updateUserContactAndSaveUserPage(AuthRequest ar,
+            String op, String emailIds) throws Exception {
+        UserPage up = ar.getUserPage();
+        if (emailIds.length() > 0) {
+            if (op.equals("Remove")) {
+                NGRole role = up.getContactsRole();
+                AddressListEntry ale = AddressListEntry
+                        .newEntryFromStorage(emailIds);
+                role.removePlayer(ale);
+                up.saveFile(ar, "removed user " + emailIds + " from role "
+                        + role.getName());
+            } else if (op.equals("Add")) {
+
+                List<AddressListEntry> contactList = AddressListEntry
+                        .parseEmailList(emailIds);
+                addMembersInContacts(ar, contactList);
+            }
+        }
+    }
 }

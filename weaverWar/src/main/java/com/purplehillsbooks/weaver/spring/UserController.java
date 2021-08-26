@@ -87,10 +87,12 @@ import com.purplehillsbooks.streams.MemFile;
 @Controller
 public class UserController extends BaseController {
 
+/*
     protected void initBinder(HttpServletRequest request,
             ServletRequestDataBinder binder) throws ServletException {
         binder.registerCustomEditor(byte[].class,new ByteArrayMultipartFileEditor());
     }
+    */
 
 
     public void streamJSPUserLoggedIn(AuthRequest ar, String userKey, String jspName) throws Exception {
@@ -117,6 +119,7 @@ public class UserController extends BaseController {
     }
 
 
+/*
     @RequestMapping(value = "/{userKey}/userProfile.htm", method = RequestMethod.GET)
     public void loadProfile(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response)
@@ -134,6 +137,7 @@ public class UserController extends BaseController {
         AuthRequest ar = AuthRequest.getOrCreate(request, response);
         redirectBrowser(ar,"watchedProjects.htm");
     }
+    */
 
 
 
@@ -327,7 +331,7 @@ public class UserController extends BaseController {
         }
     }
 
-
+/*
     @RequestMapping(value = "/{userKey}/RefreshFromRemoteProfiles.form", method = RequestMethod.POST)
     public void RefreshFromRemoteProfiles(@PathVariable String userKey,
             HttpServletRequest request,
@@ -354,7 +358,7 @@ public class UserController extends BaseController {
             throw new Exception("Unable to refresh consolidates action items list from remote profiles", ex);
         }
     }
-
+*/
 
     @RequestMapping(value = "/{userKey}/EditUserProfileAction.form", method = RequestMethod.POST)
     public void updateUserProfile(HttpServletRequest request, HttpServletResponse response,
@@ -421,7 +425,7 @@ public class UserController extends BaseController {
         }
     }
 
-
+/*
     @RequestMapping(value = "/approveOrRejectRoleRequest.ajax", method = RequestMethod.POST)
     public void approveOrRejectRoleRequest(HttpServletRequest request, HttpServletResponse response)
     throws Exception {
@@ -507,7 +511,7 @@ public class UserController extends BaseController {
             streamException(ex,ar);
         }
     }
-
+*/
 
 
     @RequestMapping(value = "/{userKey}/uploadImage.form", method = RequestMethod.POST)
@@ -643,7 +647,7 @@ public class UserController extends BaseController {
 
 
 
-
+/*
     @RequestMapping(value = "/addEmailToProfile.form", method = RequestMethod.POST)
     public void addEmailToProfile(HttpServletRequest request, HttpServletResponse response)
     throws Exception {
@@ -681,7 +685,9 @@ public class UserController extends BaseController {
             throw new NGException("nugen.operation.fail.add.mail.to.profile", null, ex);
         }
     }
+*/
 
+/*
     @RequestMapping(value="/{userKey}/uploadContacts.form", method = RequestMethod.POST)
     public void uploadContacts(
             @PathVariable String userKey,
@@ -725,7 +731,7 @@ public class UserController extends BaseController {
             throw new NGException("nugen.operation.fail.upload.contacts", new Object[]{userKey}, ex);
         }
     }
-
+*/
 
     @RequestMapping(value="/updateMicroProfile.json", method = RequestMethod.POST)
     public void updateMicroProfile(HttpServletRequest request,
@@ -747,6 +753,7 @@ public class UserController extends BaseController {
         }
     }
 
+/*
     @RequestMapping(value="/editMicroProfileDetail.form", method = RequestMethod.POST)
     public void editMicroProfileDetail(
 
@@ -769,8 +776,9 @@ public class UserController extends BaseController {
             throw new NGException("nugen.operation.fail.edit.micro.profile", null, ex);
         }
     }
+*/
 
-
+/*
     @RequestMapping(value="/getPeopleYouMayKnowList.ajax", method = RequestMethod.POST)
     public void getPeopleYouMayKnowList(
             HttpServletRequest request,
@@ -792,24 +800,11 @@ public class UserController extends BaseController {
             streamException(ex, ar);
         }
     }
+*/
 
-    @RequestMapping(value="/{userKey}/confirmedAddIdView.htm", method = RequestMethod.GET)
-    public void openConfirmedAddIdView(
-            @PathVariable String userKey,
-            HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
 
-        try{
-            AuthRequest ar = AuthRequest.getOrCreate(request, response);
-            ar.assertLoggedIn("Can not open confirm page.");
-            request.setAttribute("userKey", ar.getUserProfile().getKey());
-            streamJSPUserLogged2(request, response, userKey, "../jsp/confirmedAddIdView");
-        }
-        catch(Exception ex){
-            throw new NGException("nugen.operation.fail.open.confirm.added.id.view", new Object[]{userKey}, ex);
-        }
-    }
 
+/*
     @RequestMapping(value="/{userKey}/changeListenerSettings.form", method = RequestMethod.POST)
     public void changeListenerSettings(
             HttpServletRequest request,
@@ -842,7 +837,7 @@ public class UserController extends BaseController {
             throw new NGException("nugen.operation.fail.to.change.listener.settings", null, ex);
         }
     }
-
+*/
 
     @RequestMapping(value = "/{userKey}/notificationSettings.htm", method = RequestMethod.GET)
     public void goToNotificationSetting(@PathVariable String userKey,
@@ -1012,7 +1007,7 @@ public class UserController extends BaseController {
         }
     }
 
-
+/*
     @RequestMapping(value = "/{userKey}/userContacts.htm", method = RequestMethod.GET)
     public void userContacts(@PathVariable String userKey,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -1053,7 +1048,7 @@ public class UserController extends BaseController {
             throw new NGException("nugen.operation.fail.userprofile.page", new Object[]{userKey} , ex);
         }
     }
-
+*/
 
 
     @RequestMapping(value = "/{userKey}/searchNotes.json", method = RequestMethod.POST)

@@ -57,11 +57,13 @@ public class UploadFileController extends BaseController {
     public void setContext(ApplicationContext context) {
     }
 
+    /*
     protected void initBinder(HttpServletRequest request,
             ServletRequestDataBinder binder) throws ServletException {
 
         binder.registerCustomEditor(byte[].class,new ByteArrayMultipartFileEditor());
     }
+    */
 
     @RequestMapping(value = "/{siteId}/{pageId}/upload.form", method = RequestMethod.POST)
     protected void uploadFile(  @PathVariable String siteId, @PathVariable String pageId,
@@ -211,7 +213,7 @@ public class UploadFileController extends BaseController {
 
 
 
-    //TODO: do we
+    /*
     @RequestMapping(value = "/{siteId}/{pageId}/createLinkURL.form", method = RequestMethod.POST)
     protected void createLinkURL(@PathVariable String siteId,
             @PathVariable String pageId, HttpServletRequest request,
@@ -250,6 +252,7 @@ public class UploadFileController extends BaseController {
             throw new NGException("nugen.operation.fail.project.create.link.url.to.project", new Object[]{pageId,siteId} , ex);
         }
     }
+    */
 
 
     @RequestMapping(value = "/{siteId}/{pageId}/linkURLToProject.htm", method = RequestMethod.GET)
@@ -317,6 +320,7 @@ public class UploadFileController extends BaseController {
 
 
 
+/*
     @RequestMapping(value = "/unDeleteAttachment.ajax", method = RequestMethod.POST)
     protected void unDeleteAttachment( HttpServletRequest request,
             HttpServletResponse response) throws Exception {
@@ -340,6 +344,7 @@ public class UploadFileController extends BaseController {
             streamException(ex,ar);
         }
     }
+*/
 
      @RequestMapping(value = "/{siteId}/{pageId}/remindAttachment.htm", method = RequestMethod.GET)
      protected void remindAttachment(@PathVariable String siteId,

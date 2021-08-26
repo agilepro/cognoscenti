@@ -197,64 +197,8 @@ public class CreateProjectController extends BaseController {
         return newWorkspace;
     }
 
-    private static NGWorkspace createTemplateProject(AuthRequest ar, String siteId) throws Exception {
-        try {
 
-            NGBook site = ar.getCogInstance().getSiteByIdOrFail(siteId);
-            if (!site.primaryOrSecondaryPermission(ar.getUserProfile())) {
-                throw new NGException("nugen.exception.not.a.member.of.account",
-                        new Object[] { site.getFullName() });
-            }
 
-            String projectName = ar.reqParam("projectname").trim();
-            NGWorkspace newWorkspace = createWorkspace(ar, site, projectName);
-            ar.setPageAccessLevels(newWorkspace);
-
-            String templateName = ar.defParam("templateName", null);
-            if (templateName!=null && templateName.length()>0) {
-                NGWorkspace template_ngp = ar.getCogInstance().getWSByCombinedKeyOrFail(templateName).getWorkspace();
-                newWorkspace.injectTemplate(ar, template_ngp);
-            }
-            newWorkspace.saveContent(ar, "workspace created from template: "+templateName);
-            return newWorkspace;
-        } catch (Exception ex) {
-            throw new Exception("Unable to create a workspace from template for site "
-                    +siteId, ex);
-        }
-    }
-
-    private static void linkSubProcessToTask(AuthRequest ar, NGWorkspace subProject, String goalId,
-            String parentProcessUrl) throws Exception {
-
-        int beginOfPageKey = parentProcessUrl.indexOf("/p/") + 3;
-        int endOfPageKey = parentProcessUrl.indexOf("/", beginOfPageKey);
-        String projectKey = parentProcessUrl.substring(beginOfPageKey, endOfPageKey);
-
-        ProcessRecord process = subProject.getProcess();
-        process.setSynopsis("Goal Setting");
-        process.setDescription("Purpose of Workspace Setting");
-
-        subProject.saveFile(ar, "Changed Goal and/or Purpose of Workspace");
-        LicensedURL parentLicensedURL = null;
-
-        if (parentProcessUrl != null && parentProcessUrl.length() > 0) {
-            parentLicensedURL = LicensedURL.parseCombinedRepresentation(parentProcessUrl);
-            process.addLicensedParent(parentLicensedURL);
-        }
-        // link up the project with the workspace task link
-        if (parentLicensedURL != null) {
-            LicensedURL thisUrl = process.getWfxmlLink(ar);
-
-            // this is the subprocess address to link to
-            String subProcessURL = thisUrl.getCombinedRepresentation();
-            NGWorkspace parentProject = ar.getCogInstance().getWSByCombinedKeyOrFail(projectKey).getWorkspace();
-
-            GoalRecord goal = parentProject.getGoalOrFail(goalId);
-            goal.setSub(subProcessURL);
-            goal.setState(BaseRecord.STATE_WAITING);
-            parentProject.saveFile(ar, "Linked with Subprocess");
-        }
-    }
 
     @RequestMapping(value = "/NewSiteApplication.htm", method = RequestMethod.GET)
     public void NewSiteApplication(HttpServletRequest request, HttpServletResponse response)
