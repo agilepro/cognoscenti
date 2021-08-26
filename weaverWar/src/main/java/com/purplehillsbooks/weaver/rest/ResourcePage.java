@@ -176,7 +176,7 @@ public class ResourcePage implements NGResource
             String sname =  DOMUtils.getChildText(element_section,"secname").trim();
             if(sname != null && sname.length()>0
                 && newWorkspace.getSection(sname) == null){
-                newWorkspace.createSection(sname, ar);
+                throw new Exception("Create section no longer allowed. Protocol can not any longer create sections");
             }
 
             NGSection ngs = newWorkspace.getSectionOrFail(sname);

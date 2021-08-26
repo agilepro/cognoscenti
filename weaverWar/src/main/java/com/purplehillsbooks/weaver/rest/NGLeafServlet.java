@@ -214,22 +214,17 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
                 pageid = pageid.toLowerCase();
                 ngpi = ar.getCogInstance().getWSByCombinedKeyOrFail(pageid);
                 if (ngpi == null) {
-                    throw new NGException("nugen.exception.project.not.found.check.link", new Object[]{pageid});
+                    throw new Exception("Unable to find a workspace with the name: "+pageid);
                 }
             }
-            if (!ngpi.isProject())
-            {
-                throw new NGException("nugen.exception.looking.for.project", new Object[]{pageid});
+            if (!ngpi.isProject()) {
+                throw new Exception("Something is wrong with the workspace name: "+pageid);
             }
 
             //get the relative path needed to get to the root the application
 
             //this is the default resource
             if (resource.length()==0) {
-                resource = "FrontPage.htm";
-            }
-            if (resource.equals("leaf.htm")) {
-                //legacy migration, old links to leaf.htm should be converted.
                 resource = "FrontPage.htm";
             }
 
@@ -247,10 +242,9 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
             }
 
             if (resource.equals("process4.htm")) {
-                ar.req.setAttribute("max", "4");
-                ar.invokeJSP("leaf_process.jsp");
-                return;
+                throw new Exception("NGLeafServlet does not know how to handle the resource: "+resource);
             }
+            
             if (resource.startsWith("leaflet")) {
                 //form has to be leafletXXXX.htm  where XXXX is a
                 //four digit identifier
@@ -275,10 +269,15 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
             }
             if (resource.equals("process.xml")) {
                 ngw.genProcessData(ar);
-            } else if (resource.endsWith("wfxml")) {
+                return;
+            } 
+            if (resource.endsWith("wfxml")) {
+                System.out.println("A WFXML request has occurred");
                 if (resource.equals("process.wfxml")) {
                     ngw.genProcessData(ar);
-                } else if (resource.startsWith("act")) {
+                    return;
+                } 
+                if (resource.startsWith("act")) {
                     // format is act0000.wfxml where 0000 might be any 4
                     // digit identifier
                     String idstr = resource.substring(3, 7);
@@ -290,23 +289,11 @@ public class NGLeafServlet extends javax.servlet.http.HttpServlet {
                         }
                     }
                     ngw.genActivityData(ar, idstr);
-                } else {
-                    throw new NGException("nugen.exception.non.understandable.request",null);
+                    return;
                 }
-            } else if (resource.equals("process.txt")) {
-                ngw.writePlainText(ar);
-                ar.flush();
-            } else if (resource.startsWith("noteZoom")) {
-                //stupid hack fix.  Some email was sent with the wrong path, and this
-                //fixes the path.  Can remove after Sept 2016
-                //there is no likelihood that email is sitting around after that.
-                System.out.println("HACK: fixxing bad link in email message, redirecting to note zoom in new UI: "+resource);
-                String relPath = "../../t/"+ngpi.wsSiteKey+"/"+ngpi.containerKey+"/"+resource;
-                ar.resp.sendRedirect(relPath);
-                return;
-            } else {
-                throw new NGException("nugen.exception.page.resouce.incorrect", new Object[]{resource});
             }
+            
+            throw new Exception("NGLeafServlet does not know how to handle the resource: "+resource);
 
         } catch (Exception e) {
             handleException(e, ar);

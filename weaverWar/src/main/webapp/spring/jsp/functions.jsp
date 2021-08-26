@@ -26,10 +26,6 @@
 %><%@page import="com.purplehillsbooks.weaver.UtilityMethods"
 %><%@page import="com.purplehillsbooks.weaver.WikiConverter"
 %><%@page import="com.purplehillsbooks.weaver.WikiConverterForWYSIWYG"
-%><%@page import="com.purplehillsbooks.weaver.dms.ConnectionSettings"
-%><%@page import="com.purplehillsbooks.weaver.dms.ConnectionType"
-%><%@page import="com.purplehillsbooks.weaver.dms.FolderAccessHelper"
-%><%@page import="com.purplehillsbooks.weaver.dms.ResourceEntity"
 %><%@page import="java.io.File"
 %><%@page import="java.io.Writer"
 %><%@page import="java.io.Writer"
@@ -120,56 +116,4 @@ It does NOT produce any output by itself.
     }
 
 
-    public String getProjectRootURL(AuthRequest ar, NGWorkspace ngp) {
-        NGBook site = ngp.getSite();
-        String pageRootURL = ar.retPath + "t/"+site.getKey()+"/"+ngp.getKey()+"/";
-        return pageRootURL;
-    }
-
-
-
-    private String getShortName(String name, int maxsize) {
-        if (name.endsWith("/")) {
-            name = name.substring(0, name.length() - 1);
-        }
-        if (name.length() > maxsize) {
-            name = name.substring(0, maxsize - 3) + "...";
-        }
-
-        return name;
-
-    }
-
-    /**
-    * Creates a title attribute of a HTML element only if the name is longer than
-    * a specified amount.
-    */
-    private void writeTitleAttribute(AuthRequest ar, String name, int maxsize) throws Exception {
-        if (name.endsWith("/")) {
-            name = name.substring(0, name.length() - 1);
-        }
-        if (name.length() > maxsize) {
-            ar.write(" title=\"");
-            ar.writeHtml(name);
-            ar.write("\"");
-        }
-    }
-
-
-
-    //Recursive routine to handle variable number of parent folders
-    private void createFolderLinks(AuthRequest ar, ResourceEntity ent) throws Exception
-    {
-        ResourceEntity parent = ent.getParent();
-        if (parent!=null) {
-            createFolderLinks(ar, parent);
-            String dlink = ar.retPath + "v/"+ ar.getUserProfile().getKey() + "/folder"+ent.getFolderId()
-                +".htm?path=" + URLEncoder.encode(ent.getPath()+"/", "UTF-8")
-                +"&encodingGuard=%E6%9D%B1%E4%BA%AC";
-            ar.write("&nbsp;&nbsp;&gt;&nbsp;&nbsp;<a href=\"");
-            ar.writeHtml(dlink);
-            ar.write("\">");
-            ar.writeHtml(ent.getDecodedName());
-            ar.write("</a>");
-        }
-    }%>
+%>

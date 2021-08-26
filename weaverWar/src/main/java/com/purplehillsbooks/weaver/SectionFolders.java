@@ -23,15 +23,11 @@ package com.purplehillsbooks.weaver;
 import java.io.Writer;
 import java.util.List;
 
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
-
 @Deprecated
 public class SectionFolders extends SectionUtil implements SectionFormat {
 
     public static final int TYPE_FOLDER = 0;
     public static final int TYPE_FILE = 1;
-    public static final String PTCL_LOCAL = "Local";
-    public static final String PTCL_SMB = "SMB";
     public static final String PTCL_WEBDAV = "WEBDAV";
 
     public SectionFolders() {
@@ -59,22 +55,5 @@ public class SectionFolders extends SectionUtil implements SectionFormat {
     public void findIDs(List<String> v, NGSection sec) throws Exception {
         //no content, nothing to check
     }
-
-    /**
-     * This is a method to find a file, and output the file as a stream of bytes
-     * to the request output stream.
-     *
-    public static void serveUpFile(AuthRequest ar, NGWorkspace ngp, String fileId)
-            throws Exception {
-
-        throw new ProgramLogicError("Method Not implemented");
-
-    }
-
-    public void displaySubFolder(AuthRequest ar, NGWorkspace ngp, NGSection section,
-            String folderId) throws Exception {
-        throw new ProgramLogicError("Method Not implemented");
-    }
-    */
 
 }

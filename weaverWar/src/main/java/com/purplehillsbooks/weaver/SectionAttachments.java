@@ -113,10 +113,10 @@ public class SectionAttachments extends SectionUtil implements SectionFormat
     }
 
 
-    public static void moveAttachmentsFromDeprecatedSection(NGSection oldSec) throws Exception
+    public static void moveAttachmentsFromDeprecatedSection(NGPage ngw) throws Exception
     {
-        if (oldSec==null)
-        {
+        NGSection oldSec = ngw.getSection("Public Attachments");
+        if (oldSec==null) {
             throw new Exception("Null parameter passed to moveAttachmentsFromDeprecatedSection");
         }
         List<AttachmentRecord> wrongPlaceAtts = oldSec.getChildren("attachment", AttachmentRecord.class);

@@ -783,27 +783,3 @@ app.controller('myCtrl', function($scope, $http, $modal, AllPeople, $sce) {
   
 <script src="<%=ar.retPath%>templates/AttachDocumentCtrl.js"></script>
 
-<%!
-
-    private static String composeFromAddress(NGContainer ngc) throws Exception
-    {
-        StringBuilder sb = new StringBuilder("^");
-        String baseName = ngc.getFullName();
-        int last = baseName.length();
-        for (int i=0; i<last; i++)
-        {
-            char ch = baseName.charAt(i);
-            if ( (ch>='0' && ch<='9') || (ch>='A' && ch<='Z') || (ch>='a' && ch<='z') || (ch==' '))
-            {
-                sb.append(ch);
-            }
-        }
-
-        //now add email address in angle brackets
-        sb.append(" �");
-        sb.append(EmailSender.getProperty("mail.smtp.from"));
-        sb.append("�");
-        return sb.toString();
-    }
-
-%>

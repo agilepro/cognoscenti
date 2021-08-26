@@ -233,10 +233,6 @@ public class ConnectionSettings extends DOMFace {
         String ptcl = getProtocol();
         if(ConnectionType.PTCL_WEBDAV.equals(ptcl)){
             return new WebDavAccess(this);
-        }else if(ConnectionType.PTCL_SMB.equals(ptcl)){
-            return new SMBAccess(this);
-        }else if(ConnectionType.PTCL_LOCAL.equals(ptcl)){
-            return new LocalAccess(this);
         }else{
             return null;
         }

@@ -42,8 +42,6 @@ import com.purplehillsbooks.weaver.util.UploadFiles;
 
 public class FolderAccessHelper {
 
-    private static List<LocalFolderConfig> loaclConnections = null;
-
     AuthRequest ar;
 
     @Deprecated
@@ -54,34 +52,6 @@ public class FolderAccessHelper {
             throw new ProgramLogicError("FolderAccessHelper requires that AuthRequest parameter not be null");
         }
         this.ar = ar;
-    }
-
-
-    @Deprecated
-    public static void initLocalConnections(Cognoscenti cog){
-        loaclConnections = new ArrayList<LocalFolderConfig>();
-        String lclConn = cog.getConfig().getProperty("localConnections");
-        if(lclConn == null){
-            return;
-        }
-        lclConn = lclConn.replace('[', ' ');
-        //TODO: get rid of StringTokenizer
-        StringTokenizer st = new StringTokenizer(lclConn, "]");
-        while (st.hasMoreTokens()) {
-            String tok = st.nextToken();
-            int indx = tok.indexOf('=');
-            if(indx > 0){
-                String dname = tok.substring(0,indx).trim();
-                String path = tok.substring(indx+1).trim();
-                path = path.replace("\\", "/");
-                if (!path.endsWith("/")) {
-                    path = path + "/";
-                }
-                LocalFolderConfig lclconfig = new LocalFolderConfig(dname, path);
-                loaclConnections.add(lclconfig);
-            }
-        }
-
     }
 
 
@@ -232,42 +202,16 @@ public class FolderAccessHelper {
 
     private  static String  constructValidUrl(String url, String ptcl, AuthRequest ar) throws Exception{
         String validUrl = url;
-        if(ConnectionType.PTCL_SMB.equals(ptcl))
-        {
-            validUrl = url.replace('\\', '/');
-            if (validUrl.startsWith("//"))
-            {
-                validUrl = "smb:" + validUrl;
-            }
-        }
-        else if(ConnectionType.PTCL_WEBDAV.equals(ptcl))
+        if(ConnectionType.PTCL_WEBDAV.equals(ptcl))
         {
             if(url.endsWith("/"))
             {
                 validUrl = url.substring(0, url.length()-1 );
             }
-        }else if(ConnectionType.PTCL_LOCAL.equals(ptcl)){
-            validUrl = ar.reqParam("lclfldr").trim();
-            if(validUrl.endsWith("/")){
-                validUrl = validUrl.substring(0, validUrl.length()-1);
-            }
         }
 
         return validUrl;
     }
-
-
-    public static List<LocalFolderConfig> getLoclConnections(){
-        //Test
-        if(loaclConnections == null) {
-            throw new RuntimeException("FolderAccessHelper is not initialized");
-        }
-        return loaclConnections;
-    }
-
-
-
-
 
 
 

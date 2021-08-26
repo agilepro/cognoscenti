@@ -45,7 +45,6 @@ import com.purplehillsbooks.weaver.NGPageIndex;
  * http://machine:port/{application}/p/{pageid}/leaf.xml
  * http://machine:port/{application}/p/{pageid}/process.xml
  * http://machine:port/{application}/p/{pageid}/process.xpdl
- * http://machine:port/{application}/p/{pageid}/process.txt
  *
  * leaf.xml retrieves the page information as XML process.xml retrieves the
  * process on the page as xml process.xpdl represents that same process as xpdl

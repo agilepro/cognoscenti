@@ -400,10 +400,6 @@ public class ResourceLocater
             {
                 rs.updateSection();
             }
-            else if("DELETE".equals(methodname))
-            {
-                rs.deleteSection();
-            }
             else
             {
                 throw new ProgramLogicError("Unable to perform "+methodname+" operation on license");
@@ -477,14 +473,6 @@ public class ResourceLocater
                 throw new ProgramLogicError("Unable to perform PUT operation to '"+data_type+"'");
             }
 
-        }else if("DELETE".equals(methodname)){
-             if(data_type.equals(NGResource.DATA_SECTION_XML)){
-                rs.deleteSection();
-            }else if(data_type.equals(NGResource.DATA_SECCONTENT_XML)){
-                rs.deleteData();
-            }else{
-                throw new ProgramLogicError("Unable to perform DELETE operation to '"+data_type+"'");
-            }
         }
 
         return rs;
@@ -578,21 +566,6 @@ public class ResourceLocater
             else
             {
                 throw new ProgramLogicError("Unable to perform PUT operation");
-            }
-        }
-        else if("DELETE".equals(methodname))
-        {
-            if(data_type.equals(NGResource.DATA_SECTION_XML))
-            {
-                rs.deleteSection();
-            }
-            else if(data_type.equals(NGResource.DATA_SECCONTENT_XML))
-            {
-                rs.deleteData();
-            }
-            else
-            {
-                throw new ProgramLogicError("Unable to perform DELETE operation");
             }
         }
 

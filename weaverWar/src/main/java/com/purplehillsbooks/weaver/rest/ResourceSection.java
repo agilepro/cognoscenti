@@ -160,7 +160,7 @@ public class ResourceSection  implements NGResource
         lar.assertAdmin("Must be an admin of the page in order to add a new section");
         if(lname != null && lname.length()>0
             && ngp.getSection(lname) == null){
-                ngp.createSection(lname, lar);
+                throw new Exception("code to create sections has been removed.  Protocol no longer supports creating sections");
         }
 
         NGSection ngs = ngp.getSectionOrFail(lname);
@@ -180,25 +180,7 @@ public class ResourceSection  implements NGResource
         ltype = lrstatus.getType();
         loutdoc = lrstatus.getDocument();
     }
-    public void deleteSection() throws Exception
-    {
-        ltype = NGResource.TYPE_XML;
-        NGWorkspace ngp = lrp.getPageMustExist();
-        lar.setPageAccessLevels(ngp);
-        lar.assertAdmin("Must be an admin of the page in order to remove a  section");
-        ngp.removeSection(lname);
-        ngp.saveFile(lar,"Delete Section");
 
-        //Delete Status
-        lrstatus.setResourceid(ngp.getKey());
-        String secAddr = lserverURL + "p/" + ngp.getKey() + "/s/" + lname + "/section.xml";
-        lrstatus.setResourceURL(secAddr);
-        lrstatus.setSuccess(NGResource.OP_SUCCEEDED);
-        String cmsg = "The Section \"" + lname + " is deleted";
-        lrstatus.setCommnets(cmsg);
-        ltype = lrstatus.getType();
-        loutdoc = lrstatus.getDocument();
-    }
 
     public void updateSection() throws Exception
     {
@@ -295,42 +277,7 @@ public class ResourceSection  implements NGResource
         loutdoc = lrstatus.getDocument();
     }
 
-    public void deleteData() throws Exception
-    {
-        ltype = NGResource.TYPE_XML;
-        NGWorkspace ngp = lrp.getPageMustExist();
-        lar.setPageAccessLevels(ngp);
 
-        String cmsg = "";
-
-        if(lname.equals("Attachments")
-            || lname.equals("Public Attachments"))
-        {
-            deleteAttachments(ngp);
-            cmsg = "Attchments with id = " + lid + " is deleted";
-        }else if(lname.equals("Tasks")){
-            deleteTasks(ngp);
-            cmsg = "Tasks with id = " + lid + " is deleted";
-        }else if(lname.equals("Public Comments")
-                    || lname.equals("Comments")){
-            deleteNotes(ngp);
-            cmsg = "Topic with id = " + lid + " is deleted";
-        }
-
-        NGSection ngs = ngp.getSectionOrFail(lname);
-        ngs.setLastModify(lar);
-        ngp.saveFile(lar, "Delete Data");
-
-        //Delete Status
-        lrstatus.setResourceid(ngp.getKey());
-        String secAddr = lserverURL + "p/" + ngp.getKey() + "/s/" + lname + "/section.xml";
-        lrstatus.setResourceURL(secAddr);
-        lrstatus.setSuccess(NGResource.OP_SUCCEEDED);
-        lrstatus.setCommnets(cmsg);
-        ltype = lrstatus.getType();
-        loutdoc = lrstatus.getDocument();
-
-    }
 
     private void loadDataContent(NGSection ngs, Element element_section, String dataIds) throws Exception
     {

@@ -13,7 +13,6 @@ import javax.servlet.http.HttpSession;
 
 import com.purplehillsbooks.weaver.api.IconServlet;
 import com.purplehillsbooks.weaver.api.LightweightAuthServlet;
-import com.purplehillsbooks.weaver.dms.FolderAccessHelper;
 import com.purplehillsbooks.weaver.exception.NGException;
 import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.mail.EmailSender;
@@ -231,7 +230,6 @@ System.out.println("Weaver Server Object == Start the Server");
             //make sure that all the workspace references include a site
             userManager.assureSiteAndWorkspace(this);
 
-            FolderAccessHelper.initLocalConnections(this);
             serverId = theConfig.getServerGlobalId();
             LightweightAuthServlet.init(theConfig.getProperty("identityProvider"));
 

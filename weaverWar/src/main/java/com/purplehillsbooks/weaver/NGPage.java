@@ -22,13 +22,10 @@ package com.purplehillsbooks.weaver;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-
-import com.purplehillsbooks.weaver.dms.ConnectionSettings;
-import com.purplehillsbooks.weaver.dms.ConnectionType;
-import com.purplehillsbooks.weaver.dms.ResourceEntity;
 import com.purplehillsbooks.weaver.exception.NGException;
-import com.purplehillsbooks.weaver.exception.ProgramLogicError;
 import com.purplehillsbooks.weaver.util.StringCounter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -63,10 +60,12 @@ public abstract class NGPage extends ContainerCommon {
     private NGBook prjSite;
     protected List<String> existingIds = null;
 
-    DOMFace noteParent;
-    DOMFace attachParent;
-    DOMFace historyParent;
-
+    NGSection attParent;
+    NGSection folderParent;
+    NGSection noteParent;
+    NGSection attachParent;
+    NGSection taskParent;
+    
     //Least Recently Used Cache .... keep copies of the last ten
     //page objects in memory for reuse
     protected static LRUCache pageCache = new LRUCache(10);
@@ -78,49 +77,42 @@ public abstract class NGPage extends ContainerCommon {
         if (!"ProjInfo.xml".equals(theFile.getName())) {
             throw new Exception("Programmer Logic Error: the only file that holds a page should be called ProjInfo.xml");
         }
+        if (site==null) {
+            throw new Exception("workspaces have to be created with a site object sent in now");
+        }
+
 
         pageInfo = requireChild("pageInfo", PageInfoRecord.class);
 
         displayNames = pageInfo.getPageNames();
 
-        if (site==null) {
-            throw new Exception("workspaces have to be created with a site object sent in now");
-        }
-
         prjSite = site;
         pageInfo.setSiteKey(site.getKey());
+        
 
-        NGSection mAtt = getRequiredSection("Attachments");
-        SectionAttachments.assureSchemaMigration(mAtt, (NGWorkspace)this);
+        attParent = getRequiredSection("Attachments");
+        SectionAttachments.assureSchemaMigration(attParent, (NGWorkspace)this);
 
 
-        getRequiredSection("Comments");
-        getRequiredSection("Folders");
+        folderParent = getRequiredSection("Folders");
         noteParent   = getRequiredSection("Comments");
         attachParent = getRequiredSection("Attachments");
-        historyParent = getProcess().requireChild("history", DOMFace.class);
+        taskParent   = getRequiredSection("Tasks");
 
-        //forces the Tasks section, and also the process initialization
-        //guarantees the initialization of pageProcess member variable
-        getProcess();
-
-        //SCHEMA MIGRATION to remove Public Attachments Section
-        //'Attachments' is the ONLY place documents should be stored.
-        //This code is the only place that manipulates the deprecated "Public Attachments" section.
-        //in order to deprecate Public Attachments, check to see if
-        //there are any attached files init, and move them to
-        //the regular attachments, as public visible regular attachments
-        NGSection pAtt = getSection("Public Attachments");
-        if (pAtt!=null)
-        {
-            SectionAttachments.moveAttachmentsFromDeprecatedSection(pAtt);
-            removeSection("Public Attachments");
+        //initialization of pageProcess member variable
+        pageProcess = taskParent.requireChild("process", ProcessRecord.class);
+        if (pageProcess.getId() == null || pageProcess.getId().length() == 0)  {
+            // default values
+            pageProcess.setId(getUniqueOnPage());
+            pageProcess.setState(BaseRecord.STATE_UNSTARTED);
         }
 
         //This is the ONLY place you should see these
         //deprecated sections, check to see if
         //there are any leaflets in there, and move them to the
         //main comments section.
+
+        assertNoSectionWithThisName("Public Attachments");
         assertNoSectionWithThisName("Public Comments");
         assertNoSectionWithThisName("See Also");
         assertNoSectionWithThisName("Links");
@@ -192,12 +184,6 @@ public abstract class NGPage extends ContainerCommon {
         setKey(fileKey);
     }
 
-    private void assertNoSectionWithThisName(String name) throws Exception {
-        if (getSection(name)!=null) {
-            //this will automatically convert it to leaflet format
-            removeSection(name);
-        }
-    }
 
 
     /**
@@ -432,19 +418,33 @@ public abstract class NGPage extends ContainerCommon {
     }
 
 
-    public NGSection getSectionOrFail(String sectionNameToLookFor)
-        throws Exception
-    {
-        NGSection ngs = getSection(sectionNameToLookFor);
-        if (ngs==null)
-        {
-            throw new NGException("nugen.exception.unable.to.locate.section", new Object[]{sectionNameToLookFor,getKey()});
-        }
-        return ngs;
-    }
+    private static String[] strArr = {"abc", "def", "ghi", "jkl"};
+    private static HashSet<String> accptableName = new HashSet<String>(Arrays.asList(strArr));
 
-    public NGSection getSection(String sectionNameToLookFor) throws Exception {
-        for (NGSection sec : getAllSections()) {
+    /**
+    * Get a section, creating it if it does not exist yet
+    */
+    private NGSection getRequiredSection(String secName) throws Exception {
+        if (secName==null) {
+            throw new RuntimeException("getRequiredSection was passed a null secName parameter.");
+        }
+        //if (!accptableName.contains(secName)) {
+        //    throw new Exception("This name is not acceptable for a section: "+ secName);
+        //}
+        NGSection sec = internalScanForSection(secName);
+        if (sec==null) {
+            sec = createSection(secName, null);
+            sectionElements.add(sec);
+        }
+        return sec;
+    }
+    /*
+     * this scans the XML document for sections and returns them
+     * this scanning ONLY happens at init time, and only for specific
+     * allows section names
+     */
+    private NGSection internalScanForSection(String sectionNameToLookFor) throws Exception {
+        for (NGSection sec : getChildren("section", NGSection.class)) {
             String thisName = sec.getName();
             if (thisName == null || thisName.length() == 0) {
                 throw new NGException("nugen.exception.section.not.have.name", null);
@@ -455,40 +455,55 @@ public abstract class NGPage extends ContainerCommon {
         }
         return null;
     }
-
-    /**
-    * Get a section, creating it if it does not exist yet
-    */
-    private NGSection getRequiredSection(String secName)
-        throws Exception
-    {
-        if (secName==null)
-        {
-            throw new RuntimeException("getRequiredSection was passed a null secName parameter.");
+    private void assertNoSectionWithThisName(String name) throws Exception {
+        Element found = null;
+        for (Element ele : getNamedChildrenVector("section")) {
+            if (name.equals(ele.getAttribute("name"))) {
+                found = ele;
+            }
         }
-        NGSection sec = getSection(secName);
-        if (sec==null)
-        {
-            createSection(secName, null);
-            sec = getSection(secName);
+        if (found!=null) {
+            fEle.removeChild(found);
         }
-        return sec;
     }
+
+    
+    
+    /* 
+     * this is the external one
+     */
+    public NGSection getSection(String sectionNameToLookFor) throws Exception {
+        for (NGSection sec : sectionElements) {
+            String thisName = sec.getName();
+            if (sectionNameToLookFor.equals(thisName)) {
+                return sec;
+            }
+        }
+        return null;
+    }
+    public NGSection getSectionOrFail(String sectionNameToLookFor)
+            throws Exception
+        {
+            NGSection ngs = getSection(sectionNameToLookFor);
+            if (ngs==null)
+            {
+                throw new NGException("nugen.exception.unable.to.locate.section", new Object[]{sectionNameToLookFor,getKey()});
+            }
+            return ngs;
+        }
+
 
 
 
     /**
     * To create a new, empty, section, call this method.
     */
-    public void createSection(String secName, AuthRequest ar)
-        throws Exception
-    {
+    private NGSection createSection(String secName, AuthRequest ar) throws Exception {
         SectionDef sd = SectionDef.getDefByName(secName);
-        if (sd==null)
-        {
+        if (sd==null) {
             throw new NGException("nugen.exception.no.section.with.given.name", new Object[]{secName});
         }
-        createSection(sd, ar);
+        return createSection(sd, ar);
     }
 
 
@@ -501,9 +516,7 @@ public abstract class NGPage extends ContainerCommon {
     * record who added this required section.  In that case, pass a null
     * in for the AuthRecord, and nothing will be recorded.
     */
-    private void createSection(SectionDef sd, AuthRequest ar)
-        throws Exception
-    {
+    private NGSection createSection(SectionDef sd, AuthRequest ar) throws Exception {
         if (sd==null)
         {
             throw new RuntimeException("createSection was passed a null sd parameter");
@@ -514,51 +527,14 @@ public abstract class NGPage extends ContainerCommon {
         List<NGSection> allSections = getChildren("section", NGSection.class);
         for (NGSection sec : allSections) {
             if (secName.equals(sec.getAttribute("name"))) {
-                return;  //already created
+                return sec;  //already created, why calling this?
             }
         }
 
-        createChildWithID("section", NGSection.class, "name", secName);
+        NGSection newSection = createChildWithID("section", NGSection.class, "name", secName);
+        return newSection;
     }
 
-
-    public void removeSection(String nameToRemove)
-        throws Exception
-    {
-        NGSection lameDuck = getSection(nameToRemove);
-        if (lameDuck==null)
-        {
-            throw new NGException("nugen.exception.unable.to.remove.section", new Object[]{nameToRemove});
-        }
-        //testing
-        if (!nameToRemove.equals(lameDuck.getName()))
-        {
-            throw new ProgramLogicError("Got wrong section ("
-                   +nameToRemove+" != "+lameDuck.getName()+").");
-        }
-        SectionDef def = lameDuck.def;
-        if (def.required)
-        {
-            throw new NGException("nugen.exception.section.required",
-                    new Object[]{def.displayName,def.getTypeName(),nameToRemove,lameDuck.getName()});
-        }
-
-        //attempt to convert the contents, if any, to a Leaflet
-        SectionFormat sf = def.format;
-        NGSection notes = getRequiredSection("Comments");
-        if (sf instanceof SectionPrivate)
-        {
-            sf.convertToLeaflet(notes, lameDuck);
-        }
-        else if (sf instanceof SectionWiki)
-        {
-            sf.convertToLeaflet(notes, lameDuck);
-        }
-
-        //clear the cached vector, force regeneration in any case
-        sectionElements = null;
-        removeChild(lameDuck);
-    }
 
 
     public List<NGSection> getAllSections() throws Exception {
@@ -863,15 +839,7 @@ public abstract class NGPage extends ContainerCommon {
         if (pageProcess!=null) {
             return pageProcess;
         }
-        NGSection sec = getRequiredSection("Tasks");
-        ProcessRecord pr = sec.requireChild("process", ProcessRecord.class);
-        if (pr.getId() == null || pr.getId().length() == 0)  {
-            // default values
-            pr.setId(getUniqueOnPage());
-            pr.setState(BaseRecord.STATE_UNSTARTED);
-        }
-        pageProcess =  pr;
-        return pageProcess;
+        throw new Exception("Looks like NGPage was not initialized correctly, missing pageProcess");
     }
 
 
@@ -879,8 +847,7 @@ public abstract class NGPage extends ContainerCommon {
     * Returns all the action items for a workspace.
     */
     public List<GoalRecord> getAllGoals() throws Exception {
-        NGSection sec = getRequiredSection("Tasks");
-        return SectionTask.getAllTasks(sec);
+        return SectionTask.getAllTasks(taskParent);
     }
 
     public JSONArray getJSONGoals() throws Exception {
@@ -896,13 +863,11 @@ public abstract class NGPage extends ContainerCommon {
     * Find the requested action item, or throw an exception
     */
     public GoalRecord getGoalOrFail(String id) throws Exception {
-        NGSection sec = getRequiredSection("Tasks");
-        return SectionTask.getTaskOrFail(sec, id);
+        return SectionTask.getTaskOrFail(taskParent, id);
     }
 
     public GoalRecord getGoalOrNull(String id) throws Exception {
-        NGSection sec = getRequiredSection("Tasks");
-        return SectionTask.getTaskOrNull(sec, id);
+        return SectionTask.getTaskOrNull(taskParent, id);
     }
 
     public GoalRecord findGoalBySynopsis(String synopsis) throws Exception {
@@ -993,10 +958,6 @@ public abstract class NGPage extends ContainerCommon {
     public void genActivityData(AuthRequest ar, String id)
         throws Exception
     {
-        //todo: not sure these two lines are required
-        getProcess();
-        getRequiredSection("Tasks");
-
         ar.resp.setContentType("text/xml;charset=UTF-8");
         Document doc = DOMUtils.createDocument("activity");
         Element actEle = doc.getDocumentElement();
@@ -1923,7 +1884,7 @@ public abstract class NGPage extends ContainerCommon {
 
 
     public List<HistoryRecord>  getHistoryForResource(int contextType, String id) throws Exception {
-        List<HistoryRecord> allHist = historyParent.getChildren("event", HistoryRecord.class);
+        List<HistoryRecord> allHist = pageProcess.getChildren("event", HistoryRecord.class);
         List<HistoryRecord> newHist = new ArrayList<HistoryRecord>();
         for (HistoryRecord hr : allHist) {
             if (contextType != hr.getContextType()) {
@@ -1942,7 +1903,7 @@ public abstract class NGPage extends ContainerCommon {
     public List<HistoryRecord> getHistoryRange(long startTime, long endTime)
             throws Exception
     {
-        List<HistoryRecord> allHist = historyParent.getChildren("event", HistoryRecord.class);
+        List<HistoryRecord> allHist = pageProcess.getChildren("event", HistoryRecord.class);
         List<HistoryRecord> newHist = new ArrayList<HistoryRecord>();
         for (HistoryRecord hr : allHist)
         {

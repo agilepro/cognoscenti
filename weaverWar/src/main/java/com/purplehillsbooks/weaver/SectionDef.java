@@ -55,7 +55,6 @@ public class SectionDef
 
     //
     private static List<SectionDef> allDefs = null;
-    private static List<SectionFormat> allFormats = null;
     private static SectionFormat defaultUnknownSectionFormat = null;
 
     public SectionDef(SectionFormat newFormat, String newName, int view, int edit, boolean depr, String dName, boolean req)
@@ -80,14 +79,11 @@ public class SectionDef
     public synchronized static void clearAllStaticVars()
     {
         allDefs = null;
-        allFormats = null;
         defaultUnknownSectionFormat = null;
     }
 
     @SuppressWarnings("deprecation")
-    private static void initialize()
-    {
-        allFormats = new ArrayList<SectionFormat>();
+    private static void initialize() {
         allDefs = new ArrayList<SectionDef>();
         defaultUnknownSectionFormat = new SectionUnknown();
 
@@ -105,6 +101,8 @@ public class SectionDef
         allDefs.add(new SectionDef(cannonTasks, "Tasks", MEMBER_ACCESS, MEMBER_ACCESS,
                                    false, "Tasks", true));
 
+        
+        /*
         //the rest of these are deprecated
         SectionFormat canonWiki = new SectionWiki();
         SectionFormat canonLink =        new SectionLink();
@@ -139,15 +137,12 @@ public class SectionDef
         allDefs.add(new SectionDef(canonAttachments, "Public Attachments", ANON_ACCESS, MEMBER_ACCESS,
                                    true, "XXX Public Attachments", false));
 
-        allFormats.add(canonWiki);
-        allFormats.add(canonLink);
 
         // Please see NGWorkspace.createPage() to add the default sections to the newly created page.
+        */
     }
 
-    public String getTypeName()
-        throws Exception
-    {
+    public String getTypeName() throws Exception {
         return name;
     }
 
@@ -158,27 +153,19 @@ public class SectionDef
     }
 
 
-    public static SectionDef getDefByName(String defName)
-        throws Exception
-    {
+    public static SectionDef getDefByName(String defName) throws Exception {
         if (allDefs == null) {
             initialize();
         }
-        if (defName==null||defName.length()==0)
-        {
+        if (defName==null||defName.length()==0) {
             throw new RuntimeException("Must pass a non-null name to getDefByName");
         }
-        for (SectionDef sd : allDefs)
-        {
+        for (SectionDef sd : allDefs) {
             if (sd.getTypeName().equals(defName)) {
                 return sd;
             }
         }
-
-        //create a new definition 'on the fly', deprecated
-        SectionDef newsd = new SectionDef(defaultUnknownSectionFormat, defName, MEMBER_ACCESS, MEMBER_ACCESS,
-                                   true, "Unknown Section "+defName, false);
-        allDefs.add(newsd);
-        return newsd;
+        
+        throw new RuntimeException("Unable to find a section with the name: "+defName);
     }
 }

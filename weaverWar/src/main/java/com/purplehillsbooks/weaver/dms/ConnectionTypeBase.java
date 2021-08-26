@@ -35,9 +35,7 @@ public abstract class ConnectionTypeBase implements ConnectionType {
     public static final int TYPE_FOLDER = 0;
     public static final int TYPE_FILE = 1;
 
-    public static final String PTCL_SMB = "SMB";
     public static final String PTCL_WEBDAV = "WEBDAV";
-    public static final String PTCL_LOCAL = "LOCAL";
     public static final String PTCL_PUBLIC = "PUBLICWEB";
 
     public static final String FORM_FIELD_PRTCL = "ptc";
